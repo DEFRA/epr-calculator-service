@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EPR.Calculator.Service.Comm
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EPR.Calculator.Service.AzureFuntions", "EPR.Calculator.Service.AzureFuntions\EPR.Calculator.Service.AzureFuntions.csproj", "{2456796E-0208-449D-A44B-47FB68ED36C5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EPR.Calculator.Service.AzureFuntions.UnitTests", "EPR.Calculator.Service.AzureFuntions.UnitTests\EPR.Calculator.Service.AzureFuntions.UnitTests.csproj", "{97DC57A2-9650-454D-AE31-CB38C676E1AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{2456796E-0208-449D-A44B-47FB68ED36C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2456796E-0208-449D-A44B-47FB68ED36C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2456796E-0208-449D-A44B-47FB68ED36C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97DC57A2-9650-454D-AE31-CB38C676E1AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97DC57A2-9650-454D-AE31-CB38C676E1AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97DC57A2-9650-454D-AE31-CB38C676E1AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97DC57A2-9650-454D-AE31-CB38C676E1AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -61,6 +67,7 @@ Global
 		{71E6FD6F-CFD4-444C-AFCE-330834391444} = {648E888F-3E2B-438D-B4D2-E47D53AED3FC}
 		{26BB31E7-56E9-4A18-B918-D7EF2141232A} = {648E888F-3E2B-438D-B4D2-E47D53AED3FC}
 		{B4EBC1D2-2CB1-40BE-B780-E91D4F9A5C5F} = {648E888F-3E2B-438D-B4D2-E47D53AED3FC}
+		{97DC57A2-9650-454D-AE31-CB38C676E1AD} = {648E888F-3E2B-438D-B4D2-E47D53AED3FC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0F2CA3C0-C121-4753-9E48-3C1FC346CCF1}
