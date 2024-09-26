@@ -1,4 +1,4 @@
-# epr-pipeline-template
+# epr-calculator-service
 The README should include the following (if they apply):
 
 - **Description of the product** – what the service or product is, and what role this repo performs within it
