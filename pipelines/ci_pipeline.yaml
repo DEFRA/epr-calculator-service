@@ -30,7 +30,7 @@ variables:
   - name: solutionFolder
     value: src
   - name: projectFolder
-    value: 'EPR.Calculator.Service'
+    value: 'EPR.Calculator.Service.Function'
   - name: testProjectFolder
     value: 'EPR.Calculator.Service.Common.UnitTests' 
   - name: sonarQubeProjectKey
