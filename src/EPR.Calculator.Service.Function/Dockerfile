@@ -1,8 +1,5 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS installer-env
 
-# Copy everything
-COPY NuGet.Config ./
-
 COPY EPR.Calculator.Service.Common/. ./EPR.Calculator.Service.Common/.
 COPY EPR.Calculator.Service.Function/. ./EPR.Calculator.Service.Function/.
 
