@@ -1,0 +1,6 @@
+variables:
+  azureSubscription: 'AZD-RWD-DEV4'
+  docker.imageName: 'eprcalculatorservice'
+  acr.azureContainerRegistryName: 'devrwdinfac1401'
+  acr.repositoryName: 'eprcalculatorservicerepository' 
+  serviceName: 'DEVRWDWEBFA4411'
