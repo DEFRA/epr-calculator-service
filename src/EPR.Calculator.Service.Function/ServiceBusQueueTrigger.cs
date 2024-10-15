@@ -5,7 +5,7 @@ namespace EPR.Calculator.Service.Function
 {
     public class ServiceBusQueueTrigger
     {
-        [FunctionName("ServiceBusQueueTrigger")]
+        [FunctionName("EPRCalculatorRunServiceBusQueueTrigger")]
         public static void Run([ServiceBusTrigger(queueName: "%ServiceBusQueueName%", Connection = "ServiceBusConnectionString")] string myQueueItem, ILogger log)
         {
             log.LogInformation($"C# Service Bus Queue trigger function proceed messages: {myQueueItem}");
