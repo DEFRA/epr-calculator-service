@@ -1,6 +1,0 @@
-@EPR.Calculator.Service_HostAddress = http://localhost:5249
-
-GET {{EPR.Calculator.Service_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
