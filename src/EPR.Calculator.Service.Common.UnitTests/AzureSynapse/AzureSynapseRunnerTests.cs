@@ -61,12 +61,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
         private Mock<PipelineRunClient> MockPipelineRunClient { get; set; }
 
-        private PipelineParameters PipelineParameters { get; } = new PipelineParameters
-        {
-            CalculationId = "TestValue1255453645",
-            FinancialYear = "TestValue166468872",
-            UserId = "TestValue213567527",
-        };
+        private int Year { get; } = 166468872;
 
         /// <summary>
         /// Check that the non-test constructor
@@ -108,7 +103,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 .Returns(Task.FromResult(MockPipelineRunResponse(statusReturned)));
 
             // Act
-            var result = await this.TestClass.Process(this.PipelineParameters);
+            var result = await this.TestClass.Process(this.Year);
 
             // Assert
             Assert.AreEqual(expectedResult, result);
@@ -134,12 +129,12 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             this.MockPipelineRunClient.SetupSequence(client => client.GetPipelineRunAsync(
                 It.IsAny<string?>(),
                 It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(MockPipelineRunResponse(nameof(PipelineStatus.Running))))
-                .Returns(Task.FromResult(MockPipelineRunResponse(nameof(PipelineStatus.Running))))
+                .Returns(Task.FromResult(MockPipelineRunResponse(nameof(PipelineStatus.InProgress))))
+                .Returns(Task.FromResult(MockPipelineRunResponse(nameof(PipelineStatus.InProgress))))
                 .Returns(Task.FromResult(MockPipelineRunResponse(statusReturned)));
 
             // Act
-            var result = await this.TestClass.Process(this.PipelineParameters);
+            var result = await this.TestClass.Process(this.Year);
 
             // Assert
             Assert.AreEqual(expectedResult, result);
@@ -160,13 +155,13 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             this.MockPipelineRunClient.SetupSequence(client => client.GetPipelineRunAsync(
                 It.IsAny<string?>(),
                 It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(MockPipelineRunResponse(nameof(PipelineStatus.Running))))
-                .Returns(Task.FromResult(MockPipelineRunResponse(nameof(PipelineStatus.Running))))
-                .Returns(Task.FromResult(MockPipelineRunResponse(nameof(PipelineStatus.Running))))
+                .Returns(Task.FromResult(MockPipelineRunResponse(nameof(PipelineStatus.InProgress))))
+                .Returns(Task.FromResult(MockPipelineRunResponse(nameof(PipelineStatus.InProgress))))
+                .Returns(Task.FromResult(MockPipelineRunResponse(nameof(PipelineStatus.InProgress))))
                 .Returns(Task.FromResult(MockPipelineRunResponse(nameof(PipelineStatus.Succeeded))));
 
             // Act
-            var result = await this.TestClass.Process(this.PipelineParameters);
+            var result = await this.TestClass.Process(this.Year);
 
             // Assert
             Assert.IsFalse(result);
@@ -196,7 +191,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 .Returns(Task.FromResult(MockPipelineRunResponse(statusReturned)));
 
             // Act
-            var result = await this.TestClass.Process(this.PipelineParameters);
+            var result = await this.TestClass.Process(this.Year);
 
             // Assert
             Assert.AreEqual(expectedResult, result);
@@ -221,108 +216,8 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 .Throws(new InvalidOperationException())
                 .Throws(new InvalidOperationException());
 
-            // Act
-            try
-            {
-                await this.TestClass.Process(this.PipelineParameters);
-            }
-            catch (Exception ex)
-            {
-                result = ex;
-            }
-
-            // Assert
-            Assert.IsInstanceOfType<InvalidOperationException>(result);
-        }
-
-        /// <summary>
-        /// Check that <see cref="AzureSynapseRunner.Process(string, string, string)"/>
-        /// can't be called without a valid calculation ID.
-        /// </summary>
-        /// <param name="value">The calculation ID to test.</param>
-        /// <returns>A <see cref="Task"/>.</returns>
-        [DataTestMethod]
-        [DataRow(null)]
-        [DataRow("")]
-        [DataRow("   ")]
-        public async Task CannotCallProcessWithInvalidCalculationId(string value)
-        {
-            Exception? exception = null;
-            try
-            {
-                await this.TestClass.Process(new PipelineParameters
-                {
-                   CalculationId = value,
-                   FinancialYear = "TestValue556375345",
-                   UserId = "TestValue58318999",
-                });
-            }
-            catch (Exception ex)
-            {
-                exception = ex;
-            }
-
-            Assert.IsTrue(exception is ArgumentException);
-        }
-
-        /// <summary>
-        /// Check that <see cref="AzureSynapseRunner.Process(string, string, string)"/>
-        /// can't be called without a valid financial year.
-        /// </summary>
-        /// <param name="value">The financial ID to test.</param>
-        /// <returns>A <see cref="Task"/>.</returns>
-        [DataTestMethod]
-        [DataRow(null)]
-        [DataRow("")]
-        [DataRow("   ")]
-        public async Task CannotCallProcessWithInvalidFinancialYear(string value)
-        {
-            Exception? exception = null;
-            try
-            {
-                await this.TestClass.Process(new PipelineParameters
-                {
-                    CalculationId = "TestValue313680772",
-                    FinancialYear = value,
-                    UserId = "TestValue1282357944",
-                });
-            }
-            catch (Exception ex)
-            {
-                exception = ex;
-            }
-
-            Assert.IsTrue(exception is ArgumentException);
-        }
-
-        /// <summary>
-        /// Check that <see cref="AzureSynapseRunner.Process(string, string, string)"/>
-        /// can't be called without a valid user ID.
-        /// </summary>
-        /// <param name="value">The user ID to test.</param>
-        /// <returns>A <see cref="Task"/>.</returns>
-        [DataTestMethod]
-        [DataRow(null)]
-        [DataRow("")]
-        [DataRow("   ")]
-        public async Task CannotCallProcessWithInvalidUserId(string value)
-        {
-            Exception? exception = null;
-            try
-            {
-                await this.TestClass.Process(new PipelineParameters
-                {
-                    CalculationId = "TestValue142251981",
-                    FinancialYear = "TestValue1761091532",
-                    UserId = value,
-                });
-            }
-            catch (Exception ex)
-            {
-                exception = ex;
-            }
-
-            Assert.IsTrue(exception is ArgumentException);
+            // Act & Assert
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => this.TestClass.Process(this.Year));
         }
 
         /// <summary>
@@ -373,5 +268,18 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(createRunResponse.Object));
         }
+
+        //[TestMethod]
+        //public async Task TrialRun()
+        //{
+        //    this.TestClass = new AzureSynapseRunner(
+        //        new Uri("https://devepdinfas1401.dev.azuresynapse.net"),
+        //        "pip_paycal_get_org_data",
+        //        //"pip_paycal_get_pom_data",
+        //        3,
+        //        60000);
+        //    var result = await this.TestClass.Process(2023);
+        //    Assert.IsTrue(result);
+        //}
     }
 }

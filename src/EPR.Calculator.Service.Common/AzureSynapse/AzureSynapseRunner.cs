@@ -1,6 +1,7 @@
 ﻿namespace EPR.Calculator.Service.Common.AzureSynapse
 {
     using Azure.Identity;
+    using System.ComponentModel;
 
     /// <summary>
     /// Runs Azure Synapse pipelines.
@@ -50,16 +51,11 @@
         private Uri PipelineUrl { get; } = pipelineUrl;
 
         /// <inheritdoc/>
-        public async Task<bool> Process(PipelineParameters parameters)
+        public async Task<bool> Process(int year)
         {
-            ArgumentNullException.ThrowIfNull(parameters);
-            ArgumentException.ThrowIfNullOrWhiteSpace(parameters.CalculationId);
-            ArgumentException.ThrowIfNullOrWhiteSpace(parameters.FinancialYear);
-            ArgumentException.ThrowIfNullOrWhiteSpace(parameters.UserId);
-
             // Trigger the pipeline.
             Guid runId;
-            runId = await this.StartPipelineRun(this.PipelineClientFactory, parameters);
+            runId = await this.StartPipelineRun(this.PipelineClientFactory, year);
 
             // Periodically check the status of pipeline until it's completed.
             var checkCount = 0;
@@ -70,7 +66,7 @@
                 try
                 {
                     pipelineStatus = await this.GetPipelineRunStatus(this.PipelineClientFactory, runId);
-                    if (pipelineStatus != nameof(PipelineStatus.Running))
+                    if (pipelineStatus != nameof(PipelineStatus.InProgress))
                     {
                         break;
                     }
@@ -102,7 +98,7 @@
             }
         }
 
-        private async Task<Guid> StartPipelineRun(PipelineClientFactory factory, PipelineParameters parameters)
+        private async Task<Guid> StartPipelineRun(PipelineClientFactory factory, int year)
         {
 #if DEBUG
             var credentials = new DefaultAzureCredential();
@@ -118,9 +114,7 @@
             {
                 // Parameter names are placeholders
                 // - we need to find out what names the pipeline is expecting for them.
-                { "Calculation ID", parameters.CalculationId },
-                { "Financial Year", parameters.FinancialYear },
-                { "User ID", parameters.UserId },
+                { "date", year },
             });
 
             return Guid.Parse(result.Value.RunId);

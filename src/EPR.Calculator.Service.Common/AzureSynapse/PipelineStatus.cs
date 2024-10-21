@@ -10,7 +10,7 @@
         /// <summary>
         /// The pipeline is currently running.
         /// </summary>
-        Running,
+        InProgress,
 
         /// <summary>
         /// The pipeline completed as a success.
