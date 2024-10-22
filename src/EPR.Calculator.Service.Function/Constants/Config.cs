@@ -7,6 +7,7 @@
         public const string GetPomDataPipelineName = "GetPomDataPipelineName";
         public const string CheckInterval = "CheckInterval";
         public const string MaxCheckCount = "MaxCheckCount";
+        public const bool IsPom = true;
     }
 
 }

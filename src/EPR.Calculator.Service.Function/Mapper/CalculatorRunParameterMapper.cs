@@ -1,6 +1,5 @@
 ﻿using EPR.Calculator.Service.Common;
 
-
 namespace EPR.Calculator.Service.Function.Mapper
 {
     public class CalculatorRunParameterMapper 

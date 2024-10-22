@@ -1,17 +1,15 @@
 ﻿using EPR.Calculator.Service.Common;
-using EPR.Calculator.Service.Function.Interface;
-using System;
 using EPR.Calculator.Service.Function.Constants;
-
+using EPR.Calculator.Service.Function.Interface;
 
 namespace EPR.Calculator.Service.Function.Services
 {
     public class CalculatorRunService : ICalculatorRunService
     {
              
-        public void startProcess(CalculatorRunParameter calculatorRunParameter)
+        public void StartProcess(CalculatorRunParameter calculatorRunParameter)
         {
-           var environmentConfiguration =   GetConfiguration(true);
+           var environmentConfiguration =   GetConfiguration(Config.IsPom);
         }
 
 

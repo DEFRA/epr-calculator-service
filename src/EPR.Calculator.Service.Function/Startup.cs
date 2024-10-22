@@ -3,8 +3,6 @@ using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using System.IO;
-using Microsoft.Extensions.Configuration;
 using EPR.Calculator.Service.Function;
 
 [assembly: FunctionsStartup(typeof(Startup))]

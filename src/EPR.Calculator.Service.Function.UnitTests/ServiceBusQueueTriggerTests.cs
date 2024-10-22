@@ -3,7 +3,6 @@ using EPR.Calculator.Service.Function.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Newtonsoft.Json;
 
 namespace EPR.Calculator.Service.Function.UnitTests
 {

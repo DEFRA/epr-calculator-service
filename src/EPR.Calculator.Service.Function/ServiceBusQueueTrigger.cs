@@ -1,16 +1,11 @@
-using EPR.Calculator.Service.Common;
 using EPR.Calculator.Service.Function;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Mapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using System;
-using System.Configuration;
-using System.Xml.Linq;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace EPR.Calculator.Service.Function
@@ -32,7 +27,7 @@ namespace EPR.Calculator.Service.Function
             if (string.IsNullOrEmpty(myQueueItem)) { return new BadRequestResult(); }
 
             var calculatorRunParameter = CalculatorRunParameterMapper.Map(JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem));
-            _calculatorRunService.startProcess(calculatorRunParameter);            
+            _calculatorRunService.StartProcess(calculatorRunParameter);            
 
             return new OkObjectResult(myQueueItem);
         }
