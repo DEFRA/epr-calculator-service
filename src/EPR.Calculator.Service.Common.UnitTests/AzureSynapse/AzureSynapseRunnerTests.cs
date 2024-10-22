@@ -1,7 +1,7 @@
 namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 {
     using System;
-    using System.Net.Http.Headers;
+    using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
     using System.Threading.Tasks;
     using Azure;
@@ -11,6 +11,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
     using EPR.Calculator.Service.Common.AzureSynapse;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using Moq.Protected;
 
     /// <summary>
     /// Unit tests for the <see cref="AzureSynapseRunner"/> class.
@@ -36,6 +37,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             // Create a mock client factory to inject the mock pipeline clients into the test class.
             this.MockPipelineClient = new Mock<PipelineClient>();
             this.MockPipelineRunClient = new Mock<PipelineRunClient>();
+            this.MockStatusUpdateHandler = new Mock<HttpMessageHandler>();
             var pipelineClientFactory = new Mock<PipelineClientFactory>();
             pipelineClientFactory.Setup(factory => factory.GetPipelineRunClient(
                 It.IsAny<Uri>(),
@@ -45,6 +47,18 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 It.IsAny<Uri>(),
                 It.IsAny<TokenCredential>()))
                 .Returns(this.MockPipelineClient.Object);
+            pipelineClientFactory.Setup(factory => factory.GetStatusUpdateClient(
+                It.IsAny<Uri>()))
+                .Returns(new HttpClient(this.MockStatusUpdateHandler.Object));
+
+            // Set up the status update handler to return a default response
+            // rather than actualy trying to contact the endpoint.
+            this.MockStatusUpdateHandler.Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.IsAny<HttpRequestMessage>(),
+                    ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage());
 
             // Create the class to test.
             this.TestClass = new AzureSynapseRunner(
@@ -52,7 +66,8 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 new Uri(TestPipelineUrl),
                 TestPipelineName,
                 MaxChecks,
-                CheckInterval);
+                CheckInterval,
+                new Uri(TestPipelineUrl));
         }
 
         private AzureSynapseRunner TestClass { get; set; }
@@ -61,7 +76,9 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
         private Mock<PipelineRunClient> MockPipelineRunClient { get; set; }
 
-        private int Year { get; } = 166468872;
+        private Mock<HttpMessageHandler> MockStatusUpdateHandler { get; set; }
+
+        private FinancialYear Year { get; } = FinancialYear.Parse("2024");
 
         /// <summary>
         /// Check that the non-test constructor
@@ -74,7 +91,12 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             // Arrange
 
             // Act
-            var result = new AzureSynapseRunner(new Uri(TestPipelineUrl), TestPipelineName, MaxChecks, CheckInterval);
+            var result = new AzureSynapseRunner(
+                new Uri(TestPipelineUrl),
+                TestPipelineName,
+                MaxChecks,
+                CheckInterval,
+                new Uri(TestPipelineUrl));
 
             // Assert
             Assert.IsInstanceOfType<AzureSynapseRunner>(result);
@@ -85,14 +107,18 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
         /// pipeline run immediately succeeds.
         /// </summary>
         /// <param name="statusReturned">The status of the pipeline.</param>
-        /// <param name="expectedResult">
+        /// <param name="expectedPipelineResult">
         /// The result the method is expected to return for the given pipeline status.
         /// </param>
+        /// <param name="expectedStatusValue">The status value that's expected to be recorded to the database.</param>
         /// <returns>A <see cref="Task"/>.</returns>
         [TestMethod]
-        [DataRow(nameof(PipelineStatus.Succeeded), true)]
-        [DataRow(nameof(PipelineStatus.Failed), false)]
-        public async Task CallProcessSucceeds(string statusReturned, bool expectedResult)
+        [DataRow(nameof(PipelineStatus.Succeeded), true, AzureSynapseRunner.DatabaseSuccessValue)]
+        [DataRow(nameof(PipelineStatus.Failed), false, AzureSynapseRunner.DatabaseFailureValue)]
+        public async Task CallProcessSucceeds(
+            string statusReturned,
+            bool expectedPipelineResult,
+            string expectedStatusValue)
         {
             // Arrange
             this.MockCreateRunResponse();
@@ -103,10 +129,11 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 .Returns(Task.FromResult(MockPipelineRunResponse(statusReturned)));
 
             // Act
-            var result = await this.TestClass.Process(this.Year);
+            var pipelineSucceeded = await this.TestClass.Process(this.Year);
 
             // Assert
-            Assert.AreEqual(expectedResult, result);
+            Assert.AreEqual(expectedPipelineResult, pipelineSucceeded);
+            this.VerifyDatabaseWrite(expectedStatusValue);
         }
 
         /// <summary>
@@ -114,14 +141,18 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
         /// the pipeline takes a long time to complete, and we have to check its status multiple times.
         /// </summary>
         /// <param name="statusReturned">The status of the pipeline.</param>
-        /// <param name="expectedResult">
+        /// <param name="expectedPipelineResult">
         /// The result the method is expected to return for the given pipeline status.
         /// </param>
+        /// <param name="expectedStatusValue">The status value that's expected to be recorded to the database.</param>
         /// <returns>A <see cref="Task"/>.</returns>
         [TestMethod]
-        [DataRow(nameof(PipelineStatus.Succeeded), true)]
-        [DataRow(nameof(PipelineStatus.Failed), false)]
-        public async Task CallProcessSucceedsWhenPipelineDelayed(string statusReturned, bool expectedResult)
+        [DataRow(nameof(PipelineStatus.Succeeded), true, AzureSynapseRunner.DatabaseSuccessValue)]
+        [DataRow(nameof(PipelineStatus.Failed), false, AzureSynapseRunner.DatabaseFailureValue)]
+        public async Task CallProcessSucceedsWhenPipelineDelayed(
+            string statusReturned,
+            bool expectedPipelineResult,
+            string expectedStatusValue)
         {
             // Arrange
             this.MockCreateRunResponse();
@@ -134,10 +165,11 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 .Returns(Task.FromResult(MockPipelineRunResponse(statusReturned)));
 
             // Act
-            var result = await this.TestClass.Process(this.Year);
+            var pipelineSucceeded = await this.TestClass.Process(this.Year);
 
             // Assert
-            Assert.AreEqual(expectedResult, result);
+            Assert.AreEqual(expectedPipelineResult, pipelineSucceeded);
+            this.VerifyDatabaseWrite(expectedStatusValue);
         }
 
         /// <summary>
@@ -161,25 +193,31 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 .Returns(Task.FromResult(MockPipelineRunResponse(nameof(PipelineStatus.Succeeded))));
 
             // Act
-            var result = await this.TestClass.Process(this.Year);
+            var pipelineSucceeded = await this.TestClass.Process(this.Year);
 
             // Assert
-            Assert.IsFalse(result);
+            Assert.IsFalse(pipelineSucceeded);
+            this.VerifyDatabaseWrite(AzureSynapseRunner.DatabaseFailureValue);
         }
 
         /// <summary>
-        /// Check that <see cref="AzureSynapseRunner.Process(string, string, string)"/> returns true when
-        /// retrieving the pipeline status initialy throws an exception, but succeeds when retried.
+        /// Check that <see cref="AzureSynapseRunner.Process(string, string, string)"/> returns the appropriate
+        /// response when retrieving the pipeline status initialy throws an exception,
+        /// but successfully retrieves the status when retried.
         /// </summary>
         /// <param name="statusReturned">The status of the pipeline.</param>
         /// <param name="expectedResult">
         /// The result the method is expected to return for the given pipeline status.
         /// </param>
+        /// <param name="expectedStatusValue">The status value that's expected to be recorded to the database.</param>
         /// <returns>A <see cref="Task"/>.</returns>
         [TestMethod]
-        [DataRow(nameof(PipelineStatus.Succeeded), true)]
-        [DataRow(nameof(PipelineStatus.Failed), false)]
-        public async Task CallProcessSucceedsAfterException(string statusReturned, bool expectedResult)
+        [DataRow(nameof(PipelineStatus.Succeeded), true, AzureSynapseRunner.DatabaseSuccessValue)]
+        [DataRow(nameof(PipelineStatus.Failed), false, AzureSynapseRunner.DatabaseFailureValue)]
+        public async Task CallProcessSucceedsAfterException(
+            string statusReturned,
+            bool expectedResult,
+            string expectedStatusValue)
         {
             // Arrange
             this.MockCreateRunResponse();
@@ -191,10 +229,11 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 .Returns(Task.FromResult(MockPipelineRunResponse(statusReturned)));
 
             // Act
-            var result = await this.TestClass.Process(this.Year);
+            var pipelineSucceeded = await this.TestClass.Process(this.Year);
 
             // Assert
-            Assert.AreEqual(expectedResult, result);
+            Assert.AreEqual(expectedResult, pipelineSucceeded);
+            this.VerifyDatabaseWrite(expectedStatusValue);
         }
 
         /// <summary>
@@ -207,7 +246,6 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
         {
             // Arrange
             this.MockCreateRunResponse();
-            Exception? result = null;
 
             this.MockPipelineRunClient.SetupSequence(client => client.GetPipelineRunAsync(
                 It.IsAny<string?>(),
@@ -217,7 +255,11 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 .Throws(new InvalidOperationException());
 
             // Act & Assert
-            await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => this.TestClass.Process(this.Year));
+            var pipelineSucceeded = await this.TestClass.Process(this.Year);
+
+            // Assert
+            Assert.IsFalse(pipelineSucceeded);
+            this.VerifyDatabaseWrite(AzureSynapseRunner.DatabaseFailureValue);
         }
 
         /// <summary>
@@ -225,6 +267,8 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
         /// </summary>
         private static Response<PipelineRun> MockPipelineRunResponse(string status)
         {
+            // We have to use reflection to create the response object, as the class's constructor
+            // is internal, and it doesnt use an inverface we could mock instead.
             var ctor = typeof(PipelineRun)
                 .GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)[1];
             var pipelineResult = (PipelineRun)ctor.Invoke(
@@ -249,6 +293,19 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
         }
 
         /// <summary>
+        /// Verifies that the expected value was written to the mock database
+        /// (i.e. the mock HTTP message handler was called using the appropriate parameter).
+        /// </summary>
+        /// <param name="expectedStatusValue">The value that's expected to of been written to the database.</param>
+        private void VerifyDatabaseWrite(string expectedStatusValue)
+            => this.MockStatusUpdateHandler.Protected().Verify(
+                "SendAsync",
+                Times.Once(),
+                ItExpr.Is<HttpRequestMessage>(
+                    message => message.Content!.ReadAsStringAsync().Result.Contains(expectedStatusValue)),
+                ItExpr.IsAny<CancellationToken>());
+
+        /// <summary>
         /// Builds a mock response to a Synapse request for a new pipeline run.
         /// </summary>
         private void MockCreateRunResponse()
@@ -269,6 +326,8 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 .Returns(Task.FromResult(createRunResponse.Object));
         }
 
+        // The below is for testing against the actual pipelines before the Azure Function that
+        // will call this class is implemented.  Delete it once the Azure Function is done.
         //[TestMethod]
         //public async Task TrialRun()
         //{

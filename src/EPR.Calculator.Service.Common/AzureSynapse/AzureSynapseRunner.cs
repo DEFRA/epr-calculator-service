@@ -1,7 +1,8 @@
 ﻿namespace EPR.Calculator.Service.Common.AzureSynapse
 {
+    using System.Text;
+    using System.Text.Json;
     using Azure.Identity;
-    using System.ComponentModel;
 
     /// <summary>
     /// Runs Azure Synapse pipelines.
@@ -14,14 +15,28 @@
     /// before reporting a failure.</param>
     /// <param name="checkInterval">The time to wait before re-checking to see
     /// if the pipeline has run successfully.</param>
+    /// <param name="statusUpdateEndpoint">
+    /// The URL of the endpoint that's used to access the database and update the status of the run.
+    /// </param>
     public class AzureSynapseRunner(
         PipelineClientFactory pipelineClientFactory,
         Uri pipelineUrl,
         string pipelineName,
         int maxChecks,
-        int checkInterval)
+        int checkInterval,
+        Uri statusUpdateEndpoint)
         : IAzureSynapseRunner
     {
+        /// <summary>
+        /// The value to write to the database to indicate that the pipeline succeeded.
+        /// </summary>
+        public const string DatabaseSuccessValue = "SUCCESS";
+
+        /// <summary>
+        /// The value to write to the database to indicate that the pipeline failed.
+        /// </summary>
+        public const string DatabaseFailureValue = "FAILED";
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AzureSynapseRunner"/> class.
         /// </summary>
@@ -31,12 +46,22 @@
         /// before reporting a failure.</param>
         /// <param name="checkInterval">The time to wait before re-checking to see
         /// if the pipeline has run successfully.</param>
+        /// <param name="statusUpdateEndpoint">
+        /// The URL of the endpoint that's used to access the database and update the status of the run.
+        /// </param>
         public AzureSynapseRunner(
         Uri pipelineUrl,
         string pipelineName,
         int maxChecks,
-        int checkInterval)
-        : this(new PipelineClientFactory(), pipelineUrl, pipelineName, maxChecks, checkInterval)
+        int checkInterval,
+        Uri statusUpdateEndpoint)
+        : this(
+              new PipelineClientFactory(),
+              pipelineUrl,
+              pipelineName,
+              maxChecks,
+              checkInterval,
+              statusUpdateEndpoint)
         {
         }
 
@@ -50,16 +75,19 @@
 
         private Uri PipelineUrl { get; } = pipelineUrl;
 
+        private Uri StatusUpdateUrl { get; } = statusUpdateEndpoint;
+
         /// <inheritdoc/>
-        public async Task<bool> Process(int year)
+        public async Task<bool> Process(FinancialYear financialYear)
         {
+            // instead of year will get financial year need to map finacial year to calendar year
             // Trigger the pipeline.
             Guid runId;
-            runId = await this.StartPipelineRun(this.PipelineClientFactory, year);
+            runId = await this.StartPipelineRun(this.PipelineClientFactory, financialYear.ToCalendarYear());
 
             // Periodically check the status of pipeline until it's completed.
             var checkCount = 0;
-            var pipelineStatus = string.Empty;
+            var pipelineStatus = nameof(PipelineStatus.NotStarted);
             do
             {
                 checkCount++;
@@ -77,7 +105,7 @@
                     // so ignore it unless this is the last try.
                     if (checkCount >= this.MaxChecks)
                     {
-                        throw;
+                        break;
                     }
                 }
 
@@ -85,26 +113,43 @@
             }
             while (checkCount < this.MaxChecks);
 
-            // Record success/failure.
-            if (pipelineStatus == nameof(PipelineStatus.Succeeded))
-            {
-                // TODO: Update the status in the database.
-                return true;
-            }
-            else
-            {
-                // TODO: Update the status in the database.
-                return false;
-            }
+            // Record success/failure to the database using the web API.
+            var statusUpdateResponse = await this.PipelineClientFactory
+                .GetStatusUpdateClient(this.StatusUpdateUrl)
+                .PostAsync(
+                    this.StatusUpdateUrl.ToString(),
+                    GetStatusUpdateMessage(pipelineStatus));
+
+            return pipelineStatus == nameof(PipelineStatus.Succeeded) && statusUpdateResponse.IsSuccessStatusCode;
         }
 
-        private async Task<Guid> StartPipelineRun(PipelineClientFactory factory, int year)
+        /// <summary>
+        /// Build the JSON content of the status update API call.
+        /// </summary>
+        private static StringContent GetStatusUpdateMessage(string pipelineStatus)
         {
-#if DEBUG
+            string messageStatus = pipelineStatus switch
+            {
+                nameof(PipelineStatus.Succeeded) => DatabaseSuccessValue,
+                _ => DatabaseFailureValue,
+            };
+
+            return new StringContent(
+                JsonSerializer.Serialize(new
+                {
+                    status = messageStatus,
+                }),
+                Encoding.UTF8,
+                "application/json");
+        }
+
+        private async Task<Guid> StartPipelineRun(PipelineClientFactory factory, DateTime year)
+        {
+            #if DEBUG
             var credentials = new DefaultAzureCredential();
-#else
+            #else
             var credentials = new ManagedIdentityCredential();
-#endif
+            #endif
 
             var pipelineClient = factory.GetPipelineClient(this.PipelineUrl, credentials);
 
@@ -114,7 +159,7 @@
             {
                 // Parameter names are placeholders
                 // - we need to find out what names the pipeline is expecting for them.
-                { "date", year },
+                { "date", year.ToString("yyyy") },
             });
 
             return Guid.Parse(result.Value.RunId);
@@ -122,11 +167,11 @@
 
         private async Task<string> GetPipelineRunStatus(PipelineClientFactory factory, Guid runId)
         {
-#if DEBUG
+            #if DEBUG
             var credentials = new DefaultAzureCredential();
-#else
+            #else
             var credentials = new ManagedIdentityCredential();
-#endif
+            #endif
 
             var pipelineClient = factory.GetPipelineRunClient(this.PipelineUrl, credentials);
 

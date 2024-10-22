@@ -29,5 +29,13 @@
         /// <returns>A new <see cref="PipelineRunClient"/>.</returns>
         public virtual PipelineRunClient GetPipelineRunClient(Uri pipelineUrl, TokenCredential tokenCredential)
             => new PipelineRunClient(pipelineUrl, tokenCredential);
+
+        /// <summary>
+        /// Initialises a new <see cref="HttpClient"/> for accessing the web API that updates the run status.
+        /// </summary>
+        /// <param name="statusUpdateUrl">The URL of the status update endpoint.</param>
+        /// <returns>A new <see cref="HttpClient"/>.</returns>
+        public virtual HttpClient GetStatusUpdateClient(Uri statusUpdateUrl)
+            => new HttpClient();
     }
 }

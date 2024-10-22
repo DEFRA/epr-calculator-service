@@ -59,5 +59,21 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             // Assert
             Assert.IsInstanceOfType<PipelineRunClient>(result);
         }
+
+        /// <summary>
+        /// Checks that an HTTP client is returned when calling
+        /// <see cref="PipelineClientFactory.GetStatusUpdateClient(Uri)"/>.
+        /// </summary>
+        [TestMethod]
+        public void CanCallGetStatusUpdateClient()
+        {
+            // Arrange
+
+            // Act
+            var result = this.TestClass.GetStatusUpdateClient(new Uri(FakeAddress));
+
+            // Assert
+            Assert.IsInstanceOfType<HttpClient>(result);
+        }
     }
 }

@@ -1,11 +1,14 @@
 ﻿namespace EPR.Calculator.Service.Common.AzureSynapse
 {
     /// <summary>
-    /// Statuses that the pipeline might have.
+    /// Statuses that the pipeline can have.
     /// </summary>
     public enum PipelineStatus
     {
-        // TODO: This enum needs to be updated with the actual values that the pipeline returns.
+        /// <summary>
+        /// The pipeline hasn't been started.
+        /// </summary>
+        NotStarted,
 
         /// <summary>
         /// The pipeline is currently running.
