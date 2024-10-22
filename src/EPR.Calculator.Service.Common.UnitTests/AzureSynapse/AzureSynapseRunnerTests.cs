@@ -1,7 +1,7 @@
 namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 {
     using System;
-    using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
     using System.Reflection;
     using System.Threading.Tasks;
     using Azure;
@@ -110,15 +110,13 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
         /// <param name="expectedPipelineResult">
         /// The result the method is expected to return for the given pipeline status.
         /// </param>
-        /// <param name="expectedStatusValue">The status value that's expected to be recorded to the database.</param>
         /// <returns>A <see cref="Task"/>.</returns>
         [TestMethod]
-        [DataRow(nameof(PipelineStatus.Succeeded), true, AzureSynapseRunner.DatabaseSuccessValue)]
-        [DataRow(nameof(PipelineStatus.Failed), false, AzureSynapseRunner.DatabaseFailureValue)]
+        [DataRow(nameof(PipelineStatus.Succeeded), true)]
+        [DataRow(nameof(PipelineStatus.Failed), false)]
         public async Task CallProcessSucceeds(
             string statusReturned,
-            bool expectedPipelineResult,
-            string expectedStatusValue)
+            bool expectedPipelineResult)
         {
             // Arrange
             this.MockCreateRunResponse();
@@ -133,7 +131,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
             // Assert
             Assert.AreEqual(expectedPipelineResult, pipelineSucceeded);
-            this.VerifyDatabaseWrite(expectedStatusValue);
+            this.VerifyDatabaseWrite(pipelineSucceeded);
         }
 
         /// <summary>
@@ -144,15 +142,13 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
         /// <param name="expectedPipelineResult">
         /// The result the method is expected to return for the given pipeline status.
         /// </param>
-        /// <param name="expectedStatusValue">The status value that's expected to be recorded to the database.</param>
         /// <returns>A <see cref="Task"/>.</returns>
         [TestMethod]
-        [DataRow(nameof(PipelineStatus.Succeeded), true, AzureSynapseRunner.DatabaseSuccessValue)]
-        [DataRow(nameof(PipelineStatus.Failed), false, AzureSynapseRunner.DatabaseFailureValue)]
+        [DataRow(nameof(PipelineStatus.Succeeded), true)]
+        [DataRow(nameof(PipelineStatus.Failed), false)]
         public async Task CallProcessSucceedsWhenPipelineDelayed(
             string statusReturned,
-            bool expectedPipelineResult,
-            string expectedStatusValue)
+            bool expectedPipelineResult)
         {
             // Arrange
             this.MockCreateRunResponse();
@@ -169,7 +165,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
             // Assert
             Assert.AreEqual(expectedPipelineResult, pipelineSucceeded);
-            this.VerifyDatabaseWrite(expectedStatusValue);
+            this.VerifyDatabaseWrite(pipelineSucceeded);
         }
 
         /// <summary>
@@ -197,7 +193,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
             // Assert
             Assert.IsFalse(pipelineSucceeded);
-            this.VerifyDatabaseWrite(AzureSynapseRunner.DatabaseFailureValue);
+            this.VerifyDatabaseWrite(pipelineSucceeded);
         }
 
         /// <summary>
@@ -209,15 +205,13 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
         /// <param name="expectedResult">
         /// The result the method is expected to return for the given pipeline status.
         /// </param>
-        /// <param name="expectedStatusValue">The status value that's expected to be recorded to the database.</param>
         /// <returns>A <see cref="Task"/>.</returns>
         [TestMethod]
-        [DataRow(nameof(PipelineStatus.Succeeded), true, AzureSynapseRunner.DatabaseSuccessValue)]
-        [DataRow(nameof(PipelineStatus.Failed), false, AzureSynapseRunner.DatabaseFailureValue)]
+        [DataRow(nameof(PipelineStatus.Succeeded), true)]
+        [DataRow(nameof(PipelineStatus.Failed), false)]
         public async Task CallProcessSucceedsAfterException(
             string statusReturned,
-            bool expectedResult,
-            string expectedStatusValue)
+            bool expectedResult)
         {
             // Arrange
             this.MockCreateRunResponse();
@@ -233,7 +227,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
             // Assert
             Assert.AreEqual(expectedResult, pipelineSucceeded);
-            this.VerifyDatabaseWrite(expectedStatusValue);
+            this.VerifyDatabaseWrite(pipelineSucceeded);
         }
 
         /// <summary>
@@ -259,7 +253,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
             // Assert
             Assert.IsFalse(pipelineSucceeded);
-            this.VerifyDatabaseWrite(AzureSynapseRunner.DatabaseFailureValue);
+            this.VerifyDatabaseWrite(pipelineSucceeded);
         }
 
         /// <summary>
@@ -293,16 +287,18 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
         }
 
         /// <summary>
-        /// Verifies that the expected value was written to the mock database
-        /// (i.e. the mock HTTP message handler was called using the appropriate parameter).
+        /// Verifies that the expected value was written to the database using it's web API
+        /// (i.e. that the mock HTTP message handler was called with the isSuccessful
+        /// parameter set to the appropriate value).
         /// </summary>
-        /// <param name="expectedStatusValue">The value that's expected to of been written to the database.</param>
-        private void VerifyDatabaseWrite(string expectedStatusValue)
+        /// <param name="pipelineSucceeded">The pipeline success value that should of been recorded to the database.</param>
+        private void VerifyDatabaseWrite(bool pipelineSucceeded)
             => this.MockStatusUpdateHandler.Protected().Verify(
                 "SendAsync",
                 Times.Once(),
                 ItExpr.Is<HttpRequestMessage>(
-                    message => message.Content!.ReadAsStringAsync().Result.Contains(expectedStatusValue)),
+                    message => message.Content!.ReadAsStringAsync().Result
+                        .Contains($"\"isSuccessful\":{pipelineSucceeded.ToString().ToLower()}")),
                 ItExpr.IsAny<CancellationToken>());
 
         /// <summary>
@@ -336,8 +332,9 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
         //        "pip_paycal_get_org_data",
         //        //"pip_paycal_get_pom_data",
         //        3,
-        //        60000);
-        //    var result = await this.TestClass.Process(2023);
+        //        60000,
+        //        new Uri("https://devepdinfas1401.dev.azuresynapse.net/v1/internal/rpdStatus"));
+        //    var result = await this.TestClass.Process(FinancialYear.Parse("2023"));
         //    Assert.IsTrue(result);
         //}
     }

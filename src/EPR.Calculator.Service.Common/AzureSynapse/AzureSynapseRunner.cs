@@ -28,16 +28,6 @@
         : IAzureSynapseRunner
     {
         /// <summary>
-        /// The value to write to the database to indicate that the pipeline succeeded.
-        /// </summary>
-        public const string DatabaseSuccessValue = "SUCCESS";
-
-        /// <summary>
-        /// The value to write to the database to indicate that the pipeline failed.
-        /// </summary>
-        public const string DatabaseFailureValue = "FAILED";
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="AzureSynapseRunner"/> class.
         /// </summary>
         /// <param name="pipelineUrl">The URL of the pipeline to run.</param>
@@ -118,7 +108,7 @@
                 .GetStatusUpdateClient(this.StatusUpdateUrl)
                 .PostAsync(
                     this.StatusUpdateUrl.ToString(),
-                    GetStatusUpdateMessage(pipelineStatus));
+                    GetStatusUpdateMessage(runId, pipelineStatus == nameof(PipelineStatus.Succeeded)));
 
             return pipelineStatus == nameof(PipelineStatus.Succeeded) && statusUpdateResponse.IsSuccessStatusCode;
         }
@@ -126,18 +116,14 @@
         /// <summary>
         /// Build the JSON content of the status update API call.
         /// </summary>
-        private static StringContent GetStatusUpdateMessage(string pipelineStatus)
+        private static StringContent GetStatusUpdateMessage(Guid runId, bool pipelineSucceeded)
         {
-            string messageStatus = pipelineStatus switch
-            {
-                nameof(PipelineStatus.Succeeded) => DatabaseSuccessValue,
-                _ => DatabaseFailureValue,
-            };
-
             return new StringContent(
                 JsonSerializer.Serialize(new
                 {
-                    status = messageStatus,
+                    runId,
+                    updatedBy = "string",
+                    isSuccessful = pipelineSucceeded,
                 }),
                 Encoding.UTF8,
                 "application/json");
@@ -157,8 +143,6 @@
             this.PipelineName,
             parameters: new Dictionary<string, object>
             {
-                // Parameter names are placeholders
-                // - we need to find out what names the pipeline is expecting for them.
                 { "date", year.ToString("yyyy") },
             });
 
