@@ -1,17 +1,18 @@
-﻿using EPR.Calculator.Service.Function.Interface;
+﻿using EPR.Calculator.Service.Common;
+using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using Microsoft.Extensions.Configuration;
+using EPR.Calculator.Service.Function;
 
+[assembly: FunctionsStartup(typeof(Startup))]
 namespace EPR.Calculator.Service.Function
 {
     public class Startup : FunctionsStartup
     {
+        private CalculatorRunConfiguration _configuration;
 
         public override void Configure(IFunctionsHostBuilder builder)
         {

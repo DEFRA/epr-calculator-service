@@ -1,12 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using EPR.Calculator.Service.Common;
+
+
 
 namespace EPR.Calculator.Service.Function.Mapper
 {
-    internal class CalculatorRunParameterMapper
+    public class CalculatorRunParameterMapper 
     {
+
+        public static CalculatorRunParameter Map(CalculatorParameter calculatorParameter)
+        {
+            return new CalculatorRunParameter()
+            {
+                FinancialYear = calculatorParameter.FinancialYear,
+                User = calculatorParameter.CreatedBy,
+                Id = calculatorParameter.CalculatorRunId
+            };
+        }
     }
 }

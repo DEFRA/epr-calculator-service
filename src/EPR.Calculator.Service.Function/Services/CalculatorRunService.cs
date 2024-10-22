@@ -1,12 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using EPR.Calculator.Service.Common;
+using EPR.Calculator.Service.Function.Interface;
+using System;
+using EPR.Calculator.Service.Function.Constants;
+
 
 namespace EPR.Calculator.Service.Function.Services
 {
-    internal class CalculatorRunService
+    public class CalculatorRunService : ICalculatorRunService
     {
+             
+        public void startProcess(CalculatorRunParameter calculatorRunParameter)
+        {
+           var environmentConfiguration =   GetConfiguration(true);
+        }
+
+
+        private CalculatorRunConfiguration GetConfiguration(bool isPomData)
+        {
+            return new CalculatorRunConfiguration()
+            {
+                PipelineUrl = Configuration.PipelineUrl,
+                CheckInterval = Configuration.CheckInterval,
+                MaxCheckCount = Configuration.MaxCheckCount,
+                PipelineName = isPomData ? Configuration.GetPomDataPipelineName : Configuration.GetOrgDataPipelineName
+            };
+
+        }
     }
 }
