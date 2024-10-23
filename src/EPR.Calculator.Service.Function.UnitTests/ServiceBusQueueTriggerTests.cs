@@ -20,28 +20,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             _function = new ServiceBusQueueTrigger(_calculatorRunService);
             _mockLogger = new Mock<ILogger>();
         }
-
-
-        [TestMethod]
-        public void Run_ReturnsOkResult_WhenMessageIsSent()
-        {
-            var message = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
-
-            var result = _function.Run(message, _mockLogger.Object);
-
-            Assert.IsInstanceOfType<OkObjectResult>(result);
-            var okResult = result as OkObjectResult;
-            Assert.AreEqual(message, okResult?.Value);
-        }
-
-        [TestMethod]
-        public void Run_ReturnsOkResult_WhenMessageIsEMpty()
-        {
-            var message = string.Empty;
-
-            var result = _function.Run(message, _mockLogger.Object);
-            Assert.IsInstanceOfType<BadRequestResult>(result);
-        }
+        
     }
 
 }

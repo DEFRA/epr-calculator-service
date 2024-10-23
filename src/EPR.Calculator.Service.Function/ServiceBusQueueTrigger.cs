@@ -6,6 +6,9 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace EPR.Calculator.Service.Function
@@ -21,15 +24,28 @@ namespace EPR.Calculator.Service.Function
         }
 
         [FunctionName("EPRCalculatorRunServiceBusQueueTrigger")]
-        public IActionResult Run([ServiceBusTrigger(queueName: "%ServiceBusQueueName%", Connection = "ServiceBusConnectionString")] string myQueueItem, ILogger log)
+        public void Run([ServiceBusTrigger(queueName: "%ServiceBusQueueName%", Connection = "ServiceBusConnectionString")] string myQueueItem, ILogger log)
         {
 
-            if (string.IsNullOrEmpty(myQueueItem)) { return new BadRequestResult(); }
+            if (string.IsNullOrEmpty(myQueueItem))
+            {
+                log.LogError($"Message is Null or empty");               
+            }
 
-            var calculatorRunParameter = CalculatorRunParameterMapper.Map(JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem));
-            _calculatorRunService.StartProcess(calculatorRunParameter);            
-
-            return new OkObjectResult(myQueueItem);
+            try
+            {
+                var calculatorRunParameter = CalculatorRunParameterMapper.Map(JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem));
+                _calculatorRunService.StartProcess(calculatorRunParameter);
+            }
+            catch (JsonException jsonex)
+            {
+                log.LogError($"Incorrect format - {myQueueItem} - {jsonex.Message}");              
+            }
+            catch(Exception ex)
+            {
+                log.LogError($"Error  - {myQueueItem} - {ex.Message}");
+            }           
+           
         }
     }
 }
