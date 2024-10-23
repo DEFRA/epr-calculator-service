@@ -29,7 +29,8 @@ namespace EPR.Calculator.Service.Function
 
             if (string.IsNullOrEmpty(myQueueItem))
             {
-                log.LogError($"Message is Null or empty");               
+                log.LogError($"Message is Null or empty");
+                return;
             }
 
             try
