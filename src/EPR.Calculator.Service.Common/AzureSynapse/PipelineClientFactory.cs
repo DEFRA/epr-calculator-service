@@ -1,4 +1,9 @@
-﻿namespace EPR.Calculator.Service.Common.AzureSynapse
+﻿using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("EPR.Calculator.Service.Common.UnitTests")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")] // Expose the class to Moq.
+
+namespace EPR.Calculator.Service.Common.AzureSynapse
 {
     using Azure.Analytics.Synapse.Artifacts;
     using Azure.Core;
@@ -10,7 +15,7 @@
     /// Used by <see cref="AzureSynapsePipelineTestController"/> via dependancy injection
     /// so that the clients can be replaced with mocks when unit testing.
     /// </remarks>
-    public class PipelineClientFactory()
+    internal class PipelineClientFactory()
     {
         /// <summary>
         /// Initialises a new <see cref="PipelineClient"/>.

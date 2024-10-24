@@ -1,5 +1,7 @@
 ﻿namespace EPR.Calculator.Service.Common.AzureSynapse
 {
+    using System.Diagnostics;
+    using System.Net.Http.Headers;
     using System.Text;
     using System.Text.Json;
     using Azure.Identity;
@@ -18,7 +20,7 @@
     /// <param name="statusUpdateEndpoint">
     /// The URL of the endpoint that's used to access the database and update the status of the run.
     /// </param>
-    public class AzureSynapseRunner(
+    internal class AzureSynapseRunner(
         PipelineClientFactory pipelineClientFactory,
         Uri pipelineUrl,
         string pipelineName,
@@ -68,12 +70,23 @@
         private Uri StatusUpdateUrl { get; } = statusUpdateEndpoint;
 
         /// <inheritdoc/>
-        public async Task<bool> Process(FinancialYear financialYear)
+        public async Task<bool> Process(AzureSynapseRunnerParameters args)
+            => await this.Process(args.CalculatorRunId, args.FinancialYear);
+
+        /// <summary>
+        /// Run the pipeline, wait for it to complete, then update the status in the database.
+        /// </summary>
+        /// <param name="calculatorRunId">
+        /// The calculator run ID - used to know which record to update the status for.
+        /// </param>
+        /// <param name="financialYear">The financial year to tell the pipeline to load data for.</param>
+        /// <returns> True if the pipeline succeeded, false if it failed.</returns>
+        public async Task<bool> Process(int calculatorRunId, FinancialYear financialYear)
         {
             // instead of year will get financial year need to map finacial year to calendar year
             // Trigger the pipeline.
-            Guid runId;
-            runId = await this.StartPipelineRun(this.PipelineClientFactory, financialYear.ToCalendarYear());
+            Guid pipelineRunId;
+            pipelineRunId = await this.StartPipelineRun(this.PipelineClientFactory, financialYear.ToCalendarYear());
 
             // Periodically check the status of pipeline until it's completed.
             var checkCount = 0;
@@ -83,7 +96,7 @@
                 checkCount++;
                 try
                 {
-                    pipelineStatus = await this.GetPipelineRunStatus(this.PipelineClientFactory, runId);
+                    pipelineStatus = await this.GetPipelineRunStatus(this.PipelineClientFactory, pipelineRunId);
                     if (pipelineStatus != nameof(PipelineStatus.InProgress))
                     {
                         break;
@@ -104,11 +117,14 @@
             while (checkCount < this.MaxChecks);
 
             // Record success/failure to the database using the web API.
-            var statusUpdateResponse = await this.PipelineClientFactory
-                .GetStatusUpdateClient(this.StatusUpdateUrl)
-                .PostAsync(
+            var client = this.PipelineClientFactory.GetStatusUpdateClient(this.StatusUpdateUrl);
+            var statusUpdateResponse = await client.PostAsync(
                     this.StatusUpdateUrl.ToString(),
-                    GetStatusUpdateMessage(runId, pipelineStatus == nameof(PipelineStatus.Succeeded)));
+                    GetStatusUpdateMessage(calculatorRunId, pipelineStatus == nameof(PipelineStatus.Succeeded)));
+
+            #if DEBUG
+            Debug.WriteLine(statusUpdateResponse.Content.ReadAsStringAsync().Result);
+            #endif
 
             return pipelineStatus == nameof(PipelineStatus.Succeeded) && statusUpdateResponse.IsSuccessStatusCode;
         }
@@ -116,18 +132,16 @@
         /// <summary>
         /// Build the JSON content of the status update API call.
         /// </summary>
-        private static StringContent GetStatusUpdateMessage(Guid runId, bool pipelineSucceeded)
-        {
-            return new StringContent(
+        private static StringContent GetStatusUpdateMessage(int calculatorRunId, bool pipelineSucceeded)
+            => new StringContent(
                 JsonSerializer.Serialize(new
                 {
-                    runId,
+                    runId = calculatorRunId,
                     updatedBy = "string",
                     isSuccessful = pipelineSucceeded,
                 }),
                 Encoding.UTF8,
                 "application/json");
-        }
 
         private async Task<Guid> StartPipelineRun(PipelineClientFactory factory, DateTime year)
         {

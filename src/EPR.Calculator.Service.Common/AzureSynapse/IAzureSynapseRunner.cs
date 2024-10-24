@@ -8,8 +8,8 @@
         /// <summary>
         /// Run the pipeline, wait for it to complete, then update the status in the database.
         /// </summary>
-        /// <param name="financialYear">The financial year to tell the pipeline to load data for.</param>
+        /// <param name="args">The arguments for the process method.</param>
         /// <returns> True if the pipeline succeeded, false if it failed.</returns>
-        Task<bool> Process(FinancialYear financialYear);
+        Task<bool> Process(AzureSynapseRunnerParameters args);
     }
 }
