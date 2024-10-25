@@ -9,25 +9,7 @@
     /// <summary>
     /// Runs Azure Synapse pipelines.
     /// </summary>
-    /// <param name="pipelineClientFactory">A factory that initialises pipeline clients
-    /// (or generates mock clients when unit testing).</param>
-    /// <param name="pipelineUrl">The URL of the pipeline to run.</param>
-    /// <param name="pipelineName">The name of the pipeline to run.</param>
-    /// <param name="maxChecks">The maximum number of times to check whether the pipeline has completed,
-    /// before reporting a failure.</param>
-    /// <param name="checkInterval">The time to wait before re-checking to see
-    /// if the pipeline has run successfully.</param>
-    /// <param name="statusUpdateEndpoint">
-    /// The URL of the endpoint that's used to access the database and update the status of the run.
-    /// </param>
-    internal class AzureSynapseRunner(
-        PipelineClientFactory pipelineClientFactory,
-        Uri pipelineUrl,
-        string pipelineName,
-        int maxChecks,
-        int checkInterval,
-        Uri statusUpdateEndpoint)
-        : IAzureSynapseRunner
+    public class AzureSynapseRunner : IAzureSynapseRunner
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AzureSynapseRunner"/> class.
@@ -57,17 +39,48 @@
         {
         }
 
-        private int CheckInterval { get; } = checkInterval;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AzureSynapseRunner"/> class.
+        /// </summary>
+        /// <param name="pipelineClientFactory">A factory that initialises pipeline clients
+        /// (or generates mock clients when unit testing).</param>
+        /// <param name="pipelineUrl">The URL of the pipeline to run.</param>
+        /// <param name="pipelineName">The name of the pipeline to run.</param>
+        /// <param name="maxChecks">The maximum number of times to check whether the pipeline has completed,
+        /// before reporting a failure.</param>
+        /// <param name="checkInterval">The time to wait before re-checking to see
+        /// if the pipeline has run successfully.</param>
+        /// <param name="statusUpdateEndpoint">
+        /// The URL of the endpoint that's used to access the database and update the status of the run.
+        /// </param>
+        internal AzureSynapseRunner(
+            PipelineClientFactory pipelineClientFactory,
+            Uri pipelineUrl,
+            string pipelineName,
+            int maxChecks,
+            int checkInterval,
+            Uri statusUpdateEndpoint)
+        {
+            this.PipelineClientFactory = pipelineClientFactory;
+            this.PipelineUrl = pipelineUrl;
+            this.PipelineName = pipelineName;
+            this.MaxChecks = maxChecks;
+            this.CheckInterval = checkInterval;
+            this.StatusUpdateUrl = statusUpdateEndpoint;
+        }
 
-        private int MaxChecks { get; } = maxChecks;
 
-        private PipelineClientFactory PipelineClientFactory { get; init; } = pipelineClientFactory;
+        private int CheckInterval { get; }
 
-        private string PipelineName { get; } = pipelineName;
+        private int MaxChecks { get; }
 
-        private Uri PipelineUrl { get; } = pipelineUrl;
+        private PipelineClientFactory PipelineClientFactory { get; }
 
-        private Uri StatusUpdateUrl { get; } = statusUpdateEndpoint;
+        private string PipelineName { get; }
+
+        private Uri PipelineUrl { get; }
+
+        private Uri StatusUpdateUrl { get; }
 
         /// <inheritdoc/>
         public async Task<bool> Process(AzureSynapseRunnerParameters args)
@@ -117,7 +130,7 @@
             while (checkCount < this.MaxChecks);
 
             // Record success/failure to the database using the web API.
-            var client = this.PipelineClientFactory.GetStatusUpdateClient(this.StatusUpdateUrl);
+            using var client = this.PipelineClientFactory.GetStatusUpdateClient(this.StatusUpdateUrl);
             var statusUpdateResponse = await client.PostAsync(
                     this.StatusUpdateUrl.ToString(),
                     GetStatusUpdateMessage(calculatorRunId, pipelineStatus == nameof(PipelineStatus.Succeeded)));
