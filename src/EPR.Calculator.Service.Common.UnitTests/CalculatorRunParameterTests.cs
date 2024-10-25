@@ -10,7 +10,7 @@ namespace EPR.Calculator.Service.Common.UnitTests
     public class CalculatorRunParameterTests
     {
         /// <summary>
-        /// Tests initialisation of the class.
+        /// Tests initialisation of the class and it's properties.
         /// </summary>
         [TestMethod]
         public void CanInitialise()
