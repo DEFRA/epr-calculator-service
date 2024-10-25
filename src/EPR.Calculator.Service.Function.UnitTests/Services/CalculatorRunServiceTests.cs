@@ -1,10 +1,11 @@
+// <copyright file="CalculatorRunServiceTests.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+using EPR.Calculator.Service.Function.Services;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
-    using System;
-    using EPR.Calculator.Service.Common;
-    using EPR.Calculator.Service.Function.Services;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     [TestClass]
     public class CalculatorRunServiceTests
     {

@@ -1,4 +1,8 @@
-﻿namespace EPR.Calculator.Service.Function
+﻿// <copyright file="Configuration.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace EPR.Calculator.Service.Function
 {
     using System;
     using EPR.Calculator.Service.Function.Constants;

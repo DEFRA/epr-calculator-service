@@ -4,8 +4,8 @@
     {
         public int Id { get; set; }
 
-        public required string User { get; set; }
+        required public string User { get; set; }
 
-        public required string FinancialYear { get; set; }
+        required public string FinancialYear { get; set; }
     }
 }

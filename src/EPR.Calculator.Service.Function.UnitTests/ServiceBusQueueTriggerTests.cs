@@ -1,14 +1,15 @@
+// <copyright file="ServiceBusQueueTriggerTests.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+using EPR.Calculator.Service.Common;
+using EPR.Calculator.Service.Function.Interface;
+using Microsoft.Extensions.Logging;
+using Moq;
+using Newtonsoft.Json;
+
 namespace EPR.Calculator.Service.Function.UnitTests
 {
-    using EPR.Calculator.Service.Common;
-    using EPR.Calculator.Service.Function;
-    using EPR.Calculator.Service.Function.Interface;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Moq;
-    using Newtonsoft.Json;
-    using System;
-
     [TestClass]
     public class ServiceBusQueueTriggerTests
     {
@@ -53,8 +54,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 It.IsAny<EventId>(),
                 It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("essage is Null or empty")),
                 It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()), Times.Once
-                );
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()), Times.Once);
         }
     }
 }

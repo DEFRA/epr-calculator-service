@@ -1,3 +1,7 @@
+// <copyright file="CalculatorRunParameterMapperTests.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 {
     using EPR.Calculator.Service.Function;
@@ -7,12 +11,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
     [TestClass]
     public class CalculatorRunParameterMapperTests
     {
-        private CalculatorRunParameterMapper _testClass;
+        private CalculatorRunParameterMapper? testClass;
 
         [TestInitialize]
         public void SetUp()
         {
-            _testClass = new CalculatorRunParameterMapper();
+            this.testClass = new CalculatorRunParameterMapper();
         }
 
         [TestMethod]
@@ -22,7 +26,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             var calculatorParameter = new CalculatorParameter() { FinancialYear = "2024-25", CreatedBy = "Test user", CalculatorRunId = 678767 };
 
             // Act
-            var result = _testClass.Map(calculatorParameter);
+            var result = this.testClass.Map(calculatorParameter);
 
             Assert.AreEqual(result.FinancialYear, calculatorParameter.FinancialYear);
             Assert.AreEqual(result.User, calculatorParameter.CreatedBy);

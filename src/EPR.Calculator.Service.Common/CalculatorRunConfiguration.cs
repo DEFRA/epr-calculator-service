@@ -1,13 +1,17 @@
-﻿namespace EPR.Calculator.Service.Common
+﻿// <copyright file="CalculatorRunConfiguration.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace EPR.Calculator.Service.Common
 {
     public class CalculatorRunConfiguration
     {
-        public required string PipelineUrl { get; set; }
+        required public string PipelineUrl { get; set; }
 
-        public required  string PipelineName { get; set; }
+        required public string PipelineName { get; set; }
 
-        public required string MaxCheckCount { get; set; }
+        required public string MaxCheckCount { get; set; }
 
-        public required string CheckInterval { get; set; }
+        required public string CheckInterval { get; set; }
     }
 }

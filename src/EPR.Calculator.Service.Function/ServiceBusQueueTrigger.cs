@@ -1,3 +1,7 @@
+// <copyright file="ServiceBusQueueTrigger.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using System;
 using EPR.Calculator.Service.Function;
 using EPR.Calculator.Service.Function.Interface;
@@ -24,7 +28,6 @@ namespace EPR.Calculator.Service.Function
         [FunctionName("EPRCalculatorRunServiceBusQueueTrigger")]
         public void Run([ServiceBusTrigger(queueName: "%ServiceBusQueueName%", Connection = "ServiceBusConnectionString")] string myQueueItem, ILogger log)
         {
-
             if (string.IsNullOrEmpty(myQueueItem))
             {
                 log.LogError($"Message is Null or empty");
