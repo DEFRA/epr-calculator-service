@@ -1,4 +1,5 @@
-﻿using EPR.Calculator.Service.Common;
+﻿using System.Diagnostics.CodeAnalysis;
+using EPR.Calculator.Service.Common;
 using EPR.Calculator.Service.Function;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Mapper;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EPR.Calculator.Service.Function
 {
+    [ExcludeFromCodeCoverage]
     public class Startup : FunctionsStartup
     {
         private CalculatorRunConfiguration configuration;
