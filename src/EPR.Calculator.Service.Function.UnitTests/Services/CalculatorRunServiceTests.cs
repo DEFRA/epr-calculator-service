@@ -15,23 +15,5 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             this.calculatorRunService = new CalculatorRunService();
         }
-
-        [TestMethod]
-        public void CanCallStartProcess()
-        {
-            // Arrange
-            var calculatorRunParameter = new CalculatorRunParameter
-            {
-                Id = 19421039,
-                User = "TestValue2066475176",
-                FinancialYear = "TestValue974658342",
-            };
-
-            // Act
-            this.calculatorRunService.StartProcess(calculatorRunParameter);
-
-            // Assert
-            Assert.Fail("Create or modify test");
-        }
     }
 }
