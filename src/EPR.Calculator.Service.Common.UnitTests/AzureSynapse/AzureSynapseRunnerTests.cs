@@ -129,7 +129,12 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 .Returns(Task.FromResult(MockPipelineRunResponse(statusReturned)));
 
             // Act
-            var pipelineSucceeded = await this.TestClass.Process(CalculatorRunId, this.Year);
+            var pipelineSucceeded = await this.TestClass.Process(
+                new AzureSynapseRunnerParameters
+                {
+                    CalculatorRunId = CalculatorRunId,
+                    FinancialYear = this.Year,
+                });
 
             // Assert
             Assert.AreEqual(expectedPipelineResult, pipelineSucceeded);
@@ -163,7 +168,12 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 .Returns(Task.FromResult(MockPipelineRunResponse(statusReturned)));
 
             // Act
-            var pipelineSucceeded = await this.TestClass.Process(CalculatorRunId, this.Year);
+            var pipelineSucceeded = await this.TestClass.Process(
+                new AzureSynapseRunnerParameters
+                {
+                    CalculatorRunId = CalculatorRunId,
+                    FinancialYear = this.Year,
+                });
 
             // Assert
             Assert.AreEqual(expectedPipelineResult, pipelineSucceeded);
@@ -191,7 +201,12 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 .Returns(Task.FromResult(MockPipelineRunResponse(nameof(PipelineStatus.Succeeded))));
 
             // Act
-            var pipelineSucceeded = await this.TestClass.Process(CalculatorRunId, this.Year);
+            var pipelineSucceeded = await this.TestClass.Process(
+                new AzureSynapseRunnerParameters
+                {
+                    CalculatorRunId = CalculatorRunId,
+                    FinancialYear = this.Year,
+                });
 
             // Assert
             Assert.IsFalse(pipelineSucceeded);
@@ -225,7 +240,12 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 .Returns(Task.FromResult(MockPipelineRunResponse(statusReturned)));
 
             // Act
-            var pipelineSucceeded = await this.TestClass.Process(CalculatorRunId, this.Year);
+            var pipelineSucceeded = await this.TestClass.Process(
+                new AzureSynapseRunnerParameters
+                {
+                    CalculatorRunId = CalculatorRunId,
+                    FinancialYear = this.Year,
+                });
 
             // Assert
             Assert.AreEqual(expectedResult, pipelineSucceeded);
@@ -251,7 +271,12 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 .Throws(new InvalidOperationException());
 
             // Act & Assert
-            var pipelineSucceeded = await this.TestClass.Process(CalculatorRunId, this.Year);
+            var pipelineSucceeded = await this.TestClass.Process(
+                new AzureSynapseRunnerParameters
+                {
+                    CalculatorRunId = CalculatorRunId,
+                    FinancialYear = this.Year,
+                });
 
             // Assert
             Assert.IsFalse(pipelineSucceeded);
@@ -324,11 +349,11 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 .Returns(Task.FromResult(createRunResponse.Object));
         }
 
-        //The below is for testing against the actual pipelines before the Azure Function that
+        // The below is for testing against the actual pipelines before the Azure Function that
         // will call this class is implemented.Delete it once the Azure Function is done.
-        //[TestMethod]
-        //public async Task TrialRun()
-        //{
+        // [TestMethod]
+        // public async Task TrialRun()
+        // {
         //    this.TestClass = new AzureSynapseRunner(
         //        new Uri("https://devepdinfas1401.dev.azuresynapse.net"),
         //        "pip_paycal_get_org_data",
@@ -341,6 +366,6 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
         //        CalculatorRunId,
         //        FinancialYear.Parse("2023"));
         //    Assert.IsTrue(result);
-        //}
+        // }
     }
 }

@@ -69,7 +69,6 @@
             this.StatusUpdateUrl = statusUpdateEndpoint;
         }
 
-
         private int CheckInterval { get; }
 
         private int MaxChecks { get; }
@@ -84,22 +83,11 @@
 
         /// <inheritdoc/>
         public async Task<bool> Process(AzureSynapseRunnerParameters args)
-            => await this.Process(args.CalculatorRunId, args.FinancialYear);
-
-        /// <summary>
-        /// Run the pipeline, wait for it to complete, then update the status in the database.
-        /// </summary>
-        /// <param name="calculatorRunId">
-        /// The calculator run ID - used to know which record to update the status for.
-        /// </param>
-        /// <param name="financialYear">The financial year to tell the pipeline to load data for.</param>
-        /// <returns> True if the pipeline succeeded, false if it failed.</returns>
-        public async Task<bool> Process(int calculatorRunId, FinancialYear financialYear)
         {
             // instead of year will get financial year need to map finacial year to calendar year
             // Trigger the pipeline.
             Guid pipelineRunId;
-            pipelineRunId = await this.StartPipelineRun(this.PipelineClientFactory, financialYear.ToCalendarYear());
+            pipelineRunId = await this.StartPipelineRun(this.PipelineClientFactory, args.FinancialYear.ToCalendarYear());
 
             // Periodically check the status of pipeline until it's completed.
             var checkCount = 0;
@@ -133,7 +121,7 @@
             using var client = this.PipelineClientFactory.GetStatusUpdateClient(this.StatusUpdateUrl);
             var statusUpdateResponse = await client.PostAsync(
                     this.StatusUpdateUrl.ToString(),
-                    GetStatusUpdateMessage(calculatorRunId, pipelineStatus == nameof(PipelineStatus.Succeeded)));
+                    GetStatusUpdateMessage(args.CalculatorRunId, pipelineStatus == nameof(PipelineStatus.Succeeded)));
 
             #if DEBUG
             Debug.WriteLine(statusUpdateResponse.Content.ReadAsStringAsync().Result);

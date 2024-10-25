@@ -2,8 +2,14 @@
 {
     public record AzureSynapseRunnerParameters
     {
+        /// <summary>
+        /// Gets the calculator run ID.
+        /// </summary>
         public int CalculatorRunId { get; init; }
 
-        public FinancialYear FinancialYear { get; init; }
+        /// <summary>
+        /// Gets the Financial Year.
+        /// </summary>
+        required public FinancialYear FinancialYear { get; init; }
     }
 }

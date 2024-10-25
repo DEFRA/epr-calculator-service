@@ -4,75 +4,49 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
     using EPR.Calculator.Service.Common.AzureSynapse;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    /// <summary>
+    /// Unit tests for AzureSynapseRunnerParameters.
+    /// </summary>
     [TestClass]
     public class AzureSynapseRunnerParametersTests
     {
-        private AzureSynapseRunnerParameters _testClass;
-        private int _calculatorRunId;
-        private FinancialYear _financialYear;
-
-        [TestInitialize]
-        public void SetUp()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AzureSynapseRunnerParametersTests"/> class.
+        /// </summary>
+        public AzureSynapseRunnerParametersTests()
         {
-            _calculatorRunId = 72177078;
-            _financialYear = new FinancialYear(DateTime.UtcNow);
-            _testClass = new AzureSynapseRunnerParameters
+            this.CalculatorRunId = 72177078;
+            this.FinancialYear = new FinancialYear(DateTime.UtcNow);
+            this.TestClass = new AzureSynapseRunnerParameters
             {
-                CalculatorRunId = _calculatorRunId,
-                FinancialYear = _financialYear
+                CalculatorRunId = this.CalculatorRunId,
+                FinancialYear = this.FinancialYear,
             };
         }
 
+        private AzureSynapseRunnerParameters TestClass { get; }
+
+        private int CalculatorRunId { get; }
+
+        private FinancialYear FinancialYear { get; }
+
+        /// <summary>
+        /// Test that the class can be initialised successfully.
+        /// </summary>
         [TestMethod]
         public void CanInitialize()
         {
             // Act
             var instance = new AzureSynapseRunnerParameters
             {
-                CalculatorRunId = _calculatorRunId,
-                FinancialYear = _financialYear
+                CalculatorRunId = this.CalculatorRunId,
+                FinancialYear = this.FinancialYear,
             };
 
             // Assert
             Assert.IsNotNull(instance);
-        }
-
-        [TestMethod]
-        public void ImplementsIEquatable_AzureSynapseRunnerParameters()
-        {
-            // Arrange
-            var same = new AzureSynapseRunnerParameters
-            {
-                CalculatorRunId = _calculatorRunId,
-                FinancialYear = _financialYear
-            };
-            var different = new AzureSynapseRunnerParameters();
-
-            // Assert
-            Assert.IsFalse(_testClass.Equals(default(object)));
-            Assert.IsFalse(_testClass.Equals(new object()));
-            Assert.IsTrue(_testClass.Equals((object)same));
-            Assert.IsFalse(_testClass.Equals((object)different));
-            Assert.IsTrue(_testClass.Equals(same));
-            Assert.IsFalse(_testClass.Equals(different));
-            Assert.AreEqual(same.GetHashCode(), _testClass.GetHashCode());
-            Assert.AreNotEqual(different.GetHashCode(), _testClass.GetHashCode());
-            Assert.IsTrue(_testClass == same);
-            Assert.IsFalse(_testClass == different);
-            Assert.IsFalse(_testClass != same);
-            Assert.IsTrue(_testClass != different);
-        }
-
-        [TestMethod]
-        public void CalculatorRunIdIsInitializedCorrectly()
-        {
-            Assert.AreEqual(_calculatorRunId, _testClass.CalculatorRunId);
-        }
-
-        [TestMethod]
-        public void FinancialYearIsInitializedCorrectly()
-        {
-            Assert.AreSame(_financialYear, _testClass.FinancialYear);
+            Assert.AreEqual(this.CalculatorRunId, this.TestClass.CalculatorRunId);
+            Assert.AreSame(this.FinancialYear, this.TestClass.FinancialYear);
         }
     }
 }
