@@ -21,7 +21,7 @@ namespace EPR.Calculator.Service.Common.UnitTests
             var testFinancialYear = "TestValue1106807557";
 
             // Act
-            var testClass = new CalculatorRunParameter
+            var calculatorRunParameter = new CalculatorRunParameter
             {
                 FinancialYear = testFinancialYear,
                 Id = testId,
@@ -29,9 +29,9 @@ namespace EPR.Calculator.Service.Common.UnitTests
             };
 
             // Assert
-            Assert.AreEqual(testId, testClass.Id);
-            Assert.AreEqual(testUser, testClass.User);
-            Assert.AreEqual(testFinancialYear, testClass.FinancialYear);
+            Assert.AreEqual(testId, calculatorRunParameter.Id);
+            Assert.AreEqual(testUser, calculatorRunParameter.User);
+            Assert.AreEqual(testFinancialYear, calculatorRunParameter.FinancialYear);
         }
     }
 }

@@ -1,26 +1,24 @@
+using System;
 using EPR.Calculator.Service.Function;
 using EPR.Calculator.Service.Function.Interface;
-using EPR.Calculator.Service.Function.Mapper;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using System;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 [assembly: FunctionsStartup(typeof(Startup))]
+
 namespace EPR.Calculator.Service.Function
 {
     public class ServiceBusQueueTrigger
     {
-        private readonly ICalculatorRunService _calculatorRunService;
+        private readonly ICalculatorRunService calculatorRunService;
+        private readonly ICalculatorRunParameterMapper calculatorRunParameterMapper;
 
-        public ServiceBusQueueTrigger(ICalculatorRunService calculatorRunService)
+        public ServiceBusQueueTrigger(ICalculatorRunService calculatorRunService, ICalculatorRunParameterMapper calculatorRunParameterMapper)
         {
-                _calculatorRunService = calculatorRunService;
-
+                this.calculatorRunService = calculatorRunService;
+                this.calculatorRunParameterMapper = calculatorRunParameterMapper;
         }
 
         [FunctionName("EPRCalculatorRunServiceBusQueueTrigger")]
@@ -35,18 +33,20 @@ namespace EPR.Calculator.Service.Function
 
             try
             {
-                var calculatorRunParameter = CalculatorRunParameterMapper.Map(JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem));
-                _calculatorRunService.StartProcess(calculatorRunParameter);
+                var param = JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem);
+                var calculatorRunParameter = this.calculatorRunParameterMapper.Map(param);
+                this.calculatorRunService.StartProcess(calculatorRunParameter);
             }
             catch (JsonException jsonex)
             {
-                log.LogError($"Incorrect format - {myQueueItem} - {jsonex.Message}");              
+                log.LogError($"Incorrect format - {myQueueItem} - {jsonex.Message}");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 log.LogError($"Error  - {myQueueItem} - {ex.Message}");
-            }           
-           
+            }
+
+            log.LogInformation("Successful");
         }
     }
 }

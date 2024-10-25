@@ -1,12 +1,11 @@
-﻿using EPR.Calculator.Service.Function.Constants;
-using System;
-
-namespace EPR.Calculator.Service.Function
+﻿namespace EPR.Calculator.Service.Function
 {
+    using System;
+    using EPR.Calculator.Service.Function.Constants;
+
     public static class Configuration
     {
         public static string PipelineUrl => Environment.GetEnvironmentVariable(Config.PipelineUrl);
-
 
         public static string GetOrgDataPipelineName => Environment.GetEnvironmentVariable(Config.GetOrgDataPipelineName);
 

@@ -9,6 +9,5 @@
         public required string MaxCheckCount { get; set; }
 
         public required string CheckInterval { get; set; }
-
     }
 }

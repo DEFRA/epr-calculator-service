@@ -1,17 +1,15 @@
-﻿using EPR.Calculator.Service.Common;
-using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Interface;
-
-namespace EPR.Calculator.Service.Function.Services
+﻿namespace EPR.Calculator.Service.Function.Services
 {
+    using EPR.Calculator.Service.Common;
+    using EPR.Calculator.Service.Function.Constants;
+    using EPR.Calculator.Service.Function.Interface;
+
     public class CalculatorRunService : ICalculatorRunService
     {
-             
         public void StartProcess(CalculatorRunParameter calculatorRunParameter)
         {
-           var environmentConfiguration =   GetConfiguration(Config.IsPom);
+            var environmentConfiguration = this.GetConfiguration(Config.IsPom);
         }
-
 
         private CalculatorRunConfiguration GetConfiguration(bool isPomData)
         {
@@ -20,9 +18,8 @@ namespace EPR.Calculator.Service.Function.Services
                 PipelineUrl = Configuration.PipelineUrl,
                 CheckInterval = Configuration.CheckInterval,
                 MaxCheckCount = Configuration.MaxCheckCount,
-                PipelineName = isPomData ? Configuration.GetPomDataPipelineName : Configuration.GetOrgDataPipelineName
+                PipelineName = isPomData ? Configuration.GetPomDataPipelineName : Configuration.GetOrgDataPipelineName,
             };
-
         }
     }
 }

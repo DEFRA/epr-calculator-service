@@ -7,6 +7,5 @@
         public required string User { get; set; }
 
         public required string FinancialYear { get; set; }
-
     }
 }

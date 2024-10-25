@@ -9,5 +9,4 @@
         public const string MaxCheckCount = "MaxCheckCount";
         public const bool IsPom = true;
     }
-
 }
