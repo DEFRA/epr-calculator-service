@@ -5,18 +5,19 @@
 namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 {
     using EPR.Calculator.Service.Function;
+    using EPR.Calculator.Service.Function.Interface;
     using EPR.Calculator.Service.Function.Mapper;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
     public class CalculatorRunParameterMapperTests
     {
-        private CalculatorRunParameterMapper? testClass;
+        private ICalculatorRunParameterMapper? calculatorRunParameterMapper;
 
         [TestInitialize]
         public void SetUp()
         {
-            this.testClass = new CalculatorRunParameterMapper();
+            this.calculatorRunParameterMapper = new CalculatorRunParameterMapper();
         }
 
         [TestMethod]
@@ -26,11 +27,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             var calculatorParameter = new CalculatorParameter() { FinancialYear = "2024-25", CreatedBy = "Test user", CalculatorRunId = 678767 };
 
             // Act
-            var result = this.testClass.Map(calculatorParameter);
 
-            Assert.AreEqual(result.FinancialYear, calculatorParameter.FinancialYear);
-            Assert.AreEqual(result.User, calculatorParameter.CreatedBy);
-            Assert.AreEqual(result.Id, calculatorParameter.CalculatorRunId);
+            var result = this.calculatorRunParameterMapper?.Map(calculatorParameter);
+
+            Assert.AreEqual(result?.FinancialYear, calculatorParameter.FinancialYear);
+            Assert.AreEqual(result?.User, calculatorParameter.CreatedBy);
+            Assert.AreEqual(result?.Id, calculatorParameter.CalculatorRunId);
         }
     }
 }

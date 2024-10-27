@@ -2,14 +2,14 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-using EPR.Calculator.Service.Common;
-using EPR.Calculator.Service.Function.Interface;
-using Microsoft.Extensions.Logging;
-using Moq;
-using Newtonsoft.Json;
-
 namespace EPR.Calculator.Service.Function.UnitTests
 {
+    using EPR.Calculator.Service.Common;
+    using EPR.Calculator.Service.Function.Interface;
+    using Microsoft.Extensions.Logging;
+    using Moq;
+    using Newtonsoft.Json;
+
     [TestClass]
     public class ServiceBusQueueTriggerTests
     {

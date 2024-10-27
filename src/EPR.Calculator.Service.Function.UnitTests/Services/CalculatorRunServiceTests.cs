@@ -2,11 +2,10 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-using EPR.Calculator.Service.Function.Services;
-
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
-    [TestClass]
+    using EPR.Calculator.Service.Function.Services;
+
     public class CalculatorRunServiceTests
     {
         private CalculatorRunService? calculatorRunService;
