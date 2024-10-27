@@ -48,8 +48,6 @@ namespace EPR.Calculator.Service.Function
             {
                 log.LogError($"Error  - {myQueueItem} - {ex.Message}");
             }
-
-            log.LogInformation("Successful");
         }
     }
 }

@@ -52,7 +52,43 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 log => log.Log(
                 LogLevel.Error,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("essage is Null or empty")),
+                It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Message is Null or empty")),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()), Times.Once);
+        }
+
+        [TestMethod]
+        public void ServiceBusTrigger_Message_Notvalid_Json_Exception()
+        {
+            // Arrange
+            var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
+
+            this.parameterMapper.Setup(t => t.Map(JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem))).Throws<JsonException>();
+            this.function.Run(myQueueItem, this.mockLogger.Object);
+
+            this.mockLogger.Verify(
+                log => log.Log(
+                LogLevel.Error,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Incorrect format")),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()), Times.Once);
+        }
+
+        [TestMethod]
+        public void ServiceBusTrigger_Message_Notvalid_Exception()
+        {
+            // Arrange
+            var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
+
+            this.parameterMapper.Setup(t => t.Map(JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem))).Throws<Exception>();
+            this.function.Run(myQueueItem, this.mockLogger.Object);
+
+            this.mockLogger.Verify(
+                log => log.Log(
+                LogLevel.Error,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Error")),
                 It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception, string>>()), Times.Once);
         }
