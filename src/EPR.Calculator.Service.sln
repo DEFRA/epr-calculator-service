@@ -6,18 +6,16 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EPR.Calculator.Service.Common", "EPR.Calculator.Service.Common\EPR.Calculator.Service.Common.csproj", "{DB26AFCF-CB81-4684-8BE4-76E4291A3496}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{648E888F-3E2B-438D-B4D2-E47D53AED3FC}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		stylecop.json = stylecop.json
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EPR.Calculator.Service.Common.UnitTests", "EPR.Calculator.Service.Common.UnitTests\EPR.Calculator.Service.Common.UnitTests.csproj", "{26BB31E7-56E9-4A18-B918-D7EF2141232A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EPR.Calculator.Service.Function", "EPR.Calculator.Service.Function\EPR.Calculator.Service.Function.csproj", "{2456796E-0208-449D-A44B-47FB68ED36C5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EPR.Calculator.Service.Function.UnitTests", "EPR.Calculator.Service.Function.UnitTests\EPR.Calculator.Service.Function.UnitTests.csproj", "{97DC57A2-9650-454D-AE31-CB38C676E1AD}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AEEC5297-264D-4CCF-B1CF-15DD64562564}"
-	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-		stylecop.json = stylecop.json
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
