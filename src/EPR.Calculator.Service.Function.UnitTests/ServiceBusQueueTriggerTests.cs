@@ -5,6 +5,7 @@
 namespace EPR.Calculator.Service.Function.UnitTests
 {
     using EPR.Calculator.Service.Common;
+    using EPR.Calculator.Service.Common.AzureSynapse;
     using EPR.Calculator.Service.Function.Interface;
     using Microsoft.Extensions.Logging;
     using Moq;
@@ -17,12 +18,17 @@ namespace EPR.Calculator.Service.Function.UnitTests
         private readonly Mock<ICalculatorRunService> calculatorRunService;
         private readonly Mock<ICalculatorRunParameterMapper> parameterMapper;
         private readonly Mock<ILogger> mockLogger;
+        private readonly Mock<IAzureSynapseRunner> azureSynapseRunner;
 
         public ServiceBusQueueTriggerTests()
         {
             this.calculatorRunService = new Mock<ICalculatorRunService>();
             this.parameterMapper = new Mock<ICalculatorRunParameterMapper>();
-            this.function = new ServiceBusQueueTrigger(this.calculatorRunService.Object, this.parameterMapper.Object);
+            this.azureSynapseRunner = new Mock<IAzureSynapseRunner>();
+            this.function = new ServiceBusQueueTrigger(
+                this.calculatorRunService.Object,
+                this.parameterMapper.Object,
+                this.azureSynapseRunner.Object);
             this.mockLogger = new Mock<ILogger>();
         }
 
@@ -38,7 +44,11 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             this.function.Run(myQueueItem, log);
 
-            this.calculatorRunService.Verify(p => p.StartProcess(It.Is<CalculatorRunParameter>(msg => msg == processedParameterData)), Times.Once);
+            this.calculatorRunService.Verify(
+                p => p.StartProcess(
+                    It.Is<CalculatorRunParameter>(msg => msg == processedParameterData),
+                    It.IsAny<IAzureSynapseRunner>()),
+                Times.Once);
         }
 
         [TestMethod]

@@ -3,6 +3,7 @@
 // </copyright>
 
 using System;
+using EPR.Calculator.Service.Common.AzureSynapse;
 using EPR.Calculator.Service.Function;
 using EPR.Calculator.Service.Function.Interface;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
@@ -14,17 +15,11 @@ using Newtonsoft.Json;
 
 namespace EPR.Calculator.Service.Function
 {
-    public class ServiceBusQueueTrigger
+    public class ServiceBusQueueTrigger(
+        ICalculatorRunService calculatorRunService,
+        ICalculatorRunParameterMapper calculatorRunParameterMapper,
+        IAzureSynapseRunner azureSynapseRunner)
     {
-        private readonly ICalculatorRunService calculatorRunService;
-        private readonly ICalculatorRunParameterMapper calculatorRunParameterMapper;
-
-        public ServiceBusQueueTrigger(ICalculatorRunService calculatorRunService, ICalculatorRunParameterMapper calculatorRunParameterMapper)
-        {
-                this.calculatorRunService = calculatorRunService;
-                this.calculatorRunParameterMapper = calculatorRunParameterMapper;
-        }
-
         [FunctionName("EPRCalculatorRunServiceBusQueueTrigger")]
         public void Run([ServiceBusTrigger(queueName: "%ServiceBusQueueName%", Connection = "ServiceBusConnectionString")] string myQueueItem, ILogger log)
         {

@@ -11,8 +11,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Assert
             Assert.AreEqual(Configuration.PipelineUrl, Environment.GetEnvironmentVariable("PipelineUrl"));
-            Assert.AreEqual(Configuration.GetOrgDataPipelineName, Environment.GetEnvironmentVariable("GetOrgDataPipelineName"));
-            Assert.AreEqual(Configuration.GetPomDataPipelineName, Environment.GetEnvironmentVariable("GetPomDataPipelineName"));
+            Assert.AreEqual(Configuration.OrgDataPipelineName, Environment.GetEnvironmentVariable("GetOrgDataPipelineName"));
+            Assert.AreEqual(Configuration.PomDataPipelineName, Environment.GetEnvironmentVariable("GetPomDataPipelineName"));
             Assert.AreEqual(Configuration.CheckInterval, Environment.GetEnvironmentVariable("CheckInterval"));
             Assert.AreEqual(Configuration.MaxCheckCount, Environment.GetEnvironmentVariable("MaxCheckCount"));
         }

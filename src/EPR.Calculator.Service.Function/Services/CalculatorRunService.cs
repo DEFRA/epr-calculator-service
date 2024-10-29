@@ -4,8 +4,10 @@
 
 namespace EPR.Calculator.Service.Function.Services
 {
+    using System;
     using System.Diagnostics.CodeAnalysis;
     using EPR.Calculator.Service.Common;
+    using EPR.Calculator.Service.Common.AzureSynapse;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Interface;
 
@@ -13,20 +15,31 @@ namespace EPR.Calculator.Service.Function.Services
     [ExcludeFromCodeCoverage]
     public class CalculatorRunService : ICalculatorRunService
     {
-        public void StartProcess(CalculatorRunParameter calculatorRunParameter)
+        public void StartProcess(CalculatorRunParameter calculatorRunParameter, IAzureSynapseRunner azureSynapseRunner)
         {
-            var environmentConfiguration = this.GetConfiguration(Config.IsPom);
+            var pomPipelineConfiguration = this.GetAzureSynapseConfiguration(
+                calculatorRunParameter,
+                Configuration.PomDataPipelineName);
+            azureSynapseRunner.Process(pomPipelineConfiguration);
+
+            var orgPipelineConfiguration = this.GetAzureSynapseConfiguration(
+                calculatorRunParameter,
+                Configuration.OrgDataPipelineName);
+            azureSynapseRunner.Process(orgPipelineConfiguration);
         }
 
-        private CalculatorRunConfiguration GetConfiguration(bool isPomData)
-        {
-            return new CalculatorRunConfiguration()
+        private AzureSynapseRunnerParameters GetAzureSynapseConfiguration(
+            CalculatorRunParameter args,
+            string pipelineName)
+            => new AzureSynapseRunnerParameters()
             {
-                PipelineUrl = Configuration.PipelineUrl,
-                CheckInterval = Configuration.CheckInterval,
-                MaxCheckCount = Configuration.MaxCheckCount,
-                PipelineName = isPomData ? Configuration.GetPomDataPipelineName : Configuration.GetOrgDataPipelineName,
+                PipelineUrl = new Uri(Configuration.PipelineUrl),
+                CheckInterval = int.Parse(Configuration.CheckInterval),
+                MaxChecks = int.Parse(Configuration.MaxCheckCount),
+                PipelineName = pipelineName,
+                CalculatorRunId = args.Id,
+                FinancialYear = FinancialYear.Parse(args.FinancialYear),
+                StatusUpdateEndpoint = new Uri(EnvironmentVariableKeys.StatusUpdateEndpoint),
             };
-        }
     }
 }
