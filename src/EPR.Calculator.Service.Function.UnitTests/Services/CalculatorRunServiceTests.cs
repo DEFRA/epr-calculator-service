@@ -1,11 +1,12 @@
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
     using AutoFixture;
-    using Azure.Analytics.Synapse.Artifacts.Models;
+    using Azure.Analytics.Synapse.Artifacts.Models;  
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Services;
+    using Microsoft.Extensions.Logging;
     using Moq;
 
     [TestClass]
@@ -17,7 +18,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public CalculatorRunServiceTests()
         {
             this.Fixture = new Fixture();
-            this.CalculatorRunService = new CalculatorRunService();
+            this.CalculatorRunService = new CalculatorRunService(new Mock<IAzureSynapseRunner>().Object,new Mock<ILogger>().Object);
             this.AzureSynapseRunner = new Mock<IAzureSynapseRunner>();
             Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PomDataPipelineName, this.Fixture.Create<string>());
             Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PomDataPipelineName, this.Fixture.Create<string>());
@@ -85,7 +86,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             };
 
             // Act
-            this.CalculatorRunService.StartProcess(calculatorRunParameters, this.AzureSynapseRunner.Object);
+            this.CalculatorRunService.StartProcess(calculatorRunParameters);
 
             // Assert
             this.AzureSynapseRunner.Verify(

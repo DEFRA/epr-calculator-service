@@ -4,21 +4,36 @@
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
     using EPR.Calculator.Service.Function.Interface;
+    using Microsoft.Extensions.Logging;
 
     public class CalculatorRunService : ICalculatorRunService
     {
+        private readonly IAzureSynapseRunner azureSynapseRunner;
+        private readonly ILogger logger;
+
+        public CalculatorRunService(IAzureSynapseRunner azureSynapseRunner, ILogger logger)
+        {
+            this.logger = logger;
+            this.azureSynapseRunner = azureSynapseRunner;
+        }
+
         /// <inheritdoc/>
-        public void StartProcess(CalculatorRunParameter calculatorRunParameter, IAzureSynapseRunner azureSynapseRunner)
+        public void StartProcess(CalculatorRunParameter calculatorRunParameter)
         {
             var pomPipelineConfiguration = GetAzureSynapseConfiguration(
                 calculatorRunParameter,
                 Configuration.PomDataPipelineName);
-            azureSynapseRunner.Process(pomPipelineConfiguration);
+            var isPomSuccessful = azureSynapseRunner.Process(pomPipelineConfiguration);
+
+            this.logger.LogInformation("Pom status", isPomSuccessful);
 
             var orgPipelineConfiguration = GetAzureSynapseConfiguration(
                 calculatorRunParameter,
                 Configuration.OrgDataPipelineName);
-            azureSynapseRunner.Process(orgPipelineConfiguration);
+
+            var isOrgSuccessful = azureSynapseRunner.Process(orgPipelineConfiguration);
+
+            this.logger.LogInformation("Org status", isOrgSuccessful);
         }
 
         private static AzureSynapseRunnerParameters GetAzureSynapseConfiguration(

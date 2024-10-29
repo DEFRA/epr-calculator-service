@@ -9,7 +9,6 @@ namespace EPR.Calculator.Service.Function.Interface
 
     public interface ICalculatorRunService
     {
-        /// <param name="azureSynapseRunner">An <see cref="IAzureSynapseRunner"/>.</param>
-        public void StartProcess(CalculatorRunParameter calculatorRunParameter, IAzureSynapseRunner azureSynapseRunner);
+        public void StartProcess(CalculatorRunParameter calculatorRunParameter);
     }
 }

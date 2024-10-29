@@ -46,8 +46,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             this.calculatorRunService.Verify(
                 p => p.StartProcess(
-                    It.Is<CalculatorRunParameter>(msg => msg == processedParameterData),
-                    It.IsAny<IAzureSynapseRunner>()),
+                    It.Is<CalculatorRunParameter>(msg => msg == processedParameterData)),
                 Times.Once);
         }
 

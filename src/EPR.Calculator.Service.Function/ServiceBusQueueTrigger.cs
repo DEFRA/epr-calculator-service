@@ -44,7 +44,7 @@ namespace EPR.Calculator.Service.Function
             {
                 var param = JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem);
                 var calculatorRunParameter = this.calculatorRunParameterMapper.Map(param);
-                this.calculatorRunService.StartProcess(calculatorRunParameter, this.azureSynapseRunner);
+                this.calculatorRunService.StartProcess(calculatorRunParameter);
             }
             catch (JsonException jsonex)
             {
