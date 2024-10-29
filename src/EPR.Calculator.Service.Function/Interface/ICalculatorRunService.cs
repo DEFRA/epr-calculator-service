@@ -5,9 +5,11 @@
 namespace EPR.Calculator.Service.Function.Interface
 {
     using EPR.Calculator.Service.Common;
+    using EPR.Calculator.Service.Common.AzureSynapse;
 
     public interface ICalculatorRunService
     {
-        public void StartProcess(CalculatorRunParameter calculatorRunParameter);
+        /// <param name="azureSynapseRunner">An <see cref="IAzureSynapseRunner"/>.</param>
+        public void StartProcess(CalculatorRunParameter calculatorRunParameter, IAzureSynapseRunner azureSynapseRunner);
     }
 }
