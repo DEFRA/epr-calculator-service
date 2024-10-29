@@ -18,8 +18,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public CalculatorRunServiceTests()
         {
             this.Fixture = new Fixture();
-            this.CalculatorRunService = new CalculatorRunService(new Mock<IAzureSynapseRunner>().Object,new Mock<ILogger>().Object);
             this.AzureSynapseRunner = new Mock<IAzureSynapseRunner>();
+            this.MockLogger = new Mock<ILogger>();
+            this.CalculatorRunService = new CalculatorRunService(this.AzureSynapseRunner.Object, this.MockLogger.Object );
             Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PomDataPipelineName, this.Fixture.Create<string>());
             Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PomDataPipelineName, this.Fixture.Create<string>());
         }
@@ -27,6 +28,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         private CalculatorRunService CalculatorRunService { get; }
 
         private Mock<IAzureSynapseRunner> AzureSynapseRunner { get; }
+
+        private Mock<ILogger> MockLogger { get; }
 
         private Fixture Fixture { get; }
 
