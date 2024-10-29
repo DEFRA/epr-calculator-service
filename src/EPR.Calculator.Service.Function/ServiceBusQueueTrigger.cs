@@ -15,11 +15,22 @@ using Newtonsoft.Json;
 
 namespace EPR.Calculator.Service.Function
 {
-    public class ServiceBusQueueTrigger(
-        ICalculatorRunService calculatorRunService,
+    public class ServiceBusQueueTrigger
+    {
+
+        private readonly ICalculatorRunService calculatorRunService;
+        private readonly ICalculatorRunParameterMapper calculatorRunParameterMapper;
+        private readonly IAzureSynapseRunner azureSynapseRunner;
+
+        public ServiceBusQueueTrigger(ICalculatorRunService calculatorRunService,
         ICalculatorRunParameterMapper calculatorRunParameterMapper,
         IAzureSynapseRunner azureSynapseRunner)
-    {
+        {
+            this.calculatorRunService = calculatorRunService;
+            this.calculatorRunParameterMapper = calculatorRunParameterMapper;
+            this.azureSynapseRunner = azureSynapseRunner;
+        }
+
         [FunctionName("EPRCalculatorRunServiceBusQueueTrigger")]
         public void Run([ServiceBusTrigger(queueName: "%ServiceBusQueueName%", Connection = "ServiceBusConnectionString")] string myQueueItem, ILogger log)
         {
@@ -33,7 +44,7 @@ namespace EPR.Calculator.Service.Function
             {
                 var param = JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem);
                 var calculatorRunParameter = this.calculatorRunParameterMapper.Map(param);
-                this.calculatorRunService.StartProcess(calculatorRunParameter);
+                this.calculatorRunService.StartProcess(calculatorRunParameter, this.azureSynapseRunner);
             }
             catch (JsonException jsonex)
             {
