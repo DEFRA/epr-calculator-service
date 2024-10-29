@@ -12,12 +12,15 @@ namespace EPR.Calculator.Service.Function
     {
         public static string PipelineUrl => Environment.GetEnvironmentVariable(EnvironmentVariableKeys.PipelineUrl);
 
-        public static string OrgDataPipelineName => Environment.GetEnvironmentVariable(EnvironmentVariableKeys.GetOrgDataPipelineName);
+        public static string OrgDataPipelineName => Environment.GetEnvironmentVariable(EnvironmentVariableKeys.OrgDataPipelineName);
 
-        public static string PomDataPipelineName => Environment.GetEnvironmentVariable(EnvironmentVariableKeys.GetPomDataPipelineName);
+        public static string PomDataPipelineName => Environment.GetEnvironmentVariable(EnvironmentVariableKeys.PomDataPipelineName);
 
         public static string CheckInterval => Environment.GetEnvironmentVariable(EnvironmentVariableKeys.CheckInterval);
 
         public static string MaxCheckCount => Environment.GetEnvironmentVariable(EnvironmentVariableKeys.MaxCheckCount);
+
+        public static Uri StatusEndpoint
+            => new Uri(Environment.GetEnvironmentVariable(EnvironmentVariableKeys.StatusUpdateEndpoint));
     }
 }

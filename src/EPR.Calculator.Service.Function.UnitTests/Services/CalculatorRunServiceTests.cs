@@ -1,6 +1,7 @@
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
     using AutoFixture;
+    using Azure.Analytics.Synapse.Artifacts.Models;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
     using EPR.Calculator.Service.Function.Constants;
@@ -15,60 +16,88 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         /// </summary>
         public CalculatorRunServiceTests()
         {
+            this.Fixture = new Fixture();
             this.CalculatorRunService = new CalculatorRunService();
             this.AzureSynapseRunner = new Mock<IAzureSynapseRunner>();
+            Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PomDataPipelineName, this.Fixture.Create<string>());
+            Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PomDataPipelineName, this.Fixture.Create<string>());
         }
 
         private CalculatorRunService CalculatorRunService { get; }
 
         private Mock<IAzureSynapseRunner> AzureSynapseRunner { get; }
 
+        private Fixture Fixture { get; }
+
         /// <summary>
         /// Checks that the service calls the Azure Synapse runner and passes the correct parameters to it.
         /// </summary>
-        /// <param name="isPom">
-        /// Whether the pipeline runner is expected to call the pom pipeline or the org one.
-        /// </param>
+        /// <param name="pipelineNameKey">Which pipeline to test - The service should call the synapse runner twice
+        /// - once for each pipeline, so we run this test for each pipeline we want to check is being called.</param>
         [TestMethod]
-        [DataRow(true)]
-        [DataRow(false)]
-        public void StartProcessCallsAzureSynapseRunner(bool isPom)
+        [DataRow(EnvironmentVariableKeys.PomDataPipelineName)]
+        [DataRow(EnvironmentVariableKeys.OrgDataPipelineName)]
+        public void StartProcessCallsAzureSynapseRunner(string pipelineNameKey)
         {
-            //    // Arrange
-            //    var fixture = new Fixture();
-            //    var id = fixture.Create<int>();
-            //    var financialYear = "2024-25";
-            //    var user = fixture.Create<string>();
+            // Arrange
+            var id = this.Fixture.Create<int>();
+            var financialYear = "2024-25";
+            var user = this.Fixture.Create<string>();
 
-            //    Environment.SetEnvironmentVariable(EnvironmentVariableKeys.IsPom, isPom);
+            var checkInterval = this.Fixture.Create<int>();
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.CheckInterval,
+                checkInterval.ToString());
 
-            //    var calculatorRunParameters = new CalculatorRunParameter
-            //    {
-            //        FinancialYear = financialYear,
-            //        User = user,
-            //    };
+            var maxChecks = this.Fixture.Create<int>();
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.MaxCheckCount,
+                maxChecks.ToString());
 
-            //    // The values that the service is expected to pass to the pipeline runner.
-            //    var expectedParameters = new AzureSynapseRunnerParameters
-            //    {
-            //        CalculatorRunId = id,
-            //        CheckInterval = 1,
-            //        FinancialYear = FinancialYear.Parse(financialYear),
-            //        MaxChecks = 1,
-            //        PipelineName = isPom ? EnvironmentVariableKeys.GetPomDataPipelineName : EnvironmentVariableKeys.GetOrgDataPipelineName,
-            //        PipelineUrl = new Uri(EnvironmentVariableKeys.PipelineUrl),
-            //        StatusUpdateEndpoint = new Uri(EnvironmentVariableKeys.StatusUpdateEndpoint),
-            //    };
+            var pipelineUrl = this.Fixture.Create<Uri>();
+            Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PipelineUrl, pipelineUrl.ToString());
 
-            //    // Act
-            //    this.CalculatorRunService.StartProcess(calculatorRunParameters, this.AzureSynapseRunner.Object);
+            var pipelineName = this.Fixture.Create<string>();
+            Environment.SetEnvironmentVariable(pipelineNameKey, pipelineName.ToString());
 
-            //    // Assert
-            //    this.AzureSynapseRunner.Verify(
-            //        runnner => runnner.Process(
-            //            It.Is<AzureSynapseRunnerParameters>(args =>
-            //            args == expectedParameters)),
-            //        Times.Once);
+            var statusUpdateEndpoint = this.Fixture.Create<Uri>();
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.StatusUpdateEndpoint,
+                statusUpdateEndpoint.ToString());
+
+            var calculatorRunParameters = new CalculatorRunParameter
+            {
+                Id = id,
+                FinancialYear = financialYear,
+                User = user,
+            };
+
+            // The values that the service is expected to pass to the pipeline runner.
+            var expectedParameters = new AzureSynapseRunnerParameters
+            {
+                CalculatorRunId = id,
+                CheckInterval = checkInterval,
+                FinancialYear = FinancialYear.Parse(financialYear),
+                MaxChecks = maxChecks,
+                PipelineUrl = pipelineUrl,
+                PipelineName = pipelineName,
+                StatusUpdateEndpoint = statusUpdateEndpoint,
+            };
+
+            // Act
+            this.CalculatorRunService.StartProcess(calculatorRunParameters, this.AzureSynapseRunner.Object);
+
+            // Assert
+            this.AzureSynapseRunner.Verify(
+                runner => runner.Process(
+                    It.IsAny<AzureSynapseRunnerParameters>()),
+                Times.Exactly(2));
+
+            this.AzureSynapseRunner.Verify(
+                runnner => runnner.Process(
+                    It.Is<AzureSynapseRunnerParameters>(args =>
+                    args == expectedParameters)),
+                Times.Once);
         }
     }
 }
