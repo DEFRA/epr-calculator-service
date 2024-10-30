@@ -12,6 +12,7 @@ using EPR.Calculator.Service.Function.Services;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -23,6 +24,10 @@ namespace EPR.Calculator.Service.Function
         public override void Configure(IFunctionsHostBuilder builder)
         {
             this.RegisterDependencies(builder.Services);
+            builder.Services.AddLogging(loggingBuilder =>
+            {
+                loggingBuilder.SetMinimumLevel(LogLevel.Information);
+            });
         }
 
         private void RegisterDependencies(IServiceCollection services)

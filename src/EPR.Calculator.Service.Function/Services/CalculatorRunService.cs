@@ -11,7 +11,7 @@
         private readonly IAzureSynapseRunner azureSynapseRunner;
         private readonly ILogger logger;
 
-        public CalculatorRunService(IAzureSynapseRunner azureSynapseRunner, ILogger logger)
+        public CalculatorRunService(IAzureSynapseRunner azureSynapseRunner, ILogger<CalculatorRunService> logger)
         {
             this.logger = logger;
             this.azureSynapseRunner = azureSynapseRunner;

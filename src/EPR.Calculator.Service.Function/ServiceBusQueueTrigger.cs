@@ -21,23 +21,26 @@ namespace EPR.Calculator.Service.Function
         private readonly ICalculatorRunService calculatorRunService;
         private readonly ICalculatorRunParameterMapper calculatorRunParameterMapper;
         private readonly IAzureSynapseRunner azureSynapseRunner;
+        private readonly ILogger logger;
 
         public ServiceBusQueueTrigger(ICalculatorRunService calculatorRunService,
         ICalculatorRunParameterMapper calculatorRunParameterMapper,
-        IAzureSynapseRunner azureSynapseRunner)
+        IAzureSynapseRunner azureSynapseRunner,
+        ILogger<ServiceBusQueueTrigger> logger)
         {
             this.calculatorRunService = calculatorRunService;
             this.calculatorRunParameterMapper = calculatorRunParameterMapper;
             this.azureSynapseRunner = azureSynapseRunner;
+            this.logger = logger;
         }
 
         [FunctionName("EPRCalculatorRunServiceBusQueueTrigger")]
-        public void Run([ServiceBusTrigger(queueName: "%ServiceBusQueueName%", Connection = "ServiceBusConnectionString")] string myQueueItem, ILogger log)
+        public void Run([ServiceBusTrigger(queueName: "%ServiceBusQueueName%", Connection = "ServiceBusConnectionString")] string myQueueItem)
         {
             if (string.IsNullOrEmpty(myQueueItem))
             {
-                log.LogError($"Message is Null or empty");
-                return;
+               this.logger.LogError($"Message is Null or empty");
+               return;
             }
 
             try
@@ -48,11 +51,11 @@ namespace EPR.Calculator.Service.Function
             }
             catch (JsonException jsonex)
             {
-                log.LogError($"Incorrect format - {myQueueItem} - {jsonex.Message}");
+                this.logger.LogError($"Incorrect format - {myQueueItem} - {jsonex.Message}");
             }
             catch (Exception ex)
             {
-                log.LogError($"Error  - {myQueueItem} - {ex.Message}");
+                this.logger.LogError($"Error  - {myQueueItem} - {ex.Message}");
             }
         }
     }
