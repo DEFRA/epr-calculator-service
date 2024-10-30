@@ -17,7 +17,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         private readonly ServiceBusQueueTrigger function;
         private readonly Mock<ICalculatorRunService> calculatorRunService;
         private readonly Mock<ICalculatorRunParameterMapper> parameterMapper;
-        private readonly Mock<ILogger> mockLogger;
+        private readonly Mock<ILogger<ServiceBusQueueTrigger>> mockLogger;
         private readonly Mock<IAzureSynapseRunner> azureSynapseRunner;
 
         public ServiceBusQueueTriggerTests()
@@ -25,11 +25,12 @@ namespace EPR.Calculator.Service.Function.UnitTests
             this.calculatorRunService = new Mock<ICalculatorRunService>();
             this.parameterMapper = new Mock<ICalculatorRunParameterMapper>();
             this.azureSynapseRunner = new Mock<IAzureSynapseRunner>();
+            this.mockLogger = new Mock<ILogger<ServiceBusQueueTrigger>>();
             this.function = new ServiceBusQueueTrigger(
                 this.calculatorRunService.Object,
                 this.parameterMapper.Object,
-                this.azureSynapseRunner.Object);
-            this.mockLogger = new Mock<ILogger>();
+                this.azureSynapseRunner.Object,
+                this.mockLogger.Object);
         }
 
         [TestMethod]
@@ -42,7 +43,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             this.parameterMapper.Setup(t => t.Map(JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem))).Returns(processedParameterData);
             var log = new Mock<ILogger>().Object;
 
-            this.function.Run(myQueueItem, log);
+            this.function.Run(myQueueItem);
 
             this.calculatorRunService.Verify(
                 p => p.StartProcess(
@@ -55,7 +56,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Arrange
             var myQueueItem = string.Empty;
-            this.function.Run(myQueueItem, this.mockLogger.Object);
+            this.function.Run(myQueueItem);
 
             this.mockLogger.Verify(
                 log => log.Log(
@@ -73,7 +74,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
 
             this.parameterMapper.Setup(t => t.Map(JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem))).Throws<JsonException>();
-            this.function.Run(myQueueItem, this.mockLogger.Object);
+            this.function.Run(myQueueItem);
 
             this.mockLogger.Verify(
                 log => log.Log(
@@ -91,7 +92,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
 
             this.parameterMapper.Setup(t => t.Map(JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem))).Throws<Exception>();
-            this.function.Run(myQueueItem, this.mockLogger.Object);
+            this.function.Run(myQueueItem);
 
             this.mockLogger.Verify(
                 log => log.Log(
