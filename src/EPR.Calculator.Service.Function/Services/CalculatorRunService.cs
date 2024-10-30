@@ -18,12 +18,12 @@
         }
 
         /// <inheritdoc/>
-        public void StartProcess(CalculatorRunParameter calculatorRunParameter)
+        public async void StartProcess(CalculatorRunParameter calculatorRunParameter)
         {
             var pomPipelineConfiguration = GetAzureSynapseConfiguration(
                 calculatorRunParameter,
                 Configuration.PomDataPipelineName);
-            var isPomSuccessful = azureSynapseRunner.Process(pomPipelineConfiguration);
+            var isPomSuccessful = await azureSynapseRunner.Process(pomPipelineConfiguration);
 
             this.logger.LogInformation("Pom status", isPomSuccessful);
 
@@ -31,7 +31,7 @@
                 calculatorRunParameter,
                 Configuration.OrgDataPipelineName);
 
-            var isOrgSuccessful = azureSynapseRunner.Process(orgPipelineConfiguration);
+            var isOrgSuccessful = await azureSynapseRunner.Process(orgPipelineConfiguration);
 
             this.logger.LogInformation("Org status", isOrgSuccessful);
         }
