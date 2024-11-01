@@ -20,6 +20,8 @@
         /// <inheritdoc/>
         public async void StartProcess(CalculatorRunParameter calculatorRunParameter)
         {
+            this.logger.LogInformation("Process started");
+
             var pomPipelineConfiguration = GetAzureSynapseConfiguration(
                 calculatorRunParameter,
                 Configuration.PomDataPipelineName);

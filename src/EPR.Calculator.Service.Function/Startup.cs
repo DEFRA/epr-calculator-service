@@ -24,7 +24,6 @@ namespace EPR.Calculator.Service.Function
         public override void Configure(IFunctionsHostBuilder builder)
         {
             this.RegisterDependencies(builder.Services);
-            builder.Services.AddLogging();
         }
 
         private void RegisterDependencies(IServiceCollection services)
