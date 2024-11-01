@@ -25,22 +25,21 @@ namespace EPR.Calculator.Service.Function
 
         public ServiceBusQueueTrigger(ICalculatorRunService calculatorRunService,
         ICalculatorRunParameterMapper calculatorRunParameterMapper,
-        IAzureSynapseRunner azureSynapseRunner,
-        ILogger<ServiceBusQueueTrigger> logger)
+        IAzureSynapseRunner azureSynapseRunner)
         {
             this.calculatorRunService = calculatorRunService;
             this.calculatorRunParameterMapper = calculatorRunParameterMapper;
             this.azureSynapseRunner = azureSynapseRunner;
-            this.logger = logger;
         }
 
         [FunctionName("EPRCalculatorRunServiceBusQueueTrigger")]
-        public void Run([ServiceBusTrigger(queueName: "%ServiceBusQueueName%", Connection = "ServiceBusConnectionString")] string myQueueItem)
+        public void Run([ServiceBusTrigger(queueName: "%ServiceBusQueueName%", Connection = "ServiceBusConnectionString")] string myQueueItem, ILogger log)
         {
+            log.LogInformation("Executing the funcation app started");
             if (string.IsNullOrEmpty(myQueueItem))
             {
-               this.logger.LogError($"Message is Null or empty");
-               return;
+                log.LogError($"Message is Null or empty");
+                return;
             }
 
             try
@@ -51,12 +50,14 @@ namespace EPR.Calculator.Service.Function
             }
             catch (JsonException jsonex)
             {
-                this.logger.LogError($"Incorrect format - {myQueueItem} - {jsonex.Message}");
+                log.LogError($"Incorrect format - {myQueueItem} - {jsonex.Message}");
             }
             catch (Exception ex)
             {
-                this.logger.LogError($"Error  - {myQueueItem} - {ex.Message}");
+                log.LogError($"Error  - {myQueueItem} - {ex.Message}");
             }
+
+            log.LogInformation("Azure function app execution finished");
         }
     }
 }

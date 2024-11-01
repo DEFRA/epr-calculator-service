@@ -27,6 +27,8 @@ namespace EPR.Calculator.Service.Function
             builder.Services.AddLogging(loggingBuilder =>
             {
                 loggingBuilder.SetMinimumLevel(LogLevel.Information);
+                loggingBuilder.AddFilter("Function", LogLevel.Information);
+                loggingBuilder.AddFilter("Microsoft", LogLevel.Warning);
             });
         }
 
