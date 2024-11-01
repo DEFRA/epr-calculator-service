@@ -31,6 +31,18 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
         private const int CalculatorRunId = 7;
 
+        private AzureSynapseRunnerParameters Parameters
+            => new AzureSynapseRunnerParameters
+            {
+                CalculatorRunId = CalculatorRunId,
+                FinancialYear = this.Year,
+                CheckInterval = CheckInterval,
+                MaxChecks = MaxChecks,
+                PipelineUrl = new Uri(TestPipelineUrl),
+                PipelineName = TestPipelineName,
+                StatusUpdateEndpoint = new Uri(TestPipelineUrl),
+            };
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AzureSynapseRunnerTests"/> class.
         /// </summary>
@@ -64,12 +76,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
             // Create the class to test.
             this.TestClass = new AzureSynapseRunner(
-                pipelineClientFactory.Object,
-                new Uri(TestPipelineUrl),
-                TestPipelineName,
-                MaxChecks,
-                CheckInterval,
-                new Uri(TestPipelineUrl));
+                pipelineClientFactory.Object);
         }
 
         private AzureSynapseRunner TestClass { get; set; }
@@ -93,12 +100,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             // Arrange
 
             // Act
-            var result = new AzureSynapseRunner(
-                new Uri(TestPipelineUrl),
-                TestPipelineName,
-                MaxChecks,
-                CheckInterval,
-                new Uri(TestPipelineUrl));
+            var result = new AzureSynapseRunner();
 
             // Assert
             Assert.IsInstanceOfType<AzureSynapseRunner>(result);
@@ -129,12 +131,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 .Returns(Task.FromResult(MockPipelineRunResponse(statusReturned)));
 
             // Act
-            var pipelineSucceeded = await this.TestClass.Process(
-                new AzureSynapseRunnerParameters
-                {
-                    CalculatorRunId = CalculatorRunId,
-                    FinancialYear = this.Year,
-                });
+            var pipelineSucceeded = await this.TestClass.Process(this.Parameters);
 
             // Assert
             Assert.AreEqual(expectedPipelineResult, pipelineSucceeded);
@@ -168,12 +165,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 .Returns(Task.FromResult(MockPipelineRunResponse(statusReturned)));
 
             // Act
-            var pipelineSucceeded = await this.TestClass.Process(
-                new AzureSynapseRunnerParameters
-                {
-                    CalculatorRunId = CalculatorRunId,
-                    FinancialYear = this.Year,
-                });
+            var pipelineSucceeded = await this.TestClass.Process(this.Parameters);
 
             // Assert
             Assert.AreEqual(expectedPipelineResult, pipelineSucceeded);
@@ -201,12 +193,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 .Returns(Task.FromResult(MockPipelineRunResponse(nameof(PipelineStatus.Succeeded))));
 
             // Act
-            var pipelineSucceeded = await this.TestClass.Process(
-                new AzureSynapseRunnerParameters
-                {
-                    CalculatorRunId = CalculatorRunId,
-                    FinancialYear = this.Year,
-                });
+            var pipelineSucceeded = await this.TestClass.Process(this.Parameters);
 
             // Assert
             Assert.IsFalse(pipelineSucceeded);
@@ -240,12 +227,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 .Returns(Task.FromResult(MockPipelineRunResponse(statusReturned)));
 
             // Act
-            var pipelineSucceeded = await this.TestClass.Process(
-                new AzureSynapseRunnerParameters
-                {
-                    CalculatorRunId = CalculatorRunId,
-                    FinancialYear = this.Year,
-                });
+            var pipelineSucceeded = await this.TestClass.Process(this.Parameters);
 
             // Assert
             Assert.AreEqual(expectedResult, pipelineSucceeded);
@@ -271,12 +253,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 .Throws(new InvalidOperationException());
 
             // Act & Assert
-            var pipelineSucceeded = await this.TestClass.Process(
-                new AzureSynapseRunnerParameters
-                {
-                    CalculatorRunId = CalculatorRunId,
-                    FinancialYear = this.Year,
-                });
+            var pipelineSucceeded = await this.TestClass.Process(this.Parameters);
 
             // Assert
             Assert.IsFalse(pipelineSucceeded);
