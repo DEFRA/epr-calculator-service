@@ -24,12 +24,7 @@ namespace EPR.Calculator.Service.Function
         public override void Configure(IFunctionsHostBuilder builder)
         {
             this.RegisterDependencies(builder.Services);
-            builder.Services.AddLogging(loggingBuilder =>
-            {
-                loggingBuilder.SetMinimumLevel(LogLevel.Information);
-                loggingBuilder.AddFilter("Function", LogLevel.Information);
-                loggingBuilder.AddFilter("Microsoft", LogLevel.Warning);
-            });
+            builder.Services.AddLogging();
         }
 
         private void RegisterDependencies(IServiceCollection services)

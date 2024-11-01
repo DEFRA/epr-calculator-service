@@ -21,7 +21,6 @@ namespace EPR.Calculator.Service.Function
         private readonly ICalculatorRunService calculatorRunService;
         private readonly ICalculatorRunParameterMapper calculatorRunParameterMapper;
         private readonly IAzureSynapseRunner azureSynapseRunner;
-        private readonly ILogger logger;
 
         public ServiceBusQueueTrigger(ICalculatorRunService calculatorRunService,
         ICalculatorRunParameterMapper calculatorRunParameterMapper,
