@@ -10,6 +10,7 @@ parameters:
   values:
     - DEV4
     - DEV11
+    - DEV13
 - name: envToDeploy
   displayName: 'Target Environment to deploy:    (select "development" for DEV 1-11)'
   default: development
