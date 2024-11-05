@@ -24,6 +24,11 @@
         /// <exception cref="ArgumentException">Thrown when the format is invalid.</exception>
         public static FinancialYear Parse(string value)
         {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentException("Financial year cannot be null or empty", nameof(value));
+            }
+
             try
             {
                 return new FinancialYear(

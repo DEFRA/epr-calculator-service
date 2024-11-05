@@ -50,6 +50,33 @@
         }
 
         /// <summary>
+        /// Tests that Parse throws a FormatException for an invalid string.
+        /// </summary>
+        /// <param name="financialYear">The invalid financial year string to parse.</param>
+        [TestMethod]
+        [DataRow("20-21")]
+        [DataRow("abcd-ef")]
+        public void Parse_InvalidString_ShouldThrowsArgumentException(string financialYear)
+        {
+            var exception = Assert.ThrowsException<ArgumentException>(() => FinancialYear.Parse(financialYear));
+            Assert.AreEqual("Invalid format. Please use the format 'YYYY-YY'.", exception.Message);
+        }
+
+        /// <summary>
+        /// Tests that Parse throws an ArgumentException for a null or empty string.
+        /// </summary>
+        /// <param name="financialYear">The null or empty financial year string to convert.</param>
+        [TestMethod]
+        [DataRow(null)]
+        [DataRow("")]
+        [DataRow(" ")]
+        public void Parse_NullOrEmptyString_ShouldThrowArgumentException(string financialYear)
+        {
+            var exception = Assert.ThrowsException<ArgumentException>(() => FinancialYear.Parse(financialYear));
+            Assert.AreEqual("Financial year cannot be null or empty (Parameter 'value')", exception.Message);
+        }
+
+        /// <summary>
         /// Tests that FinancialYearAsString returns the first year from a valid financial year string.
         /// </summary>
         /// <param name="financialYear">The financial year string to parse.</param>
