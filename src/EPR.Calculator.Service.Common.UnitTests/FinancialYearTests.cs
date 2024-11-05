@@ -80,6 +80,20 @@
         }
 
         /// <summary>
+        /// Tests that FinancialYearAsString throws a ArgumentException for a null or empty string.
+        /// </summary>
+        /// <param name="financialYear">The null or empty financial year string to convert.</param>
+        [TestMethod]
+        [DataRow(null)]
+        [DataRow("")]
+        [DataRow(" ")]
+        public void FinancialYearAsString_NullOrEmptyString_ShouldThrowArgumentException(string financialYear)
+        {
+            var exception = Assert.ThrowsException<ArgumentException>(() => FinancialYear.FinancialYearAsString(financialYear));
+            Assert.AreEqual("Financial year cannot be null or empty (Parameter 'value')", exception.Message);
+        }
+
+        /// <summary>
         /// Tests that ToCalendarYearAsString returns the previous year as a string for a valid financial year string.
         /// </summary>
         /// <param name="financialYear">The financial year string to convert.</param>

@@ -1,6 +1,7 @@
 ﻿namespace EPR.Calculator.Service.Common.AzureSynapse
 {
     using System.Globalization;
+    using System.Text.RegularExpressions;
 
     public record FinancialYear(DateTime value)
     {
@@ -42,12 +43,19 @@
         /// <exception cref="FormatException">Thrown when the format is invalid.</exception>
         public static string FinancialYearAsString(string value)
         {
-            var years = value.Split('-');
-            if (years.Length != 2 || !int.TryParse(years[0], out int year) || years[0].Length != 4 || years[1].Length != 2)
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentException("Financial year cannot be null or empty", nameof(value));
+            }
+
+            string pattern = @"^\d{4}-\d{2}$";
+
+            if (!Regex.IsMatch(value, pattern))
             {
                 throw new FormatException("Financial year format is invalid. Expected format is 'YYYY-YY'.");
             }
 
+            var years = value.Split('-');
             return years[0];
         }
 
