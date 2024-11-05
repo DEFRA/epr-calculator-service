@@ -55,8 +55,8 @@
             }
 
             string pattern = @"^\d{4}-\d{2}$";
-
-            if (!Regex.IsMatch(value, pattern))
+            TimeSpan regexTimeout = TimeSpan.FromSeconds(1);
+            if (!Regex.IsMatch(value, pattern, RegexOptions.None, regexTimeout))
             {
                 throw new FormatException("Financial year format is invalid. Expected format is 'YYYY-YY'.");
             }
