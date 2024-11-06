@@ -3,6 +3,7 @@
     using System;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
+    using EPR.Calculator.Service.Common.Utils;
     using EPR.Calculator.Service.Function.Interface;
     using Microsoft.Extensions.Logging;
 
@@ -48,7 +49,7 @@
                 MaxChecks = int.Parse(Configuration.MaxCheckCount),
                 PipelineName = pipelineName,
                 CalculatorRunId = args.Id,
-                FinancialYear = FinancialYear.Parse(args.FinancialYear),
+                FinancialYear = Util.GetFinancialYearAsYYYY(args.FinancialYear),
                 StatusUpdateEndpoint = Configuration.StatusEndpoint,
             };
     }

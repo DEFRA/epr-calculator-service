@@ -5,6 +5,7 @@
     using System.Text;
     using System.Text.Json;
     using Azure.Identity;
+    using EPR.Calculator.Service.Common.Utils;
 
     /// <summary>
     /// Runs Azure Synapse pipelines.
@@ -40,7 +41,7 @@
                 this.PipelineClientFactory,
                 args.PipelineUrl,
                 args.PipelineName,
-                args.FinancialYear.ToCalendarYear());
+                Util.GetCalendarYear(args.FinancialYear));
 
             // Periodically check the status of pipeline until it's completed.
             var checkCount = 0;
@@ -104,7 +105,7 @@
             PipelineClientFactory factory,
             Uri pipelineUrl,
             string pipelineName,
-            DateTime year)
+            string year)
         {
             #if DEBUG
             var credentials = new DefaultAzureCredential();
@@ -118,7 +119,7 @@
             pipelineName,
             parameters: new Dictionary<string, object>
             {
-                { "date", year.ToString("yyyy") },
+                { "date", year },
             });
 
             return Guid.Parse(result.Value.RunId);
