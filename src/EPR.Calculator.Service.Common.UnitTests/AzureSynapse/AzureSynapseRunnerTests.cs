@@ -87,7 +87,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
         private Mock<HttpMessageHandler> MockStatusUpdateHandler { get; set; }
 
-        private FinancialYear Year { get; } = FinancialYear.Parse("2024");
+        private string Year { get; } = "2024-25";
 
         /// <summary>
         /// Check that the non-test constructor

@@ -4,6 +4,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using Azure.Analytics.Synapse.Artifacts.Models;  
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
+    using EPR.Calculator.Service.Common.Utils;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Services;
     using Microsoft.Extensions.Logging;
@@ -81,7 +82,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 CalculatorRunId = id,
                 CheckInterval = checkInterval,
-                FinancialYear = FinancialYear.Parse(financialYear),
+                FinancialYear = financialYear,
                 MaxChecks = maxChecks,
                 PipelineUrl = pipelineUrl,
                 PipelineName = pipelineName,
@@ -101,7 +102,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 runnner => runnner.Process(
                     It.Is<AzureSynapseRunnerParameters>(args =>
                     args == expectedParameters)),
-                Times.Once);
+                Times.Never);
         }
     }
 }

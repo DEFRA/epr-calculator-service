@@ -19,7 +19,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             var fixture = new Fixture();
 
             this.CalculatorRunId = fixture.Create<int>();
-            this.FinancialYear = new FinancialYear(DateTime.UtcNow);
+            this.FinancialYear = "2024-25";
             this.CheckInterval = fixture.Create<int>();
             this.MaxChecks = fixture.Create<int>();
             this.PipelineName = fixture.Create<string>();
@@ -42,7 +42,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
         private int CalculatorRunId { get; }
 
-        private FinancialYear FinancialYear { get; }
+        private string FinancialYear { get; }
 
         private int CheckInterval { get; }
 
