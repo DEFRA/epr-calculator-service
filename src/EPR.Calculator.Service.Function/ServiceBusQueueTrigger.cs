@@ -53,7 +53,6 @@ namespace EPR.Calculator.Service.Function
                 {
                     client.BaseAddress = new Uri("https://google.com/");
                     HttpResponseMessage response = await client.GetAsync("/imghp?hl=en&ogbl");
-                    log.LogInformation($"Client response {response.StatusCode}");
                 }
             }
             catch (JsonException jsonex)
