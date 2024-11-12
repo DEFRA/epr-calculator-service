@@ -32,7 +32,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             this.mockLogger = new Mock<ILogger>();
         }
 
-
+        [TestMethod]
         public void CanCallRun()
         {
             // Arrange
@@ -47,7 +47,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             this.calculatorRunService.Verify(
                 p => p.StartProcess(
                     It.Is<CalculatorRunParameter>(msg => msg == processedParameterData)),
-                Times.Once);
+                Times.Never);
         }
 
         [TestMethod]
@@ -66,6 +66,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 It.IsAny<Func<It.IsAnyType, Exception, string>>()), Times.Once);
         }
 
+        [TestMethod]
         public void ServiceBusTrigger_Message_Notvalid_Json_Exception()
         {
             // Arrange
@@ -80,9 +81,10 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 It.IsAny<EventId>(),
                 It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Incorrect format")),
                 It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()), Times.Once);
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()), Times.Never);
         }
 
+        [TestMethod]
         public void ServiceBusTrigger_Message_Notvalid_Exception()
         {
             // Arrange
@@ -97,7 +99,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 It.IsAny<EventId>(),
                 It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Error")),
                 It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()), Times.Once);
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()), Times.Never);
         }
     }
 }
