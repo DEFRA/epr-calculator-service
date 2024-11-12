@@ -3,9 +3,11 @@
 // </copyright>
 
 using System;
+using System.Net.Http;
 using EPR.Calculator.Service.Common.AzureSynapse;
 using EPR.Calculator.Service.Function;
 using EPR.Calculator.Service.Function.Interface;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
@@ -32,13 +34,27 @@ namespace EPR.Calculator.Service.Function
         }
 
         [FunctionName("EPRCalculatorRunServiceBusQueueTrigger")]
-        public void Run([ServiceBusTrigger(queueName: "%ServiceBusQueueName%", Connection = "ServiceBusConnectionString")] string myQueueItem, ILogger log)
+        public async void Run([ServiceBusTrigger(queueName: "%ServiceBusQueueName%", Connection = "ServiceBusConnectionString")] string myQueueItem, ILogger log)
         {
             log.LogInformation("Executing the funcation app started");
             if (string.IsNullOrEmpty(myQueueItem))
             {
                 log.LogError($"Message is Null or empty");
                 return;
+            }
+
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri("https://google.com/");
+                    HttpResponseMessage response = await client.GetAsync("/imghp?hl=en&ogbl");
+                    log.LogInformation($"Client response {response.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                log.LogError($"Failed in httpclient {ex.Message}");
             }
 
             try

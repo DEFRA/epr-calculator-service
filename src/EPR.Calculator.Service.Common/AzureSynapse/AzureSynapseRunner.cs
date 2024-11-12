@@ -41,7 +41,7 @@
                 this.PipelineClientFactory,
                 args.PipelineUrl,
                 args.PipelineName,
-                Util.GetCalendarYear(args.FinancialYear));
+                args.FinancialYear);
 
             // Periodically check the status of pipeline until it's completed.
             var checkCount = 0;
