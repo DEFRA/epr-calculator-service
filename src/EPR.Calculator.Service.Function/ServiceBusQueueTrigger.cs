@@ -46,23 +46,8 @@ namespace EPR.Calculator.Service.Function
 
             try
             {
-                using (var client = new HttpClient())
-                {
-                    client.BaseAddress = new Uri("https://google.com/");
-                    HttpResponseMessage response = await client.GetAsync("/imghp?hl=en&ogbl");
-                    log.LogInformation($"Client response {response.StatusCode}");
-                }
-            }
-            catch (Exception ex)
-            {
-                log.LogError($"Failed in httpclient {ex.Message}");
-            }
-
-            try
-            {
                 var param = JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem);
                 var calculatorRunParameter = this.calculatorRunParameterMapper.Map(param);
-                this.calculatorRunService.StartProcess(calculatorRunParameter);
             }
             catch (JsonException jsonex)
             {
@@ -74,6 +59,20 @@ namespace EPR.Calculator.Service.Function
             }
 
             log.LogInformation("Azure function app execution finished");
+
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri("https://google.com/");
+                    HttpResponseMessage response = await client.GetAsync("/imghp?hl=en&ogbl");
+                    log.LogInformation($"Client response {response.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                log.LogError($"Failed in httpclient {ex.Message}");
+            }
         }
     }
 }
