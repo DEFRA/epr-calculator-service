@@ -49,11 +49,10 @@ namespace EPR.Calculator.Service.Function
                 var param = JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem);
                 var calculatorRunParameter = this.calculatorRunParameterMapper.Map(param);
 
-                using (var client = new HttpClient())
-                {
-                    client.BaseAddress = new Uri("https://google.com/");
-                    HttpResponseMessage response = await client.GetAsync("/imghp?hl=en&ogbl");
-                }
+                using var client = new HttpClient();
+                client.BaseAddress = new Uri("https://google.com/");
+                HttpResponseMessage response = await client.GetAsync("/imghp?hl=en&ogbl");
+                log.LogInformation($"Client response {response.StatusCode}");
             }
             catch (JsonException jsonex)
             {

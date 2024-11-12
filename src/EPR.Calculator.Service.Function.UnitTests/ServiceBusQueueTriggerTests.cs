@@ -7,8 +7,10 @@ namespace EPR.Calculator.Service.Function.UnitTests
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
     using EPR.Calculator.Service.Function.Interface;
+    using Microsoft.AspNetCore.Mvc.Formatters.Internal;
     using Microsoft.Extensions.Logging;
     using Moq;
+    using Moq.Protected;
     using Newtonsoft.Json;
 
     [TestClass]
@@ -42,7 +44,37 @@ namespace EPR.Calculator.Service.Function.UnitTests
             this.parameterMapper.Setup(t => t.Map(JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem))).Returns(processedParameterData);
             var log = new Mock<ILogger>().Object;
 
+            var mockHttpHandler = new Mock<HttpMessageHandler>();
+
+            mockHttpHandler.Protected()
+     .Setup<Task<HttpResponseMessage>>(
+         "SendAsync",
+         ItExpr.IsAny<HttpRequestMessage>(),
+         ItExpr.IsAny<CancellationToken>()
+     )
+     .ReturnsAsync((HttpRequestMessage request, CancellationToken token) =>
+     {
+         HttpResponseMessage response = new HttpResponseMessage()
+         { StatusCode = System.Net.HttpStatusCode.OK };
+
+         return response;
+     });
+
+            var httpClient = new HttpClient(mockHttpHandler.Object)
+            {
+                BaseAddress = new Uri("http://testc.com"),
+            };
+
+
             this.function.Run(myQueueItem, log);
+
+            this.mockLogger.Verify(
+                log => log.Log(
+                LogLevel.Information,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Client")),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()), Times.Never);
 
             this.calculatorRunService.Verify(
                 p => p.StartProcess(
