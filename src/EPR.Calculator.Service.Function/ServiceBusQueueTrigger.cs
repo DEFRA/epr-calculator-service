@@ -3,12 +3,10 @@
 // </copyright>
 
 using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 using EPR.Calculator.Service.Common.AzureSynapse;
 using EPR.Calculator.Service.Function;
 using EPR.Calculator.Service.Function.Interface;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
@@ -20,7 +18,6 @@ namespace EPR.Calculator.Service.Function
 {
     public class ServiceBusQueueTrigger
     {
-
         private readonly ICalculatorRunService calculatorRunService;
         private readonly ICalculatorRunParameterMapper calculatorRunParameterMapper;
         private readonly IAzureSynapseRunner azureSynapseRunner;
@@ -48,11 +45,7 @@ namespace EPR.Calculator.Service.Function
             {
                 var param = JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem);
                 var calculatorRunParameter = this.calculatorRunParameterMapper.Map(param);
-
-                using var client = new HttpClient();
-                client.BaseAddress = new Uri("https://google.com/");
-                HttpResponseMessage response = await client.GetAsync("/imghp?hl=en&ogbl");
-                log.LogInformation($"Client response {response.StatusCode}");
+                this.calculatorRunService.StartProcess(calculatorRunParameter);
             }
             catch (JsonException jsonex)
             {

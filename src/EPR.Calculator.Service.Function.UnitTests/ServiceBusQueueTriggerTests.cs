@@ -7,7 +7,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
     using EPR.Calculator.Service.Function.Interface;
-    using Microsoft.AspNetCore.Mvc.Formatters.Internal;
     using Microsoft.Extensions.Logging;
     using Moq;
     using Moq.Protected;
@@ -62,24 +61,16 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             var httpClient = new HttpClient(mockHttpHandler.Object)
             {
-                BaseAddress = new Uri("http://testc.com"),
+                BaseAddress = new Uri("http://google.com"),
             };
 
 
             this.function.Run(myQueueItem, log);
 
-            this.mockLogger.Verify(
-                log => log.Log(
-                LogLevel.Information,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Client")),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()), Times.Never);
-
             this.calculatorRunService.Verify(
                 p => p.StartProcess(
                     It.Is<CalculatorRunParameter>(msg => msg == processedParameterData)),
-                Times.Never);
+                Times.Once);
         }
 
         [TestMethod]
