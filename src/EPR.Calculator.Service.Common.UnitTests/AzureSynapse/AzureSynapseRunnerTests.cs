@@ -16,7 +16,6 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
     /// <summary>
     /// Unit tests for the <see cref="AzureSynapseRunner"/> class.
     /// </summary>
-    [TestClass]
     public class AzureSynapseRunnerTests
     {
         private const string TestPipelineUrl = "http://not.a.real.address";

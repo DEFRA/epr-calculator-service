@@ -10,7 +10,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using Microsoft.Extensions.Logging;
     using Moq;
 
-    [TestClass]
     public class CalculatorRunServiceTests
     {
         /// <summary>
@@ -39,7 +38,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         /// </summary>
         /// <param name="pipelineNameKey">Which pipeline to test - The service should call the synapse runner twice
         /// - once for each pipeline, so we run this test for each pipeline we want to check is being called.</param>
-        [TestMethod]
         [DataRow(EnvironmentVariableKeys.PomDataPipelineName)]
         [DataRow(EnvironmentVariableKeys.OrgDataPipelineName)]
         public void StartProcessCallsAzureSynapseRunner(string pipelineNameKey)

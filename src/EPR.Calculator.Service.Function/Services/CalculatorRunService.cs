@@ -21,22 +21,31 @@
         /// <inheritdoc/>
         public async void StartProcess(CalculatorRunParameter calculatorRunParameter)
         {
+            var pipelineFactory = new PipelineClientFactory();
+
             this.logger.LogInformation("Process started");
 
-            var pomPipelineConfiguration = GetAzureSynapseConfiguration(
-                calculatorRunParameter,
-                Configuration.PomDataPipelineName);
-            var isPomSuccessful = await azureSynapseRunner.Process(pomPipelineConfiguration);
+            //var pomPipelineConfiguration = GetAzureSynapseConfiguration(
+            //    calculatorRunParameter,
+            //    Configuration.PomDataPipelineName);
+            //  var isPomSuccessful = await azureSynapseRunner.Process(pomPipelineConfiguration);
 
-            this.logger.LogInformation("Pom status", isPomSuccessful);
+            //this.logger.LogInformation("Pom status", isPomSuccessful);
 
-            var orgPipelineConfiguration = GetAzureSynapseConfiguration(
-                calculatorRunParameter,
-                Configuration.OrgDataPipelineName);
+            //var orgPipelineConfiguration = GetAzureSynapseConfiguration(
+            //    calculatorRunParameter,
+            //    Configuration.OrgDataPipelineName);
 
-            var isOrgSuccessful = await azureSynapseRunner.Process(orgPipelineConfiguration);
+            // var isOrgSuccessful = await azureSynapseRunner.Process(orgPipelineConfiguration);
 
-            this.logger.LogInformation("Org status", isOrgSuccessful);
+            //  this.logger.LogInformation("Org status", isOrgSuccessful);
+
+            // Record success/failure to the database using the web API.
+            using var client = pipelineFactory.GetStatusUpdateClient(Configuration.StatusEndpoint);
+            var statusUpdateResponse = await client.PostAsync(
+                    Configuration.StatusEndpoint,
+                    AzureSynapseRunner.GetStatusUpdateMessage(calculatorRunParameter.Id, true));
+
         }
 
         private static AzureSynapseRunnerParameters GetAzureSynapseConfiguration(

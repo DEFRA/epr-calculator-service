@@ -15,7 +15,7 @@ namespace EPR.Calculator.Service.Common.AzureSynapse
     /// Used by <see cref="AzureSynapsePipelineTestController"/> via dependancy injection
     /// so that the clients can be replaced with mocks when unit testing.
     /// </remarks>
-    internal class PipelineClientFactory()
+    public class PipelineClientFactory()
     {
         /// <summary>
         /// Initialises a new <see cref="PipelineClient"/>.

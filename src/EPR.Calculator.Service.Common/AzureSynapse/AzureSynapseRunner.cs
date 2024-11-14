@@ -74,23 +74,19 @@
             }
             while (checkCount < args.MaxChecks);
 
-            // Record success/failure to the database using the web API.
-            using var client = this.PipelineClientFactory.GetStatusUpdateClient(args.StatusUpdateEndpoint);
-            var statusUpdateResponse = await client.PostAsync(
-                    args.StatusUpdateEndpoint.ToString(),
-                    GetStatusUpdateMessage(args.CalculatorRunId, pipelineStatus == nameof(PipelineStatus.Succeeded)));
 
-            #if DEBUG
-            Debug.WriteLine(statusUpdateResponse.Content.ReadAsStringAsync().Result);
-            #endif
+            //#if DEBUG
+            //Debug.WriteLine(statusUpdateResponse.Content.ReadAsStringAsync().Result);
+            //#endif
 
-            return pipelineStatus == nameof(PipelineStatus.Succeeded) && statusUpdateResponse.IsSuccessStatusCode;
+            return pipelineStatus == nameof(PipelineStatus.Succeeded);
+                //&& statusUpdateResponse.IsSuccessStatusCode;
         }
 
         /// <summary>
         /// Build the JSON content of the status update API call.
         /// </summary>
-        private static StringContent GetStatusUpdateMessage(int calculatorRunId, bool pipelineSucceeded)
+        public static StringContent GetStatusUpdateMessage(int calculatorRunId, bool pipelineSucceeded)
             => new StringContent(
                 JsonSerializer.Serialize(new
                 {
