@@ -11,6 +11,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using Moq;
     using Moq.Protected;
 
+    [TestClass]
     public class CalculatorRunServiceTests
     {
         /// <summary>
@@ -287,20 +288,5 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     args == expectedParameters)),
                 Times.Never);
         }
-
-        /// <summary>
-        /// Verifies that the expected value was written to the database using it's web API
-        /// (i.e. that the mock HTTP message handler was called with the isSuccessful
-        /// parameter set to the appropriate value).
-        /// </summary>
-        /// <param name="pipelineSucceeded">The pipeline success value that should of been recorded to the database.</param>
-        private void VerifyDatabaseWrite(bool pipelineSucceeded)
-            => this.MockStatusUpdateHandler.Protected().Verify(
-                "SendAsync",
-                Times.Once(),
-                ItExpr.Is<HttpRequestMessage>(
-                    message => message.Content!.ReadAsStringAsync().Result
-                        .Contains($"\"isSuccessful\":{pipelineSucceeded.ToString().ToLower()}")),
-                ItExpr.IsAny<CancellationToken>());
     }
 }
