@@ -74,13 +74,7 @@
             }
             while (checkCount < args.MaxChecks);
 
-
-            //#if DEBUG
-            //Debug.WriteLine(statusUpdateResponse.Content.ReadAsStringAsync().Result);
-            //#endif
-
             return pipelineStatus == nameof(PipelineStatus.Succeeded);
-                //&& statusUpdateResponse.IsSuccessStatusCode;
         }
 
         /// <summary>

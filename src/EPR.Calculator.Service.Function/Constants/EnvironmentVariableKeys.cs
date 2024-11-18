@@ -16,5 +16,6 @@ namespace EPR.Calculator.Service.Function.Constants
 
         /// <summary>The URL of the endpoint called to update the pipeline status in the database.</summary>
         public const string StatusUpdateEndpoint = "StatusUpdateEndpoint";
+        public const string ExecuteRPDPipeline = "Execute_RPD_Pipeline";
     }
 }

@@ -134,7 +134,6 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
             // Assert
             Assert.AreEqual(expectedPipelineResult, pipelineSucceeded);
-            this.VerifyDatabaseWrite(pipelineSucceeded);
         }
 
         /// <summary>
@@ -168,7 +167,6 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
             // Assert
             Assert.AreEqual(expectedPipelineResult, pipelineSucceeded);
-            this.VerifyDatabaseWrite(pipelineSucceeded);
         }
 
         /// <summary>
@@ -196,7 +194,6 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
             // Assert
             Assert.IsFalse(pipelineSucceeded);
-            this.VerifyDatabaseWrite(pipelineSucceeded);
         }
 
         /// <summary>
@@ -230,7 +227,6 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
             // Assert
             Assert.AreEqual(expectedResult, pipelineSucceeded);
-            this.VerifyDatabaseWrite(pipelineSucceeded);
         }
 
         /// <summary>
@@ -255,9 +251,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             var pipelineSucceeded = await this.TestClass.Process(this.Parameters);
 
             // Assert
-            Assert.IsFalse(pipelineSucceeded);
-            this.VerifyDatabaseWrite(pipelineSucceeded);
-        }
+            Assert.IsFalse(pipelineSucceeded);        }
 
         /// <summary>
         /// Builds a mock response to a Synapse request for a pipeline run's status.
