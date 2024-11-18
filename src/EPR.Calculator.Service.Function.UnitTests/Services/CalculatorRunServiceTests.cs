@@ -272,10 +272,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             this.AzureSynapseRunner.Setup(t => t.Process(It.IsAny<AzureSynapseRunnerParameters>())).ReturnsAsync(true);
 
-            var client = new HttpClient(this.MockStatusUpdateHandler.Object);
-
-            this.PipelineClientFactory.Setup(t => t.GetStatusUpdateClient(It.IsAny<Uri>())).Returns(client);
-
             // Act
             this.CalculatorRunService.StartProcess(calculatorRunParameters);
 
