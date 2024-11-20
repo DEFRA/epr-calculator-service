@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 {
     using System;
@@ -13,6 +15,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
     using Moq;
     using Moq.Protected;
 
+    [ExcludeFromCodeCoverage]
     /// <summary>
     /// Unit tests for the <see cref="AzureSynapseRunner"/> class.
     /// </summary>
