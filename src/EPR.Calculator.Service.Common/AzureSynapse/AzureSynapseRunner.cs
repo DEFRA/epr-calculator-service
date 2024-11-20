@@ -1,11 +1,8 @@
 ﻿namespace EPR.Calculator.Service.Common.AzureSynapse
 {
-    using System.Diagnostics;
-    using System.Net.Http.Headers;
+    using Azure.Identity;
     using System.Text;
     using System.Text.Json;
-    using Azure.Identity;
-    using EPR.Calculator.Service.Common.Utils;
 
     /// <summary>
     /// Runs Azure Synapse pipelines.
@@ -26,10 +23,10 @@
         /// <param name="pipelineClientFactory">A factory that initialises pipeline clients
         /// (or generates mock clients when unit testing).</param>
         internal AzureSynapseRunner(
-            PipelineClientFactory pipelineClientFactory)
+            IPipelineClientFactory pipelineClientFactory)
             => this.PipelineClientFactory = pipelineClientFactory;
 
-        private PipelineClientFactory PipelineClientFactory { get; }
+        private IPipelineClientFactory PipelineClientFactory { get; }
 
         /// <inheritdoc/>
         public async Task<bool> Process(AzureSynapseRunnerParameters args)
@@ -92,7 +89,7 @@
                 "application/json");
 
         private static async Task<Guid> StartPipelineRun(
-            PipelineClientFactory factory,
+            IPipelineClientFactory factory,
             Uri pipelineUrl,
             string pipelineName,
             string year)
@@ -115,7 +112,7 @@
             return Guid.Parse(result.Value.RunId);
         }
 
-        private static async Task<string> GetPipelineRunStatus(PipelineClientFactory factory, Uri pipelineUrl, Guid runId)
+        private static async Task<string> GetPipelineRunStatus(IPipelineClientFactory factory, Uri pipelineUrl, Guid runId)
         {
             #if DEBUG
             var credentials = new DefaultAzureCredential();

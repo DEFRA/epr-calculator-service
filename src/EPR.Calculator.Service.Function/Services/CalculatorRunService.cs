@@ -1,15 +1,16 @@
 ﻿namespace EPR.Calculator.Service.Function.Services
 {
-    using System;
-    using System.Diagnostics;
-    using System.Net.Http;
-    using System.Text;
-    using System.Text.Json;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
     using EPR.Calculator.Service.Common.Utils;
     using EPR.Calculator.Service.Function.Interface;
     using Microsoft.Extensions.Logging;
+    using System;
+    using System.Diagnostics;
+    using System.Net.Http;
+    using System.Text;
+    using System.Text.Json;
+    using System.Threading.Tasks;
 
     public class CalculatorRunService : ICalculatorRunService
     {
@@ -17,18 +18,16 @@
         private readonly ILogger logger;
         private readonly PipelineClientFactory pipelineClientFactory;
 
-        public CalculatorRunService(IAzureSynapseRunner azureSynapseRunner, ILogger<CalculatorRunService> logger)
+        public CalculatorRunService(IAzureSynapseRunner azureSynapseRunner,ILogger<CalculatorRunService> logger,PipelineClientFactory pipelineClientFactory)
         {
             this.logger = logger;
             this.azureSynapseRunner = azureSynapseRunner;
-            this.pipelineClientFactory = new PipelineClientFactory();
+            this.pipelineClientFactory = pipelineClientFactory;
         }
 
         /// <inheritdoc/>
-        public async void StartProcess(CalculatorRunParameter calculatorRunParameter)
+        public async Task<bool> StartProcess(CalculatorRunParameter calculatorRunParameter)
         {
-            var pipelineFactory = new PipelineClientFactory();
-
             this.logger.LogInformation("Process started");
             bool isPomSuccessful = bool.Parse(Configuration.ExecuteRPDPipeline) ? false : true;
 
@@ -63,6 +62,7 @@
             Debug.WriteLine(statusUpdateResponse.Content.ReadAsStringAsync().Result);
             #endif
 
+            return statusUpdateResponse.IsSuccessStatusCode;
         }
 
         public static AzureSynapseRunnerParameters GetAzureSynapseConfiguration(

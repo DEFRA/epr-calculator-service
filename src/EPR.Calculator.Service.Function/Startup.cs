@@ -31,6 +31,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalculatorRunService, CalculatorRunService>();
             services.AddTransient<ICalculatorRunParameterMapper, CalculatorRunParameterMapper>();
             services.AddTransient<IAzureSynapseRunner, AzureSynapseRunner>();
+            services.AddTransient<IPipelineClientFactory, PipelineClientFactory>();
         }
     }
 }
