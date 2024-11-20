@@ -1,9 +1,12 @@
 ﻿using Azure.Analytics.Synapse.Artifacts;
 using Azure.Core;
 
-public interface IPipelineClientFactory
+namespace EPR.Calculator.Service.Common.AzureSynapse
 {
-    public PipelineClient GetPipelineClient(Uri pipelineUrl, TokenCredential tokenCredential);
-    public PipelineRunClient GetPipelineRunClient(Uri pipelineUrl, TokenCredential tokenCredential);
-    public HttpClient GetStatusUpdateClient(Uri statusUpdateUrl);
+    public interface IPipelineClientFactory
+    {
+        public PipelineClient GetPipelineClient(Uri pipelineUrl, TokenCredential tokenCredential);
+        public PipelineRunClient GetPipelineRunClient(Uri pipelineUrl, TokenCredential tokenCredential);
+        public HttpClient GetStatusUpdateClient(Uri statusUpdateUrl);
+    }
 }
