@@ -16,9 +16,9 @@
     {
         private readonly IAzureSynapseRunner azureSynapseRunner;
         private readonly ILogger logger;
-        private readonly PipelineClientFactory pipelineClientFactory;
+        private readonly IPipelineClientFactory pipelineClientFactory;
 
-        public CalculatorRunService(IAzureSynapseRunner azureSynapseRunner,ILogger<CalculatorRunService> logger,PipelineClientFactory pipelineClientFactory)
+        public CalculatorRunService(IAzureSynapseRunner azureSynapseRunner, ILogger<CalculatorRunService> logger, IPipelineClientFactory pipelineClientFactory)
         {
             this.logger = logger;
             this.azureSynapseRunner = azureSynapseRunner;
@@ -29,7 +29,7 @@
         public async Task<bool> StartProcess(CalculatorRunParameter calculatorRunParameter)
         {
             this.logger.LogInformation("Process started");
-            bool isPomSuccessful = bool.Parse(Configuration.ExecuteRPDPipeline) ? false : true;
+            bool isPomSuccessful = false;
 
             if (bool.Parse(Configuration.ExecuteRPDPipeline))
             {
@@ -51,6 +51,10 @@
                     this.logger.LogInformation("Pom status", isPomSuccessful);
                 }
             }
+            else
+            {
+                isPomSuccessful = true;
+            }
 
             // Record success/failure to the database using the web API.
             using var client = this.pipelineClientFactory.GetStatusUpdateClient(Configuration.StatusEndpoint);
@@ -58,9 +62,9 @@
                     Configuration.StatusEndpoint,
                     GetStatusUpdateMessage(calculatorRunParameter.Id, isPomSuccessful));
 
-            #if DEBUG
+#if DEBUG
             Debug.WriteLine(statusUpdateResponse.Content.ReadAsStringAsync().Result);
-            #endif
+#endif
 
             return statusUpdateResponse.IsSuccessStatusCode;
         }
