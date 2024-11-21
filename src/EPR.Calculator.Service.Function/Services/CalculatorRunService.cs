@@ -79,7 +79,7 @@
                 MaxChecks = int.Parse(Configuration.MaxCheckCount),
                 PipelineName = pipelineName,
                 CalculatorRunId = args.Id,
-                FinancialYear = Util.GetFinancialYearAsYYYY(args.FinancialYear),
+                FinancialYear = Util.GetCalendarYear(args.FinancialYear),
                 StatusUpdateEndpoint = Configuration.StatusEndpoint,
             };
 
