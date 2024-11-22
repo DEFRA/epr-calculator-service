@@ -4,9 +4,8 @@
 
 namespace EPR.Calculator.Service.Function.Interface
 {
-    using EPR.Calculator.Service.Common;
-    using EPR.Calculator.Service.Common.AzureSynapse;
     using System.Threading.Tasks;
+    using EPR.Calculator.Service.Common;
 
     public interface ICalculatorRunService
     {

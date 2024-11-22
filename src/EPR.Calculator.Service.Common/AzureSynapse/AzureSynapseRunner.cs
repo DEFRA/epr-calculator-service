@@ -1,8 +1,8 @@
 ﻿namespace EPR.Calculator.Service.Common.AzureSynapse
 {
-    using Azure.Identity;
     using System.Text;
     using System.Text.Json;
+    using Azure.Identity;
 
     /// <summary>
     /// Runs Azure Synapse pipelines.

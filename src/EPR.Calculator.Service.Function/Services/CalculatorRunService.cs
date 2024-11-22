@@ -1,16 +1,15 @@
 ﻿namespace EPR.Calculator.Service.Function.Services
 {
-    using EPR.Calculator.Service.Common;
-    using EPR.Calculator.Service.Common.AzureSynapse;
-    using EPR.Calculator.Service.Common.Utils;
-    using EPR.Calculator.Service.Function.Interface;
-    using Microsoft.Extensions.Logging;
     using System;
     using System.Diagnostics;
     using System.Net.Http;
     using System.Text;
     using System.Text.Json;
     using System.Threading.Tasks;
+    using EPR.Calculator.Service.Common;
+    using EPR.Calculator.Service.Common.AzureSynapse;
+    using EPR.Calculator.Service.Function.Interface;
+    using Microsoft.Extensions.Logging;
 
     public class CalculatorRunService : ICalculatorRunService
     {
@@ -18,7 +17,12 @@
         private readonly ILogger logger;
         private readonly IPipelineClientFactory pipelineClientFactory;
 
-        public CalculatorRunService(IAzureSynapseRunner azureSynapseRunner, ILogger<CalculatorRunService> logger, IPipelineClientFactory pipelineClientFactory)
+#pragma warning disable SA1600
+        public CalculatorRunService(IAzureSynapseRunner azureSynapseRunner, ILogger<CalculatorRunService> logger,
+#pragma warning restore SA1600
+#pragma warning disable SA1117
+            IPipelineClientFactory pipelineClientFactory)
+#pragma warning restore SA1117
         {
             this.logger = logger;
             this.azureSynapseRunner = azureSynapseRunner;
@@ -30,8 +34,8 @@
         {
             this.logger.LogInformation("Process started");
             bool isPomSuccessful = false;
-
-            if (bool.Parse(Configuration.ExecuteRPDPipeline))
+            bool runRpdPipeline = bool.Parse(Configuration.ExecuteRPDPipeline);
+            if (runRpdPipeline)
             {
                 var orgPipelineConfiguration = GetAzureSynapseConfiguration(
                   calculatorRunParameter,

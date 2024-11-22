@@ -1,9 +1,7 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 {
     using System;
-    using System.Linq;
+    using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
     using System.Threading.Tasks;
     using Azure;
