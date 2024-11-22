@@ -13,7 +13,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
     using Moq;
     using Moq.Protected;
 
-    [ExcludeFromCodeCoverage]
+    [TestClass]
     /// <summary>
     /// Unit tests for the <see cref="AzureSynapseRunner"/> class.
     /// </summary>
