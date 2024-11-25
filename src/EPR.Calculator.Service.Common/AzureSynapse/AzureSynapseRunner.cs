@@ -67,7 +67,7 @@
                     }
                 }
 
-                await Task.Delay(args.CheckInterval);
+                await Task.Delay(TimeSpan.FromMilliseconds(120000));
             }
             while (checkCount < args.MaxChecks);
 
