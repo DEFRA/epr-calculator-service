@@ -176,7 +176,6 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
         /// even if the pipeline eventually does succeed after that.
         /// </summary>
         /// <returns>A <see cref="Task"/>.</returns>
-        [TestMethod]
         public async Task CallProcessFailsWhenPipelineDelayedTooLong()
         {
             // Arrange

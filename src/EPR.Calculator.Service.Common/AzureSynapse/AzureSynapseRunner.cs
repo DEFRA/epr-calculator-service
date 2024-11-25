@@ -67,7 +67,12 @@
                     }
                 }
 
-                await Task.Delay(TimeSpan.FromMilliseconds(120000));
+                var checkInterval = args.CheckInterval == 0
+                    ? TimeSpan.FromMilliseconds(120000)
+                    : TimeSpan.FromMicroseconds(args.CheckInterval);
+
+
+                await Task.Delay(checkInterval);
             }
             while (checkCount < 10);
 
