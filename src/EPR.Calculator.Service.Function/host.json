@@ -1,5 +1,15 @@
 {
-    "version": "2.0",
+  "version": "2.0",
+  "extensions": {
+    "serviceBus": {
+      "messageHandlerOptions": {
+        "autoComplete": true,
+        "maxConcurrentCalls": 1,
+        "maxAutoRenewDuration": "00:10:00"
+      }
+    }
+  },
+  "functionTimeout": "00:55:00",
   "logging": {
     "fileLoggingMode": "always",
     "logLevel": {

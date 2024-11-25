@@ -67,7 +67,7 @@
                     }
                 }
 
-                Thread.Sleep(args.CheckInterval);
+                await Task.Delay(args.CheckInterval);
             }
             while (checkCount < args.MaxChecks);
 
@@ -94,11 +94,11 @@
             string pipelineName,
             string year)
         {
-            #if DEBUG
+#if DEBUG
             var credentials = new DefaultAzureCredential();
-            #else
+#else
             var credentials = new ManagedIdentityCredential();
-            #endif
+#endif
 
             var pipelineClient = factory.GetPipelineClient(pipelineUrl, credentials);
 
@@ -114,11 +114,11 @@
 
         private static async Task<string> GetPipelineRunStatus(IPipelineClientFactory factory, Uri pipelineUrl, Guid runId)
         {
-            #if DEBUG
+#if DEBUG
             var credentials = new DefaultAzureCredential();
-            #else
+#else
             var credentials = new ManagedIdentityCredential();
-            #endif
+#endif
 
             var pipelineClient = factory.GetPipelineRunClient(pipelineUrl, credentials);
 
