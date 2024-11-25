@@ -61,7 +61,7 @@
                 {
                     // Something went wrong retrieving the status,but we're going to try again,
                     // so ignore it unless this is the last try.
-                    if (checkCount >= args.MaxChecks)
+                    if (checkCount >= 10)
                     {
                         break;
                     }
@@ -69,7 +69,7 @@
 
                 await Task.Delay(TimeSpan.FromMilliseconds(120000));
             }
-            while (checkCount < args.MaxChecks);
+            while (checkCount < 10);
 
             return pipelineStatus == nameof(PipelineStatus.Succeeded);
         }
