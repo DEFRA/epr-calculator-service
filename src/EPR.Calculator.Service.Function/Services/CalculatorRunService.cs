@@ -43,7 +43,7 @@
 
                 var isOrgSuccessful = await this.azureSynapseRunner.Process(orgPipelineConfiguration);
 
-                this.logger.LogInformation("Org status", isOrgSuccessful);
+                this.logger.LogInformation("Org status", Convert.ToString(isOrgSuccessful));
 
                 if (isOrgSuccessful)
                 {
@@ -52,13 +52,15 @@
                         Configuration.PomDataPipelineName);
                     isPomSuccessful = await this.azureSynapseRunner.Process(pomPipelineConfiguration);
 
-                    this.logger.LogInformation("Pom status", isPomSuccessful);
+                    this.logger.LogInformation("Pom status", Convert.ToString(isPomSuccessful));
                 }
             }
             else
             {
                 isPomSuccessful = true;
             }
+
+            this.logger.LogInformation("Pom status", Convert.ToString(isPomSuccessful));
 
             // Record success/failure to the database using the web API.
             using var client = this.pipelineClientFactory.GetStatusUpdateClient(Configuration.StatusEndpoint);
@@ -69,7 +71,7 @@
 #if DEBUG
             Debug.WriteLine(statusUpdateResponse.Content.ReadAsStringAsync().Result);
 #endif
-
+            this.logger.LogInformation($"Status Reponse : {statusUpdateResponse}");
             return statusUpdateResponse.IsSuccessStatusCode;
         }
 

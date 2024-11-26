@@ -9,6 +9,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
     using Azure.Analytics.Synapse.Artifacts.Models;
     using Azure.Core;
     using EPR.Calculator.Service.Common.AzureSynapse;
+    using Microsoft.Extensions.Logging;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
     using Moq.Protected;
@@ -52,6 +53,8 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             this.MockPipelineClient = new Mock<PipelineClient>();
             this.MockPipelineRunClient = new Mock<PipelineRunClient>();
             this.MockStatusUpdateHandler = new Mock<HttpMessageHandler>();
+            this.Mocklogger = new Mock<ILogger<AzureSynapseRunner>>();
+
             var pipelineClientFactory = new Mock<PipelineClientFactory>();
             pipelineClientFactory.Setup(factory => factory.GetPipelineRunClient(
                 It.IsAny<Uri>(),
@@ -76,7 +79,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
             // Create the class to test.
             this.TestClass = new AzureSynapseRunner(
-                pipelineClientFactory.Object);
+                pipelineClientFactory.Object, this.Mocklogger.Object);
         }
 
         private AzureSynapseRunner TestClass { get; set; }
@@ -86,6 +89,8 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
         private Mock<PipelineRunClient> MockPipelineRunClient { get; set; }
 
         private Mock<HttpMessageHandler> MockStatusUpdateHandler { get; set; }
+
+        private Mock<ILogger<AzureSynapseRunner>> Mocklogger { get;set; }
 
         private string Year { get; } = "2024-25";
 
@@ -100,7 +105,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             // Arrange
 
             // Act
-            var result = new AzureSynapseRunner();
+            var result = new AzureSynapseRunner(this.Mocklogger.Object);
 
             // Assert
             Assert.IsInstanceOfType<AzureSynapseRunner>(result);

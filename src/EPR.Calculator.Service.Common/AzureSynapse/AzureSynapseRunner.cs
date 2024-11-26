@@ -3,17 +3,20 @@
     using System.Text;
     using System.Text.Json;
     using Azure.Identity;
+    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Runs Azure Synapse pipelines.
     /// </summary>
     public class AzureSynapseRunner : IAzureSynapseRunner
     {
+        private readonly ILogger<AzureSynapseRunner> logger;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AzureSynapseRunner"/> class.
         /// </summary>
-        public AzureSynapseRunner()
-        : this(new PipelineClientFactory())
+        public AzureSynapseRunner(ILogger<AzureSynapseRunner> logger)
+        : this(new PipelineClientFactory(), logger)
         {
         }
 
@@ -23,14 +26,18 @@
         /// <param name="pipelineClientFactory">A factory that initialises pipeline clients
         /// (or generates mock clients when unit testing).</param>
         internal AzureSynapseRunner(
-            IPipelineClientFactory pipelineClientFactory)
-            => this.PipelineClientFactory = pipelineClientFactory;
+            IPipelineClientFactory pipelineClientFactory, ILogger<AzureSynapseRunner> logger)
+        {
+            this.PipelineClientFactory = pipelineClientFactory;
+            this.logger = logger;
+        }
 
         private IPipelineClientFactory PipelineClientFactory { get; }
 
         /// <inheritdoc/>
         public async Task<bool> Process(AzureSynapseRunnerParameters args)
         {
+            this.logger.LogInformation("Azure synapse trigger process started");
             // instead of year will get financial year need to map finacial year to calendar year
             // Trigger the pipeline.
             Guid pipelineRunId;
@@ -40,6 +47,8 @@
                 args.PipelineName,
                 args.FinancialYear);
 
+            this.logger.LogInformation($"pipelineRunId:{pipelineRunId}");
+
             // Periodically check the status of pipeline until it's completed.
             var checkCount = 0;
             var pipelineStatus = nameof(PipelineStatus.NotStarted);
@@ -48,17 +57,22 @@
                 checkCount++;
                 try
                 {
+                    this.logger.LogInformation($"pipelineRunId checkCount:{checkCount}");
                     pipelineStatus = await GetPipelineRunStatus(
                         this.PipelineClientFactory,
                         args.PipelineUrl,
                         pipelineRunId);
+
+                    this.logger.LogInformation($"pipelineStatus for pipelineRunId {pipelineRunId}:{pipelineStatus}");
                     if (pipelineStatus != nameof(PipelineStatus.InProgress))
                     {
                         break;
                     }
                 }
-                catch
+                catch(Exception ex)
                 {
+                    this.logger.LogError($"Error Occurred in Azure Synapse Runner  :{ex.StackTrace}");
+                    this.logger.LogInformation($"Check Count inside exception  :{checkCount}");
                     // Something went wrong retrieving the status,but we're going to try again,
                     // so ignore it unless this is the last try.
                     if (checkCount >= 10)
@@ -71,10 +85,16 @@
                     ? TimeSpan.FromMilliseconds(120000)
                     : TimeSpan.FromMicroseconds(args.CheckInterval);
 
+                this.logger.LogInformation($"ChekInterval  :{checkInterval} ");
+
+                this.logger.LogInformation($"Task started at :{DateTime.Now}");
 
                 await Task.Delay(checkInterval);
+                this.logger.LogInformation($"Task completed at :{DateTime.Now} with CheckInterval {checkInterval} and checkcount is {checkCount}");
             }
             while (checkCount < 10);
+
+            this.logger.LogInformation($"Azure Synapse Runner completed at :{DateTime.Now} and checkcount is {checkCount}");
 
             return pipelineStatus == nameof(PipelineStatus.Succeeded);
         }
