@@ -64,7 +64,7 @@
                         pipelineRunId);
 
                     this.logger.LogInformation($"pipelineStatus for pipelineRunId {pipelineRunId}:{pipelineStatus}");
-                    if (pipelineStatus != nameof(PipelineStatus.InProgress))
+                    if (pipelineStatus.Contains("Succeeded"))
                     {
                         break;
                     }
