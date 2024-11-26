@@ -84,7 +84,6 @@
                 var checkInterval = args.CheckInterval;
 
                 this.logger.LogInformation($"ChekInterval  :{checkInterval} ");
-
                 this.logger.LogInformation($"Task started at :{DateTime.Now}");
 
                 await Task.Delay(TimeSpan.FromMilliseconds(checkInterval));
