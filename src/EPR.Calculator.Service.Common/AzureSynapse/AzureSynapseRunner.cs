@@ -81,15 +81,13 @@
                     }
                 }
 
-                var checkInterval = args.CheckInterval == 0
-                    ? TimeSpan.FromMilliseconds(120000)
-                    : TimeSpan.FromMicroseconds(args.CheckInterval);
+                var checkInterval = args.CheckInterval;
 
                 this.logger.LogInformation($"ChekInterval  :{checkInterval} ");
 
                 this.logger.LogInformation($"Task started at :{DateTime.Now}");
 
-                await Task.Delay(checkInterval);
+                await Task.Delay(TimeSpan.FromMilliseconds(checkInterval));
                 this.logger.LogInformation($"Task completed at :{DateTime.Now} with CheckInterval {checkInterval} and checkcount is {checkCount}");
             }
             while (checkCount < 10);
