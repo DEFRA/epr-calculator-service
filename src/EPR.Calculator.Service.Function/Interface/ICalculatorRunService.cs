@@ -4,11 +4,11 @@
 
 namespace EPR.Calculator.Service.Function.Interface
 {
+    using System.Threading.Tasks;
     using EPR.Calculator.Service.Common;
-    using EPR.Calculator.Service.Common.AzureSynapse;
 
     public interface ICalculatorRunService
     {
-        public void StartProcess(CalculatorRunParameter calculatorRunParameter);
+        public Task<bool> StartProcess(CalculatorRunParameter calculatorRunParameter);
     }
 }

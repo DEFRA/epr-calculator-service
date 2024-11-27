@@ -3,6 +3,7 @@
 // </copyright>
 
 using System;
+using System.Threading.Tasks;
 using EPR.Calculator.Service.Common.AzureSynapse;
 using EPR.Calculator.Service.Function;
 using EPR.Calculator.Service.Function.Interface;
@@ -17,7 +18,6 @@ namespace EPR.Calculator.Service.Function
 {
     public class ServiceBusQueueTrigger
     {
-
         private readonly ICalculatorRunService calculatorRunService;
         private readonly ICalculatorRunParameterMapper calculatorRunParameterMapper;
         private readonly IAzureSynapseRunner azureSynapseRunner;
@@ -32,7 +32,7 @@ namespace EPR.Calculator.Service.Function
         }
 
         [FunctionName("EPRCalculatorRunServiceBusQueueTrigger")]
-        public void Run([ServiceBusTrigger(queueName: "%ServiceBusQueueName%", Connection = "ServiceBusConnectionString")] string myQueueItem, ILogger log)
+        public async Task Run([ServiceBusTrigger(queueName: "%ServiceBusQueueName%", Connection = "ServiceBusConnectionString")] string myQueueItem, ILogger log)
         {
             log.LogInformation("Executing the funcation app started");
             if (string.IsNullOrEmpty(myQueueItem))

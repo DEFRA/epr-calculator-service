@@ -24,5 +24,10 @@
         /// The pipeline completed as a failure.
         /// </summary>
         Failed,
+
+        /// <summary>
+        /// The pipeline completed as a queued.
+        /// </summary>
+        Queued,
     }
 }

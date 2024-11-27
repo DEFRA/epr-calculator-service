@@ -18,7 +18,6 @@ using Microsoft.Extensions.Logging;
 
 namespace EPR.Calculator.Service.Function
 {
-    [ExcludeFromCodeCoverage]
     public class Startup : FunctionsStartup
     {
         public override void Configure(IFunctionsHostBuilder builder)
@@ -31,6 +30,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalculatorRunService, CalculatorRunService>();
             services.AddTransient<ICalculatorRunParameterMapper, CalculatorRunParameterMapper>();
             services.AddTransient<IAzureSynapseRunner, AzureSynapseRunner>();
+            services.AddTransient<IPipelineClientFactory, PipelineClientFactory>();
         }
     }
 }
