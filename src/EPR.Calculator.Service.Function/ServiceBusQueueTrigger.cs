@@ -16,21 +16,31 @@ using Newtonsoft.Json;
 
 namespace EPR.Calculator.Service.Function
 {
+    /// <summary>
+    /// ServiceBusQueueTrigger to trigger the calculator run process and generating the result file.
+    /// </summary>
     public class ServiceBusQueueTrigger
     {
         private readonly ICalculatorRunService calculatorRunService;
         private readonly ICalculatorRunParameterMapper calculatorRunParameterMapper;
-        private readonly IAzureSynapseRunner azureSynapseRunner;
 
-        public ServiceBusQueueTrigger(ICalculatorRunService calculatorRunService,
-        ICalculatorRunParameterMapper calculatorRunParameterMapper,
-        IAzureSynapseRunner azureSynapseRunner)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ServiceBusQueueTrigger"/> class.
+        /// </summary>
+        /// <param name="calculatorRunService">Service to trigger the process for synapse pipeline</param>
+        /// <param name="calculatorRunParameterMapper">Mapper class to map and get the parameter</param>
+        public ServiceBusQueueTrigger(ICalculatorRunService calculatorRunService, ICalculatorRunParameterMapper calculatorRunParameterMapper)
         {
             this.calculatorRunService = calculatorRunService;
             this.calculatorRunParameterMapper = calculatorRunParameterMapper;
-            this.azureSynapseRunner = azureSynapseRunner;
         }
 
+        /// <summary>
+        /// Triggering azure function <see cref="Run"/> to read the message from service bus.
+        /// </summary>
+        /// <param name="myQueueItem">Service bus message</param>
+        /// <param name="log">Logger object for logging</param>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [FunctionName("EPRCalculatorRunServiceBusQueueTrigger")]
         public async Task Run([ServiceBusTrigger(queueName: "%ServiceBusQueueName%", Connection = "ServiceBusConnectionString")] string myQueueItem, ILogger log)
         {
@@ -45,7 +55,7 @@ namespace EPR.Calculator.Service.Function
             {
                 var param = JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem);
                 var calculatorRunParameter = this.calculatorRunParameterMapper.Map(param);
-                this.calculatorRunService.StartProcess(calculatorRunParameter);
+                await this.calculatorRunService.StartProcess(calculatorRunParameter);
             }
             catch (JsonException jsonex)
             {
