@@ -19,17 +19,17 @@ namespace EPR.Calculator.Service.Function.UnitTests
         private readonly Mock<ICalculatorRunService> calculatorRunService;
         private readonly Mock<ICalculatorRunParameterMapper> parameterMapper;
         private readonly Mock<ILogger> mockLogger;
-        private readonly Mock<IAzureSynapseRunner> azureSynapseRunner;
+        
 
         public ServiceBusQueueTriggerTests()
         {
             this.calculatorRunService = new Mock<ICalculatorRunService>();
             this.parameterMapper = new Mock<ICalculatorRunParameterMapper>();
-            this.azureSynapseRunner = new Mock<IAzureSynapseRunner>();
+           
             this.function = new ServiceBusQueueTrigger(
                 this.calculatorRunService.Object,
-                this.parameterMapper.Object,
-                this.azureSynapseRunner.Object);
+                this.parameterMapper.Object
+                );
             this.mockLogger = new Mock<ILogger>();
         }
 
