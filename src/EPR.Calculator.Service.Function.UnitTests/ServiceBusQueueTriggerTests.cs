@@ -12,6 +12,9 @@ namespace EPR.Calculator.Service.Function.UnitTests
     using Moq.Protected;
     using Newtonsoft.Json;
 
+    /// <summary>
+    /// Unit Test class for service bus queue trigger
+    /// </summary>
     [TestClass]
     public class ServiceBusQueueTriggerTests
     {
@@ -19,7 +22,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         private readonly Mock<ICalculatorRunService> calculatorRunService;
         private readonly Mock<ICalculatorRunParameterMapper> parameterMapper;
         private readonly Mock<ILogger> mockLogger;
-        
+
 
         public ServiceBusQueueTriggerTests()
         {
