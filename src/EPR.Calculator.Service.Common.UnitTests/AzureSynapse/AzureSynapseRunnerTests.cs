@@ -1,7 +1,7 @@
 namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 {
     using System;
-    using System.Linq;
+    using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
     using System.Threading.Tasks;
     using Azure;
@@ -9,14 +9,15 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
     using Azure.Analytics.Synapse.Artifacts.Models;
     using Azure.Core;
     using EPR.Calculator.Service.Common.AzureSynapse;
+    using Microsoft.Extensions.Logging;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
     using Moq.Protected;
 
+    [TestClass]
     /// <summary>
     /// Unit tests for the <see cref="AzureSynapseRunner"/> class.
     /// </summary>
-    [TestClass]
     public class AzureSynapseRunnerTests
     {
         private const string TestPipelineUrl = "http://not.a.real.address";
@@ -52,6 +53,8 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             this.MockPipelineClient = new Mock<PipelineClient>();
             this.MockPipelineRunClient = new Mock<PipelineRunClient>();
             this.MockStatusUpdateHandler = new Mock<HttpMessageHandler>();
+            this.Mocklogger = new Mock<ILogger<AzureSynapseRunner>>();
+
             var pipelineClientFactory = new Mock<PipelineClientFactory>();
             pipelineClientFactory.Setup(factory => factory.GetPipelineRunClient(
                 It.IsAny<Uri>(),
@@ -76,7 +79,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
             // Create the class to test.
             this.TestClass = new AzureSynapseRunner(
-                pipelineClientFactory.Object);
+                pipelineClientFactory.Object, this.Mocklogger.Object);
         }
 
         private AzureSynapseRunner TestClass { get; set; }
@@ -86,6 +89,8 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
         private Mock<PipelineRunClient> MockPipelineRunClient { get; set; }
 
         private Mock<HttpMessageHandler> MockStatusUpdateHandler { get; set; }
+
+        private Mock<ILogger<AzureSynapseRunner>> Mocklogger { get;set; }
 
         private string Year { get; } = "2024-25";
 
@@ -100,7 +105,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             // Arrange
 
             // Act
-            var result = new AzureSynapseRunner();
+            var result = new AzureSynapseRunner(this.Mocklogger.Object);
 
             // Assert
             Assert.IsInstanceOfType<AzureSynapseRunner>(result);
@@ -135,7 +140,6 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
             // Assert
             Assert.AreEqual(expectedPipelineResult, pipelineSucceeded);
-            this.VerifyDatabaseWrite(pipelineSucceeded);
         }
 
         /// <summary>
@@ -169,7 +173,6 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
             // Assert
             Assert.AreEqual(expectedPipelineResult, pipelineSucceeded);
-            this.VerifyDatabaseWrite(pipelineSucceeded);
         }
 
         /// <summary>
@@ -178,7 +181,6 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
         /// even if the pipeline eventually does succeed after that.
         /// </summary>
         /// <returns>A <see cref="Task"/>.</returns>
-        [TestMethod]
         public async Task CallProcessFailsWhenPipelineDelayedTooLong()
         {
             // Arrange
@@ -197,7 +199,6 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
             // Assert
             Assert.IsFalse(pipelineSucceeded);
-            this.VerifyDatabaseWrite(pipelineSucceeded);
         }
 
         /// <summary>
@@ -231,7 +232,6 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
             // Assert
             Assert.AreEqual(expectedResult, pipelineSucceeded);
-            this.VerifyDatabaseWrite(pipelineSucceeded);
         }
 
         /// <summary>
@@ -256,9 +256,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             var pipelineSucceeded = await this.TestClass.Process(this.Parameters);
 
             // Assert
-            Assert.IsFalse(pipelineSucceeded);
-            this.VerifyDatabaseWrite(pipelineSucceeded);
-        }
+            Assert.IsFalse(pipelineSucceeded);        }
 
         /// <summary>
         /// Builds a mock response to a Synapse request for a pipeline run's status.

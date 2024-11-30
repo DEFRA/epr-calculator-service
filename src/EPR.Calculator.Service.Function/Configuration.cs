@@ -22,5 +22,7 @@ namespace EPR.Calculator.Service.Function
 
         public static Uri StatusEndpoint
             => new Uri(Environment.GetEnvironmentVariable(EnvironmentVariableKeys.StatusUpdateEndpoint));
+
+        public static string ExecuteRPDPipeline => Environment.GetEnvironmentVariable(EnvironmentVariableKeys.ExecuteRPDPipeline);
     }
 }
