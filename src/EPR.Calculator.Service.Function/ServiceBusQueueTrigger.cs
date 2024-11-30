@@ -4,7 +4,6 @@
 
 using System;
 using System.Threading.Tasks;
-using EPR.Calculator.Service.Common.AzureSynapse;
 using EPR.Calculator.Service.Function;
 using EPR.Calculator.Service.Function.Interface;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
@@ -42,20 +41,21 @@ namespace EPR.Calculator.Service.Function
         /// <param name="log">Logger object for logging</param>
         /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [FunctionName("EPRCalculatorRunServiceBusQueueTrigger")]
-        public async Task Run([ServiceBusTrigger(queueName: "%ServiceBusQueueName%", Connection = "ServiceBusConnectionString")] string myQueueItem, ILogger log)
+        public async Task<bool> Run([ServiceBusTrigger(queueName: "%ServiceBusQueueName%", Connection = "ServiceBusConnectionString")] string myQueueItem, ILogger log)
         {
+            bool processStatus = false;
             log.LogInformation("Executing the funcation app started");
             if (string.IsNullOrEmpty(myQueueItem))
             {
                 log.LogError($"Message is Null or empty");
-                return;
+                return processStatus;
             }
 
             try
             {
                 var param = JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem);
                 var calculatorRunParameter = this.calculatorRunParameterMapper.Map(param);
-                await this.calculatorRunService.StartProcess(calculatorRunParameter);
+                processStatus = await this.calculatorRunService.StartProcess(calculatorRunParameter);
             }
             catch (JsonException jsonex)
             {
@@ -67,6 +67,7 @@ namespace EPR.Calculator.Service.Function
             }
 
             log.LogInformation("Azure function app execution finished");
+            return processStatus;
         }
     }
 }

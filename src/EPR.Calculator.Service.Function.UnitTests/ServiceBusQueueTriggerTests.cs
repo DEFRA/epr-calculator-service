@@ -5,7 +5,6 @@
 namespace EPR.Calculator.Service.Function.UnitTests
 {
     using EPR.Calculator.Service.Common;
-    using EPR.Calculator.Service.Common.AzureSynapse;
     using EPR.Calculator.Service.Function.Interface;
     using Microsoft.Extensions.Logging;
     using Moq;
@@ -24,83 +23,103 @@ namespace EPR.Calculator.Service.Function.UnitTests
         private readonly Mock<ILogger> mockLogger;
 
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ServiceBusQueueTriggerTests"/> class.
+        /// </summary>
         public ServiceBusQueueTriggerTests()
         {
             this.calculatorRunService = new Mock<ICalculatorRunService>();
             this.parameterMapper = new Mock<ICalculatorRunParameterMapper>();
-           
             this.function = new ServiceBusQueueTrigger(
                 this.calculatorRunService.Object,
-                this.parameterMapper.Object
-                );
+                this.parameterMapper.Object);
             this.mockLogger = new Mock<ILogger>();
         }
 
+        /// <summary>
+        /// Tests the Run method with a valid message to ensure it processes the queue item correctly and returns true.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [TestMethod]
-        public void CanCallRun()
+        public async Task ServiceBusTrigger_Valid_Message_Run()
         {
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
             var processedParameterData = new CalculatorRunParameter() { FinancialYear = "2024-25", User = "Test user", Id = 678767 };
 
-            this.parameterMapper.Setup(t => t.Map(JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem))).Returns(processedParameterData);
-            var log = new Mock<ILogger>().Object;
+            this.parameterMapper.Setup(t => t.Map(It.IsAny<CalculatorParameter>())).Returns(processedParameterData);
+
+            this.calculatorRunService.Setup(t => t.StartProcess(It.IsAny<CalculatorRunParameter>())).ReturnsAsync(true);
 
             var mockHttpHandler = new Mock<HttpMessageHandler>();
 
             mockHttpHandler.Protected()
-     .Setup<Task<HttpResponseMessage>>(
-         "SendAsync",
-         ItExpr.IsAny<HttpRequestMessage>(),
-         ItExpr.IsAny<CancellationToken>()
-     )
-     .ReturnsAsync((HttpRequestMessage request, CancellationToken token) =>
-     {
-         HttpResponseMessage response = new HttpResponseMessage()
-         { StatusCode = System.Net.HttpStatusCode.OK };
+                .Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.IsAny<HttpRequestMessage>(),
+                    ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync((HttpRequestMessage request, CancellationToken token) =>
+                {
+                    HttpResponseMessage response = new HttpResponseMessage()
+                    { StatusCode = System.Net.HttpStatusCode.OK };
 
-         return response;
-     });
+                    return response;
+                });
 
             var httpClient = new HttpClient(mockHttpHandler.Object)
             {
                 BaseAddress = new Uri("http://google.com"),
             };
 
+            // Act
+            var result = await this.function.Run(myQueueItem, this.mockLogger.Object);
 
-            this.function.Run(myQueueItem, log);
-
+            // Assert
+            Assert.IsTrue(result);
             this.calculatorRunService.Verify(
                 p => p.StartProcess(
                     It.Is<CalculatorRunParameter>(msg => msg == processedParameterData)),
                 Times.Once);
         }
 
+        /// <summary>
+        /// Tests the Run method to ensure it logs an error and returns false when the message is null or empty.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [TestMethod]
-        public void ServiceBusTrigger_Message_Empty()
+        public async Task ServiceBusTrigger_Empty_Message_Run()
         {
             // Arrange
             var myQueueItem = string.Empty;
-            this.function.Run(myQueueItem, this.mockLogger.Object);
 
+            // Act
+            var result = await this.function.Run(myQueueItem, this.mockLogger.Object);
+
+            // Assert
+            Assert.IsFalse(result);
             this.mockLogger.Verify(
-                log => log.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Message is Null or empty")),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()), Times.Once);
+                 log => log.Log(
+                     LogLevel.Error,
+                     It.IsAny<EventId>(),
+                     It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Message is Null or empty")),
+                     It.IsAny<Exception>(),
+                     It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                 Times.Once);
         }
 
+        /// <summary>
+        /// Tests the Run method to ensure it logs an error and returns false when mapper throw json exception .
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [TestMethod]
-        public void ServiceBusTrigger_Message_Notvalid_Json_Exception()
+        public async Task ServiceBusTrigger_Message_Json_Exception()
         {
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
-
             this.parameterMapper.Setup(t => t.Map(JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem))).Throws<JsonException>();
-            this.function.Run(myQueueItem, this.mockLogger.Object);
 
+            // Act
+            var result = await this.function.Run(myQueueItem, this.mockLogger.Object);
             this.mockLogger.Verify(
                 log => log.Log(
                 LogLevel.Error,
@@ -110,14 +129,51 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 It.IsAny<Func<It.IsAnyType, Exception, string>>()), Times.Once);
         }
 
+        /// <summary>
+        /// Tests the Run method to ensure it logs an error and returns false when mapper throw unhandled exception.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+
         [TestMethod]
-        public void ServiceBusTrigger_Message_Notvalid_Exception()
+        public async Task ServiceBusTrigger_Message_Mapper_Unhandled_Exception()
         {
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
-
             this.parameterMapper.Setup(t => t.Map(JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem))).Throws<Exception>();
-            this.function.Run(myQueueItem, this.mockLogger.Object);
+
+            // Act
+            var result = await this.function.Run(myQueueItem, this.mockLogger.Object);
+
+            this.mockLogger.Verify(
+                log => log.Log(
+                LogLevel.Error,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Error")),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()), Times.Once);
+        }
+
+        /// <summary>
+        /// Tests the Run method to ensure it logs an error and returns false when startprocess throw unhandled exception.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [TestMethod]
+        public async Task ServiceBusTrigger_Invalid_Message_Run_Unhandled_Exception()
+        {
+            // Arrange
+            // var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
+            // this.parameterMapper.Setup(t => t.Map(JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem))).Throws<Exception>();
+
+            var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
+            var processedParameterData = new CalculatorRunParameter() { FinancialYear = "2024-25", User = "Test user", Id = 678767 };
+
+            this.parameterMapper.Setup(t => t.Map(It.IsAny<CalculatorParameter>())).Returns(processedParameterData);
+
+            // Setup StartProcess to throw an exception
+            this.calculatorRunService.Setup(t => t.StartProcess(It.IsAny<CalculatorRunParameter>())).ThrowsAsync(new Exception("Unhandled exception"));
+
+            // Act
+            var result = await this.function.Run(myQueueItem, this.mockLogger.Object);
 
             this.mockLogger.Verify(
                 log => log.Log(
