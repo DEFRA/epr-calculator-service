@@ -161,9 +161,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public async Task ServiceBusTrigger_Invalid_Message_Run_Unhandled_Exception()
         {
             // Arrange
-            // var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
-            // this.parameterMapper.Setup(t => t.Map(JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem))).Throws<Exception>();
-
             var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
             var processedParameterData = new CalculatorRunParameter() { FinancialYear = "2024-25", User = "Test user", Id = 678767 };
 
@@ -175,13 +172,16 @@ namespace EPR.Calculator.Service.Function.UnitTests
             // Act
             var result = await this.function.Run(myQueueItem, this.mockLogger.Object);
 
+            // Assert
             this.mockLogger.Verify(
                 log => log.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Error")),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()), Times.Once);
+                    LogLevel.Error,
+                    It.IsAny<EventId>(),
+                    It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Unhandled exception")),
+                    It.IsAny<Exception>(),
+                    It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                Times.Once);
         }
+
     }
 }
