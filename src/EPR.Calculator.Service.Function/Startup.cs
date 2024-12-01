@@ -18,6 +18,7 @@ using Microsoft.Extensions.Logging;
 
 namespace EPR.Calculator.Service.Function
 {
+    /// Configures the startup for the Azure Functions application.
     public class Startup : FunctionsStartup
     {
         public override void Configure(IFunctionsHostBuilder builder)
