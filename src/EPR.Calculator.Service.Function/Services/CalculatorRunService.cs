@@ -72,7 +72,6 @@
 
             this.logger.LogInformation("Pom status: {Status}", Convert.ToString(isPomSuccessful));
 
-            // Record success/failure to the database using the web API.
             using var client = this.pipelineClientFactory.GetStatusUpdateClient(Configuration.StatusEndpoint);
             var statusUpdateResponse = await client.PostAsync(
                     Configuration.StatusEndpoint,
