@@ -1,7 +1,7 @@
 ﻿namespace EPR.Calculator.Service.Common
 {
     /// <summary>
-    /// CalculatorRunParameter model class
+    /// CalculatorRunParameter model class.
     /// </summary>
     public class CalculatorRunParameter
     {

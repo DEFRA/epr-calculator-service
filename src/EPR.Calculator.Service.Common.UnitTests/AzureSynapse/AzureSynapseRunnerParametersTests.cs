@@ -21,7 +21,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             this.CalculatorRunId = fixture.Create<int>();
             this.FinancialYear = "2024-25";
             this.CheckInterval = fixture.Create<int>();
-            this.MaxChecks = fixture.Create<int>();
+            this.MaxCheckCount = fixture.Create<int>();
             this.PipelineName = fixture.Create<string>();
             this.PipelineUrl = fixture.Create<Uri>();
             this.StatusUpdateEndpoint = fixture.Create<Uri>();
@@ -31,7 +31,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 CalculatorRunId = this.CalculatorRunId,
                 FinancialYear = this.FinancialYear,
                 CheckInterval = this.CheckInterval,
-                MaxChecks = this.MaxChecks,
+                MaxCheckCount = this.MaxCheckCount,
                 PipelineName = this.PipelineName,
                 PipelineUrl = this.PipelineUrl,
                 StatusUpdateEndpoint = this.StatusUpdateEndpoint,
@@ -46,7 +46,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
         private int CheckInterval { get; }
 
-        private int MaxChecks { get; }
+        private int MaxCheckCount { get; }
 
         private string PipelineName { get; }
 
@@ -66,7 +66,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 CalculatorRunId = this.CalculatorRunId,
                 FinancialYear = this.FinancialYear,
                 CheckInterval = this.CheckInterval,
-                MaxChecks = this.MaxChecks,
+                MaxCheckCount = this.MaxCheckCount,
                 PipelineName = this.PipelineName,
                 PipelineUrl = this.PipelineUrl,
                 StatusUpdateEndpoint = this.StatusUpdateEndpoint,
@@ -77,7 +77,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             Assert.AreEqual(this.CalculatorRunId, this.TestClass.CalculatorRunId);
             Assert.AreEqual(this.FinancialYear, this.TestClass.FinancialYear);
             Assert.AreEqual(this.CheckInterval, this.TestClass.CheckInterval);
-            Assert.AreEqual(this.MaxChecks, this.TestClass.MaxChecks);
+            Assert.AreEqual(this.MaxCheckCount, this.TestClass.MaxCheckCount);
             Assert.AreEqual(this.PipelineName, this.TestClass.PipelineName);
             Assert.AreEqual(this.PipelineUrl, this.TestClass.PipelineUrl);
             Assert.AreEqual(this.StatusUpdateEndpoint, this.TestClass.StatusUpdateEndpoint);

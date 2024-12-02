@@ -26,7 +26,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
         private const string FakeRunNumber = "33a07ce6-c34e-410f-b878-d0c89fd4f893";
 
-        private const int MaxChecks = 3;
+        private const int MaxCheckCount = 3;
 
         private const int CheckInterval = 1;
 
@@ -38,7 +38,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 CalculatorRunId = CalculatorRunId,
                 FinancialYear = this.Year,
                 CheckInterval = CheckInterval,
-                MaxChecks = MaxChecks,
+                MaxCheckCount = MaxCheckCount,
                 PipelineUrl = new Uri(TestPipelineUrl),
                 PipelineName = TestPipelineName,
                 StatusUpdateEndpoint = new Uri(TestPipelineUrl),

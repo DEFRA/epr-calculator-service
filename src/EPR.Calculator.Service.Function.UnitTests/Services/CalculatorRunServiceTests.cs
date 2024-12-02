@@ -79,10 +79,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 EnvironmentVariableKeys.CheckInterval,
                 checkInterval.ToString());
 
-            var maxChecks = this.Fixture.Create<int>();
+            var maxCheckCount = this.Fixture.Create<int>();
             Environment.SetEnvironmentVariable(
                 EnvironmentVariableKeys.MaxCheckCount,
-                maxChecks.ToString());
+                maxCheckCount.ToString());
 
             var pipelineUrl = this.Fixture.Create<Uri>();
             Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PipelineUrl, pipelineUrl.ToString());
@@ -116,7 +116,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CalculatorRunId = id,
                 CheckInterval = checkInterval,
                 FinancialYear = financialYear,
-                MaxChecks = maxChecks,
+                MaxCheckCount = maxCheckCount,
                 PipelineUrl = pipelineUrl,
                 PipelineName = orgpipelineName,
                 StatusUpdateEndpoint = statusUpdateEndpoint,
@@ -126,7 +126,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 p.CalculatorRunId == id &&
                 p.CheckInterval == checkInterval &&
                 p.FinancialYear == financialYear &&
-                p.MaxChecks == maxChecks &&
+                p.MaxCheckCount == maxCheckCount &&
                 p.PipelineUrl == pipelineUrl &&
                 p.PipelineName == orgpipelineName &&
                 p.StatusUpdateEndpoint == statusUpdateEndpoint)))
@@ -136,7 +136,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 p.CalculatorRunId == id &&
                 p.CheckInterval == checkInterval &&
                 p.FinancialYear == financialYear &&
-                p.MaxChecks == maxChecks &&
+                p.MaxCheckCount == maxCheckCount &&
                 p.PipelineUrl == pipelineUrl &&
                 p.PipelineName == pompipelineName &&
                 p.StatusUpdateEndpoint == statusUpdateEndpoint)))
@@ -168,10 +168,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 EnvironmentVariableKeys.CheckInterval,
                 checkInterval.ToString());
 
-            var maxChecks = this.Fixture.Create<int>();
+            var maxCheckCount = this.Fixture.Create<int>();
             Environment.SetEnvironmentVariable(
                 EnvironmentVariableKeys.MaxCheckCount,
-                maxChecks.ToString());
+                maxCheckCount.ToString());
 
             var pipelineUrl = this.Fixture.Create<Uri>();
             Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PipelineUrl, pipelineUrl.ToString());
@@ -205,7 +205,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CalculatorRunId = id,
                 CheckInterval = checkInterval,
                 FinancialYear = financialYear,
-                MaxChecks = maxChecks,
+                MaxCheckCount = maxCheckCount,
                 PipelineUrl = pipelineUrl,
                 PipelineName = orgpipelineName,
                 StatusUpdateEndpoint = statusUpdateEndpoint,
@@ -238,10 +238,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 EnvironmentVariableKeys.CheckInterval,
                 checkInterval.ToString());
 
-            var maxChecks = 10;
+            var maxCheckCount = 10;
             Environment.SetEnvironmentVariable(
                 EnvironmentVariableKeys.MaxCheckCount,
-                maxChecks.ToString());
+                maxCheckCount.ToString());
 
             var pipelineUrl = this.Fixture.Create<Uri>(); ;
             Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PipelineUrl, pipelineUrl.ToString());
@@ -275,7 +275,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CalculatorRunId = id,
                 CheckInterval = checkInterval,
                 FinancialYear = financialYear,
-                MaxChecks = maxChecks,
+                MaxCheckCount = maxCheckCount,
                 PipelineUrl = pipelineUrl,
                 PipelineName = orgpipelineName,
                 StatusUpdateEndpoint = statusUpdateEndpoint,
@@ -316,10 +316,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 EnvironmentVariableKeys.CheckInterval,
                 checkInterval.ToString());
 
-            var maxChecks = 10;
+            var maxCheckCount = 10;
             Environment.SetEnvironmentVariable(
                 EnvironmentVariableKeys.MaxCheckCount,
-                maxChecks.ToString());
+                maxCheckCount.ToString());
 
             var pipelineUrl = this.Fixture.Create<Uri>(); ;
             Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PipelineUrl, pipelineUrl.ToString());
@@ -353,7 +353,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CalculatorRunId = id,
                 CheckInterval = checkInterval,
                 FinancialYear = financialYear,
-                MaxChecks = maxChecks,
+                MaxCheckCount = maxCheckCount,
                 PipelineUrl = pipelineUrl,
                 PipelineName = orgpipelineName,
                 StatusUpdateEndpoint = statusUpdateEndpoint,

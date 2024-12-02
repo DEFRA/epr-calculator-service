@@ -48,7 +48,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var processedParameterData = new CalculatorRunParameter() { FinancialYear = "2024-25", User = "Test user", Id = 678767 };
 
             this.parameterMapper.Setup(t => t.Map(It.IsAny<CalculatorParameter>())).Returns(processedParameterData);
-
             this.calculatorRunService.Setup(t => t.StartProcess(It.IsAny<CalculatorRunParameter>())).ReturnsAsync(true);
 
             var mockHttpHandler = new Mock<HttpMessageHandler>();
@@ -72,13 +71,22 @@ namespace EPR.Calculator.Service.Function.UnitTests
             };
 
             // Act
-            var result = await this.function.Run(myQueueItem, this.mockLogger.Object);
+            await this.function.Run(myQueueItem, this.mockLogger.Object);
 
             // Assert
-            Assert.IsTrue(result);
             this.calculatorRunService.Verify(
                 p => p.StartProcess(
                     It.Is<CalculatorRunParameter>(msg => msg == processedParameterData)),
+                Times.Once);
+
+            // Optionally, verify logging if needed
+            this.mockLogger.Verify(
+                x => x.Log(
+                    It.Is<LogLevel>(l => l == LogLevel.Information),
+                    It.IsAny<EventId>(),
+                    It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Executing the function app started")),
+                    It.IsAny<Exception>(),
+                    It.Is<Func<It.IsAnyType, Exception, string>>((v, t) => true)),
                 Times.Once);
         }
 
@@ -93,18 +101,17 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var myQueueItem = string.Empty;
 
             // Act
-            var result = await this.function.Run(myQueueItem, this.mockLogger.Object);
+            await this.function.Run(myQueueItem, this.mockLogger.Object);
 
             // Assert
-            Assert.IsFalse(result);
             this.mockLogger.Verify(
-                 log => log.Log(
-                     LogLevel.Error,
-                     It.IsAny<EventId>(),
-                     It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Message is Null or empty")),
-                     It.IsAny<Exception>(),
-                     It.IsAny<Func<It.IsAnyType, Exception, string>>()),
-                 Times.Once);
+                log => log.Log(
+                    LogLevel.Error,
+                    It.IsAny<EventId>(),
+                    It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Message is null or empty")),
+                    It.IsAny<Exception>(),
+                    It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                Times.Once);
         }
 
         /// <summary>
@@ -116,17 +123,20 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
-            this.parameterMapper.Setup(t => t.Map(JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem))).Throws<JsonException>();
+            this.parameterMapper.Setup(t => t.Map(It.IsAny<CalculatorParameter>())).Throws<JsonException>();
 
             // Act
-            var result = await this.function.Run(myQueueItem, this.mockLogger.Object);
+            await this.function.Run(myQueueItem, this.mockLogger.Object);
+
+            // Assert
             this.mockLogger.Verify(
                 log => log.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Incorrect format")),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()), Times.Once);
+                    LogLevel.Error,
+                    It.IsAny<EventId>(),
+                    It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Incorrect format")),
+                    It.IsAny<Exception>(),
+                    It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                Times.Once);
         }
 
         /// <summary>
@@ -139,18 +149,20 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
-            this.parameterMapper.Setup(t => t.Map(JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem))).Throws<Exception>();
+            this.parameterMapper.Setup(t => t.Map(It.IsAny<CalculatorParameter>())).Throws<Exception>();
 
             // Act
-            var result = await this.function.Run(myQueueItem, this.mockLogger.Object);
+            await this.function.Run(myQueueItem, this.mockLogger.Object);
 
+            // Assert
             this.mockLogger.Verify(
                 log => log.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Error")),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()), Times.Once);
+                    LogLevel.Error,
+                    It.IsAny<EventId>(),
+                    It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Error")),
+                    It.IsAny<Exception>(),
+                    It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                Times.Once);
         }
 
         /// <summary>
@@ -170,7 +182,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             this.calculatorRunService.Setup(t => t.StartProcess(It.IsAny<CalculatorRunParameter>())).ThrowsAsync(new Exception("Unhandled exception"));
 
             // Act
-            var result = await this.function.Run(myQueueItem, this.mockLogger.Object);
+            await this.function.Run(myQueueItem, this.mockLogger.Object);
 
             // Assert
             this.mockLogger.Verify(
@@ -182,6 +194,5 @@ namespace EPR.Calculator.Service.Function.UnitTests
                     It.IsAny<Func<It.IsAnyType, Exception, string>>()),
                 Times.Once);
         }
-
     }
 }

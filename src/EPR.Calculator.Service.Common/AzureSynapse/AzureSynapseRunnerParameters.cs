@@ -20,7 +20,7 @@
 
         /// <summary>Gets the maximum number of times to check whether the pipeline has completed,
         /// before reporting a failure.</summary>
-        public int MaxChecks { get; init; }
+        public int MaxCheckCount { get; init; }
 
         /// <summary>Gets the time to wait before re-checking to see
         /// if the pipeline has run successfully.</summary>

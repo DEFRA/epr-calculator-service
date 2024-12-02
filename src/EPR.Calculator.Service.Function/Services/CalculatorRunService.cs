@@ -98,7 +98,7 @@
             {
                 PipelineUrl = new Uri(Configuration.PipelineUrl),
                 CheckInterval = int.Parse(Configuration.CheckInterval),
-                MaxChecks = int.Parse(Configuration.MaxCheckCount),
+                MaxCheckCount = int.Parse(Configuration.MaxCheckCount),
                 PipelineName = pipelineName,
                 CalculatorRunId = args.Id,
                 FinancialYear = "2023",
