@@ -25,6 +25,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             this.PipelineName = fixture.Create<string>();
             this.PipelineUrl = fixture.Create<Uri>();
             this.StatusUpdateEndpoint = fixture.Create<Uri>();
+            this.PrepareCalcResultEndPoint = fixture.Create<Uri>();
 
             this.TestClass = new AzureSynapseRunnerParameters
             {
@@ -34,7 +35,8 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 MaxCheckCount = this.MaxCheckCount,
                 PipelineName = this.PipelineName,
                 PipelineUrl = this.PipelineUrl,
-                StatusUpdateEndpoint = this.StatusUpdateEndpoint,
+
+
             };
         }
 
@@ -54,6 +56,8 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
         private Uri StatusUpdateEndpoint { get; }
 
+        private Uri PrepareCalcResultEndPoint { get; }
+
         /// <summary>
         /// Test that the class can be initialised successfully.
         /// </summary>
@@ -69,7 +73,6 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 MaxCheckCount = this.MaxCheckCount,
                 PipelineName = this.PipelineName,
                 PipelineUrl = this.PipelineUrl,
-                StatusUpdateEndpoint = this.StatusUpdateEndpoint,
             };
 
             // Assert
@@ -80,7 +83,6 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             Assert.AreEqual(this.MaxCheckCount, this.TestClass.MaxCheckCount);
             Assert.AreEqual(this.PipelineName, this.TestClass.PipelineName);
             Assert.AreEqual(this.PipelineUrl, this.TestClass.PipelineUrl);
-            Assert.AreEqual(this.StatusUpdateEndpoint, this.TestClass.StatusUpdateEndpoint);
         }
     }
 }

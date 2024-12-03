@@ -26,9 +26,5 @@
         /// if the pipeline has run successfully.</summary>
         public int CheckInterval { get; init; }
 
-        /// <summary>
-        /// Gets the URL of the endpoint that's used to access the database and update the status of the run.
-        /// </summary>
-        required public Uri StatusUpdateEndpoint { get; init; }
     }
 }

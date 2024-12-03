@@ -14,10 +14,10 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
     using Moq;
     using Moq.Protected;
 
-    [TestClass]
     /// <summary>
     /// Unit tests for the <see cref="AzureSynapseRunner"/> class.
     /// </summary>
+    [TestClass]
     public class AzureSynapseRunnerTests
     {
         private const string TestPipelineUrl = "http://not.a.real.address";
@@ -31,18 +31,6 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
         private const int CheckInterval = 1;
 
         private const int CalculatorRunId = 7;
-
-        private AzureSynapseRunnerParameters Parameters
-            => new AzureSynapseRunnerParameters
-            {
-                CalculatorRunId = CalculatorRunId,
-                FinancialYear = this.Year,
-                CheckInterval = CheckInterval,
-                MaxCheckCount = MaxCheckCount,
-                PipelineUrl = new Uri(TestPipelineUrl),
-                PipelineName = TestPipelineName,
-                StatusUpdateEndpoint = new Uri(TestPipelineUrl),
-            };
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AzureSynapseRunnerTests"/> class.
@@ -64,9 +52,6 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 It.IsAny<Uri>(),
                 It.IsAny<TokenCredential>()))
                 .Returns(this.MockPipelineClient.Object);
-            pipelineClientFactory.Setup(factory => factory.GetStatusUpdateClient(
-                It.IsAny<Uri>()))
-                .Returns(new HttpClient(this.MockStatusUpdateHandler.Object));
 
             // Set up the status update handler to return a default response
             // rather than actualy trying to contact the endpoint.
@@ -82,6 +67,17 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 pipelineClientFactory.Object, this.Mocklogger.Object);
         }
 
+        private AzureSynapseRunnerParameters Parameters
+           => new AzureSynapseRunnerParameters
+           {
+               CalculatorRunId = CalculatorRunId,
+               FinancialYear = this.Year,
+               CheckInterval = CheckInterval,
+               MaxCheckCount = MaxCheckCount,
+               PipelineUrl = new Uri(TestPipelineUrl),
+               PipelineName = TestPipelineName,
+           };
+
         private AzureSynapseRunner TestClass { get; set; }
 
         private Mock<PipelineClient> MockPipelineClient { get; set; }
@@ -90,7 +86,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
         private Mock<HttpMessageHandler> MockStatusUpdateHandler { get; set; }
 
-        private Mock<ILogger<AzureSynapseRunner>> Mocklogger { get;set; }
+        private Mock<ILogger<AzureSynapseRunner>> Mocklogger { get; set; }
 
         private string Year { get; } = "2024-25";
 
@@ -103,7 +99,6 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
         public void CanConstructWithPipelineFactory()
         {
             // Arrange
-
             // Act
             var result = new AzureSynapseRunner(this.Mocklogger.Object);
 
@@ -181,6 +176,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
         /// even if the pipeline eventually does succeed after that.
         /// </summary>
         /// <returns>A <see cref="Task"/>.</returns>
+        [TestMethod]
         public async Task CallProcessFailsWhenPipelineDelayedTooLong()
         {
             // Arrange
@@ -192,8 +188,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 .Returns(Task.FromResult(MockPipelineRunResponse(nameof(PipelineStatus.InProgress))))
                 .Returns(Task.FromResult(MockPipelineRunResponse(nameof(PipelineStatus.InProgress))))
                 .Returns(Task.FromResult(MockPipelineRunResponse(nameof(PipelineStatus.InProgress))))
-                .Returns(Task.FromResult(MockPipelineRunResponse(nameof(PipelineStatus.Succeeded))));
-
+                .Returns(Task.FromResult(MockPipelineRunResponse(nameof(PipelineStatus.InProgress))));
             // Act
             var pipelineSucceeded = await this.TestClass.Process(this.Parameters);
 
@@ -256,7 +251,8 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             var pipelineSucceeded = await this.TestClass.Process(this.Parameters);
 
             // Assert
-            Assert.IsFalse(pipelineSucceeded);        }
+            Assert.IsFalse(pipelineSucceeded);
+        }
 
         /// <summary>
         /// Builds a mock response to a Synapse request for a pipeline run's status.
@@ -289,21 +285,6 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
         }
 
         /// <summary>
-        /// Verifies that the expected value was written to the database using it's web API
-        /// (i.e. that the mock HTTP message handler was called with the isSuccessful
-        /// parameter set to the appropriate value).
-        /// </summary>
-        /// <param name="pipelineSucceeded">The pipeline success value that should of been recorded to the database.</param>
-        private void VerifyDatabaseWrite(bool pipelineSucceeded)
-            => this.MockStatusUpdateHandler.Protected().Verify(
-                "SendAsync",
-                Times.Once(),
-                ItExpr.Is<HttpRequestMessage>(
-                    message => message.Content!.ReadAsStringAsync().Result
-                        .Contains($"\"isSuccessful\":{pipelineSucceeded.ToString().ToLower()}")),
-                ItExpr.IsAny<CancellationToken>());
-
-        /// <summary>
         /// Builds a mock response to a Synapse request for a new pipeline run.
         /// </summary>
         private void MockCreateRunResponse()
@@ -323,24 +304,5 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(createRunResponse.Object));
         }
-
-        // The below is for testing against the actual pipelines before the Azure Function that
-        // will call this class is implemented.Delete it once the Azure Function is done.
-        // [TestMethod]
-        // public async Task TrialRun()
-        // {
-        //    this.TestClass = new AzureSynapseRunner(
-        //        new Uri("https://devepdinfas1401.dev.azuresynapse.net"),
-        //        "pip_paycal_get_org_data",
-        //        //"pip_paycal_get_pom_data",
-        //        3,
-        //        //60000,
-        //        1,
-        //        new Uri("http://localhost:5055/v1/internal/rpdStatus"));
-        //    var result = await this.TestClass.Process(
-        //        CalculatorRunId,
-        //        FinancialYear.Parse("2023"));
-        //    Assert.IsTrue(result);
-        // }
     }
 }

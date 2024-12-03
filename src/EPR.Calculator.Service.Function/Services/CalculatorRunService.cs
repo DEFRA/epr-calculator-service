@@ -53,7 +53,6 @@
                 PipelineName = pipelineName,
                 CalculatorRunId = args.Id,
                 FinancialYear = Common.Utils.Util.GetCalendarYearFromFinancialYear(financialYear),
-                StatusUpdateEndpoint = Configuration.StatusEndpoint,
             };
         }
 
@@ -111,6 +110,7 @@
             bool runRpdPipeline = bool.Parse(Configuration.ExecuteRPDPipeline);
             var response = new HttpResponseMessage(HttpStatusCode.Continue);
             bool isSuccess = response.IsSuccessStatusCode;
+
             if (runRpdPipeline)
             {
                 var orgPipelineConfiguration = GetAzureSynapseConfiguration(
@@ -138,19 +138,19 @@
 
             this.logger.LogInformation("Pom status: {Status}", Convert.ToString(isPomSuccessful));
 
+            using var client = this.pipelineClientFactory.GetStatusUpdateClient(Configuration.StatusEndpoint);
+
             if (isPomSuccessful)
             {
-                using var prepareCalcResultclient = this.pipelineClientFactory.GetStatusUpdateClient(Configuration.PrepareCalcResultEndPoint);
-                response = await prepareCalcResultclient.PostAsync(
-                        Configuration.PrepareCalcResultEndPoint,
-                        GetPrepareCalcResultMessage(calculatorRunParameter.Id));
-                isSuccess = response.IsSuccessStatusCode;
+                var prepareCalcResultResponse = await client.PostAsync(
+                    Configuration.PrepareCalcResultEndPoint,
+                    GetPrepareCalcResultMessage(calculatorRunParameter.Id));
+                isSuccess = prepareCalcResultResponse.IsSuccessStatusCode;
             }
 
-            using var client = this.pipelineClientFactory.GetStatusUpdateClient(Configuration.StatusEndpoint);
             var statusUpdateResponse = await client.PostAsync(
-                    Configuration.StatusEndpoint,
-                    GetStatusUpdateMessage(calculatorRunParameter.Id, isSuccess));
+                Configuration.StatusEndpoint,
+                GetStatusUpdateMessage(calculatorRunParameter.Id, isSuccess));
 
 #if DEBUG
             Debug.WriteLine(statusUpdateResponse.Content.ReadAsStringAsync().Result);
