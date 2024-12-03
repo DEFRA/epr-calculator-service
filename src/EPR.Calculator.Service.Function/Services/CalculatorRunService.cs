@@ -2,6 +2,7 @@
 {
     using System;
     using System.Diagnostics;
+    using System.Net;
     using System.Net.Http;
     using System.Text;
     using System.Text.Json;
@@ -78,6 +79,25 @@
         }
 
         /// <summary>
+        /// Creates a JSON message containing the calculator run ID for preparing calculation results.
+        /// </summary>
+        /// <param name="calculatorRunId">The ID of the calculator run.</param>
+        /// <returns>A <see cref="StringContent"/> object containing the JSON message.</returns>
+        public static StringContent GetPrepareCalcResultMessage(int calculatorRunId)
+        {
+            var calcResultsRequest = new
+            {
+                runId = calculatorRunId,
+            };
+
+            return new StringContent(
+                JsonSerializer.Serialize(calcResultsRequest),
+                Encoding.UTF8,
+                "application/json");
+        }
+
+
+        /// <summary>
         /// Starts the calculator process.
         /// </summary>
         /// <param name="calculatorRunParameter">The parameters required to run the calculator.</param>
@@ -89,6 +109,8 @@
             this.logger.LogInformation("Process started");
             bool isPomSuccessful = false;
             bool runRpdPipeline = bool.Parse(Configuration.ExecuteRPDPipeline);
+            var response = new HttpResponseMessage(HttpStatusCode.Continue);
+            bool isSuccess = response.IsSuccessStatusCode;
             if (runRpdPipeline)
             {
                 var orgPipelineConfiguration = GetAzureSynapseConfiguration(
@@ -116,10 +138,19 @@
 
             this.logger.LogInformation("Pom status: {Status}", Convert.ToString(isPomSuccessful));
 
+            if (isPomSuccessful)
+            {
+                using var prepareCalcResultclient = this.pipelineClientFactory.GetStatusUpdateClient(Configuration.PrepareCalcResultEndPoint);
+                response = await prepareCalcResultclient.PostAsync(
+                        Configuration.PrepareCalcResultEndPoint,
+                        GetPrepareCalcResultMessage(calculatorRunParameter.Id));
+                isSuccess = response.IsSuccessStatusCode;
+            }
+
             using var client = this.pipelineClientFactory.GetStatusUpdateClient(Configuration.StatusEndpoint);
             var statusUpdateResponse = await client.PostAsync(
                     Configuration.StatusEndpoint,
-                    GetStatusUpdateMessage(calculatorRunParameter.Id, isPomSuccessful));
+                    GetStatusUpdateMessage(calculatorRunParameter.Id, isSuccess));
 
 #if DEBUG
             Debug.WriteLine(statusUpdateResponse.Content.ReadAsStringAsync().Result);
