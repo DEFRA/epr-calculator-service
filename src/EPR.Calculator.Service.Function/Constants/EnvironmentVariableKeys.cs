@@ -27,6 +27,6 @@ namespace EPR.Calculator.Service.Function.Constants
         public const string StatusUpdateEndpoint = "StatusUpdateEndpoint";
 
         /// <summary>The key for executing the RPD pipeline.</summary>
-        public const string ExecuteRPDPipeline = "Execute_RPD_Pipeline";
+        public const string ExecuteRPDPipeline = "ExecuteRPDPipeline";
     }
 }
