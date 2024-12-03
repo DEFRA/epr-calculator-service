@@ -34,6 +34,50 @@
         }
 
         /// <summary>
+        /// Gets the Azure Synapse configuration.
+        /// </summary>
+        /// <param name="args">The calculator run parameters.</param>
+        /// <param name="pipelineName">The name of the pipeline.</param>
+        /// <returns>The Azure Synapse runner parameters.</returns>
+        public static AzureSynapseRunnerParameters GetAzureSynapseConfiguration(
+            CalculatorRunParameter args,
+            string pipelineName)
+        {
+            var financialYear = args.FinancialYear;
+            return new AzureSynapseRunnerParameters
+            {
+                PipelineUrl = new Uri(Configuration.PipelineUrl),
+                CheckInterval = int.Parse(Configuration.CheckInterval),
+                MaxCheckCount = int.Parse(Configuration.MaxCheckCount),
+                PipelineName = pipelineName,
+                CalculatorRunId = args.Id,
+                FinancialYear = Common.Utils.Util.GetCalendarYearFromFinancialYear(financialYear),
+                StatusUpdateEndpoint = Configuration.StatusEndpoint,
+            };
+        }
+
+        /// <summary>
+        /// Builds the JSON content of the status update API call.
+        /// </summary>
+        /// <param name="calculatorRunId">The calculator run ID.</param>
+        /// <param name="pipelineSucceeded">Indicates whether the pipeline succeeded.</param>
+        /// <returns>The JSON content for the status update.</returns>
+        public static StringContent GetStatusUpdateMessage(int calculatorRunId, bool pipelineSucceeded)
+        {
+            var statusUpdate = new
+            {
+                runId = calculatorRunId,
+                updatedBy = "string",
+                isSuccessful = pipelineSucceeded,
+            };
+
+            return new StringContent(
+                JsonSerializer.Serialize(statusUpdate),
+                Encoding.UTF8,
+                "application/json");
+        }
+
+        /// <summary>
         /// Starts the calculator process.
         /// </summary>
         /// <param name="calculatorRunParameter">The parameters required to run the calculator.</param>
@@ -82,49 +126,6 @@
 #endif
             this.logger.LogInformation("Status Response: {Response}", statusUpdateResponse);
             return statusUpdateResponse.IsSuccessStatusCode;
-        }
-
-        /// <summary>
-        /// Gets the Azure Synapse configuration.
-        /// </summary>
-        /// <param name="args">The calculator run parameters.</param>
-        /// <param name="pipelineName">The name of the pipeline.</param>
-        /// <returns>The Azure Synapse runner parameters.</returns>
-        private static AzureSynapseRunnerParameters GetAzureSynapseConfiguration(
-            CalculatorRunParameter args,
-            string pipelineName)
-        {
-            return new AzureSynapseRunnerParameters
-            {
-                PipelineUrl = new Uri(Configuration.PipelineUrl),
-                CheckInterval = int.Parse(Configuration.CheckInterval),
-                MaxCheckCount = int.Parse(Configuration.MaxCheckCount),
-                PipelineName = pipelineName,
-                CalculatorRunId = args.Id,
-                FinancialYear = "2023",
-                StatusUpdateEndpoint = Configuration.StatusEndpoint,
-            };
-        }
-
-        /// <summary>
-        /// Builds the JSON content of the status update API call.
-        /// </summary>
-        /// <param name="calculatorRunId">The calculator run ID.</param>
-        /// <param name="pipelineSucceeded">Indicates whether the pipeline succeeded.</param>
-        /// <returns>The JSON content for the status update.</returns>
-        private static StringContent GetStatusUpdateMessage(int calculatorRunId, bool pipelineSucceeded)
-        {
-            var statusUpdate = new
-            {
-                runId = calculatorRunId,
-                updatedBy = "string",
-                isSuccessful = pipelineSucceeded,
-            };
-
-            return new StringContent(
-                JsonSerializer.Serialize(statusUpdate),
-                Encoding.UTF8,
-                "application/json");
         }
     }
 }

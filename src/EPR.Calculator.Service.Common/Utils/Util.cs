@@ -12,8 +12,9 @@
         /// </summary>
         /// <param name="value">The financial year string to parse, in the format "YYYY-YY".</param>
         /// <returns>The first year as a string.</returns>
+        /// <exception cref="ArgumentException">Thrown when the financial year string is null or empty.</exception>
         /// <exception cref="FormatException">Thrown when the format is invalid.</exception>
-        public static string GetFinancialYearAsYYYY(string value)
+        public static string GetStartYearFromFinancialYear(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
             {
@@ -28,6 +29,11 @@
             }
 
             var years = value.Split('-');
+            if (years.Length != 2 || !int.TryParse(years[1], out _))
+            {
+                throw new FormatException("Financial year format is invalid. Expected format is 'YYYY-YY'.");
+            }
+
             return years[0];
         }
 
@@ -37,15 +43,17 @@
         /// <param name="financialYear">The financial year string to convert, in the format "YYYY-YY".</param>
         /// <returns>The previous calendar year as a string.</returns>
         /// <exception cref="ArgumentException">Thrown when the financial year string is null or empty.</exception>
-        public static string GetCalendarYear(string financialYear)
+        public static string GetCalendarYearFromFinancialYear(string financialYear)
         {
             if (string.IsNullOrWhiteSpace(financialYear))
             {
                 throw new ArgumentException("Financial year cannot be null or empty", nameof(financialYear));
             }
 
-            int year = int.Parse(GetFinancialYearAsYYYY(financialYear));
+            int year = int.Parse(GetStartYearFromFinancialYear(financialYear));
             return (year - 1).ToString();
         }
+
     }
+
 }
