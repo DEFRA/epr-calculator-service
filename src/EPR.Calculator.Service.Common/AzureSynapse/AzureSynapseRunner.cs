@@ -1,137 +1,156 @@
 ﻿namespace EPR.Calculator.Service.Common.AzureSynapse
 {
-    using System.Diagnostics;
-    using System.Net.Http.Headers;
     using System.Text;
     using System.Text.Json;
     using Azure.Identity;
-    using EPR.Calculator.Service.Common.Utils;
+    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Runs Azure Synapse pipelines.
     /// </summary>
     public class AzureSynapseRunner : IAzureSynapseRunner
     {
+        private readonly ILogger<AzureSynapseRunner> logger;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AzureSynapseRunner"/> class.
         /// </summary>
-        public AzureSynapseRunner()
-        : this(new PipelineClientFactory())
+        /// <param name="logger">The logger instance to use for logging.</param>
+        public AzureSynapseRunner(ILogger<AzureSynapseRunner> logger)
+            : this(new PipelineClientFactory(), logger)
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AzureSynapseRunner"/> class.
         /// </summary>
-        /// <param name="pipelineClientFactory">A factory that initialises pipeline clients
+        /// <param name="pipelineClientFactory">A factory that initializes pipeline clients
         /// (or generates mock clients when unit testing).</param>
+        /// <param name="logger">The logger instance to use for logging.</param>
         internal AzureSynapseRunner(
-            PipelineClientFactory pipelineClientFactory)
-            => this.PipelineClientFactory = pipelineClientFactory;
+            IPipelineClientFactory pipelineClientFactory, ILogger<AzureSynapseRunner> logger)
+        {
+            this.PipelineClientFactory = pipelineClientFactory;
+            this.logger = logger;
+        }
 
-        private PipelineClientFactory PipelineClientFactory { get; }
+        private IPipelineClientFactory PipelineClientFactory { get; }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Processes the Azure Synapse Runner with the specified parameters.
+        /// </summary>
+        /// <param name="args">The parameters required to run the Azure Synapse Runner.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains a boolean value indicating whether the pipeline run succeeded.</returns>
         public async Task<bool> Process(AzureSynapseRunnerParameters args)
         {
-            // instead of year will get financial year need to map finacial year to calendar year
+            this.logger.LogInformation("Azure synapse trigger process started");
+
+            // Instead of year, get financial year and map financial year to calendar year.
             // Trigger the pipeline.
             Guid pipelineRunId;
             pipelineRunId = await StartPipelineRun(
                 this.PipelineClientFactory,
                 args.PipelineUrl,
                 args.PipelineName,
-                Util.GetCalendarYear(args.FinancialYear));
+                args.FinancialYear);
 
-            // Periodically check the status of pipeline until it's completed.
+            this.logger.LogInformation($"pipelineRunId: {pipelineRunId}");
+
+            // Periodically check the status of the pipeline until it's completed.
             var checkCount = 0;
             var pipelineStatus = nameof(PipelineStatus.NotStarted);
+            var maxCheckCount = args.MaxCheckCount;
             do
             {
                 checkCount++;
                 try
                 {
+                    this.logger.LogInformation($"pipelineRunId checkCount: {checkCount}");
                     pipelineStatus = await GetPipelineRunStatus(
                         this.PipelineClientFactory,
                         args.PipelineUrl,
                         pipelineRunId);
-                    if (pipelineStatus != nameof(PipelineStatus.InProgress))
+
+                    this.logger.LogInformation($"pipelineStatus for pipelineRunId {pipelineRunId}: {pipelineStatus}");
+                    if (pipelineStatus.Contains("Succeeded"))
                     {
                         break;
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // Something went wrong retrieving the status,but we're going to try again,
+                    this.logger.LogError($"Error occurred in Azure Synapse Runner: {ex.StackTrace}");
+                    this.logger.LogInformation($"Check count inside exception: {checkCount}");
+
+                    // Something went wrong retrieving the status, but we're going to try again,
                     // so ignore it unless this is the last try.
-                    if (checkCount >= args.MaxChecks)
+                    if (checkCount >= maxCheckCount)
                     {
                         break;
                     }
                 }
 
-                await Task.Delay(args.CheckInterval);
+                var checkInterval = args.CheckInterval;
+
+                this.logger.LogInformation($"CheckInterval: {checkInterval}");
+                this.logger.LogInformation($"Task started at: {DateTime.Now}");
+
+                await Task.Delay(TimeSpan.FromMilliseconds(checkInterval));
+                this.logger.LogInformation($"Task completed at: {DateTime.Now} with CheckInterval {checkInterval} and checkCount is {checkCount}");
             }
-            while (checkCount < args.MaxChecks);
+            while (checkCount < maxCheckCount);
 
-            // Record success/failure to the database using the web API.
-            using var client = this.PipelineClientFactory.GetStatusUpdateClient(args.StatusUpdateEndpoint);
-            var statusUpdateResponse = await client.PostAsync(
-                    args.StatusUpdateEndpoint.ToString(),
-                    GetStatusUpdateMessage(args.CalculatorRunId, pipelineStatus == nameof(PipelineStatus.Succeeded)));
+            this.logger.LogInformation($"Azure Synapse Runner completed at: {DateTime.Now} and checkCount is {checkCount}");
 
-            #if DEBUG
-            Debug.WriteLine(statusUpdateResponse.Content.ReadAsStringAsync().Result);
-            #endif
-
-            return pipelineStatus == nameof(PipelineStatus.Succeeded) && statusUpdateResponse.IsSuccessStatusCode;
+            return pipelineStatus == nameof(PipelineStatus.Succeeded);
         }
 
         /// <summary>
-        /// Build the JSON content of the status update API call.
+        /// Starts a pipeline run.
         /// </summary>
-        private static StringContent GetStatusUpdateMessage(int calculatorRunId, bool pipelineSucceeded)
-            => new StringContent(
-                JsonSerializer.Serialize(new
-                {
-                    runId = calculatorRunId,
-                    updatedBy = "string",
-                    isSuccessful = pipelineSucceeded,
-                }),
-                Encoding.UTF8,
-                "application/json");
-
+        /// <param name="factory">The factory to create pipeline clients.</param>
+        /// <param name="pipelineUrl">The URL of the pipeline.</param>
+        /// <param name="pipelineName">The name of the pipeline.</param>
+        /// <param name="year">The year parameter for the pipeline.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the pipeline run ID.</returns>
         private static async Task<Guid> StartPipelineRun(
-            PipelineClientFactory factory,
+            IPipelineClientFactory factory,
             Uri pipelineUrl,
             string pipelineName,
             string year)
         {
-            #if DEBUG
+#if DEBUG
             var credentials = new DefaultAzureCredential();
-            #else
-            var credentials = new ManagedIdentityCredential();
-            #endif
+#else
+    var credentials = new ManagedIdentityCredential();
+#endif
 
             var pipelineClient = factory.GetPipelineClient(pipelineUrl, credentials);
 
             var result = await pipelineClient.CreatePipelineRunAsync(
-            pipelineName,
-            parameters: new Dictionary<string, object>
-            {
-                { "date", year },
-            });
+                pipelineName,
+                parameters: new Dictionary<string, object>
+                {
+            { "date", year },
+                });
 
             return Guid.Parse(result.Value.RunId);
         }
 
-        private static async Task<string> GetPipelineRunStatus(PipelineClientFactory factory, Uri pipelineUrl, Guid runId)
+        /// <summary>
+        /// Retrieves the status of a pipeline run.
+        /// </summary>
+        /// <param name="factory">The factory to create pipeline clients.</param>
+        /// <param name="pipelineUrl">The URL of the pipeline.</param>
+        /// <param name="runId">The ID of the pipeline run.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the status of the pipeline run.</returns>
+        private static async Task<string> GetPipelineRunStatus(IPipelineClientFactory factory, Uri pipelineUrl, Guid runId)
         {
-            #if DEBUG
+#if DEBUG
             var credentials = new DefaultAzureCredential();
-            #else
-            var credentials = new ManagedIdentityCredential();
-            #endif
+#else
+    var credentials = new ManagedIdentityCredential();
+#endif
 
             var pipelineClient = factory.GetPipelineRunClient(pipelineUrl, credentials);
 

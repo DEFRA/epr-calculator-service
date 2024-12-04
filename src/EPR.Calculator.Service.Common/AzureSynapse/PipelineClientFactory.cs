@@ -15,7 +15,7 @@ namespace EPR.Calculator.Service.Common.AzureSynapse
     /// Used by <see cref="AzureSynapsePipelineTestController"/> via dependancy injection
     /// so that the clients can be replaced with mocks when unit testing.
     /// </remarks>
-    internal class PipelineClientFactory()
+    public class PipelineClientFactory : IPipelineClientFactory
     {
         /// <summary>
         /// Initialises a new <see cref="PipelineClient"/>.
@@ -40,7 +40,7 @@ namespace EPR.Calculator.Service.Common.AzureSynapse
         /// </summary>
         /// <param name="statusUpdateUrl">The URL of the status update endpoint.</param>
         /// <returns>A new <see cref="HttpClient"/>.</returns>
-        public virtual HttpClient GetStatusUpdateClient(Uri statusUpdateUrl)
+        public virtual HttpClient GetHttpClient(Uri statusUpdateUrl)
             => new HttpClient();
     }
 }
