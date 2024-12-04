@@ -7,8 +7,6 @@
     /// </summary>
     public static class Util
     {
-        private const int FinancialYearLength = 2;
-
         /// <summary>
         /// Extracts the first year from a financial year string in the format "YYYY-YY".
         /// </summary>
@@ -25,17 +23,14 @@
 
             string pattern = @"^\d{4}-\d{2}$";
             TimeSpan regexTimeout = TimeSpan.FromSeconds(1);
+
             if (!Regex.IsMatch(value, pattern, RegexOptions.None, regexTimeout))
             {
                 throw new FormatException("Financial year format is invalid. Expected format is 'YYYY-YY'.");
             }
 
+            // Since the regex ensures the format, we can safely split and return the first part
             var years = value.Split('-');
-            if (years.Length != FinancialYearLength || !int.TryParse(years[1], out _))
-            {
-                throw new FormatException("Financial year format is invalid. Expected format is 'YYYY-YY'.");
-            }
-
             return years[0];
         }
 

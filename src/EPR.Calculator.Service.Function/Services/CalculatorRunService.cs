@@ -46,15 +46,9 @@
             string pipelineName)
         {
             var financialYear = args.FinancialYear;
-            if (!int.TryParse(Configuration.CheckInterval, out int checkInterval))
-            {
-                throw new ArgumentException("Invalid CheckInterval value in configuration.");
-            }
+            int.TryParse(Configuration.CheckInterval, out int checkInterval);
 
-            if (!int.TryParse(Configuration.MaxCheckCount, out int maxCheckCount))
-            {
-                throw new ArgumentException("Invalid MaxCheckCount value in configuration.");
-            }
+            int.TryParse(Configuration.MaxCheckCount, out int maxCheckCount);
 
             return new AzureSynapseRunnerParameters
             {
@@ -118,11 +112,7 @@
         {
             this.logger.LogInformation("Process started");
             bool isPomSuccessful = false;
-            if (!bool.TryParse(Configuration.ExecuteRPDPipeline, out bool runRpdPipeline))
-            {
-                this.logger.LogError("Invalid value for ExecuteRPDPipeline in configuration.");
-                return false;
-            }
+            bool.TryParse(Configuration.ExecuteRPDPipeline, out bool runRpdPipeline);
 
             var response = new HttpResponseMessage(HttpStatusCode.Continue);
             bool isSuccess = response.IsSuccessStatusCode;
