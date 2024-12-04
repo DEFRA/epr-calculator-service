@@ -69,5 +69,4 @@ namespace EPR.Calculator.Service.Function
             log.LogInformation("Azure function app execution finished");
         }
     }
-
 }

@@ -35,8 +35,6 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 MaxCheckCount = this.MaxCheckCount,
                 PipelineName = this.PipelineName,
                 PipelineUrl = this.PipelineUrl,
-
-
             };
         }
 

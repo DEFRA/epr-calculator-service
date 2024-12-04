@@ -19,5 +19,4 @@ namespace EPR.Calculator.Service.Function.Interface
         /// <returns>A task that represents the asynchronous operation. The task result contains a boolean indicating success or failure.</returns>
         Task<bool> StartProcess(CalculatorRunParameter calculatorRunParameter);
     }
-
 }

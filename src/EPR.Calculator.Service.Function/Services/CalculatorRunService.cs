@@ -95,7 +95,6 @@
                 "application/json");
         }
 
-
         /// <summary>
         /// Starts the calculator process.
         /// </summary>
@@ -138,7 +137,7 @@
 
             this.logger.LogInformation("Pom status: {Status}", Convert.ToString(isPomSuccessful));
 
-            using var client = this.pipelineClientFactory.GetStatusUpdateClient(Configuration.StatusEndpoint);
+            using var client = this.pipelineClientFactory.GetHttpClient(Configuration.StatusEndpoint);
 
             if (isPomSuccessful)
             {

@@ -40,7 +40,7 @@ namespace EPR.Calculator.Service.Common.AzureSynapse
         /// </summary>
         /// <param name="statusUpdateUrl">The URL of the status update endpoint.</param>
         /// <returns>A new <see cref="HttpClient"/>.</returns>
-        public virtual HttpClient GetStatusUpdateClient(Uri statusUpdateUrl)
+        public virtual HttpClient GetHttpClient(Uri statusUpdateUrl)
             => new HttpClient();
     }
 }

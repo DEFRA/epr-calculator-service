@@ -29,6 +29,6 @@
         /// </summary>
         /// <param name="statusUpdateUrl">The URL for status updates.</param>
         /// <returns>A new instance of <see cref="HttpClient"/>.</returns>
-        public HttpClient GetStatusUpdateClient(Uri statusUpdateUrl);
+        public HttpClient GetHttpClient(Uri statusUpdateUrl);
     }
 }

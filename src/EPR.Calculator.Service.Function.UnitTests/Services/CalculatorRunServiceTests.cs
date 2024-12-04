@@ -40,7 +40,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             };
 
             this.PipelineClientFactory = new Mock<PipelineClientFactory>();
-            this.PipelineClientFactory.Setup(factory => factory.GetStatusUpdateClient(It.IsAny<Uri>()))
+            this.PipelineClientFactory.Setup(factory => factory.GetHttpClient(It.IsAny<Uri>()))
                 .Returns(httpClient);
 
             this.CalculatorRunService = new CalculatorRunService(
@@ -65,7 +65,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         private Mock<HttpMessageHandler> MockStatusUpdateHandler { get; set; }
 
         private Mock<PipelineClientFactory> PipelineClientFactory { get; }
-
 
         /// <summary>
         /// Checks that the service calls the Azure Synapse runner and passes the correct parameters to it.
@@ -357,6 +356,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         /// <summary>
         /// Verifies that the service returns false if the pom pipeline fails after the org pipeline succeeds.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [TestMethod]
         public async Task StartProcessReturnsFalseIfPomPipelineFails()
         {

@@ -12,7 +12,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
     using Newtonsoft.Json;
 
     /// <summary>
-    /// Unit Test class for service bus queue trigger
+    /// Unit Test class for service bus queue trigger.
     /// </summary>
     [TestClass]
     public class ServiceBusQueueTriggerTests
@@ -21,7 +21,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
         private readonly Mock<ICalculatorRunService> calculatorRunService;
         private readonly Mock<ICalculatorRunParameterMapper> parameterMapper;
         private readonly Mock<ILogger> mockLogger;
-
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceBusQueueTriggerTests"/> class.
@@ -143,7 +142,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
         /// Tests the Run method to ensure it logs an error and returns false when mapper throw unhandled exception.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-
         [TestMethod]
         public async Task ServiceBusTrigger_Message_Mapper_Unhandled_Exception()
         {
