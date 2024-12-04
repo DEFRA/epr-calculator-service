@@ -111,11 +111,29 @@
         public async Task<bool> StartProcess(CalculatorRunParameter calculatorRunParameter)
         {
             this.logger.LogInformation("Process started");
-            bool isPomSuccessful = false;
             bool.TryParse(Configuration.ExecuteRPDPipeline, out bool runRpdPipeline);
 
-            var response = new HttpResponseMessage(HttpStatusCode.Continue);
-            bool isSuccess = response.IsSuccessStatusCode;
+            bool isPomSuccessful = await this.RunPipelines(calculatorRunParameter, runRpdPipeline);
+
+            using var client = this.pipelineClientFactory.GetHttpClient(Configuration.StatusEndpoint);
+            this.logger.LogInformation("HTTP Client: {client}", client);
+
+            bool isSuccess = await this.UpdateStatusAndPrepareResult(calculatorRunParameter, isPomSuccessful, client);
+
+            return isSuccess;
+        }
+
+        /// <summary>
+        /// Executes the organization and POM pipelines based on the provided parameters.
+        /// </summary>
+        /// <param name="calculatorRunParameter">The parameters required to run the calculator.</param>
+        /// <param name="runRpdPipeline">A boolean indicating whether the RPD pipeline should be executed.</param>
+        /// <returns>
+        /// A task that represents the asynchronous operation. The task result contains a boolean indicating the success of the POM pipeline.
+        /// </returns>
+        private async Task<bool> RunPipelines(CalculatorRunParameter calculatorRunParameter, bool runRpdPipeline)
+        {
+            bool isPomSuccessful = false;
 
             if (runRpdPipeline)
             {
@@ -124,7 +142,6 @@
                     Configuration.OrgDataPipelineName);
 
                 var isOrgSuccessful = await this.azureSynapseRunner.Process(orgPipelineConfiguration);
-
                 this.logger.LogInformation("Org status: {Status}", isOrgSuccessful);
 
                 if (isOrgSuccessful)
@@ -133,7 +150,6 @@
                         calculatorRunParameter,
                         Configuration.PomDataPipelineName);
                     isPomSuccessful = await this.azureSynapseRunner.Process(pomPipelineConfiguration);
-
                     this.logger.LogInformation("Pom status: {Status}", isPomSuccessful);
                 }
             }
@@ -143,10 +159,21 @@
             }
 
             this.logger.LogInformation("Pom status: {Status}", isPomSuccessful);
+            return isPomSuccessful;
+        }
 
-            using var client = this.pipelineClientFactory.GetHttpClient(Configuration.StatusEndpoint);
-
-            this.logger.LogInformation("HTTP Client: {client}", client);
+        /// <summary>
+        /// Updates the status and prepares the result based on the success of the POM pipeline.
+        /// </summary>
+        /// <param name="calculatorRunParameter">The parameters required to run the calculator.</param>
+        /// <param name="isPomSuccessful">A boolean indicating whether the POM pipeline was successful.</param>
+        /// <param name="client">The HTTP client used to send status updates and prepare result requests.</param>
+        /// <returns>
+        /// A task that represents the asynchronous operation. The task result contains a boolean indicating the success of the status update and result preparation.
+        /// </returns>
+        private async Task<bool> UpdateStatusAndPrepareResult(CalculatorRunParameter calculatorRunParameter, bool isPomSuccessful, HttpClient client)
+        {
+            bool isSuccess = false;
 
             if (isPomSuccessful)
             {
@@ -159,8 +186,8 @@
                 if (statusUpdateResponse != null && statusUpdateResponse.IsSuccessStatusCode)
                 {
                     var prepareCalcResultResponse = await client.PostAsync(
-                   Configuration.PrepareCalcResultEndPoint,
-                   GetPrepareCalcResultMessage(calculatorRunParameter.Id));
+                        Configuration.PrepareCalcResultEndPoint,
+                        GetPrepareCalcResultMessage(calculatorRunParameter.Id));
                     isSuccess = prepareCalcResultResponse.IsSuccessStatusCode;
                     this.logger.LogInformation("prepareCalcResultResponse: {isSuccess}", prepareCalcResultResponse.IsSuccessStatusCode);
                 }
