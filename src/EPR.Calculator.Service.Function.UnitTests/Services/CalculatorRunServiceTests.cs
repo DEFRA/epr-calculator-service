@@ -417,7 +417,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters);
 
             // Assert
-            Assert.IsTrue(result);
+            Assert.IsFalse(result);
 
             // Verify that the org pipeline was called once
             this.AzureSynapseRunner.Verify(

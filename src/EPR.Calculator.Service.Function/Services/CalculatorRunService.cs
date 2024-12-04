@@ -139,23 +139,39 @@
 
             using var client = this.pipelineClientFactory.GetHttpClient(Configuration.StatusEndpoint);
 
+            this.logger.LogInformation("HTTP Client: {client}", client);
+
             if (isPomSuccessful)
             {
-                var prepareCalcResultResponse = await client.PostAsync(
-                    Configuration.PrepareCalcResultEndPoint,
-                    GetPrepareCalcResultMessage(calculatorRunParameter.Id));
-                isSuccess = prepareCalcResultResponse.IsSuccessStatusCode;
+                this.logger.LogInformation("StatusEndPoint: {StatusEndPoint}", Configuration.StatusEndpoint);
+                var statusUpdateResponse = await client.PostAsync(
+                    Configuration.StatusEndpoint,
+                    GetStatusUpdateMessage(calculatorRunParameter.Id, isPomSuccessful));
+                this.logger.LogInformation("Status Response: {Response}", statusUpdateResponse);
+
+                if (statusUpdateResponse != null && statusUpdateResponse.IsSuccessStatusCode)
+                {
+                    var prepareCalcResultResponse = await client.PostAsync(
+                   Configuration.PrepareCalcResultEndPoint,
+                   GetPrepareCalcResultMessage(calculatorRunParameter.Id));
+                    isSuccess = prepareCalcResultResponse.IsSuccessStatusCode;
+                    this.logger.LogInformation("prepareCalcResultResponse: {isSuccess}", prepareCalcResultResponse.IsSuccessStatusCode);
+                }
+
+                this.logger.LogInformation("PrepareCalcResultEndPoint: {PrepareCalcResultEndPoint}", Configuration.PrepareCalcResultEndPoint);
+                this.logger.LogInformation("CalculatorRunParameter ID: {CalculatorRunParameterId}", calculatorRunParameter.Id);
+                this.logger.LogInformation("GetPrepareCalcResultMessage: {GetPrepareCalcResultMessageId}", GetPrepareCalcResultMessage(calculatorRunParameter.Id));
+            }
+            else
+            {
+                this.logger.LogInformation("StatusEndPoint: {StatusEndPoint}", Configuration.StatusEndpoint);
+                var statusUpdateResponse = await client.PostAsync(
+                    Configuration.StatusEndpoint,
+                    GetStatusUpdateMessage(calculatorRunParameter.Id, isPomSuccessful));
+                this.logger.LogInformation("Status Response: {Response}", statusUpdateResponse);
             }
 
-            var statusUpdateResponse = await client.PostAsync(
-                Configuration.StatusEndpoint,
-                GetStatusUpdateMessage(calculatorRunParameter.Id, isSuccess));
-
-#if DEBUG
-            Debug.WriteLine(statusUpdateResponse.Content.ReadAsStringAsync().Result);
-#endif
-            this.logger.LogInformation("Status Response: {Response}", statusUpdateResponse);
-            return statusUpdateResponse.IsSuccessStatusCode;
+            return isSuccess;
         }
     }
 }
