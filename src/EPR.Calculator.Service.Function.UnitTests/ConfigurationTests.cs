@@ -24,5 +24,4 @@ namespace EPR.Calculator.Service.Function.UnitTests
             Assert.AreEqual(Environment.GetEnvironmentVariable("ExecuteRPDPipeline"), Configuration.ExecuteRPDPipeline);
         }
     }
-
 }

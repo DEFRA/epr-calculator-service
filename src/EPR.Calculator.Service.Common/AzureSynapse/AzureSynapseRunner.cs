@@ -10,6 +10,7 @@
     /// </summary>
     public class AzureSynapseRunner : IAzureSynapseRunner
     {
+        private const string DateParameter = "date";
         private readonly ILogger<AzureSynapseRunner> logger;
 
         /// <summary>
@@ -72,7 +73,7 @@
                         pipelineRunId);
 
                     this.logger.LogInformation($"pipelineStatus for pipelineRunId {pipelineRunId}: {pipelineStatus}");
-                    if (pipelineStatus.Contains("Succeeded"))
+                    if (pipelineStatus.Contains(nameof(PipelineStatus.Succeeded)))
                     {
                         break;
                     }
@@ -119,11 +120,7 @@
             string pipelineName,
             string year)
         {
-#if DEBUG
-            var credentials = new DefaultAzureCredential();
-#else
-    var credentials = new ManagedIdentityCredential();
-#endif
+            var credentials = new ManagedIdentityCredential();
 
             var pipelineClient = factory.GetPipelineClient(pipelineUrl, credentials);
 
@@ -131,7 +128,7 @@
                 pipelineName,
                 parameters: new Dictionary<string, object>
                 {
-            { "date", year },
+            { DateParameter, year },
                 });
 
             return Guid.Parse(result.Value.RunId);
@@ -146,11 +143,7 @@
         /// <returns>A task that represents the asynchronous operation. The task result contains the status of the pipeline run.</returns>
         private static async Task<string> GetPipelineRunStatus(IPipelineClientFactory factory, Uri pipelineUrl, Guid runId)
         {
-#if DEBUG
-            var credentials = new DefaultAzureCredential();
-#else
-    var credentials = new ManagedIdentityCredential();
-#endif
+            var credentials = new ManagedIdentityCredential();
 
             var pipelineClient = factory.GetPipelineRunClient(pipelineUrl, credentials);
 

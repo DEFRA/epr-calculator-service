@@ -17,6 +17,7 @@
     /// </summary>
     public class CalculatorRunService : ICalculatorRunService
     {
+        private const string JsonMediaType = "application/json";
         private readonly IAzureSynapseRunner azureSynapseRunner;
         private readonly ILogger logger;
         private readonly IPipelineClientFactory pipelineClientFactory;
@@ -45,11 +46,21 @@
             string pipelineName)
         {
             var financialYear = args.FinancialYear;
+            if (!int.TryParse(Configuration.CheckInterval, out int checkInterval))
+            {
+                throw new ArgumentException("Invalid CheckInterval value in configuration.");
+            }
+
+            if (!int.TryParse(Configuration.MaxCheckCount, out int maxCheckCount))
+            {
+                throw new ArgumentException("Invalid MaxCheckCount value in configuration.");
+            }
+
             return new AzureSynapseRunnerParameters
             {
                 PipelineUrl = new Uri(Configuration.PipelineUrl),
-                CheckInterval = int.Parse(Configuration.CheckInterval),
-                MaxCheckCount = int.Parse(Configuration.MaxCheckCount),
+                CheckInterval = checkInterval,
+                MaxCheckCount = maxCheckCount,
                 PipelineName = pipelineName,
                 CalculatorRunId = args.Id,
                 FinancialYear = Common.Utils.Util.GetCalendarYearFromFinancialYear(financialYear),
@@ -61,20 +72,21 @@
         /// </summary>
         /// <param name="calculatorRunId">The calculator run ID.</param>
         /// <param name="pipelineSucceeded">Indicates whether the pipeline succeeded.</param>
+        /// <param name="user">Requested by user.</param>
         /// <returns>The JSON content for the status update.</returns>
-        public static StringContent GetStatusUpdateMessage(int calculatorRunId, bool pipelineSucceeded)
+        public static StringContent GetStatusUpdateMessage(int calculatorRunId, bool pipelineSucceeded, string user)
         {
             var statusUpdate = new
             {
                 runId = calculatorRunId,
-                updatedBy = "string",
+                updatedBy = user,
                 isSuccessful = pipelineSucceeded,
             };
 
             return new StringContent(
                 JsonSerializer.Serialize(statusUpdate),
                 Encoding.UTF8,
-                "application/json");
+                JsonMediaType);
         }
 
         /// <summary>
@@ -92,7 +104,7 @@
             return new StringContent(
                 JsonSerializer.Serialize(calcResultsRequest),
                 Encoding.UTF8,
-                "application/json");
+                JsonMediaType);
         }
 
         /// <summary>
@@ -106,7 +118,12 @@
         {
             this.logger.LogInformation("Process started");
             bool isPomSuccessful = false;
-            bool runRpdPipeline = bool.Parse(Configuration.ExecuteRPDPipeline);
+            if (!bool.TryParse(Configuration.ExecuteRPDPipeline, out bool runRpdPipeline))
+            {
+                this.logger.LogError("Invalid value for ExecuteRPDPipeline in configuration.");
+                return false;
+            }
+
             var response = new HttpResponseMessage(HttpStatusCode.Continue);
             bool isSuccess = response.IsSuccessStatusCode;
 
@@ -118,7 +135,7 @@
 
                 var isOrgSuccessful = await this.azureSynapseRunner.Process(orgPipelineConfiguration);
 
-                this.logger.LogInformation("Org status: {Status}", Convert.ToString(isOrgSuccessful));
+                this.logger.LogInformation("Org status: {Status}", isOrgSuccessful);
 
                 if (isOrgSuccessful)
                 {
@@ -127,7 +144,7 @@
                         Configuration.PomDataPipelineName);
                     isPomSuccessful = await this.azureSynapseRunner.Process(pomPipelineConfiguration);
 
-                    this.logger.LogInformation("Pom status: {Status}", Convert.ToString(isPomSuccessful));
+                    this.logger.LogInformation("Pom status: {Status}", isPomSuccessful);
                 }
             }
             else
@@ -135,7 +152,7 @@
                 isPomSuccessful = true;
             }
 
-            this.logger.LogInformation("Pom status: {Status}", Convert.ToString(isPomSuccessful));
+            this.logger.LogInformation("Pom status: {Status}", isPomSuccessful);
 
             using var client = this.pipelineClientFactory.GetHttpClient(Configuration.StatusEndpoint);
 
@@ -146,7 +163,7 @@
                 this.logger.LogInformation("StatusEndPoint: {StatusEndPoint}", Configuration.StatusEndpoint);
                 var statusUpdateResponse = await client.PostAsync(
                     Configuration.StatusEndpoint,
-                    GetStatusUpdateMessage(calculatorRunParameter.Id, isPomSuccessful));
+                    GetStatusUpdateMessage(calculatorRunParameter.Id, isPomSuccessful, calculatorRunParameter.User));
                 this.logger.LogInformation("Status Response: {Response}", statusUpdateResponse);
 
                 if (statusUpdateResponse != null && statusUpdateResponse.IsSuccessStatusCode)
@@ -167,7 +184,7 @@
                 this.logger.LogInformation("StatusEndPoint: {StatusEndPoint}", Configuration.StatusEndpoint);
                 var statusUpdateResponse = await client.PostAsync(
                     Configuration.StatusEndpoint,
-                    GetStatusUpdateMessage(calculatorRunParameter.Id, isPomSuccessful));
+                    GetStatusUpdateMessage(calculatorRunParameter.Id, isPomSuccessful, calculatorRunParameter.User));
                 this.logger.LogInformation("Status Response: {Response}", statusUpdateResponse);
             }
 

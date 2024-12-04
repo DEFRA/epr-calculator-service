@@ -47,7 +47,6 @@ namespace EPR.Calculator.Service.Function
         /// </summary>
         public static Uri PrepareCalcResultEndPoint => new Uri(Environment.GetEnvironmentVariable(EnvironmentVariableKeys.PrepareCalcResultEndPoint));
 
-
         /// <summary>
         /// Gets the flag indicating whether to execute the RPD pipeline from environment variables.
         /// </summary>

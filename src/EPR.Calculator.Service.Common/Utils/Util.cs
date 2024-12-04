@@ -7,6 +7,8 @@
     /// </summary>
     public static class Util
     {
+        private const int FinancialYearLength = 2;
+
         /// <summary>
         /// Extracts the first year from a financial year string in the format "YYYY-YY".
         /// </summary>
@@ -29,7 +31,7 @@
             }
 
             var years = value.Split('-');
-            if (years.Length != 2 || !int.TryParse(years[1], out _))
+            if (years.Length != FinancialYearLength || !int.TryParse(years[1], out _))
             {
                 throw new FormatException("Financial year format is invalid. Expected format is 'YYYY-YY'.");
             }

@@ -189,6 +189,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 .Returns(Task.FromResult(MockPipelineRunResponse(nameof(PipelineStatus.InProgress))))
                 .Returns(Task.FromResult(MockPipelineRunResponse(nameof(PipelineStatus.InProgress))))
                 .Returns(Task.FromResult(MockPipelineRunResponse(nameof(PipelineStatus.InProgress))));
+
             // Act
             var pipelineSucceeded = await this.TestClass.Process(this.Parameters);
 
