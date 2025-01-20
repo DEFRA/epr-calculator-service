@@ -13,6 +13,8 @@ namespace EPR.Calculator.Service.Function
     /// </summary>
     public static class Configuration
     {
+        private const double DefaultTimeout = 24;
+
         /// <summary>
         /// Gets the pipeline URL from environment variables.
         /// </summary>
@@ -49,6 +51,11 @@ namespace EPR.Calculator.Service.Function
         public static Uri PrepareCalcResultEndPoint => new Uri(Environment.GetEnvironmentVariable(EnvironmentVariableKeys.PrepareCalcResultEndPoint));
 
         /// <summary>
+        /// Gets the URI for the endpoint used to Transpose before calculation of results from environment variables.
+        /// </summary>
+        public static Uri TransposeEndpoint => new Uri(Environment.GetEnvironmentVariable(EnvironmentVariableKeys.TransposeEndpoint));
+
+        /// <summary>
         /// Gets the flag indicating whether to execute the RPD pipeline from environment variables.
         /// </summary>
         public static string ExecuteRPDPipeline => Environment.GetEnvironmentVariable(EnvironmentVariableKeys.ExecuteRPDPipeline);
@@ -56,20 +63,23 @@ namespace EPR.Calculator.Service.Function
         /// <summary>
         /// Gets the calculator run timeout from environment variables.
         /// </summary>
-        public static TimeSpan CalculatorRunTimeout
-        {
-            get
-            {
-                if (TimeSpan.TryParse(
-                    Environment.GetEnvironmentVariable(EnvironmentVariableKeys.CalculatorRunTimeout),
-                    CultureInfo.CurrentCulture,
-                    out TimeSpan timeout))
-                {
-                    return timeout;
-                }
+        public static TimeSpan CalculatorRunTimeout => ParseTimeSpan(
+            Environment.GetEnvironmentVariable(EnvironmentVariableKeys.CalculatorRunTimeout));
 
-                return TimeSpan.FromHours(24);
+        /// <summary>
+        /// Gets the transpose timeout from environment variables.
+        /// </summary>
+        public static TimeSpan TransposeTimeout => ParseTimeSpan(
+            Environment.GetEnvironmentVariable(EnvironmentVariableKeys.TransposeTimeout));
+
+        private static TimeSpan ParseTimeSpan(string value)
+        {
+            if (double.TryParse(value, out double timeout))
+            {
+                return TimeSpan.FromMinutes(timeout);
             }
+
+            return TimeSpan.FromHours(DefaultTimeout);
         }
     }
 }
