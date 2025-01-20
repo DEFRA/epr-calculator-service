@@ -1,12 +1,14 @@
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
     using System.Net;
+    using System.Net.Http;
     using AutoFixture;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
     using EPR.Calculator.Service.Common.Utils;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Services;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using Moq;
     using Moq.Protected;
@@ -428,6 +430,51 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.AzureSynapseRunner.Verify(
                 t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
                 p.PipelineName == pomPipelineName)), Times.Once);
+        }
+
+        /// <summary>
+        /// Checks that <see cref="CalculatorRunService.StartProcess(CalculatorRunParameter)"/> returns false
+        /// when the calculator timed out.
+        /// </summary>
+        /// <returns>A <see cref="Task"/>.</returns>
+        [TestMethod]
+        public async Task StartProcessReturnsFalseWhenCalculatorTimesOut()
+        {
+            // Arrange
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.StatusUpdateEndpoint,
+                this.Fixture.Create<Uri>().ToString());
+
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.CalculatorRunTimeout,
+                TimeSpan.FromMicroseconds(1).ToString());
+
+            this.PipelineClientFactory.Setup(factory => factory.GetHttpClient(It.IsAny<Uri>()))
+                .Returns(new HttpClient(new DelayedMessageHandler())
+                {
+                    BaseAddress = this.Fixture.Create<Uri>(),
+                });
+
+            var calculatorRunParameters = this.Fixture.Create<CalculatorRunParameter>();
+
+            // Act
+            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        /// <summary>
+        /// A message handler that delays the response by 1 millisecond in order to test timeouts.
+        /// </summary>
+        private class DelayedMessageHandler : HttpMessageHandler
+        {
+            /// <inheritdoc/>
+            protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+            {
+                Task.Delay(1);
+                return Task.FromResult(new HttpResponseMessage(System.Net.HttpStatusCode.OK));
+            }
         }
     }
 }

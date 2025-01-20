@@ -5,6 +5,7 @@
 namespace EPR.Calculator.Service.Function
 {
     using System;
+    using System.Globalization;
     using EPR.Calculator.Service.Function.Constants;
 
     /// <summary>
@@ -51,5 +52,24 @@ namespace EPR.Calculator.Service.Function
         /// Gets the flag indicating whether to execute the RPD pipeline from environment variables.
         /// </summary>
         public static string ExecuteRPDPipeline => Environment.GetEnvironmentVariable(EnvironmentVariableKeys.ExecuteRPDPipeline);
+
+        /// <summary>
+        /// Gets the calculator run timeout from environment variables.
+        /// </summary>
+        public static TimeSpan CalculatorRunTimeout
+        {
+            get
+            {
+                if (TimeSpan.TryParse(
+                    Environment.GetEnvironmentVariable(EnvironmentVariableKeys.CalculatorRunTimeout),
+                    CultureInfo.CurrentCulture,
+                    out TimeSpan timeout))
+                {
+                    return timeout;
+                }
+
+                return TimeSpan.FromHours(24);
+            }
+        }
     }
 }

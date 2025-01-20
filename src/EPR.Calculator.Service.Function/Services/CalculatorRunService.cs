@@ -118,7 +118,15 @@
             using var client = this.pipelineClientFactory.GetHttpClient(Configuration.StatusEndpoint);
             this.logger.LogInformation("HTTP Client: {client}", client);
 
-            bool isSuccess = await this.UpdateStatusAndPrepareResult(calculatorRunParameter, isPomSuccessful, client);
+            bool isSuccess;
+            try
+            {
+                isSuccess = await this.UpdateStatusAndPrepareResult(calculatorRunParameter, isPomSuccessful, client);
+            }
+            catch (TaskCanceledException)
+            {
+                return false;
+            }
 
             return isSuccess;
         }
@@ -185,6 +193,7 @@
 
                 if (statusUpdateResponse != null && statusUpdateResponse.IsSuccessStatusCode)
                 {
+                    client.Timeout = Configuration.CalculatorRunTimeout;
                     var prepareCalcResultResponse = await client.PostAsync(
                         Configuration.PrepareCalcResultEndPoint,
                         GetPrepareCalcResultMessage(calculatorRunParameter.Id));
