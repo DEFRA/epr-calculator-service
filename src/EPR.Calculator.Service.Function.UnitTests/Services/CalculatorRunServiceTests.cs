@@ -25,18 +25,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public CalculatorRunServiceTests()
         {
             this.Fixture = new Fixture();
+
+            Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PomDataPipelineName, this.Fixture.Create<string>());
+            Environment.SetEnvironmentVariable(EnvironmentVariableKeys.OrgDataPipelineName, this.Fixture.Create<string>());
+            Environment.SetEnvironmentVariable(EnvironmentVariableKeys.StatusUpdateEndpoint, this.Fixture.Create<string>());
+            Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PrepareCalcResultEndPoint, this.Fixture.Create<Uri>().ToString());
+
             this.AzureSynapseRunner = new Mock<IAzureSynapseRunner>();
             this.MockLogger = new Mock<ILogger<CalculatorRunService>>();
-            this.MockStatusUpdateHandler = new Mock<HttpMessageHandler>();
 
-            this.MockStatusUpdateHandler.Protected()
-                .Setup<Task<HttpResponseMessage>>(
-                    "SendAsync",
-                    ItExpr.IsAny<HttpRequestMessage>(),
-                    ItExpr.IsAny<CancellationToken>())
-                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
-
-            var httpClient = new HttpClient(this.MockStatusUpdateHandler.Object)
+            var httpClient = new HttpClient(GetMockMessageHandler())
             {
                 BaseAddress = new Uri("http://test.com"),
             };
@@ -44,16 +42,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.PipelineClientFactory = new Mock<PipelineClientFactory>();
             this.PipelineClientFactory.Setup(factory => factory.GetHttpClient(It.IsAny<Uri>()))
                 .Returns(httpClient);
+            this.PipelineClientFactory.Setup(factory => factory.GetHttpClient(Configuration.PrepareCalcResultEndPoint))
+                .Returns(new HttpClient(GetMockMessageHandler()));
 
             this.CalculatorRunService = new CalculatorRunService(
                 this.AzureSynapseRunner.Object,
                 this.MockLogger.Object,
                 this.PipelineClientFactory.Object);
-
-            Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PomDataPipelineName, this.Fixture.Create<string>());
-            Environment.SetEnvironmentVariable(EnvironmentVariableKeys.OrgDataPipelineName, this.Fixture.Create<string>());
-            Environment.SetEnvironmentVariable(EnvironmentVariableKeys.StatusUpdateEndpoint, this.Fixture.Create<string>());
-            Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PrepareCalcResultEndPoint, this.Fixture.Create<string>());
         }
 
         private CalculatorRunService CalculatorRunService { get; }
@@ -64,9 +59,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         private Fixture Fixture { get; }
 
-        private Mock<HttpMessageHandler> MockStatusUpdateHandler { get; set; }
-
         private Mock<PipelineClientFactory> PipelineClientFactory { get; }
+
+        private static HttpMessageHandler GetMockMessageHandler()
+        {
+            var mockStatusUpdateHandler = new Mock<HttpMessageHandler>();
+            mockStatusUpdateHandler.Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.IsAny<HttpRequestMessage>(),
+                    ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+            return mockStatusUpdateHandler.Object;
+        }
 
         /// <summary>
         /// Checks that the service calls the Azure Synapse runner and passes the correct parameters to it.
@@ -211,11 +216,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 EnvironmentVariableKeys.StatusUpdateEndpoint,
                 statusUpdateEndpoint.ToString());
 
-            var prepareCalcResultEndPoint = this.Fixture.Create<Uri>();
-            Environment.SetEnvironmentVariable(
-                EnvironmentVariableKeys.PrepareCalcResultEndPoint,
-                prepareCalcResultEndPoint.ToString());
-
             var runRPDPipeline = false;
             Environment.SetEnvironmentVariable(
                 EnvironmentVariableKeys.ExecuteRPDPipeline,
@@ -297,11 +297,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Environment.SetEnvironmentVariable(
                 EnvironmentVariableKeys.StatusUpdateEndpoint,
                 statusUpdateEndpoint.ToString());
-
-            var prepareCalcResultEndPoint = this.Fixture.Create<Uri>();
-            Environment.SetEnvironmentVariable(
-                EnvironmentVariableKeys.PrepareCalcResultEndPoint,
-                prepareCalcResultEndPoint.ToString());
 
             var calculatorRunParameters = new CalculatorRunParameter
             {
@@ -446,16 +441,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 this.Fixture.Create<Uri>().ToString());
 
             Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.PrepareCalcResultEndPoint,
+                this.Fixture.Create<Uri>().ToString());
+
+            Environment.SetEnvironmentVariable(
                 EnvironmentVariableKeys.CalculatorRunTimeout,
                 TimeSpan.FromMicroseconds(1).ToString());
 
-            this.PipelineClientFactory.Setup(factory => factory.GetHttpClient(It.IsAny<Uri>()))
+            this.PipelineClientFactory.Setup(factory => factory.GetHttpClient(Configuration.PrepareCalcResultEndPoint))
                 .Returns(new HttpClient(new DelayedMessageHandler())
                 {
                     BaseAddress = this.Fixture.Create<Uri>(),
                 });
 
             var calculatorRunParameters = this.Fixture.Create<CalculatorRunParameter>();
+            calculatorRunParameters.FinancialYear = "2024-25";
 
             // Act
             var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters);
@@ -465,15 +465,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         /// <summary>
-        /// A message handler that delays the response by 1 millisecond in order to test timeouts.
+        /// A message handler that delays the response in order to test timeouts.
         /// </summary>
         private class DelayedMessageHandler : HttpMessageHandler
         {
             /// <inheritdoc/>
             protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
             {
-                Task.Delay(1);
-                return Task.FromResult(new HttpResponseMessage(System.Net.HttpStatusCode.OK));
+                Thread.Sleep(1);
+                return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
             }
         }
     }

@@ -193,8 +193,9 @@
 
                 if (statusUpdateResponse != null && statusUpdateResponse.IsSuccessStatusCode)
                 {
-                    client.Timeout = Configuration.CalculatorRunTimeout;
-                    var prepareCalcResultResponse = await client.PostAsync(
+                    var prepareResultClient = this.pipelineClientFactory.GetHttpClient(Configuration.PrepareCalcResultEndPoint);
+                    prepareResultClient.Timeout = Configuration.CalculatorRunTimeout;
+                    var prepareCalcResultResponse = await prepareResultClient.PostAsync(
                         Configuration.PrepareCalcResultEndPoint,
                         GetPrepareCalcResultMessage(calculatorRunParameter.Id));
                     isSuccess = prepareCalcResultResponse.IsSuccessStatusCode;
