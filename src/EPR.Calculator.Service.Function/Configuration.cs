@@ -13,7 +13,10 @@ namespace EPR.Calculator.Service.Function
     /// </summary>
     public static class Configuration
     {
-        private const double DefaultTimeout = 24;
+        /// <summary>
+        /// The default value for calculator run and transpose timeouts.
+        /// </summary>
+        public const double DefaultTimeout = 24;
 
         /// <summary>
         /// Gets the pipeline URL from environment variables.
