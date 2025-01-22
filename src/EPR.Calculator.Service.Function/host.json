@@ -3,10 +3,11 @@
   "extensions": {
     "serviceBus": {
       "messageHandlerOptions": {
-        "autoComplete": true,
+        "autoComplete": false,
         "maxConcurrentCalls": 1,
         "maxAutoRenewDuration": "00:10:00"
-      }
+      }, 
+      "prefetchCount": 1
     }
   },
   "functionTimeout": "00:55:00",
