@@ -441,7 +441,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 this.Fixture.Create<Uri>().ToString());
 
             Environment.SetEnvironmentVariable(
-                EnvironmentVariableKeys.CalculatorRunTimeout,
+                EnvironmentVariableKeys.PrepareCalcResultsTimeout,
                 "0.00000001");
 
             this.PipelineClientFactory.Setup(factory => factory.GetHttpClient(It.IsAny<Uri>()))

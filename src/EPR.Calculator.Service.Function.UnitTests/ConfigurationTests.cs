@@ -41,16 +41,16 @@ namespace EPR.Calculator.Service.Function.UnitTests
         /// Checks that the calculator run timeout can be retrieved.
         /// </summary>
         [TestMethod]
-        public void CanGetCalculatorRunTimeout()
+        public void CanGetPrepareCalcResultsTimeout()
         {
             // Arrange
             var testValueInMinutes = this.Fixture.Create<double>();
             Environment.SetEnvironmentVariable(
-                EnvironmentVariableKeys.CalculatorRunTimeout,
+                EnvironmentVariableKeys.PrepareCalcResultsTimeout,
                 testValueInMinutes.ToString());
 
             // Act
-            var result = Configuration.CalculatorRunTimeout;
+            var result = Configuration.PrepareCalcResultsTimeout;
 
             // Assert
             Assert.AreEqual(TimeSpan.FromMinutes(testValueInMinutes), result);
@@ -61,22 +61,22 @@ namespace EPR.Calculator.Service.Function.UnitTests
         /// the default value is retrieved.
         /// </summary>
         [TestMethod]
-        public void CanGetDefaultCalculatorRunTimeout()
+        public void CanGetDefaultPrepareCalcResultsTimeout()
         {
             // Arrange
             Environment.SetEnvironmentVariable(
-                EnvironmentVariableKeys.CalculatorRunTimeout,
+                EnvironmentVariableKeys.PrepareCalcResultsTimeout,
                 null);
 
             // Act
-            var result = Configuration.CalculatorRunTimeout;
+            var result = Configuration.PrepareCalcResultsTimeout;
 
             // Assert
             Assert.AreEqual(TimeSpan.FromHours(Configuration.DefaultTimeout), result);
         }
 
         /// <summary>
-        /// Checks that the calculator run timeout can be retrieved.
+        /// Checks that the rpd status timeout can be retrieved.
         /// </summary>
         [TestMethod]
         public void CanGetRpdStatusTimeout()
@@ -95,7 +95,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         }
 
         /// <summary>
-        /// Checks that when no value has been set for the calculator run timeout,
+        /// Checks that when no value has been set for the rpd status timeout,
         /// the default value is retrieved.
         /// </summary>
         [TestMethod]

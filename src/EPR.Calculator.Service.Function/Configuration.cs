@@ -72,8 +72,8 @@ namespace EPR.Calculator.Service.Function
         /// <summary>
         /// Gets the calculator run timeout from environment variables.
         /// </summary>
-        public static TimeSpan CalculatorRunTimeout => ParseTimeSpan(
-            Environment.GetEnvironmentVariable(EnvironmentVariableKeys.CalculatorRunTimeout));
+        public static TimeSpan PrepareCalcResultsTimeout => ParseTimeSpan(
+            Environment.GetEnvironmentVariable(EnvironmentVariableKeys.PrepareCalcResultsTimeout));
 
         /// <summary>
         /// Gets the transpose timeout from environment variables.

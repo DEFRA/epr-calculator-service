@@ -39,7 +39,7 @@ namespace EPR.Calculator.Service.Function.Constants
         public const string RpdStatusTimeout = "RpdStatusTimeout";
 
         /// <summary>The key for the CalculatorRunTimeout environment variable.</summary>
-        public const string CalculatorRunTimeout = "CalculatorRunTimeout";
+        public const string PrepareCalcResultsTimeout = "PrepareCalcResultsTimeout";
 
         /// <summary>The key for the TransposeTimeout environment variable.</summary>
         public const string TransposeTimeout = "TransposeTimeout";

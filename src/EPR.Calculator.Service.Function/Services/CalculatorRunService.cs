@@ -210,7 +210,7 @@
                         var prepareCalcResultResponse = await client.PostAsync(
                             Configuration.PrepareCalcResultEndPoint,
                             GetCalcResultMessage(calculatorRunParameter.Id),
-                            new System.Threading.CancellationTokenSource(Configuration.CalculatorRunTimeout).Token);
+                            new System.Threading.CancellationTokenSource(Configuration.PrepareCalcResultsTimeout).Token);
                         isSuccess = prepareCalcResultResponse.IsSuccessStatusCode;
                         this.logger.LogInformation("prepareCalcResultResponse: {isSuccess}", prepareCalcResultResponse.IsSuccessStatusCode);
                     }
