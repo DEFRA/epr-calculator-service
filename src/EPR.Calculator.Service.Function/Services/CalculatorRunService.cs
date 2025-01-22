@@ -229,7 +229,7 @@
                         calculatorRunParameter.Id,
                         isPomSuccessful,
                         calculatorRunParameter.User),
-                    new CancellationTokenSource(Configuration.TransposeTimeout).Token);
+                    new CancellationTokenSource(Configuration.RpdStatusTimeout).Token);
                 this.logger.LogInformation("Status Response: {Response}", statusUpdateResponse);
             }
 
