@@ -6,6 +6,7 @@
     using System.Net.Http;
     using System.Text;
     using System.Text.Json;
+    using System.Threading;
     using System.Threading.Tasks;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
@@ -188,7 +189,11 @@
                 this.logger.LogInformation("StatusEndPoint: {StatusEndPoint}", Configuration.StatusEndpoint);
                 var statusUpdateResponse = await client.PostAsync(
                     Configuration.StatusEndpoint,
-                    GetStatusUpdateMessage(calculatorRunParameter.Id, isPomSuccessful, calculatorRunParameter.User));
+                    GetStatusUpdateMessage(
+                        calculatorRunParameter.Id,
+                        isPomSuccessful,
+                        calculatorRunParameter.User),
+                    new CancellationTokenSource(Configuration.RpdStatusTimeout).Token);
                 this.logger.LogInformation("Status Response: {Response}", statusUpdateResponse);
 
                 if (statusUpdateResponse != null && statusUpdateResponse.IsSuccessStatusCode)
@@ -196,7 +201,7 @@
                     var transposeResultResponse = await client.PostAsync(
                         Configuration.TransposeEndpoint,
                         GetCalcResultMessage(calculatorRunParameter.Id),
-                        new System.Threading.CancellationTokenSource(Configuration.TransposeTimeout).Token);
+                        new CancellationTokenSource(Configuration.TransposeTimeout).Token);
                     var isTransposeSuccess = transposeResultResponse.IsSuccessStatusCode;
                     this.logger.LogInformation("transposeResultResponse: {isSuccess}", transposeResultResponse.IsSuccessStatusCode);
 
@@ -220,7 +225,11 @@
                 this.logger.LogInformation("StatusEndPoint: {StatusEndPoint}", Configuration.StatusEndpoint);
                 var statusUpdateResponse = await client.PostAsync(
                     Configuration.StatusEndpoint,
-                    GetStatusUpdateMessage(calculatorRunParameter.Id, isPomSuccessful, calculatorRunParameter.User));
+                    GetStatusUpdateMessage(
+                        calculatorRunParameter.Id,
+                        isPomSuccessful,
+                        calculatorRunParameter.User),
+                    new CancellationTokenSource(Configuration.TransposeTimeout).Token);
                 this.logger.LogInformation("Status Response: {Response}", statusUpdateResponse);
             }
 

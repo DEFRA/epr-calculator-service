@@ -35,10 +35,13 @@ namespace EPR.Calculator.Service.Function.Constants
         /// <summary>The key for executing the RPD pipeline.</summary>
         public const string ExecuteRPDPipeline = "ExecuteRPDPipeline";
 
-        /// <summary>The time to wait for a calculator run to complete before timing out.</summary>
+        /// <summary>The key for the RpdStatusTimeout environment variable.</summary>
+        public const string RpdStatusTimeout = "RpdStatusTimeout";
+
+        /// <summary>The key for the CalculatorRunTimeout environment variable.</summary>
         public const string CalculatorRunTimeout = "CalculatorRunTimeout";
 
-        /// <summary>The time to wait for a calculator run to complete before timing out.</summary>
+        /// <summary>The key for the TransposeTimeout environment variable.</summary>
         public const string TransposeTimeout = "TransposeTimeout";
     }
 }

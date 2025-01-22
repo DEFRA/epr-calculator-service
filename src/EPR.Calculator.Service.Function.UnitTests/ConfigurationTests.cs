@@ -76,7 +76,45 @@ namespace EPR.Calculator.Service.Function.UnitTests
         }
 
         /// <summary>
-        /// Tests that the calculator run timeout can be retrieved.
+        /// Checks that the calculator run timeout can be retrieved.
+        /// </summary>
+        [TestMethod]
+        public void CanGetRpdStatusTimeout()
+        {
+            // Arrange
+            var testValueInMinutes = this.Fixture.Create<double>();
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.RpdStatusTimeout,
+                testValueInMinutes.ToString());
+
+            // Act
+            var result = Configuration.RpdStatusTimeout;
+
+            // Assert
+            Assert.AreEqual(TimeSpan.FromMinutes(testValueInMinutes), result);
+        }
+
+        /// <summary>
+        /// Checks that when no value has been set for the calculator run timeout,
+        /// the default value is retrieved.
+        /// </summary>
+        [TestMethod]
+        public void CanGetDefaultRpdStatusTimeout()
+        {
+            // Arrange
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.RpdStatusTimeout,
+                null);
+
+            // Act
+            var result = Configuration.RpdStatusTimeout;
+
+            // Assert
+            Assert.AreEqual(TimeSpan.FromHours(Configuration.DefaultTimeout), result);
+        }
+
+        /// <summary>
+        /// Checks that the calculator run timeout can be retrieved.
         /// </summary>
         [TestMethod]
         public void CanGetTransposeTimeout()

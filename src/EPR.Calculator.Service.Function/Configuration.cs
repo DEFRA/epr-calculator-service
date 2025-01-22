@@ -64,6 +64,12 @@ namespace EPR.Calculator.Service.Function
         public static string ExecuteRPDPipeline => Environment.GetEnvironmentVariable(EnvironmentVariableKeys.ExecuteRPDPipeline);
 
         /// <summary>
+        /// Gets the RPD status timeout from environment variables.
+        /// </summary>
+        public static TimeSpan RpdStatusTimeout => ParseTimeSpan(
+            Environment.GetEnvironmentVariable(EnvironmentVariableKeys.RpdStatusTimeout));
+
+        /// <summary>
         /// Gets the calculator run timeout from environment variables.
         /// </summary>
         public static TimeSpan CalculatorRunTimeout => ParseTimeSpan(
