@@ -209,6 +209,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 EnvironmentVariableKeys.StatusUpdateEndpoint,
                 statusUpdateEndpoint.ToString());
 
+            var transposeEndPoint = this.Fixture.Create<Uri>();
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.TransposeEndpoint,
+                transposeEndPoint.ToString());
+
             var prepareCalcResultEndPoint = this.Fixture.Create<Uri>();
             Environment.SetEnvironmentVariable(
                 EnvironmentVariableKeys.PrepareCalcResultEndPoint,
@@ -295,6 +300,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Environment.SetEnvironmentVariable(
                 EnvironmentVariableKeys.StatusUpdateEndpoint,
                 statusUpdateEndpoint.ToString());
+
+            var transposeEndPoint = this.Fixture.Create<Uri>();
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.TransposeEndpoint,
+                transposeEndPoint.ToString());
 
             var prepareCalcResultEndPoint = this.Fixture.Create<Uri>();
             Environment.SetEnvironmentVariable(

@@ -88,7 +88,7 @@
         /// </summary>
         /// <param name="calculatorRunId">The ID of the calculator run.</param>
         /// <returns>A <see cref="StringContent"/> object containing the JSON message.</returns>
-        public static StringContent GetPrepareCalcResultMessage(int calculatorRunId)
+        public static StringContent GetCalcResultMessage(int calculatorRunId)
         {
             var calcResultsRequest = new
             {
@@ -185,16 +185,25 @@
 
                 if (statusUpdateResponse != null && statusUpdateResponse.IsSuccessStatusCode)
                 {
-                    var prepareCalcResultResponse = await client.PostAsync(
-                        Configuration.PrepareCalcResultEndPoint,
-                        GetPrepareCalcResultMessage(calculatorRunParameter.Id));
-                    isSuccess = prepareCalcResultResponse.IsSuccessStatusCode;
-                    this.logger.LogInformation("prepareCalcResultResponse: {isSuccess}", prepareCalcResultResponse.IsSuccessStatusCode);
+                    var transposeResultResponse = await client.PostAsync(
+                        Configuration.TramsposeEndPoint,
+                        GetCalcResultMessage(calculatorRunParameter.Id));
+                    var isTransposeSuccess = transposeResultResponse.IsSuccessStatusCode;
+                    this.logger.LogInformation("transposeResultResponse: {isSuccess}", transposeResultResponse.IsSuccessStatusCode);
+
+                    if (isTransposeSuccess)
+                    {
+                        var prepareCalcResultResponse = await client.PostAsync(
+                            Configuration.PrepareCalcResultEndPoint,
+                            GetCalcResultMessage(calculatorRunParameter.Id));
+                        isSuccess = prepareCalcResultResponse.IsSuccessStatusCode;
+                        this.logger.LogInformation("prepareCalcResultResponse: {isSuccess}", prepareCalcResultResponse.IsSuccessStatusCode);
+                    }
                 }
 
                 this.logger.LogInformation("PrepareCalcResultEndPoint: {PrepareCalcResultEndPoint}", Configuration.PrepareCalcResultEndPoint);
                 this.logger.LogInformation("CalculatorRunParameter ID: {CalculatorRunParameterId}", calculatorRunParameter.Id);
-                this.logger.LogInformation("GetPrepareCalcResultMessage: {GetPrepareCalcResultMessageId}", GetPrepareCalcResultMessage(calculatorRunParameter.Id));
+                this.logger.LogInformation("GetPrepareCalcResultMessage: {GetPrepareCalcResultMessageId}", GetCalcResultMessage(calculatorRunParameter.Id));
             }
             else
             {

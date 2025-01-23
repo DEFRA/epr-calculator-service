@@ -26,6 +26,9 @@ namespace EPR.Calculator.Service.Function.Constants
         /// <summary>The URL of the endpoint called to update the pipeline status in the database.</summary>
         public const string StatusUpdateEndpoint = "StatusUpdateEndpoint";
 
+        /// <summary> The URL for the endpoint called to Transpose before the Calculation.</summary>
+        public const string TransposeEndpoint = "TransposeEndpoint";
+
         /// <summary>The URL of the endpoint called to prepare the result file in blob storage.</summary>
         public const string PrepareCalcResultEndPoint = "PrepareCalcResultEndPoint";
 

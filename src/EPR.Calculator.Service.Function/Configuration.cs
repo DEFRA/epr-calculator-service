@@ -48,6 +48,11 @@ namespace EPR.Calculator.Service.Function
         public static Uri PrepareCalcResultEndPoint => new Uri(Environment.GetEnvironmentVariable(EnvironmentVariableKeys.PrepareCalcResultEndPoint));
 
         /// <summary>
+        /// Gets the URI for the endpoint used to Transpose before calculation of results from environment variables.
+        /// </summary>
+        public static Uri TramsposeEndPoint => new Uri(Environment.GetEnvironmentVariable(EnvironmentVariableKeys.TransposeEndpoint));
+
+        /// <summary>
         /// Gets the flag indicating whether to execute the RPD pipeline from environment variables.
         /// </summary>
         public static string ExecuteRPDPipeline => Environment.GetEnvironmentVariable(EnvironmentVariableKeys.ExecuteRPDPipeline);
