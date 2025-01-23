@@ -5,8 +5,9 @@
       "messageHandlerOptions": {
         "autoComplete": true,
         "maxConcurrentCalls": 1,
-        "maxAutoRenewDuration": "00:10:00"
-      }
+        "maxAutoRenewDuration": "01:00:00"
+      }, 
+      "prefetchCount": 1
     }
   },
   "functionTimeout": "00:55:00",
