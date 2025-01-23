@@ -1,12 +1,14 @@
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
     using System.Net;
+    using System.Net.Http;
     using AutoFixture;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
     using EPR.Calculator.Service.Common.Utils;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Services;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using Moq;
     using Moq.Protected;
@@ -51,7 +53,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PomDataPipelineName, this.Fixture.Create<string>());
             Environment.SetEnvironmentVariable(EnvironmentVariableKeys.OrgDataPipelineName, this.Fixture.Create<string>());
             Environment.SetEnvironmentVariable(EnvironmentVariableKeys.StatusUpdateEndpoint, this.Fixture.Create<string>());
-            Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PrepareCalcResultEndPoint, this.Fixture.Create<string>());
+            Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PrepareCalcResultEndPoint, this.Fixture.Create<Uri>().ToString());
+            Environment.SetEnvironmentVariable(EnvironmentVariableKeys.TransposeEndpoint, this.Fixture.Create<Uri>().ToString());
         }
 
         private CalculatorRunService CalculatorRunService { get; }
@@ -209,11 +212,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 EnvironmentVariableKeys.StatusUpdateEndpoint,
                 statusUpdateEndpoint.ToString());
 
-            var prepareCalcResultEndPoint = this.Fixture.Create<Uri>();
-            Environment.SetEnvironmentVariable(
-                EnvironmentVariableKeys.PrepareCalcResultEndPoint,
-                prepareCalcResultEndPoint.ToString());
-
             var runRPDPipeline = false;
             Environment.SetEnvironmentVariable(
                 EnvironmentVariableKeys.ExecuteRPDPipeline,
@@ -295,11 +293,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Environment.SetEnvironmentVariable(
                 EnvironmentVariableKeys.StatusUpdateEndpoint,
                 statusUpdateEndpoint.ToString());
-
-            var prepareCalcResultEndPoint = this.Fixture.Create<Uri>();
-            Environment.SetEnvironmentVariable(
-                EnvironmentVariableKeys.PrepareCalcResultEndPoint,
-                prepareCalcResultEndPoint.ToString());
 
             var calculatorRunParameters = new CalculatorRunParameter
             {
@@ -428,6 +421,93 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.AzureSynapseRunner.Verify(
                 t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
                 p.PipelineName == pomPipelineName)), Times.Once);
+        }
+
+        /// <summary>
+        /// Checks that <see cref="CalculatorRunService.StartProcess(CalculatorRunParameter)"/> returns false
+        /// when the calculator timed out.
+        /// </summary>
+        /// <returns>A <see cref="Task"/>.</returns>
+        [TestMethod]
+        public async Task StartProcessReturnsFalseWhenCalculatorTimesOut()
+        {
+            // Arrange
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.StatusUpdateEndpoint,
+                this.Fixture.Create<Uri>().ToString());
+
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.PrepareCalcResultEndPoint,
+                this.Fixture.Create<Uri>().ToString());
+
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.PrepareCalcResultsTimeout,
+                "0.00000001");
+
+            this.PipelineClientFactory.Setup(factory => factory.GetHttpClient(It.IsAny<Uri>()))
+                .Returns(new HttpClient(new DelayedMessageHandler())
+                {
+                    BaseAddress = this.Fixture.Create<Uri>(),
+                });
+
+            var calculatorRunParameters = this.Fixture.Create<CalculatorRunParameter>();
+            calculatorRunParameters.FinancialYear = "2024-25";
+
+            // Act
+            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        /// <summary>
+        /// Checks that <see cref="CalculatorRunService.StartProcess(CalculatorRunParameter)"/> returns false
+        /// when the calculator timed out.
+        /// </summary>
+        /// <returns>A <see cref="Task"/>.</returns>
+        [TestMethod]
+        public async Task StartProcessReturnsFalseWhenTransposeTimesOut()
+        {
+            // Arrange
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.StatusUpdateEndpoint,
+                this.Fixture.Create<Uri>().ToString());
+
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.PrepareCalcResultEndPoint,
+                this.Fixture.Create<Uri>().ToString());
+
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.TransposeTimeout,
+                "0.00000001");
+
+            this.PipelineClientFactory.Setup(factory => factory.GetHttpClient(It.IsAny<Uri>()))
+                .Returns(new HttpClient(new DelayedMessageHandler())
+                {
+                    BaseAddress = this.Fixture.Create<Uri>(),
+                });
+
+            var calculatorRunParameters = this.Fixture.Create<CalculatorRunParameter>();
+            calculatorRunParameters.FinancialYear = "2024-25";
+
+            // Act
+            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        /// <summary>
+        /// A message handler that delays the response in order to test timeouts.
+        /// </summary>
+        private class DelayedMessageHandler : HttpMessageHandler
+        {
+            /// <inheritdoc/>
+            protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+            {
+                Thread.Sleep(10);
+                return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
+            }
         }
     }
 }
