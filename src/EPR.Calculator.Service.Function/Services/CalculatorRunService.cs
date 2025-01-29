@@ -6,6 +6,7 @@
     using System.Net.Http;
     using System.Text;
     using System.Text.Json;
+    using System.Threading;
     using System.Threading.Tasks;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
@@ -88,7 +89,7 @@
         /// </summary>
         /// <param name="calculatorRunId">The ID of the calculator run.</param>
         /// <returns>A <see cref="StringContent"/> object containing the JSON message.</returns>
-        public static StringContent GetPrepareCalcResultMessage(int calculatorRunId)
+        public static StringContent GetCalcResultMessage(int calculatorRunId)
         {
             var calcResultsRequest = new
             {
@@ -118,7 +119,15 @@
             using var client = this.pipelineClientFactory.GetHttpClient(Configuration.StatusEndpoint);
             this.logger.LogInformation("HTTP Client: {client}", client);
 
-            bool isSuccess = await this.UpdateStatusAndPrepareResult(calculatorRunParameter, isPomSuccessful, client);
+            bool isSuccess;
+            try
+            {
+                isSuccess = await this.UpdateStatusAndPrepareResult(calculatorRunParameter, isPomSuccessful, client);
+            }
+            catch (TaskCanceledException)
+            {
+                return false;
+            }
 
             return isSuccess;
         }
@@ -180,28 +189,47 @@
                 this.logger.LogInformation("StatusEndPoint: {StatusEndPoint}", Configuration.StatusEndpoint);
                 var statusUpdateResponse = await client.PostAsync(
                     Configuration.StatusEndpoint,
-                    GetStatusUpdateMessage(calculatorRunParameter.Id, isPomSuccessful, calculatorRunParameter.User));
+                    GetStatusUpdateMessage(
+                        calculatorRunParameter.Id,
+                        isPomSuccessful,
+                        calculatorRunParameter.User),
+                    new CancellationTokenSource(Configuration.RpdStatusTimeout).Token);
                 this.logger.LogInformation("Status Response: {Response}", statusUpdateResponse);
 
                 if (statusUpdateResponse != null && statusUpdateResponse.IsSuccessStatusCode)
                 {
-                    var prepareCalcResultResponse = await client.PostAsync(
-                        Configuration.PrepareCalcResultEndPoint,
-                        GetPrepareCalcResultMessage(calculatorRunParameter.Id));
-                    isSuccess = prepareCalcResultResponse.IsSuccessStatusCode;
-                    this.logger.LogInformation("prepareCalcResultResponse: {isSuccess}", prepareCalcResultResponse.IsSuccessStatusCode);
+                    var transposeResultResponse = await client.PostAsync(
+                        Configuration.TransposeEndpoint,
+                        GetCalcResultMessage(calculatorRunParameter.Id),
+                        new CancellationTokenSource(Configuration.TransposeTimeout).Token);
+                    var isTransposeSuccess = transposeResultResponse.IsSuccessStatusCode;
+                    this.logger.LogInformation("transposeResultResponse: {isSuccess}", transposeResultResponse.IsSuccessStatusCode);
+
+                    if (isTransposeSuccess)
+                    {
+                        var prepareCalcResultResponse = await client.PostAsync(
+                            Configuration.PrepareCalcResultEndPoint,
+                            GetCalcResultMessage(calculatorRunParameter.Id),
+                            new System.Threading.CancellationTokenSource(Configuration.PrepareCalcResultsTimeout).Token);
+                        isSuccess = prepareCalcResultResponse.IsSuccessStatusCode;
+                        this.logger.LogInformation("prepareCalcResultResponse: {isSuccess}", prepareCalcResultResponse.IsSuccessStatusCode);
+                    }
                 }
 
                 this.logger.LogInformation("PrepareCalcResultEndPoint: {PrepareCalcResultEndPoint}", Configuration.PrepareCalcResultEndPoint);
                 this.logger.LogInformation("CalculatorRunParameter ID: {CalculatorRunParameterId}", calculatorRunParameter.Id);
-                this.logger.LogInformation("GetPrepareCalcResultMessage: {GetPrepareCalcResultMessageId}", GetPrepareCalcResultMessage(calculatorRunParameter.Id));
+                this.logger.LogInformation("GetPrepareCalcResultMessage: {GetPrepareCalcResultMessageId}", GetCalcResultMessage(calculatorRunParameter.Id));
             }
             else
             {
                 this.logger.LogInformation("StatusEndPoint: {StatusEndPoint}", Configuration.StatusEndpoint);
                 var statusUpdateResponse = await client.PostAsync(
                     Configuration.StatusEndpoint,
-                    GetStatusUpdateMessage(calculatorRunParameter.Id, isPomSuccessful, calculatorRunParameter.User));
+                    GetStatusUpdateMessage(
+                        calculatorRunParameter.Id,
+                        isPomSuccessful,
+                        calculatorRunParameter.User),
+                    new CancellationTokenSource(Configuration.RpdStatusTimeout).Token);
                 this.logger.LogInformation("Status Response: {Response}", statusUpdateResponse);
             }
 

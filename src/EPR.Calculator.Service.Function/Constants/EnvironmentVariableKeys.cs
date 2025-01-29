@@ -26,10 +26,22 @@ namespace EPR.Calculator.Service.Function.Constants
         /// <summary>The URL of the endpoint called to update the pipeline status in the database.</summary>
         public const string StatusUpdateEndpoint = "StatusUpdateEndpoint";
 
+        /// <summary> The URL for the endpoint called to Transpose before the Calculation.</summary>
+        public const string TransposeEndpoint = "TransposeEndpoint";
+
         /// <summary>The URL of the endpoint called to prepare the result file in blob storage.</summary>
         public const string PrepareCalcResultEndPoint = "PrepareCalcResultEndPoint";
 
         /// <summary>The key for executing the RPD pipeline.</summary>
         public const string ExecuteRPDPipeline = "ExecuteRPDPipeline";
+
+        /// <summary>The key for the RpdStatusTimeout environment variable.</summary>
+        public const string RpdStatusTimeout = "RpdStatusTimeout";
+
+        /// <summary>The key for the CalculatorRunTimeout environment variable.</summary>
+        public const string PrepareCalcResultsTimeout = "PrepareCalcResultsTimeout";
+
+        /// <summary>The key for the TransposeTimeout environment variable.</summary>
+        public const string TransposeTimeout = "TransposeTimeout";
     }
 }
