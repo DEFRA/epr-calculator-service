@@ -2,13 +2,17 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+using EPR.Calculator.API.Data;
 using EPR.Calculator.Service.Common.AzureSynapse;
 using EPR.Calculator.Service.Function;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Mapper;
+using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System.Configuration;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -26,6 +30,13 @@ namespace EPR.Calculator.Service.Function
         public override void Configure(IFunctionsHostBuilder builder)
         {
             this.RegisterDependencies(builder.Services);
+
+            // Configure the database context.
+            builder.Services.AddDbContext<ApplicationDBContext>(options =>
+            {
+                options.UseSqlServer(
+                    new TestConfiguration().DbConnectionString);
+            });
         }
 
         /// <summary>
@@ -38,6 +49,13 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalculatorRunParameterMapper, CalculatorRunParameterMapper>();
             services.AddTransient<IAzureSynapseRunner, AzureSynapseRunner>();
             services.AddTransient<IPipelineClientFactory, PipelineClientFactory>();
+            services.AddTransient<ITransposePomAndOrgDataService, TransposePomAndOrgDataService>();
+
+            // Configuration reads the configuration from environment variables. Switch to TestConfiguration
+            // when testing locally to read from hard-coded strings instead.
+            // TODO: Maybe replace this with loading from the config file?
+            services.AddTransient<IConfigurationService, Configuration>();
+            //services.AddTransient<IConfigurationService, TestConfiguration>();
         }
     }
 }

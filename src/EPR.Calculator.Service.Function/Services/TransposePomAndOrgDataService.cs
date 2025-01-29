@@ -8,7 +8,12 @@
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.API.Dtos;
+    using EPR.Calculator.API.Enums;
+    using EPR.Calculator.API.Services;
     using EPR.Calculator.Service.Function.Interface;
+    using EPR.Calculator.Service.Function.Misc;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
 
     public class TransposePomAndOrgDataService : ITransposePomAndOrgDataService
@@ -34,6 +39,72 @@
         public TransposePomAndOrgDataService(ApplicationDBContext context)
         {
             this.context = context;
+        }
+
+        public async Task<TransposeResult> TransposeBeforeCalcResults(
+            [FromBody] CalcResultsRequestDto resultsRequestDto,
+            CancellationToken cancellationToken)
+        {
+            var startTime = DateTime.Now;
+
+            new CommandTimeoutService().SetCommandTimeout(context.Database, "TransposeCommand");
+
+            CalculatorRun? calculatorRun = null;
+            try
+            {
+                calculatorRun = await this.context.CalculatorRuns.SingleOrDefaultAsync(
+                run => run.Id == resultsRequestDto.RunId,
+                cancellationToken);
+                if (calculatorRun == null)
+                {
+                    return new TransposeResult
+                    {
+                        StatusCode = StatusCodes.Status404NotFound,
+                        Exception = new KeyNotFoundException($"Unable to find Run Id {resultsRequestDto.RunId}"),
+                    };
+                }
+
+                var isTransposeSuccessful = await this.Transpose(
+                    resultsRequestDto,
+                    cancellationToken);
+                var endTime = DateTime.Now;
+                var timeDiff = startTime - endTime;
+                return new TransposeResult
+                {
+                    TimeTaken = timeDiff.TotalMinutes,
+                    StatusCode = StatusCodes.Status201Created,
+                };
+            }
+            catch (OperationCanceledException exception)
+            {
+                if (calculatorRun != null)
+                {
+                    calculatorRun.CalculatorRunClassificationId = (int)RunClassification.ERROR;
+                    this.context.CalculatorRuns.Update(calculatorRun);
+                    await this.context.SaveChangesAsync();
+                }
+
+                return new TransposeResult
+                {
+                    StatusCode = StatusCodes.Status408RequestTimeout,
+                    Exception = exception,
+                };
+            }
+            catch (Exception exception)
+            {
+                if (calculatorRun != null)
+                {
+                    calculatorRun.CalculatorRunClassificationId = (int)RunClassification.ERROR;
+                    this.context.CalculatorRuns.Update(calculatorRun);
+                    await this.context.SaveChangesAsync();
+                }
+
+                return new TransposeResult
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError,
+                    Exception = exception, 
+                };
+            }
         }
 
         public async Task<bool> Transpose(CalcResultsRequestDto resultsRequestDto, CancellationToken cancellationToken)

@@ -7,6 +7,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using EPR.Calculator.Service.Common.AzureSynapse;
     using EPR.Calculator.Service.Common.Utils;
     using EPR.Calculator.Service.Function.Constants;
+    using EPR.Calculator.Service.Function.Interface;
     using EPR.Calculator.Service.Function.Services;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
@@ -28,6 +29,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.AzureSynapseRunner = new Mock<IAzureSynapseRunner>();
             this.MockLogger = new Mock<ILogger<CalculatorRunService>>();
             this.MockStatusUpdateHandler = new Mock<HttpMessageHandler>();
+            this.TransposeService = new Mock<ITransposePomAndOrgDataService>();
 
             this.MockStatusUpdateHandler.Protected()
                 .Setup<Task<HttpResponseMessage>>(
@@ -48,7 +50,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.CalculatorRunService = new CalculatorRunService(
                 this.AzureSynapseRunner.Object,
                 this.MockLogger.Object,
-                this.PipelineClientFactory.Object);
+                this.PipelineClientFactory.Object,
+                this.TransposeService.Object,
+                new Configuration());
 
             Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PomDataPipelineName, this.Fixture.Create<string>());
             Environment.SetEnvironmentVariable(EnvironmentVariableKeys.OrgDataPipelineName, this.Fixture.Create<string>());
@@ -68,6 +72,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         private Mock<HttpMessageHandler> MockStatusUpdateHandler { get; set; }
 
         private Mock<PipelineClientFactory> PipelineClientFactory { get; }
+
+        private Mock<ITransposePomAndOrgDataService> TransposeService { get; }
 
         /// <summary>
         /// Checks that the service calls the Azure Synapse runner and passes the correct parameters to it.
