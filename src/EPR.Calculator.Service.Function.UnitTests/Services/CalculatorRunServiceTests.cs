@@ -3,12 +3,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using System.Net;
     using System.Net.Http;
     using AutoFixture;
+    using EPR.Calculator.API.Dtos;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
     using EPR.Calculator.Service.Common.Utils;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Interface;
+    using EPR.Calculator.Service.Function.Misc;
     using EPR.Calculator.Service.Function.Services;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using Moq;
@@ -53,6 +56,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 this.PipelineClientFactory.Object,
                 this.TransposeService.Object,
                 new Configuration());
+
+            this.TransposeService.Setup(t => t.TransposeBeforeCalcResults(
+                It.IsAny<CalcResultsRequestDto>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new TransposeResult { StatusCode = StatusCodes.Status201Created });
 
             Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PomDataPipelineName, this.Fixture.Create<string>());
             Environment.SetEnvironmentVariable(EnvironmentVariableKeys.OrgDataPipelineName, this.Fixture.Create<string>());
