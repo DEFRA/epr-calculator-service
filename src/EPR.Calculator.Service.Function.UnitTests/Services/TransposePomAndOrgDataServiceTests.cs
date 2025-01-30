@@ -431,7 +431,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             var list = new List<CalculatorRun>
             {
-                new() {
+                new ()
+                {
+                    Id = 1,
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Run",
                     Financial_Year = "2024-25",
@@ -440,14 +442,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     CalculatorRunOrganisationDataMasterId = 2,
                     CalculatorRunPomDataMasterId = 2,
                 },
-                new() {
+                new ()
+                {
+                    Id = 2,
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Calculated Result",
                     Financial_Year = "2024-25",
                     CreatedAt = new DateTime(2024, 8, 21, 14, 16, 27, DateTimeKind.Utc),
                     CreatedBy = "Test User"
                 },
-                new() {
+                new ()
+                {
+                    Id = 3,
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Run",
                     Financial_Year = "2024-25",
@@ -456,7 +462,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     CalculatorRunOrganisationDataMasterId = 1,
                     CalculatorRunPomDataMasterId = 1,
                 },
-                new() {
+                new ()
+                {
+                    Id = 4,
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Calculated Result",
                     Financial_Year = "2024-25",
@@ -464,7 +472,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     CreatedBy = "Test User",
                     CalculatorRunOrganisationDataMasterId = 2,
                     CalculatorRunPomDataMasterId = 2,
-                }
+                },
             };
             return list;
         }
