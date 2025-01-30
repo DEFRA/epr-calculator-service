@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 #nullable disable
 
-namespace EPR.Calculator.API.Data.Migrations
+namespace EPR.Calculator.Service.Function.Data.Migrations
 {
     [ExcludeFromCodeCoverage]
     /// <inheritdoc />

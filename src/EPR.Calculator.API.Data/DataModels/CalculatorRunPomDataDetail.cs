@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 
-namespace EPR.Calculator.API.Data.DataModels
+namespace EPR.Calculator.Service.Function.Data.DataModels
 {
     [Table("calculator_run_pom_data_detail")]
     public class CalculatorRunPomDataDetail

@@ -2,8 +2,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
 {
     using System;
     using AutoFixture;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Services;
+    using EPR.Calculator.Service.Function.Data;
+    using EPR.Calculator.Service.Function.Services;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Infrastructure;
     using Microsoft.Extensions.Configuration;

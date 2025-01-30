@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace EPR.Calculator.API.Data.DataModels
+namespace EPR.Calculator.Service.Function.Data.DataModels
 {
 
     [Table("lapcap_data_detail")]

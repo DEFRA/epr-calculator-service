@@ -2,7 +2,7 @@
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using EPR.Calculator.API.Dtos;
+    using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Misc;
 
     public interface ITransposePomAndOrgDataService

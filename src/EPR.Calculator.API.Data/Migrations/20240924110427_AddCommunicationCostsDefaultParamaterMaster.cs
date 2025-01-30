@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace EPR.Calculator.API.Data.Migrations
+namespace EPR.Calculator.Service.Function.Data.Migrations
 {
     /// <inheritdoc />
     public partial class AddCommunicationCostsDefaultParamaterMaster : Migration

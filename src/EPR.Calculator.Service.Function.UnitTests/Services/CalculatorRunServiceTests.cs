@@ -3,7 +3,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using System.Net;
     using System.Net.Http;
     using AutoFixture;
-    using EPR.Calculator.API.Dtos;
+    using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
     using EPR.Calculator.Service.Common.Utils;

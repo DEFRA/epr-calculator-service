@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Infrastructure;
 
-namespace EPR.Calculator.API.Services
+namespace EPR.Calculator.Service.Function.Services
 {
     public interface ICommandTimeoutService
     {

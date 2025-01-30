@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices.Marshalling;
 
-namespace EPR.Calculator.API.Data.DataModels
+namespace EPR.Calculator.Service.Function.Data.DataModels
 {
     [Table("country_apportionment")]
     public class CountryApportionment

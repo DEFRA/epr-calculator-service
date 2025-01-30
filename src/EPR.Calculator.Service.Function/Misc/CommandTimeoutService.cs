@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using System;
 
-namespace EPR.Calculator.API.Services
+namespace EPR.Calculator.Service.Function.Services
 {
     public class CommandTimeoutService : ICommandTimeoutService
     {

@@ -5,11 +5,11 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.API.Dtos;
-    using EPR.Calculator.API.Enums;
-    using EPR.Calculator.API.Services;
+    using EPR.Calculator.Service.Function.Data;
+    using EPR.Calculator.Service.Function.Data.DataModels;
+    using EPR.Calculator.Service.Function.Dtos;
+    using EPR.Calculator.Service.Function.Enums;
+    using EPR.Calculator.Service.Function.Services;
     using EPR.Calculator.Service.Function.Interface;
     using EPR.Calculator.Service.Function.Misc;
     using Microsoft.AspNetCore.Http;

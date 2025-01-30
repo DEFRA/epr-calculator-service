@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace EPR.Calculator.API.Enums
+namespace EPR.Calculator.Service.Function.Enums
 {
     public enum RunClassification
     {

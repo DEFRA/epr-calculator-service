@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-using EPR.Calculator.API.Data;
+using EPR.Calculator.Service.Function.Data;
 using EPR.Calculator.Service.Common.AzureSynapse;
 using EPR.Calculator.Service.Function;
 using EPR.Calculator.Service.Function.Interface;

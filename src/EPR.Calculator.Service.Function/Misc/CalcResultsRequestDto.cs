@@ -1,4 +1,4 @@
-﻿namespace EPR.Calculator.API.Dtos
+﻿namespace EPR.Calculator.Service.Function.Dtos
 {
     public class CalcResultsRequestDto
     {

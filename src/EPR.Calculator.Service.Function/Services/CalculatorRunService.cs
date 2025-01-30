@@ -8,7 +8,7 @@
     using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
-    using EPR.Calculator.API.Dtos;
+    using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
     using EPR.Calculator.Service.Function.Interface;
