@@ -35,7 +35,7 @@ namespace EPR.Calculator.Service.Function
             builder.Services.AddDbContext<ApplicationDBContext>(options =>
             {
                 options.UseSqlServer(
-                    new TestConfiguration().DbConnectionString);
+                    new LocalDevelopmentConfiguration().DbConnectionString);
             });
         }
 
@@ -54,8 +54,12 @@ namespace EPR.Calculator.Service.Function
             // Configuration reads the configuration from environment variables. Switch to TestConfiguration
             // when testing locally to read from hard-coded strings instead.
             // TODO: Maybe replace this with loading from the config file?
+#if !DEBUG
             services.AddTransient<IConfigurationService, Configuration>();
-            //services.AddTransient<IConfigurationService, TestConfiguration>();
+#endif
+#if DEBUG
+            services.AddTransient<IConfigurationService, LocalDevelopmentConfiguration>();
+#endif
         }
     }
 }
