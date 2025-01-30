@@ -153,5 +153,39 @@ namespace EPR.Calculator.Service.Function.UnitTests
             // Assert
             Assert.AreEqual(TimeSpan.FromHours(Configuration.DefaultTimeout), result);
         }
+
+        [TestMethod]
+        public void CanGetDbConnectionString()
+        {
+            // Arrange
+            var connectionString = this.Fixture.Create<string>();
+
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.DbConnectionString,
+                connectionString);
+
+            // Act
+            var result = new Configuration().DbConnectionString;
+
+            // Assert
+            Assert.AreEqual(connectionString, result);
+        }
+
+        [TestMethod]
+        public void CanGetTransposeEndpoint()
+        {
+            // Arrange
+            var transposeEndpoint = this.Fixture.Create<Uri>();
+
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.TransposeEndpoint,
+                transposeEndpoint.ToString());
+
+            // Act
+            var result = new Configuration().TransposeEndpoint;
+
+            // Assert
+            Assert.AreEqual(transposeEndpoint, result);
+        }
     }
 }
