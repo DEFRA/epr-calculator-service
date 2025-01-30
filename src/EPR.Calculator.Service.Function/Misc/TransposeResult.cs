@@ -8,7 +8,7 @@
     using Microsoft.AspNetCore.Mvc;
 
     // Temp replacement for the IActionResult that the transpose endpoint returns.
-    public readonly record struct TransposeResult
+    public record TransposeResult
     {
         required public int StatusCode { get; init; }
 
