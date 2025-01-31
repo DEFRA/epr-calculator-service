@@ -8,8 +8,6 @@ COPY stylecop.json ./
 # Publish 
 RUN dotnet publish EPR.Calculator.Service.Function/*.csproj --output /home/site/wwwroot
 
-COPY --chown=dotnet:dotnet EPR.Calculator.Service.Data/. ./EPR.Calculator.Service.Data/.
-
 # Use the Azure Functions image as the final image
 FROM mcr.microsoft.com/azure-functions/dotnet:4-dotnet8
 
