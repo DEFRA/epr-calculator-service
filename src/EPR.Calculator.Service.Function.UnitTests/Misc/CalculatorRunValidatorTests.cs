@@ -13,7 +13,10 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
         private IFixture Fixture { get; init; }
 
-        public CalculatorRunValidatorTests
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CalculatorRunValidatorTests"/> class.
+        /// </summary>
+        public CalculatorRunValidatorTests()
         {
             this.Fixture = new Fixture();
             this.TestClass = new CalculatorRunValidator();
