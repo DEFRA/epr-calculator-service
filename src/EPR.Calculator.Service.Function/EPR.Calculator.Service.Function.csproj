@@ -19,7 +19,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EPR.Calculator.API.Data\EPR.Calculator.API.Data.csproj" />
+    <ProjectReference Include="..\EPR.Calculator.API.Data\EPR.Calculator.Service.Data.csproj" />
     <ProjectReference Include="..\EPR.Calculator.Service.Common\EPR.Calculator.Service.Common.csproj" />
   </ItemGroup>
   <ItemGroup>

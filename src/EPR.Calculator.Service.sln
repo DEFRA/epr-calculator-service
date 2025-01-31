@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EPR.Calculator.Service.Func
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EPR.Calculator.Service.Function.UnitTests", "EPR.Calculator.Service.Function.UnitTests\EPR.Calculator.Service.Function.UnitTests.csproj", "{97DC57A2-9650-454D-AE31-CB38C676E1AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EPR.Calculator.API.Data", "EPR.Calculator.API.Data\EPR.Calculator.API.Data.csproj", "{284CDC1D-286F-47D0-86C9-76F51B8998BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EPR.Calculator.Service.Data", "EPR.Calculator.API.Data\EPR.Calculator.Service.Data.csproj", "{284CDC1D-286F-47D0-86C9-76F51B8998BE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
