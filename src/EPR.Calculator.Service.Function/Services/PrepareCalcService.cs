@@ -8,7 +8,6 @@
     using System.Threading.Tasks;
     using EPR.Calculator.API.Exporter;
     using EPR.Calculator.API.Validators;
-    using EPR.Calculator.API.Wrapper;
     using EPR.Calculator.Service.Function.Builder;
     using EPR.Calculator.Service.Function.Data;
     using EPR.Calculator.Service.Function.Data.DataModels;

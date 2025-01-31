@@ -1,4 +1,4 @@
-﻿namespace EPR.Calculator.API.Validators
+﻿namespace EPR.Calculator.Service.Function.Interface
 {
     using System.Collections.Generic;
     using EPR.Calculator.Service.Function.Data.DataModels;

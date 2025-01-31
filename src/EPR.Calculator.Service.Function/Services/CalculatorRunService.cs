@@ -212,11 +212,6 @@
 
                 if (statusUpdateResponse != null && statusUpdateResponse.IsSuccessStatusCode)
                 {
-                    //var transposeResultResponse = await client.PostAsync(
-                    //    Configuration.TransposeEndpoint,
-                    //    GetCalcResultMessage(calculatorRunParameter.Id),
-                    //    new CancellationTokenSource(Configuration.TransposeTimeout).Token);
-
                     var isTransposeSuccess = await this.transposePomAndOrgDataService.
                         TransposeBeforeCalcResults(
                         new CalcResultsRequestDto { RunId = calculatorRunParameter.Id },
@@ -226,16 +221,11 @@
 
                     if (isTransposeSuccess)
                     {
-                        //var prepareCalcResultResponse = await client.PostAsync(
-                        //    this.configuration.PrepareCalcResultEndPoint,
-                        //    GetCalcResultMessage(calculatorRunParameter.Id),
-                        //    new System.Threading.CancellationTokenSource(this.configuration.PrepareCalcResultsTimeout).Token);
-
-                        var isPrepareCalcSuccess = await this.prepareCalcService.PrepareCalcResults(
+                        isSuccess = await this.prepareCalcService.PrepareCalcResults(
                             new CalcResultsRequestDto { RunId = calculatorRunParameter.Id },
                             new CancellationTokenSource(this.configuration.PrepareCalcResultsTimeout).Token);
 
-                        this.logger.LogInformation("prepareCalcResultResponse: {isSuccess}", isPrepareCalcSuccess);
+                        this.logger.LogInformation("prepareCalcResultResponse: {isSuccess}", isSuccess);
                     }
                 }
 
