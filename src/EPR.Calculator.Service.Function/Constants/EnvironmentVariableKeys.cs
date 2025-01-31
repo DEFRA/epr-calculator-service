@@ -43,5 +43,8 @@ namespace EPR.Calculator.Service.Function.Constants
 
         /// <summary>The key for the TransposeTimeout environment variable.</summary>
         public const string TransposeTimeout = "TransposeTimeout";
+
+        /// <summary>The key for the DbConnectionString environment variable.</summary>
+        public const string DbConnectionString = "DbConnectionString";
     }
 }

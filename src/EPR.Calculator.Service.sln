@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EPR.Calculator.Service.Func
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EPR.Calculator.Service.Function.UnitTests", "EPR.Calculator.Service.Function.UnitTests\EPR.Calculator.Service.Function.UnitTests.csproj", "{97DC57A2-9650-454D-AE31-CB38C676E1AD}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EPR.Calculator.Service.Data", "EPR.Calculator.Service.Data\EPR.Calculator.Service.Data.csproj", "{8F774116-EDFD-4ED8-9362-741FE8D79B2E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{97DC57A2-9650-454D-AE31-CB38C676E1AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97DC57A2-9650-454D-AE31-CB38C676E1AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{97DC57A2-9650-454D-AE31-CB38C676E1AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F774116-EDFD-4ED8-9362-741FE8D79B2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F774116-EDFD-4ED8-9362-741FE8D79B2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F774116-EDFD-4ED8-9362-741FE8D79B2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F774116-EDFD-4ED8-9362-741FE8D79B2E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

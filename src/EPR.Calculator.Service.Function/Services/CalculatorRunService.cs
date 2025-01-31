@@ -8,9 +8,11 @@
     using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
+    using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
     using EPR.Calculator.Service.Function.Interface;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Logging;
 
     /// <summary>
@@ -22,6 +24,9 @@
         private readonly IAzureSynapseRunner azureSynapseRunner;
         private readonly ILogger logger;
         private readonly IPipelineClientFactory pipelineClientFactory;
+        private readonly ITransposePomAndOrgDataService transposePomAndOrgDataService;
+        private readonly IConfigurationService configuration;
+        private readonly IPrepareCalcService prepareCalcService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CalculatorRunService"/> class.
@@ -29,11 +34,20 @@
         /// <param name="azureSynapseRunner">The Azure Synapse runner.</param>
         /// <param name="logger">The logger instance.</param>
         /// <param name="pipelineClientFactory">The pipeline client factory.</param>
-        public CalculatorRunService(IAzureSynapseRunner azureSynapseRunner, ILogger<CalculatorRunService> logger, IPipelineClientFactory pipelineClientFactory)
+        public CalculatorRunService(
+            IAzureSynapseRunner azureSynapseRunner,
+            ILogger<CalculatorRunService> logger,
+            IPipelineClientFactory pipelineClientFactory,
+            ITransposePomAndOrgDataService transposePomAndOrgDataService,
+            IConfigurationService configuration,
+            IPrepareCalcService prepareCalcService)
         {
             this.logger = logger;
             this.azureSynapseRunner = azureSynapseRunner;
             this.pipelineClientFactory = pipelineClientFactory;
+            this.transposePomAndOrgDataService = transposePomAndOrgDataService;
+            this.configuration = configuration;
+            this.prepareCalcService = prepareCalcService;
         }
 
         /// <summary>
@@ -42,18 +56,18 @@
         /// <param name="args">The calculator run parameters.</param>
         /// <param name="pipelineName">The name of the pipeline.</param>
         /// <returns>The Azure Synapse runner parameters.</returns>
-        public static AzureSynapseRunnerParameters GetAzureSynapseConfiguration(
+        public AzureSynapseRunnerParameters GetAzureSynapseConfiguration(
             CalculatorRunParameter args,
             string pipelineName)
         {
             var financialYear = args.FinancialYear;
-            int.TryParse(Configuration.CheckInterval, out int checkInterval);
+            int.TryParse(this.configuration.CheckInterval, out int checkInterval);
 
-            int.TryParse(Configuration.MaxCheckCount, out int maxCheckCount);
+            int.TryParse(this.configuration.MaxCheckCount, out int maxCheckCount);
 
             return new AzureSynapseRunnerParameters
             {
-                PipelineUrl = new Uri(Configuration.PipelineUrl),
+                PipelineUrl = new Uri(this.configuration.PipelineUrl),
                 CheckInterval = checkInterval,
                 MaxCheckCount = maxCheckCount,
                 PipelineName = pipelineName,
@@ -112,11 +126,11 @@
         public async Task<bool> StartProcess(CalculatorRunParameter calculatorRunParameter)
         {
             this.logger.LogInformation("Process started");
-            bool.TryParse(Configuration.ExecuteRPDPipeline, out bool runRpdPipeline);
+            bool.TryParse(this.configuration.ExecuteRPDPipeline, out bool runRpdPipeline);
 
             bool isPomSuccessful = await this.RunPipelines(calculatorRunParameter, runRpdPipeline);
 
-            using var client = this.pipelineClientFactory.GetHttpClient(Configuration.StatusEndpoint);
+            using var client = this.pipelineClientFactory.GetHttpClient(this.configuration.StatusEndpoint);
             this.logger.LogInformation("HTTP Client: {client}", client);
 
             bool isSuccess;
@@ -148,7 +162,7 @@
             {
                 var orgPipelineConfiguration = GetAzureSynapseConfiguration(
                     calculatorRunParameter,
-                    Configuration.OrgDataPipelineName);
+                    this.configuration.OrgDataPipelineName);
 
                 var isOrgSuccessful = await this.azureSynapseRunner.Process(orgPipelineConfiguration);
                 this.logger.LogInformation("Org status: {Status}", isOrgSuccessful);
@@ -157,7 +171,7 @@
                 {
                     var pomPipelineConfiguration = GetAzureSynapseConfiguration(
                         calculatorRunParameter,
-                        Configuration.PomDataPipelineName);
+                        this.configuration.PomDataPipelineName);
                     isPomSuccessful = await this.azureSynapseRunner.Process(pomPipelineConfiguration);
                     this.logger.LogInformation("Pom status: {Status}", isPomSuccessful);
                 }
@@ -186,50 +200,49 @@
 
             if (isPomSuccessful)
             {
-                this.logger.LogInformation("StatusEndPoint: {StatusEndPoint}", Configuration.StatusEndpoint);
+                this.logger.LogInformation("StatusEndPoint: {StatusEndPoint}", this.configuration.StatusEndpoint);
                 var statusUpdateResponse = await client.PostAsync(
-                    Configuration.StatusEndpoint,
+                    this.configuration.StatusEndpoint,
                     GetStatusUpdateMessage(
                         calculatorRunParameter.Id,
                         isPomSuccessful,
                         calculatorRunParameter.User),
-                    new CancellationTokenSource(Configuration.RpdStatusTimeout).Token);
+                    new CancellationTokenSource(this.configuration.RpdStatusTimeout).Token);
                 this.logger.LogInformation("Status Response: {Response}", statusUpdateResponse);
 
                 if (statusUpdateResponse != null && statusUpdateResponse.IsSuccessStatusCode)
                 {
-                    var transposeResultResponse = await client.PostAsync(
-                        Configuration.TransposeEndpoint,
-                        GetCalcResultMessage(calculatorRunParameter.Id),
-                        new CancellationTokenSource(Configuration.TransposeTimeout).Token);
-                    var isTransposeSuccess = transposeResultResponse.IsSuccessStatusCode;
-                    this.logger.LogInformation("transposeResultResponse: {isSuccess}", transposeResultResponse.IsSuccessStatusCode);
+                    var isTransposeSuccess = await this.transposePomAndOrgDataService.
+                        TransposeBeforeCalcResults(
+                        new CalcResultsRequestDto { RunId = calculatorRunParameter.Id },
+                        new CancellationTokenSource(this.configuration.TransposeTimeout).Token);
+
+                    this.logger.LogInformation("transposeResultResponse: {isSuccess}", isTransposeSuccess);
 
                     if (isTransposeSuccess)
                     {
-                        var prepareCalcResultResponse = await client.PostAsync(
-                            Configuration.PrepareCalcResultEndPoint,
-                            GetCalcResultMessage(calculatorRunParameter.Id),
-                            new System.Threading.CancellationTokenSource(Configuration.PrepareCalcResultsTimeout).Token);
-                        isSuccess = prepareCalcResultResponse.IsSuccessStatusCode;
-                        this.logger.LogInformation("prepareCalcResultResponse: {isSuccess}", prepareCalcResultResponse.IsSuccessStatusCode);
+                        isSuccess = await this.prepareCalcService.PrepareCalcResults(
+                            new CalcResultsRequestDto { RunId = calculatorRunParameter.Id },
+                            new CancellationTokenSource(this.configuration.PrepareCalcResultsTimeout).Token);
+
+                        this.logger.LogInformation("prepareCalcResultResponse: {isSuccess}", isSuccess);
                     }
                 }
 
-                this.logger.LogInformation("PrepareCalcResultEndPoint: {PrepareCalcResultEndPoint}", Configuration.PrepareCalcResultEndPoint);
+                this.logger.LogInformation("PrepareCalcResultEndPoint: {PrepareCalcResultEndPoint}", this.configuration.PrepareCalcResultEndPoint);
                 this.logger.LogInformation("CalculatorRunParameter ID: {CalculatorRunParameterId}", calculatorRunParameter.Id);
                 this.logger.LogInformation("GetPrepareCalcResultMessage: {GetPrepareCalcResultMessageId}", GetCalcResultMessage(calculatorRunParameter.Id));
             }
             else
             {
-                this.logger.LogInformation("StatusEndPoint: {StatusEndPoint}", Configuration.StatusEndpoint);
+                this.logger.LogInformation("StatusEndPoint: {StatusEndPoint}", this.configuration.StatusEndpoint);
                 var statusUpdateResponse = await client.PostAsync(
-                    Configuration.StatusEndpoint,
+                    this.configuration.StatusEndpoint,
                     GetStatusUpdateMessage(
                         calculatorRunParameter.Id,
                         isPomSuccessful,
                         calculatorRunParameter.User),
-                    new CancellationTokenSource(Configuration.RpdStatusTimeout).Token);
+                    new CancellationTokenSource(this.configuration.RpdStatusTimeout).Token);
                 this.logger.LogInformation("Status Response: {Response}", statusUpdateResponse);
             }
 

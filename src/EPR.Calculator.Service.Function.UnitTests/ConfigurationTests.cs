@@ -28,13 +28,16 @@ namespace EPR.Calculator.Service.Function.UnitTests
         [TestMethod]
         public void Configuration_Variables_Test()
         {
+            // Arrange
+            var configuration = new Configuration();
+
             // Assert
-            Assert.AreEqual(Environment.GetEnvironmentVariable("PipelineUrl"), Configuration.PipelineUrl);
-            Assert.AreEqual(Environment.GetEnvironmentVariable("GetOrgDataPipelineName"), Configuration.OrgDataPipelineName);
-            Assert.AreEqual(Environment.GetEnvironmentVariable("GetPomDataPipelineName"), Configuration.PomDataPipelineName);
-            Assert.AreEqual(Environment.GetEnvironmentVariable("CheckInterval"), Configuration.CheckInterval);
-            Assert.AreEqual(Environment.GetEnvironmentVariable("MaxCheckCount"), Configuration.MaxCheckCount);
-            Assert.AreEqual(Environment.GetEnvironmentVariable("ExecuteRPDPipeline"), Configuration.ExecuteRPDPipeline);
+            Assert.AreEqual(Environment.GetEnvironmentVariable("PipelineUrl"), configuration.PipelineUrl);
+            Assert.AreEqual(Environment.GetEnvironmentVariable("GetOrgDataPipelineName"), configuration.OrgDataPipelineName);
+            Assert.AreEqual(Environment.GetEnvironmentVariable("GetPomDataPipelineName"), configuration.PomDataPipelineName);
+            Assert.AreEqual(Environment.GetEnvironmentVariable("CheckInterval"), configuration.CheckInterval);
+            Assert.AreEqual(Environment.GetEnvironmentVariable("MaxCheckCount"), configuration.MaxCheckCount);
+            Assert.AreEqual(Environment.GetEnvironmentVariable("ExecuteRPDPipeline"), configuration.ExecuteRPDPipeline);
         }
 
         /// <summary>
@@ -50,7 +53,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 testValueInMinutes.ToString());
 
             // Act
-            var result = Configuration.PrepareCalcResultsTimeout;
+            var result = new Configuration().PrepareCalcResultsTimeout;
 
             // Assert
             Assert.AreEqual(TimeSpan.FromMinutes(testValueInMinutes), result);
@@ -69,7 +72,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 null);
 
             // Act
-            var result = Configuration.PrepareCalcResultsTimeout;
+            var result = new Configuration().PrepareCalcResultsTimeout;
 
             // Assert
             Assert.AreEqual(TimeSpan.FromHours(Configuration.DefaultTimeout), result);
@@ -88,7 +91,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 testValueInMinutes.ToString());
 
             // Act
-            var result = Configuration.RpdStatusTimeout;
+            var result = new Configuration().RpdStatusTimeout;
 
             // Assert
             Assert.AreEqual(TimeSpan.FromMinutes(testValueInMinutes), result);
@@ -107,7 +110,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 null);
 
             // Act
-            var result = Configuration.RpdStatusTimeout;
+            var result = new Configuration().RpdStatusTimeout;
 
             // Assert
             Assert.AreEqual(TimeSpan.FromHours(Configuration.DefaultTimeout), result);
@@ -126,7 +129,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 testValueInMinutes.ToString());
 
             // Act
-            var result = Configuration.TransposeTimeout;
+            var result = new Configuration().TransposeTimeout;
 
             // Assert
             Assert.AreEqual(TimeSpan.FromMinutes(testValueInMinutes), result);
@@ -145,10 +148,44 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 null);
 
             // Act
-            var result = Configuration.TransposeTimeout;
+            var result = new Configuration().TransposeTimeout;
 
             // Assert
             Assert.AreEqual(TimeSpan.FromHours(Configuration.DefaultTimeout), result);
+        }
+
+        [TestMethod]
+        public void CanGetDbConnectionString()
+        {
+            // Arrange
+            var connectionString = this.Fixture.Create<string>();
+
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.DbConnectionString,
+                connectionString);
+
+            // Act
+            var result = new Configuration().DbConnectionString;
+
+            // Assert
+            Assert.AreEqual(connectionString, result);
+        }
+
+        [TestMethod]
+        public void CanGetTransposeEndpoint()
+        {
+            // Arrange
+            var transposeEndpoint = this.Fixture.Create<Uri>();
+
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.TransposeEndpoint,
+                transposeEndpoint.ToString());
+
+            // Act
+            var result = new Configuration().TransposeEndpoint;
+
+            // Assert
+            Assert.AreEqual(transposeEndpoint, result);
         }
     }
 }
