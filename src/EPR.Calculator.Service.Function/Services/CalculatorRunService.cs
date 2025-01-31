@@ -26,6 +26,7 @@
         private readonly IPipelineClientFactory pipelineClientFactory;
         private readonly ITransposePomAndOrgDataService transposePomAndOrgDataService;
         private readonly IConfigurationService configuration;
+        private readonly IPrepareCalcService prepareCalcService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CalculatorRunService"/> class.
@@ -38,13 +39,15 @@
             ILogger<CalculatorRunService> logger,
             IPipelineClientFactory pipelineClientFactory,
             ITransposePomAndOrgDataService transposePomAndOrgDataService,
-            IConfigurationService configuration)
+            IConfigurationService configuration,
+            IPrepareCalcService prepareCalcService)
         {
             this.logger = logger;
             this.azureSynapseRunner = azureSynapseRunner;
             this.pipelineClientFactory = pipelineClientFactory;
             this.transposePomAndOrgDataService = transposePomAndOrgDataService;
             this.configuration = configuration;
+            this.prepareCalcService = prepareCalcService;
         }
 
         /// <summary>
@@ -223,12 +226,16 @@
 
                     if (isTransposeSuccess)
                     {
-                        var prepareCalcResultResponse = await client.PostAsync(
-                            this.configuration.PrepareCalcResultEndPoint,
-                            GetCalcResultMessage(calculatorRunParameter.Id),
-                            new System.Threading.CancellationTokenSource(this.configuration.PrepareCalcResultsTimeout).Token);
-                        isSuccess = prepareCalcResultResponse.IsSuccessStatusCode;
-                        this.logger.LogInformation("prepareCalcResultResponse: {isSuccess}", prepareCalcResultResponse.IsSuccessStatusCode);
+                        //var prepareCalcResultResponse = await client.PostAsync(
+                        //    this.configuration.PrepareCalcResultEndPoint,
+                        //    GetCalcResultMessage(calculatorRunParameter.Id),
+                        //    new System.Threading.CancellationTokenSource(this.configuration.PrepareCalcResultsTimeout).Token);
+
+                        var isPrepareCalcSuccess = await this.prepareCalcService.PrepareCalcResults(
+                            new CalcResultsRequestDto { RunId = calculatorRunParameter.Id },
+                            new CancellationTokenSource(this.configuration.PrepareCalcResultsTimeout).Token);
+
+                        this.logger.LogInformation("prepareCalcResultResponse: {isSuccess}", isPrepareCalcSuccess);
                     }
                 }
 
