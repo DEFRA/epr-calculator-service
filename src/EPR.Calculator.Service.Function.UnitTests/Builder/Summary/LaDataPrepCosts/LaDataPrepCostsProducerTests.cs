@@ -9,6 +9,7 @@
     using Microsoft.EntityFrameworkCore.Diagnostics;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System.Collections.Generic;
+    using EPR.Calculator.Service.Function.Models;
 
     [TestClass]
     public class LaDataPrepCostsProducerTests

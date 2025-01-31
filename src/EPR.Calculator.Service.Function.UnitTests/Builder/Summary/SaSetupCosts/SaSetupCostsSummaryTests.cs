@@ -7,6 +7,7 @@
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Builder.Summary.Common;
     using EPR.Calculator.Service.Function.Enums;
+    using EPR.Calculator.Service.Function.Models;
 
     [TestClass]
     public class SaSetupCostsSummaryTests

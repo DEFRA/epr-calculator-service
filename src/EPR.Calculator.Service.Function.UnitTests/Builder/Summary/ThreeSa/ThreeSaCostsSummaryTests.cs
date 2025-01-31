@@ -3,6 +3,7 @@
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
 {
     using EPR.Calculator.Service.Function.Builder.Summary.ThreeSA;
+    using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Models;
 
