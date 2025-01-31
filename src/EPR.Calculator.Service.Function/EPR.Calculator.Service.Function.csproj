@@ -19,8 +19,8 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EPR.Calculator.API.Data\EPR.Calculator.Service.Data.csproj" />
     <ProjectReference Include="..\EPR.Calculator.Service.Common\EPR.Calculator.Service.Common.csproj" />
+    <ProjectReference Include="..\EPR.Calculator.Service.Data\EPR.Calculator.Service.Data.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Dockerfile">

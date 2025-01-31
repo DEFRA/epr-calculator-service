@@ -36,7 +36,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EPR.Calculator.API.Data\EPR.Calculator.Service.Data.csproj" />
     <ProjectReference Include="..\EPR.Calculator.Service.Common\EPR.Calculator.Service.Common.csproj" />
     <ProjectReference Include="..\EPR.Calculator.Service.Function\EPR.Calculator.Service.Function.csproj" />
   </ItemGroup>
