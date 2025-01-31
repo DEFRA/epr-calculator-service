@@ -1,17 +1,16 @@
-﻿using AutoFixture;
-using EPR.Calculator.Service.Function.Builder;
-using EPR.Calculator.Service.Function.Builder.Summary;
-using EPR.Calculator.Service.Function.Builder.Summary.HHTonnageVsAllProducer;
-using EPR.Calculator.Service.Function.Builder.Summary.OneAndTwoA;
-using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Data;
-using EPR.Calculator.Service.Function.Data.DataModels;
-using EPR.Calculator.Service.Function.Dtos;
-using EPR.Calculator.Service.Function.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-namespace EPR.Calculator.Service.Function.UnitTests
+﻿namespace EPR.Calculator.Service.Function.UnitTests
 {
+    using AutoFixture;
+    using EPR.Calculator.Service.Function.Builder.Summary;
+    using EPR.Calculator.Service.Function.Builder.Summary.OneAndTwoA;
+    using EPR.Calculator.Service.Function.Constants;
+    using EPR.Calculator.Service.Function.Data;
+    using EPR.Calculator.Service.Function.Data.DataModels;
+    using EPR.Calculator.Service.Function.Dtos;
+    using EPR.Calculator.Service.Function.Models;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
     [TestClass]
     public class CalcResultSummaryBuilderTests
     {
