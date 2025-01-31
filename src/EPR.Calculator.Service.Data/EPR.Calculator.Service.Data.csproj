@@ -6,10 +6,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-	<Target Name="GenerateSqlScript" AfterTargets="AfterBuild" Condition="$(AzureBuild) != true">
-		<Exec Condition="$(Configuration) == Release" Command="dotnet-ef migrations script --configuration Release --verbose --no-build --context EPR.Calculator.API.Data.ApplicationDBContext --idempotent --output Scripts/migrations.sql" />
-	</Target>
-
   <ItemGroup>
     <Folder Include="Migrations\" />
   </ItemGroup>
