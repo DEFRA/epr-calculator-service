@@ -7,6 +7,6 @@
 
     public interface ITransposePomAndOrgDataService
     {
-        Task<TransposeResult> TransposeBeforeCalcResults(CalcResultsRequestDto resultsRequestDto, CancellationToken cancellationToken);
+        Task<bool> TransposeBeforeCalcResults(CalcResultsRequestDto resultsRequestDto, CancellationToken cancellationToken);
     }
 }

@@ -60,7 +60,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.TransposeService.Setup(t => t.TransposeBeforeCalcResults(
                 It.IsAny<CalcResultsRequestDto>(),
                 It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new TransposeResult { StatusCode = StatusCodes.Status201Created });
+                .ReturnsAsync(true);
 
             Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PomDataPipelineName, this.Fixture.Create<string>());
             Environment.SetEnvironmentVariable(EnvironmentVariableKeys.OrgDataPipelineName, this.Fixture.Create<string>());

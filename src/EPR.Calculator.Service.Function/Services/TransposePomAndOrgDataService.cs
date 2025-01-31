@@ -41,7 +41,7 @@
             this.context = context;
         }
 
-        public async Task<TransposeResult> TransposeBeforeCalcResults(
+        public async Task<bool> TransposeBeforeCalcResults(
             [FromBody] CalcResultsRequestDto resultsRequestDto,
             CancellationToken cancellationToken)
         {
@@ -57,11 +57,7 @@
                 cancellationToken);
                 if (calculatorRun == null)
                 {
-                    return new TransposeResult
-                    {
-                        StatusCode = StatusCodes.Status404NotFound,
-                        Exception = new KeyNotFoundException($"Unable to find Run Id {resultsRequestDto.RunId}"),
-                    };
+                    return false;
                 }
 
                 var isTransposeSuccessful = await this.Transpose(
@@ -69,11 +65,7 @@
                     cancellationToken);
                 var endTime = DateTime.Now;
                 var timeDiff = startTime - endTime;
-                return new TransposeResult
-                {
-                    TimeTaken = timeDiff.TotalMinutes,
-                    StatusCode = StatusCodes.Status201Created,
-                };
+                return true;
             }
             catch (OperationCanceledException exception)
             {
@@ -84,11 +76,7 @@
                     await this.context.SaveChangesAsync();
                 }
 
-                return new TransposeResult
-                {
-                    StatusCode = StatusCodes.Status408RequestTimeout,
-                    Exception = exception,
-                };
+                return false;
             }
             catch (Exception exception)
             {
@@ -99,11 +87,7 @@
                     await this.context.SaveChangesAsync();
                 }
 
-                return new TransposeResult
-                {
-                    StatusCode = StatusCodes.Status500InternalServerError,
-                    Exception = exception, 
-                };
+                return false;
             }
         }
 

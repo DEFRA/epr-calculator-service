@@ -214,13 +214,12 @@
                     //    GetCalcResultMessage(calculatorRunParameter.Id),
                     //    new CancellationTokenSource(Configuration.TransposeTimeout).Token);
 
-                    var transposeResultResponse = await this.transposePomAndOrgDataService.
+                    var isTransposeSuccess = await this.transposePomAndOrgDataService.
                         TransposeBeforeCalcResults(
                         new CalcResultsRequestDto { RunId = calculatorRunParameter.Id },
                         new CancellationTokenSource(this.configuration.TransposeTimeout).Token);
 
-                    var isTransposeSuccess = transposeResultResponse.StatusCode == StatusCodes.Status201Created;
-                    this.logger.LogInformation("transposeResultResponse: {isSuccess}", transposeResultResponse.StatusCode);
+                    this.logger.LogInformation("transposeResultResponse: {isSuccess}", isTransposeSuccess);
 
                     if (isTransposeSuccess)
                     {
