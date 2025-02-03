@@ -1,9 +1,13 @@
 namespace EPR.Calculator.Service.Function.UnitTests.Misc
 {
     using System;
+    using System.Configuration;
     using AutoFixture;
+    using Castle.Core.Configuration;
     using EPR.Calculator.Service.Function.Misc;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Moq;
 
     [TestClass]
     public class LocalDevelopmentConfigurationTests
@@ -12,10 +16,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
 
         private IFixture Fixture { get; init; }
 
+        private Mock<Microsoft.Extensions.Configuration.IConfiguration> Configuration { get; init; }
+
         public LocalDevelopmentConfigurationTests()
         {
             this.Fixture = new Fixture();
-            this.TestClass = new LocalDevelopmentConfiguration();
+            this.Configuration = new Mock<Microsoft.Extensions.Configuration.IConfiguration>();
+            this.TestClass = new LocalDevelopmentConfiguration(this.Configuration.Object);
         }
 
         [TestMethod]
@@ -28,6 +35,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
         [TestMethod]
         public void CanGetDbConnectionString()
         {
+            // Arrange
+            var blobConnectionValue = this.Fixture.Create<string>();
+            var blobConnectionSection = new Mock<IConfigurationSection>();
+            blobConnectionSection.Setup(v => v.Value).Returns(blobConnectionValue);
+            this.Configuration.Setup(c => c.GetSection("DbConnectionString"))
+                .Returns(blobConnectionSection.Object);
+
             // Assert
             Assert.IsInstanceOfType(this.TestClass.DbConnectionString, typeof(string));
         }
@@ -107,6 +121,20 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
         {
             // Assert
             Assert.IsInstanceOfType(this.TestClass.TransposeTimeout, typeof(TimeSpan));
+        }
+
+        [TestMethod]
+        public void CanGetBlobConnectionString()
+        {
+            // Arrange
+            var blobConnectionValue = this.Fixture.Create<string>();
+            var blobConnectionSection = new Mock<IConfigurationSection>();
+            blobConnectionSection.Setup(v => v.Value).Returns(blobConnectionValue);
+            this.Configuration.Setup(c => c.GetSection("BlobConnectionString"))
+                .Returns(blobConnectionSection.Object);
+
+            // Assert
+            Assert.IsInstanceOfType(this.TestClass.BlobConnectionString, typeof(string));
         }
     }
 }
