@@ -34,4 +34,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup>
+	<!--Workaround for this "System.Memory.Data not found" issue: https://github.com/Azure/azure-functions-host/issues/10575-->
+    <FunctionsPreservedDependencies Include="System.Memory.Data.dll" />
+  </ItemGroup>
 </Project>

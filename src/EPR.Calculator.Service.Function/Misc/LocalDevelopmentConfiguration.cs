@@ -41,7 +41,7 @@
         public TimeSpan TransposeTimeout => TimeSpan.FromDays(1);
 
         /// <inheritdoc/>
-        public string BlobContainerName => "TestBlobContainer";
+        public string BlobContainerName => Configuration.GetValue("BlobContainerName", string.Empty);
 
         public string BlobConnectionString
             => Configuration.GetValue("BlobConnectionString", string.Empty);
