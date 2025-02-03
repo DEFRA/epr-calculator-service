@@ -58,7 +58,7 @@
             var lines = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
             // Assert
-            int expectedLineCount = 55;
+            int expectedLineCount = 57;
             Assert.AreEqual(expectedLineCount, lines.Length);
         }
 
@@ -378,7 +378,10 @@
                             CommsCostByMaterialPricePerTonne = "0.3",
                             Name = "Glass",
                         }
-                    }
+                    },
+                    CalcResultCommsCostOnePlusFourApportionment =
+                        new Fixture().CreateMany<CalcResultCommsCostOnePlusFourApportionment>(1),
+                    CommsCostByCountry = new Fixture().CreateMany<CalcResultCommsCostOnePlusFourApportionment>(1),
                 },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData
                 {
@@ -432,9 +435,8 @@
                         new CalcResultSummaryProducerDisposalFees
                         {
                             ProducerCommsFeesByMaterial =
-                                new Dictionary<MaterialDetail, CalcResultSummaryProducerCommsFeesCostByMaterial>(),
+                                new Fixture().Create<Dictionary<MaterialDetail, CalcResultSummaryProducerCommsFeesCostByMaterial>>(),
                             ProducerDisposalFeesByMaterial =
-                                //new Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial>(),
                                 new Fixture().Create<Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial>>(),
                             ProducerId = "1",
                             ProducerName = "Test",
