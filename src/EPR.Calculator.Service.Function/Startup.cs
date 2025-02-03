@@ -61,8 +61,8 @@ namespace EPR.Calculator.Service.Function
         {
             builder.Services.AddSingleton<BlobServiceClient>(provider =>
             {
-                var configuration = provider.GetRequiredService<IConfiguration>();
-                var connectionString = configuration.GetSection("BlobStorage:ConnectionString").Value;
+                var configuration = provider.GetRequiredService<IConfigurationService>();
+                var connectionString = configuration.BlobConnectionString;
                 if (string.IsNullOrEmpty(connectionString))
                 {
                     throw new ConfigurationErrorsException("Blob Storage connection string is not configured.");

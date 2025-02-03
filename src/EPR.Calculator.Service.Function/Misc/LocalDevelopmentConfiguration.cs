@@ -7,7 +7,8 @@
     {
         public string CheckInterval => string.Empty;
 
-        public string DbConnectionString => "Data Source=.;Initial Catalog=PayCal;Integrated Security=True;TrustServerCertificate=True";
+        public string DbConnectionString => System.Configuration.ConfigurationManager.AppSettings["DbConnectionString"]
+            ?? string.Empty;
 
         public string ExecuteRPDPipeline => string.Empty;
 
@@ -33,5 +34,9 @@
 
         /// <inheritdoc/>
         public string BlobContainerName => "TestBlobContainer";
+
+        public string BlobConnectionString
+            => System.Configuration.ConfigurationManager.AppSettings["BlobStorage:ConnectionString"]
+            ?? string.Empty;
     }
 }

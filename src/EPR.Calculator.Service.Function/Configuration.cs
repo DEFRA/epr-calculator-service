@@ -86,6 +86,9 @@ namespace EPR.Calculator.Service.Function
 
         /// <inheritdoc/>
         public string BlobContainerName => Environment.GetEnvironmentVariable(EnvironmentVariableKeys.BlobContainerName);
+ 
+        public string BlobConnectionString => Environment.GetEnvironmentVariable(EnvironmentVariableKeys.BlobConnectionString);
+
         private static TimeSpan ParseTimeSpan(string value)
         {
             if (double.TryParse(value, out double timeout))

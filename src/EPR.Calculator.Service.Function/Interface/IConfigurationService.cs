@@ -30,6 +30,8 @@
 
         TimeSpan TransposeTimeout { get; }
 
-        string BlobContainerName{ get; }
+        string BlobContainerName { get; }
+
+        string BlobConnectionString { get; }
     }
 }
