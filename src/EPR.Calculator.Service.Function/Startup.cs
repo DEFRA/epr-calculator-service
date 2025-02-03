@@ -50,11 +50,12 @@ namespace EPR.Calculator.Service.Function
             // Configure the database context.
             builder.Services.AddDbContext<ApplicationDBContext>(options =>
             {
+                var config = builder.Services.BuildServiceProvider().GetRequiredService<IConfigurationService>();
                 options.UseSqlServer(
-                    new LocalDevelopmentConfiguration().DbConnectionString);
-
-                SetupBlobStorage(builder);
+                    config.DbConnectionString);
             });
+
+            SetupBlobStorage(builder);
         }
 
         private static void SetupBlobStorage(IFunctionsHostBuilder builder)

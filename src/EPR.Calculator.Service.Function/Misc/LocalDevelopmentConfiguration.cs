@@ -2,13 +2,21 @@
 {
     using System;
     using EPR.Calculator.Service.Function.Interface;
+    using Microsoft.Extensions.Configuration;
 
     public class LocalDevelopmentConfiguration : IConfigurationService
     {
+        public LocalDevelopmentConfiguration(IConfiguration configuration) => this.Configuration = configuration;
+
+        /// <summary>
+        /// Store the configuration file that's passed using dependancy injection.
+        /// </summary>
+        private IConfiguration Configuration { get; }
+
         public string CheckInterval => string.Empty;
 
-        public string DbConnectionString => System.Configuration.ConfigurationManager.AppSettings["DbConnectionString"]
-            ?? string.Empty;
+        public string DbConnectionString
+            => Configuration.GetValue("DbConnectionString", string.Empty);
 
         public string ExecuteRPDPipeline => string.Empty;
 
@@ -36,7 +44,6 @@
         public string BlobContainerName => "TestBlobContainer";
 
         public string BlobConnectionString
-            => System.Configuration.ConfigurationManager.AppSettings["BlobStorage:ConnectionString"]
-            ?? string.Empty;
+            => Configuration.GetValue("BlobConnectionString", string.Empty);
     }
 }
