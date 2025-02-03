@@ -46,5 +46,8 @@ namespace EPR.Calculator.Service.Function.Constants
 
         /// <summary>The key for the DbConnectionString environment variable.</summary>
         public const string DbConnectionString = "DbConnectionString";
+
+        /// <summary>The key for the BlobContainerName environment variable.</summary>
+        public const string BlobContainerName = "BlobContainerName";
     }
 }

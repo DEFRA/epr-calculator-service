@@ -4,9 +4,7 @@
     using System.Configuration;
     using System.Threading.Tasks;
     using Azure.Storage.Blobs;
-    using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Interface;
-    using Microsoft.Extensions.Configuration;
 
     public class BlobStorageService : IStorageService
     {
@@ -19,12 +17,10 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="BlobStorageService"/> class.
         /// </summary>
-        public BlobStorageService(BlobServiceClient blobServiceClient, IConfiguration configuration)
+        public BlobStorageService(BlobServiceClient blobServiceClient, IConfigurationService config)
         {
-            var settings = configuration.GetSection(BlobStorageSection).Get<BlobStorageSettings>() ??
-                throw new ConfigurationErrorsException(BlobSettingsMissingError);
-            this.containerClient = blobServiceClient.GetBlobContainerClient(settings.ContainerName ??
-                throw new ConfigurationErrorsException(ContainerNameMissingError));
+            this.containerClient = blobServiceClient.GetBlobContainerClient(config.BlobContainerName
+                ?? throw new ConfigurationErrorsException(ContainerNameMissingError));
         }
 
         /// <inheritdoc/>

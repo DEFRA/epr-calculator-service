@@ -30,5 +30,8 @@
         public Uri TransposeEndpoint => new Uri("http://localhost/v1/internal/transposeBeforeCalcResults");
 
         public TimeSpan TransposeTimeout => TimeSpan.FromDays(1);
+
+        /// <inheritdoc/>
+        public string BlobContainerName => "TestBlobContainer";
     }
 }

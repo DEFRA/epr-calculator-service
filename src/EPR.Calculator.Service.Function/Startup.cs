@@ -27,6 +27,8 @@ using EPR.Calculator.Service.Function.Builder.ParametersOther;
 using EPR.Calculator.Service.Function.Builder.Lapcap;
 using EPR.Calculator.Service.Function.Builder.LateReportingTonnages;
 using EPR.Calculator.Service.Function.Builder.Summary;
+using Azure.Storage.Blobs;
+using Microsoft.Extensions.Configuration;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -43,13 +45,30 @@ namespace EPR.Calculator.Service.Function
         /// <param name="builder">The functions host builder.</param>
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            this.RegisterDependencies(builder.Services);
+            RegisterDependencies(builder.Services);
 
             // Configure the database context.
             builder.Services.AddDbContext<ApplicationDBContext>(options =>
             {
                 options.UseSqlServer(
                     new LocalDevelopmentConfiguration().DbConnectionString);
+
+                SetupBlobStorage(builder);
+            });
+        }
+
+        private static void SetupBlobStorage(IFunctionsHostBuilder builder)
+        {
+            builder.Services.AddSingleton<BlobServiceClient>(provider =>
+            {
+                var configuration = provider.GetRequiredService<IConfiguration>();
+                var connectionString = configuration.GetSection("BlobStorage:ConnectionString").Value;
+                if (string.IsNullOrEmpty(connectionString))
+                {
+                    throw new ConfigurationErrorsException("Blob Storage connection string is not configured.");
+                }
+
+                return new BlobServiceClient(connectionString);
             });
         }
 
@@ -57,7 +76,7 @@ namespace EPR.Calculator.Service.Function
         /// Registers the dependencies for the application.
         /// </summary>
         /// <param name="services">The service collection.</param>
-        private void RegisterDependencies(IServiceCollection services)
+        private static void RegisterDependencies(IServiceCollection services)
         {
             services.AddTransient<ICalculatorRunService, CalculatorRunService>();
             services.AddTransient<ICalculatorRunParameterMapper, CalculatorRunParameterMapper>();

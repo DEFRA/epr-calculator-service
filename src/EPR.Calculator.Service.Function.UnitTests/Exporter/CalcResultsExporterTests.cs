@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using AutoFixture;
     using EPR.Calculator.API.Exporter;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -9,6 +10,8 @@
     [TestClass]
     public class CalcResultsExporterTests
     {
+        Fixture Fixture { get; } = new Fixture();
+
         [TestMethod]
         public void Export_ShouldReturnCsvContent_WhenAllDataIsPresent()
         {
@@ -431,22 +434,23 @@
                             ProducerCommsFeesByMaterial =
                                 new Dictionary<MaterialDetail, CalcResultSummaryProducerCommsFeesCostByMaterial>(),
                             ProducerDisposalFeesByMaterial =
-                                new Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial>(),
+                                //new Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial>(),
+                                new Fixture().Create<Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial>>(),
                             ProducerId = "1",
                             ProducerName = "Test",
                             TotalProducerDisposalFeeWithBadDebtProvision = 100,
                             TotalProducerCommsFeeWithBadDebtProvision = 100,
                             SubsidiaryId = "1",
-                            ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 1
-                        }
-                    }
+                            ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 1,
+                        },
+                    },
                 },
                 CalcResultDetail = new CalcResultDetail
                 {
                     RunId = 1,
                     RunDate = DateTime.Now,
-                    RunName = "CalculatorRunName"
-                }
+                    RunName = "CalculatorRunName",
+                },
             };
         }
     }
