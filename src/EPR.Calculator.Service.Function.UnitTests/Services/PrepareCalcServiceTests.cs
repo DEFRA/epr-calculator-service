@@ -62,7 +62,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestCleanup]
-        private void TearDown()
+        public void TearDown()
         {
             this._context.Database.EnsureDeleted();
             this._context.Dispose();
