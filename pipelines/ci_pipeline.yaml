@@ -33,6 +33,8 @@ variables:
     value: 'EPR.Calculator.Service.Function'
   - name: testProjectFolder
     value: 'EPR.Calculator.Service.Common.UnitTests' 
+  - name: DataFolder
+    value: EPR.Calculator.API.Data
   - name: sonarQubeProjectKey
     value: epr-calculator-service
   - name: sonarQubeProjectName
@@ -55,6 +57,7 @@ extends:
     solutionFolder: ${{ variables.solutionFolder }}
     projectFolder: ${{ variables.projectFolder }}
     testProjectFolder: ${{ variables.testProjectFolder }}
+    DataFolder: ${{ variables.DataFolder }}
     sonarQubeProjectKey: ${{ variables.sonarQubeProjectKey }}
     sonarQubeProjectName: ${{ variables.sonarQubeProjectName }}
     runTests: ${{ parameters.runTests }}
