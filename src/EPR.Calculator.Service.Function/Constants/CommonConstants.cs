@@ -11,12 +11,14 @@ namespace EPR.Calculator.Service.Function.Constants
         public const string NorthernIreland = "Northern Ireland";
         public const string Total = "Total";
         public const string ProducerReportedHouseholdPackagingWasteTonnage = "Producer Reported Household Packaging Waste Tonnage";
+        public const string ReportedPublicBinTonnage = "Reported Public Bin Tonnage";
+        public const string HouseholdDrinkContainers = "Household Drinks Containers";
         public const string LateReportingTonnage = "Late Reporting Tonnage";
-        public const string ProduceLateTonnage =   "Producer Reported Household Tonnage + Late Reporting Tonnage";
+        public const string ProducerReportedTotalTonnage = "Producer Reported Household Packaging Waste Tonnage + Late Reporting Tonnage + Reported Public Bin Tonnage + Household Drinks Containers";
         public const string DisposalCostPricePerTonne = "Disposal Cost Price Per Tonne";
         public const string LADisposalCostData = "LA Disposal Cost Data";
-        public const string Household = "HH";
         public const string PolicyName = "AllowAllOrigins";
         public const string ServiceBusClientName = "calculator";
+        public const int SecondaryHeaderMaxColumnSize = 270;
     }
 }

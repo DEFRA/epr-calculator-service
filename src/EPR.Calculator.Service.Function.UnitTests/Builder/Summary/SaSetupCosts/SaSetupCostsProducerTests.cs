@@ -177,7 +177,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                             NorthernIreland = "NorthernIrelandTest",
                             Total = "TotalTest",
                             ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
-                            ProducerReportedHouseholdTonnagePlusLateReportingTonnage = Fixture.Create<string>(),
+                            ReportedPublicBinTonnage = Fixture.Create<string>(),
+                            ProducerReportedTotalTonnage = Fixture.Create<string>(),
                         },
                         new CalcResultLaDisposalCostDataDetail()
                         {
@@ -189,7 +190,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                             NorthernIreland = "NorthernIrelandTest",
                             Total = "TotalTest",
                             ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
-                            ProducerReportedHouseholdTonnagePlusLateReportingTonnage = Fixture.Create<string>(),
+                            ReportedPublicBinTonnage = Fixture.Create<string>(),
+                            ProducerReportedTotalTonnage = Fixture.Create<string>(),
                         },
                         new CalcResultLaDisposalCostDataDetail()
                         {
@@ -201,7 +203,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                             NorthernIreland = "NorthernIrelandTest",
                             Total = "TotalTest",
                             ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
-                            ProducerReportedHouseholdTonnagePlusLateReportingTonnage = Fixture.Create<string>(),
+                            ReportedPublicBinTonnage = Fixture.Create<string>(),
+                            ProducerReportedTotalTonnage = Fixture.Create<string>(),
                         }
                     }
                 },
@@ -402,7 +405,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
         public void CanCallSaSetupCostsProducerFeeWithoutBadDebtProvision()
         {
             // Act
-            SaSetupCostsProducer.GetProducerSetUpCosts(_calcResult,_calcResult.CalcResultSummary);
+            SaSetupCostsProducer.GetProducerSetUpCosts(_calcResult, _calcResult.CalcResultSummary);
 
             // Assert
             Assert.AreEqual(100, _calcResult.CalcResultSummary.SaSetupCostsTitleSection5);
@@ -430,7 +433,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
         public void CanCallGetSaSetupCostsScotlandOverallTotalWithBadDebtProvision()
         {
             SaSetupCostsProducer.GetProducerSetUpCosts(_calcResult, _calcResult.CalcResultSummary);
-            
+
             // Act
             var result = SaSetupCostsProducer.GetCountryTotalWithBadDebtProvision(_calcResult, _calcResult.CalcResultSummary.SaSetupCostsTitleSection5, SaSetupCostsSummary.GetSetUpBadDebtProvision(_calcResult), _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.Scotland);
 

@@ -1,4 +1,6 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Services
+﻿using Castle.Core.Logging;
+
+namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
     using System.Configuration;
     using AutoFixture;
@@ -9,6 +11,7 @@
     using EPR.Calculator.Service.Function.Interface;
     using EPR.Calculator.Service.Function.Services;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Logging;
     using Moq;
 
     /// <summary>Unit tests for the <see cref="BlobStorageService"/> class.</summary>
@@ -36,9 +39,12 @@
             this.MockBlobContainerClient.Setup(x => x.GetBlobClient(It.IsAny<string>()))
                 .Returns(this.MockBlobClient.Object);
 
+            this.Logger = new Mock<ILogger<BlobStorageService>>();
+            ;
             this.BlobStorageService = new BlobStorageService(
                 this.MockBlobServiceClient.Object,
-                this.ConfigurationService.Object);
+                this.ConfigurationService.Object,
+                this.Logger.Object);
         }
 
         private Fixture Fixture { get; init; }
@@ -52,6 +58,9 @@
         private BlobStorageService BlobStorageService { get; init; }
 
         private Mock<IConfigurationService> ConfigurationService { get; init; }
+
+        private Mock<ILogger<BlobStorageService>> Logger { get; init; }
+
 
         [TestMethod]
         public async Task UploadResultFileContentAsync_ReturnsTrue_WhenUploadSucceeds()

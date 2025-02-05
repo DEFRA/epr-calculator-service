@@ -1,4 +1,5 @@
-﻿using EPR.Calculator.Service.Function.Data.DataModels;
+﻿using EPR.Calculator.Service.Data.DataModels;
+using EPR.Calculator.Service.Function.Data.DataModels;
 using EPR.Calculator.Service.Function.Data.DataSeeder;
 using Microsoft.EntityFrameworkCore;
 
@@ -62,6 +63,8 @@ namespace EPR.Calculator.Service.Function.Data
 
         public virtual DbSet<Country> Country { get; set; }
 
+        public virtual DbSet<CalculatorRunCsvFileMetadata> CalculatorRunCsvFileMetadata { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -86,13 +89,13 @@ namespace EPR.Calculator.Service.Function.Data
             modelBuilder.Entity<CountryApportionment>();
             modelBuilder.Entity<ProducerDetail>();
             modelBuilder.Entity<ProducerReportedMaterial>();
+            modelBuilder.Entity<CalculatorRunCsvFileMetadata>();
 
             modelBuilder.Entity<LapcapDataTemplateMaster>()
             .HasMany(e => e.Details)
             .WithOne(e => e.LapcapDataTemplateMaster)
             .HasForeignKey(e => e.UniqueReference)
             .IsRequired(true);
-
 
             modelBuilder.Entity<LapcapDataMaster>()
             .HasMany(e => e.Details)
@@ -176,6 +179,8 @@ namespace EPR.Calculator.Service.Function.Data
             .HasMany(e => e.CountryApportionments)
             .WithOne(e => e.Country)
             .HasForeignKey(e => e.CountryId);
+
+            modelBuilder.Entity<CalculatorRunCsvFileMetadata>().Property(e => e.CalculatorRunId).IsRequired(true);
 
             Seeder.Initialize(modelBuilder);
         }

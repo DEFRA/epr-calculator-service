@@ -62,8 +62,6 @@
 
         private ICommandTimeoutService commandTimeoutService { get; init; }
 
-
-
         public async Task<bool> PrepareCalcResults(
             [FromBody] CalcResultsRequestDto resultsRequestDto,
             CancellationToken cancellationToken)

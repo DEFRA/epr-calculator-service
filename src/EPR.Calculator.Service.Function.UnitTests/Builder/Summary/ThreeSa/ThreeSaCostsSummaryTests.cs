@@ -102,8 +102,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                             Scotland = "ScotlandTest",
                             Material = "Material1",
                             NorthernIreland = "NorthernIrelandTest",
-                            Total = "null",
-                            ProducerReportedHouseholdPackagingWasteTonnage = "null"
+                            Total = string.Empty,
+                            ProducerReportedHouseholdPackagingWasteTonnage = string.Empty,
+                            ReportedPublicBinTonnage = string.Empty
                         },
                         new CalcResultLaDisposalCostDataDetail
                         {
@@ -113,9 +114,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                             Name = "Material1",
                             Scotland = "ScotlandTest",
                             NorthernIreland = "NorthernIrelandTest",
-                            Total = "null",
-                            ProducerReportedHouseholdPackagingWasteTonnage = "null"
-
+                            Total = string.Empty,
+                            ProducerReportedHouseholdPackagingWasteTonnage = string.Empty,
+                            ReportedPublicBinTonnage = string.Empty
                         },
                         new CalcResultLaDisposalCostDataDetail
                         {
@@ -125,9 +126,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                             Name = "Material2",
                             Scotland = "ScotlandTest",
                             NorthernIreland = "NorthernIrelandTest",
-                            Total = "null",
-                            ProducerReportedHouseholdPackagingWasteTonnage = "null"
-
+                            Total = string.Empty,
+                            ProducerReportedHouseholdPackagingWasteTonnage = string.Empty,
+                            ReportedPublicBinTonnage = string.Empty
                         }
                     },
                     Name = "some test"
@@ -271,12 +272,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
         {
             // Act
             var result = ThreeSaCostsSummary.GetHeaders().ToList();
+            var columnIndex = 244;
 
             var expectedResult = new List<CalcResultSummaryHeader>();
             expectedResult.AddRange([
-                new CalcResultSummaryHeader { Name = $"{ThreeSaCostHeader.SaOperatingCostsWithoutBadDebtProvisionTitleSection3}", ColumnIndex = 210 },
-                new CalcResultSummaryHeader { Name = $"{ThreeSaCostHeader.BadDebtProvisionTitleSection3}", ColumnIndex = 211 },
-                new CalcResultSummaryHeader { Name = $"{ThreeSaCostHeader.SaOperatingCostsWithBadDebtProvisionTitleSection3}", ColumnIndex = 212 }
+                new CalcResultSummaryHeader { Name = $"{ThreeSaCostHeader.SaOperatingCostsWithoutBadDebtProvisionTitleSection3}", ColumnIndex = columnIndex },
+                new CalcResultSummaryHeader { Name = $"{ThreeSaCostHeader.BadDebtProvisionTitleSection3}", ColumnIndex = columnIndex+1 },
+                new CalcResultSummaryHeader { Name = $"{ThreeSaCostHeader.SaOperatingCostsWithBadDebtProvisionTitleSection3}", ColumnIndex = columnIndex+2 }
             ]);
 
             // Assert

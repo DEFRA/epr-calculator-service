@@ -5,6 +5,7 @@
     using System.Text;
     using System.Threading.Tasks;
     using global::EPR.Calculator.Service.Function.Interface;
+    using Microsoft.AspNetCore.Mvc;
 
     public class LocalFileStorageService : IStorageService
     {
@@ -13,11 +14,10 @@
             throw new NotImplementedException();
         }
 
-        /// <inheritdoc/>
         public Task<bool> UploadResultFileContentAsync(string fileName, string content)
         {
-            var path = $"{Directory.GetCurrentDirectory()}\\{fileName}";
-            File.WriteAllText(path, content, Encoding.UTF8);
+            var path = Path.Combine(Directory.GetCurrentDirectory(), fileName);
+            File.WriteAllText(path, content, Encoding.UTF8); 
             var result = Task.FromResult(true);
             return result;
         }
