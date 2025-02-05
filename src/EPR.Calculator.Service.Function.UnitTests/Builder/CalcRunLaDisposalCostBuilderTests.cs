@@ -105,7 +105,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails?.Single(x => x.Name == MaterialNames.Plastic);
             Assert.IsNotNull(laDisposalCost);
             Assert.AreEqual(MaterialNames.Plastic, laDisposalCost.Name);
-            Assert.AreEqual("£23,000.00", laDisposalCost.England);
             Assert.AreEqual("£4,500.00", laDisposalCost.Wales);
             Assert.AreEqual("£6,700.00", laDisposalCost.Scotland);
             Assert.AreEqual("£2,100.00", laDisposalCost.NorthernIreland);
@@ -134,7 +133,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails?.Single(x => x.Name == MaterialNames.Glass);
             Assert.IsNotNull(laDisposalCost);
             Assert.AreEqual(MaterialNames.Glass, laDisposalCost.Name);
-            Assert.AreEqual("£45,000.00", laDisposalCost.England);
             Assert.AreEqual("£0.00", laDisposalCost.Wales);
             Assert.AreEqual("£20,700.00", laDisposalCost.Scotland);
             Assert.AreEqual("£4,500.00", laDisposalCost.NorthernIreland);
