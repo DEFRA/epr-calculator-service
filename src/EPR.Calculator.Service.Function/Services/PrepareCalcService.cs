@@ -109,28 +109,27 @@
             }
             catch (OperationCanceledException exception)
             {
-                if (calculatorRun != null)
-                {
-                    calculatorRun.CalculatorRunClassificationId = (int)RunClassification.ERROR;
-                    this.Context.CalculatorRuns.Update(calculatorRun);
-                    await this.Context.SaveChangesAsync();
-                }
+                await this.HandleErrorAsync(calculatorRun, RunClassification.ERROR);
                 return false;
             }
             catch (Exception exception)
             {
-                if (calculatorRun != null)
-                {
-                    calculatorRun.CalculatorRunClassificationId = (int)RunClassification.ERROR;
-                    this.Context.CalculatorRuns.Update(calculatorRun);
-                    await this.Context.SaveChangesAsync();
-                }
+                await this.HandleErrorAsync(calculatorRun, RunClassification.ERROR);
                 return false;
             }
-            calculatorRun.CalculatorRunClassificationId = (int)RunClassification.ERROR;
-            this.Context.CalculatorRuns.Update(calculatorRun);
-            await this.Context.SaveChangesAsync();
+
+            await this.HandleErrorAsync(calculatorRun, RunClassification.ERROR);
             return false;
+        }
+
+        private async Task HandleErrorAsync(CalculatorRun? calculatorRun, RunClassification classification)
+        {
+            if (calculatorRun != null)
+            {
+                calculatorRun.CalculatorRunClassificationId = (int)classification;
+                this.Context.CalculatorRuns.Update(calculatorRun);
+                await this.Context.SaveChangesAsync();
+            }
         }
 
         private async Task SaveCsvFileMetadataAsync(int runId, string fileName, string blobUri)
