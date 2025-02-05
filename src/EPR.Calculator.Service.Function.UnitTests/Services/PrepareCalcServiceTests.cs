@@ -86,7 +86,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this._transposePomAndOrgDataService = new Mock<ITransposePomAndOrgDataService>();
             this._storageService = new Mock<IStorageService>();
             this._storageService.Setup(x => x.UploadResultFileContentAsync(It.IsAny<string>(), It.IsAny<string>()))
-                .ReturnsAsync(true);
+                .ReturnsAsync("expected result");
             this._validationRules = fixture.Create<CalculatorRunValidator>();
             this._commandTimeoutService = new Mock<ICommandTimeoutService>();
             this._testClass = new PrepareCalcService(this._context, this._rpdStatusDataValidator.Object, this._wrapper.Object, this._builder.Object, this._exporter.Object, this._transposePomAndOrgDataService.Object, this._storageService.Object, this._validationRules, this._commandTimeoutService.Object);

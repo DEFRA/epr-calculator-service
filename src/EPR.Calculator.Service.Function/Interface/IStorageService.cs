@@ -5,7 +5,6 @@
 
     public interface IStorageService
     {
-        Task<bool> UploadResultFileContentAsync(string fileName, string content);
-        // Task<bool> DownloadFile(string fileName, string blobUri);
+        Task<string> UploadResultFileContentAsync(string fileName, string content);
     }
 }

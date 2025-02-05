@@ -7,6 +7,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using Azure;
     using Azure.Storage.Blobs;
     using Azure.Storage.Blobs.Models;
+    using Azure.Storage.Blobs.Specialized;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Interface;
     using EPR.Calculator.Service.Function.Services;
@@ -68,16 +69,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Arrange
             var fileName = "test.txt";
             var content = "test content";
+            var expectedUri = new Uri("https://example.com/test.txt");
 
             var responseMock = new Mock<Response<BlobContentInfo>>();
             this.MockBlobClient.Setup(x => x.UploadAsync(It.IsAny<BinaryData>()))
                           .ReturnsAsync(responseMock.Object);
+            this.MockBlobClient.Setup(x => x.Uri).Returns(expectedUri);
 
             // Act
             var result = await this.BlobStorageService.UploadResultFileContentAsync(fileName, content);
 
             // Assert
-            Assert.IsTrue(result);
+            Assert.AreEqual(result, expectedUri.ToString());
             this.MockBlobClient.Verify(x => x.UploadAsync(It.IsAny<BinaryData>()), Times.Once);
         }
 
@@ -95,7 +98,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var result = await this.BlobStorageService.UploadResultFileContentAsync(fileName, content);
 
             // Assert
-            Assert.IsFalse(result);
+            Assert.AreEqual(result, string.Empty);
             this.MockBlobClient.Verify(x => x.UploadAsync(It.IsAny<BinaryData>()), Times.Once);
         }
     }

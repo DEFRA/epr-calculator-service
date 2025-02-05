@@ -9,17 +9,16 @@
 
     public class LocalFileStorageService : IStorageService
     {
-        public Task<string?> GetResultFileContentAsync()
+        public Task<IActionResult> DownloadFile(string fileName, string blobUri)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> UploadResultFileContentAsync(string fileName, string content)
+        public Task<string> UploadResultFileContentAsync(string fileName, string content)
         {
             var path = Path.Combine(Directory.GetCurrentDirectory(), fileName);
-            File.WriteAllText(path, content, Encoding.UTF8); 
-            var result = Task.FromResult(true);
-            return result;
+            File.WriteAllText(path, content, Encoding.UTF8);
+            return Task.FromResult(path);
         }
     }
 }

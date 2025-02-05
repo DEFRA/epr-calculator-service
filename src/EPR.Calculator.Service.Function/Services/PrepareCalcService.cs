@@ -8,6 +8,7 @@
     using System.Threading.Tasks;
     using EPR.Calculator.API.Exporter;
     using EPR.Calculator.API.Validators;
+    using EPR.Calculator.Service.Data.DataModels;
     using EPR.Calculator.Service.Function.Builder;
     using EPR.Calculator.Service.Function.Data;
     using EPR.Calculator.Service.Function.Data.DataModels;
@@ -93,11 +94,12 @@
                     results.CalcResultDetail.RunId,
                     results.CalcResultDetail.RunName,
                     results.CalcResultDetail.RunDate);
-                var resultsFileWritten = await this.storageService.UploadResultFileContentAsync(fileName, exportedResults);
+                var blobUri = await this.storageService.UploadResultFileContentAsync(fileName, exportedResults);
 
                 var startTime = DateTime.Now;
-                if (resultsFileWritten)
+                if (!string.IsNullOrEmpty(blobUri))
                 {
+                    await SaveCsvFileMetadataAsync(results.CalcResultDetail.RunId, fileName.ToString(), blobUri);
                     calculatorRun.CalculatorRunClassificationId = (int)RunClassification.UNCLASSIFIED;
                     this.Context.CalculatorRuns.Update(calculatorRun);
                     await this.Context.SaveChangesAsync(cancellationToken);
@@ -129,6 +131,17 @@
             this.Context.CalculatorRuns.Update(calculatorRun);
             await this.Context.SaveChangesAsync();
             return false;
+        }
+
+        private async Task SaveCsvFileMetadataAsync(int runId, string fileName, string blobUri)
+        {
+            var csvFileMetadata = new CalculatorRunCsvFileMetadata
+            {
+                FileName = fileName,
+                BlobUri = blobUri,
+                CalculatorRunId = runId
+            };
+            await this.Context.CalculatorRunCsvFileMetadata.AddAsync(csvFileMetadata);
         }
     }
 }
