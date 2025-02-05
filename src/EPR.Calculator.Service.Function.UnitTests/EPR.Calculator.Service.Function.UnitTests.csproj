@@ -7,8 +7,6 @@
 
 		<IsPackable>false</IsPackable>
 		<IsTestProject>true</IsTestProject>
-		<InvariantGlobalization>false</InvariantGlobalization>
-		<Culture>en-GB</Culture>
 	</PropertyGroup>
 
 	<ItemGroup>
