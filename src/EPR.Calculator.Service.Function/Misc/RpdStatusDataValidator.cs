@@ -1,20 +1,18 @@
-﻿using EPR.Calculator.Service.Function.Data.DataModels;
-using EPR.Calculator.Service.Function.Interface;
-using EPR.Calculator.Service.Function.Models;
-using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace EPR.Calculator.API.Validators
+﻿namespace EPR.Calculator.API.Validators
 {
-    public class RpdStatusDataValidator : IRpdStatusDataValidator
-    {
-        private readonly IOrgAndPomWrapper wrapper;
+    using System.Collections.Generic;
+    using System.Linq;
+    using EPR.Calculator.Service.Function.Data.DataModels;
+    using EPR.Calculator.Service.Function.Interface;
+    using EPR.Calculator.Service.Function.Models;
+    using Microsoft.AspNetCore.Http;
 
-        public RpdStatusDataValidator(IOrgAndPomWrapper wrapper)
-        {
-            this.wrapper = wrapper;
-        }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RpdStatusDataValidator"/> class.
+    /// </summary>
+    public class RpdStatusDataValidator(IOrgAndPomWrapper wrapper) : IRpdStatusDataValidator
+    {
+        private readonly IOrgAndPomWrapper wrapper = wrapper;
 
         public RpdStatusValidation IsValidRun(CalculatorRun? calcRun, int runId, IEnumerable<CalculatorRunClassification> calculatorRunClassifications)
         {
@@ -24,7 +22,7 @@ namespace EPR.Calculator.API.Validators
                 {
                     isValid = false,
                     StatusCode = StatusCodes.Status400BadRequest,
-                    ErrorMessage = $"Calculator Run {runId} is missing"
+                    ErrorMessage = $"Calculator Run {runId} is missing",
                 };
             }
 
@@ -34,7 +32,7 @@ namespace EPR.Calculator.API.Validators
                 {
                     isValid = false,
                     StatusCode = StatusCodes.Status422UnprocessableEntity,
-                    ErrorMessage = $"Calculator Run {runId} already has OrganisationDataMasterId associated with it"
+                    ErrorMessage = $"Calculator Run {runId} already has OrganisationDataMasterId associated with it",
                 };
             }
 
@@ -44,27 +42,27 @@ namespace EPR.Calculator.API.Validators
                 {
                     isValid = false,
                     StatusCode = StatusCodes.Status422UnprocessableEntity,
-                    ErrorMessage = $"Calculator Run {runId} already has PomDataMasterId associated with it"
+                    ErrorMessage = $"Calculator Run {runId} already has PomDataMasterId associated with it",
                 };
             }
 
-            var expectedRunClassifications = calculatorRunClassifications.Where(cl => 
+            var expectedRunClassifications = calculatorRunClassifications.Where(cl =>
                 cl.Status == "RUNNING" || cl.Status == "IN THE QUEUE"
             );
 
-            if(!expectedRunClassifications.Any(cl => cl.Id == calcRun.CalculatorRunClassificationId))
+            if (!expectedRunClassifications.Any(cl => cl.Id == calcRun.CalculatorRunClassificationId))
             {
                 return new RpdStatusValidation
                 {
                     isValid = false,
                     StatusCode = StatusCodes.Status422UnprocessableEntity,
-                    ErrorMessage = $"Calculator Run {runId} classification should be RUNNING or IN THE QUEUE"
+                    ErrorMessage = $"Calculator Run {runId} classification should be RUNNING or IN THE QUEUE",
                 };
             }
 
             return new RpdStatusValidation
             {
-                isValid = true
+                isValid = true,
             };
         }
 
@@ -78,13 +76,13 @@ namespace EPR.Calculator.API.Validators
                 {
                     isValid = false,
                     StatusCode = StatusCodes.Status422UnprocessableEntity,
-                    ErrorMessage = "PomData or Organisation Data is missing"
+                    ErrorMessage = "PomData or Organisation Data is missing",
                 };
             }
 
             return new RpdStatusValidation
             {
-                isValid = true
+                isValid = true,
             };
 
         }

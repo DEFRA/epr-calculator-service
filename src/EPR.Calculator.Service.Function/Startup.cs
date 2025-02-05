@@ -48,14 +48,12 @@ namespace EPR.Calculator.Service.Function
             RegisterDependencies(builder.Services);
 
             // Configure the database context.
-            builder.Services.AddDbContext<ApplicationDBContext>(options =>
+            builder.Services.AddDbContextFactory<ApplicationDBContext>(options =>
             {
                 var config = builder.Services.BuildServiceProvider().GetRequiredService<IConfigurationService>();
                 options.UseSqlServer(
                     config.DbConnectionString);
             });
-
-            SetupBlobStorage(builder);
         }
 
         private static void SetupBlobStorage(IFunctionsHostBuilder builder)
@@ -99,8 +97,9 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcResultLateReportingBuilder, CalcResultLateReportingBuilder>();
             services.AddTransient<ICalcRunLaDisposalCostBuilder, CalcRunLaDisposalCostBuilder>();
             services.AddTransient<ICalcResultSummaryBuilder, CalcResultSummaryBuilder>();
+            services.AddTransient<IRpdStatusService, RpdStatusService>();
 #if !DEBUG
-            services.AddTransient<IStorageService, BlobStorageService>();
+            SetupBlobStorage(builder);
             services.AddTransient<IConfigurationService, Configuration>();
 #elif DEBUG
             services.AddTransient<IStorageService, LocalFileStorageService>();

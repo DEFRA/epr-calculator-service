@@ -24,13 +24,13 @@
         /// <param name="context">The PayCal database context.</param>
         public RpdStatusService(
             IConfigurationService config,
-            ApplicationDBContext context,
+            IDbContextFactory<ApplicationDBContext> context,
             ICommandTimeoutService commandTimeoutService,
             IRpdStatusDataValidator validator,
             IOrgAndPomWrapper wrapper)
         {
             this.Config = config;
-            this.Context = context;
+            this.Context = context.CreateDbContext();
             this.CommandTimeoutService = commandTimeoutService;
             this.Validator = validator;
             this.Wrapper = wrapper;

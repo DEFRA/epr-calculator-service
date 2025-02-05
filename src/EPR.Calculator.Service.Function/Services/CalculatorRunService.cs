@@ -42,7 +42,8 @@
             IPipelineClientFactory pipelineClientFactory,
             ITransposePomAndOrgDataService transposePomAndOrgDataService,
             IConfigurationService configuration,
-            IPrepareCalcService prepareCalcService)
+            IPrepareCalcService prepareCalcService,
+            IRpdStatusService statusService)
         {
             this.logger = logger;
             this.azureSynapseRunner = azureSynapseRunner;
@@ -50,6 +51,7 @@
             this.transposePomAndOrgDataService = transposePomAndOrgDataService;
             this.configuration = configuration;
             this.prepareCalcService = prepareCalcService;
+            this.statusService = statusService;
         }
 
         /// <summary>
