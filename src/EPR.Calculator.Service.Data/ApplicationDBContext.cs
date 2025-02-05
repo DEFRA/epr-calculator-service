@@ -97,6 +97,7 @@ namespace EPR.Calculator.Service.Function.Data
             .HasForeignKey(e => e.UniqueReference)
             .IsRequired(true);
 
+
             modelBuilder.Entity<LapcapDataMaster>()
             .HasMany(e => e.Details)
             .WithOne(e => e.LapcapDataMaster)

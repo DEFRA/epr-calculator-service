@@ -21,6 +21,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
             public decimal Tonnage { get; set; }
         }
 
+
         private readonly ApplicationDBContext context;
         private List<ProducerData> producerData;
 
@@ -29,6 +30,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
             this.context = context;
             producerData = new List<ProducerData>();
         }
+
 
         public async Task<CalcResultLaDisposalCostData> Construct(CalcResultsRequestDto resultsRequestDto, CalcResult calcResult)
         {
@@ -39,6 +41,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
 
             var lapcapDetails = calcResult.CalcResultLapcapData.CalcResultLapcapDataDetails
                 .Where(t => t.OrderId != 1 && t.Name != CalcResultLapcapDataBuilder.CountryApportionment).ToList();
+
 
             foreach (var details in lapcapDetails)
             {
@@ -61,6 +64,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
                     ? string.Empty
                     : CalculateDisposalCostPricePerTonne(laDiposalDetail);
                 laDisposalCostDetails.Add(laDiposalDetail);
+
             }
 
             var header = GetHeader();
@@ -71,7 +75,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
                 Name = CommonConstants.LADisposalCostData,
                 CalcResultLaDisposalCostDetails = laDisposalCostDetails.AsEnumerable()
             };
-        }
+            }
 
         private string GetReportedHouseholdDrinksContainerTonnage(string materialName)
         {

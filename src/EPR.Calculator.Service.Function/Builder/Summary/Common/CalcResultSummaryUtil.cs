@@ -639,7 +639,7 @@ public static class CalcResultSummaryUtil
             if (material.Code == MaterialCodes.Glass)
             {
                 columnHeadersList.Insert(2, new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdDrinksContainersTonnage });
-            }
+        }
 
             columnHeaders.AddRange(columnHeadersList);
         }
@@ -675,7 +675,7 @@ public static class CalcResultSummaryUtil
                 int? index = columnHeaders.FindLastIndex(t => t.Name.Equals(CalcResultSummaryHeaders.ReportedPublicBinTonnage));
                 int t = (int)(index + 1);
                 columnHeaders.Insert(t, new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdDrinksContainersTonnage });
-            }
+        }
         }
 
         columnHeaders.AddRange([

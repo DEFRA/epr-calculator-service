@@ -45,23 +45,24 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             var materialNames = materials.Select(x => x.Name).ToList();
 
             var allDefaultResults = await (from run in context.CalculatorRuns
-                                           join defaultMaster in context.DefaultParameterSettings on run.DefaultParameterSettingMasterId equals
-                                               defaultMaster.Id
-                                           join defaultDetail in context.DefaultParameterSettingDetail on defaultMaster.Id equals defaultDetail
-                                               .DefaultParameterSettingMasterId
-                                           join defaultTemplate in context.DefaultParameterTemplateMasterList on defaultDetail
-                                               .ParameterUniqueReferenceId equals defaultTemplate.ParameterUniqueReferenceId
-                                           where run.Id == runId
-                                           select new CalcCommsBuilderResult
-                                           {
-                                               ParameterValue = defaultDetail.ParameterValue,
-                                               ParameterType = defaultTemplate.ParameterType,
-                                               ParameterCategory = defaultTemplate.ParameterCategory
+                    join defaultMaster in context.DefaultParameterSettings on run.DefaultParameterSettingMasterId equals
+                        defaultMaster.Id
+                    join defaultDetail in context.DefaultParameterSettingDetail on defaultMaster.Id equals defaultDetail
+                        .DefaultParameterSettingMasterId
+                    join defaultTemplate in context.DefaultParameterTemplateMasterList on defaultDetail
+                        .ParameterUniqueReferenceId equals defaultTemplate.ParameterUniqueReferenceId
+                    where run.Id == runId
+                    select new CalcCommsBuilderResult
+                    {
+                        ParameterValue = defaultDetail.ParameterValue,
+                        ParameterType = defaultTemplate.ParameterType,
+                        ParameterCategory = defaultTemplate.ParameterCategory
                                            }).Distinct().ToListAsync();
             var materialDefaults = allDefaultResults.Where(x =>
                 x.ParameterType == CommunicationCostByMaterial && materialNames.Contains(x.ParameterCategory));
 
             var producerReportedMaterials = await GetProducerReportedMaterials(context, runId);
+
 
             var list = new List<CalcResultCommsCostCommsCostByMaterial>();
 
