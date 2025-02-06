@@ -1,8 +1,6 @@
-﻿using EPR.Calculator.Service.Function.Builder.Summary.HHTonnageVsAllProducer;
-using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs;
+﻿using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs;
 using EPR.Calculator.Service.Function.Data.DataModels;
 using EPR.Calculator.Service.Function.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 

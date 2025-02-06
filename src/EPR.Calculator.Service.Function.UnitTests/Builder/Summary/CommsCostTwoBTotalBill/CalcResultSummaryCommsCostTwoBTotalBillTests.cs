@@ -1,11 +1,9 @@
 ﻿using AutoFixture;
-using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoBTotalBill;
 using EPR.Calculator.Service.Function.Builder.Summary;
-using EPR.Calculator.Service.Function.Builder.Summary.HHTonnageVsAllProducer;
+using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoBTotalBill;
+using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs;
 using EPR.Calculator.Service.Function.Data.DataModels;
 using EPR.Calculator.Service.Function.Models;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwoBTotalBill
 {
