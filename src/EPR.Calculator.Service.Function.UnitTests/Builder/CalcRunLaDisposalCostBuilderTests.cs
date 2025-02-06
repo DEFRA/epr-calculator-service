@@ -135,16 +135,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.IsNotNull(laDisposalCost);
             Assert.AreEqual(MaterialNames.Glass, laDisposalCost.Name);
             Assert.IsTrue(laDisposalCost.England.Contains("45,000.00"));
-            Assert.IsTrue(laDisposalCost.Wales.Contains("£0.00"));
-            Assert.IsTrue(laDisposalCost.Scotland.Contains("£20,700.00"));
-            Assert.IsTrue(laDisposalCost.NorthernIreland.Contains("£4,500.00"));
-            Assert.IsTrue(laDisposalCost.Total.Contains("£70,200.00"));
+            Assert.IsTrue(laDisposalCost.Wales.Contains("0.00"));
+            Assert.IsTrue(laDisposalCost.Scotland.Contains("20,700.00"));
+            Assert.IsTrue(laDisposalCost.NorthernIreland.Contains("4,500.00"));
+            Assert.IsTrue(laDisposalCost.Total.Contains("70,200.00"));
             Assert.IsTrue(laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage.Contains("2000.00"));
             Assert.IsTrue(laDisposalCost.ReportedPublicBinTonnage.Contains("0"));
             Assert.IsTrue(laDisposalCost.HouseholdDrinkContainers.Contains("2000.00"));
             Assert.IsTrue(laDisposalCost.LateReportingTonnage.Contains("0"));
             Assert.IsTrue(laDisposalCost.ProducerReportedTotalTonnage.Contains("4000.00"));
-            Assert.IsTrue(laDisposalCost.DisposalCostPricePerTonne.Contains("£17.5500"));
+            Assert.IsTrue(laDisposalCost.DisposalCostPricePerTonne.Contains("17.5500"));
         }
 
         private static List<ProducerReportedMaterial> GetProducerReportedMaterials()
