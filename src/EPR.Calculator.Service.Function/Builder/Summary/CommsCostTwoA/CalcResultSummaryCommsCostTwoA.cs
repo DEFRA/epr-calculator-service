@@ -5,7 +5,6 @@ using EPR.Calculator.Service.Function.Builder.Summary.Common;
 using EPR.Calculator.Service.Function.Data.DataModels;
 using EPR.Calculator.Service.Function.Models;
 using System.Linq;
-using EPR.Calculator.Service.Function.Constants;
 
 namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA;
 
@@ -130,17 +129,10 @@ public static class CalcResultSummaryCommsCostTwoA
 
     public static decimal GetProducerTotalCostWithoutBadDebtProvision(ProducerDetail producer, MaterialDetail material, CalcResult calcResult)
     {
-        decimal hdcTonnage = 0;
         var hhPackagingWasteTonnage = CalcResultSummaryUtil.GetHouseholdPackagingWasteTonnage(producer, material);
-        var reportedPublicBinTonnage = CalcResultSummaryUtil.GetReportedPublicBinTonnage(producer, material);
         var priceperTonne = CalcResultSummaryCommsCostTwoA.GetPriceperTonneForComms(material, calcResult);
-        if (material.Code == MaterialCodes.Glass) hdcTonnage = CalcResultSummaryUtil.GetHDCGlassTonnage(producer, material);
 
-        var totalTonnage = material.Code == MaterialCodes.Glass ?
-            hdcTonnage + reportedPublicBinTonnage + hhPackagingWasteTonnage :
-            hhPackagingWasteTonnage + reportedPublicBinTonnage;
-
-        return totalTonnage * priceperTonne;
+        return hhPackagingWasteTonnage * priceperTonne;
     }
 
     public static decimal GetBadDebtProvisionForCommsCost(ProducerDetail producer, MaterialDetail material, CalcResult calcResult)
@@ -161,28 +153,4 @@ public static class CalcResultSummaryCommsCostTwoA
 
         return totalCost;
     }
-
-
-    public static decimal GetTotalReportedTonnage(ProducerDetail producer, MaterialDetail material)
-    {
-        decimal hdcTonnage = 0;
-        var hhPackagingWasteTonnage = CalcResultSummaryUtil.GetHouseholdPackagingWasteTonnage(producer, material);
-        var reportedPublicBinTonnage = CalcResultSummaryUtil.GetReportedPublicBinTonnage(producer, material);
-        if (material.Code == MaterialCodes.Glass) hdcTonnage = CalcResultSummaryUtil.GetHDCGlassTonnage(producer, material);
-
-        return material.Code == MaterialCodes.Glass ?
-            hdcTonnage + reportedPublicBinTonnage + hhPackagingWasteTonnage :
-            hhPackagingWasteTonnage + reportedPublicBinTonnage;
-    }
-
-    public static decimal GetTotalReportedTonnageTotal(IEnumerable<ProducerDetail> producers, MaterialDetail material)
-    {
-        decimal totalCost = 0;
-        foreach (var producer in producers)
-        {
-            totalCost += GetTotalReportedTonnage(producer, material);
-        }
-        return totalCost;
-    }
-
 }

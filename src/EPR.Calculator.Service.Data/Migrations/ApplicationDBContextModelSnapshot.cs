@@ -159,38 +159,6 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                    .HasColumnType("int")
-                    .HasColumnName("id");
-
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                b.Property<string>("BlobUri")
-                    .IsRequired()
-                    .HasMaxLength(2000)
-                    .HasColumnType("nvarchar(2000)")
-                    .HasColumnName("blob_uri");
-
-                b.Property<int>("CalculatorRunId")
-                    .HasColumnType("int")
-                    .HasColumnName("calculator_run_id");
-
-                b.Property<string>("FileName")
-                    .IsRequired()
-                    .HasMaxLength(400)
-                    .HasColumnType("nvarchar(400)")
-                    .HasColumnName("filename");
-
-                b.HasKey("Id");
-
-                b.HasIndex("CalculatorRunId");
-
-                b.ToTable("calculator_run_csvfile_metadata");
-            });
-
-            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.CalculatorRunOrganisationDataDetail", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
@@ -1606,8 +1574,6 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
             modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.CalculatorRun", b =>
                 {
                     b.Navigation("CountryApportionments");
-
-                b.Navigation("CsvFileMetadata");
 
                     b.Navigation("ProducerDetails");
                 });

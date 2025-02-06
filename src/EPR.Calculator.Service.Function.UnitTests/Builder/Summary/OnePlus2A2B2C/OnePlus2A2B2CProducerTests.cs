@@ -116,7 +116,6 @@
                             NorthernIreland = "NorthernIrelandTest",
                             Material = "Material1",
                             ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
-                            ReportedPublicBinTonnage = Fixture.Create<string>(),
                             Total = Fixture.Create<string>(),
                         },
                         new CalcResultLaDisposalCostDataDetail()
@@ -128,7 +127,6 @@
                             Scotland = "ScotlandTest",
                             NorthernIreland = "NorthernIrelandTest",
                             ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
-                            ReportedPublicBinTonnage = Fixture.Create<string>(),
                             Total = Fixture.Create<string>(),
                         },
                         new CalcResultLaDisposalCostDataDetail()
@@ -140,7 +138,6 @@
                             Scotland = "ScotlandTest",
                             NorthernIreland = "NorthernIrelandTest",
                             ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
-                            ReportedPublicBinTonnage = Fixture.Create<string>(),
                             Total = Fixture.Create<string>(),
                         }
                     }
@@ -284,12 +281,11 @@
         {
             // Act
             var result = OnePlus2A2B2CProducer.GetHeaders().ToList();
-            var columnIndex = 242;
 
             var expectedResult = new List<CalcResultSummaryHeader>();
             expectedResult.AddRange([
-                new CalcResultSummaryHeader { Name = OnePlus2A2B2CHeaders.ProducerTotalWithBadDebtProvision, ColumnIndex = columnIndex },
-                new CalcResultSummaryHeader { Name = OnePlus2A2B2CHeaders.ProducerPercentageOfOverallProducerCost, ColumnIndex = columnIndex+1 },
+                new CalcResultSummaryHeader { Name = OnePlus2A2B2CHeaders.ProducerTotalWithBadDebtProvision, ColumnIndex = 208 },
+                new CalcResultSummaryHeader { Name = OnePlus2A2B2CHeaders.ProducerPercentageOfOverallProducerCost, ColumnIndex = 209 },
             ]);
 
             // Assert
@@ -307,7 +303,7 @@
 
             var expectedResult = new List<CalcResultSummaryHeader>();
             expectedResult.AddRange([
-                new CalcResultSummaryHeader { Name = OnePlus2A2B2CHeaders.TotalWithBadDebtProvision, ColumnIndex = 242 },
+                new CalcResultSummaryHeader { Name = OnePlus2A2B2CHeaders.TotalWithBadDebtProvision, ColumnIndex = 208 },
             ]);
 
             // Assert

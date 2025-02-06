@@ -24,10 +24,6 @@ namespace EPR.Calculator.API.UnitTests.Exporter
         public CalcResultsFileNameTests()
         {
             Fixture = new Fixture();
-            Fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
-                .ForEach(b => Fixture.Behaviors.Remove(b));
-            Fixture.Behaviors.Add(new OmitOnRecursionBehavior());
-
             RunId = Fixture.Create<int>();
             TimeStamp = Fixture.Create<DateTime>();
         }
@@ -107,7 +103,7 @@ namespace EPR.Calculator.API.UnitTests.Exporter
         public void CanCallFromDatabase()
         {
             // Arrange
-            var mockRun = Fixture.Build<CalculatorRun>().Create();
+            var mockRun = Fixture.Create<CalculatorRun>();
             mockRun.Name = Fixture.Create<string>();
             var context = new Mock<ApplicationDBContext>();
             context.Setup(c => c.CalculatorRuns).ReturnsDbSet([mockRun]);

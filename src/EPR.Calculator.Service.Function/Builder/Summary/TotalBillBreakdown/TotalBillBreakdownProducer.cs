@@ -6,8 +6,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
 {
     public static class TotalBillBreakdownProducer
     {
-        public static readonly int ColumnIndex = 265;
-
+        public static readonly int ColumnIndex = 231;
+    
         public static IEnumerable<CalcResultSummaryHeader> GetHeaders()
         {
             return [
@@ -45,7 +45,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
         private static decimal GetTotalProducerBillWithoutBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
         {
             return fee.TotalProducerFeeforLADisposalCostswoBadDebtprovision +
-                   fee.TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision +
+                   fee.TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision + 
                    fee.TotalProducerFeeWithoutBadDebtFor2bComms +
                    fee.TwoCTotalProducerFeeForCommsCostsWithoutBadDebt +
                    fee.Total3SAOperatingCostwoBadDebtprovision +
@@ -55,7 +55,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
 
         private static decimal GetBadDebtProvisionForTotalProducerBill(CalcResultSummaryProducerDisposalFees fee)
         {
-            return fee.BadDebtProvisionFor1 +
+            return fee.BadDebtProvisionFor1 + 
                    fee.BadDebtProvisionFor2A +
                    fee.BadDebtProvisionFor2bComms +
                    fee.TwoCBadDebtProvision +

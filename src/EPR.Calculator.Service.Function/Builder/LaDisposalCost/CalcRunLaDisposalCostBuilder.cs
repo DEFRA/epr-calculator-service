@@ -16,8 +16,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
     {
         internal class ProducerData
         {
-            public required string MaterialName { get; set; }
-            public required string PackagingType { get; set; }
+            public required string Material { get; set; }
             public decimal Tonnage { get; set; }
         }
 
@@ -37,7 +36,18 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
             var laDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>();
             var OrderId = 1;
 
-            await SetProducerData(resultsRequestDto);
+            producerData = await (from run in context.CalculatorRuns
+                join producerDetail in context.ProducerDetail on run.Id equals producerDetail.CalculatorRunId
+                join producerMaterial in context.ProducerReportedMaterial on producerDetail.Id equals producerMaterial
+                    .ProducerDetailId
+                join material in context.Material on producerMaterial.MaterialId equals material.Id
+                where run.Id == resultsRequestDto.RunId && producerMaterial.PackagingType != null &&
+                      producerMaterial.PackagingType == CommonConstants.Household
+                select new ProducerData
+                {
+                    Material = material.Name,
+                    Tonnage = producerMaterial.PackagingTonnage
+                }).ToListAsync();
 
             var lapcapDetails = calcResult.CalcResultLapcapData.CalcResultLapcapDataDetails
                 .Where(t => t.OrderId != 1 && t.Name != CalcResultLapcapDataBuilder.CountryApportionment).ToList();
@@ -54,91 +64,49 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
                     NorthernIreland = details.NorthernIrelandDisposalCost,
                     Total = details.TotalDisposalCost,
                     ProducerReportedHouseholdPackagingWasteTonnage = GetTonnageDataByMaterial(details.Name),
-                    ReportedPublicBinTonnage = GetReportedPublicBinTonnage(details.Name),
-                    HouseholdDrinkContainers = GetReportedHouseholdDrinksContainerTonnage(details.Name),
                     OrderId = ++OrderId
                 };
-                laDiposalDetail.LateReportingTonnage = GetLateReportingTonnageDataByMaterial(laDiposalDetail.Name, calcResult.CalcResultLateReportingTonnageData.CalcResultLateReportingTonnageDetails.ToList());
-                laDiposalDetail.ProducerReportedTotalTonnage = GetProducerReportedTotalTonnage(laDiposalDetail);
-                laDiposalDetail.DisposalCostPricePerTonne = laDiposalDetail.Name == CommonConstants.Total
-                    ? string.Empty
-                    : CalculateDisposalCostPricePerTonne(laDiposalDetail);
                 laDisposalCostDetails.Add(laDiposalDetail);
 
             }
 
+
+            foreach (var details in laDisposalCostDetails)
+            {
+                details.LateReportingTonnage = GetLateReportingTonnageDataByMaterial(details.Name, calcResult.CalcResultLateReportingTonnageData.CalcResultLateReportingTonnageDetails.ToList());
+
+                details.ProducerReportedHouseholdTonnagePlusLateReportingTonnage = GetProducerReportedHouseholdTonnagePlusLateReportingTonnage(details);
+                if (details.Name == CommonConstants.Total) continue;
+                details.DisposalCostPricePerTonne = CalculateDisposalCostPricePerTonne(details);
+            }
+
+
             var header = GetHeader();
             laDisposalCostDetails.Insert(0, header);
 
-            return new CalcResultLaDisposalCostData()
-            {
-                Name = CommonConstants.LADisposalCostData,
-                CalcResultLaDisposalCostDetails = laDisposalCostDetails.AsEnumerable()
-            };
-            }
+            return new CalcResultLaDisposalCostData() { Name = CommonConstants.LADisposalCostData, CalcResultLaDisposalCostDetails = laDisposalCostDetails.AsEnumerable() };
 
-        private string GetReportedHouseholdDrinksContainerTonnage(string materialName)
-        {
-            if (materialName == CommonConstants.Total)
-            {
-                var householdDrinksContainerData = producerData
-                    .Where(p => p.PackagingType == PackagingTypes.HouseholdDrinksContainers);
-
-                return householdDrinksContainerData.Any()
-                    ? householdDrinksContainerData.Sum(p => p.Tonnage).ToString()
-                    : "0";
-            }
-            else
-            {
-                var householdDrinksContainerData = producerData
-                    .Where(p => p.MaterialName == materialName && p.PackagingType == PackagingTypes.HouseholdDrinksContainers);
-
-                return householdDrinksContainerData.Any()
-                    ? householdDrinksContainerData.Sum(p => p.Tonnage).ToString()
-                    : string.Empty;
-            }
         }
 
-        private string GetReportedPublicBinTonnage(string materialName)
+        private string GetTonnageDataByMaterial(string material)
         {
-            return materialName == CommonConstants.Total
-                ? producerData
-                    .Where(p => p.PackagingType == PackagingTypes.PublicBin)
-                    .Sum(p => p.Tonnage).ToString()
-                : producerData
-                    .Where(p => p.MaterialName == materialName && p.PackagingType == PackagingTypes.PublicBin)
-                    .Sum(p => p.Tonnage).ToString();
+            return material == "Total"? producerData.Sum(t=>t.Tonnage).ToString()  : producerData.Where(t => t.Material == material).Sum(t => t.Tonnage).ToString();
         }
 
-        private string GetTonnageDataByMaterial(string materialName)
+        private static string GetLateReportingTonnageDataByMaterial(string material, List<CalcResultLateReportingTonnageDetail> details)
         {
-            return materialName == CommonConstants.Total
-                ? producerData.Where(t => t.PackagingType == PackagingTypes.Household).Sum(t => t.Tonnage).ToString()
-                : producerData.Where(t => t.MaterialName == materialName && t.PackagingType == PackagingTypes.Household).Sum(t => t.Tonnage).ToString();
+            return details.Where(t => t.Name == material).Sum(t => t.TotalLateReportingTonnage).ToString();
         }
 
-        private static string GetLateReportingTonnageDataByMaterial(string materialName, List<CalcResultLateReportingTonnageDetail> details)
+        private static string GetProducerReportedHouseholdTonnagePlusLateReportingTonnage(CalcResultLaDisposalCostDataDetail detail)
         {
-            return details.Where(t => t.Name == materialName).Sum(t => t.TotalLateReportingTonnage).ToString();
-        }
-
-        private static string GetProducerReportedTotalTonnage(CalcResultLaDisposalCostDataDetail detail)
-        {
-            var householdDrinkContainersValue = detail.HouseholdDrinkContainers == null
-                ? 0
-                : GetDecimalValue(detail.HouseholdDrinkContainers);
-
-            var value = GetDecimalValue(detail.LateReportingTonnage)
-                + GetDecimalValue(detail.ProducerReportedHouseholdPackagingWasteTonnage)
-                + GetDecimalValue(detail.ReportedPublicBinTonnage)
-                + householdDrinkContainersValue;
-
+            var value = GetDecimalValue(detail.LateReportingTonnage) + GetDecimalValue(detail.ProducerReportedHouseholdPackagingWasteTonnage);
             return value.ToString();
         }
 
         private static string CalculateDisposalCostPricePerTonne(CalcResultLaDisposalCostDataDetail detail)
         {
-            var HouseholdTonnagePlusLateReportingTonnage = GetDecimalValue(detail.ProducerReportedTotalTonnage);
+            var HouseholdTonnagePlusLateReportingTonnage = GetDecimalValue(detail.ProducerReportedHouseholdTonnagePlusLateReportingTonnage);
             if (HouseholdTonnagePlusLateReportingTonnage == 0) return "0";
             var value = Math.Round(ConvertCurrencyToDecimal(detail.Total) / HouseholdTonnagePlusLateReportingTonnage, 4);
             var culture = CultureInfo.CreateSpecificCulture("en-GB");
@@ -158,10 +126,8 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
                 NorthernIreland = CommonConstants.NorthernIreland,
                 Total = CommonConstants.Total,
                 ProducerReportedHouseholdPackagingWasteTonnage = CommonConstants.ProducerReportedHouseholdPackagingWasteTonnage,
-                ReportedPublicBinTonnage = CommonConstants.ReportedPublicBinTonnage,
-                HouseholdDrinkContainers = CommonConstants.HouseholdDrinkContainers,
                 LateReportingTonnage = CommonConstants.LateReportingTonnage,
-                ProducerReportedTotalTonnage = CommonConstants.ProducerReportedTotalTonnage,
+                ProducerReportedHouseholdTonnagePlusLateReportingTonnage = CommonConstants.ProduceLateTonnage,
                 DisposalCostPricePerTonne = CommonConstants.DisposalCostPricePerTonne,
                 OrderId = 1
             };
@@ -169,8 +135,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
 
         private static decimal GetDecimalValue(string value)
         {
-            var isParseSuccessful = decimal.TryParse(value, CultureInfo.InvariantCulture, out decimal result);
-            return isParseSuccessful ? result : 0;
+            return decimal.Parse(value, CultureInfo.InvariantCulture);
         }
 
         private static decimal ConvertCurrencyToDecimal(string currency)
@@ -178,31 +143,6 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
             decimal amount;
             decimal.TryParse(currency, NumberStyles.Currency, CultureInfo.GetCultureInfo("en-GB"), out amount);
             return amount;
-        }
-
-        private async Task SetProducerData(CalcResultsRequestDto resultsRequestDto)
-        {
-            producerData = await (from run in context.CalculatorRuns
-                                  join producerDetail in context.ProducerDetail on run.Id equals producerDetail.CalculatorRunId
-                                  join producerMaterial in context.ProducerReportedMaterial on producerDetail.Id equals producerMaterial
-                                      .ProducerDetailId
-                                  join material in context.Material on producerMaterial.MaterialId equals material.Id
-                                  where run.Id == resultsRequestDto.RunId &&
-                                      producerMaterial.PackagingType != null &&
-                                      (
-                                          producerMaterial.PackagingType == PackagingTypes.Household ||
-                                          producerMaterial.PackagingType == PackagingTypes.PublicBin ||
-                                          (
-                                              producerMaterial.PackagingType == PackagingTypes.HouseholdDrinksContainers &&
-                                              material.Code == MaterialCodes.Glass
-                                          )
-                                      )
-                                  select new ProducerData
-                                  {
-                                      MaterialName = material.Name,
-                                      PackagingType = producerMaterial.PackagingType,
-                                      Tonnage = producerMaterial.PackagingTonnage
-                                  }).ToListAsync();
         }
     }
 }

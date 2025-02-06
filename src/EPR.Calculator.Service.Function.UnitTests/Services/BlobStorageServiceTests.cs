@@ -1,18 +1,14 @@
-﻿using Castle.Core.Logging;
-
-namespace EPR.Calculator.Service.Function.UnitTests.Services
+﻿namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
     using System.Configuration;
     using AutoFixture;
     using Azure;
     using Azure.Storage.Blobs;
     using Azure.Storage.Blobs.Models;
-    using Azure.Storage.Blobs.Specialized;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Interface;
     using EPR.Calculator.Service.Function.Services;
     using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.Logging;
     using Moq;
 
     /// <summary>Unit tests for the <see cref="BlobStorageService"/> class.</summary>
@@ -40,12 +36,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.MockBlobContainerClient.Setup(x => x.GetBlobClient(It.IsAny<string>()))
                 .Returns(this.MockBlobClient.Object);
 
-            this.Logger = new Mock<ILogger<BlobStorageService>>();
-            ;
             this.BlobStorageService = new BlobStorageService(
                 this.MockBlobServiceClient.Object,
-                this.ConfigurationService.Object,
-                this.Logger.Object);
+                this.ConfigurationService.Object);
         }
 
         private Fixture Fixture { get; init; }
@@ -60,27 +53,22 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         private Mock<IConfigurationService> ConfigurationService { get; init; }
 
-        private Mock<ILogger<BlobStorageService>> Logger { get; init; }
-
-
         [TestMethod]
         public async Task UploadResultFileContentAsync_ReturnsTrue_WhenUploadSucceeds()
         {
             // Arrange
             var fileName = "test.txt";
             var content = "test content";
-            var expectedUri = new Uri("https://example.com/test.txt");
 
             var responseMock = new Mock<Response<BlobContentInfo>>();
             this.MockBlobClient.Setup(x => x.UploadAsync(It.IsAny<BinaryData>()))
                           .ReturnsAsync(responseMock.Object);
-            this.MockBlobClient.Setup(x => x.Uri).Returns(expectedUri);
 
             // Act
             var result = await this.BlobStorageService.UploadResultFileContentAsync(fileName, content);
 
             // Assert
-            Assert.AreEqual(result, expectedUri.ToString());
+            Assert.IsTrue(result);
             this.MockBlobClient.Verify(x => x.UploadAsync(It.IsAny<BinaryData>()), Times.Once);
         }
 
@@ -98,7 +86,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var result = await this.BlobStorageService.UploadResultFileContentAsync(fileName, content);
 
             // Assert
-            Assert.AreEqual(result, string.Empty);
+            Assert.IsFalse(result);
             this.MockBlobClient.Verify(x => x.UploadAsync(It.IsAny<BinaryData>()), Times.Once);
         }
     }

@@ -6,12 +6,6 @@ namespace EPR.Calculator.Service.Function.Models
     {
         public decimal HouseholdPackagingWasteTonnage { get; set; }
 
-        public decimal ReportedPublicBinTonnage { get; set; }
-
-        public decimal TotalReportedTonnage { get; set; }
-
-        public decimal HouseholdDrinksContainers { get; set; }
-
         public decimal PriceperTonne { get; set; }
 
         public decimal ProducerTotalCostWithoutBadDebtProvision { get; set; }
@@ -27,6 +21,5 @@ namespace EPR.Calculator.Service.Function.Models
         public decimal ScotlandWithBadDebtProvision { get; set; }
 
         public decimal NorthernIrelandWithBadDebtProvision { get; set; }
-
     }
 }

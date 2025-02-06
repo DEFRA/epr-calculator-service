@@ -32,7 +32,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.ContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
             this.ContextFactory.Setup(f => f.CreateDbContext()).Returns(this._context);
 
-            SeedDatabase();
+            SeedDatabase();            
         }
 
         public Fixture Fixture { get; init; } = new Fixture();
@@ -46,7 +46,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         private void SeedDatabase()
         {
-
+            
             _context.CalculatorRunOrganisationDataMaster.AddRange(GetCalculatorRunOrganisationDataMaster());
             _context.CalculatorRunOrganisationDataDetails.AddRange(GetCalculatorRunOrganisationDataDetails());
 
@@ -83,7 +83,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var producerDetail = _context.ProducerDetail.FirstOrDefault();
             Assert.IsNotNull(producerDetail);
             Assert.AreEqual(expectedResult.ProducerId, producerDetail.ProducerId);
-            Assert.AreEqual(expectedResult.ProducerName, producerDetail.ProducerName);
+            Assert.AreEqual(expectedResult.ProducerName, producerDetail.ProducerName);           
         }
 
         [TestMethod]
@@ -136,7 +136,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 Id = 1,
                 ProducerId = 2,
-                SubsidiaryId = "1",
+                SubsidiaryId ="1",                
                 ProducerName = "Subsid2",
                 CalculatorRunId = 1,
                 CalculatorRun = Fixture.Create<CalculatorRun>(),
@@ -149,7 +149,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
             service.Transpose(resultsRequestDto, CancellationToken.None);
 
-            var producerDetail = _context.ProducerDetail.FirstOrDefault(t => t.SubsidiaryId != null);
+            var producerDetail = _context.ProducerDetail.FirstOrDefault(t=>t.SubsidiaryId != null);
             Assert.IsNotNull(producerDetail);
             Assert.AreEqual(expectedResult.ProducerId, producerDetail.ProducerId);
             Assert.AreEqual(expectedResult.ProducerName, producerDetail.ProducerName);
@@ -231,7 +231,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
 
-        protected static IEnumerable<CalculatorRunOrganisationDataMaster> GetCalculatorRunOrganisationDataMaster()
+            protected static IEnumerable<CalculatorRunOrganisationDataMaster> GetCalculatorRunOrganisationDataMaster()
         {
             var list = new List<CalculatorRunOrganisationDataMaster>
             {
@@ -435,7 +435,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             var list = new List<CalculatorRun>
             {
-                new() {
+                new ()
+                {
+                    Id = 1,
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Run",
                     Financial_Year = "2024-25",
@@ -444,14 +446,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     CalculatorRunOrganisationDataMasterId = 2,
                     CalculatorRunPomDataMasterId = 2,
                 },
-                new() {
+                new ()
+                {
+                    Id = 2,
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Calculated Result",
                     Financial_Year = "2024-25",
                     CreatedAt = new DateTime(2024, 8, 21, 14, 16, 27, DateTimeKind.Utc),
                     CreatedBy = "Test User"
                 },
-                new() {
+                new ()
+                {
+                    Id = 3,
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Run",
                     Financial_Year = "2024-25",
@@ -460,7 +466,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     CalculatorRunOrganisationDataMasterId = 1,
                     CalculatorRunPomDataMasterId = 1,
                 },
-                new() {
+                new ()
+                {
+                    Id = 4,
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Calculated Result",
                     Financial_Year = "2024-25",
@@ -468,7 +476,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     CreatedBy = "Test User",
                     CalculatorRunOrganisationDataMasterId = 2,
                     CalculatorRunPomDataMasterId = 2,
-                }
+                },
             };
             return list;
         }

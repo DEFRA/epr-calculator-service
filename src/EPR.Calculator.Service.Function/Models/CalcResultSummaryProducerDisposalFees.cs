@@ -80,7 +80,7 @@ namespace EPR.Calculator.Service.Function.Models
         public decimal TwoCScotlandTotalWithBadDebt { get; set; }
         public decimal TwoCNorthernIrelandTotalWithBadDebt { get; set; }
 
-        public decimal PercentageofProducerReportedTonnagevsAllProducers { get; set; }
+        public decimal PercentageofProducerReportedHHTonnagevsAllProducers { get; set; }
 
         // Section Total bill (1 + 2a + 2b + 2c)
         public decimal ProducerTotalOnePlus2A2B2CWithBadDeptProvision { get; set; }

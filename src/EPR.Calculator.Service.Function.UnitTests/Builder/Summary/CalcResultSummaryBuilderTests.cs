@@ -10,6 +10,7 @@
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+
     [TestClass]
     public class CalcResultSummaryBuilderTests
     {
@@ -107,8 +108,7 @@
                             Material = "Material1",
                             Total = "TotalTest",
                             ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
-                            ReportedPublicBinTonnage = Fixture.Create<string>(),
-                            ProducerReportedTotalTonnage = Fixture.Create<string>(),
+                            ProducerReportedHouseholdTonnagePlusLateReportingTonnage = Fixture.Create<string>(),
                         },
                          new CalcResultLaDisposalCostDataDetail()
                         {
@@ -120,8 +120,7 @@
                             Scotland="ScotlandTest",
                             Total = "TotalTest",
                             ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
-                            ReportedPublicBinTonnage = Fixture.Create<string>(),
-                            ProducerReportedTotalTonnage = Fixture.Create<string>(),
+                            ProducerReportedHouseholdTonnagePlusLateReportingTonnage = Fixture.Create<string>(),
                         },
                           new CalcResultLaDisposalCostDataDetail()
                         {
@@ -133,8 +132,7 @@
                             Scotland="ScotlandTest",
                             Total = "TotalTest",
                             ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
-                            ReportedPublicBinTonnage = Fixture.Create<string>(),
-                            ProducerReportedTotalTonnage = Fixture.Create<string>(),
+                            ProducerReportedHouseholdTonnagePlusLateReportingTonnage = Fixture.Create<string>(),
                         }
                     }
                 },
@@ -508,7 +506,7 @@
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.ProducerDisposalFees);
             Assert.AreEqual(2, result.ProducerDisposalFees.Count());
-            var producerTotalPercentage = result.ProducerDisposalFees.First().PercentageofProducerReportedTonnagevsAllProducers;
+            var producerTotalPercentage = result.ProducerDisposalFees.First().PercentageofProducerReportedHHTonnagevsAllProducers;
             Assert.IsNotNull(producerTotalPercentage);
             Assert.AreEqual(100, producerTotalPercentage);
         }
@@ -525,7 +523,7 @@
             Assert.IsNotNull(result);
             Assert.AreEqual(CalcResultSummaryHeaders.CalculationResult, result.ResultSummaryHeader!.Name);
             Assert.AreEqual(25, result.ProducerDisposalFeesHeaders!.Count());
-            var isColumnHeaderExists = result.ProducerDisposalFeesHeaders!.Select(dict => dict.ColumnIndex == 213 || dict.ColumnIndex == 214 || dict.ColumnIndex == 215).ToList();
+            var isColumnHeaderExists = result.ProducerDisposalFeesHeaders!.Select(dict => dict.ColumnIndex == 196 || dict.ColumnIndex == 197 || dict.ColumnIndex == 198).ToList();
             Assert.IsTrue(isColumnHeaderExists.Contains(true));
             Assert.IsNotNull(result.ProducerDisposalFees);
             Assert.AreEqual(2, result.ProducerDisposalFees.Count());
@@ -576,14 +574,14 @@
             var runProducerMaterialDetails = CalcResultSummaryBuilder.GetProducerRunMaterialDetails(orderedProducerDetails,
                 _context.ProducerReportedMaterial.ToList(), 1);
 
+            var hhTotalPackagingTonnage = CalcResultSummaryBuilder.GetHHTotalPackagingTonnagePerRun(runProducerMaterialDetails, 1);
+
             var materials = Mappers.MaterialMapper.Map(_context.Material.ToList());
 
-            var TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, 1);
-
             var result = CalcResultSummaryBuilder.GetCalcResultSummary(orderedProducerDetails, materials,
-                runProducerMaterialDetails, _calcResult, TotalPackagingTonnage);
+                runProducerMaterialDetails, _calcResult, hhTotalPackagingTonnage);
             Assert.IsNotNull(result);
-            Assert.AreEqual(125, result.ColumnHeaders.Count());
+            Assert.AreEqual(117, result.ColumnHeaders.Count());
 
             var producerDisposalFees = result.ProducerDisposalFees;
             Assert.IsNotNull(producerDisposalFees);

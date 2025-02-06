@@ -181,9 +181,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                             Scotland = "ScotlandTest",
                             Material = "Material1",
                             NorthernIreland = "NorthernIrelandTest",
-                            Total = string.Empty,
-                            ProducerReportedHouseholdPackagingWasteTonnage = string.Empty,
-                            ReportedPublicBinTonnage = string.Empty
+                            Total = "null",
+                            ProducerReportedHouseholdPackagingWasteTonnage = "null"
                         },
                         new CalcResultLaDisposalCostDataDetail
                         {
@@ -193,9 +192,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                             Name = "Material1",
                             Scotland = "ScotlandTest",
                             NorthernIreland = "NorthernIrelandTest",
-                            Total = string.Empty,
-                            ProducerReportedHouseholdPackagingWasteTonnage = string.Empty,
-                            ReportedPublicBinTonnage = string.Empty
+                            Total = "null",
+                            ProducerReportedHouseholdPackagingWasteTonnage = "null",
+
                         },
                         new CalcResultLaDisposalCostDataDetail
                         {
@@ -206,8 +205,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                             Scotland = "ScotlandTest",
                             NorthernIreland = "NorthernIrelandTest",
                             Total = "100",
-                            ProducerReportedHouseholdPackagingWasteTonnage = string.Empty,
-                            ReportedPublicBinTonnage = string.Empty
+                            ProducerReportedHouseholdPackagingWasteTonnage = "null",
+
                         }
                     },
                     Name = "some test"

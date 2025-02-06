@@ -179,8 +179,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
                             NorthernIreland = "NorthernIrelandTest",
                             Total = "TotalTest",
                             ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
-                            ProducerReportedTotalTonnage = Fixture.Create<string>(),
-                            ReportedPublicBinTonnage= Fixture.Create<string>(),
+                            ProducerReportedHouseholdTonnagePlusLateReportingTonnage = Fixture.Create<string>(),
                         },
                         new()
                         {
@@ -192,8 +191,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
                             NorthernIreland = "NorthernIrelandTest",
                             Total = "TotalTest",
                             ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
-                            ProducerReportedTotalTonnage = Fixture.Create<string>(),
-                            ReportedPublicBinTonnage= Fixture.Create<string>(),
+                            ProducerReportedHouseholdTonnagePlusLateReportingTonnage = Fixture.Create<string>(),
                         },
                         new()
                         {
@@ -205,8 +203,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
                             NorthernIreland = "NorthernIrelandTest",
                             Total = "TotalTest",
                             ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
-                            ProducerReportedTotalTonnage = Fixture.Create<string>(),
-                            ReportedPublicBinTonnage= Fixture.Create<string>(),
+                            ProducerReportedHouseholdTonnagePlusLateReportingTonnage = Fixture.Create<string>(),
                         }
                     }
                 },
@@ -360,17 +357,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
         {
             // Act
             var result = TotalBillBreakdownProducer.GetHeaders().ToList();
-            var columnIndex = 265;
 
             var expectedResult = new List<CalcResultSummaryHeader>();
             expectedResult.AddRange([
-                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.TotalProducerBillWithoutBadDebtProvision , ColumnIndex = columnIndex },
-                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.BadDebtProvision, ColumnIndex = columnIndex+1 },
-                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.TotalProducerBillWithBadDebtProvision, ColumnIndex = columnIndex+2 },
-                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.EnglandTotalWithBadDebtProvision, ColumnIndex = columnIndex+3 },
-                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.WalesTotalWithBadDebtProvision, ColumnIndex = columnIndex+4 },
-                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.ScotlandTotalWithBadDebtProvision, ColumnIndex = columnIndex+5 },
-                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.NorthernIrelandTotalWithBadDebtProvision, ColumnIndex = columnIndex+6 }
+                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.TotalProducerBillWithoutBadDebtProvision , ColumnIndex = 231 },
+                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.BadDebtProvision, ColumnIndex = 232 },
+                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.TotalProducerBillWithBadDebtProvision, ColumnIndex = 233 },
+                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.EnglandTotalWithBadDebtProvision, ColumnIndex = 234 },
+                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.WalesTotalWithBadDebtProvision, ColumnIndex = 235 },
+                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.ScotlandTotalWithBadDebtProvision, ColumnIndex = 236 },
+                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.NorthernIrelandTotalWithBadDebtProvision, ColumnIndex = 237 }
             ]);
 
             // Assert
@@ -398,7 +394,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
 
             var expectedResult = new List<CalcResultSummaryHeader>();
             expectedResult.AddRange([
-                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.TotalProducerBillBreakdown, ColumnIndex = 265 }
+                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.TotalProducerBillBreakdown, ColumnIndex = 231 }
             ]);
 
             // Assert

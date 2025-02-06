@@ -5,20 +5,21 @@
     using System.Text;
     using System.Threading.Tasks;
     using global::EPR.Calculator.Service.Function.Interface;
-    using Microsoft.AspNetCore.Mvc;
 
     public class LocalFileStorageService : IStorageService
     {
-        public Task<IActionResult> DownloadFile(string fileName, string blobUri)
+        public Task<string?> GetResultFileContentAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<string> UploadResultFileContentAsync(string fileName, string content)
+        /// <inheritdoc/>
+        public Task<bool> UploadResultFileContentAsync(string fileName, string content)
         {
-            var path = Path.Combine(Directory.GetCurrentDirectory(), fileName);
+            var path = $"{Directory.GetCurrentDirectory()}\\{fileName}";
             File.WriteAllText(path, content, Encoding.UTF8);
-            return Task.FromResult(path);
+            var result = Task.FromResult(true);
+            return result;
         }
     }
 }
