@@ -56,9 +56,9 @@ namespace EPR.Calculator.Service.Function
             });
         }
 
-        private static void SetupBlobStorage(IFunctionsHostBuilder builder)
+        private static void SetupBlobStorage(IServiceCollection services)
         {
-            builder.Services.AddSingleton<BlobServiceClient>(provider =>
+            services.AddSingleton<BlobServiceClient>(provider =>
             {
                 var configuration = provider.GetRequiredService<IConfigurationService>();
                 var connectionString = configuration.BlobConnectionString;
@@ -99,7 +99,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcResultSummaryBuilder, CalcResultSummaryBuilder>();
             services.AddTransient<IRpdStatusService, RpdStatusService>();
 #if !DEBUG
-            SetupBlobStorage(builder);
+            SetupBlobStorage(services);
             services.AddTransient<IConfigurationService, Configuration>();
 #elif DEBUG
             services.AddTransient<IStorageService, LocalFileStorageService>();
