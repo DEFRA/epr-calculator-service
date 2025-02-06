@@ -397,7 +397,8 @@
                             Material = "Material1",
                             NorthernIreland = "NorthernIrelandTest",
                             Total = "null",
-                            ProducerReportedHouseholdPackagingWasteTonnage = "null"
+                            ProducerReportedHouseholdPackagingWasteTonnage = "null",
+                            ReportedPublicBinTonnage = string.Empty,
                         },
                         new CalcResultLaDisposalCostDataDetail
                         {
@@ -409,6 +410,7 @@
                             NorthernIreland = "NorthernIrelandTest",
                             Total = "null",
                             ProducerReportedHouseholdPackagingWasteTonnage = "null",
+                            ReportedPublicBinTonnage =string.Empty,
                         },
                         new CalcResultLaDisposalCostDataDetail
                         {
@@ -420,6 +422,7 @@
                             NorthernIreland = "NorthernIrelandTest",
                             Total = "100",
                             ProducerReportedHouseholdPackagingWasteTonnage = "null",
+                            ReportedPublicBinTonnage = string.Empty,
                         }
                     },
                     Name = "some test"
