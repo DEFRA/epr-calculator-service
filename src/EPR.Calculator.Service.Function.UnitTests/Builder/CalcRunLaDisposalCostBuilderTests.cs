@@ -89,34 +89,36 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual(CommonConstants.DisposalCostPricePerTonne, headerRow.DisposalCostPricePerTonne);
         }
 
-        //[TestMethod]
-        //public void Should_Return_Material_Data_With_PublicBin()
-        //{
-        //    // Assign
-        //    var resultsDto = new CalcResultsRequestDto { RunId = 2 };
-        //    var calcResult = TestDataHelper.GetCalcResult();
+        [TestMethod]
+        public void Should_Return_Material_Data_With_PublicBin()
+        {
+            // Assign
+            var resultsDto = new CalcResultsRequestDto { RunId = 2 };
+            var calcResult = TestDataHelper.GetCalcResult();
 
-        //    // Act
-        //    var results = builder.Construct(resultsDto, calcResult);
-        //    results.Wait();
-        //    var lapcapDisposalCostResults = results.Result;
+            // Act
+            var results = builder.Construct(resultsDto, calcResult);
+            results.Wait();
+            var lapcapDisposalCostResults = results.Result;
 
-        //    // Assert
-        //    var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails?.Single(x => x.Name == MaterialNames.Plastic);
-        //    Assert.IsNotNull(laDisposalCost);
-        //    Assert.AreEqual(MaterialNames.Plastic, laDisposalCost.Name);
-        //    Assert.AreEqual("£23,000.00", laDisposalCost.England);
-        //    Assert.AreEqual("£4,500.00", laDisposalCost.Wales);
-        //    Assert.AreEqual("£6,700.00", laDisposalCost.Scotland);
-        //    Assert.AreEqual("£2,100.00", laDisposalCost.NorthernIreland);
-        //    Assert.AreEqual("£36,300.00", laDisposalCost.Total);
-        //    Assert.AreEqual("2000.00", laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage);
-        //    Assert.AreEqual("2000.00", laDisposalCost.ReportedPublicBinTonnage);
-        //    Assert.AreEqual(string.Empty, laDisposalCost.HouseholdDrinkContainers);
-        //    Assert.AreEqual("2000.00", laDisposalCost.LateReportingTonnage);
-        //    Assert.AreEqual("6000.00", laDisposalCost.ProducerReportedTotalTonnage);
-        //    Assert.AreEqual("£6.0500", laDisposalCost.DisposalCostPricePerTonne);
-        //}
+            // Assert
+            var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails?.Single(x => x.Name == MaterialNames.Plastic);
+            Assert.IsNotNull(laDisposalCost);
+            Assert.AreEqual(MaterialNames.Plastic, laDisposalCost.Name);
+            Assert.IsTrue(laDisposalCost.England.Contains("23,000.00"));
+            Assert.IsTrue(laDisposalCost.Wales.Contains("4,500.00"));
+            Assert.IsTrue(laDisposalCost.Scotland.Contains("6,700.00"));
+            Assert.IsTrue(laDisposalCost.NorthernIreland.Contains("2,100.00"));
+            Assert.IsTrue(laDisposalCost.Total.Contains("36,300.00"));
+
+            Assert.AreEqual("2000.00", laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage);
+            Assert.AreEqual("2000.00", laDisposalCost.ReportedPublicBinTonnage);
+            Assert.AreEqual(string.Empty, laDisposalCost.HouseholdDrinkContainers);
+            Assert.AreEqual("2000.00", laDisposalCost.LateReportingTonnage);
+            Assert.AreEqual("6000.00", laDisposalCost.ProducerReportedTotalTonnage);
+            Assert.IsTrue(laDisposalCost.DisposalCostPricePerTonne.Contains("6.0500"));
+
+        }
 
         [TestMethod]
         public void Should_Return_Material_Data_With_Household_Drink_Containers()
