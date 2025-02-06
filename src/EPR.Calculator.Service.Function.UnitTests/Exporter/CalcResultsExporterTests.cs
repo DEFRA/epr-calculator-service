@@ -10,6 +10,8 @@
     [TestClass]
     public class CalcResultsExporterTests
     {
+        Fixture Fixture { get; } = new Fixture();
+
         [TestMethod]
         public void Export_ShouldReturnCsvContent_WhenAllDataIsPresent()
         {
@@ -56,7 +58,7 @@
             var lines = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
             // Assert
-            int expectedLineCount = 55;
+            int expectedLineCount = 57;
             Assert.AreEqual(expectedLineCount, lines.Length);
         }
 
@@ -376,7 +378,10 @@
                             CommsCostByMaterialPricePerTonne = "0.3",
                             Name = "Glass",
                         }
-                    }
+                    },
+                    CalcResultCommsCostOnePlusFourApportionment =
+                        new Fixture().CreateMany<CalcResultCommsCostOnePlusFourApportionment>(1),
+                    CommsCostByCountry = new Fixture().CreateMany<CalcResultCommsCostOnePlusFourApportionment>(1),
                 },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData
                 {
@@ -391,9 +396,8 @@
                             Scotland = "ScotlandTest",
                             Material = "Material1",
                             NorthernIreland = "NorthernIrelandTest",
-                            Total = string.Empty,
-                            ProducerReportedHouseholdPackagingWasteTonnage = string.Empty,
-                            ReportedPublicBinTonnage = string.Empty
+                            Total = "null",
+                            ProducerReportedHouseholdPackagingWasteTonnage = "null"
                         },
                         new CalcResultLaDisposalCostDataDetail
                         {
@@ -403,9 +407,8 @@
                             Name = "Material1",
                             Scotland = "ScotlandTest",
                             NorthernIreland = "NorthernIrelandTest",
-                            Total = string.Empty,
-                            ProducerReportedHouseholdPackagingWasteTonnage = string.Empty,
-                            ReportedPublicBinTonnage = string.Empty
+                            Total = "null",
+                            ProducerReportedHouseholdPackagingWasteTonnage = "null",
                         },
                         new CalcResultLaDisposalCostDataDetail
                         {
@@ -416,8 +419,7 @@
                             Scotland = "ScotlandTest",
                             NorthernIreland = "NorthernIrelandTest",
                             Total = "100",
-                            ProducerReportedHouseholdPackagingWasteTonnage = string.Empty,
-                            ReportedPublicBinTonnage = string.Empty
+                            ProducerReportedHouseholdPackagingWasteTonnage = "null",
                         }
                     },
                     Name = "some test"
@@ -433,24 +435,24 @@
                         new CalcResultSummaryProducerDisposalFees
                         {
                             ProducerCommsFeesByMaterial =
-                                new Dictionary<MaterialDetail, CalcResultSummaryProducerCommsFeesCostByMaterial>(),
+                                new Fixture().Create<Dictionary<MaterialDetail, CalcResultSummaryProducerCommsFeesCostByMaterial>>(),
                             ProducerDisposalFeesByMaterial =
-                                new Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial>(),
+                                new Fixture().Create<Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial>>(),
                             ProducerId = "1",
                             ProducerName = "Test",
                             TotalProducerDisposalFeeWithBadDebtProvision = 100,
                             TotalProducerCommsFeeWithBadDebtProvision = 100,
                             SubsidiaryId = "1",
-                            ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 1
-                        }
-                    }
+                            ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 1,
+                        },
+                    },
                 },
                 CalcResultDetail = new CalcResultDetail
                 {
                     RunId = 1,
                     RunDate = DateTime.Now,
-                    RunName = "CalculatorRunName"
-                }
+                    RunName = "CalculatorRunName",
+                },
             };
         }
     }
