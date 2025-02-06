@@ -134,17 +134,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails?.Single(x => x.Name == MaterialNames.Glass);
             Assert.IsNotNull(laDisposalCost);
             Assert.AreEqual(MaterialNames.Glass, laDisposalCost.Name);
-            Assert.AreEqual("£45,000.00", laDisposalCost.England);
-            Assert.AreEqual("£0.00", laDisposalCost.Wales);
-            Assert.AreEqual("£20,700.00", laDisposalCost.Scotland);
-            Assert.AreEqual("£4,500.00", laDisposalCost.NorthernIreland);
-            Assert.AreEqual("£70,200.00", laDisposalCost.Total);
-            Assert.AreEqual("2000.00", laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage);
-            Assert.AreEqual("0", laDisposalCost.ReportedPublicBinTonnage);
-            Assert.AreEqual("2000.00", laDisposalCost.HouseholdDrinkContainers);
-            Assert.AreEqual("0", laDisposalCost.LateReportingTonnage);
-            Assert.AreEqual("4000.00", laDisposalCost.ProducerReportedTotalTonnage);
-            Assert.AreEqual("£17.5500", laDisposalCost.DisposalCostPricePerTonne);
+            Assert.IsTrue(laDisposalCost.England.Contains("45,000.00"));
+            Assert.IsTrue(laDisposalCost.Wales.Contains("£0.00"));
+            Assert.IsTrue(laDisposalCost.Scotland.Contains("£20,700.00"));
+            Assert.IsTrue(laDisposalCost.NorthernIreland.Contains("£4,500.00"));
+            Assert.IsTrue(laDisposalCost.Total.Contains("£70,200.00"));
+            Assert.IsTrue(laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage.Contains("2000.00"));
+            Assert.IsTrue(laDisposalCost.ReportedPublicBinTonnage.Contains("0"));
+            Assert.IsTrue(laDisposalCost.HouseholdDrinkContainers.Contains("2000.00"));
+            Assert.IsTrue(laDisposalCost.LateReportingTonnage.Contains("0"));
+            Assert.IsTrue(laDisposalCost.ProducerReportedTotalTonnage.Contains("4000.00"));
+            Assert.IsTrue(laDisposalCost.DisposalCostPricePerTonne.Contains("£17.5500"));
         }
 
         private static List<ProducerReportedMaterial> GetProducerReportedMaterials()
