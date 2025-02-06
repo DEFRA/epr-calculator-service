@@ -1,6 +1,9 @@
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
     using System;
+    using System.ComponentModel.DataAnnotations;
+    using System.Linq;
+    using System.Runtime.CompilerServices;
     using System.Threading;
     using System.Threading.Tasks;
     using AutoFixture;
@@ -10,6 +13,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using EPR.Calculator.Service.Function.Interface;
     using EPR.Calculator.Service.Function.Models;
     using EPR.Calculator.Service.Function.Services;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -116,29 +120,136 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         [TestMethod]
         public async Task UpdateRpdStatus_With_RunId_When_Successful()
         {
-                // Arrange
-                var runId = this.Fixture.Create<int>();
-                var run = this.Fixture.Create<CalculatorRun>();
-                run.Id = runId;
-                run.Financial_Year = this.Fixture.Create<DateTime>().ToString("yyyy-yy");
-                this.Context.CalculatorRuns.Add(run);
-                await this.Context.SaveChangesAsync();
+            // Arrange
+            var runId = this.Fixture.Create<int>();
+            var run = this.Fixture.Create<CalculatorRun>();
+            var financialYear = this.Fixture.Create<DateTime>();
+            run.Id = runId;
+            run.Financial_Year = financialYear.ToString("yyyy-yy");
+            this.Context.CalculatorRuns.Add(run);
+            await this.Context.SaveChangesAsync();
 
-                // Act
+            // Act
+            await this.TestClass.UpdateRpdStatus(
+                runId,
+                this.Fixture.Create<string>(),
+                true,
+                CancellationToken.None);
+
+            // Assert
+            var calcRun = await this.Context.CalculatorRuns.SingleAsync(x => x.Id == runId);
+            var expectedCalendarYear = financialYear.AddYears(-1).ToString("yyyy");
+            Assert.IsNotNull(calcRun);
+            Assert.AreEqual((int)RunClassification.RUNNING, calcRun.CalculatorRunClassificationId);
+            this.Wrapper.Verify(
+                x => x.ExecuteSqlAsync(
+                It.Is<FormattableString>(s => s.ToString().Contains($"calendarYear = {expectedCalendarYear}")),
+                It.IsAny<CancellationToken>()),
+                Times.Exactly(2));
+        }
+
+        [TestMethod]
+        public async Task UpdateRpdStatus_IsNotValidRun()
+        {
+            // Arrange
+            var runId = this.Fixture.Create<int>();
+            var run = this.Fixture.Create<CalculatorRun>();
+            run.Id = runId;
+            run.Financial_Year = this.Fixture.Create<DateTime>().ToString("yyyy-yy");
+            this.Context.CalculatorRuns.Add(run);
+            await this.Context.SaveChangesAsync();
+
+            this.Validator.Setup(v => v.IsValidRun(
+                It.IsAny<CalculatorRun>(),
+                It.IsAny<int>(),
+                It.IsAny<IEnumerable<CalculatorRunClassification>>()))
+                .Returns(new RpdStatusValidation { isValid = false });
+
+            // Act
+            Exception? result = null;
+            try
+            {
                 await this.TestClass.UpdateRpdStatus(
                     runId,
                     this.Fixture.Create<string>(),
                     true,
                     CancellationToken.None);
+            }
+            catch (Exception ex)
+            {
+                result = ex;
+            }
 
-                // Assert
-                var calcRun = await this.Context.CalculatorRuns.SingleAsync(x => x.Id == runId);
-                Assert.IsNotNull(calcRun);
-                Assert.AreEqual((int)RunClassification.RUNNING, calcRun.CalculatorRunClassificationId);
-                this.Wrapper.Verify(
-                    x => x.ExecuteSqlAsync(
-                    It.IsAny<FormattableString>(), It.IsAny<CancellationToken>()),
-                    Times.Exactly(2));
+            // Assert
+            Assert.IsInstanceOfType<FluentValidation.ValidationException>(result);
+        }
+
+        [TestMethod]
+        public async Task UpdateRpdStatus_IsNotValidSuccessfulRun()
+        {
+            // Arrange
+            var runId = this.Fixture.Create<int>();
+            var run = this.Fixture.Create<CalculatorRun>();
+            run.Id = runId;
+            run.Financial_Year = this.Fixture.Create<DateTime>().ToString("yyyy-yy");
+            this.Context.CalculatorRuns.Add(run);
+            await this.Context.SaveChangesAsync();
+
+            this.Validator.Setup(v => v.IsValidSuccessfulRun(It.IsAny<int>()))
+                .Returns(new RpdStatusValidation { isValid = false });
+
+            // Act
+            Exception? result = null;
+            try
+            {
+                await this.TestClass.UpdateRpdStatus(
+                    runId,
+                    this.Fixture.Create<string>(),
+                    true,
+                    CancellationToken.None);
+            }
+            catch (Exception ex)
+            {
+                result = ex;
+            }
+
+            // Assert
+            Assert.IsInstanceOfType<FluentValidation.ValidationException>(result);
+        }
+
+        [TestMethod]
+        public async Task UpdateRpdStatus_WrapperThrowsException()
+        {
+            // Arrange
+            var runId = this.Fixture.Create<int>();
+            var run = this.Fixture.Create<CalculatorRun>();
+            run.Id = runId;
+            run.Financial_Year = this.Fixture.Create<DateTime>().ToString("yyyy-yy");
+            this.Context.CalculatorRuns.Add(run);
+            await this.Context.SaveChangesAsync();
+
+            this.Wrapper.Setup(w => w.ExecuteSqlAsync(
+                It.IsAny<FormattableString>(),
+                It.IsAny<CancellationToken>()))
+                .Throws<Exception>();
+
+            // Act
+            Exception? result = null;
+            try
+            {
+                await this.TestClass.UpdateRpdStatus(
+                    runId,
+                    this.Fixture.Create<string>(),
+                    true,
+                    CancellationToken.None);
+            }
+            catch (Exception ex)
+            {
+                result = ex;
+            }
+
+            // Assert
+            Assert.IsInstanceOfType<Exception>(result);
         }
     }
 }
