@@ -4,16 +4,19 @@ using EPR.Calculator.Service.Function.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace EPR.Calculator.Service.Function.Data.Migrations
+namespace EPR.Calculator.Service.Data.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250123134310_AddCalculatorRunCsvFileMetadata")]
+    partial class AddCalculatorRunCsvFileMetadata
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,7 +25,7 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.CalculatorRun", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.CalculatorRun", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -97,7 +100,7 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
                     b.ToTable("calculator_run");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.CalculatorRunClassification", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.CalculatorRunClassification", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -155,42 +158,42 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.CalculatorRunOrganisationDataDetail", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.CalculatorRunCsvFileMetadata", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                    .HasColumnType("int")
-                    .HasColumnName("id");
+                        .HasColumnType("int")
+                        .HasColumnName("id");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<string>("BlobUri")
-                    .IsRequired()
-                    .HasMaxLength(2000)
-                    .HasColumnType("nvarchar(2000)")
-                    .HasColumnName("blob_uri");
+                    b.Property<string>("BlobUri")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)")
+                        .HasColumnName("blob_uri");
 
-                b.Property<int>("CalculatorRunId")
-                    .HasColumnType("int")
-                    .HasColumnName("calculator_run_id");
+                    b.Property<int>("CalculatorRunId")
+                        .HasColumnType("int")
+                        .HasColumnName("calculator_run_id");
 
-                b.Property<string>("FileName")
-                    .IsRequired()
-                    .HasMaxLength(400)
-                    .HasColumnType("nvarchar(400)")
-                    .HasColumnName("filename");
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(400)
+                        .HasColumnType("nvarchar(400)")
+                        .HasColumnName("filename");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("CalculatorRunId");
+                    b.HasIndex("CalculatorRunId");
 
-                b.ToTable("calculator_run_csvfile_metadata");
-            });
+                    b.ToTable("calculator_run_csvfile_metadata");
+                });
 
             modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.CalculatorRunOrganisationDataDetail", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
@@ -229,7 +232,7 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
                     b.ToTable("calculator_run_organization_data_detail");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.CalculatorRunOrganisationDataMaster", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.CalculatorRunOrganisationDataMaster", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -265,7 +268,7 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
                     b.ToTable("calculator_run_organization_data_master");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.CalculatorRunPomDataDetail", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.CalculatorRunPomDataDetail", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -330,7 +333,7 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
                     b.ToTable("calculator_run_pom_data_detail");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.CalculatorRunPomDataMaster", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.CalculatorRunPomDataMaster", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -366,7 +369,7 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
                     b.ToTable("calculator_run_pom_data_master");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.CostType", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.CostType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -397,7 +400,7 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
                     b.ToTable("cost_type");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.Country", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.Country", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -428,7 +431,7 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
                     b.ToTable("country");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.CountryApportionment", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.CountryApportionment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -465,7 +468,7 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
                     b.ToTable("country_apportionment");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.DefaultParameterSettingDetail", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.DefaultParameterSettingDetail", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -497,7 +500,7 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
                     b.ToTable("default_parameter_setting_detail");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.DefaultParameterSettingMaster", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.DefaultParameterSettingMaster", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -540,7 +543,7 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
                     b.ToTable("default_parameter_setting_master");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.DefaultParameterTemplateMaster", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.DefaultParameterTemplateMaster", b =>
                 {
                     b.Property<string>("ParameterUniqueReferenceId")
                         .HasMaxLength(450)
@@ -904,7 +907,7 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.LapcapDataDetail", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.LapcapDataDetail", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -936,7 +939,7 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
                     b.ToTable("lapcap_data_detail");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.LapcapDataMaster", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.LapcapDataMaster", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -980,7 +983,7 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
                     b.ToTable("lapcap_data_master");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.LapcapDataTemplateMaster", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.LapcapDataTemplateMaster", b =>
                 {
                     b.Property<string>("UniqueReference")
                         .HasMaxLength(400)
@@ -1272,7 +1275,7 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.Material", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.Material", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1303,7 +1306,7 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
                     b.ToTable("material");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.OrganisationData", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.OrganisationData", b =>
                 {
                     b.Property<DateTime>("LoadTimestamp")
                         .HasColumnType("datetime2")
@@ -1332,7 +1335,7 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
                     b.ToTable("organisation_data");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.PomData", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.PomData", b =>
                 {
                     b.Property<DateTime>("LoadTimeStamp")
                         .HasColumnType("datetime2")
@@ -1382,7 +1385,7 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
                     b.ToTable("pom_data");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.ProducerDetail", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.ProducerDetail", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1416,7 +1419,7 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
                     b.ToTable("producer_detail");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.ProducerReportedMaterial", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.ProducerReportedMaterial", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1453,27 +1456,27 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
                     b.ToTable("producer_reported_material");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.CalculatorRun", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.CalculatorRun", b =>
                 {
-                    b.HasOne("EPR.Calculator.Service.Function.Data.DataModels.CalculatorRunClassification", null)
+                    b.HasOne("EPR.Calculator.API.Data.DataModels.CalculatorRunClassification", null)
                         .WithMany("CalculatorRunDetails")
                         .HasForeignKey("CalculatorRunClassificationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EPR.Calculator.Service.Function.Data.DataModels.CalculatorRunOrganisationDataMaster", "CalculatorRunOrganisationDataMaster")
+                    b.HasOne("EPR.Calculator.API.Data.DataModels.CalculatorRunOrganisationDataMaster", "CalculatorRunOrganisationDataMaster")
                         .WithMany("RunDetails")
                         .HasForeignKey("CalculatorRunOrganisationDataMasterId");
 
-                    b.HasOne("EPR.Calculator.Service.Function.Data.DataModels.CalculatorRunPomDataMaster", "CalculatorRunPomDataMaster")
+                    b.HasOne("EPR.Calculator.API.Data.DataModels.CalculatorRunPomDataMaster", "CalculatorRunPomDataMaster")
                         .WithMany("RunDetails")
                         .HasForeignKey("CalculatorRunPomDataMasterId");
 
-                    b.HasOne("EPR.Calculator.Service.Function.Data.DataModels.DefaultParameterSettingMaster", "DefaultParameterSettingMaster")
+                    b.HasOne("EPR.Calculator.API.Data.DataModels.DefaultParameterSettingMaster", "DefaultParameterSettingMaster")
                         .WithMany("RunDetails")
                         .HasForeignKey("DefaultParameterSettingMasterId");
 
-                    b.HasOne("EPR.Calculator.Service.Function.Data.DataModels.LapcapDataMaster", "LapcapDataMaster")
+                    b.HasOne("EPR.Calculator.API.Data.DataModels.LapcapDataMaster", "LapcapDataMaster")
                         .WithMany("RunDetails")
                         .HasForeignKey("LapcapDataMasterId");
 
@@ -1486,9 +1489,20 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
                     b.Navigation("LapcapDataMaster");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.CalculatorRunOrganisationDataDetail", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.CalculatorRunCsvFileMetadata", b =>
                 {
-                    b.HasOne("EPR.Calculator.Service.Function.Data.DataModels.CalculatorRunOrganisationDataMaster", "CalculatorRunOrganisationDataMaster")
+                    b.HasOne("EPR.Calculator.API.Data.DataModels.CalculatorRun", "CalculatorRun")
+                        .WithMany("CsvFileMetadata")
+                        .HasForeignKey("CalculatorRunId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CalculatorRun");
+                });
+
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.CalculatorRunOrganisationDataDetail", b =>
+                {
+                    b.HasOne("EPR.Calculator.API.Data.DataModels.CalculatorRunOrganisationDataMaster", "CalculatorRunOrganisationDataMaster")
                         .WithMany("Details")
                         .HasForeignKey("CalculatorRunOrganisationDataMasterId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1497,9 +1511,9 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
                     b.Navigation("CalculatorRunOrganisationDataMaster");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.CalculatorRunPomDataDetail", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.CalculatorRunPomDataDetail", b =>
                 {
-                    b.HasOne("EPR.Calculator.Service.Function.Data.DataModels.CalculatorRunPomDataMaster", "CalculatorRunPomDataMaster")
+                    b.HasOne("EPR.Calculator.API.Data.DataModels.CalculatorRunPomDataMaster", "CalculatorRunPomDataMaster")
                         .WithMany("Details")
                         .HasForeignKey("CalculatorRunPomDataMasterId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1508,21 +1522,21 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
                     b.Navigation("CalculatorRunPomDataMaster");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.CountryApportionment", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.CountryApportionment", b =>
                 {
-                    b.HasOne("EPR.Calculator.Service.Function.Data.DataModels.CalculatorRun", "CalculatorRun")
+                    b.HasOne("EPR.Calculator.API.Data.DataModels.CalculatorRun", "CalculatorRun")
                         .WithMany("CountryApportionments")
                         .HasForeignKey("CalculatorRunId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EPR.Calculator.Service.Function.Data.DataModels.CostType", "CostType")
+                    b.HasOne("EPR.Calculator.API.Data.DataModels.CostType", "CostType")
                         .WithMany("CountryApportionments")
                         .HasForeignKey("CostTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EPR.Calculator.Service.Function.Data.DataModels.Country", "Country")
+                    b.HasOne("EPR.Calculator.API.Data.DataModels.Country", "Country")
                         .WithMany("CountryApportionments")
                         .HasForeignKey("CountryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1535,15 +1549,15 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
                     b.Navigation("Country");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.DefaultParameterSettingDetail", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.DefaultParameterSettingDetail", b =>
                 {
-                    b.HasOne("EPR.Calculator.Service.Function.Data.DataModels.DefaultParameterSettingMaster", "DefaultParameterSettingMaster")
+                    b.HasOne("EPR.Calculator.API.Data.DataModels.DefaultParameterSettingMaster", "DefaultParameterSettingMaster")
                         .WithMany("Details")
                         .HasForeignKey("DefaultParameterSettingMasterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EPR.Calculator.Service.Function.Data.DataModels.DefaultParameterTemplateMaster", "ParameterUniqueReference")
+                    b.HasOne("EPR.Calculator.API.Data.DataModels.DefaultParameterTemplateMaster", "ParameterUniqueReference")
                         .WithMany()
                         .HasForeignKey("ParameterUniqueReferenceId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1554,15 +1568,15 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
                     b.Navigation("ParameterUniqueReference");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.LapcapDataDetail", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.LapcapDataDetail", b =>
                 {
-                    b.HasOne("EPR.Calculator.Service.Function.Data.DataModels.LapcapDataMaster", "LapcapDataMaster")
+                    b.HasOne("EPR.Calculator.API.Data.DataModels.LapcapDataMaster", "LapcapDataMaster")
                         .WithMany("Details")
                         .HasForeignKey("LapcapDataMasterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EPR.Calculator.Service.Function.Data.DataModels.LapcapDataTemplateMaster", "LapcapDataTemplateMaster")
+                    b.HasOne("EPR.Calculator.API.Data.DataModels.LapcapDataTemplateMaster", "LapcapDataTemplateMaster")
                         .WithMany("Details")
                         .HasForeignKey("UniqueReference")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1573,9 +1587,9 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
                     b.Navigation("LapcapDataTemplateMaster");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.ProducerDetail", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.ProducerDetail", b =>
                 {
-                    b.HasOne("EPR.Calculator.Service.Function.Data.DataModels.CalculatorRun", "CalculatorRun")
+                    b.HasOne("EPR.Calculator.API.Data.DataModels.CalculatorRun", "CalculatorRun")
                         .WithMany("ProducerDetails")
                         .HasForeignKey("CalculatorRunId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1584,15 +1598,15 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
                     b.Navigation("CalculatorRun");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.ProducerReportedMaterial", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.ProducerReportedMaterial", b =>
                 {
-                    b.HasOne("EPR.Calculator.Service.Function.Data.DataModels.Material", "Material")
+                    b.HasOne("EPR.Calculator.API.Data.DataModels.Material", "Material")
                         .WithMany("ProducerReportedMaterials")
                         .HasForeignKey("MaterialId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EPR.Calculator.Service.Function.Data.DataModels.ProducerDetail", "ProducerDetail")
+                    b.HasOne("EPR.Calculator.API.Data.DataModels.ProducerDetail", "ProducerDetail")
                         .WithMany("ProducerReportedMaterials")
                         .HasForeignKey("ProducerDetailId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1603,69 +1617,69 @@ namespace EPR.Calculator.Service.Function.Data.Migrations
                     b.Navigation("ProducerDetail");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.CalculatorRun", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.CalculatorRun", b =>
                 {
                     b.Navigation("CountryApportionments");
 
-                b.Navigation("CsvFileMetadata");
+                    b.Navigation("CsvFileMetadata");
 
                     b.Navigation("ProducerDetails");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.CalculatorRunClassification", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.CalculatorRunClassification", b =>
                 {
                     b.Navigation("CalculatorRunDetails");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.CalculatorRunOrganisationDataMaster", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.CalculatorRunOrganisationDataMaster", b =>
                 {
                     b.Navigation("Details");
 
                     b.Navigation("RunDetails");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.CalculatorRunPomDataMaster", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.CalculatorRunPomDataMaster", b =>
                 {
                     b.Navigation("Details");
 
                     b.Navigation("RunDetails");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.CostType", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.CostType", b =>
                 {
                     b.Navigation("CountryApportionments");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.Country", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.Country", b =>
                 {
                     b.Navigation("CountryApportionments");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.DefaultParameterSettingMaster", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.DefaultParameterSettingMaster", b =>
                 {
                     b.Navigation("Details");
 
                     b.Navigation("RunDetails");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.LapcapDataMaster", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.LapcapDataMaster", b =>
                 {
                     b.Navigation("Details");
 
                     b.Navigation("RunDetails");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.LapcapDataTemplateMaster", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.LapcapDataTemplateMaster", b =>
                 {
                     b.Navigation("Details");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.Material", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.Material", b =>
                 {
                     b.Navigation("ProducerReportedMaterials");
                 });
 
-            modelBuilder.Entity("EPR.Calculator.Service.Function.Data.DataModels.ProducerDetail", b =>
+            modelBuilder.Entity("EPR.Calculator.API.Data.DataModels.ProducerDetail", b =>
                 {
                     b.Navigation("ProducerReportedMaterials");
                 });

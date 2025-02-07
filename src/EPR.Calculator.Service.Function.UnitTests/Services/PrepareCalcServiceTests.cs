@@ -85,8 +85,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this._exporter.Setup(x => x.Export(It.IsAny<CalcResult>())).Returns("Some value");
             this._transposePomAndOrgDataService = new Mock<ITransposePomAndOrgDataService>();
             this._storageService = new Mock<IStorageService>();
-            this._storageService.Setup(x => x.UploadResultFileContentAsync(It.IsAny<string>(), It.IsAny<string>()))
-                .ReturnsAsync(true);
+            
             this._validationRules = fixture.Create<CalculatorRunValidator>();
             this._commandTimeoutService = new Mock<ICommandTimeoutService>();
             this._testClass = new PrepareCalcService(this._context, this._rpdStatusDataValidator.Object, this._wrapper.Object, this._builder.Object, this._exporter.Object, this._transposePomAndOrgDataService.Object, this._storageService.Object, this._validationRules, this._commandTimeoutService.Object);
@@ -115,12 +114,57 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Arrange
             var fixture = new Fixture();
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-
+            this._storageService.Setup(x => x.UploadResultFileContentAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync("expected result");
             // Act
             var result = await this._testClass.PrepareCalcResults(resultsRequestDto, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(true, result);
+        }
+
+        [TestMethod]
+        public async Task PrepareCalcResults_Blob_Null_ShouldReturnFalseStatus()
+        {
+            // Arrange
+            var fixture = new Fixture();
+            var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
+            this._storageService = new Mock<IStorageService>();
+            // Act
+            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, CancellationToken.None);
+
+            // Assert
+            Assert.AreEqual(false, result);
+        }
+
+        [TestMethod]
+        public async Task PrepareCalcResults_Exported_Exception_ShouldReturnFalseStatus()
+        {
+            // Arrange
+            var fixture = new Fixture();
+            var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
+            this._exporter.Setup(x => x.Export(It.IsAny<CalcResult>())).Throws(new Exception("Custom exception message"));
+
+            // Act
+            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, CancellationToken.None);
+
+            // Assert
+            Assert.AreEqual(false, result);
+        }
+
+        [TestMethod]
+        public async Task PrepareCalcResults_Exported_Operation_Exception_ShouldReturnFalseStatus()
+        {
+            // Arrange
+            var fixture = new Fixture();
+            var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
+            this._exporter.Setup(x => x.Export(It.IsAny<CalcResult>())).Throws(new OperationCanceledException("Operation canceled exception message"));
+
+            // Act
+            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, CancellationToken.None);
+
+            // Assert
+            Assert.AreEqual(false, result);
         }
 
         [TestMethod]
@@ -144,22 +188,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Act
             var result = await this._testClass.PrepareCalcResults(resultsRequestDto, CancellationToken.None);
-
-            // Assert
-            Assert.AreEqual(false, result);
-        }
-
-        [TestMethod]
-        public async Task PrepareCalcResults_OperationCanceledException_ReturnFalse()
-        {
-            // Arrange
-            var fixture = new Fixture();
-            var cancellationToken = fixture.Create<CancellationToken>();
-
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 10 };
-
-            // Act
-            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, cancellationToken);
 
             // Assert
             Assert.AreEqual(false, result);
