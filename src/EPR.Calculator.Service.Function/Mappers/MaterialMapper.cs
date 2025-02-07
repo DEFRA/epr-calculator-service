@@ -15,6 +15,7 @@ namespace EPR.Calculator.Service.Function.Mappers
             {
                 result.Add(new MaterialDetail
                 {
+                    Id = material.Id,
                     Code = material.Code,
                     Name = material.Name,
                     Description = material.Description ?? string.Empty
