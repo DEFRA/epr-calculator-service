@@ -87,6 +87,7 @@
                 csvContent.Append($"{CsvSanitiser.SanitiseData(onePlusFourApportionment.NorthernIreland)},");
                 csvContent.AppendLine($"{CsvSanitiser.SanitiseData(onePlusFourApportionment.Total)}");
             }
+
             csvContent.AppendLine();
             var commCostByMaterials = communicationCost.CalcResultCommsCostCommsCostByMaterial;
 
@@ -109,7 +110,7 @@
                 csvContent.Append(
                     $"{CsvSanitiser.SanitiseData(commCostByMaterial.ProducerReportedHouseholdPlusLateReportingTonnage)},");
                 csvContent.AppendLine(
-                    $"{CsvSanitiser.SanitiseData(commCostByMaterial.CommsCostByMaterialPricePerTonne)}");
+                    $"£{CsvSanitiser.SanitiseData(commCostByMaterial.CommsCostByMaterialPricePerTonne)}");
             }
 
             csvContent.AppendLine();
