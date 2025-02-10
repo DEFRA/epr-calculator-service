@@ -11,6 +11,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using EPR.Calculator.Service.Function.Builder.CommsCost;
 using EPR.Calculator.Service.Function.Builder.Detail;
+using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
 
 namespace EPR.Calculator.Service.Function.UnitTests
 {
@@ -27,6 +28,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
         private readonly Mock<ICalcResultParameterOtherCostBuilder> mockCalcResultParameterOtherCostBuilder;
         private readonly Mock<ICalcResultOnePlusFourApportionmentBuilder> mockOnePlusFourApportionmentBuilder;
+        private readonly Mock<ICalcResultScaledupProducersBuilder> mockCalcResultScaledupProducersBuilder;
 
         public CalcResultBuilderTests()
         {
@@ -39,6 +41,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
             mockCalcResultParameterOtherCostBuilder = new Mock<ICalcResultParameterOtherCostBuilder>();
             mockOnePlusFourApportionmentBuilder = new Mock<ICalcResultOnePlusFourApportionmentBuilder>();
             mockCalcRunLaDisposalCostBuilder = new Mock<ICalcRunLaDisposalCostBuilder>();
+            mockCalcResultScaledupProducersBuilder = new Mock<ICalcResultScaledupProducersBuilder>();
+
             calcResultBuilder = new CalcResultBuilder(
                 mockCalcResultDetailBuilder.Object,
                 mockLapcapBuilder.Object,
@@ -47,6 +51,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 mockCommsCostReportBuilder.Object,
                 mockLateReportingBuilder.Object,
                 mockCalcRunLaDisposalCostBuilder.Object,
+                mockCalcResultScaledupProducersBuilder.Object,
                 mockSummaryBuilder.Object);
         }
 
@@ -62,6 +67,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 mockCommsCostReportBuilder.Object,
                 mockLateReportingBuilder.Object,
                 mockCalcRunLaDisposalCostBuilder.Object,
+                mockCalcResultScaledupProducersBuilder.Object,
                 mockSummaryBuilder.Object);
 
             // Assert
