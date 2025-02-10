@@ -12,6 +12,8 @@
     {
         Fixture Fixture { get; } = new Fixture();
 
+        private static IEnumerable<CalcResultScaledupProducer>? calcResultScaledupProducers;
+
         [TestMethod]
         public void Export_ShouldReturnCsvContent_WhenAllDataIsPresent()
         {
@@ -58,7 +60,7 @@
             var lines = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
             // Assert
-            int expectedLineCount = 57;
+            int expectedLineCount = 64;
             Assert.AreEqual(expectedLineCount, lines.Length);
         }
 
@@ -212,6 +214,44 @@
                 Assert.IsFalse(csvContent.Contains("SummaryData"), "CSV content should not contain SummaryData.");
             }
         }
+
+        [TestMethod]
+        public void Export_ScaledUpProducer_ShouldIncludeHeadersAndDisplayNone_WhenNoScaledUpProducer()
+        {
+            // Arrange
+            calcResultScaledupProducers = null;
+            var results = CreateCalcResult();
+            var exporter = new CalcResultsExporter();
+
+            // Act
+            var result = exporter.Export(results);
+
+            // Assert
+            Assert.IsTrue(result.Contains("Scaled-up Producers"));
+            Assert.IsTrue(result.Contains("Each submission for the year"));
+            Assert.IsTrue(result.Contains("Aluminium Breakdown"));
+            Assert.IsTrue(result.Contains("Producer ID"));
+            Assert.IsTrue(result.Contains("Subsidiary ID"));
+            Assert.IsTrue(result.Contains("None"));
+        }
+
+        [TestMethod]
+        public void Export_ScaledUpProducer_ShouldIncludeHeadersAndDisplayData_WhenScaledUpProducerExists()
+        {
+            // Arrange
+            calcResultScaledupProducers = [Fixture.Create<CalcResultScaledupProducer>()];
+            var results = CreateCalcResult();
+            var exporter = new CalcResultsExporter();
+
+            // Act
+            var result = exporter.Export(results);
+
+            // Assert
+            Assert.IsTrue(result.Contains(calcResultScaledupProducers?.First().ProducerId));
+            Assert.IsTrue(result.Contains(calcResultScaledupProducers?.First().SubsidiaryId));
+            Assert.IsFalse(result.Contains("None"));
+        }
+
         private static CalcResult CreateCalcResult()
         {
             return new CalcResult
@@ -449,6 +489,22 @@
                             ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 1,
                         },
                     },
+                },
+                CalcResultScaledupProducers = new CalcResultScaledupProducers
+                {
+                    TitleHeader = new CalcResultScaledupProducerHeader
+                    {
+                        Name = "Scaled-up Producers",
+                    },
+                    MaterialBreakdownHeaders = [
+                        new CalcResultScaledupProducerHeader{ Name = "Each submission for the year", ColumnIndex = 1},
+                        new CalcResultScaledupProducerHeader { Name = "Aluminium Breakdown", ColumnIndex = 2 }
+                    ],
+                    ColumnHeaders = [
+                        new CalcResultScaledupProducerHeader{ Name = "Producer ID"},
+                        new CalcResultScaledupProducerHeader { Name = "Subsidiary ID" }
+                    ],
+                    ScaledupProducers = calcResultScaledupProducers,
                 },
                 CalcResultDetail = new CalcResultDetail
                 {
