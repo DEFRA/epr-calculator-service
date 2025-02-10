@@ -4,13 +4,13 @@ namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResultScaledupProducer
     {
-        public required string ProducerId { get; set; }
+        public required int ProducerId { get; set; }
 
         public required string SubsidiaryId { get; set; }
 
         public required string ProducerName { get; set; }
 
-        public required string Level { get; set; }
+        public required int Level { get; set; }
 
         public bool isTotalRow { get; set; } = false;
 
