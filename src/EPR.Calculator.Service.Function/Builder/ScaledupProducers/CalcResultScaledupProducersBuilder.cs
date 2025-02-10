@@ -6,6 +6,7 @@ using EPR.Calculator.Service.Function.Dtos;
 using EPR.Calculator.Service.Function.Mappers;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -39,25 +40,23 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
             if (scaleupOrganisationIds.Any() && scaleupOrganisationIds != null)
             {
                 List<int> organisationIds = scaleupOrganisationIds.Select(x => x.OrganisationId).ToList();
-
                 var runProducerMaterialDetails = await (from run in context.CalculatorRuns
-                                                              join crpdm in context.CalculatorRunPomDataMaster on run.CalculatorRunPomDataMasterId equals crpdm.Id
-                                                              join crpdd in context.CalculatorRunPomDataDetails on crpdm.Id equals crpdd.CalculatorRunPomDataMasterId
-                                                              join spl in context.SubmissionPeriodLookup on crpdd.SubmissionPeriod equals spl.SubmissionPeriod
-                                                              join pd in context.ProducerDetail.Include(x => x.ProducerReportedMaterials) on crpdd.OrganisationId equals pd.ProducerId
-                                                              where run.Id == runId && organisationIds.Contains(crpdd.OrganisationId.GetValueOrDefault())
-                                                              select new CalcResultScaledupProducer
-                                                              {
-                                                                  ProducerId = pd.ProducerId.ToString(),
-                                                                  SubsidiaryId = pd.SubsidiaryId,
-                                                                  ProducerName = pd.ProducerName,
-                                                                  ScaleupFactor = spl.ScaleupFactor,
-                                                                  SubmissonPeriodCode = spl.SubmissionPeriod,
-                                                                  DaysInSubmissionPeriod = spl.DaysInSubmissionPeriod,
-                                                                  DaysInWholePeriod = spl.DaysInSubmissionPeriod,
-                                                                  Level = string.Empty,
-                                                                  ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>()
-                                                              }).Distinct().OrderBy(x => new { x.ProducerId, x.SubsidiaryId, x.SubmissonPeriodCode }).ToListAsync();
+                                                        join crpdm in context.CalculatorRunPomDataMaster on run.CalculatorRunPomDataMasterId equals crpdm.Id
+                                                        join crpdd in context.CalculatorRunPomDataDetails on crpdm.Id equals crpdd.CalculatorRunPomDataMasterId
+                                                        join spl in context.SubmissionPeriodLookup on crpdd.SubmissionPeriod equals spl.SubmissionPeriod
+                                                        join pd in context.ProducerDetail.Include(x => x.ProducerReportedMaterials) on crpdd.OrganisationId equals pd.ProducerId
+                                                        where run.Id == runId && organisationIds.Contains(crpdd.OrganisationId.GetValueOrDefault())
+                                                        select new CalcResultScaledupProducer
+                                                        {
+                                                            ProducerId = pd.ProducerId.ToString(),
+                                                            SubsidiaryId = pd.SubsidiaryId,
+                                                            ProducerName = pd.ProducerName,
+                                                            ScaleupFactor = spl.ScaleupFactor,
+                                                            SubmissonPeriodCode = spl.SubmissionPeriod,
+                                                            DaysInSubmissionPeriod = spl.DaysInSubmissionPeriod,
+                                                            DaysInWholePeriod = spl.DaysInSubmissionPeriod,
+                                                            Level = string.Empty,
+                                                        }).Distinct().ToListAsync();
 
                 var groupByResult = runProducerMaterialDetails.Where(x => x.SubsidiaryId != null).GroupBy(x => new { x.ProducerId, x.SubsidiaryId }).ToList();
 

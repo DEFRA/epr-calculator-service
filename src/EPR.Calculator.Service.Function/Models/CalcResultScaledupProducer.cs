@@ -22,6 +22,6 @@ namespace EPR.Calculator.Service.Function.Models
 
         public required decimal ScaleupFactor { get; set; }
 
-        public required Dictionary<string, CalcResultScaledupProducerTonnage> ScaledupProducerTonnageByMaterial { get; set; }
+        public Dictionary<string, CalcResultScaledupProducerTonnage> ScaledupProducerTonnageByMaterial { get; set; } = new Dictionary<string, CalcResultScaledupProducerTonnage>();
     }
 }
