@@ -62,7 +62,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
             return scaledupProducersSummary;
         }
 
-        private async Task<IEnumerable<ScaleupProducer>> GetScaledUpProducerIds(int runId)
+        public async Task<IEnumerable<ScaleupProducer>> GetScaledUpProducerIds(int runId)
         {
             var scaleupProducerIds = await (from run in context.CalculatorRuns
                                             join pd in context.ProducerDetail on run.Id equals pd.CalculatorRunId
@@ -77,7 +77,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                                                 ScaleupFactor = spl.ScaleupFactor,
                                                 SubmissionPeriod = spl.SubmissionPeriod,
                                                 DaysInSubmissionPeriod = spl.DaysInSubmissionPeriod,
-                                                DaysInWholePeriod = spl.DaysInWholePeriod
+                                                DaysInWholePeriod = spl.DaysInWholePeriod,
                                             }
                                ).Distinct().ToListAsync();
             return scaleupProducerIds;
