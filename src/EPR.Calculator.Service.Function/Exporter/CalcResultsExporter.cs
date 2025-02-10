@@ -109,7 +109,8 @@
                     $"{CsvSanitiser.SanitiseData(commCostByMaterial.LateReportingTonnage)},");
                 csvContent.Append(
                     $"{CsvSanitiser.SanitiseData(commCostByMaterial.ProducerReportedHouseholdPlusLateReportingTonnage)},");
-                csvContent.AppendLine(
+                csvContent.AppendLine(commCostByMaterial.Total == "Total" || string.IsNullOrWhiteSpace(commCostByMaterial.CommsCostByMaterialPricePerTonne) ?
+                     $"{CsvSanitiser.SanitiseData(commCostByMaterial.CommsCostByMaterialPricePerTonne)}" :
                     $"£{CsvSanitiser.SanitiseData(commCostByMaterial.CommsCostByMaterialPricePerTonne)}");
             }
 
