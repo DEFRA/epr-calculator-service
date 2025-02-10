@@ -12,25 +12,6 @@ using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
 {
-    public class CalcResultScaledupProducerTest
-    {
-        public SubmissionPeriodLookup SubmissionPeriodLookup { get; set; }
-        public ProducerDetail ProducerDetail { get; set; }
-    }
-
-    public class Something
-    {
-        public int ProducerId { get; set; }
-        public string ProducerName { get; set; }
-        public string SubsidaryId { get; set; }
-        public string SubmissionPeriod { get; set; }
-        public int Days1 { get; set; }
-        public int Days2 { get; set; }
-        public decimal ScaleUpFactor { get; set; }
-
-        public Dictionary<string, CalcResultScaledupProducerTonnage> MaterialDictionary { get; set; }
-    }
-
     public class CalcResultScaledupProducersBuilder : ICalcResultScaledupProducersBuilder
     {
         private const decimal NormalScaleup = 1.0M;
@@ -90,7 +71,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                 {
                     var first = pair.ToList().First();
                     // Create a new Something
-                    var something = new CalcResultScaledupProducer
+                    var extraRow = new CalcResultScaledupProducer
                     {
                         ProducerId = pair.Key.ProducerId,
                         SubsidiaryId = pair.Key.SubsidiaryId,
@@ -102,26 +83,8 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                         Level = string.Empty,
                         ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>()
                     };
-                    runProducerMaterialDetails.Add( something );
+                    runProducerMaterialDetails.Add(extraRow);
                 }
-
-                foreach (var runProducerMaterialDetail in runProducerMaterialDetails)
-                {
-                    //var something = new Something();
-                    //something.ProducerId = runProducerMaterialDetail.ProducerDetail.ProducerId;
-                    //something.ProducerName = runProducerMaterialDetail.ProducerDetail.ProducerName;
-                    //something.SubmissionPeriod = runProducerMaterialDetail.SubmissionPeriodLookup.SubmissionPeriod;
-
-                    // runProducerMaterialDetail.ProducerDetail.ProducerReportedMaterials.Sum(x => x.PackagingTonnage)
-                }
-
-                //var producerDetails = runProducerMaterialDetails
-                //    .Select(p => p.ProducerDetail)
-                //    .Distinct()
-                //    .OrderBy(p => p.ProducerId)
-                //    .ToList();
-
-                // scaledupProducersSummary = GetCalcResultScaledupProducers(producerDetails, materials, scaleupProducerIds);
             }
 
             SetHeaders(scaledupProducersSummary, materials);
