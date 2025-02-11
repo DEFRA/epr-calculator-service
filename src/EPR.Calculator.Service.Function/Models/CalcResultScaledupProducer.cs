@@ -14,6 +14,8 @@ namespace EPR.Calculator.Service.Function.Models
 
         public bool isSubtotalRow { get; set; } = false;
 
+        public bool isTotalRow { get; set; } = false;
+
         public string SubmissonPeriodCode { get; set; }
 
         public int DaysInSubmissionPeriod { get; set; }

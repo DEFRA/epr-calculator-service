@@ -66,10 +66,6 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                                                            where run.Id == runId && organisationIds.Contains(crpdd.OrganisationId.GetValueOrDefault())
                                                            select crpdd).Distinct().ToListAsync();
 
-                    //foreach(var runProducerMaterialDetail in runProducerMaterialDetails)
-                    //{
-                    //    if (runProducerMaterialDetail)
-                    //}
 
                     var level2Rows = runProducerMaterialDetails.Where(x => string.IsNullOrEmpty(x.SubsidiaryId)).GroupBy(x => new { x.ProducerId, x.SubsidiaryId }).ToList();
 
@@ -93,10 +89,6 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                         .Where(x => x.Count() > 1)
                         .ToList();
 
-                    //var abc = runProducerMaterialDetails
-                    //    .GroupBy(x => new { x.ProducerId, x.SubsidiaryId })
-                    //    .Where(x => x.Count() > 1);
-
 
                     foreach (var pair in groupByResult)
                     {
@@ -116,7 +108,6 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                             DaysInWholePeriod = first.DaysInSubmissionPeriod,
                             Level = CommonConstants.LevelOne.ToString(),
                             isSubtotalRow = true
-                            // ScaledupProducerTonnageByMaterial = GetTonnages(pomData, materials, first.SubmissonPeriodCode, first.ScaleupFactor)
                         };
 
                         runProducerMaterialDetails.Add(extraRow);
@@ -147,6 +138,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                     
                     var overallTotalRow = new CalcResultScaledupProducer
                     {
+                        isTotalRow = true,
                         ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>()
                     };
                     var allMaterialDict = orderedRunProducerMaterialDetails.Where(x => !x.isSubtotalRow).Select(x => x.ScaledupProducerTonnageByMaterial);
@@ -154,10 +146,19 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                     {
                         var totalRow = new CalcResultScaledupProducerTonnage();
                         var materialValues = allMaterialDict.Where(x => x.ContainsKey(material.Code)).Select(x => x[material.Code]).ToList();
-
+                        totalRow.ReportedHouseholdPackagingWasteTonnage = materialValues.Sum(x => x.ReportedHouseholdPackagingWasteTonnage);
+                        totalRow.ReportedPublicBinTonnage = materialValues.Sum(x => x.ReportedPublicBinTonnage);
+                        totalRow.TotalReportedTonnage = materialValues.Sum(x => x.TotalReportedTonnage);
                         totalRow.ReportedSelfManagedConsumerWasteTonnage = materialValues.Sum(x => x.ReportedSelfManagedConsumerWasteTonnage);
+                        totalRow.NetReportedTonnage = materialValues.Sum(x => x.NetReportedTonnage);
+                        totalRow.ScaledupReportedHouseholdPackagingWasteTonnage = materialValues.Sum(x => x.ScaledupReportedHouseholdPackagingWasteTonnage);
+                        totalRow.ScaledupReportedPublicBinTonnage = materialValues.Sum(x => x.ScaledupReportedPublicBinTonnage);
+                        totalRow.ScaledupTotalReportedTonnage = materialValues.Sum(x => x.ScaledupTotalReportedTonnage);
+                        totalRow.ScaledupReportedSelfManagedConsumerWasteTonnage = materialValues.Sum(x => x.ScaledupReportedSelfManagedConsumerWasteTonnage);
+                        totalRow.ScaledupNetReportedTonnage = materialValues.Sum(x => x.ScaledupNetReportedTonnage);
                         overallTotalRow.ScaledupProducerTonnageByMaterial.Add(material.Name, totalRow);
                     }
+
                     orderedRunProducerMaterialDetails.Add(overallTotalRow);
                     scaledupProducersSummary.ScaledupProducers = orderedRunProducerMaterialDetails;
                 }
