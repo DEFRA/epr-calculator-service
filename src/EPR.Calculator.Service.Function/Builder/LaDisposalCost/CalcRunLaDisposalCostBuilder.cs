@@ -75,28 +75,31 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
                 Name = CommonConstants.LADisposalCostData,
                 CalcResultLaDisposalCostDetails = laDisposalCostDetails.AsEnumerable()
             };
-            }
+        }
 
         private string GetReportedHouseholdDrinksContainerTonnage(string materialName)
         {
+            var householdDrinksContainerData = this.producerData
+                .Where(p => p.PackagingType == PackagingTypes.HouseholdDrinksContainers);
+
             if (materialName == CommonConstants.Total)
             {
-                var householdDrinksContainerData = producerData
-                    .Where(p => p.PackagingType == PackagingTypes.HouseholdDrinksContainers);
+                return householdDrinksContainerData.Any()
+                    ? householdDrinksContainerData.Sum(p => p.Tonnage).ToString()
+                    : "0";
+            }
+
+            if (materialName == MaterialNames.Glass)
+            {
+                householdDrinksContainerData = householdDrinksContainerData
+                    .Where(p => p.MaterialName == materialName);
 
                 return householdDrinksContainerData.Any()
                     ? householdDrinksContainerData.Sum(p => p.Tonnage).ToString()
                     : "0";
             }
-            else
-            {
-                var householdDrinksContainerData = producerData
-                    .Where(p => p.MaterialName == materialName && p.PackagingType == PackagingTypes.HouseholdDrinksContainers);
 
-                return householdDrinksContainerData.Any()
-                    ? householdDrinksContainerData.Sum(p => p.Tonnage).ToString()
-                    : string.Empty;
-            }
+            return string.Empty;
         }
 
         private string GetReportedPublicBinTonnage(string materialName)
