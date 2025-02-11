@@ -72,21 +72,25 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                         .Where(x => x.Count() > 1)
                         .ToList();
 
-                    var abc = runProducerMaterialDetails
-                        .GroupBy(x => new { x.ProducerId, x.SubsidiaryId })
-                        .Where(x => x.Count() > 1);
+                    //var abc = runProducerMaterialDetails
+                    //    .GroupBy(x => new { x.ProducerId, x.SubsidiaryId })
+                    //    .Where(x => x.Count() > 1);
+
 
                     foreach (var pair in groupByResult)
                     {
                         var first = pair.ToList().First();
 
+                        // We are always expecting record with subsidiaryid null
+                        var parentProducer = runProducerMaterialDetails.Where(x => x.ProducerId == pair.Key.ProducerId && x.SubsidiaryId == null).ToList();
+
                         var extraRow = new CalcResultScaledupProducer
                         {
                             ProducerId = pair.Key.ProducerId,
-                            SubsidiaryId = string.Empty,
-                            ProducerName = first.ProducerName,
+                            SubsidiaryId = pair.Key.SubsidiaryId,
+                            ProducerName = parentProducer[0].ProducerName,
                             ScaleupFactor = first.ScaleupFactor,
-                            SubmissonPeriodCode = first.SubmissonPeriodCode,
+                            SubmissonPeriodCode = parentProducer[0].SubmissonPeriodCode,
                             DaysInSubmissionPeriod = first.DaysInSubmissionPeriod,
                             DaysInWholePeriod = first.DaysInSubmissionPeriod,
                             Level = CommonConstants.LevelOne,
@@ -117,7 +121,6 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                     var orderedRunProducerMaterialDetails = runProducerMaterialDetails
                         .OrderBy(p => p.ProducerId)
                         .OrderBy(p => p.Level)
-                        // .OrderBy(p => p.SubmissonPeriodCode)
                         .ToList();
 
                     scaledupProducersSummary.ScaledupProducers = orderedRunProducerMaterialDetails;
@@ -149,6 +152,21 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                                             })
                                .Distinct().ToListAsync();
             return scaleupProducerIds == null ? new List<ScaleupProducer>() : scaleupProducerIds;
+        }
+
+        private static int GetLevelIndex(IEnumerable<CalcResultScaledupProducer> scaledupProducers, CalcResultScaledupProducer producer)
+        {
+            if (producer.isTotalRow)
+            {
+                return CommonConstants.LevelOne;
+            }
+
+            if (producer.SubsidiaryId == null && scaledupProducers.Where(x => x.ProducerId == producer.ProducerId).Count() == 1)
+            {
+                return CommonConstants.LevelTwo;
+            }
+
+            return 1;
         }
 
         private static Dictionary<string, CalcResultScaledupProducerTonnage> GetTonnages(IEnumerable<CalculatorRunPomDataDetail> pomData,
@@ -196,13 +214,6 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                 scaledupProducerTonnages.Add(material.Code, scaledupProducerTonnage);
             }
             return scaledupProducerTonnages;
-        }
-
-        private static bool IsValidScaledupProducer(IEnumerable<ScaleupProducer> scaledupProducers, ProducerDetail producer)
-        {
-            var scaledupProducer = scaledupProducers.FirstOrDefault(p => p.OrganisationId == producer.ProducerId && p.ScaleupFactor > NormalScaleup);
-            return scaledupProducer != null;
-
         }
 
         private static void SetHeaders(CalcResultScaledupProducers producers, IEnumerable<MaterialDetail> materials)
