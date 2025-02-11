@@ -5,6 +5,7 @@ using EPR.Calculator.Service.Function.Dtos;
 using EPR.Calculator.Service.Function.Mappers;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,7 +58,6 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                                                                 DaysInSubmissionPeriod = spl.DaysInSubmissionPeriod,
                                                                 DaysInWholePeriod = spl.DaysInSubmissionPeriod,
                                                                 Level = pd.SubsidiaryId != null ? CommonConstants.LevelTwo.ToString() : CommonConstants.LevelOne.ToString(),
-                                                                isTotalRow = false,
                                                             }).Distinct().ToListAsync();
 
                     var allOrganisationPomDetails = await (from run in context.CalculatorRuns
@@ -115,7 +115,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                             DaysInSubmissionPeriod = first.DaysInSubmissionPeriod,
                             DaysInWholePeriod = first.DaysInSubmissionPeriod,
                             Level = CommonConstants.LevelOne.ToString(),
-                            isTotalRow = true,
+                            isSubtotalRow = true
                             // ScaledupProducerTonnageByMaterial = GetTonnages(pomData, materials, first.SubmissonPeriodCode, first.ScaleupFactor)
                         };
 
@@ -126,7 +126,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
 
                     foreach (var item in runProducerMaterialDetails)
                     {
-                        var pomData = item.isTotalRow
+                        var pomData = item.isSubtotalRow
                             ? allOrganisationPomDetails
                                 .Where(pom => pom.OrganisationId == item.ProducerId && pom.SubmissionPeriod == item.SubmissonPeriodCode)
                                 .ToList()
@@ -144,6 +144,21 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                         .OrderBy(p => p.Level)
                         .ToList();
 
+                    
+                    var overallTotalRow = new CalcResultScaledupProducer
+                    {
+                        ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>()
+                    };
+                    var allMaterialDict = orderedRunProducerMaterialDetails.Where(x => !x.isSubtotalRow).Select(x => x.ScaledupProducerTonnageByMaterial);
+                    foreach (var material in materials)
+                    {
+                        var totalRow = new CalcResultScaledupProducerTonnage();
+                        var materialValues = allMaterialDict.Where(x => x.ContainsKey(material.Code)).Select(x => x[material.Code]).ToList();
+
+                        totalRow.ReportedSelfManagedConsumerWasteTonnage = materialValues.Sum(x => x.ReportedSelfManagedConsumerWasteTonnage);
+                        overallTotalRow.ScaledupProducerTonnageByMaterial.Add(material.Name, totalRow);
+                    }
+                    orderedRunProducerMaterialDetails.Add(overallTotalRow);
                     scaledupProducersSummary.ScaledupProducers = orderedRunProducerMaterialDetails;
                 }
 
@@ -175,20 +190,6 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
             return scaleupProducerIds == null ? new List<ScaleupProducer>() : scaleupProducerIds;
         }
 
-        private static int GetLevelIndex(IEnumerable<CalcResultScaledupProducer> scaledupProducers, CalcResultScaledupProducer producer)
-        {
-            if (producer.isTotalRow)
-            {
-                return CommonConstants.LevelOne;
-            }
-
-            if (producer.SubsidiaryId == null && scaledupProducers.Where(x => x.ProducerId == producer.ProducerId).Count() == 1)
-            {
-                return CommonConstants.LevelTwo;
-            }
-
-            return 1;
-        }
 
         private static Dictionary<string, CalcResultScaledupProducerTonnage> GetTonnages(IEnumerable<CalculatorRunPomDataDetail> pomData,
             IEnumerable<MaterialDetail> materials,
@@ -312,13 +313,6 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
             }
 
             return columnHeaders;
-        }
-
-        private static int GetLevelIndex(IEnumerable<CalcResultScaledupProducer> scaledupProducers, ProducerDetail producer)
-        {
-            var totalRow = scaledupProducers.FirstOrDefault(p => p.ProducerId == producer.ProducerId && p.isTotalRow);
-
-            return totalRow == null ? (int)CalcResultSummaryLevelIndex.One : (int)CalcResultSummaryLevelIndex.Two;
         }
     }
 }
