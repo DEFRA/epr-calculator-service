@@ -14,8 +14,9 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
 {
     public class CalcRunLaDisposalCostBuilder : ICalcRunLaDisposalCostBuilder
     {
+        private const string empty_string = "0";
         internal class ProducerData
-        {
+        {            
             public required string MaterialName { get; set; }
             public required string PackagingType { get; set; }
             public decimal Tonnage { get; set; }
@@ -86,7 +87,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
             {
                 return householdDrinksContainerData.Any()
                     ? householdDrinksContainerData.Sum(p => p.Tonnage).ToString()
-                    : "0";
+                    : empty_string;
             }
 
             if (materialName == MaterialNames.Glass)
@@ -96,7 +97,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
 
                 return householdDrinksContainerData.Any()
                     ? householdDrinksContainerData.Sum(p => p.Tonnage).ToString()
-                    : "0";
+                    : empty_string;
             }
 
             return string.Empty;
@@ -142,7 +143,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
         private static string CalculateDisposalCostPricePerTonne(CalcResultLaDisposalCostDataDetail detail)
         {
             var HouseholdTonnagePlusLateReportingTonnage = GetDecimalValue(detail.ProducerReportedTotalTonnage);
-            if (HouseholdTonnagePlusLateReportingTonnage == 0) return "0";
+            if (HouseholdTonnagePlusLateReportingTonnage == 0) return empty_string;
             var value = Math.Round(ConvertCurrencyToDecimal(detail.Total) / HouseholdTonnagePlusLateReportingTonnage, 4);
             var culture = CultureInfo.CreateSpecificCulture("en-GB");
             culture.NumberFormat.CurrencySymbol = "£";
