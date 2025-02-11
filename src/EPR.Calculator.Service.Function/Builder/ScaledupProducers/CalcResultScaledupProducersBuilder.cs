@@ -101,13 +101,13 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                         {
                             ProducerId = pair.Key.ProducerId,
                             SubsidiaryId = string.Empty,
-                            ProducerName = "extra" + parentProducer[0].ProducerName,
+                            ProducerName = parentProducer[0].ProducerName,
                             ScaleupFactor = first.ScaleupFactor,
                             SubmissonPeriodCode = pair.Key.SubmissonPeriodCode,
                             DaysInSubmissionPeriod = first.DaysInSubmissionPeriod,
                             DaysInWholePeriod = first.DaysInSubmissionPeriod,
                             Level = CommonConstants.LevelOne.ToString(),
-                            isSubtotalRow = true
+                            IsSubtotalRow = true
                         };
 
                         runProducerMaterialDetails.Add(extraRow);
@@ -117,7 +117,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
 
                     foreach (var item in runProducerMaterialDetails)
                     {
-                        var pomData = item.isSubtotalRow
+                        var pomData = item.IsSubtotalRow
                             ? allOrganisationPomDetails
                                 .Where(pom => pom.OrganisationId == item.ProducerId && pom.SubmissionPeriod == item.SubmissonPeriodCode)
                                 .ToList()
@@ -128,20 +128,19 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                         item.ScaledupProducerTonnageByMaterial = GetTonnages(pomData, materials, item.SubmissonPeriodCode, item.ScaleupFactor);
                     }
 
-
-
                     var orderedRunProducerMaterialDetails = runProducerMaterialDetails
                         .OrderBy(p => p.ProducerId)
-                        .OrderBy(p => p.Level)
+                        .ThenBy(p => p.Level)
+                        .ThenBy(p => p.SubsidiaryId)
+                        .ThenBy(p => p.SubmissonPeriodCode)
                         .ToList();
-
-                    
                     var overallTotalRow = new CalcResultScaledupProducer
                     {
-                        isTotalRow = true,
+                        IsTotalRow = true,
                         ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>()
                     };
-                    var allMaterialDict = orderedRunProducerMaterialDetails.Where(x => !x.isSubtotalRow).Select(x => x.ScaledupProducerTonnageByMaterial);
+
+                    var allMaterialDict = orderedRunProducerMaterialDetails.Where(x => !x.IsSubtotalRow).Select(x => x.ScaledupProducerTonnageByMaterial);
                     foreach (var material in materials)
                     {
                         var totalRow = new CalcResultScaledupProducerTonnage();

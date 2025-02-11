@@ -12,9 +12,9 @@ namespace EPR.Calculator.Service.Function.Models
 
         public string Level { get; set; }
 
-        public bool isSubtotalRow { get; set; } = false;
+        public bool IsSubtotalRow { get; set; } = false;
 
-        public bool isTotalRow { get; set; } = false;
+        public bool IsTotalRow { get; set; } = false;
 
         public string SubmissonPeriodCode { get; set; }
 

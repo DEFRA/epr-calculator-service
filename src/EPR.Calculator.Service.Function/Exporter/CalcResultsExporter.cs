@@ -324,7 +324,7 @@
             {
                 foreach (var producer in producers.ScaledupProducers)
                 {
-                    if (producer.isTotalRow)
+                    if (producer.IsTotalRow)
                     {
                         csvContent.Append(",");
                         csvContent.Append(",");
