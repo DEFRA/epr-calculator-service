@@ -41,6 +41,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         [TestMethod]
         public void ConstructTest()
         {
+            var calcResult = TestDataHelper.GetCalcResult();
+
             CreateMaterials();
             CreateDefaultTemplate();
             CreateDefaultParameters();
@@ -67,7 +69,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     }
                 }
             };
-            var results = builder.Construct(resultsRequestDto, apportionment);
+            var results = builder.Construct(resultsRequestDto, apportionment, calcResult);
             results.Wait();
             var result = results.Result;
 
