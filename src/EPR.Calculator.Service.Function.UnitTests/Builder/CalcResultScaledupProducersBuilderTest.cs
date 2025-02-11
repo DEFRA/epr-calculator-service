@@ -78,7 +78,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     EndDate = DateTime.Now,
                     StartDate = DateTime.Now,
                     ScaleupFactor = 2.999M,
-                    SubmissionPeriod = "2024-P4",
+                    SubmissionPeriod = "2024-P2",
                     SubmissionPeriodDesc = ""
                 });
             dbContext.SaveChanges();
