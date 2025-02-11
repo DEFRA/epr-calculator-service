@@ -56,7 +56,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                                                                 SubmissonPeriodCode = spl.SubmissionPeriod,
                                                                 DaysInSubmissionPeriod = spl.DaysInSubmissionPeriod,
                                                                 DaysInWholePeriod = spl.DaysInSubmissionPeriod,
-                                                                Level = pd.SubsidiaryId != null ? CommonConstants.LevelTwo : CommonConstants.LevelOne,
+                                                                Level = pd.SubsidiaryId != null ? CommonConstants.LevelTwo.ToString() : CommonConstants.LevelOne.ToString(),
                                                                 isTotalRow = false,
                                                             }).Distinct().ToListAsync();
 
@@ -66,9 +66,30 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                                                            where run.Id == runId && organisationIds.Contains(crpdd.OrganisationId.GetValueOrDefault())
                                                            select crpdd).Distinct().ToListAsync();
 
+                    //foreach(var runProducerMaterialDetail in runProducerMaterialDetails)
+                    //{
+                    //    if (runProducerMaterialDetail)
+                    //}
+
+                    var level2Rows = runProducerMaterialDetails.Where(x => string.IsNullOrEmpty(x.SubsidiaryId)).GroupBy(x => new { x.ProducerId, x.SubsidiaryId }).ToList();
+
+                    foreach (var row in level2Rows)
+                    {
+                        if (runProducerMaterialDetails.Any(x => x.ProducerId == row.Key.ProducerId && x.SubsidiaryId != null)
+                            && 
+                            row.Count() > 0)
+                        {
+                            var levelRows = runProducerMaterialDetails.Where(x => x.ProducerId == row.Key.ProducerId && string.IsNullOrEmpty(x.SubsidiaryId));
+                            foreach (var level2Row in levelRows)
+                            {
+                                level2Row.Level = CommonConstants.LevelTwo.ToString();
+                            }
+                        }
+                    }
+
                     var groupByResult = runProducerMaterialDetails
                         .Where(x => x.SubsidiaryId != null)
-                        .GroupBy(x => new { x.ProducerId, x.SubsidiaryId })
+                        .GroupBy(x => new { x.ProducerId, x.SubmissonPeriodCode })
                         .Where(x => x.Count() > 1)
                         .ToList();
 
@@ -87,13 +108,13 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                         var extraRow = new CalcResultScaledupProducer
                         {
                             ProducerId = pair.Key.ProducerId,
-                            SubsidiaryId = pair.Key.SubsidiaryId,
-                            ProducerName = parentProducer[0].ProducerName,
+                            SubsidiaryId = string.Empty,
+                            ProducerName = "extra" + parentProducer[0].ProducerName,
                             ScaleupFactor = first.ScaleupFactor,
-                            SubmissonPeriodCode = parentProducer[0].SubmissonPeriodCode,
+                            SubmissonPeriodCode = pair.Key.SubmissonPeriodCode,
                             DaysInSubmissionPeriod = first.DaysInSubmissionPeriod,
                             DaysInWholePeriod = first.DaysInSubmissionPeriod,
-                            Level = CommonConstants.LevelOne,
+                            Level = CommonConstants.LevelOne.ToString(),
                             isTotalRow = true,
                             // ScaledupProducerTonnageByMaterial = GetTonnages(pomData, materials, first.SubmissonPeriodCode, first.ScaleupFactor)
                         };
