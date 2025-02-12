@@ -21,6 +21,7 @@
         {
             var producerDetail = new ProducerDetail
             {
+                Id = 1,
                 CalculatorRunId = runId,
                 ProducerId = 10,
                 SubsidiaryId = "Subsidary 1",
@@ -28,22 +29,25 @@
             dbContext.ProducerDetail.Add(producerDetail);
             dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
             {
+                Id = 1,
                 PackagingType = "HH",
-                ProducerDetail = producerDetail
+                ProducerDetail = producerDetail,
             });
             var calcRunPomDataMaster = new CalculatorRunPomDataMaster
             {
+                Id = 1,
                 CalendarYear = "2024",
                 EffectiveFrom = DateTime.Now,
                 CreatedAt = DateTime.Now,
-                CreatedBy = "Test User"
+                CreatedBy = "Test User",
             };
             dbContext.CalculatorRunPomDataMaster.Add(calcRunPomDataMaster);
             dbContext.CalculatorRuns.Add(new CalculatorRun
             {
+                Id = runId,
                 Financial_Year = "2024-25",
                 Name = "Name",
-                CalculatorRunPomDataMaster = calcRunPomDataMaster
+                CalculatorRunPomDataMaster = calcRunPomDataMaster,
             });
             dbContext.CalculatorRunPomDataDetails.Add(
                 new CalculatorRunPomDataDetail
@@ -52,7 +56,7 @@
                     SubmissionPeriod = "2024-P1",
                     SubmissionPeriodDesc = "desc",
                     CalculatorRunPomDataMaster = calcRunPomDataMaster,
-                    OrganisationId = 10
+                    OrganisationId = 10,
                 });
             dbContext.CalculatorRunPomDataDetails.Add(
                 new CalculatorRunPomDataDetail
@@ -61,7 +65,7 @@
                     SubmissionPeriod = "2024-P2",
                     SubmissionPeriodDesc = "desc",
                     CalculatorRunPomDataMaster = calcRunPomDataMaster,
-                    OrganisationId = 11
+                    OrganisationId = 11,
                 });
             dbContext.SubmissionPeriodLookup.Add(
                 new SubmissionPeriodLookup
@@ -72,7 +76,7 @@
                     StartDate = DateTime.Now,
                     ScaleupFactor = 1,
                     SubmissionPeriod = "2024-P1",
-                    SubmissionPeriodDesc = ""
+                    SubmissionPeriodDesc = string.Empty,
                 });
             dbContext.SubmissionPeriodLookup.Add(
                 new SubmissionPeriodLookup
@@ -83,7 +87,7 @@
                     StartDate = DateTime.Now,
                     ScaleupFactor = 2.999M,
                     SubmissionPeriod = "2024-P2",
-                    SubmissionPeriodDesc = ""
+                    SubmissionPeriodDesc = string.Empty,
                 });
             dbContext.SaveChanges();
         }
@@ -111,7 +115,9 @@
         [TestMethod]
         public void Construct()
         {
+            PrepareScaledUpProducer();
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
+
             var task = builder.Construct(requestDto);
             task.Wait();
 
