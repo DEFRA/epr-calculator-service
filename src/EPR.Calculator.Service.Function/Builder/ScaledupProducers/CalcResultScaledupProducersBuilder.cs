@@ -46,18 +46,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
 
                     this.AddExtraRows(runProducerMaterialDetails);
 
-                    foreach (var item in runProducerMaterialDetails)
-                    {
-                        var pomData = item.IsSubtotalRow
-                            ? allOrganisationPomDetails
-                                .Where(pom => pom.OrganisationId == item.ProducerId && pom.SubmissionPeriod == item.SubmissonPeriodCode)
-                                .ToList()
-                            : allOrganisationPomDetails
-                                .Where(pom => pom.OrganisationId == item.ProducerId && pom.SubsidaryId == item.SubsidiaryId && pom.SubmissionPeriod == item.SubmissonPeriodCode)
-                                .ToList();
-
-                        item.ScaledupProducerTonnageByMaterial = GetTonnages(pomData, materials, item.SubmissonPeriodCode, item.ScaleupFactor);
-                    }
+                    this.CalculateScaledupTonnage(runProducerMaterialDetails, allOrganisationPomDetails, materials);
 
                     var orderedRunProducerMaterialDetails = runProducerMaterialDetails
                         .OrderBy(p => p.ProducerId)
@@ -65,29 +54,8 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                         .ThenBy(p => p.SubsidiaryId)
                         .ThenBy(p => p.SubmissonPeriodCode)
                         .ToList();
-                    var overallTotalRow = new CalcResultScaledupProducer
-                    {
-                        IsTotalRow = true,
-                        ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>()
-                    };
 
-                    var allMaterialDict = orderedRunProducerMaterialDetails.Where(x => !x.IsSubtotalRow).Select(x => x.ScaledupProducerTonnageByMaterial);
-                    foreach (var material in materials)
-                    {
-                        var totalRow = new CalcResultScaledupProducerTonnage();
-                        var materialValues = allMaterialDict.Where(x => x.ContainsKey(material.Code)).Select(x => x[material.Code]).ToList();
-                        totalRow.ReportedHouseholdPackagingWasteTonnage = materialValues.Sum(x => x.ReportedHouseholdPackagingWasteTonnage);
-                        totalRow.ReportedPublicBinTonnage = materialValues.Sum(x => x.ReportedPublicBinTonnage);
-                        totalRow.TotalReportedTonnage = materialValues.Sum(x => x.TotalReportedTonnage);
-                        totalRow.ReportedSelfManagedConsumerWasteTonnage = materialValues.Sum(x => x.ReportedSelfManagedConsumerWasteTonnage);
-                        totalRow.NetReportedTonnage = materialValues.Sum(x => x.NetReportedTonnage);
-                        totalRow.ScaledupReportedHouseholdPackagingWasteTonnage = materialValues.Sum(x => x.ScaledupReportedHouseholdPackagingWasteTonnage);
-                        totalRow.ScaledupReportedPublicBinTonnage = materialValues.Sum(x => x.ScaledupReportedPublicBinTonnage);
-                        totalRow.ScaledupTotalReportedTonnage = materialValues.Sum(x => x.ScaledupTotalReportedTonnage);
-                        totalRow.ScaledupReportedSelfManagedConsumerWasteTonnage = materialValues.Sum(x => x.ScaledupReportedSelfManagedConsumerWasteTonnage);
-                        totalRow.ScaledupNetReportedTonnage = materialValues.Sum(x => x.ScaledupNetReportedTonnage);
-                        overallTotalRow.ScaledupProducerTonnageByMaterial.Add(material.Name, totalRow);
-                    }
+                    var overallTotalRow = this.GetOverallTotalRow(orderedRunProducerMaterialDetails, materials);
 
                     orderedRunProducerMaterialDetails.Add(overallTotalRow);
                     scaledupProducersSummary.ScaledupProducers = orderedRunProducerMaterialDetails;
@@ -99,6 +67,56 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
             catch (Exception ex)
             {
                 throw ex;
+            }
+        }
+
+        public CalcResultScaledupProducer GetOverallTotalRow(
+            IEnumerable<CalcResultScaledupProducer> orderedRunProducerMaterialDetails,
+            IEnumerable<MaterialDetail> materials)
+        {
+            var overallTotalRow = new CalcResultScaledupProducer
+            {
+                IsTotalRow = true,
+                ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>()
+            };
+
+            var allMaterialDict = orderedRunProducerMaterialDetails.Where(x => !x.IsSubtotalRow).Select(x => x.ScaledupProducerTonnageByMaterial);
+            foreach (var material in materials)
+            {
+                var totalRow = new CalcResultScaledupProducerTonnage();
+                var materialValues = allMaterialDict.Where(x => x.ContainsKey(material.Code)).Select(x => x[material.Code]).ToList();
+                totalRow.ReportedHouseholdPackagingWasteTonnage = materialValues.Sum(x => x.ReportedHouseholdPackagingWasteTonnage);
+                totalRow.ReportedPublicBinTonnage = materialValues.Sum(x => x.ReportedPublicBinTonnage);
+                totalRow.TotalReportedTonnage = materialValues.Sum(x => x.TotalReportedTonnage);
+                totalRow.ReportedSelfManagedConsumerWasteTonnage = materialValues.Sum(x => x.ReportedSelfManagedConsumerWasteTonnage);
+                totalRow.NetReportedTonnage = materialValues.Sum(x => x.NetReportedTonnage);
+                totalRow.ScaledupReportedHouseholdPackagingWasteTonnage = materialValues.Sum(x => x.ScaledupReportedHouseholdPackagingWasteTonnage);
+                totalRow.ScaledupReportedPublicBinTonnage = materialValues.Sum(x => x.ScaledupReportedPublicBinTonnage);
+                totalRow.ScaledupTotalReportedTonnage = materialValues.Sum(x => x.ScaledupTotalReportedTonnage);
+                totalRow.ScaledupReportedSelfManagedConsumerWasteTonnage = materialValues.Sum(x => x.ScaledupReportedSelfManagedConsumerWasteTonnage);
+                totalRow.ScaledupNetReportedTonnage = materialValues.Sum(x => x.ScaledupNetReportedTonnage);
+                overallTotalRow.ScaledupProducerTonnageByMaterial.Add(material.Name, totalRow);
+            }
+            return overallTotalRow;
+        }
+
+        public void CalculateScaledupTonnage(
+            IEnumerable<CalcResultScaledupProducer> runProducerMaterialDetails,
+            IEnumerable<CalculatorRunPomDataDetail> allOrganisationPomDetails,
+            IEnumerable<MaterialDetail> materials
+            )
+        {
+            foreach (var item in runProducerMaterialDetails)
+            {
+                var pomData = item.IsSubtotalRow
+                    ? allOrganisationPomDetails
+                        .Where(pom => pom.OrganisationId == item.ProducerId && pom.SubmissionPeriod == item.SubmissonPeriodCode)
+                        .ToList()
+                    : allOrganisationPomDetails
+                        .Where(pom => pom.OrganisationId == item.ProducerId && pom.SubsidaryId == item.SubsidiaryId && pom.SubmissionPeriod == item.SubmissonPeriodCode)
+                        .ToList();
+
+                item.ScaledupProducerTonnageByMaterial = GetTonnages(pomData, materials, item.SubmissonPeriodCode, item.ScaleupFactor);
             }
         }
 
