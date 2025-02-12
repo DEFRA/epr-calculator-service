@@ -58,7 +58,7 @@
             var lines = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
             // Assert
-            int expectedLineCount = 64;
+            int expectedLineCount = 65;
             Assert.AreEqual(expectedLineCount, lines.Length);
         }
 
@@ -492,7 +492,7 @@
         {
             var scaledupProducerList = new List<CalcResultScaledupProducer>();
 
-            scaledupProducerList.Add(
+            scaledupProducerList.AddRange([
                 new CalcResultScaledupProducer()
                 {
                     ProducerId = 101001,
@@ -504,7 +504,21 @@
                     DaysInWholePeriod = 91,
                     ScaleupFactor = 2,
                     ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterial(),
-                });
+                },
+                new CalcResultScaledupProducer()
+                {
+                    ProducerId = 101001,
+                    SubsidiaryId = string.Empty,
+                    ProducerName = "Allied Packaging",
+                    Level = "1",
+                    SubmissonPeriodCode = "2024-P2",
+                    DaysInSubmissionPeriod = 91,
+                    DaysInWholePeriod = 91,
+                    ScaleupFactor = 2,
+                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterial(),
+                    IsTotalRow = true,
+                },
+            ]);
 
             return scaledupProducerList;
         }
@@ -528,6 +542,7 @@
                     ScaledupReportedSelfManagedConsumerWasteTonnage = 1000,
                     ScaledupNetReportedTonnage = 2200,
                 });
+
 
             return tonnageByMaterial;
         }
