@@ -21,5 +21,9 @@
         public decimal ScaledupReportedSelfManagedConsumerWasteTonnage { get; set; }
 
         public decimal ScaledupNetReportedTonnage { get; set; }
+
+        public decimal HouseholdDrinksContainersTonnageGlass { get; set; }
+
+        public decimal ScaledupHouseholdDrinksContainersTonnageGlass { get; set; }
     }
 }
