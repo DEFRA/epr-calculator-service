@@ -122,7 +122,9 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
 
         public void AddExtraRows(List<CalcResultScaledupProducer> runProducerMaterialDetails)
         {
-            var level2Rows = runProducerMaterialDetails.Where(x => string.IsNullOrEmpty(x.SubsidiaryId)).GroupBy(x => new { x.ProducerId, x.SubsidiaryId }).ToList();
+            var level2Rows = runProducerMaterialDetails
+                .Where(x => string.IsNullOrEmpty(x.SubsidiaryId))
+                .GroupBy(x => new { x.ProducerId, x.SubsidiaryId }).ToList();
 
             foreach (var row in level2Rows)
             {

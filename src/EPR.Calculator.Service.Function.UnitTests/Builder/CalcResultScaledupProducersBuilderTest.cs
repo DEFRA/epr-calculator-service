@@ -3,6 +3,9 @@ using EPR.Calculator.Service.Function.Data;
 using EPR.Calculator.Service.Function.Data.DataModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Constants;
+using Microsoft.Azure.Amqp.Framing;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
@@ -108,6 +111,51 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var result = task.Result;
             Assert.IsNotNull(result);
             Assert.AreEqual(1, result.Count());
+        }
+
+        [TestMethod]
+        public void AddExtraRowsTest()
+        {
+            builder = new CalcResultScaledupProducersBuilder(dbContext);
+            var runProducerMaterialDetails = new List<CalcResultScaledupProducer>();
+            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
+            {
+                ProducerId = 1,
+            });
+            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
+            {
+                ProducerId = 1,
+                SubsidiaryId = "Sub1"
+            });
+            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
+            {
+                ProducerId = 1,
+                SubsidiaryId = "Sub2"
+            });
+            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
+            {
+                ProducerId = 2,
+            });
+            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
+            {
+                ProducerId = 2,
+                SubsidiaryId = "Sub3"
+            });
+            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
+            {
+                ProducerId = 2,
+                SubsidiaryId = "Sub4"
+            });
+            builder.AddExtraRows(runProducerMaterialDetails);
+
+            Assert.AreEqual(8, runProducerMaterialDetails.Count);
+            var allProducersWithLevel2 = runProducerMaterialDetails.Where(x => x.SubsidiaryId == null);
+            Assert.IsTrue(allProducersWithLevel2.All(x => x.Level == CommonConstants.LevelTwo.ToString()));
+
+            var extraRows = runProducerMaterialDetails.Skip(Math.Max(0, runProducerMaterialDetails.Count() - 2));
+            Assert.AreEqual(2, extraRows.Count());
+            Assert.IsTrue(extraRows.All(x => x.IsSubtotalRow == true));
+            Assert.AreEqual(2, runProducerMaterialDetails.Count(x => x.IsSubtotalRow == true));
         }
     }
 }
