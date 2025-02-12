@@ -7,6 +7,7 @@ using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Constants;
 using Microsoft.Azure.Amqp.Framing;
 using EPR.Calculator.Service.Function.Mappers;
+using System.Collections.Generic;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
@@ -295,6 +296,60 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var materialsBreakDown = CalcResultScaledupProducersBuilder.GetMaterialsBreakdownHeader(materialDetails);
             Assert.IsNotNull(materialsBreakDown);
             Assert.AreEqual(2, materialsBreakDown.Count);
+        }
+
+        [TestMethod]
+        public void SetHeadersTest()
+        {
+            var producers = new CalcResultScaledupProducers();
+            var materials = new List<Material>();
+            materials.Add(new Material { Code = "AL", Name = "Aluminium" });
+            var materialDetails = MaterialMapper.Map(materials);
+            CalcResultScaledupProducersBuilder.SetHeaders(producers, materialDetails);
+            Assert.AreEqual(18, producers.ColumnHeaders.Count());
+            Assert.AreEqual(2, producers.MaterialBreakdownHeaders.Count());
+        }
+
+        [TestMethod]
+        public void CalculateScaledupTonnageTest()
+        {
+            var dictionary = new Dictionary<string, CalcResultScaledupProducerTonnage>();
+            dictionary.Add("AL", new CalcResultScaledupProducerTonnage
+            {
+                ReportedHouseholdPackagingWasteTonnage = 10,
+                ReportedPublicBinTonnage = 10,
+                TotalReportedTonnage = 10,
+                ReportedSelfManagedConsumerWasteTonnage = 10,
+                NetReportedTonnage = 10,
+                ScaledupReportedHouseholdPackagingWasteTonnage = 10,
+                ScaledupReportedPublicBinTonnage = 10,
+                ScaledupTotalReportedTonnage = 10,
+                ScaledupReportedSelfManagedConsumerWasteTonnage = 10,
+                ScaledupNetReportedTonnage = 10,
+            });
+            var scaledUpProducer = new CalcResultScaledupProducer
+            {
+                ProducerId = 2,
+                SubsidiaryId = "Sub3",
+                ScaledupProducerTonnageByMaterial = dictionary
+            };
+
+            var allPomDataDetails = new List<CalculatorRunPomDataDetail>();
+            allPomDataDetails.Add(new CalculatorRunPomDataDetail
+            {
+                LoadTimeStamp = DateTime.Now,
+                SubmissionPeriod = "2024-P1",
+                SubmissionPeriodDesc = "desc",
+                OrganisationId = 10
+            });
+            var materials = new List<Material>();
+            materials.Add(new Material { Code = "AL", Name = "Aluminium" });
+            var materialDetails = MaterialMapper.Map(materials);
+            builder = new CalcResultScaledupProducersBuilder(dbContext);
+            builder.CalculateScaledupTonnage([scaledUpProducer], allPomDataDetails, materialDetails);
+            Assert.IsNull(scaledUpProducer.ScaledupProducerTonnageByMaterial);
+            var scaledUpTonnage = scaledUpProducer.ScaledupProducerTonnageByMaterial["AL"];
+            Assert.IsNotNull(scaledUpTonnage);
         }
     }
 }
