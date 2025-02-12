@@ -254,5 +254,25 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.IsNotNull(result);
             Assert.AreEqual(0, result.Count());
         }
+
+        [TestMethod]
+        public void GetTonnagesTest()
+        {
+            var materials = new List<Material>();
+            materials.Add(new Material { Code = "AL", Name = "Aluminium" });
+            var materialDetails = MaterialMapper.Map(materials);
+            var pomDateDetails = new List<CalculatorRunPomDataDetail>();
+            pomDateDetails.Add(new CalculatorRunPomDataDetail
+            {
+                LoadTimeStamp = DateTime.Now,
+                SubmissionPeriod = "2024-P2",
+                SubmissionPeriodDesc = "desc",
+                OrganisationId = 11
+            });
+            var tonnage = CalcResultScaledupProducersBuilder.GetTonnages(pomDateDetails, materialDetails, "2024-P2", 2);
+            Assert.IsNotNull(tonnage);
+            var aluminium = tonnage["AL"];
+            Assert.IsNotNull(aluminium);
+        }
     }
 }
