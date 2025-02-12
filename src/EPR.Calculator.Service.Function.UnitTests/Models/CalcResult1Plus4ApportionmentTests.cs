@@ -1,11 +1,10 @@
 namespace EPR.Calculator.Service.Function.UnitTests.Models
 {
-    using System;
-    using System.Collections.Generic;
     using AutoFixture;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using System.Collections.Generic;
 
     [TestClass]
     public class CalcResult1Plus4ApportionmentTests

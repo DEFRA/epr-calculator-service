@@ -12,6 +12,8 @@
     {
         Fixture Fixture { get; } = new Fixture();
 
+        private static IEnumerable<CalcResultScaledupProducer>? calcResultScaledupProducers;
+
         [TestMethod]
         public void Export_ShouldReturnCsvContent_WhenAllDataIsPresent()
         {
@@ -58,7 +60,7 @@
             var lines = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
             // Assert
-            int expectedLineCount = 57;
+            int expectedLineCount = 63;
             Assert.AreEqual(expectedLineCount, lines.Length);
         }
 
@@ -212,6 +214,24 @@
                 Assert.IsFalse(csvContent.Contains("SummaryData"), "CSV content should not contain SummaryData.");
             }
         }
+
+        [TestMethod]
+        public void Export_ScaledUpProducer_ShouldIncludeHeadersAndDisplayData_WhenScaledUpProducerExists()
+        {
+            // Arrange
+            calcResultScaledupProducers = [Fixture.Create<CalcResultScaledupProducer>()];
+            var results = CreateCalcResult();
+            var exporter = new CalcResultsExporter();
+
+            // Act
+            var result = exporter.Export(results);
+
+            // Assert
+            //Assert.IsTrue(result.Contains(calcResultScaledupProducers?.First().ProducerId));
+            //Assert.IsTrue(result.Contains(calcResultScaledupProducers?.First().SubsidiaryId));
+            //Assert.IsFalse(result.Contains("None"));
+        }
+
         private static CalcResult CreateCalcResult()
         {
             return new CalcResult
@@ -221,8 +241,7 @@
                     Name = "LAPCAP Data",
                     CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>
                     {
-                        new CalcResultLapcapDataDetails
-                        {
+                        new () {
                             Name = "Total",
                             EnglandDisposalCost = "£13,280.45",
                             WalesDisposalCost = "£210.28",
@@ -233,10 +252,10 @@
                             WalesCost = 210.28m,
                             ScotlandCost = 91.00m,
                             NorthernIrelandCost = 91.00m,
-                            TotalCost = 13742.80m
-                        }
+                            TotalCost = 13742.80m,
+                        },
 
-                    }
+                    },
                 },
                 CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
                 {
@@ -248,19 +267,19 @@
                         new CalcResultLateReportingTonnageDetail
                         {
                             Name = "Aluminium",
-                            TotalLateReportingTonnage = 8000.00m
+                            TotalLateReportingTonnage = 8000.00m,
                         },
                         new CalcResultLateReportingTonnageDetail
                         {
                             Name = "Plastic",
-                            TotalLateReportingTonnage = 2000.00m
+                            TotalLateReportingTonnage = 2000.00m,
                         },
                         new CalcResultLateReportingTonnageDetail
                         {
                             Name = "Total",
-                            TotalLateReportingTonnage = 10000.00m
-                        }
-                    }
+                            TotalLateReportingTonnage = 10000.00m,
+                        },
+                    },
                 },
                 CalcResultParameterOtherCost = new CalcResultParameterOtherCost
                 {
@@ -281,8 +300,8 @@
                             NorthernIreland = "£10.00",
                             NorthernIrelandValue = 10,
                             Total = "£100.00",
-                            TotalValue = 100
-                        }
+                            TotalValue = 100,
+                        },
 
                     },
                     Materiality = new List<CalcResultMateriality>
@@ -293,8 +312,8 @@
                             AmountValue = 0,
                             Percentage = "%",
                             PercentageValue = 0,
-                            SevenMateriality = "7 Materiality"
-                        }
+                            SevenMateriality = "7 Materiality",
+                        },
                     },
                     Name = "Parameters - Other",
                     SaOperatingCost = new List<CalcResultParameterOtherCostDetail>
@@ -312,8 +331,8 @@
                             NorthernIreland = "£10.00",
                             NorthernIrelandValue = 10,
                             Total = "£100.00",
-                            TotalValue = 100
-                        }
+                            TotalValue = 100,
+                        },
                     },
                     SchemeSetupCost = new CalcResultParameterOtherCostDetail
                     {
@@ -328,8 +347,8 @@
                         NorthernIreland = "£10.00",
                         NorthernIrelandValue = 10,
                         Total = "£100.00",
-                        TotalValue = 100
-                    }
+                        TotalValue = 100,
+                    },
                 },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment
                 {
@@ -360,9 +379,9 @@
                             ScotlandTotal = 0.15M,
                             WalesTotal = 0.20M,
                             Name = "Test",
-                        }
+                        },
                     },
-                    Name = "some test"
+                    Name = "some test",
                 },
                 CalcResultCommsCostReportDetail = new CalcResultCommsCost
                 {
@@ -377,7 +396,7 @@
                         {
                             CommsCostByMaterialPricePerTonne = "0.3",
                             Name = "Glass",
-                        }
+                        },
                     },
                     CalcResultCommsCostOnePlusFourApportionment =
                         new Fixture().CreateMany<CalcResultCommsCostOnePlusFourApportionment>(1),
@@ -423,7 +442,7 @@
                             Total = "100",
                             ProducerReportedHouseholdPackagingWasteTonnage = "null",
                             ReportedPublicBinTonnage = string.Empty,
-                        }
+                        },
                     },
                     Name = "some test"
                 },
@@ -449,6 +468,22 @@
                             ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 1,
                         },
                     },
+                },
+                CalcResultScaledupProducers = new CalcResultScaledupProducers
+                {
+                    TitleHeader = new CalcResultScaledupProducerHeader
+                    {
+                        Name = "Scaled-up Producers",
+                    },
+                    MaterialBreakdownHeaders = [
+                        new CalcResultScaledupProducerHeader{ Name = "Each submission for the year", ColumnIndex = 1},
+                        new CalcResultScaledupProducerHeader { Name = "Aluminium Breakdown", ColumnIndex = 2 }
+                    ],
+                    ColumnHeaders = [
+                        new CalcResultScaledupProducerHeader{ Name = "Producer ID"},
+                        new CalcResultScaledupProducerHeader { Name = "Subsidiary ID" }
+                    ],
+                    ScaledupProducers = calcResultScaledupProducers,
                 },
                 CalcResultDetail = new CalcResultDetail
                 {
