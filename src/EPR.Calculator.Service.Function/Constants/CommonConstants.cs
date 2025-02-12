@@ -9,8 +9,6 @@
         public const string NorthernIreland = "Northern Ireland";
         public const string Total = "Total";
         public const string Totals = "Totals";
-        public const string LevelOne = "1";
-        public const string LevelTwo = "2";
         public const string ProducerReportedHouseholdPackagingWasteTonnage = "Producer Reported Household Packaging Waste Tonnage";
         public const string ReportedPublicBinTonnage = "Reported Public Bin Tonnage";
         public const string HouseholdDrinkContainers = "Household Drinks Containers";
@@ -20,6 +18,8 @@
         public const string LADisposalCostData = "LA Disposal Cost Data";
         public const string PolicyName = "AllowAllOrigins";
         public const string ServiceBusClientName = "calculator";
+        public const int LevelOne = 1;
+        public const int LevelTwo = 2;
         public const int SecondaryHeaderMaxColumnSize = 270;
     }
 }
