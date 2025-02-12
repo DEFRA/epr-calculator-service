@@ -102,7 +102,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public void GetScaledUpProducerIds_Test()
         {
             PrepareScaledUpProducer();
-            var task = this.builder.GetScaledUpOrganisationIds(runId);
+            var task = this.builder.GetScaledUpOrganisationIdsAsync(runId);
             task.Wait();
 
             var result = task.Result;
