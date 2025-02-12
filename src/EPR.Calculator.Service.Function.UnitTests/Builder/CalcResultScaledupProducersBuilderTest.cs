@@ -274,5 +274,27 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var aluminium = tonnage["AL"];
             Assert.IsNotNull(aluminium);
         }
+
+        [TestMethod]
+        public void GetColumnHeadersTest()
+        {
+            var materials = new List<Material>();
+            materials.Add(new Material { Code = "AL", Name = "Aluminium" });
+            var materialDetails = MaterialMapper.Map(materials);
+            var columnHeaders = CalcResultScaledupProducersBuilder.GetColumnHeaders(materialDetails);
+            Assert.IsNotNull(columnHeaders);
+            Assert.AreEqual(18, columnHeaders.Count);
+        }
+
+        [TestMethod]
+        public void GetMaterialsBreakdownHeaderTest()
+        {
+            var materials = new List<Material>();
+            materials.Add(new Material { Code = "AL", Name = "Aluminium" });
+            var materialDetails = MaterialMapper.Map(materials);
+            var materialsBreakDown = CalcResultScaledupProducersBuilder.GetMaterialsBreakdownHeader(materialDetails);
+            Assert.IsNotNull(materialsBreakDown);
+            Assert.AreEqual(2, materialsBreakDown.Count);
+        }
     }
 }

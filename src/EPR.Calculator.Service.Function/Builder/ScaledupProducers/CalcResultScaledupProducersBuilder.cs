@@ -262,7 +262,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
             return scaledupProducerTonnages;
         }
 
-        private static void SetHeaders(CalcResultScaledupProducers producers, IEnumerable<MaterialDetail> materials)
+        public static void SetHeaders(CalcResultScaledupProducers producers, IEnumerable<MaterialDetail> materials)
         {
             producers.TitleHeader = new CalcResultScaledupProducerHeader
             {
@@ -275,7 +275,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
             producers.ColumnHeaders = GetColumnHeaders(materials);
         }
 
-        private static List<CalcResultScaledupProducerHeader> GetMaterialsBreakdownHeader(IEnumerable<MaterialDetail> materials)
+        public static List<CalcResultScaledupProducerHeader> GetMaterialsBreakdownHeader(IEnumerable<MaterialDetail> materials)
         {
             var materialsBreakdownHeaders = new List<CalcResultScaledupProducerHeader>();
             var columnIndex = MaterialsBreakdownHeaderInitialColumnIndex;
@@ -302,7 +302,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
             return materialsBreakdownHeaders;
         }
 
-        private static List<CalcResultScaledupProducerHeader> GetColumnHeaders(IEnumerable<MaterialDetail> materials)
+        public static List<CalcResultScaledupProducerHeader> GetColumnHeaders(IEnumerable<MaterialDetail> materials)
         {
             var columnHeaders = new List<CalcResultScaledupProducerHeader>();
 
