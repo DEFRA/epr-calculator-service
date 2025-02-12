@@ -1,16 +1,15 @@
-﻿using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
-using EPR.Calculator.Service.Function.Data;
-using EPR.Calculator.Service.Function.Data.DataModels;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.Constants;
-using Microsoft.Azure.Amqp.Framing;
-using EPR.Calculator.Service.Function.Mappers;
-using System.Collections.Generic;
-
-namespace EPR.Calculator.Service.Function.UnitTests.Builder
+﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
+    using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
+    using EPR.Calculator.Service.Function.Constants;
+    using EPR.Calculator.Service.Function.Data;
+    using EPR.Calculator.Service.Function.Data.DataModels;
+    using EPR.Calculator.Service.Function.Dtos;
+    using EPR.Calculator.Service.Function.Mappers;
+    using EPR.Calculator.Service.Function.Models;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Diagnostics;
+
     [TestClass]
     public class CalcResultScaledupProducersBuilderTest
     {
@@ -107,6 +106,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public void Teardown()
         {
             dbContext.Database.EnsureDeleted();
+        }
+
+        [TestMethod]
+        public void Construct()
+        {
+            var requestDto = new CalcResultsRequestDto { RunId = 1 };
+            var task = builder.Construct(requestDto);
+            task.Wait();
+
+            var result = task.Result;
+            Assert.IsNotNull(result);
         }
 
         [TestMethod]

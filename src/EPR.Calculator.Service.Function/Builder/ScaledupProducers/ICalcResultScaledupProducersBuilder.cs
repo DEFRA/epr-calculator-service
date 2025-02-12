@@ -6,6 +6,6 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
 {
     public interface ICalcResultScaledupProducersBuilder
     {
-        Task<CalcResultScaledupProducers> Construct(CalcResultsRequestDto resultsRequestDto, CalcResult calcResult);
+        Task<CalcResultScaledupProducers> Construct(CalcResultsRequestDto resultsRequestDto);
     }
 }
