@@ -102,6 +102,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             this.builder = new CalcResultScaledupProducersBuilder(dbContext);
         }
 
+        [TestCleanup]
+        public void Teardown()
+        {
+            dbContext.Database.EnsureDeleted();
+        }
+
         [TestMethod]
         public void GetScaledUpProducerIds_Test()
         {
@@ -225,6 +231,28 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual(60, aluminium.ScaledupNetReportedTonnage);
             Assert.AreEqual(60, aluminium.ScaledupReportedPublicBinTonnage);
             Assert.AreEqual(60, aluminium.ScaledupReportedPublicBinTonnage);
+        }
+
+        [TestMethod]
+        public void GetProducerReportedMaterialsAsyncTest()
+        {
+            builder = new CalcResultScaledupProducersBuilder(dbContext);
+            var task = builder.GetProducerReportedMaterialsAsync(1, [1, 2]);
+            task.Wait();
+            var result = task.Result;
+            Assert.IsNotNull(result);
+            Assert.AreEqual(0, result.Count);
+        }
+
+        [TestMethod]
+        public void GetScaledupOrganisationDetailsTest()
+        {
+            builder = new CalcResultScaledupProducersBuilder(dbContext);
+            var task = builder.GetScaledupOrganisationDetails(1, [1, 2]);
+            task.Wait();
+            var result = task.Result;
+            Assert.IsNotNull(result);
+            Assert.AreEqual(0, result.Count());
         }
     }
 }
