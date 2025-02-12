@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Constants;
 using Microsoft.Azure.Amqp.Framing;
+using EPR.Calculator.Service.Function.Mappers;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
@@ -156,6 +157,74 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual(2, extraRows.Count());
             Assert.IsTrue(extraRows.All(x => x.IsSubtotalRow == true));
             Assert.AreEqual(2, runProducerMaterialDetails.Count(x => x.IsSubtotalRow == true));
+        }
+
+        [TestMethod]
+        public void GetOverallTotalRowTest()
+        {
+            builder = new CalcResultScaledupProducersBuilder(dbContext);
+            var runProducerMaterialDetails = new List<CalcResultScaledupProducer>();
+            var dictionary = new Dictionary<string, CalcResultScaledupProducerTonnage>();
+            dictionary.Add("AL", new CalcResultScaledupProducerTonnage
+            {
+                ReportedHouseholdPackagingWasteTonnage = 10,
+                ReportedPublicBinTonnage = 10,
+                TotalReportedTonnage = 10,
+                ReportedSelfManagedConsumerWasteTonnage = 10,
+                NetReportedTonnage = 10,
+                ScaledupReportedHouseholdPackagingWasteTonnage = 10,
+                ScaledupReportedPublicBinTonnage = 10,
+                ScaledupTotalReportedTonnage = 10,
+                ScaledupReportedSelfManagedConsumerWasteTonnage = 10,
+                ScaledupNetReportedTonnage = 10,
+            });
+            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
+            {
+                ProducerId = 1,
+                ScaledupProducerTonnageByMaterial = dictionary
+            });
+            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
+            {
+                ProducerId = 1,
+                SubsidiaryId = "Sub1",
+                ScaledupProducerTonnageByMaterial = dictionary
+            });
+            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
+            {
+                ProducerId = 1,
+                SubsidiaryId = "Sub2",
+                ScaledupProducerTonnageByMaterial = dictionary
+            });
+            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
+            {
+                ProducerId = 2,
+                ScaledupProducerTonnageByMaterial = dictionary
+            });
+            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
+            {
+                ProducerId = 2,
+                SubsidiaryId = "Sub3",
+                ScaledupProducerTonnageByMaterial = dictionary
+            });
+            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
+            {
+                ProducerId = 2,
+                SubsidiaryId = "Sub4",
+                ScaledupProducerTonnageByMaterial = dictionary
+            });
+
+            var materials = new List<Material>();
+            materials.Add(new Material { Code = "AL", Name = "Aluminium" });
+            var materialDetails = MaterialMapper.Map(materials);
+            var totalRow = builder.GetOverallTotalRow(runProducerMaterialDetails, materialDetails);
+            Assert.IsNotNull(totalRow);
+            var aluminium = totalRow.ScaledupProducerTonnageByMaterial["Aluminium"];
+            Assert.IsNotNull(aluminium);
+            Assert.AreEqual(60, aluminium.NetReportedTonnage);
+            Assert.AreEqual(60, aluminium.ScaledupTotalReportedTonnage);
+            Assert.AreEqual(60, aluminium.ScaledupNetReportedTonnage);
+            Assert.AreEqual(60, aluminium.ScaledupReportedPublicBinTonnage);
+            Assert.AreEqual(60, aluminium.ScaledupReportedPublicBinTonnage);
         }
     }
 }
