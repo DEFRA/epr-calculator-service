@@ -347,7 +347,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var materialDetails = MaterialMapper.Map(materials);
             builder = new CalcResultScaledupProducersBuilder(dbContext);
             builder.CalculateScaledupTonnage([scaledUpProducer], allPomDataDetails, materialDetails);
-            Assert.IsNull(scaledUpProducer.ScaledupProducerTonnageByMaterial);
+            Assert.IsNotNull(scaledUpProducer.ScaledupProducerTonnageByMaterial);
             var scaledUpTonnage = scaledUpProducer.ScaledupProducerTonnageByMaterial["AL"];
             Assert.IsNotNull(scaledUpTonnage);
         }
