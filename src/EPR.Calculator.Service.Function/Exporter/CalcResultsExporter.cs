@@ -30,56 +30,49 @@
                 throw new ArgumentNullException(nameof(results), "The results parameter cannot be null.");
             }
 
-            try
+            var csvContent = new StringBuilder();
+            LoadCalcResultDetail(results, csvContent);
+            if (results.CalcResultLapcapData != null)
             {
-                var csvContent = new StringBuilder();
-                LoadCalcResultDetail(results, csvContent);
-                if (results.CalcResultLapcapData != null)
-                {
-                    PrepareLapcapData(results.CalcResultLapcapData, csvContent);
-                }
-
-                if (results.CalcResultLateReportingTonnageData != null)
-                {
-                    PrepareLateReportingData(results.CalcResultLateReportingTonnageData, csvContent);
-                }
-
-                if (results.CalcResultParameterOtherCost != null)
-                {
-                    PrepareOtherCosts(results.CalcResultParameterOtherCost, csvContent);
-                }
-
-                if (results.CalcResultOnePlusFourApportionment != null)
-                {
-                    PrepareOnePluseFourApportionment(results.CalcResultOnePlusFourApportionment, csvContent);
-                }
-
-                if (results.CalcResultCommsCostReportDetail != null)
-                {
-                    PrepareCommsCost(results.CalcResultCommsCostReportDetail, csvContent);
-                }
-
-                if (results.CalcResultLaDisposalCostData != null)
-                {
-                    PrepareLaDisposalCostData(results.CalcResultLaDisposalCostData, csvContent);
-                }
-
-                if (results.CalcResultScaledupProducers != null)
-                {
-                    PrepareScaledupProducers(results.CalcResultScaledupProducers, csvContent);
-                }
-
-                if (results.CalcResultSummary != null)
-                {
-                    PrepareSummaryData(results.CalcResultSummary, csvContent);
-                }
-
-                return csvContent.ToString();
+                PrepareLapcapData(results.CalcResultLapcapData, csvContent);
             }
-            catch(Exception ex)
+
+            if (results.CalcResultLateReportingTonnageData != null)
             {
-                throw ex;
+                PrepareLateReportingData(results.CalcResultLateReportingTonnageData, csvContent);
             }
+
+            if (results.CalcResultParameterOtherCost != null)
+            {
+                PrepareOtherCosts(results.CalcResultParameterOtherCost, csvContent);
+            }
+
+            if (results.CalcResultOnePlusFourApportionment != null)
+            {
+                PrepareOnePluseFourApportionment(results.CalcResultOnePlusFourApportionment, csvContent);
+            }
+
+            if (results.CalcResultCommsCostReportDetail != null)
+            {
+                PrepareCommsCost(results.CalcResultCommsCostReportDetail, csvContent);
+            }
+
+            if (results.CalcResultLaDisposalCostData != null)
+            {
+                PrepareLaDisposalCostData(results.CalcResultLaDisposalCostData, csvContent);
+            }
+
+            if (results.CalcResultScaledupProducers != null)
+            {
+                PrepareScaledupProducers(results.CalcResultScaledupProducers, csvContent);
+            }
+
+            if (results.CalcResultSummary != null)
+            {
+                PrepareSummaryData(results.CalcResultSummary, csvContent);
+            }
+
+            return csvContent.ToString();
         }
 
         private static void PrepareCommsCost(CalcResultCommsCost communicationCost, StringBuilder csvContent)
