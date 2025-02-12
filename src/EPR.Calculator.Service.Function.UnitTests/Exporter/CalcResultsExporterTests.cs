@@ -12,8 +12,6 @@
     {
         Fixture Fixture { get; } = new Fixture();
 
-        private static IEnumerable<CalcResultScaledupProducer>? calcResultScaledupProducers;
-
         [TestMethod]
         public void Export_ShouldReturnCsvContent_WhenAllDataIsPresent()
         {
@@ -60,7 +58,7 @@
             var lines = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
             // Assert
-            int expectedLineCount = 63;
+            int expectedLineCount = 64;
             Assert.AreEqual(expectedLineCount, lines.Length);
         }
 
@@ -169,6 +167,20 @@
         }
 
         [TestMethod]
+        public void Export_ShouldIncludeScaledupProducers_WhenNotNull()
+        {
+            // Arrange
+            var results = CreateCalcResult();
+            var exporter = new CalcResultsExporter();
+
+            // Act
+            var result = exporter.Export(results);
+
+            // Assert
+            Assert.IsTrue(result.Contains("Scaled-up Producers"));
+        }
+
+        [TestMethod]
         public void Export_ShouldIncludeSummaryData_WhenNotNull()
         {
             // Arrange
@@ -179,7 +191,6 @@
             var result = exporter.Export(results);
 
             //Assert
-
             Assert.IsTrue(result.Contains("SummaryData"));
         }
 
@@ -213,23 +224,6 @@
                     "CSV content should not contain LaDisposalCostData.");
                 Assert.IsFalse(csvContent.Contains("SummaryData"), "CSV content should not contain SummaryData.");
             }
-        }
-
-        [TestMethod]
-        public void Export_ScaledUpProducer_ShouldIncludeHeadersAndDisplayData_WhenScaledUpProducerExists()
-        {
-            // Arrange
-            calcResultScaledupProducers = [Fixture.Create<CalcResultScaledupProducer>()];
-            var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter();
-
-            // Act
-            var result = exporter.Export(results);
-
-            // Assert
-            //Assert.IsTrue(result.Contains(calcResultScaledupProducers?.First().ProducerId));
-            //Assert.IsTrue(result.Contains(calcResultScaledupProducers?.First().SubsidiaryId));
-            //Assert.IsFalse(result.Contains("None"));
         }
 
         private static CalcResult CreateCalcResult()
@@ -444,7 +438,23 @@
                             ReportedPublicBinTonnage = string.Empty,
                         },
                     },
-                    Name = "some test"
+                    Name = "some test",
+                },
+                CalcResultScaledupProducers = new CalcResultScaledupProducers
+                {
+                    TitleHeader = new CalcResultScaledupProducerHeader
+                    {
+                        Name = "Scaled-up Producers",
+                    },
+                    MaterialBreakdownHeaders = [
+                        new CalcResultScaledupProducerHeader{ Name = "Each submission for the year", ColumnIndex = 1 },
+                        new CalcResultScaledupProducerHeader { Name = "Aluminium Breakdown", ColumnIndex = 2 }
+                    ],
+                    ColumnHeaders = [
+                        new CalcResultScaledupProducerHeader{ Name = "Producer ID" },
+                        new CalcResultScaledupProducerHeader { Name = "Subsidiary ID" }
+                    ],
+                    ScaledupProducers = GetCalcResultScaledupProducerList(),
                 },
                 CalcResultSummary = new CalcResultSummary
                 {
@@ -469,22 +479,6 @@
                         },
                     },
                 },
-                CalcResultScaledupProducers = new CalcResultScaledupProducers
-                {
-                    TitleHeader = new CalcResultScaledupProducerHeader
-                    {
-                        Name = "Scaled-up Producers",
-                    },
-                    MaterialBreakdownHeaders = [
-                        new CalcResultScaledupProducerHeader{ Name = "Each submission for the year", ColumnIndex = 1},
-                        new CalcResultScaledupProducerHeader { Name = "Aluminium Breakdown", ColumnIndex = 2 }
-                    ],
-                    ColumnHeaders = [
-                        new CalcResultScaledupProducerHeader{ Name = "Producer ID"},
-                        new CalcResultScaledupProducerHeader { Name = "Subsidiary ID" }
-                    ],
-                    ScaledupProducers = calcResultScaledupProducers,
-                },
                 CalcResultDetail = new CalcResultDetail
                 {
                     RunId = 1,
@@ -492,6 +486,50 @@
                     RunName = "CalculatorRunName",
                 },
             };
+        }
+
+        private static IEnumerable<CalcResultScaledupProducer> GetCalcResultScaledupProducerList()
+        {
+            var scaledupProducerList = new List<CalcResultScaledupProducer>();
+
+            scaledupProducerList.Add(
+                new CalcResultScaledupProducer()
+                {
+                    ProducerId = 101001,
+                    SubsidiaryId = string.Empty,
+                    ProducerName = "Allied Packaging",
+                    Level = "1",
+                    SubmissonPeriodCode = "2024-P2",
+                    DaysInSubmissionPeriod = 91,
+                    DaysInWholePeriod = 91,
+                    ScaleupFactor = 2,
+                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterial(),
+                });
+
+            return scaledupProducerList;
+        }
+
+        private static Dictionary<string, CalcResultScaledupProducerTonnage> GetScaledupProducerTonnageByMaterial()
+        {
+            var tonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>();
+
+            tonnageByMaterial.Add(
+                "AL",
+                new CalcResultScaledupProducerTonnage()
+                {
+                    ReportedHouseholdPackagingWasteTonnage = 1000,
+                    ReportedPublicBinTonnage = 100,
+                    TotalReportedTonnage = 1100,
+                    ReportedSelfManagedConsumerWasteTonnage = 500,
+                    NetReportedTonnage = 1100,
+                    ScaledupReportedHouseholdPackagingWasteTonnage = 2000,
+                    ScaledupReportedPublicBinTonnage = 200,
+                    ScaledupTotalReportedTonnage = 2200,
+                    ScaledupReportedSelfManagedConsumerWasteTonnage = 1000,
+                    ScaledupNetReportedTonnage = 2200,
+                });
+
+            return tonnageByMaterial;
         }
     }
 }
