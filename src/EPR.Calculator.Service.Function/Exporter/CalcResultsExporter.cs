@@ -413,6 +413,7 @@
                 csvContent.Append($"{CsvSanitiser.SanitiseData(producer.SubsidiaryId)},");
                 csvContent.Append($"{CsvSanitiser.SanitiseData(producer.ProducerName)},");
                 csvContent.Append($"{CsvSanitiser.SanitiseData(producer.Level)},");
+                csvContent.Append($"{CsvSanitiser.SanitiseData(producer.isProducerScaledup)},");
 
                 foreach (var disposalFee in producer.ProducerDisposalFeesByMaterial)
                 {

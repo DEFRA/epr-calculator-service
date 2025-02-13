@@ -4,18 +4,16 @@ using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA;
 using EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts;
 using EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C;
 using EPR.Calculator.Service.Function.Builder.Summary.SaSetupCosts;
-using EPR.Calculator.Service.Function.Builder.Summary.ThreeSa;
+using EPR.Calculator.Service.Function.Builder.Summary.ThreeSA;
 using EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown;
-using EPR.Calculator.Service.Function.Builder.Summary.TotalProducerBillBreakdown;
 using EPR.Calculator.Service.Function.Builder.Summary.TwoCCommsCost;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Data.DataModels;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Models;
-using System.Globalization;
-using EPR.Calculator.Service.Function.Builder.Summary.ThreeSA;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace EPR.Calculator.Service.Function.Builder.Summary.Common;
@@ -23,18 +21,18 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common;
 public static class CalcResultSummaryUtil
 {
     public const int ResultSummaryHeaderColumnIndex = 1;
-    public const int ProducerDisposalFeesHeaderColumnIndex = 5;
-    public const int CommsCostHeaderColumnIndex = 117;
-    public const int MaterialsBreakdownHeaderInitialColumnIndex = 5;
+    public const int ProducerDisposalFeesHeaderColumnIndex = 6;
+    public const int CommsCostHeaderColumnIndex = 118;
+    public const int MaterialsBreakdownHeaderInitialColumnIndex = 6;
     public const int MaterialsBreakdownHeaderIncrementalColumnIndex = 13;
 
-    public const int DisposalFeeSummaryColumnIndex = 110;
-    public const int MaterialsBreakdownHeaderCommsInitialColumnIndex = 117;
+    public const int DisposalFeeSummaryColumnIndex = 111;
+    public const int MaterialsBreakdownHeaderCommsInitialColumnIndex = 118;
     public const int MaterialsBreakdownHeaderCommsIncrementalColumnIndex = 11;
     //Section-(1) & (2a)
-    public const int DisposalFeeCommsCostsHeaderInitialColumnIndex = 213;
+    public const int DisposalFeeCommsCostsHeaderInitialColumnIndex = 214;
     //Section-(2b)
-    private const int CommsCost2bColumnIndex = 228;
+    private const int CommsCost2bColumnIndex = 229;
     public const int decimalRoundUp = 2;
 
     public static int GetLevelIndex(List<CalcResultSummaryProducerDisposalFees> producerDisposalFeesLookup, ProducerDetail producer)
@@ -611,29 +609,30 @@ public static class CalcResultSummaryUtil
         var columnHeaders = new List<CalcResultSummaryHeader>();
 
         columnHeaders.AddRange([
-            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.ProducerId },
-            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.SubsidiaryId },
-            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.ProducerOrSubsidiaryName },
-            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.Level }
+            new () { Name = CalcResultSummaryHeaders.ProducerId },
+            new () { Name = CalcResultSummaryHeaders.SubsidiaryId },
+            new () { Name = CalcResultSummaryHeaders.ProducerOrSubsidiaryName },
+            new () { Name = CalcResultSummaryHeaders.Level },
+            new () { Name = CalcResultSummaryHeaders.ScaledupTonnages }
         ]);
 
         foreach (var material in materials)
         {
             var columnHeadersList = new List<CalcResultSummaryHeader>
             {
-                new() { Name = CalcResultSummaryHeaders.ReportedHouseholdPackagingWasteTonnage },
-                new() { Name = CalcResultSummaryHeaders.ReportedPublicBinTonnage },
-                new() { Name = CalcResultSummaryHeaders.TotalReportedTonnage },
-                new() { Name = CalcResultSummaryHeaders.ReportedSelfManagedConsumerWasteTonnage },
-                new() { Name = CalcResultSummaryHeaders.NetReportedTonnage },
-                new() { Name = CalcResultSummaryHeaders.PricePerTonne },
-                new() { Name = CalcResultSummaryHeaders.ProducerDisposalFee },
-                new() { Name = CalcResultSummaryHeaders.BadDebtProvision },
-                new() { Name = CalcResultSummaryHeaders.ProducerDisposalFeeWithBadDebtProvision },
-                new() { Name = CalcResultSummaryHeaders.EnglandWithBadDebtProvision },
-                new() { Name = CalcResultSummaryHeaders.WalesWithBadDebtProvision },
-                new() { Name = CalcResultSummaryHeaders.ScotlandWithBadDebtProvision },
-                new() { Name = CalcResultSummaryHeaders.NorthernIrelandWithBadDebtProvision }
+                new () { Name = CalcResultSummaryHeaders.HouseholdPackagingWasteTonnage },
+                new () { Name = CalcResultSummaryHeaders.PublicBinTonnage },
+                new () { Name = CalcResultSummaryHeaders.TotalTonnage },
+                new () { Name = CalcResultSummaryHeaders.SelfManagedConsumerWasteTonnage },
+                new () { Name = CalcResultSummaryHeaders.NetTonnage },
+                new () { Name = CalcResultSummaryHeaders.PricePerTonne },
+                new () { Name = CalcResultSummaryHeaders.ProducerDisposalFee },
+                new () { Name = CalcResultSummaryHeaders.BadDebtProvision },
+                new () { Name = CalcResultSummaryHeaders.ProducerDisposalFeeWithBadDebtProvision },
+                new () { Name = CalcResultSummaryHeaders.EnglandWithBadDebtProvision },
+                new () { Name = CalcResultSummaryHeaders.WalesWithBadDebtProvision },
+                new () { Name = CalcResultSummaryHeaders.ScotlandWithBadDebtProvision },
+                new () { Name = CalcResultSummaryHeaders.NorthernIrelandWithBadDebtProvision },
             };
 
             if (material.Code == MaterialCodes.Glass)
@@ -657,9 +656,9 @@ public static class CalcResultSummaryUtil
         foreach (var material in materials)
         {
             columnHeaders.AddRange([
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.ReportedHouseholdPackagingWasteTonnage },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.ReportedPublicBinTonnage },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.TotalReportedTonnage },
+                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdPackagingWasteTonnage },
+                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.PublicBinTonnage },
+                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.TotalTonnage },
                 new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.PricePerTonne },
                 new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.ProducerTotalCostWithoutBadDebtProvision },
                 new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.BadDebtProvision },
@@ -672,7 +671,7 @@ public static class CalcResultSummaryUtil
 
             if (material.Code == MaterialCodes.Glass)
             {
-                int? index = columnHeaders.FindLastIndex(t => t.Name.Equals(CalcResultSummaryHeaders.ReportedPublicBinTonnage));
+                int? index = columnHeaders.FindLastIndex(t => t.Name.Equals(CalcResultSummaryHeaders.PublicBinTonnage));
                 int t = (int)(index + 1);
                 columnHeaders.Insert(t, new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdDrinksContainersTonnage });
         }
