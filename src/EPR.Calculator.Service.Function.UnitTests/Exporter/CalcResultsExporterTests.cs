@@ -12,8 +12,6 @@
     {
         Fixture Fixture { get; } = new Fixture();
 
-        private static IEnumerable<CalcResultScaledupProducer>? calcResultScaledupProducers;
-
         [TestMethod]
         public void Export_ShouldReturnCsvContent_WhenAllDataIsPresent()
         {
