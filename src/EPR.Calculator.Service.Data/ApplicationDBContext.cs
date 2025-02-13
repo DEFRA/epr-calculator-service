@@ -65,6 +65,8 @@ namespace EPR.Calculator.Service.Function.Data
 
         public virtual DbSet<CalculatorRunCsvFileMetadata> CalculatorRunCsvFileMetadata { get; set; }
 
+        public virtual DbSet<SubmissionPeriodLookup> SubmissionPeriodLookup { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -90,6 +92,8 @@ namespace EPR.Calculator.Service.Function.Data
             modelBuilder.Entity<ProducerDetail>();
             modelBuilder.Entity<ProducerReportedMaterial>();
             modelBuilder.Entity<CalculatorRunCsvFileMetadata>();
+            modelBuilder.Entity<SubmissionPeriodLookup>()
+            .HasKey(e => e.SubmissionPeriod);
 
             modelBuilder.Entity<LapcapDataTemplateMaster>()
             .HasMany(e => e.Details)

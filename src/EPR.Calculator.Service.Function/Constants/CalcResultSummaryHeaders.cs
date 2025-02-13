@@ -19,23 +19,15 @@ namespace EPR.Calculator.Service.Function.Constants
         public static readonly string SubsidiaryId = "Subsidiary ID";
         public static readonly string ProducerOrSubsidiaryName = "Producer / Subsidiary Name";
         public static readonly string Level = "Level";
+        public static readonly string ScaledupTonnages = "Scaled-up tonnages?";
 
-        public static readonly string ReportedHouseholdPackagingWasteTonnage =
-            "Reported Household Packaging Waste Tonnage";
+        public static readonly string HouseholdPackagingWasteTonnage = "Household Packaging Waste Tonnage";
+        public static readonly string PublicBinTonnage = "Public Bin Tonnage";
+        public static readonly string HouseholdDrinksContainersTonnage = "Household Drinks Containers Tonnage - Glass";
+        public static readonly string TotalTonnage = "Total Tonnage";
+        public static readonly string SelfManagedConsumerWasteTonnage = "Self Managed Consumer Waste Tonnage";
+        public static readonly string NetTonnage = "Net Tonnage";
 
-        public static readonly string ReportedPublicBinTonnage =
-            "Reported Public Bin Tonnage";
-
-        public static readonly string HouseholdDrinksContainersTonnage =
-            "Household Drinks Containers Tonnage - Glass";
-
-        public static readonly string TotalReportedTonnage =
-            "Total Reported Tonnage";
-
-        public static readonly string ReportedSelfManagedConsumerWasteTonnage =
-            "Reported Self Managed Consumer Waste Tonnage";
-
-        public static readonly string NetReportedTonnage = "Net Reported Tonnage";
         public static readonly string PricePerTonne = "Price per Tonne";
         public static readonly string ProducerDisposalFee = "Producer Disposal Fee w/o Bad Debt Provision";
         public static readonly string BadDebtProvision = "Bad Debt Provision";
