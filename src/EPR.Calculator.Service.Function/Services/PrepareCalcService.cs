@@ -24,7 +24,7 @@
     public class PrepareCalcService : IPrepareCalcService
     {
         public PrepareCalcService(
-            ApplicationDBContext context,
+            IDbContextFactory<ApplicationDBContext> context,
             IRpdStatusDataValidator rpdStatusDataValidator,
             IOrgAndPomWrapper wrapper,
             ICalcResultBuilder builder,
@@ -34,7 +34,7 @@
             CalculatorRunValidator validationRules,
             ICommandTimeoutService commandTimeoutService)
         {
-            this.Context = context;
+            this.Context = context.CreateDbContext();
             this.rpdStatusDataValidator = rpdStatusDataValidator;
             this.Wrapper = wrapper;
             this.Builder = builder;
