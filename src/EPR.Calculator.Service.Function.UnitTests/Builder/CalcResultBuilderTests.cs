@@ -94,7 +94,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             mockOnePlusFourApportionmentBuilder.Setup(m => m.Construct(resultsRequestDto, It.IsAny<CalcResult>()))
                 .Returns(mockOnePlusFourApp.Object);
             mockCommsCostReportBuilder
-                .Setup(m => m.Construct(resultsRequestDto, It.IsAny<CalcResultOnePlusFourApportionment>()))
+                .Setup(m => m.Construct(resultsRequestDto, It.IsAny<CalcResultOnePlusFourApportionment>(), It.IsAny<CalcResult>()))
                 .ReturnsAsync(mockCalcResultCommsCost.Object);
             mockLateReportingBuilder.Setup(m => m.Construct(resultsRequestDto))
                 .ReturnsAsync(mockCalcResultLateReportingTonnage.Object);
