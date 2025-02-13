@@ -181,6 +181,26 @@
         }
 
         [TestMethod]
+        public void Export_ScaledUpProducer_ShouldIncludeHeadersAndDisplayNone_WhenNoScaledUpProducer()
+        {
+            // Arrange
+            var results = CreateCalcResult();
+            results.CalcResultScaledupProducers.ScaledupProducers = null;
+            var exporter = new CalcResultsExporter();
+
+            // Act
+            var result = exporter.Export(results);
+
+            // Assert
+            Assert.IsTrue(result.Contains("Scaled-up Producers"));
+            Assert.IsTrue(result.Contains("Each submission for the year"));
+            Assert.IsTrue(result.Contains("Aluminium Breakdown"));
+            Assert.IsTrue(result.Contains("Producer ID"));
+            Assert.IsTrue(result.Contains("Subsidiary ID"));
+            Assert.IsTrue(result.Contains("None"));
+        }
+
+        [TestMethod]
         public void Export_ShouldIncludeSummaryData_WhenNotNull()
         {
             // Arrange
