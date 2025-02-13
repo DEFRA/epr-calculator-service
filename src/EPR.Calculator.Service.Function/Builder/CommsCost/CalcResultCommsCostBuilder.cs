@@ -56,12 +56,12 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                                            {
                                                ParameterValue = defaultDetail.ParameterValue,
                                                ParameterType = defaultTemplate.ParameterType,
-                                               ParameterCategory = defaultTemplate.ParameterCategory
+                                               ParameterCategory = defaultTemplate.ParameterCategory,
                                            }).Distinct().ToListAsync();
             var materialDefaults = allDefaultResults.Where(x =>
                 x.ParameterType == CommunicationCostByMaterial && materialNames.Contains(x.ParameterCategory));
 
-            var producerReportedMaterials = await GetProducerReportedMaterials(context, runId);
+            var producerReportedMaterials = await this.GetProducerReportedMaterials(context, runId);
 
             var list = new List<CalcResultCommsCostCommsCostByMaterial>();
 
@@ -81,7 +81,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                 LateReportingTonnage = CommsCostByMaterialHeaderConstant.LateReportingTonnage,
                 ProducerReportedHouseholdPlusLateReportingTonnage = CommsCostByMaterialHeaderConstant
                     .ProducerReportedHouseholdPlusLateReportingTonnage,
-                CommsCostByMaterialPricePerTonne = CommsCostByMaterialHeaderConstant.CommsCostByMaterialPricePerTonne
+                CommsCostByMaterialPricePerTonne = CommsCostByMaterialHeaderConstant.CommsCostByMaterialPricePerTonne,
             };
             list.Add(header);
 
@@ -95,7 +95,6 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             {
                 var commsCost = GetCommsCost(materialDefaults, materialName, apportionmentDetail, culture);
                 var currentMaterial = materials.Single(x => x.Name == materialName);
-
 
                 var producerReportedTon = producerReportedMaterials.Where(x => x.MaterialId == currentMaterial.Id && x.PackagingType != PackagingTypes.PublicBin && x.PackagingType != PackagingTypes.HouseholdDrinksContainers)
                     .Sum(x => x.PackagingTonnage);
@@ -112,12 +111,9 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                 var publicBinTonnage = producerReportedMaterials.Where(p => p.MaterialId == currentMaterial.Id && p.PackagingType == PackagingTypes.PublicBin).Sum(p => p.PackagingTonnage);
                 var householdcontainers = producerReportedMaterials.Where(p => p.MaterialId == currentMaterial.Id && p.PackagingType == PackagingTypes.HouseholdDrinksContainers).Sum(p => p.PackagingTonnage);
 
-                commsCost.ReportedPublicBinTonnageValue = publicBinTonnage;
-                commsCost.HouseholdDrinksContainersValue = householdcontainers;
-
                 commsCost.ProducerReportedHouseholdPackagingWasteTonnageValue = producerReportedTon + scaledProducerTonnages.ScaledupReportedHouseholdPackagingWasteTonnage;
                 commsCost.ReportedPublicBinTonnageValue = publicBinTonnage + scaledProducerTonnages.ScaledupReportedPublicBinTonnage;
-                commsCost.HouseholdDrinksContainersValue = householdcontainers;
+                commsCost.HouseholdDrinksContainersValue = householdcontainers + scaledProducerTonnages.ScaledupHouseholdDrinksContainersTonnageGlass;
 
                 commsCost.LateReportingTonnageValue = lateReportingTonnage.ParameterValue;
                 commsCost.ProducerReportedTotalTonnage =
@@ -154,7 +150,6 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
 
             list.Add(totalRow);
             result.CalcResultCommsCostCommsCostByMaterial = list;
-
 
             var commsCostByUk =
                 allDefaultResults.Single(x =>
@@ -195,7 +190,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                               MaterialId = mat.MaterialId,
                               PackagingTonnage = mat.PackagingTonnage,
                               PackagingType = mat.PackagingType,
-                              ProducerDetail = new ProducerDetail() { ProducerId = pd.ProducerId }
+                              ProducerDetail = new ProducerDetail() { ProducerId = pd.ProducerId },
                           }).Distinct().ToListAsync();
         }
 

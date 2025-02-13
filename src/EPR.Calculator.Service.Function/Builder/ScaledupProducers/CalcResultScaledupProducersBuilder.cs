@@ -94,6 +94,13 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                 totalRow.ScaledupTotalReportedTonnage = materialValues.Sum(x => x.ScaledupTotalReportedTonnage);
                 totalRow.ScaledupReportedSelfManagedConsumerWasteTonnage = materialValues.Sum(x => x.ScaledupReportedSelfManagedConsumerWasteTonnage);
                 totalRow.ScaledupNetReportedTonnage = materialValues.Sum(x => x.ScaledupNetReportedTonnage);
+
+                if (material.Code == "GL")
+                {
+                    totalRow.HouseholdDrinksContainersTonnageGlass = materialValues.Sum(x => x.HouseholdDrinksContainersTonnageGlass);
+                    totalRow.ScaledupHouseholdDrinksContainersTonnageGlass = materialValues.Sum(x => x.ScaledupHouseholdDrinksContainersTonnageGlass);
+                }
+
                 overallTotalRow.ScaledupProducerTonnageByMaterial.Add(material.Name, totalRow);
             }
             return overallTotalRow;
@@ -255,6 +262,14 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                 scaledupProducerTonnage.ScaledupTotalReportedTonnage = scaledupProducerTonnage.TotalReportedTonnage * scaleUpFactor;
                 scaledupProducerTonnage.ScaledupReportedSelfManagedConsumerWasteTonnage = scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage * scaleUpFactor;
                 scaledupProducerTonnage.ScaledupNetReportedTonnage = scaledupProducerTonnage.NetReportedTonnage * scaleUpFactor;
+                
+                if (material.Code == "GL")
+                {
+                    scaledupProducerTonnage.HouseholdDrinksContainersTonnageGlass = hdc;
+                    scaledupProducerTonnage.TotalReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
+                                            scaledupProducerTonnage.ReportedPublicBinTonnage + scaledupProducerTonnage.HouseholdDrinksContainersTonnageGlass;
+                    scaledupProducerTonnage.ScaledupHouseholdDrinksContainersTonnageGlass = scaledupProducerTonnage.HouseholdDrinksContainersTonnageGlass * scaleUpFactor;
+                }
 
                 scaledupProducerTonnages.Add(material.Code, scaledupProducerTonnage);
             }
@@ -294,7 +309,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                 });
 
                 columnIndex = material.Code == MaterialCodes.Glass
-                    ? columnIndex + MaterialsBreakdownHeaderIncrementalColumnIndex + 1
+                    ? columnIndex + MaterialsBreakdownHeaderIncrementalColumnIndex + 2
                     : columnIndex + MaterialsBreakdownHeaderIncrementalColumnIndex;
             }
 
@@ -332,6 +347,11 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                     new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupNetReportedTonnage },
                 };
 
+                if (material.Code == "GL")
+                {
+                    columnHeadersList.Insert(2, new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.HouseholdDrinksContainersTonnageGlass });
+                    columnHeadersList.Insert(8, new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupHouseholdDrinksContainersTonnageGlass });
+                }
                 columnHeaders.AddRange(columnHeadersList);
             }
 
