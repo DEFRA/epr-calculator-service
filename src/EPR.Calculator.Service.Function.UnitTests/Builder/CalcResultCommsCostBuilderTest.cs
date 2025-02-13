@@ -9,6 +9,7 @@ using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
@@ -42,6 +43,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public void ConstructTest()
         {
             var calcResult = TestDataHelper.GetCalcResult();
+            calcResult.CalcResultScaledupProducers = GetScaledUpProducers();
 
             CreateMaterials();
             CreateDefaultTemplate();
@@ -115,12 +117,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual("Scotland", materialHeader.Scotland);
             Assert.AreEqual("Northern Ireland", materialHeader.NorthernIreland);
             Assert.AreEqual("Total", materialHeader.Total);
-            Assert.AreEqual("Producer Reported Household Packaging Waste Tonnage",
+            Assert.AreEqual("Producer Household Packaging Waste Tonnage",
                 materialHeader.ProducerReportedHouseholdPackagingWasteTonnage);
-            Assert.AreEqual("Reported Public Bin Tonnage", materialHeader.ReportedPublicBinTonnage);
-            Assert.AreEqual("Household Drinks Containers", materialHeader.HouseholdDrinksContainers);
+            Assert.AreEqual("Public Bin Tonnage", materialHeader.ReportedPublicBinTonnage);
+            Assert.AreEqual("Household Drinks Containers Tonnage", materialHeader.HouseholdDrinksContainers);
             Assert.AreEqual("Late Reporting Tonnage", materialHeader.LateReportingTonnage);
-            Assert.AreEqual("Producer Reported Household Packaging Waste Tonnage + Late Reporting Tonnage + Report Public Bin Tonnage + Household Drinks Containers",
+            Assert.AreEqual("Producer Household Packaging Waste Tonnage + Late Reporting Tonnage + Public Bin Tonnage + Household Drinks Containers Tonnage",
                 materialHeader.ProducerReportedHouseholdPlusLateReportingTonnage);
             Assert.AreEqual("Comms Cost - by Material Price Per Tonne",
                 materialHeader.CommsCostByMaterialPricePerTonne);
@@ -387,6 +389,36 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             }
 
             return 10;
+        }
+
+        private static CalcResultScaledupProducers GetScaledUpProducers()
+        {
+           return new CalcResultScaledupProducers()
+            {
+                ScaledupProducers = new List<CalcResultScaledupProducer>()
+                 {
+                     new CalcResultScaledupProducer()
+                     {
+                         IsTotalRow = true,
+                         ScaledupProducerTonnageByMaterial = new ()
+                        {
+                         ["AL"] = new CalcResultScaledupProducerTonnage
+                        {
+                            ReportedHouseholdPackagingWasteTonnage = 10,
+                            ReportedPublicBinTonnage = 10,
+                            TotalReportedTonnage = 10,
+                            ReportedSelfManagedConsumerWasteTonnage = 10,
+                            NetReportedTonnage = 10,
+                            ScaledupReportedHouseholdPackagingWasteTonnage = 10,
+                            ScaledupReportedPublicBinTonnage = 10,
+                            ScaledupTotalReportedTonnage = 10,
+                            ScaledupReportedSelfManagedConsumerWasteTonnage = 10,
+                            ScaledupNetReportedTonnage = 10,
+                        },
+                        },
+                     },
+                 },
+            };
         }
 
         private void CreateMaterials()
