@@ -185,7 +185,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            results.CalcResultScaledupProducers.ScaledupProducers = null;
+            results.CalcResultScaledupProducers.ScaledupProducers = null!;
             var exporter = new CalcResultsExporter();
 
             // Act
