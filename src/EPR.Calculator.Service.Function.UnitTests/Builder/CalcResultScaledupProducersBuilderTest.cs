@@ -23,7 +23,7 @@
             {
                 Id = 1,
                 CalculatorRunId = runId,
-                ProducerId = 10,
+                ProducerId = 11,
                 SubsidiaryId = "Subsidary 1",
             };
             dbContext.ProducerDetail.Add(producerDetail);
