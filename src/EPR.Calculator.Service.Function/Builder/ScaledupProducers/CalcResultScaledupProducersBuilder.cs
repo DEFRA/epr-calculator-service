@@ -25,8 +25,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
             this.context = context;
         }
 
-        public async Task<CalcResultScaledupProducers> Construct(CalcResultsRequestDto resultsRequestDto,
-            CalcResult calcResult)
+        public async Task<CalcResultScaledupProducers> Construct(CalcResultsRequestDto resultsRequestDto)
         {
             try
             {

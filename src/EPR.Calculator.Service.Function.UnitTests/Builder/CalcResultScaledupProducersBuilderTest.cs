@@ -1,13 +1,12 @@
 ﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
-    using System.Collections.Generic;
     using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Data;
     using EPR.Calculator.Service.Function.Data.DataModels;
+    using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Mappers;
     using EPR.Calculator.Service.Function.Models;
-    using Microsoft.Azure.Amqp.Framing;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -22,18 +21,21 @@
         {
             var producerDetail = new ProducerDetail
             {
-                CalculatorRunId = this.runId,
-                ProducerId = 10,
+                Id = 1,
+                CalculatorRunId = runId,
+                ProducerId = 11,
                 SubsidiaryId = "Subsidary 1",
             };
             this.dbContext.ProducerDetail.Add(producerDetail);
             this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
             {
+                Id = 1,
                 PackagingType = "HH",
                 ProducerDetail = producerDetail,
             });
             var calcRunPomDataMaster = new CalculatorRunPomDataMaster
             {
+                Id = 1,
                 CalendarYear = "2024",
                 EffectiveFrom = DateTime.Now,
                 CreatedAt = DateTime.Now,
@@ -42,6 +44,7 @@
             this.dbContext.CalculatorRunPomDataMaster.Add(calcRunPomDataMaster);
             this.dbContext.CalculatorRuns.Add(new CalculatorRun
             {
+                Id = runId,
                 Financial_Year = "2024-25",
                 Name = "Name",
                 CalculatorRunPomDataMaster = calcRunPomDataMaster,
@@ -106,6 +109,19 @@
         public void Teardown()
         {
             this.dbContext.Database.EnsureDeleted();
+        }
+
+        [TestMethod]
+        public void Construct()
+        {
+            PrepareScaledUpProducer();
+            var requestDto = new CalcResultsRequestDto { RunId = 1 };
+
+            var task = builder.Construct(requestDto);
+            task.Wait();
+
+            var result = task.Result;
+            Assert.IsNotNull(result);
         }
 
         [TestMethod]
