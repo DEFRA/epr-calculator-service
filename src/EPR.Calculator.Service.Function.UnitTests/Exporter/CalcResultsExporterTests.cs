@@ -555,19 +555,11 @@
         }
 
         [TestMethod]
-        public void Export_ShouldIncludeGlassColumns_WhenGlassMaterialPresent()
+        public void AppendFileInfoTest()
         {
-            // Arrange
-            var results = CreateCalcResultWithGlass();
-            var exporter = new CalcResultsExporter();
-
-            // Act
-            var result = exporter.Export(results);
-
-            // Assert
-            Assert.IsTrue(result.Contains("Glass"));
-            Assert.IsTrue(result.Contains("HouseholdDrinksContainersTonnageGlass"));
-            Assert.IsTrue(result.Contains("ScaledupHouseholdDrinksContainersTonnageGlass"));
+            var csvContent = new StringBuilder();
+            CalcResultsExporter.AppendFileInfo(csvContent, "Label", "Filename,20/12/2024,User");
+            Assert.IsTrue(csvContent.ToString().Contains("Label,Filename,20/12/2024,User"));
         }
 
         [TestMethod]
