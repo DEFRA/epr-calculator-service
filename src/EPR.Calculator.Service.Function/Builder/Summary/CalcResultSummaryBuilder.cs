@@ -1,33 +1,36 @@
-﻿using EPR.Calculator.Service.Function.Builder.Summary.Common;
-using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA;
-using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoBTotalBill;
-using EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts;
-using EPR.Calculator.Service.Function.Builder.Summary.OneAndTwoA;
-using EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C;
-using EPR.Calculator.Service.Function.Builder.Summary.SaSetupCosts;
-using EPR.Calculator.Service.Function.Builder.Summary.ThreeSA;
-using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs;
-using EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown;
-using EPR.Calculator.Service.Function.Builder.Summary.TwoCCommsCost;
-using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Data;
-using EPR.Calculator.Service.Function.Data.DataModels;
-using EPR.Calculator.Service.Function.Dtos;
-using EPR.Calculator.Service.Function.Models;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace EPR.Calculator.Service.Function.Builder.Summary
+﻿namespace EPR.Calculator.Service.Function.Builder.Summary
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using EPR.Calculator.Service.Function.Builder.Summary.Common;
+    using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA;
+    using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoBTotalBill;
+    using EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts;
+    using EPR.Calculator.Service.Function.Builder.Summary.OneAndTwoA;
+    using EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C;
+    using EPR.Calculator.Service.Function.Builder.Summary.SaSetupCosts;
+    using EPR.Calculator.Service.Function.Builder.Summary.ThreeSA;
+    using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs;
+    using EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown;
+    using EPR.Calculator.Service.Function.Builder.Summary.TwoCCommsCost;
+    using EPR.Calculator.Service.Function.Constants;
+    using EPR.Calculator.Service.Function.Data;
+    using EPR.Calculator.Service.Function.Data.DataModels;
+    using EPR.Calculator.Service.Function.Dtos;
+    using EPR.Calculator.Service.Function.Models;
+    using Microsoft.EntityFrameworkCore;
+
     public class CalcResultSummaryBuilder : ICalcResultSummaryBuilder
     {
         private readonly ApplicationDBContext context;
 
+        private IEnumerable<int> scaledupProducerIds { get; set; }
+
         public CalcResultSummaryBuilder(ApplicationDBContext context)
         {
             this.context = context;
+            this.scaledupProducerIds = new List<int>();
         }
 
         public async Task<CalcResultSummary> Construct(CalcResultsRequestDto resultsRequestDto, CalcResult calcResult)
@@ -36,6 +39,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             var runId = resultsRequestDto.RunId;
             var materialsFromDb = await context.Material.ToListAsync();
             var materials = Mappers.MaterialMapper.Map(materialsFromDb);
+
+            this.scaledupProducerIds = calcResult.CalcResultScaledupProducers.ScaledupProducers.Select(p => p.ProducerId).Distinct();
 
             var runProducerMaterialDetails = await (from pd in context.ProducerDetail
                                                     join prm in context.ProducerReportedMaterial on pd.Id equals prm.ProducerDetailId
@@ -63,7 +68,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             return result;
         }
 
-        public static CalcResultSummary GetCalcResultSummary(
+        public CalcResultSummary GetCalcResultSummary(
             IEnumerable<ProducerDetail> orderedProducerDetails,
             IEnumerable<MaterialDetail> materials,
             IEnumerable<CalcResultsProducerAndReportMaterialDetail> runProducerMaterialDetails,
@@ -163,7 +168,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     }).ToList();
         }
 
-        public static CalcResultSummaryProducerDisposalFees GetProducerTotalRow(List<ProducerDetail> producersAndSubsidiaries,
+        public CalcResultSummaryProducerDisposalFees GetProducerTotalRow(List<ProducerDetail> producersAndSubsidiaries,
             IEnumerable<MaterialDetail> materials,
             CalcResult calcResult,
             IEnumerable<CalcResultsProducerAndReportMaterialDetail> runProducerMaterialDetails,
@@ -192,7 +197,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     WalesWithBadDebtProvision = CalcResultSummaryUtil.GetWalesWithBadDebtProvisionProducerTotal(producersAndSubsidiaries, material, calcResult),
                     ScotlandWithBadDebtProvision = CalcResultSummaryUtil.GetScotlandWithBadDebtProvisionProducerTotal(producersAndSubsidiaries, material, calcResult),
                     NorthernIrelandWithBadDebtProvision = CalcResultSummaryUtil.GetNorthernIrelandWithBadDebtProvisionProducerTotal(producersAndSubsidiaries, material,
-                        calcResult)
+                        calcResult),
                 });
 
                 if (material.Code == MaterialCodes.Glass && materialCostSummary.TryGetValue(material, out var materialCost))
@@ -212,7 +217,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     WalesWithBadDebtProvision = CalcResultSummaryCommsCostTwoA.GetWalesWithBadDebtProvisionForCommsTotal(producersAndSubsidiaries, material, calcResult),
                     ScotlandWithBadDebtProvision = CalcResultSummaryCommsCostTwoA.GetScotlandWithBadDebtProvisionForCommsTotal(producersAndSubsidiaries, material, calcResult),
                     NorthernIrelandWithBadDebtProvision = CalcResultSummaryCommsCostTwoA.GetNorthernIrelandWithBadDebtProvisionForCommsTotal(producersAndSubsidiaries, material,
-                            calcResult)
+                            calcResult),
                 });
 
                 if (material.Code == MaterialCodes.Glass && commsCostSummary.TryGetValue(material, out var comm))
@@ -227,7 +232,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     ? string.Empty
                     : producersAndSubsidiaries[0].ProducerName ?? string.Empty,
                 SubsidiaryId = string.Empty,
-                Level = isOverAllTotalRow ? "Totals" : "1",
+                Level = isOverAllTotalRow ? CommonConstants.Totals : CommonConstants.LevelOne.ToString(),
+                isProducerScaledup = isOverAllTotalRow ? string.Empty : this.scaledupProducerIds.Contains(producersAndSubsidiaries[0].ProducerId) ? "Yes" : "No",
                 ProducerDisposalFeesByMaterial = materialCostSummary,
 
                 // Disposal fee summary
@@ -288,7 +294,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             return totalRow;
         }
 
-        public static CalcResultSummaryProducerDisposalFees GetProducerRow(
+        public CalcResultSummaryProducerDisposalFees GetProducerRow(
             List<CalcResultSummaryProducerDisposalFees> producerDisposalFeesLookup,
             ProducerDetail producer,
             IEnumerable<MaterialDetail> materials,
@@ -303,7 +309,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 ProducerId = producer.ProducerId.ToString(),
                 ProducerName = producer.ProducerName ?? string.Empty,
                 SubsidiaryId = producer.SubsidiaryId ?? string.Empty,
-                Level = CalcResultSummaryUtil.GetLevelIndex(producerDisposalFeesLookup, producer).ToString()
+                Level = CalcResultSummaryUtil.GetLevelIndex(producerDisposalFeesLookup, producer).ToString(),
+                isProducerScaledup = this.scaledupProducerIds.Contains(producer.ProducerId) ? "Yes" : "No",
             };
 
             foreach (var material in materials)
@@ -352,7 +359,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     EnglandWithBadDebtProvision = CalcResultSummaryCommsCostTwoA.GetEnglandWithBadDebtProvisionForComms(producer, material, calcResult),
                     WalesWithBadDebtProvision = CalcResultSummaryCommsCostTwoA.GetWalesWithBadDebtProvisionForComms(producer, material, calcResult),
                     ScotlandWithBadDebtProvision = CalcResultSummaryCommsCostTwoA.GetScotlandWithBadDebtProvisionForComms(producer, material, calcResult),
-                    NorthernIrelandWithBadDebtProvision = CalcResultSummaryCommsCostTwoA.GetNorthernIrelandWithBadDebtProvisionForComms(producer, material, calcResult)
+                    NorthernIrelandWithBadDebtProvision = CalcResultSummaryCommsCostTwoA.GetNorthernIrelandWithBadDebtProvisionForComms(producer, material, calcResult),
                 };
 
                 commsCostSummary.Add(material, calcResultSummaryProducerCommsFeesCostByMaterial);
@@ -434,7 +441,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             {
                 ProducerId = g.Key.ProducerId,
                 SubsidiaryId = g.Key.SubsidiaryId,
-                TotalPackagingTonnage = g.Sum(x => x.m.PackagingTonnage)
+                TotalPackagingTonnage = g.Sum(x => x.m.PackagingTonnage),
             }).ToList();
 
             return result;

@@ -580,7 +580,8 @@
 
             var TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, 1);
 
-            var result = CalcResultSummaryBuilder.GetCalcResultSummary(orderedProducerDetails, materials,
+            var calcResultSummaryBuilder = new CalcResultSummaryBuilder(this._context);
+            var result = calcResultSummaryBuilder.GetCalcResultSummary(orderedProducerDetails, materials,
                 runProducerMaterialDetails, _calcResult, TotalPackagingTonnage);
             Assert.IsNotNull(result);
             Assert.AreEqual(125, result.ColumnHeaders.Count());
