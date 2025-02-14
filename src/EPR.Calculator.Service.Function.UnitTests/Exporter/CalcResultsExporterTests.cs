@@ -448,11 +448,14 @@
                     },
                     MaterialBreakdownHeaders = [
                         new CalcResultScaledupProducerHeader{ Name = "Each submission for the year", ColumnIndex = 1 },
-                        new CalcResultScaledupProducerHeader { Name = "Aluminium Breakdown", ColumnIndex = 2 }
+                        new CalcResultScaledupProducerHeader { Name = "Aluminium Breakdown", ColumnIndex = 2 },
+                        new CalcResultScaledupProducerHeader { Name = "Glass Breakdown", ColumnIndex = 3 }
                     ],
                     ColumnHeaders = [
                         new CalcResultScaledupProducerHeader{ Name = "Producer ID" },
-                        new CalcResultScaledupProducerHeader { Name = "Subsidiary ID" }
+                        new CalcResultScaledupProducerHeader { Name = "Subsidiary ID" },
+                        new CalcResultScaledupProducerHeader { Name = "HouseholdDrinksContainersTonnageGlass" },
+                        new CalcResultScaledupProducerHeader { Name = "ScaledupHouseholdDrinksContainersTonnageGlass" },
                     ],
                     ScaledupProducers = GetCalcResultScaledupProducerList(),
                 },
@@ -460,7 +463,7 @@
                 {
                     ResultSummaryHeader = new CalcResultSummaryHeader
                     {
-                        Name = "SummaryData"
+                        Name = "SummaryData",
                     },
                     ProducerDisposalFeesHeaders = new List<CalcResultSummaryHeader>
                     {
@@ -547,6 +550,22 @@
             return scaledupProducerList;
         }
 
+        [TestMethod]
+        public void Export_ShouldIncludeGlassColumns_WhenGlassMaterialPresent()
+        {
+            // Arrange
+            var results = CreateCalcResultWithGlass();
+            var exporter = new CalcResultsExporter();
+
+            // Act
+            var result = exporter.Export(results);
+
+            // Assert
+            Assert.IsTrue(result.Contains("Glass"));
+            Assert.IsTrue(result.Contains("HouseholdDrinksContainersTonnageGlass"));
+            Assert.IsTrue(result.Contains("ScaledupHouseholdDrinksContainersTonnageGlass"));
+        }
+
         private static Dictionary<string, CalcResultScaledupProducerTonnage> GetScaledupProducerTonnageByMaterial()
         {
             var tonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>();
@@ -567,7 +586,72 @@
                     ScaledupNetReportedTonnage = 2200,
                 });
 
+            return tonnageByMaterial;
+        }
 
+        private static CalcResult CreateCalcResultWithGlass()
+        {
+            var result = CreateCalcResult();
+            result.CalcResultScaledupProducers.ScaledupProducers = GetCalcResultScaledupProducerListWithGlass();
+            return result;
+        }
+
+        private static IEnumerable<CalcResultScaledupProducer> GetCalcResultScaledupProducerListWithGlass()
+        {
+            var scaledupProducerList = new List<CalcResultScaledupProducer>
+            {
+                new CalcResultScaledupProducer
+                {
+                    ProducerId = 101001,
+                    SubsidiaryId = string.Empty,
+                    ProducerName = "Allied Packaging",
+                    Level = "1",
+                    SubmissonPeriodCode = "2024-P2",
+                    DaysInSubmissionPeriod = 91,
+                    DaysInWholePeriod = 91,
+                    ScaleupFactor = 2,
+                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterialWithGlass(),
+                },
+                new CalcResultScaledupProducer
+                {
+                    ProducerId = 101001,
+                    SubsidiaryId = string.Empty,
+                    ProducerName = "Allied Packaging",
+                    Level = "1",
+                    SubmissonPeriodCode = "2024-P2",
+                    DaysInSubmissionPeriod = 91,
+                    DaysInWholePeriod = 91,
+                    ScaleupFactor = 2,
+                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterialWithGlass(),
+                    IsTotalRow = true,
+                },
+            };
+            return scaledupProducerList;
+        }
+
+        private static Dictionary<string, CalcResultScaledupProducerTonnage> GetScaledupProducerTonnageByMaterialWithGlass()
+        {
+            var tonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>
+            {
+                {
+                    "GL",
+                    new CalcResultScaledupProducerTonnage
+                    {
+                        ReportedHouseholdPackagingWasteTonnage = 1000,
+                        ReportedPublicBinTonnage = 100,
+                        HouseholdDrinksContainersTonnageGlass = 50,
+                        TotalReportedTonnage = 1100,
+                        ReportedSelfManagedConsumerWasteTonnage = 500,
+                        NetReportedTonnage = 1100,
+                        ScaledupReportedHouseholdPackagingWasteTonnage = 2000,
+                        ScaledupReportedPublicBinTonnage = 200,
+                        ScaledupHouseholdDrinksContainersTonnageGlass = 100,
+                        ScaledupTotalReportedTonnage = 2200,
+                        ScaledupReportedSelfManagedConsumerWasteTonnage = 1000,
+                        ScaledupNetReportedTonnage = 2200,
+                    }
+                },
+            };
             return tonnageByMaterial;
         }
     }
