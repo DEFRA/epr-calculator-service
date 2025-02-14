@@ -389,7 +389,7 @@
                 csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(producer.ScotlandTotalWithBadDebtProvision2A, decimalRoundUp))},");
                 csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(producer.NorthernIrelandTotalWithBadDebtProvision2A, decimalRoundUp))},");
 
-                // Percentage of Producer Reported Tonnage vs All Producers
+                // Percentage of Producer Tonnage vs All Producers
                 csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(producer.PercentageofProducerReportedTonnagevsAllProducers, 8))}%,");
 
                 // 2b comms Total
