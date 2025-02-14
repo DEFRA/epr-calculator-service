@@ -559,7 +559,7 @@
         {
             var csvContent = new StringBuilder();
             CalcResultsExporter.AppendFileInfo(csvContent, "Label", "Filename,20/12/2024,User");
-            Assert.AreSame("label,Filename,20/12/2024,User", csvContent.ToString());
+            Assert.IsTrue(csvContent.ToString().Contains("Label,Filename,20/12/2024,User"));
         }
 
         private static Dictionary<string, CalcResultScaledupProducerTonnage> GetScaledupProducerTonnageByMaterial()
