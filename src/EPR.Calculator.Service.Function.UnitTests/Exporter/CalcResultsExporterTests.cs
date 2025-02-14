@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Text;
     using AutoFixture;
     using EPR.Calculator.API.Exporter;
     using EPR.Calculator.Service.Function.Models;
@@ -548,6 +549,14 @@
             ]);
 
             return scaledupProducerList;
+        }
+
+        [TestMethod]
+        public void AppendFileInfoTest()
+        {
+            var csvContent = new StringBuilder();
+            CalcResultsExporter.AppendFileInfo(csvContent, "Label", "Filename,20/12/2024,User");
+            Assert.AreSame("label,Filename,20/12/2024,User", csvContent.ToString());
         }
 
         private static Dictionary<string, CalcResultScaledupProducerTonnage> GetScaledupProducerTonnageByMaterial()

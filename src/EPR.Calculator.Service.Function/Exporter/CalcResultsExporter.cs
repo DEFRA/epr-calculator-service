@@ -203,7 +203,7 @@
             csvContent.AppendLine($"{rPDFileORG},{CsvSanitiser.SanitiseData(rpdFileORGValue)},{rPDFilePOM},{CsvSanitiser.SanitiseData(rpdFilePOMValue)}");
         }
 
-        private static void AppendFileInfo(StringBuilder csvContent, string label, string filePath)
+        public static void AppendFileInfo(StringBuilder csvContent, string label, string filePath)
         {
             var fileParts = filePath.Split(',');
             if (fileParts.Length >= 3)
