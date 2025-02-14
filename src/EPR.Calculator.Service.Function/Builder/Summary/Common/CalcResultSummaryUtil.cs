@@ -30,51 +30,45 @@ public static class CalcResultSummaryUtil
     public const int DisposalFeeSummaryColumnIndex = 111;
     public const int MaterialsBreakdownHeaderCommsInitialColumnIndex = 118;
     public const int MaterialsBreakdownHeaderCommsIncrementalColumnIndex = 11;
-    //Section-(1) & (2a)
+    // Section-(1) & (2a)
     public const int DisposalFeeCommsCostsHeaderInitialColumnIndex = 214;
-    //Section-(2b)
+    // Section-(2b)
     private const int CommsCost2bColumnIndex = 229;
     public const int decimalRoundUp = 2;
 
-    public static int GetLevelIndex(List<CalcResultSummaryProducerDisposalFees> producerDisposalFeesLookup, ProducerDetail producer)
+    public static int GetLevelIndex(
+        List<CalcResultSummaryProducerDisposalFees> producerDisposalFeesLookup,
+        ProducerDetail producer)
     {
         var totalRow = producerDisposalFeesLookup.Find(pdf => pdf.ProducerId == producer.ProducerId.ToString() && pdf.isTotalRow);
 
         return totalRow == null ? (int)CalcResultSummaryLevelIndex.One : (int)CalcResultSummaryLevelIndex.Two;
     }
 
-    //public static decimal GetHouseholdPackagingWasteTonnage(ProducerDetail producer, MaterialDetail material, List<Dictionary<string, CalcResultScaledupProducerTonnage>> scaledUpProducers)
-    //{
-    //    var result = scaledUpProducers
-    //        .SelectMany(dict => dict)
-    //        .Where(pair => pair.Key == producer.ProducerId.ToString());
-
-    //    if (result.Any())
-    //    {
-    //        var householdPackagingMaterialTonnage = scaledUpProducers
-    //            .SelectMany(dict => dict.Values)
-    //            .Sum(myClass => myClass.ScaledupReportedHouseholdPackagingWasteTonnage);
-
-    //    }
-    //    else
-    //    {
-    //        var householdPackagingMaterial = producer.ProducerReportedMaterials.FirstOrDefault(p => p.Material?.Code == material.Code && p.PackagingType == PackagingTypes.Household);
-    //    }
-
-    //    return householdPackagingMaterial != null ? householdPackagingMaterial.PackagingTonnage : 0;
-    //}
-
-    public static decimal GetHouseholdPackagingWasteTonnage(ProducerDetail producer, MaterialDetail material, List<Dictionary<string, CalcResultScaledupProducerTonnage>> scaledUpProducers)
+    public static bool IsProducerScaledup(
+        ProducerDetail producer,
+        IEnumerable<CalcResultScaledupProducer> scaledupProducers)
     {
-        var producerData = scaledUpProducers
-            .SelectMany(dict => dict)
-            .FirstOrDefault(pair => pair.Key == producer.ProducerId.ToString());
+        var scaledupProducer = scaledupProducers.FirstOrDefault(p => p.ProducerId == producer.ProducerId);
+        return scaledupProducer != null;
+    }
 
-        if (producerData.Key != null)
+    public static decimal GetHouseholdPackagingWasteTonnage(
+        ProducerDetail producer,
+        MaterialDetail material,
+        IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
+    {
+        var scaledupProducerForAllSubmissionPeriods = scaledUpProducers.Where(p => p.ProducerId == producer.ProducerId);
+
+        if (scaledupProducerForAllSubmissionPeriods != null)
         {
-            return scaledUpProducers
-                .SelectMany(dict => dict.Values)
-                .Sum(data => data.ScaledupReportedHouseholdPackagingWasteTonnage);
+            decimal tonnage = 0;
+            foreach (var item in scaledupProducerForAllSubmissionPeriods)
+            {
+                tonnage += item.ScaledupProducerTonnageByMaterial[material.Code].ScaledupReportedHouseholdPackagingWasteTonnage;
+            }
+
+            return tonnage;
         }
 
         var householdPackagingMaterial = producer.ProducerReportedMaterials
@@ -83,8 +77,24 @@ public static class CalcResultSummaryUtil
         return householdPackagingMaterial?.PackagingTonnage ?? 0;
     }
 
-    public static decimal GetPublicBinTonnage(ProducerDetail producer, MaterialDetail material)
+    public static decimal GetPublicBinTonnage(
+        ProducerDetail producer,
+        MaterialDetail material,
+        IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
     {
+        var scaledupProducerForAllSubmissionPeriods = scaledUpProducers.Where(p => p.ProducerId == producer.ProducerId);
+
+        if (scaledupProducerForAllSubmissionPeriods != null)
+        {
+            decimal tonnage = 0;
+            foreach (var item in scaledupProducerForAllSubmissionPeriods)
+            {
+                tonnage += item.ScaledupProducerTonnageByMaterial[material.Code].ReportedPublicBinTonnage;
+            }
+
+            return tonnage;
+        }
+
         var publicBinTonnageMaterial = producer.ProducerReportedMaterials.FirstOrDefault(p => p.Material?.Code == material.Code && p.PackagingType == PackagingTypes.PublicBin);
 
         return publicBinTonnageMaterial?.PackagingTonnage ?? 0;
@@ -97,16 +107,22 @@ public static class CalcResultSummaryUtil
         return holdDrinksContainersMaterial?.PackagingTonnage ?? 0;
     }
 
-    public static decimal GetReportedTonnage(ProducerDetail producer, MaterialDetail material, List<Dictionary<string, CalcResultScaledupProducerTonnage>> scaledUpProducers)
+    public static decimal GetReportedTonnage(
+        ProducerDetail producer,
+        MaterialDetail material,
+        IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
     {
         var householdPackagingWasteTonnage = GetHouseholdPackagingWasteTonnage(producer, material, scaledUpProducers);
-        var publicBinTonnageMaterial = GetPublicBinTonnage(producer, material);
+        var publicBinTonnageMaterial = GetPublicBinTonnage(producer, material, scaledUpProducers);
         var householdDrinksContainers = GetHouseholdDrinksContainersTonnage(producer, material);
 
         return material.Code != MaterialCodes.Glass ? householdPackagingWasteTonnage + publicBinTonnageMaterial : householdPackagingWasteTonnage + publicBinTonnageMaterial + householdDrinksContainers;
     }
 
-    public static decimal GetHouseholdPackagingWasteTonnageProducerTotal(IEnumerable<ProducerDetail> producers, MaterialDetail material, List<Dictionary<string, CalcResultScaledupProducerTonnage>> scaledUpProducers)
+    public static decimal GetHouseholdPackagingWasteTonnageProducerTotal(
+        IEnumerable<ProducerDetail> producers,
+        MaterialDetail material,
+        IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
     {
         decimal totalCost = 0;
 
@@ -118,49 +134,83 @@ public static class CalcResultSummaryUtil
         return totalCost;
     }
 
-    public static decimal GetPublicBinTonnageProducerTotal(IEnumerable<ProducerDetail> producers, MaterialDetail material)
+    public static decimal GetPublicBinTonnageProducerTotal(
+        IEnumerable<ProducerDetail> producers,
+        MaterialDetail material,
+        IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
     {
-        return producers.Sum(producer => GetPublicBinTonnage(producer, material));
+        return producers.Sum(producer => GetPublicBinTonnage(producer, material, scaledUpProducers));
     }
 
-    public static decimal GetHouseholdDrinksContainersTonnageProducerTotal(IEnumerable<ProducerDetail> producers, MaterialDetail material)
+    public static decimal GetHouseholdDrinksContainersTonnageProducerTotal(
+        IEnumerable<ProducerDetail> producers,
+        MaterialDetail material)
     {
         return producers.Sum(producer => GetHouseholdDrinksContainersTonnage(producer, material));
     }
 
-    public static decimal GetReportedTonnageProducerTotal(IEnumerable<ProducerDetail> producers, MaterialDetail material, List<Dictionary<string, CalcResultScaledupProducerTonnage>> scaledUpProducers)
+    public static decimal GetReportedTonnageProducerTotal(
+        IEnumerable<ProducerDetail> producers,
+        MaterialDetail material,
+        IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
     {
         return producers.Sum(producer => GetReportedTonnage(producer, material, scaledUpProducers));
     }
 
-    public static decimal GetManagedConsumerWasteTonnage(ProducerDetail producer, MaterialDetail material)
+    public static decimal GetManagedConsumerWasteTonnage(
+        ProducerDetail producer,
+        MaterialDetail material,
+        IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
     {
-        var consumerWastePackagingMaterial = producer.ProducerReportedMaterials.FirstOrDefault(p => p.Material?.Code == material.Code && p.PackagingType == "CW");
+        var scaledupProducerForAllSubmissionPeriods = scaledUpProducers.Where(p => p.ProducerId == producer.ProducerId);
+
+        if (scaledupProducerForAllSubmissionPeriods != null)
+        {
+            decimal tonnage = 0;
+            foreach (var item in scaledupProducerForAllSubmissionPeriods)
+            {
+                tonnage += item.ScaledupProducerTonnageByMaterial[material.Code].ScaledupReportedHouseholdPackagingWasteTonnage;
+            }
+
+            return tonnage;
+        }
+
+        var consumerWastePackagingMaterial = producer.ProducerReportedMaterials
+            .FirstOrDefault(p => p.Material?.Code == material.Code && p.PackagingType == PackagingTypes.ConsumerWaste);
 
         return consumerWastePackagingMaterial != null ? consumerWastePackagingMaterial.PackagingTonnage : 0;
     }
 
-    public static decimal GetManagedConsumerWasteTonnageProducerTotal(IEnumerable<ProducerDetail> producers, MaterialDetail material)
+    public static decimal GetManagedConsumerWasteTonnageProducerTotal(
+        IEnumerable<ProducerDetail> producers,
+        MaterialDetail material,
+        IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
     {
         decimal totalCost = 0;
 
         foreach (var producer in producers)
         {
-            totalCost += GetManagedConsumerWasteTonnage(producer, material);
+            totalCost += GetManagedConsumerWasteTonnage(producer, material, scaledUpProducers);
         }
 
         return totalCost;
     }
 
-    public static decimal GetNetReportedTonnage(ProducerDetail producer, MaterialDetail material, List<Dictionary<string, CalcResultScaledupProducerTonnage>> scaledUpProducers)
+    public static decimal GetNetReportedTonnage(
+        ProducerDetail producer,
+        MaterialDetail material,
+        IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
     {
         var reportedTonnage = GetReportedTonnage(producer, material, scaledUpProducers);
-        var managedConsumerWasteTonnage = GetManagedConsumerWasteTonnage(producer, material);
+        var managedConsumerWasteTonnage = GetManagedConsumerWasteTonnage(producer, material, scaledUpProducers);
 
         return reportedTonnage - managedConsumerWasteTonnage;
     }
 
-    public static decimal GetNetReportedTonnageProducerTotal(IEnumerable<ProducerDetail> producers, MaterialDetail material, List<Dictionary<string, CalcResultScaledupProducerTonnage>> scaledUpProducers)
+    public static decimal GetNetReportedTonnageProducerTotal(
+        IEnumerable<ProducerDetail> producers,
+        MaterialDetail material,
+        IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
     {
         decimal totalCost = 0;
 
@@ -172,7 +222,9 @@ public static class CalcResultSummaryUtil
         return totalCost;
     }
 
-    public static decimal GetPricePerTonne(MaterialDetail material, CalcResult calcResult)
+    public static decimal GetPricePerTonne(
+        MaterialDetail material,
+        CalcResult calcResult)
     {
         var laDisposalCostDataDetail = calcResult.CalcResultLaDisposalCostData.CalcResultLaDisposalCostDetails.FirstOrDefault(la => la.Name == material.Name);
 
@@ -186,7 +238,11 @@ public static class CalcResultSummaryUtil
         return isParseSuccessful ? value : 0;
     }
 
-    public static decimal GetProducerDisposalFee(ProducerDetail producer, MaterialDetail material, CalcResult calcResult, List<Dictionary<string, CalcResultScaledupProducerTonnage>> scaledUpProducers)
+    public static decimal GetProducerDisposalFee(
+        ProducerDetail producer,
+        MaterialDetail material,
+        CalcResult calcResult,
+        IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
     {
         var netReportedTonnage = GetNetReportedTonnage(producer, material, scaledUpProducers);
         var pricePerTonne = GetPricePerTonne(material, calcResult);
@@ -194,7 +250,11 @@ public static class CalcResultSummaryUtil
         return netReportedTonnage * pricePerTonne;
     }
 
-    public static decimal GetProducerDisposalFeeProducerTotal(IEnumerable<ProducerDetail> producers, MaterialDetail material, CalcResult calcResult, List<Dictionary<string, CalcResultScaledupProducerTonnage>> scaledUpProducers)
+    public static decimal GetProducerDisposalFeeProducerTotal(
+        IEnumerable<ProducerDetail> producers,
+        MaterialDetail material,
+        CalcResult calcResult,
+        IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
     {
         decimal totalCost = 0;
 
@@ -206,7 +266,11 @@ public static class CalcResultSummaryUtil
         return totalCost;
     }
 
-    public static decimal GetBadDebtProvision(ProducerDetail producer, MaterialDetail material, CalcResult calcResult, List<Dictionary<string, CalcResultScaledupProducerTonnage>> scaledUpProducers)
+    public static decimal GetBadDebtProvision(
+        ProducerDetail producer,
+        MaterialDetail material,
+        CalcResult calcResult,
+        IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
     {
         var producerDisposalFee = GetProducerDisposalFee(producer, material, calcResult, scaledUpProducers);
 
@@ -220,7 +284,11 @@ public static class CalcResultSummaryUtil
         return 0;
     }
 
-    public static decimal GetBadDebtProvisionProducerTotal(IEnumerable<ProducerDetail> producers, MaterialDetail material, CalcResult calcResult, List<Dictionary<string, CalcResultScaledupProducerTonnage>> scaledUpProducers)
+    public static decimal GetBadDebtProvisionProducerTotal(
+        IEnumerable<ProducerDetail> producers,
+        MaterialDetail material,
+        CalcResult calcResult,
+        IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
     {
         decimal totalCost = 0;
 
@@ -232,7 +300,11 @@ public static class CalcResultSummaryUtil
         return totalCost;
     }
 
-    public static decimal GetProducerDisposalFeeWithBadDebtProvision(ProducerDetail producer, MaterialDetail material, CalcResult calcResult, List<Dictionary<string, CalcResultScaledupProducerTonnage>> scaledUpProducers)
+    public static decimal GetProducerDisposalFeeWithBadDebtProvision(
+        ProducerDetail producer,
+        MaterialDetail material,
+        CalcResult calcResult,
+        IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
     {
         var producerDisposalFee = GetProducerDisposalFee(producer, material, calcResult, scaledUpProducers);
 
@@ -246,7 +318,11 @@ public static class CalcResultSummaryUtil
         return 0;
     }
 
-    public static decimal GetProducerDisposalFeeWithBadDebtProvisionProducerTotal(IEnumerable<ProducerDetail> producers, MaterialDetail material, CalcResult calcResult, List<Dictionary<string, CalcResultScaledupProducerTonnage>> scaledUpProducers)
+    public static decimal GetProducerDisposalFeeWithBadDebtProvisionProducerTotal(
+        IEnumerable<ProducerDetail> producers,
+        MaterialDetail material,
+        CalcResult calcResult,
+        IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
     {
         decimal totalCost = 0;
 
@@ -258,7 +334,11 @@ public static class CalcResultSummaryUtil
         return totalCost;
     }
 
-    public static decimal GetEnglandWithBadDebtProvision(ProducerDetail producer, MaterialDetail material, CalcResult calcResult, List<Dictionary<string, CalcResultScaledupProducerTonnage>> scaledUpProducers)
+    public static decimal GetEnglandWithBadDebtProvision(
+        ProducerDetail producer,
+        MaterialDetail material,
+        CalcResult calcResult,
+        IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
     {
         var producerDisposalFeeWithBadDebtProvision = GetProducerDisposalFeeWithBadDebtProvision(producer, material, calcResult, scaledUpProducers);
 
@@ -273,7 +353,11 @@ public static class CalcResultSummaryUtil
         return isParseSuccessful ? producerDisposalFeeWithBadDebtProvision * value / 100 : 0;
     }
 
-    public static decimal GetEnglandWithBadDebtProvisionProducerTotal(IEnumerable<ProducerDetail> producers, MaterialDetail material, CalcResult calcResult, List<Dictionary<string, CalcResultScaledupProducerTonnage>> scaledUpProducers)
+    public static decimal GetEnglandWithBadDebtProvisionProducerTotal(
+        IEnumerable<ProducerDetail> producers,
+        MaterialDetail material,
+        CalcResult calcResult,
+        IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
     {
         decimal totalCost = 0;
 
@@ -285,7 +369,11 @@ public static class CalcResultSummaryUtil
         return totalCost;
     }
 
-    public static decimal GetWalesWithBadDebtProvision(ProducerDetail producer, MaterialDetail material, CalcResult calcResult, List<Dictionary<string, CalcResultScaledupProducerTonnage>> scaledUpProducers)
+    public static decimal GetWalesWithBadDebtProvision(
+        ProducerDetail producer,
+        MaterialDetail material,
+        CalcResult calcResult,
+        IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
     {
         var producerDisposalFeeWithBadDebtProvision = GetProducerDisposalFeeWithBadDebtProvision(producer, material, calcResult, scaledUpProducers);
 
@@ -300,7 +388,11 @@ public static class CalcResultSummaryUtil
         return isParseSuccessful ? producerDisposalFeeWithBadDebtProvision * value / 100 : 0;
     }
 
-    public static decimal GetWalesWithBadDebtProvisionProducerTotal(IEnumerable<ProducerDetail> producers, MaterialDetail material, CalcResult calcResult, List<Dictionary<string, CalcResultScaledupProducerTonnage>> scaledUpProducers)
+    public static decimal GetWalesWithBadDebtProvisionProducerTotal(
+        IEnumerable<ProducerDetail> producers,
+        MaterialDetail material,
+        CalcResult calcResult,
+        IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
     {
         decimal totalCost = 0;
 
@@ -312,7 +404,11 @@ public static class CalcResultSummaryUtil
         return totalCost;
     }
 
-    public static decimal GetScotlandWithBadDebtProvision(ProducerDetail producer, MaterialDetail material, CalcResult calcResult, List<Dictionary<string, CalcResultScaledupProducerTonnage>> scaledUpProducers)
+    public static decimal GetScotlandWithBadDebtProvision(
+        ProducerDetail producer,
+        MaterialDetail material,
+        CalcResult calcResult,
+        IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
     {
         var producerDisposalFeeWithBadDebtProvision = GetProducerDisposalFeeWithBadDebtProvision(producer, material, calcResult, scaledUpProducers);
 
@@ -327,7 +423,11 @@ public static class CalcResultSummaryUtil
         return isParseSuccessful ? producerDisposalFeeWithBadDebtProvision * value / 100 : 0;
     }
 
-    public static decimal GetScotlandWithBadDebtProvisionProducerTotal(IEnumerable<ProducerDetail> producers, MaterialDetail material, CalcResult calcResult, List<Dictionary<string, CalcResultScaledupProducerTonnage>> scaledUpProducers)
+    public static decimal GetScotlandWithBadDebtProvisionProducerTotal(
+        IEnumerable<ProducerDetail> producers,
+        MaterialDetail material,
+        CalcResult calcResult,
+        IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
     {
         decimal totalCost = 0;
 
@@ -339,7 +439,11 @@ public static class CalcResultSummaryUtil
         return totalCost;
     }
 
-    public static decimal GetNorthernIrelandWithBadDebtProvision(ProducerDetail producer, MaterialDetail material, CalcResult calcResult, List<Dictionary<string, CalcResultScaledupProducerTonnage>> scaledUpProducers)
+    public static decimal GetNorthernIrelandWithBadDebtProvision(
+        ProducerDetail producer,
+        MaterialDetail material,
+        CalcResult calcResult,
+        IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
     {
         var producerDisposalFeeWithBadDebtProvision = GetProducerDisposalFeeWithBadDebtProvision(producer, material, calcResult, scaledUpProducers);
 
@@ -354,7 +458,11 @@ public static class CalcResultSummaryUtil
         return isParseSuccessful ? producerDisposalFeeWithBadDebtProvision * value / 100 : 0;
     }
 
-    public static decimal GetNorthernIrelandWithBadDebtProvisionProducerTotal(IEnumerable<ProducerDetail> producers, MaterialDetail material, CalcResult calcResult, List<Dictionary<string, CalcResultScaledupProducerTonnage>> scaledUpProducers)
+    public static decimal GetNorthernIrelandWithBadDebtProvisionProducerTotal(
+        IEnumerable<ProducerDetail> producers,
+        MaterialDetail material,
+        CalcResult calcResult,
+        IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
     {
         decimal totalCost = 0;
 
@@ -455,7 +563,11 @@ public static class CalcResultSummaryUtil
         return totalNorthernIreland;
     }
 
-    public static decimal GetTotal1Plus2ABadDebt(IEnumerable<ProducerDetail> producers, IEnumerable<MaterialDetail> materials, CalcResult calcResult, List<Dictionary<string, CalcResultScaledupProducerTonnage>> scaledUpProducers)
+    public static decimal GetTotal1Plus2ABadDebt(
+        IEnumerable<ProducerDetail> producers,
+        IEnumerable<MaterialDetail> materials,
+        CalcResult calcResult,
+        IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
     {
         decimal total = 0m;
 
@@ -474,7 +586,7 @@ public static class CalcResultSummaryUtil
         result.ResultSummaryHeader = new CalcResultSummaryHeader
         {
             Name = CalcResultSummaryHeaders.CalculationResult,
-            ColumnIndex = ResultSummaryHeaderColumnIndex
+            ColumnIndex = ResultSummaryHeaderColumnIndex,
         };
 
         result.ProducerDisposalFeesHeaders = GetProducerDisposalFeesHeaders();
@@ -489,11 +601,11 @@ public static class CalcResultSummaryUtil
         var resultSummaryHeaders = new List<CalcResultSummaryHeader>();
 
         resultSummaryHeaders.AddRange([
-            //Section-1 Title headers
+            // Section-1 Title headers
             new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.OneProducerDisposalFeesWithBadDebtProvision, ColumnIndex = ProducerDisposalFeesHeaderColumnIndex },
             new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.CommsCostHeader, ColumnIndex = CommsCostHeaderColumnIndex },
-                
-            //Section-(1) & (2a) Title headers   
+
+            // Section-(1) & (2a) Title headers
             new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.FeeforLADisposalCostswoBadDebtprovision1, ColumnIndex = DisposalFeeCommsCostsHeaderInitialColumnIndex },
             new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.BadDebtProvision,ColumnIndex = DisposalFeeCommsCostsHeaderInitialColumnIndex + 1 },
             new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.FeeforLADisposalCostswithBadDebtprovision1, ColumnIndex = DisposalFeeCommsCostsHeaderInitialColumnIndex + 2 },
@@ -501,7 +613,7 @@ public static class CalcResultSummaryUtil
             new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.BadDebtProvision, ColumnIndex = DisposalFeeCommsCostsHeaderInitialColumnIndex + 8 },
             new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.FeeforCommsCostsbyMaterialwithBadDebtprovision2A,ColumnIndex = DisposalFeeCommsCostsHeaderInitialColumnIndex + 9 },
 
-            //Section-2b Title headers
+            // Section-2b Title headers
             new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.CommsCostHeaderWithoutBadDebtFor2bTitle, ColumnIndex = CommsCost2bColumnIndex },
             new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.CommsCostHeaderBadDebtProvisionFor2bTitle, ColumnIndex = CommsCost2bColumnIndex + 1 },
             new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.CommsCostHeaderWithBadDebtFor2bTitle, ColumnIndex = CommsCost2bColumnIndex + 2 },
@@ -511,34 +623,26 @@ public static class CalcResultSummaryUtil
         ]);
 
         // Section Total bill (1 + 2a + 2b + 2c)
-        resultSummaryHeaders.AddRange(
-            OnePlus2A2B2CProducer.GetSummaryHeaders()
-        );
+        resultSummaryHeaders.AddRange(OnePlus2A2B2CProducer.GetSummaryHeaders());
 
         // Section-3 Title headers
-        resultSummaryHeaders.AddRange(
-            ThreeSaCostsSummary.GetHeaders()
-        );
+        resultSummaryHeaders.AddRange(ThreeSaCostsSummary.GetHeaders());
 
         // Section-4 Title headers
-        resultSummaryHeaders.AddRange(
-            LaDataPrepCostsProducer.GetSummaryHeaders()
-        );
+        resultSummaryHeaders.AddRange(LaDataPrepCostsProducer.GetSummaryHeaders());
 
         // Section-5 Title headers
-        resultSummaryHeaders.AddRange(
-            SaSetupCostsSummary.GetHeaders()
-        );
+        resultSummaryHeaders.AddRange(SaSetupCostsSummary.GetHeaders());
 
         // Section Total bill headers
-        resultSummaryHeaders.AddRange(
-            TotalBillBreakdownProducer.GetSummaryHeaders()
-        );
+        resultSummaryHeaders.AddRange(TotalBillBreakdownProducer.GetSummaryHeaders());
 
         return resultSummaryHeaders;
     }
 
-    public static List<CalcResultSummaryHeader> GetMaterialsBreakdownHeader(CalcResultSummary result, IEnumerable<MaterialDetail> materials)
+    public static List<CalcResultSummaryHeader> GetMaterialsBreakdownHeader(
+        CalcResultSummary result,
+        IEnumerable<MaterialDetail> materials)
     {
         var materialsBreakdownHeaders = new List<CalcResultSummaryHeader>();
         var columnIndex = MaterialsBreakdownHeaderInitialColumnIndex;
@@ -548,7 +652,7 @@ public static class CalcResultSummaryUtil
             materialsBreakdownHeaders.Add(new CalcResultSummaryHeader
             {
                 Name = $"{material.Name} Breakdown",
-                ColumnIndex = columnIndex
+                ColumnIndex = columnIndex,
             });
 
             columnIndex = material.Code == MaterialCodes.Glass
@@ -560,7 +664,7 @@ public static class CalcResultSummaryUtil
         materialsBreakdownHeaders.Add(new CalcResultSummaryHeader
         {
             Name = CalcResultSummaryHeaders.DisposalFeeSummary,
-            ColumnIndex = DisposalFeeSummaryColumnIndex
+            ColumnIndex = DisposalFeeSummaryColumnIndex,
         });
 
         var commsCostColumnIndex = MaterialsBreakdownHeaderCommsInitialColumnIndex;
@@ -570,7 +674,7 @@ public static class CalcResultSummaryUtil
             materialsBreakdownHeaders.Add(new CalcResultSummaryHeader
             {
                 Name = $"{material.Name} Breakdown",
-                ColumnIndex = commsCostColumnIndex
+                ColumnIndex = commsCostColumnIndex,
             });
             commsCostColumnIndex = commsCostColumnIndex + (material.Code == MaterialCodes.Glass ?
                 MaterialsBreakdownHeaderCommsIncrementalColumnIndex + 1 :
@@ -580,27 +684,27 @@ public static class CalcResultSummaryUtil
         materialsBreakdownHeaders.Add(new CalcResultSummaryHeader
         {
             Name = CalcResultSummaryHeaders.CommsCostSummaryHeader,
-            ColumnIndex = commsCostColumnIndex
+            ColumnIndex = commsCostColumnIndex,
         });
 
-        //Section-(1) & (2a)
+        // Section-(1) & (2a)
         materialsBreakdownHeaders.AddRange([
             new CalcResultSummaryHeader { Name = $"£{Math.Round(result.TotalFeeforLADisposalCostswoBadDebtprovision1, decimalRoundUp)}", ColumnIndex = DisposalFeeCommsCostsHeaderInitialColumnIndex },
-            new CalcResultSummaryHeader { Name = $"£{Math.Round(result.BadDebtProvisionFor1, decimalRoundUp)}", ColumnIndex = DisposalFeeCommsCostsHeaderInitialColumnIndex+1 },
-            new CalcResultSummaryHeader { Name = $"£{Math.Round(result.TotalFeeforLADisposalCostswithBadDebtprovision1, decimalRoundUp)}",ColumnIndex = DisposalFeeCommsCostsHeaderInitialColumnIndex+2 }
+            new CalcResultSummaryHeader { Name = $"£{Math.Round(result.BadDebtProvisionFor1, decimalRoundUp)}", ColumnIndex = DisposalFeeCommsCostsHeaderInitialColumnIndex + 1 },
+            new CalcResultSummaryHeader { Name = $"£{Math.Round(result.TotalFeeforLADisposalCostswithBadDebtprovision1, decimalRoundUp)}", ColumnIndex = DisposalFeeCommsCostsHeaderInitialColumnIndex + 2 }
         ]);
 
         materialsBreakdownHeaders.AddRange([
             new CalcResultSummaryHeader { Name = $"£{Math.Round(result.TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A, decimalRoundUp)}", ColumnIndex = DisposalFeeCommsCostsHeaderInitialColumnIndex + 7 },
-            new CalcResultSummaryHeader { Name = $"£{Math.Round(result.BadDebtProvisionFor2A, decimalRoundUp)}",ColumnIndex = DisposalFeeCommsCostsHeaderInitialColumnIndex+8 },
-            new CalcResultSummaryHeader { Name = $"£{Math.Round(result.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A, decimalRoundUp)}",ColumnIndex = DisposalFeeCommsCostsHeaderInitialColumnIndex+9 }
+            new CalcResultSummaryHeader { Name = $"£{Math.Round(result.BadDebtProvisionFor2A, decimalRoundUp)}", ColumnIndex = DisposalFeeCommsCostsHeaderInitialColumnIndex + 8 },
+            new CalcResultSummaryHeader { Name = $"£{Math.Round(result.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A, decimalRoundUp)}", ColumnIndex = DisposalFeeCommsCostsHeaderInitialColumnIndex + 9 }
         ]);
 
         // 2b comms total bill
         materialsBreakdownHeaders.AddRange([
             new CalcResultSummaryHeader { Name = $"£{Math.Round(result.CommsCostHeaderWithoutBadDebtFor2bTitle, decimalRoundUp)}", ColumnIndex = CommsCost2bColumnIndex },
-            new CalcResultSummaryHeader { Name = $"£{Math.Round(result.CommsCostHeaderBadDebtProvisionFor2bTitle,decimalRoundUp)}",ColumnIndex = CommsCost2bColumnIndex+1 },
-            new CalcResultSummaryHeader { Name = $"£{Math.Round(result.CommsCostHeaderWithBadDebtFor2bTitle, decimalRoundUp)}",ColumnIndex = CommsCost2bColumnIndex+2 },
+            new CalcResultSummaryHeader { Name = $"£{Math.Round(result.CommsCostHeaderBadDebtProvisionFor2bTitle,decimalRoundUp)}", ColumnIndex = CommsCost2bColumnIndex + 1 },
+            new CalcResultSummaryHeader { Name = $"£{Math.Round(result.CommsCostHeaderWithBadDebtFor2bTitle, decimalRoundUp)}", ColumnIndex = CommsCost2bColumnIndex + 2 },
          ]);
 
         materialsBreakdownHeaders.AddRange([
@@ -617,14 +721,14 @@ public static class CalcResultSummaryUtil
         //Section-3 -first header
         materialsBreakdownHeaders.AddRange([
            new CalcResultSummaryHeader { Name = $"£{Math.Round(result.SaOperatingCostsWoTitleSection3, decimalRoundUp)}", ColumnIndex = ThreeSaCostsSummary.ColumnIndex },
-            new CalcResultSummaryHeader { Name = $"£{Math.Round(result.BadDebtProvisionTitleSection3, decimalRoundUp)}" ,ColumnIndex = ThreeSaCostsSummary.ColumnIndex +1},
-            new CalcResultSummaryHeader { Name = $"£{Math.Round(result.SaOperatingCostsWithTitleSection3, decimalRoundUp)}", ColumnIndex = ThreeSaCostsSummary.ColumnIndex +2 }
+            new CalcResultSummaryHeader { Name = $"£{Math.Round(result.BadDebtProvisionTitleSection3, decimalRoundUp)}", ColumnIndex = ThreeSaCostsSummary.ColumnIndex + 1 },
+            new CalcResultSummaryHeader { Name = $"£{Math.Round(result.SaOperatingCostsWithTitleSection3, decimalRoundUp)}", ColumnIndex = ThreeSaCostsSummary.ColumnIndex + 2 }
          ]);
 
         // LA data prep costs section 4
         materialsBreakdownHeaders.AddRange([
             new CalcResultSummaryHeader { Name = $"£{Math.Round(result.LaDataPrepCostsTitleSection4, decimalRoundUp)}", ColumnIndex = LaDataPrepCostsProducer.ColumnIndex },
-            new CalcResultSummaryHeader { Name = $"£{Math.Round(result.LaDataPrepCostsBadDebtProvisionTitleSection4, decimalRoundUp)}" ,ColumnIndex = LaDataPrepCostsProducer.ColumnIndex + 1 },
+            new CalcResultSummaryHeader { Name = $"£{Math.Round(result.LaDataPrepCostsBadDebtProvisionTitleSection4, decimalRoundUp)}", ColumnIndex = LaDataPrepCostsProducer.ColumnIndex + 1 },
             new CalcResultSummaryHeader { Name = $"£{Math.Round(result.LaDataPrepCostsWithBadDebtProvisionTitleSection4, decimalRoundUp)}", ColumnIndex = LaDataPrepCostsProducer.ColumnIndex + 2 }
         ]);
 
@@ -632,7 +736,7 @@ public static class CalcResultSummaryUtil
         materialsBreakdownHeaders.AddRange([
             new CalcResultSummaryHeader { Name = $"£{Math.Round(result.SaSetupCostsTitleSection5, decimalRoundUp)}", ColumnIndex = SaSetupCostsSummary.ColumnIndex },
             new CalcResultSummaryHeader { Name = $"£{Math.Round(result.SaSetupCostsBadDebtProvisionTitleSection5, decimalRoundUp)}", ColumnIndex = SaSetupCostsSummary.ColumnIndex + 1 },
-            new CalcResultSummaryHeader { Name = $"£{Math.Round(result.SaSetupCostsWithBadDebtProvisionTitleSection5, decimalRoundUp)}",ColumnIndex = SaSetupCostsSummary.ColumnIndex + 2 }
+            new CalcResultSummaryHeader { Name = $"£{Math.Round(result.SaSetupCostsWithBadDebtProvisionTitleSection5, decimalRoundUp)}", ColumnIndex = SaSetupCostsSummary.ColumnIndex + 2 }
         ]);
 
         return materialsBreakdownHeaders;
@@ -721,7 +825,7 @@ public static class CalcResultSummaryUtil
             new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.NorthernIrelandTotalwithBadDebtprovision }
         ]);
 
-        //Section-(1) & (2a)
+        // Section-(1) & (2a)
         columnHeaders.AddRange([
             new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.TotalProducerFeeforLADisposalCostswoBadDebtprovision, ColumnIndex = DisposalFeeCommsCostsHeaderInitialColumnIndex },
             new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.BadDebtProvisionFor1 },
@@ -747,7 +851,7 @@ public static class CalcResultSummaryUtil
             new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.PercentageofProducerReportedTonnagevsAllProducers },
         ]);
 
-        // 2b comms total.
+        // 2b comms total
         columnHeaders.AddRange([
             new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.ProducerFeeWithoutBadDebtForComms2b, ColumnIndex = CommsCost2bColumnIndex },
                 new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.BadDebtProvisionForComms2b },
@@ -758,7 +862,7 @@ public static class CalcResultSummaryUtil
                 new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.NorthernIrelandTotalWithBadDebtProvisionForComms2b }
         ]);
 
-        // 2c comms total.
+        // 2c comms total
         columnHeaders.AddRange([
             new CalcResultSummaryHeader { Name = TwoCCommsCostSubColumnHeader.TwoCCommsCostCountryInPropertionWithoutBadDebt, ColumnIndex = TwoCCommsCostColumnIndex.Value },
             new CalcResultSummaryHeader { Name = TwoCCommsCostSubColumnHeader.TwoCCommsCostBadDebtProvision },
@@ -770,29 +874,19 @@ public static class CalcResultSummaryUtil
         ]);
 
         // Section Total bill (1 + 2a + 2b + 2c)
-        columnHeaders.AddRange(
-            OnePlus2A2B2CProducer.GetHeaders()
-        );
+        columnHeaders.AddRange(OnePlus2A2B2CProducer.GetHeaders());
 
         // SA operating cost section 3
-        columnHeaders.AddRange(
-            ThreeSaCostsProducer.GetHeaders()
-        );
+        columnHeaders.AddRange(ThreeSaCostsProducer.GetHeaders());
 
         // Section-4 LA data prep costs column headers
-        columnHeaders.AddRange(
-            LaDataPrepCostsProducer.GetHeaders()
-        );
+        columnHeaders.AddRange(LaDataPrepCostsProducer.GetHeaders());
 
         // Section-5 SA setup costs column headers
-        columnHeaders.AddRange(
-            SaSetupCostsProducer.GetHeaders()
-        );
+        columnHeaders.AddRange(SaSetupCostsProducer.GetHeaders());
 
         // Section-TotalBill column headers
-        columnHeaders.AddRange(
-            TotalBillBreakdownProducer.GetHeaders()
-        );
+        columnHeaders.AddRange(TotalBillBreakdownProducer.GetHeaders());
 
         return columnHeaders;
     }
@@ -886,7 +980,9 @@ public static class CalcResultSummaryUtil
         return calcResult.CalcResultCommsCostReportDetail.CommsCostByCountry.ToList()[1].TotalValue;
     }
 
-    public static decimal GetCommsCostHeaderBadDebtProvisionFor2bTitle(CalcResult calcResult, CalcResultSummary calcResultSummary)
+    public static decimal GetCommsCostHeaderBadDebtProvisionFor2bTitle(
+        CalcResult calcResult,
+        CalcResultSummary calcResultSummary)
     {
         var commsCost = calcResultSummary.CommsCostHeaderWithoutBadDebtFor2bTitle;
         var badDebtProvision = Convert.ToDecimal(calcResult.CalcResultParameterOtherCost.BadDebtProvision.Value.Trim('%')) / 100;
@@ -900,7 +996,9 @@ public static class CalcResultSummaryUtil
         return commsCostHeaderWithoutBadDebt + commsCostHeaderBadDebtProvision;
     }
 
-    public static decimal GetCountryOnePlusFourApportionment(CalcResult calcResult, Countries country)
+    public static decimal GetCountryOnePlusFourApportionment(
+        CalcResult calcResult,
+        Countries country)
     {
         var onePlusFourApportionment = calcResult.CalcResultOnePlusFourApportionment
             .CalcResultOnePlusFourApportionmentDetails
@@ -921,7 +1019,9 @@ public static class CalcResultSummaryUtil
         }
     }
 
-    public static decimal GetParamsOtherFourCountryApportionmentPercentage(CalcResult calcResult, Countries country)
+    public static decimal GetParamsOtherFourCountryApportionmentPercentage(
+        CalcResult calcResult,
+        Countries country)
     {
         var fourCountryApportionment = calcResult.CalcResultParameterOtherCost.Details
             .SingleOrDefault(x => x.Name == CalcResultParameterOtherCostBuilder.FourCountryApportionmentPercentage);
@@ -946,25 +1046,34 @@ public static class CalcResultSummaryUtil
         }
     }
 
-    public static decimal GetReportedPublicBinTonnage(ProducerDetail producer, MaterialDetail material, List<Dictionary<string, CalcResultScaledupProducerTonnage>> scaledUpProducers)
+    public static decimal GetReportedPublicBinTonnage(
+        ProducerDetail producer,
+        MaterialDetail material,
+        IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
     {
-        var producerData = scaledUpProducers
-            .SelectMany(dict => dict)
-            .FirstOrDefault(pair => pair.Key == producer.ProducerId.ToString());
+        var scaledupProducerForAllSubmissionPeriods = scaledUpProducers.Where(p => p.ProducerId == producer.ProducerId);
 
-        if (producerData.Key != null)
+        if (scaledupProducerForAllSubmissionPeriods != null)
         {
-            return scaledUpProducers
-                .SelectMany(dict => dict.Values)
-                .Sum(data => data.ScaledupReportedPublicBinTonnage);
+            decimal tonnage = 0;
+            foreach (var item in scaledupProducerForAllSubmissionPeriods)
+            {
+                tonnage += item.ScaledupProducerTonnageByMaterial[material.Code].ScaledupReportedPublicBinTonnage;
+            }
+
+            return tonnage;
         }
 
-        var publicBinPackagingMaterial = producer.ProducerReportedMaterials.FirstOrDefault(p => p.Material?.Code == material.Code && p.PackagingType == "PB");
+        var publicBinPackagingMaterial = producer.ProducerReportedMaterials
+            .FirstOrDefault(p => p.Material?.Code == material.Code && p.PackagingType == PackagingTypes.PublicBin);
 
         return publicBinPackagingMaterial != null ? publicBinPackagingMaterial.PackagingTonnage : 0;
     }
 
-    public static decimal GetReportedPublicBinTonnageTotal(IEnumerable<ProducerDetail> producers, MaterialDetail material, List<Dictionary<string, CalcResultScaledupProducerTonnage>> scaledUpProducers)
+    public static decimal GetReportedPublicBinTonnageTotal(
+        IEnumerable<ProducerDetail> producers,
+        MaterialDetail material,
+        IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
     {
         decimal totalCost = 0;
 
@@ -976,14 +1085,19 @@ public static class CalcResultSummaryUtil
         return totalCost;
     }
 
-    public static decimal GetHDCGlassTonnage(ProducerDetail producer, MaterialDetail material)
+    public static decimal GetHDCGlassTonnage(
+        ProducerDetail producer,
+        MaterialDetail material)
     {
-        var hdcPackagingMaterial = producer.ProducerReportedMaterials.FirstOrDefault(p => p.Material?.Code == material.Code && p.PackagingType == PackagingTypes.HouseholdDrinksContainers);
+        var hdcPackagingMaterial = producer.ProducerReportedMaterials
+            .FirstOrDefault(p => p.Material?.Code == material.Code && p.PackagingType == PackagingTypes.HouseholdDrinksContainers);
 
         return hdcPackagingMaterial != null ? hdcPackagingMaterial.PackagingTonnage : 0;
     }
 
-    public static decimal GetHDCGlassTonnageTotal(IEnumerable<ProducerDetail> producers, MaterialDetail material)
+    public static decimal GetHDCGlassTonnageTotal(
+        IEnumerable<ProducerDetail> producers,
+        MaterialDetail material)
     {
         decimal totalCost = 0;
 

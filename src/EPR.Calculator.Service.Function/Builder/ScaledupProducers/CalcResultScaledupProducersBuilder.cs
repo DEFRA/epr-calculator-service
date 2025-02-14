@@ -51,7 +51,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                         .OrderBy(p => p.ProducerId)
                         .ThenBy(p => p.Level)
                         .ThenBy(p => p.SubsidiaryId)
-                        .ThenBy(p => p.SubmissonPeriodCode)
+                        .ThenBy(p => p.SubmissionPeriodCode)
                         .ToList();
 
                     var overallTotalRow = this.GetOverallTotalRow(orderedRunProducerMaterialDetails, materials);
@@ -109,13 +109,13 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
             {
                 var pomData = item.IsSubtotalRow
                     ? allOrganisationPomDetails
-                        .Where(pom => pom.OrganisationId == item.ProducerId && pom.SubmissionPeriod == item.SubmissonPeriodCode)
+                        .Where(pom => pom.OrganisationId == item.ProducerId && pom.SubmissionPeriod == item.SubmissionPeriodCode)
                         .ToList()
                     : allOrganisationPomDetails
-                        .Where(pom => pom.OrganisationId == item.ProducerId && pom.SubsidaryId == item.SubsidiaryId && pom.SubmissionPeriod == item.SubmissonPeriodCode)
+                        .Where(pom => pom.OrganisationId == item.ProducerId && pom.SubsidaryId == item.SubsidiaryId && pom.SubmissionPeriod == item.SubmissionPeriodCode)
                         .ToList();
 
-                item.ScaledupProducerTonnageByMaterial = GetTonnages(pomData, materials, item.SubmissonPeriodCode, item.ScaleupFactor);
+                item.ScaledupProducerTonnageByMaterial = GetTonnages(pomData, materials, item.SubmissionPeriodCode, item.ScaleupFactor);
             }
         }
 
@@ -141,7 +141,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
 
             var groupByResult = runProducerMaterialDetails
                 .Where(x => x.SubsidiaryId != null)
-                .GroupBy(x => new { x.ProducerId, x.SubmissonPeriodCode })
+                .GroupBy(x => new { x.ProducerId, x.SubmissionPeriodCode })
                 .Where(x => x.Count() > 1)
                 .ToList();
 
@@ -159,7 +159,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                     SubsidiaryId = string.Empty,
                     ProducerName = parentProducer[0].ProducerName,
                     ScaleupFactor = first.ScaleupFactor,
-                    SubmissonPeriodCode = pair.Key.SubmissonPeriodCode,
+                    SubmissionPeriodCode = pair.Key.SubmissionPeriodCode,
                     DaysInSubmissionPeriod = first.DaysInSubmissionPeriod,
                     DaysInWholePeriod = first.DaysInSubmissionPeriod,
                     Level = CommonConstants.LevelOne.ToString(),
@@ -194,7 +194,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                                     SubsidiaryId = pd.SubsidiaryId,
                                     ProducerName = pd.ProducerName,
                                     ScaleupFactor = spl.ScaleupFactor,
-                                    SubmissonPeriodCode = spl.SubmissionPeriod,
+                                    SubmissionPeriodCode = spl.SubmissionPeriod,
                                     DaysInSubmissionPeriod = spl.DaysInSubmissionPeriod,
                                     DaysInWholePeriod = spl.DaysInSubmissionPeriod,
                                     Level = pd.SubsidiaryId != null ? CommonConstants.LevelTwo.ToString() : CommonConstants.LevelOne.ToString(),

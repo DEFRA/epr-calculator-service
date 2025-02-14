@@ -335,7 +335,7 @@
                         csvContent.Append($"{CsvSanitiser.SanitiseData(producer.SubsidiaryId)},");
                         csvContent.Append($"{CsvSanitiser.SanitiseData(producer.ProducerName)},");
                         csvContent.Append($"{CsvSanitiser.SanitiseData(producer.Level)},");
-                        csvContent.Append($"{CsvSanitiser.SanitiseData(producer.SubmissonPeriodCode)},");
+                        csvContent.Append($"{CsvSanitiser.SanitiseData(producer.SubmissionPeriodCode)},");
                         csvContent.Append($"{CsvSanitiser.SanitiseData(producer.DaysInSubmissionPeriod != -1 ? producer.DaysInSubmissionPeriod.ToString() : string.Empty)},");
                         csvContent.Append($"{CsvSanitiser.SanitiseData(producer.DaysInWholePeriod != -1 ? producer.DaysInWholePeriod.ToString() : string.Empty)},");
                         csvContent.Append($"{CsvSanitiser.SanitiseData(producer.ScaleupFactor == -1 ? CommonConstants.Totals : producer.ScaleupFactor.ToString())},");

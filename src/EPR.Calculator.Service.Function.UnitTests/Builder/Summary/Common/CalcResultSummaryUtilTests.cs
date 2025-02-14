@@ -1,7 +1,6 @@
 ﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
 {
     using AutoFixture;
-    using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
     using EPR.Calculator.Service.Function.Builder.Summary.Common;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Models;
@@ -51,6 +50,7 @@
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
             var scaledupProducers = TestDataHelper.GetScaledupProducers();
+
             // Act
             var result = CalcResultSummaryUtil.GetHouseholdPackagingWasteTonnage(producer, material, scaledupProducers);
 
