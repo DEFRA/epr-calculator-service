@@ -65,7 +65,7 @@
         [TestMethod]
         public void AddExtraRowsTest()
         {
-            this.builder = new CalcResultScaledupProducersBuilder(this.dbContext);
+            this.builder = new CalcResultScaledupProducersBuilder(this.dbContext!);
             var runProducerMaterialDetails = new List<CalcResultScaledupProducer>();
             runProducerMaterialDetails.Add(new CalcResultScaledupProducer
             {
@@ -101,7 +101,7 @@
             var allProducersWithLevel2 = runProducerMaterialDetails.Where(x => x.SubsidiaryId == null);
             Assert.IsTrue(allProducersWithLevel2.All(x => x.Level == CommonConstants.LevelTwo.ToString()));
 
-            var extraRows = runProducerMaterialDetails.Skip(Math.Max(0, runProducerMaterialDetails.Count() - 2));
+            var extraRows = runProducerMaterialDetails.Skip(Math.Max(0, runProducerMaterialDetails.Count - 2));
             Assert.AreEqual(2, extraRows.Count());
             Assert.IsTrue(extraRows.All(x => x.IsSubtotalRow));
             Assert.AreEqual(2, runProducerMaterialDetails.Count(x => x.IsSubtotalRow));
@@ -110,7 +110,7 @@
         [TestMethod]
         public void GetOverallTotalRowTest()
         {
-            this.builder = new CalcResultScaledupProducersBuilder(this.dbContext);
+            this.builder = new CalcResultScaledupProducersBuilder(this.dbContext!);
             var runProducerMaterialDetails = new List<CalcResultScaledupProducer>();
             var dictionary = new Dictionary<string, CalcResultScaledupProducerTonnage>();
             dictionary.Add("AL", new CalcResultScaledupProducerTonnage
@@ -178,8 +178,8 @@
         [TestMethod]
         public void GetProducerReportedMaterialsAsyncTest()
         {
-            this.builder = new CalcResultScaledupProducersBuilder(this.dbContext);
-            var task = this.builder.GetProducerReportedMaterialsAsync(1, [1, 2]);
+            this.builder = new CalcResultScaledupProducersBuilder(this.dbContext!);
+            var task = this.builder.GetProducerReportedMaterialsAsync(1, new List<int> { 1, 2 });
             task.Wait();
             var result = task.Result;
             Assert.IsNotNull(result);
@@ -189,8 +189,8 @@
         [TestMethod]
         public void GetScaledupOrganisationDetailsTest()
         {
-            this.builder = new CalcResultScaledupProducersBuilder(this.dbContext);
-            var task = this.builder.GetScaledupOrganisationDetails(1, [1, 2]);
+            this.builder = new CalcResultScaledupProducersBuilder(this.dbContext!);
+            var task = this.builder.GetScaledupOrganisationDetails(1, new List<int> { 1, 2 });
             task.Wait();
             var result = task.Result;
             Assert.IsNotNull(result);
@@ -286,7 +286,7 @@
             var materials = new List<Material>();
             materials.Add(new Material { Code = "AL", Name = "Aluminium" });
             var materialDetails = MaterialMapper.Map(materials);
-            this.builder = new CalcResultScaledupProducersBuilder(this.dbContext);
+            this.builder = new CalcResultScaledupProducersBuilder(this.dbContext!);
             this.builder.CalculateScaledupTonnage([scaledUpProducer], allPomDataDetails, materialDetails);
             Assert.IsNotNull(scaledUpProducer.ScaledupProducerTonnageByMaterial);
             var scaledUpTonnage = scaledUpProducer.ScaledupProducerTonnageByMaterial["AL"];

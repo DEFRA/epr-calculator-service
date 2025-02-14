@@ -184,14 +184,14 @@
 
             var organisationDetails = new List<CalculatorRunOrganisationDataDetail>
             {
-                new()
+                new ()
                 {
                     OrganisationId = 1,
                     OrganisationName = "Test1",
                     SubsidaryId = "sub1",
                     SubmissionPeriodDesc = "January to June 2023",
                 },
-                new()
+                new ()
                 {
                     OrganisationId = 2,
                     OrganisationName = "Test2",
@@ -204,14 +204,14 @@
 
             var orgSubDetails = new List<OrganisationDetails>()
             {
-                new()
+                new ()
                 {
                      OrganisationId = 1,
                      OrganisationName = "Test1",
                      SubsidaryId = "sub1",
                      SubmissionPeriodDescription = "January to June 2023",
                 },
-                new()
+                new ()
                 {
                      OrganisationId = 2,
                      OrganisationName = "Test2",
@@ -230,7 +230,7 @@
         {
             var list = new List<CalculatorRunOrganisationDataMaster>
             {
-                new()
+                new ()
                 {
                     Id = 1,
                     CalendarYear = "2024-25",
@@ -238,7 +238,7 @@
                     CreatedBy = "Test user",
                     CreatedAt = DateTime.Now,
                 },
-                new()
+                new ()
                 {
                     Id = 2,
                     CalendarYear = "2024-25",
@@ -255,7 +255,7 @@
             var list = new List<CalculatorRunOrganisationDataDetail>();
             list.AddRange(new List<CalculatorRunOrganisationDataDetail>()
             {
-                new()
+                new ()
                 {
                     Id = 1,
                     OrganisationId = 1,
@@ -265,7 +265,7 @@
                     CalculatorRunOrganisationDataMasterId = 1,
                     SubmissionPeriodDesc = "January to June 2023",
                 },
-                new()
+                new ()
                 {
                     Id = 2,
                     OrganisationId = 1,
@@ -274,7 +274,7 @@
                     CalculatorRunOrganisationDataMasterId = 1,
                     SubmissionPeriodDesc = "July to December 2023",
                 },
-                new()
+                new ()
                 {
                     Id = 3,
                     OrganisationId = 2,
@@ -292,56 +292,56 @@
         {
             var list = new List<Material>
             {
-                new()
+                new ()
                 {
                     Id = 1,
                     Code = "AL",
                     Name = "Aluminium",
                     Description = "Aluminium",
                 },
-                new()
+                new ()
                 {
                     Id = 2,
                     Code = "FC",
                     Name = "Fibre composite",
                     Description = "Fibre composite",
                 },
-                new()
+                new ()
                 {
                     Id = 3,
                     Code = "GL",
                     Name = "Glass",
                     Description = "Glass",
                 },
-                new()
+                new ()
                 {
                     Id = 4,
                     Code = "PC",
                     Name = "Paper or card",
                     Description = "Paper or card",
                 },
-                new()
+                new ()
                 {
                     Id = 5,
                     Code = "PL",
                     Name = "Plastic",
                     Description = "Plastic",
                 },
-                new()
+                new ()
                 {
                     Id = 6,
                     Code = "ST",
                     Name = "Steel",
                     Description = "Steel",
                 },
-                new()
+                new ()
                 {
                     Id = 7,
                     Code = "WD",
                     Name = "Wood",
                     Description = "Wood",
                 },
-                new()
+                new ()
                 {
                     Id = 8,
                     Code = "OT",
@@ -356,7 +356,7 @@
         {
             var list = new List<CalculatorRunPomDataMaster>
             {
-                new()
+                new ()
                 {
                     Id = 1,
                     CalendarYear = "2024-25",
@@ -364,7 +364,7 @@
                     CreatedBy = "Test user",
                     CreatedAt = DateTime.Now,
                 },
-                new()
+                new ()
                 {
                     Id = 2,
                     CalendarYear = "2024-25",
@@ -380,7 +380,7 @@
         {
             var list = new List<CalculatorRunPomDataDetail>
             {
-                new()
+                new ()
                 {
                     Id = 1,
                     OrganisationId = 1,
@@ -395,7 +395,7 @@
                     CalculatorRunPomDataMasterId = 1,
                     SubmissionPeriodDesc = "July to December 2023",
                 },
-                new()
+                new ()
                 {
                     Id = 2,
                     OrganisationId = 1,
@@ -409,7 +409,7 @@
                     CalculatorRunPomDataMasterId = 1,
                     SubmissionPeriodDesc = "July to December 2023",
                 },
-                new()
+                new ()
                 {
                     Id = 3,
                     OrganisationId = 1,
@@ -424,7 +424,7 @@
                     CalculatorRunPomDataMasterId = 1,
                     SubmissionPeriodDesc = "January to June 2023",
                 },
-                new()
+                new ()
                 {
                     Id = 4,
                     OrganisationId = 2,
@@ -449,7 +449,7 @@
         {
             var list = new List<CalculatorRun>
             {
-                new()
+                new ()
                 {
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Run",
@@ -459,7 +459,7 @@
                     CalculatorRunOrganisationDataMasterId = 2,
                     CalculatorRunPomDataMasterId = 2,
                 },
-                new()
+                new ()
                 {
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Calculated Result",
@@ -467,7 +467,7 @@
                     CreatedAt = new DateTime(2024, 8, 21, 14, 16, 27, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                 },
-                new()
+                new ()
                 {
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Run",
@@ -477,7 +477,7 @@
                     CalculatorRunOrganisationDataMasterId = 1,
                     CalculatorRunPomDataMasterId = 1,
                 },
-                new()
+                new ()
                 {
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Calculated Result",
