@@ -117,7 +117,7 @@
             PrepareScaledUpProducer();
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
 
-            var task = builder.Construct(requestDto);
+            var task = this.builder.Construct(requestDto);
             task.Wait();
 
             var result = task.Result;
@@ -139,7 +139,7 @@
         [TestMethod]
         public void AddExtraRowsTest()
         {
-            builder = new CalcResultScaledupProducersBuilder(this.dbContext);
+            this.builder = new CalcResultScaledupProducersBuilder(this.dbContext);
             var runProducerMaterialDetails = new List<CalcResultScaledupProducer>();
             runProducerMaterialDetails.Add(new CalcResultScaledupProducer
             {
