@@ -1,8 +1,11 @@
 namespace EPR.Calculator.API.UnitTests.Exporter
 {
     using System;
+    using System.Reflection;
+    using System.Text;
     using AutoFixture;
     using EPR.Calculator.API.Exporter;
+    using EPR.Calculator.API.Utils;
     using EPR.Calculator.Service.Function.Data;
     using EPR.Calculator.Service.Function.Data.DataModels;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -124,10 +127,61 @@ namespace EPR.Calculator.API.UnitTests.Exporter
             Assert.AreEqual(expectedFileName, (string)result);
         }
 
+        /// <summary>
+        /// Tests the AppendFileInfo method with an invalid file path.
+        /// </summary>
+        [TestMethod]
+        public void AppendFileInfo_InvalidFilePath_DoesNotAppend()
+        {
+            // Arrange
+            var csvContent = new StringBuilder();
+            string label = "TestLabel";
+            string filePath = "fileName.csv,2025-02-14"; // Missing user part
+
+            // Act
+            this.InvokeAppendFileInfo(csvContent, label, filePath);
+
+            // Assert
+            Assert.AreEqual(string.Empty, csvContent.ToString());
+        }
+
+        /// <summary>
+        /// Tests the AppendFileInfo method with an empty file path.
+        /// </summary>
+        [TestMethod]
+        public void AppendFileInfo_EmptyFilePath_DoesNotAppend()
+        {
+            // Arrange
+            var csvContent = new StringBuilder();
+            string label = "TestLabel";
+            string filePath = string.Empty;
+
+            // Act
+            this.InvokeAppendFileInfo(csvContent, label, filePath);
+
+            // Assert
+            Assert.AreEqual(string.Empty, csvContent.ToString());
+        }
+
         private static string GetRandomString(int length)
             => string.Join(string.Empty, new char[length].Select(c => GetRandomChar()));
 
         private static char GetRandomChar()
             => (char)('a' + Random.Shared.Next(0, 26));
+
+        /// <summary>
+        /// Checks generating a file name using values retrieved from the database.
+        /// </summary>
+        private void InvokeAppendFileInfo(StringBuilder csvContent, string label, string filePath)
+        {
+            // Get the type of the class containing the method
+            Type type = typeof(CalcResultsExporter);
+
+            // Get the method info using reflection
+            MethodInfo? methodInfo = type.GetMethod("AppendFileInfo", BindingFlags.NonPublic | BindingFlags.Static);
+
+            // Invoke the method
+            methodInfo?.Invoke(null, new object[] { csvContent, label, filePath });
+        }
     }
 }

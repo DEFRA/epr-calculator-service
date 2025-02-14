@@ -53,6 +53,8 @@ namespace EPR.Calculator.Service.Function.Models
                 CalcResultLaDisposalCostDetails = [],
             };
 
+        public CalcResultScaledupProducers CalcResultScaledupProducers { get; set; }
+
         public CalcResultSummary CalcResultSummary { get; set; } = new();
     }
 }

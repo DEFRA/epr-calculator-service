@@ -58,7 +58,7 @@
             var lines = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
             // Assert
-            int expectedLineCount = 57;
+            int expectedLineCount = 65;
             Assert.AreEqual(expectedLineCount, lines.Length);
         }
 
@@ -167,6 +167,20 @@
         }
 
         [TestMethod]
+        public void Export_ShouldIncludeScaledupProducers_WhenNotNull()
+        {
+            // Arrange
+            var results = CreateCalcResult();
+            var exporter = new CalcResultsExporter();
+
+            // Act
+            var result = exporter.Export(results);
+
+            // Assert
+            Assert.IsTrue(result.Contains("Scaled-up Producers"));
+        }
+
+        [TestMethod]
         public void Export_ShouldIncludeSummaryData_WhenNotNull()
         {
             // Arrange
@@ -177,7 +191,6 @@
             var result = exporter.Export(results);
 
             //Assert
-
             Assert.IsTrue(result.Contains("SummaryData"));
         }
 
@@ -212,6 +225,23 @@
                 Assert.IsFalse(csvContent.Contains("SummaryData"), "CSV content should not contain SummaryData.");
             }
         }
+
+        [TestMethod]
+        public void Export_ShouldIncludeGlassColumns_WhenGlassMaterialPresent()
+        {
+            // Arrange
+            var results = CreateCalcResultWithGlass();
+            var exporter = new CalcResultsExporter();
+
+            // Act
+            var result = exporter.Export(results);
+
+            // Assert
+            Assert.IsTrue(result.Contains("Glass"));
+            Assert.IsTrue(result.Contains("HouseholdDrinksContainersTonnageGlass"));
+            Assert.IsTrue(result.Contains("ScaledupHouseholdDrinksContainersTonnageGlass"));
+        }
+
         private static CalcResult CreateCalcResult()
         {
             return new CalcResult
@@ -221,8 +251,7 @@
                     Name = "LAPCAP Data",
                     CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>
                     {
-                        new CalcResultLapcapDataDetails
-                        {
+                        new () {
                             Name = "Total",
                             EnglandDisposalCost = "£13,280.45",
                             WalesDisposalCost = "£210.28",
@@ -233,10 +262,10 @@
                             WalesCost = 210.28m,
                             ScotlandCost = 91.00m,
                             NorthernIrelandCost = 91.00m,
-                            TotalCost = 13742.80m
-                        }
+                            TotalCost = 13742.80m,
+                        },
 
-                    }
+                    },
                 },
                 CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
                 {
@@ -248,19 +277,19 @@
                         new CalcResultLateReportingTonnageDetail
                         {
                             Name = "Aluminium",
-                            TotalLateReportingTonnage = 8000.00m
+                            TotalLateReportingTonnage = 8000.00m,
                         },
                         new CalcResultLateReportingTonnageDetail
                         {
                             Name = "Plastic",
-                            TotalLateReportingTonnage = 2000.00m
+                            TotalLateReportingTonnage = 2000.00m,
                         },
                         new CalcResultLateReportingTonnageDetail
                         {
                             Name = "Total",
-                            TotalLateReportingTonnage = 10000.00m
-                        }
-                    }
+                            TotalLateReportingTonnage = 10000.00m,
+                        },
+                    },
                 },
                 CalcResultParameterOtherCost = new CalcResultParameterOtherCost
                 {
@@ -281,8 +310,8 @@
                             NorthernIreland = "£10.00",
                             NorthernIrelandValue = 10,
                             Total = "£100.00",
-                            TotalValue = 100
-                        }
+                            TotalValue = 100,
+                        },
 
                     },
                     Materiality = new List<CalcResultMateriality>
@@ -293,8 +322,8 @@
                             AmountValue = 0,
                             Percentage = "%",
                             PercentageValue = 0,
-                            SevenMateriality = "7 Materiality"
-                        }
+                            SevenMateriality = "7 Materiality",
+                        },
                     },
                     Name = "Parameters - Other",
                     SaOperatingCost = new List<CalcResultParameterOtherCostDetail>
@@ -312,8 +341,8 @@
                             NorthernIreland = "£10.00",
                             NorthernIrelandValue = 10,
                             Total = "£100.00",
-                            TotalValue = 100
-                        }
+                            TotalValue = 100,
+                        },
                     },
                     SchemeSetupCost = new CalcResultParameterOtherCostDetail
                     {
@@ -328,8 +357,8 @@
                         NorthernIreland = "£10.00",
                         NorthernIrelandValue = 10,
                         Total = "£100.00",
-                        TotalValue = 100
-                    }
+                        TotalValue = 100,
+                    },
                 },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment
                 {
@@ -360,9 +389,9 @@
                             ScotlandTotal = 0.15M,
                             WalesTotal = 0.20M,
                             Name = "Test",
-                        }
+                        },
                     },
-                    Name = "some test"
+                    Name = "some test",
                 },
                 CalcResultCommsCostReportDetail = new CalcResultCommsCost
                 {
@@ -377,7 +406,7 @@
                         {
                             CommsCostByMaterialPricePerTonne = "0.3",
                             Name = "Glass",
-                        }
+                        },
                     },
                     CalcResultCommsCostOnePlusFourApportionment =
                         new Fixture().CreateMany<CalcResultCommsCostOnePlusFourApportionment>(1),
@@ -423,15 +452,58 @@
                             Total = "100",
                             ProducerReportedHouseholdPackagingWasteTonnage = "null",
                             ReportedPublicBinTonnage = string.Empty,
-                        }
+                        },
                     },
-                    Name = "some test"
+                    Name = "some test",
+                },
+                CalcResultScaledupProducers = new CalcResultScaledupProducers
+                {
+                    TitleHeader = new CalcResultScaledupProducerHeader
+                    {
+                        Name = "Scaled-up Producers",
+                    },
+                    MaterialBreakdownHeaders = [
+                        new CalcResultScaledupProducerHeader{ Name = "Each submission for the year", ColumnIndex = 1 },
+                        new CalcResultScaledupProducerHeader { Name = "Aluminium Breakdown", ColumnIndex = 2 },
+                        new CalcResultScaledupProducerHeader { Name = "Glass Breakdown", ColumnIndex = 3 }
+                    ],
+                    ColumnHeaders = [
+                        new CalcResultScaledupProducerHeader{ Name = "Producer ID" },
+                        new CalcResultScaledupProducerHeader { Name = "Subsidiary ID" },
+                        new CalcResultScaledupProducerHeader { Name = "HouseholdDrinksContainersTonnageGlass" },
+                        new CalcResultScaledupProducerHeader { Name = "ScaledupHouseholdDrinksContainersTonnageGlass" },
+                    ],
+                    ScaledupProducers = GetCalcResultScaledupProducerList(),
                 },
                 CalcResultSummary = new CalcResultSummary
                 {
                     ResultSummaryHeader = new CalcResultSummaryHeader
                     {
-                        Name = "SummaryData"
+                        Name = "SummaryData",
+                    },
+                    ProducerDisposalFeesHeaders = new List<CalcResultSummaryHeader>
+                    {
+                       new CalcResultSummaryHeader
+                       {
+                           Name = "Producer disposal fees header",
+                           ColumnIndex = 1,
+                       },
+                    },
+                    MaterialBreakdownHeaders = new List<CalcResultSummaryHeader>
+                    {
+                       new CalcResultSummaryHeader
+                       {
+                           Name = "Material breakdown header",
+                           ColumnIndex = 1,
+                       },
+                    },
+                    ColumnHeaders = new List<CalcResultSummaryHeader>
+                    {
+                       new CalcResultSummaryHeader
+                       {
+                           Name = "Column header",
+                           ColumnIndex = 1,
+                       },
                     },
                     ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
                     {
@@ -457,6 +529,130 @@
                     RunName = "CalculatorRunName",
                 },
             };
+        }
+
+        private static IEnumerable<CalcResultScaledupProducer> GetCalcResultScaledupProducerList()
+        {
+            var scaledupProducerList = new List<CalcResultScaledupProducer>();
+
+            scaledupProducerList.AddRange([
+                new CalcResultScaledupProducer()
+                {
+                    ProducerId = 101001,
+                    SubsidiaryId = string.Empty,
+                    ProducerName = "Allied Packaging",
+                    Level = "1",
+                    SubmissonPeriodCode = "2024-P2",
+                    DaysInSubmissionPeriod = 91,
+                    DaysInWholePeriod = 91,
+                    ScaleupFactor = 2,
+                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterial(),
+                },
+                new CalcResultScaledupProducer()
+                {
+                    ProducerId = 101001,
+                    SubsidiaryId = string.Empty,
+                    ProducerName = "Allied Packaging",
+                    Level = "1",
+                    SubmissonPeriodCode = "2024-P2",
+                    DaysInSubmissionPeriod = 91,
+                    DaysInWholePeriod = 91,
+                    ScaleupFactor = 2,
+                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterial(),
+                    IsTotalRow = true,
+                },
+            ]);
+
+            return scaledupProducerList;
+        }
+
+        private static Dictionary<string, CalcResultScaledupProducerTonnage> GetScaledupProducerTonnageByMaterial()
+        {
+            var tonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>();
+
+            tonnageByMaterial.Add(
+                "AL",
+                new CalcResultScaledupProducerTonnage()
+                {
+                    ReportedHouseholdPackagingWasteTonnage = 1000,
+                    ReportedPublicBinTonnage = 100,
+                    TotalReportedTonnage = 1100,
+                    ReportedSelfManagedConsumerWasteTonnage = 500,
+                    NetReportedTonnage = 1100,
+                    ScaledupReportedHouseholdPackagingWasteTonnage = 2000,
+                    ScaledupReportedPublicBinTonnage = 200,
+                    ScaledupTotalReportedTonnage = 2200,
+                    ScaledupReportedSelfManagedConsumerWasteTonnage = 1000,
+                    ScaledupNetReportedTonnage = 2200,
+                });
+
+            return tonnageByMaterial;
+        }
+
+        private static CalcResult CreateCalcResultWithGlass()
+        {
+            var result = CreateCalcResult();
+            result.CalcResultScaledupProducers.ScaledupProducers = GetCalcResultScaledupProducerListWithGlass();
+            return result;
+        }
+
+        private static List<CalcResultScaledupProducer> GetCalcResultScaledupProducerListWithGlass()
+        {
+            var scaledupProducerList = new List<CalcResultScaledupProducer>
+            {
+                new CalcResultScaledupProducer
+                {
+                    ProducerId = 101001,
+                    SubsidiaryId = string.Empty,
+                    ProducerName = "Allied Packaging",
+                    Level = "1",
+                    SubmissonPeriodCode = "2024-P2",
+                    DaysInSubmissionPeriod = 91,
+                    DaysInWholePeriod = 91,
+                    ScaleupFactor = 2,
+                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterialWithGlass(),
+                },
+                new CalcResultScaledupProducer
+                {
+                    ProducerId = 101001,
+                    SubsidiaryId = string.Empty,
+                    ProducerName = "Allied Packaging",
+                    Level = "1",
+                    SubmissonPeriodCode = "2024-P2",
+                    DaysInSubmissionPeriod = 91,
+                    DaysInWholePeriod = 91,
+                    ScaleupFactor = 2,
+                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterialWithGlass(),
+                    IsTotalRow = true,
+                },
+            };
+            return scaledupProducerList;
+        }
+
+        private static Dictionary<string, CalcResultScaledupProducerTonnage> GetScaledupProducerTonnageByMaterialWithGlass()
+        {
+            var tonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>
+            {
+                {
+                    "GL",
+                    new CalcResultScaledupProducerTonnage
+                    {
+                        ReportedHouseholdPackagingWasteTonnage = 1000,
+                        ReportedPublicBinTonnage = 100,
+                        HouseholdDrinksContainersTonnageGlass = 50,
+                        TotalReportedTonnage = 1100,
+                        ReportedSelfManagedConsumerWasteTonnage = 500,
+                        NetReportedTonnage = 1100,
+                        ScaledupReportedHouseholdPackagingWasteTonnage = 2000,
+                        ScaledupReportedPublicBinTonnage = 200,
+                        ScaledupHouseholdDrinksContainersTonnageGlass = 100,
+                        ScaledupTotalReportedTonnage = 2200,
+                        ScaledupReportedSelfManagedConsumerWasteTonnage = 1000,
+                        ScaledupNetReportedTonnage = 2200,
+                    }
+                },
+            };
+            return tonnageByMaterial;
         }
     }
 }
