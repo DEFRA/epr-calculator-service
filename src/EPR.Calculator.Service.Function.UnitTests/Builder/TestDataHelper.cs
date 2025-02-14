@@ -1075,6 +1075,32 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
         }
 
+        public static List<Dictionary<string, CalcResultScaledupProducerTonnage>> GetScaledupProducers()
+        {
+            return new List<Dictionary<string, CalcResultScaledupProducerTonnage>>
+            {
+                new Dictionary<string, CalcResultScaledupProducerTonnage>
+                {
+                    {
+                        "10001",
+                        new CalcResultScaledupProducerTonnage
+                        {
+                            ReportedHouseholdPackagingWasteTonnage = 0,
+                            ReportedPublicBinTonnage = 0,
+                            TotalReportedTonnage = 0,
+                            ReportedSelfManagedConsumerWasteTonnage = 0,
+                            NetReportedTonnage = 0,
+                            ScaledupReportedHouseholdPackagingWasteTonnage = 0,
+                            ScaledupReportedPublicBinTonnage = 0,
+                            ScaledupTotalReportedTonnage = 0,
+                            ScaledupReportedSelfManagedConsumerWasteTonnage = 0,
+                            ScaledupNetReportedTonnage = 0,
+                        }
+                    },
+                },
+            };
+        }
+
         public static List<MaterialDetail> GetMaterials()
         {
             return new List<MaterialDetail>
@@ -1167,7 +1193,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             var producerReportedMaterials = GetProducerReportedMaterials();
 
-            producers.ForEach(producer => {
+            producers.ForEach(producer =>
+            {
                 producerReportedMaterials.ForEach(producerReportedMaterial =>
                 {
                     producer.ProducerReportedMaterials.Add(producerReportedMaterial);

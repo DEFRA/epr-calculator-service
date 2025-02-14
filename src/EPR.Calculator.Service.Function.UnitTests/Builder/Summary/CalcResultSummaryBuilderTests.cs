@@ -1,6 +1,7 @@
 ﻿namespace EPR.Calculator.Service.Function.UnitTests
 {
     using AutoFixture;
+    using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
     using EPR.Calculator.Service.Function.Builder.Summary;
     using EPR.Calculator.Service.Function.Builder.Summary.OneAndTwoA;
     using EPR.Calculator.Service.Function.Constants;
@@ -17,6 +18,7 @@
         private readonly ApplicationDBContext _context;
         private readonly CalcResultSummaryBuilder _calcResultsService;
         private readonly CalcResult _calcResult;
+        private readonly List<Dictionary<string, CalcResultScaledupProducerTonnage>> _scaledupProducers;
 
         private Fixture Fixture { get; init; } = new Fixture();
 
@@ -27,7 +29,7 @@
                 .Options;
             _context = new ApplicationDBContext(_dbContextOptions);
             _calcResultsService = new CalcResultSummaryBuilder(_context);
-
+            _scaledupProducers = GetScaledUpProducers();
             _calcResult = new CalcResult
             {
                 CalcResultParameterOtherCost = new CalcResultParameterOtherCost
@@ -258,6 +260,32 @@
 
             // Seed database
             SeedDatabase(_context);
+        }
+
+        private static List<Dictionary<string, CalcResultScaledupProducerTonnage>> GetScaledUpProducers()
+        {
+            return new List<Dictionary<string, CalcResultScaledupProducerTonnage>>
+            {
+                new Dictionary<string, CalcResultScaledupProducerTonnage>
+                {
+                    {
+                        "10001",
+                        new CalcResultScaledupProducerTonnage
+                        {
+                            ReportedHouseholdPackagingWasteTonnage = 0,
+                            ReportedPublicBinTonnage = 0,
+                            TotalReportedTonnage = 0,
+                            ReportedSelfManagedConsumerWasteTonnage = 0,
+                            NetReportedTonnage = 0,
+                            ScaledupReportedHouseholdPackagingWasteTonnage = 0,
+                            ScaledupReportedPublicBinTonnage = 0,
+                            ScaledupTotalReportedTonnage = 0,
+                            ScaledupReportedSelfManagedConsumerWasteTonnage = 0,
+                            ScaledupNetReportedTonnage = 0,
+                        }
+                    },
+                },
+            };
         }
 
         [TestCleanup]
@@ -580,9 +608,10 @@
 
             var TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, 1);
 
+
             var calcResultSummaryBuilder = new CalcResultSummaryBuilder(this._context);
             var result = calcResultSummaryBuilder.GetCalcResultSummary(orderedProducerDetails, materials,
-                runProducerMaterialDetails, _calcResult, TotalPackagingTonnage);
+                runProducerMaterialDetails, _calcResult, TotalPackagingTonnage, _scaledupProducers);
             Assert.IsNotNull(result);
             Assert.AreEqual(125, result.ColumnHeaders.Count());
 
