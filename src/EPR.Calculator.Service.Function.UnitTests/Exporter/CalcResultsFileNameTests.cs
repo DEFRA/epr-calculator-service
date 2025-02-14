@@ -163,6 +163,12 @@ namespace EPR.Calculator.API.UnitTests.Exporter
             Assert.AreEqual(string.Empty, csvContent.ToString());
         }
 
+        private static string GetRandomString(int length)
+            => string.Join(string.Empty, new char[length].Select(c => GetRandomChar()));
+
+        private static char GetRandomChar()
+            => (char)('a' + Random.Shared.Next(0, 26));
+
         /// <summary>
         /// Checks generating a file name using values retrieved from the database.
         /// </summary>
@@ -172,16 +178,10 @@ namespace EPR.Calculator.API.UnitTests.Exporter
             Type type = typeof(CalcResultsExporter);
 
             // Get the method info using reflection
-            MethodInfo methodInfo = type.GetMethod("AppendFileInfo", BindingFlags.NonPublic | BindingFlags.Static);
+            MethodInfo? methodInfo = type.GetMethod("AppendFileInfo", BindingFlags.NonPublic | BindingFlags.Static);
 
             // Invoke the method
-            methodInfo.Invoke(null, new object[] { csvContent, label, filePath });
+            methodInfo?.Invoke(null, new object[] { csvContent, label, filePath });
         }
-
-        private static string GetRandomString(int length)
-            => string.Join(string.Empty, new char[length].Select(c => GetRandomChar()));
-
-        private static char GetRandomChar()
-            => (char)('a' + Random.Shared.Next(0, 26));
     }
 }

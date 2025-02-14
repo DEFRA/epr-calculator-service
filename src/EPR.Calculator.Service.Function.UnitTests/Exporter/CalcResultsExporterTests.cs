@@ -226,6 +226,22 @@
             }
         }
 
+        [TestMethod]
+        public void Export_ShouldIncludeGlassColumns_WhenGlassMaterialPresent()
+        {
+            // Arrange
+            var results = CreateCalcResultWithGlass();
+            var exporter = new CalcResultsExporter();
+
+            // Act
+            var result = exporter.Export(results);
+
+            // Assert
+            Assert.IsTrue(result.Contains("Glass"));
+            Assert.IsTrue(result.Contains("HouseholdDrinksContainersTonnageGlass"));
+            Assert.IsTrue(result.Contains("ScaledupHouseholdDrinksContainersTonnageGlass"));
+        }
+
         private static CalcResult CreateCalcResult()
         {
             return new CalcResult
@@ -550,22 +566,6 @@
             return scaledupProducerList;
         }
 
-        [TestMethod]
-        public void Export_ShouldIncludeGlassColumns_WhenGlassMaterialPresent()
-        {
-            // Arrange
-            var results = CreateCalcResultWithGlass();
-            var exporter = new CalcResultsExporter();
-
-            // Act
-            var result = exporter.Export(results);
-
-            // Assert
-            Assert.IsTrue(result.Contains("Glass"));
-            Assert.IsTrue(result.Contains("HouseholdDrinksContainersTonnageGlass"));
-            Assert.IsTrue(result.Contains("ScaledupHouseholdDrinksContainersTonnageGlass"));
-        }
-
         private static Dictionary<string, CalcResultScaledupProducerTonnage> GetScaledupProducerTonnageByMaterial()
         {
             var tonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>();
@@ -596,7 +596,7 @@
             return result;
         }
 
-        private static IEnumerable<CalcResultScaledupProducer> GetCalcResultScaledupProducerListWithGlass()
+        private static List<CalcResultScaledupProducer> GetCalcResultScaledupProducerListWithGlass()
         {
             var scaledupProducerList = new List<CalcResultScaledupProducer>
             {

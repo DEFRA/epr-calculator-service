@@ -62,6 +62,151 @@
             return scaledupProducersSummary;
         }
 
+        public static Dictionary<string, CalcResultScaledupProducerTonnage> GetTonnages(
+            IEnumerable<CalculatorRunPomDataDetail> pomData,
+            IEnumerable<MaterialDetail> materials,
+            string submissionPeriod,
+            decimal scaleUpFactor)
+        {
+            var scaledupProducerTonnages = new Dictionary<string, CalcResultScaledupProducerTonnage>();
+
+            foreach (var material in materials)
+            {
+                var scaledupProducerTonnage = new CalcResultScaledupProducerTonnage();
+
+                var materialPomData = pomData.Where(pom => pom.PackagingMaterial == material.Code && pom.SubmissionPeriod == submissionPeriod);
+
+                scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage = (decimal)materialPomData
+                    .Where(pom => pom.PackagingType == PackagingTypes.Household)
+                    .Sum(pom => pom.PackagingMaterialWeight);
+
+                scaledupProducerTonnage.ReportedPublicBinTonnage = (decimal)materialPomData
+                    .Where(pom => pom.PackagingType == PackagingTypes.PublicBin)
+                    .Sum(pom => pom.PackagingMaterialWeight);
+
+                var hdc = (decimal)materialPomData
+                    .Where(pom => pom.PackagingType == PackagingTypes.HouseholdDrinksContainers)
+                    .Sum(pom => pom.PackagingMaterialWeight);
+
+                if (material.Code == MaterialCodes.Glass)
+                {
+                    scaledupProducerTonnage.HouseholdDrinksContainersTonnageGlass = hdc;
+                    scaledupProducerTonnage.TotalReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
+                                            scaledupProducerTonnage.ReportedPublicBinTonnage + scaledupProducerTonnage.HouseholdDrinksContainersTonnageGlass;
+                }
+                else
+                {
+                    scaledupProducerTonnage.TotalReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
+                    scaledupProducerTonnage.ReportedPublicBinTonnage;
+                }
+
+                scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage = (decimal)materialPomData
+                    .Where(pom => pom.PackagingType == PackagingTypes.ConsumerWaste)
+                    .Sum(pom => pom.PackagingMaterialWeight);
+
+                scaledupProducerTonnage.NetReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
+                    scaledupProducerTonnage.ReportedPublicBinTonnage +
+                    hdc;
+                scaledupProducerTonnage.ScaledupReportedHouseholdPackagingWasteTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage * scaleUpFactor;
+                scaledupProducerTonnage.ScaledupReportedPublicBinTonnage = scaledupProducerTonnage.ReportedPublicBinTonnage * scaleUpFactor;
+
+                if (material.Code == MaterialCodes.Glass)
+                {
+                    scaledupProducerTonnage.ScaledupHouseholdDrinksContainersTonnageGlass = scaledupProducerTonnage.HouseholdDrinksContainersTonnageGlass * scaleUpFactor;
+                }
+
+                scaledupProducerTonnage.ScaledupTotalReportedTonnage = scaledupProducerTonnage.TotalReportedTonnage * scaleUpFactor;
+                scaledupProducerTonnage.ScaledupReportedSelfManagedConsumerWasteTonnage = scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage * scaleUpFactor;
+                scaledupProducerTonnage.ScaledupNetReportedTonnage = scaledupProducerTonnage.NetReportedTonnage * scaleUpFactor;
+                scaledupProducerTonnages.Add(material.Code, scaledupProducerTonnage);
+            }
+
+            return scaledupProducerTonnages;
+        }
+
+        public static void SetHeaders(CalcResultScaledupProducers producers, IEnumerable<MaterialDetail> materials)
+        {
+            producers.TitleHeader = new CalcResultScaledupProducerHeader
+            {
+                Name = CalcResultScaledupProducerHeaders.ScaledupProducers,
+                ColumnIndex = 1,
+            };
+
+            producers.MaterialBreakdownHeaders = GetMaterialsBreakdownHeader(materials);
+
+            producers.ColumnHeaders = GetColumnHeaders(materials);
+        }
+
+        public static List<CalcResultScaledupProducerHeader> GetMaterialsBreakdownHeader(IEnumerable<MaterialDetail> materials)
+        {
+            var materialsBreakdownHeaders = new List<CalcResultScaledupProducerHeader>();
+            var columnIndex = MaterialsBreakdownHeaderInitialColumnIndex;
+
+            materialsBreakdownHeaders.Add(new CalcResultScaledupProducerHeader
+            {
+                Name = CalcResultScaledupProducerHeaders.EachSubmissionForTheYear,
+                ColumnIndex = 1,
+            });
+
+            foreach (var material in materials)
+            {
+                materialsBreakdownHeaders.Add(new CalcResultScaledupProducerHeader
+                {
+                    Name = $"{material.Name} Breakdown",
+                    ColumnIndex = columnIndex,
+                });
+
+                columnIndex = material.Code == MaterialCodes.Glass
+                    ? columnIndex + MaterialsBreakdownHeaderIncrementalColumnIndex + 2
+                    : columnIndex + MaterialsBreakdownHeaderIncrementalColumnIndex;
+            }
+
+            return materialsBreakdownHeaders;
+        }
+
+        public static List<CalcResultScaledupProducerHeader> GetColumnHeaders(IEnumerable<MaterialDetail> materials)
+        {
+            var columnHeaders = new List<CalcResultScaledupProducerHeader>();
+
+            columnHeaders.AddRange([
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ProducerId },
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.SubsidiaryId },
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ProducerOrSubsidiaryName },
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.Level },
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.SubmissionPeriodCode },
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.DaysInSubmissionPeriod },
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.DaysInWholePeriod },
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaleupFactor }
+            ]);
+
+            foreach (var material in materials)
+            {
+                var columnHeadersList = new List<CalcResultScaledupProducerHeader>
+                {
+                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ReportedHouseholdPackagingWasteTonnage },
+                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ReportedPublicBinTonnage },
+                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.TotalReportedTonnage },
+                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ReportedSelfManagedConsumerWasteTonnage },
+                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.NetReportedTonnage },
+                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupReportedHouseholdPackagingWasteTonnage },
+                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupReportedPublicBinTonnage },
+                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupTotalReportedTonnage },
+                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupReportedSelfManagedConsumerWasteTonnage },
+                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupNetReportedTonnage },
+                };
+
+                if (material.Code == MaterialCodes.Glass)
+                {
+                    columnHeadersList.Insert(2, new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.HouseholdDrinksContainersTonnageGlass });
+                    columnHeadersList.Insert(8, new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupHouseholdDrinksContainersTonnageGlass });
+                }
+
+                columnHeaders.AddRange(columnHeadersList);
+            }
+
+            return columnHeaders;
+        }
+
         public CalcResultScaledupProducer GetOverallTotalRow(
             IEnumerable<CalcResultScaledupProducer> orderedRunProducerMaterialDetails,
             IEnumerable<MaterialDetail> materials)
@@ -216,151 +361,6 @@
                                             where run.Id == runId && crpdd.OrganisationId != null && spl.ScaleupFactor > NormalScaleup
                                             select crpdd.OrganisationId.GetValueOrDefault()).Distinct().ToListAsync();
             return scaleupProducerIds ?? [];
-        }
-
-        public static Dictionary<string, CalcResultScaledupProducerTonnage> GetTonnages(
-            IEnumerable<CalculatorRunPomDataDetail> pomData,
-            IEnumerable<MaterialDetail> materials,
-            string submissionPeriod,
-            decimal scaleUpFactor)
-        {
-            var scaledupProducerTonnages = new Dictionary<string, CalcResultScaledupProducerTonnage>();
-
-            foreach (var material in materials)
-            {
-                var scaledupProducerTonnage = new CalcResultScaledupProducerTonnage();
-
-                var materialPomData = pomData.Where(pom => pom.PackagingMaterial == material.Code && pom.SubmissionPeriod == submissionPeriod);
-
-                scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage = (decimal)materialPomData
-                    .Where(pom => pom.PackagingType == PackagingTypes.Household)
-                    .Sum(pom => pom.PackagingMaterialWeight);
-
-                scaledupProducerTonnage.ReportedPublicBinTonnage = (decimal)materialPomData
-                    .Where(pom => pom.PackagingType == PackagingTypes.PublicBin)
-                    .Sum(pom => pom.PackagingMaterialWeight);
-
-                var hdc = (decimal)materialPomData
-                    .Where(pom => pom.PackagingType == PackagingTypes.HouseholdDrinksContainers)
-                    .Sum(pom => pom.PackagingMaterialWeight);
-
-                if (material.Code == MaterialCodes.Glass)
-                {
-                    scaledupProducerTonnage.HouseholdDrinksContainersTonnageGlass = hdc;
-                    scaledupProducerTonnage.TotalReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
-                                            scaledupProducerTonnage.ReportedPublicBinTonnage + scaledupProducerTonnage.HouseholdDrinksContainersTonnageGlass;
-                }
-                else
-                {
-                    scaledupProducerTonnage.TotalReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
-                    scaledupProducerTonnage.ReportedPublicBinTonnage;
-                }
-
-                scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage = (decimal)materialPomData
-                    .Where(pom => pom.PackagingType == PackagingTypes.ConsumerWaste)
-                    .Sum(pom => pom.PackagingMaterialWeight);
-
-                scaledupProducerTonnage.NetReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
-                    scaledupProducerTonnage.ReportedPublicBinTonnage +
-                    hdc;
-                scaledupProducerTonnage.ScaledupReportedHouseholdPackagingWasteTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage * scaleUpFactor;
-                scaledupProducerTonnage.ScaledupReportedPublicBinTonnage = scaledupProducerTonnage.ReportedPublicBinTonnage * scaleUpFactor;
-
-                if (material.Code == MaterialCodes.Glass)
-                {
-                    scaledupProducerTonnage.ScaledupHouseholdDrinksContainersTonnageGlass = scaledupProducerTonnage.HouseholdDrinksContainersTonnageGlass * scaleUpFactor;
-                }
-
-                scaledupProducerTonnage.ScaledupTotalReportedTonnage = scaledupProducerTonnage.TotalReportedTonnage * scaleUpFactor;
-                scaledupProducerTonnage.ScaledupReportedSelfManagedConsumerWasteTonnage = scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage * scaleUpFactor;
-                scaledupProducerTonnage.ScaledupNetReportedTonnage = scaledupProducerTonnage.NetReportedTonnage * scaleUpFactor;
-                scaledupProducerTonnages.Add(material.Code, scaledupProducerTonnage);
-            }
-
-            return scaledupProducerTonnages;
-        }
-
-        public static void SetHeaders(CalcResultScaledupProducers producers, IEnumerable<MaterialDetail> materials)
-        {
-            producers.TitleHeader = new CalcResultScaledupProducerHeader
-            {
-                Name = CalcResultScaledupProducerHeaders.ScaledupProducers,
-                ColumnIndex = 1,
-            };
-
-            producers.MaterialBreakdownHeaders = GetMaterialsBreakdownHeader(materials);
-
-            producers.ColumnHeaders = GetColumnHeaders(materials);
-        }
-
-        public static List<CalcResultScaledupProducerHeader> GetMaterialsBreakdownHeader(IEnumerable<MaterialDetail> materials)
-        {
-            var materialsBreakdownHeaders = new List<CalcResultScaledupProducerHeader>();
-            var columnIndex = MaterialsBreakdownHeaderInitialColumnIndex;
-
-            materialsBreakdownHeaders.Add(new CalcResultScaledupProducerHeader
-            {
-                Name = CalcResultScaledupProducerHeaders.EachSubmissionForTheYear,
-                ColumnIndex = 1,
-            });
-
-            foreach (var material in materials)
-            {
-                materialsBreakdownHeaders.Add(new CalcResultScaledupProducerHeader
-                {
-                    Name = $"{material.Name} Breakdown",
-                    ColumnIndex = columnIndex,
-                });
-
-                columnIndex = material.Code == MaterialCodes.Glass
-                    ? columnIndex + MaterialsBreakdownHeaderIncrementalColumnIndex + 2
-                    : columnIndex + MaterialsBreakdownHeaderIncrementalColumnIndex;
-            }
-
-            return materialsBreakdownHeaders;
-        }
-
-        public static List<CalcResultScaledupProducerHeader> GetColumnHeaders(IEnumerable<MaterialDetail> materials)
-        {
-            var columnHeaders = new List<CalcResultScaledupProducerHeader>();
-
-            columnHeaders.AddRange([
-                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ProducerId },
-                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.SubsidiaryId },
-                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ProducerOrSubsidiaryName },
-                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.Level },
-                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.SubmissionPeriodCode },
-                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.DaysInSubmissionPeriod },
-                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.DaysInWholePeriod },
-                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaleupFactor }
-            ]);
-
-            foreach (var material in materials)
-            {
-                var columnHeadersList = new List<CalcResultScaledupProducerHeader>
-                {
-                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ReportedHouseholdPackagingWasteTonnage },
-                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ReportedPublicBinTonnage },
-                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.TotalReportedTonnage },
-                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ReportedSelfManagedConsumerWasteTonnage },
-                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.NetReportedTonnage },
-                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupReportedHouseholdPackagingWasteTonnage },
-                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupReportedPublicBinTonnage },
-                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupTotalReportedTonnage },
-                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupReportedSelfManagedConsumerWasteTonnage },
-                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupNetReportedTonnage },
-                };
-
-                if (material.Code == MaterialCodes.Glass)
-                {
-                    columnHeadersList.Insert(2, new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.HouseholdDrinksContainersTonnageGlass });
-                    columnHeadersList.Insert(8, new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupHouseholdDrinksContainersTonnageGlass });
-                }
-
-                columnHeaders.AddRange(columnHeadersList);
-            }
-
-            return columnHeaders;
         }
     }
 }
