@@ -13,9 +13,9 @@
     [TestClass]
     public class CalcResultScaledupProducersBuilderTest
     {
+        private readonly ApplicationDBContext dbContext;
+        private readonly int runId = 1;
         private CalcResultScaledupProducersBuilder builder;
-        private ApplicationDBContext dbContext;
-        int runId = 1;
 
         private void PrepareScaledUpProducer()
         {
@@ -92,8 +92,7 @@
             this.dbContext.SaveChanges();
         }
 
-        [TestInitialize]
-        public void Init()
+        public CalcResultScaledupProducersBuilderTest()
         {
             var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
             .UseInMemoryDatabase(databaseName: "PayCal")
@@ -128,7 +127,7 @@
         [TestMethod]
         public void GetScaledUpProducerIds_Test()
         {
-            PrepareScaledUpProducer();
+            this.PrepareScaledUpProducer();
             var task = this.builder.GetScaledUpOrganisationIdsAsync(this.runId);
             task.Wait();
 
@@ -176,7 +175,7 @@
             var allProducersWithLevel2 = runProducerMaterialDetails.Where(x => x.SubsidiaryId == null);
             Assert.IsTrue(allProducersWithLevel2.All(x => x.Level == CommonConstants.LevelTwo.ToString()));
 
-            var extraRows = runProducerMaterialDetails.Skip(Math.Max(0, runProducerMaterialDetails.Count() - 2));
+            var extraRows = runProducerMaterialDetails.Skip(Math.Max(0, runProducerMaterialDetails.Count - 2));
             Assert.AreEqual(2, extraRows.Count());
             Assert.IsTrue(extraRows.All(x => x.IsSubtotalRow));
             Assert.AreEqual(2, runProducerMaterialDetails.Count(x => x.IsSubtotalRow));
