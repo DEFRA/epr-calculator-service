@@ -11,6 +11,8 @@
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using static Azure.Core.HttpHeader;
+
     [TestClass]
     public class CalcResultSummaryBuilderTests
     {
@@ -218,12 +220,12 @@
                     ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>() { new()
                 {
                      ProducerCommsFeesByMaterial =  new Dictionary<MaterialDetail, CalcResultSummaryProducerCommsFeesCostByMaterial>(){ },
-                      ProducerDisposalFeesByMaterial = new Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial>(){ },
-                       ProducerId ="1",
-                        ProducerName ="Test",
+                     ProducerDisposalFeesByMaterial = new Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial>(){ },
+                     ProducerId ="1",
+                     ProducerName ="Test",
                      TotalProducerDisposalFeeWithBadDebtProvision =100,
                      TotalProducerCommsFeeWithBadDebtProvision =100,
-                      SubsidiaryId ="1",
+                     SubsidiaryId ="1",
 
                 } }
                 },
@@ -256,6 +258,41 @@
                     ]
                 },
                 CalcResultLateReportingTonnageData = Fixture.Create<CalcResultLateReportingTonnage>(),
+
+                CalcResultScaledupProducers = new CalcResultScaledupProducers
+                {
+                    TitleHeader = null,
+                    MaterialBreakdownHeaders = null,
+                    ColumnHeaders = null,
+                    ScaledupProducers = new List<CalcResultScaledupProducer>
+                    {
+                        new ()
+                        {
+                            ProducerId = 1,
+                            ProducerName = "Producer A",
+                            ScaledupProducerTonnageByMaterial =
+                                new Dictionary<string, CalcResultScaledupProducerTonnage>
+                                {
+                                    {
+                                        "10001",
+                                        new CalcResultScaledupProducerTonnage
+                                        {
+                                            ReportedHouseholdPackagingWasteTonnage = 0,
+                                            ReportedPublicBinTonnage = 0,
+                                            TotalReportedTonnage = 0,
+                                            ReportedSelfManagedConsumerWasteTonnage = 0,
+                                            NetReportedTonnage = 0,
+                                            ScaledupReportedHouseholdPackagingWasteTonnage = 0,
+                                            ScaledupReportedPublicBinTonnage = 0,
+                                            ScaledupTotalReportedTonnage = 0,
+                                            ScaledupReportedSelfManagedConsumerWasteTonnage = 0,
+                                            ScaledupNetReportedTonnage = 0,
+                                        }
+                                    }
+                                }
+                        },
+                    }
+                },
             };
 
             // Seed database
@@ -613,7 +650,7 @@
             var result = calcResultSummaryBuilder.GetCalcResultSummary(orderedProducerDetails, materials,
                 runProducerMaterialDetails, _calcResult, TotalPackagingTonnage, _scaledupProducers);
             Assert.IsNotNull(result);
-            Assert.AreEqual(125, result.ColumnHeaders.Count());
+            Assert.AreEqual(126, result.ColumnHeaders.Count());
 
             var producerDisposalFees = result.ProducerDisposalFees;
             Assert.IsNotNull(producerDisposalFees);
