@@ -128,8 +128,8 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                     $"{commsCost.ProducerReportedHouseholdPackagingWasteTonnageValue:0.000}";
                 commsCost.ReportedPublicBinTonnage =
                     $"{commsCost.ReportedPublicBinTonnageValue:0.0000}";
-                commsCost.HouseholdDrinksContainers =
-                    $"{commsCost.HouseholdDrinksContainersValue:0.0000}";
+                commsCost.HouseholdDrinksContainers = materialName == MaterialNames.Glass ?
+                    $"{commsCost.HouseholdDrinksContainersValue:0.0000}" : string.Empty;
                 commsCost.LateReportingTonnage = $"{commsCost.LateReportingTonnageValue:0.000}";
                 commsCost.ProducerReportedHouseholdPlusLateReportingTonnage =
                     $"{commsCost.ProducerReportedTotalTonnage:0.000}";
