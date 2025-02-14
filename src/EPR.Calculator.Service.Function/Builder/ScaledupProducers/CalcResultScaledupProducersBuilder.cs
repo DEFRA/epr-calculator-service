@@ -163,7 +163,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                     DaysInSubmissionPeriod = first.DaysInSubmissionPeriod,
                     DaysInWholePeriod = first.DaysInSubmissionPeriod,
                     Level = CommonConstants.LevelOne.ToString(),
-                    IsSubtotalRow = true
+                    IsSubtotalRow = true,
                 };
 
                 runProducerMaterialDetails.Add(extraRow);
@@ -212,7 +212,6 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                                             select crpdd.OrganisationId.GetValueOrDefault()).Distinct().ToListAsync();
             return scaleupProducerIds ?? [];
         }
-
 
         public static Dictionary<string, CalcResultScaledupProducerTonnage> GetTonnages(IEnumerable<CalculatorRunPomDataDetail> pomData,
             IEnumerable<MaterialDetail> materials,

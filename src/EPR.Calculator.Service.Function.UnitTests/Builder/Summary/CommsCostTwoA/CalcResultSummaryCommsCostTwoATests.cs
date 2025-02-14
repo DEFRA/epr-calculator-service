@@ -12,7 +12,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
         private readonly List<ProducerDetail> _producers;
         private readonly MaterialDetail _material;
         private readonly CalcResult _calcResult;
-        private readonly List<Dictionary<string, CalcResultScaledupProducerTonnage>> _scaledupProducers;
+        private readonly IEnumerable<CalcResultScaledupProducer> _scaledupProducers;
 
         private Fixture Fixture { get; init; } = new Fixture();
 
@@ -20,7 +20,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
         {
             _material = GetMaterial();
             _producers = GetProducers();
-            _scaledupProducers = GetScaledUpProducers();
+            _scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
             _calcResult = new CalcResult
             {

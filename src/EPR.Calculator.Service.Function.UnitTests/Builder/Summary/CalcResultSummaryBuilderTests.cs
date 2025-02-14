@@ -648,7 +648,7 @@
 
             var calcResultSummaryBuilder = new CalcResultSummaryBuilder(this._context);
             var result = calcResultSummaryBuilder.GetCalcResultSummary(orderedProducerDetails, materials,
-                runProducerMaterialDetails, _calcResult, TotalPackagingTonnage, _scaledupProducers);
+                _calcResult, TotalPackagingTonnage);
             Assert.IsNotNull(result);
             Assert.AreEqual(126, result.ColumnHeaders.Count());
 
