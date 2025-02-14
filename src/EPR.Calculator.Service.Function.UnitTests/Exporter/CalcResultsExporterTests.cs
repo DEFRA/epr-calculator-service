@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Text;
     using AutoFixture;
     using EPR.Calculator.API.Exporter;
     using EPR.Calculator.Service.Function.Models;
@@ -567,6 +568,14 @@
             Assert.IsTrue(result.Contains("Glass"));
             Assert.IsTrue(result.Contains("HouseholdDrinksContainersTonnageGlass"));
             Assert.IsTrue(result.Contains("ScaledupHouseholdDrinksContainersTonnageGlass"));
+        }
+
+        [TestMethod]
+        public void AppendFileInfoTest()
+        {
+            var csvContent = new StringBuilder();
+            CalcResultsExporter.AppendFileInfo(csvContent, "Label", "Filename,20/12/2024,User");
+            Assert.IsTrue(csvContent.ToString().Contains("Label,Filename,20/12/2024,User"));
         }
 
         private static Dictionary<string, CalcResultScaledupProducerTonnage> GetScaledupProducerTonnageByMaterial()
