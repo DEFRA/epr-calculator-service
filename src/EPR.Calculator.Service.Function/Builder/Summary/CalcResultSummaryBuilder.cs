@@ -182,7 +182,7 @@
                 materialCostSummary.Add(material, new CalcResultSummaryProducerDisposalFeesByMaterial
                 {
                     HouseholdPackagingWasteTonnage = CalcResultSummaryUtil.GetHouseholdPackagingWasteTonnageProducerTotal(producersAndSubsidiaries, material, this.ScaledupProducers), // example done
-                    PublicBinTonnage = CalcResultSummaryUtil.GetPublicBinTonnageProducerTotal(producersAndSubsidiaries, material, this.ScaledupProducers),
+                    PublicBinTonnage = CalcResultSummaryUtil.GetPublicBinTonnageProducerTotal(producersAndSubsidiaries, material, PackagingTypes.PublicBin, this.ScaledupProducers),
                     TotalReportedTonnage = CalcResultSummaryUtil.GetReportedTonnageProducerTotal(producersAndSubsidiaries, material, this.ScaledupProducers),
                     ManagedConsumerWasteTonnage = CalcResultSummaryUtil.GetManagedConsumerWasteTonnageProducerTotal(producersAndSubsidiaries, material, this.ScaledupProducers),
                     NetReportedTonnage = CalcResultSummaryUtil.GetNetReportedTonnageProducerTotal(producersAndSubsidiaries, material, this.ScaledupProducers),
@@ -231,7 +231,7 @@
                     ? string.Empty
                     : producersAndSubsidiaries[0].ProducerName ?? string.Empty,
                 SubsidiaryId = string.Empty,
-                Level = isOverAllTotalRow ? CommonConstants.Totals : CommonConstants.LevelOne.ToString(),
+                Level = isOverAllTotalRow ? string.Empty : CommonConstants.LevelOne.ToString(),
                 isProducerScaledup = GetScaledupProducerStatusTotalRow(producersAndSubsidiaries[0], this.ScaledupProducers, isOverAllTotalRow),
                 ProducerDisposalFeesByMaterial = materialCostSummary,
 
@@ -284,7 +284,7 @@
                 // Percentage of Producer Reported Tonnage vs All Producers
                 PercentageofProducerReportedTonnagevsAllProducers = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducersTotal(producersAndSubsidiaries, TotalPackagingTonnage),
 
-                isTotalRow = true
+                isTotalRow = true,
             };
 
             TwoCCommsCostUtil.UpdateTwoCTotals(calcResult, producerDisposalFees, isOverAllTotalRow, totalRow,
@@ -316,12 +316,15 @@
 
             foreach (var material in materials)
             {
+                var householdPackagingWasteTonnage = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.Household, this.ScaledupProducers);
+                var publicBinTonnage = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.PublicBin, this.ScaledupProducers);
+
                 var calcResultSummaryProducerDisposalFeesByMaterial = new CalcResultSummaryProducerDisposalFeesByMaterial
                 {
-                    HouseholdPackagingWasteTonnage = CalcResultSummaryUtil.GetHouseholdPackagingWasteTonnage(producer, material, this.ScaledupProducers),
-                    PublicBinTonnage = CalcResultSummaryUtil.GetPublicBinTonnage(producer, material, this.ScaledupProducers),
+                    HouseholdPackagingWasteTonnage = householdPackagingWasteTonnage,
+                    PublicBinTonnage = publicBinTonnage,
                     TotalReportedTonnage = CalcResultSummaryUtil.GetReportedTonnage(producer, material, this.ScaledupProducers),
-                    ManagedConsumerWasteTonnage = CalcResultSummaryUtil.GetManagedConsumerWasteTonnage(producer, material, this.ScaledupProducers),
+                    ManagedConsumerWasteTonnage = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.ConsumerWaste, this.ScaledupProducers),
                     NetReportedTonnage = CalcResultSummaryUtil.GetNetReportedTonnage(producer, material, this.ScaledupProducers),
                     PricePerTonne = CalcResultSummaryUtil.GetPricePerTonne(material, calcResult),
                     ProducerDisposalFee = CalcResultSummaryUtil.GetProducerDisposalFee(producer, material, calcResult, this.ScaledupProducers),
@@ -337,7 +340,7 @@
 
                 if (material.Code == MaterialCodes.Glass && materialCostSummary.TryGetValue(material, out var producerDisposalFees))
                 {
-                    producerDisposalFees.HouseholdDrinksContainersTonnage = CalcResultSummaryUtil.GetHouseholdDrinksContainersTonnage(producer, material);
+                    producerDisposalFees.HouseholdDrinksContainersTonnage = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.HouseholdDrinksContainers, this.ScaledupProducers);
                 }
 
                 result.TotalProducerDisposalFee += calcResultSummaryProducerDisposalFeesByMaterial.ProducerDisposalFee;
@@ -350,8 +353,8 @@
 
                 var calcResultSummaryProducerCommsFeesCostByMaterial = new CalcResultSummaryProducerCommsFeesCostByMaterial
                 {
-                    HouseholdPackagingWasteTonnage = CalcResultSummaryUtil.GetHouseholdPackagingWasteTonnage(producer, material, this.ScaledupProducers),
-                    ReportedPublicBinTonnage = CalcResultSummaryUtil.GetReportedPublicBinTonnage(producer, material, this.ScaledupProducers),
+                    HouseholdPackagingWasteTonnage = householdPackagingWasteTonnage,
+                    ReportedPublicBinTonnage = publicBinTonnage,
                     TotalReportedTonnage = CalcResultSummaryCommsCostTwoA.GetTotalReportedTonnage(producer, material, this.ScaledupProducers),
                     PriceperTonne = CalcResultSummaryCommsCostTwoA.GetPriceperTonneForComms(material, calcResult),
                     ProducerTotalCostWithoutBadDebtProvision = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostWithoutBadDebtProvision(producer, material, calcResult, this.ScaledupProducers),
@@ -455,7 +458,7 @@
         {
             if (isOverAllTotalRow)
             {
-                return string.Empty;
+                return CommonConstants.Totals;
             }
 
             return CalcResultSummaryUtil.IsProducerScaledup(producer, scaledupProducers)

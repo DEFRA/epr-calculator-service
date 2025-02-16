@@ -1,6 +1,5 @@
 ﻿using EPR.Calculator.Service.Function.Builder.CommsCost;
 using EPR.Calculator.Service.Function.Builder.ParametersOther;
-using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
 using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA;
 using EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts;
 using EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C;
@@ -77,9 +76,10 @@ public static class CalcResultSummaryUtil
         return householdPackagingMaterial?.PackagingTonnage ?? 0;
     }
 
-    public static decimal GetPublicBinTonnage(
+    public static decimal GetTonnage(
         ProducerDetail producer,
         MaterialDetail material,
+        string packagingType,
         IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
     {
         var scaledupProducerForAllSubmissionPeriods = scaledUpProducers.Where(p => p.ProducerId == producer.ProducerId);
@@ -89,20 +89,39 @@ public static class CalcResultSummaryUtil
             decimal tonnage = 0;
             foreach (var item in scaledupProducerForAllSubmissionPeriods)
             {
-                tonnage += item.ScaledupProducerTonnageByMaterial[material.Code].ReportedPublicBinTonnage;
+                switch (packagingType)
+                {
+                    case PackagingTypes.Household:
+                        tonnage += item.ScaledupProducerTonnageByMaterial[material.Code].ScaledupReportedHouseholdPackagingWasteTonnage;
+                        break;
+                    case PackagingTypes.PublicBin:
+                        tonnage += item.ScaledupProducerTonnageByMaterial[material.Code].ScaledupReportedPublicBinTonnage;
+                        break;
+                    case PackagingTypes.ConsumerWaste:
+                        tonnage += item.ScaledupProducerTonnageByMaterial[material.Code].ScaledupReportedSelfManagedConsumerWasteTonnage;
+                        break;
+                    case PackagingTypes.HouseholdDrinksContainers:
+                        tonnage += item.ScaledupProducerTonnageByMaterial[material.Code].ReportedHouseholdPackagingWasteTonnage;
+                        break;
+                    default:
+                        tonnage += 0;
+                        break;
+                }
             }
 
             return tonnage;
         }
 
-        var publicBinTonnageMaterial = producer.ProducerReportedMaterials.FirstOrDefault(p => p.Material?.Code == material.Code && p.PackagingType == PackagingTypes.PublicBin);
+        var reportedMaterials = producer.ProducerReportedMaterials
+            .FirstOrDefault(p => p.Material?.Code == material.Code && p.PackagingType == packagingType);
 
-        return publicBinTonnageMaterial?.PackagingTonnage ?? 0;
+        return reportedMaterials?.PackagingTonnage ?? 0;
     }
 
     public static decimal GetHouseholdDrinksContainersTonnage(ProducerDetail producer, MaterialDetail material)
     {
-        var holdDrinksContainersMaterial = producer.ProducerReportedMaterials.FirstOrDefault(p => p.Material?.Code == material.Code && p.PackagingType == PackagingTypes.HouseholdDrinksContainers);
+        var holdDrinksContainersMaterial = producer.ProducerReportedMaterials
+            .FirstOrDefault(p => p.Material?.Code == material.Code && p.PackagingType == PackagingTypes.HouseholdDrinksContainers);
 
         return holdDrinksContainersMaterial?.PackagingTonnage ?? 0;
     }
@@ -112,11 +131,17 @@ public static class CalcResultSummaryUtil
         MaterialDetail material,
         IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
     {
-        var householdPackagingWasteTonnage = GetHouseholdPackagingWasteTonnage(producer, material, scaledUpProducers);
-        var publicBinTonnageMaterial = GetPublicBinTonnage(producer, material, scaledUpProducers);
-        var householdDrinksContainers = GetHouseholdDrinksContainersTonnage(producer, material);
+        var householdPackagingWasteTonnage = GetTonnage(producer, material, PackagingTypes.Household, scaledUpProducers);
+        var publicBinTonnage = GetTonnage(producer, material, PackagingTypes.PublicBin, scaledUpProducers);
 
-        return material.Code != MaterialCodes.Glass ? householdPackagingWasteTonnage + publicBinTonnageMaterial : householdPackagingWasteTonnage + publicBinTonnageMaterial + householdDrinksContainers;
+        if (material.Code != MaterialCodes.Glass)
+        {
+            return householdPackagingWasteTonnage + publicBinTonnage;
+        }
+
+        var householdDrinksContainersTonnage = GetTonnage(producer, material, PackagingTypes.HouseholdDrinksContainers, scaledUpProducers);
+
+        return householdPackagingWasteTonnage + publicBinTonnage + householdDrinksContainersTonnage;
     }
 
     public static decimal GetHouseholdPackagingWasteTonnageProducerTotal(
@@ -137,9 +162,10 @@ public static class CalcResultSummaryUtil
     public static decimal GetPublicBinTonnageProducerTotal(
         IEnumerable<ProducerDetail> producers,
         MaterialDetail material,
+        string packagingType,
         IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
     {
-        return producers.Sum(producer => GetPublicBinTonnage(producer, material, scaledUpProducers));
+        return producers.Sum(producer => GetTonnage(producer, material, packagingType, scaledUpProducers));
     }
 
     public static decimal GetHouseholdDrinksContainersTonnageProducerTotal(
