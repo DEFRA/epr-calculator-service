@@ -62,7 +62,7 @@
         {
             var scaledupProducerForAllSubmissionPeriods = scaledUpProducers.Where(p => p.ProducerId == producer.ProducerId);
 
-            if (scaledupProducerForAllSubmissionPeriods != null)
+            if (scaledupProducerForAllSubmissionPeriods.Any())
             {
                 decimal tonnage = 0;
                 foreach (var item in scaledupProducerForAllSubmissionPeriods)
@@ -923,30 +923,6 @@
                 default:
                     return 0;
             }
-        }
-
-        public static decimal GetReportedPublicBinTonnage(
-            ProducerDetail producer,
-            MaterialDetail material,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
-        {
-            var scaledupProducerForAllSubmissionPeriods = scaledUpProducers.Where(p => p.ProducerId == producer.ProducerId);
-
-            if (scaledupProducerForAllSubmissionPeriods != null)
-            {
-                decimal tonnage = 0;
-                foreach (var item in scaledupProducerForAllSubmissionPeriods)
-                {
-                    tonnage += item.ScaledupProducerTonnageByMaterial[material.Code].ScaledupReportedPublicBinTonnage;
-                }
-
-                return tonnage;
-            }
-
-            var publicBinPackagingMaterial = producer.ProducerReportedMaterials
-                .FirstOrDefault(p => p.Material?.Code == material.Code && p.PackagingType == PackagingTypes.PublicBin);
-
-            return publicBinPackagingMaterial != null ? publicBinPackagingMaterial.PackagingTonnage : 0;
         }
     }
 }

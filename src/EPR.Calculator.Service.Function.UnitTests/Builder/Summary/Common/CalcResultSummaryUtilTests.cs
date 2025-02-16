@@ -797,7 +797,7 @@
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
             // Act
-            var result = CalcResultSummaryUtil.GetReportedPublicBinTonnage(producer, material, scaledupProducers);
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.PublicBin, scaledupProducers);
 
             // Assert
             Assert.AreEqual(20.00m, result);

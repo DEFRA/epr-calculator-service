@@ -12,6 +12,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Mappers;
     using EPR.Calculator.Service.Function.Models;
+    using EPR.Calculator.Service.Function.UnitTests.Builder;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -22,7 +23,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         private readonly ApplicationDBContext context;
         private readonly CalcResultSummaryBuilder calcResultsService;
         private readonly CalcResult calcResult;
-        private readonly List<Dictionary<string, CalcResultScaledupProducerTonnage>> _scaledupProducers;
+        private readonly CalcResultScaledupProducers scaledupProducers;
 
         private Fixture Fixture { get; init; } = new Fixture();
 
@@ -33,7 +34,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 .Options;
             this.context = new ApplicationDBContext(this.dbContextOptions);
             this.calcResultsService = new CalcResultSummaryBuilder(this.context);
-            _scaledupProducers = GetScaledUpProducers();
+            this.scaledupProducers = TestDataHelper.GetScaledupProducers();
             this.calcResult = new CalcResult
             {
                 CalcResultParameterOtherCost = new CalcResultParameterOtherCost
@@ -276,65 +277,12 @@ namespace EPR.Calculator.Service.Function.UnitTests
                     TitleHeader = null,
                     MaterialBreakdownHeaders = null,
                     ColumnHeaders = null,
-                    ScaledupProducers = new List<CalcResultScaledupProducer>
-                    {
-                        new ()
-                        {
-                            ProducerId = 1,
-                            ProducerName = "Producer A",
-                            ScaledupProducerTonnageByMaterial =
-                                new Dictionary<string, CalcResultScaledupProducerTonnage>
-                                {
-                                    {
-                                        "10001",
-                                        new CalcResultScaledupProducerTonnage
-                                        {
-                                            ReportedHouseholdPackagingWasteTonnage = 0,
-                                            ReportedPublicBinTonnage = 0,
-                                            TotalReportedTonnage = 0,
-                                            ReportedSelfManagedConsumerWasteTonnage = 0,
-                                            NetReportedTonnage = 0,
-                                            ScaledupReportedHouseholdPackagingWasteTonnage = 0,
-                                            ScaledupReportedPublicBinTonnage = 0,
-                                            ScaledupTotalReportedTonnage = 0,
-                                            ScaledupReportedSelfManagedConsumerWasteTonnage = 0,
-                                            ScaledupNetReportedTonnage = 0,
-                                        }
-                                    }
-                                }
-                        },
-                    }
+                    ScaledupProducers = this.scaledupProducers.ScaledupProducers,
                 },
             };
 
             // Seed database
             SeedDatabase(this.context);
-        }
-
-        private static List<Dictionary<string, CalcResultScaledupProducerTonnage>> GetScaledUpProducers()
-        {
-            return new List<Dictionary<string, CalcResultScaledupProducerTonnage>>
-            {
-                new Dictionary<string, CalcResultScaledupProducerTonnage>
-                {
-                    {
-                        "10001",
-                        new CalcResultScaledupProducerTonnage
-                        {
-                            ReportedHouseholdPackagingWasteTonnage = 0,
-                            ReportedPublicBinTonnage = 0,
-                            TotalReportedTonnage = 0,
-                            ReportedSelfManagedConsumerWasteTonnage = 0,
-                            NetReportedTonnage = 0,
-                            ScaledupReportedHouseholdPackagingWasteTonnage = 0,
-                            ScaledupReportedPublicBinTonnage = 0,
-                            ScaledupTotalReportedTonnage = 0,
-                            ScaledupReportedSelfManagedConsumerWasteTonnage = 0,
-                            ScaledupNetReportedTonnage = 0,
-                        }
-                    },
-                },
-            };
         }
 
         [TestCleanup]
@@ -669,7 +617,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var producerDisposalFees = result.ProducerDisposalFees;
             Assert.IsNotNull(producerDisposalFees);
 
-            var totals = producerDisposalFees.First(t => t.Level == "Totals");
+            var totals = producerDisposalFees.First(t => t.isProducerScaledup == "Totals");
             var producer = producerDisposalFees.First(t => t.Level == "1");
             Assert.IsNotNull(producer);
 
@@ -725,13 +673,13 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             Assert.AreEqual(100, glassTonnage.ReportedHouseholdPackagingWasteTonnage);
             Assert.AreEqual(0, glassTonnage.ReportedPublicBinTonnage);
-            Assert.AreEqual(30, glassTonnage.HouseholdDrinksContainersTonnageGlass);
-            Assert.AreEqual(130, glassTonnage.TotalReportedTonnage);
+            Assert.AreEqual(0, glassTonnage.HouseholdDrinksContainersTonnageGlass);
+            Assert.AreEqual(100, glassTonnage.TotalReportedTonnage);
             Assert.AreEqual(130, glassTonnage.NetReportedTonnage);
             Assert.AreEqual(100, glassTonnage.ScaledupReportedHouseholdPackagingWasteTonnage);
             Assert.AreEqual(0, glassTonnage.ScaledupReportedPublicBinTonnage);
-            Assert.AreEqual(30, glassTonnage.ScaledupHouseholdDrinksContainersTonnageGlass);
-            Assert.AreEqual(130, glassTonnage.ScaledupTotalReportedTonnage);
+            Assert.AreEqual(0, glassTonnage.ScaledupHouseholdDrinksContainersTonnageGlass);
+            Assert.AreEqual(100, glassTonnage.ScaledupTotalReportedTonnage);
             Assert.AreEqual(130, glassTonnage.ScaledupNetReportedTonnage);
         }
 
