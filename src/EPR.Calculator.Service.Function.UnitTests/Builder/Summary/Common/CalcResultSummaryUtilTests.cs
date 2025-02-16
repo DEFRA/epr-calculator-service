@@ -2,6 +2,7 @@
 {
     using AutoFixture;
     using EPR.Calculator.Service.Function.Builder.Summary.Common;
+    using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -52,7 +53,7 @@
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
             // Act
-            var result = CalcResultSummaryUtil.GetHouseholdPackagingWasteTonnage(producer, material, scaledupProducers);
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.Household, scaledupProducers);
 
             // Assert
             Assert.AreEqual(1000.00m, result);
@@ -67,7 +68,7 @@
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
             // Act
-            var result = CalcResultSummaryUtil.GetPublicBinTonnage(producer, material, scaledupProducers);
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.PublicBin, scaledupProducers);
 
             // Assert
             Assert.AreEqual(20.00m, result);
@@ -79,9 +80,10 @@
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
             // Act
-            var result = CalcResultSummaryUtil.GetHouseholdDrinksContainersTonnage(producer, material);
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.HouseholdDrinksContainers, scaledupProducers);
 
             // Assert
             Assert.AreEqual(50.00m, result);
@@ -111,7 +113,7 @@
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
             // Act
-            var result = CalcResultSummaryUtil.GetHouseholdPackagingWasteTonnageProducerTotal(producers, material, scaledupProducers);
+            var result = CalcResultSummaryUtil.GetTonnageTotal(producers, material, PackagingTypes.Household, scaledupProducers);
 
             // Assert
             Assert.AreEqual(3000.00m, result);
@@ -126,7 +128,7 @@
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
             // Act
-            var result = CalcResultSummaryUtil.GetPublicBinTonnageProducerTotal(producers, material, scaledupProducers);
+            var result = CalcResultSummaryUtil.GetTonnageTotal(producers, material, PackagingTypes.PublicBin, scaledupProducers);
 
             // Assert
             Assert.AreEqual(60.00m, result);
@@ -141,7 +143,7 @@
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
             // Act
-            var result = CalcResultSummaryUtil.GetReportedTonnageProducerTotal(producers, material, scaledupProducers);
+            var result = CalcResultSummaryUtil.GetReportedTonnageTotal(producers, material, scaledupProducers);
 
             // Assert
             Assert.AreEqual(3000.00m, result);
@@ -153,9 +155,10 @@
             // Arrange
             var producers = TestDataHelper.GetProducers();
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
             // Act
-            var result = CalcResultSummaryUtil.GetHouseholdDrinksContainersTonnageProducerTotal(producers, material);
+            var result = CalcResultSummaryUtil.GetTonnageTotal(producers, material, PackagingTypes.HouseholdDrinksContainers, scaledupProducers);
 
             // Assert
             Assert.AreEqual(150.00m, result);
@@ -170,7 +173,7 @@
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
             // Act
-            var result = CalcResultSummaryUtil.GetManagedConsumerWasteTonnage(producer, material, scaledupProducers);
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.ConsumerWaste, scaledupProducers);
 
             // Assert
             Assert.AreEqual(20.00m, result);
@@ -185,7 +188,7 @@
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
             // Act
-            var result = CalcResultSummaryUtil.GetManagedConsumerWasteTonnageProducerTotal(producers, material, scaledupProducers);
+            var result = CalcResultSummaryUtil.GetTonnageTotal(producers, material, PackagingTypes.ConsumerWaste, scaledupProducers);
 
             // Assert
             Assert.AreEqual(60.00m, result);
@@ -215,7 +218,7 @@
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
             // Act
-            var result = CalcResultSummaryUtil.GetNetReportedTonnageProducerTotal(producers, material, scaledupProducers);
+            var result = CalcResultSummaryUtil.GetNetReportedTonnageTotal(producers, material, scaledupProducers);
 
             // Assert
             Assert.AreEqual(2940.00m, result);
@@ -809,7 +812,7 @@
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
             // Act
-            var result = CalcResultSummaryUtil.GetReportedPublicBinTonnageTotal(producer, material, scaledupProducers);
+            var result = CalcResultSummaryUtil.GetTonnageTotal(producer, material, PackagingTypes.PublicBin, scaledupProducers);
 
             // Assert
             Assert.AreEqual(60.00m, result);
@@ -821,9 +824,10 @@
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
             // Act
-            var result = CalcResultSummaryUtil.GetHDCGlassTonnage(producer, material);
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.HouseholdDrinksContainers, scaledupProducers);
 
             // Assert
             Assert.AreEqual(50.00m, result);
@@ -835,9 +839,10 @@
             // Arrange
             var producer = TestDataHelper.GetProducers();
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
             // Act
-            var result = CalcResultSummaryUtil.GetHDCGlassTonnageTotal(producer, material);
+            var result = CalcResultSummaryUtil.GetTonnageTotal(producer, material, PackagingTypes.HouseholdDrinksContainers, scaledupProducers);
 
             // Assert
             Assert.AreEqual(150.00m, result);

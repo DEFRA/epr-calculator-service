@@ -660,8 +660,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, 1);
 
-            var result = CalcResultSummaryBuilder.GetCalcResultSummary(orderedProducerDetails, materials,
-                runProducerMaterialDetails, this.calcResult, totalPackagingTonnage);
+            var result = new CalcResultSummaryBuilder(this.context).GetCalcResultSummary(orderedProducerDetails, materials,
+                this.calcResult, totalPackagingTonnage);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(126, result.ColumnHeaders.Count());

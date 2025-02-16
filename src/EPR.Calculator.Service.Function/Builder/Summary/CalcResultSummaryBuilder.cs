@@ -186,9 +186,9 @@
                 {
                     HouseholdPackagingWasteTonnage = householdPackagingWasteTonnage,
                     PublicBinTonnage = publicBinTonnage,
-                    TotalReportedTonnage = CalcResultSummaryUtil.GetReportedTonnageProducerTotal(producersAndSubsidiaries, material, this.ScaledupProducers),
+                    TotalReportedTonnage = CalcResultSummaryUtil.GetReportedTonnageTotal(producersAndSubsidiaries, material, this.ScaledupProducers),
                     ManagedConsumerWasteTonnage = CalcResultSummaryUtil.GetTonnageTotal(producersAndSubsidiaries, material, PackagingTypes.ConsumerWaste, this.ScaledupProducers),
-                    NetReportedTonnage = CalcResultSummaryUtil.GetNetReportedTonnageProducerTotal(producersAndSubsidiaries, material, this.ScaledupProducers),
+                    NetReportedTonnage = CalcResultSummaryUtil.GetNetReportedTonnageTotal(producersAndSubsidiaries, material, this.ScaledupProducers),
                     PricePerTonne = CalcResultSummaryUtil.GetPricePerTonne(material, calcResult),
                     ProducerDisposalFee = CalcResultSummaryUtil.GetProducerDisposalFeeProducerTotal(producersAndSubsidiaries, material, calcResult, this.ScaledupProducers),
                     BadDebtProvision = CalcResultSummaryUtil.GetBadDebtProvisionProducerTotal(producersAndSubsidiaries, material, calcResult, this.ScaledupProducers),

@@ -54,30 +54,6 @@
             return scaledupProducer != null;
         }
 
-        public static decimal GetHouseholdPackagingWasteTonnage(
-            ProducerDetail producer,
-            MaterialDetail material,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
-        {
-            var scaledupProducerForAllSubmissionPeriods = scaledUpProducers.Where(p => p.ProducerId == producer.ProducerId);
-
-            if (scaledupProducerForAllSubmissionPeriods != null)
-            {
-                decimal tonnage = 0;
-                foreach (var item in scaledupProducerForAllSubmissionPeriods)
-                {
-                    tonnage += item.ScaledupProducerTonnageByMaterial[material.Code].ScaledupReportedHouseholdPackagingWasteTonnage;
-                }
-
-                return tonnage;
-            }
-
-            var householdPackagingMaterial = producer.ProducerReportedMaterials
-                .FirstOrDefault(p => p.Material?.Code == material.Code && p.PackagingType == PackagingTypes.Household);
-
-            return householdPackagingMaterial?.PackagingTonnage ?? 0;
-        }
-
         public static decimal GetTonnage(
             ProducerDetail producer,
             MaterialDetail material,
@@ -120,6 +96,15 @@
             return reportedMaterials?.PackagingTonnage ?? 0;
         }
 
+        public static decimal GetTonnageTotal(
+            IEnumerable<ProducerDetail> producers,
+            MaterialDetail material,
+            string packagingType,
+            IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
+        {
+            return producers.Sum(producer => GetTonnage(producer, material, packagingType, scaledUpProducers));
+        }
+
         public static decimal GetReportedTonnage(
             ProducerDetail producer,
             MaterialDetail material,
@@ -138,16 +123,7 @@
             return householdPackagingWasteTonnage + publicBinTonnage + householdDrinksContainersTonnage;
         }
 
-        public static decimal GetTonnageTotal(
-            IEnumerable<ProducerDetail> producers,
-            MaterialDetail material,
-            string packagingType,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
-        {
-            return producers.Sum(producer => GetTonnage(producer, material, packagingType, scaledUpProducers));
-        }
-
-        public static decimal GetReportedTonnageProducerTotal(
+        public static decimal GetReportedTonnageTotal(
             IEnumerable<ProducerDetail> producers,
             MaterialDetail material,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
@@ -166,19 +142,12 @@
             return reportedTonnage - managedConsumerWasteTonnage;
         }
 
-        public static decimal GetNetReportedTonnageProducerTotal(
+        public static decimal GetNetReportedTonnageTotal(
             IEnumerable<ProducerDetail> producers,
             MaterialDetail material,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
-            decimal totalCost = 0;
-
-            foreach (var producer in producers)
-            {
-                totalCost += GetNetReportedTonnage(producer, material, scaledUpProducers);
-            }
-
-            return totalCost;
+            return producers.Sum(producer => GetNetReportedTonnage(producer, material, scaledUpProducers));
         }
 
         public static decimal GetPricePerTonne(
@@ -215,14 +184,7 @@
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
-            decimal totalCost = 0;
-
-            foreach (var producer in producers)
-            {
-                totalCost += GetProducerDisposalFee(producer, material, calcResult, scaledUpProducers);
-            }
-
-            return totalCost;
+            return producers.Sum(producer => GetProducerDisposalFee(producer, material, calcResult, scaledUpProducers));
         }
 
         public static decimal GetBadDebtProvision(
@@ -249,14 +211,7 @@
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
-            decimal totalCost = 0;
-
-            foreach (var producer in producers)
-            {
-                totalCost += GetBadDebtProvision(producer, material, calcResult, scaledUpProducers);
-            }
-
-            return totalCost;
+            return producers.Sum(producer => GetBadDebtProvision(producer, material, calcResult, scaledUpProducers));
         }
 
         public static decimal GetProducerDisposalFeeWithBadDebtProvision(
@@ -271,7 +226,7 @@
 
             if (isParseSuccessful)
             {
-                return producerDisposalFee * (1 + value / 100);
+                return producerDisposalFee * (1 + (value / 100));
             }
 
             return 0;
@@ -283,14 +238,7 @@
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
-            decimal totalCost = 0;
-
-            foreach (var producer in producers)
-            {
-                totalCost += GetProducerDisposalFeeWithBadDebtProvision(producer, material, calcResult, scaledUpProducers);
-            }
-
-            return totalCost;
+            return producers.Sum(producer => GetProducerDisposalFeeWithBadDebtProvision(producer, material, calcResult, scaledUpProducers));
         }
 
         public static decimal GetEnglandWithBadDebtProvision(
@@ -318,14 +266,7 @@
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
-            decimal totalCost = 0;
-
-            foreach (var producer in producers)
-            {
-                totalCost += GetEnglandWithBadDebtProvision(producer, material, calcResult, scaledUpProducers);
-            }
-
-            return totalCost;
+            return producers.Sum(producer => GetEnglandWithBadDebtProvision(producer, material, calcResult, scaledUpProducers));
         }
 
         public static decimal GetWalesWithBadDebtProvision(
@@ -353,14 +294,7 @@
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
-            decimal totalCost = 0;
-
-            foreach (var producer in producers)
-            {
-                totalCost += GetWalesWithBadDebtProvision(producer, material, calcResult, scaledUpProducers);
-            }
-
-            return totalCost;
+            return producers.Sum(producer => GetWalesWithBadDebtProvision(producer, material, calcResult, scaledUpProducers));
         }
 
         public static decimal GetScotlandWithBadDebtProvision(
@@ -388,14 +322,7 @@
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
-            decimal totalCost = 0;
-
-            foreach (var producer in producers)
-            {
-                totalCost += GetScotlandWithBadDebtProvision(producer, material, calcResult, scaledUpProducers);
-            }
-
-            return totalCost;
+            return producers.Sum(producer => GetScotlandWithBadDebtProvision(producer, material, calcResult, scaledUpProducers));
         }
 
         public static decimal GetNorthernIrelandWithBadDebtProvision(
@@ -423,14 +350,7 @@
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
-            decimal totalCost = 0;
-
-            foreach (var producer in producers)
-            {
-                totalCost += GetNorthernIrelandWithBadDebtProvision(producer, material, calcResult, scaledUpProducers);
-            }
-
-            return totalCost;
+            return producers.Sum(producer => GetNorthernIrelandWithBadDebtProvision(producer, material, calcResult, scaledUpProducers));
         }
 
         public static CalcResultLapcapDataDetails? GetCountryApportionmentPercentage(CalcResult calcResult)
