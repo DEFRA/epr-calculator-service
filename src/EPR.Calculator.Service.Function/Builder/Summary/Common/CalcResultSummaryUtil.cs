@@ -6,6 +6,7 @@
     using System.Linq;
     using EPR.Calculator.Service.Function.Builder.CommsCost;
     using EPR.Calculator.Service.Function.Builder.ParametersOther;
+    using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
     using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA;
     using EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts;
     using EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C;
@@ -241,10 +242,11 @@
             return producers.Sum(producer => GetProducerDisposalFeeWithBadDebtProvision(producer, material, calcResult, scaledUpProducers));
         }
 
-        public static decimal GetEnglandWithBadDebtProvision(
+        public static decimal GetCountryBadDebtProvision(
             ProducerDetail producer,
             MaterialDetail material,
             CalcResult calcResult,
+            Countries country,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
             var producerDisposalFeeWithBadDebtProvision = GetProducerDisposalFeeWithBadDebtProvision(producer, material, calcResult, scaledUpProducers);
@@ -255,102 +257,39 @@
                 return 0;
             }
 
-            var isParseSuccessful = decimal.TryParse((string?)countryApportionmentPercentage.EnglandDisposalCost.Replace("%", string.Empty), out decimal value);
-
-            return isParseSuccessful ? producerDisposalFeeWithBadDebtProvision * value / 100 : 0;
-        }
-
-        public static decimal GetEnglandWithBadDebtProvisionProducerTotal(
-            IEnumerable<ProducerDetail> producers,
-            MaterialDetail material,
-            CalcResult calcResult,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
-        {
-            return producers.Sum(producer => GetEnglandWithBadDebtProvision(producer, material, calcResult, scaledUpProducers));
-        }
-
-        public static decimal GetWalesWithBadDebtProvision(
-            ProducerDetail producer,
-            MaterialDetail material,
-            CalcResult calcResult,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
-        {
-            var producerDisposalFeeWithBadDebtProvision = GetProducerDisposalFeeWithBadDebtProvision(producer, material, calcResult, scaledUpProducers);
-
-            var countryApportionmentPercentage = GetCountryApportionmentPercentage(calcResult);
-            if (countryApportionmentPercentage == null)
+            string? disposalCost;
+            switch (country)
             {
-                return 0;
+                case Countries.England:
+                    disposalCost = countryApportionmentPercentage.EnglandDisposalCost;
+                    break;
+                case Countries.Wales:
+                    disposalCost = countryApportionmentPercentage.WalesDisposalCost;
+                    break;
+                case Countries.Scotland:
+                    disposalCost = countryApportionmentPercentage.ScotlandDisposalCost;
+                    break;
+                case Countries.NorthernIreland:
+                    disposalCost = countryApportionmentPercentage.NorthernIrelandDisposalCost;
+                    break;
+                default:
+                    disposalCost = "0%";
+                    break;
             }
 
-            var isParseSuccessful = decimal.TryParse((string?)countryApportionmentPercentage.WalesDisposalCost.Replace("%", string.Empty), out decimal value);
+            var isParseSuccessful = decimal.TryParse(disposalCost.Replace("%", string.Empty), out decimal value);
 
             return isParseSuccessful ? producerDisposalFeeWithBadDebtProvision * value / 100 : 0;
         }
 
-        public static decimal GetWalesWithBadDebtProvisionProducerTotal(
+        public static decimal GetCountryBadDebtProvisionTotal(
             IEnumerable<ProducerDetail> producers,
             MaterialDetail material,
             CalcResult calcResult,
+            Countries country,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
-            return producers.Sum(producer => GetWalesWithBadDebtProvision(producer, material, calcResult, scaledUpProducers));
-        }
-
-        public static decimal GetScotlandWithBadDebtProvision(
-            ProducerDetail producer,
-            MaterialDetail material,
-            CalcResult calcResult,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
-        {
-            var producerDisposalFeeWithBadDebtProvision = GetProducerDisposalFeeWithBadDebtProvision(producer, material, calcResult, scaledUpProducers);
-
-            var countryApportionmentPercentage = GetCountryApportionmentPercentage(calcResult);
-            if (countryApportionmentPercentage == null)
-            {
-                return 0;
-            }
-
-            var isParseSuccessful = decimal.TryParse((string?)countryApportionmentPercentage.ScotlandDisposalCost.Replace("%", string.Empty), out decimal value);
-
-            return isParseSuccessful ? producerDisposalFeeWithBadDebtProvision * value / 100 : 0;
-        }
-
-        public static decimal GetScotlandWithBadDebtProvisionProducerTotal(
-            IEnumerable<ProducerDetail> producers,
-            MaterialDetail material,
-            CalcResult calcResult,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
-        {
-            return producers.Sum(producer => GetScotlandWithBadDebtProvision(producer, material, calcResult, scaledUpProducers));
-        }
-
-        public static decimal GetNorthernIrelandWithBadDebtProvision(
-            ProducerDetail producer,
-            MaterialDetail material,
-            CalcResult calcResult,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
-        {
-            var producerDisposalFeeWithBadDebtProvision = GetProducerDisposalFeeWithBadDebtProvision(producer, material, calcResult, scaledUpProducers);
-
-            var countryApportionmentPercentage = GetCountryApportionmentPercentage(calcResult);
-            if (countryApportionmentPercentage == null)
-            {
-                return 0;
-            }
-
-            var isParseSuccessful = decimal.TryParse((string?)countryApportionmentPercentage.NorthernIrelandDisposalCost.Replace("%", string.Empty), out decimal value);
-
-            return isParseSuccessful ? producerDisposalFeeWithBadDebtProvision * value / 100 : 0;
-        }
-
-        public static decimal GetNorthernIrelandWithBadDebtProvisionProducerTotal(
-            IEnumerable<ProducerDetail> producers,
-            MaterialDetail material,
-            CalcResult calcResult,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
-        {
-            return producers.Sum(producer => GetNorthernIrelandWithBadDebtProvision(producer, material, calcResult, scaledUpProducers));
+            return producers.Sum(producer => GetCountryBadDebtProvision(producer, material, calcResult, country, scaledUpProducers));
         }
 
         public static CalcResultLapcapDataDetails? GetCountryApportionmentPercentage(CalcResult calcResult)
@@ -452,7 +391,7 @@
 
             foreach (var material in materials)
             {
-                var laDisposalTotal = CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvisionProducerTotal(producers, material, calcResult, scaledUpProducers);
+                var laDisposalTotal = GetProducerDisposalFeeWithBadDebtProvisionProducerTotal(producers, material, calcResult, scaledUpProducers);
                 var twoAcommsDisposal = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostwithBadDebtProvisionTotal(producers, material, calcResult, scaledUpProducers);
                 total += laDisposalTotal + twoAcommsDisposal;
             }

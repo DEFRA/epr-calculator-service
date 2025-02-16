@@ -336,7 +336,7 @@
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
             // Act
-            var result = CalcResultSummaryUtil.GetEnglandWithBadDebtProvision(producer, material, _calcResult, scaledupProducers);
+            var result = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, material, _calcResult, Countries.England, scaledupProducers);
 
             // Assert
             Assert.AreEqual(374.8295162135948480m, result);
@@ -351,7 +351,7 @@
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
             // Act
-            var result = CalcResultSummaryUtil.GetWalesWithBadDebtProvision(producer, material, _calcResult, scaledupProducers);
+            var result = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, material, _calcResult, Countries.Wales, scaledupProducers);
 
             // Assert
             Assert.AreEqual(84.4902597789384960m, result);
@@ -366,7 +366,7 @@
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
             // Act
-            var result = CalcResultSummaryUtil.GetScotlandWithBadDebtProvision(producer, material, _calcResult, scaledupProducers);
+            var result = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, material, _calcResult, Countries.Scotland, scaledupProducers);
 
             // Assert
             Assert.AreEqual(168.2977700641839840m, result);
@@ -381,7 +381,7 @@
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
             // Act
-            var result = CalcResultSummaryUtil.GetNorthernIrelandWithBadDebtProvision(producer, material, _calcResult, scaledupProducers);
+            var result = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, material, _calcResult, Countries.NorthernIreland, scaledupProducers);
 
             // Assert
             Assert.AreEqual(65.8853339432826720m, result);
@@ -396,7 +396,7 @@
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
             // Act
-            var result = CalcResultSummaryUtil.GetEnglandWithBadDebtProvisionProducerTotal(producers, material, _calcResult, scaledupProducers);
+            var result = CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producers, material, _calcResult, Countries.England, scaledupProducers);
 
             // Assert
             Assert.AreEqual(1124.4885486407845440m, result);
@@ -411,7 +411,7 @@
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
             // Act
-            var result = CalcResultSummaryUtil.GetWalesWithBadDebtProvisionProducerTotal(producers, material, _calcResult, scaledupProducers);
+            var result = CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producers, material, _calcResult, Countries.Wales, scaledupProducers);
 
             // Assert
             Assert.AreEqual(253.4707793368154880m, result);
@@ -426,7 +426,7 @@
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
             // Act
-            var result = CalcResultSummaryUtil.GetScotlandWithBadDebtProvisionProducerTotal(producers, material, _calcResult, scaledupProducers);
+            var result = CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producers, material, _calcResult, Countries.Scotland, scaledupProducers);
 
             // Assert
             Assert.AreEqual(504.8933101925519520m, result);
@@ -441,7 +441,7 @@
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
             // Act
-            var result = CalcResultSummaryUtil.GetNorthernIrelandWithBadDebtProvisionProducerTotal(producers, material, _calcResult, scaledupProducers);
+            var result = CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producers, material, _calcResult, Countries.NorthernIreland, scaledupProducers);
 
             // Assert
             Assert.AreEqual(197.6560018298480160m, result);
