@@ -25,34 +25,27 @@
             this.context = context;
         }
 
-        /// <inheritdoc/>
         public async Task<CalcResultScaledupProducers> Construct(CalcResultsRequestDto resultsRequestDto)
         {
-            var runId = resultsRequestDto.RunId;
-            var materialsFromDb = await this.context.Material.ToListAsync();
-            var materials = MaterialMapper.Map(materialsFromDb);
-
-            var scaledupProducersSummary = new CalcResultScaledupProducers();
-
-            var organisationIds = await this.GetScaledUpOrganisationIdsAsync(resultsRequestDto.RunId);
-            if (organisationIds != null && organisationIds.Any())
+            try
             {
-                var runProducerMaterialDetails = await this.GetProducerReportedMaterialsAsync(runId, organisationIds);
+                var runId = resultsRequestDto.RunId;
+                var materialsFromDb = await context.Material.ToListAsync();
+                var materials = MaterialMapper.Map(materialsFromDb);
 
-                var allOrganisationPomDetails = await this.GetScaledupOrganisationDetails(runId, organisationIds);
+                var scaledupProducersSummary = new CalcResultScaledupProducers();
+                var scaledupProducers = new List<CalcResultScaledupProducer>();
 
-                this.AddExtraRows(runProducerMaterialDetails);
+                var organisationIds = await this.GetScaledUpOrganisationIdsAsync(resultsRequestDto.RunId);
+                if (organisationIds != null && organisationIds.Any())
+                {
+                    var runProducerMaterialDetails = await this.GetProducerReportedMaterialsAsync(runId, organisationIds);
 
-                this.CalculateScaledupTonnage(runProducerMaterialDetails, allOrganisationPomDetails, materials);
+                    var allOrganisationPomDetails = await this.GetScaledupOrganisationDetails(runId, organisationIds);
 
-                var orderedRunProducerMaterialDetails = runProducerMaterialDetails
-                    .OrderBy(p => p.ProducerId)
-                    .ThenBy(p => p.Level)
-                    .ThenBy(p => p.SubsidiaryId)
-                    .ThenBy(p => p.SubmissonPeriodCode)
-                    .ToList();
+                    this.AddExtraRows(runProducerMaterialDetails);
 
-                var overallTotalRow = this.GetOverallTotalRow(orderedRunProducerMaterialDetails, materials);
+                    this.CalculateScaledupTonnage(runProducerMaterialDetails, allOrganisationPomDetails, materials);
 
                     var orderedRunProducerMaterialDetails = runProducerMaterialDetails
                         .OrderBy(p => p.ProducerId)
@@ -74,9 +67,6 @@
             {
                 throw ex;
             }
-
-            SetHeaders(scaledupProducersSummary, materials);
-            return scaledupProducersSummary;
         }
 
         public CalcResultScaledupProducer GetOverallTotalRow(
@@ -86,7 +76,7 @@
             var overallTotalRow = new CalcResultScaledupProducer
             {
                 IsTotalRow = true,
-                ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>(),
+                ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>()
             };
 
             var allMaterialDict = orderedRunProducerMaterialDetails.Where(x => !x.IsSubtotalRow).Select(x => x.ScaledupProducerTonnageByMaterial);
@@ -96,28 +86,16 @@
                 var materialValues = allMaterialDict.Where(x => x.ContainsKey(material.Code)).Select(x => x[material.Code]).ToList();
                 totalRow.ReportedHouseholdPackagingWasteTonnage = materialValues.Sum(x => x.ReportedHouseholdPackagingWasteTonnage);
                 totalRow.ReportedPublicBinTonnage = materialValues.Sum(x => x.ReportedPublicBinTonnage);
-                if (material.Code == MaterialCodes.Glass)
-                {
-                    totalRow.HouseholdDrinksContainersTonnageGlass = materialValues.Sum(x => x.HouseholdDrinksContainersTonnageGlass);
-                }
-
                 totalRow.TotalReportedTonnage = materialValues.Sum(x => x.TotalReportedTonnage);
                 totalRow.ReportedSelfManagedConsumerWasteTonnage = materialValues.Sum(x => x.ReportedSelfManagedConsumerWasteTonnage);
                 totalRow.NetReportedTonnage = materialValues.Sum(x => x.NetReportedTonnage);
                 totalRow.ScaledupReportedHouseholdPackagingWasteTonnage = materialValues.Sum(x => x.ScaledupReportedHouseholdPackagingWasteTonnage);
                 totalRow.ScaledupReportedPublicBinTonnage = materialValues.Sum(x => x.ScaledupReportedPublicBinTonnage);
-                if (material.Code == MaterialCodes.Glass)
-                {
-                    totalRow.ScaledupHouseholdDrinksContainersTonnageGlass = materialValues.Sum(x => x.ScaledupHouseholdDrinksContainersTonnageGlass);
-                }
-
                 totalRow.ScaledupTotalReportedTonnage = materialValues.Sum(x => x.ScaledupTotalReportedTonnage);
                 totalRow.ScaledupReportedSelfManagedConsumerWasteTonnage = materialValues.Sum(x => x.ScaledupReportedSelfManagedConsumerWasteTonnage);
                 totalRow.ScaledupNetReportedTonnage = materialValues.Sum(x => x.ScaledupNetReportedTonnage);
-
                 overallTotalRow.ScaledupProducerTonnageByMaterial.Add(material.Name, totalRow);
             }
-
             return overallTotalRow;
         }
 
@@ -149,9 +127,9 @@
 
             foreach (var row in level2Rows)
             {
-                if (runProducerMaterialDetails.Exists(x => x.ProducerId == row.Key.ProducerId && x.SubsidiaryId != null)
+                if (runProducerMaterialDetails.Any(x => x.ProducerId == row.Key.ProducerId && x.SubsidiaryId != null)
                     &&
-                    row.Any())
+                    row.Count() > 0)
                 {
                     var levelRows = runProducerMaterialDetails.Where(x => x.ProducerId == row.Key.ProducerId && string.IsNullOrEmpty(x.SubsidiaryId));
                     foreach (var level2Row in levelRows)
@@ -170,7 +148,7 @@
 
             foreach (var pair in groupByResult)
             {
-                var first = pair.ToList()[0];
+                var first = pair.ToList().First();
 
                 // We are always expecting record with subsidiaryid null
                 var parentProducer = runProducerMaterialDetails.Where(x => x.ProducerId == pair.Key.ProducerId && x.SubsidiaryId == null).ToList();
@@ -185,7 +163,7 @@
                     DaysInSubmissionPeriod = first.DaysInSubmissionPeriod,
                     DaysInWholePeriod = first.DaysInWholePeriod,
                     Level = CommonConstants.LevelOne.ToString(),
-                    IsSubtotalRow = true,
+                    IsSubtotalRow = true
                 };
 
                 runProducerMaterialDetails.Add(extraRow);
@@ -194,9 +172,9 @@
 
         public async Task<IEnumerable<CalculatorRunPomDataDetail>> GetScaledupOrganisationDetails(int runId, IEnumerable<int> organisationIds)
         {
-            var result = await (from run in this.context.CalculatorRuns
-                                join crpdm in this.context.CalculatorRunPomDataMaster on run.CalculatorRunPomDataMasterId equals crpdm.Id
-                                join crpdd in this.context.CalculatorRunPomDataDetails on crpdm.Id equals crpdd.CalculatorRunPomDataMasterId
+            var result = await (from run in context.CalculatorRuns
+                                join crpdm in context.CalculatorRunPomDataMaster on run.CalculatorRunPomDataMasterId equals crpdm.Id
+                                join crpdd in context.CalculatorRunPomDataDetails on crpdm.Id equals crpdd.CalculatorRunPomDataMasterId
                                 where run.Id == runId && organisationIds.Contains(crpdd.OrganisationId.GetValueOrDefault())
                                 select crpdd).Distinct().ToListAsync();
             return result;
@@ -204,11 +182,11 @@
 
         public async Task<List<CalcResultScaledupProducer>> GetProducerReportedMaterialsAsync(int runId, IEnumerable<int> organisationIds)
         {
-            var result = await (from run in this.context.CalculatorRuns
-                                join crpdm in this.context.CalculatorRunPomDataMaster on run.CalculatorRunPomDataMasterId equals crpdm.Id
-                                join crpdd in this.context.CalculatorRunPomDataDetails on crpdm.Id equals crpdd.CalculatorRunPomDataMasterId
-                                join spl in this.context.SubmissionPeriodLookup on crpdd.SubmissionPeriod equals spl.SubmissionPeriod
-                                join pd in this.context.ProducerDetail.Include(x => x.ProducerReportedMaterials) on crpdd.OrganisationId equals pd.ProducerId
+            var result = await (from run in context.CalculatorRuns
+                                join crpdm in context.CalculatorRunPomDataMaster on run.CalculatorRunPomDataMasterId equals crpdm.Id
+                                join crpdd in context.CalculatorRunPomDataDetails on crpdm.Id equals crpdd.CalculatorRunPomDataMasterId
+                                join spl in context.SubmissionPeriodLookup on crpdd.SubmissionPeriod equals spl.SubmissionPeriod
+                                join pd in context.ProducerDetail.Include(x => x.ProducerReportedMaterials) on crpdd.OrganisationId equals pd.ProducerId
                                 where run.Id == runId && organisationIds.Contains(crpdd.OrganisationId.GetValueOrDefault())
                                 select new CalcResultScaledupProducer
                                 {
@@ -226,17 +204,17 @@
 
         public async Task<IEnumerable<int>> GetScaledUpOrganisationIdsAsync(int runId)
         {
-            var scaleupProducerIds = await (from run in this.context.CalculatorRuns
-                                            join crpdm in this.context.CalculatorRunPomDataMaster on run.CalculatorRunPomDataMasterId equals crpdm.Id
-                                            join crpdd in this.context.CalculatorRunPomDataDetails on crpdm.Id equals crpdd.CalculatorRunPomDataMasterId
-                                            join spl in this.context.SubmissionPeriodLookup on crpdd.SubmissionPeriod equals spl.SubmissionPeriod
+            var scaleupProducerIds = await (from run in context.CalculatorRuns
+                                            join crpdm in context.CalculatorRunPomDataMaster on run.CalculatorRunPomDataMasterId equals crpdm.Id
+                                            join crpdd in context.CalculatorRunPomDataDetails on crpdm.Id equals crpdd.CalculatorRunPomDataMasterId
+                                            join spl in context.SubmissionPeriodLookup on crpdd.SubmissionPeriod equals spl.SubmissionPeriod
                                             where run.Id == runId && crpdd.OrganisationId != null && spl.ScaleupFactor > NormalScaleup
                                             select crpdd.OrganisationId.GetValueOrDefault()).Distinct().ToListAsync();
             return scaleupProducerIds ?? [];
         }
 
-        public static Dictionary<string, CalcResultScaledupProducerTonnage> GetTonnages(
-            IEnumerable<CalculatorRunPomDataDetail> pomData,
+
+        public static Dictionary<string, CalcResultScaledupProducerTonnage> GetTonnages(IEnumerable<CalculatorRunPomDataDetail> pomData,
             IEnumerable<MaterialDetail> materials,
             string submissionPeriod,
             decimal scaleUpFactor)
@@ -257,21 +235,12 @@
                     .Where(pom => pom.PackagingType == PackagingTypes.PublicBin)
                     .Sum(pom => pom.PackagingMaterialWeight);
 
+                scaledupProducerTonnage.TotalReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
+                    scaledupProducerTonnage.ReportedPublicBinTonnage;
+
                 var hdc = (decimal)materialPomData
                     .Where(pom => pom.PackagingType == PackagingTypes.HouseholdDrinksContainers)
                     .Sum(pom => pom.PackagingMaterialWeight);
-
-                if (material.Code == MaterialCodes.Glass)
-                {
-                    scaledupProducerTonnage.HouseholdDrinksContainersTonnageGlass = hdc;
-                    scaledupProducerTonnage.TotalReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
-                                            scaledupProducerTonnage.ReportedPublicBinTonnage + scaledupProducerTonnage.HouseholdDrinksContainersTonnageGlass;
-                }
-                else
-                {
-                    scaledupProducerTonnage.TotalReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
-                    scaledupProducerTonnage.ReportedPublicBinTonnage;
-                }
 
                 scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage = (decimal)materialPomData
                     .Where(pom => pom.PackagingType == PackagingTypes.ConsumerWaste)
@@ -280,20 +249,15 @@
                 scaledupProducerTonnage.NetReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
                     scaledupProducerTonnage.ReportedPublicBinTonnage +
                     hdc;
+
                 scaledupProducerTonnage.ScaledupReportedHouseholdPackagingWasteTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage * scaleUpFactor;
                 scaledupProducerTonnage.ScaledupReportedPublicBinTonnage = scaledupProducerTonnage.ReportedPublicBinTonnage * scaleUpFactor;
-
-                if (material.Code == MaterialCodes.Glass)
-                {
-                    scaledupProducerTonnage.ScaledupHouseholdDrinksContainersTonnageGlass = scaledupProducerTonnage.HouseholdDrinksContainersTonnageGlass * scaleUpFactor;
-                }
-
                 scaledupProducerTonnage.ScaledupTotalReportedTonnage = scaledupProducerTonnage.TotalReportedTonnage * scaleUpFactor;
                 scaledupProducerTonnage.ScaledupReportedSelfManagedConsumerWasteTonnage = scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage * scaleUpFactor;
                 scaledupProducerTonnage.ScaledupNetReportedTonnage = scaledupProducerTonnage.NetReportedTonnage * scaleUpFactor;
+
                 scaledupProducerTonnages.Add(material.Code, scaledupProducerTonnage);
             }
-
             return scaledupProducerTonnages;
         }
 
@@ -302,7 +266,7 @@
             producers.TitleHeader = new CalcResultScaledupProducerHeader
             {
                 Name = CalcResultScaledupProducerHeaders.ScaledupProducers,
-                ColumnIndex = 1,
+                ColumnIndex = 1
             };
 
             producers.MaterialBreakdownHeaders = GetMaterialsBreakdownHeader(materials);
@@ -318,7 +282,7 @@
             materialsBreakdownHeaders.Add(new CalcResultScaledupProducerHeader
             {
                 Name = CalcResultScaledupProducerHeaders.EachSubmissionForTheYear,
-                ColumnIndex = 1,
+                ColumnIndex = 1
             });
 
             foreach (var material in materials)
@@ -326,11 +290,11 @@
                 materialsBreakdownHeaders.Add(new CalcResultScaledupProducerHeader
                 {
                     Name = $"{material.Name} Breakdown",
-                    ColumnIndex = columnIndex,
+                    ColumnIndex = columnIndex
                 });
 
                 columnIndex = material.Code == MaterialCodes.Glass
-                    ? columnIndex + MaterialsBreakdownHeaderIncrementalColumnIndex + 2
+                    ? columnIndex + MaterialsBreakdownHeaderIncrementalColumnIndex + 1
                     : columnIndex + MaterialsBreakdownHeaderIncrementalColumnIndex;
             }
 
@@ -367,12 +331,6 @@
                     new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupReportedSelfManagedConsumerWasteTonnage },
                     new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupNetReportedTonnage },
                 };
-
-                if (material.Code == MaterialCodes.Glass)
-                {
-                    columnHeadersList.Insert(2, new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.HouseholdDrinksContainersTonnageGlass });
-                    columnHeadersList.Insert(8, new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupHouseholdDrinksContainersTonnageGlass });
-                }
 
                 columnHeaders.AddRange(columnHeadersList);
             }
