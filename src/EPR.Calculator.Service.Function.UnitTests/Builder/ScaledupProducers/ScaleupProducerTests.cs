@@ -5,15 +5,20 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ScaledupProducers
     using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    /// <summary>
+    /// Unit tests for the <see cref="ScaleupProducer"/> class.
+    /// </summary>
     [TestClass]
     public class ScaleupProducerTests
     {
-        private ScaleupProducer scaleupProducer;
+        private readonly ScaleupProducer scaleupProducer;
 
-        [TestInitialize]
-        public void SetUp()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ScaleupProducerTests"/> class.
+        /// </summary>
+        public ScaleupProducerTests()
         {
-            scaleupProducer = new ScaleupProducer();
+            this.scaleupProducer = new ScaleupProducer();
         }
 
         [TestMethod]
@@ -25,10 +30,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ScaledupProducers
             var testValue = fixture.Create<int>();
 
             // Act
-            scaleupProducer.OrganisationId = testValue;
+            this.scaleupProducer.OrganisationId = testValue;
 
             // Assert
-            Assert.AreEqual(testValue, scaleupProducer.OrganisationId);
+            Assert.AreEqual(testValue, this.scaleupProducer.OrganisationId);
         }
 
         [TestMethod]
@@ -40,10 +45,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ScaledupProducers
             var testValue = fixture.Create<decimal>();
 
             // Act
-            scaleupProducer.ScaleupFactor = testValue;
+            this.scaleupProducer.ScaleupFactor = testValue;
 
             // Assert
-            Assert.AreEqual(testValue, scaleupProducer.ScaleupFactor);
+            Assert.AreEqual(testValue, this.scaleupProducer.ScaleupFactor);
         }
 
         [TestMethod]
@@ -55,10 +60,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ScaledupProducers
             var testValue = fixture.Create<string>();
 
             // Act
-            scaleupProducer.SubmissionPeriod = testValue;
+            this.scaleupProducer.SubmissionPeriod = testValue;
 
             // Assert
-            Assert.AreEqual(testValue, scaleupProducer.SubmissionPeriod);
+            Assert.AreEqual(testValue, this.scaleupProducer.SubmissionPeriod);
         }
 
         [TestMethod]
@@ -70,10 +75,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ScaledupProducers
             var testValue = fixture.Create<int>();
 
             // Act
-            scaleupProducer.DaysInSubmissionPeriod = testValue;
+            this.scaleupProducer.DaysInSubmissionPeriod = testValue;
 
             // Assert
-            Assert.AreEqual(testValue, scaleupProducer.DaysInSubmissionPeriod);
+            Assert.AreEqual(testValue, this.scaleupProducer.DaysInSubmissionPeriod);
         }
 
         [TestMethod]
@@ -85,10 +90,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ScaledupProducers
             var testValue = fixture.Create<int>();
 
             // Act
-            scaleupProducer.DaysInWholePeriod = testValue;
+            this.scaleupProducer.DaysInWholePeriod = testValue;
 
             // Assert
-            Assert.AreEqual(testValue, scaleupProducer.DaysInWholePeriod);
+            Assert.AreEqual(testValue, this.scaleupProducer.DaysInWholePeriod);
         }
     }
 }

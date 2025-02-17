@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Text;
     using AutoFixture;
     using EPR.Calculator.API.Exporter;
     using EPR.Calculator.Service.Function.Models;
@@ -10,7 +11,7 @@
     [TestClass]
     public class CalcResultsExporterTests
     {
-        Fixture Fixture { get; } = new Fixture();
+        private Fixture Fixture { get; } = new Fixture();
 
         [TestMethod]
         public void Export_ShouldReturnCsvContent_WhenAllDataIsPresent()
@@ -92,7 +93,6 @@
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter();
 
-
             // Act
             var result = exporter.Export(results);
 
@@ -106,10 +106,10 @@
             // Arrange
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter();
-            //Act
+            // Act
             var result = exporter.Export(results);
 
-            //Assert
+            // Assert
             Assert.IsTrue(result.Contains("Late Reporting Tonnage"));
         }
 
@@ -119,10 +119,10 @@
             // Arrange
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter();
-            //Act
+            // Act
             var result = exporter.Export(results);
 
-            //Assert
+            // Assert
             Assert.IsTrue(result.Contains("Parameters - Other"));
         }
 
@@ -132,10 +132,10 @@
             // Arrange
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter();
-            //Act
+            // Act
             var result = exporter.Export(results);
 
-            //Assert
+            // Assert
             Assert.IsTrue(result.Contains("1 + 4 Apportionment %s"));
         }
 
@@ -145,10 +145,10 @@
             // Arrange
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter();
-            //Act
+            // Act
             var result = exporter.Export(results);
 
-            //Assert
+            // Assert
             Assert.IsTrue(result.Contains("4 LA Data Prep Charge"));
         }
 
@@ -159,10 +159,10 @@
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter();
 
-            //Act
+            // Act
             var result = exporter.Export(results);
 
-            //Assert
+            // Assert
             Assert.IsTrue(result.Contains("5 Scheme set up cost Yearly Cost"));
         }
 
@@ -187,10 +187,10 @@
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter();
 
-            //Act
+            // Act
             var result = exporter.Export(results);
 
-            //Assert
+            // Assert
             Assert.IsTrue(result.Contains("SummaryData"));
         }
 
@@ -202,7 +202,7 @@
             {
                 CalcResultLapcapData = null!,
                 CalcResultLateReportingTonnageData = null!,
-                CalcResultParameterOtherCost = null!
+                CalcResultParameterOtherCost = null!,
             };
             var exporter = new CalcResultsExporter();
 
@@ -214,13 +214,16 @@
                 // Assert
                 Assert.IsFalse(string.IsNullOrEmpty(csvContent), "CSV content should not be empty.");
                 Assert.IsFalse(csvContent.Contains("LapcapData"), "CSV content should not contain LapcapData.");
-                Assert.IsFalse(csvContent.Contains("LateReportingData"),
+                Assert.IsFalse(
+                    csvContent.Contains("LateReportingData"),
                     "CSV content should not contain LateReportingData.");
                 Assert.IsFalse(csvContent.Contains("OtherCosts"), "CSV content should not contain OtherCosts.");
-                Assert.IsFalse(csvContent.Contains("OnePlusFourApportionment"),
+                Assert.IsFalse(
+                    csvContent.Contains("OnePlusFourApportionment"),
                     "CSV content should not contain OnePlusFourApportionment.");
                 Assert.IsFalse(csvContent.Contains("CommsCost"), "CSV content should not contain CommsCost.");
-                Assert.IsFalse(csvContent.Contains("LaDisposalCostData"),
+                Assert.IsFalse(
+                    csvContent.Contains("LaDisposalCostData"),
                     "CSV content should not contain LaDisposalCostData.");
                 Assert.IsFalse(csvContent.Contains("SummaryData"), "CSV content should not contain SummaryData.");
             }
@@ -235,7 +238,8 @@
                     Name = "LAPCAP Data",
                     CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>
                     {
-                        new () {
+                        new()
+                        {
                             Name = "Total",
                             EnglandDisposalCost = "£13,280.45",
                             WalesDisposalCost = "£210.28",
@@ -448,11 +452,14 @@
                     },
                     MaterialBreakdownHeaders = [
                         new CalcResultScaledupProducerHeader{ Name = "Each submission for the year", ColumnIndex = 1 },
-                        new CalcResultScaledupProducerHeader { Name = "Aluminium Breakdown", ColumnIndex = 2 }
+                        new CalcResultScaledupProducerHeader { Name = "Aluminium Breakdown", ColumnIndex = 2 },
+                        new CalcResultScaledupProducerHeader { Name = "Glass Breakdown", ColumnIndex = 3 }
                     ],
                     ColumnHeaders = [
                         new CalcResultScaledupProducerHeader{ Name = "Producer ID" },
-                        new CalcResultScaledupProducerHeader { Name = "Subsidiary ID" }
+                        new CalcResultScaledupProducerHeader { Name = "Subsidiary ID" },
+                        new CalcResultScaledupProducerHeader { Name = "HouseholdDrinksContainersTonnageGlass" },
+                        new CalcResultScaledupProducerHeader { Name = "ScaledupHouseholdDrinksContainersTonnageGlass" },
                     ],
                     ScaledupProducers = GetCalcResultScaledupProducerList(),
                 },
@@ -460,7 +467,7 @@
                 {
                     ResultSummaryHeader = new CalcResultSummaryHeader
                     {
-                        Name = "SummaryData"
+                        Name = "SummaryData",
                     },
                     ProducerDisposalFeesHeaders = new List<CalcResultSummaryHeader>
                     {
@@ -512,7 +519,7 @@
             };
         }
 
-        private static IEnumerable<CalcResultScaledupProducer> GetCalcResultScaledupProducerList()
+        private static List<CalcResultScaledupProducer> GetCalcResultScaledupProducerList()
         {
             var scaledupProducerList = new List<CalcResultScaledupProducer>();
 
@@ -523,7 +530,7 @@
                     SubsidiaryId = string.Empty,
                     ProducerName = "Allied Packaging",
                     Level = "1",
-                    SubmissonPeriodCode = "2024-P2",
+                    SubmissionPeriodCode = "2024-P2",
                     DaysInSubmissionPeriod = 91,
                     DaysInWholePeriod = 91,
                     ScaleupFactor = 2,
@@ -535,7 +542,7 @@
                     SubsidiaryId = string.Empty,
                     ProducerName = "Allied Packaging",
                     Level = "1",
-                    SubmissonPeriodCode = "2024-P2",
+                    SubmissionPeriodCode = "2024-P2",
                     DaysInSubmissionPeriod = 91,
                     DaysInWholePeriod = 91,
                     ScaleupFactor = 2,
@@ -545,6 +552,30 @@
             ]);
 
             return scaledupProducerList;
+        }
+
+        [TestMethod]
+        public void Export_ShouldIncludeGlassColumns_WhenGlassMaterialPresent()
+        {
+            // Arrange
+            var results = CreateCalcResultWithGlass();
+            var exporter = new CalcResultsExporter();
+
+            // Act
+            var result = exporter.Export(results);
+
+            // Assert
+            Assert.IsTrue(result.Contains("Glass"));
+            Assert.IsTrue(result.Contains("HouseholdDrinksContainersTonnageGlass"));
+            Assert.IsTrue(result.Contains("ScaledupHouseholdDrinksContainersTonnageGlass"));
+        }
+
+        [TestMethod]
+        public void AppendFileInfoTest()
+        {
+            var csvContent = new StringBuilder();
+            CalcResultsExporter.AppendFileInfo(csvContent, "Label", "Filename,20/12/2024,User");
+            Assert.IsTrue(csvContent.ToString().Contains("Label,Filename,20/12/2024,User"));
         }
 
         private static Dictionary<string, CalcResultScaledupProducerTonnage> GetScaledupProducerTonnageByMaterial()
@@ -567,7 +598,72 @@
                     ScaledupNetReportedTonnage = 2200,
                 });
 
+            return tonnageByMaterial;
+        }
 
+        private static CalcResult CreateCalcResultWithGlass()
+        {
+            var result = CreateCalcResult();
+            result.CalcResultScaledupProducers.ScaledupProducers = GetCalcResultScaledupProducerListWithGlass();
+            return result;
+        }
+
+        private static IEnumerable<CalcResultScaledupProducer> GetCalcResultScaledupProducerListWithGlass()
+        {
+            var scaledupProducerList = new List<CalcResultScaledupProducer>
+            {
+                new CalcResultScaledupProducer
+                {
+                    ProducerId = 101001,
+                    SubsidiaryId = string.Empty,
+                    ProducerName = "Allied Packaging",
+                    Level = "1",
+                    SubmissionPeriodCode = "2024-P2",
+                    DaysInSubmissionPeriod = 91,
+                    DaysInWholePeriod = 91,
+                    ScaleupFactor = 2,
+                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterialWithGlass(),
+                },
+                new CalcResultScaledupProducer
+                {
+                    ProducerId = 101001,
+                    SubsidiaryId = string.Empty,
+                    ProducerName = "Allied Packaging",
+                    Level = "1",
+                    SubmissionPeriodCode = "2024-P2",
+                    DaysInSubmissionPeriod = 91,
+                    DaysInWholePeriod = 91,
+                    ScaleupFactor = 2,
+                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterialWithGlass(),
+                    IsTotalRow = true,
+                },
+            };
+            return scaledupProducerList;
+        }
+
+        private static Dictionary<string, CalcResultScaledupProducerTonnage> GetScaledupProducerTonnageByMaterialWithGlass()
+        {
+            var tonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>
+            {
+                {
+                    "GL",
+                    new CalcResultScaledupProducerTonnage
+                    {
+                        ReportedHouseholdPackagingWasteTonnage = 1000,
+                        ReportedPublicBinTonnage = 100,
+                        HouseholdDrinksContainersTonnageGlass = 50,
+                        TotalReportedTonnage = 1100,
+                        ReportedSelfManagedConsumerWasteTonnage = 500,
+                        NetReportedTonnage = 1100,
+                        ScaledupReportedHouseholdPackagingWasteTonnage = 2000,
+                        ScaledupReportedPublicBinTonnage = 200,
+                        ScaledupHouseholdDrinksContainersTonnageGlass = 100,
+                        ScaledupTotalReportedTonnage = 2200,
+                        ScaledupReportedSelfManagedConsumerWasteTonnage = 1000,
+                        ScaledupNetReportedTonnage = 2200,
+                    }
+                },
+            };
             return tonnageByMaterial;
         }
     }
