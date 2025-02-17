@@ -26,7 +26,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             // Act
             this.calcResultScaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage = testValue!;
 
-
             // Assert
             Assert.AreEqual(testValue, this.calcResultScaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage);
         }

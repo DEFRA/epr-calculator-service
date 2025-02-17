@@ -247,8 +247,8 @@
             materials.Add(new Material { Code = "AL", Name = "Aluminium" });
             var materialDetails = MaterialMapper.Map(materials);
             CalcResultScaledupProducersBuilder.SetHeaders(producers, materialDetails);
-            Assert.AreEqual(18, producers.ColumnHeaders.Count());
-            Assert.AreEqual(2, producers.MaterialBreakdownHeaders.Count());
+            Assert.AreEqual(18, producers?.ColumnHeaders?.Count());
+            Assert.AreEqual(2, producers?.MaterialBreakdownHeaders?.Count());
         }
 
         [TestMethod]

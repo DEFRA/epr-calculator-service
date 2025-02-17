@@ -33,12 +33,13 @@
         {
             var scaledupProducerTonnages = new Dictionary<string, CalcResultScaledupProducerTonnage>();
 
-            foreach (var material in materials)
+            foreach (var materialCode in materials.Select(material => material.Code))
             {
                 var scaledupProducerTonnage = new CalcResultScaledupProducerTonnage();
 
-                var materialPomData = pomData.Where(pom => pom.PackagingMaterial == material.Code && pom.SubmissionPeriod == submissionPeriod);
+                var materialPomData = pomData.Where(pom => pom.PackagingMaterial == materialCode && pom.SubmissionPeriod == submissionPeriod);
 
+#pragma warning disable CS8629 // Nullable value type may be null.
                 scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage = (decimal)materialPomData
                     .Where(pom => pom.PackagingType == PackagingTypes.Household)
                     .Sum(pom => pom.PackagingMaterialWeight);
@@ -51,7 +52,7 @@
                     .Where(pom => pom.PackagingType == PackagingTypes.HouseholdDrinksContainers)
                     .Sum(pom => pom.PackagingMaterialWeight);
 
-                if (material.Code == MaterialCodes.Glass)
+                if (materialCode == MaterialCodes.Glass)
                 {
                     scaledupProducerTonnage.HouseholdDrinksContainersTonnageGlass = hdc;
                     scaledupProducerTonnage.TotalReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
@@ -66,6 +67,7 @@
                 scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage = (decimal)materialPomData
                     .Where(pom => pom.PackagingType == PackagingTypes.ConsumerWaste)
                     .Sum(pom => pom.PackagingMaterialWeight);
+#pragma warning restore CS8629 // Nullable value type may be null.
 
                 scaledupProducerTonnage.NetReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
                     scaledupProducerTonnage.ReportedPublicBinTonnage +
@@ -73,7 +75,7 @@
                 scaledupProducerTonnage.ScaledupReportedHouseholdPackagingWasteTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage * scaleUpFactor;
                 scaledupProducerTonnage.ScaledupReportedPublicBinTonnage = scaledupProducerTonnage.ReportedPublicBinTonnage * scaleUpFactor;
 
-                if (material.Code == MaterialCodes.Glass)
+                if (materialCode == MaterialCodes.Glass)
                 {
                     scaledupProducerTonnage.ScaledupHouseholdDrinksContainersTonnageGlass = scaledupProducerTonnage.HouseholdDrinksContainersTonnageGlass * scaleUpFactor;
                 }
@@ -81,7 +83,7 @@
                 scaledupProducerTonnage.ScaledupTotalReportedTonnage = scaledupProducerTonnage.TotalReportedTonnage * scaleUpFactor;
                 scaledupProducerTonnage.ScaledupReportedSelfManagedConsumerWasteTonnage = scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage * scaleUpFactor;
                 scaledupProducerTonnage.ScaledupNetReportedTonnage = scaledupProducerTonnage.NetReportedTonnage * scaleUpFactor;
-                scaledupProducerTonnages.Add(material.Code, scaledupProducerTonnage);
+                scaledupProducerTonnages.Add(materialCode, scaledupProducerTonnage);
             }
 
             return scaledupProducerTonnages;
@@ -227,7 +229,7 @@
                         .Where(pom => pom.OrganisationId == item.ProducerId && pom.SubsidaryId == item.SubsidiaryId && pom.SubmissionPeriod == item.SubmissonPeriodCode)
                         .ToList();
 
-                item.ScaledupProducerTonnageByMaterial = GetTonnages(pomData, materials, item.SubmissonPeriodCode, item.ScaleupFactor);
+                item.ScaledupProducerTonnageByMaterial = GetTonnages(pomData, materials, item.SubmissonPeriodCode!, item.ScaleupFactor);
             }
         }
 

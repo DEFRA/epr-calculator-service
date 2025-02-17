@@ -372,11 +372,11 @@
         private static void PrepareScaledupProducersHeader(CalcResultScaledupProducers producers, StringBuilder csvContent)
         {
             // Add scaledup producer header
-            csvContent.AppendLine(CsvSanitiser.SanitiseData(producers.TitleHeader.Name));
+            csvContent.AppendLine(CsvSanitiser.SanitiseData(producers.TitleHeader!.Name));
             csvContent.AppendLine();
 
             // Add material breakdown header
-            WriteScaledupProducersSecondaryHeaders(producers.MaterialBreakdownHeaders, csvContent);
+            WriteScaledupProducersSecondaryHeaders(producers.MaterialBreakdownHeaders!, csvContent);
 
             // Add column header
             WriteScaledupProducersColumnHeaders(producers, csvContent);
@@ -401,7 +401,7 @@
 
         private static void WriteScaledupProducersColumnHeaders(CalcResultScaledupProducers producers, StringBuilder csvContent)
         {
-            foreach (var item in producers.ColumnHeaders)
+            foreach (var item in producers.ColumnHeaders!)
             {
                 csvContent.Append($"{CsvSanitiser.SanitiseData(item.Name)},");
             }
@@ -424,7 +424,7 @@
                 csvContent.Append($"{CsvSanitiser.SanitiseData(producer.ProducerName)},");
                 csvContent.Append($"{CsvSanitiser.SanitiseData(producer.Level)},");
 
-                foreach (var disposalFee in producer.ProducerDisposalFeesByMaterial)
+                foreach (var disposalFee in producer.ProducerDisposalFeesByMaterial!)
                 {
                     csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.HouseholdPackagingWasteTonnage, DecimalPoint).ToString(DecimalFormat))},");
 
@@ -455,7 +455,7 @@
                 csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(producer.ScotlandTotal, DecimalRoundUp))},");
                 csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(producer.NorthernIrelandTotal, DecimalRoundUp))},");
 
-                foreach (var disposalFee in producer.ProducerCommsFeesByMaterial)
+                foreach (var disposalFee in producer.ProducerCommsFeesByMaterial!)
                 {
                     csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.HouseholdPackagingWasteTonnage, DecimalPoint).ToString(DecimalFormat))},");
                     csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.ReportedPublicBinTonnage, DecimalPoint).ToString(DecimalFormat))},");

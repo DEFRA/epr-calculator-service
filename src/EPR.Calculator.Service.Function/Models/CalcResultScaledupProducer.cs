@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace EPR.Calculator.Service.Function.Models
+﻿namespace EPR.Calculator.Service.Function.Models
 {
+    using System.Collections.Generic;
+
     public class CalcResultScaledupProducer
     {
         public int ProducerId { get; set; }

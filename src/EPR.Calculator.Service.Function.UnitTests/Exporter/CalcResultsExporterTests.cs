@@ -244,7 +244,6 @@
 
         private static CalcResult CreateCalcResult()
         {
-#pragma warning disable SA1010 // Opening square brackets should be spaced correctly
             return new CalcResult
             {
                 CalcResultLapcapData = new CalcResultLapcapData
@@ -531,7 +530,6 @@
                     RunName = "CalculatorRunName",
                 },
             };
-#pragma warning restore SA1010 // Opening square brackets should be spaced correctly
         }
 
         private static List<CalcResultScaledupProducer> GetCalcResultScaledupProducerList()
@@ -595,7 +593,7 @@
         private static CalcResult CreateCalcResultWithGlass()
         {
             var result = CreateCalcResult();
-            result.CalcResultScaledupProducers.ScaledupProducers = GetCalcResultScaledupProducerListWithGlass();
+            result.CalcResultScaledupProducers!.ScaledupProducers = GetCalcResultScaledupProducerListWithGlass();
             return result;
         }
 
