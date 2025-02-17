@@ -2,6 +2,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
     using AutoFixture;
     using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
+    using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Data;
     using EPR.Calculator.Service.Function.Data.DataModels;
@@ -18,6 +19,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
     {
         private readonly CalcRunLaDisposalCostBuilder builder;
         private readonly ApplicationDBContext dbContext;
+
+        public class ProducerData
+        {
+            public int ProducerId { get; set; }
+
+            public required string MaterialName { get; set; }
+
+            public required string PackagingType { get; set; }
+
+            public decimal Tonnage { get; set; }
+
+            public ProducerDetail ProducerDetail { get; set; }
+        }
 
         public CalcRunLaDisposalCostBuilderTests()
         {
@@ -116,6 +130,41 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             // Assert
             Assert.AreEqual(producerDetail, result);
+        }
+
+        [TestMethod]
+        public void TestProducerDataFiltering()
+        {
+            // Arrange
+            var producerData = new List<ProducerData>
+            {
+                new ProducerData { ProducerDetail = new ProducerDetail { ProducerId = 1 }, MaterialName = "Plastic", PackagingType = "PB" },
+                new ProducerData { ProducerDetail = new ProducerDetail { ProducerId = 2 }, MaterialName = "Glass", PackagingType = "HDC" }
+            };
+            // Assign
+            var resultsDto = new CalcResultsRequestDto { RunId = 2 };
+            var calcResult = TestDataHelper.GetCalcResult();
+            calcResult.CalcResultScaledupProducers = calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers()
+            {
+                ScaledupProducers = new List<CalcResultScaledupProducer>()
+                {
+                    new CalcResultScaledupProducer()
+                     {
+                        ProducerId = 1,
+                      },
+                    new CalcResultScaledupProducer()
+                     {
+                        ProducerId = 3,
+                      }
+                }
+            };
+
+            // Act
+            var filteredData = producerData.Where(t => !calcResult.CalcResultScaledupProducers.ScaledupProducers.Any(i => i.ProducerId == t?.ProducerDetail.ProducerId)).ToList();
+
+            // Assert
+            Assert.AreEqual(1, filteredData.Count);
+            Assert.AreEqual(2, filteredData.First().ProducerDetail.ProducerId);
         }
 
         [TestMethod]
@@ -350,19 +399,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                      },
                  },
             };
-        }
-
-        public class ProducerData
-        {
-            public int ProducerId { get; set; }
-
-            public required string MaterialName { get; set; }
-
-            public required string PackagingType { get; set; }
-
-            public decimal Tonnage { get; set; }
-
-            public ProducerDetail ProducerDetail { get; set; }
         }
     }
 }
