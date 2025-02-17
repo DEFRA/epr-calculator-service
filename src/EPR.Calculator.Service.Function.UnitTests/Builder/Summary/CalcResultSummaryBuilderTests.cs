@@ -277,7 +277,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                     TitleHeader = null,
                     MaterialBreakdownHeaders = null,
                     ColumnHeaders = null,
-                    ScaledupProducers = this.scaledupProducers.ScaledupProducers,
+                    ScaledupProducers = new List<CalcResultScaledupProducer>(),
                 },
             };
 
