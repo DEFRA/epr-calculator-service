@@ -620,10 +620,8 @@
         [TestMethod]
         public void GetTonnages_ShouldCalculateCorrectlyForGlass()
         {
-#pragma warning disable SA1010 // Opening square brackets should be spaced correctly
-            List<CalculatorRunPomDataDetail> pomData = [];
-            List<MaterialDetail> materials = [];
-#pragma warning restore SA1010 // Opening square brackets should be spaced correctly
+            List<CalculatorRunPomDataDetail> pomData = new List<CalculatorRunPomDataDetail>();
+            List<MaterialDetail> materials = new List<MaterialDetail>();
 
             var glassMaterial = new MaterialDetail
             {

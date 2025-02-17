@@ -8,7 +8,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
     [TestClass]
     public class CalcResultProducerAndReportMaterialDetailTests
     {
-        private CalcResultProducerAndReportMaterialDetail calcResultProducerAndReportMaterialDetail;
+        private CalcResultProducerAndReportMaterialDetail calcResultProducerAndReportMaterialDetail = null!;
 
         [TestInitialize]
         public void SetUp()

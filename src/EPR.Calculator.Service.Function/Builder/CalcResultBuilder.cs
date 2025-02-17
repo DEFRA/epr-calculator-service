@@ -26,6 +26,7 @@ namespace EPR.Calculator.Service.Function.Builder
         private readonly ICalcRunLaDisposalCostBuilder laDisposalCostBuilder;
         private readonly ICalcResultScaledupProducersBuilder calcResultScaledupProducersBuilder;
 
+#pragma warning restore S107 // Constructor has 9 parameters, which is greater than the 7 authorized
         public CalcResultBuilder(
             ICalcResultDetailBuilder calcResultDetailBuilder,
             ICalcResultLapcapDataBuilder lapcapBuilder,
@@ -47,6 +48,7 @@ namespace EPR.Calculator.Service.Function.Builder
             this.calcResultScaledupProducersBuilder = calcResultScaledupProducersBuilder;
             this.summaryBuilder = summaryBuilder;
         }
+#pragma warning restore S107 // Constructor has 9 parameters, which is greater than the 7 authorized
 
         public async Task<CalcResult> Build(CalcResultsRequestDto resultsRequestDto)
         {

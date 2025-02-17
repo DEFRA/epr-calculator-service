@@ -34,7 +34,6 @@
         public void Teardown()
         {
             this.dbContext?.Database.EnsureDeleted();
-            this.dbContext?.Database.EnsureDeleted();
         }
 
         [TestMethod]
