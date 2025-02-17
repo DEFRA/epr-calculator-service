@@ -452,14 +452,11 @@
                     },
                     MaterialBreakdownHeaders = [
                         new CalcResultScaledupProducerHeader{ Name = "Each submission for the year", ColumnIndex = 1 },
-                        new CalcResultScaledupProducerHeader { Name = "Aluminium Breakdown", ColumnIndex = 2 },
-                        new CalcResultScaledupProducerHeader { Name = "Glass Breakdown", ColumnIndex = 3 }
+                        new CalcResultScaledupProducerHeader { Name = "Aluminium Breakdown", ColumnIndex = 2 }
                     ],
                     ColumnHeaders = [
-                        new CalcResultScaledupProducerHeader{ Name = "Producer ID" },
-                        new CalcResultScaledupProducerHeader { Name = "Subsidiary ID" },
-                        new CalcResultScaledupProducerHeader { Name = "HouseholdDrinksContainersTonnageGlass" },
-                        new CalcResultScaledupProducerHeader { Name = "ScaledupHouseholdDrinksContainersTonnageGlass" },
+                        new CalcResultScaledupProducerHeader { Name = "Producer ID" },
+                        new CalcResultScaledupProducerHeader { Name = "Subsidiary ID" }
                     ],
                     ScaledupProducers = GetCalcResultScaledupProducerList(),
                 },
