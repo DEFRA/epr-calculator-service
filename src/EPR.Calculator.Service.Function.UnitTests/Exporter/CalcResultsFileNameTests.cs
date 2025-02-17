@@ -139,7 +139,7 @@ namespace EPR.Calculator.API.UnitTests.Exporter
             string filePath = "fileName.csv,2025-02-14"; // Missing user part
 
             // Act
-            this.InvokeAppendFileInfo(csvContent, label, filePath);
+            InvokeAppendFileInfo(csvContent, label, filePath);
 
             // Assert
             Assert.AreEqual(string.Empty, csvContent.ToString());
@@ -157,7 +157,7 @@ namespace EPR.Calculator.API.UnitTests.Exporter
             string filePath = string.Empty;
 
             // Act
-            this.InvokeAppendFileInfo(csvContent, label, filePath);
+            InvokeAppendFileInfo(csvContent, label, filePath);
 
             // Assert
             Assert.AreEqual(string.Empty, csvContent.ToString());
@@ -172,7 +172,7 @@ namespace EPR.Calculator.API.UnitTests.Exporter
         /// <summary>
         /// Checks generating a file name using values retrieved from the database.
         /// </summary>
-        private void InvokeAppendFileInfo(StringBuilder csvContent, string label, string filePath)
+        private static void InvokeAppendFileInfo(StringBuilder csvContent, string label, string filePath)
         {
             // Get the type of the class containing the method
             Type type = typeof(CalcResultsExporter);

@@ -8,7 +8,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ScaledupProducers
     [TestClass]
     public class ScaleupProducerTests
     {
-        private ScaleupProducer scaleupProducer;
+        private ScaleupProducer scaleupProducer = null!;
 
         [TestInitialize]
         public void SetUp()

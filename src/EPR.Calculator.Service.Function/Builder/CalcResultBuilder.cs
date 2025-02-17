@@ -1,19 +1,19 @@
-using EPR.Calculator.Service.Function.Builder.CommsCost;
-using EPR.Calculator.Service.Function.Builder.Detail;
-using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
-using EPR.Calculator.Service.Function.Builder.Lapcap;
-using EPR.Calculator.Service.Function.Builder.LateReportingTonnages;
-using EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment;
-using EPR.Calculator.Service.Function.Builder.ParametersOther;
-using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
-using EPR.Calculator.Service.Function.Builder.Summary;
-using EPR.Calculator.Service.Function.Dtos;
-using EPR.Calculator.Service.Function.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
 namespace EPR.Calculator.Service.Function.Builder
 {
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using EPR.Calculator.Service.Function.Builder.CommsCost;
+    using EPR.Calculator.Service.Function.Builder.Detail;
+    using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
+    using EPR.Calculator.Service.Function.Builder.Lapcap;
+    using EPR.Calculator.Service.Function.Builder.LateReportingTonnages;
+    using EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment;
+    using EPR.Calculator.Service.Function.Builder.ParametersOther;
+    using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
+    using EPR.Calculator.Service.Function.Builder.Summary;
+    using EPR.Calculator.Service.Function.Dtos;
+    using EPR.Calculator.Service.Function.Models;
+
     public class CalcResultBuilder : ICalcResultBuilder
     {
         private readonly ICalcResultParameterOtherCostBuilder calcResultParameterOtherCostBuilder;

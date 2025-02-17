@@ -534,7 +534,7 @@
 #pragma warning restore SA1010 // Opening square brackets should be spaced correctly
         }
 
-        private static IEnumerable<CalcResultScaledupProducer> GetCalcResultScaledupProducerList()
+        private static List<CalcResultScaledupProducer> GetCalcResultScaledupProducerList()
         {
             var scaledupProducerList = new List<CalcResultScaledupProducer>();
 

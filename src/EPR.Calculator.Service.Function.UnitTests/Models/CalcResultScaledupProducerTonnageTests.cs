@@ -7,7 +7,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
     [TestClass]
     public class CalcResultScaledupProducerTonnageTests
     {
-        private CalcResultScaledupProducerTonnage? calcResultScaledupProducerTonnage;
+        private CalcResultScaledupProducerTonnage calcResultScaledupProducerTonnage = null!;
 
         [TestInitialize]
         public void SetUp()
@@ -24,7 +24,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var testValue = fixture.Create<decimal>();
 
             // Act
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
             this.calcResultScaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage = testValue!;
 
 
@@ -162,7 +161,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
 
             // Act
             this.calcResultScaledupProducerTonnage.ScaledupNetReportedTonnage = testValue;
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
             // Assert
             Assert.AreEqual(testValue, this.calcResultScaledupProducerTonnage.ScaledupNetReportedTonnage);

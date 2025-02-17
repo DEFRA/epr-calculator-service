@@ -6,17 +6,17 @@ namespace EPR.Calculator.Service.Function.Models
     {
         public int ProducerId { get; set; }
 
-        public string SubsidiaryId { get; set; }
+        public string? SubsidiaryId { get; set; }
 
-        public string ProducerName { get; set; }
+        public string? ProducerName { get; set; }
 
-        public string Level { get; set; }
+        public string? Level { get; set; }
 
         public bool IsSubtotalRow { get; set; } = false;
 
         public bool IsTotalRow { get; set; } = false;
 
-        public string SubmissonPeriodCode { get; set; }
+        public string? SubmissonPeriodCode { get; set; }
 
         public int DaysInSubmissionPeriod { get; set; }
 
