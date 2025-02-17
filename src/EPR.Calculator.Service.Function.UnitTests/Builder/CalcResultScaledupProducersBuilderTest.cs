@@ -13,12 +13,86 @@
     [TestClass]
     public class CalcResultScaledupProducersBuilderTest
     {
-        private CalcResultScaledupProducersBuilder? builder;
-        private ApplicationDBContext? dbContext;
-        private int runId = 1;
+        private readonly ApplicationDBContext dbContext;
+        private readonly int runId = 1;
+        private CalcResultScaledupProducersBuilder builder;
 
-        [TestInitialize]
-        public void Init()
+        private void PrepareScaledUpProducer()
+        {
+            var producerDetail = new ProducerDetail
+            {
+                Id = 1,
+                CalculatorRunId = runId,
+                ProducerId = 11,
+                SubsidiaryId = "Subsidary 1",
+            };
+            this.dbContext.ProducerDetail.Add(producerDetail);
+            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            {
+                Id = 1,
+                PackagingType = "HH",
+                ProducerDetail = producerDetail,
+            });
+            var calcRunPomDataMaster = new CalculatorRunPomDataMaster
+            {
+                Id = 1,
+                CalendarYear = "2024",
+                EffectiveFrom = DateTime.Now,
+                CreatedAt = DateTime.Now,
+                CreatedBy = "Test User",
+            };
+            this.dbContext.CalculatorRunPomDataMaster.Add(calcRunPomDataMaster);
+            this.dbContext.CalculatorRuns.Add(new CalculatorRun
+            {
+                Id = runId,
+                Financial_Year = "2024-25",
+                Name = "Name",
+                CalculatorRunPomDataMaster = calcRunPomDataMaster,
+            });
+            this.dbContext.CalculatorRunPomDataDetails.Add(
+                new CalculatorRunPomDataDetail
+                {
+                    LoadTimeStamp = DateTime.Now,
+                    SubmissionPeriod = "2024-P1",
+                    SubmissionPeriodDesc = "desc",
+                    CalculatorRunPomDataMaster = calcRunPomDataMaster,
+                    OrganisationId = 10,
+                });
+            this.dbContext.CalculatorRunPomDataDetails.Add(
+                new CalculatorRunPomDataDetail
+                {
+                    LoadTimeStamp = DateTime.Now,
+                    SubmissionPeriod = "2024-P2",
+                    SubmissionPeriodDesc = "desc",
+                    CalculatorRunPomDataMaster = calcRunPomDataMaster,
+                    OrganisationId = 11,
+                });
+            this.dbContext.SubmissionPeriodLookup.Add(
+                new SubmissionPeriodLookup
+                {
+                    DaysInSubmissionPeriod = 0,
+                    DaysInWholePeriod = 0,
+                    EndDate = DateTime.Now,
+                    StartDate = DateTime.Now,
+                    ScaleupFactor = 1,
+                    SubmissionPeriod = "2024-P1",
+                    SubmissionPeriodDesc = string.Empty,
+                });
+            this.dbContext.SubmissionPeriodLookup.Add(
+                new SubmissionPeriodLookup
+                {
+                    DaysInSubmissionPeriod = 0,
+                    DaysInWholePeriod = 0,
+                    EndDate = DateTime.Now,
+                    StartDate = DateTime.Now,
+                    ScaleupFactor = 2.999M,
+                    SubmissionPeriod = "2024-P2",
+                    SubmissionPeriodDesc = string.Empty,
+                });
+            this.dbContext.SaveChanges();
+        }
+
+        public CalcResultScaledupProducersBuilderTest()
         {
             var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
             .UseInMemoryDatabase(databaseName: "PayCal")

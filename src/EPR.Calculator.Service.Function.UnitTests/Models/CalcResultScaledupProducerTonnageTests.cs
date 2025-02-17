@@ -7,10 +7,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
     [TestClass]
     public class CalcResultScaledupProducerTonnageTests
     {
-        private CalcResultScaledupProducerTonnage calcResultScaledupProducerTonnage = null!;
+        private readonly CalcResultScaledupProducerTonnage calcResultScaledupProducerTonnage;
 
-        [TestInitialize]
-        public void SetUp()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CalcResultScaledupProducerTonnageTests"/> class.
+        /// </summary>
+        public CalcResultScaledupProducerTonnageTests()
         {
             this.calcResultScaledupProducerTonnage = new CalcResultScaledupProducerTonnage();
         }
@@ -24,7 +26,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var testValue = fixture.Create<decimal>();
 
             // Act
-            this.calcResultScaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage = testValue!;
+            this.calcResultScaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage = testValue;
 
             // Assert
             Assert.AreEqual(testValue, this.calcResultScaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage);

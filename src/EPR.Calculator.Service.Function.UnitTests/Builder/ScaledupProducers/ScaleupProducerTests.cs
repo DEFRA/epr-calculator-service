@@ -5,13 +5,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ScaledupProducers
     using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    /// <summary>
+    /// Unit tests for the <see cref="ScaleupProducer"/> class.
+    /// </summary>
     [TestClass]
     public class ScaleupProducerTests
     {
         private ScaleupProducer scaleupProducer = null!;
 
-        [TestInitialize]
-        public void SetUp()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ScaleupProducerTests"/> class.
+        /// </summary>
+        public ScaleupProducerTests()
         {
             this.scaleupProducer = new ScaleupProducer();
         }

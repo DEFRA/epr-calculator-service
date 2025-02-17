@@ -8,10 +8,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
     [TestClass]
     public class CalcResultScaledupProducerHeaderTests
     {
-        private CalcResultScaledupProducerHeader calcResultScaledupProducerHeader = null!;
+        private readonly CalcResultScaledupProducerHeader calcResultScaledupProducerHeader;
 
-        [TestInitialize]
-        public void SetUp()
+        public CalcResultScaledupProducerHeaderTests()
         {
             this.calcResultScaledupProducerHeader = new CalcResultScaledupProducerHeader
             {

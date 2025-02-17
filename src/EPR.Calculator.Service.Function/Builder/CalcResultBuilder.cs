@@ -27,6 +27,9 @@ namespace EPR.Calculator.Service.Function.Builder
         private readonly ICalcResultScaledupProducersBuilder calcResultScaledupProducersBuilder;
 
 #pragma warning restore S107 // Constructor has 9 parameters, which is greater than the 7 authorized
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CalcResultBuilder"/> class.
+        /// </summary>
         public CalcResultBuilder(
             ICalcResultDetailBuilder calcResultDetailBuilder,
             ICalcResultLapcapDataBuilder lapcapBuilder,
