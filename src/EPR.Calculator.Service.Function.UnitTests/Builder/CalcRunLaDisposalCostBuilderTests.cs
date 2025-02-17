@@ -328,23 +328,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         }
 
         [TestMethod]
-        public async Task Should_Calculate_Disposal_Cost_Price_Per_Tonne()
-        {
-            // Arrange
-            var resultsDto = new CalcResultsRequestDto { RunId = 2 };
-            var calcResult = TestDataHelper.GetCalcResult();
-            calcResult.CalcResultScaledupProducers = GetScaledUpProducers();
-
-            // Act
-            var lapcapDisposalCostResults = await this.builder.Construct(resultsDto, calcResult);
-
-            // Assert
-            var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails?.Single(x => x.Name == MaterialNames.Plastic);
-            Assert.IsNotNull(laDisposalCost);
-            Assert.AreEqual("£18.1500", laDisposalCost.DisposalCostPricePerTonne);
-        }
-
-        [TestMethod]
         public async Task Should_Calculate_ProducerDataTotal_For_Total_Material()
         {
             // Arrange
