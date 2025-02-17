@@ -180,6 +180,81 @@
         }
 
         [TestMethod]
+        public void CanGetHouseholdTonnageForScaledupProducer()
+        {
+            // Arrange
+            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
+            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+
+            // Act
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.Household, scaledupProducers);
+
+            // Assert
+            Assert.AreEqual(200m, result);
+        }
+
+        [TestMethod]
+        public void CanGetPublicBinTonnageForScaledupProducer()
+        {
+            // Arrange
+            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
+            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+
+            // Act
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.PublicBin, scaledupProducers);
+
+            // Assert
+            Assert.AreEqual(40m, result);
+        }
+
+        [TestMethod]
+        public void CanGetConsumerWasteTonnageForScaledupProducer()
+        {
+            // Arrange
+            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
+            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+
+            // Act
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.ConsumerWaste, scaledupProducers);
+
+            // Assert
+            Assert.AreEqual(120m, result);
+        }
+
+        [TestMethod]
+        public void CanGetHDCTonnageForScaledupProducer()
+        {
+            // Arrange
+            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
+            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+
+            // Act
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.HouseholdDrinksContainers, scaledupProducers);
+
+            // Assert
+            Assert.AreEqual(100m, result);
+        }
+
+        [TestMethod]
+        public void CanGetZeroTonnageForInvalidPackagingTypeForScaledupProducer()
+        {
+            // Arrange
+            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
+            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+
+            // Act
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, "Invalid packaging type", scaledupProducers);
+
+            // Assert
+            Assert.AreEqual(0, result);
+        }
+
+        [TestMethod]
         public void CanGetManagedConsumerWasteTonnage()
         {
             // Arrange
