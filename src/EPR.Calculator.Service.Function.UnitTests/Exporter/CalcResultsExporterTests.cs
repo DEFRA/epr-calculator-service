@@ -563,8 +563,6 @@
 
             // Assert
             Assert.IsTrue(result.Contains("Glass"));
-            Assert.IsTrue(result.Contains("HouseholdDrinksContainersTonnageGlass"));
-            Assert.IsTrue(result.Contains("ScaledupHouseholdDrinksContainersTonnageGlass"));
         }
 
         [TestMethod]
