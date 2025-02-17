@@ -66,6 +66,59 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         }
 
         [TestMethod]
+        public void Should_Set_And_Get_MaterialName()
+        {
+            // Arrange
+            var producerData = new ProducerData { MaterialName = "Plastic", PackagingType = "PB" };
+
+            // Act
+            var result = producerData.MaterialName;
+
+            // Assert
+            Assert.AreEqual("Plastic", result);
+        }
+
+        [TestMethod]
+        public void Should_Set_And_Get_PackagingType()
+        {
+            // Arrange
+            var producerData = new ProducerData { PackagingType = "HDC", MaterialName = "Glass" };
+
+            // Act
+            var result = producerData.PackagingType;
+
+            // Assert
+            Assert.AreEqual("HDC", result);
+        }
+
+        [TestMethod]
+        public void Should_Set_And_Get_Tonnage()
+        {
+            // Arrange
+            var producerData = new ProducerData { Tonnage = 100.5m, MaterialName = "Plastic", PackagingType = "PB" };
+
+            // Act
+            var result = producerData.Tonnage;
+
+            // Assert
+            Assert.AreEqual(100.5m, result);
+        }
+
+        [TestMethod]
+        public void Should_Set_And_Get_ProducerDetail()
+        {
+            // Arrange
+            var producerDetail = new ProducerDetail { ProducerId = 1, ProducerName = "Test Producer" };
+            var producerData = new ProducerData { MaterialName = "Plastic", PackagingType = "PB", ProducerDetail = producerDetail };
+
+            // Act
+            var result = producerData.ProducerDetail;
+
+            // Assert
+            Assert.AreEqual(producerDetail, result);
+        }
+
+        [TestMethod]
         public void Should_Return_LA_Disposal_Costs()
         {
             // Assign
@@ -149,7 +202,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
 
             // Act
-            var results = builder.Construct(resultsDto, calcResult);
+            var results = this.builder.Construct(resultsDto, calcResult);
             results.Wait();
             var lapcapDisposalCostResults = results.Result;
 
@@ -168,7 +221,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual(string.Empty, laDisposalCost.HouseholdDrinkContainers);
             Assert.AreEqual("2000.00", laDisposalCost.LateReportingTonnage);
             Assert.AreEqual("2700.00", laDisposalCost.ProducerReportedTotalTonnage);
-            //Assert.IsTrue(laDisposalCost.DisposalCostPricePerTonne.Contains("6.0500"));
         }
 
         [TestMethod]
@@ -225,7 +277,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.IsTrue(laDisposalCost.HouseholdDrinkContainers.Contains("1000"));
             Assert.IsTrue(laDisposalCost.LateReportingTonnage.Contains("0"));
             Assert.IsTrue(laDisposalCost.ProducerReportedTotalTonnage.Contains("1700"));
-            //Assert.IsTrue(laDisposalCost.DisposalCostPricePerTonne.Contains("17.5500"));
         }
 
         private static CalcResultScaledupProducers GetScaledUpProducers()
@@ -264,19 +315,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                          ["Glass"] = new CalcResultScaledupProducerTonnage
                         {
                              ReportedHouseholdPackagingWasteTonnage = 1000,
-                            ReportedPublicBinTonnage = 2000,
-                            TotalReportedTonnage = 3000,
-                            ReportedSelfManagedConsumerWasteTonnage = 1000,
-                            NetReportedTonnage = 5000,
-                            ScaledupReportedHouseholdPackagingWasteTonnage = 300,
-                            ScaledupReportedPublicBinTonnage = 400,
-                            ScaledupTotalReportedTonnage = 500,
-                            ScaledupReportedSelfManagedConsumerWasteTonnage = 100,
-                            ScaledupNetReportedTonnage = 100,
+                             ReportedPublicBinTonnage = 2000,
+                             TotalReportedTonnage = 3000,
+                             ReportedSelfManagedConsumerWasteTonnage = 1000,
+                             NetReportedTonnage = 5000,
+                             ScaledupReportedHouseholdPackagingWasteTonnage = 300,
+                             ScaledupReportedPublicBinTonnage = 400,
+                             ScaledupTotalReportedTonnage = 500,
+                             ScaledupReportedSelfManagedConsumerWasteTonnage = 100,
+                             ScaledupNetReportedTonnage = 100,
                         },
                         },
                      },
-                      new CalcResultScaledupProducer()
+                     new CalcResultScaledupProducer()
                      {
                         ProducerId = 1,
                         IsTotalRow = true,
@@ -285,20 +336,33 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                          ["Plastic"] = new CalcResultScaledupProducerTonnage
                         {
                              ReportedHouseholdPackagingWasteTonnage = 1000,
-                            ReportedPublicBinTonnage = 2000,
-                            TotalReportedTonnage = 3000,
-                            ReportedSelfManagedConsumerWasteTonnage = 1000,
-                            NetReportedTonnage = 5000,
-                            ScaledupReportedHouseholdPackagingWasteTonnage = 300,
-                            ScaledupReportedPublicBinTonnage = 400,
-                            ScaledupTotalReportedTonnage = 500,
-                            ScaledupReportedSelfManagedConsumerWasteTonnage = 100,
-                            ScaledupNetReportedTonnage = 100,
+                             ReportedPublicBinTonnage = 2000,
+                             TotalReportedTonnage = 3000,
+                             ReportedSelfManagedConsumerWasteTonnage = 1000,
+                             NetReportedTonnage = 5000,
+                             ScaledupReportedHouseholdPackagingWasteTonnage = 300,
+                             ScaledupReportedPublicBinTonnage = 400,
+                             ScaledupTotalReportedTonnage = 500,
+                             ScaledupReportedSelfManagedConsumerWasteTonnage = 100,
+                             ScaledupNetReportedTonnage = 100,
                         },
                         },
                      },
                  },
             };
+        }
+
+        public class ProducerData
+        {
+            public int ProducerId { get; set; }
+
+            public required string MaterialName { get; set; }
+
+            public required string PackagingType { get; set; }
+
+            public decimal Tonnage { get; set; }
+
+            public ProducerDetail ProducerDetail { get; set; }
         }
     }
 }
