@@ -666,5 +666,71 @@
             };
             return tonnageByMaterial;
         }
+
+        private static List<CalcResultScaledupProducer> GetCalcResultScaledupProducerList()
+        {
+            var scaledupProducerList = new List<CalcResultScaledupProducer>();
+
+            scaledupProducerList.AddRange([
+                new CalcResultScaledupProducer()
+                {
+                    ProducerId = 101001,
+                    SubsidiaryId = string.Empty,
+                    ProducerName = "Allied Packaging",
+                    Level = "1",
+                    SubmissonPeriodCode = "2024-P2",
+                    DaysInSubmissionPeriod = 91,
+                    DaysInWholePeriod = 91,
+                    ScaleupFactor = 2,
+                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterial(),
+                },
+                new CalcResultScaledupProducer()
+                {
+                    ProducerId = 101001,
+                    SubsidiaryId = string.Empty,
+                    ProducerName = "Allied Packaging",
+                    Level = "1",
+                    SubmissonPeriodCode = "2024-P2",
+                    DaysInSubmissionPeriod = 91,
+                    DaysInWholePeriod = 91,
+                    ScaleupFactor = 2,
+                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterial(),
+                    IsTotalRow = true,
+                },
+            ]);
+
+            return scaledupProducerList;
+        }
+
+        [TestMethod]
+        public void AppendFileInfoTest()
+        {
+            var csvContent = new StringBuilder();
+            CalcResultsExporter.AppendFileInfo(csvContent, "Label", "Filename,20/12/2024,User");
+            Assert.IsTrue(csvContent.ToString().Contains("Label,Filename,20/12/2024,User"));
+        }
+
+        private static Dictionary<string, CalcResultScaledupProducerTonnage> GetScaledupProducerTonnageByMaterial()
+        {
+            var tonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>();
+
+            tonnageByMaterial.Add(
+                "AL",
+                new CalcResultScaledupProducerTonnage()
+                {
+                    ReportedHouseholdPackagingWasteTonnage = 1000,
+                    ReportedPublicBinTonnage = 100,
+                    TotalReportedTonnage = 1100,
+                    ReportedSelfManagedConsumerWasteTonnage = 500,
+                    NetReportedTonnage = 1100,
+                    ScaledupReportedHouseholdPackagingWasteTonnage = 2000,
+                    ScaledupReportedPublicBinTonnage = 200,
+                    ScaledupTotalReportedTonnage = 2200,
+                    ScaledupReportedSelfManagedConsumerWasteTonnage = 1000,
+                    ScaledupNetReportedTonnage = 2200,
+                });
+
+            return tonnageByMaterial;
+        }
     }
 }

@@ -4,14 +4,20 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Data;
-    using EPR.Calculator.Service.Function.Data.DataModels;
-    using EPR.Calculator.Service.Function.Dtos;
-    using EPR.Calculator.Service.Function.Mappers;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.EntityFrameworkCore;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Data;
+using EPR.Calculator.Service.Function.Data.DataModels;
+using EPR.Calculator.Service.Function.Dtos;
+using EPR.Calculator.Service.Function.Mappers;
+using EPR.Calculator.Service.Function.Models;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
+namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
+{
     public class CalcResultScaledupProducersBuilder : ICalcResultScaledupProducersBuilder
     {
         private const decimal NormalScaleup = 1.0M;
@@ -28,38 +34,46 @@
         /// <inheritdoc/>
         public async Task<CalcResultScaledupProducers> Construct(CalcResultsRequestDto resultsRequestDto)
         {
-            var runId = resultsRequestDto.RunId;
-            var materialsFromDb = await this.context.Material.ToListAsync();
-            var materials = MaterialMapper.Map(materialsFromDb);
-
-            var scaledupProducersSummary = new CalcResultScaledupProducers();
-
-            var organisationIds = await this.GetScaledUpOrganisationIdsAsync(resultsRequestDto.RunId);
-            if (organisationIds != null && organisationIds.Any())
+            try
             {
-                var runProducerMaterialDetails = await this.GetProducerReportedMaterialsAsync(runId, organisationIds);
+                var runId = resultsRequestDto.RunId;
+            var materialsFromDb = await this.context.Material.ToListAsync();
+                var materials = MaterialMapper.Map(materialsFromDb);
 
-                var allOrganisationPomDetails = await this.GetScaledupOrganisationDetails(runId, organisationIds);
+                var scaledupProducersSummary = new CalcResultScaledupProducers();
+                var scaledupProducers = new List<CalcResultScaledupProducer>();
 
-                this.AddExtraRows(runProducerMaterialDetails);
+                var organisationIds = await this.GetScaledUpOrganisationIdsAsync(resultsRequestDto.RunId);
+                if (organisationIds != null && organisationIds.Any())
+                {
+                    var runProducerMaterialDetails = await this.GetProducerReportedMaterialsAsync(runId, organisationIds);
 
-                this.CalculateScaledupTonnage(runProducerMaterialDetails, allOrganisationPomDetails, materials);
+                    var allOrganisationPomDetails = await this.GetScaledupOrganisationDetails(runId, organisationIds);
 
-                var orderedRunProducerMaterialDetails = runProducerMaterialDetails
-                    .OrderBy(p => p.ProducerId)
-                    .ThenBy(p => p.Level)
-                    .ThenBy(p => p.SubsidiaryId)
-                    .ThenBy(p => p.SubmissonPeriodCode)
-                    .ToList();
+                    this.AddExtraRows(runProducerMaterialDetails);
 
-                var overallTotalRow = this.GetOverallTotalRow(orderedRunProducerMaterialDetails, materials);
+                    this.CalculateScaledupTonnage(runProducerMaterialDetails, allOrganisationPomDetails, materials);
 
-                orderedRunProducerMaterialDetails.Add(overallTotalRow);
-                scaledupProducersSummary.ScaledupProducers = orderedRunProducerMaterialDetails;
+                    var orderedRunProducerMaterialDetails = runProducerMaterialDetails
+                        .OrderBy(p => p.ProducerId)
+                        .ThenBy(p => p.Level)
+                        .ThenBy(p => p.SubsidiaryId)
+                        .ThenBy(p => p.SubmissonPeriodCode)
+                        .ToList();
+
+                    var overallTotalRow = this.GetOverallTotalRow(orderedRunProducerMaterialDetails, materials);
+
+                    orderedRunProducerMaterialDetails.Add(overallTotalRow);
+                    scaledupProducersSummary.ScaledupProducers = orderedRunProducerMaterialDetails;
+                }
+
+                SetHeaders(scaledupProducersSummary, materials);
+                return scaledupProducersSummary;
             }
-
-            SetHeaders(scaledupProducersSummary, materials);
-            return scaledupProducersSummary;
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public CalcResultScaledupProducer GetOverallTotalRow(
@@ -166,7 +180,7 @@
                     ScaleupFactor = first.ScaleupFactor,
                     SubmissonPeriodCode = pair.Key.SubmissonPeriodCode,
                     DaysInSubmissionPeriod = first.DaysInSubmissionPeriod,
-                    DaysInWholePeriod = first.DaysInSubmissionPeriod,
+                    DaysInWholePeriod = first.DaysInWholePeriod,
                     Level = CommonConstants.LevelOne.ToString(),
                     IsSubtotalRow = true,
                 };
@@ -201,7 +215,7 @@
                                     ScaleupFactor = spl.ScaleupFactor,
                                     SubmissonPeriodCode = spl.SubmissionPeriod,
                                     DaysInSubmissionPeriod = spl.DaysInSubmissionPeriod,
-                                    DaysInWholePeriod = spl.DaysInSubmissionPeriod,
+                                    DaysInWholePeriod = spl.DaysInWholePeriod,
                                     Level = pd.SubsidiaryId != null ? CommonConstants.LevelTwo.ToString() : CommonConstants.LevelOne.ToString(),
                                 }).Distinct().ToListAsync();
             return result ?? [];
@@ -240,6 +254,9 @@
                     .Where(pom => pom.PackagingType == PackagingTypes.PublicBin)
                     .Sum(pom => pom.PackagingMaterialWeight);
 
+                scaledupProducerTonnage.TotalReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
+                    scaledupProducerTonnage.ReportedPublicBinTonnage;
+
                 var hdc = (decimal)materialPomData
                     .Where(pom => pom.PackagingType == PackagingTypes.HouseholdDrinksContainers)
                     .Sum(pom => pom.PackagingMaterialWeight);
@@ -260,9 +277,8 @@
                     .Where(pom => pom.PackagingType == PackagingTypes.ConsumerWaste)
                     .Sum(pom => pom.PackagingMaterialWeight);
 
-                scaledupProducerTonnage.NetReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
-                    scaledupProducerTonnage.ReportedPublicBinTonnage +
-                    hdc;
+                scaledupProducerTonnage.NetReportedTonnage = scaledupProducerTonnage.TotalReportedTonnage - scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage;
+
                 scaledupProducerTonnage.ScaledupReportedHouseholdPackagingWasteTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage * scaleUpFactor;
                 scaledupProducerTonnage.ScaledupReportedPublicBinTonnage = scaledupProducerTonnage.ReportedPublicBinTonnage * scaleUpFactor;
 
@@ -274,6 +290,7 @@
                 scaledupProducerTonnage.ScaledupTotalReportedTonnage = scaledupProducerTonnage.TotalReportedTonnage * scaleUpFactor;
                 scaledupProducerTonnage.ScaledupReportedSelfManagedConsumerWasteTonnage = scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage * scaleUpFactor;
                 scaledupProducerTonnage.ScaledupNetReportedTonnage = scaledupProducerTonnage.NetReportedTonnage * scaleUpFactor;
+
                 scaledupProducerTonnages.Add(material.Code, scaledupProducerTonnage);
             }
 
