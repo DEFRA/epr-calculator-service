@@ -15,10 +15,9 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
 {
     public class CalcRunLaDisposalCostBuilder : ICalcRunLaDisposalCostBuilder
     {
-        private const string EmptyString = "0";
-
+        private const string empty_string = "0";
         internal class ProducerData
-        {
+        {            
             public required string MaterialName { get; set; }
 
             public required string PackagingType { get; set; }
@@ -81,6 +80,31 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
                 Name = CommonConstants.LADisposalCostData,
                 CalcResultLaDisposalCostDetails = laDisposalCostDetails.AsEnumerable(),
             };
+        }
+
+        private string GetReportedHouseholdDrinksContainerTonnage(string materialName)
+        {
+            var householdDrinksContainerData = this.producerData
+                .Where(p => p.PackagingType == PackagingTypes.HouseholdDrinksContainers);
+
+            if (materialName == CommonConstants.Total)
+            {
+                return householdDrinksContainerData.Any()
+                    ? householdDrinksContainerData.Sum(p => p.Tonnage).ToString()
+                    : empty_string;
+            }
+
+            if (materialName == MaterialNames.Glass)
+            {
+                householdDrinksContainerData = householdDrinksContainerData
+                    .Where(p => p.MaterialName == materialName);
+
+                return householdDrinksContainerData.Any()
+                    ? householdDrinksContainerData.Sum(p => p.Tonnage).ToString()
+                    : empty_string;
+            }
+
+            return string.Empty;
         }
 
         private string GetReportedHouseholdDrinksContainerTonnage(string materialName, CalcResultScaledupProducer scaledUpProducerReportedOn)
@@ -156,13 +180,9 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
 
         private static string CalculateDisposalCostPricePerTonne(CalcResultLaDisposalCostDataDetail detail)
         {
-            var householdTonnagePlusLateReportingTonnage = GetDecimalValue(detail.ProducerReportedTotalTonnage);
-            if (householdTonnagePlusLateReportingTonnage == 0)
-            {
-                return EmptyString;
-            }
-
-            var value = Math.Round(ConvertCurrencyToDecimal(detail.Total) / householdTonnagePlusLateReportingTonnage, 4);
+            var HouseholdTonnagePlusLateReportingTonnage = GetDecimalValue(detail.ProducerReportedTotalTonnage);
+            if (HouseholdTonnagePlusLateReportingTonnage == 0) return empty_string;
+            var value = Math.Round(ConvertCurrencyToDecimal(detail.Total) / HouseholdTonnagePlusLateReportingTonnage, 4);
             var culture = CultureInfo.CreateSpecificCulture("en-GB");
             culture.NumberFormat.CurrencySymbol = "£";
             culture.NumberFormat.CurrencyPositivePattern = 0;
