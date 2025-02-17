@@ -50,7 +50,7 @@
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.Household, scaledupProducers);
@@ -65,7 +65,7 @@
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "PL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.PublicBin, scaledupProducers);
@@ -80,7 +80,7 @@
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.HouseholdDrinksContainers, scaledupProducers);
@@ -95,7 +95,7 @@
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetReportedTonnage(producer, material, scaledupProducers);
@@ -110,7 +110,7 @@
             // Arrange
             var producers = TestDataHelper.GetProducers();
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetTonnageTotal(producers, material, PackagingTypes.Household, scaledupProducers);
@@ -125,7 +125,7 @@
             // Arrange
             var producers = TestDataHelper.GetProducers();
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "PL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetTonnageTotal(producers, material, PackagingTypes.PublicBin, scaledupProducers);
@@ -140,7 +140,7 @@
             // Arrange
             var producers = TestDataHelper.GetProducers();
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetReportedTonnageTotal(producers, material, scaledupProducers);
@@ -155,7 +155,7 @@
             // Arrange
             var producers = TestDataHelper.GetProducers();
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetTonnageTotal(producers, material, PackagingTypes.HouseholdDrinksContainers, scaledupProducers);
@@ -165,12 +165,102 @@
         }
 
         [TestMethod]
-        public void CanGetManagedConsumerWasteTonnage()
+        public void CanGetTonnageForScaledupProducer()
         {
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+
+            // Act
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.Household, scaledupProducers);
+
+            // Assert
+            Assert.AreEqual(200m, result);
+        }
+
+        [TestMethod]
+        public void CanGetHouseholdTonnageForScaledupProducer()
+        {
+            // Arrange
+            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
+            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+
+            // Act
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.Household, scaledupProducers);
+
+            // Assert
+            Assert.AreEqual(200m, result);
+        }
+
+        [TestMethod]
+        public void CanGetPublicBinTonnageForScaledupProducer()
+        {
+            // Arrange
+            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
+            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+
+            // Act
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.PublicBin, scaledupProducers);
+
+            // Assert
+            Assert.AreEqual(40m, result);
+        }
+
+        [TestMethod]
+        public void CanGetConsumerWasteTonnageForScaledupProducer()
+        {
+            // Arrange
+            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
+            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+
+            // Act
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.ConsumerWaste, scaledupProducers);
+
+            // Assert
+            Assert.AreEqual(120m, result);
+        }
+
+        [TestMethod]
+        public void CanGetHDCTonnageForScaledupProducer()
+        {
+            // Arrange
+            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
+            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+
+            // Act
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.HouseholdDrinksContainers, scaledupProducers);
+
+            // Assert
+            Assert.AreEqual(100m, result);
+        }
+
+        [TestMethod]
+        public void CanGetZeroTonnageForInvalidPackagingTypeForScaledupProducer()
+        {
+            // Arrange
+            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
+            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+
+            // Act
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, "Invalid packaging type", scaledupProducers);
+
+            // Assert
+            Assert.AreEqual(0, result);
+        }
+
+        [TestMethod]
+        public void CanGetManagedConsumerWasteTonnage()
+        {
+            // Arrange
+            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
+            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.ConsumerWaste, scaledupProducers);
@@ -185,7 +275,7 @@
             // Arrange
             var producers = TestDataHelper.GetProducers();
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetTonnageTotal(producers, material, PackagingTypes.ConsumerWaste, scaledupProducers);
@@ -200,7 +290,7 @@
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetNetReportedTonnage(producer, material, scaledupProducers);
@@ -215,7 +305,7 @@
             // Arrange
             var producers = TestDataHelper.GetProducers();
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetNetReportedTonnageTotal(producers, material, scaledupProducers);
@@ -243,7 +333,7 @@
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetProducerDisposalFee(producer, material, _calcResult, scaledupProducers);
@@ -258,7 +348,7 @@
             // Arrange
             var producers = TestDataHelper.GetProducers();
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetProducerDisposalFeeProducerTotal(producers, material, _calcResult, scaledupProducers);
@@ -273,7 +363,7 @@
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetBadDebtProvision(producer, material, _calcResult, scaledupProducers);
@@ -288,7 +378,7 @@
             // Arrange
             var producers = TestDataHelper.GetProducers();
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetBadDebtProvisionProducerTotal(producers, material, _calcResult, scaledupProducers);
@@ -303,7 +393,7 @@
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvision(producer, material, _calcResult, scaledupProducers);
@@ -318,7 +408,7 @@
             // Arrange
             var producers = TestDataHelper.GetProducers();
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvisionProducerTotal(producers, material, _calcResult, scaledupProducers);
@@ -333,7 +423,7 @@
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, material, _calcResult, Countries.England, scaledupProducers);
@@ -348,7 +438,7 @@
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, material, _calcResult, Countries.Wales, scaledupProducers);
@@ -363,7 +453,7 @@
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, material, _calcResult, Countries.Scotland, scaledupProducers);
@@ -378,7 +468,7 @@
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, material, _calcResult, Countries.NorthernIreland, scaledupProducers);
@@ -393,7 +483,7 @@
             // Arrange
             var producers = TestDataHelper.GetProducers();
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producers, material, _calcResult, Countries.England, scaledupProducers);
@@ -408,7 +498,7 @@
             // Arrange
             var producers = TestDataHelper.GetProducers();
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producers, material, _calcResult, Countries.Wales, scaledupProducers);
@@ -423,7 +513,7 @@
             // Arrange
             var producers = TestDataHelper.GetProducers();
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producers, material, _calcResult, Countries.Scotland, scaledupProducers);
@@ -438,7 +528,7 @@
             // Arrange
             var producers = TestDataHelper.GetProducers();
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producers, material, _calcResult, Countries.NorthernIreland, scaledupProducers);
@@ -574,7 +664,7 @@
             // Arrange
             var producers = TestDataHelper.GetProducers();
             var materials = TestDataHelper.GetMaterials();
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetTotal1Plus2ABadDebt(producers, materials, _calcResult, scaledupProducers);
@@ -809,7 +899,7 @@
             // Arrange
             var producer = TestDataHelper.GetProducers();
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "PL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetTonnageTotal(producer, material, PackagingTypes.PublicBin, scaledupProducers);
@@ -824,7 +914,7 @@
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.HouseholdDrinksContainers, scaledupProducers);
@@ -839,7 +929,7 @@
             // Arrange
             var producer = TestDataHelper.GetProducers();
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
             var result = CalcResultSummaryUtil.GetTonnageTotal(producer, material, PackagingTypes.HouseholdDrinksContainers, scaledupProducers);

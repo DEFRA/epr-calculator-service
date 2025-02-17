@@ -1126,7 +1126,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 {
                     new CalcResultScaledupProducer
                     {
-                        ProducerId = 10001,
+                        ProducerId = 1,
                         ProducerName = "Producer Name",
                         DaysInSubmissionPeriod = 91,
                         DaysInWholePeriod = 91,
@@ -1142,18 +1142,35 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                                 "AL",
                                 new CalcResultScaledupProducerTonnage
                                 {
-                                    ReportedHouseholdPackagingWasteTonnage = 1000,
-                                    ReportedPublicBinTonnage = 2000,
-                                    TotalReportedTonnage = 3000,
-                                    ReportedSelfManagedConsumerWasteTonnage = 1000,
-                                    NetReportedTonnage = 5000,
-                                    ScaledupReportedHouseholdPackagingWasteTonnage = 300,
-                                    ScaledupReportedPublicBinTonnage = 400,
-                                    ScaledupTotalReportedTonnage = 500,
-                                    ScaledupReportedSelfManagedConsumerWasteTonnage = 100,
-                                    ScaledupNetReportedTonnage = 100,
+                                    ReportedHouseholdPackagingWasteTonnage = 100,
+                                    ReportedPublicBinTonnage = 20,
+                                    TotalReportedTonnage = 120,
+                                    ReportedSelfManagedConsumerWasteTonnage = 60,
+                                    NetReportedTonnage = 180,
+                                    ScaledupReportedHouseholdPackagingWasteTonnage = 200,
+                                    ScaledupReportedPublicBinTonnage = 40,
+                                    ScaledupTotalReportedTonnage = 240,
+                                    ScaledupReportedSelfManagedConsumerWasteTonnage = 120,
+                                    ScaledupNetReportedTonnage = 360,
                                 }
                             },
+                            {
+                                "GL",
+                                new CalcResultScaledupProducerTonnage
+                                {
+                                    ReportedHouseholdPackagingWasteTonnage = 100,
+                                    ReportedPublicBinTonnage = 20,
+                                    TotalReportedTonnage = 120,
+                                    ReportedSelfManagedConsumerWasteTonnage = 60,
+                                    NetReportedTonnage = 180,
+                                    ScaledupReportedHouseholdPackagingWasteTonnage = 200,
+                                    ScaledupReportedPublicBinTonnage = 40,
+                                    ScaledupTotalReportedTonnage = 240,
+                                    ScaledupReportedSelfManagedConsumerWasteTonnage = 120,
+                                    ScaledupNetReportedTonnage = 360,
+                                }
+                            },
+
                         },
                     },
                 },
@@ -1230,6 +1247,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 new ProducerDetail
                 {
                     Id = 1,
+                    ProducerId = 1,
                     ProducerName = "Allied Packaging",
                     CalculatorRunId = 1,
                     CalculatorRun = new CalculatorRun { Financial_Year = "2024-25", Name = "Test Run 1" },
@@ -1237,6 +1255,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 new ProducerDetail
                 {
                     Id = 2,
+                    ProducerId = 2,
                     ProducerName = "Beeline Materials",
                     CalculatorRunId = 1,
                     CalculatorRun = new CalculatorRun { Financial_Year = "2024-25", Name = "Test Run 1" },
@@ -1244,6 +1263,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 new ProducerDetail
                 {
                     Id = 3,
+                    ProducerId = 3,
                     ProducerName = "Cloud Boxes",
                     CalculatorRunId = 1,
                     CalculatorRun = new CalculatorRun { Financial_Year = "2024-25", Name = "Test Run 1" },

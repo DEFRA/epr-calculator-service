@@ -20,7 +20,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
         {
             _material = GetMaterial();
             _producers = GetProducers();
-            _scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            _scaledupProducers = new List<CalcResultScaledupProducer>();
 
             _calcResult = new CalcResult
             {
