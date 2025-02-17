@@ -13,7 +13,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
         [TestInitialize]
         public void SetUp()
         {
-            calcResultProducerAndReportMaterialDetail = new CalcResultProducerAndReportMaterialDetail
+            this.calcResultProducerAndReportMaterialDetail = new CalcResultProducerAndReportMaterialDetail
             {
                 ProducerDetail = new ProducerDetail
                 {
@@ -28,7 +28,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
                     PackagingTonnage = 1000.00m,
                     PackagingType = "HH",
                     MaterialId = 1,
-                    ProducerDetail = null
+                    ProducerDetail = null,
                 },
             };
         }
@@ -42,10 +42,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var testValue = fixture.Create<ProducerDetail>();
 
             // Act
-            calcResultProducerAndReportMaterialDetail.ProducerDetail = testValue;
+            this.calcResultProducerAndReportMaterialDetail.ProducerDetail = testValue;
 
             // Assert
-            Assert.AreSame(testValue, calcResultProducerAndReportMaterialDetail.ProducerDetail);
+            Assert.AreSame(testValue, this.calcResultProducerAndReportMaterialDetail.ProducerDetail);
         }
 
         [TestMethod]
@@ -57,10 +57,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var testValue = fixture.Create<ProducerReportedMaterial>();
 
             // Act
-            calcResultProducerAndReportMaterialDetail.ProducerReportedMaterial = testValue;
+            this.calcResultProducerAndReportMaterialDetail.ProducerReportedMaterial = testValue;
 
             // Assert
-            Assert.AreSame(testValue, calcResultProducerAndReportMaterialDetail.ProducerReportedMaterial);
+            Assert.AreSame(testValue, this.calcResultProducerAndReportMaterialDetail.ProducerReportedMaterial);
         }
     }
 }

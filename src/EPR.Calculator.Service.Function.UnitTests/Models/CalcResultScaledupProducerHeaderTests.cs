@@ -13,7 +13,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
         [TestInitialize]
         public void SetUp()
         {
-            calcResultScaledupProducerHeader = new CalcResultScaledupProducerHeader
+            this.calcResultScaledupProducerHeader = new CalcResultScaledupProducerHeader
             {
                 Name = "Some column header name",
                 ColumnIndex = 1,
@@ -29,10 +29,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var testValue = fixture.Create<string>();
 
             // Act
-            calcResultScaledupProducerHeader.Name = testValue;
+            this.calcResultScaledupProducerHeader.Name = testValue;
 
             // Assert
-            Assert.AreEqual(testValue, calcResultScaledupProducerHeader.Name);
+            Assert.AreEqual(testValue, this.calcResultScaledupProducerHeader.Name);
         }
 
         [TestMethod]
@@ -44,10 +44,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var testValue = fixture.Create<int?>();
 
             // Act
-            calcResultScaledupProducerHeader.ColumnIndex = testValue;
+            this.calcResultScaledupProducerHeader.ColumnIndex = testValue;
 
             // Assert
-            Assert.AreEqual(testValue, calcResultScaledupProducerHeader.ColumnIndex);
+            Assert.AreEqual(testValue, this.calcResultScaledupProducerHeader.ColumnIndex);
         }
     }
 }

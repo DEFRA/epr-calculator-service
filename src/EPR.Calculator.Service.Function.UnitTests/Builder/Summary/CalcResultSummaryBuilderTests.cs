@@ -226,7 +226,7 @@
                 {
                     ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>()
                     {
-                        new()
+                        new ()
                             {
                             ProducerCommsFeesByMaterial = new Dictionary<MaterialDetail, CalcResultSummaryProducerCommsFeesCostByMaterial>() { },
                             ProducerDisposalFeesByMaterial = new Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial>() { },
@@ -284,7 +284,7 @@
         {
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
 
-            var results = this.calcResultsService.Construct(requestDto, calcResult);
+            var results = this.calcResultsService.Construct(requestDto, this.calcResult);
             results.Wait();
             var result = results.Result;
             Assert.IsNotNull(result);
@@ -304,7 +304,7 @@
         {
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
 
-            var results = this.calcResultsService.Construct(requestDto, calcResult);
+            var results = this.calcResultsService.Construct(requestDto, this.calcResult);
 
             results.Wait();
             var result = results.Result;
@@ -620,8 +620,10 @@
         [TestMethod]
         public void GetTonnages_ShouldCalculateCorrectlyForGlass()
         {
+#pragma warning disable SA1010 // Opening square brackets should be spaced correctly
             List<CalculatorRunPomDataDetail> pomData = [];
             List<MaterialDetail> materials = [];
+#pragma warning restore SA1010 // Opening square brackets should be spaced correctly
 
             var glassMaterial = new MaterialDetail
             {

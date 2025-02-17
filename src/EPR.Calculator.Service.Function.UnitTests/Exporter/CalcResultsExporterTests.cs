@@ -187,10 +187,10 @@
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter();
 
-            //Act
+            // Act
             var result = exporter.Export(results);
 
-            //Assert
+            // Assert
             Assert.IsTrue(result.Contains("SummaryData"));
         }
 
@@ -244,6 +244,7 @@
 
         private static CalcResult CreateCalcResult()
         {
+#pragma warning disable SA1010 // Opening square brackets should be spaced correctly
             return new CalcResult
             {
                 CalcResultLapcapData = new CalcResultLapcapData
@@ -251,7 +252,8 @@
                     Name = "LAPCAP Data",
                     CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>
                     {
-                        new () {
+                        new ()
+                        {
                             Name = "Total",
                             EnglandDisposalCost = "£13,280.45",
                             WalesDisposalCost = "£210.28",
@@ -463,12 +465,12 @@
                         Name = "Scaled-up Producers",
                     },
                     MaterialBreakdownHeaders = [
-                        new CalcResultScaledupProducerHeader{ Name = "Each submission for the year", ColumnIndex = 1 },
+                        new CalcResultScaledupProducerHeader { Name = "Each submission for the year", ColumnIndex = 1 },
                         new CalcResultScaledupProducerHeader { Name = "Aluminium Breakdown", ColumnIndex = 2 },
                         new CalcResultScaledupProducerHeader { Name = "Glass Breakdown", ColumnIndex = 3 }
                     ],
                     ColumnHeaders = [
-                        new CalcResultScaledupProducerHeader{ Name = "Producer ID" },
+                        new CalcResultScaledupProducerHeader { Name = "Producer ID" },
                         new CalcResultScaledupProducerHeader { Name = "Subsidiary ID" },
                         new CalcResultScaledupProducerHeader { Name = "HouseholdDrinksContainersTonnageGlass" },
                         new CalcResultScaledupProducerHeader { Name = "ScaledupHouseholdDrinksContainersTonnageGlass" },
@@ -529,6 +531,7 @@
                     RunName = "CalculatorRunName",
                 },
             };
+#pragma warning restore SA1010 // Opening square brackets should be spaced correctly
         }
 
         private static IEnumerable<CalcResultScaledupProducer> GetCalcResultScaledupProducerList()
