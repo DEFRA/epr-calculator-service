@@ -62,6 +62,11 @@
                 PrepareLaDisposalCostData(results.CalcResultLaDisposalCostData, csvContent);
             }
 
+            if (results.CalcResultScaledupProducers != null)
+            {
+                PrepareScaledupProducers(results.CalcResultScaledupProducers, csvContent);
+            }
+
             if (results.CalcResultSummary != null)
             {
                 PrepareSummaryData(results.CalcResultSummary, csvContent);
@@ -108,8 +113,9 @@
                     $"{CsvSanitiser.SanitiseData(commCostByMaterial.LateReportingTonnage)},");
                 csvContent.Append(
                     $"{CsvSanitiser.SanitiseData(commCostByMaterial.ProducerReportedHouseholdPlusLateReportingTonnage)},");
-                csvContent.AppendLine(
-                    $"{CsvSanitiser.SanitiseData(commCostByMaterial.CommsCostByMaterialPricePerTonne)}");
+                csvContent.AppendLine(commCostByMaterial.Total == "Total" || string.IsNullOrWhiteSpace(commCostByMaterial.CommsCostByMaterialPricePerTonne) ?
+                      $"{CsvSanitiser.SanitiseData(commCostByMaterial.CommsCostByMaterialPricePerTonne)}" :
+                     $"£{CsvSanitiser.SanitiseData(commCostByMaterial.CommsCostByMaterialPricePerTonne)}");
             }
 
             csvContent.AppendLine();
@@ -197,7 +203,7 @@
             csvContent.AppendLine($"{rPDFileORG},{CsvSanitiser.SanitiseData(rpdFileORGValue)},{rPDFilePOM},{CsvSanitiser.SanitiseData(rpdFilePOMValue)}");
         }
 
-        private static void AppendFileInfo(StringBuilder csvContent, string label, string filePath)
+        public static void AppendFileInfo(StringBuilder csvContent, string label, string filePath)
         {
             var fileParts = filePath.Split(',');
             if (fileParts.Length >= 3)
@@ -233,6 +239,7 @@
                 csvContent.AppendLine();
             }
         }
+
         private static void PrepareOnePluseFourApportionment(CalcResultOnePlusFourApportionment calcResult1Plus4Apportionment, StringBuilder csvContent)
         {
             csvContent.AppendLine();
@@ -294,6 +301,100 @@
                 csvContent.Append($"\"{CsvSanitiser.SanitiseData(lapcapData.ProducerReportedTotalTonnage)}\",");
                 csvContent.Append($"\"{CsvSanitiser.SanitiseData(lapcapData.DisposalCostPricePerTonne)}\",");
                 csvContent.AppendLine();
+            }
+        }
+
+        private static void PrepareScaledupProducers(CalcResultScaledupProducers producers, StringBuilder csvContent)
+        {
+            // Add empty lines
+            csvContent.AppendLine();
+            csvContent.AppendLine();
+
+            // Add headers
+            PrepareScaledupProducersHeader(producers, csvContent);
+
+            // Add data
+            if (producers.ScaledupProducers != null)
+            {
+                foreach (var producer in producers.ScaledupProducers)
+                {
+                    if (producer.IsTotalRow)
+                    {
+                        csvContent.Append(",");
+                        csvContent.Append(",");
+                        csvContent.Append(",");
+                        csvContent.Append(",");
+                        csvContent.Append(",");
+                        csvContent.Append(",");
+                        csvContent.Append(",");
+                        csvContent.Append($"{CommonConstants.Totals},");
+                    }
+                    else
+                    {
+                        csvContent.Append($"{CsvSanitiser.SanitiseData(producer.ProducerId)},");
+                        csvContent.Append($"{CsvSanitiser.SanitiseData(producer.SubsidiaryId)},");
+                        csvContent.Append($"{CsvSanitiser.SanitiseData(producer.ProducerName)},");
+                        csvContent.Append($"{CsvSanitiser.SanitiseData(producer.Level)},");
+                        csvContent.Append($"{CsvSanitiser.SanitiseData(producer.SubmissonPeriodCode)},");
+                        csvContent.Append($"{CsvSanitiser.SanitiseData(producer.DaysInSubmissionPeriod != -1 ? producer.DaysInSubmissionPeriod.ToString() : string.Empty)},");
+                        csvContent.Append($"{CsvSanitiser.SanitiseData(producer.DaysInWholePeriod != -1 ? producer.DaysInWholePeriod.ToString() : string.Empty)},");
+                        csvContent.Append($"{CsvSanitiser.SanitiseData(producer.ScaleupFactor == -1 ? CommonConstants.Totals : producer.ScaleupFactor.ToString())},");
+                    }
+
+                    foreach (var producerTonnage in producer.ScaledupProducerTonnageByMaterial.Select(producerTonnage => producerTonnage.Value))
+                    {
+                        csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(producerTonnage.ReportedHouseholdPackagingWasteTonnage, 3).ToString("F3"))},");
+                        csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(producerTonnage.ReportedPublicBinTonnage, 3).ToString("F3"))},");
+                        csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(producerTonnage.TotalReportedTonnage, 3).ToString("F3"))},");
+                        csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(producerTonnage.ReportedSelfManagedConsumerWasteTonnage, 3).ToString("F3"))},");
+                        csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(producerTonnage.NetReportedTonnage, 3).ToString("F3"))},");
+                        csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(producerTonnage.ScaledupReportedHouseholdPackagingWasteTonnage, 3).ToString("F3"))},");
+                        csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(producerTonnage.ScaledupReportedPublicBinTonnage, 3).ToString("F3"))},");
+                        csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(producerTonnage.ScaledupTotalReportedTonnage, 3).ToString("F3"))},");
+                        csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(producerTonnage.ScaledupReportedSelfManagedConsumerWasteTonnage, 3).ToString("F3"))},");
+                        csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(producerTonnage.ScaledupNetReportedTonnage, 3).ToString("F3"))},");
+                    }
+
+                    csvContent.AppendLine();
+                }
+            }
+        }
+
+        private static void PrepareScaledupProducersHeader(CalcResultScaledupProducers producers, StringBuilder csvContent)
+        {
+            // Add scaledup producer header
+            csvContent.AppendLine(CsvSanitiser.SanitiseData(producers.TitleHeader.Name));
+            csvContent.AppendLine();
+
+            // Add material breakdown header
+            WriteScaledupProducersSecondaryHeaders(producers.MaterialBreakdownHeaders, csvContent);
+
+            // Add column header
+            WriteScaledupProducersColumnHeaders(producers, csvContent);
+            csvContent.AppendLine();
+        }
+
+        private static void WriteScaledupProducersSecondaryHeaders(IEnumerable<CalcResultScaledupProducerHeader> headers, StringBuilder csvContent)
+        {
+            const int maxColumnSize = CommonConstants.SecondaryHeaderMaxColumnSize;
+            var headerRows = new string[maxColumnSize];
+            foreach (var item in headers)
+            {
+                if (item.ColumnIndex.HasValue)
+                {
+                    headerRows[item.ColumnIndex.Value - 1] = $"{CsvSanitiser.SanitiseData(item.Name)}";
+                }
+            }
+
+            var headerRow = string.Join(",", headerRows);
+            csvContent.AppendLine(headerRow);
+        }
+
+        private static void WriteScaledupProducersColumnHeaders(CalcResultScaledupProducers producers, StringBuilder csvContent)
+        {
+            foreach (var item in producers.ColumnHeaders)
+            {
+                csvContent.Append($"{CsvSanitiser.SanitiseData(item.Name)},");
             }
         }
 

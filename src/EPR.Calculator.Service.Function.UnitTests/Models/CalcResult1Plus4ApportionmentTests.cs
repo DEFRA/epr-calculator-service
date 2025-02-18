@@ -1,6 +1,5 @@
 namespace EPR.Calculator.Service.Function.UnitTests.Models
 {
-    using System;
     using System.Collections.Generic;
     using AutoFixture;
     using EPR.Calculator.Service.Function.Models;
@@ -10,13 +9,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
     [TestClass]
     public class CalcResult1Plus4ApportionmentTests
     {
-        private CalcResult1Plus4Apportionment TestClass;
-        private IFixture Fixture;
+        private CalcResult1Plus4Apportionment TestClass { get; init; }
 
-        [TestInitialize]
-        public void SetUp()
+        private IFixture Fixture { get; init; }
+
+        public CalcResult1Plus4ApportionmentTests()
         {
-            Fixture = new Fixture();
+            this.Fixture = new Fixture();
             this.TestClass = new CalcResult1Plus4Apportionment();
         }
 
