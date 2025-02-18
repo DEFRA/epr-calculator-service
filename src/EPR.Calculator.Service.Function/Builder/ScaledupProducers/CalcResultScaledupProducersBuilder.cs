@@ -261,7 +261,6 @@
                     .Where(pom => pom.PackagingType == PackagingTypes.ConsumerWaste)
                     .Sum(pom => pom.PackagingMaterialWeight);
 
-                //scaledupProducerTonnage.NetReportedTonnage = scaledupProducerTonnage.TotalReportedTonnage - scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage;
                 scaledupProducerTonnage.NetReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
                     scaledupProducerTonnage.ReportedPublicBinTonnage +
                     hdc;

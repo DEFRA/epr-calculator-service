@@ -446,13 +446,13 @@
                     csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.ManagedConsumerWasteTonnage, DecimalPoint).ToString(DecimalFormat))},");
                     csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.NetReportedTonnage, DecimalPoint).ToString(DecimalFormat))},");
                     csvContent.Append(producer.Level != "Totals" ? $"£{CsvSanitiser.SanitiseData(disposalFee.Value.PricePerTonne)}," : ",");
-                    csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.ProducerDisposalFee, decimalRoundUp))},");
-                    csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.BadDebtProvision, decimalRoundUp))},");
-                    csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.ProducerDisposalFeeWithBadDebtProvision, decimalRoundUp))},");
-                    csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.EnglandWithBadDebtProvision, decimalRoundUp).ToString("F2"))},");
-                    csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.WalesWithBadDebtProvision, decimalRoundUp))},");
-                    csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.ScotlandWithBadDebtProvision, decimalRoundUp))},");
-                    csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.NorthernIrelandWithBadDebtProvision, decimalRoundUp))},");
+                    csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.ProducerDisposalFee, DecimalRoundUp))},");
+                    csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.BadDebtProvision, DecimalRoundUp))},");
+                    csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.ProducerDisposalFeeWithBadDebtProvision, DecimalRoundUp))},");
+                    csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.EnglandWithBadDebtProvision, DecimalRoundUp).ToString("F2"))},");
+                    csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.WalesWithBadDebtProvision, DecimalRoundUp))},");
+                    csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.ScotlandWithBadDebtProvision, DecimalRoundUp))},");
+                    csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.NorthernIrelandWithBadDebtProvision, DecimalRoundUp))},");
                 }
 
                 csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(producer.TotalProducerDisposalFee, DecimalRoundUp))},");
@@ -474,13 +474,13 @@
 
                     csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.TotalReportedTonnage, DecimalPoint).ToString(DecimalFormat))},");
                     csvContent.Append(producer.Level != "Totals" ? $"£{CsvSanitiser.SanitiseData(disposalFee.Value.PriceperTonne)}," : ",");
-                    csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.ProducerTotalCostWithoutBadDebtProvision, decimalRoundUp))},");
-                    csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.BadDebtProvision, decimalRoundUp))},");
-                    csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.ProducerTotalCostwithBadDebtProvision, decimalRoundUp))},");
-                    csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.EnglandWithBadDebtProvision, decimalRoundUp).ToString("F2"))},");
-                    csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.WalesWithBadDebtProvision, decimalRoundUp))},");
-                    csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.ScotlandWithBadDebtProvision, decimalRoundUp))},");
-                    csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.NorthernIrelandWithBadDebtProvision, decimalRoundUp))},");
+                    csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.ProducerTotalCostWithoutBadDebtProvision, DecimalRoundUp))},");
+                    csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.BadDebtProvision, DecimalRoundUp))},");
+                    csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.ProducerTotalCostwithBadDebtProvision, DecimalRoundUp))},");
+                    csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.EnglandWithBadDebtProvision, DecimalRoundUp).ToString("F2"))},");
+                    csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.WalesWithBadDebtProvision, DecimalRoundUp))},");
+                    csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.ScotlandWithBadDebtProvision, DecimalRoundUp))},");
+                    csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.NorthernIrelandWithBadDebtProvision, DecimalRoundUp))},");
                 }
 
                 csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(producer.TotalProducerCommsFee, DecimalRoundUp))},");
