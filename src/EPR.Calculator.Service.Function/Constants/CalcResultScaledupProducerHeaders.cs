@@ -25,5 +25,6 @@
         public static readonly string ScaledupTotalReportedTonnage = "Scaled-up Total Reported Tonnage";
         public static readonly string ScaledupReportedSelfManagedConsumerWasteTonnage = "Scaled-up Reported Self Managed Consumer Waste Tonnage";
         public static readonly string ScaledupNetReportedTonnage = "Scaled-up Net Reported Tonnage";
+        public static readonly string NoScaledupProducers = "None";
     }
 }
