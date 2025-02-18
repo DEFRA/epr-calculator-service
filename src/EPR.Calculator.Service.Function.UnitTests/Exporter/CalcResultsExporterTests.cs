@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Text;
     using AutoFixture;
     using EPR.Calculator.API.Exporter;
     using EPR.Calculator.Service.Function.Models;
@@ -10,7 +11,7 @@
     [TestClass]
     public class CalcResultsExporterTests
     {
-        Fixture Fixture { get; } = new Fixture();
+        private Fixture Fixture { get; } = new Fixture();
 
         [TestMethod]
         public void Export_ShouldReturnCsvContent_WhenAllDataIsPresent()
@@ -58,7 +59,7 @@
             var lines = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
             // Assert
-            int expectedLineCount = 57;
+            int expectedLineCount = 65;
             Assert.AreEqual(expectedLineCount, lines.Length);
         }
 
@@ -92,7 +93,6 @@
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter();
 
-
             // Act
             var result = exporter.Export(results);
 
@@ -106,10 +106,10 @@
             // Arrange
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter();
-            //Act
+            // Act
             var result = exporter.Export(results);
 
-            //Assert
+            // Assert
             Assert.IsTrue(result.Contains("Late Reporting Tonnage"));
         }
 
@@ -119,10 +119,10 @@
             // Arrange
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter();
-            //Act
+            // Act
             var result = exporter.Export(results);
 
-            //Assert
+            // Assert
             Assert.IsTrue(result.Contains("Parameters - Other"));
         }
 
@@ -132,10 +132,10 @@
             // Arrange
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter();
-            //Act
+            // Act
             var result = exporter.Export(results);
 
-            //Assert
+            // Assert
             Assert.IsTrue(result.Contains("1 + 4 Apportionment %s"));
         }
 
@@ -145,10 +145,10 @@
             // Arrange
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter();
-            //Act
+            // Act
             var result = exporter.Export(results);
 
-            //Assert
+            // Assert
             Assert.IsTrue(result.Contains("4 LA Data Prep Charge"));
         }
 
@@ -159,11 +159,25 @@
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter();
 
-            //Act
+            // Act
             var result = exporter.Export(results);
 
-            //Assert
+            // Assert
             Assert.IsTrue(result.Contains("5 Scheme set up cost Yearly Cost"));
+        }
+
+        [TestMethod]
+        public void Export_ShouldIncludeScaledupProducers_WhenNotNull()
+        {
+            // Arrange
+            var results = CreateCalcResult();
+            var exporter = new CalcResultsExporter();
+
+            // Act
+            var result = exporter.Export(results);
+
+            // Assert
+            Assert.IsTrue(result.Contains("Scaled-up Producers"));
         }
 
         [TestMethod]
@@ -173,11 +187,10 @@
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter();
 
-            //Act
+            // Act
             var result = exporter.Export(results);
 
-            //Assert
-
+            // Assert
             Assert.IsTrue(result.Contains("SummaryData"));
         }
 
@@ -189,7 +202,7 @@
             {
                 CalcResultLapcapData = null!,
                 CalcResultLateReportingTonnageData = null!,
-                CalcResultParameterOtherCost = null!
+                CalcResultParameterOtherCost = null!,
             };
             var exporter = new CalcResultsExporter();
 
@@ -201,17 +214,21 @@
                 // Assert
                 Assert.IsFalse(string.IsNullOrEmpty(csvContent), "CSV content should not be empty.");
                 Assert.IsFalse(csvContent.Contains("LapcapData"), "CSV content should not contain LapcapData.");
-                Assert.IsFalse(csvContent.Contains("LateReportingData"),
+                Assert.IsFalse(
+                    csvContent.Contains("LateReportingData"),
                     "CSV content should not contain LateReportingData.");
                 Assert.IsFalse(csvContent.Contains("OtherCosts"), "CSV content should not contain OtherCosts.");
-                Assert.IsFalse(csvContent.Contains("OnePlusFourApportionment"),
+                Assert.IsFalse(
+                    csvContent.Contains("OnePlusFourApportionment"),
                     "CSV content should not contain OnePlusFourApportionment.");
                 Assert.IsFalse(csvContent.Contains("CommsCost"), "CSV content should not contain CommsCost.");
-                Assert.IsFalse(csvContent.Contains("LaDisposalCostData"),
+                Assert.IsFalse(
+                    csvContent.Contains("LaDisposalCostData"),
                     "CSV content should not contain LaDisposalCostData.");
                 Assert.IsFalse(csvContent.Contains("SummaryData"), "CSV content should not contain SummaryData.");
             }
         }
+
         private static CalcResult CreateCalcResult()
         {
             return new CalcResult
@@ -221,7 +238,7 @@
                     Name = "LAPCAP Data",
                     CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>
                     {
-                        new CalcResultLapcapDataDetails
+                        new()
                         {
                             Name = "Total",
                             EnglandDisposalCost = "£13,280.45",
@@ -233,10 +250,10 @@
                             WalesCost = 210.28m,
                             ScotlandCost = 91.00m,
                             NorthernIrelandCost = 91.00m,
-                            TotalCost = 13742.80m
-                        }
+                            TotalCost = 13742.80m,
+                        },
 
-                    }
+                    },
                 },
                 CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
                 {
@@ -248,19 +265,19 @@
                         new CalcResultLateReportingTonnageDetail
                         {
                             Name = "Aluminium",
-                            TotalLateReportingTonnage = 8000.00m
+                            TotalLateReportingTonnage = 8000.00m,
                         },
                         new CalcResultLateReportingTonnageDetail
                         {
                             Name = "Plastic",
-                            TotalLateReportingTonnage = 2000.00m
+                            TotalLateReportingTonnage = 2000.00m,
                         },
                         new CalcResultLateReportingTonnageDetail
                         {
                             Name = "Total",
-                            TotalLateReportingTonnage = 10000.00m
-                        }
-                    }
+                            TotalLateReportingTonnage = 10000.00m,
+                        },
+                    },
                 },
                 CalcResultParameterOtherCost = new CalcResultParameterOtherCost
                 {
@@ -281,8 +298,8 @@
                             NorthernIreland = "£10.00",
                             NorthernIrelandValue = 10,
                             Total = "£100.00",
-                            TotalValue = 100
-                        }
+                            TotalValue = 100,
+                        },
 
                     },
                     Materiality = new List<CalcResultMateriality>
@@ -293,8 +310,8 @@
                             AmountValue = 0,
                             Percentage = "%",
                             PercentageValue = 0,
-                            SevenMateriality = "7 Materiality"
-                        }
+                            SevenMateriality = "7 Materiality",
+                        },
                     },
                     Name = "Parameters - Other",
                     SaOperatingCost = new List<CalcResultParameterOtherCostDetail>
@@ -312,8 +329,8 @@
                             NorthernIreland = "£10.00",
                             NorthernIrelandValue = 10,
                             Total = "£100.00",
-                            TotalValue = 100
-                        }
+                            TotalValue = 100,
+                        },
                     },
                     SchemeSetupCost = new CalcResultParameterOtherCostDetail
                     {
@@ -328,8 +345,8 @@
                         NorthernIreland = "£10.00",
                         NorthernIrelandValue = 10,
                         Total = "£100.00",
-                        TotalValue = 100
-                    }
+                        TotalValue = 100,
+                    },
                 },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment
                 {
@@ -360,9 +377,9 @@
                             ScotlandTotal = 0.15M,
                             WalesTotal = 0.20M,
                             Name = "Test",
-                        }
+                        },
                     },
-                    Name = "some test"
+                    Name = "some test",
                 },
                 CalcResultCommsCostReportDetail = new CalcResultCommsCost
                 {
@@ -377,7 +394,7 @@
                         {
                             CommsCostByMaterialPricePerTonne = "0.3",
                             Name = "Glass",
-                        }
+                        },
                     },
                     CalcResultCommsCostOnePlusFourApportionment =
                         new Fixture().CreateMany<CalcResultCommsCostOnePlusFourApportionment>(1),
@@ -423,15 +440,55 @@
                             Total = "100",
                             ProducerReportedHouseholdPackagingWasteTonnage = "null",
                             ReportedPublicBinTonnage = string.Empty,
-                        }
+                        },
                     },
-                    Name = "some test"
+                    Name = "some test",
+                },
+                CalcResultScaledupProducers = new CalcResultScaledupProducers
+                {
+                    TitleHeader = new CalcResultScaledupProducerHeader
+                    {
+                        Name = "Scaled-up Producers",
+                    },
+                    MaterialBreakdownHeaders = [
+                        new CalcResultScaledupProducerHeader{ Name = "Each submission for the year", ColumnIndex = 1 },
+                        new CalcResultScaledupProducerHeader { Name = "Aluminium Breakdown", ColumnIndex = 2 }
+                    ],
+                    ColumnHeaders = [
+                        new CalcResultScaledupProducerHeader { Name = "Producer ID" },
+                        new CalcResultScaledupProducerHeader { Name = "Subsidiary ID" }
+                    ],
+                    ScaledupProducers = GetCalcResultScaledupProducerList(),
                 },
                 CalcResultSummary = new CalcResultSummary
                 {
                     ResultSummaryHeader = new CalcResultSummaryHeader
                     {
-                        Name = "SummaryData"
+                        Name = "SummaryData",
+                    },
+                    ProducerDisposalFeesHeaders = new List<CalcResultSummaryHeader>
+                    {
+                       new CalcResultSummaryHeader
+                       {
+                           Name = "Producer disposal fees header",
+                           ColumnIndex = 1,
+                       },
+                    },
+                    MaterialBreakdownHeaders = new List<CalcResultSummaryHeader>
+                    {
+                       new CalcResultSummaryHeader
+                       {
+                           Name = "Material breakdown header",
+                           ColumnIndex = 1,
+                       },
+                    },
+                    ColumnHeaders = new List<CalcResultSummaryHeader>
+                    {
+                       new CalcResultSummaryHeader
+                       {
+                           Name = "Column header",
+                           ColumnIndex = 1,
+                       },
                     },
                     ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
                     {
@@ -457,6 +514,72 @@
                     RunName = "CalculatorRunName",
                 },
             };
+        }
+
+        private static List<CalcResultScaledupProducer> GetCalcResultScaledupProducerList()
+        {
+            var scaledupProducerList = new List<CalcResultScaledupProducer>();
+
+            scaledupProducerList.AddRange([
+                new CalcResultScaledupProducer()
+                {
+                    ProducerId = 101001,
+                    SubsidiaryId = string.Empty,
+                    ProducerName = "Allied Packaging",
+                    Level = "1",
+                    SubmissonPeriodCode = "2024-P2",
+                    DaysInSubmissionPeriod = 91,
+                    DaysInWholePeriod = 91,
+                    ScaleupFactor = 2,
+                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterial(),
+                },
+                new CalcResultScaledupProducer()
+                {
+                    ProducerId = 101001,
+                    SubsidiaryId = string.Empty,
+                    ProducerName = "Allied Packaging",
+                    Level = "1",
+                    SubmissonPeriodCode = "2024-P2",
+                    DaysInSubmissionPeriod = 91,
+                    DaysInWholePeriod = 91,
+                    ScaleupFactor = 2,
+                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterial(),
+                    IsTotalRow = true,
+                },
+            ]);
+
+            return scaledupProducerList;
+        }
+
+        [TestMethod]
+        public void AppendFileInfoTest()
+        {
+            var csvContent = new StringBuilder();
+            CalcResultsExporter.AppendFileInfo(csvContent, "Label", "Filename,20/12/2024,User");
+            Assert.IsTrue(csvContent.ToString().Contains("Label,Filename,20/12/2024,User"));
+        }
+
+        private static Dictionary<string, CalcResultScaledupProducerTonnage> GetScaledupProducerTonnageByMaterial()
+        {
+            var tonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>();
+
+            tonnageByMaterial.Add(
+                "AL",
+                new CalcResultScaledupProducerTonnage()
+                {
+                    ReportedHouseholdPackagingWasteTonnage = 1000,
+                    ReportedPublicBinTonnage = 100,
+                    TotalReportedTonnage = 1100,
+                    ReportedSelfManagedConsumerWasteTonnage = 500,
+                    NetReportedTonnage = 1100,
+                    ScaledupReportedHouseholdPackagingWasteTonnage = 2000,
+                    ScaledupReportedPublicBinTonnage = 200,
+                    ScaledupTotalReportedTonnage = 2200,
+                    ScaledupReportedSelfManagedConsumerWasteTonnage = 1000,
+                    ScaledupNetReportedTonnage = 2200,
+                });
+
+            return tonnageByMaterial;
         }
     }
 }
