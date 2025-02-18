@@ -258,7 +258,7 @@
                     Name = "LAPCAP Data",
                     CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>
                     {
-                        new ()
+                        new()
                         {
                             Name = "Total",
                             EnglandDisposalCost = "£13,280.45",

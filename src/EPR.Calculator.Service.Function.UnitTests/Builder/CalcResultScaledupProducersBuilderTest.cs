@@ -99,6 +99,7 @@
             .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
             .Options;
 
+
             this.dbContext = new ApplicationDBContext(dbContextOptions);
             this.dbContext.Database.EnsureCreated();
             this.builder = new CalcResultScaledupProducersBuilder(this.dbContext);
