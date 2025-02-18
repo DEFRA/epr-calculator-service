@@ -510,30 +510,6 @@
                            ColumnIndex = 1,
                        },
                     },
-                    ProducerDisposalFeesHeaders = new List<CalcResultSummaryHeader>
-                    {
-                       new CalcResultSummaryHeader
-                       {
-                           Name = "Producer disposal fees header",
-                           ColumnIndex = 1,
-                       },
-                    },
-                    MaterialBreakdownHeaders = new List<CalcResultSummaryHeader>
-                    {
-                       new CalcResultSummaryHeader
-                       {
-                           Name = "Material breakdown header",
-                           ColumnIndex = 1,
-                       },
-                    },
-                    ColumnHeaders = new List<CalcResultSummaryHeader>
-                    {
-                       new CalcResultSummaryHeader
-                       {
-                           Name = "Column header",
-                           ColumnIndex = 1,
-                       },
-                    },
                     ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
                     {
                         new CalcResultSummaryProducerDisposalFees
