@@ -107,8 +107,7 @@
         public void CalculateScaledupTonnage(
             IEnumerable<CalcResultScaledupProducer> runProducerMaterialDetails,
             IEnumerable<CalculatorRunPomDataDetail> allOrganisationPomDetails,
-            IEnumerable<MaterialDetail> materials
-            )
+            IEnumerable<MaterialDetail> materials)
         {
             foreach (var item in runProducerMaterialDetails)
             {
@@ -150,7 +149,6 @@
                 .Where(x => x.Count() > 1)
                 .ToList();
 
-
             foreach (var pair in groupByResult)
             {
                 var first = pair.ToList()[0];
@@ -166,7 +164,7 @@
                     ScaleupFactor = first.ScaleupFactor,
                     SubmissonPeriodCode = pair.Key.SubmissonPeriodCode,
                     DaysInSubmissionPeriod = first.DaysInSubmissionPeriod,
-                    DaysInWholePeriod = first.DaysInSubmissionPeriod,
+                    DaysInWholePeriod = first.DaysInWholePeriod,
                     Level = CommonConstants.LevelOne.ToString(),
                     IsSubtotalRow = true,
                 };
@@ -201,7 +199,7 @@
                                     ScaleupFactor = spl.ScaleupFactor,
                                     SubmissonPeriodCode = spl.SubmissionPeriod,
                                     DaysInSubmissionPeriod = spl.DaysInSubmissionPeriod,
-                                    DaysInWholePeriod = spl.DaysInSubmissionPeriod,
+                                    DaysInWholePeriod = spl.DaysInWholePeriod,
                                     Level = pd.SubsidiaryId != null ? CommonConstants.LevelTwo.ToString() : CommonConstants.LevelOne.ToString(),
                                 }).Distinct().ToListAsync();
             return result ?? [];
@@ -218,8 +216,8 @@
             return scaleupProducerIds ?? [];
         }
 
-        public static Dictionary<string, CalcResultScaledupProducerTonnage> GetTonnages(
-            IEnumerable<CalculatorRunPomDataDetail> pomData,
+
+        public static Dictionary<string, CalcResultScaledupProducerTonnage> GetTonnages(IEnumerable<CalculatorRunPomDataDetail> pomData,
             IEnumerable<MaterialDetail> materials,
             string submissionPeriod,
             decimal scaleUpFactor)
@@ -239,6 +237,9 @@
                 scaledupProducerTonnage.ReportedPublicBinTonnage = (decimal)materialPomData
                     .Where(pom => pom.PackagingType == PackagingTypes.PublicBin)
                     .Sum(pom => pom.PackagingMaterialWeight);
+
+                scaledupProducerTonnage.TotalReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
+                    scaledupProducerTonnage.ReportedPublicBinTonnage;
 
                 var hdc = (decimal)materialPomData
                     .Where(pom => pom.PackagingType == PackagingTypes.HouseholdDrinksContainers)
@@ -260,6 +261,7 @@
                     .Where(pom => pom.PackagingType == PackagingTypes.ConsumerWaste)
                     .Sum(pom => pom.PackagingMaterialWeight);
 
+                //scaledupProducerTonnage.NetReportedTonnage = scaledupProducerTonnage.TotalReportedTonnage - scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage;
                 scaledupProducerTonnage.NetReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
                     scaledupProducerTonnage.ReportedPublicBinTonnage +
                     hdc;

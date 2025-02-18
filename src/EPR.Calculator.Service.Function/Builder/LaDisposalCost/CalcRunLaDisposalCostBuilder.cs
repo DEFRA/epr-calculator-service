@@ -18,7 +18,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
         private const string EmptyString = "0";
 
         internal class ProducerData
-        {
+        {            
             public required string MaterialName { get; set; }
 
             public required string PackagingType { get; set; }
