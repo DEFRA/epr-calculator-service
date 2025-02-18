@@ -27,5 +27,6 @@
         public static readonly string ScaledupNetReportedTonnage = "Scaled-up Net Reported Tonnage";
         public static readonly string HouseholdDrinksContainersTonnageGlass = "Household Drinks Containers Tonnage - Glass";
         public static readonly string ScaledupHouseholdDrinksContainersTonnageGlass = "Scaled-up Household Drinks Containers Tonnage - Glass";
+        public static readonly string NoScaledupProducers = "None";
     }
 }

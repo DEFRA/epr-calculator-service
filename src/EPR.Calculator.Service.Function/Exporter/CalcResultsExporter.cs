@@ -367,6 +367,10 @@
                     csvContent.AppendLine();
                 }
             }
+            else
+            {
+                csvContent.AppendLine(CsvSanitiser.SanitiseData(CalcResultScaledupProducerHeaders.NoScaledupProducers));
+            }
         }
 
         private static void PrepareScaledupProducersHeader(CalcResultScaledupProducers producers, StringBuilder csvContent)
