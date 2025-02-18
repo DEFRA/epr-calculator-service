@@ -3,6 +3,7 @@ using EPR.Calculator.Service.Function.Data;
 using EPR.Calculator.Service.Function.Data.DataModels;
 using EPR.Calculator.Service.Function.Dtos;
 using EPR.Calculator.Service.Function.Mappers;
+using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -227,26 +228,24 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
 
                 var materialPomData = pomData.Where(pom => pom.PackagingMaterial == material.Code && pom.SubmissionPeriod == submissionPeriod);
 
-#pragma warning disable CS8629 // Nullable value type may be null.
                 scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage = (decimal)materialPomData
                     .Where(pom => pom.PackagingType == PackagingTypes.Household)
-                    .Sum(pom => Math.Round((decimal)pom.PackagingMaterialWeight / 1000, 3));
+                    .Sum(pom => CommonUtil.ConvertKilogramToTonne(pom.PackagingMaterialWeight ?? 0));
 
                 scaledupProducerTonnage.ReportedPublicBinTonnage = (decimal)materialPomData
                     .Where(pom => pom.PackagingType == PackagingTypes.PublicBin)
-                    .Sum(pom => Math.Round((decimal)pom.PackagingMaterialWeight / 1000, 3));
+                    .Sum(pom => CommonUtil.ConvertKilogramToTonne(pom.PackagingMaterialWeight ?? 0));
 
                 scaledupProducerTonnage.TotalReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
                     scaledupProducerTonnage.ReportedPublicBinTonnage;
 
                 var hdc = (decimal)materialPomData
                     .Where(pom => pom.PackagingType == PackagingTypes.HouseholdDrinksContainers)
-                    .Sum(pom => Math.Round((decimal)pom.PackagingMaterialWeight / 1000, 3));
+                    .Sum(pom => CommonUtil.ConvertKilogramToTonne(pom.PackagingMaterialWeight ?? 0));
 
                 scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage = (decimal)materialPomData
                     .Where(pom => pom.PackagingType == PackagingTypes.ConsumerWaste)
-                    .Sum(pom => Math.Round((decimal)pom.PackagingMaterialWeight / 1000, 3));
-#pragma warning restore CS8629 // Nullable value type may be null.
+                    .Sum(pom => CommonUtil.ConvertKilogramToTonne(pom.PackagingMaterialWeight ?? 0));
 
                 scaledupProducerTonnage.NetReportedTonnage = scaledupProducerTonnage.TotalReportedTonnage - scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage;
 
