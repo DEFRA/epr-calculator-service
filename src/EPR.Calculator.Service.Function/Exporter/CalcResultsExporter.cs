@@ -411,6 +411,7 @@
             }
         }
 
+#pragma warning restore S3776 // Reduce its Cognitive Complexity
         private static void PrepareSummaryData(CalcResultSummary resultSummary, StringBuilder csvContent)
         {
             // Add empty lines
@@ -568,6 +569,7 @@
                 csvContent.AppendLine();
             }
         }
+#pragma warning restore S3776 // Reduce its Cognitive Complexity
 
         private static void PrepareSummaryDataHeader(CalcResultSummary resultSummary, StringBuilder csvContent)
         {

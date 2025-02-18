@@ -474,7 +474,7 @@
                     {
                         Name = "Scaled-up Producers",
                     },
-                    MaterialBreakdownHeaders = new List<CalcResultScaledupProducerHeader>() 
+                    MaterialBreakdownHeaders = new List<CalcResultScaledupProducerHeader>()
                     {
                         new CalcResultScaledupProducerHeader { Name = "Each submission for the year", ColumnIndex = 1 },
                         new CalcResultScaledupProducerHeader { Name = "Aluminium Breakdown", ColumnIndex = 2 },
