@@ -274,7 +274,7 @@
                     ScaleupFactor = first.ScaleupFactor,
                     SubmissonPeriodCode = pair.Key.SubmissonPeriodCode,
                     DaysInSubmissionPeriod = first.DaysInSubmissionPeriod,
-                    DaysInWholePeriod = first.DaysInSubmissionPeriod,
+                    DaysInWholePeriod = first.DaysInWholePeriod,
                     Level = CommonConstants.LevelOne.ToString(),
                     IsSubtotalRow = true,
                 };
@@ -345,7 +345,7 @@
                                     ScaleupFactor = spl.ScaleupFactor,
                                     SubmissonPeriodCode = spl.SubmissionPeriod,
                                     DaysInSubmissionPeriod = spl.DaysInSubmissionPeriod,
-                                    DaysInWholePeriod = spl.DaysInSubmissionPeriod,
+                                    DaysInWholePeriod = spl.DaysInWholePeriod,
                                     Level = pd.SubsidiaryId != null ? CommonConstants.LevelTwo.ToString() : CommonConstants.LevelOne.ToString(),
                                 }).Distinct().ToListAsync();
             return result ?? new List<CalcResultScaledupProducer>();

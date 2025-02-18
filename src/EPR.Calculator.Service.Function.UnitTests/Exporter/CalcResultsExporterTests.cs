@@ -245,6 +245,14 @@
             Assert.IsTrue(result.Contains("ScaledupHouseholdDrinksContainersTonnageGlass"));
         }
 
+        [TestMethod]
+        public void AppendFileInfoTest()
+        {
+            var csvContent = new StringBuilder();
+            CalcResultsExporter.AppendFileInfo(csvContent, "Label", "Filename,20/12/2024,User");
+            Assert.IsTrue(csvContent.ToString().Contains("Label,Filename,20/12/2024,User"));
+        }
+
         private static CalcResult CreateCalcResult()
         {
             return new CalcResult
@@ -667,6 +675,41 @@
                 },
             };
             return tonnageByMaterial;
+        }
+
+        private static List<CalcResultScaledupProducer> GetCalcResultScaledupProducerList()
+        {
+            var scaledupProducerList = new List<CalcResultScaledupProducer>();
+
+            scaledupProducerList.AddRange([
+                new CalcResultScaledupProducer()
+                {
+                    ProducerId = 101001,
+                    SubsidiaryId = string.Empty,
+                    ProducerName = "Allied Packaging",
+                    Level = "1",
+                    SubmissonPeriodCode = "2024-P2",
+                    DaysInSubmissionPeriod = 91,
+                    DaysInWholePeriod = 91,
+                    ScaleupFactor = 2,
+                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterial(),
+                },
+                new CalcResultScaledupProducer()
+                {
+                    ProducerId = 101001,
+                    SubsidiaryId = string.Empty,
+                    ProducerName = "Allied Packaging",
+                    Level = "1",
+                    SubmissonPeriodCode = "2024-P2",
+                    DaysInSubmissionPeriod = 91,
+                    DaysInWholePeriod = 91,
+                    ScaleupFactor = 2,
+                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterial(),
+                    IsTotalRow = true,
+                },
+            ]);
+
+            return scaledupProducerList;
         }
     }
 }
