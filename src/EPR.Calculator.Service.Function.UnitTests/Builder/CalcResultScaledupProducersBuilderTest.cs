@@ -102,7 +102,6 @@
             this.dbContext = new ApplicationDBContext(dbContextOptions);
             this.dbContext.Database.EnsureCreated();
             this.builder = new CalcResultScaledupProducersBuilder(this.dbContext);
-
         }
 
         [TestCleanup]
