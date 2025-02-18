@@ -671,16 +671,16 @@ namespace EPR.Calculator.Service.Function.UnitTests
             Assert.IsTrue(result.ContainsKey(MaterialCodes.Glass));
             var glassTonnage = result[MaterialCodes.Glass];
 
-            Assert.AreEqual(100, glassTonnage.ReportedHouseholdPackagingWasteTonnage);
+            Assert.AreEqual(0.1M, glassTonnage.ReportedHouseholdPackagingWasteTonnage);
             Assert.AreEqual(0, glassTonnage.ReportedPublicBinTonnage);
             Assert.AreEqual(0, glassTonnage.HouseholdDrinksContainersTonnageGlass);
-            Assert.AreEqual(100, glassTonnage.TotalReportedTonnage);
-            Assert.AreEqual(100, glassTonnage.NetReportedTonnage);
-            Assert.AreEqual(100, glassTonnage.ScaledupReportedHouseholdPackagingWasteTonnage);
+            Assert.AreEqual(0.1M, glassTonnage.TotalReportedTonnage);
+            Assert.AreEqual(0.1M, glassTonnage.NetReportedTonnage);
+            Assert.AreEqual(0.1M, glassTonnage.ScaledupReportedHouseholdPackagingWasteTonnage);
             Assert.AreEqual(0, glassTonnage.ScaledupReportedPublicBinTonnage);
             Assert.AreEqual(0, glassTonnage.ScaledupHouseholdDrinksContainersTonnageGlass);
-            Assert.AreEqual(100, glassTonnage.ScaledupTotalReportedTonnage);
-            Assert.AreEqual(100, glassTonnage.ScaledupNetReportedTonnage);
+            Assert.AreEqual(0.1M, glassTonnage.ScaledupTotalReportedTonnage);
+            Assert.AreEqual(0.1M, glassTonnage.ScaledupNetReportedTonnage);
         }
 
         private static void SeedDatabase(ApplicationDBContext context)
