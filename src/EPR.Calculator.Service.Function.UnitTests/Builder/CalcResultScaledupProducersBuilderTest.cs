@@ -284,11 +284,15 @@
                 SubmissionPeriod = "2024-P2",
                 SubmissionPeriodDesc = "desc",
                 OrganisationId = 11,
+                PackagingMaterialWeight = 100,
+                PackagingMaterial = "AL",
+                PackagingType = "HH",
             });
             var tonnage = CalcResultScaledupProducersBuilder.GetTonnages(pomDateDetails, materialDetails, "2024-P2", 2);
             Assert.IsNotNull(tonnage);
             var aluminium = tonnage["AL"];
-            Assert.IsNotNull(aluminium);
+            Assert.AreEqual(0.1m, aluminium.ReportedHouseholdPackagingWasteTonnage);
+            Assert.AreEqual(0.2m, aluminium.ScaledupReportedHouseholdPackagingWasteTonnage);
         }
 
         [TestMethod]

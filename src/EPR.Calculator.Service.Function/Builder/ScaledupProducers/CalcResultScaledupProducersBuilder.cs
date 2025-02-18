@@ -229,33 +229,34 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
 
                 scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage = (decimal)materialPomData
                     .Where(pom => pom.PackagingType == PackagingTypes.Household)
-                    .Sum(pom => pom.PackagingMaterialWeight);
+                    .Sum(pom => Math.Round((decimal)pom.PackagingMaterialWeight / 1000, 3));
 
                 scaledupProducerTonnage.ReportedPublicBinTonnage = (decimal)materialPomData
                     .Where(pom => pom.PackagingType == PackagingTypes.PublicBin)
-                    .Sum(pom => pom.PackagingMaterialWeight);
+                    .Sum(pom => Math.Round((decimal)pom.PackagingMaterialWeight / 1000, 3));
 
                 scaledupProducerTonnage.TotalReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
                     scaledupProducerTonnage.ReportedPublicBinTonnage;
 
                 var hdc = (decimal)materialPomData
                     .Where(pom => pom.PackagingType == PackagingTypes.HouseholdDrinksContainers)
-                    .Sum(pom => pom.PackagingMaterialWeight);
+                    .Sum(pom => Math.Round((decimal)pom.PackagingMaterialWeight / 1000, 3));
 
                 scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage = (decimal)materialPomData
                     .Where(pom => pom.PackagingType == PackagingTypes.ConsumerWaste)
-                    .Sum(pom => pom.PackagingMaterialWeight);
+                    .Sum(pom => Math.Round((decimal)pom.PackagingMaterialWeight / 1000, 3));
 
                 scaledupProducerTonnage.NetReportedTonnage = scaledupProducerTonnage.TotalReportedTonnage - scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage;
 
-                scaledupProducerTonnage.ScaledupReportedHouseholdPackagingWasteTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage * scaleUpFactor;
-                scaledupProducerTonnage.ScaledupReportedPublicBinTonnage = scaledupProducerTonnage.ReportedPublicBinTonnage * scaleUpFactor;
-                scaledupProducerTonnage.ScaledupTotalReportedTonnage = scaledupProducerTonnage.TotalReportedTonnage * scaleUpFactor;
-                scaledupProducerTonnage.ScaledupReportedSelfManagedConsumerWasteTonnage = scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage * scaleUpFactor;
-                scaledupProducerTonnage.ScaledupNetReportedTonnage = scaledupProducerTonnage.NetReportedTonnage * scaleUpFactor;
+                scaledupProducerTonnage.ScaledupReportedHouseholdPackagingWasteTonnage = Math.Round((decimal)scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage * scaleUpFactor, 3);
+                scaledupProducerTonnage.ScaledupReportedPublicBinTonnage = Math.Round((decimal)scaledupProducerTonnage.ReportedPublicBinTonnage * scaleUpFactor, 3);
+                scaledupProducerTonnage.ScaledupTotalReportedTonnage = Math.Round((decimal)scaledupProducerTonnage.TotalReportedTonnage * scaleUpFactor, 3);
+                scaledupProducerTonnage.ScaledupReportedSelfManagedConsumerWasteTonnage = Math.Round((decimal)scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage * scaleUpFactor, 3);
+                scaledupProducerTonnage.ScaledupNetReportedTonnage = Math.Round((decimal)scaledupProducerTonnage.NetReportedTonnage * scaleUpFactor, 3);
 
                 scaledupProducerTonnages.Add(material.Code, scaledupProducerTonnage);
             }
+
             return scaledupProducerTonnages;
         }
 
