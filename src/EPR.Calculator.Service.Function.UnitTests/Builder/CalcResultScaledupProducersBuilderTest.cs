@@ -13,9 +13,9 @@
     [TestClass]
     public class CalcResultScaledupProducersBuilderTest
     {
+        private readonly ApplicationDBContext dbContext;
+        private readonly int runId = 1;
         private CalcResultScaledupProducersBuilder builder;
-        private ApplicationDBContext dbContext;
-        int runId = 1;
 
         private void PrepareScaledUpProducer()
         {
@@ -26,8 +26,8 @@
                 ProducerId = 11,
                 SubsidiaryId = "Subsidary 1",
             };
-            dbContext.ProducerDetail.Add(producerDetail);
-            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            this.dbContext.ProducerDetail.Add(producerDetail);
+            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
             {
                 Id = 1,
                 PackagingType = "HH",
@@ -41,15 +41,15 @@
                 CreatedAt = DateTime.Now,
                 CreatedBy = "Test User",
             };
-            dbContext.CalculatorRunPomDataMaster.Add(calcRunPomDataMaster);
-            dbContext.CalculatorRuns.Add(new CalculatorRun
+            this.dbContext.CalculatorRunPomDataMaster.Add(calcRunPomDataMaster);
+            this.dbContext.CalculatorRuns.Add(new CalculatorRun
             {
                 Id = runId,
                 Financial_Year = "2024-25",
                 Name = "Name",
                 CalculatorRunPomDataMaster = calcRunPomDataMaster,
             });
-            dbContext.CalculatorRunPomDataDetails.Add(
+            this.dbContext.CalculatorRunPomDataDetails.Add(
                 new CalculatorRunPomDataDetail
                 {
                     LoadTimeStamp = DateTime.Now,
@@ -58,7 +58,7 @@
                     CalculatorRunPomDataMaster = calcRunPomDataMaster,
                     OrganisationId = 10,
                 });
-            dbContext.CalculatorRunPomDataDetails.Add(
+            this.dbContext.CalculatorRunPomDataDetails.Add(
                 new CalculatorRunPomDataDetail
                 {
                     LoadTimeStamp = DateTime.Now,
@@ -67,7 +67,7 @@
                     CalculatorRunPomDataMaster = calcRunPomDataMaster,
                     OrganisationId = 11,
                 });
-            dbContext.SubmissionPeriodLookup.Add(
+            this.dbContext.SubmissionPeriodLookup.Add(
                 new SubmissionPeriodLookup
                 {
                     DaysInSubmissionPeriod = 0,
@@ -78,7 +78,7 @@
                     SubmissionPeriod = "2024-P1",
                     SubmissionPeriodDesc = string.Empty,
                 });
-            dbContext.SubmissionPeriodLookup.Add(
+            this.dbContext.SubmissionPeriodLookup.Add(
                 new SubmissionPeriodLookup
                 {
                     DaysInSubmissionPeriod = 0,
@@ -89,27 +89,26 @@
                     SubmissionPeriod = "2024-P2",
                     SubmissionPeriodDesc = string.Empty,
                 });
-            dbContext.SaveChanges();
+            this.dbContext.SaveChanges();
         }
 
-        [TestInitialize]
-        public void Init()
+        public CalcResultScaledupProducersBuilderTest()
         {
             var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
             .UseInMemoryDatabase(databaseName: "PayCal")
             .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
             .Options;
 
+            this.dbContext = new ApplicationDBContext(dbContextOptions);
+            this.dbContext.Database.EnsureCreated();
+            this.builder = new CalcResultScaledupProducersBuilder(this.dbContext);
 
-            dbContext = new ApplicationDBContext(dbContextOptions);
-            dbContext.Database.EnsureCreated();
-            this.builder = new CalcResultScaledupProducersBuilder(dbContext);
         }
 
         [TestCleanup]
         public void Teardown()
         {
-            dbContext.Database.EnsureDeleted();
+            this.dbContext.Database.EnsureDeleted();
         }
 
         [TestMethod]
@@ -128,8 +127,8 @@
         [TestMethod]
         public void GetScaledUpProducerIds_Test()
         {
-            PrepareScaledUpProducer();
-            var task = this.builder.GetScaledUpOrganisationIdsAsync(runId);
+            this.PrepareScaledUpProducer();
+            var task = this.builder.GetScaledUpOrganisationIdsAsync(this.runId);
             task.Wait();
 
             var result = task.Result;
@@ -140,7 +139,7 @@
         [TestMethod]
         public void AddExtraRowsTest()
         {
-            builder = new CalcResultScaledupProducersBuilder(dbContext);
+            builder = new CalcResultScaledupProducersBuilder(this.dbContext);
             var runProducerMaterialDetails = new List<CalcResultScaledupProducer>();
             runProducerMaterialDetails.Add(new CalcResultScaledupProducer
             {
@@ -149,12 +148,12 @@
             runProducerMaterialDetails.Add(new CalcResultScaledupProducer
             {
                 ProducerId = 1,
-                SubsidiaryId = "Sub1"
+                SubsidiaryId = "Sub1",
             });
             runProducerMaterialDetails.Add(new CalcResultScaledupProducer
             {
                 ProducerId = 1,
-                SubsidiaryId = "Sub2"
+                SubsidiaryId = "Sub2",
             });
             runProducerMaterialDetails.Add(new CalcResultScaledupProducer
             {
@@ -163,29 +162,29 @@
             runProducerMaterialDetails.Add(new CalcResultScaledupProducer
             {
                 ProducerId = 2,
-                SubsidiaryId = "Sub3"
+                SubsidiaryId = "Sub3",
             });
             runProducerMaterialDetails.Add(new CalcResultScaledupProducer
             {
                 ProducerId = 2,
-                SubsidiaryId = "Sub4"
+                SubsidiaryId = "Sub4",
             });
-            builder.AddExtraRows(runProducerMaterialDetails);
+            this.builder.AddExtraRows(runProducerMaterialDetails);
 
             Assert.AreEqual(8, runProducerMaterialDetails.Count);
             var allProducersWithLevel2 = runProducerMaterialDetails.Where(x => x.SubsidiaryId == null);
             Assert.IsTrue(allProducersWithLevel2.All(x => x.Level == CommonConstants.LevelTwo.ToString()));
 
-            var extraRows = runProducerMaterialDetails.Skip(Math.Max(0, runProducerMaterialDetails.Count() - 2));
+            var extraRows = runProducerMaterialDetails.Skip(Math.Max(0, runProducerMaterialDetails.Count - 2));
             Assert.AreEqual(2, extraRows.Count());
-            Assert.IsTrue(extraRows.All(x => x.IsSubtotalRow == true));
-            Assert.AreEqual(2, runProducerMaterialDetails.Count(x => x.IsSubtotalRow == true));
+            Assert.IsTrue(extraRows.All(x => x.IsSubtotalRow));
+            Assert.AreEqual(2, runProducerMaterialDetails.Count(x => x.IsSubtotalRow));
         }
 
         [TestMethod]
         public void GetOverallTotalRowTest()
         {
-            builder = new CalcResultScaledupProducersBuilder(dbContext);
+            this.builder = new CalcResultScaledupProducersBuilder(this.dbContext);
             var runProducerMaterialDetails = new List<CalcResultScaledupProducer>();
             var dictionary = new Dictionary<string, CalcResultScaledupProducerTonnage>();
             dictionary.Add("AL", new CalcResultScaledupProducerTonnage
@@ -204,42 +203,42 @@
             runProducerMaterialDetails.Add(new CalcResultScaledupProducer
             {
                 ProducerId = 1,
-                ScaledupProducerTonnageByMaterial = dictionary
+                ScaledupProducerTonnageByMaterial = dictionary,
             });
             runProducerMaterialDetails.Add(new CalcResultScaledupProducer
             {
                 ProducerId = 1,
                 SubsidiaryId = "Sub1",
-                ScaledupProducerTonnageByMaterial = dictionary
+                ScaledupProducerTonnageByMaterial = dictionary,
             });
             runProducerMaterialDetails.Add(new CalcResultScaledupProducer
             {
                 ProducerId = 1,
                 SubsidiaryId = "Sub2",
-                ScaledupProducerTonnageByMaterial = dictionary
+                ScaledupProducerTonnageByMaterial = dictionary,
             });
             runProducerMaterialDetails.Add(new CalcResultScaledupProducer
             {
                 ProducerId = 2,
-                ScaledupProducerTonnageByMaterial = dictionary
+                ScaledupProducerTonnageByMaterial = dictionary,
             });
             runProducerMaterialDetails.Add(new CalcResultScaledupProducer
             {
                 ProducerId = 2,
                 SubsidiaryId = "Sub3",
-                ScaledupProducerTonnageByMaterial = dictionary
+                ScaledupProducerTonnageByMaterial = dictionary,
             });
             runProducerMaterialDetails.Add(new CalcResultScaledupProducer
             {
                 ProducerId = 2,
                 SubsidiaryId = "Sub4",
-                ScaledupProducerTonnageByMaterial = dictionary
+                ScaledupProducerTonnageByMaterial = dictionary,
             });
 
             var materials = new List<Material>();
             materials.Add(new Material { Code = "AL", Name = "Aluminium" });
             var materialDetails = MaterialMapper.Map(materials);
-            var totalRow = builder.GetOverallTotalRow(runProducerMaterialDetails, materialDetails);
+            var totalRow = this.builder.GetOverallTotalRow(runProducerMaterialDetails, materialDetails);
             Assert.IsNotNull(totalRow);
             var aluminium = totalRow.ScaledupProducerTonnageByMaterial["Aluminium"];
             Assert.IsNotNull(aluminium);
@@ -253,8 +252,8 @@
         [TestMethod]
         public void GetProducerReportedMaterialsAsyncTest()
         {
-            builder = new CalcResultScaledupProducersBuilder(dbContext);
-            var task = builder.GetProducerReportedMaterialsAsync(1, [1, 2]);
+            this.builder = new CalcResultScaledupProducersBuilder(this.dbContext);
+            var task = this.builder.GetProducerReportedMaterialsAsync(1, [1, 2]);
             task.Wait();
             var result = task.Result;
             Assert.IsNotNull(result);
@@ -264,8 +263,8 @@
         [TestMethod]
         public void GetScaledupOrganisationDetailsTest()
         {
-            builder = new CalcResultScaledupProducersBuilder(dbContext);
-            var task = builder.GetScaledupOrganisationDetails(1, [1, 2]);
+            this.builder = new CalcResultScaledupProducersBuilder(this.dbContext);
+            var task = this.builder.GetScaledupOrganisationDetails(1, [1, 2]);
             task.Wait();
             var result = task.Result;
             Assert.IsNotNull(result);
@@ -284,7 +283,7 @@
                 LoadTimeStamp = DateTime.Now,
                 SubmissionPeriod = "2024-P2",
                 SubmissionPeriodDesc = "desc",
-                OrganisationId = 11
+                OrganisationId = 11,
             });
             var tonnage = CalcResultScaledupProducersBuilder.GetTonnages(pomDateDetails, materialDetails, "2024-P2", 2);
             Assert.IsNotNull(tonnage);
@@ -347,7 +346,7 @@
             {
                 ProducerId = 2,
                 SubsidiaryId = "Sub3",
-                ScaledupProducerTonnageByMaterial = dictionary
+                ScaledupProducerTonnageByMaterial = dictionary,
             };
 
             var allPomDataDetails = new List<CalculatorRunPomDataDetail>();
@@ -356,13 +355,13 @@
                 LoadTimeStamp = DateTime.Now,
                 SubmissionPeriod = "2024-P1",
                 SubmissionPeriodDesc = "desc",
-                OrganisationId = 10
+                OrganisationId = 10,
             });
             var materials = new List<Material>();
             materials.Add(new Material { Code = "AL", Name = "Aluminium" });
             var materialDetails = MaterialMapper.Map(materials);
-            builder = new CalcResultScaledupProducersBuilder(dbContext);
-            builder.CalculateScaledupTonnage([scaledUpProducer], allPomDataDetails, materialDetails);
+            this.builder = new CalcResultScaledupProducersBuilder(this.dbContext);
+            this.builder.CalculateScaledupTonnage([scaledUpProducer], allPomDataDetails, materialDetails);
             Assert.IsNotNull(scaledUpProducer.ScaledupProducerTonnageByMaterial);
             var scaledUpTonnage = scaledUpProducer.ScaledupProducerTonnageByMaterial["AL"];
             Assert.IsNotNull(scaledUpTonnage);

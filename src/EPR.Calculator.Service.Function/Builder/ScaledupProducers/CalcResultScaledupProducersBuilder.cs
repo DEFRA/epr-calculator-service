@@ -161,7 +161,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                     ScaleupFactor = first.ScaleupFactor,
                     SubmissonPeriodCode = pair.Key.SubmissonPeriodCode,
                     DaysInSubmissionPeriod = first.DaysInSubmissionPeriod,
-                    DaysInWholePeriod = first.DaysInSubmissionPeriod,
+                    DaysInWholePeriod = first.DaysInWholePeriod,
                     Level = CommonConstants.LevelOne.ToString(),
                     IsSubtotalRow = true
                 };
@@ -196,7 +196,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                                     ScaleupFactor = spl.ScaleupFactor,
                                     SubmissonPeriodCode = spl.SubmissionPeriod,
                                     DaysInSubmissionPeriod = spl.DaysInSubmissionPeriod,
-                                    DaysInWholePeriod = spl.DaysInSubmissionPeriod,
+                                    DaysInWholePeriod = spl.DaysInWholePeriod,
                                     Level = pd.SubsidiaryId != null ? CommonConstants.LevelTwo.ToString() : CommonConstants.LevelOne.ToString(),
                                 }).Distinct().ToListAsync();
             return result ?? [];
@@ -245,11 +245,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                 scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage = (decimal)materialPomData
                     .Where(pom => pom.PackagingType == PackagingTypes.ConsumerWaste)
                     .Sum(pom => pom.PackagingMaterialWeight);
-
-                scaledupProducerTonnage.NetReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
-                    scaledupProducerTonnage.ReportedPublicBinTonnage +
-                    hdc;
-
+                scaledupProducerTonnage.NetReportedTonnage = scaledupProducerTonnage.TotalReportedTonnage - scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage;
                 scaledupProducerTonnage.ScaledupReportedHouseholdPackagingWasteTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage * scaleUpFactor;
                 scaledupProducerTonnage.ScaledupReportedPublicBinTonnage = scaledupProducerTonnage.ReportedPublicBinTonnage * scaleUpFactor;
                 scaledupProducerTonnage.ScaledupTotalReportedTonnage = scaledupProducerTonnage.TotalReportedTonnage * scaleUpFactor;
