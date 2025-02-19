@@ -117,7 +117,7 @@
             PrepareScaledUpProducer();
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
 
-            var task = builder.Construct(requestDto);
+            var task = this.builder.Construct(requestDto);
             task.Wait();
 
             var result = task.Result;
@@ -139,7 +139,7 @@
         [TestMethod]
         public void AddExtraRowsTest()
         {
-            builder = new CalcResultScaledupProducersBuilder(this.dbContext);
+            this.builder = new CalcResultScaledupProducersBuilder(this.dbContext);
             var runProducerMaterialDetails = new List<CalcResultScaledupProducer>();
             runProducerMaterialDetails.Add(new CalcResultScaledupProducer
             {
@@ -284,11 +284,15 @@
                 SubmissionPeriod = "2024-P2",
                 SubmissionPeriodDesc = "desc",
                 OrganisationId = 11,
+                PackagingMaterialWeight = 100,
+                PackagingMaterial = "AL",
+                PackagingType = "HH",
             });
             var tonnage = CalcResultScaledupProducersBuilder.GetTonnages(pomDateDetails, materialDetails, "2024-P2", 2);
             Assert.IsNotNull(tonnage);
             var aluminium = tonnage["AL"];
-            Assert.IsNotNull(aluminium);
+            Assert.AreEqual(0.1m, aluminium.ReportedHouseholdPackagingWasteTonnage);
+            Assert.AreEqual(0.2m, aluminium.ScaledupReportedHouseholdPackagingWasteTonnage);
         }
 
         [TestMethod]
