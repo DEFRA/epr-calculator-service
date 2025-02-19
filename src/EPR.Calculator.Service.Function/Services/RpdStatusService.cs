@@ -47,7 +47,7 @@
         private IOrgAndPomWrapper Wrapper { get; init; }
 
         /// <inheritdoc/>
-        public async Task<TimeSpan?> UpdateRpdStatus(
+        public async Task<bool> UpdateRpdStatus(
             int runId,
             string updatedBy,
             bool isPomSuccessful,
@@ -72,7 +72,7 @@
             {
                 calcRun.CalculatorRunClassificationId = runClassifications.Single(x => x.Status == RunClassification.ERROR.ToString()).Id;
                 await this.Context.SaveChangesAsync(timeout);
-                return null;
+                return false;
             }
 
             var vr = this.Validator.IsValidSuccessfulRun(runId);
@@ -96,14 +96,12 @@
                     calcRun!.CalculatorRunClassificationId = runClassifications.Single(x => x.Status == RunClassification.RUNNING.ToString()).Id;
                     await this.Context.SaveChangesAsync(timeout);
                     await transaction.CommitAsync(timeout);
-                    var timeDiff = startTime - DateTime.Now;
-
-                    return timeDiff;
+                    return true;
                 }
                 catch (Exception)
                 {
                     await transaction.RollbackAsync();
-                    throw;
+                    return false;
                 }
             }
         }

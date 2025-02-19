@@ -6,6 +6,6 @@
 
     public interface IRpdStatusService
     {
-        Task<TimeSpan?> UpdateRpdStatus(int runId, string updatedBy, bool isPomSuccessful, CancellationToken timeout);
+        Task<bool> UpdateRpdStatus(int runId, string updatedBy, bool isPomSuccessful, CancellationToken timeout);
     }
 }

@@ -210,9 +210,9 @@
                         calculatorRunParameter.User,
                         isPomSuccessful,
                         new CancellationTokenSource(this.configuration.RpdStatusTimeout).Token);
-                this.logger.LogInformation("Status Response: {Response}", statusUpdateResponse);
+                this.logger.LogInformation("Status UpdateRpdStatus: {Response}", statusUpdateResponse);
 
-                if (statusUpdateResponse != null)
+                if (statusUpdateResponse)
                 {
                     var isTransposeSuccess = await this.transposePomAndOrgDataService.
                         TransposeBeforeCalcResults(
