@@ -50,12 +50,12 @@
 
                 this.CalculateScaledupTonnage(runProducerMaterialDetails, allOrganisationPomDetails, materials);
 
-                    var orderedRunProducerMaterialDetails = runProducerMaterialDetails
-                        .OrderBy(p => p.ProducerId)
-                        .ThenBy(p => p.Level)
-                        .ThenBy(p => p.SubsidiaryId)
-                        .ThenBy(p => p.SubmissionPeriodCode)
-                        .ToList();
+                var orderedRunProducerMaterialDetails = runProducerMaterialDetails
+                    .OrderBy(p => p.ProducerId)
+                    .ThenBy(p => p.Level)
+                    .ThenBy(p => p.SubsidiaryId)
+                    .ThenBy(p => p.SubmissionPeriodCode)
+                    .ToList();
 
                 var overallTotalRow = this.GetOverallTotalRow(orderedRunProducerMaterialDetails, materials);
 

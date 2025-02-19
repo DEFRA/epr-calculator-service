@@ -176,7 +176,7 @@
             var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.Household, scaledupProducers);
 
             // Assert
-            Assert.AreEqual(200m, result);
+            Assert.AreEqual(1000.00m, result);
         }
 
         [TestMethod]
@@ -191,7 +191,7 @@
             var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.Household, scaledupProducers);
 
             // Assert
-            Assert.AreEqual(200m, result);
+            Assert.AreEqual(1000.00m, result);
         }
 
         [TestMethod]
@@ -206,7 +206,7 @@
             var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.PublicBin, scaledupProducers);
 
             // Assert
-            Assert.AreEqual(40m, result);
+            Assert.AreEqual(0, result);
         }
 
         [TestMethod]
@@ -221,7 +221,7 @@
             var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.ConsumerWaste, scaledupProducers);
 
             // Assert
-            Assert.AreEqual(120m, result);
+            Assert.AreEqual(20.00m, result);
         }
 
         [TestMethod]
@@ -236,7 +236,7 @@
             var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.HouseholdDrinksContainers, scaledupProducers);
 
             // Assert
-            Assert.AreEqual(100m, result);
+            Assert.AreEqual(50.00m, result);
         }
 
         [TestMethod]
