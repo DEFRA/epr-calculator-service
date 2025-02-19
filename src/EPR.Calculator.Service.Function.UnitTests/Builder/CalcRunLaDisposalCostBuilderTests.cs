@@ -30,7 +30,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             public decimal Tonnage { get; set; }
 
-            public ProducerDetail ProducerDetail { get; set; }
+            public ProducerDetail? ProducerDetail { get; set; }
         }
 
         public CalcRunLaDisposalCostBuilderTests()

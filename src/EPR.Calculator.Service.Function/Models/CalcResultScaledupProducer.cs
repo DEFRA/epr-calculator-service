@@ -16,7 +16,7 @@
 
         public bool IsTotalRow { get; set; } = false;
 
-        public string SubmissionPeriodCode { get; set; }
+        public string? SubmissionPeriodCode { get; set; }
 
         public int DaysInSubmissionPeriod { get; set; }
 

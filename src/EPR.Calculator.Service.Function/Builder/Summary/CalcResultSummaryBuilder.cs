@@ -240,7 +240,7 @@
                     : producersAndSubsidiaries[0].ProducerName ?? string.Empty,
                 SubsidiaryId = string.Empty,
                 Level = isOverAllTotalRow ? string.Empty : CommonConstants.LevelOne.ToString(),
-                isProducerScaledup = GetScaledupProducerStatusTotalRow(producersAndSubsidiaries[0], this.ScaledupProducers, isOverAllTotalRow),
+                IsProducerScaledup = GetScaledupProducerStatusTotalRow(producersAndSubsidiaries[0], this.ScaledupProducers, isOverAllTotalRow),
                 ProducerDisposalFeesByMaterial = materialCostSummary,
 
                 // Disposal fee summary
@@ -317,7 +317,7 @@
                 ProducerName = producer.ProducerName ?? string.Empty,
                 SubsidiaryId = producer.SubsidiaryId ?? string.Empty,
                 Level = CalcResultSummaryUtil.GetLevelIndex(producerDisposalFeesLookup, producer).ToString(),
-                isProducerScaledup = CalcResultSummaryUtil.IsProducerScaledup(producer, this.ScaledupProducers)
+                IsProducerScaledup = CalcResultSummaryUtil.IsProducerScaledup(producer, this.ScaledupProducers)
                     ? CommonConstants.ScaledupProducersYes
                     : CommonConstants.ScaledupProducersNo,
             };

@@ -238,9 +238,9 @@
 
             var materials = new List<Material>
         {
-            new Material { Id = 1, Name ="Plastic", Code = MaterialCodes.Plastic },
-            new Material { Id = 2, Name ="Steel",Code = MaterialCodes.Steel },
-            new Material { Id = 3, Name ="Glass",Code = MaterialCodes.Glass },
+            new Material { Id = 1, Name = "Plastic", Code = MaterialCodes.Plastic },
+            new Material { Id = 2, Name = "Steel", Code = MaterialCodes.Steel },
+            new Material { Id = 3, Name = "Glass", Code = MaterialCodes.Glass },
         };
             context.Material.AddRange(materials);
 
@@ -320,7 +320,7 @@
                 MaterialId = 2,
                 ProducerDetailId = 1,
                 PackagingType = "PB",
-                PackagingTonnage = 200
+                PackagingTonnage = 200,
             });
 
             this.dbContext.SaveChanges();
@@ -392,7 +392,7 @@
                 Financial_Year = "2024-25",
                 CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
                 CreatedBy = "Test User",
-                DefaultParameterSettingMasterId = 1
+                DefaultParameterSettingMasterId = 1,
             };
             this.dbContext.CalculatorRuns.Add(run);
             this.dbContext.SaveChanges();
@@ -455,7 +455,7 @@
                      {
                         ProducerId = 1,
                         IsTotalRow = true,
-                        ScaledupProducerTonnageByMaterial = new ()
+                        ScaledupProducerTonnageByMaterial = new()
                         {
                          ["Aluminium"] = new CalcResultScaledupProducerTonnage
                         {
@@ -476,7 +476,7 @@
                      {
                         ProducerId = 1,
                         IsTotalRow = true,
-                        ScaledupProducerTonnageByMaterial = new ()
+                        ScaledupProducerTonnageByMaterial = new()
                         {
                          ["GL"] = new CalcResultScaledupProducerTonnage
                         {

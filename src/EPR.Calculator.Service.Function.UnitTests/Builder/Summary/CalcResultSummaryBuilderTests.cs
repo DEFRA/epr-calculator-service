@@ -609,8 +609,7 @@
 
             var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, 1);
 
-            var result = new CalcResultSummaryBuilder(this.context).GetCalcResultSummary(orderedProducerDetails, materials,
-                this.calcResult, totalPackagingTonnage);
+            var result = new CalcResultSummaryBuilder(this.context).GetCalcResultSummary(orderedProducerDetails, materials, this.calcResult, totalPackagingTonnage);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(128, result.ColumnHeaders.Count());
@@ -618,7 +617,7 @@
             var producerDisposalFees = result.ProducerDisposalFees;
             Assert.IsNotNull(producerDisposalFees);
 
-            var totals = producerDisposalFees.First(t => t.isProducerScaledup == "Totals");
+            var totals = producerDisposalFees.First(t => t.IsProducerScaledup == "Totals");
             var producer = producerDisposalFees.First(t => t.Level == "1");
             Assert.IsNotNull(producer);
 
