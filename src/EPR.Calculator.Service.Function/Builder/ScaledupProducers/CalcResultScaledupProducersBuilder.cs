@@ -50,12 +50,12 @@
 
                 this.CalculateScaledupTonnage(runProducerMaterialDetails, allOrganisationPomDetails, materials);
 
-                var orderedRunProducerMaterialDetails = runProducerMaterialDetails
-                    .OrderBy(p => p.ProducerId)
-                    .ThenBy(p => p.Level)
-                    .ThenBy(p => p.SubsidiaryId)
-                    .ThenBy(p => p.SubmissonPeriodCode)
-                    .ToList();
+                    var orderedRunProducerMaterialDetails = runProducerMaterialDetails
+                        .OrderBy(p => p.ProducerId)
+                        .ThenBy(p => p.Level)
+                        .ThenBy(p => p.SubsidiaryId)
+                        .ThenBy(p => p.SubmissionPeriodCode)
+                        .ToList();
 
                 var overallTotalRow = this.GetOverallTotalRow(orderedRunProducerMaterialDetails, materials);
 
@@ -118,13 +118,13 @@
             {
                 var pomData = item.IsSubtotalRow
                     ? allOrganisationPomDetails
-                        .Where(pom => pom.OrganisationId == item.ProducerId && pom.SubmissionPeriod == item.SubmissonPeriodCode)
+                        .Where(pom => pom.OrganisationId == item.ProducerId && pom.SubmissionPeriod == item.SubmissionPeriodCode)
                         .ToList()
                     : allOrganisationPomDetails
-                        .Where(pom => pom.OrganisationId == item.ProducerId && pom.SubsidaryId == item.SubsidiaryId && pom.SubmissionPeriod == item.SubmissonPeriodCode)
+                        .Where(pom => pom.OrganisationId == item.ProducerId && pom.SubsidaryId == item.SubsidiaryId && pom.SubmissionPeriod == item.SubmissionPeriodCode)
                         .ToList();
 
-                item.ScaledupProducerTonnageByMaterial = GetTonnages(pomData, materials, item.SubmissonPeriodCode, item.ScaleupFactor);
+                item.ScaledupProducerTonnageByMaterial = GetTonnages(pomData, materials, item.SubmissionPeriodCode, item.ScaleupFactor);
             }
         }
 
@@ -150,7 +150,7 @@
 
             var groupByResult = runProducerMaterialDetails
                 .Where(x => x.SubsidiaryId != null)
-                .GroupBy(x => new { x.ProducerId, x.SubmissonPeriodCode })
+                .GroupBy(x => new { x.ProducerId, x.SubmissionPeriodCode })
                 .Where(x => x.Count() > 1)
                 .ToList();
 
@@ -167,7 +167,7 @@
                     SubsidiaryId = string.Empty,
                     ProducerName = parentProducer[0].ProducerName,
                     ScaleupFactor = first.ScaleupFactor,
-                    SubmissonPeriodCode = pair.Key.SubmissonPeriodCode,
+                    SubmissionPeriodCode = pair.Key.SubmissionPeriodCode,
                     DaysInSubmissionPeriod = first.DaysInSubmissionPeriod,
                     DaysInWholePeriod = first.DaysInWholePeriod,
                     Level = CommonConstants.LevelOne.ToString(),
@@ -202,7 +202,7 @@
                                     SubsidiaryId = pd.SubsidiaryId,
                                     ProducerName = pd.ProducerName,
                                     ScaleupFactor = spl.ScaleupFactor,
-                                    SubmissonPeriodCode = spl.SubmissionPeriod,
+                                    SubmissionPeriodCode = spl.SubmissionPeriod,
                                     DaysInSubmissionPeriod = spl.DaysInSubmissionPeriod,
                                     DaysInWholePeriod = spl.DaysInWholePeriod,
                                     Level = pd.SubsidiaryId != null ? CommonConstants.LevelTwo.ToString() : CommonConstants.LevelOne.ToString(),
@@ -259,36 +259,21 @@
                     scaledupProducerTonnage.ReportedPublicBinTonnage;
                 }
 
-                if (material.Code == MaterialCodes.Glass)
-                {
-                    scaledupProducerTonnage.HouseholdDrinksContainersTonnageGlass = hdc;
-                    scaledupProducerTonnage.TotalReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
-                                            scaledupProducerTonnage.ReportedPublicBinTonnage + scaledupProducerTonnage.HouseholdDrinksContainersTonnageGlass;
-                }
-                else
-                {
-                    scaledupProducerTonnage.TotalReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
-                    scaledupProducerTonnage.ReportedPublicBinTonnage;
-                }
-
                 scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage = (decimal)materialPomData
                     .Where(pom => pom.PackagingType == PackagingTypes.ConsumerWaste)
                     .Sum(pom => CommonUtil.ConvertKilogramToTonne(pom.PackagingMaterialWeight ?? 0));
 
-                scaledupProducerTonnage.NetReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
-                    scaledupProducerTonnage.ReportedPublicBinTonnage +
-                    hdc;
-                scaledupProducerTonnage.ScaledupReportedHouseholdPackagingWasteTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage * scaleUpFactor;
-                scaledupProducerTonnage.ScaledupReportedPublicBinTonnage = scaledupProducerTonnage.ReportedPublicBinTonnage * scaleUpFactor;
-
+                scaledupProducerTonnage.NetReportedTonnage = scaledupProducerTonnage.TotalReportedTonnage - scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage;
+                scaledupProducerTonnage.ScaledupReportedHouseholdPackagingWasteTonnage = Math.Round(scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage * scaleUpFactor, 3);
+                scaledupProducerTonnage.ScaledupReportedPublicBinTonnage = Math.Round(scaledupProducerTonnage.ReportedPublicBinTonnage * scaleUpFactor, 3);
                 if (material.Code == MaterialCodes.Glass)
                 {
                     scaledupProducerTonnage.ScaledupHouseholdDrinksContainersTonnageGlass = scaledupProducerTonnage.HouseholdDrinksContainersTonnageGlass * scaleUpFactor;
                 }
 
-                scaledupProducerTonnage.ScaledupTotalReportedTonnage = scaledupProducerTonnage.TotalReportedTonnage * scaleUpFactor;
-                scaledupProducerTonnage.ScaledupReportedSelfManagedConsumerWasteTonnage = scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage * scaleUpFactor;
-                scaledupProducerTonnage.ScaledupNetReportedTonnage = scaledupProducerTonnage.NetReportedTonnage * scaleUpFactor;
+                scaledupProducerTonnage.ScaledupTotalReportedTonnage = Math.Round(scaledupProducerTonnage.TotalReportedTonnage * scaleUpFactor, 3);
+                scaledupProducerTonnage.ScaledupReportedSelfManagedConsumerWasteTonnage = Math.Round(scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage * scaleUpFactor, 3);
+                scaledupProducerTonnage.ScaledupNetReportedTonnage = Math.Round(scaledupProducerTonnage.NetReportedTonnage * scaleUpFactor, 3);
                 scaledupProducerTonnages.Add(material.Code, scaledupProducerTonnage);
             }
 

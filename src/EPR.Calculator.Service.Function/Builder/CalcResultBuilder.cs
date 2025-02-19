@@ -69,7 +69,7 @@ namespace EPR.Calculator.Service.Function.Builder
                     Name = string.Empty,
                 },
             };
-
+            result.CalcResultScaledupProducers = await this.calcResultScaledupProducersBuilder.Construct(resultsRequestDto);
             result.CalcResultDetail = await this.calcResultDetailBuilder.Construct(resultsRequestDto);
             result.CalcResultLapcapData = await this.lapcapBuilder.Construct(resultsRequestDto);
             result.CalcResultLateReportingTonnageData = await this.lateReportingBuilder.Construct(resultsRequestDto);
