@@ -102,7 +102,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
                 : (scaledProducerTonnages?.ScaledupHouseholdDrinksContainersTonnageGlass ?? 0);
 
             // Return "0" if the material is "Glass" and there's no data, otherwise return the total tonnage as a string
-            return (materialName == MaterialNames.Glass && (producerDataTotal + scaledDataTotal) == 0) ? empty_string : (producerDataTotal + scaledDataTotal).ToString();
+            return (materialName == MaterialNames.Glass && (producerDataTotal + scaledDataTotal) == 0) ? EmptyString : (producerDataTotal + scaledDataTotal).ToString();
         }
 
         private string GetReportedPublicBinTonnage(string materialName, CalcResultScaledupProducer scaledUpProducerReportedOn)
