@@ -612,7 +612,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 this.calcResult, totalPackagingTonnage);
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(126, result.ColumnHeaders.Count());
+            Assert.AreEqual(128, result.ColumnHeaders.Count());
 
             var producerDisposalFees = result.ProducerDisposalFees;
             Assert.IsNotNull(producerDisposalFees);
@@ -688,7 +688,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             context.Material.AddRange(new List<Material>
             {
                 new () { Id = 1, Name = "Material1", Code = "123" },
-                new () { Id = 2, Name = "Material2", Code = "456" },
+                new () { Id = 2, Name = "Material2", Code = MaterialCodes.Glass },
             });
 
             context.ProducerDetail.AddRange(new List<ProducerDetail>
