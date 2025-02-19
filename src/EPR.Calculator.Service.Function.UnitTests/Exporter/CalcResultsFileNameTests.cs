@@ -163,6 +163,25 @@ namespace EPR.Calculator.API.UnitTests.Exporter
             Assert.AreEqual(string.Empty, csvContent.ToString());
         }
 
+        /// <summary>
+        /// Checks generating a file name using values retrieved from the database.
+        /// </summary>
+        private static void InvokeAppendFileInfo(StringBuilder csvContent, string label, string filePath)
+        {
+            // Get the type of the class containing the method
+            Type type = typeof(CalcResultsExporter);
+
+            // Get the method info using reflection
+            MethodInfo? methodInfo = type.GetMethod("AppendFileInfo", BindingFlags.NonPublic | BindingFlags.Static);
+
+            // Check if methodInfo is not null before invoking
+            if (methodInfo != null)
+            {
+                // Invoke the method
+                methodInfo.Invoke(null, new object[] { csvContent, label, filePath });
+            }
+        }
+
         private static string GetRandomString(int length)
             => string.Join(string.Empty, new char[length].Select(c => GetRandomChar()));
 

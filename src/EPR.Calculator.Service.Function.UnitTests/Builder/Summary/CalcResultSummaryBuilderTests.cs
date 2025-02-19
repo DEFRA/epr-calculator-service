@@ -1,4 +1,6 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests
+﻿using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
+
+namespace EPR.Calculator.Service.Function.UnitTests
 {
     using AutoFixture;
     using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
@@ -8,6 +10,7 @@
     using EPR.Calculator.Service.Function.Data;
     using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Dtos;
+    using EPR.Calculator.Service.Function.Mappers;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -285,6 +288,7 @@
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
 
             var results = this.calcResultsService.Construct(requestDto, this.calcResult);
+          
             results.Wait();
             var result = results.Result;
             Assert.IsNotNull(result);
@@ -372,6 +376,7 @@
             var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
 
             var results = this.calcResultsService.Construct(calcResultsRequestDto, this.calcResult);
+          
             results.Wait();
             var result = results.Result;
             Assert.IsNotNull(result);
@@ -452,7 +457,9 @@
         public void GetTotalBadDebtprovision2A_ShouldReturnCorrectValue()
         {
             var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
+
             var results = this.calcResultsService.Construct(calcResultsRequestDto, this.calcResult);
+          
             results.Wait();
             var result = results.Result;
             Assert.IsNotNull(result);
