@@ -664,10 +664,10 @@
                 new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.NorthernIrelandTotalwithBadDebtprovision }
             ]);
 
-            // Percentage of Producer Reported Tonnage vs All Producers
-            columnHeaders.AddRange([
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.PercentageofProducerReportedTonnagevsAllProducers },
-            ]);
+        // Percentage of Producer Tonnage vs All Producers
+        columnHeaders.AddRange([
+            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.PercentageofProducerTonnagevsAllProducers },
+        ]);
 
             // 2b comms total
             columnHeaders.AddRange([
