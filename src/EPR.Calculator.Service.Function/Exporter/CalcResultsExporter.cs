@@ -93,6 +93,7 @@
                 csvContent.Append($"{CsvSanitiser.SanitiseData(onePlusFourApportionment.NorthernIreland)},");
                 csvContent.AppendLine($"{CsvSanitiser.SanitiseData(onePlusFourApportionment.Total)}");
             }
+
             csvContent.AppendLine();
             var commCostByMaterials = communicationCost.CalcResultCommsCostCommsCostByMaterial;
 

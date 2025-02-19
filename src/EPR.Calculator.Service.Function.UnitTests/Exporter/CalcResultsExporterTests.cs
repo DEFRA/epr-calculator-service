@@ -249,6 +249,30 @@
             }
         }
 
+        [TestMethod]
+        public void Export_ShouldIncludeGlassColumns_WhenGlassMaterialPresent()
+        {
+            // Arrange
+            var results = CreateCalcResultWithGlass();
+            var exporter = new CalcResultsExporter();
+
+            // Act
+            var result = exporter.Export(results);
+
+            // Assert
+            Assert.IsTrue(result.Contains("Glass"));
+            Assert.IsTrue(result.Contains("HouseholdDrinksContainersTonnageGlass"));
+            Assert.IsTrue(result.Contains("ScaledupHouseholdDrinksContainersTonnageGlass"));
+        }
+
+        [TestMethod]
+        public void AppendFileInfoTest()
+        {
+            var csvContent = new StringBuilder();
+            CalcResultsExporter.AppendFileInfo(csvContent, "Label", "Filename,20/12/2024,User");
+            Assert.IsTrue(csvContent.ToString().Contains("Label,Filename,20/12/2024,User"));
+        }
+
         private static CalcResult CreateCalcResult()
         {
             return new CalcResult
@@ -472,11 +496,14 @@
                     },
                     MaterialBreakdownHeaders = [
                         new CalcResultScaledupProducerHeader{ Name = "Each submission for the year", ColumnIndex = 1 },
-                        new CalcResultScaledupProducerHeader { Name = "Aluminium Breakdown", ColumnIndex = 2 }
+                        new CalcResultScaledupProducerHeader { Name = "Aluminium Breakdown", ColumnIndex = 2 },
+                        new CalcResultScaledupProducerHeader { Name = "Glass Breakdown", ColumnIndex = 3 }
                     ],
                     ColumnHeaders = [
-                        new CalcResultScaledupProducerHeader { Name = "Producer ID" },
-                        new CalcResultScaledupProducerHeader { Name = "Subsidiary ID" }
+                        new CalcResultScaledupProducerHeader{ Name = "Producer ID" },
+                        new CalcResultScaledupProducerHeader { Name = "Subsidiary ID" },
+                        new CalcResultScaledupProducerHeader { Name = "HouseholdDrinksContainersTonnageGlass" },
+                        new CalcResultScaledupProducerHeader { Name = "ScaledupHouseholdDrinksContainersTonnageGlass" },
                     ],
                     ScaledupProducers = GetCalcResultScaledupProducerList(),
                 },
@@ -534,63 +561,6 @@
                     RunName = "CalculatorRunName",
                 },
             };
-        }
-
-        private static List<CalcResultScaledupProducer> GetCalcResultScaledupProducerList()
-        {
-            var scaledupProducerList = new List<CalcResultScaledupProducer>();
-
-            scaledupProducerList.AddRange([
-                new CalcResultScaledupProducer()
-                {
-                    ProducerId = 101001,
-                    SubsidiaryId = string.Empty,
-                    ProducerName = "Allied Packaging",
-                    Level = "1",
-                    SubmissionPeriodCode = "2024-P2",
-                    DaysInSubmissionPeriod = 91,
-                    DaysInWholePeriod = 91,
-                    ScaleupFactor = 2,
-                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterial(),
-                },
-                new CalcResultScaledupProducer()
-                {
-                    ProducerId = 101001,
-                    SubsidiaryId = string.Empty,
-                    ProducerName = "Allied Packaging",
-                    Level = "1",
-                    SubmissionPeriodCode = "2024-P2",
-                    DaysInSubmissionPeriod = 91,
-                    DaysInWholePeriod = 91,
-                    ScaleupFactor = 2,
-                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterial(),
-                    IsTotalRow = true,
-                },
-            ]);
-
-            return scaledupProducerList;
-        }
-
-        [TestMethod]
-        public void Export_ShouldIncludeGlassColumns_WhenGlassMaterialPresent()
-        {
-            // Arrange
-            var results = CreateCalcResultWithGlass();
-            var exporter = new CalcResultsExporter();
-
-            // Act
-            var result = exporter.Export(results);
-
-            // Assert
-            Assert.IsTrue(result.Contains("Glass"));
-        }
-
-        [TestMethod]
-        public void AppendFileInfoTest()
-        {
-            var csvContent = new StringBuilder();
-            CalcResultsExporter.AppendFileInfo(csvContent, "Label", "Filename,20/12/2024,User");
-            Assert.IsTrue(csvContent.ToString().Contains("Label,Filename,20/12/2024,User"));
         }
 
         private static Dictionary<string, CalcResultScaledupProducerTonnage> GetScaledupProducerTonnageByMaterial()
@@ -653,6 +623,41 @@
                     IsTotalRow = true,
                 },
             };
+            return scaledupProducerList;
+        }
+
+        private static List<CalcResultScaledupProducer> GetCalcResultScaledupProducerList()
+        {
+            var scaledupProducerList = new List<CalcResultScaledupProducer>();
+
+            scaledupProducerList.AddRange([
+                new CalcResultScaledupProducer()
+                {
+                    ProducerId = 101001,
+                    SubsidiaryId = string.Empty,
+                    ProducerName = "Allied Packaging",
+                    Level = "1",
+                    SubmissionPeriodCode = "2024-P2",
+                    DaysInSubmissionPeriod = 91,
+                    DaysInWholePeriod = 91,
+                    ScaleupFactor = 2,
+                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterial(),
+                },
+                new CalcResultScaledupProducer()
+                {
+                    ProducerId = 101001,
+                    SubsidiaryId = string.Empty,
+                    ProducerName = "Allied Packaging",
+                    Level = "1",
+                    SubmissionPeriodCode = "2024-P2",
+                    DaysInSubmissionPeriod = 91,
+                    DaysInWholePeriod = 91,
+                    ScaleupFactor = 2,
+                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterial(),
+                    IsTotalRow = true,
+                },
+            ]);
+
             return scaledupProducerList;
         }
 

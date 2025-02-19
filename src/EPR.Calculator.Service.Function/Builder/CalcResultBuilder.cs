@@ -55,7 +55,8 @@ namespace EPR.Calculator.Service.Function.Builder
         {
             var result = new CalcResult
             {
-                CalcResultLapcapData = new CalcResultLapcapData
+                CalcResultLapcapData =
+                new CalcResultLapcapData
                 {
                     CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>(),
                 },
@@ -65,7 +66,7 @@ namespace EPR.Calculator.Service.Function.Builder
                 },
                 CalcResultParameterOtherCost = new CalcResultParameterOtherCost
                 {
-                        Name = string.Empty,
+                    Name = string.Empty,
                 },
             };
             result.CalcResultScaledupProducers = await this.calcResultScaledupProducersBuilder.Construct(resultsRequestDto);
@@ -73,7 +74,6 @@ namespace EPR.Calculator.Service.Function.Builder
             result.CalcResultLapcapData = await this.lapcapBuilder.Construct(resultsRequestDto);
             result.CalcResultLateReportingTonnageData = await this.lateReportingBuilder.Construct(resultsRequestDto);
             result.CalcResultParameterOtherCost = await this.calcResultParameterOtherCostBuilder.Construct(resultsRequestDto);
-
             result.CalcResultOnePlusFourApportionment = this.lapcapplusFourApportionmentBuilder.Construct(resultsRequestDto, result);
             result.CalcResultCommsCostReportDetail = await this.commsCostReportBuilder.Construct(resultsRequestDto, result.CalcResultOnePlusFourApportionment, result);
             result.CalcResultLaDisposalCostData = await this.laDisposalCostBuilder.Construct(resultsRequestDto, result);
