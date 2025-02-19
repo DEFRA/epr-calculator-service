@@ -16,6 +16,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using Microsoft.Extensions.Logging;
     using Moq;
     using Moq.Protected;
+    using EPR.Calculator.Service.Function.Enums;
 
     /// <summary>
     /// Contains unit tests for the CalculatorRunService class.
@@ -53,7 +54,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 It.IsAny<string>(),
                 It.IsAny<bool>(),
                 It.IsAny<CancellationToken>()))
-                .ReturnsAsync(TimeSpan.Zero);
+                .ReturnsAsync(RunClassification.RUNNING);
 
             var httpClient = new HttpClient(this.MockStatusUpdateHandler.Object)
             {

@@ -15,6 +15,7 @@
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Logging;
     using FluentValidation;
+    using EPR.Calculator.Service.Function.Enums;
 
     /// <summary>
     /// Implementing calculator run service methods.
@@ -212,7 +213,7 @@
                         new CancellationTokenSource(this.configuration.RpdStatusTimeout).Token);
                 this.logger.LogInformation("Status UpdateRpdStatus: {Response}", statusUpdateResponse);
 
-                if (statusUpdateResponse)
+                if (statusUpdateResponse == RunClassification.RUNNING)
                 {
                     var isTransposeSuccess = await this.transposePomAndOrgDataService.
                         TransposeBeforeCalcResults(
