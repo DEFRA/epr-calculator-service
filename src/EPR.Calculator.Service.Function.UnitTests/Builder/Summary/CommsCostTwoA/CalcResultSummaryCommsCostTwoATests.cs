@@ -36,6 +36,32 @@
             };
         }
 
+        public static List<Dictionary<string, CalcResultScaledupProducerTonnage>> GetScaledUpProducers()
+        {
+            return new List<Dictionary<string, CalcResultScaledupProducerTonnage>>
+            {
+                new Dictionary<string, CalcResultScaledupProducerTonnage>
+                {
+                    {
+                        "10001",
+                        new CalcResultScaledupProducerTonnage
+                        {
+                            ReportedHouseholdPackagingWasteTonnage = 0,
+                            ReportedPublicBinTonnage = 0,
+                            TotalReportedTonnage = 0,
+                            ReportedSelfManagedConsumerWasteTonnage = 0,
+                            NetReportedTonnage = 0,
+                            ScaledupReportedHouseholdPackagingWasteTonnage = 0,
+                            ScaledupReportedPublicBinTonnage = 0,
+                            ScaledupTotalReportedTonnage = 0,
+                            ScaledupReportedSelfManagedConsumerWasteTonnage = 0,
+                            ScaledupNetReportedTonnage = 0,
+                        }
+                    },
+                },
+            };
+        }
+
         [TestMethod]
         public void GetEnglandWithBadDebtProvisionForCommsTotal_WhenNoProducers_ShouldReturn0()
         {
@@ -291,32 +317,6 @@
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
-        }
-
-        public static List<Dictionary<string, CalcResultScaledupProducerTonnage>> GetScaledUpProducers()
-        {
-            return new List<Dictionary<string, CalcResultScaledupProducerTonnage>>
-            {
-                new Dictionary<string, CalcResultScaledupProducerTonnage>
-                {
-                    {
-                        "10001",
-                        new CalcResultScaledupProducerTonnage
-                        {
-                            ReportedHouseholdPackagingWasteTonnage = 0,
-                            ReportedPublicBinTonnage = 0,
-                            TotalReportedTonnage = 0,
-                            ReportedSelfManagedConsumerWasteTonnage = 0,
-                            NetReportedTonnage = 0,
-                            ScaledupReportedHouseholdPackagingWasteTonnage = 0,
-                            ScaledupReportedPublicBinTonnage = 0,
-                            ScaledupTotalReportedTonnage = 0,
-                            ScaledupReportedSelfManagedConsumerWasteTonnage = 0,
-                            ScaledupNetReportedTonnage = 0,
-                        }
-                    },
-                },
-            };
         }
 
         private static List<ProducerDetail> GetProducers()
