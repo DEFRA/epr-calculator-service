@@ -64,7 +64,6 @@
         public void AddExtraRowsTest()
         {
             this.builder = new CalcResultScaledupProducersBuilder(this.dbContext!);
-
             var runProducerMaterialDetails = new List<CalcResultScaledupProducer>();
             runProducerMaterialDetails.Add(new CalcResultScaledupProducer
             {

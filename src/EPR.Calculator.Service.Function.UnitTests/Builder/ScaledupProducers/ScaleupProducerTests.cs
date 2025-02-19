@@ -11,7 +11,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ScaledupProducers
     [TestClass]
     public class ScaleupProducerTests
     {
-        private ScaleupProducer scaleupProducer = null!;
+        private readonly ScaleupProducer scaleupProducer = null!;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ScaleupProducerTests"/> class.
