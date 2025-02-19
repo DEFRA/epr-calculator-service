@@ -671,16 +671,16 @@ namespace EPR.Calculator.Service.Function.UnitTests
             Assert.IsTrue(result.ContainsKey(MaterialCodes.Glass));
             var glassTonnage = result[MaterialCodes.Glass];
 
-            Assert.AreEqual(0.1M, glassTonnage.ReportedHouseholdPackagingWasteTonnage);
+            Assert.AreEqual(0.1m, glassTonnage.ReportedHouseholdPackagingWasteTonnage);
             Assert.AreEqual(0, glassTonnage.ReportedPublicBinTonnage);
-            Assert.AreEqual(0.03M, glassTonnage.HouseholdDrinksContainersTonnageGlass);
-            Assert.AreEqual(0.13M, glassTonnage.TotalReportedTonnage);
-            Assert.AreEqual(0.13M, glassTonnage.NetReportedTonnage);
-            Assert.AreEqual(0.1M, glassTonnage.ScaledupReportedHouseholdPackagingWasteTonnage);
+            Assert.AreEqual(0.03m, glassTonnage.HouseholdDrinksContainersTonnageGlass);
+            Assert.AreEqual(0.13m, glassTonnage.TotalReportedTonnage);
+            Assert.AreEqual(0.13m, glassTonnage.NetReportedTonnage);
+            Assert.AreEqual(0.1m, glassTonnage.ScaledupReportedHouseholdPackagingWasteTonnage);
             Assert.AreEqual(0, glassTonnage.ScaledupReportedPublicBinTonnage);
-            Assert.AreEqual(0.03M, glassTonnage.ScaledupHouseholdDrinksContainersTonnageGlass);
-            Assert.AreEqual(0.13M, glassTonnage.ScaledupTotalReportedTonnage);
-            Assert.AreEqual(0.13M, glassTonnage.ScaledupNetReportedTonnage);
+            Assert.AreEqual(0.03m, glassTonnage.ScaledupHouseholdDrinksContainersTonnageGlass);
+            Assert.AreEqual(0.13m, glassTonnage.ScaledupTotalReportedTonnage);
+            Assert.AreEqual(0.13m, glassTonnage.ScaledupNetReportedTonnage);
         }
 
         private static void SeedDatabase(ApplicationDBContext context)
