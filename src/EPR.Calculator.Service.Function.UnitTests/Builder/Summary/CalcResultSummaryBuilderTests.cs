@@ -1,6 +1,4 @@
-﻿using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
-
-namespace EPR.Calculator.Service.Function.UnitTests
+﻿namespace EPR.Calculator.Service.Function.UnitTests
 {
     using AutoFixture;
     using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
@@ -10,7 +8,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
     using EPR.Calculator.Service.Function.Data;
     using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Dtos;
-    using EPR.Calculator.Service.Function.Mappers;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -288,7 +285,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
 
             var results = this.calcResultsService.Construct(requestDto, this.calcResult);
-          
+
             results.Wait();
             var result = results.Result;
             Assert.IsNotNull(result);
@@ -376,7 +373,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
 
             var results = this.calcResultsService.Construct(calcResultsRequestDto, this.calcResult);
-          
+
             results.Wait();
             var result = results.Result;
             Assert.IsNotNull(result);
@@ -459,7 +456,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
 
             var results = this.calcResultsService.Construct(calcResultsRequestDto, this.calcResult);
-          
+
             results.Wait();
             var result = results.Result;
             Assert.IsNotNull(result);
