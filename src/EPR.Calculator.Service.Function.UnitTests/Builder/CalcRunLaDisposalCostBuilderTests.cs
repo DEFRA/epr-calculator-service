@@ -1,5 +1,6 @@
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
+    using System;
     using AutoFixture;
     using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
     using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
@@ -12,7 +13,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System;
 
     [TestClass]
     public class CalcRunLaDisposalCostBuilderTests
@@ -41,15 +41,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                                     .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
                                     .Options;
 
-            dbContext = new ApplicationDBContext(dbContextOptions);
-            dbContext.Database.EnsureCreated();
-            SeedDatabase();
-            builder = new CalcRunLaDisposalCostBuilder(dbContext);
+            this.dbContext = new ApplicationDBContext(dbContextOptions);
+            this.dbContext.Database.EnsureCreated();
+            this.SeedDatabase();
+            this.builder = new CalcRunLaDisposalCostBuilder(this.dbContext);
         }
 
         private void SeedDatabase()
         {
-            dbContext.ProducerReportedMaterial.AddRange(
+            this.dbContext.ProducerReportedMaterial.AddRange(
                 new ProducerReportedMaterial
                 {
                     MaterialId = 3,
@@ -72,7 +72,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     PackagingTonnage = 200,
                 });
 
-            dbContext.SaveChanges();
+            this.dbContext.SaveChanges();
         }
 
         private Fixture Fixture { get; init; }
@@ -80,7 +80,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         [TestCleanup]
         public void TearDown()
         {
-            dbContext?.Database.EnsureDeleted();
+            this.dbContext?.Database.EnsureDeleted();
         }
 
         [TestMethod]
@@ -174,7 +174,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             calcResult.CalcResultScaledupProducers = GetScaledUpProducers();
 
             // Act
-            var results = builder.Construct(resultsDto, calcResult);
+            var results = this.builder.Construct(resultsDto, calcResult);
             results.Wait();
             var lapcapDisposalCostResults = results.Result;
 
@@ -193,7 +193,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             calcResult.CalcResultScaledupProducers = GetScaledUpProducers();
 
             // Act
-            var results = builder.Construct(resultsDto, calcResult);
+            var results = this.builder.Construct(resultsDto, calcResult);
             results.Wait();
             var lapcapDisposalCostResults = results.Result;
 
@@ -228,7 +228,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                       {
                           ProducerId = 1,
                           IsTotalRow = true,
-                          ScaledupProducerTonnageByMaterial = new ()
+                          ScaledupProducerTonnageByMaterial = new()
                             {
                                 ["Plastic"] = new CalcResultScaledupProducerTonnage
                                 {
@@ -285,7 +285,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                       {
                           ProducerId = 1,
                           IsTotalRow = true,
-                          ScaledupProducerTonnageByMaterial = new ()
+                          ScaledupProducerTonnageByMaterial = new()
                             {
                                 ["Glass"] = new CalcResultScaledupProducerTonnage
                                 {
@@ -307,7 +307,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
 
             // Act
-            var results = builder.Construct(resultsDto, calcResult);
+            var results = this.builder.Construct(resultsDto, calcResult);
             results.Wait();
             var lapcapDisposalCostResults = results.Result;
 
@@ -358,7 +358,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                       {
                           ProducerId = 1,
                           IsTotalRow = true,
-                          ScaledupProducerTonnageByMaterial = new ()
+                          ScaledupProducerTonnageByMaterial = new()
                             {
                                 ["Plastic"] = new CalcResultScaledupProducerTonnage
                                 {
@@ -397,7 +397,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                      {
                         ProducerId = 1,
                         IsTotalRow = true,
-                        ScaledupProducerTonnageByMaterial = new ()
+                        ScaledupProducerTonnageByMaterial = new()
                         {
                             ["Aluminium"] = new CalcResultScaledupProducerTonnage
                             {
@@ -418,7 +418,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                      {
                         ProducerId = 1,
                         IsTotalRow = true,
-                        ScaledupProducerTonnageByMaterial = new ()
+                        ScaledupProducerTonnageByMaterial = new()
                         {
                             ["Glass"] = new CalcResultScaledupProducerTonnage
                             {
@@ -439,7 +439,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                      {
                         ProducerId = 1,
                         IsTotalRow = true,
-                        ScaledupProducerTonnageByMaterial = new ()
+                        ScaledupProducerTonnageByMaterial = new()
                         {
                             ["Plastic"] = new CalcResultScaledupProducerTonnage
                             {
