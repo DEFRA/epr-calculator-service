@@ -28,6 +28,7 @@ using EPR.Calculator.Service.Function.Services;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System.Configuration;
 
 [assembly: FunctionsStartup(typeof(Startup))]
@@ -58,16 +59,17 @@ namespace EPR.Calculator.Service.Function
 
         private static void SetupBlobStorage(IServiceCollection services)
         {
-            services.AddSingleton<BlobServiceClient>(provider =>
+            services.AddSingleton<IStorageService>(provider =>
             {
                 var configuration = provider.GetRequiredService<IConfigurationService>();
+                var logger = provider.GetRequiredService<ILogger<BlobStorageService>>();
                 var connectionString = configuration.BlobConnectionString;
                 if (string.IsNullOrEmpty(connectionString))
                 {
                     throw new ConfigurationErrorsException("Blob Storage connection string is not configured.");
                 }
 
-                return new BlobServiceClient(connectionString);
+                return new BlobStorageService(new BlobServiceClient(connectionString), configuration, logger);
             });
         }
 
