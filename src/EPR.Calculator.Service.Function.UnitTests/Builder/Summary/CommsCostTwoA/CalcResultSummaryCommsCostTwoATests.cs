@@ -293,16 +293,6 @@
             Assert.AreEqual(expectedCost1, totalCost);
         }
 
-        private CalcResultParameterCommunicationCost GetCalcResultParameterCommunicationCost()
-        {
-            return this.Fixture.Create<CalcResultParameterCommunicationCost>();
-        }
-
-        private CalcResultLateReportingTonnage GetCalcResultLateReportingTonnage()
-        {
-            return this.Fixture.Create<CalcResultLateReportingTonnage>();
-        }
-
         public static List<Dictionary<string, CalcResultScaledupProducerTonnage>> GetScaledUpProducers()
         {
             return new List<Dictionary<string, CalcResultScaledupProducerTonnage>>
@@ -403,6 +393,16 @@
                 Description = "Material2",
             };
             return material;
+        }
+
+        private CalcResultParameterCommunicationCost GetCalcResultParameterCommunicationCost()
+        {
+            return this.Fixture.Create<CalcResultParameterCommunicationCost>();
+        }
+
+        private CalcResultLateReportingTonnage GetCalcResultLateReportingTonnage()
+        {
+            return this.Fixture.Create<CalcResultLateReportingTonnage>();
         }
     }
 }

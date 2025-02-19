@@ -89,17 +89,16 @@
                     if (producersAndSubsidiaries.Count() > 1 &&
                         producerDisposalFees.Find(pdf => pdf.ProducerId == producer.ProducerId.ToString()) == null)
                     {
-                        var totalRow = GetProducerTotalRow(producersAndSubsidiaries.ToList(), materials, calcResult, producerDisposalFees, false, TotalPackagingTonnage);
+                        var totalRow = this.GetProducerTotalRow(producersAndSubsidiaries.ToList(), materials, calcResult, producerDisposalFees, false, TotalPackagingTonnage);
                         producerDisposalFees.Add(totalRow);
                     }
 
                     // Calculate the values for the producer
-                    producerDisposalFees.Add(GetProducerRow(producerDisposalFees, producer, materials, calcResult, TotalPackagingTonnage));
+                    producerDisposalFees.Add(this.GetProducerRow(producerDisposalFees, producer, materials, calcResult, TotalPackagingTonnage));
                 }
 
-
                 // Calculate the total for all the producers
-                var allTotalRow = GetProducerTotalRow(orderedProducerDetails.ToList(), materials, calcResult, producerDisposalFees, true, TotalPackagingTonnage);
+                var allTotalRow = this.GetProducerTotalRow(orderedProducerDetails.ToList(), materials, calcResult, producerDisposalFees, true, TotalPackagingTonnage);
                 producerDisposalFees.Add(allTotalRow);
 
                 result.ProducerDisposalFees = producerDisposalFees;

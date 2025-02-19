@@ -66,21 +66,21 @@
             if (scaledupProducerForAllSubmissionPeriods.Any())
             {
                 decimal tonnage = 0;
-                foreach (var item in scaledupProducerForAllSubmissionPeriods)
+                foreach (var scaledupProducerTonnageByMaterial in scaledupProducerForAllSubmissionPeriods.Select(x => x.ScaledupProducerTonnageByMaterial))
                 {
                     switch (packagingType)
                     {
                         case PackagingTypes.Household:
-                            tonnage += item.ScaledupProducerTonnageByMaterial[material.Code].ScaledupReportedHouseholdPackagingWasteTonnage;
+                            tonnage += scaledupProducerTonnageByMaterial[material.Code].ScaledupReportedHouseholdPackagingWasteTonnage;
                             break;
                         case PackagingTypes.PublicBin:
-                            tonnage += item.ScaledupProducerTonnageByMaterial[material.Code].ScaledupReportedPublicBinTonnage;
+                            tonnage += scaledupProducerTonnageByMaterial[material.Code].ScaledupReportedPublicBinTonnage;
                             break;
                         case PackagingTypes.ConsumerWaste:
-                            tonnage += item.ScaledupProducerTonnageByMaterial[material.Code].ScaledupReportedSelfManagedConsumerWasteTonnage;
+                            tonnage += scaledupProducerTonnageByMaterial[material.Code].ScaledupReportedSelfManagedConsumerWasteTonnage;
                             break;
                         case PackagingTypes.HouseholdDrinksContainers:
-                            tonnage += item.ScaledupProducerTonnageByMaterial[material.Code].ReportedHouseholdPackagingWasteTonnage;
+                            tonnage += scaledupProducerTonnageByMaterial[material.Code].ReportedHouseholdPackagingWasteTonnage;
                             break;
                         default:
                             tonnage += 0;
