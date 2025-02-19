@@ -16,7 +16,7 @@
 
         public CalcResultSummaryUtilTests()
         {
-            calcResult = new CalcResult
+            this.calcResult = new CalcResult
             {
                 CalcResultParameterOtherCost = TestDataHelper.GetCalcResultParameterOtherCost(),
                 CalcResultDetail = TestDataHelper.GetCalcResultDetail(),
@@ -173,7 +173,7 @@
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
             // Act
-            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.Household, scaledupProducers);
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.Household, scaledupProducers!);
 
             // Assert
             Assert.AreEqual(200m, result);
@@ -188,7 +188,7 @@
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
             // Act
-            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.Household, scaledupProducers);
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.Household, scaledupProducers!);
 
             // Assert
             Assert.AreEqual(200m, result);
@@ -203,7 +203,7 @@
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
             // Act
-            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.PublicBin, scaledupProducers);
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.PublicBin, scaledupProducers!);
 
             // Assert
             Assert.AreEqual(40m, result);
@@ -218,7 +218,7 @@
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
             // Act
-            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.ConsumerWaste, scaledupProducers);
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.ConsumerWaste, scaledupProducers!);
 
             // Assert
             Assert.AreEqual(120m, result);

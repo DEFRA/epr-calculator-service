@@ -81,7 +81,6 @@ namespace EPR.Calculator.Service.Function.Builder
             result.CalcResultCommsCostReportDetail = await this.commsCostReportBuilder.Construct(
                 resultsRequestDto, result.CalcResultOnePlusFourApportionment, result);
             result.CalcResultLaDisposalCostData = await this.laDisposalCostBuilder.Construct(resultsRequestDto, result);
-            
             result.CalcResultSummary = await this.summaryBuilder.Construct(resultsRequestDto, result);
 
             return result;

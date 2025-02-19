@@ -158,11 +158,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
 
             // Act
-            var filteredData = producerData.Where(t => !calcResult.CalcResultScaledupProducers.ScaledupProducers.Any(i => i.ProducerId == t?.ProducerDetail.ProducerId)).ToList();
+            var filteredData = producerData.Where(t => !calcResult.CalcResultScaledupProducers.ScaledupProducers.Any(i => i.ProducerId == t?.ProducerDetail?.ProducerId)).ToList();
 
             // Assert
             Assert.AreEqual(1, filteredData.Count);
-            Assert.AreEqual(2, filteredData.First().ProducerDetail.ProducerId);
+            Assert.AreEqual(2, filteredData?.First().ProducerDetail?.ProducerId);
         }
 
         [TestMethod]

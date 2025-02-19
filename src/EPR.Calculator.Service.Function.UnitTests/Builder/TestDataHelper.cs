@@ -1170,7 +1170,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                                     ScaledupNetReportedTonnage = 360,
                                 }
                             },
-
                         },
                     },
                 },

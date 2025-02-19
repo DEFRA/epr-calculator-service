@@ -687,27 +687,27 @@
         {
             context.Material.AddRange(new List<Material>
             {
-                new () { Id = 1, Name = "Material1", Code = "123" },
-                new () { Id = 2, Name = "Material2", Code = MaterialCodes.Glass },
+                new() { Id = 1, Name = "Material1", Code = "123" },
+                new() { Id = 2, Name = "Material2", Code = MaterialCodes.Glass },
             });
 
             context.ProducerDetail.AddRange(new List<ProducerDetail>
             {
-                new () { Id = 1, ProducerName = "Producer1", ProducerId = 1, CalculatorRunId = 1, CalculatorRun = new CalculatorRun { Financial_Year = "2024-25", Name = "Test1" } },
-                new () { Id = 2, ProducerName = "Producer2", ProducerId = 2, CalculatorRunId = 2, CalculatorRun = new CalculatorRun { Financial_Year = "2024-25", Name = "Test2" } },
-                new () { Id = 3, ProducerName = "Producer3", ProducerId = 3, CalculatorRunId = 3, CalculatorRun = new CalculatorRun { Financial_Year = "2024-25", Name = "Test3" } },
-                new () { Id = 4, ProducerName = "Producer4", ProducerId = 4, CalculatorRunId = 1 },
-                new () { Id = 5, ProducerName = "Producer5", ProducerId = 5, CalculatorRunId = 1 },
+                new() { Id = 1, ProducerName = "Producer1", ProducerId = 1, CalculatorRunId = 1, CalculatorRun = new CalculatorRun { Financial_Year = "2024-25", Name = "Test1" } },
+                new() { Id = 2, ProducerName = "Producer2", ProducerId = 2, CalculatorRunId = 2, CalculatorRun = new CalculatorRun { Financial_Year = "2024-25", Name = "Test2" } },
+                new() { Id = 3, ProducerName = "Producer3", ProducerId = 3, CalculatorRunId = 3, CalculatorRun = new CalculatorRun { Financial_Year = "2024-25", Name = "Test3" } },
+                new() { Id = 4, ProducerName = "Producer4", ProducerId = 4, CalculatorRunId = 1 },
+                new() { Id = 5, ProducerName = "Producer5", ProducerId = 5, CalculatorRunId = 1 },
             });
 
             context.ProducerReportedMaterial.AddRange(new List<ProducerReportedMaterial>
             {
-                new () { Id = 1, MaterialId = 1, PackagingType = "HH", PackagingTonnage = 400m, ProducerDetailId = 1 },
-                new () { Id = 2, MaterialId = 2, PackagingType = "HH", PackagingTonnage = 400m, ProducerDetailId = 2 },
-                new () { Id = 3, MaterialId = 1, PackagingType = "CW", PackagingTonnage = 200m, ProducerDetailId = 1 },
-                new () { Id = 4, MaterialId = 2, PackagingType = "CW", PackagingTonnage = 200m, ProducerDetailId = 2 },
-                new () { Id = 5, MaterialId = 1, PackagingType = "HDC", PackagingTonnage = 300m, ProducerDetailId = 1 },
-                new () { Id = 6, MaterialId = 2, PackagingType = "HDC", PackagingTonnage = 300m, ProducerDetailId = 2 },
+                new() { Id = 1, MaterialId = 1, PackagingType = "HH", PackagingTonnage = 400m, ProducerDetailId = 1 },
+                new() { Id = 2, MaterialId = 2, PackagingType = "HH", PackagingTonnage = 400m, ProducerDetailId = 2 },
+                new() { Id = 3, MaterialId = 1, PackagingType = "CW", PackagingTonnage = 200m, ProducerDetailId = 1 },
+                new() { Id = 4, MaterialId = 2, PackagingType = "CW", PackagingTonnage = 200m, ProducerDetailId = 2 },
+                new() { Id = 5, MaterialId = 1, PackagingType = "HDC", PackagingTonnage = 300m, ProducerDetailId = 1 },
+                new() { Id = 6, MaterialId = 2, PackagingType = "HDC", PackagingTonnage = 300m, ProducerDetailId = 2 },
             });
             context.SaveChanges();
         }
