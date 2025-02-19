@@ -61,7 +61,10 @@
             string packagingType,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
-            var scaledupProducerForAllSubmissionPeriods = scaledUpProducers.Where(p => p.ProducerId == producer.ProducerId);
+            var scaledupProducerForAllSubmissionPeriods = scaledUpProducers.Where(p => p.ProducerId == producer.ProducerId
+                && p.SubsidiaryId == producer.SubsidiaryId
+                && !p.IsSubtotalRow
+                && !p.IsTotalRow);
 
             if (scaledupProducerForAllSubmissionPeriods.Any())
             {
