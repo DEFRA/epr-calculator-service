@@ -184,6 +184,7 @@
         {
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
+            producer.SubsidiaryId = string.Empty;
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
@@ -191,7 +192,7 @@
             var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.Household, scaledupProducers!);
 
             // Assert
-            Assert.AreEqual(1000.00m, result);
+            Assert.AreEqual(200.00m, result);
         }
 
         [TestMethod]
@@ -199,6 +200,7 @@
         {
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
+            producer.SubsidiaryId = string.Empty;
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
@@ -206,7 +208,7 @@
             var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.PublicBin, scaledupProducers!);
 
             // Assert
-            Assert.AreEqual(0, result);
+            Assert.AreEqual(40, result);
         }
 
         [TestMethod]
@@ -214,6 +216,7 @@
         {
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
+            producer.SubsidiaryId = string.Empty;
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
@@ -221,7 +224,7 @@
             var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.ConsumerWaste, scaledupProducers!);
 
             // Assert
-            Assert.AreEqual(20.00m, result);
+            Assert.AreEqual(120.00m, result);
         }
 
         [TestMethod]
@@ -229,6 +232,7 @@
         {
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
+            producer.SubsidiaryId = string.Empty;
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
@@ -236,7 +240,23 @@
             var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.HouseholdDrinksContainers, scaledupProducers!);
 
             // Assert
-            Assert.AreEqual(50.00m, result);
+            Assert.AreEqual(100.00m, result);
+        }
+
+        [TestMethod]
+        public void CanGetDefaultTonnageForScaledupProducer()
+        {
+            // Arrange
+            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
+            producer.SubsidiaryId = string.Empty;
+            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+
+            // Act
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, "Default" , scaledupProducers!);
+
+            // Assert
+            Assert.AreEqual(0.00m, result);
         }
 
         [TestMethod]
@@ -325,6 +345,19 @@
 
             // Assert
             Assert.AreEqual(0.6676m, result);
+        }
+
+        [TestMethod]
+        public void CanGetPricePerTonne_NonMatchingMaterial()
+        {
+            // Arrange
+            var material = Fixture.Create<MaterialDetail>();
+
+            // Act
+            var result = CalcResultSummaryUtil.GetPricePerTonne(material, this.calcResult);
+
+            // Assert
+            Assert.AreEqual(0m, result);
         }
 
         [TestMethod]
