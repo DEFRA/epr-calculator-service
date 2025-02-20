@@ -33,6 +33,12 @@
                 PackagingType = "HH",
                 ProducerDetail = producerDetail,
             });
+            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            {
+                Id = 2,
+                PackagingType = "HDC",
+                ProducerDetail = producerDetail,
+            });
             var calcRunPomDataMaster = new CalculatorRunPomDataMaster
             {
                 Id = 1,
@@ -98,7 +104,6 @@
             .UseInMemoryDatabase(databaseName: "PayCal")
             .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
             .Options;
-
 
             this.dbContext = new ApplicationDBContext(dbContextOptions);
             this.dbContext.Database.EnsureCreated();
@@ -369,6 +374,52 @@
             Assert.IsNotNull(scaledUpProducer.ScaledupProducerTonnageByMaterial);
             var scaledUpTonnage = scaledUpProducer.ScaledupProducerTonnageByMaterial["AL"];
             Assert.IsNotNull(scaledUpTonnage);
+        }
+
+        [TestMethod]
+        public void CalculateScaledupTonnageTestForGlass()
+        {
+            var dictionary = new Dictionary<string, CalcResultScaledupProducerTonnage>();
+            dictionary.Add("GL", new CalcResultScaledupProducerTonnage
+            {
+                ReportedHouseholdPackagingWasteTonnage = 10,
+                ReportedPublicBinTonnage = 10,
+                HouseholdDrinksContainersTonnageGlass = 10,
+                TotalReportedTonnage = 10,
+                ReportedSelfManagedConsumerWasteTonnage = 10,
+                NetReportedTonnage = 10,
+                ScaledupReportedHouseholdPackagingWasteTonnage = 10,
+                ScaledupReportedPublicBinTonnage = 10,
+                ScaledupHouseholdDrinksContainersTonnageGlass = 10,
+                ScaledupTotalReportedTonnage = 10,
+                ScaledupReportedSelfManagedConsumerWasteTonnage = 10,
+                ScaledupNetReportedTonnage = 10,
+            });
+            var scaledUpProducer = new CalcResultScaledupProducer
+            {
+                ProducerId = 2,
+                SubsidiaryId = "Sub3",
+                ScaledupProducerTonnageByMaterial = dictionary,
+            };
+
+            var allPomDataDetails = new List<CalculatorRunPomDataDetail>();
+            allPomDataDetails.Add(new CalculatorRunPomDataDetail
+            {
+                LoadTimeStamp = DateTime.Now,
+                SubmissionPeriod = "2024-P1",
+                SubmissionPeriodDesc = "desc",
+                OrganisationId = 10,
+            });
+            var materials = new List<Material>();
+            materials.Add(new Material { Code = "GL", Name = "Glass" });
+            var materialDetails = MaterialMapper.Map(materials);
+            this.builder = new CalcResultScaledupProducersBuilder(this.dbContext);
+            this.builder.CalculateScaledupTonnage([scaledUpProducer], allPomDataDetails, materialDetails);
+
+            var scaledUpTonnage = scaledUpProducer.ScaledupProducerTonnageByMaterial["GL"];
+            Assert.IsNotNull(scaledUpTonnage);
+            Assert.IsNotNull(scaledUpTonnage.HouseholdDrinksContainersTonnageGlass);
+            Assert.IsNotNull(scaledUpTonnage.ScaledupHouseholdDrinksContainersTonnageGlass);
         }
     }
 }
