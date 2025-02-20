@@ -6,6 +6,9 @@ namespace EPR.Calculator.Service.Function.Constants
     public static class CalcResultSummaryHeaders
     {
         public static readonly string CalculationResult = "Calculation Result";
+        public static readonly string Notes = "NOTE: Rows with 'Scaled-up tonnages?' = " +
+            "Yes include reported tonnages for a period that have been scaled-up to a full 6 month equivalent period. " +
+            "See 'Scaled-up Producers' table for details.";
 
         public static readonly string OneProducerDisposalFeesWithBadDebtProvision =
             "1 Producer Disposal Fees with Bad Debt Provision";
