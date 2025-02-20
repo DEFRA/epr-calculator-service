@@ -9,6 +9,7 @@
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
+    using static EPR.Calculator.Service.Function.UnitTests.Builder.CalcRunLaDisposalCostBuilderTests;
 
     [TestClass]
     public class CalcResultScaledupProducersBuilderTest
@@ -139,6 +140,48 @@
             var result = task.Result;
             Assert.IsNotNull(result);
             Assert.AreEqual(1, result.Count());
+        }
+
+        [TestMethod]
+        public void Should_Set_And_Get_PackagingType()
+        {
+            // Arrange
+            var producerData = new ProducerData { PackagingType = "HDC", MaterialName = "Glass" };
+
+            // Act
+            var result = producerData.PackagingType;
+
+            // Assert
+            Assert.AreEqual("HDC", result);
+        }
+
+        [TestMethod]
+        public void TestProducerDataFilteringForGlass()
+        {
+            // Arrange
+            var producerData = new List<ProducerData>
+            {
+                new ProducerData { ProducerDetail = new ProducerDetail { ProducerId = 1 }, MaterialName = "Aluminum", PackagingType = "AL" },
+                new ProducerData { ProducerDetail = new ProducerDetail { ProducerId = 2 }, MaterialName = "Glass", PackagingType = "HDC" },
+            };
+
+            var resultsDto = new CalcResultsRequestDto { RunId = 2 };
+            var calcResult = TestDataHelper.GetCalcResult();
+            calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers
+            {
+                ScaledupProducers = new List<CalcResultScaledupProducer>
+                {
+                    new CalcResultScaledupProducer { ProducerId = 1 },
+                    new CalcResultScaledupProducer { ProducerId = 3 },
+                },
+            };
+
+            // Act
+            var filteredData = producerData.Where(t => !calcResult.CalcResultScaledupProducers.ScaledupProducers.Any(i => i.ProducerId == t?.ProducerDetail.ProducerId)).ToList();
+
+            // Assert
+            Assert.AreEqual(1, filteredData.Count);
+            Assert.AreEqual(2, filteredData.First().ProducerDetail.ProducerId);
         }
 
         [TestMethod]
