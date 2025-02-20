@@ -16,7 +16,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using Microsoft.Extensions.Logging;
     using Moq;
     using Moq.Protected;
-    using EPR.Calculator.Service.Function.Enums;
 
     /// <summary>
     /// Contains unit tests for the CalculatorRunService class.
@@ -32,9 +31,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.Fixture = new Fixture();
             this.AzureSynapseRunner = new Mock<IAzureSynapseRunner>();
             this.MockLogger = new Mock<ILogger<CalculatorRunService>>();
+            this.MockStatusUpdateHandler = new Mock<HttpMessageHandler>();
             this.TransposeService = new Mock<ITransposePomAndOrgDataService>();
 
-            this.MockStatusUpdateHandler = new Mock<HttpMessageHandler>();
             this.MockStatusUpdateHandler.Protected()
                 .Setup<Task<HttpResponseMessage>>(
                     "SendAsync",
@@ -47,14 +46,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 It.IsAny<CalcResultsRequestDto>(),
                 It.IsAny<CancellationToken>()))
                 .ReturnsAsync(true);
-
-            var statusService = new Mock<IRpdStatusService>();
-            statusService.Setup(s => s.UpdateRpdStatus(
-                It.IsAny<int>(),
-                It.IsAny<string>(),
-                It.IsAny<bool>(),
-                It.IsAny<CancellationToken>()))
-                .ReturnsAsync(RunClassification.RUNNING);
 
             var httpClient = new HttpClient(this.MockStatusUpdateHandler.Object)
             {
@@ -71,8 +62,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 this.PipelineClientFactory.Object,
                 this.TransposeService.Object,
                 new Configuration(),
-                this.PrepareCalcService.Object,
-                statusService.Object);
+                this.PrepareCalcService.Object);
 
             this.TransposeService.Setup(t => t.TransposeBeforeCalcResults(
                 It.IsAny<CalcResultsRequestDto>(),

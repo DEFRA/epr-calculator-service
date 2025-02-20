@@ -26,7 +26,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         private readonly DbContextOptions<ApplicationDBContext> _dbContextOptions;
         private PrepareCalcService _testClass;
         private ApplicationDBContext _context;
-        private Mock<IDbContextFactory<ApplicationDBContext>> _dbContextFactory;
         private Mock<IRpdStatusDataValidator> _rpdStatusDataValidator;
         private Mock<IOrgAndPomWrapper> _wrapper;
         private Mock<ICalcResultBuilder> _builder;
@@ -44,9 +43,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 .Options;
 
             this._context = new ApplicationDBContext(this._dbContextOptions);
-            this._dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
-            this._dbContextFactory.Setup(f => f.CreateDbContext()).Returns(this._context);
-
             this.SeedDatabase();
 
             var calcResult = new CalcResult
@@ -92,7 +88,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             
             this._validationRules = fixture.Create<CalculatorRunValidator>();
             this._commandTimeoutService = new Mock<ICommandTimeoutService>();
-            this._testClass = new PrepareCalcService(this._dbContextFactory.Object, this._rpdStatusDataValidator.Object, this._wrapper.Object, this._builder.Object, this._exporter.Object, this._transposePomAndOrgDataService.Object, this._storageService.Object, this._validationRules, this._commandTimeoutService.Object);
+            this._testClass = new PrepareCalcService(this._context, this._rpdStatusDataValidator.Object, this._wrapper.Object, this._builder.Object, this._exporter.Object, this._transposePomAndOrgDataService.Object, this._storageService.Object, this._validationRules, this._commandTimeoutService.Object);
         }
 
         [TestCleanup]
@@ -106,7 +102,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public void CanConstruct()
         {
             // Act
-            var instance = new PrepareCalcService(this._dbContextFactory.Object, this._rpdStatusDataValidator.Object, this._wrapper.Object, this._builder.Object, this._exporter.Object, this._transposePomAndOrgDataService.Object, this._storageService.Object, this._validationRules, this._commandTimeoutService.Object);
+            var instance = new PrepareCalcService(this._context, this._rpdStatusDataValidator.Object, this._wrapper.Object, this._builder.Object, this._exporter.Object, this._transposePomAndOrgDataService.Object, this._storageService.Object, this._validationRules, this._commandTimeoutService.Object);
 
             // Assert
             Assert.IsNotNull(instance);
