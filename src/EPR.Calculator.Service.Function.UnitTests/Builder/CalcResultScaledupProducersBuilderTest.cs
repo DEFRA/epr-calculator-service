@@ -376,7 +376,7 @@
             materials.Add(new Material { Code = "GL", Name = "Glass" });
             var materialDetails = MaterialMapper.Map(materials);
             this.builder = new CalcResultScaledupProducersBuilder(this.dbContext);
-            this.builder.CalculateScaledupTonnage([scaledUpProducer], allPomDataDetails, materialDetails);
+            CalcResultScaledupProducersBuilder.CalculateScaledupTonnage([scaledUpProducer], allPomDataDetails, materialDetails);
 
             var scaledUpTonnage = scaledUpProducer.ScaledupProducerTonnageByMaterial["GL"];
             Assert.IsNotNull(scaledUpTonnage);
