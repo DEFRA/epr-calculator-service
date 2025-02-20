@@ -28,7 +28,6 @@ using EPR.Calculator.Service.Function.Services;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using System.Configuration;
 
 [assembly: FunctionsStartup(typeof(Startup))]
@@ -49,27 +48,28 @@ namespace EPR.Calculator.Service.Function
             RegisterDependencies(builder.Services);
 
             // Configure the database context.
-            builder.Services.AddDbContextFactory<ApplicationDBContext>(options =>
+            builder.Services.AddDbContext<ApplicationDBContext>(options =>
             {
                 var config = builder.Services.BuildServiceProvider().GetRequiredService<IConfigurationService>();
                 options.UseSqlServer(
                     config.DbConnectionString);
             });
+
+            SetupBlobStorage(builder);
         }
 
-        private static void SetupBlobStorage(IServiceCollection services)
+        private static void SetupBlobStorage(IFunctionsHostBuilder builder)
         {
-            services.AddSingleton<IStorageService>(provider =>
+            builder.Services.AddSingleton<BlobServiceClient>(provider =>
             {
                 var configuration = provider.GetRequiredService<IConfigurationService>();
-                var logger = provider.GetRequiredService<ILogger<BlobStorageService>>();
                 var connectionString = configuration.BlobConnectionString;
                 if (string.IsNullOrEmpty(connectionString))
                 {
                     throw new ConfigurationErrorsException("Blob Storage connection string is not configured.");
                 }
 
-                return new BlobStorageService(new BlobServiceClient(connectionString), configuration, logger);
+                return new BlobServiceClient(connectionString);
             });
         }
 
@@ -100,9 +100,8 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcRunLaDisposalCostBuilder, CalcRunLaDisposalCostBuilder>();
             services.AddScoped<ICalcResultScaledupProducersBuilder, CalcResultScaledupProducersBuilder>();
             services.AddTransient<ICalcResultSummaryBuilder, CalcResultSummaryBuilder>();
-            services.AddTransient<IRpdStatusService, RpdStatusService>();
 #if !DEBUG
-            SetupBlobStorage(services);
+            services.AddTransient<IStorageService, BlobStorageService>();
             services.AddTransient<IConfigurationService, Configuration>();
 #elif DEBUG
             services.AddTransient<IStorageService, LocalFileStorageService>();

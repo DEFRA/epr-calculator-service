@@ -17,8 +17,6 @@
     {
         private readonly ApplicationDBContext _context;
 
-        private Mock<IDbContextFactory<ApplicationDBContext>> ContextFactory { get; init; }
-
         private readonly DbContextOptions<ApplicationDBContext> _dbContextOptions;
 
         public TransposePomAndOrgDataServiceTests()
@@ -29,8 +27,6 @@
             .Options;
 
             this._context = new ApplicationDBContext(_dbContextOptions);
-            this.ContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
-            this.ContextFactory.Setup(f => f.CreateDbContext()).Returns(this._context);
 
             this.SeedDatabase();
         }
@@ -74,7 +70,7 @@
             };
 
 #pragma warning disable CS8604 // Possible null reference argument.
-            var service = new TransposePomAndOrgDataService(this.ContextFactory.Object);
+            var service = new TransposePomAndOrgDataService(_context);
 #pragma warning restore CS8604 // Possible null reference argument.
 
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 3 };
@@ -115,7 +111,7 @@
             };
 
 #pragma warning disable CS8604 // Possible null reference argument.
-            var service = new TransposePomAndOrgDataService(this.ContextFactory.Object);
+            var service = new TransposePomAndOrgDataService(this._context);
 #pragma warning restore CS8604 // Possible null reference argument.
 
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 3 };
@@ -143,7 +139,7 @@
             };
 
 #pragma warning disable CS8604 // Possible null reference argument.
-            var service = new TransposePomAndOrgDataService(this.ContextFactory.Object);
+            var service = new TransposePomAndOrgDataService(_context);
 #pragma warning restore CS8604 // Possible null reference argument.
 
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
@@ -169,7 +165,7 @@
             };
 
 #pragma warning disable CS8604 // Possible null reference argument.
-            var service = new TransposePomAndOrgDataService(this.ContextFactory.Object);
+            var service = new TransposePomAndOrgDataService(_context);
 #pragma warning restore CS8604 // Possible null reference argument.
 
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
@@ -185,7 +181,7 @@
         public void Transpose_Should_Return_Latest_Organisation_Name()
         {
             var mockContext = new Mock<ApplicationDBContext>();
-            var service = new TransposePomAndOrgDataService(this.ContextFactory.Object);
+            var service = new TransposePomAndOrgDataService(mockContext.Object);
 
             var organisationDetails = new List<CalculatorRunOrganisationDataDetail>
             {

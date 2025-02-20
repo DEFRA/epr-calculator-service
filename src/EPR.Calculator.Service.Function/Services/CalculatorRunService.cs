@@ -14,8 +14,6 @@
     using EPR.Calculator.Service.Function.Interface;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Logging;
-    using FluentValidation;
-    using EPR.Calculator.Service.Function.Enums;
 
     /// <summary>
     /// Implementing calculator run service methods.
@@ -29,7 +27,6 @@
         private readonly ITransposePomAndOrgDataService transposePomAndOrgDataService;
         private readonly IConfigurationService configuration;
         private readonly IPrepareCalcService prepareCalcService;
-        private readonly IRpdStatusService statusService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CalculatorRunService"/> class.
@@ -43,8 +40,7 @@
             IPipelineClientFactory pipelineClientFactory,
             ITransposePomAndOrgDataService transposePomAndOrgDataService,
             IConfigurationService configuration,
-            IPrepareCalcService prepareCalcService,
-            IRpdStatusService statusService)
+            IPrepareCalcService prepareCalcService)
         {
             this.logger = logger;
             this.azureSynapseRunner = azureSynapseRunner;
@@ -52,7 +48,6 @@
             this.transposePomAndOrgDataService = transposePomAndOrgDataService;
             this.configuration = configuration;
             this.prepareCalcService = prepareCalcService;
-            this.statusService = statusService;
         }
 
         /// <summary>
@@ -206,14 +201,16 @@
             if (isPomSuccessful)
             {
                 this.logger.LogInformation("StatusEndPoint: {StatusEndPoint}", this.configuration.StatusEndpoint);
-                var statusUpdateResponse = await this.statusService.UpdateRpdStatus(
+                var statusUpdateResponse = await client.PostAsync(
+                    this.configuration.StatusEndpoint,
+                    GetStatusUpdateMessage(
                         calculatorRunParameter.Id,
-                        calculatorRunParameter.User,
                         isPomSuccessful,
-                        new CancellationTokenSource(this.configuration.RpdStatusTimeout).Token);
-                this.logger.LogInformation("Status UpdateRpdStatus: {Response}", statusUpdateResponse);
+                        calculatorRunParameter.User),
+                    new CancellationTokenSource(this.configuration.RpdStatusTimeout).Token);
+                this.logger.LogInformation("Status Response: {Response}", statusUpdateResponse);
 
-                if (statusUpdateResponse == RunClassification.RUNNING)
+                if (statusUpdateResponse != null && statusUpdateResponse.IsSuccessStatusCode)
                 {
                     var isTransposeSuccess = await this.transposePomAndOrgDataService.
                         TransposeBeforeCalcResults(
@@ -239,10 +236,12 @@
             else
             {
                 this.logger.LogInformation("StatusEndPoint: {StatusEndPoint}", this.configuration.StatusEndpoint);
-                var statusUpdateResponse = await this.statusService.UpdateRpdStatus(
-                    calculatorRunParameter.Id,
-                    calculatorRunParameter.User,
-                    isPomSuccessful,
+                var statusUpdateResponse = await client.PostAsync(
+                    this.configuration.StatusEndpoint,
+                    GetStatusUpdateMessage(
+                        calculatorRunParameter.Id,
+                        isPomSuccessful,
+                        calculatorRunParameter.User),
                     new CancellationTokenSource(this.configuration.RpdStatusTimeout).Token);
                 this.logger.LogInformation("Status Response: {Response}", statusUpdateResponse);
             }

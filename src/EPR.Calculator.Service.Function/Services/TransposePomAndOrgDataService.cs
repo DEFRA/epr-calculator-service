@@ -35,9 +35,10 @@
             public string? SubmissionPeriodDesc { get; set; }
         }
 
-        public TransposePomAndOrgDataService(IDbContextFactory<ApplicationDBContext> context)
+
+        public TransposePomAndOrgDataService(ApplicationDBContext context)
         {
-            this.context = context.CreateDbContext();
+            this.context = context;
         }
 
         public async Task<bool> TransposeBeforeCalcResults(
