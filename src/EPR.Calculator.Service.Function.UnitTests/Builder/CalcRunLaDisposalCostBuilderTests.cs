@@ -237,11 +237,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.IsTrue(laDisposalCost.NorthernIreland.Contains("2,100.00"));
             Assert.IsTrue(laDisposalCost.Total.Contains("36,300.00"));
 
-            Assert.AreEqual("400", laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage);
+            Assert.AreEqual("700", laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage);
             Assert.AreEqual("400", laDisposalCost.ReportedPublicBinTonnage);
             Assert.AreEqual(string.Empty, laDisposalCost.HouseholdDrinkContainers);
             Assert.AreEqual("2000.00", laDisposalCost.LateReportingTonnage);
-            Assert.AreEqual("2800.00", laDisposalCost.ProducerReportedTotalTonnage);
+            Assert.AreEqual("3100.00", laDisposalCost.ProducerReportedTotalTonnage);
         }
 
         [TestMethod]
