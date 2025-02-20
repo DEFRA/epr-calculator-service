@@ -30,44 +30,7 @@
             this.context = context;
         }
 
-        /// <inheritdoc/>
-        public async Task<CalcResultScaledupProducers> Construct(CalcResultsRequestDto resultsRequestDto)
-        {
-            var runId = resultsRequestDto.RunId;
-            var materialsFromDb = await this.context.Material.ToListAsync();
-            var materials = MaterialMapper.Map(materialsFromDb);
-
-            var scaledupProducersSummary = new CalcResultScaledupProducers();
-
-            var organisationIds = await this.GetScaledUpOrganisationIdsAsync(resultsRequestDto.RunId);
-            if (organisationIds != null && organisationIds.Any())
-            {
-                var runProducerMaterialDetails = await this.GetProducerReportedMaterialsAsync(runId, organisationIds);
-
-                var allOrganisationPomDetails = await this.GetScaledupOrganisationDetails(runId, organisationIds);
-
-                this.AddExtraRows(runProducerMaterialDetails);
-
-                this.CalculateScaledupTonnage(runProducerMaterialDetails, allOrganisationPomDetails, materials);
-
-                var orderedRunProducerMaterialDetails = runProducerMaterialDetails
-                    .OrderBy(p => p.ProducerId)
-                    .ThenBy(p => p.Level)
-                    .ThenBy(p => p.SubsidiaryId)
-                    .ThenBy(p => p.SubmissionPeriodCode)
-                    .ToList();
-
-                var overallTotalRow = this.GetOverallTotalRow(orderedRunProducerMaterialDetails, materials);
-
-                orderedRunProducerMaterialDetails.Add(overallTotalRow);
-                scaledupProducersSummary.ScaledupProducers = orderedRunProducerMaterialDetails;
-            }
-
-            SetHeaders(scaledupProducersSummary, materials);
-            return scaledupProducersSummary;
-        }
-
-        public CalcResultScaledupProducer GetOverallTotalRow(
+        public static CalcResultScaledupProducer GetOverallTotalRow(
             IEnumerable<CalcResultScaledupProducer> orderedRunProducerMaterialDetails,
             IEnumerable<MaterialDetail> materials)
         {
@@ -178,6 +141,7 @@
             }
         }
 
+        /// <inheritdoc/>
         public async Task<CalcResultScaledupProducers> Construct(CalcResultsRequestDto resultsRequestDto)
         {
             var runId = resultsRequestDto.RunId;
