@@ -972,8 +972,6 @@
             Assert.AreEqual(150.00m, result);
         }
 
-
-
         private CalcResultParameterCommunicationCost GetCalcResultParameterCommunicationCost()
         {
             return this.Fixture.Create<CalcResultParameterCommunicationCost>();

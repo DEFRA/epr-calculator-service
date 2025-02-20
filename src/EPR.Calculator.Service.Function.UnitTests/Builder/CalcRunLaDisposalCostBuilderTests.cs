@@ -43,36 +43,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             this.dbContext = new ApplicationDBContext(dbContextOptions);
             this.dbContext.Database.EnsureCreated();
-            this.SeedDatabase();
             this.builder = new CalcRunLaDisposalCostBuilder(this.dbContext);
-        }
-
-        private void SeedDatabase()
-        {
-            this.dbContext.ProducerReportedMaterial.AddRange(
-                new ProducerReportedMaterial
-                {
-                    MaterialId = 3,
-                    ProducerDetailId = 1,
-                    PackagingType = "HDC",
-                    PackagingTonnage = 100,
-                },
-                new ProducerReportedMaterial
-                {
-                    MaterialId = 3,
-                    ProducerDetailId = 2,
-                    PackagingType = "HDC",
-                    PackagingTonnage = 100,
-                },
-                new ProducerReportedMaterial
-                {
-                    MaterialId = 2,
-                    ProducerDetailId = 1,
-                    PackagingType = "PB",
-                    PackagingTonnage = 200,
-                });
-
-            this.dbContext.SaveChanges();
         }
 
         private Fixture Fixture { get; init; }
@@ -218,8 +189,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public void Should_Return_Material_Data_With_PublicBin()
         {
             // Assign
-            var resultsDto = new CalcResultsRequestDto { RunId = 2 };
+            var resultsDto = new CalcResultsRequestDto { RunId = 1 };
             var calcResult = TestDataHelper.GetCalcResult();
+            this.SeedDatabase(this.dbContext);
+
             calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers()
             {
                 ScaledupProducers = new List<CalcResultScaledupProducer>()
@@ -255,6 +228,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             // Assert
             var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails?.Single(x => x.Name == MaterialNames.Plastic);
+
             Assert.IsNotNull(laDisposalCost);
             Assert.AreEqual(MaterialNames.Plastic, laDisposalCost.Name);
             Assert.IsTrue(laDisposalCost.England.Contains("23,000.00"));
@@ -263,19 +237,20 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.IsTrue(laDisposalCost.NorthernIreland.Contains("2,100.00"));
             Assert.IsTrue(laDisposalCost.Total.Contains("36,300.00"));
 
-            Assert.AreEqual("300", laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage);
+            Assert.AreEqual("700", laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage);
             Assert.AreEqual("400", laDisposalCost.ReportedPublicBinTonnage);
             Assert.AreEqual(string.Empty, laDisposalCost.HouseholdDrinkContainers);
             Assert.AreEqual("2000.00", laDisposalCost.LateReportingTonnage);
-            Assert.AreEqual("2700.00", laDisposalCost.ProducerReportedTotalTonnage);
+            Assert.AreEqual("3100.00", laDisposalCost.ProducerReportedTotalTonnage);
         }
 
         [TestMethod]
         public void Should_Return_Material_Data_With_Household_Drink_Containers()
         {
             // Assign
-            var resultsDto = new CalcResultsRequestDto { RunId = 2 };
+            var resultsDto = new CalcResultsRequestDto { RunId = 1 };
             var calcResult = TestDataHelper.GetCalcResult();
+            this.SeedDatabase(this.dbContext);
 
             calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers()
             {
@@ -322,17 +297,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.IsTrue(laDisposalCost.Total.Contains("70,200.00"));
             Assert.IsTrue(laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage.Contains("300"));
             Assert.IsTrue(laDisposalCost.ReportedPublicBinTonnage.Contains("0"));
-            Assert.IsTrue(laDisposalCost.HouseholdDrinkContainers.Contains("1000"));
+            Assert.IsTrue(laDisposalCost.HouseholdDrinkContainers.Contains("1500"));
             Assert.IsTrue(laDisposalCost.LateReportingTonnage.Contains("0"));
-            Assert.IsTrue(laDisposalCost.ProducerReportedTotalTonnage.Contains("1700"));
+            Assert.IsTrue(laDisposalCost.ProducerReportedTotalTonnage.Contains("2200"));
         }
 
         [TestMethod]
         public async Task Should_Calculate_ProducerDataTotal_For_Total_Material()
         {
             // Arrange
-            var resultsDto = new CalcResultsRequestDto { RunId = 2 };
+            // Assign
+            var resultsDto = new CalcResultsRequestDto { RunId = 1 };
             var calcResult = TestDataHelper.GetCalcResult();
+            this.SeedDatabase(this.dbContext);
             calcResult.CalcResultScaledupProducers = GetScaledUpProducers();
 
             // Act
@@ -341,15 +318,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             // Assert
             var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails?.Single(x => x.Name == CommonConstants.Total);
             Assert.IsNotNull(laDisposalCost);
-            Assert.AreEqual("300", laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage);
+            Assert.AreEqual("700", laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage);
         }
 
         [TestMethod]
         public async Task Should_Calculate_ProducerDataTotal_For_Specific_Material()
         {
-            // Arrange
-            var resultsDto = new CalcResultsRequestDto { RunId = 2 };
+             // Assign
+            var resultsDto = new CalcResultsRequestDto { RunId = 1 };
             var calcResult = TestDataHelper.GetCalcResult();
+            this.SeedDatabase(this.dbContext);
             calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers()
             {
                 ScaledupProducers = new List<CalcResultScaledupProducer>()
@@ -384,7 +362,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             // Assert
             var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails?.Single(x => x.Name == MaterialNames.Plastic);
             Assert.IsNotNull(laDisposalCost);
-            Assert.AreEqual("300", laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage);
+            Assert.AreEqual("700", laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage);
         }
 
         private static CalcResultScaledupProducers GetScaledUpProducers()
@@ -458,6 +436,46 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                      },
                 },
             };
+        }
+
+        private void SeedDatabase(ApplicationDBContext context)
+        {
+            var run = new CalculatorRun { Id = 1, Financial_Year = "2024-25", Name = "CalculatorRunTest1" };
+            context.CalculatorRuns.Add(run);
+
+            var producerDetail = new List<ProducerDetail>
+            {
+                new ProducerDetail
+                {
+                    Id = 3, CalculatorRunId = 1,
+                },
+                new ProducerDetail
+                {
+                    Id = 2, CalculatorRunId = 1,
+                },
+            };
+            context.ProducerDetail.AddRange(producerDetail);
+
+            var materials = new List<Material>
+            {
+                new Material { Id = 1, Name = "Plastic", Code = MaterialCodes.Plastic },
+                new Material { Id = 2, Name = "Steel", Code = MaterialCodes.Steel },
+                new Material { Id = 3, Name = "Glass", Code = MaterialCodes.Glass },
+            };
+            context.Material.AddRange(materials);
+
+            var producerReportedMaterials = new List<ProducerReportedMaterial>
+            {
+                new ProducerReportedMaterial { Id = 1, ProducerDetailId = 3, MaterialId = 1, PackagingType = PackagingTypes.Household, PackagingTonnage = 100 },
+                new ProducerReportedMaterial { Id = 5, ProducerDetailId = 2, MaterialId = 1, PackagingType = PackagingTypes.Household, PackagingTonnage = 300 },
+                new ProducerReportedMaterial { Id = 2, ProducerDetailId = 3, MaterialId = 2, PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 200 },
+                new ProducerReportedMaterial { Id = 4, ProducerDetailId = 2, MaterialId = 2, PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 200 },
+                new ProducerReportedMaterial { Id = 3, ProducerDetailId = 1, MaterialId = 3, PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 300 },
+                new ProducerReportedMaterial { Id = 6, ProducerDetailId = 2, MaterialId = 3, PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 500 },
+            };
+            context.ProducerReportedMaterial.AddRange(producerReportedMaterials);
+
+            context.SaveChanges();
         }
     }
 }
