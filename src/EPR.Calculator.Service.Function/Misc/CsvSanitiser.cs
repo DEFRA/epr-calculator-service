@@ -33,11 +33,16 @@ namespace EPR.Calculator.API.Utils
                 : SanitiseData(value);
         }
 
-        public static string SanitiseData(decimal value, int roundTo, string? valueFormat, bool delimitedRequired = true)
+        public static string SanitiseData(decimal value, int roundTo, string? valueFormat, bool isCurrency = false, bool delimitedRequired = true)
         {
             var formattedValue = valueFormat == null
                 ? Math.Round(value, roundTo).ToString()
                 : Math.Round(value, roundTo).ToString(valueFormat);
+
+            if (isCurrency)
+            {
+                formattedValue = $"£{formattedValue}";
+            }
 
             return delimitedRequired
                 ? $"{SanitiseData(formattedValue)},"
