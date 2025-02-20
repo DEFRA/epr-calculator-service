@@ -22,6 +22,7 @@
     public static class CalcResultSummaryUtil
     {
         public const int ResultSummaryHeaderColumnIndex = 1;
+        public const int NotesHeaderColumnIndex = 1;
         public const int ProducerDisposalFeesHeaderColumnIndex = 6;
         public const int CommsCostHeaderColumnIndex = 118;
         public const int MaterialsBreakdownHeaderInitialColumnIndex = 6;
@@ -407,6 +408,12 @@
             result.ResultSummaryHeader = new CalcResultSummaryHeader
             {
                 Name = CalcResultSummaryHeaders.CalculationResult,
+                ColumnIndex = ResultSummaryHeaderColumnIndex,
+            };
+
+            result.NotesHeader = new CalcResultSummaryHeader
+            {
+                Name = CalcResultSummaryHeaders.Notes,
                 ColumnIndex = ResultSummaryHeaderColumnIndex,
             };
 
