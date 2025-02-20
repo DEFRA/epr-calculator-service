@@ -253,7 +253,7 @@
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
 
             // Act
-            var result = CalcResultSummaryUtil.GetTonnage(producer, material, "Default" , scaledupProducers!);
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, "Default", scaledupProducers!);
 
             // Assert
             Assert.AreEqual(0.00m, result);
@@ -351,7 +351,7 @@
         public void CanGetPricePerTonne_NonMatchingMaterial()
         {
             // Arrange
-            var material = Fixture.Create<MaterialDetail>();
+            var material = this.Fixture.Create<MaterialDetail>();
 
             // Act
             var result = CalcResultSummaryUtil.GetPricePerTonne(material, this.calcResult);
