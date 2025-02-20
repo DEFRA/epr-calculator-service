@@ -86,12 +86,12 @@
 
             foreach (var onePlusFourApportionment in apportionment)
             {
-                csvContent.Append($"{CsvSanitiser.SanitiseData(onePlusFourApportionment.Name)},");
-                csvContent.Append($"{CsvSanitiser.SanitiseData(onePlusFourApportionment.England)},");
-                csvContent.Append($"{CsvSanitiser.SanitiseData(onePlusFourApportionment.Wales)},");
-                csvContent.Append($"{CsvSanitiser.SanitiseData(onePlusFourApportionment.Scotland)},");
-                csvContent.Append($"{CsvSanitiser.SanitiseData(onePlusFourApportionment.NorthernIreland)},");
-                csvContent.AppendLine($"{CsvSanitiser.SanitiseData(onePlusFourApportionment.Total)}");
+                csvContent.Append(CsvSanitiser.SanitiseData(onePlusFourApportionment.Name));
+                csvContent.Append(CsvSanitiser.SanitiseData(onePlusFourApportionment.England));
+                csvContent.Append(CsvSanitiser.SanitiseData(onePlusFourApportionment.Wales));
+                csvContent.Append(CsvSanitiser.SanitiseData(onePlusFourApportionment.Scotland));
+                csvContent.Append(CsvSanitiser.SanitiseData(onePlusFourApportionment.NorthernIreland));
+                csvContent.AppendLine(CsvSanitiser.SanitiseData(onePlusFourApportionment.Total));
             }
 
             csvContent.AppendLine();
@@ -99,37 +99,39 @@
 
             foreach (var commCostByMaterial in commCostByMaterials)
             {
-                csvContent.Append($"{CsvSanitiser.SanitiseData(commCostByMaterial.Name)},");
-                csvContent.Append($"{CsvSanitiser.SanitiseData(commCostByMaterial.England)},");
-                csvContent.Append($"{CsvSanitiser.SanitiseData(commCostByMaterial.Wales)},");
-                csvContent.Append($"{CsvSanitiser.SanitiseData(commCostByMaterial.Scotland)},");
-                csvContent.Append($"{CsvSanitiser.SanitiseData(commCostByMaterial.NorthernIreland)},");
-                csvContent.Append($"{CsvSanitiser.SanitiseData(commCostByMaterial.Total)},");
-                csvContent.Append(
-                    $"{CsvSanitiser.SanitiseData(commCostByMaterial.ProducerReportedHouseholdPackagingWasteTonnage)},");
-                csvContent.Append(
-                    $"{CsvSanitiser.SanitiseData(commCostByMaterial.ReportedPublicBinTonnage)},");
-                csvContent.Append(
-                    $"{CsvSanitiser.SanitiseData(commCostByMaterial.HouseholdDrinksContainers)},");
-                csvContent.Append(
-                    $"{CsvSanitiser.SanitiseData(commCostByMaterial.LateReportingTonnage)},");
-                csvContent.Append(
-                    $"{CsvSanitiser.SanitiseData(commCostByMaterial.ProducerReportedHouseholdPlusLateReportingTonnage)},");
-                csvContent.AppendLine(commCostByMaterial.Total == "Total" || string.IsNullOrWhiteSpace(commCostByMaterial.CommsCostByMaterialPricePerTonne) ?
-                      $"{CsvSanitiser.SanitiseData(commCostByMaterial.CommsCostByMaterialPricePerTonne)}" :
-                     $"£{CsvSanitiser.SanitiseData(commCostByMaterial.CommsCostByMaterialPricePerTonne)}");
+                csvContent.Append(CsvSanitiser.SanitiseData(commCostByMaterial.Name));
+                csvContent.Append(CsvSanitiser.SanitiseData(commCostByMaterial.England));
+                csvContent.Append(CsvSanitiser.SanitiseData(commCostByMaterial.Wales));
+                csvContent.Append(CsvSanitiser.SanitiseData(commCostByMaterial.Scotland));
+                csvContent.Append(CsvSanitiser.SanitiseData(commCostByMaterial.NorthernIreland));
+                csvContent.Append(CsvSanitiser.SanitiseData(commCostByMaterial.Total));
+                csvContent.Append(CsvSanitiser.SanitiseData(commCostByMaterial.ProducerReportedHouseholdPackagingWasteTonnage));
+                csvContent.Append(CsvSanitiser.SanitiseData(commCostByMaterial.ReportedPublicBinTonnage));
+                csvContent.Append(CsvSanitiser.SanitiseData(commCostByMaterial.HouseholdDrinksContainers));
+                csvContent.Append(CsvSanitiser.SanitiseData(commCostByMaterial.LateReportingTonnage));
+                csvContent.Append(CsvSanitiser.SanitiseData(commCostByMaterial.ProducerReportedHouseholdPlusLateReportingTonnage));
+
+                if (commCostByMaterial.Total == "Total" || string.IsNullOrWhiteSpace(commCostByMaterial.CommsCostByMaterialPricePerTonne))
+                {
+                    csvContent.AppendLine(CsvSanitiser.SanitiseData(commCostByMaterial.CommsCostByMaterialPricePerTonne));
+                }
+                else
+                {
+                    csvContent.AppendLine(CsvSanitiser.SanitiseData(commCostByMaterial.CommsCostByMaterialPricePerTonne));
+                }
             }
 
             csvContent.AppendLine();
             var countryList = communicationCost.CommsCostByCountry;
             foreach (var country in countryList)
             {
-                csvContent.Append($"{CsvSanitiser.SanitiseData(country.Name)},");
-                csvContent.Append($"{CsvSanitiser.SanitiseData(country.England)},");
-                csvContent.Append($"{CsvSanitiser.SanitiseData(country.Wales)},");
-                csvContent.Append($"{CsvSanitiser.SanitiseData(country.Scotland)},");
-                csvContent.Append($"{CsvSanitiser.SanitiseData(country.NorthernIreland)},");
-                csvContent.AppendLine($"{CsvSanitiser.SanitiseData(country.Total)}");
+                csvContent.Append(CsvSanitiser.SanitiseData(country.Name));
+                csvContent.Append(CsvSanitiser.SanitiseData(country.England));
+                csvContent.Append(CsvSanitiser.SanitiseData(country.Wales));
+                csvContent.Append(CsvSanitiser.SanitiseData(country.Scotland));
+                csvContent.Append(CsvSanitiser.SanitiseData(country.NorthernIreland));
+                csvContent.Append(CsvSanitiser.SanitiseData(country.Total));
+                csvContent.AppendLine();
             }
         }
 
@@ -144,12 +146,13 @@
 
             foreach (var saOperatingCost in saOperatingCosts)
             {
-                csvContent.Append($"{CsvSanitiser.SanitiseData(saOperatingCost.Name)},");
-                csvContent.Append($"{CsvSanitiser.SanitiseData(saOperatingCost.England)},");
-                csvContent.Append($"{CsvSanitiser.SanitiseData(saOperatingCost.Wales)},");
-                csvContent.Append($"{CsvSanitiser.SanitiseData(saOperatingCost.Scotland)},");
-                csvContent.Append($"{CsvSanitiser.SanitiseData(saOperatingCost.NorthernIreland)},");
-                csvContent.AppendLine($"{CsvSanitiser.SanitiseData(saOperatingCost.Total)}");
+                csvContent.Append(CsvSanitiser.SanitiseData(saOperatingCost.Name));
+                csvContent.Append(CsvSanitiser.SanitiseData(saOperatingCost.England));
+                csvContent.Append(CsvSanitiser.SanitiseData(saOperatingCost.Wales));
+                csvContent.Append(CsvSanitiser.SanitiseData(saOperatingCost.Scotland));
+                csvContent.Append(CsvSanitiser.SanitiseData(saOperatingCost.NorthernIreland));
+                csvContent.Append(CsvSanitiser.SanitiseData(saOperatingCost.Total));
+                csvContent.AppendLine();
             }
 
             csvContent.AppendLine();
@@ -158,34 +161,36 @@
 
             foreach (var laDataPrep in laDataPreps)
             {
-                csvContent.Append($"{CsvSanitiser.SanitiseData(laDataPrep.Name)},");
-                csvContent.Append($"{CsvSanitiser.SanitiseData(laDataPrep.England)},");
-                csvContent.Append($"{CsvSanitiser.SanitiseData(laDataPrep.Wales)},");
-                csvContent.Append($"{CsvSanitiser.SanitiseData(laDataPrep.Scotland)},");
-                csvContent.Append($"{CsvSanitiser.SanitiseData(laDataPrep.NorthernIreland)},");
-                csvContent.AppendLine($"{CsvSanitiser.SanitiseData(laDataPrep.Total)}");
+                csvContent.Append(CsvSanitiser.SanitiseData(laDataPrep.Name));
+                csvContent.Append(CsvSanitiser.SanitiseData(laDataPrep.England));
+                csvContent.Append(CsvSanitiser.SanitiseData(laDataPrep.Wales));
+                csvContent.Append(CsvSanitiser.SanitiseData(laDataPrep.Scotland));
+                csvContent.Append(CsvSanitiser.SanitiseData(laDataPrep.NorthernIreland));
+                csvContent.Append(CsvSanitiser.SanitiseData(laDataPrep.Total));
+                csvContent.AppendLine();
             }
 
             csvContent.AppendLine();
             var schemeCost = otherCost.SchemeSetupCost;
-            csvContent.Append($"{CsvSanitiser.SanitiseData(schemeCost.Name)},");
-            csvContent.Append($"{CsvSanitiser.SanitiseData(schemeCost.England)},");
-            csvContent.Append($"{CsvSanitiser.SanitiseData(schemeCost.Wales)},");
-            csvContent.Append($"{CsvSanitiser.SanitiseData(schemeCost.Scotland)},");
-            csvContent.Append($"{CsvSanitiser.SanitiseData(schemeCost.NorthernIreland)},");
-            csvContent.AppendLine($"{CsvSanitiser.SanitiseData(schemeCost.Total)}");
+            csvContent.Append(CsvSanitiser.SanitiseData(schemeCost.Name));
+            csvContent.Append(CsvSanitiser.SanitiseData(schemeCost.England));
+            csvContent.Append(CsvSanitiser.SanitiseData(schemeCost.Wales));
+            csvContent.Append(CsvSanitiser.SanitiseData(schemeCost.Scotland));
+            csvContent.Append(CsvSanitiser.SanitiseData(schemeCost.NorthernIreland));
+            csvContent.AppendLine(CsvSanitiser.SanitiseData(schemeCost.Total));
 
             csvContent.AppendLine();
-            csvContent.Append($"{CsvSanitiser.SanitiseData(otherCost.BadDebtProvision.Key)},");
-            csvContent.AppendLine($"{CsvSanitiser.SanitiseData(otherCost.BadDebtProvision.Value)}");
+            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.BadDebtProvision.Key));
+            csvContent.AppendLine(CsvSanitiser.SanitiseData(otherCost.BadDebtProvision.Value));
 
             csvContent.AppendLine();
             var materiality = otherCost.Materiality;
             foreach (var material in materiality)
             {
-                csvContent.Append($"{CsvSanitiser.SanitiseData(material.SevenMateriality)},");
-                csvContent.Append($"{CsvSanitiser.SanitiseData(material.Amount)},");
-                csvContent.AppendLine($"{CsvSanitiser.SanitiseData(material.Percentage)}");
+                csvContent.Append(CsvSanitiser.SanitiseData(material.SevenMateriality));
+                csvContent.Append(CsvSanitiser.SanitiseData(material.Amount));
+                csvContent.Append(CsvSanitiser.SanitiseData(material.Percentage));
+                csvContent.AppendLine();
             }
         }
 
@@ -221,7 +226,7 @@
 
         private static void AppendCsvLine(StringBuilder csvContent, string label, string value)
         {
-            csvContent.AppendLine($"{label},{CsvSanitiser.SanitiseData(value)}");
+            csvContent.AppendLine($"{label},{CsvSanitiser.SanitiseData(value, false)}");
         }
 
         private static void PrepareLapcapData(CalcResultLapcapData calcResultLapcapData, StringBuilder csvContent)
@@ -234,12 +239,12 @@
 
             foreach (var lapcapData in lapcapDataDetails)
             {
-                csvContent.Append($"{CsvSanitiser.SanitiseData(lapcapData.Name)},");
-                csvContent.Append($"\"{CsvSanitiser.SanitiseData(lapcapData.EnglandDisposalCost)}\",");
-                csvContent.Append($"\"{CsvSanitiser.SanitiseData(lapcapData.WalesDisposalCost)}\",");
-                csvContent.Append($"\"{CsvSanitiser.SanitiseData(lapcapData.ScotlandDisposalCost)}\",");
-                csvContent.Append($"\"{CsvSanitiser.SanitiseData(lapcapData.NorthernIrelandDisposalCost)}\",");
-                csvContent.Append($"\"{CsvSanitiser.SanitiseData(lapcapData.TotalDisposalCost)}\"");
+                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.Name));
+                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.EnglandDisposalCost));
+                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.WalesDisposalCost));
+                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.ScotlandDisposalCost));
+                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.NorthernIrelandDisposalCost));
+                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.TotalDisposalCost, false));
                 csvContent.AppendLine();
             }
         }
@@ -254,12 +259,12 @@
 
             foreach (var lapcapData in lapcapDataDetails)
             {
-                csvContent.Append($"{CsvSanitiser.SanitiseData(lapcapData.Name)},");
-                csvContent.Append($"\"{CsvSanitiser.SanitiseData(lapcapData.EnglandDisposalTotal)}\",");
-                csvContent.Append($"\"{CsvSanitiser.SanitiseData(lapcapData.WalesDisposalTotal)}\",");
-                csvContent.Append($"\"{CsvSanitiser.SanitiseData(lapcapData.ScotlandDisposalTotal)}\",");
-                csvContent.Append($"\"{CsvSanitiser.SanitiseData(lapcapData.NorthernIrelandDisposalTotal)}\",");
-                csvContent.Append($"\"{CsvSanitiser.SanitiseData(lapcapData.Total)}\",");
+                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.Name));
+                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.EnglandDisposalTotal));
+                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.WalesDisposalTotal));
+                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.ScotlandDisposalTotal));
+                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.NorthernIrelandDisposalTotal));
+                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.Total));
                 csvContent.AppendLine();
             }
         }
@@ -270,13 +275,13 @@
             csvContent.AppendLine();
 
             csvContent.AppendLine(calcResultLateReportingData.Name);
-            csvContent.Append($"{calcResultLateReportingData.MaterialHeading},");
+            csvContent.Append(calcResultLateReportingData.MaterialHeading);
             csvContent.Append(calcResultLateReportingData.TonnageHeading);
             csvContent.AppendLine();
 
             foreach (var lateReportingData in calcResultLateReportingData.CalcResultLateReportingTonnageDetails)
             {
-                csvContent.Append($"{CsvSanitiser.SanitiseData(lateReportingData.Name)},");
+                csvContent.Append(CsvSanitiser.SanitiseData(lateReportingData.Name));
                 csvContent.Append(CsvSanitiser.SanitiseData(lateReportingData.TotalLateReportingTonnage));
                 csvContent.AppendLine();
             }
@@ -292,18 +297,18 @@
 
             foreach (var lapcapData in lapcapDataDetails)
             {
-                csvContent.Append($"{CsvSanitiser.SanitiseData(lapcapData.Name)},");
-                csvContent.Append($"\"{CsvSanitiser.SanitiseData(lapcapData.England)}\",");
-                csvContent.Append($"\"{CsvSanitiser.SanitiseData(lapcapData.Wales)}\",");
-                csvContent.Append($"\"{CsvSanitiser.SanitiseData(lapcapData.Scotland)}\",");
-                csvContent.Append($"\"{CsvSanitiser.SanitiseData(lapcapData.NorthernIreland)}\",");
-                csvContent.Append($"\"{CsvSanitiser.SanitiseData(lapcapData.Total)}\",");
-                csvContent.Append($"\"{CsvSanitiser.SanitiseData(lapcapData.ProducerReportedHouseholdPackagingWasteTonnage)}\",");
-                csvContent.Append($"\"{CsvSanitiser.SanitiseData(lapcapData.ReportedPublicBinTonnage)}\",");
-                csvContent.Append($"\"{CsvSanitiser.SanitiseData(lapcapData.HouseholdDrinkContainers)}\",");
-                csvContent.Append($"\"{CsvSanitiser.SanitiseData(lapcapData.LateReportingTonnage)}\",");
-                csvContent.Append($"\"{CsvSanitiser.SanitiseData(lapcapData.ProducerReportedTotalTonnage)}\",");
-                csvContent.Append($"\"{CsvSanitiser.SanitiseData(lapcapData.DisposalCostPricePerTonne)}\",");
+                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.Name));
+                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.England));
+                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.Wales));
+                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.Scotland));
+                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.NorthernIreland));
+                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.Total));
+                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.ProducerReportedHouseholdPackagingWasteTonnage));
+                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.ReportedPublicBinTonnage));
+                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.HouseholdDrinkContainers));
+                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.LateReportingTonnage));
+                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.ProducerReportedTotalTonnage));
+                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.DisposalCostPricePerTonne));
                 csvContent.AppendLine();
             }
         }
@@ -324,19 +329,19 @@
                 {
                     if (producer.IsTotalRow)
                     {
-                        _ = csvContent.Append(new string(CommonConstants.Comma[0], 7));
-                        csvContent.Append($"{CommonConstants.Totals},");
+                        _ = csvContent.Append(new string(CommonConstants.CsvFileDelimiter[0], 7));
+                        csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.Totals));
                     }
                     else
                     {
-                        csvContent.Append($"{CsvSanitiser.SanitiseData(producer.ProducerId)},");
-                        csvContent.Append($"{CsvSanitiser.SanitiseData(producer.SubsidiaryId)},");
-                        csvContent.Append($"{CsvSanitiser.SanitiseData(producer.ProducerName)},");
-                        csvContent.Append($"{CsvSanitiser.SanitiseData(producer.Level)},");
-                        csvContent.Append($"{CsvSanitiser.SanitiseData(producer.SubmissonPeriodCode)},");
-                        csvContent.Append($"{CsvSanitiser.SanitiseData(producer.DaysInSubmissionPeriod != -1 ? producer.DaysInSubmissionPeriod.ToString() : string.Empty)},");
-                        csvContent.Append($"{CsvSanitiser.SanitiseData(producer.DaysInWholePeriod != -1 ? producer.DaysInWholePeriod.ToString() : string.Empty)},");
-                        csvContent.Append($"{CsvSanitiser.SanitiseData(producer.ScaleupFactor == -1 ? CommonConstants.Totals : producer.ScaleupFactor.ToString())},");
+                        csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerId));
+                        csvContent.Append(CsvSanitiser.SanitiseData(producer.SubsidiaryId));
+                        csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerName));
+                        csvContent.Append(CsvSanitiser.SanitiseData(producer.Level));
+                        csvContent.Append(CsvSanitiser.SanitiseData(producer.SubmissonPeriodCode));
+                        csvContent.Append(CsvSanitiser.SanitiseData(producer.DaysInSubmissionPeriod != -1 ? producer.DaysInSubmissionPeriod.ToString() : string.Empty));
+                        csvContent.Append(CsvSanitiser.SanitiseData(producer.DaysInWholePeriod != -1 ? producer.DaysInWholePeriod.ToString() : string.Empty));
+                        csvContent.Append(CsvSanitiser.SanitiseData(producer.ScaleupFactor == -1 ? CommonConstants.Totals : producer.ScaleupFactor.ToString()));
                     }
 
                     foreach (var producerTonnage in producer.ScaledupProducerTonnageByMaterial)
@@ -344,28 +349,28 @@
                         var materialCode = producerTonnage.Key;
                         var tonnage = producerTonnage.Value;
 
-                        csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(tonnage.ReportedHouseholdPackagingWasteTonnage, 3).ToString("F3"))},");
-                        csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(tonnage.ReportedPublicBinTonnage, 3).ToString("F3"))},");
+                        csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ReportedHouseholdPackagingWasteTonnage, DecimalPoint, DecimalFormat));
+                        csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ReportedPublicBinTonnage, DecimalPoint, DecimalFormat));
 
                         if (materialCode == MaterialCodes.Glass || materialCode == MaterialNames.Glass)
                         {
-                            csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(tonnage.HouseholdDrinksContainersTonnageGlass, DecimalPoint).ToString(DecimalFormat))},");
+                            csvContent.Append(CsvSanitiser.SanitiseData(tonnage.HouseholdDrinksContainersTonnageGlass, DecimalPoint, DecimalFormat));
                         }
 
-                        csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(tonnage.TotalReportedTonnage, 3).ToString("F3"))},");
-                        csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(tonnage.ReportedSelfManagedConsumerWasteTonnage, 3).ToString("F3"))},");
-                        csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(tonnage.NetReportedTonnage, 3).ToString("F3"))},");
-                        csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(tonnage.ScaledupReportedHouseholdPackagingWasteTonnage, 3).ToString("F3"))},");
-                        csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(tonnage.ScaledupReportedPublicBinTonnage, 3).ToString("F3"))},");
+                        csvContent.Append(CsvSanitiser.SanitiseData(tonnage.TotalReportedTonnage, DecimalPoint, DecimalFormat));
+                        csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ReportedSelfManagedConsumerWasteTonnage, DecimalPoint, DecimalFormat));
+                        csvContent.Append(CsvSanitiser.SanitiseData(tonnage.NetReportedTonnage, DecimalPoint, DecimalFormat));
+                        csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ScaledupReportedHouseholdPackagingWasteTonnage, DecimalPoint, DecimalFormat));
+                        csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ScaledupReportedPublicBinTonnage, DecimalPoint, DecimalFormat));
 
                         if (materialCode == MaterialCodes.Glass || materialCode == MaterialNames.Glass)
                         {
-                            csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(tonnage.ScaledupHouseholdDrinksContainersTonnageGlass, DecimalPoint).ToString(DecimalFormat))},");
+                            csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ScaledupHouseholdDrinksContainersTonnageGlass, DecimalPoint, DecimalFormat));
                         }
 
-                        csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(tonnage.ScaledupTotalReportedTonnage, 3).ToString("F3"))},");
-                        csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(tonnage.ScaledupReportedSelfManagedConsumerWasteTonnage, 3).ToString("F3"))},");
-                        csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(tonnage.ScaledupNetReportedTonnage, 3).ToString("F3"))},");
+                        csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ScaledupTotalReportedTonnage, DecimalPoint, DecimalFormat));
+                        csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ScaledupReportedSelfManagedConsumerWasteTonnage, DecimalPoint, DecimalFormat));
+                        csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ScaledupNetReportedTonnage, DecimalPoint, DecimalFormat));
                     }
 
                     csvContent.AppendLine();
@@ -399,7 +404,7 @@
             {
                 if (item.ColumnIndex.HasValue)
                 {
-                    headerRows[item.ColumnIndex.Value - 1] = $"{CsvSanitiser.SanitiseData(item.Name)}";
+                    headerRows[item.ColumnIndex.Value - 1] = CsvSanitiser.SanitiseData(item.Name);
                 }
             }
 
@@ -411,7 +416,7 @@
         {
             foreach (var item in producers.ColumnHeaders)
             {
-                csvContent.Append($"{CsvSanitiser.SanitiseData(item.Name)},");
+                csvContent.Append(CsvSanitiser.SanitiseData(item.Name));
             }
         }
 
@@ -427,24 +432,24 @@
             // Add data
             foreach (var producer in resultSummary.ProducerDisposalFees)
             {
-                csvContent.Append($"{CsvSanitiser.SanitiseData(producer.ProducerId)},");
-                csvContent.Append($"{CsvSanitiser.SanitiseData(producer.SubsidiaryId)},");
-                csvContent.Append($"{CsvSanitiser.SanitiseData(producer.ProducerName)},");
-                csvContent.Append($"{CsvSanitiser.SanitiseData(producer.Level)},");
+                csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerId));
+                csvContent.Append(CsvSanitiser.SanitiseData(producer.SubsidiaryId));
+                csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerName));
+                csvContent.Append(CsvSanitiser.SanitiseData(producer.Level));
 
                 foreach (var disposalFee in producer.ProducerDisposalFeesByMaterial)
                 {
-                    csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.HouseholdPackagingWasteTonnage, DecimalPoint).ToString(DecimalFormat))},");
+                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.HouseholdPackagingWasteTonnage, DecimalPoint, DecimalFormat));
 
-                    csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.PublicBinTonnage, DecimalPoint).ToString(DecimalFormat))},");
+                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.PublicBinTonnage, DecimalPoint, DecimalFormat));
                     if (disposalFee.Key.Code == MaterialCodes.Glass)
                     {
-                        csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.HouseholdDrinksContainersTonnage, DecimalPoint).ToString(DecimalFormat))},");
+                        csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.HouseholdDrinksContainersTonnage, DecimalPoint, DecimalFormat));
                     }
 
-                    csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.TotalReportedTonnage, DecimalPoint).ToString(DecimalFormat))},");
-                    csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.ManagedConsumerWasteTonnage, DecimalPoint).ToString(DecimalFormat))},");
-                    csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.NetReportedTonnage, DecimalPoint).ToString(DecimalFormat))},");
+                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.TotalReportedTonnage, DecimalPoint, DecimalFormat));
+                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ManagedConsumerWasteTonnage, DecimalPoint, DecimalFormat));
+                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.NetReportedTonnage, DecimalPoint, DecimalFormat));
                     csvContent.Append(producer.Level != "Totals" ? $"£{CsvSanitiser.SanitiseData(disposalFee.Value.PricePerTonne)}," : ",");
                     csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.ProducerDisposalFee, DecimalRoundUp))},");
                     csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.BadDebtProvision, DecimalRoundUp))},");
@@ -465,14 +470,14 @@
 
                 foreach (var disposalFee in producer.ProducerCommsFeesByMaterial)
                 {
-                    csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.HouseholdPackagingWasteTonnage, DecimalPoint).ToString(DecimalFormat))},");
-                    csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.ReportedPublicBinTonnage, DecimalPoint).ToString(DecimalFormat))},");
+                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.HouseholdPackagingWasteTonnage, DecimalPoint, DecimalFormat));
+                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ReportedPublicBinTonnage, DecimalPoint, DecimalFormat));
                     if (disposalFee.Key.Code == MaterialCodes.Glass)
                     {
-                        csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.HouseholdDrinksContainers, DecimalPoint).ToString(DecimalFormat))},");
+                        csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.HouseholdDrinksContainers, DecimalPoint, DecimalFormat));
                     }
 
-                    csvContent.Append($"{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.TotalReportedTonnage, DecimalPoint).ToString(DecimalFormat))},");
+                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.TotalReportedTonnage, DecimalPoint, DecimalFormat));
                     csvContent.Append(producer.Level != "Totals" ? $"£{CsvSanitiser.SanitiseData(disposalFee.Value.PriceperTonne)}," : ",");
                     csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.ProducerTotalCostWithoutBadDebtProvision, DecimalRoundUp))},");
                     csvContent.Append($"£{CsvSanitiser.SanitiseData(Math.Round(disposalFee.Value.BadDebtProvision, DecimalRoundUp))},");
@@ -598,11 +603,11 @@
             {
                 if (item.ColumnIndex.HasValue)
                 {
-                    headerRows[item.ColumnIndex.Value - 1] = $"{CsvSanitiser.SanitiseData(item.Name)}";
+                    headerRows[item.ColumnIndex.Value - 1] = CsvSanitiser.SanitiseData(item.Name);
                 }
             }
 
-            var headerRow = string.Join(CommonConstants.Comma, headerRows);
+            var headerRow = string.Join(CommonConstants.CsvFileDelimiter, headerRows);
             csvContent.AppendLine(headerRow);
         }
 
@@ -610,7 +615,7 @@
         {
             foreach (var item in resultSummary.ColumnHeaders)
             {
-                csvContent.Append($"{CsvSanitiser.SanitiseData(item.Name)},");
+                csvContent.Append(CsvSanitiser.SanitiseData(item.Name));
             }
         }
     }

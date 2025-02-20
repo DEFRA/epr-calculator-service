@@ -7,7 +7,10 @@ namespace EPR.Calculator.API.Utils
     {
         public static string SanitiseData<T>(T value)
         {
-            if (value == null) return string.Empty;
+            if (value == null)
+            {
+                return string.Empty;
+            }
 
             // If the value is a string, use it directly; otherwise, serialize the object to JSON.
             var stringToSanitise = value is string
@@ -21,6 +24,24 @@ namespace EPR.Calculator.API.Utils
                                    .Trim();
 
             return stringToSanitise ?? string.Empty;
+        }
+
+        public static string SanitiseData(string value, bool delimitedRequired = true)
+        {
+            return delimitedRequired
+                ? $"{SanitiseData(value)},"
+                : SanitiseData(value);
+        }
+
+        public static string SanitiseData(decimal value, int roundTo, string? valueFormat, bool delimitedRequired = true)
+        {
+            var formattedValue = valueFormat == null
+                ? Math.Round(value, roundTo).ToString()
+                : Math.Round(value, roundTo).ToString(valueFormat);
+
+            return delimitedRequired
+                ? $"{SanitiseData(formattedValue)},"
+                : SanitiseData(formattedValue);
         }
     }
 }
