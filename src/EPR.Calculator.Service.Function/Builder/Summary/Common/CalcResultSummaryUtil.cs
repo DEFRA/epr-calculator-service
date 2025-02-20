@@ -84,7 +84,7 @@
                             tonnage += item.ScaledupProducerTonnageByMaterial[material.Code].ScaledupReportedSelfManagedConsumerWasteTonnage;
                             break;
                         case PackagingTypes.HouseholdDrinksContainers:
-                            tonnage += item.ScaledupProducerTonnageByMaterial[material.Code].ReportedHouseholdPackagingWasteTonnage;
+                            tonnage += item.ScaledupProducerTonnageByMaterial[material.Code].ScaledupHouseholdDrinksContainersTonnageGlass;
                             break;
                         default:
                             tonnage += 0;
