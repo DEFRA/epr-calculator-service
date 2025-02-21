@@ -10,7 +10,9 @@ namespace EPR.Calculator.API.Utils
         {
             if (value == null)
             {
-                return string.Empty;
+                return delimitedRequired
+                    ? ","
+                    : string.Empty;
             }
 
             // If the value is a string, use it directly; otherwise, serialize the object to JSON.
