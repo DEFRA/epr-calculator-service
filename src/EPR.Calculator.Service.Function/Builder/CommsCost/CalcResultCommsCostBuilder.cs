@@ -26,8 +26,10 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
         public const string EnGb = "en-GB";
         public const string PoundSign = "£";
 
-        public async Task<CalcResultCommsCost> Construct(CalcResultsRequestDto resultsRequestDto,
-           CalcResultOnePlusFourApportionment apportionment, CalcResult calcResult)
+        public async Task<CalcResultCommsCost> Construct(
+            CalcResultsRequestDto resultsRequestDto,
+            CalcResultOnePlusFourApportionment apportionment,
+            CalcResult calcResult)
         {
             var runId = resultsRequestDto.RunId;
             var culture = CultureInfo.CreateSpecificCulture(EnGb);
@@ -85,11 +87,11 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             };
             list.Add(header);
 
-            producerReportedMaterials = producerReportedMaterials.Where(t => !calcResult.CalcResultScaledupProducers.ScaledupProducers.
+            producerReportedMaterials = producerReportedMaterials.Where(t => !calcResult.CalcResultScaledupProducers!.ScaledupProducers!.
                 Any(i => i.ProducerId == t.ProducerDetail?.ProducerId)).ToList();
 
-            var scaledUpProducerReportedOn = calcResult.CalcResultScaledupProducers
-                  .ScaledupProducers.First(t => t.IsTotalRow);
+            var scaledUpProducerReportedOn = calcResult.CalcResultScaledupProducers!
+                  .ScaledupProducers!.First(t => t.IsTotalRow);
 
             foreach (var materialName in materialNames)
             {

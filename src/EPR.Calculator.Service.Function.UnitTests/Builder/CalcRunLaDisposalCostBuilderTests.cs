@@ -1,5 +1,6 @@
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
+    using System;
     using AutoFixture;
     using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
     using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
@@ -12,7 +13,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System;
 
     [TestClass]
     public class CalcRunLaDisposalCostBuilderTests
@@ -30,7 +30,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             public decimal Tonnage { get; set; }
 
-            public ProducerDetail ProducerDetail { get; set; }
+            public ProducerDetail? ProducerDetail { get; set; }
         }
 
         public CalcRunLaDisposalCostBuilderTests()
@@ -129,11 +129,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
 
             // Act
-            var filteredData = producerData.Where(t => !calcResult.CalcResultScaledupProducers.ScaledupProducers.Any(i => i.ProducerId == t?.ProducerDetail.ProducerId)).ToList();
+            var filteredData = producerData.Where(t => !calcResult.CalcResultScaledupProducers.ScaledupProducers.Any(i => i.ProducerId == t?.ProducerDetail?.ProducerId)).ToList();
 
             // Assert
             Assert.AreEqual(1, filteredData.Count);
-            Assert.AreEqual(2, filteredData.First().ProducerDetail.ProducerId);
+            Assert.AreEqual(2, filteredData?.First().ProducerDetail?.ProducerId);
         }
 
         [TestMethod]
@@ -145,7 +145,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             calcResult.CalcResultScaledupProducers = GetScaledUpProducers();
 
             // Act
-            var results = builder.Construct(resultsDto, calcResult);
+            var results = this.builder.Construct(resultsDto, calcResult);
             results.Wait();
             var lapcapDisposalCostResults = results.Result;
 
@@ -164,7 +164,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             calcResult.CalcResultScaledupProducers = GetScaledUpProducers();
 
             // Act
-            var results = builder.Construct(resultsDto, calcResult);
+            var results = this.builder.Construct(resultsDto, calcResult);
             results.Wait();
             var lapcapDisposalCostResults = results.Result;
 
@@ -375,7 +375,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                      {
                         ProducerId = 1,
                         IsTotalRow = true,
-                        ScaledupProducerTonnageByMaterial = new ()
+                        ScaledupProducerTonnageByMaterial = new()
                         {
                             ["Aluminium"] = new CalcResultScaledupProducerTonnage
                             {
@@ -396,7 +396,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                      {
                         ProducerId = 1,
                         IsTotalRow = true,
-                        ScaledupProducerTonnageByMaterial = new ()
+                        ScaledupProducerTonnageByMaterial = new()
                         {
                             ["Glass"] = new CalcResultScaledupProducerTonnage
                             {
@@ -417,7 +417,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                      {
                         ProducerId = 1,
                         IsTotalRow = true,
-                        ScaledupProducerTonnageByMaterial = new ()
+                        ScaledupProducerTonnageByMaterial = new()
                         {
                             ["Plastic"] = new CalcResultScaledupProducerTonnage
                             {

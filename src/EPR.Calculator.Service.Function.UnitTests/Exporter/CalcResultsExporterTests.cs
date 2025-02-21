@@ -282,7 +282,7 @@
                     Name = "LAPCAP Data",
                     CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>
                     {
-                        new()
+                        new ()
                         {
                             Name = "Total",
                             EnglandDisposalCost = "£13,280.45",
@@ -494,17 +494,19 @@
                     {
                         Name = "Scaled-up Producers",
                     },
-                    MaterialBreakdownHeaders = [
-                        new CalcResultScaledupProducerHeader{ Name = "Each submission for the year", ColumnIndex = 1 },
+                    MaterialBreakdownHeaders = new List<CalcResultScaledupProducerHeader>()
+                    {
+                        new CalcResultScaledupProducerHeader { Name = "Each submission for the year", ColumnIndex = 1 },
                         new CalcResultScaledupProducerHeader { Name = "Aluminium Breakdown", ColumnIndex = 2 },
-                        new CalcResultScaledupProducerHeader { Name = "Glass Breakdown", ColumnIndex = 3 }
-                    ],
-                    ColumnHeaders = [
-                        new CalcResultScaledupProducerHeader{ Name = "Producer ID" },
+                        new CalcResultScaledupProducerHeader { Name = "Glass Breakdown", ColumnIndex = 3 },
+                    },
+                    ColumnHeaders = new List<CalcResultScaledupProducerHeader>()
+                    {
+                        new CalcResultScaledupProducerHeader { Name = "Producer ID" },
                         new CalcResultScaledupProducerHeader { Name = "Subsidiary ID" },
                         new CalcResultScaledupProducerHeader { Name = "HouseholdDrinksContainersTonnageGlass" },
                         new CalcResultScaledupProducerHeader { Name = "ScaledupHouseholdDrinksContainersTonnageGlass" },
-                    ],
+                    },
                     ScaledupProducers = GetCalcResultScaledupProducerList(),
                 },
                 CalcResultSummary = new CalcResultSummary
@@ -626,6 +628,32 @@
             return scaledupProducerList;
         }
 
+        private static Dictionary<string, CalcResultScaledupProducerTonnage> GetScaledupProducerTonnageByMaterialWithGlass()
+        {
+            var tonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>
+            {
+                {
+                    "GL",
+                    new CalcResultScaledupProducerTonnage
+                    {
+                        ReportedHouseholdPackagingWasteTonnage = 1000,
+                        ReportedPublicBinTonnage = 100,
+                        HouseholdDrinksContainersTonnageGlass = 50,
+                        TotalReportedTonnage = 1100,
+                        ReportedSelfManagedConsumerWasteTonnage = 500,
+                        NetReportedTonnage = 1100,
+                        ScaledupReportedHouseholdPackagingWasteTonnage = 2000,
+                        ScaledupReportedPublicBinTonnage = 200,
+                        ScaledupHouseholdDrinksContainersTonnageGlass = 100,
+                        ScaledupTotalReportedTonnage = 2200,
+                        ScaledupReportedSelfManagedConsumerWasteTonnage = 1000,
+                        ScaledupNetReportedTonnage = 2200,
+                    }
+                },
+            };
+            return tonnageByMaterial;
+        }
+
         private static List<CalcResultScaledupProducer> GetCalcResultScaledupProducerList()
         {
             var scaledupProducerList = new List<CalcResultScaledupProducer>();
@@ -659,32 +687,6 @@
             ]);
 
             return scaledupProducerList;
-        }
-
-        private static Dictionary<string, CalcResultScaledupProducerTonnage> GetScaledupProducerTonnageByMaterialWithGlass()
-        {
-            var tonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>
-            {
-                {
-                    "GL",
-                    new CalcResultScaledupProducerTonnage
-                    {
-                        ReportedHouseholdPackagingWasteTonnage = 1000,
-                        ReportedPublicBinTonnage = 100,
-                        HouseholdDrinksContainersTonnageGlass = 50,
-                        TotalReportedTonnage = 1100,
-                        ReportedSelfManagedConsumerWasteTonnage = 500,
-                        NetReportedTonnage = 1100,
-                        ScaledupReportedHouseholdPackagingWasteTonnage = 2000,
-                        ScaledupReportedPublicBinTonnage = 200,
-                        ScaledupHouseholdDrinksContainersTonnageGlass = 100,
-                        ScaledupTotalReportedTonnage = 2200,
-                        ScaledupReportedSelfManagedConsumerWasteTonnage = 1000,
-                        ScaledupNetReportedTonnage = 2200,
-                    }
-                },
-            };
-            return tonnageByMaterial;
         }
     }
 }

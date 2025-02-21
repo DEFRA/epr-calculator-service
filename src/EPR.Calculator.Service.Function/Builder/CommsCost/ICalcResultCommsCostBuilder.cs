@@ -6,7 +6,9 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
 {
     public interface ICalcResultCommsCostBuilder
     {
-        Task<CalcResultCommsCost> Construct(CalcResultsRequestDto resultsRequestDto,
-           CalcResultOnePlusFourApportionment apportionment, CalcResult calcResult);
+        Task<CalcResultCommsCost> Construct(
+            CalcResultsRequestDto resultsRequestDto,
+            CalcResultOnePlusFourApportionment apportionment,
+            CalcResult calcResult);
     }
 }

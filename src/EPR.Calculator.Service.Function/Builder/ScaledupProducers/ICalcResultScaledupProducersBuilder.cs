@@ -1,9 +1,9 @@
-﻿using EPR.Calculator.Service.Function.Dtos;
-using EPR.Calculator.Service.Function.Models;
-using System.Threading.Tasks;
-
-namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
+﻿namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
 {
+    using System.Threading.Tasks;
+    using EPR.Calculator.Service.Function.Dtos;
+    using EPR.Calculator.Service.Function.Models;
+
     public interface ICalcResultScaledupProducersBuilder
     {
         Task<CalcResultScaledupProducers> Construct(CalcResultsRequestDto resultsRequestDto);
