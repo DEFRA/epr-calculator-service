@@ -37,7 +37,7 @@
             var materialsFromDb = await this.context.Material.ToListAsync();
             var materials = MaterialMapper.Map(materialsFromDb);
 
-            var scaledupProducersSummary = new CalcResultScaledupProducers();
+            List<CalcResultScaledupProducer> orderedRunProducerMaterialDetails = new List<CalcResultScaledupProducer>();
 
             var organisationIds = await this.GetScaledUpOrganisationIdsAsync(resultsRequestDto.RunId);
             if (organisationIds != null && organisationIds.Any())
@@ -50,7 +50,7 @@
 
                 this.CalculateScaledupTonnage(runProducerMaterialDetails, allOrganisationPomDetails, materials);
 
-                var orderedRunProducerMaterialDetails = runProducerMaterialDetails
+                orderedRunProducerMaterialDetails = runProducerMaterialDetails
                     .OrderBy(p => p.ProducerId)
                     .ThenBy(p => p.Level)
                     .ThenBy(p => p.SubsidiaryId)
@@ -60,8 +60,12 @@
                 var overallTotalRow = this.GetOverallTotalRow(orderedRunProducerMaterialDetails, materials);
 
                 orderedRunProducerMaterialDetails.Add(overallTotalRow);
-                scaledupProducersSummary.ScaledupProducers = orderedRunProducerMaterialDetails;
             }
+
+            var scaledupProducersSummary = new CalcResultScaledupProducers
+            {
+                ScaledupProducers = orderedRunProducerMaterialDetails,
+            };
 
             SetHeaders(scaledupProducersSummary, materials);
             return scaledupProducersSummary;

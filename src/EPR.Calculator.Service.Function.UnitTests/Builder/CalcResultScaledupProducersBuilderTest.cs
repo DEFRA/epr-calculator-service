@@ -368,7 +368,10 @@
         [TestMethod]
         public void SetHeadersTest()
         {
-            var producers = new CalcResultScaledupProducers();
+            var producers = new CalcResultScaledupProducers
+            {
+                ScaledupProducers = new List<CalcResultScaledupProducer>(),
+            };
             var materials = new List<Material>();
             materials.Add(new Material { Code = "AL", Name = "Aluminium" });
             var materialDetails = MaterialMapper.Map(materials);
