@@ -597,7 +597,12 @@
         private static void PrepareSummaryDataHeader(CalcResultSummary resultSummary, StringBuilder csvContent)
         {
             // Add result summary header
-            csvContent.AppendLine(CsvSanitiser.SanitiseData(resultSummary.ResultSummaryHeader?.Name));
+            csvContent.AppendLine(CsvSanitiser.SanitiseData(resultSummary.ResultSummaryHeader?.Name))
+                .AppendLine()
+                .AppendLine();
+
+            // Add notes header
+            csvContent.AppendLine(CsvSanitiser.SanitiseData(resultSummary.NotesHeader?.Name));
 
             // Add producer disposal fees header
             WriteSecondaryHeaders(csvContent, resultSummary.ProducerDisposalFeesHeaders);

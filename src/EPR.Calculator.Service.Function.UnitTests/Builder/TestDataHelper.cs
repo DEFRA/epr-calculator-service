@@ -1162,11 +1162,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                                     ReportedPublicBinTonnage = 20,
                                     TotalReportedTonnage = 120,
                                     ReportedSelfManagedConsumerWasteTonnage = 60,
+                                    HouseholdDrinksContainersTonnageGlass = 70,
                                     NetReportedTonnage = 180,
                                     ScaledupReportedHouseholdPackagingWasteTonnage = 200,
                                     ScaledupReportedPublicBinTonnage = 40,
                                     ScaledupTotalReportedTonnage = 240,
                                     ScaledupReportedSelfManagedConsumerWasteTonnage = 120,
+                                    ScaledupHouseholdDrinksContainersTonnageGlass = 140,
                                     ScaledupNetReportedTonnage = 360,
                                 }
                             },

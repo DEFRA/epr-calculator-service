@@ -59,7 +59,7 @@
             var lines = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
             // Assert
-            int expectedLineCount = 65;
+            int expectedLineCount = 68;
             Assert.AreEqual(expectedLineCount, lines.Length);
         }
 

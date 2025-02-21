@@ -240,7 +240,7 @@
             var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.HouseholdDrinksContainers, scaledupProducers!);
 
             // Assert
-            Assert.AreEqual(100.00m, result);
+            Assert.AreEqual(140m, result);
         }
 
         [TestMethod]

@@ -22,6 +22,7 @@
     public static class CalcResultSummaryUtil
     {
         public const int ResultSummaryHeaderColumnIndex = 1;
+        public const int NotesHeaderColumnIndex = 1;
         public const int ProducerDisposalFeesHeaderColumnIndex = 6;
         public const int CommsCostHeaderColumnIndex = 118;
         public const int MaterialsBreakdownHeaderInitialColumnIndex = 6;
@@ -83,7 +84,7 @@
                             tonnage += scaledupProducerTonnageByMaterial[material.Code].ScaledupReportedSelfManagedConsumerWasteTonnage;
                             break;
                         case PackagingTypes.HouseholdDrinksContainers:
-                            tonnage += scaledupProducerTonnageByMaterial[material.Code].ReportedHouseholdPackagingWasteTonnage;
+                            tonnage += item.ScaledupProducerTonnageByMaterial[material.Code].ScaledupHouseholdDrinksContainersTonnageGlass;
                             break;
                         default:
                             tonnage += 0;
@@ -407,6 +408,12 @@
             result.ResultSummaryHeader = new CalcResultSummaryHeader
             {
                 Name = CalcResultSummaryHeaders.CalculationResult,
+                ColumnIndex = ResultSummaryHeaderColumnIndex,
+            };
+
+            result.NotesHeader = new CalcResultSummaryHeader
+            {
+                Name = CalcResultSummaryHeaders.Notes,
                 ColumnIndex = ResultSummaryHeaderColumnIndex,
             };
 
