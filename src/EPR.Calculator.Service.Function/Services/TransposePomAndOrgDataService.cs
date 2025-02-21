@@ -35,10 +35,15 @@
             public string? SubmissionPeriodDesc { get; set; }
         }
 
-        public TransposePomAndOrgDataService(IDbContextFactory<ApplicationDBContext> context)
+        public TransposePomAndOrgDataService(
+            IDbContextFactory<ApplicationDBContext> context,
+            ICommandTimeoutService commandTimeoutService)
         {
             this.context = context.CreateDbContext();
+            this.CommandTimeoutService = commandTimeoutService;
         }
+
+        public ICommandTimeoutService CommandTimeoutService { get; init; }
 
         public async Task<bool> TransposeBeforeCalcResults(
             [FromBody] CalcResultsRequestDto resultsRequestDto,
@@ -46,7 +51,7 @@
         {
             var startTime = DateTime.Now;
 
-            new CommandTimeoutService().SetCommandTimeout(context.Database, "TransposeCommand");
+            this.CommandTimeoutService.SetCommandTimeout(context.Database);
 
             CalculatorRun? calculatorRun = null;
             try
