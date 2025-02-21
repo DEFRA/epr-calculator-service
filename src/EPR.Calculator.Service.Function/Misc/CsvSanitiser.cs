@@ -1,11 +1,12 @@
-﻿using Newtonsoft.Json;
+﻿using EPR.Calculator.Service.Function.Enums;
+using Newtonsoft.Json;
 using System;
 
 namespace EPR.Calculator.API.Utils
 {
     public static class CsvSanitiser
     {
-        public static string SanitiseData<T>(T value)
+        public static string SanitiseData<T>(T value, bool delimitedRequired = true)
         {
             if (value == null)
             {
@@ -21,27 +22,37 @@ namespace EPR.Calculator.API.Utils
             stringToSanitise = stringToSanitise?.Replace(Environment.NewLine, string.Empty)
                                    .Replace("\t", string.Empty)
                                    .Replace(",", string.Empty)
-                                   .Trim();
+                                   .Trim() ?? string.Empty;
 
-            return stringToSanitise ?? string.Empty;
-        }
-
-        public static string SanitiseData(string value, bool delimitedRequired = true)
-        {
             return delimitedRequired
-                ? $"{SanitiseData(value)},"
-                : SanitiseData(value);
+                ? $"{stringToSanitise},"
+                : stringToSanitise;
         }
 
-        public static string SanitiseData(decimal value, int roundTo, string? valueFormat, bool isCurrency = false, bool delimitedRequired = true)
+        public static string SanitiseData(
+            decimal value,
+            DecimalPlaces? roundTo,
+            DecimalFormats? valueFormat,
+            bool isCurrency = false,
+            bool isPercentage = false,
+            bool delimitedRequired = true)
         {
+            var roundedValue = roundTo == null
+                ? value
+                : Math.Round(value, (int)roundTo);
+
             var formattedValue = valueFormat == null
-                ? Math.Round(value, roundTo).ToString()
-                : Math.Round(value, roundTo).ToString(valueFormat);
+                ? roundedValue.ToString()
+                : roundedValue.ToString(valueFormat.ToString());
 
             if (isCurrency)
             {
                 formattedValue = $"£{formattedValue}";
+            }
+
+            if (isPercentage)
+            {
+                formattedValue = $"{formattedValue}%";
             }
 
             return delimitedRequired
