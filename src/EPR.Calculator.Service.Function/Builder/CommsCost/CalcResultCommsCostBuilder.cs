@@ -89,7 +89,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                 Any(i => i.ProducerId == t.ProducerDetail?.ProducerId)).ToList();
 
             var scaledUpProducerReportedOn = calcResult.CalcResultScaledupProducers
-                  .ScaledupProducers.First(t => t.IsTotalRow);
+                  .ScaledupProducers.FirstOrDefault(t => t.IsTotalRow);
 
             foreach (var materialName in materialNames)
             {
@@ -99,21 +99,18 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                 var producerReportedTon = producerReportedMaterials.Where(x => x.MaterialId == currentMaterial.Id && x.PackagingType != PackagingTypes.PublicBin && x.PackagingType != PackagingTypes.HouseholdDrinksContainers)
                     .Sum(x => x.PackagingTonnage);
 
-                var scaledProducerTonnages = new CalcResultScaledupProducerTonnage();
-
-                if (scaledUpProducerReportedOn.ScaledupProducerTonnageByMaterial.TryGetValue(materialName, out var val))
-                {
-                    scaledProducerTonnages = val;
-                }
+                var scaledProducerTonnages = scaledUpProducerReportedOn
+                    ?.ScaledupProducerTonnageByMaterial
+                    .GetValueOrDefault(materialName, new CalcResultScaledupProducerTonnage());
 
                 var lateReportingTonnage = allDefaultResults.Single(x =>
                     x.ParameterType == LateReportingTonnage && x.ParameterCategory == materialName);
                 var publicBinTonnage = producerReportedMaterials.Where(p => p.MaterialId == currentMaterial.Id && p.PackagingType == PackagingTypes.PublicBin).Sum(p => p.PackagingTonnage);
                 var householdcontainers = producerReportedMaterials.Where(p => p.MaterialId == currentMaterial.Id && p.PackagingType == PackagingTypes.HouseholdDrinksContainers).Sum(p => p.PackagingTonnage);
 
-                commsCost.ProducerReportedHouseholdPackagingWasteTonnageValue = producerReportedTon + scaledProducerTonnages.ScaledupReportedHouseholdPackagingWasteTonnage;
-                commsCost.ReportedPublicBinTonnageValue = publicBinTonnage + scaledProducerTonnages.ScaledupReportedPublicBinTonnage;
-                commsCost.HouseholdDrinksContainersValue = householdcontainers + scaledProducerTonnages.ScaledupHouseholdDrinksContainersTonnageGlass;
+                commsCost.ProducerReportedHouseholdPackagingWasteTonnageValue = producerReportedTon + (scaledProducerTonnages?.ScaledupReportedHouseholdPackagingWasteTonnage ?? 0);
+                commsCost.ReportedPublicBinTonnageValue = publicBinTonnage + (scaledProducerTonnages?.ScaledupReportedPublicBinTonnage ?? 0);
+                commsCost.HouseholdDrinksContainersValue = householdcontainers + (scaledProducerTonnages?.ScaledupHouseholdDrinksContainersTonnageGlass ?? 0);
 
                 commsCost.LateReportingTonnageValue = lateReportingTonnage.ParameterValue;
                 commsCost.ProducerReportedTotalTonnage =

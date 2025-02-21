@@ -10,6 +10,6 @@ namespace EPR.Calculator.Service.Function.Models
 
         public IEnumerable<CalcResultScaledupProducerHeader> ColumnHeaders { get; set; }
 
-        public IEnumerable<CalcResultScaledupProducer> ScaledupProducers { get; set; }
+        required public IEnumerable<CalcResultScaledupProducer> ScaledupProducers { get; set; }
     }
 }
