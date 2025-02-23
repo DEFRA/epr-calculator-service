@@ -336,7 +336,7 @@
                         csvContent.Append(CsvSanitiser.SanitiseData(producer.SubsidiaryId));
                         csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerName));
                         csvContent.Append(CsvSanitiser.SanitiseData(producer.Level));
-                        csvContent.Append(CsvSanitiser.SanitiseData(producer.SubmissonPeriodCode));
+                        csvContent.Append(CsvSanitiser.SanitiseData(producer.SubmissionPeriodCode));
                         csvContent.Append(CsvSanitiser.SanitiseData(producer.DaysInSubmissionPeriod != -1 ? producer.DaysInSubmissionPeriod.ToString() : string.Empty));
                         csvContent.Append(CsvSanitiser.SanitiseData(producer.DaysInWholePeriod != -1 ? producer.DaysInWholePeriod.ToString() : string.Empty));
                         csvContent.Append(CsvSanitiser.SanitiseData(producer.ScaleupFactor == -1 ? CommonConstants.Totals : producer.ScaleupFactor.ToString()));
@@ -344,10 +344,13 @@
 
                     foreach (var producerTonnage in producer.ScaledupProducerTonnageByMaterial)
                     {
+                        var materialCode = producerTonnage.Key;
+                        var tonnage = producerTonnage.Value;
+
                         csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ReportedHouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                         csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ReportedPublicBinTonnage, DecimalPlaces.Three, DecimalFormats.F3));
 
-                        if (materialCode == MaterialCodes.Glass || materialCode == MaterialNames.Glass)
+                        if (materialCode == MaterialCodes.Glass)
                         {
                             csvContent.Append(CsvSanitiser.SanitiseData(tonnage.HouseholdDrinksContainersTonnageGlass, DecimalPlaces.Three, DecimalFormats.F3));
                         }
@@ -358,7 +361,7 @@
                         csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ScaledupReportedHouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                         csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ScaledupReportedPublicBinTonnage, DecimalPlaces.Three, DecimalFormats.F3));
 
-                        if (producerTonnage.Key == MaterialCodes.Glass || producerTonnage.Key == MaterialNames.Glass)
+                        if (materialCode == MaterialCodes.Glass)
                         {
                             csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ScaledupHouseholdDrinksContainersTonnageGlass, DecimalPlaces.Three, DecimalFormats.F3));
                         }
