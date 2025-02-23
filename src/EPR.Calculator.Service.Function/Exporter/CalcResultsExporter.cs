@@ -344,9 +344,6 @@
 
                     foreach (var producerTonnage in producer.ScaledupProducerTonnageByMaterial)
                     {
-                        var materialCode = producerTonnage.Key;
-                        var tonnage = producerTonnage.Value;
-
                         csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ReportedHouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                         csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ReportedPublicBinTonnage, DecimalPlaces.Three, DecimalFormats.F3));
 
@@ -361,7 +358,7 @@
                         csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ScaledupReportedHouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                         csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ScaledupReportedPublicBinTonnage, DecimalPlaces.Three, DecimalFormats.F3));
 
-                        if (materialCode == MaterialCodes.Glass || materialCode == MaterialNames.Glass)
+                        if (producerTonnage.Key == MaterialCodes.Glass || producerTonnage.Key == MaterialNames.Glass)
                         {
                             csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ScaledupHouseholdDrinksContainersTonnageGlass, DecimalPlaces.Three, DecimalFormats.F3));
                         }
@@ -406,7 +403,7 @@
                 }
             }
 
-            var headerRow = string.Join(",", headerRows);
+            var headerRow = string.Join(CommonConstants.Comma, headerRows);
             csvContent.AppendLine(headerRow);
         }
 
@@ -434,6 +431,7 @@
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.SubsidiaryId));
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerName));
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.Level));
+                csvContent.Append(CsvSanitiser.SanitiseData(producer.isProducerScaledup));
 
                 foreach (var disposalFee in producer.ProducerDisposalFeesByMaterial)
                 {
@@ -449,7 +447,7 @@
                     csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ManagedConsumerWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                     csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.NetReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
 
-                    csvContent.Append(producer.Level != CommonConstants.Totals ? CsvSanitiser.SanitiseData(disposalFee.Value.PricePerTonne, null, null, true) : ",");
+                    csvContent.Append(producer.isProducerScaledup != CommonConstants.Totals ? CsvSanitiser.SanitiseData(disposalFee.Value.PricePerTonne, null, null, true) : ",");
                     csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ProducerDisposalFee, DecimalPlaces.Two, null, true));
                     csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.BadDebtProvision, DecimalPlaces.Two, null, true));
                     csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ProducerDisposalFeeWithBadDebtProvision, DecimalPlaces.Two, null, true));
@@ -477,7 +475,7 @@
                     }
 
                     csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.TotalReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                    csvContent.Append(producer.Level != CommonConstants.Totals ? CsvSanitiser.SanitiseData(disposalFee.Value.PriceperTonne, null, null, true) : ",");
+                    csvContent.Append(producer.isProducerScaledup != CommonConstants.Totals ? CsvSanitiser.SanitiseData(disposalFee.Value.PriceperTonne, null, null, true) : ",");
                     csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ProducerTotalCostWithoutBadDebtProvision, DecimalPlaces.Two, null, true));
                     csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.BadDebtProvision, DecimalPlaces.Two, null, true));
                     csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ProducerTotalCostwithBadDebtProvision, DecimalPlaces.Two, null, true));
@@ -580,7 +578,12 @@
         private static void PrepareSummaryDataHeader(CalcResultSummary resultSummary, StringBuilder csvContent)
         {
             // Add result summary header
-            csvContent.AppendLine(CsvSanitiser.SanitiseData(resultSummary.ResultSummaryHeader?.Name));
+            csvContent.AppendLine(CsvSanitiser.SanitiseData(resultSummary.ResultSummaryHeader?.Name))
+                .AppendLine()
+                .AppendLine();
+
+            // Add notes header
+            csvContent.AppendLine(CsvSanitiser.SanitiseData(resultSummary.NotesHeader?.Name));
 
             // Add producer disposal fees header
             WriteSecondaryHeaders(csvContent, resultSummary.ProducerDisposalFeesHeaders);
