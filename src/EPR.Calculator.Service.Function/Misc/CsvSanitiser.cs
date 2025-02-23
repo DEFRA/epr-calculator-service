@@ -1,9 +1,9 @@
-﻿using EPR.Calculator.Service.Function.Enums;
-using Newtonsoft.Json;
-using System;
-
-namespace EPR.Calculator.API.Utils
+﻿namespace EPR.Calculator.API.Utils
 {
+    using System;
+    using EPR.Calculator.Service.Function.Enums;
+    using Newtonsoft.Json;
+
     public static class CsvSanitiser
     {
         public static string SanitiseData<T>(T value, bool delimitedRequired = true)
@@ -57,9 +57,7 @@ namespace EPR.Calculator.API.Utils
                 formattedValue = $"{formattedValue}%";
             }
 
-            return delimitedRequired
-                ? $"{SanitiseData(formattedValue)},"
-                : SanitiseData(formattedValue);
+            return SanitiseData(formattedValue, delimitedRequired);
         }
     }
 }

@@ -1,47 +1,125 @@
-namespace EPR.Calculator.Service.Function.UnitTests
+﻿namespace EPR.Calculator.Service.Function.UnitTests
 {
-    using System;
-    using AutoFixture;
     using EPR.Calculator.API.Utils;
     using EPR.Calculator.Service.Function.Enums;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using T = System.String;
 
     [TestClass]
     public class CsvSanitiserTests
     {
         [TestMethod]
-        public void CanCallSanitiseDataWithValueAndDelimitedRequired()
+        public void ShouldSanitiseDataWithDelimiter()
         {
             // Arrange
-            var fixture = new Fixture();
-            var value = fixture.Create<T>();
-            var delimitedRequired = fixture.Create<bool>();
+            var data = "Some data\n\t";
 
             // Act
-            var result = CsvSanitiser.SanitiseData<T>(value, delimitedRequired);
+            var result = CsvSanitiser.SanitiseData(data);
 
             // Assert
-            Assert.Fail("Create or modify test");
+            Assert.AreEqual(result, "Some data,");
         }
 
         [TestMethod]
-        public void CanCallSanitiseDataWithValueAndRoundToAndValueFormatAndIsCurrencyAndIsPercentageAndDelimitedRequired()
+        public void ShouldSanitiseDataWithoutDemiliter()
         {
             // Arrange
-            var fixture = new Fixture();
-            var value = fixture.Create<decimal>();
-            var roundTo = fixture.Create<DecimalPlaces?>();
-            var valueFormat = fixture.Create<DecimalFormats?>();
-            var isCurrency = fixture.Create<bool>();
-            var isPercentage = fixture.Create<bool>();
-            var delimitedRequired = fixture.Create<bool>();
+            var data = "Some,\t data";
 
             // Act
-            var result = CsvSanitiser.SanitiseData(value, roundTo, valueFormat, isCurrency, isPercentage, delimitedRequired);
+            var result = CsvSanitiser.SanitiseData(data, false);
 
             // Assert
-            Assert.Fail("Create or modify test");
+            Assert.AreEqual(result, "Some data");
+        }
+
+        [TestMethod]
+        public void ShouldReturnCommaIfNoDataWithDelimitedEnabled()
+        {
+            // Arrange
+            var data = string.Empty;
+
+            // Act
+            var result = CsvSanitiser.SanitiseData(data);
+
+            // Assert
+            Assert.AreEqual(",", result);
+        }
+
+        [TestMethod]
+        public void ShouldReturnEmptyStringIfNoDataWithoutDelimiter()
+        {
+            // Arrange
+            var data = string.Empty;
+
+            // Act
+            var result = CsvSanitiser.SanitiseData(data, false);
+
+            // Assert
+            Assert.AreEqual(string.Empty, result);
+        }
+
+        [TestMethod]
+        public void ShouldSanitiseCurrencyDataWithDelimiter()
+        {
+            // Arrange
+            var data = 100.5987m;
+            var decimalPlaces = DecimalPlaces.Two;
+            var isCurrency = true;
+
+            // Act
+            var result = CsvSanitiser.SanitiseData(data, decimalPlaces, null, isCurrency);
+
+            // Assert
+            Assert.AreEqual("£100.60,", result);
+        }
+
+        [TestMethod]
+        public void ShouldSanitiseCurrencyDataWithoutDelimiter()
+        {
+            // Arrange
+            var data = 290.5987432m;
+            var decimalPlaces = DecimalPlaces.Three;
+            var isCurrency = true;
+            var isPercentage = false;
+
+            // Act
+            var result = CsvSanitiser.SanitiseData(data, decimalPlaces, null, isCurrency, isPercentage, false);
+
+            // Assert
+            Assert.AreEqual("£290.599", result);
+        }
+
+        [TestMethod]
+        public void ShouldSanitisePercentageDataWithDelimiter()
+        {
+            // Arrange
+            var data = 79.798m;
+            var decimalPlaces = DecimalPlaces.Two;
+            var isCurrency = false;
+            var isPercentage = true;
+
+            // Act
+            var result = CsvSanitiser.SanitiseData(data, decimalPlaces, null, isCurrency, isPercentage);
+
+            // Assert
+            Assert.AreEqual("79.80%,", result);
+        }
+
+        [TestMethod]
+        public void ShouldSanitisePercentageDataWithoutDelimiter()
+        {
+            // Arrange
+            var data = 83.456m;
+            var decimalPlaces = DecimalPlaces.Two;
+            var isCurrency = false;
+            var isPercentage = true;
+
+            // Act
+            var result = CsvSanitiser.SanitiseData(data, decimalPlaces, null, isCurrency, isPercentage, false);
+
+            // Assert
+            Assert.AreEqual("83.46%", result);
         }
     }
 }

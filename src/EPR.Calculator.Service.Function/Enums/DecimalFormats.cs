@@ -4,7 +4,6 @@
 
     public enum DecimalFormats
     {
-        None,
         F2,
         F3,
     }
