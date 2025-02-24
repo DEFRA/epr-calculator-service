@@ -191,7 +191,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             // Assign
             var resultsDto = new CalcResultsRequestDto { RunId = 1 };
             var calcResult = TestDataHelper.GetCalcResult();
-            this.SeedDatabase(this.dbContext);
+            SeedDatabase(this.dbContext);
 
             calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers()
             {
@@ -250,7 +250,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             // Assign
             var resultsDto = new CalcResultsRequestDto { RunId = 1 };
             var calcResult = TestDataHelper.GetCalcResult();
-            this.SeedDatabase(this.dbContext);
+            SeedDatabase(this.dbContext);
 
             calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers()
             {
@@ -309,7 +309,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             // Assign
             var resultsDto = new CalcResultsRequestDto { RunId = 1 };
             var calcResult = TestDataHelper.GetCalcResult();
-            this.SeedDatabase(this.dbContext);
+            SeedDatabase(this.dbContext);
             calcResult.CalcResultScaledupProducers = GetScaledUpProducers();
 
             // Act
@@ -327,7 +327,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
              // Assign
             var resultsDto = new CalcResultsRequestDto { RunId = 1 };
             var calcResult = TestDataHelper.GetCalcResult();
-            this.SeedDatabase(this.dbContext);
+            SeedDatabase(this.dbContext);
             calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers()
             {
                 ScaledupProducers = new List<CalcResultScaledupProducer>()
@@ -438,7 +438,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
         }
 
-        private void SeedDatabase(ApplicationDBContext context)
+        private static void SeedDatabase(ApplicationDBContext context)
         {
             var run = new CalculatorRun { Id = 1, Financial_Year = "2024-25", Name = "CalculatorRunTest1" };
             context.CalculatorRuns.Add(run);
