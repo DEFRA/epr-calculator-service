@@ -322,14 +322,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var lapcapDisposalCostResults = results.Result;
 
             // Assert
+            var culture = CultureInfo.GetCultureInfo("en-GB");
             var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails?.Single(x => x.Name == MaterialNames.Glass);
             Assert.IsNotNull(laDisposalCost);
             Assert.AreEqual(MaterialNames.Glass, laDisposalCost.Name);
-            Assert.AreEqual(45000.00, double.Parse(laDisposalCost.England, NumberStyles.Currency));
-            Assert.AreEqual(0, double.Parse(laDisposalCost.Wales, NumberStyles.Currency));
-            Assert.AreEqual(20700.00, double.Parse(laDisposalCost.Scotland, NumberStyles.Currency));
-            Assert.AreEqual(4500.00, double.Parse(laDisposalCost.NorthernIreland, NumberStyles.Currency));
-            Assert.AreEqual(70200.00, double.Parse(laDisposalCost.Total, NumberStyles.Currency));
+            Assert.AreEqual(45000.00, double.Parse(laDisposalCost.England, NumberStyles.Currency, culture));
+            Assert.AreEqual(0, double.Parse(laDisposalCost.Wales, NumberStyles.Currency, culture));
+            Assert.AreEqual(20700.00, double.Parse(laDisposalCost.Scotland, NumberStyles.Currency, culture));
+            Assert.AreEqual(4500.00, double.Parse(laDisposalCost.NorthernIreland, NumberStyles.Currency, culture));
+            Assert.AreEqual(70200.00, double.Parse(laDisposalCost.Total, NumberStyles.Currency, culture));
             Assert.AreEqual(0, double.Parse(laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage));
             Assert.AreEqual(0, double.Parse(laDisposalCost.ReportedPublicBinTonnage));
             Assert.AreEqual(500, double.Parse(laDisposalCost.HouseholdDrinkContainers));
