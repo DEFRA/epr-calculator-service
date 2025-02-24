@@ -56,5 +56,4 @@
             return selector(totalFee);
         }
     }
-
 }
