@@ -46,7 +46,7 @@ public static class CalcResultOneAndTwoAUtil
         }
 
         var totalFee = producerDisposalFees
-            .FirstOrDefault(t => t.isProducerScaledup == CommonConstants.Totals);
+            .FirstOrDefault(t => t.IsProducerScaledup == CommonConstants.Totals);
 
         if (totalFee is null)
         {
