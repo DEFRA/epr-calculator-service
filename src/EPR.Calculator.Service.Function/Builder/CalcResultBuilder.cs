@@ -94,7 +94,7 @@ namespace EPR.Calculator.Service.Function.Builder
             this._telemetryClient.TrackTrace("lapcapplusFourApportionmentBuilder end...");
 
             this._telemetryClient.TrackTrace("commsCostReportBuilder started...");
-            result.CalcResultCommsCostReportDetail = await this.commsCostReportBuilder.Construct(resultsRequestDto, result.CalcResultOnePlusFourApportionment);
+            result.CalcResultCommsCostReportDetail = await this.commsCostReportBuilder.Construct(resultsRequestDto, result.CalcResultOnePlusFourApportionment, result);
             this._telemetryClient.TrackTrace("commsCostReportBuilder end...");
 
             this._telemetryClient.TrackTrace("laDisposalCostBuilder started...");
