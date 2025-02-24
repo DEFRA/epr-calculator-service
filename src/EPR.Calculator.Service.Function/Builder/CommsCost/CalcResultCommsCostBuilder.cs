@@ -85,6 +85,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             };
             list.Add(header);
 
+            var producerReportedMaterials1 = producerReportedMaterials;
             producerReportedMaterials = producerReportedMaterials.Where(t => !calcResult.CalcResultScaledupProducers.ScaledupProducers.
                 Any(i => i.ProducerId == t.ProducerDetail?.ProducerId)).ToList();
 

@@ -13,6 +13,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
     using Microsoft.EntityFrameworkCore.Diagnostics;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System;
+    using System.Globalization;
 
     [TestClass]
     public class CalcRunLaDisposalCostBuilderTests
@@ -303,6 +304,40 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         }
 
         [TestMethod]
+        public void Should_Return_Material_Data_With_Household_Drink_Containers_NoScaledUpData()
+        {
+            // Assign
+            var resultsDto = new CalcResultsRequestDto { RunId = 1 };
+            var calcResult = TestDataHelper.GetCalcResult();
+            this.SeedDatabase(this.dbContext);
+
+            calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers()
+            {
+                ScaledupProducers = new List<CalcResultScaledupProducer>(),
+            };
+
+            // Act
+            var results = this.builder.Construct(resultsDto, calcResult);
+            results.Wait();
+            var lapcapDisposalCostResults = results.Result;
+
+            // Assert
+            var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails?.Single(x => x.Name == MaterialNames.Glass);
+            Assert.IsNotNull(laDisposalCost);
+            Assert.AreEqual(MaterialNames.Glass, laDisposalCost.Name);
+            Assert.AreEqual(45000.00, double.Parse(laDisposalCost.England, NumberStyles.Currency));
+            Assert.AreEqual(0, double.Parse(laDisposalCost.Wales, NumberStyles.Currency));
+            Assert.AreEqual(20700.00, double.Parse(laDisposalCost.Scotland, NumberStyles.Currency));
+            Assert.AreEqual(4500.00, double.Parse(laDisposalCost.NorthernIreland, NumberStyles.Currency));
+            Assert.AreEqual(70200.00, double.Parse(laDisposalCost.Total, NumberStyles.Currency));
+            Assert.AreEqual(0, double.Parse(laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage));
+            Assert.AreEqual(0, double.Parse(laDisposalCost.ReportedPublicBinTonnage));
+            Assert.AreEqual(500, double.Parse(laDisposalCost.HouseholdDrinkContainers));
+            Assert.AreEqual(0, double.Parse(laDisposalCost.LateReportingTonnage));
+            Assert.AreEqual(500, double.Parse(laDisposalCost.ProducerReportedTotalTonnage));
+        }
+
+        [TestMethod]
         public async Task Should_Calculate_ProducerDataTotal_For_Total_Material()
         {
             // Arrange
@@ -363,6 +398,27 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails?.Single(x => x.Name == MaterialNames.Plastic);
             Assert.IsNotNull(laDisposalCost);
             Assert.AreEqual("700", laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage);
+        }
+
+        [TestMethod]
+        public async Task Should_Calculate_ProducerDataTotal_For_Specific_Material_NoScaledUpData()
+        {
+            // Assign
+            var resultsDto = new CalcResultsRequestDto { RunId = 1 };
+            var calcResult = TestDataHelper.GetCalcResult();
+            this.SeedDatabase(this.dbContext);
+            calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers()
+            {
+                ScaledupProducers = new List<CalcResultScaledupProducer>(),
+            };
+
+            // Act
+            var lapcapDisposalCostResults = await this.builder.Construct(resultsDto, calcResult);
+
+            // Assert
+            var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails?.Single(x => x.Name == MaterialNames.Plastic);
+            Assert.IsNotNull(laDisposalCost);
+            Assert.AreEqual(400, double.Parse(laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage));
         }
 
         private static CalcResultScaledupProducers GetScaledUpProducers()
