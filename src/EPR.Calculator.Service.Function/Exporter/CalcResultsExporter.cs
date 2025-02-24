@@ -7,6 +7,7 @@
     using EPR.Calculator.API.Utils;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Models;
+    using Microsoft.IdentityModel.Tokens;
 
     public class CalcResultsExporter : ICalcResultsExporter<CalcResult>
     {
@@ -318,7 +319,7 @@
             PrepareScaledupProducersHeader(producers, csvContent);
 
             // Add data
-            if (producers.ScaledupProducers != null)
+            if (!producers.ScaledupProducers.IsNullOrEmpty())
             {
                 foreach (var producer in producers.ScaledupProducers)
                 {
