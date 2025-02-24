@@ -618,6 +618,7 @@
             Assert.IsNotNull(producerDisposalFees);
 
             var totals = producerDisposalFees.First(t => t.IsProducerScaledup == "Totals");
+
             var producer = producerDisposalFees.First(t => t.Level == "1");
             Assert.IsNotNull(producer);
 

@@ -310,6 +310,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var resultsDto = new CalcResultsRequestDto { RunId = 1 };
             var calcResult = TestDataHelper.GetCalcResult();
             SeedDatabase(this.dbContext);
+
             calcResult.CalcResultScaledupProducers = GetScaledUpProducers();
 
             // Act
@@ -328,6 +329,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var resultsDto = new CalcResultsRequestDto { RunId = 1 };
             var calcResult = TestDataHelper.GetCalcResult();
             SeedDatabase(this.dbContext);
+
             calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers()
             {
                 ScaledupProducers = new List<CalcResultScaledupProducer>()

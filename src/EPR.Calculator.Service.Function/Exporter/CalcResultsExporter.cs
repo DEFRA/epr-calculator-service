@@ -413,7 +413,7 @@
                 }
             }
 
-            var headerRow = string.Join(",", headerRows);
+            var headerRow = string.Join(CommonConstants.Comma, headerRows);
             csvContent.AppendLine(headerRow);
         }
 

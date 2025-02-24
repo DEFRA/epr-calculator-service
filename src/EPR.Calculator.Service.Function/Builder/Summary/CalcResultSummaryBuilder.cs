@@ -98,6 +98,7 @@
                 }
 
                 // Calculate the total for all the producers
+
                 var allTotalRow = this.GetProducerTotalRow(orderedProducerDetails.ToList(), materials, calcResult, producerDisposalFees, true, TotalPackagingTonnage);
                 producerDisposalFees.Add(allTotalRow);
 

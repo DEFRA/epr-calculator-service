@@ -628,32 +628,6 @@
             return scaledupProducerList;
         }
 
-        private static Dictionary<string, CalcResultScaledupProducerTonnage> GetScaledupProducerTonnageByMaterialWithGlass()
-        {
-            var tonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>
-            {
-                {
-                    "GL",
-                    new CalcResultScaledupProducerTonnage
-                    {
-                        ReportedHouseholdPackagingWasteTonnage = 1000,
-                        ReportedPublicBinTonnage = 100,
-                        HouseholdDrinksContainersTonnageGlass = 50,
-                        TotalReportedTonnage = 1100,
-                        ReportedSelfManagedConsumerWasteTonnage = 500,
-                        NetReportedTonnage = 1100,
-                        ScaledupReportedHouseholdPackagingWasteTonnage = 2000,
-                        ScaledupReportedPublicBinTonnage = 200,
-                        ScaledupHouseholdDrinksContainersTonnageGlass = 100,
-                        ScaledupTotalReportedTonnage = 2200,
-                        ScaledupReportedSelfManagedConsumerWasteTonnage = 1000,
-                        ScaledupNetReportedTonnage = 2200,
-                    }
-                },
-            };
-            return tonnageByMaterial;
-        }
-
         private static List<CalcResultScaledupProducer> GetCalcResultScaledupProducerList()
         {
             var scaledupProducerList = new List<CalcResultScaledupProducer>();
@@ -687,6 +661,32 @@
             ]);
 
             return scaledupProducerList;
+        }
+
+        private static Dictionary<string, CalcResultScaledupProducerTonnage> GetScaledupProducerTonnageByMaterialWithGlass()
+        {
+            var tonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>
+            {
+                {
+                    "GL",
+                    new CalcResultScaledupProducerTonnage
+                    {
+                        ReportedHouseholdPackagingWasteTonnage = 1000,
+                        ReportedPublicBinTonnage = 100,
+                        HouseholdDrinksContainersTonnageGlass = 50,
+                        TotalReportedTonnage = 1100,
+                        ReportedSelfManagedConsumerWasteTonnage = 500,
+                        NetReportedTonnage = 1100,
+                        ScaledupReportedHouseholdPackagingWasteTonnage = 2000,
+                        ScaledupReportedPublicBinTonnage = 200,
+                        ScaledupHouseholdDrinksContainersTonnageGlass = 100,
+                        ScaledupTotalReportedTonnage = 2200,
+                        ScaledupReportedSelfManagedConsumerWasteTonnage = 1000,
+                        ScaledupNetReportedTonnage = 2200,
+                    }
+                },
+            };
+            return tonnageByMaterial;
         }
     }
 }
