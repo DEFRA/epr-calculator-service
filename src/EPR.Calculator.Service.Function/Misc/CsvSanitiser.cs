@@ -1,6 +1,7 @@
 ﻿namespace EPR.Calculator.API.Utils
 {
     using System;
+    using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Enums;
     using Newtonsoft.Json;
 
@@ -11,7 +12,7 @@
             if (value == null)
             {
                 return delimitedRequired
-                    ? ","
+                    ? CommonConstants.CsvFileDelimiter
                     : string.Empty;
             }
 
@@ -22,8 +23,8 @@
 
             // Remove newline, carriage returns, and commas, then trim
             stringToSanitise = stringToSanitise?.Replace(Environment.NewLine, string.Empty)
-                                   .Replace("\t", string.Empty)
-                                   .Replace(",", string.Empty)
+                                   .Replace(CommonConstants.TabSpace, string.Empty)
+                                   .Replace(CommonConstants.CsvFileDelimiter, string.Empty)
                                    .Trim() ?? string.Empty;
 
             return delimitedRequired

@@ -406,7 +406,7 @@
                 }
             }
 
-            var headerRow = string.Join(CommonConstants.Comma, headerRows);
+            var headerRow = string.Join(CommonConstants.CsvFileDelimiter, headerRows);
             csvContent.AppendLine(headerRow);
         }
 
