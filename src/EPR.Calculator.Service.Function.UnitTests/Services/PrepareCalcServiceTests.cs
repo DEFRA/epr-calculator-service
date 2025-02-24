@@ -16,6 +16,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using EPR.Calculator.Service.Function.Misc;
     using EPR.Calculator.Service.Function.Models;
     using EPR.Calculator.Service.Function.Services;
+    using Microsoft.ApplicationInsights;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
@@ -35,6 +36,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         private Mock<IStorageService> _storageService;
         private CalculatorRunValidator _validationRules;
         private Mock<ICommandTimeoutService> _commandTimeoutService;
+        private TelemetryClient _telemetryClient = new();
 
         public PrepareCalcServiceTests()
         {
@@ -89,10 +91,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this._exporter.Setup(x => x.Export(It.IsAny<CalcResult>())).Returns("Some value");
             this._transposePomAndOrgDataService = new Mock<ITransposePomAndOrgDataService>();
             this._storageService = new Mock<IStorageService>();
-            
             this._validationRules = fixture.Create<CalculatorRunValidator>();
             this._commandTimeoutService = new Mock<ICommandTimeoutService>();
-            this._testClass = new PrepareCalcService(this._dbContextFactory.Object, this._rpdStatusDataValidator.Object, this._wrapper.Object, this._builder.Object, this._exporter.Object, this._transposePomAndOrgDataService.Object, this._storageService.Object, this._validationRules, this._commandTimeoutService.Object);
+            this._testClass = new PrepareCalcService(this._dbContextFactory.Object, this._rpdStatusDataValidator.Object, this._wrapper.Object, this._builder.Object, this._exporter.Object, this._transposePomAndOrgDataService.Object, this._storageService.Object, this._validationRules, this._commandTimeoutService.Object, this._telemetryClient);
         }
 
         [TestCleanup]
@@ -106,7 +107,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public void CanConstruct()
         {
             // Act
-            var instance = new PrepareCalcService(this._dbContextFactory.Object, this._rpdStatusDataValidator.Object, this._wrapper.Object, this._builder.Object, this._exporter.Object, this._transposePomAndOrgDataService.Object, this._storageService.Object, this._validationRules, this._commandTimeoutService.Object);
+            var instance = new PrepareCalcService(this._dbContextFactory.Object, this._rpdStatusDataValidator.Object, this._wrapper.Object, this._builder.Object, this._exporter.Object, this._transposePomAndOrgDataService.Object, this._storageService.Object, this._validationRules, this._commandTimeoutService.Object, this._telemetryClient);
 
             // Assert
             Assert.IsNotNull(instance);
