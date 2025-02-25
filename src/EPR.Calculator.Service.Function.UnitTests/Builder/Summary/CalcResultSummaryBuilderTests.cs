@@ -1,6 +1,4 @@
-﻿using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
-
-namespace EPR.Calculator.Service.Function.UnitTests
+﻿namespace EPR.Calculator.Service.Function.UnitTests
 {
     using AutoFixture;
     using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
@@ -10,7 +8,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
     using EPR.Calculator.Service.Function.Data;
     using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Dtos;
-    using EPR.Calculator.Service.Function.Mappers;
     using EPR.Calculator.Service.Function.Models;
     using EPR.Calculator.Service.Function.UnitTests.Builder;
     using Microsoft.EntityFrameworkCore;
@@ -297,7 +294,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
 
-            var results = this.calcResultsService.Construct(requestDto, calcResult);
+            var results = this.calcResultsService.Construct(requestDto, this.calcResult);
+
             results.Wait();
             var result = results.Result;
             Assert.IsNotNull(result);
@@ -317,7 +315,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
 
-            var results = this.calcResultsService.Construct(requestDto, calcResult);
+            var results = this.calcResultsService.Construct(requestDto, this.calcResult);
 
             results.Wait();
             var result = results.Result;
@@ -330,7 +328,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
 
-            var results = this.calcResultsService.Construct(requestDto, calcResult);
+            var results = this.calcResultsService.Construct(requestDto, this.calcResult);
 
             results.Wait();
             var result = results.Result;
@@ -344,7 +342,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
 
-            var results = this.calcResultsService.Construct(requestDto, calcResult);
+            var results = this.calcResultsService.Construct(requestDto, this.calcResult);
 
             results.Wait();
             var result = results.Result;
@@ -358,7 +356,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
 
-            var result = this.calcResultsService.Construct(requestDto, calcResult);
+            var result = this.calcResultsService.Construct(requestDto, this.calcResult);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(0, 0);
@@ -369,7 +367,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
 
-            var results = this.calcResultsService.Construct(calcResultsRequestDto, calcResult);
+            var results = this.calcResultsService.Construct(calcResultsRequestDto, this.calcResult);
 
             results.Wait();
             var result = results.Result;
@@ -384,7 +382,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
 
-            var results = this.calcResultsService.Construct(calcResultsRequestDto, calcResult);
+            var results = this.calcResultsService.Construct(calcResultsRequestDto, this.calcResult);
+
             results.Wait();
             var result = results.Result;
             Assert.IsNotNull(result);
@@ -465,7 +464,9 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void GetTotalBadDebtprovision2A_ShouldReturnCorrectValue()
         {
             var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-            var results = this.calcResultsService.Construct(calcResultsRequestDto, calcResult);
+
+            var results = this.calcResultsService.Construct(calcResultsRequestDto, this.calcResult);
+
             results.Wait();
             var result = results.Result;
             Assert.IsNotNull(result);
@@ -608,8 +609,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, 1);
 
-            var result = new CalcResultSummaryBuilder(this.context).GetCalcResultSummary(orderedProducerDetails, materials,
-                this.calcResult, totalPackagingTonnage);
+            var result = new CalcResultSummaryBuilder(this.context).GetCalcResultSummary(orderedProducerDetails, materials, this.calcResult, totalPackagingTonnage);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(128, result.ColumnHeaders.Count());
@@ -617,7 +617,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var producerDisposalFees = result.ProducerDisposalFees;
             Assert.IsNotNull(producerDisposalFees);
 
-            var totals = producerDisposalFees.First(t => t.isProducerScaledup == "Totals");
+            var totals = producerDisposalFees.First(t => t.IsProducerScaledup == "Totals");
+
             var producer = producerDisposalFees.First(t => t.Level == "1");
             Assert.IsNotNull(producer);
 
@@ -629,8 +630,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
         [TestMethod]
         public void GetTonnages_ShouldCalculateCorrectlyForGlass()
         {
-            List<CalculatorRunPomDataDetail> pomData = [];
-            List<MaterialDetail> materials = [];
+            List<CalculatorRunPomDataDetail> pomData = new List<CalculatorRunPomDataDetail>();
+            List<MaterialDetail> materials = new List<MaterialDetail>();
 
             var glassMaterial = new MaterialDetail
             {
@@ -687,27 +688,27 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             context.Material.AddRange(new List<Material>
             {
-                new () { Id = 1, Name = "Material1", Code = "123" },
-                new () { Id = 2, Name = "Material2", Code = MaterialCodes.Glass },
+                new() { Id = 1, Name = "Material1", Code = "123" },
+                new() { Id = 2, Name = "Material2", Code = MaterialCodes.Glass },
             });
 
             context.ProducerDetail.AddRange(new List<ProducerDetail>
             {
-                new () { Id = 1, ProducerName = "Producer1", ProducerId = 1, CalculatorRunId = 1, CalculatorRun = new CalculatorRun { Financial_Year = "2024-25", Name = "Test1" } },
-                new () { Id = 2, ProducerName = "Producer2", ProducerId = 2, CalculatorRunId = 2, CalculatorRun = new CalculatorRun { Financial_Year = "2024-25", Name = "Test2" } },
-                new () { Id = 3, ProducerName = "Producer3", ProducerId = 3, CalculatorRunId = 3, CalculatorRun = new CalculatorRun { Financial_Year = "2024-25", Name = "Test3" } },
-                new () { Id = 4, ProducerName = "Producer4", ProducerId = 4, CalculatorRunId = 1 },
-                new () { Id = 5, ProducerName = "Producer5", ProducerId = 5, CalculatorRunId = 1 },
+                new() { Id = 1, ProducerName = "Producer1", ProducerId = 1, CalculatorRunId = 1, CalculatorRun = new CalculatorRun { Financial_Year = "2024-25", Name = "Test1" } },
+                new() { Id = 2, ProducerName = "Producer2", ProducerId = 2, CalculatorRunId = 2, CalculatorRun = new CalculatorRun { Financial_Year = "2024-25", Name = "Test2" } },
+                new() { Id = 3, ProducerName = "Producer3", ProducerId = 3, CalculatorRunId = 3, CalculatorRun = new CalculatorRun { Financial_Year = "2024-25", Name = "Test3" } },
+                new() { Id = 4, ProducerName = "Producer4", ProducerId = 4, CalculatorRunId = 1 },
+                new() { Id = 5, ProducerName = "Producer5", ProducerId = 5, CalculatorRunId = 1 },
             });
 
             context.ProducerReportedMaterial.AddRange(new List<ProducerReportedMaterial>
             {
-                new () { Id = 1, MaterialId = 1, PackagingType = "HH", PackagingTonnage = 400m, ProducerDetailId = 1 },
-                new () { Id = 2, MaterialId = 2, PackagingType = "HH", PackagingTonnage = 400m, ProducerDetailId = 2 },
-                new () { Id = 3, MaterialId = 1, PackagingType = "CW", PackagingTonnage = 200m, ProducerDetailId = 1 },
-                new () { Id = 4, MaterialId = 2, PackagingType = "CW", PackagingTonnage = 200m, ProducerDetailId = 2 },
-                new () { Id = 5, MaterialId = 1, PackagingType = "HDC", PackagingTonnage = 300m, ProducerDetailId = 1 },
-                new () { Id = 6, MaterialId = 2, PackagingType = "HDC", PackagingTonnage = 300m, ProducerDetailId = 2 },
+                new() { Id = 1, MaterialId = 1, PackagingType = "HH", PackagingTonnage = 400m, ProducerDetailId = 1 },
+                new() { Id = 2, MaterialId = 2, PackagingType = "HH", PackagingTonnage = 400m, ProducerDetailId = 2 },
+                new() { Id = 3, MaterialId = 1, PackagingType = "CW", PackagingTonnage = 200m, ProducerDetailId = 1 },
+                new() { Id = 4, MaterialId = 2, PackagingType = "CW", PackagingTonnage = 200m, ProducerDetailId = 2 },
+                new() { Id = 5, MaterialId = 1, PackagingType = "HDC", PackagingTonnage = 300m, ProducerDetailId = 1 },
+                new() { Id = 6, MaterialId = 2, PackagingType = "HDC", PackagingTonnage = 300m, ProducerDetailId = 2 },
             });
             context.SaveChanges();
         }

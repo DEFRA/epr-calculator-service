@@ -6,7 +6,7 @@ namespace EPR.Calculator.Service.Function.Models
     {
         public CalcResultSummaryHeader? ResultSummaryHeader { get; set; }
 
-        public CalcResultSummaryHeader NotesHeader { get; set; }
+        public CalcResultSummaryHeader? NotesHeader { get; set; }
 
         public IEnumerable<CalcResultSummaryHeader> ProducerDisposalFeesHeaders { get; set; }
             = [];

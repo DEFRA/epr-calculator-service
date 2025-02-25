@@ -53,7 +53,6 @@
             this._context.CalculatorRunPomDataMaster.AddRange(GetCalculatorRunPomDataMaster());
             this._context.CalculatorRunPomDataDetails.AddRange(GetCalculatorRunPomDataDetails());
 
-
             this._context.CalculatorRuns.AddRange(GetCalculatorRuns());
             this._context.Material.AddRange(GetMaterials());
 

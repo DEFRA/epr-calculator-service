@@ -28,6 +28,7 @@ namespace EPR.Calculator.Service.Function.Builder
         private readonly ICalcResultScaledupProducersBuilder calcResultScaledupProducersBuilder;
         private readonly TelemetryClient _telemetryClient;
 
+#pragma warning restore S107 // Constructor has 9 parameters, which is greater than the 7 authorized
         /// <summary>
         /// Initializes a new instance of the <see cref="CalcResultBuilder"/> class.
         /// </summary>
@@ -54,6 +55,7 @@ namespace EPR.Calculator.Service.Function.Builder
             this.summaryBuilder = summaryBuilder;
             this._telemetryClient = telemetryClient;
         }
+#pragma warning restore S107 // Constructor has 9 parameters, which is greater than the 7 authorized
 
         public async Task<CalcResult> Build(CalcResultsRequestDto resultsRequestDto)
         {
@@ -106,6 +108,9 @@ namespace EPR.Calculator.Service.Function.Builder
             this._telemetryClient.TrackTrace("calcResultScaledupProducersBuilder end...");
 
             this._telemetryClient.TrackTrace("summaryBuilder started...");
+            result.CalcResultCommsCostReportDetail = await this.commsCostReportBuilder.Construct(
+                resultsRequestDto, result.CalcResultOnePlusFourApportionment, result);
+            result.CalcResultLaDisposalCostData = await this.laDisposalCostBuilder.Construct(resultsRequestDto, result);
             result.CalcResultSummary = await this.summaryBuilder.Construct(resultsRequestDto, result);
             this._telemetryClient.TrackTrace("summaryBuilder end...");
 
