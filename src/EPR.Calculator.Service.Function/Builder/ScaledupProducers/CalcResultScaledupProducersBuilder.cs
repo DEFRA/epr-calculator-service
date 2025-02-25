@@ -201,9 +201,9 @@
                                     SubmissionPeriodCode = spl.SubmissionPeriod,
                                     DaysInSubmissionPeriod = spl.DaysInSubmissionPeriod,
                                     DaysInWholePeriod = spl.DaysInWholePeriod,
-                                    Level = pd.SubsidiaryId != null && pd.SubsidiaryId != string.Empty ? CommonConstants.LevelTwo.ToString() : CommonConstants.LevelOne.ToString(),
+                                    Level = !string.IsNullOrEmpty(pd.SubsidiaryId) ? CommonConstants.LevelTwo.ToString() : CommonConstants.LevelOne.ToString(),
                                 }).Distinct().ToListAsync();
-            return result ?? [];
+            return result ?? new List<CalcResultScaledupProducer>();
         }
 
         public async Task<IEnumerable<int>> GetScaledUpOrganisationIdsAsync(int runId)
