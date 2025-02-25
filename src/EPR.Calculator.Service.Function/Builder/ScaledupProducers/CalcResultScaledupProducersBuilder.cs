@@ -221,7 +221,6 @@
             return scaleupProducerIds ?? [];
         }
 
-
         public static Dictionary<string, CalcResultScaledupProducerTonnage> GetTonnages(IEnumerable<CalculatorRunPomDataDetail> pomData,
             IEnumerable<MaterialDetail> materials,
             string submissionPeriod,
