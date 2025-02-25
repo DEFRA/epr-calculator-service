@@ -1,21 +1,23 @@
-﻿using EPR.Calculator.Service.Function.Builder.Lapcap;
-using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Data;
-using EPR.Calculator.Service.Function.Dtos;
-using EPR.Calculator.Service.Function.Models;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Threading.Tasks;
-using System.Linq;
-using System;
-using EPR.Calculator.Service.Function.Data.DataModels;
-
-namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
+﻿namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using EPR.Calculator.Service.Function.Builder.Lapcap;
+    using EPR.Calculator.Service.Function.Constants;
+    using EPR.Calculator.Service.Function.Data;
+    using EPR.Calculator.Service.Function.Data.DataModels;
+    using EPR.Calculator.Service.Function.Dtos;
+    using EPR.Calculator.Service.Function.Models;
+    using Microsoft.EntityFrameworkCore;
+
     public class CalcRunLaDisposalCostBuilder : ICalcRunLaDisposalCostBuilder
     {
         private const string EmptyString = "0";
+        private readonly ApplicationDBContext context;
+        private List<ProducerData> producerData;
 
         internal class ProducerData
         {
@@ -25,11 +27,8 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
 
             public decimal Tonnage { get; set; }
 
-            public ProducerDetail ProducerDetail { get; set; }
+            public ProducerDetail? ProducerDetail { get; set; }
         }
-
-        private readonly ApplicationDBContext context;
-        private List<ProducerData> producerData;
 
         public CalcRunLaDisposalCostBuilder(ApplicationDBContext context)
         {
@@ -60,9 +59,9 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
                     Scotland = details.ScotlandDisposalCost,
                     NorthernIreland = details.NorthernIrelandDisposalCost,
                     Total = details.TotalDisposalCost,
-                    ProducerReportedHouseholdPackagingWasteTonnage = this.GetTonnageDataByMaterial(details.Name, scaledUpProducerReportedOn),
-                    ReportedPublicBinTonnage = this.GetReportedPublicBinTonnage(details.Name, scaledUpProducerReportedOn),
-                    HouseholdDrinkContainers = this.GetReportedHouseholdDrinksContainerTonnage(details.Name, scaledUpProducerReportedOn),
+                    ProducerReportedHouseholdPackagingWasteTonnage = this.GetTonnageDataByMaterial(details.Name, scaledUpProducerReportedOn!),
+                    ReportedPublicBinTonnage = this.GetReportedPublicBinTonnage(details.Name, scaledUpProducerReportedOn!),
+                    HouseholdDrinkContainers = this.GetReportedHouseholdDrinksContainerTonnage(details.Name, scaledUpProducerReportedOn!),
                     OrderId = ++orderId,
                 };
                 laDiposalDetail.LateReportingTonnage = GetLateReportingTonnageDataByMaterial(laDiposalDetail.Name, calcResult.CalcResultLateReportingTonnageData.CalcResultLateReportingTonnageDetails.ToList());
