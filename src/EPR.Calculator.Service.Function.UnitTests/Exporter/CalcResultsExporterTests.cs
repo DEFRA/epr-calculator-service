@@ -282,7 +282,7 @@
                     Name = "LAPCAP Data",
                     CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>
                     {
-                        new()
+                        new ()
                         {
                             Name = "Total",
                             EnglandDisposalCost = "£13,280.45",
@@ -494,17 +494,19 @@
                     {
                         Name = "Scaled-up Producers",
                     },
-                    MaterialBreakdownHeaders = [
-                        new CalcResultScaledupProducerHeader{ Name = "Each submission for the year", ColumnIndex = 1 },
+                    MaterialBreakdownHeaders = new List<CalcResultScaledupProducerHeader>()
+                    {
+                        new CalcResultScaledupProducerHeader { Name = "Each submission for the year", ColumnIndex = 1 },
                         new CalcResultScaledupProducerHeader { Name = "Aluminium Breakdown", ColumnIndex = 2 },
-                        new CalcResultScaledupProducerHeader { Name = "Glass Breakdown", ColumnIndex = 3 }
-                    ],
-                    ColumnHeaders = [
-                        new CalcResultScaledupProducerHeader{ Name = "Producer ID" },
+                        new CalcResultScaledupProducerHeader { Name = "Glass Breakdown", ColumnIndex = 3 },
+                    },
+                    ColumnHeaders = new List<CalcResultScaledupProducerHeader>()
+                    {
+                        new CalcResultScaledupProducerHeader { Name = "Producer ID" },
                         new CalcResultScaledupProducerHeader { Name = "Subsidiary ID" },
                         new CalcResultScaledupProducerHeader { Name = "HouseholdDrinksContainersTonnageGlass" },
                         new CalcResultScaledupProducerHeader { Name = "ScaledupHouseholdDrinksContainersTonnageGlass" },
-                    ],
+                    },
                     ScaledupProducers = GetCalcResultScaledupProducerList(),
                 },
                 CalcResultSummary = new CalcResultSummary

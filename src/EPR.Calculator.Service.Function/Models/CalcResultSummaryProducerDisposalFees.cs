@@ -12,7 +12,7 @@ namespace EPR.Calculator.Service.Function.Models
 
         public string? Level { get; set; }
 
-        public string isProducerScaledup { get; set; } = "No";
+        public string IsProducerScaledup { get; set; } = "No";
 
         public bool isTotalRow { get; set; } = false;
 
