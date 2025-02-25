@@ -73,7 +73,7 @@
             [FromBody] CalcResultsRequestDto resultsRequestDto,
             CancellationToken cancellationToken)
         {
-            this.commandTimeoutService.SetCommandTimeout(this.Context.Database, "PrepareCalcResultsCommand");
+            this.commandTimeoutService.SetCommandTimeout(this.Context.Database);
 
             CalculatorRun? calculatorRun = null;
             try

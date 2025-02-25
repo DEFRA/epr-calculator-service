@@ -53,7 +53,7 @@
             bool isPomSuccessful,
             CancellationToken timeout)
         {
-            this.CommandTimeoutService.SetCommandTimeout(this.Context.Database, "RpdStatusCommand");
+            this.CommandTimeoutService.SetCommandTimeout(this.Context.Database);
 
             var calcRun = await this.Context.CalculatorRuns.SingleOrDefaultAsync(
                 run => run.Id == runId,

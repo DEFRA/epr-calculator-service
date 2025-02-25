@@ -1,5 +1,6 @@
 ﻿namespace EPR.Calculator.Service.Function.Interface
 {
+    using EPR.Calculator.Service.Function.Constants;
     using System;
 
     public interface IConfigurationService
@@ -33,5 +34,10 @@
         string BlobContainerName { get; }
 
         string BlobConnectionString { get; }
+
+        /// <summary>
+        /// Gets the database command timout from the envirionment variables.
+        /// </summary>
+        TimeSpan CommandTimeout { get; }
     }
 }
