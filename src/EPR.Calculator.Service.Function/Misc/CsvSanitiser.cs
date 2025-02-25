@@ -7,11 +7,11 @@
 
     public static class CsvSanitiser
     {
-        public static string SanitiseData<T>(T value, bool delimitedRequired = true)
+        public static string SanitiseData<T>(T value, bool delimiterRequired = true)
         {
             if (value == null)
             {
-                return delimitedRequired
+                return delimiterRequired
                     ? CommonConstants.CsvFileDelimiter
                     : string.Empty;
             }
@@ -27,7 +27,7 @@
                                    .Replace(CommonConstants.CsvFileDelimiter, string.Empty)
                                    .Trim() ?? string.Empty;
 
-            return delimitedRequired
+            return delimiterRequired
                 ? $"{stringToSanitise},"
                 : stringToSanitise;
         }
@@ -38,7 +38,7 @@
             DecimalFormats? valueFormat,
             bool isCurrency = false,
             bool isPercentage = false,
-            bool delimitedRequired = true)
+            bool delimiterRequired = true)
         {
             var roundedValue = roundTo == null
                 ? value
@@ -58,7 +58,7 @@
                 formattedValue = $"{formattedValue}%";
             }
 
-            return SanitiseData(formattedValue, delimitedRequired);
+            return SanitiseData(formattedValue, delimiterRequired);
         }
     }
 }
