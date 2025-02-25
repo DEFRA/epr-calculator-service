@@ -413,7 +413,7 @@
             {
                 if (item.ColumnIndex.HasValue)
                 {
-                    headerRows[item.ColumnIndex.Value - 1] = CsvSanitiser.SanitiseData(item.Name);
+                    headerRows[item.ColumnIndex.Value - 1] = CsvSanitiser.SanitiseData(item.Name, false);
                 }
             }
 
@@ -629,7 +629,7 @@
             {
                 if (item.ColumnIndex.HasValue)
                 {
-                    headerRows[item.ColumnIndex.Value - 1] = CsvSanitiser.SanitiseData(item.Name);
+                    headerRows[item.ColumnIndex.Value - 1] = CsvSanitiser.SanitiseData(item.Name, false);
                 }
             }
 
