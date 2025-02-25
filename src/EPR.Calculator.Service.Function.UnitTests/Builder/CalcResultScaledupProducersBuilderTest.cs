@@ -18,6 +18,96 @@
         private readonly int runId = 1;
         private CalcResultScaledupProducersBuilder builder;
 
+        private void PrepareNonScaledUpProducer()
+        {
+            var producerDetail = new ProducerDetail
+            {
+                Id = 1,
+                CalculatorRunId = runId,
+                ProducerId = 11,
+                SubsidiaryId = "Subsidary 1",
+            };
+            this.dbContext.ProducerDetail.Add(producerDetail);
+            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            {
+                Id = 1,
+                PackagingType = "HH",
+                ProducerDetail = producerDetail,
+            });
+            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            {
+                Id = 2,
+                PackagingType = "HDC",
+                ProducerDetail = producerDetail,
+            });
+            var calcRunPomDataMaster = new CalculatorRunPomDataMaster
+            {
+                Id = 1,
+                CalendarYear = "2024",
+                EffectiveFrom = DateTime.Now,
+                CreatedAt = DateTime.Now,
+                CreatedBy = "Test User",
+            };
+            this.dbContext.CalculatorRunPomDataMaster.Add(calcRunPomDataMaster);
+            this.dbContext.CalculatorRuns.Add(new CalculatorRun
+            {
+                Id = runId,
+                Financial_Year = "2024-25",
+                Name = "Name",
+                CalculatorRunPomDataMaster = calcRunPomDataMaster,
+            });
+            this.dbContext.CalculatorRunPomDataDetails.Add(
+                new CalculatorRunPomDataDetail
+                {
+                    LoadTimeStamp = DateTime.Now,
+                    SubmissionPeriod = "2024-P1",
+                    SubmissionPeriodDesc = "desc",
+                    CalculatorRunPomDataMaster = calcRunPomDataMaster,
+                    OrganisationId = 10,
+                });
+
+            this.dbContext.SubmissionPeriodLookup.Add(
+                new SubmissionPeriodLookup
+                {
+                    DaysInSubmissionPeriod = 0,
+                    DaysInWholePeriod = 0,
+                    EndDate = DateTime.Now,
+                    StartDate = DateTime.Now,
+                    ScaleupFactor = 1,
+                    SubmissionPeriod = "2024-P1",
+                    SubmissionPeriodDesc = string.Empty,
+                });
+ 
+            this.dbContext.SaveChanges();
+        }
+
+        private void PrepareScaledUpProducer()
+        {
+            this.dbContext.CalculatorRunPomDataDetails.Add(
+            new CalculatorRunPomDataDetail
+            {
+                LoadTimeStamp = DateTime.Now,
+                SubmissionPeriod = "2024-P2",
+                SubmissionPeriodDesc = "desc",
+                CalculatorRunPomDataMaster = this.dbContext.CalculatorRunPomDataMaster.First(),
+                OrganisationId = 11,
+            });
+
+            this.dbContext.SubmissionPeriodLookup.Add(
+            new SubmissionPeriodLookup
+            {
+                DaysInSubmissionPeriod = 0,
+                DaysInWholePeriod = 0,
+                EndDate = DateTime.Now,
+                StartDate = DateTime.Now,
+                ScaleupFactor = 2.999M,
+                SubmissionPeriod = "2024-P2",
+                SubmissionPeriodDesc = string.Empty,
+            });
+
+            this.dbContext.SaveChanges();
+        }
+
         public CalcResultScaledupProducersBuilderTest()
         {
             var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
@@ -36,22 +126,50 @@
             this.dbContext?.Database.EnsureDeleted();
         }
 
+        /// <summary>
+        /// Tests that the <see cref="ICalcResultScaledupProducersBuilder.Construct(CalcResultsRequestDto)"/>
+        /// method returns the correct result when scaled up data is present.
+        /// </summary>
+        /// <returns>A <see cref="Task"/>.</returns>
         [TestMethod]
-        public void Construct()
+        public async Task Construct_WhenScaledUpDataPresent()
         {
+            // Arrange
+            this.PrepareNonScaledUpProducer();
             this.PrepareScaledUpProducer();
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
 
-            var task = this.builder?.Construct(requestDto);
-            task?.Wait();
+            // Act
+            var result = await this.builder.Construct(requestDto);
 
-            var result = task?.Result;
-            Assert.IsNotNull(result);
+            // Assert
+            var expectedNumberOfRuns = await this.dbContext.CalculatorRuns.CountAsync() + 1; // The +1 is the totals row.
+            Assert.AreEqual(expectedNumberOfRuns, result.ScaledupProducers.Count());
+        }
+
+        /// <summary>
+        /// Tests that the <see cref="ICalcResultScaledupProducersBuilder.Construct(CalcResultsRequestDto)"/>
+        /// method returns the correct result when scaled up data is not present.
+        /// </summary>
+        /// <returns>A <see cref="Task"/>.</returns>
+        [TestMethod]
+        public async Task Construct_WhenNoScaledUpDataPresent()
+        {
+            // Arrange
+            this.PrepareNonScaledUpProducer();
+            var requestDto = new CalcResultsRequestDto { RunId = 1 };
+
+            // Act
+            var result = await this.builder.Construct(requestDto);
+
+            // Assert
+            Assert.AreEqual(0, result.ScaledupProducers.Count());
         }
 
         [TestMethod]
         public void GetScaledUpProducerIds_Test()
         {
+            this.PrepareNonScaledUpProducer();
             this.PrepareScaledUpProducer();
             var task = this.builder?.GetScaledUpOrganisationIdsAsync(this.runId);
             task?.Wait();
@@ -287,7 +405,10 @@
         [TestMethod]
         public void SetHeadersTest()
         {
-            var producers = new CalcResultScaledupProducers();
+            var producers = new CalcResultScaledupProducers
+            {
+                ScaledupProducers = new List<CalcResultScaledupProducer>(),
+            };
             var materials = new List<Material>();
             materials.Add(new Material { Code = "AL", Name = "Aluminium" });
             var materialDetails = MaterialMapper.Map(materials);
@@ -382,81 +503,6 @@
             Assert.IsNotNull(scaledUpTonnage);
             Assert.IsNotNull(scaledUpTonnage.HouseholdDrinksContainersTonnageGlass);
             Assert.IsNotNull(scaledUpTonnage.ScaledupHouseholdDrinksContainersTonnageGlass);
-        }
-
-        private void PrepareScaledUpProducer()
-        {
-            var producerDetail = new ProducerDetail
-            {
-                Id = 1,
-                CalculatorRunId = this.runId,
-                ProducerId = 11,
-                SubsidiaryId = "Subsidary 1",
-            };
-            this.dbContext?.ProducerDetail.Add(producerDetail);
-            this.dbContext?.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-            {
-                Id = 1,
-                PackagingType = "HH",
-                ProducerDetail = producerDetail,
-            });
-            var calcRunPomDataMaster = new CalculatorRunPomDataMaster
-            {
-                Id = 1,
-                CalendarYear = "2024",
-                EffectiveFrom = DateTime.Now,
-                CreatedAt = DateTime.Now,
-                CreatedBy = "Test User",
-            };
-            this.dbContext?.CalculatorRunPomDataMaster.Add(calcRunPomDataMaster);
-            this.dbContext?.CalculatorRuns.Add(new CalculatorRun
-            {
-                Id = this.runId,
-                Financial_Year = "2024-25",
-                Name = "Name",
-                CalculatorRunPomDataMaster = calcRunPomDataMaster,
-            });
-            this.dbContext?.CalculatorRunPomDataDetails.Add(
-                new CalculatorRunPomDataDetail
-                {
-                    LoadTimeStamp = DateTime.Now,
-                    SubmissionPeriod = "2024-P1",
-                    SubmissionPeriodDesc = "desc",
-                    CalculatorRunPomDataMaster = calcRunPomDataMaster,
-                    OrganisationId = 10,
-                });
-            this.dbContext?.CalculatorRunPomDataDetails.Add(
-                new CalculatorRunPomDataDetail
-                {
-                    LoadTimeStamp = DateTime.Now,
-                    SubmissionPeriod = "2024-P2",
-                    SubmissionPeriodDesc = "desc",
-                    CalculatorRunPomDataMaster = calcRunPomDataMaster,
-                    OrganisationId = 11,
-                });
-            this.dbContext?.SubmissionPeriodLookup.Add(
-                new SubmissionPeriodLookup
-                {
-                    DaysInSubmissionPeriod = 0,
-                    DaysInWholePeriod = 0,
-                    EndDate = DateTime.Now,
-                    StartDate = DateTime.Now,
-                    ScaleupFactor = 1,
-                    SubmissionPeriod = "2024-P1",
-                    SubmissionPeriodDesc = string.Empty,
-                });
-            this.dbContext?.SubmissionPeriodLookup.Add(
-                new SubmissionPeriodLookup
-                {
-                    DaysInSubmissionPeriod = 0,
-                    DaysInWholePeriod = 0,
-                    EndDate = DateTime.Now,
-                    StartDate = DateTime.Now,
-                    ScaleupFactor = 2.999M,
-                    SubmissionPeriod = "2024-P2",
-                    SubmissionPeriodDesc = string.Empty,
-                });
-            this.dbContext?.SaveChanges();
         }
     }
 }

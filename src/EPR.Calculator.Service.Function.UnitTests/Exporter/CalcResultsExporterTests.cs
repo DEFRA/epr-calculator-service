@@ -181,11 +181,16 @@
         }
 
         [TestMethod]
-        public void Export_ScaledUpProducer_ShouldIncludeHeadersAndDisplayNone_WhenNoScaledUpProducer()
+        [DataRow(true)]
+        [DataRow(false)]
+        public void Export_ScaledUpProducer_ShouldIncludeHeadersAndDisplayNone_WhenNoScaledUpProducer(
+            bool setScaledUpProducersToNull)
         {
             // Arrange
             var results = CreateCalcResult();
-            results.CalcResultScaledupProducers.ScaledupProducers = null!;
+            results.CalcResultScaledupProducers.ScaledupProducers = setScaledUpProducersToNull
+                ? null!
+                : new List<CalcResultScaledupProducer>();
             var exporter = new CalcResultsExporter();
 
             // Act
