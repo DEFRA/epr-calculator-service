@@ -10,9 +10,11 @@ using System.Threading.Tasks;
 using System;
 using EPR.Calculator.Service.Function.Data.DataModels;
 using Microsoft.ApplicationInsights;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EPR.Calculator.Service.Function.Builder.CommsCost
 {
+    [ExcludeFromCodeCoverage]
     public class CalcResultCommsCostBuilder(ApplicationDBContext context, TelemetryClient telemetryClient)
         : ICalcResultCommsCostBuilder
     {
@@ -103,7 +105,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
 
             try
             {
-                producerReportedMaterials = producerReportedMaterials.Where(t => !calcResult.CalcResultScaledupProducers.ScaledupProducers.
+                producerReportedMaterials = producerReportedMaterials.Where(t => !calcResult.CalcResultScaledupProducers!.ScaledupProducers.
                     Any(i => i.ProducerId == t.ProducerDetail?.ProducerId)).ToList();
             }
             catch (Exception ex)
