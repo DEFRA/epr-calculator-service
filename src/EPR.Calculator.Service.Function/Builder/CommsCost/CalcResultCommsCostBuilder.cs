@@ -99,7 +99,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             producerReportedMaterials = producerReportedMaterials.Where(t => !calcResult.CalcResultScaledupProducers!.ScaledupProducers!.
                 Any(i => i.ProducerId == t.ProducerDetail?.ProducerId)).ToList();
 
-            var scaledUpProducerReportedOn = calcResult.CalcResultScaledupProducers
+            var scaledUpProducerReportedOn = calcResult.CalcResultScaledupProducers?
                   .ScaledupProducers.FirstOrDefault(t => t.IsTotalRow);
 
             foreach (var materialName in materialNames)
