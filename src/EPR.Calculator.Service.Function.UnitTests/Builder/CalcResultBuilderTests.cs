@@ -1,5 +1,6 @@
 namespace EPR.Calculator.Service.Function.UnitTests
 {
+    using AutoFixture;
     using EPR.Calculator.Service.Function.Builder;
     using EPR.Calculator.Service.Function.Builder.CommsCost;
     using EPR.Calculator.Service.Function.Builder.Detail;
@@ -32,6 +33,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
         public CalcResultBuilderTests()
         {
+            this.Fixture = new Fixture();
             this.mockCalcResultDetailBuilder = new Mock<ICalcResultDetailBuilder>();
             this.mockLapcapBuilder = new Mock<ICalcResultLapcapDataBuilder>();
             this.mockSummaryBuilder = new Mock<ICalcResultSummaryBuilder>();
@@ -54,6 +56,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 this.mockCalcResultScaledupProducersBuilder.Object,
                 this.mockSummaryBuilder.Object);
         }
+
+        private Fixture Fixture { get; init; }
 
         [TestMethod]
         public void CanConstruct()
@@ -83,7 +87,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var mockOtherParams = new Mock<CalcResultParameterOtherCost>();
             var mockOnePlusFourApp = new Mock<CalcResultOnePlusFourApportionment>();
             var mockCalcResultCommsCost = new Mock<CalcResultCommsCost>();
-            var mockCalcResultLateReportingTonnage = new Mock<CalcResultLateReportingTonnage>();
+            var mockCalcResultLateReportingTonnage = this.Fixture.Create<CalcResultLateReportingTonnage>();
             var mockCalcResultLaDisposalCostData = new Mock<CalcResultLaDisposalCostData>();
             var mockCalcResultSummary = new Mock<CalcResultSummary>();
 
@@ -97,7 +101,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 .Setup(m => m.Construct(resultsRequestDto, It.IsAny<CalcResultOnePlusFourApportionment>(), It.IsAny<CalcResult>()))
                 .ReturnsAsync(mockCalcResultCommsCost.Object);
             this.mockLateReportingBuilder.Setup(m => m.Construct(resultsRequestDto))
-                .ReturnsAsync(mockCalcResultLateReportingTonnage.Object);
+                .ReturnsAsync(mockCalcResultLateReportingTonnage);
             this.mockCalcRunLaDisposalCostBuilder.Setup(m => m.Construct(resultsRequestDto, It.IsAny<CalcResult>()))
                 .ReturnsAsync(mockCalcResultLaDisposalCostData.Object);
             this.mockSummaryBuilder.Setup(x => x.Construct(resultsRequestDto, It.IsAny<CalcResult>()))
@@ -113,7 +117,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             Assert.AreEqual(mockOtherParams.Object, result.CalcResultParameterOtherCost);
             Assert.AreEqual(mockOnePlusFourApp.Object, result.CalcResultOnePlusFourApportionment);
             Assert.AreEqual(mockCalcResultCommsCost.Object, result.CalcResultCommsCostReportDetail);
-            Assert.AreEqual(mockCalcResultLateReportingTonnage.Object, result.CalcResultLateReportingTonnageData);
+            Assert.AreEqual(mockCalcResultLateReportingTonnage, result.CalcResultLateReportingTonnageData);
             Assert.AreEqual(mockCalcResultLaDisposalCostData.Object, result.CalcResultLaDisposalCostData);
             Assert.AreEqual(mockCalcResultSummary.Object, result.CalcResultSummary);
         }

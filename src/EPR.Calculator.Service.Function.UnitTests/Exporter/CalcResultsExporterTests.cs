@@ -5,23 +5,35 @@
     using System.Text;
     using AutoFixture;
     using EPR.Calculator.API.Exporter;
+    using EPR.Calculator.Service.Function.Exporter;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Moq;
 
     [TestClass]
     public class CalcResultsExporterTests
     {
-        private Fixture Fixture { get; } = new Fixture();
+        public CalcResultsExporterTests()
+        {
+            this.Fixture = new Fixture();
+            this.MockLateReportingExporter = new Mock<LateReportingExporter>();
+            this.TestClass = new CalcResultsExporter(this.MockLateReportingExporter.Object);
+        }
+
+        private Fixture Fixture { get; init; }
+
+        private Mock<LateReportingExporter> MockLateReportingExporter { get; init; }
+
+        private CalcResultsExporter TestClass { get; init; }
 
         [TestMethod]
         public void Export_ShouldReturnCsvContent_WhenAllDataIsPresent()
         {
             // Arrange
-            var exporter = new CalcResultsExporter();
             var calcResult = CreateCalcResult();
 
             // Act
-            var result = exporter.Export(calcResult);
+            var result = this.TestClass.Export(calcResult);
 
             // Assert
             Assert.IsNotNull(result);
@@ -31,11 +43,10 @@
         public void Export_DataFormatting_IsCorrect()
         {
             // Arrange
-            var exporter = new CalcResultsExporter();
             var calcResult = CreateCalcResult();
 
             // Act
-            var result = exporter.Export(calcResult);
+            var result = this.TestClass.Export(calcResult);
 
             // Assert
             Assert.IsTrue(result.Contains("LAPCAP Data"));
@@ -51,11 +62,10 @@
         public void Export_CsvContent_HasCorrectNumberOfLineBreaks()
         {
             // Arrange
-            var exporter = new CalcResultsExporter();
             var calcResult = CreateCalcResult();
 
             // Act
-            var result = exporter.Export(calcResult);
+            var result = this.TestClass.Export(calcResult);
             var lines = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
             // Assert
@@ -68,10 +78,9 @@
         {
             // Arrange
             CalcResult? results = null;
-            var exporter = new CalcResultsExporter();
 
             // Act & Assert
-            var ex = Assert.ThrowsException<ArgumentNullException>(() => exporter.Export(results!));
+            var ex = Assert.ThrowsException<ArgumentNullException>(() => this.TestClass.Export(results!));
             Assert.AreEqual("results", ex.ParamName);
         }
 
@@ -79,9 +88,8 @@
         public void Export_ShouldIncludeCalcResultRunNameDetails()
         {
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter();
 
-            var result = exporter.Export(results);
+            var result = this.TestClass.Export(results);
 
             Assert.IsTrue(result.Contains("CalculatorRunName"));
         }
@@ -91,10 +99,9 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter();
 
             // Act
-            var result = exporter.Export(results);
+            var result = this.TestClass.Export(results);
 
             // Assert
             Assert.IsTrue(result.Contains("LAPCAP Data"));
@@ -105,9 +112,9 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter();
+
             // Act
-            var result = exporter.Export(results);
+            var result = this.TestClass.Export(results);
 
             // Assert
             Assert.IsTrue(result.Contains("Late Reporting Tonnage"));
@@ -118,9 +125,9 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter();
+
             // Act
-            var result = exporter.Export(results);
+            var result = this.TestClass.Export(results);
 
             // Assert
             Assert.IsTrue(result.Contains("Parameters - Other"));
@@ -131,9 +138,9 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter();
+
             // Act
-            var result = exporter.Export(results);
+            var result = this.TestClass.Export(results);
 
             // Assert
             Assert.IsTrue(result.Contains("1 + 4 Apportionment %s"));
@@ -144,9 +151,9 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter();
+
             // Act
-            var result = exporter.Export(results);
+            var result = this.TestClass.Export(results);
 
             // Assert
             Assert.IsTrue(result.Contains("4 LA Data Prep Charge"));
@@ -157,10 +164,9 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter();
 
             // Act
-            var result = exporter.Export(results);
+            var result = this.TestClass.Export(results);
 
             // Assert
             Assert.IsTrue(result.Contains("5 Scheme set up cost Yearly Cost"));
@@ -171,10 +177,9 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter();
 
             // Act
-            var result = exporter.Export(results);
+            var result = this.TestClass.Export(results);
 
             // Assert
             Assert.IsTrue(result.Contains("Scaled-up Producers"));
@@ -191,10 +196,9 @@
             results.CalcResultScaledupProducers.ScaledupProducers = setScaledUpProducersToNull
                 ? null!
                 : new List<CalcResultScaledupProducer>();
-            var exporter = new CalcResultsExporter();
 
             // Act
-            var result = exporter.Export(results);
+            var result = this.TestClass.Export(results);
 
             // Assert
             Assert.IsTrue(result.Contains("Scaled-up Producers"));
@@ -210,10 +214,9 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter();
 
             // Act
-            var result = exporter.Export(results);
+            var result = this.TestClass.Export(results);
 
             // Assert
             Assert.IsTrue(result.Contains("SummaryData"));
@@ -229,12 +232,11 @@
                 CalcResultLateReportingTonnageData = null!,
                 CalcResultParameterOtherCost = null!,
             };
-            var exporter = new CalcResultsExporter();
 
             // Act
             if (results != null)
             {
-                var csvContent = exporter.Export(results);
+                var csvContent = this.TestClass.Export(results);
 
                 // Assert
                 Assert.IsFalse(string.IsNullOrEmpty(csvContent), "CSV content should not be empty.");
@@ -259,10 +261,9 @@
         {
             // Arrange
             var results = CreateCalcResultWithGlass();
-            var exporter = new CalcResultsExporter();
 
             // Act
-            var result = exporter.Export(results);
+            var result = this.TestClass.Export(results);
 
             // Assert
             Assert.IsTrue(result.Contains("Glass"));

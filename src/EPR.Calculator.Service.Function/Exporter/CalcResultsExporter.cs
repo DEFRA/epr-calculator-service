@@ -6,10 +6,11 @@
     using System.Text;
     using EPR.Calculator.API.Utils;
     using EPR.Calculator.Service.Function.Constants;
+    using EPR.Calculator.Service.Function.Exporter;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.IdentityModel.Tokens;
 
-    public class CalcResultsExporter : ICalcResultsExporter<CalcResult>
+    public class CalcResultsExporter(LateReportingExporter lateReportingExporter) : ICalcResultsExporter<CalcResult>
     {
         private const string RunName = "Run Name";
         private const string RunId = "Run Id";
@@ -25,6 +26,8 @@
         private const int DecimalRoundUp = 2;
         private const int DecimalPoint = 3;
 
+        private LateReportingExporter LateReportingExporter { get; init; } = lateReportingExporter;
+
         public string Export(CalcResult results)
         {
             if (results == null)
@@ -39,10 +42,7 @@
                 PrepareLapcapData(results.CalcResultLapcapData, csvContent);
             }
 
-            if (results.CalcResultLateReportingTonnageData != null)
-            {
-                PrepareLateReportingData(results.CalcResultLateReportingTonnageData, csvContent);
-            }
+            csvContent.Append(this.LateReportingExporter.PrepareData(results.CalcResultLateReportingTonnageData));
 
             if (results.CalcResultParameterOtherCost != null)
             {
@@ -261,24 +261,6 @@
                 csvContent.Append($"\"{CsvSanitiser.SanitiseData(lapcapData.ScotlandDisposalTotal)}\",");
                 csvContent.Append($"\"{CsvSanitiser.SanitiseData(lapcapData.NorthernIrelandDisposalTotal)}\",");
                 csvContent.Append($"\"{CsvSanitiser.SanitiseData(lapcapData.Total)}\",");
-                csvContent.AppendLine();
-            }
-        }
-
-        private static void PrepareLateReportingData(CalcResultLateReportingTonnage calcResultLateReportingData, StringBuilder csvContent)
-        {
-            csvContent.AppendLine();
-            csvContent.AppendLine();
-
-            csvContent.AppendLine(calcResultLateReportingData.Name);
-            csvContent.Append($"{calcResultLateReportingData.MaterialHeading},");
-            csvContent.Append(calcResultLateReportingData.TonnageHeading);
-            csvContent.AppendLine();
-
-            foreach (var lateReportingData in calcResultLateReportingData.CalcResultLateReportingTonnageDetails)
-            {
-                csvContent.Append($"{CsvSanitiser.SanitiseData(lateReportingData.Name)},");
-                csvContent.Append(CsvSanitiser.SanitiseData(lateReportingData.TotalLateReportingTonnage));
                 csvContent.AppendLine();
             }
         }
