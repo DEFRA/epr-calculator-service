@@ -5,19 +5,23 @@
     using System.Text;
     using AutoFixture;
     using EPR.Calculator.API.Exporter;
+    using EPR.Calculator.Service.Function.Exporter;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Moq;
 
     [TestClass]
     public class CalcResultsExporterTests
     {
         private Fixture Fixture { get; } = new Fixture();
 
+        private Mock<ICalcResultDetailexporter> resultDetailexporter = new();
+
         [TestMethod]
         public void Export_ShouldReturnCsvContent_WhenAllDataIsPresent()
         {
             // Arrange
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
             var calcResult = CreateCalcResult();
 
             // Act
@@ -31,7 +35,7 @@
         public void Export_DataFormatting_IsCorrect()
         {
             // Arrange
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
             var calcResult = CreateCalcResult();
 
             // Act
@@ -48,27 +52,11 @@
         }
 
         [TestMethod]
-        public void Export_CsvContent_HasCorrectNumberOfLineBreaks()
-        {
-            // Arrange
-            var exporter = new CalcResultsExporter();
-            var calcResult = CreateCalcResult();
-
-            // Act
-            var result = exporter.Export(calcResult);
-            var lines = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-
-            // Assert
-            int expectedLineCount = 68;
-            Assert.AreEqual(expectedLineCount, lines.Length);
-        }
-
-        [TestMethod]
         public void Export_ShouldThrowArgumentNullException_WhenResultsIsNull()
         {
             // Arrange
             CalcResult? results = null;
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
 
             // Act & Assert
             var ex = Assert.ThrowsException<ArgumentNullException>(() => exporter.Export(results!));
@@ -76,22 +64,11 @@
         }
 
         [TestMethod]
-        public void Export_ShouldIncludeCalcResultRunNameDetails()
-        {
-            var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter();
-
-            var result = exporter.Export(results);
-
-            Assert.IsTrue(result.Contains("CalculatorRunName"));
-        }
-
-        [TestMethod]
         public void Export_ShouldIncludeLapcapData_WhenNotNull()
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
 
             // Act
             var result = exporter.Export(results);
@@ -105,7 +82,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
             // Act
             var result = exporter.Export(results);
 
@@ -118,7 +95,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
             // Act
             var result = exporter.Export(results);
 
@@ -131,7 +108,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
             // Act
             var result = exporter.Export(results);
 
@@ -144,7 +121,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
             // Act
             var result = exporter.Export(results);
 
@@ -157,7 +134,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
 
             // Act
             var result = exporter.Export(results);
@@ -171,7 +148,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
 
             // Act
             var result = exporter.Export(results);
@@ -191,7 +168,7 @@
             results.CalcResultScaledupProducers.ScaledupProducers = setScaledUpProducersToNull
                 ? null!
                 : new List<CalcResultScaledupProducer>();
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
 
             // Act
             var result = exporter.Export(results);
@@ -210,7 +187,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
 
             // Act
             var result = exporter.Export(results);
@@ -229,7 +206,7 @@
                 CalcResultLateReportingTonnageData = null!,
                 CalcResultParameterOtherCost = null!,
             };
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
 
             // Act
             if (results != null)
@@ -259,7 +236,7 @@
         {
             // Arrange
             var results = CreateCalcResultWithGlass();
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
 
             // Act
             var result = exporter.Export(results);
@@ -274,7 +251,7 @@
         public void AppendFileInfoTest()
         {
             var csvContent = new StringBuilder();
-            CalcResultsExporter.AppendFileInfo(csvContent, "Label", "Filename,20/12/2024,User");
+            CalcResultDetailexporter.AppendFileInfo(csvContent, "Label", "Filename,20/12/2024,User");
             Assert.IsTrue(csvContent.ToString().Contains("Label,Filename,20/12/2024,User"));
         }
 
