@@ -684,6 +684,63 @@
             Assert.AreEqual(0.13m, glassTonnage.ScaledupNetReportedTonnage);
         }
 
+        [TestMethod]
+        public void GetCalcResultSummary_ScaledUpProducerShouldReturnCorrectValue()
+        {
+
+            var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
+            this.calcResult.CalcResultScaledupProducers.ScaledupProducers = GetScaledUpProducers();
+            var results = this.calcResultsService.Construct(calcResultsRequestDto, this.calcResult);
+
+            var orderedProducerDetails = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, this.context.ProducerDetail.ToList());
+            var runProducerMaterialDetails = CalcResultSummaryBuilder.GetProducerRunMaterialDetails(
+                orderedProducerDetails,
+                this.context.ProducerReportedMaterial.ToList(),
+                1);
+
+            var materials = Mappers.MaterialMapper.Map(this.context.Material.ToList());
+
+            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, 1);
+            var scaledUpProducer = totalPackagingTonnage.First(t => t.ProducerId == 4);
+
+            Assert.AreEqual(3, totalPackagingTonnage.Count());
+            Assert.IsNotNull(scaledUpProducer.ProducerId);
+            Assert.AreEqual(100, scaledUpProducer.TotalPackagingTonnage);
+        }
+
+        public static List<CalcResultScaledupProducer> GetScaledUpProducers()
+        {
+            var test = new List<CalcResultScaledupProducer>
+            {
+                new CalcResultScaledupProducer()
+                {
+                    ProducerId = 4,
+                    ProducerName = "Test",
+                    ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>
+                {
+                    {
+                        "1",
+                        new CalcResultScaledupProducerTonnage
+                        {
+                            ReportedHouseholdPackagingWasteTonnage = 0,
+                            ReportedPublicBinTonnage = 0,
+                            TotalReportedTonnage = 0,
+                            ReportedSelfManagedConsumerWasteTonnage = 0,
+                            NetReportedTonnage = 0,
+                            ScaledupReportedHouseholdPackagingWasteTonnage = 0,
+                            ScaledupReportedPublicBinTonnage = 0,
+                            ScaledupTotalReportedTonnage = 100,
+                            ScaledupReportedSelfManagedConsumerWasteTonnage = 0,
+                            ScaledupNetReportedTonnage = 0,
+                        }
+                    },
+                },
+                },
+            };
+
+            return test;
+        }
+
         private static void SeedDatabase(ApplicationDBContext context)
         {
             context.Material.AddRange(new List<Material>
@@ -709,6 +766,8 @@
                 new() { Id = 4, MaterialId = 2, PackagingType = "CW", PackagingTonnage = 200m, ProducerDetailId = 2 },
                 new() { Id = 5, MaterialId = 1, PackagingType = "HDC", PackagingTonnage = 300m, ProducerDetailId = 1 },
                 new() { Id = 6, MaterialId = 2, PackagingType = "HDC", PackagingTonnage = 300m, ProducerDetailId = 2 },
+                new() { Id = 7, MaterialId = 2, PackagingType = "HH", PackagingTonnage = 300m, ProducerDetailId = 4 },
+                new() { Id = 8, MaterialId = 1, PackagingType = "HH", PackagingTonnage = 300m, ProducerDetailId = 5 },
             });
             context.SaveChanges();
         }
