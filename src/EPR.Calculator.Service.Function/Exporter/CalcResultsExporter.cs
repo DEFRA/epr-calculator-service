@@ -273,9 +273,9 @@
             csvContent.AppendLine();
             csvContent.AppendLine();
 
-            csvContent.AppendLine(calcResultLateReportingData.Name);
-            csvContent.Append(calcResultLateReportingData.MaterialHeading);
-            csvContent.Append(calcResultLateReportingData.TonnageHeading);
+            csvContent.AppendLine(CsvSanitiser.SanitiseData(calcResultLateReportingData.Name));
+            csvContent.Append(CsvSanitiser.SanitiseData(calcResultLateReportingData.MaterialHeading));
+            csvContent.Append(CsvSanitiser.SanitiseData(calcResultLateReportingData.TonnageHeading));
             csvContent.AppendLine();
 
             foreach (var lateReportingData in calcResultLateReportingData.CalcResultLateReportingTonnageDetails)
@@ -565,7 +565,7 @@
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ManagedConsumerWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.NetReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
 
-                csvContent.Append(producer.Level != CommonConstants.Totals ? CsvSanitiser.SanitiseData(disposalFee.Value.PricePerTonne, null, null, true) : ",");
+                csvContent.Append(producer.Level != CommonConstants.Totals ? CsvSanitiser.SanitiseData(disposalFee.Value.PricePerTonne, null, null, true) : CommonConstants.CsvFileDelimiter);
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ProducerDisposalFee, DecimalPlaces.Two, null, true));
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.BadDebtProvision, DecimalPlaces.Two, null, true));
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ProducerDisposalFeeWithBadDebtProvision, DecimalPlaces.Two, null, true));
@@ -588,7 +588,7 @@
                 }
 
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.TotalReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(producer.Level != CommonConstants.Totals ? CsvSanitiser.SanitiseData(disposalFee.Value.PriceperTonne, null, null, true) : ",");
+                csvContent.Append(producer.Level != CommonConstants.Totals ? CsvSanitiser.SanitiseData(disposalFee.Value.PriceperTonne, null, null, true) : CommonConstants.CsvFileDelimiter);
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ProducerTotalCostWithoutBadDebtProvision, DecimalPlaces.Two, null, true));
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.BadDebtProvision, DecimalPlaces.Two, null, true));
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ProducerTotalCostwithBadDebtProvision, DecimalPlaces.Two, null, true));
