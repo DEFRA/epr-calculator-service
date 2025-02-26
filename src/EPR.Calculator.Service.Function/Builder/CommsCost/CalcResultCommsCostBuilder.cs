@@ -96,10 +96,15 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             list.Add(header);
 
             telemetryClient.TrackTrace("Filtering producer reported materials...");
-            telemetryClient.TrackTrace($"CalcResultScaledupProducers present = {calcResult.CalcResultScaledupProducers is null}");
-            telemetryClient.TrackTrace($"CalcResultScaledupProducers?.ScaledupProducers present = {calcResult.CalcResultScaledupProducers?.ScaledupProducers is null}");
-            producerReportedMaterials = producerReportedMaterials.Where(t => !calcResult.CalcResultScaledupProducers!.ScaledupProducers!.
-                Any(i => i.ProducerId == t.ProducerDetail?.ProducerId)).ToList();
+            try
+            {
+                producerReportedMaterials = producerReportedMaterials.Where(t => !calcResult.CalcResultScaledupProducers!.ScaledupProducers!.
+                    Any(i => i.ProducerId == t.ProducerDetail?.ProducerId)).ToList();
+            }
+            catch (Exception ex)
+            {
+                telemetryClient.TrackTrace(ex.ToString());
+            }
 
             telemetryClient.TrackTrace("Getting scaled up producer reported on...");
             var scaledUpProducerReportedOn = calcResult.CalcResultScaledupProducers?
