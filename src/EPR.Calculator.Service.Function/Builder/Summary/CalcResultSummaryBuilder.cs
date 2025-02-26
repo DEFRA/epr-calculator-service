@@ -26,7 +26,7 @@
     {
         private readonly ApplicationDBContext context;
 
-        private static IEnumerable<CalcResultScaledupProducer> ScaledupProducers { get; set; }
+        public static IEnumerable<CalcResultScaledupProducer> ScaledupProducers { get; set; }
 
         public CalcResultSummaryBuilder(ApplicationDBContext context)
         {
