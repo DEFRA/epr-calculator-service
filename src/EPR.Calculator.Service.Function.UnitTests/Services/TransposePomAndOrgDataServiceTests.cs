@@ -26,7 +26,7 @@
                 .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
             .Options;
 
-            this._context = new ApplicationDBContext(_dbContextOptions);
+            this._context = new ApplicationDBContext(this._dbContextOptions);
 
             this.SeedDatabase();
         }
@@ -48,7 +48,6 @@
 
             this._context.CalculatorRunPomDataMaster.AddRange(GetCalculatorRunPomDataMaster());
             this._context.CalculatorRunPomDataDetails.AddRange(GetCalculatorRunPomDataDetails());
-
 
             this._context.CalculatorRuns.AddRange(GetCalculatorRuns());
             this._context.Material.AddRange(GetMaterials());

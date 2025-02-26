@@ -38,13 +38,13 @@
         {
             // Get and map materials from DB
             var runId = resultsRequestDto.RunId;
-            var materialsFromDb = await context.Material.ToListAsync();
+            var materialsFromDb = await this.context.Material.ToListAsync();
             var materials = Mappers.MaterialMapper.Map(materialsFromDb);
 
             ScaledupProducers = calcResult.CalcResultScaledupProducers.ScaledupProducers;
 
-            var runProducerMaterialDetails = await (from pd in context.ProducerDetail
-                                                    join prm in context.ProducerReportedMaterial on pd.Id equals prm.ProducerDetailId
+            var runProducerMaterialDetails = await (from pd in this.context.ProducerDetail
+                                                    join prm in this.context.ProducerReportedMaterial on pd.Id equals prm.ProducerDetailId
                                                     where pd.CalculatorRunId == runId
                                                     select new CalcResultsProducerAndReportMaterialDetail
                                                     {
@@ -57,13 +57,13 @@
                 runId, producerDetails);
 
             // Household + PublicBin + HDC
-            var TotalPackagingTonnage = GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, runId);
+            var totalPackagingTonnage = GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, runId);
 
             var result = GetCalcResultSummary(
                 orderedProducerDetails,
                 materials,
                 calcResult,
-                TotalPackagingTonnage);
+                totalPackagingTonnage);
 
             return result;
         }
@@ -89,20 +89,17 @@
                     if (producersAndSubsidiaries.Count() > 1 &&
                         producerDisposalFees.Find(pdf => pdf.ProducerId == producer.ProducerId.ToString()) == null)
                     {
-                        var totalRow = GetProducerTotalRow(producersAndSubsidiaries.ToList(), materials, calcResult,
-                            producerDisposalFees, false, TotalPackagingTonnage);
+                        var totalRow = this.GetProducerTotalRow(producersAndSubsidiaries.ToList(), materials, calcResult, producerDisposalFees, false, TotalPackagingTonnage);
                         producerDisposalFees.Add(totalRow);
                     }
 
                     // Calculate the values for the producer
-                    producerDisposalFees.Add(GetProducerRow(producerDisposalFees, producer, materials, calcResult,
-                        TotalPackagingTonnage));
+                    producerDisposalFees.Add(this.GetProducerRow(producerDisposalFees, producer, materials, calcResult, TotalPackagingTonnage));
                 }
 
-
                 // Calculate the total for all the producers
-                var allTotalRow = GetProducerTotalRow(orderedProducerDetails.ToList(), materials, calcResult,
-                    producerDisposalFees, true, TotalPackagingTonnage);
+
+                var allTotalRow = this.GetProducerTotalRow(orderedProducerDetails.ToList(), materials, calcResult, producerDisposalFees, true, TotalPackagingTonnage);
                 producerDisposalFees.Add(allTotalRow);
 
                 result.ProducerDisposalFees = producerDisposalFees;
@@ -240,7 +237,7 @@
                     : producersAndSubsidiaries[0].ProducerName ?? string.Empty,
                 SubsidiaryId = string.Empty,
                 Level = isOverAllTotalRow ? string.Empty : CommonConstants.LevelOne.ToString(),
-                isProducerScaledup = GetScaledupProducerStatusTotalRow(producersAndSubsidiaries[0], ScaledupProducers, isOverAllTotalRow),
+                IsProducerScaledup = GetScaledupProducerStatusTotalRow(producersAndSubsidiaries[0], ScaledupProducers, isOverAllTotalRow),
                 ProducerDisposalFeesByMaterial = materialCostSummary,
 
                 // Disposal fee summary
@@ -295,8 +292,7 @@
                 isTotalRow = true,
             };
 
-            TwoCCommsCostUtil.UpdateTwoCTotals(calcResult, producerDisposalFees, isOverAllTotalRow, totalRow,
-                producersAndSubsidiaries, TotalPackagingTonnage);
+            TwoCCommsCostUtil.UpdateTwoCTotals(calcResult, producerDisposalFees, isOverAllTotalRow, totalRow, producersAndSubsidiaries, TotalPackagingTonnage);
 
             return totalRow;
         }
@@ -317,7 +313,7 @@
                 ProducerName = producer.ProducerName ?? string.Empty,
                 SubsidiaryId = producer.SubsidiaryId ?? string.Empty,
                 Level = CalcResultSummaryUtil.GetLevelIndex(producerDisposalFeesLookup, producer).ToString(),
-                isProducerScaledup = CalcResultSummaryUtil.IsProducerScaledup(producer, ScaledupProducers)
+                IsProducerScaledup = CalcResultSummaryUtil.IsProducerScaledup(producer, ScaledupProducers)
                     ? CommonConstants.ScaledupProducersYes
                     : CommonConstants.ScaledupProducersNo,
             };
