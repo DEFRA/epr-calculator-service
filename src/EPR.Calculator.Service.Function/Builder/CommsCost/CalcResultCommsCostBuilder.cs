@@ -98,8 +98,8 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             telemetryClient.TrackTrace("Filtering producer reported materials...");
             telemetryClient.TrackTrace($"ProducerReportedMaterials present = {producerReportedMaterials is null}");
             telemetryClient.TrackTrace($"CalcResult present = {calcResult is null}");
-            telemetryClient.TrackTrace($"CalcResultScaledupProducers present = {calcResult.CalcResultScaledupProducers is null}");
-            telemetryClient.TrackTrace($"CalcResultScaledupProducers?.ScaledupProducers present = {calcResult.CalcResultScaledupProducers?.ScaledupProducers is null}");
+            telemetryClient.TrackTrace($"CalcResultScaledupProducers present = {calcResult?.CalcResultScaledupProducers is null}");
+            telemetryClient.TrackTrace($"CalcResultScaledupProducers?.ScaledupProducers present = {calcResult?.CalcResultScaledupProducers?.ScaledupProducers is null}");
 
             try
             {
