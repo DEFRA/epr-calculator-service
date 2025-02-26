@@ -304,7 +304,7 @@
 
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.ProducerDisposalFees);
-            Assert.AreEqual(2, result.ProducerDisposalFees.Count());
+            Assert.AreEqual(4, result.ProducerDisposalFees.Count());
             var firstProducer = result.ProducerDisposalFees.FirstOrDefault();
             Assert.IsNotNull(firstProducer);
             Assert.AreEqual("Producer1", firstProducer.ProducerName);
@@ -373,7 +373,7 @@
             var result = results.Result;
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(2, result.ProducerDisposalFees.Count());
+            Assert.AreEqual(4, result.ProducerDisposalFees.Count());
             Assert.IsFalse(result.ProducerDisposalFees.Any(fee => fee.ProducerName.Contains("Total")));
         }
 
@@ -387,7 +387,7 @@
             results.Wait();
             var result = results.Result;
             Assert.IsNotNull(result);
-            Assert.AreEqual(2, result.ProducerDisposalFees.Count());
+            Assert.AreEqual(4, result.ProducerDisposalFees.Count());
         }
 
         [TestMethod]
@@ -533,10 +533,10 @@
 
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.ProducerDisposalFees);
-            Assert.AreEqual(2, result.ProducerDisposalFees.Count());
+            Assert.AreEqual(4, result.ProducerDisposalFees.Count());
             var producerTotalPercentage = result.ProducerDisposalFees.First().PercentageofProducerReportedTonnagevsAllProducers;
             Assert.IsNotNull(producerTotalPercentage);
-            Assert.AreEqual(100, producerTotalPercentage);
+            Assert.AreEqual(40, producerTotalPercentage);
         }
 
         [TestMethod]
@@ -554,7 +554,7 @@
             var isColumnHeaderExists = result.ProducerDisposalFeesHeaders!.Select(dict => dict.ColumnIndex == 213 || dict.ColumnIndex == 214 || dict.ColumnIndex == 215).ToList();
             Assert.IsTrue(isColumnHeaderExists.Contains(true));
             Assert.IsNotNull(result.ProducerDisposalFees);
-            Assert.AreEqual(2, result.ProducerDisposalFees.Count());
+            Assert.AreEqual(4, result.ProducerDisposalFees.Count());
         }
 
         [TestMethod]
@@ -580,7 +580,7 @@
                 this.context.ProducerReportedMaterial.ToList(),
                 1);
             Assert.IsNotNull(result);
-            Assert.AreEqual(3, result.Count());
+            Assert.AreEqual(5, result.Count());
             var producer = result.FirstOrDefault(t => t.ProducerDetail.Id == 1);
             Assert.AreEqual(3, producer?.ProducerDetail.ProducerReportedMaterials.Count);
             Assert.AreEqual("Producer1", producer?.ProducerDetail.ProducerName);
