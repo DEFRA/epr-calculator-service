@@ -12,9 +12,9 @@
 
     public class CalcResultsExporter : ICalcResultsExporter<CalcResult>
     {
-        private readonly ICalcResultDetailexporter resultDetailexporter;
+        private readonly ICalcResultDetailExporter resultDetailexporter;
 
-        public CalcResultsExporter(ICalcResultDetailexporter resultDetailexporter)
+        public CalcResultsExporter(ICalcResultDetailExporter resultDetailexporter)
         {
             this.resultDetailexporter = resultDetailexporter;
         }

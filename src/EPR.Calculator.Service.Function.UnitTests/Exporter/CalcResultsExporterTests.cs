@@ -15,7 +15,7 @@
     {
         private Fixture Fixture { get; } = new Fixture();
 
-        private Mock<ICalcResultDetailexporter> resultDetailexporter = new();
+        private Mock<ICalcResultDetailExporter> resultDetailexporter = new();
 
         [TestMethod]
         public void Export_ShouldReturnCsvContent_WhenAllDataIsPresent()

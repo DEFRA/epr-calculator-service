@@ -5,7 +5,7 @@ using System.Text;
 
 namespace EPR.Calculator.Service.Function.Exporter
 {
-    public class CalcResultDetailexporter : ICalcResultDetailexporter
+    public class CalcResultDetailexporter : ICalcResultDetailExporter
     {
         private const string RunName = "Run Name";
         private const string RunId = "Run Id";

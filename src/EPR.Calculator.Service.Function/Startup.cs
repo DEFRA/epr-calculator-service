@@ -101,7 +101,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcRunLaDisposalCostBuilder, CalcRunLaDisposalCostBuilder>();
             services.AddScoped<ICalcResultScaledupProducersBuilder, CalcResultScaledupProducersBuilder>();
             services.AddTransient<ICalcResultSummaryBuilder, CalcResultSummaryBuilder>();
-            services.AddTransient<ICalcResultDetailexporter, CalcResultDetailexporter>();
+            services.AddTransient<ICalcResultDetailExporter, CalcResultDetailexporter>();
 #if !DEBUG
             services.AddTransient<IStorageService, BlobStorageService>();
             services.AddTransient<IConfigurationService, Configuration>();
