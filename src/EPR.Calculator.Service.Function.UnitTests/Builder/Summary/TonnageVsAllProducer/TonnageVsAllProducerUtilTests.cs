@@ -36,6 +36,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TonnageVsAll
             allResults.First().ProducerReportedMaterial.MaterialId = testMaterialId;
             materialDetails.First().Id = testMaterialId;
 
+            CalcResultSummaryBuilder.ScaledupProducers = Fixture.Create<List<CalcResultScaledupProducer>>();
+
             var TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, producers.First().CalculatorRunId);
             // Act
             var result = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducersTotal(producers, TotalPackagingTonnage);
@@ -84,6 +86,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TonnageVsAll
             var testSubsidaryId = Fixture.Create<string>();
             var materialDetails = Fixture.Create<List<MaterialDetail>>();
             var testMaterialId = Fixture.Create<int>();
+            CalcResultSummaryBuilder.ScaledupProducers = Fixture.Create<List<CalcResultScaledupProducer>>();
 
             var producer = Fixture.Create<ProducerDetail>();
             var allResults = GenerateAllResults(testProducerId, testCalculatorRunId, testSubsidaryId);
@@ -93,6 +96,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TonnageVsAll
             producer.CalculatorRunId = testCalculatorRunId;
             allResults.First().ProducerReportedMaterial.MaterialId = testMaterialId;
             materialDetails.First().Id = testMaterialId;
+
 
             var TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId);
 
@@ -152,6 +156,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TonnageVsAll
             producer.ProducerId = testProducerId;
             producer.SubsidiaryId = testSubsidaryId;
             producer.CalculatorRunId = testCalculatorRunId;
+            CalcResultSummaryBuilder.ScaledupProducers = Fixture.Create<List<CalcResultScaledupProducer>>();
 
             var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId);
 

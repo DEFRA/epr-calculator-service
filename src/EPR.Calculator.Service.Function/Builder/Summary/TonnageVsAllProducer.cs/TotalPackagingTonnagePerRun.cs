@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs
+﻿namespace EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs
 {
     public record TotalPackagingTonnagePerRun
     {

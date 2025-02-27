@@ -32,7 +32,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                 CalcResultParameterCommunicationCost = GetCalcResultParameterCommunicationCost(),
                 CalcResultSummary = TestDataHelper.GetCalcResultSummary(),
                 CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
-                CalcResultLateReportingTonnageData = GetCalcResultLateReportingTonnage()
+                CalcResultLateReportingTonnageData = GetCalcResultLateReportingTonnage(),
+                CalcResultScaledupProducers =  TestDataHelper.GetScaledupProducers(),
             };
 
             // Set up consistent data
@@ -64,8 +65,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                             Code = "HH",
                             Name = "Material1",
                             Description = "Material1"
-                        }
-                    }
+                        },
+                    },
                 },
                 new CalcResultsProducerAndReportMaterialDetail
                 {
@@ -92,11 +93,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                             Description = "Material1"
                         }
                     }
-                }
+                },
             };
 
             var materails = TestDataHelper.GetMaterials();
-
+            CalcResultSummaryBuilder.ScaledupProducers = Fixture.Create<List<CalcResultScaledupProducer>>();
             TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(_allResults, materails, 1);
         }
 
@@ -348,8 +349,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                     Id = 1,
                     Code = "HH",
                     Name = "Material1",
-                    Description = "Material1"
-                }
+                    Description = "Material1",
+                },
             });
 
             return producers;
