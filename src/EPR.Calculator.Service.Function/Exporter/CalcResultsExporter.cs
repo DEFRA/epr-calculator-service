@@ -7,6 +7,7 @@
     using EPR.Calculator.API.Utils;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Enums;
+    using EPR.Calculator.Service.Function.Exporter.ScaledupProducers;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.IdentityModel.Tokens;
 
@@ -22,6 +23,13 @@
         private const string LapcapFile = "LAPCAP File";
         private const string ParametersFile = "Parameters File";
         private const string CountryApportionmentFile = "Country Apportionment File";
+
+        private readonly ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter;
+
+        public CalcResultsExporter(ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter)
+        {
+            this.calcResultScaledupProducersExporter = calcResultScaledupProducersExporter;
+        }
 
         public string Export(CalcResult results)
         {
@@ -64,8 +72,7 @@
 
             if (results.CalcResultScaledupProducers != null)
             {
-
-                // PrepareScaledupProducers(results.CalcResultScaledupProducers, csvContent);
+                this.calcResultScaledupProducersExporter.Export(results.CalcResultScaledupProducers, csvContent);
             }
 
             if (results.CalcResultSummary != null)

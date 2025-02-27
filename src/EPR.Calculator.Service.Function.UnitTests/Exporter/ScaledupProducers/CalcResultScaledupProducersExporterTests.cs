@@ -1,6 +1,7 @@
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.ScaledupProducers
 {
     using System.Text;
+    using EPR.Calculator.API.Exporter;
     using EPR.Calculator.Service.Function.Exporter.ScaledupProducers;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -25,7 +26,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.ScaledupProducers
                 TitleHeader = this.GetTitleHeader(),
                 MaterialBreakdownHeaders = this.GetMaterialBreakdownHeaders(),
                 ColumnHeaders = this.GetCoulmnHeaders(),
-                ScaledupProducers = GetCalcResultScaledupProducerList(),
+                ScaledupProducers = this.GetCalcResultScaledupProducerList(),
             };
 
             var csvContent = new StringBuilder();
@@ -64,6 +65,30 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.ScaledupProducers
             Assert.IsTrue(result.Contains("Producer Id"));
             Assert.IsTrue(result.Contains("Subsidiary Id"));
             Assert.IsTrue(result.Contains("None"));
+        }
+
+        [TestMethod]
+        public void Export_ShouldIncludeGlassColumns_WhenGlassMaterialPresent()
+        {
+            // Arrange
+            var scaledupProducers = new CalcResultScaledupProducers
+            {
+                TitleHeader = this.GetTitleHeader(),
+                MaterialBreakdownHeaders = this.GetMaterialBreakdownHeaders(),
+                ColumnHeaders = this.GetCoulmnHeaders(),
+                ScaledupProducers = this.GetCalcResultScaledupProducerList(),
+            };
+
+            var csvContent = new StringBuilder();
+
+            // Act
+            this.exporter.Export(scaledupProducers, csvContent);
+            var result = csvContent.ToString();
+
+            // Assert
+            Assert.IsTrue(result.Contains("Glass"));
+            Assert.IsTrue(result.Contains("Household Drinks Containers Tonnage - Glass"));
+            Assert.IsTrue(result.Contains("Scaled-up Household Drinks Containers Tonnage - Glass"));
         }
 
         private List<CalcResultScaledupProducer> GetCalcResultScaledupProducerList()
@@ -139,6 +164,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.ScaledupProducers
                 new CalcResultScaledupProducerHeader { Name = "Days in submission period" },
                 new CalcResultScaledupProducerHeader { Name = "Days in whole period" },
                 new CalcResultScaledupProducerHeader { Name = "Scale-up factor" },
+                new CalcResultScaledupProducerHeader { Name = "Reported Household Packaging Waste Tonnage" },
+                new CalcResultScaledupProducerHeader { Name = "Reported Public Bin Tonnage" },
+                new CalcResultScaledupProducerHeader { Name = "Household Drinks Containers Tonnage - Glass" },
+                new CalcResultScaledupProducerHeader { Name = "Total Reported Tonnage" },
+                new CalcResultScaledupProducerHeader { Name = "Reported Self Managed Consumer Waste Tonnage" },
+                new CalcResultScaledupProducerHeader { Name = "Net Reported Tonnage" },
+                new CalcResultScaledupProducerHeader { Name = "Scaled-up Reported Household Packaging Waste Tonnage" },
+                new CalcResultScaledupProducerHeader { Name = "Scaled-up Reported Public Bin Tonnage" },
+                new CalcResultScaledupProducerHeader { Name = "Scaled-up Household Drinks Containers Tonnage - Glass" },
+                new CalcResultScaledupProducerHeader { Name = "Scaled-up Total Reported Tonnage" },
+                new CalcResultScaledupProducerHeader { Name = "Scaled-up Reported Self Managed Consumer Waste Tonnage" },
+                new CalcResultScaledupProducerHeader { Name = "Scaled-up Net Reported Tonnage" },
             };
         }
 
@@ -157,6 +194,24 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.ScaledupProducers
                         NetReportedTonnage = 1100,
                         ScaledupReportedHouseholdPackagingWasteTonnage = 2000,
                         ScaledupReportedPublicBinTonnage = 200,
+                        ScaledupTotalReportedTonnage = 2200,
+                        ScaledupReportedSelfManagedConsumerWasteTonnage = 1000,
+                        ScaledupNetReportedTonnage = 2200,
+                    }
+                },
+                {
+                    "GL",
+                    new CalcResultScaledupProducerTonnage()
+                    {
+                        ReportedHouseholdPackagingWasteTonnage = 1000,
+                        ReportedPublicBinTonnage = 100,
+                        HouseholdDrinksContainersTonnageGlass = 120,
+                        TotalReportedTonnage = 1100,
+                        ReportedSelfManagedConsumerWasteTonnage = 500,
+                        NetReportedTonnage = 1100,
+                        ScaledupReportedHouseholdPackagingWasteTonnage = 2000,
+                        ScaledupReportedPublicBinTonnage = 200,
+                        ScaledupHouseholdDrinksContainersTonnageGlass = 240,
                         ScaledupTotalReportedTonnage = 2200,
                         ScaledupReportedSelfManagedConsumerWasteTonnage = 1000,
                         ScaledupNetReportedTonnage = 2200,
