@@ -95,17 +95,17 @@ namespace EPR.Calculator.Service.Function.Builder
             result.CalcResultOnePlusFourApportionment = this.lapcapplusFourApportionmentBuilder.Construct(resultsRequestDto, result);
             this._telemetryClient.TrackTrace("lapcapplusFourApportionmentBuilder end...");
 
-            this._telemetryClient.TrackTrace("commsCostReportBuilder started...");
-            result.CalcResultCommsCostReportDetail = await this.commsCostReportBuilder.Construct(resultsRequestDto, result.CalcResultOnePlusFourApportionment, result);
-            this._telemetryClient.TrackTrace("commsCostReportBuilder end...");
-
-            this._telemetryClient.TrackTrace("laDisposalCostBuilder started...");
-            result.CalcResultLaDisposalCostData = await this.laDisposalCostBuilder.Construct(resultsRequestDto, result);
-            this._telemetryClient.TrackTrace("laDisposalCostBuilder end...");
+            //this._telemetryClient.TrackTrace("commsCostReportBuilder started...");
+            //result.CalcResultCommsCostReportDetail = await this.commsCostReportBuilder.Construct(resultsRequestDto, result.CalcResultOnePlusFourApportionment, result);
+            //this._telemetryClient.TrackTrace("commsCostReportBuilder end...");
 
             this._telemetryClient.TrackTrace("calcResultScaledupProducersBuilder started...");
             result.CalcResultScaledupProducers = await this.calcResultScaledupProducersBuilder.Construct(resultsRequestDto);
             this._telemetryClient.TrackTrace("calcResultScaledupProducersBuilder end...");
+
+            this._telemetryClient.TrackTrace("laDisposalCostBuilder started...");
+            result.CalcResultLaDisposalCostData = await this.laDisposalCostBuilder.Construct(resultsRequestDto, result);
+            this._telemetryClient.TrackTrace("laDisposalCostBuilder end...");
 
             this._telemetryClient.TrackTrace("summaryBuilder started...");
             result.CalcResultCommsCostReportDetail = await this.commsCostReportBuilder.Construct(

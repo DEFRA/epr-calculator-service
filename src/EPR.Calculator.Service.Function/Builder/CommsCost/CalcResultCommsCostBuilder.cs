@@ -105,12 +105,13 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
 
             try
             {
-                producerReportedMaterials = producerReportedMaterials.Where(t => !calcResult.CalcResultScaledupProducers!.ScaledupProducers.
+                producerReportedMaterials = producerReportedMaterials.Where(t => !calcResult.CalcResultScaledupProducers.ScaledupProducers.
                     Any(i => i.ProducerId == t.ProducerDetail?.ProducerId)).ToList();
             }
             catch (Exception ex)
             {
                 telemetryClient.TrackTrace(ex.ToString());
+                throw;
             }
 
             telemetryClient.TrackTrace("Getting scaled up producer reported on...");
