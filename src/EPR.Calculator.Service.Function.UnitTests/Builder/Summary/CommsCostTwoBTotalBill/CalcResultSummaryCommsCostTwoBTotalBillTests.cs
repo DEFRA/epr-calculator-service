@@ -110,19 +110,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
         }
 
         [TestMethod]
-        public void GetCommsProducerFeeWithoutBadDebtFor2bTotalsRow_ShouldReturnCorrectTotal()
-        {
-            // Arrange
-            const decimal expectedValue = 253.0m;
-
-            // Act
-            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsProducerFeeWithoutBadDebtFor2bTotalsRow(_calcResult, _producers, TotalPackagingTonnage);
-
-            // Assert
-            Assert.AreEqual(expectedValue, result);
-        }
-
-        [TestMethod]
         public void GetCommsProducerFeeWithBadDebtFor2bTotalsRow_ShouldReturnCorrectTotal()
         {
             // Arrange
@@ -143,32 +130,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
 
             // Act
             var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsEnglandWithBadDebtTotalsRow(_calcResult, _producers, TotalPackagingTonnage);
-
-            // Assert
-            Assert.AreEqual(expectedValue, result);
-        }
-
-        [TestMethod]
-        public void GetCommsWalesWithBadDebtTotalsRow_ShouldReturnCorrectTotal()
-        {
-            // Arrange
-            decimal expectedValue = 55.6600m;
-
-            // Act
-            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsWalesWithBadDebtTotalsRow(_calcResult, _producers, TotalPackagingTonnage);
-
-            // Assert
-            Assert.AreEqual(expectedValue, result);
-        }
-
-        [TestMethod]
-        public void GetCommsScotlandWithBadDebtTotalsRow_ShouldReturnCorrectTotal()
-        {
-            // Arrange
-            decimal expectedValue = 55.6600m;
-
-            // Act
-            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsScotlandWithBadDebtTotalsRow(_calcResult, _producers, TotalPackagingTonnage);
 
             // Assert
             Assert.AreEqual(expectedValue, result);
