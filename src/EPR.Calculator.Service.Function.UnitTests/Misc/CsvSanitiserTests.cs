@@ -17,7 +17,7 @@
             var result = CsvSanitiser.SanitiseData(data);
 
             // Assert
-            Assert.AreEqual(result, "Some data,");
+            Assert.AreEqual("\"Some data\",", result);
         }
 
         [TestMethod]
@@ -30,7 +30,7 @@
             var result = CsvSanitiser.SanitiseData(data, false);
 
             // Assert
-            Assert.AreEqual(result, "Some data");
+            Assert.AreEqual("\"Some data\"", result);
         }
 
         [TestMethod]
@@ -43,7 +43,7 @@
             var result = CsvSanitiser.SanitiseData(data);
 
             // Assert
-            Assert.AreEqual(",", result);
+            Assert.AreEqual("\"\",", result);
         }
 
         [TestMethod]
@@ -56,7 +56,7 @@
             var result = CsvSanitiser.SanitiseData(data, false);
 
             // Assert
-            Assert.AreEqual(string.Empty, result);
+            Assert.AreEqual("\"\"", result);
         }
 
         [TestMethod]
@@ -71,7 +71,7 @@
             var result = CsvSanitiser.SanitiseData(data, decimalPlaces, null, isCurrency);
 
             // Assert
-            Assert.AreEqual("£100.60,", result);
+            Assert.AreEqual("\"£100.60\",", result);
         }
 
         [TestMethod]
@@ -87,7 +87,7 @@
             var result = CsvSanitiser.SanitiseData(data, decimalPlaces, null, isCurrency, isPercentage, false);
 
             // Assert
-            Assert.AreEqual("£290.599", result);
+            Assert.AreEqual("\"£290.599\"", result);
         }
 
         [TestMethod]
@@ -103,7 +103,7 @@
             var result = CsvSanitiser.SanitiseData(data, decimalPlaces, null, isCurrency, isPercentage);
 
             // Assert
-            Assert.AreEqual("79.80%,", result);
+            Assert.AreEqual("\"79.80%\",", result);
         }
 
         [TestMethod]
@@ -119,7 +119,7 @@
             var result = CsvSanitiser.SanitiseData(data, decimalPlaces, null, isCurrency, isPercentage, false);
 
             // Assert
-            Assert.AreEqual("83.46%", result);
+            Assert.AreEqual("\"83.46%\"", result);
         }
     }
 }

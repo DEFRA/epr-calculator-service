@@ -116,7 +116,7 @@
                 }
                 else
                 {
-                    csvContent.AppendLine($"£{CsvSanitiser.SanitiseData(commCostByMaterial.CommsCostByMaterialPricePerTonne)}");
+                    csvContent.AppendLine(CsvSanitiser.SanitiseData(commCostByMaterial.CommsCostByMaterialPricePerTonne, DecimalPlaces.Four, null, true, false));
                 }
             }
 

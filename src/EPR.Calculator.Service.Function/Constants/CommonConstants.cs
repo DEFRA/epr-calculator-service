@@ -20,6 +20,7 @@
         public const string ServiceBusClientName = "calculator";
         public const string CsvFileDelimiter = ",";
         public const string TabSpace = "\t";
+        public const string DoubleQuote = "\"";
         public const int LevelOne = 1;
         public const int LevelTwo = 2;
         public const int SecondaryHeaderMaxColumnSize = 270;

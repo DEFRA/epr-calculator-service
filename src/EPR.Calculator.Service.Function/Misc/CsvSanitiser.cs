@@ -1,6 +1,7 @@
 ﻿namespace EPR.Calculator.API.Utils
 {
     using System;
+    using System.Globalization;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Enums;
     using Newtonsoft.Json;
@@ -27,22 +28,32 @@
                                    .Replace(CommonConstants.CsvFileDelimiter, string.Empty)
                                    .Trim() ?? string.Empty;
 
+            // Apply the speech marks to handle the comma in the text and currency values
+            stringToSanitise = $"{CommonConstants.DoubleQuote}{stringToSanitise}{CommonConstants.DoubleQuote}";
+
             return delimiterRequired
-                ? $"{stringToSanitise},"
+                ? $"{stringToSanitise}{CommonConstants.CsvFileDelimiter}"
                 : stringToSanitise;
         }
 
-        public static string SanitiseData(
-            decimal value,
+        public static string SanitiseData<T>(
+            T value,
             DecimalPlaces? roundTo,
             DecimalFormats? valueFormat,
             bool isCurrency = false,
             bool isPercentage = false,
             bool delimiterRequired = true)
         {
+            if (value is string)
+            {
+                return SanitiseData(value, delimiterRequired);
+            }
+
+            var decimalValue = Convert.ToDecimal(value);
+
             var roundedValue = roundTo == null
-                ? value
-                : Math.Round(value, (int)roundTo);
+                ? decimalValue
+                : Math.Round(decimalValue, (int)roundTo);
 
             var formattedValue = valueFormat == null
                 ? roundedValue.ToString()
