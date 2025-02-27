@@ -7,6 +7,7 @@
     using EPR.Calculator.API.Utils;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Enums;
+    using EPR.Calculator.Service.Function.Exporter.Lapcap;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.IdentityModel.Tokens;
 
@@ -23,6 +24,13 @@
         private const string ParametersFile = "Parameters File";
         private const string CountryApportionmentFile = "Country Apportionment File";
 
+        private readonly ILapcaptDetailExporter lapcaptDetailExporter;
+
+        public CalcResultsExporter(ILapcaptDetailExporter lapcaptDetailExporter)
+        {
+            this.lapcaptDetailExporter = lapcaptDetailExporter;
+        }
+
         public string Export(CalcResult results)
         {
             if (results == null)
@@ -34,7 +42,7 @@
             LoadCalcResultDetail(results, csvContent);
             if (results.CalcResultLapcapData != null)
             {
-                PrepareLapcapData(results.CalcResultLapcapData, csvContent);
+                this.lapcaptDetailExporter.PrepareLapcapData(results.CalcResultLapcapData, csvContent);
             }
 
             if (results.CalcResultLateReportingTonnageData != null)
@@ -226,26 +234,6 @@
         private static void AppendCsvLine(StringBuilder csvContent, string label, string value)
         {
             csvContent.AppendLine($"{label},{CsvSanitiser.SanitiseData(value, false)}");
-        }
-
-        private static void PrepareLapcapData(CalcResultLapcapData calcResultLapcapData, StringBuilder csvContent)
-        {
-            csvContent.AppendLine();
-            csvContent.AppendLine();
-
-            csvContent.AppendLine(calcResultLapcapData.Name);
-            var lapcapDataDetails = calcResultLapcapData.CalcResultLapcapDataDetails.OrderBy(x => x.OrderId);
-
-            foreach (var lapcapData in lapcapDataDetails)
-            {
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.Name));
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.EnglandDisposalCost));
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.WalesDisposalCost));
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.ScotlandDisposalCost));
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.NorthernIrelandDisposalCost));
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.TotalDisposalCost, false));
-                csvContent.AppendLine();
-            }
         }
 
         private static void PrepareOnePluseFourApportionment(CalcResultOnePlusFourApportionment calcResult1Plus4Apportionment, StringBuilder csvContent)
