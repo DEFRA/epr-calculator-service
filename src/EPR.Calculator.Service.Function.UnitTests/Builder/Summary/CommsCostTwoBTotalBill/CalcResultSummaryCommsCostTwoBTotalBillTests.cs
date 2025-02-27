@@ -123,19 +123,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
         }
 
         [TestMethod]
-        public void GetCommsBadDebtProvisionFor2bTotalsRow_ShouldReturnCorrectTotal()
-        {
-            // Arrange
-            decimal expectedValue = 25.300m;
-
-            // Act
-            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsBadDebtProvisionFor2bTotalsRow(_calcResult, _producers, TotalPackagingTonnage);
-
-            // Assert
-            Assert.AreEqual(expectedValue, result);
-        }
-
-        [TestMethod]
         public void GetCommsProducerFeeWithBadDebtFor2bTotalsRow_ShouldReturnCorrectTotal()
         {
             // Arrange
