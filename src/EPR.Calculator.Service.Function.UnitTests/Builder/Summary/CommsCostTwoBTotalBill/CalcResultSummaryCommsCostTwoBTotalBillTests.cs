@@ -297,8 +297,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                     Id = 1,
                     Code = "HH",
                     Name = "Material1",
-                    Description = "Material1"
-                }
+                    Description = "Material1",
+                },
             });
 
             return producers;

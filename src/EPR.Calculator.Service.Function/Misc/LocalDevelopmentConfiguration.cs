@@ -1,6 +1,7 @@
 ﻿namespace EPR.Calculator.Service.Function.Misc
 {
     using System;
+    using System.Configuration;
     using EPR.Calculator.Service.Function.Interface;
     using Microsoft.Extensions.Configuration;
 
@@ -45,5 +46,16 @@
 
         public string BlobConnectionString
             => Configuration.GetValue("BlobConnectionString", string.Empty);
+
+        public TimeSpan CommandTimeout
+        {
+            get
+            {
+                double.TryParse(
+                    this.Configuration.GetValue("CommandTimeout", string.Empty),
+                    out double timeoutInMinutes);
+                return TimeSpan.FromMinutes(timeoutInMinutes);
+            }
+        }
     }
 }

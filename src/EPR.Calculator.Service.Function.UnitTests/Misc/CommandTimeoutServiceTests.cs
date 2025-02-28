@@ -3,6 +3,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
     using System;
     using AutoFixture;
     using EPR.Calculator.Service.Function.Data;
+    using EPR.Calculator.Service.Function.Interface;
     using EPR.Calculator.Service.Function.Services;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -18,12 +19,12 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
         private IFixture Fixture { get; }
 
-        private Mock<IConfiguration> Configuration { get; }
+        private Mock<IConfigurationService> Configuration { get; }
 
         public CommandTimeoutServiceTests()
         {
             this.Fixture = new Fixture();
-            this.Configuration = new Mock<IConfiguration>();
+            this.Configuration = new Mock<IConfigurationService>();
             this.TestClass = new CommandTimeoutService(this.Configuration.Object);
         }
 
@@ -31,13 +32,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void CanConstruct()
         {
             // Act
-            var instance = new CommandTimeoutService();
-
-            // Assert
-            Assert.IsNotNull(instance);
-
-            // Act
-            instance = new CommandTimeoutService(this.Configuration.Object);
+            var instance = new CommandTimeoutService(this.Configuration.Object);
 
             // Assert
             Assert.IsNotNull(instance);
@@ -47,20 +42,19 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void CanCallSetCommandTimeout()
         {
             // Arrange
-            var context = new Mock<DbContext>();
             var database = new TestDbFacade(new ApplicationDBContext());
             var key = this.Fixture.Create<string>();
-            var timeoutValue = this.Fixture.Create<double>();
-            var expectedResult = (int)(timeoutValue * 60);
+            var timeoutValue = this.Fixture.Create<TimeSpan>();
+            var expectedResult = (int)(timeoutValue.TotalSeconds);
 
             var timeoutValueSection = new Mock<IConfigurationSection>();
             timeoutValueSection.Setup(s => s.Value).Returns(timeoutValue.ToString());
             var timeoutsSection = new Mock<IConfigurationSection>();
             timeoutsSection.Setup(s => s.GetSection(key)).Returns(timeoutValueSection.Object);
-            this.Configuration.Setup(c => c.GetSection("Timeouts")).Returns(timeoutsSection.Object);
+            this.Configuration.Setup(c => c.CommandTimeout).Returns(timeoutValue);
 
             // Act
-            this.TestClass.SetCommandTimeout(database, key);
+            this.TestClass.SetCommandTimeout(database);
             var result = database.GetCommandTimeout();
 
             // Assert
