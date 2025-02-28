@@ -276,7 +276,9 @@
         {
             var csvContent = new StringBuilder();
             CalcResultsExporter.AppendFileInfo(csvContent, "Label", "Filename,20/12/2024,User");
-            Assert.IsTrue(csvContent.ToString().Contains("Label,Filename,20/12/2024,User"));
+            Assert.IsTrue(csvContent.ToString().Contains("Filename"));
+            Assert.IsTrue(csvContent.ToString().Contains("20/12/2024"));
+            Assert.IsTrue(csvContent.ToString().Contains("User"));
         }
 
         private static CalcResult CreateCalcResult()

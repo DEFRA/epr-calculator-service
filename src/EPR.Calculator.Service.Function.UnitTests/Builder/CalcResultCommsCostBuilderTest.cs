@@ -9,6 +9,8 @@
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Models;
+    using Microsoft.ApplicationInsights;
+    using Microsoft.ApplicationInsights.Extensibility;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -28,7 +30,9 @@
 
             this.dbContext = new ApplicationDBContext(dbContextOptions);
             this.dbContext.Database.EnsureCreated();
-            this.builder = new CalcResultCommsCostBuilder(this.dbContext);
+            this.builder = new CalcResultCommsCostBuilder(
+                this.dbContext,
+                new TelemetryClient(TelemetryConfiguration.CreateDefault()));
         }
 
         private Fixture Fixture { get; init; } = new Fixture();
