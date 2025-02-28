@@ -5,6 +5,7 @@
     using System.Text;
     using AutoFixture;
     using EPR.Calculator.API.Exporter;
+    using EPR.Calculator.Service.Function.Exporter.ScaledupProducers;
     using EPR.Calculator.Service.Function.Exporter;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,12 +17,14 @@
     {
         private Fixture Fixture { get; } = new Fixture();
 
+        private Mock<ICalcResultScaledupProducersExporter> scaledupProducersExporter = new();
         private Mock<ICalcResultDetailExporter> resultDetailexporter = new();
 
         [TestMethod]
         public void Export_ShouldReturnCsvContent_WhenAllDataIsPresent()
         {
             // Arrange
+            var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
             var exporter = new CalcResultsExporter(resultDetailexporter.Object);
             var calcResult = CreateCalcResult();
 
@@ -36,6 +39,7 @@
         public void Export_DataFormatting_IsCorrect()
         {
             // Arrange
+            var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
             var exporter = new CalcResultsExporter(resultDetailexporter.Object);
             var calcResult = CreateCalcResult();
 
@@ -57,6 +61,7 @@
         {
             // Arrange
             CalcResult? results = null;
+            var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
             var exporter = new CalcResultsExporter(resultDetailexporter.Object);
 
             // Act & Assert
@@ -69,6 +74,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
+            var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
             var exporter = new CalcResultsExporter(resultDetailexporter.Object);
 
             // Act
@@ -83,6 +89,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
+            var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
             var exporter = new CalcResultsExporter(resultDetailexporter.Object);
             // Act
             var result = exporter.Export(results);
@@ -96,6 +103,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
+            var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
             var exporter = new CalcResultsExporter(resultDetailexporter.Object);
             // Act
             var result = exporter.Export(results);
@@ -109,6 +117,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
+            var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
             var exporter = new CalcResultsExporter(resultDetailexporter.Object);
             // Act
             var result = exporter.Export(results);
@@ -122,6 +131,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
+            var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
             var exporter = new CalcResultsExporter(resultDetailexporter.Object);
             // Act
             var result = exporter.Export(results);
@@ -135,6 +145,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
+            var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
             var exporter = new CalcResultsExporter(resultDetailexporter.Object);
 
             // Act
@@ -145,49 +156,11 @@
         }
 
         [TestMethod]
-        public void Export_ShouldIncludeScaledupProducers_WhenNotNull()
-        {
-            // Arrange
-            var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
-
-            // Act
-            var result = exporter.Export(results);
-
-            // Assert
-            Assert.IsTrue(result.Contains("Scaled-up Producers"));
-        }
-
-        [TestMethod]
-        [DataRow(true)]
-        [DataRow(false)]
-        public void Export_ScaledUpProducer_ShouldIncludeHeadersAndDisplayNone_WhenNoScaledUpProducer(
-            bool setScaledUpProducersToNull)
-        {
-            // Arrange
-            var results = CreateCalcResult();
-            results.CalcResultScaledupProducers.ScaledupProducers = setScaledUpProducersToNull
-                ? null!
-                : new List<CalcResultScaledupProducer>();
-            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
-
-            // Act
-            var result = exporter.Export(results);
-
-            // Assert
-            Assert.IsTrue(result.Contains("Scaled-up Producers"));
-            Assert.IsTrue(result.Contains("Each submission for the year"));
-            Assert.IsTrue(result.Contains("Aluminium Breakdown"));
-            Assert.IsTrue(result.Contains("Producer ID"));
-            Assert.IsTrue(result.Contains("Subsidiary ID"));
-            Assert.IsTrue(result.Contains("None"));
-        }
-
-        [TestMethod]
         public void Export_ShouldIncludeSummaryData_WhenNotNull()
         {
             // Arrange
             var results = CreateCalcResult();
+            var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
             var exporter = new CalcResultsExporter(resultDetailexporter.Object);
 
             // Act
@@ -207,6 +180,7 @@
                 CalcResultLateReportingTonnageData = null!,
                 CalcResultParameterOtherCost = null!,
             };
+            var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
             var exporter = new CalcResultsExporter(resultDetailexporter.Object);
 
             // Act
@@ -230,22 +204,6 @@
                     "CSV content should not contain LaDisposalCostData.");
                 Assert.IsFalse(csvContent.Contains("SummaryData"), "CSV content should not contain SummaryData.");
             }
-        }
-
-        [TestMethod]
-        public void Export_ShouldIncludeGlassColumns_WhenGlassMaterialPresent()
-        {
-            // Arrange
-            var results = CreateCalcResultWithGlass();
-            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
-
-            // Act
-            var result = exporter.Export(results);
-
-            // Assert
-            Assert.IsTrue(result.Contains("Glass"));
-            Assert.IsTrue(result.Contains("HouseholdDrinksContainersTonnageGlass"));
-            Assert.IsTrue(result.Contains("ScaledupHouseholdDrinksContainersTonnageGlass"));
         }
 
         [TestMethod]
@@ -571,46 +529,6 @@
                 });
 
             return tonnageByMaterial;
-        }
-
-        private static CalcResult CreateCalcResultWithGlass()
-        {
-            var result = CreateCalcResult();
-            result.CalcResultScaledupProducers.ScaledupProducers = GetCalcResultScaledupProducerListWithGlass();
-            return result;
-        }
-
-        private static IEnumerable<CalcResultScaledupProducer> GetCalcResultScaledupProducerListWithGlass()
-        {
-            var scaledupProducerList = new List<CalcResultScaledupProducer>
-            {
-                new CalcResultScaledupProducer
-                {
-                    ProducerId = 101001,
-                    SubsidiaryId = string.Empty,
-                    ProducerName = "Allied Packaging",
-                    Level = "1",
-                    SubmissionPeriodCode = "2024-P2",
-                    DaysInSubmissionPeriod = 91,
-                    DaysInWholePeriod = 91,
-                    ScaleupFactor = 2,
-                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterialWithGlass(),
-                },
-                new CalcResultScaledupProducer
-                {
-                    ProducerId = 101001,
-                    SubsidiaryId = string.Empty,
-                    ProducerName = "Allied Packaging",
-                    Level = "1",
-                    SubmissionPeriodCode = "2024-P2",
-                    DaysInSubmissionPeriod = 91,
-                    DaysInWholePeriod = 91,
-                    ScaleupFactor = 2,
-                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterialWithGlass(),
-                    IsTotalRow = true,
-                },
-            };
-            return scaledupProducerList;
         }
 
         private static List<CalcResultScaledupProducer> GetCalcResultScaledupProducerList()
