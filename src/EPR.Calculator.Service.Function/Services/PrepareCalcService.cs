@@ -20,11 +20,13 @@
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.IdentityModel.Abstractions;
+    using Microsoft.ApplicationInsights;
 
     public class PrepareCalcService : IPrepareCalcService
     {
         public PrepareCalcService(
-            ApplicationDBContext context,
+            IDbContextFactory<ApplicationDBContext> context,
             IRpdStatusDataValidator rpdStatusDataValidator,
             IOrgAndPomWrapper wrapper,
             ICalcResultBuilder builder,
@@ -32,9 +34,10 @@
             ITransposePomAndOrgDataService transposePomAndOrgDataService,
             IStorageService storageService,
             CalculatorRunValidator validationRules,
-            ICommandTimeoutService commandTimeoutService)
+            ICommandTimeoutService commandTimeoutService,
+            TelemetryClient telemetryClient)
         {
-            this.Context = context;
+            this.Context = context.CreateDbContext();
             this.rpdStatusDataValidator = rpdStatusDataValidator;
             this.Wrapper = wrapper;
             this.Builder = builder;
@@ -43,7 +46,10 @@
             this.storageService = storageService;
             this.validatior = validationRules;
             this.commandTimeoutService = commandTimeoutService;
+            this._telemetryClient = telemetryClient;
         }
+
+        private readonly TelemetryClient _telemetryClient;
 
         private ApplicationDBContext Context { get; init; }
 
@@ -67,7 +73,7 @@
             [FromBody] CalcResultsRequestDto resultsRequestDto,
             CancellationToken cancellationToken)
         {
-            this.commandTimeoutService.SetCommandTimeout(this.Context.Database, "PrepareCalcResultsCommand");
+            this.commandTimeoutService.SetCommandTimeout(this.Context.Database);
 
             CalculatorRun? calculatorRun = null;
             try
@@ -87,14 +93,21 @@
                     return false;
                 }
 
+                this._telemetryClient.TrackTrace("Builder started...");
                 var results = await this.Builder.Build(resultsRequestDto);
-                var exportedResults = this.Exporter.Export(results);
+                this._telemetryClient.TrackTrace("Builder end...");
 
+                this._telemetryClient.TrackTrace("Exporter started...");
+                var exportedResults = this.Exporter.Export(results);
+                this._telemetryClient.TrackTrace("Exporter end...");
+
+                this._telemetryClient.TrackTrace("Exporter started...");
                 var fileName = new CalcResultsFileName(
                     results.CalcResultDetail.RunId,
                     results.CalcResultDetail.RunName,
                     results.CalcResultDetail.RunDate);
                 var blobUri = await this.storageService.UploadResultFileContentAsync(fileName, exportedResults);
+                this._telemetryClient.TrackTrace("Exporter end...");
 
                 var startTime = DateTime.Now;
                 if (!string.IsNullOrEmpty(blobUri))
