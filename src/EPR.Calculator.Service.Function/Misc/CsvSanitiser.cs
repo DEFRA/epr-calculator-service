@@ -8,11 +8,11 @@
 
     public static class CsvSanitiser
     {
-        public static string SanitiseData<T>(T value, bool delimiterRequired = true)
+        public static string SanitiseData<T>(T value, bool csvDelimiterRequired = true)
         {
             if (value == null)
             {
-                return delimiterRequired
+                return csvDelimiterRequired
                     ? CommonConstants.CsvFileDelimiter
                     : string.Empty;
             }
@@ -31,7 +31,7 @@
             // Apply the speech marks to handle the comma in the text and currency values
             stringToSanitise = $"{CommonConstants.DoubleQuote}{stringToSanitise}{CommonConstants.DoubleQuote}";
 
-            return delimiterRequired
+            return csvDelimiterRequired
                 ? $"{stringToSanitise}{CommonConstants.CsvFileDelimiter}"
                 : stringToSanitise;
         }
