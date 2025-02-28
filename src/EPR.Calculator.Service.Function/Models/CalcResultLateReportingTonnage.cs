@@ -1,16 +1,17 @@
-﻿using System.Collections.Generic;
-
-namespace EPR.Calculator.Service.Function.Models
+﻿namespace EPR.Calculator.Service.Function.Models
 {
-    public class CalcResultLateReportingTonnage
+    using System;
+    using System.Collections.Generic;
+
+    public record CalcResultLateReportingTonnage
     {
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; init; } = string.Empty;
 
-        public string MaterialHeading { get; set; } = string.Empty;
+        public string MaterialHeading { get; init; } = string.Empty;
 
-        public string TonnageHeading { get; set; } = string.Empty;
+        public string TonnageHeading { get; init; } = string.Empty;
 
-        public required IEnumerable<CalcResultLateReportingTonnageDetail> CalcResultLateReportingTonnageDetails { get; set; }
-            = [];
+        required public IEnumerable<CalcResultLateReportingTonnageDetail> CalcResultLateReportingTonnageDetails { get; init; }
+            = Array.Empty<CalcResultLateReportingTonnageDetail>();
     }
 }

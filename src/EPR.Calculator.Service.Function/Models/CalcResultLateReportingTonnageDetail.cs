@@ -1,8 +1,9 @@
 ﻿namespace EPR.Calculator.Service.Function.Models
 {
-    public class CalcResultLateReportingTonnageDetail
+    public record CalcResultLateReportingTonnageDetail
     {
-        public required string Name { get; set; }
-        public required decimal TotalLateReportingTonnage { get; set; }
+        required public string Name { get; init; }
+
+        required public decimal TotalLateReportingTonnage { get; init; }
     }
 }
