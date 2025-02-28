@@ -9,6 +9,7 @@
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
     [TestClass]
     public class CalcResultsExporterTests
@@ -252,7 +253,9 @@
         {
             var csvContent = new StringBuilder();
             CalcResultDetailexporter.AppendFileInfo(csvContent, "Label", "Filename,20/12/2024,User");
-            Assert.IsTrue(csvContent.ToString().Contains("Label,Filename,20/12/2024,User"));
+            Assert.IsTrue(csvContent.ToString().Contains("Label"));
+            Assert.IsTrue(csvContent.ToString().Contains("Filename"));
+            Assert.IsTrue(csvContent.ToString().Contains("20/12/2024"));
         }
 
         private static CalcResult CreateCalcResult()

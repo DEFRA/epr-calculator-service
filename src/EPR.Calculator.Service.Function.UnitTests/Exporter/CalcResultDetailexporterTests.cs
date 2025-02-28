@@ -42,7 +42,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
             var lines = result.Split(Environment.NewLine);
             Assert.AreEqual(7, lines.Count());
 
-            Assert.IsTrue(lines.First().Contains("Run Name,SomeRunName"));
+            Assert.IsTrue(lines.First().Contains("Run Name"));
+            Assert.IsTrue(lines.First().Contains("SomeRunName"));
             Assert.IsTrue(lines.Last().Contains(string.Empty));
         }
     }

@@ -5,6 +5,7 @@
     using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Enums;
+    using EPR.Calculator.Service.Function.Interface;
     using EPR.Calculator.Service.Function.Services;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -17,19 +18,26 @@
     {
         private readonly ApplicationDBContext _context;
 
+        private Mock<IDbContextFactory<ApplicationDBContext>> ContextFactory { get; init; }
+
         private readonly DbContextOptions<ApplicationDBContext> _dbContextOptions;
 
         public TransposePomAndOrgDataServiceTests()
         {
+            this.CommandTimeoutService = new Mock<ICommandTimeoutService>().Object;
             _dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
             .Options;
 
-            this._context = new ApplicationDBContext(this._dbContextOptions);
+            this._context = new ApplicationDBContext(_dbContextOptions);
+            this.ContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
+            this.ContextFactory.Setup(f => f.CreateDbContext()).Returns(this._context);
 
             this.SeedDatabase();
         }
+
+        private ICommandTimeoutService CommandTimeoutService { get; init; }
 
         public Fixture Fixture { get; init; } = new Fixture();
 
@@ -69,7 +77,9 @@
             };
 
 #pragma warning disable CS8604 // Possible null reference argument.
-            var service = new TransposePomAndOrgDataService(_context);
+            var service = new TransposePomAndOrgDataService(
+                this.ContextFactory.Object,
+                this.CommandTimeoutService);
 #pragma warning restore CS8604 // Possible null reference argument.
 
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 3 };
@@ -110,7 +120,9 @@
             };
 
 #pragma warning disable CS8604 // Possible null reference argument.
-            var service = new TransposePomAndOrgDataService(this._context);
+            var service = new TransposePomAndOrgDataService(
+                this.ContextFactory.Object,
+                this.CommandTimeoutService);
 #pragma warning restore CS8604 // Possible null reference argument.
 
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 3 };
@@ -138,7 +150,9 @@
             };
 
 #pragma warning disable CS8604 // Possible null reference argument.
-            var service = new TransposePomAndOrgDataService(_context);
+            var service = new TransposePomAndOrgDataService(
+                this.ContextFactory.Object,
+                this.CommandTimeoutService);
 #pragma warning restore CS8604 // Possible null reference argument.
 
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
@@ -164,7 +178,9 @@
             };
 
 #pragma warning disable CS8604 // Possible null reference argument.
-            var service = new TransposePomAndOrgDataService(_context);
+            var service = new TransposePomAndOrgDataService(
+                this.ContextFactory.Object,
+                this.CommandTimeoutService);
 #pragma warning restore CS8604 // Possible null reference argument.
 
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
@@ -180,7 +196,9 @@
         public void Transpose_Should_Return_Latest_Organisation_Name()
         {
             var mockContext = new Mock<ApplicationDBContext>();
-            var service = new TransposePomAndOrgDataService(mockContext.Object);
+            var service = new TransposePomAndOrgDataService(
+                this.ContextFactory.Object,
+                this.CommandTimeoutService);
 
             var organisationDetails = new List<CalculatorRunOrganisationDataDetail>
             {

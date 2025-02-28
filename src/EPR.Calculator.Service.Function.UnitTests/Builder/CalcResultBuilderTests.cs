@@ -12,6 +12,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
     using EPR.Calculator.Service.Function.Builder.Summary;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Models;
+    using Microsoft.ApplicationInsights;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
 
@@ -29,6 +30,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         private readonly Mock<ICalcResultParameterOtherCostBuilder> mockCalcResultParameterOtherCostBuilder;
         private readonly Mock<ICalcResultOnePlusFourApportionmentBuilder> mockOnePlusFourApportionmentBuilder;
         private readonly Mock<ICalcResultScaledupProducersBuilder> mockCalcResultScaledupProducersBuilder;
+        private TelemetryClient _telemetryClient = new();
 
         public CalcResultBuilderTests()
         {
@@ -52,7 +54,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 this.mockLateReportingBuilder.Object,
                 this.mockCalcRunLaDisposalCostBuilder.Object,
                 this.mockCalcResultScaledupProducersBuilder.Object,
-                this.mockSummaryBuilder.Object);
+                this.mockSummaryBuilder.Object,
+                this._telemetryClient);
         }
 
         [TestMethod]
@@ -68,7 +71,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 this.mockLateReportingBuilder.Object,
                 this.mockCalcRunLaDisposalCostBuilder.Object,
                 this.mockCalcResultScaledupProducersBuilder.Object,
-                this.mockSummaryBuilder.Object);
+                this.mockSummaryBuilder.Object,
+                this._telemetryClient);
 
             // Assert
             Assert.IsNotNull(instance);
