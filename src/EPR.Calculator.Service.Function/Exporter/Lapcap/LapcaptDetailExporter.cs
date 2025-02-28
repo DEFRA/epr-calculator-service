@@ -1,10 +1,10 @@
-﻿using EPR.Calculator.API.Utils;
-using EPR.Calculator.Service.Function.Models;
-using System.Linq;
-using System.Text;
-
-namespace EPR.Calculator.Service.Function.Exporter.Lapcap
+﻿namespace EPR.Calculator.Service.Function.Exporter.Lapcap
 {
+    using System.Linq;
+    using System.Text;
+    using EPR.Calculator.API.Utils;
+    using EPR.Calculator.Service.Function.Models;
+
     public class LapcaptDetailExporter: ILapcaptDetailExporter
     {
         public void Export(CalcResultLapcapData calcResultLapcapData, StringBuilder csvContent)
@@ -22,7 +22,7 @@ namespace EPR.Calculator.Service.Function.Exporter.Lapcap
                 csvContent.Append($"{CsvSanitiser.SanitiseData(lapcapData.WalesDisposalCost)}");
                 csvContent.Append($"{CsvSanitiser.SanitiseData(lapcapData.ScotlandDisposalCost)}");
                 csvContent.Append($"{CsvSanitiser.SanitiseData(lapcapData.NorthernIrelandDisposalCost)}");
-                csvContent.Append($"{CsvSanitiser.SanitiseData(lapcapData.TotalDisposalCost)}");
+                csvContent.Append($"{CsvSanitiser.SanitiseData(lapcapData.TotalDisposalCost, false)}");
                 csvContent.AppendLine();
             }
         }
