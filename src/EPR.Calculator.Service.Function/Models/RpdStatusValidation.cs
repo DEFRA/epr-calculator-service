@@ -1,6 +1,6 @@
 ﻿namespace EPR.Calculator.Service.Function.Models
 {
-    public class RpdStatusValidation
+    public record RpdStatusValidation
     {
         public bool isValid { get; set; }
 
