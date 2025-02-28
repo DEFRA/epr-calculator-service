@@ -1,7 +1,7 @@
-﻿using System.ComponentModel;
-
-namespace EPR.Calculator.Service.Function.Enums
+﻿namespace EPR.Calculator.Service.Function.Enums
 {
+    using System.ComponentModel;
+
     public enum RunClassification
     {
         [Description("IN THE QUEUE")]
@@ -20,6 +20,6 @@ namespace EPR.Calculator.Service.Function.Enums
         ERROR = 5,
 
         [Description("DELETED")]
-        DELETED = 6
+        DELETED = 6,
     }
 }
