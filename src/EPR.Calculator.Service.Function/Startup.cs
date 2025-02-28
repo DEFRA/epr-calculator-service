@@ -20,6 +20,7 @@ using EPR.Calculator.Service.Function.Builder.ParametersOther;
 using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
 using EPR.Calculator.Service.Function.Builder.Summary;
 using EPR.Calculator.Service.Function.Data;
+using EPR.Calculator.Service.Function.Exporter;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Misc;
@@ -101,6 +102,7 @@ namespace EPR.Calculator.Service.Function
             services.AddScoped<ICalcResultScaledupProducersBuilder, CalcResultScaledupProducersBuilder>();
             services.AddTransient<ICalcResultSummaryBuilder, CalcResultSummaryBuilder>();
             services.AddTransient<IRpdStatusService, RpdStatusService>();
+            services.AddTransient<ICalcResultDetailExporter, CalcResultDetailexporter>();
 #if !DEBUG
             SetupBlobStorage(services);
             services.AddTransient<IConfigurationService, Configuration>();
