@@ -5,19 +5,23 @@
     using System.Text;
     using AutoFixture;
     using EPR.Calculator.API.Exporter;
+    using EPR.Calculator.Service.Function.Exporter.Lapcap;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Moq;
 
     [TestClass]
     public class CalcResultsExporterTests
     {
         private Fixture Fixture { get; } = new Fixture();
 
+        private ILapcaptDetailExporter lapcaptDetailExporter = new LapcaptDetailExporter();
+
         [TestMethod]
         public void Export_ShouldReturnCsvContent_WhenAllDataIsPresent()
         {
             // Arrange
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(this.lapcaptDetailExporter);
             var calcResult = CreateCalcResult();
 
             // Act
@@ -31,7 +35,7 @@
         public void Export_DataFormatting_IsCorrect()
         {
             // Arrange
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(this.lapcaptDetailExporter);
             var calcResult = CreateCalcResult();
 
             // Act
@@ -51,7 +55,7 @@
         public void Export_CsvContent_HasCorrectNumberOfLineBreaks()
         {
             // Arrange
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(this.lapcaptDetailExporter);
             var calcResult = CreateCalcResult();
 
             // Act
@@ -68,7 +72,7 @@
         {
             // Arrange
             CalcResult? results = null;
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(this.lapcaptDetailExporter);
 
             // Act & Assert
             var ex = Assert.ThrowsException<ArgumentNullException>(() => exporter.Export(results!));
@@ -79,7 +83,7 @@
         public void Export_ShouldIncludeCalcResultRunNameDetails()
         {
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(this.lapcaptDetailExporter);
 
             var result = exporter.Export(results);
 
@@ -91,7 +95,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(this.lapcaptDetailExporter);
 
             // Act
             var result = exporter.Export(results);
@@ -105,7 +109,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(this.lapcaptDetailExporter);
             // Act
             var result = exporter.Export(results);
 
@@ -118,7 +122,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(this.lapcaptDetailExporter);
             // Act
             var result = exporter.Export(results);
 
@@ -131,7 +135,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(this.lapcaptDetailExporter);
             // Act
             var result = exporter.Export(results);
 
@@ -144,7 +148,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(this.lapcaptDetailExporter);
             // Act
             var result = exporter.Export(results);
 
@@ -157,7 +161,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(this.lapcaptDetailExporter);
 
             // Act
             var result = exporter.Export(results);
@@ -171,7 +175,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(this.lapcaptDetailExporter);
 
             // Act
             var result = exporter.Export(results);
@@ -191,7 +195,7 @@
             results.CalcResultScaledupProducers.ScaledupProducers = setScaledUpProducersToNull
                 ? null!
                 : new List<CalcResultScaledupProducer>();
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(this.lapcaptDetailExporter);
 
             // Act
             var result = exporter.Export(results);
@@ -210,7 +214,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(this.lapcaptDetailExporter);
 
             // Act
             var result = exporter.Export(results);
@@ -229,7 +233,7 @@
                 CalcResultLateReportingTonnageData = null!,
                 CalcResultParameterOtherCost = null!,
             };
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(this.lapcaptDetailExporter);
 
             // Act
             if (results != null)
@@ -259,7 +263,7 @@
         {
             // Arrange
             var results = CreateCalcResultWithGlass();
-            var exporter = new CalcResultsExporter();
+            var exporter = new CalcResultsExporter(this.lapcaptDetailExporter);
 
             // Act
             var result = exporter.Export(results);
