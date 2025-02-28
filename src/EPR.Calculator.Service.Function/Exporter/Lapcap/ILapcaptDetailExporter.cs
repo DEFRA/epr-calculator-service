@@ -5,6 +5,6 @@
 
     public interface ILapcaptDetailExporter
     {
-        void PrepareLapcapData(CalcResultLapcapData calcResultLapcapData, StringBuilder csvContent);
+        void Export(CalcResultLapcapData calcResultLapcapData, StringBuilder csvContent);
     }
 }

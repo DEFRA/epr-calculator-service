@@ -42,7 +42,7 @@
             LoadCalcResultDetail(results, csvContent);
             if (results.CalcResultLapcapData != null)
             {
-                this.lapcaptDetailExporter.PrepareLapcapData(results.CalcResultLapcapData, csvContent);
+                this.lapcaptDetailExporter.Export(results.CalcResultLapcapData, csvContent);
             }
 
             if (results.CalcResultLateReportingTonnageData != null)

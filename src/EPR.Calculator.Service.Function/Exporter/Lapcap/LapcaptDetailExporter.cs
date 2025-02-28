@@ -7,7 +7,7 @@ namespace EPR.Calculator.Service.Function.Exporter.Lapcap
 {
     public class LapcaptDetailExporter: ILapcaptDetailExporter
     {
-        public void PrepareLapcapData(CalcResultLapcapData calcResultLapcapData, StringBuilder csvContent)
+        public void Export(CalcResultLapcapData calcResultLapcapData, StringBuilder csvContent)
         {
             csvContent.AppendLine();
             csvContent.AppendLine();
