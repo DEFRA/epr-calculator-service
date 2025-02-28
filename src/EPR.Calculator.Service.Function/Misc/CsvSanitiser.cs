@@ -44,12 +44,21 @@
             bool isPercentage = false,
             bool delimiterRequired = true)
         {
+            decimal decimalValue;
             if (value is string)
             {
-                return SanitiseData(value, delimiterRequired);
-            }
+                var isParseSuccessful = decimal.TryParse(value.ToString(), CultureInfo.InvariantCulture, out decimal result);
+                if (!isParseSuccessful)
+                {
+                    return SanitiseData(value, delimiterRequired);
+                }
 
-            var decimalValue = Convert.ToDecimal(value);
+                decimalValue = result;
+            }
+            else
+            {
+                decimalValue = Convert.ToDecimal(value);
+            }
 
             var roundedValue = roundTo == null
                 ? decimalValue

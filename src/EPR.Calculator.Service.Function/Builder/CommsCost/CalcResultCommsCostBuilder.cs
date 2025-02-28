@@ -9,10 +9,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using System;
 using EPR.Calculator.Service.Function.Data.DataModels;
+using Microsoft.ApplicationInsights;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EPR.Calculator.Service.Function.Builder.CommsCost
 {
-    public class CalcResultCommsCostBuilder(ApplicationDBContext context) : ICalcResultCommsCostBuilder
+    public class CalcResultCommsCostBuilder(ApplicationDBContext context, TelemetryClient telemetryClient)
+        : ICalcResultCommsCostBuilder
     {
         public const string Header = "Parameters - Comms Costs";
         public const string CommunicationCostByMaterial = "Communication costs by material";
@@ -31,6 +34,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             CalcResultOnePlusFourApportionment apportionment,
             CalcResult calcResult)
         {
+            telemetryClient.TrackTrace("Begining constructing comms cost...");
             var runId = resultsRequestDto.RunId;
             var culture = CultureInfo.CreateSpecificCulture(EnGb);
             culture.NumberFormat.CurrencySymbol = PoundSign;
@@ -40,12 +44,15 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             var apportionmentDetail = apportionmentDetails.Last();
 
             var result = new CalcResultCommsCost();
+            telemetryClient.TrackTrace("Calculating apportionment...");
             CalculateApportionment(apportionmentDetail, result);
             result.Name = Header;
 
+            telemetryClient.TrackTrace("Getting material names...");
             var materials = await context.Material.ToListAsync();
             var materialNames = materials.Select(x => x.Name).ToList();
 
+            telemetryClient.TrackTrace("Getting material defaults...");
             var allDefaultResults = await (from run in context.CalculatorRuns
                                            join defaultMaster in context.DefaultParameterSettings on run.DefaultParameterSettingMasterId equals
                                                defaultMaster.Id
@@ -63,8 +70,10 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             var materialDefaults = allDefaultResults.Where(x =>
                 x.ParameterType == CommunicationCostByMaterial && materialNames.Contains(x.ParameterCategory));
 
+            telemetryClient.TrackTrace("Getting producer reported materials...");
             var producerReportedMaterials = await this.GetProducerReportedMaterials(context, runId);
 
+            telemetryClient.TrackTrace("Getting headers...");
             var list = new List<CalcResultCommsCostCommsCostByMaterial>();
 
             var header = new CalcResultCommsCostCommsCostByMaterial
@@ -87,14 +96,18 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             };
             list.Add(header);
 
-            producerReportedMaterials = producerReportedMaterials.Where(t => !calcResult.CalcResultScaledupProducers!.ScaledupProducers!.
+            telemetryClient.TrackTrace("Filtering producer reported materials...");
+            producerReportedMaterials = producerReportedMaterials.Where(t => !calcResult.CalcResultScaledupProducers.ScaledupProducers.
                 Any(i => i.ProducerId == t.ProducerDetail?.ProducerId)).ToList();
 
-            var scaledUpProducerReportedOn = calcResult.CalcResultScaledupProducers
+            telemetryClient.TrackTrace("Getting scaled up producer reported on...");
+            var scaledUpProducerReportedOn = calcResult.CalcResultScaledupProducers?
                   .ScaledupProducers.FirstOrDefault(t => t.IsTotalRow);
 
+            telemetryClient.TrackTrace($"Generating comms costs for {materialNames.Count} materials...");
             foreach (var materialName in materialNames)
             {
+                telemetryClient.TrackTrace($"Generating comms cost for {materialName}...");
                 var commsCost = GetCommsCost(materialDefaults, materialName, apportionmentDetail, culture);
                 var currentMaterial = materials.Single(x => x.Name == materialName);
 
@@ -138,6 +151,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                 list.Add(commsCost);
             }
 
+            telemetryClient.TrackTrace("Generating total row...");
             var totalRow = GetTotalRow(list, culture);
 
             list.Add(totalRow);
@@ -158,6 +172,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                 OrderId = 2
             };
 
+            telemetryClient.TrackTrace("Getting comms cost by country...");
             var commsCostByCountryList = GetCommsCostByCountryList(ukCost, allDefaultResults, culture);
             result.CommsCostByCountry = commsCostByCountryList;
 
