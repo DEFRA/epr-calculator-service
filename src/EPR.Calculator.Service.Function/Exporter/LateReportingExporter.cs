@@ -28,7 +28,7 @@
 
             foreach (var lateReportingData in calcResultLateReportingData.CalcResultLateReportingTonnageDetails)
             {
-                csvContent.Append($"{CsvSanitiser.SanitiseData(lateReportingData.Name)},");
+                csvContent.Append($"{CsvSanitiser.SanitiseData(lateReportingData.Name)}");
                 csvContent.Append(CsvSanitiser.SanitiseData(lateReportingData.TotalLateReportingTonnage));
                 csvContent.AppendLine();
             }

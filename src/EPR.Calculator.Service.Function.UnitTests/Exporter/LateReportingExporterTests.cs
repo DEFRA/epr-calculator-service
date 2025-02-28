@@ -36,7 +36,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
             var expectedheader = $"{input.Name}" + Environment.NewLine +
                 $"{input.MaterialHeading},{input.TonnageHeading}" + Environment.NewLine;
             var expectedMaterials = input.CalcResultLateReportingTonnageDetails.Select(m
-                => $"{m.Name},{m.TotalLateReportingTonnage:0.0}");
+                => $"\"{m.Name}\",\"{m.TotalLateReportingTonnage:0.0}\",");
 
             var expectedResult = Environment.NewLine
                 + Environment.NewLine
