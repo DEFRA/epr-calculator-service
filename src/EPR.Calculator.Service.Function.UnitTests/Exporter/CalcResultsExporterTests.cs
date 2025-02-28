@@ -6,9 +6,11 @@
     using AutoFixture;
     using EPR.Calculator.API.Exporter;
     using EPR.Calculator.Service.Function.Exporter.ScaledupProducers;
+    using EPR.Calculator.Service.Function.Exporter;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
     [TestClass]
     public class CalcResultsExporterTests
@@ -16,12 +18,14 @@
         private Fixture Fixture { get; } = new Fixture();
 
         private Mock<ICalcResultScaledupProducersExporter> scaledupProducersExporter = new();
+        private Mock<ICalcResultDetailExporter> resultDetailexporter = new();
 
         [TestMethod]
         public void Export_ShouldReturnCsvContent_WhenAllDataIsPresent()
         {
             // Arrange
             var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
+            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
             var calcResult = CreateCalcResult();
 
             // Act
@@ -36,6 +40,7 @@
         {
             // Arrange
             var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
+            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
             var calcResult = CreateCalcResult();
 
             // Act
@@ -57,21 +62,11 @@
             // Arrange
             CalcResult? results = null;
             var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
+            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
 
             // Act & Assert
             var ex = Assert.ThrowsException<ArgumentNullException>(() => exporter.Export(results!));
             Assert.AreEqual("results", ex.ParamName);
-        }
-
-        [TestMethod]
-        public void Export_ShouldIncludeCalcResultRunNameDetails()
-        {
-            var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
-
-            var result = exporter.Export(results);
-
-            Assert.IsTrue(result.Contains("CalculatorRunName"));
         }
 
         [TestMethod]
@@ -80,6 +75,7 @@
             // Arrange
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
+            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
 
             // Act
             var result = exporter.Export(results);
@@ -94,6 +90,7 @@
             // Arrange
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
+            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
             // Act
             var result = exporter.Export(results);
 
@@ -107,6 +104,7 @@
             // Arrange
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
+            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
             // Act
             var result = exporter.Export(results);
 
@@ -120,6 +118,7 @@
             // Arrange
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
+            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
             // Act
             var result = exporter.Export(results);
 
@@ -133,6 +132,7 @@
             // Arrange
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
+            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
             // Act
             var result = exporter.Export(results);
 
@@ -146,6 +146,7 @@
             // Arrange
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
+            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
 
             // Act
             var result = exporter.Export(results);
@@ -160,6 +161,7 @@
             // Arrange
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
+            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
 
             // Act
             var result = exporter.Export(results);
@@ -179,6 +181,7 @@
                 CalcResultParameterOtherCost = null!,
             };
             var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
+            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
 
             // Act
             if (results != null)
@@ -207,10 +210,10 @@
         public void AppendFileInfoTest()
         {
             var csvContent = new StringBuilder();
-            CalcResultsExporter.AppendFileInfo(csvContent, "Label", "Filename,20/12/2024,User");
+            CalcResultDetailexporter.AppendFileInfo(csvContent, "Label", "Filename,20/12/2024,User");
+            Assert.IsTrue(csvContent.ToString().Contains("Label"));
             Assert.IsTrue(csvContent.ToString().Contains("Filename"));
             Assert.IsTrue(csvContent.ToString().Contains("20/12/2024"));
-            Assert.IsTrue(csvContent.ToString().Contains("User"));
         }
 
         private static CalcResult CreateCalcResult()
