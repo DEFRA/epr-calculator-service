@@ -9,19 +9,21 @@
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
     [TestClass]
     public class CalcResultsExporterTests
     {
         private Fixture Fixture { get; } = new Fixture();
 
-        private Mock<IOnePlusFourApportionmentExporter> mockOnePlusFourExporter = new Mock<IOnePlusFourApportionmentExporter>();
+        private Mock<ICalcResultDetailExporter> mockResultDetailexporter = new();
+        private Mock<IOnePlusFourApportionmentExporter> mockOnePlusFourExporter = new();
 
         [TestMethod]
         public void Export_ShouldReturnCsvContent_WhenAllDataIsPresent()
         {
             // Arrange
-            var exporter = new CalcResultsExporter(mockOnePlusFourExporter.Object);
+            var exporter = new CalcResultsExporter(mockResultDetailexporter.Object, mockOnePlusFourExporter.Object);
             var calcResult = CreateCalcResult();
 
             // Act
@@ -32,14 +34,34 @@
         }
 
         [TestMethod]
-        public void Export_ShouldIncludeCalcResultRunNameDetails()
+        public void Export_DataFormatting_IsCorrect()
         {
-            var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(mockOnePlusFourExporter.Object);
+            // Arrange
+            var exporter = new CalcResultsExporter(mockResultDetailexporter.Object, mockOnePlusFourExporter.Object);
+            var calcResult = CreateCalcResult();
 
-            var result = exporter.Export(results);
+            // Act
+            var result = exporter.Export(calcResult);
 
-            Assert.IsTrue(result.Contains("CalculatorRunName"));
+            // Assert
+            Assert.IsTrue(result.Contains("LAPCAP Data"));
+            Assert.IsTrue(result.Contains("Late Reporting Tonnage"));
+            Assert.IsTrue(result.Contains("Parameters - Other"));
+            Assert.IsTrue(result.Contains("4 LA Data Prep Charge"));
+            Assert.IsTrue(result.Contains("5 Scheme set up cost Yearly Cost"));
+            Assert.IsTrue(result.Contains("some test"));
+        }
+
+        [TestMethod]
+        public void Export_ShouldThrowArgumentNullException_WhenResultsIsNull()
+        {
+            // Arrange
+            CalcResult? results = null;
+            var exporter = new CalcResultsExporter(mockResultDetailexporter.Object, mockOnePlusFourExporter.Object);
+
+            // Act & Assert
+            var ex = Assert.ThrowsException<ArgumentNullException>(() => exporter.Export(results!));
+            Assert.AreEqual("results", ex.ParamName);
         }
 
         [TestMethod]
@@ -47,7 +69,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(mockOnePlusFourExporter.Object);
+            var exporter = new CalcResultsExporter(mockResultDetailexporter.Object, mockOnePlusFourExporter.Object);
 
             // Act
             var result = exporter.Export(results);
@@ -61,7 +83,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(mockOnePlusFourExporter.Object);
+            var exporter = new CalcResultsExporter(mockResultDetailexporter.Object, mockOnePlusFourExporter.Object);
             // Act
             var result = exporter.Export(results);
 
@@ -74,7 +96,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(mockOnePlusFourExporter.Object);
+            var exporter = new CalcResultsExporter(mockResultDetailexporter.Object, mockOnePlusFourExporter.Object);
             // Act
             var result = exporter.Export(results);
 
@@ -87,7 +109,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(mockOnePlusFourExporter.Object);
+            var exporter = new CalcResultsExporter(mockResultDetailexporter.Object, mockOnePlusFourExporter.Object);
             // Act
             var result = exporter.Export(results);
 
@@ -100,7 +122,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(mockOnePlusFourExporter.Object);
+            var exporter = new CalcResultsExporter(mockResultDetailexporter.Object, mockOnePlusFourExporter.Object);
 
             // Act
             var result = exporter.Export(results);
@@ -114,7 +136,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(mockOnePlusFourExporter.Object);
+            var exporter = new CalcResultsExporter(mockResultDetailexporter.Object, mockOnePlusFourExporter.Object);
 
             // Act
             var result = exporter.Export(results);
@@ -134,7 +156,7 @@
             results.CalcResultScaledupProducers.ScaledupProducers = setScaledUpProducersToNull
                 ? null!
                 : new List<CalcResultScaledupProducer>();
-            var exporter = new CalcResultsExporter(mockOnePlusFourExporter.Object);
+            var exporter = new CalcResultsExporter(mockResultDetailexporter.Object, mockOnePlusFourExporter.Object);
 
             // Act
             var result = exporter.Export(results);
@@ -153,7 +175,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(mockOnePlusFourExporter.Object);
+            var exporter = new CalcResultsExporter(mockResultDetailexporter.Object, mockOnePlusFourExporter.Object);
 
             // Act
             var result = exporter.Export(results);
@@ -172,7 +194,7 @@
                 CalcResultLateReportingTonnageData = null!,
                 CalcResultParameterOtherCost = null!,
             };
-            var exporter = new CalcResultsExporter(mockOnePlusFourExporter.Object);
+            var exporter = new CalcResultsExporter(mockResultDetailexporter.Object, mockOnePlusFourExporter.Object);
 
             // Act
             if (results != null)
@@ -202,7 +224,7 @@
         {
             // Arrange
             var results = CreateCalcResultWithGlass();
-            var exporter = new CalcResultsExporter(mockOnePlusFourExporter.Object);
+            var exporter = new CalcResultsExporter(mockResultDetailexporter.Object, mockOnePlusFourExporter.Object);
 
             // Act
             var result = exporter.Export(results);
@@ -217,10 +239,10 @@
         public void AppendFileInfoTest()
         {
             var csvContent = new StringBuilder();
-            CalcResultsExporter.AppendFileInfo(csvContent, "Label", "Filename,20/12/2024,User");
+            CalcResultDetailexporter.AppendFileInfo(csvContent, "Label", "Filename,20/12/2024,User");
+            Assert.IsTrue(csvContent.ToString().Contains("Label"));
             Assert.IsTrue(csvContent.ToString().Contains("Filename"));
             Assert.IsTrue(csvContent.ToString().Contains("20/12/2024"));
-            Assert.IsTrue(csvContent.ToString().Contains("User"));
         }
 
         private static CalcResult CreateCalcResult()

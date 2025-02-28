@@ -103,6 +103,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcResultSummaryBuilder, CalcResultSummaryBuilder>();
             services.AddTransient<IOnePlusFourApportionmentExporter, OnePlusFourApportionmentExporter>();
             services.AddTransient<IRpdStatusService, RpdStatusService>();
+            services.AddTransient<ICalcResultDetailExporter, CalcResultDetailexporter>();
 #if !DEBUG
             SetupBlobStorage(services);
             services.AddTransient<IConfigurationService, Configuration>();
