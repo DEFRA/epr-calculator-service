@@ -25,7 +25,7 @@
             csvContent.AppendLine();
 
             csvContent.AppendLine(CsvSanitiser.SanitiseData(calcResultLateReportingData.Name));
-            csvContent.Append(CsvSanitiser.SanitiseData($"{calcResultLateReportingData.MaterialHeading},"));
+            csvContent.Append(CsvSanitiser.SanitiseData($"{calcResultLateReportingData.MaterialHeading}"));
             csvContent.Append(CsvSanitiser.SanitiseData(calcResultLateReportingData.TonnageHeading));
             csvContent.AppendLine();
 
