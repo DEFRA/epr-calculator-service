@@ -1,4 +1,5 @@
-﻿using EPR.Calculator.Service.Function.Data;
+﻿using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Data;
 using EPR.Calculator.Service.Function.Data.DataModels;
 using EPR.Calculator.Service.Function.Dtos;
 using EPR.Calculator.Service.Function.Models;
@@ -48,17 +49,17 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
 
             var other = new CalcResultParameterOtherCost
             {
-                Name = "Parameters - Other",
+                Name = CommonConstants.ParametersOther,
             };
 
             var saDetails = new List<CalcResultParameterOtherCostDetail>();
             var saOperatinCostHeader = new CalcResultParameterOtherCostDetail
             {
-                England = "England",
-                Wales = "Wales",
-                Scotland = "Scotland",
-                NorthernIreland = "Northern Ireland",
-                Total = "Total"
+                England = CommonConstants.England,
+                Wales = CommonConstants.Wales,
+                Scotland = CommonConstants.Scotland,
+                NorthernIreland = CommonConstants.NorthernIreland,
+                Total = CommonConstants.Total,
             };
             saDetails.Add(saOperatinCostHeader);
 

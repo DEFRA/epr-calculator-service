@@ -37,10 +37,7 @@
 
             csvContent.Append(lateReportingExporter.PrepareData(results.CalcResultLateReportingTonnageData));
 
-            if (results.CalcResultParameterOtherCost != null)
-            {
-                PrepareOtherCosts(results.CalcResultParameterOtherCost, csvContent);
-            }
+            csvContent.Append(CalcResultParameterOtherCostExporter.ExportOtherCost(results.CalcResultParameterOtherCost));
 
             onePlusFourApportionmentExporter.Export(results.CalcResultOnePlusFourApportionment, csvContent);
 
