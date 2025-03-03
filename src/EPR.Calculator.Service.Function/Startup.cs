@@ -104,6 +104,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcResultSummaryBuilder, CalcResultSummaryBuilder>();
             services.AddTransient<IOnePlusFourApportionmentExporter, OnePlusFourApportionmentExporter>();
             services.AddTransient<IRpdStatusService, RpdStatusService>();
+            services.AddTransient<ILapcaptDetailExporter, LapcaptDetailExporter>();
             services.AddTransient<ICalcResultDetailExporter, CalcResultDetailexporter>();
             services.AddTransient<ICalcResultScaledupProducersExporter, CalcResultScaledupProducersExporter>();
             services.AddTransient<LateReportingExporter, LateReportingExporter>();
