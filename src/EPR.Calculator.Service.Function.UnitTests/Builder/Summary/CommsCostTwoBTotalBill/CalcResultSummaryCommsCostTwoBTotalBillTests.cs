@@ -178,7 +178,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
         public void GetCommsScotlandWithBadDebt_ShouldReturnCorrectTotal()
         {
             // Arrange
-            decimal expectedValue = 55.6600m;
+            decimal expectedValue = 55.600m;
 
             // Act
             var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsScotlandWithBadDebt(_calcResult, _producers[0], TotalPackagingTonnage);
