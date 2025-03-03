@@ -209,16 +209,6 @@
             }
         }
 
-        private static void AppendRpdFileInfo(StringBuilder csvContent, string rPDFileORG, string rPDFilePOM, string rpdFileORGValue, string rpdFilePOMValue)
-        {
-            csvContent.AppendLine($"{rPDFileORG},{CsvSanitiser.SanitiseData(rpdFileORGValue)},{rPDFilePOM},{CsvSanitiser.SanitiseData(rpdFilePOMValue)}");
-        }
-
-        private static void AppendCsvLine(StringBuilder csvContent, string label, string value)
-        {
-            csvContent.AppendLine($"{label},{CsvSanitiser.SanitiseData(value, false)}");
-        }
-
         private static void PrepareLateReportingData(CalcResultLateReportingTonnage calcResultLateReportingData, StringBuilder csvContent)
         {
             csvContent.AppendLine();
