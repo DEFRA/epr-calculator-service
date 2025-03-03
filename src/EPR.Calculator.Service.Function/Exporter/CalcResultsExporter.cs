@@ -7,12 +7,21 @@
     using EPR.Calculator.API.Utils;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Function.Exporter.Lapcap;
+    using EPR.Calculator.Service.Function.Exporter;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.IdentityModel.Tokens;
 
     public class CalcResultsExporter : ICalcResultsExporter<CalcResult>
     {
+        private readonly ICalcResultDetailExporter resultDetailexporter;
+        private readonly IOnePlusFourApportionmentExporter onePlusFourApportionmentExporter;
+
+        public CalcResultsExporter(ICalcResultDetailExporter resultDetailexporter, IOnePlusFourApportionmentExporter onePlusFourApportionmentExporter)
+        {
+            this.resultDetailexporter = resultDetailexporter;
+            this.onePlusFourApportionmentExporter = onePlusFourApportionmentExporter;
+        }
+
         private const string RunName = "Run Name";
         private const string RunId = "Run Id";
         private const string RunDate = "Run Date";
@@ -39,7 +48,7 @@
             }
 
             var csvContent = new StringBuilder();
-            LoadCalcResultDetail(results, csvContent);
+            this.resultDetailexporter.Export(results.CalcResultDetail, csvContent);
             if (results.CalcResultLapcapData != null)
             {
                 this.lapcaptDetailExporter.Export(results.CalcResultLapcapData, csvContent);
@@ -55,10 +64,7 @@
                 PrepareOtherCosts(results.CalcResultParameterOtherCost, csvContent);
             }
 
-            if (results.CalcResultOnePlusFourApportionment != null)
-            {
-                PrepareOnePluseFourApportionment(results.CalcResultOnePlusFourApportionment, csvContent);
-            }
+            this.onePlusFourApportionmentExporter.Export(results.CalcResultOnePlusFourApportionment, csvContent);
 
             if (results.CalcResultCommsCostReportDetail != null)
             {
@@ -201,59 +207,14 @@
             }
         }
 
-        private static void LoadCalcResultDetail(CalcResult results, StringBuilder csvContent)
-        {
-            AppendCsvLine(csvContent, RunName, results.CalcResultDetail.RunName);
-            AppendCsvLine(csvContent, RunId, results.CalcResultDetail.RunId.ToString());
-            AppendCsvLine(csvContent, RunDate, results.CalcResultDetail.RunDate.ToString(CalculationResults.DateFormat));
-            AppendCsvLine(csvContent, Runby, results.CalcResultDetail.RunBy);
-            AppendCsvLine(csvContent, FinancialYear, results.CalcResultDetail.FinancialYear);
-            AppendRpdFileInfo(csvContent, RPDFileORG, RPDFilePOM, results.CalcResultDetail.RpdFileORG, results.CalcResultDetail.RpdFilePOM);
-            AppendFileInfo(csvContent, LapcapFile, results.CalcResultDetail.LapcapFile);
-            AppendFileInfo(csvContent, ParametersFile, results.CalcResultDetail.ParametersFile);
-            AppendFileInfo(csvContent, CountryApportionmentFile, results.CalcResultDetail.CountryApportionmentFile);
-        }
-
         private static void AppendRpdFileInfo(StringBuilder csvContent, string rPDFileORG, string rPDFilePOM, string rpdFileORGValue, string rpdFilePOMValue)
         {
             csvContent.AppendLine($"{rPDFileORG},{CsvSanitiser.SanitiseData(rpdFileORGValue)},{rPDFilePOM},{CsvSanitiser.SanitiseData(rpdFilePOMValue)}");
         }
 
-        public static void AppendFileInfo(StringBuilder csvContent, string label, string filePath)
-        {
-            var fileParts = filePath.Split(',');
-            if (fileParts.Length >= 3)
-            {
-                string fileName = CsvSanitiser.SanitiseData(fileParts[0], false);
-                string date = CsvSanitiser.SanitiseData(fileParts[1], false);
-                string user = CsvSanitiser.SanitiseData(fileParts[2], false);
-                csvContent.AppendLine($"{label},{fileName},{date},{user}");
-            }
-        }
-
         private static void AppendCsvLine(StringBuilder csvContent, string label, string value)
         {
             csvContent.AppendLine($"{label},{CsvSanitiser.SanitiseData(value, false)}");
-        }
-
-        private static void PrepareOnePluseFourApportionment(CalcResultOnePlusFourApportionment calcResult1Plus4Apportionment, StringBuilder csvContent)
-        {
-            csvContent.AppendLine();
-            csvContent.AppendLine();
-
-            csvContent.AppendLine(calcResult1Plus4Apportionment.Name);
-            var lapcapDataDetails = calcResult1Plus4Apportionment.CalcResultOnePlusFourApportionmentDetails.OrderBy(x => x.OrderId);
-
-            foreach (var lapcapData in lapcapDataDetails)
-            {
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.Name));
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.EnglandDisposalTotal));
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.WalesDisposalTotal));
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.ScotlandDisposalTotal));
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.NorthernIrelandDisposalTotal));
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.Total));
-                csvContent.AppendLine();
-            }
         }
 
         private static void PrepareLateReportingData(CalcResultLateReportingTonnage calcResultLateReportingData, StringBuilder csvContent)
