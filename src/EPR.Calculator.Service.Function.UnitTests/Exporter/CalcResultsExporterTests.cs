@@ -16,7 +16,7 @@
     {
         private Fixture Fixture { get; } = new Fixture();
         private ILapcaptDetailExporter lapcaptDetailExporter = new LapcaptDetailExporter();
-        private Mock<ICalcResultDetailExporter> mockResultDetailexporter = new();
+        private Mock<ICalcResultDetailExporter> mockResultDetailExporter = new();
         private Mock<IOnePlusFourApportionmentExporter> mockOnePlusFourExporter = new();
         private Mock<ICalcResultScaledupProducersExporter> mockScaledupProducersExporter = new();
 
@@ -43,7 +43,7 @@
             // Arrange
             var exporter = new CalcResultsExporter(mockResultDetailExporter.Object,
                 mockOnePlusFourExporter.Object,
-                mockScaledupProducersExporter.Object
+                mockScaledupProducersExporter.Object,
                 this.lapcaptDetailExporter);
             var calcResult = CreateCalcResult();
 
@@ -66,7 +66,7 @@
             CalcResult? results = null;
             var exporter = new CalcResultsExporter(mockResultDetailExporter.Object,
                 mockOnePlusFourExporter.Object,
-                mockScaledupProducersExporter.Object
+                mockScaledupProducersExporter.Object,
                 this.lapcaptDetailExporter);
 
             // Act & Assert
@@ -81,7 +81,7 @@
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter(mockResultDetailExporter.Object,
                 mockOnePlusFourExporter.Object,
-                mockScaledupProducersExporter.Object
+                mockScaledupProducersExporter.Object,
                 this.lapcaptDetailExporter);
 
             // Act
@@ -115,7 +115,7 @@
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter(mockResultDetailExporter.Object,
                 mockOnePlusFourExporter.Object,
-                mockScaledupProducersExporter.Object
+                mockScaledupProducersExporter.Object,
                 this.lapcaptDetailExporter);
 
             // Act
@@ -134,7 +134,7 @@
                 mockOnePlusFourExporter.Object,
                 mockScaledupProducersExporter.Object,
                 this.lapcaptDetailExporter);
-          
+
             // Act
             var result = exporter.Export(results);
 
