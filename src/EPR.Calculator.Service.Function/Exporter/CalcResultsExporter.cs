@@ -16,10 +16,14 @@
         private readonly ICalcResultDetailExporter resultDetailexporter;
         private readonly IOnePlusFourApportionmentExporter onePlusFourApportionmentExporter;
 
-        public CalcResultsExporter(ICalcResultDetailExporter resultDetailexporter, IOnePlusFourApportionmentExporter onePlusFourApportionmentExporter)
+        public CalcResultsExporter(
+            ICalcResultDetailExporter resultDetailexporter,
+            IOnePlusFourApportionmentExporter onePlusFourApportionmentExporter,
+            ILapcaptDetailExporter lapcaptDetailExporter)
         {
             this.resultDetailexporter = resultDetailexporter;
             this.onePlusFourApportionmentExporter = onePlusFourApportionmentExporter;
+            this.lapcaptDetailExporter = lapcaptDetailExporter;
         }
 
         private const string RunName = "Run Name";
@@ -34,11 +38,6 @@
         private const string CountryApportionmentFile = "Country Apportionment File";
 
         private readonly ILapcaptDetailExporter lapcaptDetailExporter;
-
-        public CalcResultsExporter(ILapcaptDetailExporter lapcaptDetailExporter)
-        {
-            this.lapcaptDetailExporter = lapcaptDetailExporter;
-        }
 
         public string Export(CalcResult results)
         {

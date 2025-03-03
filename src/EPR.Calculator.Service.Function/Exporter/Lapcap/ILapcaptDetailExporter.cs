@@ -1,4 +1,4 @@
-﻿namespace EPR.Calculator.Service.Function.Exporter.Lapcap
+﻿namespace EPR.Calculator.Service.Function.Exporter
 {
     using System.Text;
     using EPR.Calculator.Service.Function.Models;

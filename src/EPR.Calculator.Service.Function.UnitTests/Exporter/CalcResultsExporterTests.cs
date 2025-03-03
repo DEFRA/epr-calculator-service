@@ -1,15 +1,14 @@
 ﻿namespace EPR.Calculator.API.UnitTests.Exporter
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
     using AutoFixture;
     using EPR.Calculator.API.Exporter;
-    using EPR.Calculator.Service.Function.Exporter.Lapcap;
+    using EPR.Calculator.Service.Function.Exporter;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
-    using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
 
     [TestClass]
     public class CalcResultsExporterTests
