@@ -13,20 +13,13 @@
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.IdentityModel.Tokens;
 
-    public class CalcResultsExporter : ICalcResultsExporter<CalcResult>
+    public class CalcResultsExporter(
+        LateReportingExporter lateReportingExporter,
+        ICalcResultDetailExporter resultDetailexporter,
+        IOnePlusFourApportionmentExporter onePlusFourApportionmentExporter,
+        ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter)
+        : ICalcResultsExporter<CalcResult>
     {
-        private readonly ICalcResultDetailExporter resultDetailexporter;
-        private readonly IOnePlusFourApportionmentExporter onePlusFourApportionmentExporter;
-        private readonly ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter;
-
-        public CalcResultsExporter(ICalcResultDetailExporter resultDetailexporter,
-            IOnePlusFourApportionmentExporter onePlusFourApportionmentExporter,
-            ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter)
-        {
-            this.resultDetailexporter = resultDetailexporter;
-            this.onePlusFourApportionmentExporter = onePlusFourApportionmentExporter;
-            this.calcResultScaledupProducersExporter = calcResultScaledupProducersExporter;
-        }
 
         public string Export(CalcResult results)
         {
@@ -36,23 +29,20 @@
             }
 
             var csvContent = new StringBuilder();
-            this.resultDetailexporter.Export(results.CalcResultDetail, csvContent);
+            resultDetailexporter.Export(results.CalcResultDetail, csvContent);
             if (results.CalcResultLapcapData != null)
             {
                 PrepareLapcapData(results.CalcResultLapcapData, csvContent);
             }
 
-            if (results.CalcResultLateReportingTonnageData != null)
-            {
-                PrepareLateReportingData(results.CalcResultLateReportingTonnageData, csvContent);
-            }
+            csvContent.Append(lateReportingExporter.PrepareData(results.CalcResultLateReportingTonnageData));
 
             if (results.CalcResultParameterOtherCost != null)
             {
                 PrepareOtherCosts(results.CalcResultParameterOtherCost, csvContent);
             }
 
-            this.onePlusFourApportionmentExporter.Export(results.CalcResultOnePlusFourApportionment, csvContent);
+            onePlusFourApportionmentExporter.Export(results.CalcResultOnePlusFourApportionment, csvContent);
 
             csvContent.Append(CommsCostExporter.ExportCommsCost(results.CalcResultCommsCostReportDetail));
 
@@ -63,7 +53,7 @@
 
             if (results.CalcResultScaledupProducers != null)
             {
-                this.calcResultScaledupProducersExporter.Export(results.CalcResultScaledupProducers, csvContent);
+                calcResultScaledupProducersExporter.Export(results.CalcResultScaledupProducers, csvContent);
             }
 
             if (results.CalcResultSummary != null)
@@ -149,24 +139,6 @@
                 csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.ScotlandDisposalCost));
                 csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.NorthernIrelandDisposalCost));
                 csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.TotalDisposalCost, false));
-                csvContent.AppendLine();
-            }
-        }
-
-        private static void PrepareLateReportingData(CalcResultLateReportingTonnage calcResultLateReportingData, StringBuilder csvContent)
-        {
-            csvContent.AppendLine();
-            csvContent.AppendLine();
-
-            csvContent.AppendLine(CsvSanitiser.SanitiseData(calcResultLateReportingData.Name));
-            csvContent.Append(CsvSanitiser.SanitiseData(calcResultLateReportingData.MaterialHeading));
-            csvContent.Append(CsvSanitiser.SanitiseData(calcResultLateReportingData.TonnageHeading));
-            csvContent.AppendLine();
-
-            foreach (var lateReportingData in calcResultLateReportingData.CalcResultLateReportingTonnageDetails)
-            {
-                csvContent.Append(CsvSanitiser.SanitiseData(lateReportingData.Name));
-                csvContent.Append(CsvSanitiser.SanitiseData(lateReportingData.TotalLateReportingTonnage));
                 csvContent.AppendLine();
             }
         }

@@ -106,6 +106,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<IRpdStatusService, RpdStatusService>();
             services.AddTransient<ICalcResultDetailExporter, CalcResultDetailexporter>();
             services.AddTransient<ICalcResultScaledupProducersExporter, CalcResultScaledupProducersExporter>();
+            services.AddTransient<LateReportingExporter, LateReportingExporter>();
 #if !DEBUG
             SetupBlobStorage(services);
             services.AddTransient<IConfigurationService, Configuration>();
