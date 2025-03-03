@@ -2,6 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+using System.Configuration;
 using Azure.Storage.Blobs;
 using EPR.Calculator.API.Exporter;
 using EPR.Calculator.API.Services;
@@ -21,6 +22,7 @@ using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
 using EPR.Calculator.Service.Function.Builder.Summary;
 using EPR.Calculator.Service.Function.Data;
 using EPR.Calculator.Service.Function.Exporter;
+using EPR.Calculator.Service.Function.Exporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Misc;
@@ -30,7 +32,6 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.Configuration;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -105,6 +106,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<IRpdStatusService, RpdStatusService>();
             services.AddTransient<ILapcaptDetailExporter, LapcaptDetailExporter>();
             services.AddTransient<ICalcResultDetailExporter, CalcResultDetailexporter>();
+            services.AddTransient<ICalcResultScaledupProducersExporter, CalcResultScaledupProducersExporter>();
 #if !DEBUG
             SetupBlobStorage(services);
             services.AddTransient<IConfigurationService, Configuration>();
