@@ -7,35 +7,19 @@
     using EPR.Calculator.API.Utils;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Function.Exporter.ScaledupProducers;
     using EPR.Calculator.Service.Function.Exporter;
+    using EPR.Calculator.Service.Function.Exporter.ScaledupProducers;
     using EPR.Calculator.Service.Function.Models;
-    using Microsoft.IdentityModel.Tokens;
 
     public class CalcResultsExporter : ICalcResultsExporter<CalcResult>
     {
-        private readonly ICalcResultDetailExporter resultDetailexporter;
-
-        public CalcResultsExporter(ICalcResultDetailExporter resultDetailexporter)
-        {
-            this.resultDetailexporter = resultDetailexporter;
-        }
-
-        private const string RunName = "Run Name";
-        private const string RunId = "Run Id";
-        private const string RunDate = "Run Date";
-        private const string Runby = "Run by";
-        private const string FinancialYear = "Financial Year";
-        private const string RPDFileORG = "RPD File - ORG";
-        private const string RPDFilePOM = "RPD File - POM";
-        private const string LapcapFile = "LAPCAP File";
-        private const string ParametersFile = "Parameters File";
-        private const string CountryApportionmentFile = "Country Apportionment File";
-
+        private readonly ICalcResultDetailExporter resultDetailExporter;
         private readonly ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter;
 
-        public CalcResultsExporter(ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter)
+        public CalcResultsExporter(ICalcResultDetailExporter resultDetailExporter,
+            ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter)
         {
+            this.resultDetailExporter = resultDetailExporter;
             this.calcResultScaledupProducersExporter = calcResultScaledupProducersExporter;
         }
 
@@ -47,7 +31,7 @@
             }
 
             var csvContent = new StringBuilder();
-            this.resultDetailexporter.Export(results.CalcResultDetail, csvContent);
+            this.resultDetailExporter.Export(results.CalcResultDetail, csvContent);
             if (results.CalcResultLapcapData != null)
             {
                 PrepareLapcapData(results.CalcResultLapcapData, csvContent);

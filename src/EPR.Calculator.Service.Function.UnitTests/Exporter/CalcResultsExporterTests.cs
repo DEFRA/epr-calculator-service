@@ -5,27 +5,26 @@
     using System.Text;
     using AutoFixture;
     using EPR.Calculator.API.Exporter;
-    using EPR.Calculator.Service.Function.Exporter.ScaledupProducers;
     using EPR.Calculator.Service.Function.Exporter;
+    using EPR.Calculator.Service.Function.Exporter.ScaledupProducers;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
-    using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
     [TestClass]
     public class CalcResultsExporterTests
     {
         private Fixture Fixture { get; } = new Fixture();
 
+        private Mock<ICalcResultDetailExporter> resultDetailExporter = new();
         private Mock<ICalcResultScaledupProducersExporter> scaledupProducersExporter = new();
-        private Mock<ICalcResultDetailExporter> resultDetailexporter = new();
 
         [TestMethod]
         public void Export_ShouldReturnCsvContent_WhenAllDataIsPresent()
         {
             // Arrange
-            var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
-            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
+            var exporter = new CalcResultsExporter(resultDetailExporter.Object,
+                scaledupProducersExporter.Object);
             var calcResult = CreateCalcResult();
 
             // Act
@@ -39,8 +38,8 @@
         public void Export_DataFormatting_IsCorrect()
         {
             // Arrange
-            var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
-            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
+            var exporter = new CalcResultsExporter(resultDetailExporter.Object,
+                scaledupProducersExporter.Object);
             var calcResult = CreateCalcResult();
 
             // Act
@@ -61,8 +60,8 @@
         {
             // Arrange
             CalcResult? results = null;
-            var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
-            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
+            var exporter = new CalcResultsExporter(resultDetailExporter.Object,
+                scaledupProducersExporter.Object);
 
             // Act & Assert
             var ex = Assert.ThrowsException<ArgumentNullException>(() => exporter.Export(results!));
@@ -74,8 +73,8 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
-            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
+            var exporter = new CalcResultsExporter(resultDetailExporter.Object,
+                scaledupProducersExporter.Object);
 
             // Act
             var result = exporter.Export(results);
@@ -89,8 +88,8 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
-            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
+            var exporter = new CalcResultsExporter(resultDetailExporter.Object,
+                scaledupProducersExporter.Object);
             // Act
             var result = exporter.Export(results);
 
@@ -103,8 +102,8 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
-            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
+            var exporter = new CalcResultsExporter(resultDetailExporter.Object,
+                scaledupProducersExporter.Object);
             // Act
             var result = exporter.Export(results);
 
@@ -117,8 +116,8 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
-            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
+            var exporter = new CalcResultsExporter(resultDetailExporter.Object,
+                scaledupProducersExporter.Object);
             // Act
             var result = exporter.Export(results);
 
@@ -131,8 +130,8 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
-            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
+            var exporter = new CalcResultsExporter(resultDetailExporter.Object,
+                scaledupProducersExporter.Object);
             // Act
             var result = exporter.Export(results);
 
@@ -145,8 +144,8 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
-            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
+            var exporter = new CalcResultsExporter(resultDetailExporter.Object,
+                scaledupProducersExporter.Object);
 
             // Act
             var result = exporter.Export(results);
@@ -160,8 +159,8 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
-            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
+            var exporter = new CalcResultsExporter(resultDetailExporter.Object,
+                scaledupProducersExporter.Object);
 
             // Act
             var result = exporter.Export(results);
@@ -180,8 +179,8 @@
                 CalcResultLateReportingTonnageData = null!,
                 CalcResultParameterOtherCost = null!,
             };
-            var exporter = new CalcResultsExporter(scaledupProducersExporter.Object);
-            var exporter = new CalcResultsExporter(resultDetailexporter.Object);
+            var exporter = new CalcResultsExporter(resultDetailExporter.Object,
+                scaledupProducersExporter.Object);
 
             // Act
             if (results != null)
@@ -529,6 +528,46 @@
                 });
 
             return tonnageByMaterial;
+        }
+
+        private static CalcResult CreateCalcResultWithGlass()
+        {
+            var result = CreateCalcResult();
+            result.CalcResultScaledupProducers.ScaledupProducers = GetCalcResultScaledupProducerListWithGlass();
+            return result;
+        }
+
+        private static IEnumerable<CalcResultScaledupProducer> GetCalcResultScaledupProducerListWithGlass()
+        {
+            var scaledupProducerList = new List<CalcResultScaledupProducer>
+            {
+                new CalcResultScaledupProducer
+                {
+                    ProducerId = 101001,
+                    SubsidiaryId = string.Empty,
+                    ProducerName = "Allied Packaging",
+                    Level = "1",
+                    SubmissionPeriodCode = "2024-P2",
+                    DaysInSubmissionPeriod = 91,
+                    DaysInWholePeriod = 91,
+                    ScaleupFactor = 2,
+                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterialWithGlass(),
+                },
+                new CalcResultScaledupProducer
+                {
+                    ProducerId = 101001,
+                    SubsidiaryId = string.Empty,
+                    ProducerName = "Allied Packaging",
+                    Level = "1",
+                    SubmissionPeriodCode = "2024-P2",
+                    DaysInSubmissionPeriod = 91,
+                    DaysInWholePeriod = 91,
+                    ScaleupFactor = 2,
+                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterialWithGlass(),
+                    IsTotalRow = true,
+                },
+            };
+            return scaledupProducerList;
         }
 
         private static List<CalcResultScaledupProducer> GetCalcResultScaledupProducerList()
