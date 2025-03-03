@@ -1,8 +1,11 @@
 ﻿namespace EPR.Calculator.Service.Function.Exporter
 {
+    using System;
+    using System.Linq;
     using System.Text;
     using EPR.Calculator.API.Utils;
     using EPR.Calculator.Service.Function.Models;
+    using Microsoft.Extensions.Primitives;
 
     /// <summary>
     /// Exports the Late Reporting Tonnage data to a string to be added to the results file.
@@ -28,8 +31,13 @@
 
             foreach (var lateReportingData in calcResultLateReportingData.CalcResultLateReportingTonnageDetails)
             {
-                csvContent.Append($"{CsvSanitiser.SanitiseData(lateReportingData.Name)}");
-                csvContent.Append(CsvSanitiser.SanitiseData(lateReportingData.TotalLateReportingTonnage));
+                csvContent.AppendJoin(
+                    string.Empty,
+                    new string[]
+                    {
+                        lateReportingData.Name,
+                        lateReportingData.TotalLateReportingTonnage.ToString("0.0"),
+                    }.Select(s => CsvSanitiser.SanitiseData(s)));
                 csvContent.AppendLine();
             }
 
