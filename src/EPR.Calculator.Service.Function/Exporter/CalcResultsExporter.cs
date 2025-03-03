@@ -14,10 +14,12 @@
     public class CalcResultsExporter : ICalcResultsExporter<CalcResult>
     {
         private readonly ICalcResultDetailExporter resultDetailexporter;
+        private readonly IOnePlusFourApportionmentExporter onePlusFourApportionmentExporter;
 
-        public CalcResultsExporter(ICalcResultDetailExporter resultDetailexporter)
+        public CalcResultsExporter(ICalcResultDetailExporter resultDetailexporter, IOnePlusFourApportionmentExporter onePlusFourApportionmentExporter)
         {
             this.resultDetailexporter = resultDetailexporter;
+            this.onePlusFourApportionmentExporter = onePlusFourApportionmentExporter;
         }
 
         private const string RunName = "Run Name";
@@ -55,10 +57,7 @@
                 PrepareOtherCosts(results.CalcResultParameterOtherCost, csvContent);
             }
 
-            if (results.CalcResultOnePlusFourApportionment != null)
-            {
-                PrepareOnePluseFourApportionment(results.CalcResultOnePlusFourApportionment, csvContent);
-            }
+            this.onePlusFourApportionmentExporter.Export(results.CalcResultOnePlusFourApportionment, csvContent);
 
             if (results.CalcResultCommsCostReportDetail != null)
             {
@@ -227,26 +226,6 @@
                 csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.ScotlandDisposalCost));
                 csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.NorthernIrelandDisposalCost));
                 csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.TotalDisposalCost, false));
-                csvContent.AppendLine();
-            }
-        }
-
-        private static void PrepareOnePluseFourApportionment(CalcResultOnePlusFourApportionment calcResult1Plus4Apportionment, StringBuilder csvContent)
-        {
-            csvContent.AppendLine();
-            csvContent.AppendLine();
-
-            csvContent.AppendLine(calcResult1Plus4Apportionment.Name);
-            var lapcapDataDetails = calcResult1Plus4Apportionment.CalcResultOnePlusFourApportionmentDetails.OrderBy(x => x.OrderId);
-
-            foreach (var lapcapData in lapcapDataDetails)
-            {
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.Name));
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.EnglandDisposalTotal));
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.WalesDisposalTotal));
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.ScotlandDisposalTotal));
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.NorthernIrelandDisposalTotal));
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.Total));
                 csvContent.AppendLine();
             }
         }
