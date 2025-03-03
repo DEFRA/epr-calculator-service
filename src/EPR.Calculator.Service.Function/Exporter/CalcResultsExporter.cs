@@ -16,7 +16,8 @@
         LateReportingExporter lateReportingExporter,
         ICalcResultDetailExporter resultDetailexporter,
         IOnePlusFourApportionmentExporter onePlusFourApportionmentExporter,
-        ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter)
+        ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter,
+        ILapcaptDetailExporter lapcaptDetailExporter)
         : ICalcResultsExporter<CalcResult>
     {
 
@@ -31,7 +32,7 @@
             resultDetailexporter.Export(results.CalcResultDetail, csvContent);
             if (results.CalcResultLapcapData != null)
             {
-                PrepareLapcapData(results.CalcResultLapcapData, csvContent);
+                lapcaptDetailExporter.Export(results.CalcResultLapcapData, csvContent);
             }
 
             csvContent.Append(lateReportingExporter.PrepareData(results.CalcResultLateReportingTonnageData));
@@ -177,26 +178,6 @@
                 csvContent.Append(CsvSanitiser.SanitiseData(material.SevenMateriality));
                 csvContent.Append(CsvSanitiser.SanitiseData(material.Amount));
                 csvContent.Append(CsvSanitiser.SanitiseData(material.Percentage));
-                csvContent.AppendLine();
-            }
-        }
-
-        private static void PrepareLapcapData(CalcResultLapcapData calcResultLapcapData, StringBuilder csvContent)
-        {
-            csvContent.AppendLine();
-            csvContent.AppendLine();
-
-            csvContent.AppendLine(calcResultLapcapData.Name);
-            var lapcapDataDetails = calcResultLapcapData.CalcResultLapcapDataDetails.OrderBy(x => x.OrderId);
-
-            foreach (var lapcapData in lapcapDataDetails)
-            {
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.Name));
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.EnglandDisposalCost));
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.WalesDisposalCost));
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.ScotlandDisposalCost));
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.NorthernIrelandDisposalCost));
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.TotalDisposalCost, false));
                 csvContent.AppendLine();
             }
         }
