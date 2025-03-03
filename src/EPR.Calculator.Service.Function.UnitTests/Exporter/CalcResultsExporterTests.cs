@@ -18,6 +18,7 @@
         private Fixture Fixture { get; } = new Fixture();
 
         private Mock<ICalcResultDetailExporter> resultDetailexporter = new();
+        private Mock<IOnePlusFourApportionmentExporter> mockOnePlusFourExporter = new();
         private Mock<ICalcResultScaledupProducersExporter> scaledupProducersExporter = new();
 
         [TestMethod]
@@ -25,6 +26,7 @@
         {
             // Arrange
             var exporter = new CalcResultsExporter(resultDetailexporter.Object,
+                mockOnePlusFourExporter.Object,
                 scaledupProducersExporter.Object);
             var calcResult = CreateCalcResult();
 
@@ -40,6 +42,7 @@
         {
             // Arrange
             var exporter = new CalcResultsExporter(resultDetailexporter.Object,
+                mockOnePlusFourExporter.Object,
                 scaledupProducersExporter.Object);
             var calcResult = CreateCalcResult();
 
@@ -50,7 +53,6 @@
             Assert.IsTrue(result.Contains("LAPCAP Data"));
             Assert.IsTrue(result.Contains("Late Reporting Tonnage"));
             Assert.IsTrue(result.Contains("Parameters - Other"));
-            Assert.IsTrue(result.Contains("1 + 4 Apportionment %s"));
             Assert.IsTrue(result.Contains("4 LA Data Prep Charge"));
             Assert.IsTrue(result.Contains("5 Scheme set up cost Yearly Cost"));
             Assert.IsTrue(result.Contains("some test"));
@@ -62,6 +64,7 @@
             // Arrange
             CalcResult? results = null;
             var exporter = new CalcResultsExporter(resultDetailexporter.Object,
+                mockOnePlusFourExporter.Object,
                 scaledupProducersExporter.Object);
 
             // Act & Assert
@@ -75,6 +78,7 @@
             // Arrange
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter(resultDetailexporter.Object,
+                mockOnePlusFourExporter.Object,
                 scaledupProducersExporter.Object);
 
             // Act
@@ -90,6 +94,7 @@
             // Arrange
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter(resultDetailexporter.Object,
+                mockOnePlusFourExporter.Object,
                 scaledupProducersExporter.Object);
             // Act
             var result = exporter.Export(results);
@@ -104,6 +109,7 @@
             // Arrange
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter(resultDetailexporter.Object,
+                mockOnePlusFourExporter.Object,
                 scaledupProducersExporter.Object);
             // Act
             var result = exporter.Export(results);
@@ -113,25 +119,12 @@
         }
 
         [TestMethod]
-        public void Export_ShouldIncludeOnePlusFourApportionment_WhenNotNull()
-        {
-            // Arrange
-            var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(resultDetailexporter.Object,
-                scaledupProducersExporter.Object);
-            // Act
-            var result = exporter.Export(results);
-
-            // Assert
-            Assert.IsTrue(result.Contains("1 + 4 Apportionment %s"));
-        }
-
-        [TestMethod]
         public void Export_ShouldIncludeCommCost_WhenNotNull()
         {
             // Arrange
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter(resultDetailexporter.Object,
+                mockOnePlusFourExporter.Object,
                 scaledupProducersExporter.Object);
             // Act
             var result = exporter.Export(results);
@@ -146,6 +139,7 @@
             // Arrange
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter(resultDetailexporter.Object,
+                mockOnePlusFourExporter.Object,
                 scaledupProducersExporter.Object);
 
             // Act
@@ -156,11 +150,51 @@
         }
 
         [TestMethod]
+        public void Export_ShouldIncludeScaledupProducers_WhenNotNull()
+        {
+            // Arrange
+            var results = CreateCalcResult();
+            var exporter = new CalcResultsExporter(mockResultDetailexporter.Object, mockOnePlusFourExporter.Object);
+
+            // Act
+            var result = exporter.Export(results);
+
+            // Assert
+            Assert.IsTrue(result.Contains("Scaled-up Producers"));
+        }
+
+        [TestMethod]
+        [DataRow(true)]
+        [DataRow(false)]
+        public void Export_ScaledUpProducer_ShouldIncludeHeadersAndDisplayNone_WhenNoScaledUpProducer(
+            bool setScaledUpProducersToNull)
+        {
+            // Arrange
+            var results = CreateCalcResult();
+            results.CalcResultScaledupProducers.ScaledupProducers = setScaledUpProducersToNull
+                ? null!
+                : new List<CalcResultScaledupProducer>();
+            var exporter = new CalcResultsExporter(mockResultDetailexporter.Object, mockOnePlusFourExporter.Object);
+
+            // Act
+            var result = exporter.Export(results);
+
+            // Assert
+            Assert.IsTrue(result.Contains("Scaled-up Producers"));
+            Assert.IsTrue(result.Contains("Each submission for the year"));
+            Assert.IsTrue(result.Contains("Aluminium Breakdown"));
+            Assert.IsTrue(result.Contains("Producer ID"));
+            Assert.IsTrue(result.Contains("Subsidiary ID"));
+            Assert.IsTrue(result.Contains("None"));
+        }
+
+        [TestMethod]
         public void Export_ShouldIncludeSummaryData_WhenNotNull()
         {
             // Arrange
             var results = CreateCalcResult();
             var exporter = new CalcResultsExporter(resultDetailexporter.Object,
+                mockOnePlusFourExporter.Object,
                 scaledupProducersExporter.Object);
 
             // Act
@@ -181,6 +215,7 @@
                 CalcResultParameterOtherCost = null!,
             };
             var exporter = new CalcResultsExporter(resultDetailexporter.Object,
+                mockOnePlusFourExporter.Object,
                 scaledupProducersExporter.Object);
 
             // Act
@@ -204,6 +239,22 @@
                     "CSV content should not contain LaDisposalCostData.");
                 Assert.IsFalse(csvContent.Contains("SummaryData"), "CSV content should not contain SummaryData.");
             }
+        }
+
+        [TestMethod]
+        public void Export_ShouldIncludeGlassColumns_WhenGlassMaterialPresent()
+        {
+            // Arrange
+            var results = CreateCalcResultWithGlass();
+            var exporter = new CalcResultsExporter(mockResultDetailexporter.Object, mockOnePlusFourExporter.Object);
+
+            // Act
+            var result = exporter.Export(results);
+
+            // Assert
+            Assert.IsTrue(result.Contains("Glass"));
+            Assert.IsTrue(result.Contains("HouseholdDrinksContainersTonnageGlass"));
+            Assert.IsTrue(result.Contains("ScaledupHouseholdDrinksContainersTonnageGlass"));
         }
 
         [TestMethod]
