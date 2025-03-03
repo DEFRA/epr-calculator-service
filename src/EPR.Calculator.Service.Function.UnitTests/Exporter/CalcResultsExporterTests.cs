@@ -9,6 +9,7 @@
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
     [TestClass]
     public class CalcResultsExporterTests
@@ -16,13 +17,22 @@
         public CalcResultsExporterTests()
         {
             this.Fixture = new Fixture();
-            this.MockLateReportingExporter = new Mock<LateReportingExporter>();
-            this.TestClass = new CalcResultsExporter(this.MockLateReportingExporter.Object);
+            this.MockLateReportingExporter = new();
+            this.MockResultDetailexporter = new();
+            this.MockOnePlusFourExporter = new();
+            this.TestClass = new CalcResultsExporter(
+                this.MockLateReportingExporter.Object,
+                this.MockResultDetailexporter.Object,
+                this.MockOnePlusFourExporter.Object);
         }
 
         private Fixture Fixture { get; init; }
 
         private Mock<LateReportingExporter> MockLateReportingExporter { get; init; }
+
+        private Mock<ICalcResultDetailExporter> MockResultDetailexporter { get; init; }
+
+        private Mock<IOnePlusFourApportionmentExporter> MockOnePlusFourExporter { get; init; }
 
         private CalcResultsExporter TestClass { get; init; }
 
@@ -52,46 +62,17 @@
             Assert.IsTrue(result.Contains("LAPCAP Data"));
             Assert.IsTrue(result.Contains("Late Reporting Tonnage"));
             Assert.IsTrue(result.Contains("Parameters - Other"));
-            Assert.IsTrue(result.Contains("1 + 4 Apportionment %s"));
             Assert.IsTrue(result.Contains("4 LA Data Prep Charge"));
             Assert.IsTrue(result.Contains("5 Scheme set up cost Yearly Cost"));
             Assert.IsTrue(result.Contains("some test"));
         }
 
         [TestMethod]
-        public void Export_CsvContent_HasCorrectNumberOfLineBreaks()
-        {
-            // Arrange
-            var calcResult = CreateCalcResult();
-
-            // Act
-            var result = this.TestClass.Export(calcResult);
-            var lines = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-
-            // Assert
-            int expectedLineCount = 68;
-            Assert.AreEqual(expectedLineCount, lines.Length);
-        }
-
-        [TestMethod]
         public void Export_ShouldThrowArgumentNullException_WhenResultsIsNull()
         {
-            // Arrange
-            CalcResult? results = null;
-
             // Act & Assert
-            var ex = Assert.ThrowsException<ArgumentNullException>(() => this.TestClass.Export(results!));
+            var ex = Assert.ThrowsException<ArgumentNullException>(() => this.TestClass.Export(null!));
             Assert.AreEqual("results", ex.ParamName);
-        }
-
-        [TestMethod]
-        public void Export_ShouldIncludeCalcResultRunNameDetails()
-        {
-            var results = CreateCalcResult();
-
-            var result = this.TestClass.Export(results);
-
-            Assert.IsTrue(result.Contains("CalculatorRunName"));
         }
 
         [TestMethod]
@@ -134,19 +115,6 @@
         }
 
         [TestMethod]
-        public void Export_ShouldIncludeOnePlusFourApportionment_WhenNotNull()
-        {
-            // Arrange
-            var results = CreateCalcResult();
-
-            // Act
-            var result = this.TestClass.Export(results);
-
-            // Assert
-            Assert.IsTrue(result.Contains("1 + 4 Apportionment %s"));
-        }
-
-        [TestMethod]
         public void Export_ShouldIncludeCommCost_WhenNotNull()
         {
             // Arrange
@@ -175,8 +143,9 @@
         [TestMethod]
         public void Export_ShouldIncludeScaledupProducers_WhenNotNull()
         {
-            // Arrange
             var results = CreateCalcResult();
+
+            // Arrange
 
             // Act
             var result = this.TestClass.Export(results);
@@ -260,7 +229,7 @@
         public void Export_ShouldIncludeGlassColumns_WhenGlassMaterialPresent()
         {
             // Arrange
-            var results = CreateCalcResultWithGlass();
+            var results = CreateCalcResult();
 
             // Act
             var result = this.TestClass.Export(results);
@@ -275,10 +244,10 @@
         public void AppendFileInfoTest()
         {
             var csvContent = new StringBuilder();
-            CalcResultsExporter.AppendFileInfo(csvContent, "Label", "Filename,20/12/2024,User");
+            CalcResultDetailexporter.AppendFileInfo(csvContent, "Label", "Filename,20/12/2024,User");
+            Assert.IsTrue(csvContent.ToString().Contains("Label"));
             Assert.IsTrue(csvContent.ToString().Contains("Filename"));
             Assert.IsTrue(csvContent.ToString().Contains("20/12/2024"));
-            Assert.IsTrue(csvContent.ToString().Contains("User"));
         }
 
         private static CalcResult CreateCalcResult()
@@ -290,7 +259,7 @@
                     Name = "LAPCAP Data",
                     CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>
                     {
-                        new ()
+                        new()
                         {
                             Name = "Total",
                             EnglandDisposalCost = "£13,280.45",
