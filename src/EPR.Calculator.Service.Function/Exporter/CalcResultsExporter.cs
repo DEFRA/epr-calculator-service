@@ -16,36 +16,10 @@
         LateReportingExporter lateReportingExporter,
         ICalcResultDetailExporter resultDetailexporter,
         IOnePlusFourApportionmentExporter onePlusFourApportionmentExporter,
-        ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter)
+        ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter,
+        ILapcaptDetailExporter lapcaptDetailExporter)
         : ICalcResultsExporter<CalcResult>
     {
-        private readonly ICalcResultDetailExporter resultDetailexporter;
-        private readonly IOnePlusFourApportionmentExporter onePlusFourApportionmentExporter;
-        private readonly ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter;
-        private readonly ILapcaptDetailExporter lapcaptDetailExporter;
-
-        private const string RunName = "Run Name";
-        private const string RunId = "Run Id";
-        private const string RunDate = "Run Date";
-        private const string Runby = "Run by";
-        private const string FinancialYear = "Financial Year";
-        private const string RPDFileORG = "RPD File - ORG";
-        private const string RPDFilePOM = "RPD File - POM";
-        private const string LapcapFile = "LAPCAP File";
-        private const string ParametersFile = "Parameters File";
-        private const string CountryApportionmentFile = "Country Apportionment File";        
-
-        public CalcResultsExporter(ICalcResultDetailExporter resultDetailexporter,
-            IOnePlusFourApportionmentExporter onePlusFourApportionmentExporter,
-            ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter,
-            ILapcaptDetailExporter lapcaptDetailExporter
-            )
-        {
-            this.resultDetailexporter = resultDetailexporter;
-            this.onePlusFourApportionmentExporter = onePlusFourApportionmentExporter;
-            this.calcResultScaledupProducersExporter = calcResultScaledupProducersExporter;
-            this.lapcaptDetailExporter = lapcaptDetailExporter;
-        }
 
         public string Export(CalcResult results)
         {
@@ -58,7 +32,7 @@
             resultDetailexporter.Export(results.CalcResultDetail, csvContent);
             if (results.CalcResultLapcapData != null)
             {
-                this.lapcaptDetailExporter.Export(results.CalcResultLapcapData, csvContent);
+                lapcaptDetailExporter.Export(results.CalcResultLapcapData, csvContent);
             }
 
             csvContent.Append(lateReportingExporter.PrepareData(results.CalcResultLateReportingTonnageData));

@@ -1,5 +1,8 @@
 ﻿namespace EPR.Calculator.API.UnitTests.Exporter
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
     using AutoFixture;
     using EPR.Calculator.API.Exporter;
     using EPR.Calculator.Service.Function.Exporter;
@@ -7,9 +10,7 @@
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
+    using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
     [TestClass]
     public class CalcResultsExporterTests
@@ -21,16 +22,16 @@
             this.MockResultDetailexporter = new();
             this.MockOnePlusFourExporter = new();
             this.MockScaledupProducersExporter = new();
+            this.MockLapcaptDetailExporter = new();
             this.TestClass = new CalcResultsExporter(
                 this.MockLateReportingExporter.Object,
                 this.MockResultDetailexporter.Object,
                 this.MockOnePlusFourExporter.Object,
-                this.MockScaledupProducersExporter.Object);
+                this.MockScaledupProducersExporter.Object,
+                this.MockLapcaptDetailExporter.Object);
         }
 
         private Fixture Fixture { get; init; }
-      
-        private ILapcaptDetailExporter lapcaptDetailExporter = new LapcaptDetailExporter();
 
         private Mock<LateReportingExporter> MockLateReportingExporter { get; init; }
 
@@ -40,16 +41,14 @@
 
         private Mock<ICalcResultScaledupProducersExporter> MockScaledupProducersExporter { get; init; }
 
+        private Mock<ILapcaptDetailExporter> MockLapcaptDetailExporter { get; init; }
+
         private CalcResultsExporter TestClass { get; init; }
 
         [TestMethod]
         public void Export_ShouldReturnCsvContent_WhenAllDataIsPresent()
         {
             // Arrange
-            var exporter = new CalcResultsExporter(mockResultDetailExporter.Object,
-                mockOnePlusFourExporter.Object,
-                mockScaledupProducersExporter.Object,
-                this.lapcaptDetailExporter);
             var calcResult = CreateCalcResult();
 
             // Act
@@ -63,17 +62,12 @@
         public void Export_DataFormatting_IsCorrect()
         {
             // Arrange
-            var exporter = new CalcResultsExporter(mockResultDetailExporter.Object,
-                mockOnePlusFourExporter.Object,
-                mockScaledupProducersExporter.Object,
-                this.lapcaptDetailExporter);
             var calcResult = CreateCalcResult();
 
             // Act
             var result = this.TestClass.Export(calcResult);
 
             // Assert
-            Assert.IsTrue(result.Contains("LAPCAP Data"));
             Assert.IsTrue(result.Contains("Late Reporting Tonnage"));
             Assert.IsTrue(result.Contains("Parameters - Other"));
             Assert.IsTrue(result.Contains("4 LA Data Prep Charge"));
@@ -84,33 +78,9 @@
         [TestMethod]
         public void Export_ShouldThrowArgumentNullException_WhenResultsIsNull()
         {
-            // Arrange
-            CalcResult? results = null;
-            var exporter = new CalcResultsExporter(mockResultDetailExporter.Object,
-                mockOnePlusFourExporter.Object,
-                mockScaledupProducersExporter.Object,
-                this.lapcaptDetailExporter);
-
             // Act & Assert
             var ex = Assert.ThrowsException<ArgumentNullException>(() => this.TestClass.Export(null!));
             Assert.AreEqual("results", ex.ParamName);
-        }
-
-        [TestMethod]
-        public void Export_ShouldIncludeLapcapData_WhenNotNull()
-        {
-            // Arrange
-            var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(mockResultDetailExporter.Object,
-                mockOnePlusFourExporter.Object,
-                mockScaledupProducersExporter.Object,
-                this.lapcaptDetailExporter);
-
-            // Act
-            var result = this.TestClass.Export(results);
-
-            // Assert
-            Assert.IsTrue(result.Contains("LAPCAP Data"));
         }
 
         [TestMethod]
@@ -118,11 +88,7 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(mockResultDetailExporter.Object,
-                mockOnePlusFourExporter.Object,
-                mockScaledupProducersExporter.Object,
-                this.lapcaptDetailExporter);
-          
+
             // Act
             var result = this.TestClass.Export(results);
 
@@ -135,10 +101,6 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(mockResultDetailExporter.Object,
-                mockOnePlusFourExporter.Object,
-                mockScaledupProducersExporter.Object,
-                this.lapcaptDetailExporter);
 
             // Act
             var result = this.TestClass.Export(results);
@@ -152,10 +114,6 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(mockResultDetailExporter.Object,
-                mockOnePlusFourExporter.Object,
-                mockScaledupProducersExporter.Object,
-                this.lapcaptDetailExporter);
 
             // Act
             var result = this.TestClass.Export(results);
@@ -169,10 +127,6 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(mockResultDetailExporter.Object,
-                mockOnePlusFourExporter.Object,
-                mockScaledupProducersExporter.Object,
-                this.lapcaptDetailExporter);
 
             // Act
             var result = this.TestClass.Export(results);
@@ -186,10 +140,6 @@
         {
             // Arrange
             var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(mockResultDetailExporter.Object,
-                mockOnePlusFourExporter.Object,
-                mockScaledupProducersExporter.Object,
-                this.lapcaptDetailExporter);
 
             // Act
             var result = this.TestClass.Export(results);
@@ -208,10 +158,6 @@
                 CalcResultLateReportingTonnageData = null!,
                 CalcResultParameterOtherCost = null!,
             };
-            var exporter = new CalcResultsExporter(mockResultDetailExporter.Object,
-                mockOnePlusFourExporter.Object,
-                mockScaledupProducersExporter.Object,
-                this.lapcaptDetailExporter);
 
             // Act
             if (results != null)
