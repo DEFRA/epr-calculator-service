@@ -7,6 +7,7 @@
     using EPR.Calculator.API.Utils;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Enums;
+    using EPR.Calculator.Service.Function.Exporter;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.IdentityModel.Tokens;
 
@@ -42,10 +43,7 @@
                 PrepareLateReportingData(results.CalcResultLateReportingTonnageData, csvContent);
             }
 
-            if (results.CalcResultParameterOtherCost != null)
-            {
-                PrepareOtherCosts(results.CalcResultParameterOtherCost, csvContent);
-            }
+            csvContent.Append(CalcResultParameterOtherCostExporter.ExportOtherCost(results.CalcResultParameterOtherCost));
 
             if (results.CalcResultOnePlusFourApportionment != null)
             {

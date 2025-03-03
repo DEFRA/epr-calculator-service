@@ -26,5 +26,6 @@
         public const int SecondaryHeaderMaxColumnSize = 270;
         public const string ScaledupProducersYes = "Yes";
         public const string ScaledupProducersNo = "No";
+        public const string ParametersOther = "Parameters - Other";
     }
 }
