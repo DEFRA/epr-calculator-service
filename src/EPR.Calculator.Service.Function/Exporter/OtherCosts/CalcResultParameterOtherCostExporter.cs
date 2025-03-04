@@ -1,44 +1,36 @@
 ﻿using EPR.Calculator.API.Utils;
+using EPR.Calculator.Service.Function.Exporter.OtherCosts;
 using EPR.Calculator.Service.Function.Models;
 using System.Linq;
 using System.Text;
 
 namespace EPR.Calculator.Service.Function.Exporter
 {
-    public class CalcResultParameterOtherCostExporter
+    public class CalcResultParameterOtherCostExporter : ICalcResultParameterOtherCostExporter
     {
-        public static StringBuilder ExportOtherCost(CalcResultParameterOtherCost otherCost)
+        public void OtherCostExporter(CalcResultParameterOtherCost otherCost, StringBuilder csvContent)
         {
-            var csvContent = new StringBuilder();
-
-            if (otherCost == null)
-            {
-                return csvContent;
-            }
-
             csvContent.AppendLine();
             csvContent.AppendLine();
             csvContent.AppendLine(otherCost.Name);
-            SaOpertingCosts(otherCost, csvContent);
+            this.SaOpertingCosts(otherCost, csvContent);
 
             csvContent.AppendLine();
 
-            LaDataPrepCosts(otherCost, csvContent);
+            this.LaDataPrepCosts(otherCost, csvContent);
 
             csvContent.AppendLine();
-            SchemeSetupCost(otherCost, csvContent);
+            this.SchemeSetupCost(otherCost, csvContent);
 
             csvContent.AppendLine();
             csvContent.Append($"{CsvSanitiser.SanitiseData(otherCost.BadDebtProvision.Key)}");
             csvContent.AppendLine($"{CsvSanitiser.SanitiseData(otherCost.BadDebtProvision.Value)}");
 
             csvContent.AppendLine();
-            Materiality(otherCost, csvContent);
-
-            return csvContent;
+            this.Materiality(otherCost, csvContent);
         }
 
-        public static StringBuilder Materiality(CalcResultParameterOtherCost otherCost, StringBuilder csvContent)
+        public void Materiality(CalcResultParameterOtherCost otherCost, StringBuilder csvContent)
         {
             var materiality = otherCost.Materiality;
             foreach (var material in materiality)
@@ -47,11 +39,9 @@ namespace EPR.Calculator.Service.Function.Exporter
                 csvContent.Append($"{CsvSanitiser.SanitiseData(material.Amount)}");
                 csvContent.AppendLine($"{CsvSanitiser.SanitiseData(material.Percentage)}");
             }
-
-            return csvContent;
         }
 
-        public static StringBuilder SchemeSetupCost(CalcResultParameterOtherCost otherCost, StringBuilder csvContent)
+        public void SchemeSetupCost(CalcResultParameterOtherCost otherCost, StringBuilder csvContent)
         {
             var schemeCost = otherCost.SchemeSetupCost;
             csvContent.Append($"{CsvSanitiser.SanitiseData(schemeCost.Name)}");
@@ -60,11 +50,9 @@ namespace EPR.Calculator.Service.Function.Exporter
             csvContent.Append($"{CsvSanitiser.SanitiseData(schemeCost.Scotland)}");
             csvContent.Append($"{CsvSanitiser.SanitiseData(schemeCost.NorthernIreland)}");
             csvContent.AppendLine($"{CsvSanitiser.SanitiseData(schemeCost.Total)}");
-
-            return csvContent;
         }
 
-        public static StringBuilder LaDataPrepCosts(CalcResultParameterOtherCost otherCost, StringBuilder csvContent)
+        public void LaDataPrepCosts(CalcResultParameterOtherCost otherCost, StringBuilder csvContent)
         {
             var laDataPreps = otherCost.Details.OrderBy(x => x.OrderId);
 
@@ -77,11 +65,9 @@ namespace EPR.Calculator.Service.Function.Exporter
                 csvContent.Append($"{CsvSanitiser.SanitiseData(laDataPrep.NorthernIreland)}");
                 csvContent.AppendLine($"{CsvSanitiser.SanitiseData(laDataPrep.Total)}");
             }
-
-            return csvContent;
         }
 
-        public static StringBuilder SaOpertingCosts(CalcResultParameterOtherCost otherCost, StringBuilder csvContent)
+        public void SaOpertingCosts(CalcResultParameterOtherCost otherCost, StringBuilder csvContent)
         {
             var saOperatingCosts = otherCost.SaOperatingCost.OrderBy(x => x.OrderId);
 
@@ -94,8 +80,6 @@ namespace EPR.Calculator.Service.Function.Exporter
                 csvContent.Append($"{CsvSanitiser.SanitiseData(saOperatingCost.NorthernIreland)}");
                 csvContent.AppendLine($"{CsvSanitiser.SanitiseData(saOperatingCost.Total)}");
             }
-
-            return csvContent;
         }
     }
 }

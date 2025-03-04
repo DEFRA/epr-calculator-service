@@ -4,17 +4,20 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
     using AutoFixture;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Exporter;
+    using EPR.Calculator.Service.Function.Exporter.OtherCosts;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
     public class CalcResultParameterOtherCostExporterTests
     {
+        private ICalcResultParameterOtherCostExporter exporter = new CalcResultParameterOtherCostExporter();
+
         [TestMethod]
         public void CanCallExportCommsCost()
         {
             // Arrange
-            var fixture = new Fixture();
+
             var otherCost = new CalcResultParameterOtherCost()
             {
                 BadDebtProvision = new KeyValuePair<string, string>("key1", "6%"),
@@ -82,9 +85,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
                         TotalValue = 100,
                     },
             };
+            var csvContent = new StringBuilder();
 
             // Act
-            var result = CalcResultParameterOtherCostExporter.ExportOtherCost(otherCost).ToString();
+            this.exporter.OtherCostExporter(otherCost, csvContent);
+
+            var result = csvContent.ToString();
 
             // Assert
             Assert.IsTrue(result.Contains(CommonConstants.England));
@@ -129,8 +135,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
             };
             var csvContent = new StringBuilder();
 
+            this.exporter.LaDataPrepCosts(otherCost, csvContent);
+            var result = csvContent.ToString();
+
             // Assert
-            var result = CalcResultParameterOtherCostExporter.LaDataPrepCosts(otherCost, csvContent).ToString();
             Assert.IsTrue(result.Contains("England"));
             Assert.IsTrue(result.Contains("Wales"));
             Assert.IsTrue(result.Contains("Scotland"));
@@ -161,7 +169,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
             var csvContent = new StringBuilder();
 
             // Assert
-            var result = CalcResultParameterOtherCostExporter.SchemeSetupCost(otherCost, csvContent).ToString();
+            this.exporter.SchemeSetupCost(otherCost, csvContent);
+            var result = csvContent.ToString();
             Assert.IsTrue(result.Contains("£40"));
             Assert.IsTrue(result.Contains("£100"));
         }
@@ -192,7 +201,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
             var csvContent = new StringBuilder();
 
             // Assert
-            var result = CalcResultParameterOtherCostExporter.Materiality(otherCost, csvContent).ToString();
+            this.exporter.Materiality(otherCost, csvContent);
+            var result = csvContent.ToString();
             Assert.IsTrue(result.Contains("Amount £s"));
             Assert.IsTrue(result.Contains("%"));
             Assert.IsTrue(result.Contains("7 Materiality"));
@@ -232,9 +242,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
                     ],
             };
             var csvContent = new StringBuilder();
+            this.exporter.SaOpertingCosts(otherCost, csvContent);
+            var result = csvContent.ToString();
 
             // Assert
-            var result = CalcResultParameterOtherCostExporter.SaOpertingCosts(otherCost, csvContent).ToString();
             Assert.IsTrue(result.Contains("England"));
             Assert.IsTrue(result.Contains("Wales"));
             Assert.IsTrue(result.Contains("Scotland"));
