@@ -1,28 +1,41 @@
 ﻿namespace EPR.Calculator.API.Exporter
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
     using EPR.Calculator.API.Utils;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Exporter;
+    using EPR.Calculator.Service.Function.Exporter.OtherCosts;
+    using EPR.Calculator.Service.Function.Exporter.ScaledupProducers;
     using EPR.Calculator.Service.Function.Models;
-    using Microsoft.IdentityModel.Tokens;
+    using System;
+    using System.Linq;
+    using System.Text;
 
     public class CalcResultsExporter : ICalcResultsExporter<CalcResult>
     {
         private readonly ICalcResultSummaryExporter calcResultSummaryExporter;
         private readonly ICalcResultDetailExporter resultDetailexporter;
         private readonly IOnePlusFourApportionmentExporter onePlusFourApportionmentExporter;
+        private readonly ILapcaptDetailExporter lapcaptDetailExporter;
+        private readonly ICalcResultParameterOtherCostExporter parameterOtherCosts;
+        private readonly ILateReportingExporter lateReportingExporter;
+        private readonly ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter;
 
-        public CalcResultsExporter(ICalcResultDetailExporter resultDetailexporter,
-                                    IOnePlusFourApportionmentExporter onePlusFourApportionmentExporter,
-                                    ICalcResultSummaryExporter calcResultSummaryExporter)
+        public CalcResultsExporter(
+            ILateReportingExporter lateReportingExporter,
+            ICalcResultDetailExporter resultDetailexporter,
+            IOnePlusFourApportionmentExporter onePlusFourApportionmentExporter,
+            ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter,
+            ILapcaptDetailExporter lapcaptDetailExporter,
+            ICalcResultParameterOtherCostExporter parameterOtherCosts,
+            ICalcResultSummaryExporter calcResultSummaryExporter)
         {
             this.resultDetailexporter = resultDetailexporter;
             this.onePlusFourApportionmentExporter = onePlusFourApportionmentExporter;
+            this.lateReportingExporter = lateReportingExporter;
+            this.calcResultScaledupProducersExporter = calcResultScaledupProducersExporter;
+            this.lapcaptDetailExporter = lapcaptDetailExporter;
+            this.parameterOtherCosts = parameterOtherCosts;
             this.calcResultSummaryExporter = calcResultSummaryExporter;
         }
 
@@ -34,43 +47,23 @@
             }
 
             var csvContent = new StringBuilder();
-            this.resultDetailexporter.Export(results.CalcResultDetail, csvContent);
-            if (results.CalcResultLapcapData != null)
-            {
-                PrepareLapcapData(results.CalcResultLapcapData, csvContent);
-            }
+            resultDetailexporter.Export(results.CalcResultDetail, csvContent);
 
-            if (results.CalcResultLateReportingTonnageData != null)
-            {
-                PrepareLateReportingData(results.CalcResultLateReportingTonnageData, csvContent);
-            }
+            lapcaptDetailExporter.Export(results.CalcResultLapcapData, csvContent);
 
-            if (results.CalcResultParameterOtherCost != null)
-            {
-                PrepareOtherCosts(results.CalcResultParameterOtherCost, csvContent);
-            }
+            csvContent.Append(lateReportingExporter.Export(results.CalcResultLateReportingTonnageData));
 
-            this.onePlusFourApportionmentExporter.Export(results.CalcResultOnePlusFourApportionment, csvContent);
+            parameterOtherCosts.Export(results.CalcResultParameterOtherCost, csvContent);
 
-            if (results.CalcResultCommsCostReportDetail != null)
-            {
-                PrepareCommsCost(results.CalcResultCommsCostReportDetail, csvContent);
-            }
+            onePlusFourApportionmentExporter.Export(results.CalcResultOnePlusFourApportionment, csvContent);
 
-            if (results.CalcResultLaDisposalCostData != null)
-            {
-                PrepareLaDisposalCostData(results.CalcResultLaDisposalCostData, csvContent);
-            }
+            PrepareCommsCost(results.CalcResultCommsCostReportDetail, csvContent);
 
-            if (results.CalcResultScaledupProducers != null)
-            {
-                PrepareScaledupProducers(results.CalcResultScaledupProducers, csvContent);
-            }
+            PrepareLaDisposalCostData(results.CalcResultLaDisposalCostData, csvContent);
 
-            if (results.CalcResultSummary != null)
-            {
-                this.calcResultSummaryExporter.Export(results.CalcResultSummary, csvContent);
-            }
+            calcResultScaledupProducersExporter.Export(results.CalcResultScaledupProducers, csvContent);
+
+            this.calcResultSummaryExporter.Export(results.CalcResultSummary, csvContent);
 
             return csvContent.ToString();
         }
@@ -134,113 +127,6 @@
             }
         }
 
-        private static void PrepareOtherCosts(CalcResultParameterOtherCost otherCost, StringBuilder csvContent)
-        {
-            csvContent.AppendLine();
-            csvContent.AppendLine();
-
-            csvContent.AppendLine(otherCost.Name);
-
-            var saOperatingCosts = otherCost.SaOperatingCost.OrderBy(x => x.OrderId);
-
-            foreach (var saOperatingCost in saOperatingCosts)
-            {
-                csvContent.Append(CsvSanitiser.SanitiseData(saOperatingCost.Name));
-                csvContent.Append(CsvSanitiser.SanitiseData(saOperatingCost.England));
-                csvContent.Append(CsvSanitiser.SanitiseData(saOperatingCost.Wales));
-                csvContent.Append(CsvSanitiser.SanitiseData(saOperatingCost.Scotland));
-                csvContent.Append(CsvSanitiser.SanitiseData(saOperatingCost.NorthernIreland));
-                csvContent.Append(CsvSanitiser.SanitiseData(saOperatingCost.Total));
-                csvContent.AppendLine();
-            }
-
-            csvContent.AppendLine();
-
-            var laDataPreps = otherCost.Details.OrderBy(x => x.OrderId);
-
-            foreach (var laDataPrep in laDataPreps)
-            {
-                csvContent.Append(CsvSanitiser.SanitiseData(laDataPrep.Name));
-                csvContent.Append(CsvSanitiser.SanitiseData(laDataPrep.England));
-                csvContent.Append(CsvSanitiser.SanitiseData(laDataPrep.Wales));
-                csvContent.Append(CsvSanitiser.SanitiseData(laDataPrep.Scotland));
-                csvContent.Append(CsvSanitiser.SanitiseData(laDataPrep.NorthernIreland));
-                csvContent.Append(CsvSanitiser.SanitiseData(laDataPrep.Total));
-                csvContent.AppendLine();
-            }
-
-            csvContent.AppendLine();
-            var schemeCost = otherCost.SchemeSetupCost;
-            csvContent.Append(CsvSanitiser.SanitiseData(schemeCost.Name));
-            csvContent.Append(CsvSanitiser.SanitiseData(schemeCost.England));
-            csvContent.Append(CsvSanitiser.SanitiseData(schemeCost.Wales));
-            csvContent.Append(CsvSanitiser.SanitiseData(schemeCost.Scotland));
-            csvContent.Append(CsvSanitiser.SanitiseData(schemeCost.NorthernIreland));
-            csvContent.AppendLine(CsvSanitiser.SanitiseData(schemeCost.Total));
-
-            csvContent.AppendLine();
-            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.BadDebtProvision.Key));
-            csvContent.AppendLine(CsvSanitiser.SanitiseData(otherCost.BadDebtProvision.Value));
-
-            csvContent.AppendLine();
-            var materiality = otherCost.Materiality;
-            foreach (var material in materiality)
-            {
-                csvContent.Append(CsvSanitiser.SanitiseData(material.SevenMateriality));
-                csvContent.Append(CsvSanitiser.SanitiseData(material.Amount));
-                csvContent.Append(CsvSanitiser.SanitiseData(material.Percentage));
-                csvContent.AppendLine();
-            }
-        }
-
-        private static void AppendRpdFileInfo(StringBuilder csvContent, string rPDFileORG, string rPDFilePOM, string rpdFileORGValue, string rpdFilePOMValue)
-        {
-            csvContent.AppendLine($"{rPDFileORG},{CsvSanitiser.SanitiseData(rpdFileORGValue)},{rPDFilePOM},{CsvSanitiser.SanitiseData(rpdFilePOMValue)}");
-        }
-
-        private static void AppendCsvLine(StringBuilder csvContent, string label, string value)
-        {
-            csvContent.AppendLine($"{label},{CsvSanitiser.SanitiseData(value, false)}");
-        }
-
-        private static void PrepareLapcapData(CalcResultLapcapData calcResultLapcapData, StringBuilder csvContent)
-        {
-            csvContent.AppendLine();
-            csvContent.AppendLine();
-
-            csvContent.AppendLine(calcResultLapcapData.Name);
-            var lapcapDataDetails = calcResultLapcapData.CalcResultLapcapDataDetails.OrderBy(x => x.OrderId);
-
-            foreach (var lapcapData in lapcapDataDetails)
-            {
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.Name));
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.EnglandDisposalCost));
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.WalesDisposalCost));
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.ScotlandDisposalCost));
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.NorthernIrelandDisposalCost));
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.TotalDisposalCost, false));
-                csvContent.AppendLine();
-            }
-        }
-
-        private static void PrepareLateReportingData(CalcResultLateReportingTonnage calcResultLateReportingData, StringBuilder csvContent)
-        {
-            csvContent.AppendLine();
-            csvContent.AppendLine();
-
-            csvContent.AppendLine(CsvSanitiser.SanitiseData(calcResultLateReportingData.Name));
-            csvContent.Append(CsvSanitiser.SanitiseData(calcResultLateReportingData.MaterialHeading));
-            csvContent.Append(CsvSanitiser.SanitiseData(calcResultLateReportingData.TonnageHeading));
-            csvContent.AppendLine();
-
-            foreach (var lateReportingData in calcResultLateReportingData.CalcResultLateReportingTonnageDetails)
-            {
-                csvContent.Append(CsvSanitiser.SanitiseData(lateReportingData.Name));
-                csvContent.Append(CsvSanitiser.SanitiseData(lateReportingData.TotalLateReportingTonnage));
-                csvContent.AppendLine();
-            }
-        }
-
         private static void PrepareLaDisposalCostData(CalcResultLaDisposalCostData calcResultLaDisposalCostData, StringBuilder csvContent)
         {
             csvContent.AppendLine();
@@ -264,123 +150,6 @@
                 csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.ProducerReportedTotalTonnage));
                 csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.DisposalCostPricePerTonne));
                 csvContent.AppendLine();
-            }
-        }
-
-        private static void PrepareScaledupProducers(CalcResultScaledupProducers producers, StringBuilder csvContent)
-        {
-            // Add empty lines
-            csvContent.AppendLine();
-            csvContent.AppendLine();
-
-            // Add headers
-            PrepareScaledupProducersHeader(producers, csvContent);
-
-            // Add data
-            if (!producers.ScaledupProducers.IsNullOrEmpty())
-            {
-                AppendScaledupProducers(producers, csvContent);
-            }
-            else
-            {
-                csvContent.AppendLine(CsvSanitiser.SanitiseData(CalcResultScaledupProducerHeaders.NoScaledupProducers));
-            }
-        }
-
-        private static void AppendScaledupProducers(CalcResultScaledupProducers producers, StringBuilder csvContent)
-        {
-            foreach (var producer in producers.ScaledupProducers!)
-            {
-                if (producer.IsTotalRow)
-                {
-                    _ = csvContent.Append(new string(CommonConstants.CsvFileDelimiter[0], 7));
-                    csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.Totals));
-                }
-                else
-                {
-                    csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerId));
-                    csvContent.Append(CsvSanitiser.SanitiseData(producer.SubsidiaryId));
-                    csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerName));
-                    csvContent.Append(CsvSanitiser.SanitiseData(producer.Level));
-                    csvContent.Append(CsvSanitiser.SanitiseData(producer.SubmissionPeriodCode));
-                    csvContent.Append(CsvSanitiser.SanitiseData(producer.DaysInSubmissionPeriod != -1 ? producer.DaysInSubmissionPeriod.ToString() : string.Empty));
-                    csvContent.Append(CsvSanitiser.SanitiseData(producer.DaysInWholePeriod != -1 ? producer.DaysInWholePeriod.ToString() : string.Empty));
-                    csvContent.Append(CsvSanitiser.SanitiseData(producer.ScaleupFactor == -1 ? CommonConstants.Totals : producer.ScaleupFactor.ToString()));
-                }
-
-                AppendScaledupProducerTonnageByMaterial(csvContent, producer);
-
-                csvContent.AppendLine();
-            }
-        }
-
-        private static void AppendScaledupProducerTonnageByMaterial(StringBuilder csvContent, CalcResultScaledupProducer producer)
-        {
-            foreach (var producerTonnage in producer.ScaledupProducerTonnageByMaterial)
-            {
-                var materialCode = producerTonnage.Key;
-                var tonnage = producerTonnage.Value;
-
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ReportedHouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ReportedPublicBinTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-
-                if (materialCode == MaterialCodes.Glass || materialCode == MaterialNames.Glass)
-                {
-                    csvContent.Append(CsvSanitiser.SanitiseData(tonnage.HouseholdDrinksContainersTonnageGlass, DecimalPlaces.Three, DecimalFormats.F3));
-                }
-
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.TotalReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ReportedSelfManagedConsumerWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.NetReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ScaledupReportedHouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ScaledupReportedPublicBinTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-
-                if (materialCode == MaterialCodes.Glass || materialCode == MaterialNames.Glass)
-                {
-                    csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ScaledupHouseholdDrinksContainersTonnageGlass, DecimalPlaces.Three, DecimalFormats.F3));
-                }
-
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ScaledupTotalReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ScaledupReportedSelfManagedConsumerWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ScaledupNetReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-            }
-        }
-
-        private static void PrepareScaledupProducersHeader(CalcResultScaledupProducers producers, StringBuilder csvContent)
-        {
-            // Add scaledup producer header
-            csvContent.AppendLine(CsvSanitiser.SanitiseData(producers.TitleHeader!.Name));
-            csvContent.AppendLine();
-
-            // Add material breakdown header
-            WriteScaledupProducersSecondaryHeaders(producers.MaterialBreakdownHeaders!, csvContent);
-
-            // Add column header
-            WriteScaledupProducersColumnHeaders(producers, csvContent);
-            csvContent.AppendLine();
-        }
-
-        private static void WriteScaledupProducersSecondaryHeaders(IEnumerable<CalcResultScaledupProducerHeader> headers, StringBuilder csvContent)
-        {
-            const int maxColumnSize = CommonConstants.SecondaryHeaderMaxColumnSize;
-            var headerRows = new string[maxColumnSize];
-            foreach (var item in headers)
-            {
-                if (item.ColumnIndex.HasValue)
-                {
-                    headerRows[item.ColumnIndex.Value - 1] = CsvSanitiser.SanitiseData(item.Name, false);
-                }
-            }
-
-            var headerRow = string.Join(CommonConstants.CsvFileDelimiter, headerRows);
-            csvContent.AppendLine(headerRow);
-        }
-
-        private static void WriteScaledupProducersColumnHeaders(CalcResultScaledupProducers producers, StringBuilder csvContent)
-        {
-            foreach (var item in producers.ColumnHeaders!)
-            {
-                csvContent.Append(CsvSanitiser.SanitiseData(item.Name));
             }
         }
     }

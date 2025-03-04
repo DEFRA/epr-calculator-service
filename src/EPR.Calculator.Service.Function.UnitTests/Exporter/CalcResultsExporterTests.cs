@@ -6,6 +6,8 @@
     using AutoFixture;
     using EPR.Calculator.API.Exporter;
     using EPR.Calculator.Service.Function.Exporter;
+    using EPR.Calculator.Service.Function.Exporter.OtherCosts;
+    using EPR.Calculator.Service.Function.Exporter.ScaledupProducers;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
@@ -14,237 +16,67 @@
     [TestClass]
     public class CalcResultsExporterTests
     {
-        private Fixture Fixture { get; } = new Fixture();
+        public CalcResultsExporterTests()
+        {
+            this.Fixture = new Fixture();
+            this.MockLateReportingExporter = new();
+            this.MockResultDetailexporter = new();
+            this.MockOnePlusFourExporter = new();
+            this.MockScaledupProducersExporter = new();
+            this.MockLapcaptDetailExporter = new();
+            this.ParameterOtherCostExporter = new();
+            this.MockCalcResultSummaryExporter = new();
+            this.TestClass = new CalcResultsExporter(
+                this.MockLateReportingExporter.Object,
+                this.MockResultDetailexporter.Object,
+                this.MockOnePlusFourExporter.Object,
+                this.MockScaledupProducersExporter.Object,
+                this.MockLapcaptDetailExporter.Object,
+                this.ParameterOtherCostExporter.Object,
+                this.MockCalcResultSummaryExporter.Object);
+        }
 
         private Mock<ICalcResultDetailExporter> mockResultDetailexporter = new();
         private Mock<IOnePlusFourApportionmentExporter> mockOnePlusFourExporter = new();
         private Mock<ICalcResultSummaryExporter> mockCalcResultSummaryExporter = new();
+        private Fixture Fixture { get; init; }
+
+        private Mock<ILateReportingExporter> MockLateReportingExporter { get; init; }
+
+        private Mock<ICalcResultDetailExporter> MockResultDetailexporter { get; init; }
+
+        private Mock<IOnePlusFourApportionmentExporter> MockOnePlusFourExporter { get; init; }
+
+        private Mock<ICalcResultScaledupProducersExporter> MockScaledupProducersExporter { get; init; }
+
+        private Mock<ILapcaptDetailExporter> MockLapcaptDetailExporter { get; init; }
+
+        private Mock<ICalcResultParameterOtherCostExporter> ParameterOtherCostExporter { get; init; }
+
+        private Mock<ICalcResultSummaryExporter> MockCalcResultSummaryExporter { get; init; }
+
+        private CalcResultsExporter TestClass { get; init; }
 
         [TestMethod]
         public void Export_ShouldReturnCsvContent_WhenAllDataIsPresent()
         {
             // Arrange
-            var exporter = new CalcResultsExporter(mockResultDetailexporter.Object,
-                mockOnePlusFourExporter.Object,
-                mockCalcResultSummaryExporter.Object);
             var calcResult = CreateCalcResult();
 
             // Act
-            var result = exporter.Export(calcResult);
+            var result = this.TestClass.Export(calcResult);
 
             // Assert
             Assert.IsNotNull(result);
+
+            this.MockLateReportingExporter.Verify(x => x.Export(calcResult.CalcResultLateReportingTonnageData));
+            this.MockCalcResultSummaryExporter.Verify(x => x.Export(It.IsAny<CalcResultSummary>(), It.IsAny<StringBuilder>()));
+            this.MockLapcaptDetailExporter.Verify(x => x.Export(It.IsAny<CalcResultLapcapData>(), It.IsAny<StringBuilder>()));
+            this.MockResultDetailexporter.Verify(x => x.Export(It.IsAny<CalcResultDetail>(), It.IsAny<StringBuilder>()));
         }
 
-        [TestMethod]
-        public void Export_DataFormatting_IsCorrect()
-        {
-            // Arrange
-            var exporter = new CalcResultsExporter(mockResultDetailexporter.Object,
-                mockOnePlusFourExporter.Object,
-                mockCalcResultSummaryExporter.Object);
-            var calcResult = CreateCalcResult();
 
-            // Act
-            var result = exporter.Export(calcResult);
 
-            // Assert
-            Assert.IsTrue(result.Contains("LAPCAP Data"));
-            Assert.IsTrue(result.Contains("Late Reporting Tonnage"));
-            Assert.IsTrue(result.Contains("Parameters - Other"));
-            Assert.IsTrue(result.Contains("4 LA Data Prep Charge"));
-            Assert.IsTrue(result.Contains("5 Scheme set up cost Yearly Cost"));
-            Assert.IsTrue(result.Contains("some test"));
-        }
-
-        [TestMethod]
-        public void Export_ShouldThrowArgumentNullException_WhenResultsIsNull()
-        {
-            // Arrange
-            CalcResult? results = null;
-            var exporter = new CalcResultsExporter(mockResultDetailexporter.Object,
-                mockOnePlusFourExporter.Object,
-                mockCalcResultSummaryExporter.Object);
-
-            // Act & Assert
-            var ex = Assert.ThrowsException<ArgumentNullException>(() => exporter.Export(results!));
-            Assert.AreEqual("results", ex.ParamName);
-        }
-
-        [TestMethod]
-        public void Export_ShouldIncludeLapcapData_WhenNotNull()
-        {
-            // Arrange
-            var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(mockResultDetailexporter.Object,
-                mockOnePlusFourExporter.Object,
-                mockCalcResultSummaryExporter.Object);
-
-            // Act
-            var result = exporter.Export(results);
-
-            // Assert
-            Assert.IsTrue(result.Contains("LAPCAP Data"));
-        }
-
-        [TestMethod]
-        public void Export_ShouldIncludeLateReportingData_WhenNotNull()
-        {
-            // Arrange
-            var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(mockResultDetailexporter.Object,
-                mockOnePlusFourExporter.Object,
-                mockCalcResultSummaryExporter.Object);
-            // Act
-            var result = exporter.Export(results);
-
-            // Assert
-            Assert.IsTrue(result.Contains("Late Reporting Tonnage"));
-        }
-
-        [TestMethod]
-        public void Export_ShouldIncludeOtherCosts_WhenNotNull()
-        {
-            // Arrange
-            var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(mockResultDetailexporter.Object,
-                mockOnePlusFourExporter.Object,
-                mockCalcResultSummaryExporter.Object);
-            // Act
-            var result = exporter.Export(results);
-
-            // Assert
-            Assert.IsTrue(result.Contains("Parameters - Other"));
-        }
-
-        [TestMethod]
-        public void Export_ShouldIncludeCommCost_WhenNotNull()
-        {
-            // Arrange
-            var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(mockResultDetailexporter.Object,
-                mockOnePlusFourExporter.Object,
-                mockCalcResultSummaryExporter.Object);
-            // Act
-            var result = exporter.Export(results);
-
-            // Assert
-            Assert.IsTrue(result.Contains("4 LA Data Prep Charge"));
-        }
-
-        [TestMethod]
-        public void Export_ShouldIncludeLaDisposalCostData_WhenNotNull()
-        {
-            // Arrange
-            var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(mockResultDetailexporter.Object,
-                mockOnePlusFourExporter.Object,
-                mockCalcResultSummaryExporter.Object);
-
-            // Act
-            var result = exporter.Export(results);
-
-            // Assert
-            Assert.IsTrue(result.Contains("5 Scheme set up cost Yearly Cost"));
-        }
-
-        [TestMethod]
-        public void Export_ShouldIncludeScaledupProducers_WhenNotNull()
-        {
-            // Arrange
-            var results = CreateCalcResult();
-            var exporter = new CalcResultsExporter(mockResultDetailexporter.Object,
-                mockOnePlusFourExporter.Object,
-                mockCalcResultSummaryExporter.Object);
-
-            // Act
-            var result = exporter.Export(results);
-
-            // Assert
-            Assert.IsTrue(result.Contains("Scaled-up Producers"));
-        }
-
-        [TestMethod]
-        [DataRow(true)]
-        [DataRow(false)]
-        public void Export_ScaledUpProducer_ShouldIncludeHeadersAndDisplayNone_WhenNoScaledUpProducer(
-            bool setScaledUpProducersToNull)
-        {
-            // Arrange
-            var results = CreateCalcResult();
-            results.CalcResultScaledupProducers.ScaledupProducers = setScaledUpProducersToNull
-                ? null!
-                : new List<CalcResultScaledupProducer>();
-            var exporter = new CalcResultsExporter(mockResultDetailexporter.Object,
-                mockOnePlusFourExporter.Object,
-                mockCalcResultSummaryExporter.Object);
-
-            // Act
-            var result = exporter.Export(results);
-
-            // Assert
-            Assert.IsTrue(result.Contains("Scaled-up Producers"));
-            Assert.IsTrue(result.Contains("Each submission for the year"));
-            Assert.IsTrue(result.Contains("Aluminium Breakdown"));
-            Assert.IsTrue(result.Contains("Producer ID"));
-            Assert.IsTrue(result.Contains("Subsidiary ID"));
-            Assert.IsTrue(result.Contains("None"));
-        }
-
-        [TestMethod]
-        public void Export_ShouldGenerateEmptyCsv_WhenNoData()
-        {
-            // Arrange
-            var results = new CalcResult
-            {
-                CalcResultLapcapData = null!,
-                CalcResultLateReportingTonnageData = null!,
-                CalcResultParameterOtherCost = null!,
-            };
-            var exporter = new CalcResultsExporter(mockResultDetailexporter.Object,
-                mockOnePlusFourExporter.Object,
-                mockCalcResultSummaryExporter.Object);
-
-            // Act
-            if (results != null)
-            {
-                var csvContent = exporter.Export(results);
-
-                // Assert
-                Assert.IsFalse(string.IsNullOrEmpty(csvContent), "CSV content should not be empty.");
-                Assert.IsFalse(csvContent.Contains("LapcapData"), "CSV content should not contain LapcapData.");
-                Assert.IsFalse(
-                    csvContent.Contains("LateReportingData"),
-                    "CSV content should not contain LateReportingData.");
-                Assert.IsFalse(csvContent.Contains("OtherCosts"), "CSV content should not contain OtherCosts.");
-                Assert.IsFalse(
-                    csvContent.Contains("OnePlusFourApportionment"),
-                    "CSV content should not contain OnePlusFourApportionment.");
-                Assert.IsFalse(csvContent.Contains("CommsCost"), "CSV content should not contain CommsCost.");
-                Assert.IsFalse(
-                    csvContent.Contains("LaDisposalCostData"),
-                    "CSV content should not contain LaDisposalCostData.");
-                Assert.IsFalse(csvContent.Contains("SummaryData"), "CSV content should not contain SummaryData.");
-            }
-        }
-
-        [TestMethod]
-        public void Export_ShouldIncludeGlassColumns_WhenGlassMaterialPresent()
-        {
-            // Arrange
-            var results = CreateCalcResultWithGlass();
-            var exporter = new CalcResultsExporter(mockResultDetailexporter.Object,
-                mockOnePlusFourExporter.Object,
-                mockCalcResultSummaryExporter.Object);
-
-            // Act
-            var result = exporter.Export(results);
-
-            // Assert
-            Assert.IsTrue(result.Contains("Glass"));
-            Assert.IsTrue(result.Contains("HouseholdDrinksContainersTonnageGlass"));
-            Assert.IsTrue(result.Contains("ScaledupHouseholdDrinksContainersTonnageGlass"));
-        }
 
         [TestMethod]
         public void AppendFileInfoTest()
@@ -265,7 +97,7 @@
                     Name = "LAPCAP Data",
                     CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>
                     {
-                        new ()
+                        new()
                         {
                             Name = "Total",
                             EnglandDisposalCost = "£13,280.45",
@@ -571,46 +403,6 @@
             return tonnageByMaterial;
         }
 
-        private static CalcResult CreateCalcResultWithGlass()
-        {
-            var result = CreateCalcResult();
-            result.CalcResultScaledupProducers.ScaledupProducers = GetCalcResultScaledupProducerListWithGlass();
-            return result;
-        }
-
-        private static IEnumerable<CalcResultScaledupProducer> GetCalcResultScaledupProducerListWithGlass()
-        {
-            var scaledupProducerList = new List<CalcResultScaledupProducer>
-            {
-                new CalcResultScaledupProducer
-                {
-                    ProducerId = 101001,
-                    SubsidiaryId = string.Empty,
-                    ProducerName = "Allied Packaging",
-                    Level = "1",
-                    SubmissionPeriodCode = "2024-P2",
-                    DaysInSubmissionPeriod = 91,
-                    DaysInWholePeriod = 91,
-                    ScaleupFactor = 2,
-                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterialWithGlass(),
-                },
-                new CalcResultScaledupProducer
-                {
-                    ProducerId = 101001,
-                    SubsidiaryId = string.Empty,
-                    ProducerName = "Allied Packaging",
-                    Level = "1",
-                    SubmissionPeriodCode = "2024-P2",
-                    DaysInSubmissionPeriod = 91,
-                    DaysInWholePeriod = 91,
-                    ScaleupFactor = 2,
-                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterialWithGlass(),
-                    IsTotalRow = true,
-                },
-            };
-            return scaledupProducerList;
-        }
-
         private static List<CalcResultScaledupProducer> GetCalcResultScaledupProducerList()
         {
             var scaledupProducerList = new List<CalcResultScaledupProducer>();
@@ -644,32 +436,6 @@
             ]);
 
             return scaledupProducerList;
-        }
-
-        private static Dictionary<string, CalcResultScaledupProducerTonnage> GetScaledupProducerTonnageByMaterialWithGlass()
-        {
-            var tonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>
-            {
-                {
-                    "GL",
-                    new CalcResultScaledupProducerTonnage
-                    {
-                        ReportedHouseholdPackagingWasteTonnage = 1000,
-                        ReportedPublicBinTonnage = 100,
-                        HouseholdDrinksContainersTonnageGlass = 50,
-                        TotalReportedTonnage = 1100,
-                        ReportedSelfManagedConsumerWasteTonnage = 500,
-                        NetReportedTonnage = 1100,
-                        ScaledupReportedHouseholdPackagingWasteTonnage = 2000,
-                        ScaledupReportedPublicBinTonnage = 200,
-                        ScaledupHouseholdDrinksContainersTonnageGlass = 100,
-                        ScaledupTotalReportedTonnage = 2200,
-                        ScaledupReportedSelfManagedConsumerWasteTonnage = 1000,
-                        ScaledupNetReportedTonnage = 2200,
-                    }
-                },
-            };
-            return tonnageByMaterial;
         }
     }
 }
