@@ -1,4 +1,4 @@
-namespace EPR.Calculator.Service.Function.UnitTests.Exporter
+ï»¿namespace EPR.Calculator.Service.Function.UnitTests.Exporter
 {
     using System.Text;
     using EPR.Calculator.Service.Function.Constants;
@@ -25,15 +25,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
                         {
                             Name = "4 LA Data Prep Charge",
                             OrderId = 1,
-                            England = "£40.00",
+                            England = "Â£40.00",
                             EnglandValue = 40,
-                            Wales = "£30.00",
+                            Wales = "Â£30.00",
                             WalesValue = 30,
-                            Scotland = "£20.00",
+                            Scotland = "Â£20.00",
                             ScotlandValue = 20,
-                            NorthernIreland = "£10.00",
+                            NorthernIreland = "Â£10.00",
                             NorthernIrelandValue = 10,
-                            Total = "£100.00",
+                            Total = "Â£100.00",
                             TotalValue = 100,
                         },
                     ],
@@ -41,7 +41,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
                     [
                         new CalcResultMateriality
                         {
-                            Amount = "Amount £s",
+                            Amount = "Amount Â£s",
                             AmountValue = 0,
                             Percentage = "%",
                             PercentageValue = 0,
@@ -71,15 +71,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
                     {
                         Name = "5 Scheme set up cost Yearly Cost",
                         OrderId = 1,
-                        England = "£40.00",
+                        England = "Â£40.00",
                         EnglandValue = 40,
-                        Wales = "£30.00",
+                        Wales = "Â£30.00",
                         WalesValue = 30,
-                        Scotland = "£20.00",
+                        Scotland = "Â£20.00",
                         ScotlandValue = 20,
-                        NorthernIreland = "£10.00",
+                        NorthernIreland = "Â£10.00",
                         NorthernIrelandValue = 10,
-                        Total = "£100.00",
+                        Total = "Â£100.00",
                         TotalValue = 100,
                     },
             };
@@ -124,11 +124,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
                         {
                             Name = string.Empty,
                             OrderId = 1,
-                            England = "£40.00",
-                            Wales = "£30.00",
-                            Scotland = "£20.00",
-                            NorthernIreland = "£10.00",
-                            Total = "£100.00",
+                            England = "Â£40.00",
+                            Wales = "Â£30.00",
+                            Scotland = "Â£20.00",
+                            NorthernIreland = "Â£10.00",
+                            Total = "Â£100.00",
                         },
                     ],
             };
@@ -158,11 +158,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
                     {
                         Name = "5 Scheme set up cost Yearly Cost",
                         OrderId = 1,
-                        England = "£40.00",
-                        Wales = "£30.00",
-                        Scotland = "£20.00",
-                        NorthernIreland = "£10.00",
-                        Total = "£100.00",
+                        England = "Â£40.00",
+                        Wales = "Â£30.00",
+                        Scotland = "Â£20.00",
+                        NorthernIreland = "Â£10.00",
+                        Total = "Â£100.00",
                     },
             };
             var csvContent = new StringBuilder();
@@ -170,8 +170,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
             // Assert
             this.exporter.SchemeSetupCost(otherCost, csvContent);
             var result = csvContent.ToString();
-            Assert.IsTrue(result.Contains("£40"));
-            Assert.IsTrue(result.Contains("£100"));
+            Assert.IsTrue(result.Contains("Â£40"));
+            Assert.IsTrue(result.Contains("Â£100"));
         }
 
         [TestMethod]
@@ -185,7 +185,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
                     [
                         new CalcResultMateriality
                         {
-                            Amount = "Amount £s",
+                            Amount = "Amount Â£s",
                             Percentage = "%",
                             SevenMateriality = "7 Materiality",
                         },
@@ -202,7 +202,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
             // Assert
             this.exporter.Materiality(otherCost, csvContent);
             var result = csvContent.ToString();
-            Assert.IsTrue(result.Contains("Amount £s"));
+            Assert.IsTrue(result.Contains("Amount Â£s"));
             Assert.IsTrue(result.Contains("%"));
             Assert.IsTrue(result.Contains("7 Materiality"));
             Assert.IsTrue(result.Contains("Increase"));
