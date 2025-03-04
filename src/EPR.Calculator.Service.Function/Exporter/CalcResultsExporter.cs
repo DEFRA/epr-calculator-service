@@ -9,6 +9,7 @@
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Exporter;
     using EPR.Calculator.Service.Function.Exporter.CommsCost;
+    using EPR.Calculator.Service.Function.Exporter.OtherCosts;
     using EPR.Calculator.Service.Function.Exporter.ScaledupProducers;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.IdentityModel.Tokens;
@@ -18,7 +19,8 @@
         ICalcResultDetailExporter resultDetailexporter,
         IOnePlusFourApportionmentExporter onePlusFourApportionmentExporter,
         ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter,
-        ILapcaptDetailExporter lapcaptDetailExporter)
+        ILapcaptDetailExporter lapcaptDetailExporter,
+        ICalcResultParameterOtherCostExporter parameterOtherCosts)
         : ICalcResultsExporter<CalcResult>
     {
 
@@ -40,7 +42,7 @@
 
             if (results.CalcResultParameterOtherCost != null)
             {
-                PrepareOtherCosts(results.CalcResultParameterOtherCost, csvContent);
+                parameterOtherCosts.Export(results.CalcResultParameterOtherCost, csvContent);
             }
 
             onePlusFourApportionmentExporter.Export(results.CalcResultOnePlusFourApportionment, csvContent);
