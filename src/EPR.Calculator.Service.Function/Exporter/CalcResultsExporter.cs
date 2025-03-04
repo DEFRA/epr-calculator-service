@@ -4,6 +4,7 @@
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Exporter;
+    using EPR.Calculator.Service.Function.Exporter.LaDisposalCost;
     using EPR.Calculator.Service.Function.Exporter.OtherCosts;
     using EPR.Calculator.Service.Function.Exporter.ScaledupProducers;
     using EPR.Calculator.Service.Function.Models;
@@ -20,11 +21,13 @@
         private readonly ICalcResultParameterOtherCostExporter parameterOtherCosts;
         private readonly ILateReportingExporter lateReportingExporter;
         private readonly ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter;
+        private readonly ICalcResultLaDisposalCostExporter laDisposalCostExporter;
 
         public CalcResultsExporter(
             ILateReportingExporter lateReportingExporter,
             ICalcResultDetailExporter resultDetailexporter,
             IOnePlusFourApportionmentExporter onePlusFourApportionmentExporter,
+            ICalcResultLaDisposalCostExporter laDisposalCostExporter,
             ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter,
             ILapcaptDetailExporter lapcaptDetailExporter,
             ICalcResultParameterOtherCostExporter parameterOtherCosts,
@@ -37,6 +40,7 @@
             this.lapcaptDetailExporter = lapcaptDetailExporter;
             this.parameterOtherCosts = parameterOtherCosts;
             this.calcResultSummaryExporter = calcResultSummaryExporter;
+            this.laDisposalCostExporter = laDisposalCostExporter;
         }
 
         public string Export(CalcResult results)
@@ -59,7 +63,7 @@
 
             PrepareCommsCost(results.CalcResultCommsCostReportDetail, csvContent);
 
-            PrepareLaDisposalCostData(results.CalcResultLaDisposalCostData, csvContent);
+            this.laDisposalCostExporter.Export(results.CalcResultLaDisposalCostData, csvContent);
 
             calcResultScaledupProducersExporter.Export(results.CalcResultScaledupProducers, csvContent);
 

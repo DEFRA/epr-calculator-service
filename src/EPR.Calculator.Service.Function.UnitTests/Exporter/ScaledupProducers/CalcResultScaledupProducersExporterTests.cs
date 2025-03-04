@@ -1,7 +1,6 @@
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.ScaledupProducers
 {
     using System.Text;
-    using EPR.Calculator.API.Exporter;
     using EPR.Calculator.Service.Function.Exporter.ScaledupProducers;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;

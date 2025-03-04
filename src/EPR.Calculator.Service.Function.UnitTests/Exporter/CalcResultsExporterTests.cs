@@ -6,12 +6,12 @@
     using AutoFixture;
     using EPR.Calculator.API.Exporter;
     using EPR.Calculator.Service.Function.Exporter;
+    using EPR.Calculator.Service.Function.Exporter.LaDisposalCost;
     using EPR.Calculator.Service.Function.Exporter.OtherCosts;
     using EPR.Calculator.Service.Function.Exporter.ScaledupProducers;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
-    using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
     [TestClass]
     public class CalcResultsExporterTests
@@ -22,6 +22,7 @@
             this.MockLateReportingExporter = new();
             this.MockResultDetailexporter = new();
             this.MockOnePlusFourExporter = new();
+            this.MockLaDisposalCostDataExporter = new();
             this.MockScaledupProducersExporter = new();
             this.MockLapcaptDetailExporter = new();
             this.ParameterOtherCostExporter = new();
@@ -30,6 +31,7 @@
                 this.MockLateReportingExporter.Object,
                 this.MockResultDetailexporter.Object,
                 this.MockOnePlusFourExporter.Object,
+                this.MockLaDisposalCostDataExporter.Object,
                 this.MockScaledupProducersExporter.Object,
                 this.MockLapcaptDetailExporter.Object,
                 this.ParameterOtherCostExporter.Object,
@@ -46,6 +48,8 @@
         private Mock<ICalcResultDetailExporter> MockResultDetailexporter { get; init; }
 
         private Mock<IOnePlusFourApportionmentExporter> MockOnePlusFourExporter { get; init; }
+
+        private Mock<ICalcResultLaDisposalCostExporter> MockLaDisposalCostDataExporter { get; init; }
 
         private Mock<ICalcResultScaledupProducersExporter> MockScaledupProducersExporter { get; init; }
 
@@ -73,10 +77,8 @@
             this.MockCalcResultSummaryExporter.Verify(x => x.Export(It.IsAny<CalcResultSummary>(), It.IsAny<StringBuilder>()));
             this.MockLapcaptDetailExporter.Verify(x => x.Export(It.IsAny<CalcResultLapcapData>(), It.IsAny<StringBuilder>()));
             this.MockResultDetailexporter.Verify(x => x.Export(It.IsAny<CalcResultDetail>(), It.IsAny<StringBuilder>()));
+            this.MockLaDisposalCostDataExporter.Verify(x => x.Export(It.IsAny<CalcResultLaDisposalCostData>(), It.IsAny<StringBuilder>()));
         }
-
-
-
 
         [TestMethod]
         public void AppendFileInfoTest()
@@ -301,7 +303,7 @@
                             ReportedPublicBinTonnage = string.Empty,
                         },
                     },
-                    Name = "some test",
+                    Name = "LA Disposal Cost Data",
                 },
                 CalcResultScaledupProducers = new CalcResultScaledupProducers
                 {
