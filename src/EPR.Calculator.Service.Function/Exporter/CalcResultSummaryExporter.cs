@@ -3,17 +3,15 @@ using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace EPR.Calculator.Service.Function.Exporter
 {
-    public interface ICalcResultSummaryExporter
-    {
-        void Export(CalcResultSummary resultSummary, StringBuilder csvContent);
-    }
-
     public class CalcResultSummaryExporter : ICalcResultSummaryExporter
     {
+        private readonly IEnumerable<string> extraColumns = [MaterialCodes.Glass];
+
         public void Export(CalcResultSummary resultSummary, StringBuilder csvContent)
         {
             // Add empty lines
@@ -21,7 +19,7 @@ namespace EPR.Calculator.Service.Function.Exporter
             csvContent.AppendLine();
 
             // Add headers
-            PrepareSummaryDataHeader(resultSummary, csvContent);
+            this.PrepareSummaryDataHeader(resultSummary, csvContent);
 
             // Add data
             foreach (var producer in resultSummary.ProducerDisposalFees)
@@ -32,7 +30,7 @@ namespace EPR.Calculator.Service.Function.Exporter
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.Level));
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.IsProducerScaledup));
 
-                AppendProducerDisposalFeesByMaterial(csvContent, producer);
+                this.AppendProducerDisposalFeesByMaterial(csvContent, producer);
 
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.TotalProducerDisposalFee, DecimalPlaces.Two, null, true));
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.BadDebtProvision, DecimalPlaces.Two, null, true));
@@ -42,7 +40,7 @@ namespace EPR.Calculator.Service.Function.Exporter
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.ScotlandTotal, DecimalPlaces.Two, null, true));
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.NorthernIrelandTotal, DecimalPlaces.Two, null, true));
 
-                AppendProducerCommsFeesByMaterial(csvContent, producer);
+                this.AppendProducerCommsFeesByMaterial(csvContent, producer);
 
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.TotalProducerCommsFee, DecimalPlaces.Two, null, true));
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.BadDebtProvisionComms, DecimalPlaces.Two, null, true));
@@ -134,14 +132,16 @@ namespace EPR.Calculator.Service.Function.Exporter
             }
         }
 
-        private static void AppendProducerDisposalFeesByMaterial(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
+        private void AppendProducerDisposalFeesByMaterial(
+            StringBuilder csvContent,
+            CalcResultSummaryProducerDisposalFees producer)
         {
             foreach (var disposalFee in producer.ProducerDisposalFeesByMaterial!)
             {
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.HouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
 
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.PublicBinTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                if (disposalFee.Key.Code == MaterialCodes.Glass)
+                if (this.extraColumns.Contains(disposalFee.Key.Code))
                 {
                     csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.HouseholdDrinksContainersTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 }
@@ -161,13 +161,13 @@ namespace EPR.Calculator.Service.Function.Exporter
             }
         }
 
-        private static void AppendProducerCommsFeesByMaterial(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
+        private void AppendProducerCommsFeesByMaterial(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
         {
             foreach (var disposalFee in producer.ProducerCommsFeesByMaterial!)
             {
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.HouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ReportedPublicBinTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                if (disposalFee.Key.Code == MaterialCodes.Glass)
+                if (this.extraColumns.Contains(disposalFee.Key.Code))
                 {
                     csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.HouseholdDrinksContainers, DecimalPlaces.Three, DecimalFormats.F3));
                 }
@@ -184,7 +184,7 @@ namespace EPR.Calculator.Service.Function.Exporter
             }
         }
 
-        private static void WriteSecondaryHeaders(StringBuilder csvContent, IEnumerable<CalcResultSummaryHeader> headers)
+        private void WriteSecondaryHeaders(StringBuilder csvContent, IEnumerable<CalcResultSummaryHeader> headers)
         {
             const int maxColumnSize = CommonConstants.SecondaryHeaderMaxColumnSize;
             var headerRows = new string[maxColumnSize];
@@ -200,7 +200,7 @@ namespace EPR.Calculator.Service.Function.Exporter
             csvContent.AppendLine(headerRow);
         }
 
-        private static void WriteColumnHeaders(CalcResultSummary resultSummary, StringBuilder csvContent)
+        private void WriteColumnHeaders(CalcResultSummary resultSummary, StringBuilder csvContent)
         {
             foreach (var item in resultSummary.ColumnHeaders)
             {
@@ -208,7 +208,7 @@ namespace EPR.Calculator.Service.Function.Exporter
             }
         }
 
-        private static void PrepareSummaryDataHeader(CalcResultSummary resultSummary, StringBuilder csvContent)
+        private void PrepareSummaryDataHeader(CalcResultSummary resultSummary, StringBuilder csvContent)
         {
             // Add result summary header
             csvContent.AppendLine(CsvSanitiser.SanitiseData(resultSummary.ResultSummaryHeader?.Name))
@@ -219,13 +219,13 @@ namespace EPR.Calculator.Service.Function.Exporter
             csvContent.AppendLine(CsvSanitiser.SanitiseData(resultSummary.NotesHeader?.Name));
 
             // Add producer disposal fees header
-            WriteSecondaryHeaders(csvContent, resultSummary.ProducerDisposalFeesHeaders);
+            this.WriteSecondaryHeaders(csvContent, resultSummary.ProducerDisposalFeesHeaders);
 
             // Add material breakdown header
-            WriteSecondaryHeaders(csvContent, resultSummary.MaterialBreakdownHeaders);
+            this.WriteSecondaryHeaders(csvContent, resultSummary.MaterialBreakdownHeaders);
 
             // Add column header
-            WriteColumnHeaders(resultSummary, csvContent);
+            this.WriteColumnHeaders(resultSummary, csvContent);
 
             csvContent.AppendLine();
         }
