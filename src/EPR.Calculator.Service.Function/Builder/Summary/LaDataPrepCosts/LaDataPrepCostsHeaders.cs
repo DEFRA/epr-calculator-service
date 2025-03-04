@@ -16,7 +16,7 @@
             "4 Total Producer Fee for LA Data Prep Costs In proportion to Percentage of Overall Producer Cost of (1+2a+2b+2c) with Bad Debt provision";
 
         public static readonly string TotalProducerFeeWithoutBadDebtProvision =
-            "4 Total Producer Fee for LA Data Prep Costs In proportion to  Percentage of Overall Producer Cost of (1+2a+2b+2c) w/o Bad Debt provision";
+            "4 Total Producer Fee for LA Data Prep Costs In proportion to Percentage of Overall Producer Cost of (1+2a+2b+2c) w/o Bad Debt provision";
 
         public static readonly string EnglandTotalWithBadDebtProvision = "England Total with Bad Debt provision";
         public static readonly string WalesTotalWithBadDebtProvision = "Wales Total with Bad Debt provision";

@@ -9,6 +9,7 @@
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Exporter;
     using EPR.Calculator.Service.Function.Exporter.LaDisposalCost;
+    using EPR.Calculator.Service.Function.Exporter.OtherCosts;
     using EPR.Calculator.Service.Function.Exporter.ScaledupProducers;
     using EPR.Calculator.Service.Function.Models;
 
@@ -18,7 +19,8 @@
         IOnePlusFourApportionmentExporter onePlusFourApportionmentExporter,
         ICalcResultLaDisposalCostExporter laDisposalCostExporter,
         ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter,
-        ILapcaptDetailExporter lapcaptDetailExporter)
+        ILapcaptDetailExporter lapcaptDetailExporter,
+        ICalcResultParameterOtherCostExporter parameterOtherCosts)
         : ICalcResultsExporter<CalcResult>
     {
         public string Export(CalcResult results)
@@ -39,7 +41,7 @@
 
             if (results.CalcResultParameterOtherCost != null)
             {
-                PrepareOtherCosts(results.CalcResultParameterOtherCost, csvContent);
+                parameterOtherCosts.Export(results.CalcResultParameterOtherCost, csvContent);
             }
 
             onePlusFourApportionmentExporter.Export(results.CalcResultOnePlusFourApportionment, csvContent);

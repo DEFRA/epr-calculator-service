@@ -7,6 +7,7 @@
     using EPR.Calculator.API.Exporter;
     using EPR.Calculator.Service.Function.Exporter;
     using EPR.Calculator.Service.Function.Exporter.LaDisposalCost;
+    using EPR.Calculator.Service.Function.Exporter.OtherCosts;
     using EPR.Calculator.Service.Function.Exporter.ScaledupProducers;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -24,13 +25,15 @@
             this.MockLaDisposalCostDataExporter = new();
             this.MockScaledupProducersExporter = new();
             this.MockLapcaptDetailExporter = new();
+            this.ParameterOtherCostExporter = new CalcResultParameterOtherCostExporter();
             this.TestClass = new CalcResultsExporter(
                 this.MockLateReportingExporter.Object,
                 this.MockResultDetailexporter.Object,
                 this.MockOnePlusFourExporter.Object,
                 this.MockLaDisposalCostDataExporter.Object,
                 this.MockScaledupProducersExporter.Object,
-                this.MockLapcaptDetailExporter.Object);
+                this.MockLapcaptDetailExporter.Object,
+                this.ParameterOtherCostExporter);
         }
 
         private Fixture Fixture { get; init; }
@@ -46,6 +49,8 @@
         private Mock<ICalcResultScaledupProducersExporter> MockScaledupProducersExporter { get; init; }
 
         private Mock<ILapcaptDetailExporter> MockLapcaptDetailExporter { get; init; }
+
+        private ICalcResultParameterOtherCostExporter ParameterOtherCostExporter { get; init; }
 
         private CalcResultsExporter TestClass { get; init; }
 

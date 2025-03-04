@@ -23,6 +23,7 @@ using EPR.Calculator.Service.Function.Builder.Summary;
 using EPR.Calculator.Service.Function.Data;
 using EPR.Calculator.Service.Function.Exporter;
 using EPR.Calculator.Service.Function.Exporter.LaDisposalCost;
+using EPR.Calculator.Service.Function.Exporter.OtherCosts;
 using EPR.Calculator.Service.Function.Exporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Mapper;
@@ -110,6 +111,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcResultLaDisposalCostExporter, CalcResultLaDisposalCostExporter>();
             services.AddTransient<ICalcResultScaledupProducersExporter, CalcResultScaledupProducersExporter>();
             services.AddTransient<LateReportingExporter, LateReportingExporter>();
+            services.AddTransient<ICalcResultParameterOtherCostExporter, CalcResultParameterOtherCostExporter>();
 #if !DEBUG
             SetupBlobStorage(services);
             services.AddTransient<IConfigurationService, Configuration>();
