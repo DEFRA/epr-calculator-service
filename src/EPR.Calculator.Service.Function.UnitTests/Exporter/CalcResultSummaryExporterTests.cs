@@ -105,5 +105,24 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
             Assert.AreEqual("\"Column 11\"", rowContents[10]);
             Assert.AreEqual("\"Column 21\"", rowContents[20]);
         }
+
+        [TestMethod]
+        public void CanCallAddNewRow()
+        {
+            var csvContent = new StringBuilder();
+            var producer = new CalcResultSummaryProducerDisposalFees
+            {
+                ProducerId = "ProducerId1",
+                ProducerName = "ProducerName1",
+                SubsidiaryId = "SubsidaryId1",
+                Level = "1",
+                IsProducerScaledup = "No",
+                ProducerDisposalFeesByMaterial = [],
+                ProducerCommsFeesByMaterial = []
+            };
+            _testClass.AddNewRow(csvContent, producer);
+            var results = csvContent.ToString().Split(",");
+            Assert.AreEqual(79, results.Length);
+        }
     }
 }
