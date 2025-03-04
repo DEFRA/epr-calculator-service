@@ -6,12 +6,12 @@
     using AutoFixture;
     using EPR.Calculator.API.Exporter;
     using EPR.Calculator.Service.Function.Exporter;
+    using EPR.Calculator.Service.Function.Exporter.LaDisposalCost;
     using EPR.Calculator.Service.Function.Exporter.OtherCosts;
     using EPR.Calculator.Service.Function.Exporter.ScaledupProducers;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
-    using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
     [TestClass]
     public class CalcResultsExporterTests
@@ -22,6 +22,7 @@
             this.MockLateReportingExporter = new();
             this.MockResultDetailexporter = new();
             this.MockOnePlusFourExporter = new();
+            this.MockLaDisposalCostDataExporter = new();
             this.MockScaledupProducersExporter = new();
             this.MockLapcaptDetailExporter = new();
             this.ParameterOtherCostExporter = new CalcResultParameterOtherCostExporter();
@@ -29,6 +30,7 @@
                 this.MockLateReportingExporter.Object,
                 this.MockResultDetailexporter.Object,
                 this.MockOnePlusFourExporter.Object,
+                this.MockLaDisposalCostDataExporter.Object,
                 this.MockScaledupProducersExporter.Object,
                 this.MockLapcaptDetailExporter.Object,
                 this.ParameterOtherCostExporter);
@@ -41,6 +43,8 @@
         private Mock<ICalcResultDetailExporter> MockResultDetailexporter { get; init; }
 
         private Mock<IOnePlusFourApportionmentExporter> MockOnePlusFourExporter { get; init; }
+
+        private Mock<ICalcResultLaDisposalCostExporter> MockLaDisposalCostDataExporter { get; init; }
 
         private Mock<ICalcResultScaledupProducersExporter> MockScaledupProducersExporter { get; init; }
 
@@ -77,7 +81,6 @@
             Assert.IsTrue(result.Contains("Parameters - Other"));
             Assert.IsTrue(result.Contains("4 LA Data Prep Charge"));
             Assert.IsTrue(result.Contains("5 Scheme set up cost Yearly Cost"));
-            Assert.IsTrue(result.Contains("some test"));
         }
 
         [TestMethod]
@@ -128,16 +131,17 @@
         }
 
         [TestMethod]
-        public void Export_ShouldIncludeLaDisposalCostData_WhenNotNull()
+        public void Export_ShouldNotIncludeLaDisposalCostData_WhenNull()
         {
             // Arrange
             var results = CreateCalcResult();
+            results.CalcResultLaDisposalCostData = null;
 
             // Act
             var result = this.TestClass.Export(results);
 
             // Assert
-            Assert.IsTrue(result.Contains("5 Scheme set up cost Yearly Cost"));
+            Assert.IsFalse(result.Contains("LA Disposal Cost Data"));
         }
 
         [TestMethod]
@@ -410,7 +414,7 @@
                             ReportedPublicBinTonnage = string.Empty,
                         },
                     },
-                    Name = "some test",
+                    Name = "LA Disposal Cost Data",
                 },
                 CalcResultScaledupProducers = new CalcResultScaledupProducers
                 {
