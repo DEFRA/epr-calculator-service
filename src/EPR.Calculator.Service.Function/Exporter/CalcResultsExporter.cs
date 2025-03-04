@@ -41,7 +41,7 @@
 
             if (results.CalcResultParameterOtherCost != null)
             {
-                parameterOtherCosts.OtherCostExporter(results.CalcResultParameterOtherCost, csvContent);
+                parameterOtherCosts.Export(results.CalcResultParameterOtherCost, csvContent);
             }
 
             onePlusFourApportionmentExporter.Export(results.CalcResultOnePlusFourApportionment, csvContent);

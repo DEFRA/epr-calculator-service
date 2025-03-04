@@ -8,7 +8,7 @@ namespace EPR.Calculator.Service.Function.Exporter
 {
     public class CalcResultParameterOtherCostExporter : ICalcResultParameterOtherCostExporter
     {
-        public void OtherCostExporter(CalcResultParameterOtherCost otherCost, StringBuilder csvContent)
+        public void Export(CalcResultParameterOtherCost otherCost, StringBuilder csvContent)
         {
             csvContent.AppendLine();
             csvContent.AppendLine();

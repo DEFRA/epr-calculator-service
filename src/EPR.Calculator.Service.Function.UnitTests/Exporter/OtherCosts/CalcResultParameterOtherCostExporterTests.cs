@@ -1,7 +1,6 @@
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter
 {
     using System.Text;
-    using AutoFixture;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Exporter;
     using EPR.Calculator.Service.Function.Exporter.OtherCosts;
@@ -11,13 +10,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
     [TestClass]
     public class CalcResultParameterOtherCostExporterTests
     {
-        private ICalcResultParameterOtherCostExporter exporter = new CalcResultParameterOtherCostExporter();
+        private CalcResultParameterOtherCostExporter exporter = new CalcResultParameterOtherCostExporter();
 
         [TestMethod]
         public void CanCallExportCommsCost()
         {
             // Arrange
-
             var otherCost = new CalcResultParameterOtherCost()
             {
                 BadDebtProvision = new KeyValuePair<string, string>("key1", "6%"),
@@ -86,9 +84,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
                     },
             };
             var csvContent = new StringBuilder();
+            ICalcResultParameterOtherCostExporter exporter = this.exporter;
 
             // Act
-            this.exporter.OtherCostExporter(otherCost, csvContent);
+            this.exporter.Export(otherCost, csvContent);
 
             var result = csvContent.ToString();
 
