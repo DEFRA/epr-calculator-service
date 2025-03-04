@@ -184,7 +184,7 @@ namespace EPR.Calculator.Service.Function.Exporter
             }
         }
 
-        private void WriteSecondaryHeaders(StringBuilder csvContent, IEnumerable<CalcResultSummaryHeader> headers)
+        public void WriteSecondaryHeaders(StringBuilder csvContent, IEnumerable<CalcResultSummaryHeader> headers)
         {
             const int maxColumnSize = CommonConstants.SecondaryHeaderMaxColumnSize;
             var headerRows = new string[maxColumnSize];
@@ -200,7 +200,7 @@ namespace EPR.Calculator.Service.Function.Exporter
             csvContent.AppendLine(headerRow);
         }
 
-        private void WriteColumnHeaders(CalcResultSummary resultSummary, StringBuilder csvContent)
+        public void WriteColumnHeaders(CalcResultSummary resultSummary, StringBuilder csvContent)
         {
             foreach (var item in resultSummary.ColumnHeaders)
             {
