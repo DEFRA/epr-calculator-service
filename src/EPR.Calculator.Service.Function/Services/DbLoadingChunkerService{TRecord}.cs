@@ -1,17 +1,14 @@
-﻿namespace EPR.Calculator.Service.Function.Misc
+﻿namespace EPR.Calculator.Service.Function.Services
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Threading;
     using System.Threading.Tasks;
     using EPR.Calculator.Service.Function.Data;
     using EPR.Calculator.Service.Function.Interface;
     using Microsoft.ApplicationInsights;
     using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Metadata.Internal;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.IdentityModel.Abstractions;
 
     /// <summary>
     /// Inserts records to the database, divided into chunks to avoid timeouts
@@ -22,19 +19,20 @@
     /// <param name="context">The database context.</param>
     /// <param name="table">The database table to load the data into.</param>
     /// <param name="chunkSize">The number of records to load in each chunk.</param>
-    public class DbLoadingChunker<TRecord>
+    public class DbLoadingChunkerService<TRecord> : IDbLoadingChunkerService<TRecord>
         where TRecord : class
     {
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DbLoadingChunker{TRecord}"/> class.
+        /// Initializes a new instance of the <see cref="DbLoadingChunkerService{TRecord}"/> class.
         /// </summary>
         /// <param name="config">The application config settings.</param>
         /// <param name="telemetryClient">A telemetry client.</param>
+        /// <param name="commandTimeoutService">A service to set the database command timeout.</param>
         /// <param name="context">The database context.</param>
         /// <param name="table">The database table to insert data into.</param>
         [ActivatorUtilitiesConstructor]
-        public DbLoadingChunker(
+        public DbLoadingChunkerService(
             IConfigurationService config,
             TelemetryClient telemetryClient,
             ICommandTimeoutService commandTimeoutService,
@@ -44,13 +42,14 @@
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DbLoadingChunker{TRecord}"/> class.
+        /// Initializes a new instance of the <see cref="DbLoadingChunkerService{TRecord}"/> class.
         /// </summary>
         /// <param name="telemetryClient">A telemetry client.</param>
+        /// /// <param name="commandTimeoutService">A service to set the database command timeout.</param>
         /// <param name="context">The database context.</param>
         /// <param name="table">The database table to insert data into.</param>
         /// <param name="chunkSize">The number of records to include in each chunk of records.</param>
-        public DbLoadingChunker(
+        public DbLoadingChunkerService(
             TelemetryClient telemetryClient,
             ICommandTimeoutService commandTimeoutService,
             ApplicationDBContext context,
@@ -72,11 +71,7 @@
 
         private DbSet<TRecord> Table { get; set; }
 
-        /// <summary>
-        /// Insert a collection of records into the database using chunks.
-        /// </summary>
-        /// <param name="records">The collection of records to insert.</param>
-        /// <returns>A <see cref="Task"/>.</returns>
+        /// <inheritdoc/>
         public async Task InsertRecords(IEnumerable<TRecord> records)
         {
             Console.WriteLine($"Loading {typeof(TRecord).Name} records in chunks of {this.ChunkSize}.");

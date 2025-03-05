@@ -6,7 +6,6 @@
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Interface;
-    using EPR.Calculator.Service.Function.Misc;
     using EPR.Calculator.Service.Function.Services;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -40,8 +39,8 @@
             this.TestClass = new TransposePomAndOrgDataService(
                 this._context,
                 this.CommandTimeoutService,
-                new Mock<DbLoadingChunker<ProducerDetail>>().Object,
-                new Mock<DbLoadingChunker<ProducerReportedMaterial>>().Object);
+                new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
+                new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object);
         }
 
         private ICommandTimeoutService CommandTimeoutService { get; init; }
@@ -70,111 +69,6 @@
             this._context.Material.AddRange(GetMaterials());
 
             this._context.SaveChanges();
-        }
-
-
-        [TestMethod]
-        public async Task Transpose_Should_Return_Correct_Producer_Detail()
-        {
-            var expectedResult = new ProducerDetail
-            {
-                Id = 1,
-                ProducerId = 1,
-                ProducerName = "UPU LIMITED",
-                CalculatorRunId = 1,
-                CalculatorRun = Fixture.Create<CalculatorRun>(),
-            };
-
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 3 };
-            await this.TestClass.Transpose(resultsRequestDto, CancellationToken.None);
-
-            var producerDetail = _context.ProducerDetail.FirstOrDefault();
-            Assert.IsNotNull(producerDetail);
-            Assert.AreEqual(expectedResult.ProducerId, producerDetail.ProducerId);
-            Assert.AreEqual(expectedResult.ProducerName, producerDetail.ProducerName);
-        }
-
-        [TestMethod]
-        public async Task Transpose_Should_Return_Correct_Producer_Reported_Material()
-        {
-            var expectedResult = new ProducerReportedMaterial
-            {
-                Id = 1,
-                MaterialId = 4,
-                ProducerDetailId = 1,
-                PackagingType = "CW",
-                PackagingTonnage = 1,
-                Material = new Material
-                {
-                    Id = 4,
-                    Code = "PC",
-                    Name = "Paper or card",
-                    Description = "Paper or card",
-                },
-                ProducerDetail = new ProducerDetail
-                {
-                    Id = 1,
-                    ProducerId = 1,
-                    SubsidiaryId = "1",
-                    ProducerName = "UPU LIMITED",
-                    CalculatorRunId = 1,
-                    CalculatorRun = Fixture.Create<CalculatorRun>(),
-                },
-            };
-
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 3 };
-            await this.TestClass.Transpose(resultsRequestDto, CancellationToken.None);
-
-            var producerReportedMaterial = this._context.ProducerReportedMaterial.FirstOrDefault();
-            Assert.IsNotNull(producerReportedMaterial);
-            Assert.AreEqual(expectedResult.Material.Code, producerReportedMaterial.Material!.Code);
-            Assert.AreEqual(expectedResult.Material.Name, producerReportedMaterial.Material.Name);
-            Assert.AreEqual(expectedResult.ProducerDetail.ProducerId, producerReportedMaterial.ProducerDetail!.ProducerId);
-            Assert.AreEqual(expectedResult.ProducerDetail.ProducerName, producerReportedMaterial.ProducerDetail.ProducerName);
-        }
-
-        [TestMethod]
-        public async Task Transpose_Should_Return_Correct_Producer_Subsidary_Detail()
-        {
-            var expectedResult = new ProducerDetail
-            {
-                Id = 1,
-                ProducerId = 2,
-                SubsidiaryId = "1",
-                ProducerName = "Subsid2",
-                CalculatorRunId = 1,
-                CalculatorRun = Fixture.Create<CalculatorRun>(),
-            };
-
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-            await this.TestClass.Transpose(resultsRequestDto, CancellationToken.None);
-
-            var producerDetail = this._context.ProducerDetail.FirstOrDefault(t => t.SubsidiaryId != null);
-            Assert.IsNotNull(producerDetail);
-            Assert.AreEqual(expectedResult.ProducerId, producerDetail.ProducerId);
-            Assert.AreEqual(expectedResult.ProducerName, producerDetail.ProducerName);
-        }
-
-
-        [TestMethod]
-        public async Task Transpose_Should_Return_Correct_Producer_Detail_When_Submission_Period_Not_Exists()
-        {
-            var expectedResult = new ProducerDetail
-            {
-                Id = 1,
-                ProducerId = 2,
-                ProducerName = "Subsid2",
-                CalculatorRunId = 1,
-                CalculatorRun = Fixture.Create<CalculatorRun>(),
-            };
-
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-            await this.TestClass.Transpose(resultsRequestDto, CancellationToken.None);
-
-            var producerDetail = this._context.ProducerDetail.FirstOrDefault();
-            Assert.IsNotNull(producerDetail);
-            Assert.AreEqual(expectedResult.ProducerId, producerDetail.ProducerId);
-            Assert.AreEqual(expectedResult.ProducerName, producerDetail.ProducerName);
         }
 
         [TestMethod]

@@ -9,9 +9,7 @@
     using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Function.Services;
     using EPR.Calculator.Service.Function.Interface;
-    using EPR.Calculator.Service.Function.Misc;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
@@ -39,8 +37,8 @@
         public TransposePomAndOrgDataService(
             ApplicationDBContext context,
             ICommandTimeoutService commandTimeoutService,
-            DbLoadingChunker<ProducerDetail> producerDetailChunker,
-            DbLoadingChunker<ProducerReportedMaterial> producerReportedMaterialChunker)
+            IDbLoadingChunkerService<ProducerDetail> producerDetailChunker,
+            IDbLoadingChunkerService<ProducerReportedMaterial> producerReportedMaterialChunker)
         {
             this.context = context;
             this.CommandTimeoutService = commandTimeoutService;
@@ -50,9 +48,9 @@
 
         public ICommandTimeoutService CommandTimeoutService { get; init; }
 
-        private DbLoadingChunker<ProducerDetail> ProducerDetailChunker { get; init; }
+        private IDbLoadingChunkerService<ProducerDetail> ProducerDetailChunker { get; init; }
 
-        private DbLoadingChunker<ProducerReportedMaterial> ProducerReportedMaterialChunker { get; init; }
+        private IDbLoadingChunkerService<ProducerReportedMaterial> ProducerReportedMaterialChunker { get; init; }
 
         public async Task<bool> TransposeBeforeCalcResults(
             [FromBody] CalcResultsRequestDto resultsRequestDto,

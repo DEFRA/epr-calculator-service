@@ -109,8 +109,8 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcResultDetailExporter, CalcResultDetailexporter>();
             services.AddTransient<ICalcResultScaledupProducersExporter, CalcResultScaledupProducersExporter>();
             services.AddTransient<LateReportingExporter, LateReportingExporter>();
-            services.AddTransient<DbLoadingChunker<ProducerDetail>, DbLoadingChunker<ProducerDetail>>();
-            services.AddTransient<DbLoadingChunker<ProducerReportedMaterial>>();
+            services.AddTransient<IDbLoadingChunkerService<ProducerDetail>, DbLoadingChunkerService<ProducerDetail>>();
+            services.AddTransient<IDbLoadingChunkerService<ProducerReportedMaterial>, DbLoadingChunkerService<ProducerReportedMaterial>>();
 #if !DEBUG
             SetupBlobStorage(services);
             services.AddTransient<IConfigurationService, Configuration>();
