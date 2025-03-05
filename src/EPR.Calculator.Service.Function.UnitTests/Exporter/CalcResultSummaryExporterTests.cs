@@ -120,9 +120,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
                 ProducerDisposalFeesByMaterial = [],
                 ProducerCommsFeesByMaterial = []
             };
+            var materialDetail = new MaterialDetail
+            {
+                Code = "AL",
+                Description = "Aluminuim",
+                Name = "Alimunium"
+            };
+            var producerCommsFees = new CalcResultSummaryProducerCommsFeesCostByMaterial();
+            producer.ProducerCommsFeesByMaterial.Add(materialDetail, producerCommsFees);
             _testClass.AddNewRow(csvContent, producer);
             var results = csvContent.ToString().Split(",");
-            Assert.AreEqual(79, results.Length);
+            Assert.AreEqual(90, results.Length);
         }
     }
 }
