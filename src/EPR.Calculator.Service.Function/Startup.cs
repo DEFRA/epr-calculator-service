@@ -21,6 +21,7 @@ using EPR.Calculator.Service.Function.Builder.ParametersOther;
 using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
 using EPR.Calculator.Service.Function.Builder.Summary;
 using EPR.Calculator.Service.Function.Data;
+using EPR.Calculator.Service.Function.Data.DataModels;
 using EPR.Calculator.Service.Function.Exporter;
 using EPR.Calculator.Service.Function.Exporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Interface;
@@ -108,6 +109,8 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcResultDetailExporter, CalcResultDetailexporter>();
             services.AddTransient<ICalcResultScaledupProducersExporter, CalcResultScaledupProducersExporter>();
             services.AddTransient<LateReportingExporter, LateReportingExporter>();
+            services.AddTransient<DbLoadingChunker<ProducerDetail>, DbLoadingChunker<ProducerDetail>>();
+            services.AddTransient<DbLoadingChunker<ProducerReportedMaterial>>();
 #if !DEBUG
             SetupBlobStorage(services);
             services.AddTransient<IConfigurationService, Configuration>();

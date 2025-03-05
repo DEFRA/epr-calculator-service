@@ -6,6 +6,7 @@
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Interface;
+    using EPR.Calculator.Service.Function.Misc;
     using EPR.Calculator.Service.Function.Services;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -35,11 +36,19 @@
             this.ContextFactory.Setup(f => f.CreateDbContext()).Returns(this._context);
 
             this.SeedDatabase();
+
+            this.TestClass = new TransposePomAndOrgDataService(
+                this._context,
+                this.CommandTimeoutService,
+                new Mock<DbLoadingChunker<ProducerDetail>>().Object,
+                new Mock<DbLoadingChunker<ProducerReportedMaterial>>().Object);
         }
 
         private ICommandTimeoutService CommandTimeoutService { get; init; }
 
         public Fixture Fixture { get; init; } = new Fixture();
+
+        public TransposePomAndOrgDataService TestClass { get; set; }
 
         [TestCleanup]
         public void TearDown()
@@ -65,7 +74,7 @@
 
 
         [TestMethod]
-        public void Transpose_Should_Return_Correct_Producer_Detail()
+        public async Task Transpose_Should_Return_Correct_Producer_Detail()
         {
             var expectedResult = new ProducerDetail
             {
@@ -76,14 +85,8 @@
                 CalculatorRun = Fixture.Create<CalculatorRun>(),
             };
 
-#pragma warning disable CS8604 // Possible null reference argument.
-            var service = new TransposePomAndOrgDataService(
-                this.ContextFactory.Object,
-                this.CommandTimeoutService);
-#pragma warning restore CS8604 // Possible null reference argument.
-
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 3 };
-            service.Transpose(resultsRequestDto, CancellationToken.None);
+            await this.TestClass.Transpose(resultsRequestDto, CancellationToken.None);
 
             var producerDetail = _context.ProducerDetail.FirstOrDefault();
             Assert.IsNotNull(producerDetail);
@@ -92,7 +95,7 @@
         }
 
         [TestMethod]
-        public void Transpose_Should_Return_Correct_Producer_Reported_Material()
+        public async Task Transpose_Should_Return_Correct_Producer_Reported_Material()
         {
             var expectedResult = new ProducerReportedMaterial
             {
@@ -119,14 +122,8 @@
                 },
             };
 
-#pragma warning disable CS8604 // Possible null reference argument.
-            var service = new TransposePomAndOrgDataService(
-                this.ContextFactory.Object,
-                this.CommandTimeoutService);
-#pragma warning restore CS8604 // Possible null reference argument.
-
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 3 };
-            service.Transpose(resultsRequestDto, CancellationToken.None);
+            await this.TestClass.Transpose(resultsRequestDto, CancellationToken.None);
 
             var producerReportedMaterial = this._context.ProducerReportedMaterial.FirstOrDefault();
             Assert.IsNotNull(producerReportedMaterial);
@@ -137,7 +134,7 @@
         }
 
         [TestMethod]
-        public void Transpose_Should_Return_Correct_Producer_Subsidary_Detail()
+        public async Task Transpose_Should_Return_Correct_Producer_Subsidary_Detail()
         {
             var expectedResult = new ProducerDetail
             {
@@ -149,14 +146,8 @@
                 CalculatorRun = Fixture.Create<CalculatorRun>(),
             };
 
-#pragma warning disable CS8604 // Possible null reference argument.
-            var service = new TransposePomAndOrgDataService(
-                this.ContextFactory.Object,
-                this.CommandTimeoutService);
-#pragma warning restore CS8604 // Possible null reference argument.
-
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-            service.Transpose(resultsRequestDto, CancellationToken.None);
+            await this.TestClass.Transpose(resultsRequestDto, CancellationToken.None);
 
             var producerDetail = this._context.ProducerDetail.FirstOrDefault(t => t.SubsidiaryId != null);
             Assert.IsNotNull(producerDetail);
@@ -166,7 +157,7 @@
 
 
         [TestMethod]
-        public void Transpose_Should_Return_Correct_Producer_Detail_When_Submission_Period_Not_Exists()
+        public async Task Transpose_Should_Return_Correct_Producer_Detail_When_Submission_Period_Not_Exists()
         {
             var expectedResult = new ProducerDetail
             {
@@ -177,14 +168,8 @@
                 CalculatorRun = Fixture.Create<CalculatorRun>(),
             };
 
-#pragma warning disable CS8604 // Possible null reference argument.
-            var service = new TransposePomAndOrgDataService(
-                this.ContextFactory.Object,
-                this.CommandTimeoutService);
-#pragma warning restore CS8604 // Possible null reference argument.
-
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-            service.Transpose(resultsRequestDto, CancellationToken.None);
+            await this.TestClass.Transpose(resultsRequestDto, CancellationToken.None);
 
             var producerDetail = this._context.ProducerDetail.FirstOrDefault();
             Assert.IsNotNull(producerDetail);
@@ -196,9 +181,6 @@
         public void Transpose_Should_Return_Latest_Organisation_Name()
         {
             var mockContext = new Mock<ApplicationDBContext>();
-            var service = new TransposePomAndOrgDataService(
-                this.ContextFactory.Object,
-                this.CommandTimeoutService);
 
             var organisationDetails = new List<CalculatorRunOrganisationDataDetail>
             {
@@ -218,7 +200,7 @@
                 },
             };
 
-            var orgDetails = service.GetAllOrganisationsBasedonRunId(organisationDetails);
+            var orgDetails = this.TestClass.GetAllOrganisationsBasedonRunId(organisationDetails);
 
             var orgSubDetails = new List<OrganisationDetails>()
             {
@@ -238,7 +220,7 @@
                 },
             };
 
-            var output = service.GetLatestOrganisationName(1, orgSubDetails, orgDetails);
+            var output = this.TestClass.GetLatestOrganisationName(1, orgSubDetails, orgDetails);
             Assert.IsNotNull(output);
             Assert.AreEqual("Test1", output);
         }
