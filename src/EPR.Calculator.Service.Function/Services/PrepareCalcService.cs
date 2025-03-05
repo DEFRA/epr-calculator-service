@@ -22,7 +22,6 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.IdentityModel.Abstractions;
     using Microsoft.ApplicationInsights;
-    using System.Diagnostics;
 
     public class PrepareCalcService : IPrepareCalcService
     {
@@ -94,27 +93,21 @@
                     return false;
                 }
 
-                Stopwatch stopwatch = new Stopwatch();
-                stopwatch.Start();
-
-                this._telemetryClient.TrackTrace("Builder start...");
+                this._telemetryClient.TrackTrace("Builder started...");
                 var results = await this.Builder.Build(resultsRequestDto);
-                this._telemetryClient.TrackTrace($"Perf Test - Builder end...: {stopwatch.ElapsedMilliseconds} ms");
-                stopwatch.Restart();
+                this._telemetryClient.TrackTrace("Builder end...");
 
                 this._telemetryClient.TrackTrace("Exporter started...");
                 var exportedResults = this.Exporter.Export(results);
-                this._telemetryClient.TrackTrace($"Perf Test - Exporter end...: {stopwatch.ElapsedMilliseconds} ms");
-                stopwatch.Restart();
+                this._telemetryClient.TrackTrace("Exporter end...");
 
-                this._telemetryClient.TrackTrace("Upload started...");
+                this._telemetryClient.TrackTrace("Exporter started...");
                 var fileName = new CalcResultsFileName(
                     results.CalcResultDetail.RunId,
                     results.CalcResultDetail.RunName,
                     results.CalcResultDetail.RunDate);
                 var blobUri = await this.storageService.UploadResultFileContentAsync(fileName, exportedResults);
-                this._telemetryClient.TrackTrace($"Perf Test - Upload end...: {stopwatch.ElapsedMilliseconds} ms");
-                stopwatch.Stop();
+                this._telemetryClient.TrackTrace("Exporter end...");
 
                 var startTime = DateTime.Now;
                 if (!string.IsNullOrEmpty(blobUri))
