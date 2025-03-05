@@ -4,6 +4,7 @@
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Exporter;
+    using EPR.Calculator.Service.Function.Exporter.CommsCost;
     using EPR.Calculator.Service.Function.Exporter.Detail;
     using EPR.Calculator.Service.Function.Exporter.LaDisposalCost;
     using EPR.Calculator.Service.Function.Exporter.OtherCosts;
@@ -23,6 +24,7 @@
         private readonly ILateReportingExporter lateReportingExporter;
         private readonly ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter;
         private readonly ICalcResultLaDisposalCostExporter laDisposalCostExporter;
+        private readonly ICommsCostExporter commsCostExporter;
 
         public CalcResultsExporter(
             ILateReportingExporter lateReportingExporter,
@@ -32,6 +34,7 @@
             ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter,
             ILapcaptDetailExporter lapcaptDetailExporter,
             ICalcResultParameterOtherCostExporter parameterOtherCosts,
+            ICommsCostExporter commsCostExporter,
             ICalcResultSummaryExporter calcResultSummaryExporter)
         {
             this.resultDetailexporter = resultDetailexporter;
@@ -42,6 +45,7 @@
             this.parameterOtherCosts = parameterOtherCosts;
             this.calcResultSummaryExporter = calcResultSummaryExporter;
             this.laDisposalCostExporter = laDisposalCostExporter;
+            this.commsCostExporter = commsCostExporter;
         }
 
         public string Export(CalcResult results)
@@ -62,7 +66,7 @@
 
             onePlusFourApportionmentExporter.Export(results.CalcResultOnePlusFourApportionment, csvContent);
 
-            PrepareCommsCost(results.CalcResultCommsCostReportDetail, csvContent);
+            this.commsCostExporter.Export(results.CalcResultCommsCostReportDetail, csvContent);
 
             this.laDisposalCostExporter.Export(results.CalcResultLaDisposalCostData, csvContent);
 

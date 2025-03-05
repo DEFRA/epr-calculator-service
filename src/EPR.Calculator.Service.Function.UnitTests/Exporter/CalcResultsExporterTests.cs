@@ -7,6 +7,7 @@
     using EPR.Calculator.API.Exporter;
     using EPR.Calculator.Service.Function.Exporter;
     using EPR.Calculator.Service.Function.Exporter.Detail;
+    using EPR.Calculator.Service.Function.Exporter.CommsCost;
     using EPR.Calculator.Service.Function.Exporter.LaDisposalCost;
     using EPR.Calculator.Service.Function.Exporter.OtherCosts;
     using EPR.Calculator.Service.Function.Exporter.ScaledupProducers;
@@ -26,8 +27,9 @@
             this.MockLaDisposalCostDataExporter = new();
             this.MockScaledupProducersExporter = new();
             this.MockLapcaptDetailExporter = new();
-            this.ParameterOtherCostExporter = new();
+            this.MockParameterOtherCostExporter = new();
             this.MockCalcResultSummaryExporter = new();
+            this.MockCommsCostExporter = new();
             this.TestClass = new CalcResultsExporter(
                 this.MockLateReportingExporter.Object,
                 this.MockResultDetailexporter.Object,
@@ -35,7 +37,8 @@
                 this.MockLaDisposalCostDataExporter.Object,
                 this.MockScaledupProducersExporter.Object,
                 this.MockLapcaptDetailExporter.Object,
-                this.ParameterOtherCostExporter.Object,
+                this.MockParameterOtherCostExporter.Object,
+                this.MockCommsCostExporter.Object,
                 this.MockCalcResultSummaryExporter.Object);
         }
 
@@ -56,9 +59,11 @@
 
         private Mock<ILapcaptDetailExporter> MockLapcaptDetailExporter { get; init; }
 
-        private Mock<ICalcResultParameterOtherCostExporter> ParameterOtherCostExporter { get; init; }
+        private Mock<ICalcResultParameterOtherCostExporter> MockParameterOtherCostExporter { get; init; }
 
         private Mock<ICalcResultSummaryExporter> MockCalcResultSummaryExporter { get; init; }
+
+        private Mock<ICommsCostExporter> MockCommsCostExporter { get; init; }
 
         private CalcResultsExporter TestClass { get; init; }
 
@@ -79,6 +84,10 @@
             this.MockLapcaptDetailExporter.Verify(x => x.Export(It.IsAny<CalcResultLapcapData>(), It.IsAny<StringBuilder>()));
             this.MockResultDetailexporter.Verify(x => x.Export(It.IsAny<CalcResultDetail>(), It.IsAny<StringBuilder>()));
             this.MockLaDisposalCostDataExporter.Verify(x => x.Export(It.IsAny<CalcResultLaDisposalCostData>(), It.IsAny<StringBuilder>()));
+            this.MockCommsCostExporter.Verify(x => x.Export(It.IsAny<CalcResultCommsCost>(), It.IsAny<StringBuilder>()));
+            this.MockOnePlusFourExporter.Verify(x => x.Export(It.IsAny<CalcResultOnePlusFourApportionment>(), It.IsAny<StringBuilder>()));
+            this.MockScaledupProducersExporter.Verify(x => x.Export(It.IsAny<CalcResultScaledupProducers>(), It.IsAny<StringBuilder>()));
+            this.MockParameterOtherCostExporter.Verify(x => x.Export(It.IsAny<CalcResultParameterOtherCost>(), It.IsAny<StringBuilder>()));
         }
 
         [TestMethod]
