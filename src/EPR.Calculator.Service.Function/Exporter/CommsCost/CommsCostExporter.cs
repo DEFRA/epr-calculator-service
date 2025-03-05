@@ -17,7 +17,10 @@
         /// <param name="communicationCost">The communication cost details to export.</param>
         /// <param name="csvContent">The csv contenst.</param>
         public void Export(CalcResultCommsCost communicationCost, StringBuilder csvContent)
-        {
+            {
+                return csvContent;
+            }
+
             csvContent.AppendLine();
             csvContent.AppendLine();
             csvContent.AppendLine(communicationCost.Name);
@@ -73,6 +76,8 @@
                 csvContent.Append(CsvSanitiser.SanitiseData(country.Total));
                 csvContent.AppendLine();
             }
+
+            return csvContent;
         }
     }
 }
