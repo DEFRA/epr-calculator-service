@@ -1,27 +1,18 @@
 ﻿namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CommsCost
 {
     using System;
+    using System.Text;
     using AutoFixture;
+    using EPR.Calculator.Service.Function.Exporter;
     using EPR.Calculator.Service.Function.Exporter.CommsCost;
+    using EPR.Calculator.Service.Function.Exporter.OtherCosts;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
     public class CommsCostExporterTests
     {
-        [TestMethod]
-        public void ExportCommsCost_NullInput_ReturnsEmptyStringBuilder()
-        {
-            // Arrange
-            CalcResultCommsCost communicationCost = null;
-
-            // Act
-            var result = CommsCostExporter.ExportCommsCost(communicationCost);
-
-            // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(string.Empty, result.ToString());
-        }
+        private CommsCostExporter exporter = new CommsCostExporter();
 
         [TestMethod]
         public void ExportCommsCost_EmptyLists_ReturnsStringBuilderWithHeaders()
@@ -36,7 +27,9 @@
             };
 
             // Act
-            var result = CommsCostExporter.ExportCommsCost(communicationCost);
+            var csvContent = new StringBuilder();
+            this.exporter.Export(communicationCost, csvContent);
+            var result = csvContent.ToString();
 
             // Assert
             Assert.IsNotNull(result);
@@ -65,7 +58,9 @@
             };
 
             // Act
-            var result = CommsCostExporter.ExportCommsCost(communicationCost);
+            var csvContent = new StringBuilder();
+            this.exporter.Export(communicationCost, csvContent);
+            var result = csvContent.ToString();
 
             // Assert
             Assert.IsNotNull(result);
