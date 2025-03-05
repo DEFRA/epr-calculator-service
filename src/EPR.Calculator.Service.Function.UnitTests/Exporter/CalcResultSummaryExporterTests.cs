@@ -127,10 +127,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
                 Name = "Alimunium"
             };
             var producerCommsFees = new CalcResultSummaryProducerCommsFeesCostByMaterial();
+            var calcResultSummaryProDis = new CalcResultSummaryProducerDisposalFeesByMaterial();
+            producer.ProducerDisposalFeesByMaterial.Add(materialDetail, calcResultSummaryProDis);
             producer.ProducerCommsFeesByMaterial.Add(materialDetail, producerCommsFees);
             _testClass.AddNewRow(csvContent, producer);
             var results = csvContent.ToString().Split(",");
-            Assert.AreEqual(90, results.Length);
+            Assert.AreEqual(103, results.Length);
         }
     }
 }
