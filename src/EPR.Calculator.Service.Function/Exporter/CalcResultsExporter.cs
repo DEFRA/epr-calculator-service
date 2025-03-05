@@ -21,7 +21,8 @@
         ICalcResultLaDisposalCostExporter laDisposalCostExporter,
         ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter,
         ILapcaptDetailExporter lapcaptDetailExporter,
-        ICalcResultParameterOtherCostExporter parameterOtherCosts)
+        ICalcResultParameterOtherCostExporter parameterOtherCosts,
+        ICommsCostExporter commsCostExporter)
         : ICalcResultsExporter<CalcResult>
     {
         public string Export(CalcResult results)
@@ -47,7 +48,10 @@
 
             onePlusFourApportionmentExporter.Export(results.CalcResultOnePlusFourApportionment, csvContent);
 
-            csvContent.Append(CommsCostExporter.ExportCommsCost(results.CalcResultCommsCostReportDetail));
+            if (results.CalcResultCommsCostReportDetail != null)
+            {
+                commsCostExporter.Export(results.CalcResultCommsCostReportDetail, csvContent);
+            }
 
             if (results.CalcResultLaDisposalCostData != null)
             {

@@ -6,6 +6,7 @@
     using AutoFixture;
     using EPR.Calculator.API.Exporter;
     using EPR.Calculator.Service.Function.Exporter;
+    using EPR.Calculator.Service.Function.Exporter.CommsCost;
     using EPR.Calculator.Service.Function.Exporter.LaDisposalCost;
     using EPR.Calculator.Service.Function.Exporter.OtherCosts;
     using EPR.Calculator.Service.Function.Exporter.ScaledupProducers;
@@ -26,6 +27,7 @@
             this.MockScaledupProducersExporter = new();
             this.MockLapcaptDetailExporter = new();
             this.ParameterOtherCostExporter = new CalcResultParameterOtherCostExporter();
+            this.CommsCostExporter = new CommsCostExporter();
             this.TestClass = new CalcResultsExporter(
                 this.MockLateReportingExporter.Object,
                 this.MockResultDetailexporter.Object,
@@ -33,7 +35,8 @@
                 this.MockLaDisposalCostDataExporter.Object,
                 this.MockScaledupProducersExporter.Object,
                 this.MockLapcaptDetailExporter.Object,
-                this.ParameterOtherCostExporter);
+                this.ParameterOtherCostExporter,
+                this.CommsCostExporter);
         }
 
         private Fixture Fixture { get; init; }
@@ -51,6 +54,8 @@
         private Mock<ILapcaptDetailExporter> MockLapcaptDetailExporter { get; init; }
 
         private ICalcResultParameterOtherCostExporter ParameterOtherCostExporter { get; init; }
+
+        private ICommsCostExporter CommsCostExporter { get; init; }
 
         private CalcResultsExporter TestClass { get; init; }
 
