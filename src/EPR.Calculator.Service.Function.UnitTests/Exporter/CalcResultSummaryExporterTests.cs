@@ -134,5 +134,28 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
             var results = csvContent.ToString().Split(",");
             Assert.AreEqual(103, results.Length);
         }
+
+        [TestMethod]
+        public void CanCallExport()
+        {
+            var resultSummary = new CalcResultSummary();
+            var csvContent = new StringBuilder();
+            var producer = new CalcResultSummaryProducerDisposalFees
+            {
+                ProducerId = "ProducerId1",
+                ProducerName = "ProducerName1",
+                SubsidiaryId = "SubsidaryId1",
+                Level = "1",
+                IsProducerScaledup = "No",
+                ProducerDisposalFeesByMaterial = [],
+                ProducerCommsFeesByMaterial = []
+            };
+
+            resultSummary.ProducerDisposalFees = [producer];
+
+            _testClass.Export(resultSummary, csvContent);
+
+            Assert.IsNotNull(csvContent.ToString());
+        }
     }
 }
