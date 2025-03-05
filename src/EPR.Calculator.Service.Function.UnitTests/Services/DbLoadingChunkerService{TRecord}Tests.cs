@@ -12,6 +12,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using Microsoft.EntityFrameworkCore;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using TRecord = System.String;
 
     /// <summary>Unit tests for <see cref="DbLoadingChunkerService{TRecord}"/>.</summary>
     [TestClass]
@@ -181,6 +182,30 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.IsNotNull(producerDetail);
             Assert.AreEqual(expectedResult.ProducerId, producerDetail.ProducerId);
             Assert.AreEqual(expectedResult.ProducerName, producerDetail.ProducerName);
+        }
+
+        [TestMethod]
+        public void CanConstruct()
+        {
+            // Act
+            var instance = new DbLoadingChunkerService<string>(
+                new TelemetryClient(TelemetryConfiguration.CreateDefault()),
+                new Mock<ICommandTimeoutService>().Object,
+                this.Context,
+                this.Fixture.Create<int>());
+
+            // Assert
+            Assert.IsNotNull(instance);
+
+            // Act
+            instance = new DbLoadingChunkerService<string>(
+                new Mock<IConfigurationService>().Object,
+                new TelemetryClient(TelemetryConfiguration.CreateDefault()),
+                new Mock<ICommandTimeoutService>().Object,
+                this.Context);
+
+            // Assert
+            Assert.IsNotNull(instance);
         }
     }
 }
