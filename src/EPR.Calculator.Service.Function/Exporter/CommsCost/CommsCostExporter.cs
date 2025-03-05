@@ -9,21 +9,15 @@
     /// <summary>
     /// Provides functionality to export communication cost details to a CSV format.
     /// </summary>
-    public class CommsCostExporter
+    public class CommsCostExporter : ICommsCostExporter
     {
         /// <summary>
         /// Exports the communication cost details to the provided StringBuilder in CSV format.
         /// </summary>
         /// <param name="communicationCost">The communication cost details to export.</param>
-        /// <returns> StringBuilder</returns>
-        public static StringBuilder ExportCommsCost(CalcResultCommsCost communicationCost)
-        {
-            var csvContent = new StringBuilder();
-            if (communicationCost == null)
+        /// <param name="csvContent">The csv contenst.</param>
+        public void Export(CalcResultCommsCost communicationCost, StringBuilder csvContent)
             {
-                return csvContent;
-            }
-
             csvContent.AppendLine();
             csvContent.AppendLine();
             csvContent.AppendLine(communicationCost.Name);
@@ -79,8 +73,6 @@
                 csvContent.Append(CsvSanitiser.SanitiseData(country.Total));
                 csvContent.AppendLine();
             }
-
-            return csvContent;
         }
     }
 }
