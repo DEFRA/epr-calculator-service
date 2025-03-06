@@ -477,9 +477,9 @@
                         new CalcResultSummaryProducerDisposalFees
                         {
                             ProducerCommsFeesByMaterial =
-                                new Fixture().Create<Dictionary<MaterialDetail, CalcResultSummaryProducerCommsFeesCostByMaterial>>(),
+                                new Fixture().Create<Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>>(),
                             ProducerDisposalFeesByMaterial =
-                                new Fixture().Create<Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial>>(),
+                                new Fixture().Create<Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>>(),
                             ProducerId = "1",
                             ProducerName = "Test",
                             TotalProducerDisposalFeeWithBadDebtProvision = 100,

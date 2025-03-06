@@ -173,15 +173,15 @@
             bool isOverAllTotalRow,
             IEnumerable<TotalPackagingTonnagePerRun> TotalPackagingTonnage)
         {
-            var materialCostSummary = new Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial>();
-            var commsCostSummary = new Dictionary<MaterialDetail, CalcResultSummaryProducerCommsFeesCostByMaterial>();
+            var materialCostSummary = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>();
+            var commsCostSummary = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>();
 
             foreach (var material in materials)
             {
                 var householdPackagingWasteTonnage = CalcResultSummaryUtil.GetTonnageTotal(producersAndSubsidiaries, material, PackagingTypes.Household, ScaledupProducers);
                 var publicBinTonnage = CalcResultSummaryUtil.GetTonnageTotal(producersAndSubsidiaries, material, PackagingTypes.PublicBin, ScaledupProducers);
 
-                materialCostSummary.Add(material, new CalcResultSummaryProducerDisposalFeesByMaterial
+                materialCostSummary.Add(material.Code, new CalcResultSummaryProducerDisposalFeesByMaterial
                 {
                     HouseholdPackagingWasteTonnage = householdPackagingWasteTonnage,
                     PublicBinTonnage = publicBinTonnage,
@@ -200,13 +200,13 @@
                         calcResult, Countries.NorthernIreland, ScaledupProducers),
                 });
 
-                if (material.Code == MaterialCodes.Glass && materialCostSummary.TryGetValue(material, out var materialCost))
+                if (material.Code == MaterialCodes.Glass && materialCostSummary.TryGetValue(material.Code, out var materialCost))
                 {
                     materialCost.HouseholdDrinksContainersTonnage = CalcResultSummaryUtil.GetTonnageTotal(
                         producersAndSubsidiaries, material, PackagingTypes.HouseholdDrinksContainers, ScaledupProducers);
                 }
 
-                commsCostSummary.Add(material, new CalcResultSummaryProducerCommsFeesCostByMaterial
+                commsCostSummary.Add(material.Code, new CalcResultSummaryProducerCommsFeesCostByMaterial
                 {
                     HouseholdPackagingWasteTonnage = householdPackagingWasteTonnage,
                     ReportedPublicBinTonnage = publicBinTonnage,
@@ -223,7 +223,7 @@
                             calcResult, ScaledupProducers),
                 });
 
-                if (material.Code == MaterialCodes.Glass && commsCostSummary.TryGetValue(material, out var comm))
+                if (material.Code == MaterialCodes.Glass && commsCostSummary.TryGetValue(material.Code, out var comm))
                 {
                     comm.HouseholdDrinksContainers = CalcResultSummaryUtil.GetTonnageTotal(producersAndSubsidiaries, material, PackagingTypes.HouseholdDrinksContainers, ScaledupProducers);
                 }
@@ -304,8 +304,8 @@
             CalcResult calcResult,
             IEnumerable<TotalPackagingTonnagePerRun> TotalPackagingTonnage)
         {
-            var materialCostSummary = new Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial>();
-            var commsCostSummary = new Dictionary<MaterialDetail, CalcResultSummaryProducerCommsFeesCostByMaterial>();
+            var materialCostSummary = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>();
+            var commsCostSummary = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>();
 
             var result = new CalcResultSummaryProducerDisposalFees
             {
@@ -340,9 +340,9 @@
                     NorthernIrelandWithBadDebtProvision = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, material, calcResult, Countries.NorthernIreland, ScaledupProducers),
                 };
 
-                materialCostSummary.Add(material, calcResultSummaryProducerDisposalFeesByMaterial);
+                materialCostSummary.Add(material.Code, calcResultSummaryProducerDisposalFeesByMaterial);
 
-                if (material.Code == MaterialCodes.Glass && materialCostSummary.TryGetValue(material, out var producerDisposalFees))
+                if (material.Code == MaterialCodes.Glass && materialCostSummary.TryGetValue(material.Code, out var producerDisposalFees))
                 {
                     producerDisposalFees.HouseholdDrinksContainersTonnage = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.HouseholdDrinksContainers, ScaledupProducers);
                 }
@@ -370,9 +370,9 @@
                     NorthernIrelandWithBadDebtProvision = CalcResultSummaryCommsCostTwoA.GetNorthernIrelandWithBadDebtProvisionForComms(producer, material, calcResult, ScaledupProducers),
                 };
 
-                commsCostSummary.Add(material, calcResultSummaryProducerCommsFeesCostByMaterial);
+                commsCostSummary.Add(material.Code, calcResultSummaryProducerCommsFeesCostByMaterial);
 
-                if (material.Code == MaterialCodes.Glass && commsCostSummary.TryGetValue(material, out var comm))
+                if (material.Code == MaterialCodes.Glass && commsCostSummary.TryGetValue(material.Code, out var comm))
                 {
                     comm.HouseholdDrinksContainers = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.HouseholdDrinksContainers, ScaledupProducers);
                 }
