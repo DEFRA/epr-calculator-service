@@ -1,21 +1,18 @@
 ﻿namespace EPR.Calculator.Service.Function.Services
 {
     using System;
-    using System.Diagnostics;
-    using System.Net;
     using System.Net.Http;
     using System.Text;
     using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
-    using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
-    using EPR.Calculator.Service.Function.Interface;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.Extensions.Logging;
-    using FluentValidation;
+    using EPR.Calculator.Service.Common.Utils;
+    using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Enums;
+    using EPR.Calculator.Service.Function.Interface;
+    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Implementing calculator run service methods.
@@ -53,32 +50,6 @@
             this.configuration = configuration;
             this.prepareCalcService = prepareCalcService;
             this.statusService = statusService;
-        }
-
-        /// <summary>
-        /// Gets the Azure Synapse configuration.
-        /// </summary>
-        /// <param name="args">The calculator run parameters.</param>
-        /// <param name="pipelineName">The name of the pipeline.</param>
-        /// <returns>The Azure Synapse runner parameters.</returns>
-        public AzureSynapseRunnerParameters GetAzureSynapseConfiguration(
-            CalculatorRunParameter args,
-            string pipelineName)
-        {
-            var financialYear = args.FinancialYear;
-            int.TryParse(this.configuration.CheckInterval, out int checkInterval);
-
-            int.TryParse(this.configuration.MaxCheckCount, out int maxCheckCount);
-
-            return new AzureSynapseRunnerParameters
-            {
-                PipelineUrl = new Uri(this.configuration.PipelineUrl),
-                CheckInterval = checkInterval,
-                MaxCheckCount = maxCheckCount,
-                PipelineName = pipelineName,
-                CalculatorRunId = args.Id,
-                FinancialYear = Common.Utils.Util.GetCalendarYearFromFinancialYear(financialYear),
-            };
         }
 
         /// <summary>
@@ -122,6 +93,29 @@
         }
 
         /// <summary>
+        /// Gets the Azure Synapse configuration.
+        /// </summary>
+        /// <param name="args">The calculator run parameters.</param>
+        /// <param name="pipelineName">The name of the pipeline.</param>
+        /// <returns>The Azure Synapse runner parameters.</returns>
+        public AzureSynapseRunnerParameters GetAzureSynapseConfiguration(
+            CalculatorRunParameter args,
+            string pipelineName)
+        {
+            var financialYear = args.FinancialYear;
+
+            return new AzureSynapseRunnerParameters
+            {
+                PipelineUrl = new Uri(this.configuration.PipelineUrl),
+                CheckInterval = this.configuration.CheckInterval,
+                MaxCheckCount = this.configuration.MaxCheckCount,
+                PipelineName = pipelineName,
+                CalculatorRunId = args.Id,
+                FinancialYear = Util.GetCalendarYearFromFinancialYear(financialYear),
+            };
+        }
+
+        /// <summary>
         /// Starts the calculator process.
         /// </summary>
         /// <param name="calculatorRunParameter">The parameters required to run the calculator.</param>
@@ -130,18 +124,12 @@
         /// </returns>
         public async Task<bool> StartProcess(CalculatorRunParameter calculatorRunParameter)
         {
-            this.logger.LogInformation("Process started");
-            bool.TryParse(this.configuration.ExecuteRPDPipeline, out bool runRpdPipeline);
-
-            bool isPomSuccessful = await this.RunPipelines(calculatorRunParameter, runRpdPipeline);
-
-            using var client = this.pipelineClientFactory.GetHttpClient(this.configuration.StatusEndpoint);
-            this.logger.LogInformation("HTTP Client: {client}", client);
+            bool isPomSuccessful = await this.RunPipelines(calculatorRunParameter, this.configuration.ExecuteRPDPipeline);
 
             bool isSuccess;
             try
             {
-                isSuccess = await this.UpdateStatusAndPrepareResult(calculatorRunParameter, isPomSuccessful, client);
+                isSuccess = await this.UpdateStatusAndPrepareResult(calculatorRunParameter, isPomSuccessful);
             }
             catch (TaskCanceledException)
             {
@@ -165,7 +153,7 @@
 
             if (runRpdPipeline)
             {
-                var orgPipelineConfiguration = GetAzureSynapseConfiguration(
+                var orgPipelineConfiguration = this.GetAzureSynapseConfiguration(
                     calculatorRunParameter,
                     this.configuration.OrgDataPipelineName);
 
@@ -174,7 +162,7 @@
 
                 if (isOrgSuccessful)
                 {
-                    var pomPipelineConfiguration = GetAzureSynapseConfiguration(
+                    var pomPipelineConfiguration = this.GetAzureSynapseConfiguration(
                         calculatorRunParameter,
                         this.configuration.PomDataPipelineName);
                     isPomSuccessful = await this.azureSynapseRunner.Process(pomPipelineConfiguration);
@@ -195,11 +183,10 @@
         /// </summary>
         /// <param name="calculatorRunParameter">The parameters required to run the calculator.</param>
         /// <param name="isPomSuccessful">A boolean indicating whether the POM pipeline was successful.</param>
-        /// <param name="client">The HTTP client used to send status updates and prepare result requests.</param>
         /// <returns>
         /// A task that represents the asynchronous operation. The task result contains a boolean indicating the success of the status update and result preparation.
         /// </returns>
-        private async Task<bool> UpdateStatusAndPrepareResult(CalculatorRunParameter calculatorRunParameter, bool isPomSuccessful, HttpClient client)
+        private async Task<bool> UpdateStatusAndPrepareResult(CalculatorRunParameter calculatorRunParameter, bool isPomSuccessful)
         {
             bool isSuccess = false;
 
@@ -217,8 +204,8 @@
                 {
                     var isTransposeSuccess = await this.transposePomAndOrgDataService.
                         TransposeBeforeCalcResults(
-                        new CalcResultsRequestDto { RunId = calculatorRunParameter.Id },
-                        new CancellationTokenSource(this.configuration.TransposeTimeout).Token);
+                            new CalcResultsRequestDto { RunId = calculatorRunParameter.Id },
+                            new CancellationTokenSource(this.configuration.TransposeTimeout).Token);
 
                     this.logger.LogInformation("transposeResultResponse: {isSuccess}", isTransposeSuccess);
 
