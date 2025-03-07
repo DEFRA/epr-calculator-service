@@ -108,6 +108,9 @@ namespace EPR.Calculator.Service.Function
         public TimeSpan CommandTimeout => ParseTimeSpan(
             Environment.GetEnvironmentVariable(EnvironmentVariableKeys.CommandTimeout));
 
+        public int DbLoadingChunkSize => int.Parse(
+            Environment.GetEnvironmentVariable(EnvironmentVariableKeys.DbLoadingChunkSize) ?? "1000");
+
         /// <summary>
         /// Parses a string value to a TimeSpan.
         /// </summary>

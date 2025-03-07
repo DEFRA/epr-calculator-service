@@ -41,5 +41,7 @@
         /// Gets the database command timout from the envirionment variables.
         /// </summary>
         TimeSpan CommandTimeout { get; }
+
+        int DbLoadingChunkSize { get; }
     }
 }
