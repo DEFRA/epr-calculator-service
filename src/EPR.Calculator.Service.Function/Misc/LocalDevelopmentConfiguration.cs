@@ -48,6 +48,8 @@
         public string BlobConnectionString
             => Configuration.GetValue("BlobConnectionString", string.Empty);
 
+        public string InstrumentationKey => Configuration.GetValue("InstrumentationKey", string.Empty);
+
         public TimeSpan CommandTimeout
         {
             get
