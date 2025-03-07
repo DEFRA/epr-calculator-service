@@ -195,11 +195,10 @@
         public async Task<List<CalcResultScaledupProducer>> GetProducerReportedMaterialsAsync(int runId, IEnumerable<int> organisationIds)
         {
             var result = await (from run in this.context.CalculatorRuns
-                                join crpdm in this.context.CalculatorRunPomDataMaster on run.CalculatorRunPomDataMasterId equals crpdm.Id
-                                join crpdd in this.context.CalculatorRunPomDataDetails on crpdm.Id equals crpdd.CalculatorRunPomDataMasterId
+                                join crpdd in this.context.CalculatorRunPomDataDetails on run.CalculatorRunPomDataMasterId equals crpdd.CalculatorRunPomDataMasterId
                                 join spl in this.context.SubmissionPeriodLookup on crpdd.SubmissionPeriod equals spl.SubmissionPeriod
                                 join pd in this.context.ProducerDetail.Include(x => x.ProducerReportedMaterials) on crpdd.OrganisationId equals pd.ProducerId
-                                where run.Id == runId && organisationIds.Contains(crpdd.OrganisationId.GetValueOrDefault())
+                                where run.Id == runId && organisationIds.Contains(crpdd.OrganisationId.GetValueOrDefault()) && pd.CalculatorRunId == runId
                                 select new CalcResultScaledupProducer
                                 {
                                     ProducerId = pd.ProducerId,
