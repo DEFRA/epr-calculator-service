@@ -40,8 +40,7 @@
             this.calculatorTelemetryLogger.LogInformation(runId, runName, message);
 
             // Assert
-            this.mockTelemetryClient.Verify(
-                tc => tc.TrackTrace(It.Is<TraceTelemetry>(t =>
+            this.mockTelemetryClient.Verify(tc => tc.TrackTrace(It.Is<TraceTelemetry>(t =>
                 t.Message.Contains(runId) &&
                 t.Message.Contains(runName) &&
                 t.Message.Contains(message) &&
@@ -64,8 +63,7 @@
             this.calculatorTelemetryLogger.LogError(runId, runName, message, exception);
 
             // Assert
-            this.mockTelemetryClient.Verify(
-                tc => tc.TrackException(It.Is<ExceptionTelemetry>(et =>
+            this.mockTelemetryClient.Verify(tc => tc.TrackException(It.Is<ExceptionTelemetry>(et =>
                 et.Exception == exception &&
                 et.Message.Contains(runId) &&
                 et.Message.Contains(runName) &&

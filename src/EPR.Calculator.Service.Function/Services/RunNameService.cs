@@ -13,11 +13,8 @@
     {
         private readonly IConfigurationService configuration;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RunNameService"/> class.
-        /// </summary>
-        /// <param name="configuration">The configuration service.</param>
-        /// <param name="context">The DB context.</param>
+        private ApplicationDBContext Context { get; init; }
+
         public RunNameService(
             IConfigurationService configuration,
             IDbContextFactory<ApplicationDBContext> context)
@@ -26,7 +23,23 @@
             this.Context = context.CreateDbContext();
         }
 
-        private ApplicationDBContext Context { get; init; }
+        /*public async Task<string?> GetRunNameAsync1(int runId)
+        {
+            string? runName = null;
+            var connectionString = this.configuration.DbConnectionString;
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                await connection.OpenAsync();
+                using (var command = new SqlCommand("SELECT RunName FROM Runs WHERE RunId = @RunId", connection))
+                {
+                    command.Parameters.AddWithValue("@RunId", runId);
+                    runName = (string?)await command.ExecuteScalarAsync();
+                }
+            }
+
+            return runName;
+        }*/
 
         /// <summary>
         /// Gets the run name for the specified run ID.
@@ -36,7 +49,6 @@
         public async Task<string?> GetRunNameAsync(int runId)
         {
             var run = await this.Context.CalculatorRuns
-                .AsNoTracking()
                 .FirstOrDefaultAsync(r => r.Id == runId);
 
             return run?.Name;
