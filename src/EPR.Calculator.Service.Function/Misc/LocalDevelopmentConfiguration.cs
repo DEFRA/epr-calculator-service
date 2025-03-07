@@ -10,11 +10,6 @@
     {
         public LocalDevelopmentConfiguration(IConfiguration configuration) => this.Configuration = configuration;
 
-        /// <summary>
-        /// Gets the configuration file that's passed using dependancy injection.
-        /// </summary>
-        private IConfiguration Configuration { get; }
-
         public int CheckInterval => this.Configuration.GetValue(nameof(this.CheckInterval), 5);
 
         public string DbConnectionString
@@ -47,6 +42,11 @@
 
         public string BlobConnectionString
             => Configuration.GetValue("BlobConnectionString", string.Empty);
+
+        /// <summary>
+        /// Gets the configuration file that's passed using dependancy injection.
+        /// </summary>
+        private IConfiguration Configuration { get; }
 
         public TimeSpan CommandTimeout
         {
