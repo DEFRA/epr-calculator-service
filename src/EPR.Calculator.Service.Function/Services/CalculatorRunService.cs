@@ -25,6 +25,7 @@
         private readonly IConfigurationService configuration;
         private readonly IPrepareCalcService prepareCalcService;
         private readonly IRpdStatusService statusService;
+        private readonly IRunNameService runNameService;
         private readonly ICalculatorTelemetryLogger telemetryLogger;
 
         /// <summary>
@@ -44,7 +45,8 @@
             ITransposePomAndOrgDataService transposePomAndOrgDataService,
             IConfigurationService configuration,
             IPrepareCalcService prepareCalcService,
-            IRpdStatusService statusService)
+            IRpdStatusService statusService,
+            IRunNameService runNameService)
         {
             this.telemetryLogger = telemetryLogger;
             this.azureSynapseRunner = azureSynapseRunner;
@@ -53,6 +55,7 @@
             this.configuration = configuration;
             this.prepareCalcService = prepareCalcService;
             this.statusService = statusService;
+            this.runNameService = runNameService;
         }
 
         /// <summary>
@@ -125,32 +128,33 @@
         /// Starts the calculator process.
         /// </summary>
         /// <param name="calculatorRunParameter">The parameters required to run the calculator.</param>
+        /// <param name="runName">The name of the run.</param>
         /// <returns>
         /// A task that represents the asynchronous operation. The task result contains a boolean indicating success or failure.
         /// </returns>
-        public async Task<bool> StartProcess(CalculatorRunParameter calculatorRunParameter)
+        public async Task<bool> StartProcess(CalculatorRunParameter calculatorRunParameter, string runName)
         {
-            this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), "SUNITA-StartProcess", "Process started");
+            this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, "Process started");
             bool.TryParse(this.configuration.ExecuteRPDPipeline, out bool runRpdPipeline);
 
-            bool isPomSuccessful = await this.RunPipelines(calculatorRunParameter, runRpdPipeline);
+            bool isPomSuccessful = await this.RunPipelines(calculatorRunParameter, runRpdPipeline, runName);
 
             using var client = this.pipelineClientFactory.GetHttpClient(this.configuration.StatusEndpoint);
-            this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), "SUNITA-StartProcess", $"HTTP Client: {client}");
+            this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"HTTP Client: {client}");
 
             bool isSuccess;
             try
             {
-                isSuccess = await this.UpdateStatusAndPrepareResult(calculatorRunParameter, isPomSuccessful, client);
+                isSuccess = await this.UpdateStatusAndPrepareResult(calculatorRunParameter, isPomSuccessful, client, runName);
             }
             catch (TaskCanceledException ex)
             {
-                this.telemetryLogger.LogError(calculatorRunParameter.Id.ToString(), "StartProcess", "Task was canceled", ex);
+                this.telemetryLogger.LogError(calculatorRunParameter.Id.ToString(), runName, "StartProcess - Task was canceled", ex);
                 return false;
             }
             catch (Exception ex)
             {
-                this.telemetryLogger.LogError(calculatorRunParameter.Id.ToString(), "StartProcess", "An error occurred", ex);
+                this.telemetryLogger.LogError(calculatorRunParameter.Id.ToString(), runName, "StartProcess - An error occurred", ex);
                 return false;
             }
 
@@ -162,28 +166,29 @@
         /// </summary>
         /// <param name="calculatorRunParameter">The parameters required to run the calculator.</param>
         /// <param name="runRpdPipeline">A boolean indicating whether the RPD pipeline should be executed.</param>
+        /// <param name="runName">The name of the run.</param>
         /// <returns>
         /// A task that represents the asynchronous operation. The task result contains a boolean indicating the success of the POM pipeline.
         /// </returns>
-        private async Task<bool> RunPipelines(CalculatorRunParameter calculatorRunParameter, bool runRpdPipeline)
+        private async Task<bool> RunPipelines(CalculatorRunParameter calculatorRunParameter, bool runRpdPipeline, string runName)
         {
             bool isPomSuccessful = false;
 
             if (runRpdPipeline)
             {
-                var orgPipelineConfiguration = GetAzureSynapseConfiguration(
+                var orgPipelineConfiguration = this.GetAzureSynapseConfiguration(
                     calculatorRunParameter,
                     this.configuration.OrgDataPipelineName);
 
                 var isOrgSuccessful = await this.azureSynapseRunner.Process(orgPipelineConfiguration);
-                this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), "SUNITA-RunPipelines", $"Org status: {isOrgSuccessful}");
+                this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"RunPipelines - Org status: {isOrgSuccessful}");
                 if (isOrgSuccessful)
                 {
-                    var pomPipelineConfiguration = GetAzureSynapseConfiguration(
+                    var pomPipelineConfiguration = this.GetAzureSynapseConfiguration(
                         calculatorRunParameter,
                         this.configuration.PomDataPipelineName);
                     isPomSuccessful = await this.azureSynapseRunner.Process(pomPipelineConfiguration);
-                    this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), "SUNITA-RunPipelines", $"Pom status: {isPomSuccessful}");
+                    this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"RunPipelines - Org status: {isPomSuccessful}");
                 }
             }
             else
@@ -191,7 +196,7 @@
                 isPomSuccessful = true;
             }
 
-            this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), "SUNITA-RunPipelines", $"Pom status: {isPomSuccessful}");
+            this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"RunPipelines - Org status: {isPomSuccessful}");
             return isPomSuccessful;
         }
 
@@ -201,22 +206,23 @@
         /// <param name="calculatorRunParameter">The parameters required to run the calculator.</param>
         /// <param name="isPomSuccessful">A boolean indicating whether the POM pipeline was successful.</param>
         /// <param name="client">The HTTP client used to send status updates and prepare result requests.</param>
+        /// <param name="runName">The name of the run.</param>
         /// <returns>
         /// A task that represents the asynchronous operation. The task result contains a boolean indicating the success of the status update and result preparation.
         /// </returns>
-        private async Task<bool> UpdateStatusAndPrepareResult(CalculatorRunParameter calculatorRunParameter, bool isPomSuccessful, HttpClient client)
+        private async Task<bool> UpdateStatusAndPrepareResult(CalculatorRunParameter calculatorRunParameter, bool isPomSuccessful, HttpClient client, string runName)
         {
             bool isSuccess = false;
 
             if (isPomSuccessful)
             {
-                this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), "SUNITA-UpdateStatusAndPrepareResult", $"StatusEndPoint: {this.configuration.StatusEndpoint}");
+                this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"UpdateStatusAndPrepareResult - StatusEndPoint: {this.configuration.StatusEndpoint}");
                 var statusUpdateResponse = await this.statusService.UpdateRpdStatus(
                         calculatorRunParameter.Id,
                         calculatorRunParameter.User,
                         isPomSuccessful,
                         new CancellationTokenSource(this.configuration.RpdStatusTimeout).Token);
-                this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), "SUNITA-UpdateStatusAndPrepareResult", $"Status UpdateRpdStatus: {statusUpdateResponse}");
+                this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"UpdateStatusAndPrepareResult - Status UpdateRpdStatus: {statusUpdateResponse}");
 
                 if (statusUpdateResponse == RunClassification.RUNNING)
                 {
@@ -225,7 +231,7 @@
                         new CalcResultsRequestDto { RunId = calculatorRunParameter.Id },
                         new CancellationTokenSource(this.configuration.TransposeTimeout).Token);
 
-                    this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), "SUNITA-UpdateStatusAndPrepareResult", $"transposeResultResponse: {isTransposeSuccess}");
+                    this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"UpdateStatusAndPrepareResult - transposeResultResponse: {isTransposeSuccess}");
 
                     if (isTransposeSuccess)
                     {
@@ -233,23 +239,23 @@
                             new CalcResultsRequestDto { RunId = calculatorRunParameter.Id },
                             new CancellationTokenSource(this.configuration.PrepareCalcResultsTimeout).Token);
 
-                        this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), "SUNITA-UpdateStatusAndPrepareResult", $"prepareCalcResultResponse: {isSuccess}");
+                        this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"UpdateStatusAndPrepareResult - prepareCalcResultResponse: {isSuccess}");
                     }
                 }
 
-                this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), "SUNITA-UpdateStatusAndPrepareResult", $"PrepareCalcResultEndPoint: {this.configuration.PrepareCalcResultEndPoint}");
-                this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), "SUNITA-UpdateStatusAndPrepareResult", $"CalculatorRunParameter ID: {calculatorRunParameter.Id}");
-                this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), "SUNITA-UpdateStatusAndPrepareResult", $"GetPrepareCalcResultMessage: {GetCalcResultMessage(calculatorRunParameter.Id)}");
+                this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"UpdateStatusAndPrepareResult - StatusEndPoint: {this.configuration.PrepareCalcResultEndPoint}");
+                this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"UpdateStatusAndPrepareResult - StatusEndPoint: {calculatorRunParameter.Id}");
+                this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"UpdateStatusAndPrepareResult - StatusEndPoint: {GetCalcResultMessage(calculatorRunParameter.Id)}");
             }
             else
             {
-                this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), "SUNITA-UpdateStatusAndPrepareResult", $"StatusEndPoint: {this.configuration.StatusEndpoint}");
+                this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"UpdateStatusAndPrepareResult - StatusEndPoint: {this.configuration.StatusEndpoint}");
                 var statusUpdateResponse = await this.statusService.UpdateRpdStatus(
                     calculatorRunParameter.Id,
                     calculatorRunParameter.User,
                     isPomSuccessful,
                     new CancellationTokenSource(this.configuration.RpdStatusTimeout).Token);
-                this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), "SUNITA-UpdateStatusAndPrepareResult", $"Status Response: {statusUpdateResponse}");
+                this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"UpdateStatusAndPrepareResult - Status Response: {statusUpdateResponse}");
             }
 
             return isSuccess;

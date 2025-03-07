@@ -12,13 +12,13 @@
     /// <param name="telemetryClient">The telemetry client to use for logging.</param>
     public class CalculatorTelemetryLogger : ICalculatorTelemetryLogger
     {
-        private readonly TelemetryClient telemetryClient;
+        private readonly ITelemetryClientWrapper telemetryClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CalculatorTelemetryLogger"/> class.
         /// </summary>
         /// <param name="telemetryClient">The telemetry client to use for logging.</param>
-        public CalculatorTelemetryLogger(TelemetryClient telemetryClient)
+        public CalculatorTelemetryLogger(ITelemetryClientWrapper telemetryClient)
         {
             this.telemetryClient = telemetryClient;
         }

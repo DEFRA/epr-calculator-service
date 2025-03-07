@@ -22,16 +22,22 @@ namespace EPR.Calculator.Service.Function
     {
         private readonly ICalculatorRunService calculatorRunService;
         private readonly ICalculatorRunParameterMapper calculatorRunParameterMapper;
+        private readonly IRunNameService runNameService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceBusQueueTrigger"/> class.
         /// </summary>
         /// <param name="calculatorRunService">Service to trigger the process for synapse pipeline.</param>
         /// <param name="calculatorRunParameterMapper">Mapper class to map and get the parameter.</param>
-        public ServiceBusQueueTrigger(ICalculatorRunService calculatorRunService, ICalculatorRunParameterMapper calculatorRunParameterMapper)
+        /// <param name="runNameService">Service to fetch the run name from the database.</param>
+        public ServiceBusQueueTrigger(
+            ICalculatorRunService calculatorRunService,
+            ICalculatorRunParameterMapper calculatorRunParameterMapper,
+            IRunNameService runNameService)
         {
             this.calculatorRunService = calculatorRunService;
             this.calculatorRunParameterMapper = calculatorRunParameterMapper;
+            this.runNameService = runNameService;
         }
 
         /// <summary>
@@ -54,7 +60,11 @@ namespace EPR.Calculator.Service.Function
             {
                 var param = JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem);
                 var calculatorRunParameter = this.calculatorRunParameterMapper.Map(param);
-                bool processStatus = await this.calculatorRunService.StartProcess(calculatorRunParameter);
+
+                // Fetch the run name using the run ID
+                var runName = await this.runNameService.GetRunNameAsync(calculatorRunParameter.Id);
+
+                bool processStatus = await this.calculatorRunService.StartProcess(calculatorRunParameter, runName);
                 log.LogInformation($"Process status: {processStatus}");
             }
             catch (JsonException jsonex)
