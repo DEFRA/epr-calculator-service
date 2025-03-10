@@ -8,6 +8,7 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using Newtonsoft.Json.Linq;
 
     /// <summary>
     /// Unit tests for the <see cref="RunNameService"/> class.
@@ -76,7 +77,7 @@
             var result = await this.runNameService.GetRunNameAsync(runId);
 
             // Assert
-            Assert.IsNull(result);
+            Assert.AreEqual(null, result);
         }
     }
 
