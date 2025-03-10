@@ -21,8 +21,10 @@ using EPR.Calculator.Service.Function.Builder.ParametersOther;
 using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
 using EPR.Calculator.Service.Function.Builder.Summary;
 using EPR.Calculator.Service.Function.Data;
+using EPR.Calculator.Service.Function.Data.DataModels;
 using EPR.Calculator.Service.Function.Exporter;
 using EPR.Calculator.Service.Function.Exporter.CommsCost;
+using EPR.Calculator.Service.Function.Exporter.Detail;
 using EPR.Calculator.Service.Function.Exporter.LaDisposalCost;
 using EPR.Calculator.Service.Function.Exporter.OtherCosts;
 using EPR.Calculator.Service.Function.Exporter.ScaledupProducers;
@@ -114,6 +116,10 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<LateReportingExporter, LateReportingExporter>();
             services.AddTransient<ICalcResultParameterOtherCostExporter, CalcResultParameterOtherCostExporter>();
             services.AddTransient<ICommsCostExporter, CommsCostExporter>();
+            services.AddTransient<IDbLoadingChunkerService<ProducerDetail>, DbLoadingChunkerService<ProducerDetail>>();
+            services.AddTransient<IDbLoadingChunkerService<ProducerReportedMaterial>, DbLoadingChunkerService<ProducerReportedMaterial>>();
+            services.AddTransient<ICalcResultSummaryExporter, CalcResultSummaryExporter>();
+            services.AddTransient<ILateReportingExporter, LateReportingExporter>();
 #if !DEBUG
             SetupBlobStorage(services);
             services.AddTransient<IConfigurationService, Configuration>();
