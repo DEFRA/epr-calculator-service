@@ -16,6 +16,7 @@
     using Microsoft.Extensions.Logging;
     using FluentValidation;
     using EPR.Calculator.Service.Function.Enums;
+    using Microsoft.ApplicationInsights;
 
     /// <summary>
     /// Implementing calculator run service methods.
@@ -30,6 +31,7 @@
         private readonly IConfigurationService configuration;
         private readonly IPrepareCalcService prepareCalcService;
         private readonly IRpdStatusService statusService;
+        private readonly TelemetryClient _telemetryClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CalculatorRunService"/> class.
@@ -44,7 +46,8 @@
             ITransposePomAndOrgDataService transposePomAndOrgDataService,
             IConfigurationService configuration,
             IPrepareCalcService prepareCalcService,
-            IRpdStatusService statusService)
+            IRpdStatusService statusService,
+            TelemetryClient telemetryClient)
         {
             this.logger = logger;
             this.azureSynapseRunner = azureSynapseRunner;
@@ -53,6 +56,7 @@
             this.configuration = configuration;
             this.prepareCalcService = prepareCalcService;
             this.statusService = statusService;
+            this._telemetryClient = telemetryClient;
         }
 
         /// <summary>
@@ -147,7 +151,6 @@
             {
                 return false;
             }
-
             return isSuccess;
         }
 
@@ -201,6 +204,9 @@
         /// </returns>
         private async Task<bool> UpdateStatusAndPrepareResult(CalculatorRunParameter calculatorRunParameter, bool isPomSuccessful, HttpClient client)
         {
+            Stopwatch stopwatchTotal = new Stopwatch();
+            stopwatchTotal.Start();
+
             bool isSuccess = false;
 
             if (isPomSuccessful)
@@ -215,12 +221,17 @@
 
                 if (statusUpdateResponse == RunClassification.RUNNING)
                 {
+                    Stopwatch stopwatch = new Stopwatch();
+                    stopwatch.Start();
+
                     var isTransposeSuccess = await this.transposePomAndOrgDataService.
                         TransposeBeforeCalcResults(
                         new CalcResultsRequestDto { RunId = calculatorRunParameter.Id },
                         new CancellationTokenSource(this.configuration.TransposeTimeout).Token);
 
                     this.logger.LogInformation("transposeResultResponse: {isSuccess}", isTransposeSuccess);
+                    this._telemetryClient.TrackTrace($"Perf Test - Transpose...: {stopwatch.ElapsedMilliseconds} ms");
+                    stopwatch.Restart();
 
                     if (isTransposeSuccess)
                     {
@@ -229,6 +240,8 @@
                             new CancellationTokenSource(this.configuration.PrepareCalcResultsTimeout).Token);
 
                         this.logger.LogInformation("prepareCalcResultResponse: {isSuccess}", isSuccess);
+                        this._telemetryClient.TrackTrace($"Perf Test - Prepare Calc Results Total...: {stopwatch.ElapsedMilliseconds} ms");
+                        stopwatch.Stop();
                     }
                 }
 
@@ -246,6 +259,9 @@
                     new CancellationTokenSource(this.configuration.RpdStatusTimeout).Token);
                 this.logger.LogInformation("Status Response: {Response}", statusUpdateResponse);
             }
+
+            this._telemetryClient.TrackTrace($"Perf Test - Total Time...: {stopwatchTotal.ElapsedMilliseconds / 60000} min");
+            stopwatchTotal.Stop();
 
             return isSuccess;
         }

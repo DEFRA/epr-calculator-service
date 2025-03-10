@@ -99,12 +99,12 @@
 
                 this._telemetryClient.TrackTrace("Builder start...");
                 var results = await this.Builder.Build(resultsRequestDto);
-                this._telemetryClient.TrackTrace($"Perf Test - Builder end...: {stopwatch.ElapsedMilliseconds} ms");
+                this._telemetryClient.TrackTrace($"Perf Test - Builder Total...: {stopwatch.ElapsedMilliseconds} ms");
                 stopwatch.Restart();
 
                 this._telemetryClient.TrackTrace("Exporter started...");
                 var exportedResults = this.Exporter.Export(results);
-                this._telemetryClient.TrackTrace($"Perf Test - Exporter end...: {stopwatch.ElapsedMilliseconds} ms");
+                this._telemetryClient.TrackTrace($"Perf Test - Exporter...: {stopwatch.ElapsedMilliseconds} ms");
                 stopwatch.Restart();
 
                 this._telemetryClient.TrackTrace("Upload started...");
@@ -113,7 +113,7 @@
                     results.CalcResultDetail.RunName,
                     results.CalcResultDetail.RunDate);
                 var blobUri = await this.storageService.UploadResultFileContentAsync(fileName, exportedResults);
-                this._telemetryClient.TrackTrace($"Perf Test - Upload end...: {stopwatch.ElapsedMilliseconds} ms");
+                this._telemetryClient.TrackTrace($"Perf Test - Upload...: {stopwatch.ElapsedMilliseconds} ms");
                 stopwatch.Stop();
 
                 var startTime = DateTime.Now;

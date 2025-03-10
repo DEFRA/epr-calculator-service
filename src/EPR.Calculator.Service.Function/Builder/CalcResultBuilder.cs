@@ -82,37 +82,37 @@ namespace EPR.Calculator.Service.Function.Builder
 
             this._telemetryClient.TrackTrace("calcResultDetailBuilder started...");
             result.CalcResultDetail = await this.calcResultDetailBuilder.Construct(resultsRequestDto);
-            this._telemetryClient.TrackTrace($"Perf Test - calcResultDetailBuilder end...: {stopwatch.ElapsedMilliseconds} ms");
+            this._telemetryClient.TrackTrace($"Perf Test - Result Detail Builder...: {stopwatch.ElapsedMilliseconds} ms");
             stopwatch.Restart();
 
             this._telemetryClient.TrackTrace("lapcapBuilder started...");
             result.CalcResultLapcapData = await this.lapcapBuilder.Construct(resultsRequestDto);
-            this._telemetryClient.TrackTrace($"Perf Test - lapcapBuilder end...: {stopwatch.ElapsedMilliseconds} ms");
+            this._telemetryClient.TrackTrace($"Perf Test - Lapcap Builder...: {stopwatch.ElapsedMilliseconds} ms");
             stopwatch.Restart();
 
             this._telemetryClient.TrackTrace("lateReportingBuilder started...");
             result.CalcResultLateReportingTonnageData = await this.lateReportingBuilder.Construct(resultsRequestDto);
-            this._telemetryClient.TrackTrace($"Perf Test - lateReportingBuilder end...: {stopwatch.ElapsedMilliseconds} ms");
+            this._telemetryClient.TrackTrace($"Perf Test - Late Reporting Builder...: {stopwatch.ElapsedMilliseconds} ms");
             stopwatch.Restart();
 
             this._telemetryClient.TrackTrace("calcResultParameterOtherCostBuilder started...");
             result.CalcResultParameterOtherCost = await this.calcResultParameterOtherCostBuilder.Construct(resultsRequestDto);
-            this._telemetryClient.TrackTrace($"Perf Test - calcResultParameterOtherCostBuilder end...: {stopwatch.ElapsedMilliseconds} ms");
+            this._telemetryClient.TrackTrace($"Perf Test - Parameter Other Cost Builder...: {stopwatch.ElapsedMilliseconds} ms");
             stopwatch.Restart();
 
             this._telemetryClient.TrackTrace("lapcapplusFourApportionmentBuilder started...");
             result.CalcResultOnePlusFourApportionment = this.lapcapplusFourApportionmentBuilder.Construct(resultsRequestDto, result);
-            this._telemetryClient.TrackTrace($"Perf Test - lapcapplusFourApportionmentBuilder end...: {stopwatch.ElapsedMilliseconds} ms");
+            this._telemetryClient.TrackTrace($"Perf Test - Lapcap Plus Four Apportionment Builder...: {stopwatch.ElapsedMilliseconds} ms");
             stopwatch.Restart();
 
             this._telemetryClient.TrackTrace("calcResultScaledupProducersBuilder started...");
             result.CalcResultScaledupProducers = await this.calcResultScaledupProducersBuilder.Construct(resultsRequestDto);
-            this._telemetryClient.TrackTrace($"Perf Test - calcResultScaledupProducersBuilder end...: {stopwatch.ElapsedMilliseconds} ms");
+            this._telemetryClient.TrackTrace($"Perf Test - Scaledup Producers Builder...: {stopwatch.ElapsedMilliseconds} ms");
             stopwatch.Restart();
 
             this._telemetryClient.TrackTrace("laDisposalCostBuilder started...");
             result.CalcResultLaDisposalCostData = await this.laDisposalCostBuilder.Construct(resultsRequestDto, result);
-            this._telemetryClient.TrackTrace($"Perf Test - laDisposalCostBuilder end...: {stopwatch.ElapsedMilliseconds} ms");
+            this._telemetryClient.TrackTrace($"Perf Test - la Disposal CostBuilder...: {stopwatch.ElapsedMilliseconds} ms");
             stopwatch.Restart();
 
             this._telemetryClient.TrackTrace("summaryBuilder started...");
@@ -120,9 +120,8 @@ namespace EPR.Calculator.Service.Function.Builder
                 resultsRequestDto, result.CalcResultOnePlusFourApportionment, result);
             result.CalcResultLaDisposalCostData = await this.laDisposalCostBuilder.Construct(resultsRequestDto, result);
             result.CalcResultSummary = await this.summaryBuilder.Construct(resultsRequestDto, result);
-            this._telemetryClient.TrackTrace($"Perf Test - summaryBuilder end...: {stopwatch.ElapsedMilliseconds} ms");
+            this._telemetryClient.TrackTrace($"Perf Test - Summary Builder...: {stopwatch.ElapsedMilliseconds} ms");
             stopwatch.Stop();
-
 
             return result;
         }
