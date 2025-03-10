@@ -507,9 +507,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
                 new()
                 {
                     ProducerCommsFeesByMaterial =
-                        new Dictionary<MaterialDetail, CalcResultSummaryProducerCommsFeesCostByMaterial>() { },
+                        new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>() { },
                     ProducerDisposalFeesByMaterial =
-                        new Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial>() { },
+                        new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>() { },
                     ProducerId = "1",
                     ProducerName = "Test",
                     TotalProducerDisposalFeeWithBadDebtProvision = 100,
