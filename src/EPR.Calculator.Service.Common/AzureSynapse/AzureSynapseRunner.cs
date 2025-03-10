@@ -53,7 +53,7 @@
                 this.PipelineClientFactory,
                 args.PipelineUrl,
                 args.PipelineName,
-                args.FinancialYear);
+                args.CalendarYear);
 
             this.logger.LogInformation($"pipelineRunId: {pipelineRunId}");
 

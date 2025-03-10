@@ -18,6 +18,6 @@
         /// <summary>
         /// Gets or sets the financial year for the calculator run.
         /// </summary>
-        required public string FinancialYear { get; set; }
+        required public FinancialYear FinancialYear { get; set; }
     }
 }

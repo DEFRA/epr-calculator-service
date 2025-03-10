@@ -8,6 +8,7 @@ namespace EPR.Calculator.Service.Function
     using System.Globalization;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Interface;
+    using Microsoft.EntityFrameworkCore.Diagnostics;
 
     /// <summary>
     /// Provides configuration settings for the calculator service.
@@ -18,6 +19,10 @@ namespace EPR.Calculator.Service.Function
         /// The default value for calculator run and transpose timeouts.
         /// </summary>
         public const double DefaultTimeout = 24;
+
+        public const int DefaultCheckInterval = 5;
+
+        public const int DefaultMaxCheckCount = 10;
 
         /// <summary>
         /// Gets the pipeline URL from environment variables.
@@ -37,12 +42,30 @@ namespace EPR.Calculator.Service.Function
         /// <summary>
         /// Gets the check interval from environment variables.
         /// </summary>
-        public string CheckInterval => Environment.GetEnvironmentVariable(EnvironmentVariableKeys.CheckInterval);
+        public int CheckInterval
+        {
+            get
+            {
+                var parseSuccess = int.TryParse(
+                    Environment.GetEnvironmentVariable(EnvironmentVariableKeys.CheckInterval),
+                    out int value);
+                return parseSuccess ? value : DefaultCheckInterval;
+            }
+        }
 
         /// <summary>
         /// Gets the maximum check count from environment variables.
         /// </summary>
-        public string MaxCheckCount => Environment.GetEnvironmentVariable(EnvironmentVariableKeys.MaxCheckCount);
+        public int MaxCheckCount
+        {
+            get
+            {
+                var parseSuccess = int.TryParse(
+                    Environment.GetEnvironmentVariable(EnvironmentVariableKeys.MaxCheckCount),
+                    out int value);
+                return parseSuccess ? value : DefaultMaxCheckCount;
+            }
+        }
 
         /// <summary>
         /// Gets the status update endpoint URI from environment variables.
@@ -60,9 +83,18 @@ namespace EPR.Calculator.Service.Function
         public Uri TransposeEndpoint => new Uri(Environment.GetEnvironmentVariable(EnvironmentVariableKeys.TransposeEndpoint));
 
         /// <summary>
-        /// Gets the flag indicating whether to execute the RPD pipeline from environment variables.
+        /// Gets a value indicating whether to execute the RPD pipeline from environment variables.
         /// </summary>
-        public string ExecuteRPDPipeline => Environment.GetEnvironmentVariable(EnvironmentVariableKeys.ExecuteRPDPipeline);
+        public bool ExecuteRPDPipeline
+        {
+            get
+            {
+                bool.TryParse(
+                    Environment.GetEnvironmentVariable(EnvironmentVariableKeys.ExecuteRPDPipeline),
+                    out bool value);
+                return value;
+            }
+        }
 
         /// <summary>
         /// Gets the RPD status timeout from environment variables.

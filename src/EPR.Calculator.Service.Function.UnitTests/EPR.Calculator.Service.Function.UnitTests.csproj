@@ -36,6 +36,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\EPR.Calculator.Service.Common.UnitTests\EPR.Calculator.Service.Common.UnitTests.csproj" />
 		<ProjectReference Include="..\EPR.Calculator.Service.Common\EPR.Calculator.Service.Common.csproj" />
 		<ProjectReference Include="..\EPR.Calculator.Service.Data\EPR.Calculator.Service.Data.csproj" />
 		<ProjectReference Include="..\EPR.Calculator.Service.Function\EPR.Calculator.Service.Function.csproj" />
