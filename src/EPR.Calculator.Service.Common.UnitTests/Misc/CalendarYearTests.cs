@@ -3,7 +3,6 @@ namespace EPR.Calculator.Service.Common.UnitTests.Misc
     using AutoFixture;
     using EPR.Calculator.Service.Common.UnitTests.AutoFixtureCustomisations;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System.Diagnostics.CodeAnalysis;
 
     /// <summary>Unit tests for the <see cref="CalendarYear"/> class.</summary>
     [TestClass]

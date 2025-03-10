@@ -5,8 +5,11 @@
     /// <summary>
     /// Represents a financial year, with the format yyyy-yy.
     /// </summary>
-    public record struct FinancialYear
+    public partial record struct FinancialYear
     {
+        [GeneratedRegex("^[0-9]{4}-[0-9]{2}$", RegexOptions.IgnoreCase, "en-GB")]
+        private static partial Regex FinancialYearRegex();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FinancialYear"/> class.
         /// </summary>
@@ -17,7 +20,7 @@
         /// </remarks>
         public FinancialYear(string value)
         {
-            if (!Regex.IsMatch(value, "^[0-9]{4}-[0-9]{2}$", default, TimeSpan.FromSeconds(1)))
+            if (!FinancialYearRegex().IsMatch(value))
             {
                 throw new System.ArgumentException("The year must be in the format yyyy-yy.");
             }

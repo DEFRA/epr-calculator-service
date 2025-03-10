@@ -5,8 +5,11 @@
     /// <summary>
     /// Represents a calendar year, with the format yyyy.
     /// </summary>
-    public record struct CalendarYear
+    public partial record struct CalendarYear
     {
+        [GeneratedRegex("^[0-9]{4}$", RegexOptions.IgnoreCase, "en-GB")]
+        private static partial Regex CalendarYearRegex();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CalendarYear"/> class.
         /// </summary>
@@ -17,7 +20,7 @@
         /// </remarks>
         public CalendarYear(string value)
         {
-            if (!Regex.IsMatch(value, "^[0-9]{4}$", default, TimeSpan.FromSeconds(1)))
+            if (!CalendarYearRegex().IsMatch(value))
             {
                 throw new System.ArgumentException("The year must be in the format yyyy.");
             }

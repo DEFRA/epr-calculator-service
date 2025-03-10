@@ -259,7 +259,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var calculatorRunParameters = new CalculatorRunParameter
             {
                 Id = id,
-                FinancialYear = FinancialYear,
+                FinancialYear = this.FinancialYear,
                 User = user,
             };
 
@@ -268,7 +268,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 CalculatorRunId = id,
                 CheckInterval = checkInterval,
-                CalendarYear = CalendarYear,
+                CalendarYear = this.CalendarYear,
                 MaxCheckCount = maxCheckCount,
                 PipelineUrl = pipelineUrl,
                 PipelineName = orgPipelineName,
@@ -432,7 +432,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var calculatorRunParameters = new CalculatorRunParameter
             {
                 Id = id,
-                FinancialYear = FinancialYear,
+                FinancialYear = this.FinancialYear,
                 User = user,
             };
 
@@ -488,7 +488,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 });
 
             var calculatorRunParameters = this.Fixture.Create<CalculatorRunParameter>();
-            calculatorRunParameters.FinancialYear = FinancialYear;
+            calculatorRunParameters.FinancialYear = this.FinancialYear;
 
             // Act
             var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters);
@@ -525,7 +525,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 });
 
             var calculatorRunParameters = this.Fixture.Create<CalculatorRunParameter>();
-            calculatorRunParameters.FinancialYear = FinancialYear;
+            calculatorRunParameters.FinancialYear = this.FinancialYear;
 
             // Act
             var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters);
