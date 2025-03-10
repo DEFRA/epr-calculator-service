@@ -71,7 +71,7 @@
         public async Task GetRunNameAsync_ShouldReturnNullWhenRunDoesNotExist()
         {
             // Arrange
-            var runId = 1;
+            var runId = 10;
 
             // Act
             var result = await this.runNameService.GetRunNameAsync(runId);
