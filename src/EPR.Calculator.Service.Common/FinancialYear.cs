@@ -17,7 +17,7 @@
         /// </remarks>
         public FinancialYear(string value)
         {
-            if (!Regex.IsMatch(value, "^[0-9]{4}-[0-9]{2}$"))
+            if (!Regex.IsMatch(value, "^[0-9]{4}-[0-9]{2}$", default, TimeSpan.FromSeconds(1)))
             {
                 throw new System.ArgumentException("The year must be in the format yyyy-yy.");
             }

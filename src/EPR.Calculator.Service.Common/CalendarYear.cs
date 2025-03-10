@@ -17,7 +17,7 @@
         /// </remarks>
         public CalendarYear(string value)
         {
-            if (!Regex.IsMatch(value, "^[0-9]{4}$"))
+            if (!Regex.IsMatch(value, "^[0-9]{4}$", default, TimeSpan.FromSeconds(1)))
             {
                 throw new System.ArgumentException("The year must be in the format yyyy.");
             }
