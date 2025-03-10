@@ -3,11 +3,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using System.Net;
     using System.Net.Http;
     using AutoFixture;
-    using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
+    using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Common.Utils;
     using EPR.Calculator.Service.Function.Constants;
+    using EPR.Calculator.Service.Function.Dtos;
+    using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Interface;
     using EPR.Calculator.Service.Function.Misc;
     using EPR.Calculator.Service.Function.Services;
@@ -16,8 +18,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using Microsoft.Extensions.Logging;
     using Moq;
     using Moq.Protected;
-    using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Common.Logging;
 
     /// <summary>
     /// Contains unit tests for the CalculatorRunService class.
@@ -47,12 +47,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.PrepareCalcService = new Mock<IPrepareCalcService>();
             this.PrepareCalcService.Setup(s => s.PrepareCalcResults(
                 It.IsAny<CalcResultsRequestDto>(),
-                It.IsAny<CancellationToken>()))
+                It.IsAny<CancellationToken>(),
+                It.IsAny<string>()))
                 .ReturnsAsync(true);
 
             var statusService = new Mock<IRpdStatusService>();
             statusService.Setup(s => s.UpdateRpdStatus(
                 It.IsAny<int>(),
+                It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<bool>(),
                 It.IsAny<CancellationToken>()))
@@ -74,11 +76,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 this.TransposeService.Object,
                 new Configuration(),
                 this.PrepareCalcService.Object,
-                statusService.Object,
-                this.RunNameService.Object);
+                statusService.Object);
 
             this.TransposeService.Setup(t => t.TransposeBeforeCalcResults(
                 It.IsAny<CalcResultsRequestDto>(),
+                It.IsAny<string>(),
                 It.IsAny<CancellationToken>()))
                 .ReturnsAsync(true);
 
@@ -565,5 +567,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
             }
         }
+
+
     }
 }

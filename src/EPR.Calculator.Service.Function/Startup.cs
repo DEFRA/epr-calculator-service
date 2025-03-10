@@ -83,7 +83,7 @@ namespace EPR.Calculator.Service.Function
             services.AddSingleton<IStorageService>(provider =>
             {
                 var configuration = provider.GetRequiredService<IConfigurationService>();
-                var logger = provider.GetRequiredService<ILogger<BlobStorageService>>();
+                var logger = provider.GetRequiredService<ICalculatorTelemetryLogger>();
                 var connectionString = configuration.BlobConnectionString;
                 if (string.IsNullOrEmpty(connectionString))
                 {

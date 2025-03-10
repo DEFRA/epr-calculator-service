@@ -124,6 +124,7 @@
         public void Teardown()
         {
             this.dbContext?.Database.EnsureDeleted();
+            this.dbContext.Dispose();
         }
 
         /// <summary>

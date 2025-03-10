@@ -1,14 +1,14 @@
 ﻿namespace EPR.Calculator.Service.Function.Services
 {
-    using Azure.Storage;
-    using Azure.Storage.Blobs;
-    using EPR.Calculator.Service.Function.Interface;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
     using System;
     using System.Configuration;
-    using System.Text;
     using System.Threading.Tasks;
+    using Azure.Storage;
+    using Azure.Storage.Blobs;
+    using EPR.Calculator.Service.Common.Logging;
+    using EPR.Calculator.Service.Function.Interface;
+    using Microsoft.Extensions.Logging;
+    using Newtonsoft.Json.Linq;
 
     public class BlobStorageService : IStorageService
     {
@@ -19,27 +19,33 @@
 
         private readonly BlobContainerClient containerClient;
         private readonly StorageSharedKeyCredential sharedKeyCredential;
-        private readonly ILogger<BlobStorageService> _logger;
+        private readonly ICalculatorTelemetryLogger telemetryLogger;
 
-        public BlobStorageService(BlobServiceClient blobServiceClient, IConfigurationService config, ILogger<BlobStorageService> logger)
+        public BlobStorageService(
+            BlobServiceClient blobServiceClient,
+            IConfigurationService config,
+            ICalculatorTelemetryLogger telemetryLogger)
         {
             this.containerClient = blobServiceClient.GetBlobContainerClient(config.BlobContainerName
                                                                             ?? throw new ConfigurationErrorsException(ContainerNameMissingError));
-            this._logger = logger;
+            this.telemetryLogger = telemetryLogger;
         }
 
-        public async Task<string> UploadResultFileContentAsync(string fileName, string content)
+        public async Task<string> UploadResultFileContentAsync(string fileName, string content, string runName)
         {
+            string runId = fileName.Split('-')[0];
             try
             {
+                this.telemetryLogger.LogInformation(runId, runName, "Upload Blob started...");
                 var blobClient = this.containerClient.GetBlobClient(fileName);
                 var binaryData = BinaryData.FromString(content);
                 await blobClient.UploadAsync(binaryData);
+                this.telemetryLogger.LogInformation(runId, runName, "Upload Blob end...");
                 return blobClient.Uri.ToString();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error Blob write");
+                this.telemetryLogger.LogError(runId, runName, "Error writing a Blob ", ex);
                 return string.Empty;
             }
         }

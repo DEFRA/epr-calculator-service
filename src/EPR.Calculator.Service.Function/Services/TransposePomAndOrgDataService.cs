@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Function.Data;
     using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Dtos;
@@ -17,13 +18,20 @@
     public class TransposePomAndOrgDataService : ITransposePomAndOrgDataService
     {
         private readonly ApplicationDBContext context;
+        private readonly ICalculatorTelemetryLogger telemetryLogger;
+
         private const string PeriodSeparator = "-P";
+
         public class OrganisationDetails
         {
             public int? OrganisationId { get; set; }
+
             public required string OrganisationName { get; set; }
+
             public string? SubmissionPeriod { get; set; }
+
             public string? SubmissionPeriodDescription { get; set; }
+
             public string? SubsidaryId { get; set; }
         }
 
@@ -38,12 +46,14 @@
             ApplicationDBContext context,
             ICommandTimeoutService commandTimeoutService,
             IDbLoadingChunkerService<ProducerDetail> producerDetailChunker,
-            IDbLoadingChunkerService<ProducerReportedMaterial> producerReportedMaterialChunker)
+            IDbLoadingChunkerService<ProducerReportedMaterial> producerReportedMaterialChunker,
+            ICalculatorTelemetryLogger telemetryLogger)
         {
             this.context = context;
             this.CommandTimeoutService = commandTimeoutService;
             this.ProducerDetailChunker = producerDetailChunker;
             this.ProducerReportedMaterialChunker = producerReportedMaterialChunker;
+            this.telemetryLogger = telemetryLogger;
         }
 
         public ICommandTimeoutService CommandTimeoutService { get; init; }
@@ -54,6 +64,7 @@
 
         public async Task<bool> TransposeBeforeCalcResults(
             [FromBody] CalcResultsRequestDto resultsRequestDto,
+            string runName,
             CancellationToken cancellationToken)
         {
             var startTime = DateTime.Now;
@@ -63,6 +74,7 @@
             CalculatorRun? calculatorRun = null;
             try
             {
+                this.telemetryLogger.LogInformation(resultsRequestDto.RunId.ToString(), runName, $"Transpose POM and ORG data for run: {resultsRequestDto.RunId}");
                 calculatorRun = await this.context.CalculatorRuns.SingleOrDefaultAsync(
                 run => run.Id == resultsRequestDto.RunId,
                 cancellationToken);
@@ -76,30 +88,36 @@
                     cancellationToken);
                 var endTime = DateTime.Now;
                 var timeDiff = startTime - endTime;
+                this.telemetryLogger.LogInformation(resultsRequestDto.RunId.ToString(), runName, $"Transpose POM and ORG data for run: {resultsRequestDto.RunId} completed in {timeDiff.TotalSeconds} seconds");
                 return true;
             }
             catch (OperationCanceledException exception)
             {
+                this.telemetryLogger.LogError(resultsRequestDto.RunId.ToString(), runName, "Operation cancelled", exception);
+
                 if (calculatorRun != null)
                 {
                     calculatorRun.CalculatorRunClassificationId = (int)RunClassification.ERROR;
                     this.context.CalculatorRuns.Update(calculatorRun);
                     await this.context.SaveChangesAsync();
+                    this.telemetryLogger.LogError(resultsRequestDto.RunId.ToString(), runName, "RunId is updated with ClassificationId Error", exception);
                 }
 
                 return false;
             }
             catch (Exception exception)
             {
+                this.telemetryLogger.LogError(resultsRequestDto.RunId.ToString(), runName, "Error occurred while transposing POM and ORG data", exception);
                 if (calculatorRun != null)
                 {
                     calculatorRun.CalculatorRunClassificationId = (int)RunClassification.ERROR;
                     this.context.CalculatorRuns.Update(calculatorRun);
                     await this.context.SaveChangesAsync();
+                    this.telemetryLogger.LogError(resultsRequestDto.RunId.ToString(), runName, "RunId is updated with ClassificationId Error", exception);
                 }
-
-                return false;
             }
+
+            return false;
         }
 
         public async Task<bool> Transpose(CalcResultsRequestDto resultsRequestDto, CancellationToken cancellationToken)

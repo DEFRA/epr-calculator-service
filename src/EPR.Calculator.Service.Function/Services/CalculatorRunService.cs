@@ -25,7 +25,6 @@
         private readonly IConfigurationService configuration;
         private readonly IPrepareCalcService prepareCalcService;
         private readonly IRpdStatusService statusService;
-        private readonly IRunNameService runNameService;
         private readonly ICalculatorTelemetryLogger telemetryLogger;
 
         /// <summary>
@@ -45,8 +44,7 @@
             ITransposePomAndOrgDataService transposePomAndOrgDataService,
             IConfigurationService configuration,
             IPrepareCalcService prepareCalcService,
-            IRpdStatusService statusService,
-            IRunNameService runNameService)
+            IRpdStatusService statusService)
         {
             this.telemetryLogger = telemetryLogger;
             this.azureSynapseRunner = azureSynapseRunner;
@@ -55,7 +53,6 @@
             this.configuration = configuration;
             this.prepareCalcService = prepareCalcService;
             this.statusService = statusService;
-            this.runNameService = runNameService;
         }
 
         /// <summary>
@@ -219,6 +216,7 @@
                 this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"UpdateStatusAndPrepareResult - StatusEndPoint: {this.configuration.StatusEndpoint}");
                 var statusUpdateResponse = await this.statusService.UpdateRpdStatus(
                         calculatorRunParameter.Id,
+                        runName,
                         calculatorRunParameter.User,
                         isPomSuccessful,
                         new CancellationTokenSource(this.configuration.RpdStatusTimeout).Token);
@@ -229,6 +227,7 @@
                     var isTransposeSuccess = await this.transposePomAndOrgDataService.
                         TransposeBeforeCalcResults(
                         new CalcResultsRequestDto { RunId = calculatorRunParameter.Id },
+                        runName,
                         new CancellationTokenSource(this.configuration.TransposeTimeout).Token);
 
                     this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"UpdateStatusAndPrepareResult - transposeResultResponse: {isTransposeSuccess}");
@@ -237,7 +236,8 @@
                     {
                         isSuccess = await this.prepareCalcService.PrepareCalcResults(
                             new CalcResultsRequestDto { RunId = calculatorRunParameter.Id },
-                            new CancellationTokenSource(this.configuration.PrepareCalcResultsTimeout).Token);
+                            new CancellationTokenSource(this.configuration.PrepareCalcResultsTimeout).Token,
+                            runName);
 
                         this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"UpdateStatusAndPrepareResult - prepareCalcResultResponse: {isSuccess}");
                     }
@@ -252,6 +252,7 @@
                 this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"UpdateStatusAndPrepareResult - StatusEndPoint: {this.configuration.StatusEndpoint}");
                 var statusUpdateResponse = await this.statusService.UpdateRpdStatus(
                     calculatorRunParameter.Id,
+                    runName,
                     calculatorRunParameter.User,
                     isPomSuccessful,
                     new CancellationTokenSource(this.configuration.RpdStatusTimeout).Token);
