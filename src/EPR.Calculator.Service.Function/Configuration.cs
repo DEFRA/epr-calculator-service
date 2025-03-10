@@ -20,9 +20,9 @@ namespace EPR.Calculator.Service.Function
         /// </summary>
         public const double DefaultTimeout = 24;
 
-        public const string DefaultCheckInterval = "5";
+        public const int DefaultCheckInterval = 5;
 
-        public const string DefaultMaxCheckCount = "10";
+        public const int DefaultMaxCheckCount = 10;
 
         /// <summary>
         /// Gets the pipeline URL from environment variables.
@@ -42,16 +42,30 @@ namespace EPR.Calculator.Service.Function
         /// <summary>
         /// Gets the check interval from environment variables.
         /// </summary>
-        public int CheckInterval =>
-            int.Parse(Environment.GetEnvironmentVariable(EnvironmentVariableKeys.CheckInterval)
-                ?? DefaultCheckInterval);
+        public int CheckInterval
+        {
+            get
+            {
+                var parseSuccess = int.TryParse(
+                    Environment.GetEnvironmentVariable(EnvironmentVariableKeys.CheckInterval),
+                    out int value);
+                return parseSuccess ? value : DefaultCheckInterval;
+            }
+        }
 
         /// <summary>
         /// Gets the maximum check count from environment variables.
         /// </summary>
-        public int MaxCheckCount =>
-            int.Parse(Environment.GetEnvironmentVariable(EnvironmentVariableKeys.MaxCheckCount)
-                ?? DefaultMaxCheckCount);
+        public int MaxCheckCount
+        {
+            get
+            {
+                var parseSuccess = int.TryParse(
+                    Environment.GetEnvironmentVariable(EnvironmentVariableKeys.MaxCheckCount),
+                    out int value);
+                return parseSuccess ? value : DefaultMaxCheckCount;
+            }
+        }
 
         /// <summary>
         /// Gets the status update endpoint URI from environment variables.
