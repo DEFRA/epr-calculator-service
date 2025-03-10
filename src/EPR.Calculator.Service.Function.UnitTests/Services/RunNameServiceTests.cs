@@ -4,6 +4,7 @@
     using EPR.Calculator.Service.Function.Data;
     using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Interface;
+    using EPR.Calculator.Service.Function.Models;
     using EPR.Calculator.Service.Function.Services;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -37,6 +38,22 @@
             this.runNameService = new RunNameService(
                 this.mockConfigurationService.Object,
                 this.dbContextFactory);
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            // Dispose of the DbContextFactory if it implements IDisposable
+            if (this.dbContextFactory is IDisposable disposableFactory)
+            {
+                disposableFactory.Dispose();
+            }
+
+            // Dispose of the RunNameService if it implements IDisposable
+            if (this.runNameService is IDisposable disposableService)
+            {
+                disposableService.Dispose();
+            }
         }
 
         /// <summary>
