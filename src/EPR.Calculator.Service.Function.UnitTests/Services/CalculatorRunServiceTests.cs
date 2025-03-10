@@ -17,6 +17,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using Moq;
     using Moq.Protected;
     using EPR.Calculator.Service.Function.Enums;
+    using Microsoft.ApplicationInsights;
 
     /// <summary>
     /// Contains unit tests for the CalculatorRunService class.
@@ -24,6 +25,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     [TestClass]
     public class CalculatorRunServiceTests
     {
+        private TelemetryClient _telemetryClient = new();
         /// <summary>
         /// Initializes a new instance of the <see cref="CalculatorRunServiceTests"/> class.
         /// </summary>
@@ -72,7 +74,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 this.TransposeService.Object,
                 new Configuration(),
                 this.PrepareCalcService.Object,
-                statusService.Object);
+                statusService.Object,
+                this._telemetryClient);
 
             this.TransposeService.Setup(t => t.TransposeBeforeCalcResults(
                 It.IsAny<CalcResultsRequestDto>(),
