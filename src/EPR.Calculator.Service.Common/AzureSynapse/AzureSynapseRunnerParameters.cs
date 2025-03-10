@@ -10,7 +10,7 @@
         /// <summary>
         /// Gets the Financial Year.
         /// </summary>
-        required public string FinancialYear { get; init; }
+        required public string CalendarYear { get; init; }
 
         /// <summary>Gets the URL of the pipeline to run.</summary>
         required public Uri PipelineUrl { get; init; }

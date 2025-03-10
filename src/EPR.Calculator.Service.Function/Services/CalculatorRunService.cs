@@ -111,7 +111,7 @@
                 MaxCheckCount = this.configuration.MaxCheckCount,
                 PipelineName = pipelineName,
                 CalculatorRunId = args.Id,
-                FinancialYear = Util.GetCalendarYearFromFinancialYear(financialYear),
+                CalendarYear = Util.GetCalendarYearFromFinancialYear(financialYear),
             };
         }
 
