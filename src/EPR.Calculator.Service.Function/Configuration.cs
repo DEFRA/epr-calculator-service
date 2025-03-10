@@ -71,7 +71,16 @@ namespace EPR.Calculator.Service.Function
         /// <summary>
         /// Gets a value indicating whether to execute the RPD pipeline from environment variables.
         /// </summary>
-        public bool ExecuteRPDPipeline => Convert.ToBoolean(Environment.GetEnvironmentVariable(EnvironmentVariableKeys.ExecuteRPDPipeline));
+        public bool ExecuteRPDPipeline
+        {
+            get
+            {
+                bool.TryParse(
+                    Environment.GetEnvironmentVariable(EnvironmentVariableKeys.ExecuteRPDPipeline),
+                    out bool value);
+                return value;
+            }
+        }
 
         /// <summary>
         /// Gets the RPD status timeout from environment variables.
