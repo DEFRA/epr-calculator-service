@@ -120,12 +120,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
                 ProducerDisposalFeesByMaterial = [],
                 ProducerCommsFeesByMaterial = []
             };
-            var materialDetail = new MaterialDetail
-            {
-                Code = "AL",
-                Description = "Aluminuim",
-                Name = "Alimunium"
-            };
+            var materialDetail = "AL";
             var producerCommsFees = new CalcResultSummaryProducerCommsFeesCostByMaterial();
             var calcResultSummaryProDis = new CalcResultSummaryProducerDisposalFeesByMaterial();
             producer.ProducerDisposalFeesByMaterial.Add(materialDetail, calcResultSummaryProDis);
