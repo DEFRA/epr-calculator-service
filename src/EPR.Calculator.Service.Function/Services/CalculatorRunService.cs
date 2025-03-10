@@ -124,6 +124,7 @@
         /// </returns>
         public async Task<bool> StartProcess(CalculatorRunParameter calculatorRunParameter)
         {
+            this.logger.LogInformation("Process started");
             bool isPomSuccessful = await this.RunPipelines(calculatorRunParameter, this.configuration.ExecuteRPDPipeline);
 
             bool isSuccess;
