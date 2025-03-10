@@ -4,11 +4,13 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
     using System.Threading.Tasks;
+    using AutoFixture;
     using Azure;
     using Azure.Analytics.Synapse.Artifacts;
     using Azure.Analytics.Synapse.Artifacts.Models;
     using Azure.Core;
     using EPR.Calculator.Service.Common.AzureSynapse;
+    using EPR.Calculator.Service.Common.UnitTests.AutoFixtureCustomisations;
     using Microsoft.Extensions.Logging;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
@@ -37,6 +39,10 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
         /// </summary>
         public AzureSynapseRunnerTests()
         {
+            this.Fixture = new Fixture();
+            this.Fixture.Customizations.Add(new CalendarYearCustomisation());
+            this.Fixture.Customizations.Add(new FinancialYearCustomisation());
+
             // Create a mock client factory to inject the mock pipeline clients into the test class.
             this.MockPipelineClient = new Mock<PipelineClient>();
             this.MockPipelineRunClient = new Mock<PipelineRunClient>();
@@ -71,12 +77,14 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
            => new AzureSynapseRunnerParameters
            {
                CalculatorRunId = CalculatorRunId,
-               CalendarYear = this.Year,
+               CalendarYear = this.Fixture.Create<CalendarYear>(),
                CheckInterval = CheckInterval,
                MaxCheckCount = MaxCheckCount,
                PipelineUrl = new Uri(TestPipelineUrl),
                PipelineName = TestPipelineName,
            };
+
+        private Fixture Fixture { get; init; }
 
         private AzureSynapseRunner TestClass { get; set; }
 
@@ -87,8 +95,6 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
         private Mock<HttpMessageHandler> MockStatusUpdateHandler { get; set; }
 
         private Mock<ILogger<AzureSynapseRunner>> Mocklogger { get; set; }
-
-        private string Year { get; } = "2024-25";
 
         /// <summary>
         /// Check that the non-test constructor

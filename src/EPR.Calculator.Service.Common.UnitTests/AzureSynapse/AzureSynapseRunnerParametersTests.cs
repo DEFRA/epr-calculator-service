@@ -3,6 +3,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
     using System;
     using AutoFixture;
     using EPR.Calculator.Service.Common.AzureSynapse;
+    using EPR.Calculator.Service.Common.UnitTests.AutoFixtureCustomisations;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     /// <summary>
@@ -17,9 +18,10 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
         public AzureSynapseRunnerParametersTests()
         {
             var fixture = new Fixture();
+            fixture.Customizations.Add(new CalendarYearCustomisation());
 
             this.CalculatorRunId = fixture.Create<int>();
-            this.CalendarYear = "2024";
+            this.CalendarYear = fixture.Create<CalendarYear>();
             this.CheckInterval = fixture.Create<int>();
             this.MaxCheckCount = fixture.Create<int>();
             this.PipelineName = fixture.Create<string>();
@@ -42,7 +44,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
         private int CalculatorRunId { get; }
 
-        private string CalendarYear { get; }
+        private CalendarYear CalendarYear { get; }
 
         private int CheckInterval { get; }
 

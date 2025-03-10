@@ -17,6 +17,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using Moq;
     using Moq.Protected;
     using EPR.Calculator.Service.Function.Enums;
+    using EPR.Calculator.Service.Common.UnitTests.AutoFixtureCustomisations;
 
     /// <summary>
     /// Contains unit tests for the CalculatorRunService class.
@@ -24,9 +25,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     [TestClass]
     public class CalculatorRunServiceTests
     {
-        private const string FinancialYear = "2024-25";
+        private FinancialYear FinancialYear { get; init; } = "2024-25";
 
-        private const string CalendarYear = "2024";
+        private CalendarYear CalendarYear { get; init; } = "2023";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CalculatorRunServiceTests"/> class.
@@ -34,6 +35,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public CalculatorRunServiceTests()
         {
             this.Fixture = new Fixture();
+            this.Fixture.Customizations.Add(new FinancialYearCustomisation());
             this.AzureSynapseRunner = new Mock<IAzureSynapseRunner>();
             this.MockLogger = new Mock<ILogger<CalculatorRunService>>();
             this.TransposeService = new Mock<ITransposePomAndOrgDataService>();
@@ -154,7 +156,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var calculatorRunParameters = new CalculatorRunParameter
             {
                 Id = id,
-                FinancialYear = FinancialYear,
+                FinancialYear = this.FinancialYear,
                 User = user,
             };
 
@@ -163,7 +165,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 CalculatorRunId = id,
                 CheckInterval = checkInterval,
-                CalendarYear = CalendarYear,
+                CalendarYear = this.CalendarYear,
                 MaxCheckCount = maxCheckCount,
                 PipelineUrl = pipelineUrl,
                 PipelineName = orgPipelineName,
@@ -173,7 +175,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.AzureSynapseRunner.Setup(t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
                 p.CalculatorRunId == id &&
                 p.CheckInterval == checkInterval &&
-                p.CalendarYear == CalendarYear &&
+                p.CalendarYear == this.CalendarYear &&
                 p.MaxCheckCount == maxCheckCount &&
                 p.PipelineUrl == pipelineUrl &&
                 p.PipelineName == orgPipelineName)))
@@ -189,20 +191,22 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
                 p.CalculatorRunId == id &&
                 p.CheckInterval == checkInterval &&
-                p.CalendarYear == CalendarYear &&
+                p.CalendarYear == this.CalendarYear &&
                 p.MaxCheckCount == maxCheckCount &&
                 p.PipelineUrl == pipelineUrl &&
-                p.PipelineName == orgPipelineName)), Times.Once);
+                p.PipelineName == orgPipelineName)),
+                Times.Once);
 
             // Verify that the pom pipeline was not called
             this.AzureSynapseRunner.Verify(
                 t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
                 p.CalculatorRunId == id &&
                 p.CheckInterval == checkInterval &&
-                p.CalendarYear == CalendarYear &&
+                p.CalendarYear == this.CalendarYear &&
                 p.MaxCheckCount == maxCheckCount &&
                 p.PipelineUrl == pipelineUrl &&
-                p.PipelineName == pomPipelineName)), Times.Never);
+                p.PipelineName == pomPipelineName)),
+                Times.Never);
         }
 
         /// <summary>
@@ -331,7 +335,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var calculatorRunParameters = new CalculatorRunParameter
             {
                 Id = id,
-                FinancialYear = FinancialYear,
+                FinancialYear = this.FinancialYear,
                 User = user,
             };
 
@@ -340,7 +344,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 CalculatorRunId = id,
                 CheckInterval = checkInterval,
-                CalendarYear = CalendarYear,
+                CalendarYear = this.CalendarYear,
                 MaxCheckCount = maxCheckCount,
                 PipelineUrl = pipelineUrl,
                 PipelineName = orgPipelineName,
@@ -350,7 +354,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 CalculatorRunId = id,
                 CheckInterval = checkInterval,
-                CalendarYear = FinancialYear,
+                CalendarYear = this.CalendarYear,
                 MaxCheckCount = maxCheckCount,
                 PipelineUrl = pipelineUrl,
                 PipelineName = pomPipelineName,
