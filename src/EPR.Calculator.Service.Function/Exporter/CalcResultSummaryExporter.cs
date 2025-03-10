@@ -195,7 +195,7 @@ namespace EPR.Calculator.Service.Function.Exporter
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.HouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
 
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.PublicBinTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                if (this.extraColumns.Contains(disposalFee.Key.Code))
+                if (this.extraColumns.Contains(disposalFee.Key))
                 {
                     csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.HouseholdDrinksContainersTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 }
@@ -221,7 +221,7 @@ namespace EPR.Calculator.Service.Function.Exporter
             {
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.HouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ReportedPublicBinTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                if (this.extraColumns.Contains(disposalFee.Key.Code))
+                if (this.extraColumns.Contains(disposalFee.Key))
                 {
                     csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.HouseholdDrinksContainers, DecimalPlaces.Three, DecimalFormats.F3));
                 }
