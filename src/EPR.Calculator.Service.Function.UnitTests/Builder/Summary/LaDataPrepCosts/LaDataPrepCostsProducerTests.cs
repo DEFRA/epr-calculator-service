@@ -300,6 +300,7 @@
         public void TearDown()
         {
             _dbContext?.Database.EnsureDeleted();
+            _dbContext?.Dispose();
         }
 
         [TestMethod]

@@ -1,6 +1,7 @@
 ﻿namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
     using AutoFixture;
+    using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Function.Data;
     using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Dtos;
@@ -40,7 +41,8 @@
                 this._context,
                 this.CommandTimeoutService,
                 new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
-                new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object);
+                new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
+                new Mock<ICalculatorTelemetryLogger>().Object);
         }
 
         private ICommandTimeoutService CommandTimeoutService { get; init; }
@@ -336,8 +338,6 @@
             };
             return list;
         }
-
-
 
         protected static IEnumerable<CalculatorRun> GetCalculatorRuns()
         {

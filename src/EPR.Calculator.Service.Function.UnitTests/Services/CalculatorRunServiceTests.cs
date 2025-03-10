@@ -3,11 +3,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using System.Net;
     using System.Net.Http;
     using AutoFixture;
-    using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
+    using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Common.Utils;
     using EPR.Calculator.Service.Function.Constants;
+    using EPR.Calculator.Service.Function.Dtos;
+    using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Interface;
     using EPR.Calculator.Service.Function.Misc;
     using EPR.Calculator.Service.Function.Services;
@@ -16,7 +18,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using Microsoft.Extensions.Logging;
     using Moq;
     using Moq.Protected;
-    using EPR.Calculator.Service.Function.Enums;
 
     /// <summary>
     /// Contains unit tests for the CalculatorRunService class.
@@ -31,8 +32,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             this.Fixture = new Fixture();
             this.AzureSynapseRunner = new Mock<IAzureSynapseRunner>();
-            this.MockLogger = new Mock<ILogger<CalculatorRunService>>();
+            this.MockLogger = new Mock<ICalculatorTelemetryLogger>();
             this.TransposeService = new Mock<ITransposePomAndOrgDataService>();
+            this.RunNameService = new Mock<IRunNameService>();
 
             this.MockStatusUpdateHandler = new Mock<HttpMessageHandler>();
             this.MockStatusUpdateHandler.Protected()
@@ -45,12 +47,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.PrepareCalcService = new Mock<IPrepareCalcService>();
             this.PrepareCalcService.Setup(s => s.PrepareCalcResults(
                 It.IsAny<CalcResultsRequestDto>(),
-                It.IsAny<CancellationToken>()))
+                It.IsAny<CancellationToken>(),
+                It.IsAny<string>()))
                 .ReturnsAsync(true);
 
             var statusService = new Mock<IRpdStatusService>();
             statusService.Setup(s => s.UpdateRpdStatus(
                 It.IsAny<int>(),
+                It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<bool>(),
                 It.IsAny<CancellationToken>()))
@@ -76,6 +80,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             this.TransposeService.Setup(t => t.TransposeBeforeCalcResults(
                 It.IsAny<CalcResultsRequestDto>(),
+                It.IsAny<string>(),
                 It.IsAny<CancellationToken>()))
                 .ReturnsAsync(true);
 
@@ -90,7 +95,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         private Mock<IAzureSynapseRunner> AzureSynapseRunner { get; }
 
-        private Mock<ILogger<CalculatorRunService>> MockLogger { get; }
+        private Mock<ICalculatorTelemetryLogger> MockLogger { get; }
 
         private Fixture Fixture { get; }
 
@@ -101,6 +106,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         private Mock<ITransposePomAndOrgDataService> TransposeService { get; }
 
         private Mock<IPrepareCalcService> PrepareCalcService { get; init; }
+
+        private Mock<IRunNameService> RunNameService { get; }
 
         /// <summary>
         /// Checks that the service calls the Azure Synapse runner and passes the correct parameters to it.
@@ -113,6 +120,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var id = this.Fixture.Create<int>();
             var financialYear = "2024-25";
             var user = this.Fixture.Create<string>();
+            var runName = "Test Run Name";
 
             var checkInterval = this.Fixture.Create<int>();
             Environment.SetEnvironmentVariable(
@@ -176,8 +184,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 p.PipelineName == orgPipelineName)))
                 .ReturnsAsync(false);
 
+            this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
+
             // Act
-            await this.CalculatorRunService.StartProcess(calculatorRunParameters);
+            await this.CalculatorRunService.StartProcess(calculatorRunParameters, runName);
 
             // Assert
 
@@ -220,6 +230,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var id = this.Fixture.Create<int>();
             var financialYear = "2024-25";
             var user = this.Fixture.Create<string>();
+            var runName = "Test Run Name";
 
             var checkInterval = this.Fixture.Create<int>();
             Environment.SetEnvironmentVariable(
@@ -272,8 +283,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.AzureSynapseRunner.Setup(t => t.Process(It.IsAny<AzureSynapseRunnerParameters>()))
                 .ReturnsAsync(true);
 
+            this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
+
             // Act
-            await this.CalculatorRunService.StartProcess(calculatorRunParameters);
+            await this.CalculatorRunService.StartProcess(calculatorRunParameters, runName);
 
             // Assert
             this.AzureSynapseRunner.Verify(
@@ -297,6 +310,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var id = this.Fixture.Create<int>();
             var financialYear = "2024-25";
             var user = this.Fixture.Create<string>();
+            var runName = "Test Run Name";
 
             var checkInterval = 5;
             Environment.SetEnvironmentVariable(
@@ -362,8 +376,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.AzureSynapseRunner.Setup(t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
                 p.PipelineName == pomPipelineName))).ReturnsAsync(true);
 
+            this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
+
             // Act
-            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters);
+            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters, runName);
 
             // Assert
             Assert.IsTrue(result);
@@ -390,6 +406,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var id = this.Fixture.Create<int>();
             var financialYear = "2024-25";
             var user = this.Fixture.Create<string>();
+            var runName = "Test Run Name";
 
             var checkInterval = 5;
             Environment.SetEnvironmentVariable(
@@ -439,8 +456,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.AzureSynapseRunner.Setup(t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
                 p.PipelineName == pomPipelineName))).ReturnsAsync(false);
 
+            this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
+
             // Act
-            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters);
+            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters, runName);
 
             // Assert
             Assert.IsFalse(result);
@@ -485,9 +504,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var calculatorRunParameters = this.Fixture.Create<CalculatorRunParameter>();
             calculatorRunParameters.FinancialYear = "2024-25";
+            var runName = "Test Run Name";
+
+            this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
 
             // Act
-            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters);
+            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters, runName);
 
             // Assert
             Assert.IsFalse(result);
@@ -522,9 +544,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var calculatorRunParameters = this.Fixture.Create<CalculatorRunParameter>();
             calculatorRunParameters.FinancialYear = "2024-25";
+            var runName = "Test Run Name";
+
+            this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
 
             // Act
-            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters);
+            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters, runName);
 
             // Assert
             Assert.IsFalse(result);
@@ -542,5 +567,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
             }
         }
+
+
     }
 }

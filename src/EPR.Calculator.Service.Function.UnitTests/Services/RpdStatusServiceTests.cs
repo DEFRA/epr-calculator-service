@@ -7,6 +7,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using System.Threading;
     using System.Threading.Tasks;
     using AutoFixture;
+    using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Function.Data;
     using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Enums;
@@ -55,13 +56,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.Configuration = new Mock<IConfigurationService>();
             this.Configuration.Setup(s => s.BlobContainerName)
                 .Returns(this.Fixture.Create<string>());
+            this.telemetryLogger = new Mock<ICalculatorTelemetryLogger>();
 
             this.TestClass = new RpdStatusService(
                 this.Configuration.Object,
                 contextFactory.Object,
                 this.CommandTimeoutService.Object,
                 this.Validator.Object,
-                this.Wrapper.Object);
+                this.Wrapper.Object,
+                this.telemetryLogger.Object);
         }
 
         private RpdStatusService TestClass { get; init; }
@@ -77,6 +80,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         private Mock<IOrgAndPomWrapper> Wrapper { get; init; }
 
         private Mock<ICommandTimeoutService> CommandTimeoutService { get; set; }
+
+        private Mock<ICalculatorTelemetryLogger> telemetryLogger { get; init; }
 
         private void SetupRunClassifications()
         {
@@ -108,6 +113,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             await this.TestClass.UpdateRpdStatus(
                 runId,
                 this.Fixture.Create<string>(),
+                this.Fixture.Create<string>(),
                 false,
                 CancellationToken.None);
 
@@ -132,6 +138,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Act
             await this.TestClass.UpdateRpdStatus(
                 runId,
+                this.Fixture.Create<string>(),
                 this.Fixture.Create<string>(),
                 true,
                 CancellationToken.None);
@@ -172,6 +179,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 await this.TestClass.UpdateRpdStatus(
                     runId,
                     this.Fixture.Create<string>(),
+                    this.Fixture.Create<string>(),
                     true,
                     CancellationToken.None);
             }
@@ -204,6 +212,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 await this.TestClass.UpdateRpdStatus(
                     runId,
+                    this.Fixture.Create<string>(),
                     this.Fixture.Create<string>(),
                     true,
                     CancellationToken.None);
@@ -239,6 +248,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 await this.TestClass.UpdateRpdStatus(
                     runId,
+                    this.Fixture.Create<string>(),
                     this.Fixture.Create<string>(),
                     true,
                     CancellationToken.None);
