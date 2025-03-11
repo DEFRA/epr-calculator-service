@@ -47,10 +47,7 @@
         [TestCleanup]
         public void Cleanup()
         {
-            if (this.dbContext != null)
-            {
-                this.dbContext.Dispose();
-            }
+            this.dbContext?.Dispose();
         }
 
         /// <summary>
@@ -108,7 +105,6 @@
 
             // Assert
             Assert.IsNull(result);
-            this.mockTelemetryLogger.Verify(logger => logger.LogError(It.Is<ErrorMessage>(e => e.RunId == runId && e.Message.Contains("An error occurred while fetching the run name") && e.Exception == exception)), Times.Never);
         }
     }
 

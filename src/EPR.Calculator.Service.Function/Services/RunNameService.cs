@@ -41,13 +41,7 @@
             }
             catch (Exception ex)
             {
-                this.telemetryLogger.LogError(new ErrorMessage
-                {
-                    RunId = runId,
-                    Message = "An error occurred while fetching the run name.",
-                    Exception = ex,
-                });
-
+                this.telemetryLogger.LogError(new ErrorMessage { Message = "Error fetching run name", Exception = ex });
                 return null;
             }
         }
