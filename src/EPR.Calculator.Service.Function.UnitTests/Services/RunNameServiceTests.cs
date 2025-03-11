@@ -100,13 +100,15 @@
         {
             // Arrange
             var runId = 1;
-            this.dbContextFactory.Setup(factory => factory.CreateDbContext()).Throws(new Exception("Test Exception"));
+            var exception = new Exception("Test Exception");
+            this.dbContextFactory.Setup(factory => factory.CreateDbContext()).Throws(exception);
 
             // Act
             var result = await this.runNameService.GetRunNameAsync(runId);
 
             // Assert
             Assert.IsNull(result);
+            this.mockTelemetryLogger.Verify(logger => logger.LogError(It.Is<ErrorMessage>(e => e.RunId == runId && e.Message.Contains("An error occurred while fetching the run name") && e.Exception == exception)), Times.Never);
         }
     }
 
