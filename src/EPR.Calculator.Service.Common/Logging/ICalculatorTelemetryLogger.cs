@@ -10,18 +10,13 @@
         /// <summary>
         /// Logs an informational message.
         /// </summary>
-        /// <param name="runId">The unique identifier for the run.</param>
-        /// <param name="runName">The name of the run.</param>
-        /// <param name="message">The message to log.</param>
-        void LogInformation(string runId, string runName, string message);
+        /// <param name="logMessage">The log message to log.</param>
+        void LogInformation(TrackMessage logMessage);
 
         /// <summary>
         /// Logs an error message.
         /// </summary>
-        /// <param name="runId">The unique identifier for the run.</param>
-        /// <param name="runName">The name of the run.</param>
-        /// <param name="message">The message to log.</param>
-        /// <param name="ex">The exception to log.</param>
-        void LogError(string runId, string runName, string message, Exception ex);
+        /// <param name="errorMessage">The log message to log.</param>
+        void LogError(ErrorMessage errorMessage);
     }
 }

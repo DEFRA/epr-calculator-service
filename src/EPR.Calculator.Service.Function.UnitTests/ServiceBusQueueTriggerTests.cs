@@ -5,6 +5,7 @@
 namespace EPR.Calculator.Service.Function.UnitTests
 {
     using EPR.Calculator.Service.Common;
+    using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Function.Interface;
     using Microsoft.Extensions.Logging;
     using Moq;
@@ -21,7 +22,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         private readonly Mock<ICalculatorRunService> calculatorRunService;
         private readonly Mock<ICalculatorRunParameterMapper> parameterMapper;
         private readonly Mock<IRunNameService> runNameService;
-        private readonly Mock<ILogger> mockLogger;
+        private readonly Mock<ICalculatorTelemetryLogger> telemetryLogger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceBusQueueTriggerTests"/> class.
@@ -31,11 +32,12 @@ namespace EPR.Calculator.Service.Function.UnitTests
             this.calculatorRunService = new Mock<ICalculatorRunService>();
             this.parameterMapper = new Mock<ICalculatorRunParameterMapper>();
             this.runNameService = new Mock<IRunNameService>();
+            this.telemetryLogger = new Mock<ICalculatorTelemetryLogger>();
             this.function = new ServiceBusQueueTrigger(
                 this.calculatorRunService.Object,
                 this.parameterMapper.Object,
-                this.runNameService.Object);
-            this.mockLogger = new Mock<ILogger>();
+                this.runNameService.Object,
+                this.telemetryLogger.Object);
         }
 
         /// <summary>
@@ -75,7 +77,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             };
 
             // Act
-            await this.function.Run(myQueueItem, this.mockLogger.Object);
+            await this.function.Run(myQueueItem);
 
             // Assert
             this.calculatorRunService.Verify(
@@ -85,13 +87,9 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 Times.Once);
 
             // Optionally, verify logging if needed
-            this.mockLogger.Verify(
-                x => x.Log(
-                    It.Is<LogLevel>(l => l == LogLevel.Information),
-                    It.IsAny<EventId>(),
-                    It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Executing the function app started")),
-                    It.IsAny<Exception>(),
-                    It.Is<Func<It.IsAnyType, Exception, string>>((v, t) => true)),
+            this.telemetryLogger.Verify(
+                x => x.LogInformation(It.Is<TrackMessage>(log =>
+                    log.Message.Contains("Executing the function app started"))),
                 Times.Once);
         }
 
@@ -106,16 +104,13 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var myQueueItem = string.Empty;
 
             // Act
-            await this.function.Run(myQueueItem, this.mockLogger.Object);
+            await this.function.Run(myQueueItem);
 
             // Assert
-            this.mockLogger.Verify(
-                log => log.Log(
-                    LogLevel.Error,
-                    It.IsAny<EventId>(),
-                    It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Message is null or empty")),
-                    It.IsAny<Exception>(),
-                    It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+            this.telemetryLogger.Verify(
+                log => log.LogError(It.Is<ErrorMessage>(msg =>
+                    msg.Message.Contains("Message is null or empty") &&
+                    msg.Exception is ArgumentNullException)),
                 Times.Once);
         }
 
@@ -131,16 +126,13 @@ namespace EPR.Calculator.Service.Function.UnitTests
             this.parameterMapper.Setup(t => t.Map(It.IsAny<CalculatorParameter>())).Throws<JsonException>();
 
             // Act
-            await this.function.Run(myQueueItem, this.mockLogger.Object);
+            await this.function.Run(myQueueItem);
 
             // Assert
-            this.mockLogger.Verify(
-                log => log.Log(
-                    LogLevel.Error,
-                    It.IsAny<EventId>(),
-                    It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Incorrect format")),
-                    It.IsAny<Exception>(),
-                    It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+            this.telemetryLogger.Verify(
+                log => log.LogError(It.Is<ErrorMessage>(msg =>
+                    msg.Message.Contains("Incorrect format") &&
+                    msg.Exception is JsonException)),
                 Times.Once);
         }
 
@@ -156,16 +148,13 @@ namespace EPR.Calculator.Service.Function.UnitTests
             this.parameterMapper.Setup(t => t.Map(It.IsAny<CalculatorParameter>())).Throws<Exception>();
 
             // Act
-            await this.function.Run(myQueueItem, this.mockLogger.Object);
+            await this.function.Run(myQueueItem);
 
             // Assert
-            this.mockLogger.Verify(
-                log => log.Log(
-                    LogLevel.Error,
-                    It.IsAny<EventId>(),
-                    It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Error")),
-                    It.IsAny<Exception>(),
-                    It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+            this.telemetryLogger.Verify(
+                log => log.LogError(It.Is<ErrorMessage>(msg =>
+                    msg.Message.Contains("Error") &&
+                    msg.Exception is Exception)),
                 Times.Once);
         }
 
@@ -188,16 +177,13 @@ namespace EPR.Calculator.Service.Function.UnitTests
             this.calculatorRunService.Setup(t => t.StartProcess(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).ThrowsAsync(new Exception("Unhandled exception"));
 
             // Act
-            await this.function.Run(myQueueItem, this.mockLogger.Object);
+            await this.function.Run(myQueueItem);
 
             // Assert
-            this.mockLogger.Verify(
-                log => log.Log(
-                    LogLevel.Error,
-                    It.IsAny<EventId>(),
-                    It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Unhandled exception")),
-                    It.IsAny<Exception>(),
-                    It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+            this.telemetryLogger.Verify(
+                log => log.LogError(It.Is<ErrorMessage>(msg =>
+                    msg.Message.Contains("Unhandled exception") &&
+                    msg.Exception is Exception)),
                 Times.Once);
         }
     }

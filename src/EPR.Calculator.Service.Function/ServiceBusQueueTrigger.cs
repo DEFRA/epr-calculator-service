@@ -4,6 +4,7 @@
 
 using System;
 using System.Threading.Tasks;
+using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function;
 using EPR.Calculator.Service.Function.Interface;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
@@ -22,6 +23,7 @@ namespace EPR.Calculator.Service.Function
     {
         private readonly ICalculatorRunService calculatorRunService;
         private readonly ICalculatorRunParameterMapper calculatorRunParameterMapper;
+        private readonly ICalculatorTelemetryLogger telemetryLogger;
         private readonly IRunNameService runNameService;
 
         /// <summary>
@@ -30,29 +32,32 @@ namespace EPR.Calculator.Service.Function
         /// <param name="calculatorRunService">Service to trigger the process for synapse pipeline.</param>
         /// <param name="calculatorRunParameterMapper">Mapper class to map and get the parameter.</param>
         /// <param name="runNameService">Service to fetch the run name from the database.</param>
+        /// <param name="telemetryLogger">Service to fetch the telemetry log.</param>
         public ServiceBusQueueTrigger(
             ICalculatorRunService calculatorRunService,
             ICalculatorRunParameterMapper calculatorRunParameterMapper,
-            IRunNameService runNameService)
+            IRunNameService runNameService,
+            ICalculatorTelemetryLogger telemetryLogger)
         {
             this.calculatorRunService = calculatorRunService;
             this.calculatorRunParameterMapper = calculatorRunParameterMapper;
             this.runNameService = runNameService;
+            this.telemetryLogger = telemetryLogger;
         }
 
         /// <summary>
         /// Triggering Azure function <see cref="Run"/> to read the message from Service Bus.
         /// </summary>
         /// <param name="myQueueItem">Service Bus message.</param>
-        /// <param name="log">Logger object for logging.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [FunctionName("EPRCalculatorRunServiceBusQueueTrigger")]
-        public async Task Run([ServiceBusTrigger(queueName: "%ServiceBusQueueName%", Connection = "ServiceBusConnectionString")] string myQueueItem, ILogger log)
+        public async Task Run([ServiceBusTrigger(queueName: "%ServiceBusQueueName%", Connection = "ServiceBusConnectionString")] string myQueueItem)
         {
-            log.LogInformation("Executing the function app started");
+            this.telemetryLogger.LogInformation(new TrackMessage { Message = "Executing the function app started" });
+
             if (string.IsNullOrEmpty(myQueueItem))
             {
-                log.LogError("Message is null or empty");
+                this.telemetryLogger.LogError(new ErrorMessage { Message = "Message is null or empty", Exception = new ArgumentNullException() });
                 return;
             }
 
@@ -65,18 +70,23 @@ namespace EPR.Calculator.Service.Function
                 var runName = await this.runNameService.GetRunNameAsync(calculatorRunParameter.Id);
 
                 bool processStatus = await this.calculatorRunService.StartProcess(calculatorRunParameter, runName);
-                log.LogInformation($"Process status: {processStatus}");
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = calculatorRunParameter.Id,
+                    RunName = runName,
+                    Message = $"Process status: {processStatus}",
+                });
             }
             catch (JsonException jsonex)
             {
-                log.LogError($"Incorrect format - {myQueueItem} - {jsonex.Message}");
+                this.telemetryLogger.LogError(new ErrorMessage { Message = $"Incorrect format - {myQueueItem} - {jsonex.Message}", Exception = jsonex });
             }
             catch (Exception ex)
             {
-                log.LogError($"Error - {myQueueItem} - {ex.Message}");
+                this.telemetryLogger.LogError(new ErrorMessage { Message = $"Error - {myQueueItem} - {ex.Message}", Exception = ex });
             }
 
-            log.LogInformation("Azure function app execution finished");
+            this.telemetryLogger.LogInformation(new TrackMessage { Message = "Azure function app execution finished" });
         }
     }
 }

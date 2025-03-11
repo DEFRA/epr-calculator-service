@@ -6,10 +6,6 @@
     /// <summary>
     /// Logger for telemetry data in the calculator service.
     /// </summary>
-    /// <remarks>
-    /// Initializes a new instance of the <see cref="CalculatorTelemetryLogger"/> class.
-    /// </remarks>
-    /// <param name="telemetryClient">The telemetry client to use for logging.</param>
     public class CalculatorTelemetryLogger : ICalculatorTelemetryLogger
     {
         private readonly ITelemetryClientWrapper telemetryClient;
@@ -26,44 +22,56 @@
         /// <summary>
         /// Logs an informational message.
         /// </summary>
-        /// <param name="runId">The run identifier.</param>
-        /// <param name="runName">The run name.</param>
-        /// <param name="message">The message to log.</param>
-        public void LogInformation(string runId, string runName, string message)
+        /// <param name="logMessage">The log message to log.</param>
+        public void LogInformation(TrackMessage logMessage)
         {
-            this.TrackTrace(runId, runName, message, SeverityLevel.Information);
+            this.TrackTrace(logMessage, SeverityLevel.Information);
         }
 
         /// <summary>
         /// Logs an error message.
         /// </summary>
-        /// <param name="runId">The run identifier.</param>
-        /// <param name="runName">The run name.</param>
-        /// <param name="message">The message to log.</param>
-        /// <param name="ex">The exception to log.</param>
-        public void LogError(string runId, string runName, string message, Exception ex)
+        /// <param name="errorMessage">The error message to log.</param>
+        public void LogError(ErrorMessage errorMessage)
         {
-            var telemetry = new ExceptionTelemetry(ex)
+            var formattedMessage = CreateLogMessage(errorMessage.RunId, errorMessage.RunName, errorMessage.Message);
+            var exceptionTelemetry = new ExceptionTelemetry(errorMessage.Exception)
             {
                 SeverityLevel = SeverityLevel.Error,
-                Message = CreateLogMessage(runId, runName, message),
+                Message = formattedMessage,
             };
-            this.telemetryClient.TrackException(telemetry);
+            AddProperties(exceptionTelemetry.Properties, errorMessage.RunId, errorMessage.RunName);
+            this.telemetryClient.TrackException(exceptionTelemetry);
         }
 
-        private static string CreateLogMessage(string runId, string runName, string message)
+        private static string CreateLogMessage(int? runId, string? runName, string message)
         {
             return $"[{DateTime.Now}] RunId: {runId}, RunName: {runName}, Message: {message}";
         }
 
-        private void TrackTrace(string runId, string runName, string message, SeverityLevel severityLevel)
+        private static void AddProperties(IDictionary<string, string> properties, int? runId, string? runName)
         {
-            var telemetry = new TraceTelemetry
+            if (runId.HasValue)
             {
-                Message = CreateLogMessage(runId, runName, message),
+                properties["RunId"] = runId.Value.ToString();
+            }
+
+            if (!string.IsNullOrEmpty(runName))
+            {
+                properties["RunName"] = runName;
+            }
+        }
+
+        private void TrackTrace(TrackMessage logMessage, SeverityLevel severityLevel)
+        {
+            var formattedMessage = CreateLogMessage(logMessage.RunId, logMessage.RunName, logMessage.Message);
+            var traceTelemetry = new TraceTelemetry
+            {
+                Message = formattedMessage,
                 SeverityLevel = severityLevel,
             };
-            this.telemetryClient.TrackTrace(telemetry);
+            AddProperties(traceTelemetry.Properties, logMessage.RunId, logMessage.RunName);
+            this.telemetryClient.TrackTrace(traceTelemetry);
         }
     }
 }

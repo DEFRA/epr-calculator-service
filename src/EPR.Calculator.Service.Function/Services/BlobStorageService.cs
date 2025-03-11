@@ -10,6 +10,9 @@
     using Microsoft.Extensions.Logging;
     using Newtonsoft.Json.Linq;
 
+    /// <summary>
+    /// Service for handling blob storage operations.
+    /// </summary>
     public class BlobStorageService : IStorageService
     {
         public const string BlobConnectionStringMissingError = "BlobStorage settings are missing in configuration.";
@@ -21,6 +24,13 @@
         private readonly StorageSharedKeyCredential sharedKeyCredential;
         private readonly ICalculatorTelemetryLogger telemetryLogger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BlobStorageService"/> class.
+        /// </summary>
+        /// <param name="blobServiceClient">The blob service client.</param>
+        /// <param name="config">The configuration service.</param>
+        /// <param name="telemetryLogger">The telemetry logger.</param>
+        /// <exception cref="ConfigurationErrorsException">Thrown when the container name is missing in the configuration.</exception>
         public BlobStorageService(
             BlobServiceClient blobServiceClient,
             IConfigurationService config,
@@ -31,21 +41,38 @@
             this.telemetryLogger = telemetryLogger;
         }
 
+        /// <inheritdoc/>
         public async Task<string> UploadResultFileContentAsync(string fileName, string content, string runName)
         {
-            string runId = fileName.Split('-')[0];
+            int? runId = int.TryParse(fileName.Split('-')[0], out var id) ? id : (int?)null;
             try
             {
-                this.telemetryLogger.LogInformation(runId, runName, "Upload Blob started...");
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = runId,
+                    RunName = runName,
+                    Message = "Upload Blob started...",
+                });
                 var blobClient = this.containerClient.GetBlobClient(fileName);
                 var binaryData = BinaryData.FromString(content);
                 await blobClient.UploadAsync(binaryData);
-                this.telemetryLogger.LogInformation(runId, runName, "Upload Blob end...");
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = runId,
+                    RunName = runName,
+                    Message = "Upload Blob end...",
+                });
                 return blobClient.Uri.ToString();
             }
             catch (Exception ex)
             {
-                this.telemetryLogger.LogError(runId, runName, "Error writing a Blob ", ex);
+                this.telemetryLogger.LogError(new ErrorMessage
+                {
+                    RunId = runId,
+                    RunName = runName,
+                    Message = "Error writing a Blob",
+                    Exception = ex,
+                });
                 return string.Empty;
             }
         }

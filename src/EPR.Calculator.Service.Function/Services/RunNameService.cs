@@ -1,6 +1,8 @@
 ﻿namespace EPR.Calculator.Service.Function.Services
 {
+    using System;
     using System.Threading.Tasks;
+    using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Function.Data;
     using EPR.Calculator.Service.Function.Interface;
     using Microsoft.Data.SqlClient;
@@ -9,24 +11,22 @@
     /// <summary>
     /// Service to fetch the run name from the database.
     /// </summary>
-    public class RunNameService : IRunNameService
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="RunNameService"/> class.
+    /// </remarks>
+    /// <param name="configuration">The configuration object.</param>
+    /// <param name="context">The context object.</param>
+    /// <param name="telemetryLogger">The telemetry logger.</param>
+    public class RunNameService(
+        IConfigurationService configuration,
+        IDbContextFactory<ApplicationDBContext> context,
+        ICalculatorTelemetryLogger telemetryLogger): IRunNameService
     {
-        private readonly IConfigurationService configuration;
+        private readonly IConfigurationService configuration = configuration;
 
-        private ApplicationDBContext Context { get; init; }
+        private readonly ICalculatorTelemetryLogger telemetryLogger = telemetryLogger;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RunNameService"/> class.
-        /// </summary>
-        /// <param name="configuration">The configuration object.</param>
-        /// <param name="context">The context object.</param>
-        public RunNameService(
-            IConfigurationService configuration,
-            IDbContextFactory<ApplicationDBContext> context)
-        {
-            this.configuration = configuration;
-            this.Context = context.CreateDbContext();
-        }
+        private ApplicationDBContext Context { get; init; } = context.CreateDbContext();
 
         /// <summary>
         /// Gets the run name for the specified run ID.
@@ -35,10 +35,24 @@
         /// <returns>The run name.</returns>
         public async Task<string?> GetRunNameAsync(int runId)
         {
-            var run = await this.Context.CalculatorRuns
-                .FirstOrDefaultAsync(r => r.Id == runId);
+            try
+            {
+                var run = await this.Context.CalculatorRuns
+                    .SingleOrDefaultAsync(r => r.Id == runId);
 
-            return run?.Name;
+                return run?.Name;
+            }
+            catch (Exception ex)
+            {
+                this.telemetryLogger.LogError(new ErrorMessage
+                {
+                    RunId = runId,
+                    Message = "An error occurred while fetching the run name.",
+                    Exception = ex,
+                });
+
+                return null;
+            }
         }
     }
 }

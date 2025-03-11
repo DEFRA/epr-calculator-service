@@ -15,6 +15,9 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
 
+    /// <summary>
+    /// Service for transposing POM and organization data.
+    /// </summary>
     public class TransposePomAndOrgDataService : ITransposePomAndOrgDataService
     {
         private readonly ApplicationDBContext context;
@@ -74,7 +77,12 @@
             CalculatorRun? calculatorRun = null;
             try
             {
-                this.telemetryLogger.LogInformation(resultsRequestDto.RunId.ToString(), runName, $"Transpose POM and ORG data for run: {resultsRequestDto.RunId}");
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = resultsRequestDto.RunId,
+                    RunName = runName,
+                    Message = $"Transpose POM and ORG data for run: {resultsRequestDto.RunId}",
+                });
                 calculatorRun = await this.context.CalculatorRuns.SingleOrDefaultAsync(
                 run => run.Id == resultsRequestDto.RunId,
                 cancellationToken);
@@ -88,32 +96,61 @@
                     cancellationToken);
                 var endTime = DateTime.Now;
                 var timeDiff = startTime - endTime;
-                this.telemetryLogger.LogInformation(resultsRequestDto.RunId.ToString(), runName, $"Transpose POM and ORG data for run: {resultsRequestDto.RunId} completed in {timeDiff.TotalSeconds} seconds");
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = resultsRequestDto.RunId,
+                    RunName = runName,
+                    Message = $"Transpose POM and ORG data for run: {resultsRequestDto.RunId} completed in {timeDiff.TotalSeconds} seconds",
+                });
                 return true;
             }
             catch (OperationCanceledException exception)
             {
-                this.telemetryLogger.LogError(resultsRequestDto.RunId.ToString(), runName, "Operation cancelled", exception);
+                this.telemetryLogger.LogError(new ErrorMessage
+                {
+                    RunId = resultsRequestDto.RunId,
+                    RunName = runName,
+                    Message = "Operation cancelled",
+                    Exception = exception,
+                });
 
                 if (calculatorRun != null)
                 {
                     calculatorRun.CalculatorRunClassificationId = (int)RunClassification.ERROR;
                     this.context.CalculatorRuns.Update(calculatorRun);
                     await this.context.SaveChangesAsync();
-                    this.telemetryLogger.LogError(resultsRequestDto.RunId.ToString(), runName, "RunId is updated with ClassificationId Error", exception);
+                    this.telemetryLogger.LogError(new ErrorMessage
+                    {
+                        RunId = resultsRequestDto.RunId,
+                        RunName = runName,
+                        Message = "RunId is updated with ClassificationId Error",
+                        Exception = exception,
+                    });
                 }
 
                 return false;
             }
             catch (Exception exception)
             {
-                this.telemetryLogger.LogError(resultsRequestDto.RunId.ToString(), runName, "Error occurred while transposing POM and ORG data", exception);
+                this.telemetryLogger.LogError(new ErrorMessage
+                {
+                    RunId = resultsRequestDto.RunId,
+                    RunName = runName,
+                    Message = "Error occurred while transposing POM and ORG data",
+                    Exception = exception,
+                });
                 if (calculatorRun != null)
                 {
                     calculatorRun.CalculatorRunClassificationId = (int)RunClassification.ERROR;
                     this.context.CalculatorRuns.Update(calculatorRun);
                     await this.context.SaveChangesAsync();
-                    this.telemetryLogger.LogError(resultsRequestDto.RunId.ToString(), runName, "RunId is updated with ClassificationId Error", exception);
+                    this.telemetryLogger.LogError(new ErrorMessage
+                    {
+                        RunId = resultsRequestDto.RunId,
+                        RunName = runName,
+                        Message = "RunId is updated with ClassificationId Error",
+                        Exception = exception,
+                    });
                 }
             }
 
@@ -266,7 +303,7 @@
                         OrganisationName = org.OrganisationName,
                         SubmissionPeriodDescription = org.SubmissionPeriodDescription,
                         SubmissionPeriod = sub.SubmissionPeriod,
-                        SubsidaryId = org.SubsidaryId
+                        SubsidaryId = org.SubsidaryId,
                     });
                 }
             }
@@ -283,7 +320,7 @@
                         OrganisationId = org.OrganisationId,
                         OrganisationName = org.OrganisationName,
                         SubmissionPeriodDescription = org.SubmissionPeriodDesc,
-                        SubsidaryId = org.SubsidaryId
+                        SubsidaryId = org.SubsidaryId,
                     }).Distinct();
         }
 

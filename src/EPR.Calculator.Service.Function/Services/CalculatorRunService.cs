@@ -131,13 +131,24 @@
         /// </returns>
         public async Task<bool> StartProcess(CalculatorRunParameter calculatorRunParameter, string runName)
         {
-            this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, "Process started");
+            this.telemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = calculatorRunParameter.Id,
+                RunName = runName,
+                Message = "Process started",
+            });
+
             bool.TryParse(this.configuration.ExecuteRPDPipeline, out bool runRpdPipeline);
 
             bool isPomSuccessful = await this.RunPipelines(calculatorRunParameter, runRpdPipeline, runName);
 
             using var client = this.pipelineClientFactory.GetHttpClient(this.configuration.StatusEndpoint);
-            this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"HTTP Client: {client}");
+            this.telemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = calculatorRunParameter.Id,
+                RunName = runName,
+                Message = $"HTTP Client: {client}",
+            });
 
             bool isSuccess;
             try
@@ -146,12 +157,24 @@
             }
             catch (TaskCanceledException ex)
             {
-                this.telemetryLogger.LogError(calculatorRunParameter.Id.ToString(), runName, "StartProcess - Task was canceled", ex);
+                this.telemetryLogger.LogError(new ErrorMessage
+                {
+                    RunId = calculatorRunParameter.Id,
+                    RunName = runName,
+                    Message = "StartProcess - Task was canceled",
+                    Exception = ex,
+                });
                 return false;
             }
             catch (Exception ex)
             {
-                this.telemetryLogger.LogError(calculatorRunParameter.Id.ToString(), runName, "StartProcess - An error occurred", ex);
+                this.telemetryLogger.LogError(new ErrorMessage
+                {
+                    RunId = calculatorRunParameter.Id,
+                    RunName = runName,
+                    Message = "StartProcess - An error occurred",
+                    Exception = ex,
+                });
                 return false;
             }
 
@@ -178,14 +201,25 @@
                     this.configuration.OrgDataPipelineName);
 
                 var isOrgSuccessful = await this.azureSynapseRunner.Process(orgPipelineConfiguration);
-                this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"RunPipelines - Org status: {isOrgSuccessful}");
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = calculatorRunParameter.Id,
+                    RunName = runName,
+                    Message = $"RunPipelines - Org status: {isOrgSuccessful}",
+                });
+
                 if (isOrgSuccessful)
                 {
                     var pomPipelineConfiguration = this.GetAzureSynapseConfiguration(
                         calculatorRunParameter,
                         this.configuration.PomDataPipelineName);
                     isPomSuccessful = await this.azureSynapseRunner.Process(pomPipelineConfiguration);
-                    this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"RunPipelines - Org status: {isPomSuccessful}");
+                    this.telemetryLogger.LogInformation(new TrackMessage
+                    {
+                        RunId = calculatorRunParameter.Id,
+                        RunName = runName,
+                        Message = $"RunPipelines - POM status: {isPomSuccessful}",
+                    });
                 }
             }
             else
@@ -193,7 +227,12 @@
                 isPomSuccessful = true;
             }
 
-            this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"RunPipelines - Org status: {isPomSuccessful}");
+            this.telemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = calculatorRunParameter.Id,
+                RunName = runName,
+                Message = $"RunPipelines - Final POM status: {isPomSuccessful}",
+            });
             return isPomSuccessful;
         }
 
@@ -213,14 +252,24 @@
 
             if (isPomSuccessful)
             {
-                this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"UpdateStatusAndPrepareResult - StatusEndPoint: {this.configuration.StatusEndpoint}");
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = calculatorRunParameter.Id,
+                    RunName = runName,
+                    Message = $"UpdateStatusAndPrepareResult - StatusEndPoint: {this.configuration.StatusEndpoint}",
+                });
                 var statusUpdateResponse = await this.statusService.UpdateRpdStatus(
                         calculatorRunParameter.Id,
                         runName,
                         calculatorRunParameter.User,
                         isPomSuccessful,
                         new CancellationTokenSource(this.configuration.RpdStatusTimeout).Token);
-                this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"UpdateStatusAndPrepareResult - Status UpdateRpdStatus: {statusUpdateResponse}");
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = calculatorRunParameter.Id,
+                    RunName = runName,
+                    Message = $"UpdateStatusAndPrepareResult - Status UpdateRpdStatus: {statusUpdateResponse}",
+                });
 
                 if (statusUpdateResponse == RunClassification.RUNNING)
                 {
@@ -230,7 +279,12 @@
                         runName,
                         new CancellationTokenSource(this.configuration.TransposeTimeout).Token);
 
-                    this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"UpdateStatusAndPrepareResult - transposeResultResponse: {isTransposeSuccess}");
+                    this.telemetryLogger.LogInformation(new TrackMessage
+                    {
+                        RunId = calculatorRunParameter.Id,
+                        RunName = runName,
+                        Message = $"UpdateStatusAndPrepareResult - transposeResultResponse: {isTransposeSuccess}",
+                    });
 
                     if (isTransposeSuccess)
                     {
@@ -239,24 +293,56 @@
                             new CancellationTokenSource(this.configuration.PrepareCalcResultsTimeout).Token,
                             runName);
 
-                        this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"UpdateStatusAndPrepareResult - prepareCalcResultResponse: {isSuccess}");
+                        this.telemetryLogger.LogInformation(new TrackMessage
+                        {
+                            RunId = calculatorRunParameter.Id,
+                            RunName = runName,
+                            Message = $"UpdateStatusAndPrepareResult - prepareCalcResultResponse: {isSuccess}",
+                        });
                     }
                 }
 
-                this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"UpdateStatusAndPrepareResult - StatusEndPoint: {this.configuration.PrepareCalcResultEndPoint}");
-                this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"UpdateStatusAndPrepareResult - StatusEndPoint: {calculatorRunParameter.Id}");
-                this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"UpdateStatusAndPrepareResult - StatusEndPoint: {GetCalcResultMessage(calculatorRunParameter.Id)}");
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = calculatorRunParameter.Id,
+                    RunName = runName,
+                    Message = $"UpdateStatusAndPrepareResult - StatusEndPoint: {this.configuration.PrepareCalcResultEndPoint}",
+                });
+
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = calculatorRunParameter.Id,
+                    RunName = runName,
+                    Message = $"UpdateStatusAndPrepareResult - CalculatorRunParameter ID: {calculatorRunParameter.Id}",
+                });
+
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = calculatorRunParameter.Id,
+                    RunName = runName,
+                    Message = $"UpdateStatusAndPrepareResult - GetPrepareCalcResultMessage: {GetCalcResultMessage(calculatorRunParameter.Id)}",
+                });
             }
             else
             {
-                this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"UpdateStatusAndPrepareResult - StatusEndPoint: {this.configuration.StatusEndpoint}");
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = calculatorRunParameter.Id,
+                    RunName = runName,
+                    Message = $"UpdateStatusAndPrepareResult - StatusEndPoint: {this.configuration.StatusEndpoint}",
+                });
                 var statusUpdateResponse = await this.statusService.UpdateRpdStatus(
                     calculatorRunParameter.Id,
                     runName,
                     calculatorRunParameter.User,
                     isPomSuccessful,
                     new CancellationTokenSource(this.configuration.RpdStatusTimeout).Token);
-                this.telemetryLogger.LogInformation(calculatorRunParameter.Id.ToString(), runName, $"UpdateStatusAndPrepareResult - Status Response: {statusUpdateResponse}");
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = calculatorRunParameter.Id,
+                    RunName = runName,
+                    Message = $"UpdateStatusAndPrepareResult - Status Response: {statusUpdateResponse}",
+                });
             }
 
             return isSuccess;

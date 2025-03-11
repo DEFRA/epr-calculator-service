@@ -1,6 +1,7 @@
 ﻿namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
     using System.Threading.Tasks;
+    using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Function.Data;
     using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Interface;
@@ -18,6 +19,7 @@
     public class RunNameServiceTests
     {
         private Mock<IConfigurationService> mockConfigurationService;
+        private Mock<ICalculatorTelemetryLogger> mockTelemetryLogger;
         private IDbContextFactory<ApplicationDBContext> dbContextFactory;
         private RunNameService runNameService;
 
@@ -28,6 +30,7 @@
         public void Setup()
         {
             this.mockConfigurationService = new Mock<IConfigurationService>();
+            this.mockTelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
 
             var options = new DbContextOptionsBuilder<ApplicationDBContext>()
                 .UseInMemoryDatabase(databaseName: "TestDatabase")
@@ -37,7 +40,8 @@
 
             this.runNameService = new RunNameService(
                 this.mockConfigurationService.Object,
-                this.dbContextFactory);
+                this.dbContextFactory,
+                this.mockTelemetryLogger.Object);
         }
 
         [TestCleanup]
