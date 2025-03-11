@@ -78,5 +78,45 @@
                 et.Message.Contains(errorMessage.Message) &&
                 et.SeverityLevel == SeverityLevel.Error)), Times.Once);
         }
+
+        [TestMethod]
+        public void CreateLogMessage_ShouldReturnFormattedMessage()
+        {
+            // Arrange
+            int? runId = 1;
+            string? runName = "TestRun";
+            string message = "Test message";
+
+            // Act
+            var result = CalculatorTelemetryLogger.CreateLogMessage(runId, runName, message);
+
+            // Assert
+            Assert.IsTrue(result.Contains("RunId: 1"));
+            Assert.IsTrue(result.Contains("RunName: TestRun"));
+            Assert.IsTrue(result.Contains("Message: Test message"));
+        }
+
+        [TestMethod]
+        public void AddProperties_ShouldAddRunIdAndRunNameToProperties()
+        {
+            // Arrange
+            var properties = new Dictionary<string, string>();
+            int? runId = 1;
+            string? runName = "TestRun";
+
+            // Act
+            CalculatorTelemetryLogger.AddProperties(properties, runId, runName);
+
+            // Assert
+            Assert.AreEqual("1", properties["RunId"]);
+            Assert.AreEqual("TestRun", properties["RunName"]);
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            mockTelemetryClient = null;
+            calculatorTelemetryLogger = null;
+        }
     }
 }
