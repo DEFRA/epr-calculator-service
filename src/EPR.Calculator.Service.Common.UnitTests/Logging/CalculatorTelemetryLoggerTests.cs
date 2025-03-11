@@ -63,7 +63,7 @@
                 RunId = 123,
                 RunName = "TestRun",
                 Message = "This is an error message",
-                Exception = new Exception("Test exception")
+                Exception = new Exception("Test exception"),
             };
 
             // Act

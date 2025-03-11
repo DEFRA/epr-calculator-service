@@ -18,12 +18,9 @@
     /// <param name="context">The context object.</param>
     /// <param name="telemetryLogger">The telemetry logger.</param>
     public class RunNameService(
-        IConfigurationService configuration,
         IDbContextFactory<ApplicationDBContext> context,
-        ICalculatorTelemetryLogger telemetryLogger): IRunNameService
+        ICalculatorTelemetryLogger telemetryLogger) : IRunNameService
     {
-        private readonly IConfigurationService configuration = configuration;
-
         private readonly ICalculatorTelemetryLogger telemetryLogger = telemetryLogger;
 
         private ApplicationDBContext Context { get; init; } = context.CreateDbContext();

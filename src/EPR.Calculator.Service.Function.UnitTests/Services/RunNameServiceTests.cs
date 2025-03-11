@@ -18,9 +18,9 @@
     [TestClass]
     public class RunNameServiceTests
     {
-        private Mock<IConfigurationService> mockConfigurationService;
         private Mock<ICalculatorTelemetryLogger> mockTelemetryLogger;
-        private IDbContextFactory<ApplicationDBContext> dbContextFactory;
+        private Mock<IDbContextFactory<ApplicationDBContext>> dbContextFactory;
+        private ApplicationDBContext dbContext;
         private RunNameService runNameService;
 
         /// <summary>
@@ -29,34 +29,27 @@
         [TestInitialize]
         public void Setup()
         {
-            this.mockConfigurationService = new Mock<IConfigurationService>();
             this.mockTelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
 
             var options = new DbContextOptionsBuilder<ApplicationDBContext>()
                 .UseInMemoryDatabase(databaseName: "TestDatabase")
                 .Options;
 
-            this.dbContextFactory = new DbContextFactory<ApplicationDBContext>(options);
+            this.dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
+            this.dbContext = new ApplicationDBContext(options);
+            this.dbContextFactory.Setup(factory => factory.CreateDbContext()).Returns(this.dbContext);
 
             this.runNameService = new RunNameService(
-                this.mockConfigurationService.Object,
-                this.dbContextFactory,
+                this.dbContextFactory.Object,
                 this.mockTelemetryLogger.Object);
         }
 
         [TestCleanup]
         public void Cleanup()
         {
-            // Dispose of the DbContextFactory if it implements IDisposable
-            if (this.dbContextFactory is IDisposable disposableFactory)
+            if (this.dbContext != null)
             {
-                disposableFactory.Dispose();
-            }
-
-            // Dispose of the RunNameService if it implements IDisposable
-            if (this.runNameService is IDisposable disposableService)
-            {
-                disposableService.Dispose();
+                this.dbContext.Dispose();
             }
         }
 
@@ -71,11 +64,8 @@
             var runId = 1;
             var expectedRunName = "Test Run Name";
 
-            using (var context = this.dbContextFactory.CreateDbContext())
-            {
-                _ = context.CalculatorRuns.Add(new CalculatorRun { Id = runId, Name = expectedRunName, Financial_Year = "2024-25" });
-                context.SaveChanges();
-            }
+            this.dbContext.CalculatorRuns.Add(new CalculatorRun { Id = runId, Name = expectedRunName, Financial_Year = "2024-25" });
+            await this.dbContext.SaveChangesAsync();
 
             // Act
             var result = await this.runNameService.GetRunNameAsync(runId);
@@ -99,6 +89,24 @@
 
             // Assert
             Assert.AreEqual(null, result);
+        }
+
+        /// <summary>
+        /// Tests that <see cref="RunNameService.GetRunNameAsync(int)"/> logs an error when an exception is thrown.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        [TestMethod]
+        public async Task GetRunNameAsync_ShouldLogErrorWhenExceptionIsThrown()
+        {
+            // Arrange
+            var runId = 1;
+            this.dbContextFactory.Setup(factory => factory.CreateDbContext()).Throws(new Exception("Test Exception"));
+
+            // Act
+            var result = await this.runNameService.GetRunNameAsync(runId);
+
+            // Assert
+            Assert.IsNull(result);
         }
     }
 

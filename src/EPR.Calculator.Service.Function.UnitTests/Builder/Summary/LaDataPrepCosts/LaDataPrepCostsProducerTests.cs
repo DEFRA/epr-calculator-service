@@ -52,7 +52,7 @@
                             NorthernIreland = "£10.00",
                             NorthernIrelandValue = 10,
                             Total = "£100.00",
-                            TotalValue = 100
+                            TotalValue = 100,
                         },
                         new CalcResultParameterOtherCostDetail
                         {
@@ -67,7 +67,7 @@
                             NorthernIreland = "10.00%",
                             NorthernIrelandValue = 10,
                             Total = "100.00%",
-                            TotalValue = 100
+                            TotalValue = 100,
                         }
                     ],
                     Materiality = [
@@ -77,7 +77,7 @@
                             AmountValue = 0,
                             Percentage = "%",
                             PercentageValue = 0,
-                            SevenMateriality = "7 Materiality"
+                            SevenMateriality = "7 Materiality",
                         }
                     ],
                     Name = "Parameters - Other",
@@ -95,7 +95,7 @@
                             NorthernIreland = "Northern Ireland",
                             NorthernIrelandValue = 0,
                             Total = "Total",
-                            TotalValue = 0
+                            TotalValue = 0,
                         }
                     ],
                     SchemeSetupCost = {
@@ -110,8 +110,8 @@
                         NorthernIreland = "£10.00",
                         NorthernIrelandValue = 10,
                         Total = "£100.00",
-                        TotalValue = 100
-                    }
+                        TotalValue = 100,
+                    },
                 },
                 CalcResultDetail = new CalcResultDetail() { },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData()
@@ -158,14 +158,14 @@
                             ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
                             ReportedPublicBinTonnage = Fixture.Create<string>(),
                             ProducerReportedTotalTonnage = Fixture.Create<string>(),
-                        }
-                    }
+                        },
+                    },
                 },
                 CalcResultLapcapData = new CalcResultLapcapData()
                 {
                     CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>()
                     {
-                    }
+                    },
                 },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment()
                 {
@@ -237,7 +237,7 @@
                             WalesTotal=020M,
                             Name="Test",
                         }
-                    ]
+                    ],
                 },
                 CalcResultParameterCommunicationCost = Fixture.Create<CalcResultParameterCommunicationCost>(),
                 CalcResultSummary = new CalcResultSummary
@@ -267,7 +267,7 @@
                             LaDataPrepCostsWalesTotalWithBadDebtProvisionSection4 = 20,
                             LaDataPrepCostsScotlandTotalWithBadDebtProvisionSection4 = 20,
                             LaDataPrepCostsNorthernIrelandTotalWithBadDebtProvisionSection4 = 20,
-                        }
+                        },
                     },
                     TotalFeeforLADisposalCostswithBadDebtprovision1 = 100,
                     TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A = 100,
@@ -282,15 +282,13 @@
                         {
                             CommsCostByMaterialPricePerTonne="0.42",
                             Name ="Aluminium",
-
                         },
                         new ()
                         {
                             CommsCostByMaterialPricePerTonne="0.3",
                             Name ="Glass",
-
                         }
-                    ]
+                    ],
                 },
                 CalcResultLateReportingTonnageData = Fixture.Create<CalcResultLateReportingTonnage>(),
             };
@@ -299,8 +297,8 @@
         [TestCleanup]
         public void TearDown()
         {
-            _dbContext?.Database.EnsureDeleted();
-            _dbContext?.Dispose();
+            this._dbContext?.Database.EnsureDeleted();
+            this._dbContext?.Dispose();
         }
 
         [TestMethod]
