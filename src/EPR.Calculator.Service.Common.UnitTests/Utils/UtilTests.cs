@@ -64,21 +64,7 @@
         public void GetCalendarYearFromFinancialYear_ValidString_ShouldReturnPreviousYearAsString(string financialYear, string expectedCalendarYear)
         {
             var result = Util.GetCalendarYearFromFinancialYear(financialYear);
-            Assert.AreEqual(expectedCalendarYear, result);
-        }
-
-        /// <summary>
-        /// Tests that GetCalendarYearFromFinancialYear throws an ArgumentException for a null or empty string.
-        /// </summary>
-        /// <param name="financialYear">The null or empty financial year string to convert.</param>
-        [TestMethod]
-        [DataRow(null)]
-        [DataRow("")]
-        [DataRow(" ")]
-        public void GetCalendarYearFromFinancialYear_NullOrEmptyString_ShouldThrowArgumentException(string financialYear)
-        {
-            var exception = Assert.ThrowsException<ArgumentException>(() => Util.GetCalendarYearFromFinancialYear(financialYear));
-            Assert.AreEqual("Financial year cannot be null or empty (Parameter 'financialYear')", exception.Message);
+            Assert.AreEqual((CalendarYear)expectedCalendarYear, result);
         }
     }
 }
