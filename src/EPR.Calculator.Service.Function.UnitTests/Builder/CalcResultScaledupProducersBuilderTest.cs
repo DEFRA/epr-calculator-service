@@ -26,6 +26,7 @@
                 CalculatorRunId = runId,
                 ProducerId = 11,
                 SubsidiaryId = "Subsidary 1",
+                ProducerName = "Producer Name",
             };
             this.dbContext.ProducerDetail.Add(producerDetail);
             this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
@@ -77,7 +78,29 @@
                     SubmissionPeriod = "2024-P1",
                     SubmissionPeriodDesc = string.Empty,
                 });
- 
+
+            this.dbContext.CalculatorRuns.Add(
+                new CalculatorRun
+                {
+                    Id = 2,
+                    Financial_Year = "2024-25",
+                    Name = "Name",
+                });
+
+            var producerDetail1 = new ProducerDetail
+            {
+                Id = 2,
+                CalculatorRunId = 2,
+                ProducerId = 11,
+                ProducerName = "Producer Test",
+            };
+            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            {
+                Id = 3,
+                PackagingType = "HH",
+                ProducerDetail = producerDetail1,
+            });
+
             this.dbContext.SaveChanges();
         }
 
@@ -144,8 +167,29 @@
             var result = await this.builder.Construct(requestDto);
 
             // Assert
-            var expectedNumberOfRuns = await this.dbContext.CalculatorRuns.CountAsync() + 1; // The +1 is the totals row.
+            var expectedNumberOfRuns = await this.dbContext.CalculatorRuns.CountAsync(); // The +1 is the totals row.
             Assert.AreEqual(expectedNumberOfRuns, result.ScaledupProducers.Count());
+        }
+
+        /// <summary>
+        /// Tests that the <see cref="ICalcResultScaledupProducersBuilder.Construct(CalcResultsRequestDto)"/>
+        /// method returns the correct result when scaled up data is present.
+        /// </summary>
+        /// <returns>A <see cref="Task"/>.</returns>
+        [TestMethod]
+        public async Task Construct_ScaledUpDataPresentForThisRunOnly()
+        {
+            // Arrange
+            this.PrepareNonScaledUpProducer();
+            this.PrepareScaledUpProducer();
+            var requestDto = new CalcResultsRequestDto { RunId = 1 };
+
+            // Act
+            var result = await this.builder.Construct(requestDto);
+
+            // Assert
+            var actualNumberScaledUpProducer = result.ScaledupProducers.Where(t => !t.IsTotalRow); 
+            Assert.AreEqual(1, actualNumberScaledUpProducer.Count());
         }
 
         /// <summary>
