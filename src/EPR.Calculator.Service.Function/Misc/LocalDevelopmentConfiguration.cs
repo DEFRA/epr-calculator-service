@@ -10,19 +10,14 @@
     {
         public LocalDevelopmentConfiguration(IConfiguration configuration) => this.Configuration = configuration;
 
-        /// <summary>
-        /// Store the configuration file that's passed using dependancy injection.
-        /// </summary>
-        private IConfiguration Configuration { get; }
-
-        public string CheckInterval => string.Empty;
+        public int CheckInterval => this.Configuration.GetValue(nameof(this.CheckInterval), 5);
 
         public string DbConnectionString
             => Configuration.GetValue("DbConnectionString", string.Empty);
 
-        public string ExecuteRPDPipeline => string.Empty;
+        public bool ExecuteRPDPipeline => this.Configuration.GetValue(nameof(this.ExecuteRPDPipeline), false);
 
-        public string MaxCheckCount => string.Empty;
+        public int MaxCheckCount => this.Configuration.GetValue(nameof(this.MaxCheckCount), 10);
 
         public string OrgDataPipelineName => string.Empty;
 
@@ -47,6 +42,11 @@
 
         public string BlobConnectionString
             => Configuration.GetValue("BlobConnectionString", string.Empty);
+
+        /// <summary>
+        /// Gets the configuration file that's passed using dependancy injection.
+        /// </summary>
+        private IConfiguration Configuration { get; }
 
         public string InstrumentationKey => Configuration.GetValue("InstrumentationKey", string.Empty);
 

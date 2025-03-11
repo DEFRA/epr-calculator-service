@@ -9,6 +9,7 @@
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
     using EPR.Calculator.Service.Common.Logging;
+    using EPR.Calculator.Service.Common.Utils;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Interface;
@@ -56,32 +57,6 @@
         }
 
         /// <summary>
-        /// Gets the Azure Synapse configuration.
-        /// </summary>
-        /// <param name="args">The calculator run parameters.</param>
-        /// <param name="pipelineName">The name of the pipeline.</param>
-        /// <returns>The Azure Synapse runner parameters.</returns>
-        public AzureSynapseRunnerParameters GetAzureSynapseConfiguration(
-            CalculatorRunParameter args,
-            string pipelineName)
-        {
-            var financialYear = args.FinancialYear;
-            int.TryParse(this.configuration.CheckInterval, out int checkInterval);
-
-            int.TryParse(this.configuration.MaxCheckCount, out int maxCheckCount);
-
-            return new AzureSynapseRunnerParameters
-            {
-                PipelineUrl = new Uri(this.configuration.PipelineUrl),
-                CheckInterval = checkInterval,
-                MaxCheckCount = maxCheckCount,
-                PipelineName = pipelineName,
-                CalculatorRunId = args.Id,
-                FinancialYear = Common.Utils.Util.GetCalendarYearFromFinancialYear(financialYear),
-            };
-        }
-
-        /// <summary>
         /// Builds the JSON content of the status update API call.
         /// </summary>
         /// <param name="calculatorRunId">The calculator run ID.</param>
@@ -122,6 +97,29 @@
         }
 
         /// <summary>
+        /// Gets the Azure Synapse configuration.
+        /// </summary>
+        /// <param name="args">The calculator run parameters.</param>
+        /// <param name="pipelineName">The name of the pipeline.</param>
+        /// <returns>The Azure Synapse runner parameters.</returns>
+        public AzureSynapseRunnerParameters GetAzureSynapseConfiguration(
+            CalculatorRunParameter args,
+            string pipelineName)
+        {
+            var financialYear = args.FinancialYear;
+
+            return new AzureSynapseRunnerParameters
+            {
+                PipelineUrl = new Uri(this.configuration.PipelineUrl),
+                CheckInterval = this.configuration.CheckInterval,
+                MaxCheckCount = this.configuration.MaxCheckCount,
+                PipelineName = pipelineName,
+                CalculatorRunId = args.Id,
+                CalendarYear = Util.GetCalendarYearFromFinancialYear(financialYear),
+            };
+        }
+
+        /// <summary>
         /// Starts the calculator process.
         /// </summary>
         /// <param name="calculatorRunParameter">The parameters required to run the calculator.</param>
@@ -138,7 +136,7 @@
                 Message = "Process started",
             });
 
-            bool.TryParse(this.configuration.ExecuteRPDPipeline, out bool runRpdPipeline);
+            bool runRpdPipeline = this.configuration.ExecuteRPDPipeline;
 
             bool isPomSuccessful = await this.RunPipelines(calculatorRunParameter, runRpdPipeline, runName);
 
