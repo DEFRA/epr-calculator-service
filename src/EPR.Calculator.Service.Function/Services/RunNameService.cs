@@ -32,18 +32,10 @@
         /// <returns>The run name.</returns>
         public async Task<string?> GetRunNameAsync(int runId)
         {
-            try
-            {
-                var run = await this.Context.CalculatorRuns
+            var run = await this.Context.CalculatorRuns
                     .SingleOrDefaultAsync(r => r.Id == runId);
 
-                return run?.Name;
-            }
-            catch (Exception ex)
-            {
-                this.telemetryLogger.LogError(new ErrorMessage { Message = "Error fetching run name", Exception = ex });
-                return null;
-            }
+            return run?.Name;
         }
     }
 }

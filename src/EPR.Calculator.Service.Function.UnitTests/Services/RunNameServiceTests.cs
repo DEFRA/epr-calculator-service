@@ -87,25 +87,6 @@
             // Assert
             Assert.AreEqual(null, result);
         }
-
-        /// <summary>
-        /// Tests that <see cref="RunNameService.GetRunNameAsync(int)"/> logs an error when an exception is thrown.
-        /// </summary>
-        /// <returns>A task that represents the asynchronous operation.</returns>
-        [TestMethod]
-        public async Task GetRunNameAsync_ShouldLogErrorWhenExceptionIsThrown()
-        {
-            // Arrange
-            var runId = 1;
-            var exception = new Exception("Test Exception");
-            this.dbContextFactory.Setup(factory => factory.CreateDbContext()).Throws(exception);
-
-            // Act
-            var result = await this.runNameService.GetRunNameAsync(runId);
-
-            // Assert
-            Assert.IsNull(result);
-        }
     }
 
     /// <summary>
