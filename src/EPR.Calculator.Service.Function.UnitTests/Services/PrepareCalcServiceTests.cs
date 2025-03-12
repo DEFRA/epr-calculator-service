@@ -132,7 +132,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this._storageService.Setup(x => x.UploadResultFileContentAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync("expected result");
             // Act
-            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, CancellationToken.None, runName);
+            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, runName, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(true, result);
@@ -148,7 +148,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var runName = fixture.Create<string>();
 
             // Act
-            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, CancellationToken.None, runName);
+            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, runName, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(false, result);
@@ -164,7 +164,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var runName = fixture.Create<string>();
 
             // Act
-            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, CancellationToken.None, runName);
+            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, runName, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(false, result);
@@ -180,7 +180,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var runName = fixture.Create<string>();
 
             // Act
-            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, CancellationToken.None, runName);
+            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, runName, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(false, result);
@@ -194,7 +194,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var runName = "test";
 
             // Act
-            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, CancellationToken.None, runName);
+            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, runName, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(false, result);
@@ -208,7 +208,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var runName = "test";
 
             // Act
-            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, CancellationToken.None, runName);
+            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, runName, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(false, result);

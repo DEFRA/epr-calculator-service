@@ -15,7 +15,7 @@
         public void TrackMessageRunIdSetAndGet()
         {
             // Arrange
-            TrackMessage trackMessage = new()
+            TrackMessage trackMessage = new ()
             {
                 // Act
                 RunId = 123,

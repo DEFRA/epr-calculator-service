@@ -219,8 +219,8 @@
                     {
                         isSuccess = await this.prepareCalcService.PrepareCalcResults(
                             new CalcResultsRequestDto { RunId = calculatorRunParameter.Id },
-                            new CancellationTokenSource(this.configuration.PrepareCalcResultsTimeout).Token,
-                            runName);
+                            runName,
+                            new CancellationTokenSource(this.configuration.PrepareCalcResultsTimeout).Token);
 
                         this.LogInformation(calculatorRunParameter.Id, runName, $"UpdateStatusAndPrepareResult - prepareCalcResultResponse: {isSuccess}");
                     }

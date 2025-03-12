@@ -48,8 +48,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.PrepareCalcService = new Mock<IPrepareCalcService>();
             this.PrepareCalcService.Setup(s => s.PrepareCalcResults(
                 It.IsAny<CalcResultsRequestDto>(),
-                It.IsAny<CancellationToken>(),
-                It.IsAny<string>()))
+                It.IsAny<string>(),
+                It.IsAny<CancellationToken>()))
                 .ReturnsAsync(true);
 
             var statusService = new Mock<IRpdStatusService>();

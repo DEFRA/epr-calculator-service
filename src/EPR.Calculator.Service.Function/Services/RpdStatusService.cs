@@ -40,10 +40,10 @@
             this.CommandTimeoutService = commandTimeoutService;
             this.Validator = validator;
             this.Wrapper = wrapper;
-            this.telemetryLogger = telemetryLogger;
+            this.TelemetryLogger = telemetryLogger;
         }
 
-        private ICalculatorTelemetryLogger telemetryLogger { get; init; }
+        private ICalculatorTelemetryLogger TelemetryLogger { get; init; }
 
         private ICommandTimeoutService CommandTimeoutService { get; init; }
 
@@ -63,7 +63,7 @@
             bool isPomSuccessful,
             CancellationToken timeout)
         {
-            this.telemetryLogger.LogInformation(new TrackMessage
+            this.TelemetryLogger.LogInformation(new TrackMessage
             {
                 RunId = runId,
                 RunName = runName,
@@ -81,7 +81,7 @@
             var validationResult = this.Validator.IsValidRun(calcRun, runId, runClassifications);
             if (!validationResult.isValid)
             {
-                this.telemetryLogger.LogError(new ErrorMessage
+                this.TelemetryLogger.LogError(new ErrorMessage
                 {
                     RunId = runId,
                     RunName = runName,
@@ -93,7 +93,7 @@
 
             if (!isPomSuccessful && calcRun != null)
             {
-                this.telemetryLogger.LogInformation(new TrackMessage { RunId = runId, RunName = runName, Message = $"POM failed for run: {runId}" });
+                this.TelemetryLogger.LogInformation(new TrackMessage { RunId = runId, RunName = runName, Message = $"POM failed for run: {runId}" });
                 calcRun.CalculatorRunClassificationId = runClassifications.Single(x => x.Status == RunClassification.ERROR.ToString()).Id;
                 await this.Context.SaveChangesAsync(timeout);
                 return RunClassification.ERROR;
@@ -102,7 +102,7 @@
             var vr = this.Validator.IsValidSuccessfulRun(runId);
             if (!vr.isValid)
             {
-                this.telemetryLogger.LogError(new ErrorMessage
+                this.TelemetryLogger.LogError(new ErrorMessage
                 {
                     RunId = runId,
                     RunName = runName,
@@ -119,7 +119,7 @@
             {
                 try
                 {
-                    this.telemetryLogger.LogInformation(new TrackMessage { RunId = runId, RunName = runName, Message = $"Creating run organization and POM for run: {runId}" });
+                    this.TelemetryLogger.LogInformation(new TrackMessage { RunId = runId, RunName = runName, Message = $"Creating run organization and POM for run: {runId}" });
                     var createRunOrgCommand = Util.GetFormattedSqlString("dbo.CreateRunOrganization", runId, calendarYear, createdBy);
                     await this.Wrapper.ExecuteSqlAsync(createRunOrgCommand, timeout);
                     var createRunPomCommand = Util.GetFormattedSqlString("dbo.CreateRunPom", runId, calendarYear, createdBy);
@@ -132,7 +132,7 @@
                 }
                 catch (Exception)
                 {
-                    this.telemetryLogger.LogError(new ErrorMessage
+                    this.TelemetryLogger.LogError(new ErrorMessage
                     {
                         RunId = runId,
                         RunName = runName,

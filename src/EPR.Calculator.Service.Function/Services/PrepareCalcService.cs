@@ -76,8 +76,8 @@
 
         public async Task<bool> PrepareCalcResults(
             [FromBody] CalcResultsRequestDto resultsRequestDto,
-            CancellationToken cancellationToken,
-            string runName)
+            string runName,
+            CancellationToken cancellationToken)
         {
             this.commandTimeoutService.SetCommandTimeout(this.Context.Database);
 

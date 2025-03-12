@@ -23,6 +23,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         private readonly Mock<ICalculatorRunParameterMapper> parameterMapper;
         private readonly Mock<IRunNameService> runNameService;
         private readonly Mock<ICalculatorTelemetryLogger> telemetryLogger;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceBusQueueTriggerTests"/> class.
         /// </summary>
@@ -44,7 +45,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [TestMethod]
-        public async Task ServiceBusTrigger_Valid_Message_Run()
+        public async Task ServiceBusTrigger_ValidMessageRun()
         {
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
@@ -76,7 +77,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [TestMethod]
-        public async Task ServiceBusTrigger_Empty_Message_Run()
+        public async Task ServiceBusTrigger_EmptyMessageRun()
         {
             // Arrange
             var myQueueItem = string.Empty;
@@ -93,13 +94,13 @@ namespace EPR.Calculator.Service.Function.UnitTests
         }
 
         [TestMethod]
-        public async Task ServiceBusTrigger_Null_Message_Run()
+        public async Task ServiceBusTrigger_NullMessageRun()
         {
             // Arrange
-            string myQueueItem = null;
+            string? myQueueItem = null;
 
             // Act
-            await this.function.Run(myQueueItem);
+            await this.function.Run(myQueueItem!);
 
             // Assert
             this.telemetryLogger.Verify(
@@ -110,7 +111,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         }
 
         [TestMethod]
-        public async Task ServiceBusTrigger_Message_Json_Exception()
+        public async Task ServiceBusTrigger_MessageJsonException()
         {
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
@@ -126,6 +127,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                     msg.Exception is JsonException)),
                 Times.Once);
         }
+
         /// <summary>
         /// Tests the Run method to ensure it logs an error and returns false when mapper throw unhandled exception.
         /// </summary>
@@ -152,7 +154,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [TestMethod]
-        public async Task ServiceBusTrigger_Invalid_Message_Run_Unhandled_Exception()
+        public async Task ServiceBusTrigger_InvalidMessageRunUnhandledException()
         {
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
@@ -177,11 +179,11 @@ namespace EPR.Calculator.Service.Function.UnitTests
         }
 
         [TestMethod]
-        public async Task ServiceBusTrigger_Null_Param_Run()
+        public async Task ServiceBusTrigger_NullParamRun()
         {
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
-            this.parameterMapper.Setup(t => t.Map(It.IsAny<CalculatorParameter>())).Returns((CalculatorRunParameter)null);
+            this.parameterMapper.Setup(t => t.Map(It.IsAny<CalculatorParameter>())).Returns(default(CalculatorRunParameter));
 
             // Act
             await this.function.Run(myQueueItem);
@@ -195,14 +197,14 @@ namespace EPR.Calculator.Service.Function.UnitTests
         }
 
         [TestMethod]
-        public async Task ServiceBusTrigger_Null_RunName_Run()
+        public async Task ServiceBusTrigger_NullRunNameRun()
         {
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
             var processedParameterData = new CalculatorRunParameter() { FinancialYear = "2024-25", User = "Test user", Id = 678767 };
 
             this.parameterMapper.Setup(t => t.Map(It.IsAny<CalculatorParameter>())).Returns(processedParameterData);
-            this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync((string)null);
+            _ = this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync((string?)null);
 
             // Act
             await this.function.Run(myQueueItem);
@@ -216,9 +218,10 @@ namespace EPR.Calculator.Service.Function.UnitTests
         }
 
         [TestMethod]
-        public async Task ServiceBusTrigger_Successful_Process_Run()
+        public async Task ServiceBusTrigger_SuccessfulProcess_Run()
         {
             // Arrange
+            this.parameterMapper.Setup(t => t.Map(It.IsAny<CalculatorParameter>())).Returns((CalculatorRunParameter?)null);
             var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
             var processedParameterData = new CalculatorRunParameter() { FinancialYear = "2024-25", User = "Test user", Id = 678767 };
             var runName = "Test Run Name";

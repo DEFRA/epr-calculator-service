@@ -4,13 +4,10 @@
     using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Function.Data;
     using EPR.Calculator.Service.Function.Data.DataModels;
-    using EPR.Calculator.Service.Function.Interface;
-    using EPR.Calculator.Service.Function.Models;
     using EPR.Calculator.Service.Function.Services;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
-    using Newtonsoft.Json.Linq;
 
     /// <summary>
     /// Unit tests for the <see cref="RunNameService"/> class.
@@ -18,9 +15,8 @@
     [TestClass]
     public class RunNameServiceTests
     {
-        private Mock<ICalculatorTelemetryLogger> mockTelemetryLogger;
-        private Mock<IDbContextFactory<ApplicationDBContext>> dbContextFactory;
-        private ApplicationDBContext dbContext;
+        private Mock<IDbContextFactory<ApplicationDBContext>>? dbContextFactory;
+        private ApplicationDBContext? dbContext;
         private RunNameService runNameService;
 
         /// <summary>
@@ -29,8 +25,6 @@
         [TestInitialize]
         public void Setup()
         {
-            this.mockTelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
-
             var options = new DbContextOptionsBuilder<ApplicationDBContext>()
                 .UseInMemoryDatabase(databaseName: "TestDatabase")
                 .Options;
@@ -40,8 +34,7 @@
             this.dbContextFactory.Setup(factory => factory.CreateDbContext()).Returns(this.dbContext);
 
             this.runNameService = new RunNameService(
-                this.dbContextFactory.Object,
-                this.mockTelemetryLogger.Object);
+                this.dbContextFactory.Object);
         }
 
         [TestCleanup]
@@ -86,34 +79,6 @@
 
             // Assert
             Assert.AreEqual(null, result);
-        }
-    }
-
-    /// <summary>
-    /// Factory class for creating instances of <see cref="ApplicationDBContext"/>.
-    /// </summary>
-    /// <typeparam name="TContext">The type of the context.</typeparam>
-    public class DbContextFactory<TContext> : IDbContextFactory<TContext>
-        where TContext : DbContext
-    {
-        private readonly DbContextOptions<TContext> options;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DbContextFactory{TContext}"/> class.
-        /// </summary>
-        /// <param name="options">The options to be used by the DbContext.</param>
-        public DbContextFactory(DbContextOptions<TContext> options)
-        {
-            this.options = options;
-        }
-
-        /// <summary>
-        /// Creates a new instance of the DbContext.
-        /// </summary>
-        /// <returns>A new instance of the DbContext.</returns>
-        public TContext CreateDbContext()
-        {
-            return (TContext)Activator.CreateInstance(typeof(TContext), this.options);
         }
     }
 }

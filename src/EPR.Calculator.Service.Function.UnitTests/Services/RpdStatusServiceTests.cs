@@ -56,7 +56,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.Configuration = new Mock<IConfigurationService>();
             this.Configuration.Setup(s => s.BlobContainerName)
                 .Returns(this.Fixture.Create<string>());
-            this.telemetryLogger = new Mock<ICalculatorTelemetryLogger>();
+            this.TelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
 
             this.TestClass = new RpdStatusService(
                 this.Configuration.Object,
@@ -64,7 +64,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 this.CommandTimeoutService.Object,
                 this.Validator.Object,
                 this.Wrapper.Object,
-                this.telemetryLogger.Object);
+                this.TelemetryLogger.Object);
         }
 
         private RpdStatusService TestClass { get; init; }
@@ -81,7 +81,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         private Mock<ICommandTimeoutService> CommandTimeoutService { get; set; }
 
-        private Mock<ICalculatorTelemetryLogger> telemetryLogger { get; init; }
+        private Mock<ICalculatorTelemetryLogger> TelemetryLogger { get; init; }
 
         private void SetupRunClassifications()
         {

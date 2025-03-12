@@ -14,7 +14,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         [TestInitialize]
         public void SetUp()
         {
-            _testClass = new LocalFileStorageService();
+            this._testClass = new LocalFileStorageService();
         }
 
         [TestMethod]
@@ -27,7 +27,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var runName = fixture.Create<string>();
 
             // Act
-            var result = await _testClass.UploadResultFileContentAsync(fileName, content, runName);
+            var result = await this._testClass.UploadResultFileContentAsync(fileName, content, runName);
 
             // Assert
             Assert.IsNotNull(result);

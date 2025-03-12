@@ -7,6 +7,6 @@ namespace EPR.Calculator.Service.Function.Interface
 {
     public interface IPrepareCalcService
     {
-        Task<bool> PrepareCalcResults([FromBody] CalcResultsRequestDto resultsRequestDto, CancellationToken cancellationToken, string runName);
+        Task<bool> PrepareCalcResults([FromBody] CalcResultsRequestDto resultsRequestDto, string runName, CancellationToken cancellationToken);
     }
 }
