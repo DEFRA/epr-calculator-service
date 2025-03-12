@@ -2,6 +2,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
 {
     using System;
     using System.Configuration;
+    using System.Runtime.CompilerServices;
     using AutoFixture;
     using Castle.Core.Configuration;
     using EPR.Calculator.Service.Function.Constants;
@@ -29,8 +30,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
         [TestMethod]
         public void CanGetCheckInterval()
         {
+            // Arrange
+            var checkIntervalValue = this.Fixture.Create<int>();
+            var checkIntervalSection = new Mock<IConfigurationSection>();
+            checkIntervalSection.Setup(v => v.Value).Returns(checkIntervalValue.ToString());
+            this.Configuration.Setup(c => c.GetSection(nameof(LocalDevelopmentConfiguration.CheckInterval)))
+                .Returns(checkIntervalSection.Object);
+
             // Assert
-            Assert.IsInstanceOfType(this.TestClass.CheckInterval, typeof(string));
+            Assert.IsInstanceOfType(this.TestClass.CheckInterval, typeof(int));
         }
 
         [TestMethod]
@@ -50,15 +58,29 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
         [TestMethod]
         public void CanGetExecuteRPDPipeline()
         {
+            // Arrange
+            var executeRPDPipelineValue = this.Fixture.Create<bool>();
+            var rPDPipelineSection = new Mock<IConfigurationSection>();
+            rPDPipelineSection.Setup(v => v.Value).Returns(executeRPDPipelineValue.ToString());
+            this.Configuration.Setup(c => c.GetSection(nameof(LocalDevelopmentConfiguration.ExecuteRPDPipeline)))
+                .Returns(rPDPipelineSection.Object);
+
             // Assert
-            Assert.IsInstanceOfType(this.TestClass.ExecuteRPDPipeline, typeof(string));
+            Assert.IsInstanceOfType(this.TestClass.ExecuteRPDPipeline, typeof(bool));
         }
 
         [TestMethod]
         public void CanGetMaxCheckCount()
         {
+            // Arrange
+            var maxCheckCountValue = this.Fixture.Create<int>();
+            var maxCheckCountSection = new Mock<IConfigurationSection>();
+            maxCheckCountSection.Setup(v => v.Value).Returns(maxCheckCountValue.ToString());
+            this.Configuration.Setup(c => c.GetSection(nameof(LocalDevelopmentConfiguration.MaxCheckCount)))
+                .Returns(maxCheckCountSection.Object);
+
             // Assert
-            Assert.IsInstanceOfType(this.TestClass.MaxCheckCount, typeof(string));
+            Assert.IsInstanceOfType(this.TestClass.MaxCheckCount, typeof(int));
         }
 
         [TestMethod]
