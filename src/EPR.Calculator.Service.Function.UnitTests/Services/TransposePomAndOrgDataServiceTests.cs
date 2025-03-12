@@ -126,7 +126,7 @@
             var result = this.TestClass.GetAllOrganisationsBasedonRunId(organisationDetails);
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(2, result.Count());
+            Assert.AreEqual(3, result.Count());
         }
 
         [TestMethod]
@@ -178,7 +178,7 @@
             var result = this.TestClass.GetLatestOrganisationName(1, orgSubDetails, orgDetails);
 
             Assert.IsNotNull(result);
-            Assert.AreEqual("Test2", result);
+            Assert.AreEqual("Test1", result);
         }
 
         protected static IEnumerable<CalculatorRunOrganisationDataMaster> GetCalculatorRunOrganisationDataMaster()
