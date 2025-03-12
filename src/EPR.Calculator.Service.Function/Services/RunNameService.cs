@@ -1,25 +1,25 @@
 ﻿namespace EPR.Calculator.Service.Function.Services
 {
-    using System;
     using System.Threading.Tasks;
-    using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Function.Data;
     using EPR.Calculator.Service.Function.Interface;
-    using Microsoft.Data.SqlClient;
     using Microsoft.EntityFrameworkCore;
 
     /// <summary>
     /// Service to fetch the run name from the database.
     /// </summary>
-    /// <remarks>
-    /// Initializes a new instance of the <see cref="RunNameService"/> class.
-    /// </remarks>
-    /// <param name="configuration">The configuration object.</param>
-    /// <param name="context">The context object.</param>
-    /// <param name="telemetryLogger">The telemetry logger.</param>
-    public class RunNameService(IDbContextFactory<ApplicationDBContext> context) : IRunNameService
+    public class RunNameService : IRunNameService
     {
-        private ApplicationDBContext Context { get; init; } = context.CreateDbContext();
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RunNameService"/> class.
+        /// </summary>
+        /// <param name="context">The context object.</param>
+        public RunNameService(IDbContextFactory<ApplicationDBContext> context)
+        {
+            this.Context = context.CreateDbContext();
+        }
+
+        private ApplicationDBContext Context { get; init; }
 
         /// <summary>
         /// Gets the run name for the specified run ID.
@@ -29,7 +29,7 @@
         public async Task<string?> GetRunNameAsync(int runId)
         {
             var run = await this.Context.CalculatorRuns
-                    .SingleOrDefaultAsync(r => r.Id == runId);
+                .SingleOrDefaultAsync(r => r.Id == runId);
 
             return run?.Name;
         }

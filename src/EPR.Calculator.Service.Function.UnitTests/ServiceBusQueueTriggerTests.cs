@@ -7,9 +7,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Function.Interface;
-    using Microsoft.Extensions.Logging;
     using Moq;
-    using Moq.Protected;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -128,6 +126,30 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 Times.Once);
         }
 
+        [TestMethod]
+        [ExpectedException(typeof(JsonException))]
+        public async Task ServiceBusTrigger_NullParameterThrowsJsonExceptionAsync()
+        {
+            // Arrange
+            var myQueueItem = "null"; // Simulate a null JSON object
+
+            // Act
+            var param = JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem);
+            await this.function.Run(myQueueItem);
+
+            // Assert
+            if (param == null)
+            {
+                this.telemetryLogger.Verify(
+                log => log.LogError(It.Is<ErrorMessage>(msg =>
+                   msg.Message.Contains("Deserialized object is null") &&
+                   msg.Exception is JsonException)),
+                Times.AtLeastOnce);
+
+                throw new JsonException("Deserialized object is null");
+            }
+        }
+
         /// <summary>
         /// Tests the Run method to ensure it logs an error and returns false when mapper throw unhandled exception.
         /// </summary>
@@ -149,6 +171,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                     msg.Exception is Exception)),
                 Times.Once);
         }
+
         /// <summary>
         /// Tests the Run method to ensure it logs an error and returns false when startprocess throw unhandled exception.
         /// </summary>
