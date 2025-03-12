@@ -60,7 +60,6 @@
 
         private void SeedDatabase()
         {
-
             this._context.CalculatorRunOrganisationDataMaster.AddRange(GetCalculatorRunOrganisationDataMaster());
             this._context.CalculatorRunOrganisationDataDetails.AddRange(GetCalculatorRunOrganisationDataDetails());
 
@@ -76,8 +75,6 @@
         [TestMethod]
         public void Transpose_Should_Return_Latest_Organisation_Name()
         {
-            var mockContext = new Mock<ApplicationDBContext>();
-
             var organisationDetails = new List<CalculatorRunOrganisationDataDetail>
             {
                 new ()
@@ -121,6 +118,68 @@
             Assert.AreEqual("Test1", output);
         }
 
+        [TestMethod]
+        public void GetAllOrganisationsBasedonRunIdShouldReturnOrganisationDetails()
+        {
+            var organisationDetails = GetCalculatorRunOrganisationDataDetails().ToList();
+
+            var result = this.TestClass.GetAllOrganisationsBasedonRunId(organisationDetails);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(2, result.Count());
+        }
+
+        [TestMethod]
+        public void GetLatestOrganisationNameShouldReturnNullWhenOrganisationNotFound()
+        {
+            var orgDetails = new List<OrganisationDetails>();
+            var orgSubDetails = new List<OrganisationDetails>();
+
+            var result = this.TestClass.GetLatestOrganisationName(1, orgSubDetails, orgDetails);
+
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public void GetLatestOrganisationNameShouldReturnLatestOrganisationName()
+        {
+            var orgDetails = new List<OrganisationDetails>
+            {
+                new OrganisationDetails
+                {
+                    OrganisationId = 1,
+                    OrganisationName = "Test1",
+                    SubmissionPeriodDescription = "January to June 2023",
+                },
+                new OrganisationDetails
+                {
+                    OrganisationId = 1,
+                    OrganisationName = "Test2",
+                    SubmissionPeriodDescription = "July to December 2023",
+                },
+            };
+
+            var orgSubDetails = new List<OrganisationDetails>
+            {
+                new OrganisationDetails
+                {
+                    OrganisationId = 1,
+                    OrganisationName = "Test1",
+                    SubmissionPeriodDescription = "January to June 2023",
+                },
+                new OrganisationDetails
+                {
+                    OrganisationId = 1,
+                    OrganisationName = "Test2",
+                    SubmissionPeriodDescription = "July to December 2023",
+                },
+            };
+
+            var result = this.TestClass.GetLatestOrganisationName(1, orgSubDetails, orgDetails);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual("Test2", result);
+        }
 
         protected static IEnumerable<CalculatorRunOrganisationDataMaster> GetCalculatorRunOrganisationDataMaster()
         {
