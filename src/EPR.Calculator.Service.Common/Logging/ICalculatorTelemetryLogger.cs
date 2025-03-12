@@ -16,7 +16,7 @@
         /// <summary>
         /// Logs an error message.
         /// </summary>
-        /// <param name="errorMessage">The log message to log.</param>
+        /// <param name="errorMessage">The error message to log.</param>
         void LogError(ErrorMessage errorMessage);
     }
 }

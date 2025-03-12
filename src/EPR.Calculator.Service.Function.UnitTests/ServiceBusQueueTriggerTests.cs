@@ -23,7 +23,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
         private readonly Mock<ICalculatorRunParameterMapper> parameterMapper;
         private readonly Mock<IRunNameService> runNameService;
         private readonly Mock<ICalculatorTelemetryLogger> telemetryLogger;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceBusQueueTriggerTests"/> class.
         /// </summary>
@@ -56,26 +55,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
             this.parameterMapper.Setup(t => t.Map(It.IsAny<CalculatorParameter>())).Returns(processedParameterData);
             this.calculatorRunService.Setup(t => t.StartProcess(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).ReturnsAsync(true);
 
-            var mockHttpHandler = new Mock<HttpMessageHandler>();
-
-            mockHttpHandler.Protected()
-                .Setup<Task<HttpResponseMessage>>(
-                    "SendAsync",
-                    ItExpr.IsAny<HttpRequestMessage>(),
-                    ItExpr.IsAny<CancellationToken>())
-                .ReturnsAsync((HttpRequestMessage request, CancellationToken token) =>
-                {
-                    HttpResponseMessage response = new HttpResponseMessage()
-                    { StatusCode = System.Net.HttpStatusCode.OK };
-
-                    return response;
-                });
-
-            var httpClient = new HttpClient(mockHttpHandler.Object)
-            {
-                BaseAddress = new Uri("http://google.com"),
-            };
-
             // Act
             await this.function.Run(myQueueItem);
 
@@ -86,7 +65,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
                     It.Is<string>(name => name == runName)),
                 Times.Once);
 
-            // Optionally, verify logging if needed
             this.telemetryLogger.Verify(
                 x => x.LogInformation(It.Is<TrackMessage>(log =>
                     log.Message.Contains("Executing the function app started"))),
@@ -114,10 +92,23 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 Times.Once);
         }
 
-        /// <summary>
-        /// Tests the Run method to ensure it logs an error and returns false when mapper throw json exception .
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [TestMethod]
+        public async Task ServiceBusTrigger_Null_Message_Run()
+        {
+            // Arrange
+            string myQueueItem = null;
+
+            // Act
+            await this.function.Run(myQueueItem);
+
+            // Assert
+            this.telemetryLogger.Verify(
+                log => log.LogError(It.Is<ErrorMessage>(msg =>
+                    msg.Message.Contains("Message is null or empty") &&
+                    msg.Exception is ArgumentNullException)),
+                Times.Once);
+        }
+
         [TestMethod]
         public async Task ServiceBusTrigger_Message_Json_Exception()
         {
@@ -135,7 +126,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
                     msg.Exception is JsonException)),
                 Times.Once);
         }
-
         /// <summary>
         /// Tests the Run method to ensure it logs an error and returns false when mapper throw unhandled exception.
         /// </summary>
@@ -157,7 +147,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
                     msg.Exception is Exception)),
                 Times.Once);
         }
-
         /// <summary>
         /// Tests the Run method to ensure it logs an error and returns false when startprocess throw unhandled exception.
         /// </summary>
@@ -184,6 +173,67 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 log => log.LogError(It.Is<ErrorMessage>(msg =>
                     msg.Message.Contains("Unhandled exception") &&
                     msg.Exception is Exception)),
+                Times.Once);
+        }
+
+        [TestMethod]
+        public async Task ServiceBusTrigger_Null_Param_Run()
+        {
+            // Arrange
+            var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
+            this.parameterMapper.Setup(t => t.Map(It.IsAny<CalculatorParameter>())).Returns((CalculatorRunParameter)null);
+
+            // Act
+            await this.function.Run(myQueueItem);
+
+            // Assert
+            this.telemetryLogger.Verify(
+                log => log.LogError(It.Is<ErrorMessage>(msg =>
+                    msg.Message.Contains("Deserialized object is null") &&
+                    msg.Exception is JsonException)),
+                Times.Never);
+        }
+
+        [TestMethod]
+        public async Task ServiceBusTrigger_Null_RunName_Run()
+        {
+            // Arrange
+            var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
+            var processedParameterData = new CalculatorRunParameter() { FinancialYear = "2024-25", User = "Test user", Id = 678767 };
+
+            this.parameterMapper.Setup(t => t.Map(It.IsAny<CalculatorParameter>())).Returns(processedParameterData);
+            this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync((string)null);
+
+            // Act
+            await this.function.Run(myQueueItem);
+
+            // Assert
+            this.telemetryLogger.Verify(
+                log => log.LogError(It.Is<ErrorMessage>(msg =>
+                    msg.Message.Contains("Run name not found") &&
+                    msg.Exception is InvalidOperationException)),
+                Times.AtLeastOnce);
+        }
+
+        [TestMethod]
+        public async Task ServiceBusTrigger_Successful_Process_Run()
+        {
+            // Arrange
+            var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
+            var processedParameterData = new CalculatorRunParameter() { FinancialYear = "2024-25", User = "Test user", Id = 678767 };
+            var runName = "Test Run Name";
+
+            this.parameterMapper.Setup(t => t.Map(It.IsAny<CalculatorParameter>())).Returns(processedParameterData);
+            this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
+            this.calculatorRunService.Setup(t => t.StartProcess(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).ReturnsAsync(true);
+
+            // Act
+            await this.function.Run(myQueueItem);
+
+            // Assert
+            this.telemetryLogger.Verify(
+                log => log.LogInformation(It.Is<TrackMessage>(msg =>
+                    msg.Message.Contains("Process status: True"))),
                 Times.Once);
         }
     }

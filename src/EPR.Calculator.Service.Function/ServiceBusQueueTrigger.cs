@@ -1,7 +1,3 @@
-// <copyright file="ServiceBusQueueTrigger.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
-
 using System;
 using System.Threading.Tasks;
 using EPR.Calculator.Service.Common.Logging;
@@ -17,7 +13,7 @@ using Newtonsoft.Json;
 namespace EPR.Calculator.Service.Function
 {
     /// <summary>
-    /// ServiceBusQueueTrigger to trigger the calculator run process and generating the result file.
+    /// ServiceBusQueueTrigger to trigger the calculator run process and generate the result file.
     /// </summary>
     public class ServiceBusQueueTrigger
     {
@@ -57,17 +53,27 @@ namespace EPR.Calculator.Service.Function
 
             if (string.IsNullOrEmpty(myQueueItem))
             {
-                this.telemetryLogger.LogError(new ErrorMessage { Message = "Message is null or empty", Exception = new ArgumentNullException() });
+                this.LogError("Message is null or empty", new ArgumentNullException(nameof(myQueueItem)));
                 return;
             }
 
             try
             {
                 var param = JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem);
-                var calculatorRunParameter = this.calculatorRunParameterMapper.Map(param);
+                if (param == null)
+                {
+                    this.LogError("Deserialized object is null", new JsonException($"Deserialized object is null"));
+                    throw new JsonException("Deserialized object is null");
+                }
 
-                // Fetch the run name using the run ID
+                var calculatorRunParameter = this.calculatorRunParameterMapper.Map(param);
                 var runName = await this.runNameService.GetRunNameAsync(calculatorRunParameter.Id);
+
+                if (runName == null)
+                {
+                    this.LogError("Run name not found", new InvalidOperationException($"Run name not found for ID {calculatorRunParameter.Id}"));
+                    throw new InvalidOperationException($"Run name not found for ID {calculatorRunParameter.Id}");
+                }
 
                 bool processStatus = await this.calculatorRunService.StartProcess(calculatorRunParameter, runName);
                 this.telemetryLogger.LogInformation(new TrackMessage
@@ -79,14 +85,26 @@ namespace EPR.Calculator.Service.Function
             }
             catch (JsonException jsonex)
             {
-                this.telemetryLogger.LogError(new ErrorMessage { Message = $"Incorrect format - {myQueueItem} - {jsonex.Message}", Exception = jsonex });
+                this.LogError($"Incorrect format - {myQueueItem} - {jsonex.Message}", jsonex);
             }
             catch (Exception ex)
             {
-                this.telemetryLogger.LogError(new ErrorMessage { Message = $"Error - {myQueueItem} - {ex.Message}", Exception = ex });
+                this.LogError($"Error - {myQueueItem} - {ex.Message}", ex);
             }
 
             this.telemetryLogger.LogInformation(new TrackMessage { Message = "Azure function app execution finished" });
+        }
+
+        private void LogError(string message, Exception exception)
+        {
+            var errorMessage = new ErrorMessage
+            {
+                Message = message,
+                Exception = exception,
+                RunId = null,
+                RunName = string.Empty,
+            };
+            this.telemetryLogger.LogError(errorMessage);
         }
     }
 }
