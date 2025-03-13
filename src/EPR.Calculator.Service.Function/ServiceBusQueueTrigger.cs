@@ -72,9 +72,9 @@ namespace EPR.Calculator.Service.Function
                 {
                     runName = await this.runNameService.GetRunNameAsync(calculatorRunParameter.Id);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    this.LogError("Run name not found", new InvalidOperationException($"Run name not found for ID {calculatorRunParameter.Id}"));
+                    this.LogError("Run name not found", ex);
                 }
 
                 bool processStatus = await this.calculatorRunService.StartProcess(calculatorRunParameter, runName);
