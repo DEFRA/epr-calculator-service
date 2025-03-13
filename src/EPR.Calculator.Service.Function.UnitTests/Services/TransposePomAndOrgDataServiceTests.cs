@@ -506,6 +506,42 @@
                     It.Is<ErrorMessage>(message => message.Message == "Operation cancelled")),
                 Times.Once);
         }
+
+        /// <summary>
+        /// If an unspecified exception occurs after the calculation run is retrieved,
+        /// the cancellation should be logged to telemetry and the run should be updated with an error status.
+        /// </summary>
+        /// <returns>A <see cref="Task"/>.</returns>
+        [TestMethod]
+        public async Task TransposeShouldUpdateCalculationRunWhenCancelledAfterRetrievingCalculatorRun()
+        {
+            // Arrange
+            var runId = 1;
+            var resultsRequestDto = this.Fixture.Create<CalcResultsRequestDto>();
+            resultsRequestDto.RunId = runId;
+            this._context.CalculatorRunPomDataDetails = null!;
+
+            // Act
+            var result = await this.TestClass.TransposeBeforeCalcResults(
+                resultsRequestDto,
+                this.Fixture.Create<string>(),
+                CancellationToken.None);
+
+            // Assert
+            Assert.IsFalse(result);
+            this.TelemetryLogger.Verify(
+                t => t.LogError(
+                    It.Is<ErrorMessage>(message => message.Message == "Error occurred while transposing POM and ORG data")),
+                Times.Once);
+            this.TelemetryLogger.Verify(
+                t => t.LogError(
+                    It.Is<ErrorMessage>(message => message.Message == "RunId is updated with ClassificationId Error")),
+                Times.Once);
+            Assert.IsTrue(this._context.CalculatorRuns
+                .Single(run => run.Id == runId)
+                .CalculatorRunClassificationId == (int)RunClassification.ERROR);
+        }
+
         protected static IEnumerable<CalculatorRunOrganisationDataMaster> GetCalculatorRunOrganisationDataMaster()
         {
             var list = new List<CalculatorRunOrganisationDataMaster>
