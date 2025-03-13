@@ -12,6 +12,8 @@
     using Microsoft.EntityFrameworkCore.Diagnostics;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using Moq.Protected;
+    using System.Linq.Expressions;
     using static EPR.Calculator.Service.Function.Services.TransposePomAndOrgDataService;
 
     [TestClass]
@@ -179,6 +181,131 @@
 
             Assert.IsNotNull(result);
             Assert.AreEqual("Test1", result);
+        }
+
+        [TestMethod]
+        public void GetLatestOrganisationName_Should_Return_OrganisationName()
+        {
+            // Arrange
+            var orgId = this.Fixture.Create<int>();
+            var organisationsBySubmissionPeriod = this.Fixture.CreateMany<OrganisationDetails>().ToList();
+            var organisationsList = this.Fixture.CreateMany<OrganisationDetails>().ToList();
+
+            // Act
+            var result = this.TestClass.GetLatestOrganisationName(orgId, organisationsBySubmissionPeriod, organisationsList);
+
+            // Assert
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public void GetLatestSubsidaryName_Should_Return_SubsidaryName()
+        {
+            // Arrange
+            var orgId = this.Fixture.Create<int>();
+            var subsidaryId = this.Fixture.Create<string>();
+            var organisationsBySubmissionPeriod = this.Fixture.CreateMany<OrganisationDetails>().ToList();
+            var organisationsList = this.Fixture.CreateMany<OrganisationDetails>().ToList();
+
+            // Act
+            var result = this.TestClass.GetLatestSubsidaryName(orgId, subsidaryId, organisationsBySubmissionPeriod, organisationsList);
+
+            // Assert
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public async Task TransposeBeforeCalcResults_Should_Return_False_When_CalculatorRun_Not_Found()
+        {
+            // Arrange
+            var resultsRequestDto = this.Fixture.Create<CalcResultsRequestDto>();
+            var runName = this.Fixture.Create<string>();
+            var cancellationToken = It.IsAny<CancellationToken>();
+
+            this._context.CalculatorRuns.RemoveRange(this._context.CalculatorRuns);
+            await this._context.SaveChangesAsync();
+
+            // Act
+            var result = await this.TestClass.TransposeBeforeCalcResults(resultsRequestDto, runName, cancellationToken);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task TransposeBeforeCalcResults_Should_LogError_And_Return_False_On_OperationCanceledException()
+        {
+            // Arrange
+            var resultsRequestDto = this.Fixture.Create<CalcResultsRequestDto>();
+            var runName = this.Fixture.Create<string>();
+            var cancellationToken = CancellationToken.None;
+
+            var mockContext = new Mock<ApplicationDBContext>(_dbContextOptions);
+            var mockDbSet = new Mock<DbSet<CalculatorRun>>();
+
+            mockContext.Setup(c => c.CalculatorRuns).Returns(mockDbSet.Object);
+            mockDbSet.As<IQueryable<CalculatorRun>>().Setup(m => m.Provider).Throws(new OperationCanceledException());
+
+            var mockTelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
+            var service = new TransposePomAndOrgDataService(
+                mockContext.Object,
+                this.CommandTimeoutService,
+                new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
+                new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
+                mockTelemetryLogger.Object);
+
+            // Act
+            var result = await service.TransposeBeforeCalcResults(resultsRequestDto, runName, cancellationToken);
+
+            // Assert
+            Assert.IsFalse(result);
+            mockTelemetryLogger.Verify(t => t.LogError(It.IsAny<ErrorMessage>()), Times.AtLeastOnce);
+        }
+
+        [TestMethod]
+        public async Task TransposeBeforeCalcResults_Should_LogError_And_Return_False_On_Exception()
+        {
+            // Arrange
+            var resultsRequestDto = this.Fixture.Create<CalcResultsRequestDto>();
+            var runName = this.Fixture.Create<string>();
+            var cancellationToken = CancellationToken.None;
+
+            var mockContext = new Mock<ApplicationDBContext>(this._dbContextOptions);
+            var mockDbSet = new Mock<DbSet<CalculatorRun>>();
+
+            mockContext.Setup(c => c.CalculatorRuns).Returns(mockDbSet.Object);
+            mockDbSet.As<IQueryable<CalculatorRun>>().Setup(m => m.Provider).Throws(new Exception("Test Exception"));
+
+            var mockTelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
+
+            var service = new TransposePomAndOrgDataService(
+                mockContext.Object,
+                this.CommandTimeoutService,
+                new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
+                new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
+                mockTelemetryLogger.Object);
+
+            // Act
+            var result = await service.TransposeBeforeCalcResults(resultsRequestDto, runName, cancellationToken);
+
+            // Assert
+            Assert.IsFalse(result);
+            mockTelemetryLogger.Verify(t => t.LogError(It.IsAny<ErrorMessage>()), Times.AtLeastOnce);
+        }
+
+        [TestMethod]
+        public async Task TransposeBeforeCalcResults_Should_Return_True_On_Success()
+        {
+            // Arrange
+            var resultsRequestDto = this.Fixture.Create<CalcResultsRequestDto>();
+            var runName = this.Fixture.Create<string>();
+            var cancellationToken = CancellationToken.None;
+
+            // Act
+            var result = await this.TestClass.TransposeBeforeCalcResults(resultsRequestDto, runName, cancellationToken);
+
+            // Assert
+            Assert.IsFalse(result);
         }
 
         protected static IEnumerable<CalculatorRunOrganisationDataMaster> GetCalculatorRunOrganisationDataMaster()
