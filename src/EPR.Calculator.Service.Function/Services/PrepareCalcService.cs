@@ -8,6 +8,8 @@
     using System.Threading.Tasks;
     using EPR.Calculator.API.Exporter;
     using EPR.Calculator.API.Validators;
+    using EPR.Calculator.Service.Common;
+    using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Data.DataModels;
     using EPR.Calculator.Service.Function.Builder;
     using EPR.Calculator.Service.Function.Data;
@@ -17,12 +19,15 @@
     using EPR.Calculator.Service.Function.Interface;
     using EPR.Calculator.Service.Function.Misc;
     using EPR.Calculator.Service.Function.Models;
+    using Microsoft.ApplicationInsights;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.IdentityModel.Abstractions;
-    using Microsoft.ApplicationInsights;
 
+    /// <summary>
+    /// Service for preparing calculation results.
+    /// </summary>
     public class PrepareCalcService : IPrepareCalcService
     {
         public PrepareCalcService(
@@ -35,7 +40,7 @@
             IStorageService storageService,
             CalculatorRunValidator validationRules,
             ICommandTimeoutService commandTimeoutService,
-            TelemetryClient telemetryClient)
+            ICalculatorTelemetryLogger telemetryLogger)
         {
             this.Context = context.CreateDbContext();
             this.rpdStatusDataValidator = rpdStatusDataValidator;
@@ -46,10 +51,10 @@
             this.storageService = storageService;
             this.validatior = validationRules;
             this.commandTimeoutService = commandTimeoutService;
-            this._telemetryClient = telemetryClient;
+            this.telemetryLogger = telemetryLogger;
         }
 
-        private readonly TelemetryClient _telemetryClient;
+        private readonly ICalculatorTelemetryLogger telemetryLogger;
 
         private ApplicationDBContext Context { get; init; }
 
@@ -71,6 +76,7 @@
 
         public async Task<bool> PrepareCalcResults(
             [FromBody] CalcResultsRequestDto resultsRequestDto,
+            string runName,
             CancellationToken cancellationToken)
         {
             this.commandTimeoutService.SetCommandTimeout(this.Context.Database);
@@ -93,21 +99,59 @@
                     return false;
                 }
 
-                this._telemetryClient.TrackTrace("Builder started...");
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = resultsRequestDto.RunId,
+                    RunName = runName,
+                    Message = "Builder started...",
+                });
+
                 var results = await this.Builder.Build(resultsRequestDto);
-                this._telemetryClient.TrackTrace("Builder end...");
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = resultsRequestDto.RunId,
+                    RunName = runName,
+                    Message = "Builder end...",
+                });
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = resultsRequestDto.RunId,
+                    RunName = runName,
+                    Message = "Exporter started...",
+                });
 
-                this._telemetryClient.TrackTrace("Exporter started...");
                 var exportedResults = this.Exporter.Export(results);
-                this._telemetryClient.TrackTrace("Exporter end...");
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = resultsRequestDto.RunId,
+                    RunName = runName,
+                    Message = "Exporter end...",
+                });
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = resultsRequestDto.RunId,
+                    RunName = runName,
+                    Message = "Uploader started...",
+                });
 
-                this._telemetryClient.TrackTrace("Exporter started...");
                 var fileName = new CalcResultsFileName(
                     results.CalcResultDetail.RunId,
                     results.CalcResultDetail.RunName,
                     results.CalcResultDetail.RunDate);
-                var blobUri = await this.storageService.UploadResultFileContentAsync(fileName, exportedResults);
-                this._telemetryClient.TrackTrace("Exporter end...");
+                var blobUri = await this.storageService.UploadResultFileContentAsync(fileName, exportedResults, runName);
+
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = resultsRequestDto.RunId,
+                    RunName = runName,
+                    Message = "Uploader end...",
+                });
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = resultsRequestDto.RunId,
+                    RunName = runName,
+                    Message = "Csv File saving started...",
+                });
 
                 var startTime = DateTime.Now;
                 if (!string.IsNullOrEmpty(blobUri))
@@ -119,19 +163,46 @@
                     var timeDiff = startTime - DateTime.Now;
                     return true;
                 }
+
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = resultsRequestDto.RunId,
+                    RunName = runName,
+                    Message = "Csv File saving end...",
+                });
             }
             catch (OperationCanceledException exception)
             {
                 await this.HandleErrorAsync(calculatorRun, RunClassification.ERROR);
+                this.telemetryLogger.LogError(new ErrorMessage
+                {
+                    RunId = resultsRequestDto.RunId,
+                    RunName = runName,
+                    Message = "Operation cancelled",
+                    Exception = exception,
+                });
                 return false;
             }
             catch (Exception exception)
             {
                 await this.HandleErrorAsync(calculatorRun, RunClassification.ERROR);
+                this.telemetryLogger.LogError(new ErrorMessage
+                {
+                    RunId = resultsRequestDto.RunId,
+                    RunName = runName,
+                    Message = "Error occurred",
+                    Exception = exception,
+                });
                 return false;
             }
 
             await this.HandleErrorAsync(calculatorRun, RunClassification.ERROR);
+            this.telemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = resultsRequestDto.RunId,
+                RunName = runName,
+                Message = "Error occurred",
+            });
             return false;
         }
 
@@ -151,7 +222,7 @@
             {
                 FileName = fileName,
                 BlobUri = blobUri,
-                CalculatorRunId = runId
+                CalculatorRunId = runId,
             };
             await this.Context.CalculatorRunCsvFileMetadata.AddAsync(csvFileMetadata);
         }
