@@ -30,6 +30,7 @@
         {
             this.CommandTimeoutService = new Mock<ICommandTimeoutService>().Object;
             this.TelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
+            this.Chunker = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
 
             _dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
@@ -45,7 +46,7 @@
             this.TestClass = new TransposePomAndOrgDataService(
                 this._context,
                 this.CommandTimeoutService,
-                new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
+                this.Chunker.Object,
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
                 this.TelemetryLogger.Object);
         }
@@ -57,6 +58,8 @@
         public TransposePomAndOrgDataService TestClass { get; set; }
 
         private Mock<ICalculatorTelemetryLogger> TelemetryLogger { get; init; }
+
+        private Mock<IDbLoadingChunkerService<ProducerDetail>> Chunker { get; init; }
 
         [TestCleanup]
         public void TearDown()
@@ -505,6 +508,45 @@
                 t => t.LogError(
                     It.Is<ErrorMessage>(message => message.Message == "Operation cancelled")),
                 Times.Once);
+        }
+
+        /// <summary>
+        /// If the operation is cancelled or times out before the calculator run is retrieved,
+        /// the cancellation should be logged to telemetry.
+        /// </summary>
+        /// <returns>A <see cref="Task"/>.</returns>
+        [TestMethod]
+        public async Task TransposeShouldUpdateCalculationRunWhenCancelledBeoreRetrievingCalculatorRun()
+        {
+            // Arrange
+            var runId = 1;
+            var resultsRequestDto = this.Fixture.Create<CalcResultsRequestDto>();
+            resultsRequestDto.RunId = runId;
+            var runName = this.Fixture.Create<string>();
+            var mockCalculatorRunsTable = new Mock<DbSet<CalculatorRun>>();
+            var mockCalculatorRun = this.Fixture.Create<CalculatorRun>();
+            this.Chunker.Setup(c => c.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
+                .Throws<OperationCanceledException>();
+
+            // Act
+            var result = await this.TestClass.TransposeBeforeCalcResults(
+                resultsRequestDto,
+                runName,
+                CancellationToken.None);
+
+            // Assert
+            Assert.IsFalse(result);
+            this.TelemetryLogger.Verify(
+                t => t.LogError(
+                    It.Is<ErrorMessage>(message => message.Message == "Operation cancelled")),
+                Times.Once);
+            this.TelemetryLogger.Verify(
+                t => t.LogError(
+                    It.Is<ErrorMessage>(message => message.Message == "RunId is updated with ClassificationId Error")),
+                Times.Once);
+            Assert.IsTrue(this._context.CalculatorRuns
+                .Single(run => run.Id == runId)
+                .CalculatorRunClassificationId == (int)RunClassification.ERROR);
         }
 
         /// <summary>
