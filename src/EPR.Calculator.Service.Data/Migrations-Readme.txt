@@ -14,7 +14,7 @@ dotnet ef migrations add AddBlogCreatedTimestamp
 
 **** Command to remove a Migration *****
 
-dotnet ef migrations remove
+dotnet ef migrations remove --verbose --project "EPR.Calculator.API.Data" --startup-project "EPR.Calculator.API" 
 
 **** Listing Migrations *****
 
