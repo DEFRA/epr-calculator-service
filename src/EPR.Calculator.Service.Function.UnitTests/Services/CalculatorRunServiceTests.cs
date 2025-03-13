@@ -2,6 +2,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
     using System.Net;
     using System.Net.Http;
+    using System.Text;
+    using System.Text.Json;
     using AutoFixture;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
@@ -589,6 +591,46 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
+        public async Task StartProcess_Should_Return_False_On_TaskCanceledException()
+        {
+            // Arrange
+            var calculatorRunParameter = new CalculatorRunParameter { Id = 1, User = "TestUser", FinancialYear = new FinancialYear("2024-25") };
+            var runName = "TestRun";
+            var mockHttpClient = new Mock<HttpClient>();
+
+            this.PipelineClientFactory.Setup(p => p.GetHttpClient(It.IsAny<Uri>())).Returns(mockHttpClient.Object);
+            this.TransposeService.Setup(t => t.TransposeBeforeCalcResults(It.IsAny<CalcResultsRequestDto>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new TaskCanceledException());
+
+            // Act
+            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameter, runName);
+
+            // Assert
+            Assert.IsFalse(result);
+            this.MockLogger.Verify(t => t.LogError(It.IsAny<ErrorMessage>()), Times.AtLeastOnce);
+        }
+
+        [TestMethod]
+        public async Task StartProcess_Should_Return_False_On_Exception()
+        {
+            // Arrange
+            var calculatorRunParameter = new CalculatorRunParameter { Id = 1, User = "TestUser", FinancialYear = new FinancialYear("2024-25") };
+            var runName = "TestRun";
+            var mockHttpClient = new Mock<HttpClient>();
+
+            this.PipelineClientFactory.Setup(p => p.GetHttpClient(It.IsAny<Uri>())).Returns(mockHttpClient.Object);
+            this.TransposeService.Setup(t => t.TransposeBeforeCalcResults(It.IsAny<CalcResultsRequestDto>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new Exception("Test Exception"));
+
+            // Act
+            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameter, runName);
+
+            // Assert
+            Assert.IsFalse(result);
+            this.MockLogger.Verify(t => t.LogError(It.IsAny<ErrorMessage>()), Times.Once);
+        }
+
+        [TestMethod]
         public async Task StartProcess_ShouldLogErrorOn_Exception()
         {
             // Arrange
@@ -607,6 +649,24 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Verify the exception message
             Assert.AreEqual("Test Exception", exception.Message);
+        }
+
+        [TestMethod]
+        public void GetCalcResultMessage_ShouldReturnCorrect_StringContent()
+        {
+            // Arrange
+            int calculatorRunId = 123;
+            var expectedJson = JsonSerializer.Serialize(new { runId = calculatorRunId });
+            var expectedContent = new StringContent(expectedJson, Encoding.UTF8, "application/json");
+
+            // Act
+            var result = CalculatorRunService.GetCalcResultMessage(calculatorRunId);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedContent.Headers.ContentType?.MediaType, result.Headers.ContentType?.MediaType);
+            Assert.AreEqual(expectedContent.Headers.ContentType?.CharSet, result.Headers.ContentType?.CharSet);
+            Assert.AreEqual(expectedJson, result.ReadAsStringAsync().Result);
         }
 
         /// <summary>

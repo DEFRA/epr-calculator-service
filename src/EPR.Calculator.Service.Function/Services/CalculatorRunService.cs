@@ -146,12 +146,24 @@
             }
             catch (TaskCanceledException ex)
             {
-                this.LogError(calculatorRunParameter.Id, runName, "StartProcess - Task was canceled", ex);
+                this.telemetryLogger.LogError( new ErrorMessage
+                {
+                    RunId = calculatorRunParameter.Id,
+                    RunName = runName,
+                    Message = "StartProcess - Task was canceled",
+                    Exception = ex,
+                });
                 return false;
             }
             catch (Exception ex)
             {
-                this.LogError(calculatorRunParameter.Id, runName, "StartProcess - An error occurred", ex);
+                this.telemetryLogger.LogError(new ErrorMessage
+                {
+                    RunId = calculatorRunParameter.Id,
+                    RunName = runName,
+                    Message = "StartProcess - An error occurred",
+                    Exception = ex,
+                });
                 return false;
             }
 
