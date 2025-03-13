@@ -253,6 +253,7 @@
         {
             // Arrange
             var resultsRequestDto = this.Fixture.Create<CalcResultsRequestDto>();
+            resultsRequestDto.RunId = 1;
             var runName = this.Fixture.Create<string>();
             var cancellationToken = CancellationToken.None;
 
@@ -260,7 +261,7 @@
             var result = await this.TestClass.TransposeBeforeCalcResults(resultsRequestDto, runName, cancellationToken);
 
             // Assert
-            Assert.IsFalse(result);
+            Assert.IsTrue(result);
         }
 
         [TestMethod]
