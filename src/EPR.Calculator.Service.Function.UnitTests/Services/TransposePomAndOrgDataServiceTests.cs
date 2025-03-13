@@ -29,6 +29,8 @@
         public TransposePomAndOrgDataServiceTests()
         {
             this.CommandTimeoutService = new Mock<ICommandTimeoutService>().Object;
+            this.TelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
+
             _dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
@@ -45,7 +47,7 @@
                 this.CommandTimeoutService,
                 new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
-                new Mock<ICalculatorTelemetryLogger>().Object);
+                this.TelemetryLogger.Object);
         }
 
         private ICommandTimeoutService CommandTimeoutService { get; init; }
@@ -53,6 +55,8 @@
         public Fixture Fixture { get; init; } = new Fixture();
 
         public TransposePomAndOrgDataService TestClass { get; set; }
+
+        private Mock<ICalculatorTelemetryLogger> TelemetryLogger { get; init; }
 
         [TestCleanup]
         public void TearDown()
@@ -479,6 +483,29 @@
             Assert.AreEqual("Test1", output);
         }
 
+        /// <summary>
+        /// If the operation is cancelled or times out before the calculator run is retrieved,
+        /// the cancellation should be logged to telemetry.
+        /// </summary>
+        /// <returns>A <see cref="Task"/>.</returns>
+        [TestMethod]
+        public async Task TransposeShouldLogWhenCancelled()
+        {
+            // Arrange
+            var resultsRequestDto = this.Fixture.Create<CalcResultsRequestDto>();
+            var runName = this.Fixture.Create<string>();
+            var cancellationToken = new CancellationToken(true);
+
+            // Act
+            var result = await this.TestClass.TransposeBeforeCalcResults(resultsRequestDto, runName, cancellationToken);
+
+            // Assert
+            Assert.IsFalse(result);
+            this.TelemetryLogger.Verify(
+                t => t.LogError(
+                    It.Is<ErrorMessage>(message => message.Message == "Operation cancelled")),
+                Times.Once);
+        }
         protected static IEnumerable<CalculatorRunOrganisationDataMaster> GetCalculatorRunOrganisationDataMaster()
         {
             var list = new List<CalculatorRunOrganisationDataMaster>
