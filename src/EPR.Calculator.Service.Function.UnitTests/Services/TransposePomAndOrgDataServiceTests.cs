@@ -75,52 +75,6 @@
             this._context.SaveChanges();
         }
 
-        /*[TestMethod]
-        public void Transpose_Should_Return_Latest_Organisation_Name()
-        {
-            var organisationDetails = new List<CalculatorRunOrganisationDataDetail>
-            {
-                new ()
-                {
-                    OrganisationId = 1,
-                    OrganisationName = "Test1",
-                    SubsidaryId = "sub1",
-                    SubmissionPeriodDesc = "January to June 2023",
-                },
-                new ()
-                {
-                    OrganisationId = 2,
-                    OrganisationName = "Test2",
-                    SubsidaryId = "sub2",
-                    SubmissionPeriodDesc = "January to June 2023",
-                },
-            };
-
-            var orgDetails = this.TestClass.GetAllOrganisationsBasedonRunId(organisationDetails);
-
-            var orgSubDetails = new List<OrganisationDetails>()
-            {
-                new ()
-                {
-                     OrganisationId = 1,
-                     OrganisationName = "Test1",
-                     SubsidaryId = "sub1",
-                     SubmissionPeriodDescription = "January to June 2023",
-                },
-                new ()
-                {
-                     OrganisationId = 2,
-                     OrganisationName = "Test2",
-                     SubsidaryId = "sub2",
-                     SubmissionPeriodDescription = "January to June 2024",
-                },
-            };
-
-            var output = this.TestClass.GetLatestOrganisationName(1, orgSubDetails, orgDetails);
-            Assert.IsNotNull(output);
-           Assert.AreEqual("Test1", output);
-        }*/
-
         [TestMethod]
         public void GetAllOrganisationsBasedonRunIdShouldReturnOrganisationDetails()
         {
