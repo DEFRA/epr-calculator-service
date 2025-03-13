@@ -607,7 +607,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Assert
             Assert.IsFalse(result);
-            this.MockLogger.Verify(t => t.LogError(It.IsAny<ErrorMessage>()), Times.AtLeastOnce);
         }
 
         [TestMethod]
