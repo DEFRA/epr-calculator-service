@@ -1,8 +1,7 @@
 ﻿namespace EPR.Calculator.API.Exporter
 {
-    using EPR.Calculator.API.Utils;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Enums;
+    using System;
+    using System.Text;
     using EPR.Calculator.Service.Function.Exporter;
     using EPR.Calculator.Service.Function.Exporter.CommsCost;
     using EPR.Calculator.Service.Function.Exporter.Detail;
@@ -10,9 +9,6 @@
     using EPR.Calculator.Service.Function.Exporter.OtherCosts;
     using EPR.Calculator.Service.Function.Exporter.ScaledupProducers;
     using EPR.Calculator.Service.Function.Models;
-    using System;
-    using System.Linq;
-    using System.Text;
 
     public class CalcResultsExporter : ICalcResultsExporter<CalcResult>
     {

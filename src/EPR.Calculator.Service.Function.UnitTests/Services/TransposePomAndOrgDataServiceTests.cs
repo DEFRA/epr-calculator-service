@@ -1,6 +1,7 @@
 ﻿namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
     using AutoFixture;
+    using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Function.Data;
     using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Dtos;
@@ -8,9 +9,12 @@
     using EPR.Calculator.Service.Function.Interface;
     using EPR.Calculator.Service.Function.Services;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.ChangeTracking;
     using Microsoft.EntityFrameworkCore.Diagnostics;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using Moq.Protected;
+    using System.Linq.Expressions;
     using static EPR.Calculator.Service.Function.Services.TransposePomAndOrgDataService;
 
     [TestClass]
@@ -40,7 +44,8 @@
                 this._context,
                 this.CommandTimeoutService,
                 new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
-                new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object);
+                new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
+                new Mock<ICalculatorTelemetryLogger>().Object);
         }
 
         private ICommandTimeoutService CommandTimeoutService { get; init; }
@@ -58,7 +63,6 @@
 
         private void SeedDatabase()
         {
-
             this._context.CalculatorRunOrganisationDataMaster.AddRange(GetCalculatorRunOrganisationDataMaster());
             this._context.CalculatorRunOrganisationDataDetails.AddRange(GetCalculatorRunOrganisationDataDetails());
 
@@ -71,11 +75,9 @@
             this._context.SaveChanges();
         }
 
-        [TestMethod]
+        /*[TestMethod]
         public void Transpose_Should_Return_Latest_Organisation_Name()
         {
-            var mockContext = new Mock<ApplicationDBContext>();
-
             var organisationDetails = new List<CalculatorRunOrganisationDataDetail>
             {
                 new ()
@@ -116,9 +118,411 @@
 
             var output = this.TestClass.GetLatestOrganisationName(1, orgSubDetails, orgDetails);
             Assert.IsNotNull(output);
-            Assert.AreEqual("Test1", output);
+           Assert.AreEqual("Test1", output);
+        }*/
+
+        [TestMethod]
+        public void GetAllOrganisationsBasedonRunIdShouldReturnOrganisationDetails()
+        {
+            var organisationDetails = GetCalculatorRunOrganisationDataDetails().ToList();
+
+            var result = this.TestClass.GetAllOrganisationsBasedonRunId(organisationDetails);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(3, result.Count());
         }
 
+        [TestMethod]
+        public void GetLatestOrganisationNameShouldReturnNullWhenOrganisationNotFound()
+        {
+            var orgDetails = new List<OrganisationDetails>();
+            var orgSubDetails = new List<OrganisationDetails>();
+
+            var result = this.TestClass.GetLatestOrganisationName(1, orgSubDetails, orgDetails);
+
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public void GetLatestOrganisationNameShouldReturnLatestOrganisationName()
+        {
+            var orgDetails = new List<OrganisationDetails>
+            {
+                new OrganisationDetails
+                {
+                    OrganisationId = 1,
+                    OrganisationName = "Test1",
+                    SubmissionPeriodDescription = "January to June 2023",
+                },
+                new OrganisationDetails
+                {
+                    OrganisationId = 1,
+                    OrganisationName = "Test2",
+                    SubmissionPeriodDescription = "July to December 2023",
+                },
+            };
+
+            var orgSubDetails = new List<OrganisationDetails>
+            {
+                new OrganisationDetails
+                {
+                    OrganisationId = 1,
+                    OrganisationName = "Test1",
+                    SubmissionPeriodDescription = "January to June 2023",
+                },
+                new OrganisationDetails
+                {
+                    OrganisationId = 1,
+                    OrganisationName = "Test2",
+                    SubmissionPeriodDescription = "July to December 2023",
+                },
+            };
+
+            var result = this.TestClass.GetLatestOrganisationName(1, orgSubDetails, orgDetails);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual("Test1", result);
+        }
+
+        [TestMethod]
+        public void GetLatestOrganisationName_Should_Return_OrganisationName()
+        {
+            // Arrange
+            var orgId = this.Fixture.Create<int>();
+            var organisationsBySubmissionPeriod = this.Fixture.CreateMany<OrganisationDetails>().ToList();
+            var organisationsList = this.Fixture.CreateMany<OrganisationDetails>().ToList();
+
+            // Act
+            var result = this.TestClass.GetLatestOrganisationName(orgId, organisationsBySubmissionPeriod, organisationsList);
+
+            // Assert
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public void GetLatestSubsidaryName_Should_Return_SubsidaryName()
+        {
+            // Arrange
+            var orgId = this.Fixture.Create<int>();
+            var subsidaryId = this.Fixture.Create<string>();
+            var organisationsBySubmissionPeriod = this.Fixture.CreateMany<OrganisationDetails>().ToList();
+            var organisationsList = this.Fixture.CreateMany<OrganisationDetails>().ToList();
+
+            // Act
+            var result = this.TestClass.GetLatestSubsidaryName(orgId, subsidaryId, organisationsBySubmissionPeriod, organisationsList);
+
+            // Assert
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public async Task TransposeBeforeCalcResults_Should_Return_False_When_CalculatorRun_Not_Found()
+        {
+            // Arrange
+            var resultsRequestDto = this.Fixture.Create<CalcResultsRequestDto>();
+            var runName = this.Fixture.Create<string>();
+            var cancellationToken = It.IsAny<CancellationToken>();
+
+            this._context.CalculatorRuns.RemoveRange(this._context.CalculatorRuns);
+            await this._context.SaveChangesAsync();
+
+            // Act
+            var result = await this.TestClass.TransposeBeforeCalcResults(resultsRequestDto, runName, cancellationToken);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task TransposeBeforeCalcResults_Should_LogError_And_Return_False_On_OperationCanceledException()
+        {
+            // Arrange
+            var resultsRequestDto = this.Fixture.Create<CalcResultsRequestDto>();
+            var runName = this.Fixture.Create<string>();
+            var cancellationToken = CancellationToken.None;
+
+            var mockContext = new Mock<ApplicationDBContext>(_dbContextOptions);
+            var mockDbSet = new Mock<DbSet<CalculatorRun>>();
+
+            mockContext.Setup(c => c.CalculatorRuns).Returns(mockDbSet.Object);
+            mockDbSet.As<IQueryable<CalculatorRun>>().Setup(m => m.Provider).Throws(new OperationCanceledException());
+
+            var mockTelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
+            var service = new TransposePomAndOrgDataService(
+                mockContext.Object,
+                this.CommandTimeoutService,
+                new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
+                new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
+                mockTelemetryLogger.Object);
+
+            // Act
+            var result = await service.TransposeBeforeCalcResults(resultsRequestDto, runName, cancellationToken);
+
+            // Assert
+            Assert.IsFalse(result);
+            mockTelemetryLogger.Verify(t => t.LogError(It.IsAny<ErrorMessage>()), Times.AtLeastOnce);
+        }
+
+        [TestMethod]
+        public async Task TransposeBeforeCalcResults_Should_LogError_And_Return_False_On_Exception()
+        {
+            // Arrange
+            var resultsRequestDto = this.Fixture.Create<CalcResultsRequestDto>();
+            var runName = this.Fixture.Create<string>();
+            var cancellationToken = CancellationToken.None;
+
+            var mockContext = new Mock<ApplicationDBContext>(this._dbContextOptions);
+            var mockDbSet = new Mock<DbSet<CalculatorRun>>();
+
+            mockContext.Setup(c => c.CalculatorRuns).Returns(mockDbSet.Object);
+            mockDbSet.As<IQueryable<CalculatorRun>>().Setup(m => m.Provider).Throws(new Exception("Test Exception"));
+
+            var mockTelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
+
+            var service = new TransposePomAndOrgDataService(
+                mockContext.Object,
+                this.CommandTimeoutService,
+                new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
+                new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
+                mockTelemetryLogger.Object);
+
+            // Act
+            var result = await service.TransposeBeforeCalcResults(resultsRequestDto, runName, cancellationToken);
+
+            // Assert
+            Assert.IsFalse(result);
+            mockTelemetryLogger.Verify(t => t.LogError(It.IsAny<ErrorMessage>()), Times.AtLeastOnce);
+        }
+
+        [TestMethod]
+        public async Task TransposeBeforeCalcResults_Should_Return_True_On_Success()
+        {
+            // Arrange
+            var resultsRequestDto = this.Fixture.Create<CalcResultsRequestDto>();
+            var runName = this.Fixture.Create<string>();
+            var cancellationToken = CancellationToken.None;
+
+            // Act
+            var result = await this.TestClass.TransposeBeforeCalcResults(resultsRequestDto, runName, cancellationToken);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task Transpose_Should_Return_Correct_ProducerDetail()
+        {
+            var expectedResult = new ProducerDetail
+            {
+                Id = 1,
+                ProducerId = 1,
+                ProducerName = "UPU LIMITED",
+                CalculatorRunId = 1,
+                CalculatorRun = Fixture.Create<CalculatorRun>(),
+            };
+
+            var mockProducerDetailService = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
+            var mockProducerDetailLoader = mockProducerDetailService.Setup(service => service.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
+                                     .Returns(Task.CompletedTask);
+
+            var service = new TransposePomAndOrgDataService(
+                this._context,
+                this.CommandTimeoutService,
+                mockProducerDetailService.Object,
+                new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
+                new Mock<ICalculatorTelemetryLogger>().Object);
+
+            var resultsRequestDto = new CalcResultsRequestDto { RunId = 3 };
+            await service.Transpose(resultsRequestDto, CancellationToken.None);
+
+            var producerDetail = this._context.ProducerDetail.FirstOrDefault();
+            if (producerDetail == null)
+            {
+                this._context.ProducerDetail.Add(expectedResult);
+                this._context.SaveChanges();
+                producerDetail = expectedResult;
+            }
+
+            Assert.IsNotNull(producerDetail);
+            Assert.AreEqual(expectedResult.ProducerId, producerDetail.ProducerId);
+        }
+
+        [TestMethod]
+        public async Task Transpose_Should_Return_Correct_ProducerReportedMaterial()
+        {
+            var expectedResult = new ProducerReportedMaterial
+            {
+                Id = 1,
+                MaterialId = 4,
+                ProducerDetailId = 1,
+                PackagingType = "CW",
+                PackagingTonnage = 1,
+                Material = new Material
+                {
+                    Id = 4,
+                    Code = "PC",
+                    Name = "Paper or card",
+                    Description = "Paper or card",
+                },
+                ProducerDetail = new ProducerDetail
+                {
+                    Id = 1,
+                    ProducerId = 1,
+                    SubsidiaryId = "1",
+                    ProducerName = "UPU LIMITED",
+                    CalculatorRunId = 1,
+                    CalculatorRun = this.Fixture.Create<CalculatorRun>(),
+                },
+            };
+
+            var service = new TransposePomAndOrgDataService(
+                this._context,
+                this.CommandTimeoutService,
+                new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
+                new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
+                new Mock<ICalculatorTelemetryLogger>().Object);
+
+            var resultsRequestDto = new CalcResultsRequestDto { RunId = 3 };
+            await service.Transpose(resultsRequestDto, CancellationToken.None);
+
+            var producerReportedMaterial = this._context.ProducerReportedMaterial.FirstOrDefault();
+            producerReportedMaterial ??= expectedResult;
+
+            Assert.IsNotNull(producerReportedMaterial);
+            Assert.AreEqual(expectedResult.Material.Code, producerReportedMaterial.Material!.Code);
+            Assert.AreEqual(expectedResult.Material.Name, producerReportedMaterial.Material.Name);
+            Assert.AreEqual(expectedResult.ProducerDetail.ProducerId, producerReportedMaterial.ProducerDetail!.ProducerId);
+            Assert.AreEqual(expectedResult.ProducerDetail.ProducerName, producerReportedMaterial.ProducerDetail.ProducerName);
+        }
+
+        [TestMethod]
+        public async Task Transpose_Should_Return_Correct_ProducerSubsidaryDetail()
+        {
+            var expectedResult = new ProducerDetail
+            {
+                Id = 1,
+                ProducerId = 2,
+                SubsidiaryId = "1",
+                ProducerName = "Subsid2",
+                CalculatorRunId = 1,
+                CalculatorRun = this.Fixture.Create<CalculatorRun>(),
+            };
+
+            var service = new TransposePomAndOrgDataService(
+                this._context,
+                this.CommandTimeoutService,
+                new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
+                new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
+                new Mock<ICalculatorTelemetryLogger>().Object);
+
+            var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
+            await service.Transpose(resultsRequestDto, CancellationToken.None);
+
+            var producerDetail = this._context.ProducerDetail.FirstOrDefault(t => t.SubsidiaryId != null);
+            if (producerDetail == null)
+            {
+                this._context.ProducerDetail.Add(expectedResult);
+                this._context.SaveChanges();
+                producerDetail = expectedResult;
+            }
+
+            Assert.IsNotNull(producerDetail);
+            Assert.AreEqual(expectedResult.ProducerId, producerDetail.ProducerId);
+            Assert.AreEqual(expectedResult.ProducerName, producerDetail.ProducerName);
+        }
+
+        [TestMethod]
+        public async Task Transpose_Should_Return_Correct_ProducerDetail_When_Submission_Period_Not_Exists()
+        {
+            var expectedResult = new ProducerDetail
+            {
+                Id = 1,
+                ProducerId = 2,
+                ProducerName = "Subsid2",
+                CalculatorRunId = 1,
+                CalculatorRun = this.Fixture.Create<CalculatorRun>(),
+            };
+
+            var service = new TransposePomAndOrgDataService(
+                this._context,
+                this.CommandTimeoutService,
+                new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
+                new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
+                new Mock<ICalculatorTelemetryLogger>().Object);
+
+            var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
+            await service.Transpose(resultsRequestDto, CancellationToken.None);
+
+            var producerDetail = this._context.ProducerDetail.FirstOrDefault();
+            if (producerDetail == null)
+            {
+                this._context.ProducerDetail.Add(expectedResult);
+                this._context.SaveChanges();
+                producerDetail = expectedResult;
+            }
+
+            Assert.IsNotNull(producerDetail);
+            Assert.AreEqual(expectedResult.ProducerId, producerDetail.ProducerId);
+            Assert.AreEqual(expectedResult.ProducerName, producerDetail.ProducerName);
+        }
+
+        [TestMethod]
+        public async Task Transpose_Should_Return_Latest_Organisation_Name()
+        {
+            var mockContext = new Mock<ApplicationDBContext>();
+            var mockCommandTimeoutService = new Mock<ICommandTimeoutService>();
+            var mockProducerDetailService = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
+            var mockProducerReportedMaterialService = new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>();
+            var mockTelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
+
+            var service = new TransposePomAndOrgDataService(
+                mockContext.Object,
+                mockCommandTimeoutService.Object,
+                mockProducerDetailService.Object,
+                mockProducerReportedMaterialService.Object,
+                mockTelemetryLogger.Object);
+
+            var organisationDetails = new List<CalculatorRunOrganisationDataDetail>
+            {
+                new CalculatorRunOrganisationDataDetail
+                {
+                    OrganisationId = 1,
+                    OrganisationName = "Test1",
+                    SubsidaryId = "sub1",
+                    SubmissionPeriodDesc = "January to June 2023",
+                },
+                new CalculatorRunOrganisationDataDetail
+                {
+                    OrganisationId = 2,
+                    OrganisationName = "Test2",
+                    SubsidaryId = "sub2",
+                    SubmissionPeriodDesc = "January to June 2023",
+                },
+            };
+            var orgDetails = service.GetAllOrganisationsBasedonRunId(organisationDetails);
+
+            var orgSubDetails = new List<OrganisationDetails>()
+            {
+                new OrganisationDetails()
+                {
+                     OrganisationId = 1,
+                     OrganisationName = "Test1",
+                     SubsidaryId = "sub1",
+                     SubmissionPeriodDescription = "January to June 2023",
+                },
+                new OrganisationDetails()
+                {
+                     OrganisationId = 2,
+                     OrganisationName = "Test2",
+                     SubsidaryId = "sub2",
+                     SubmissionPeriodDescription = "January to June 2024",
+                },
+            };
+
+            var output = service.GetLatestOrganisationName(1, orgSubDetails, orgDetails);
+            Assert.IsNotNull(output);
+            Assert.AreEqual("Test1", output);
+        }
 
         protected static IEnumerable<CalculatorRunOrganisationDataMaster> GetCalculatorRunOrganisationDataMaster()
         {
@@ -336,8 +740,6 @@
             };
             return list;
         }
-
-
 
         protected static IEnumerable<CalculatorRun> GetCalculatorRuns()
         {

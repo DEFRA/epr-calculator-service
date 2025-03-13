@@ -48,6 +48,8 @@
         /// </summary>
         private IConfiguration Configuration { get; }
 
+        public string InstrumentationKey => Configuration.GetValue("InstrumentationKey", string.Empty);
+
         public TimeSpan CommandTimeout
         {
             get

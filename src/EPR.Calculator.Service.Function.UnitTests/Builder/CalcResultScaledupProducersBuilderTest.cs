@@ -23,7 +23,7 @@
             var producerDetail = new ProducerDetail
             {
                 Id = 1,
-                CalculatorRunId = runId,
+                CalculatorRunId = this.runId,
                 ProducerId = 11,
                 SubsidiaryId = "Subsidary 1",
                 ProducerName = "Producer Name",
@@ -131,6 +131,9 @@
             this.dbContext.SaveChanges();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CalcResultScaledupProducersBuilderTest"/> class.
+        /// </summary>
         public CalcResultScaledupProducersBuilderTest()
         {
             var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
@@ -146,7 +149,11 @@
         [TestCleanup]
         public void Teardown()
         {
-            this.dbContext?.Database.EnsureDeleted();
+            if (this.dbContext != null)
+            {
+                this.dbContext.Database.EnsureDeleted();
+                this.dbContext.Dispose();
+            }
         }
 
         /// <summary>
@@ -187,7 +194,7 @@
             var result = await this.builder.Construct(requestDto);
 
             // Assert
-            var actualNumberScaledUpProducer = result.ScaledupProducers.Where(t => !t.IsTotalRow); 
+            var actualNumberScaledUpProducer = result.ScaledupProducers.Where(t => !t.IsTotalRow);
             Assert.AreEqual(1, actualNumberScaledUpProducer.Count());
         }
 

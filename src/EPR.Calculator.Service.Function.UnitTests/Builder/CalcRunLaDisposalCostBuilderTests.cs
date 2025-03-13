@@ -54,6 +54,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public void TearDown()
         {
             this.dbContext?.Database.EnsureDeleted();
+            this.dbContext?.Dispose();
         }
 
         [TestMethod]
