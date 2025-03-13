@@ -9,6 +9,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
     using EPR.Calculator.Service.Function.Interface;
     using Moq;
     using Newtonsoft.Json;
+    using NuGet.Frameworks;
 
     /// <summary>
     /// Unit Test class for service bus queue trigger.
@@ -220,27 +221,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
         }
 
         [TestMethod]
-        public async Task ServiceBusTrigger_NullRunNameRun()
-        {
-            // Arrange
-            var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
-            var processedParameterData = new CalculatorRunParameter() { FinancialYear = "2024-25", User = "Test user", Id = 678767 };
-
-            this.parameterMapper.Setup(t => t.Map(It.IsAny<CalculatorParameter>())).Returns(processedParameterData);
-            _ = this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync((string?)null);
-
-            // Act
-            await this.function.Run(myQueueItem);
-
-            // Assert
-            this.telemetryLogger.Verify(
-                log => log.LogError(It.Is<ErrorMessage>(msg =>
-                    msg.Message.Contains("Run name not found") &&
-                    msg.Exception is InvalidOperationException)),
-                Times.AtLeastOnce);
-        }
-
-        [TestMethod]
         public async Task ServiceBusTrigger_SuccessfulProcess_Run()
         {
             // Arrange
@@ -260,6 +240,50 @@ namespace EPR.Calculator.Service.Function.UnitTests
             this.telemetryLogger.Verify(
                 log => log.LogInformation(It.Is<TrackMessage>(msg =>
                     msg.Message.Contains("Process status: True"))),
+                Times.Once);
+        }
+
+        [TestMethod]
+        public async Task ServiceBusTrigger_StartProcess_Unhandled_Exception()
+        {
+            // Arrange
+            var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
+            var processedParameterData = new CalculatorRunParameter() { FinancialYear = "2024-25", User = "Test user", Id = 678767 };
+            var runName = "Test Run Name";
+
+            this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
+            this.parameterMapper.Setup(t => t.Map(It.IsAny<CalculatorParameter>())).Returns(processedParameterData);
+            this.calculatorRunService.Setup(t => t.StartProcess(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).Throws<Exception>();
+
+            // Act
+            await this.function.Run(myQueueItem);
+
+            // Assert
+            this.telemetryLogger.Verify(
+                log => log.LogError(It.Is<ErrorMessage>(msg =>
+                    msg.Message.Contains("Error") &&
+                    msg.Exception is Exception)),
+                Times.Once);
+        }
+
+        [TestMethod]
+        public async Task ServiceBusTrigger_GetRunNameAsync_Unhandled_Exception()
+        {
+            // Arrange
+            var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
+            var processedParameterData = new CalculatorRunParameter() { FinancialYear = "2024-25", User = "Test user", Id = 678767 };
+
+            this.parameterMapper.Setup(t => t.Map(It.IsAny<CalculatorParameter>())).Returns(processedParameterData);
+            this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).Throws<Exception>();
+
+            // Act
+            await this.function.Run(myQueueItem);
+
+            // Assert
+            this.telemetryLogger.Verify(
+                log => log.LogError(It.Is<ErrorMessage>(msg =>
+                    msg.Message.Contains("Run name not found") &&
+                    msg.Exception is Exception)),
                 Times.Once);
         }
     }
