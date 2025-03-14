@@ -7,6 +7,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using System.Threading.Tasks;
     using AutoFixture;
     using EPR.Calculator.API.Exporter;
+    using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Function.Builder;
     using EPR.Calculator.Service.Function.Data;
     using EPR.Calculator.Service.Function.Data.DataModels;
@@ -36,7 +37,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         private Mock<IStorageService> _storageService;
         private CalculatorRunValidator _validationRules;
         private Mock<ICommandTimeoutService> _commandTimeoutService;
-        private TelemetryClient _telemetryClient = new();
+        private Mock<ICalculatorTelemetryLogger> telemetryLogger;
 
         public PrepareCalcServiceTests()
         {
@@ -48,6 +49,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this._context = new ApplicationDBContext(this._dbContextOptions);
             this._dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
             this._dbContextFactory.Setup(f => f.CreateDbContext()).Returns(this._context);
+            this.telemetryLogger = new Mock<ICalculatorTelemetryLogger>();
 
             this.SeedDatabase();
 
@@ -57,12 +59,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 {
                     RunId = 4,
                     RunDate = DateTime.Now,
-                    RunName = "RunName"
+                    RunName = "RunName",
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
                     Name = string.Empty,
-                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>()
+                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>(),
                 },
                 CalcResultParameterOtherCost = new()
                 {
@@ -78,8 +80,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Name = string.Empty,
                     CalcResultLateReportingTonnageDetails = new List<CalcResultLateReportingTonnageDetail>(),
                     MaterialHeading = string.Empty,
-                    TonnageHeading = string.Empty
-                }
+                    TonnageHeading = string.Empty,
+                },
             };
 
             var fixture = new Fixture();
@@ -93,7 +95,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this._storageService = new Mock<IStorageService>();
             this._validationRules = fixture.Create<CalculatorRunValidator>();
             this._commandTimeoutService = new Mock<ICommandTimeoutService>();
-            this._testClass = new PrepareCalcService(this._dbContextFactory.Object, this._rpdStatusDataValidator.Object, this._wrapper.Object, this._builder.Object, this._exporter.Object, this._transposePomAndOrgDataService.Object, this._storageService.Object, this._validationRules, this._commandTimeoutService.Object, this._telemetryClient);
+            this._testClass = new PrepareCalcService(this._dbContextFactory.Object, this._rpdStatusDataValidator.Object, this._wrapper.Object, this._builder.Object, this._exporter.Object, this._transposePomAndOrgDataService.Object, this._storageService.Object, this._validationRules, this._commandTimeoutService.Object, this.telemetryLogger.Object);
         }
 
         [TestCleanup]
@@ -101,13 +103,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             this._context.Database.EnsureDeleted();
             this._context.Dispose();
+
+            // Dispose of the DbContextFactory if it implements IDisposable
+            if (this._dbContextFactory is IDisposable disposableFactory)
+            {
+                disposableFactory.Dispose();
+            }
         }
 
         [TestMethod]
         public void CanConstruct()
         {
             // Act
-            var instance = new PrepareCalcService(this._dbContextFactory.Object, this._rpdStatusDataValidator.Object, this._wrapper.Object, this._builder.Object, this._exporter.Object, this._transposePomAndOrgDataService.Object, this._storageService.Object, this._validationRules, this._commandTimeoutService.Object, this._telemetryClient);
+            var instance = new PrepareCalcService(this._dbContextFactory.Object, this._rpdStatusDataValidator.Object, this._wrapper.Object, this._builder.Object, this._exporter.Object, this._transposePomAndOrgDataService.Object, this._storageService.Object, this._validationRules, this._commandTimeoutService.Object, this.telemetryLogger.Object);
 
             // Assert
             Assert.IsNotNull(instance);
@@ -119,10 +127,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Arrange
             var fixture = new Fixture();
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-            this._storageService.Setup(x => x.UploadResultFileContentAsync(It.IsAny<string>(), It.IsAny<string>()))
+            var runName = fixture.Create<string>();
+
+            this._storageService.Setup(x => x.UploadResultFileContentAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync("expected result");
             // Act
-            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, CancellationToken.None);
+            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, runName, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(true, result);
@@ -135,8 +145,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var fixture = new Fixture();
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
             this._storageService = new Mock<IStorageService>();
+            var runName = fixture.Create<string>();
+
             // Act
-            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, CancellationToken.None);
+            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, runName, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(false, result);
@@ -149,9 +161,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var fixture = new Fixture();
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
             this._exporter.Setup(x => x.Export(It.IsAny<CalcResult>())).Throws(new Exception("Custom exception message"));
+            var runName = fixture.Create<string>();
 
             // Act
-            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, CancellationToken.None);
+            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, runName, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(false, result);
@@ -164,9 +177,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var fixture = new Fixture();
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
             this._exporter.Setup(x => x.Export(It.IsAny<CalcResult>())).Throws(new OperationCanceledException("Operation canceled exception message"));
+            var runName = fixture.Create<string>();
 
             // Act
-            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, CancellationToken.None);
+            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, runName, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(false, result);
@@ -177,9 +191,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             // Arrange
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 2 };
+            var runName = "test";
 
             // Act
-            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, CancellationToken.None);
+            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, runName, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(false, result);
@@ -190,9 +205,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             // Arrange
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 10 };
+            var runName = "test";
 
             // Act
-            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, CancellationToken.None);
+            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, runName, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(false, result);
@@ -200,18 +216,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         private void SeedDatabase()
         {
+            this._context.CalculatorRunOrganisationDataMaster.AddRange(GetCalculatorRunOrganisationDataMaster());
+            this._context.CalculatorRunOrganisationDataDetails.AddRange(GetCalculatorRunOrganisationDataDetails());
 
-            _context.CalculatorRunOrganisationDataMaster.AddRange(GetCalculatorRunOrganisationDataMaster());
-            _context.CalculatorRunOrganisationDataDetails.AddRange(GetCalculatorRunOrganisationDataDetails());
+            this._context.CalculatorRunPomDataMaster.AddRange(GetCalculatorRunPomDataMaster());
+            this._context.CalculatorRunPomDataDetails.AddRange(GetCalculatorRunPomDataDetails());
 
-            _context.CalculatorRunPomDataMaster.AddRange(GetCalculatorRunPomDataMaster());
-            _context.CalculatorRunPomDataDetails.AddRange(GetCalculatorRunPomDataDetails());
+            this._context.CalculatorRuns.AddRange(GetCalculatorRuns());
+            this._context.Material.AddRange(GetMaterials());
 
-
-            _context.CalculatorRuns.AddRange(GetCalculatorRuns());
-            _context.Material.AddRange(GetMaterials());
-
-            _context.SaveChanges();
+            this._context.SaveChanges();
         }
 
         protected static IEnumerable<CalculatorRunOrganisationDataMaster> GetCalculatorRunOrganisationDataMaster()
@@ -223,15 +237,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     CalendarYear = "2024-25",
                     EffectiveFrom = DateTime.Now,
                     CreatedBy = "Test user",
-                    CreatedAt = DateTime.Now
+                    CreatedAt = DateTime.Now,
                 },
                 new() {
                     Id = 2,
                     CalendarYear = "2024-25",
                     EffectiveFrom = DateTime.Now,
                     CreatedBy = "Test user",
-                    CreatedAt = DateTime.Now
-                }
+                    CreatedAt = DateTime.Now,
+                },
             };
             return list;
         }
@@ -248,7 +262,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     SubsidaryId ="1",
                     LoadTimeStamp = DateTime.Now,
                     CalculatorRunOrganisationDataMasterId = 1,
-                    SubmissionPeriodDesc = "January to June 2023"
+                    SubmissionPeriodDesc = "January to June 2023",
                 },
                 new() {
                     Id = 2,
@@ -256,16 +270,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     OrganisationName = "Test LIMITED",
                     LoadTimeStamp = DateTime.Now,
                     CalculatorRunOrganisationDataMasterId = 1,
-                    SubmissionPeriodDesc = "July to December 2023"
+                    SubmissionPeriodDesc = "July to December 2023",
                 },
-                 new() {
+                new() {
                     Id = 3,
                     OrganisationId = 2,
                     SubsidaryId = "1",
                     OrganisationName = "Subsid2",
                     LoadTimeStamp = DateTime.Now,
                     CalculatorRunOrganisationDataMasterId = 2,
-                    SubmissionPeriodDesc = "July to December 2023"
+                    SubmissionPeriodDesc = "July to December 2023",
                 },
             });
             return list;
@@ -279,50 +293,50 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Id = 1,
                     Code = "AL",
                     Name = "Aluminium",
-                    Description = "Aluminium"
+                    Description = "Aluminium",
                 },
                 new() {
                     Id = 2,
                     Code = "FC",
                     Name = "Fibre composite",
-                    Description = "Fibre composite"
+                    Description = "Fibre composite",
                 },
                 new() {
                     Id = 3,
                     Code = "GL",
                     Name = "Glass",
-                    Description = "Glass"
+                    Description = "Glass",
                 },
                 new() {
                     Id = 4,
                     Code = "PC",
                     Name = "Paper or card",
-                    Description = "Paper or card"
+                    Description = "Paper or card",
                 },
                 new() {
                     Id = 5,
                     Code = "PL",
                     Name = "Plastic",
-                    Description = "Plastic"
+                    Description = "Plastic",
                 },
                 new() {
                     Id = 6,
                     Code = "ST",
                     Name = "Steel",
-                    Description = "Steel"
+                    Description = "Steel",
                 },
                 new() {
                     Id = 7,
                     Code = "WD",
                     Name = "Wood",
-                    Description = "Wood"
+                    Description = "Wood",
                 },
                 new() {
                     Id = 8,
                     Code = "OT",
                     Name = "Other materials",
-                    Description = "Other materials"
-                }
+                    Description = "Other materials",
+                },
             };
             return list;
         }
@@ -336,15 +350,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     CalendarYear = "2024-25",
                     EffectiveFrom = DateTime.Now,
                     CreatedBy = "Test user",
-                    CreatedAt = DateTime.Now
+                    CreatedAt = DateTime.Now,
                 },
-                 new() {
+                new() {
                     Id = 2,
                     CalendarYear = "2024-25",
                     EffectiveFrom = DateTime.Now,
                     CreatedBy = "Test user",
-                    CreatedAt = DateTime.Now
-                }
+                    CreatedAt = DateTime.Now,
+                },
             };
             return list;
         }
@@ -365,7 +379,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     PackagingMaterialWeight = 1000,
                     LoadTimeStamp = DateTime.Now,
                     CalculatorRunPomDataMasterId = 1,
-                    SubmissionPeriodDesc = "July to December 2023"
+                    SubmissionPeriodDesc = "July to December 2023",
                 },
                 new() {
                     Id = 2,
@@ -378,7 +392,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     PackagingMaterialWeight = 1000,
                     LoadTimeStamp = DateTime.Now,
                     CalculatorRunPomDataMasterId = 1,
-                    SubmissionPeriodDesc = "July to December 2023"
+                    SubmissionPeriodDesc = "July to December 2023",
                 },
                 new() {
                     Id = 3,
@@ -392,9 +406,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     PackagingMaterialWeight = 1000,
                     LoadTimeStamp = DateTime.Now,
                     CalculatorRunPomDataMasterId = 1,
-                    SubmissionPeriodDesc = "January to June 2023"
+                    SubmissionPeriodDesc = "January to June 2023",
                 },
-                 new() {
+                new() {
                     Id = 4,
                     OrganisationId = 2,
                     SubsidaryId = "1",
@@ -406,7 +420,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     PackagingMaterialWeight = 1000,
                     LoadTimeStamp = DateTime.Now,
                     CalculatorRunPomDataMasterId = 2,
-                    SubmissionPeriodDesc = "January to June 2024"
+                    SubmissionPeriodDesc = "January to June 2024",
                 },
             };
             return list;
@@ -427,7 +441,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     CalculatorRunOrganisationDataMasterId = 2,
                     CalculatorRunPomDataMasterId = 2,
                     DefaultParameterSettingMasterId = 5,
-                    LapcapDataMasterId = 6
+                    LapcapDataMasterId = 6,
                 },
                 new ()
                 {
@@ -438,7 +452,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     CreatedAt = new DateTime(2024, 8, 21, 14, 16, 27, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                     DefaultParameterSettingMasterId = 5,
-                    LapcapDataMasterId = 6
+                    LapcapDataMasterId = 6,
                 },
                 new ()
                 {
@@ -451,7 +465,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     CalculatorRunOrganisationDataMasterId = 1,
                     CalculatorRunPomDataMasterId = 1,
                     DefaultParameterSettingMasterId = 5,
-                    LapcapDataMasterId = 6
+                    LapcapDataMasterId = 6,
                 },
                 new ()
                 {
@@ -464,7 +478,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     CalculatorRunOrganisationDataMasterId = 2,
                     CalculatorRunPomDataMasterId = 2,
                     DefaultParameterSettingMasterId = 5,
-                    LapcapDataMasterId = 6
+                    LapcapDataMasterId = 6,
                 },
             };
             return list;

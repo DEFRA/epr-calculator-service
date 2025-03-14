@@ -8,11 +8,11 @@
     using System.Threading.Tasks;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
+    using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Common.Utils;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Interface;
-    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Implementing calculator run service methods.
@@ -21,29 +21,33 @@
     {
         private const string JsonMediaType = "application/json";
         private readonly IAzureSynapseRunner azureSynapseRunner;
-        private readonly ILogger logger;
         private readonly IPipelineClientFactory pipelineClientFactory;
         private readonly ITransposePomAndOrgDataService transposePomAndOrgDataService;
         private readonly IConfigurationService configuration;
         private readonly IPrepareCalcService prepareCalcService;
         private readonly IRpdStatusService statusService;
+        private readonly ICalculatorTelemetryLogger telemetryLogger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CalculatorRunService"/> class.
         /// </summary>
         /// <param name="azureSynapseRunner">The Azure Synapse runner.</param>
-        /// <param name="logger">The logger instance.</param>
+        /// <param name="telemetryLogger">The logger instance.</param>
         /// <param name="pipelineClientFactory">The pipeline client factory.</param>
+        /// <param name="transposePomAndOrgDataService">The service for transposing POM and organization data.</param>
+        /// <param name="configuration">The configuration.</param>
+        /// <param name="prepareCalcService">The prepare calculator service.</param>
+        /// <param name="statusService">The status service.</param>
         public CalculatorRunService(
             IAzureSynapseRunner azureSynapseRunner,
-            ILogger<CalculatorRunService> logger,
+            ICalculatorTelemetryLogger telemetryLogger,
             IPipelineClientFactory pipelineClientFactory,
             ITransposePomAndOrgDataService transposePomAndOrgDataService,
             IConfigurationService configuration,
             IPrepareCalcService prepareCalcService,
             IRpdStatusService statusService)
         {
-            this.logger = logger;
+            this.telemetryLogger = telemetryLogger;
             this.azureSynapseRunner = azureSynapseRunner;
             this.pipelineClientFactory = pipelineClientFactory;
             this.transposePomAndOrgDataService = transposePomAndOrgDataService;
@@ -115,40 +119,59 @@
             };
         }
 
-        /// <summary>
-        /// Starts the calculator process.
-        /// </summary>
-        /// <param name="calculatorRunParameter">The parameters required to run the calculator.</param>
-        /// <returns>
-        /// A task that represents the asynchronous operation. The task result contains a boolean indicating success or failure.
-        /// </returns>
-        public async Task<bool> StartProcess(CalculatorRunParameter calculatorRunParameter)
+        /// <inheritdoc/>
+        public async Task<bool> StartProcess(CalculatorRunParameter calculatorRunParameter, string? runName)
         {
-            this.logger.LogInformation("Process started");
-            bool isPomSuccessful = await this.RunPipelines(calculatorRunParameter, this.configuration.ExecuteRPDPipeline);
+            this.telemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = calculatorRunParameter.Id,
+                RunName = runName,
+                Message = "Process started",
+            });
+
+            bool runRpdPipeline = this.configuration.ExecuteRPDPipeline;
+            bool isPomSuccessful = await this.RunPipelines(calculatorRunParameter, runRpdPipeline, runName);
+
+            using var client = this.pipelineClientFactory.GetHttpClient(this.configuration.StatusEndpoint);
+            this.telemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = calculatorRunParameter.Id,
+                RunName = runName,
+                Message = $"HTTP Client: {client}",
+            });
 
             bool isSuccess;
             try
             {
-                isSuccess = await this.UpdateStatusAndPrepareResult(calculatorRunParameter, isPomSuccessful);
+                isSuccess = await this.UpdateStatusAndPrepareResult(calculatorRunParameter, isPomSuccessful, client, runName);
             }
-            catch (TaskCanceledException)
+            catch (TaskCanceledException ex)
             {
+                this.telemetryLogger.LogError(new ErrorMessage
+                {
+                    RunId = calculatorRunParameter.Id,
+                    RunName = runName,
+                    Message = "StartProcess - Task was canceled",
+                    Exception = ex,
+                });
+                return false;
+            }
+            catch (Exception ex)
+            {
+                this.telemetryLogger.LogError(new ErrorMessage
+                {
+                    RunId = calculatorRunParameter.Id,
+                    RunName = runName,
+                    Message = "StartProcess - An error occurred",
+                    Exception = ex,
+                });
                 return false;
             }
 
             return isSuccess;
         }
 
-        /// <summary>
-        /// Executes the organization and POM pipelines based on the provided parameters.
-        /// </summary>
-        /// <param name="calculatorRunParameter">The parameters required to run the calculator.</param>
-        /// <param name="runRpdPipeline">A boolean indicating whether the RPD pipeline should be executed.</param>
-        /// <returns>
-        /// A task that represents the asynchronous operation. The task result contains a boolean indicating the success of the POM pipeline.
-        /// </returns>
-        private async Task<bool> RunPipelines(CalculatorRunParameter calculatorRunParameter, bool runRpdPipeline)
+        private async Task<bool> RunPipelines(CalculatorRunParameter calculatorRunParameter, bool runRpdPipeline, string? runName)
         {
             bool isPomSuccessful = false;
 
@@ -159,7 +182,7 @@
                     this.configuration.OrgDataPipelineName);
 
                 var isOrgSuccessful = await this.azureSynapseRunner.Process(orgPipelineConfiguration);
-                this.logger.LogInformation("Org status: {Status}", isOrgSuccessful);
+                this.LogInformation(calculatorRunParameter.Id, runName, $"RunPipelines - Org status: {isOrgSuccessful}");
 
                 if (isOrgSuccessful)
                 {
@@ -167,7 +190,7 @@
                         calculatorRunParameter,
                         this.configuration.PomDataPipelineName);
                     isPomSuccessful = await this.azureSynapseRunner.Process(pomPipelineConfiguration);
-                    this.logger.LogInformation("Pom status: {Status}", isPomSuccessful);
+                    this.LogInformation(calculatorRunParameter.Id, runName, $"RunPipelines - POM status: {isPomSuccessful}");
                 }
             }
             else
@@ -175,67 +198,90 @@
                 isPomSuccessful = true;
             }
 
-            this.logger.LogInformation("Pom status: {Status}", isPomSuccessful);
+            this.LogInformation(calculatorRunParameter.Id, runName, $"RunPipelines - Final POM status: {isPomSuccessful}");
             return isPomSuccessful;
         }
 
-        /// <summary>
-        /// Updates the status and prepares the result based on the success of the POM pipeline.
-        /// </summary>
-        /// <param name="calculatorRunParameter">The parameters required to run the calculator.</param>
-        /// <param name="isPomSuccessful">A boolean indicating whether the POM pipeline was successful.</param>
-        /// <returns>
-        /// A task that represents the asynchronous operation. The task result contains a boolean indicating the success of the status update and result preparation.
-        /// </returns>
-        private async Task<bool> UpdateStatusAndPrepareResult(CalculatorRunParameter calculatorRunParameter, bool isPomSuccessful)
+        private async Task<bool> UpdateStatusAndPrepareResult(CalculatorRunParameter calculatorRunParameter, bool isPomSuccessful, HttpClient client, string? runName)
         {
             bool isSuccess = false;
 
             if (isPomSuccessful)
             {
-                this.logger.LogInformation("StatusEndPoint: {StatusEndPoint}", this.configuration.StatusEndpoint);
+                await LogAndUpdateStatus(calculatorRunParameter, runName, isPomSuccessful);
+
                 var statusUpdateResponse = await this.statusService.UpdateRpdStatus(
-                        calculatorRunParameter.Id,
-                        calculatorRunParameter.User,
-                        isPomSuccessful,
-                        new CancellationTokenSource(this.configuration.RpdStatusTimeout).Token);
-                this.logger.LogInformation("Status UpdateRpdStatus: {Response}", statusUpdateResponse);
+                    calculatorRunParameter.Id,
+                    runName,
+                    calculatorRunParameter.User,
+                    isPomSuccessful,
+                    new CancellationTokenSource(this.configuration.RpdStatusTimeout).Token);
+
+                this.LogInformation(calculatorRunParameter.Id, runName, $"UpdateStatusAndPrepareResult - Status UpdateRpdStatus: {statusUpdateResponse}");
 
                 if (statusUpdateResponse == RunClassification.RUNNING)
                 {
-                    var isTransposeSuccess = await this.transposePomAndOrgDataService.
-                        TransposeBeforeCalcResults(
-                            new CalcResultsRequestDto { RunId = calculatorRunParameter.Id },
-                            new CancellationTokenSource(this.configuration.TransposeTimeout).Token);
+                    var isTransposeSuccess = await this.transposePomAndOrgDataService.TransposeBeforeCalcResults(
+                        new CalcResultsRequestDto { RunId = calculatorRunParameter.Id },
+                        runName,
+                        new CancellationTokenSource(this.configuration.TransposeTimeout).Token);
 
-                    this.logger.LogInformation("transposeResultResponse: {isSuccess}", isTransposeSuccess);
+                    this.LogInformation(calculatorRunParameter.Id, runName, $"UpdateStatusAndPrepareResult - transposeResultResponse: {isTransposeSuccess}");
 
                     if (isTransposeSuccess)
                     {
                         isSuccess = await this.prepareCalcService.PrepareCalcResults(
                             new CalcResultsRequestDto { RunId = calculatorRunParameter.Id },
+                            runName,
                             new CancellationTokenSource(this.configuration.PrepareCalcResultsTimeout).Token);
 
-                        this.logger.LogInformation("prepareCalcResultResponse: {isSuccess}", isSuccess);
+                        this.LogInformation(calculatorRunParameter.Id, runName, $"UpdateStatusAndPrepareResult - prepareCalcResultResponse: {isSuccess}");
                     }
                 }
 
-                this.logger.LogInformation("PrepareCalcResultEndPoint: {PrepareCalcResultEndPoint}", this.configuration.PrepareCalcResultEndPoint);
-                this.logger.LogInformation("CalculatorRunParameter ID: {CalculatorRunParameterId}", calculatorRunParameter.Id);
-                this.logger.LogInformation("GetPrepareCalcResultMessage: {GetPrepareCalcResultMessageId}", GetCalcResultMessage(calculatorRunParameter.Id));
+                this.LogInformation(calculatorRunParameter.Id, runName, $"UpdateStatusAndPrepareResult - StatusEndPoint: {this.configuration.PrepareCalcResultEndPoint}");
+                this.LogInformation(calculatorRunParameter.Id, runName, $"UpdateStatusAndPrepareResult - CalculatorRunParameter ID: {calculatorRunParameter.Id}");
+                this.LogInformation(calculatorRunParameter.Id, runName, $"UpdateStatusAndPrepareResult - GetPrepareCalcResultMessage: {GetCalcResultMessage(calculatorRunParameter.Id)}");
             }
             else
             {
-                this.logger.LogInformation("StatusEndPoint: {StatusEndPoint}", this.configuration.StatusEndpoint);
-                var statusUpdateResponse = await this.statusService.UpdateRpdStatus(
-                    calculatorRunParameter.Id,
-                    calculatorRunParameter.User,
-                    isPomSuccessful,
-                    new CancellationTokenSource(this.configuration.RpdStatusTimeout).Token);
-                this.logger.LogInformation("Status Response: {Response}", statusUpdateResponse);
+                await this.LogAndUpdateStatus(calculatorRunParameter, runName, isPomSuccessful);
             }
 
             return isSuccess;
+        }
+
+        private async Task LogAndUpdateStatus(CalculatorRunParameter calculatorRunParameter, string? runName, bool isPomSuccessful)
+        {
+            this.LogInformation(calculatorRunParameter.Id, runName, $"UpdateStatusAndPrepareResult - StatusEndPoint: {this.configuration.StatusEndpoint}");
+            var statusUpdateResponse = await this.statusService.UpdateRpdStatus(
+                calculatorRunParameter.Id,
+                runName,
+                calculatorRunParameter.User,
+                isPomSuccessful,
+                new CancellationTokenSource(this.configuration.RpdStatusTimeout).Token);
+            this.LogInformation(calculatorRunParameter.Id, runName, $"UpdateStatusAndPrepareResult - Status Response: {statusUpdateResponse}");
+        }
+
+        private void LogInformation(int runId, string? runName, string message)
+        {
+            this.telemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = runId,
+                RunName = runName,
+                Message = message,
+            });
+        }
+
+        private void LogError(int runId, string runName, string message, Exception ex)
+        {
+            this.telemetryLogger.LogError(new ErrorMessage
+            {
+                RunId = runId,
+                RunName = runName,
+                Message = message,
+                Exception = ex,
+            });
         }
     }
 }
