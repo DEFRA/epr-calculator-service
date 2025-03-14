@@ -24,7 +24,7 @@ namespace EPR.Calculator.Service.Function.Constants
         public static readonly string Level = "Level";
         public static readonly string ScaledupTonnages = "Scaled-up tonnages?";
 
-        public static readonly string HouseholdPackagingWasteTonnage = "Household Packaging Waste Tonnage";
+        public static readonly string HouseholdPackagingWasteTonnage = "Household Packaging Tonnage";
         public static readonly string PublicBinTonnage = "Public Bin Tonnage";
         public static readonly string HouseholdDrinksContainersTonnage = "Household Drinks Containers Tonnage - Glass";
         public static readonly string TotalTonnage = "Total Tonnage";
