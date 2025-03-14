@@ -8,7 +8,7 @@
         public const string Scotland = "Scotland";
         public const string NorthernIreland = "Northern Ireland";
         public const string Total = "Total";
-        public const string ProducerReportedHouseholdPackagingWasteTonnage = "Producer Household Packaging Waste Tonnage";
+        public const string ProducerReportedHouseholdPackagingWasteTonnage = "Producer Household Packaging Tonnage";
         public const string LateReportingTonnage = "Late Reporting Tonnage";
         public const string ReportedPublicBinTonnage = "Public Bin Tonnage";
         public const string HouseholdDrinksContainers = "Household Drinks Containers Tonnage";

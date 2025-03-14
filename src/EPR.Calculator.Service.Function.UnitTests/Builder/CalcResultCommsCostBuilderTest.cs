@@ -121,7 +121,7 @@
             Assert.AreEqual("Northern Ireland", materialHeader.NorthernIreland);
             Assert.AreEqual("Total", materialHeader.Total);
             Assert.AreEqual(
-                "Producer Household Packaging Waste Tonnage",
+                "Producer Household Packaging Tonnage",
                 materialHeader.ProducerReportedHouseholdPackagingWasteTonnage);
             Assert.AreEqual("Public Bin Tonnage", materialHeader.ReportedPublicBinTonnage);
             Assert.AreEqual("Household Drinks Containers Tonnage", materialHeader.HouseholdDrinksContainers);
