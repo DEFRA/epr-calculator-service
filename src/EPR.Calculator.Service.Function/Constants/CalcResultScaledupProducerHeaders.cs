@@ -15,12 +15,12 @@
         public static readonly string DaysInWholePeriod = "Days in whole period";
         public static readonly string ScaleupFactor = "Scale-up factor";
 
-        public static readonly string ReportedHouseholdPackagingWasteTonnage = "Reported Household Packaging Waste Tonnage";
+        public static readonly string ReportedHouseholdPackagingWasteTonnage = "Reported Household Packaging Tonnage";
         public static readonly string ReportedPublicBinTonnage = "Reported Public Bin Tonnage";
         public static readonly string TotalReportedTonnage = "Total Reported Tonnage";
         public static readonly string ReportedSelfManagedConsumerWasteTonnage = "Reported Self Managed Consumer Waste Tonnage";
         public static readonly string NetReportedTonnage = "Net Reported Tonnage";
-        public static readonly string ScaledupReportedHouseholdPackagingWasteTonnage = "Scaled-up Reported Household Packaging Waste Tonnage";
+        public static readonly string ScaledupReportedHouseholdPackagingWasteTonnage = "Scaled-up Reported Household Packaging Tonnage";
         public static readonly string ScaledupReportedPublicBinTonnage = "Scaled-up Reported Public Bin Tonnage";
         public static readonly string ScaledupTotalReportedTonnage = "Scaled-up Total Reported Tonnage";
         public static readonly string ScaledupReportedSelfManagedConsumerWasteTonnage = "Scaled-up Reported Self Managed Consumer Waste Tonnage";
