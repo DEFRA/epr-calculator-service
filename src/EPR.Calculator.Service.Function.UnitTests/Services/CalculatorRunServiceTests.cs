@@ -2,21 +2,20 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
     using System.Net;
     using System.Net.Http;
+    using System.Text;
+    using System.Text.Json;
     using AutoFixture;
-    using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
-    using EPR.Calculator.Service.Common.Utils;
+    using EPR.Calculator.Service.Common.Logging;
+    using EPR.Calculator.Service.Common.UnitTests.AutoFixtureCustomisations;
     using EPR.Calculator.Service.Function.Constants;
+    using EPR.Calculator.Service.Function.Dtos;
+    using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Interface;
-    using EPR.Calculator.Service.Function.Misc;
     using EPR.Calculator.Service.Function.Services;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
     using Moq;
     using Moq.Protected;
-    using EPR.Calculator.Service.Function.Enums;
 
     /// <summary>
     /// Contains unit tests for the CalculatorRunService class.
@@ -24,15 +23,23 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     [TestClass]
     public class CalculatorRunServiceTests
     {
+        private FinancialYear FinancialYear { get; init; } = "2024-25";
+
+        private CalendarYear CalendarYear { get; init; } = "2023";
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CalculatorRunServiceTests"/> class.
         /// </summary>
         public CalculatorRunServiceTests()
         {
             this.Fixture = new Fixture();
+            this.Fixture.Customizations.Add(new FinancialYearCustomisation());
             this.AzureSynapseRunner = new Mock<IAzureSynapseRunner>();
-            this.MockLogger = new Mock<ILogger<CalculatorRunService>>();
+            this.MockLogger = new Mock<ICalculatorTelemetryLogger>();
             this.TransposeService = new Mock<ITransposePomAndOrgDataService>();
+            this.RunNameService = new Mock<IRunNameService>();
+            this.Configuration = new Mock<IConfigurationService>();
+            this.TelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
 
             this.MockStatusUpdateHandler = new Mock<HttpMessageHandler>();
             this.MockStatusUpdateHandler.Protected()
@@ -45,12 +52,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.PrepareCalcService = new Mock<IPrepareCalcService>();
             this.PrepareCalcService.Setup(s => s.PrepareCalcResults(
                 It.IsAny<CalcResultsRequestDto>(),
+                It.IsAny<string>(),
                 It.IsAny<CancellationToken>()))
                 .ReturnsAsync(true);
 
             var statusService = new Mock<IRpdStatusService>();
             statusService.Setup(s => s.UpdateRpdStatus(
                 It.IsAny<int>(),
+                It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<bool>(),
                 It.IsAny<CancellationToken>()))
@@ -76,6 +85,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             this.TransposeService.Setup(t => t.TransposeBeforeCalcResults(
                 It.IsAny<CalcResultsRequestDto>(),
+                It.IsAny<string>(),
                 It.IsAny<CancellationToken>()))
                 .ReturnsAsync(true);
 
@@ -84,13 +94,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Environment.SetEnvironmentVariable(EnvironmentVariableKeys.StatusUpdateEndpoint, this.Fixture.Create<string>());
             Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PrepareCalcResultEndPoint, this.Fixture.Create<Uri>().ToString());
             Environment.SetEnvironmentVariable(EnvironmentVariableKeys.TransposeEndpoint, this.Fixture.Create<Uri>().ToString());
+            Environment.SetEnvironmentVariable(EnvironmentVariableKeys.RpdStatusTimeout, "0");
+            Environment.SetEnvironmentVariable(EnvironmentVariableKeys.StatusUpdateEndpoint, this.Fixture.Create<Uri>().ToString());
         }
 
         private CalculatorRunService CalculatorRunService { get; }
 
         private Mock<IAzureSynapseRunner> AzureSynapseRunner { get; }
 
-        private Mock<ILogger<CalculatorRunService>> MockLogger { get; }
+        private Mock<ICalculatorTelemetryLogger> MockLogger { get; }
 
         private Fixture Fixture { get; }
 
@@ -102,6 +114,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         private Mock<IPrepareCalcService> PrepareCalcService { get; init; }
 
+        private Mock<IRunNameService> RunNameService { get; }
+
+        private Mock<IConfigurationService> Configuration { get; }
+
+        private Mock<ICalculatorTelemetryLogger> TelemetryLogger { get; }
+
         /// <summary>
         /// Checks that the service calls the Azure Synapse runner and passes the correct parameters to it.
         /// </summary>
@@ -111,8 +129,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             // Arrange
             var id = this.Fixture.Create<int>();
-            var financialYear = "2024-25";
             var user = this.Fixture.Create<string>();
+            var runName = "Test Run Name";
 
             var checkInterval = this.Fixture.Create<int>();
             Environment.SetEnvironmentVariable(
@@ -151,7 +169,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var calculatorRunParameters = new CalculatorRunParameter
             {
                 Id = id,
-                FinancialYear = financialYear,
+                FinancialYear = this.FinancialYear,
                 User = user,
             };
 
@@ -160,7 +178,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 CalculatorRunId = id,
                 CheckInterval = checkInterval,
-                FinancialYear = financialYear,
+                CalendarYear = this.CalendarYear,
                 MaxCheckCount = maxCheckCount,
                 PipelineUrl = pipelineUrl,
                 PipelineName = orgPipelineName,
@@ -170,14 +188,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.AzureSynapseRunner.Setup(t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
                 p.CalculatorRunId == id &&
                 p.CheckInterval == checkInterval &&
-                p.FinancialYear == financialYear &&
+                p.CalendarYear == this.CalendarYear &&
                 p.MaxCheckCount == maxCheckCount &&
                 p.PipelineUrl == pipelineUrl &&
                 p.PipelineName == orgPipelineName)))
                 .ReturnsAsync(false);
 
+            this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
+
             // Act
-            await this.CalculatorRunService.StartProcess(calculatorRunParameters);
+            await this.CalculatorRunService.StartProcess(calculatorRunParameters, runName);
 
             // Assert
 
@@ -186,20 +206,22 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
                 p.CalculatorRunId == id &&
                 p.CheckInterval == checkInterval &&
-                p.FinancialYear == Util.GetCalendarYearFromFinancialYear(financialYear) &&
+                p.CalendarYear == this.CalendarYear &&
                 p.MaxCheckCount == maxCheckCount &&
                 p.PipelineUrl == pipelineUrl &&
-                p.PipelineName == orgPipelineName)), Times.Once);
+                p.PipelineName == orgPipelineName)),
+                Times.Once);
 
             // Verify that the pom pipeline was not called
             this.AzureSynapseRunner.Verify(
                 t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
                 p.CalculatorRunId == id &&
                 p.CheckInterval == checkInterval &&
-                p.FinancialYear == Util.GetCalendarYearFromFinancialYear(financialYear) &&
+                p.CalendarYear == this.CalendarYear &&
                 p.MaxCheckCount == maxCheckCount &&
                 p.PipelineUrl == pipelineUrl &&
-                p.PipelineName == pomPipelineName)), Times.Never);
+                p.PipelineName == pomPipelineName)),
+                Times.Never);
         }
 
         /// <summary>
@@ -218,8 +240,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             // Arrange
             var id = this.Fixture.Create<int>();
-            var financialYear = "2024-25";
             var user = this.Fixture.Create<string>();
+            var runName = "Test Run Name";
 
             var checkInterval = this.Fixture.Create<int>();
             Environment.SetEnvironmentVariable(
@@ -253,7 +275,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var calculatorRunParameters = new CalculatorRunParameter
             {
                 Id = id,
-                FinancialYear = financialYear,
+                FinancialYear = this.FinancialYear,
                 User = user,
             };
 
@@ -262,7 +284,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 CalculatorRunId = id,
                 CheckInterval = checkInterval,
-                FinancialYear = financialYear,
+                CalendarYear = this.CalendarYear,
                 MaxCheckCount = maxCheckCount,
                 PipelineUrl = pipelineUrl,
                 PipelineName = orgPipelineName,
@@ -272,8 +294,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.AzureSynapseRunner.Setup(t => t.Process(It.IsAny<AzureSynapseRunnerParameters>()))
                 .ReturnsAsync(true);
 
+            this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
+
             // Act
-            await this.CalculatorRunService.StartProcess(calculatorRunParameters);
+            await this.CalculatorRunService.StartProcess(calculatorRunParameters, runName);
 
             // Assert
             this.AzureSynapseRunner.Verify(
@@ -295,8 +319,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             // Arrange
             var id = this.Fixture.Create<int>();
-            var financialYear = "2024-25";
             var user = this.Fixture.Create<string>();
+            var runName = "Test Run Name";
 
             var checkInterval = 5;
             Environment.SetEnvironmentVariable(
@@ -330,7 +354,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var calculatorRunParameters = new CalculatorRunParameter
             {
                 Id = id,
-                FinancialYear = financialYear,
+                FinancialYear = this.FinancialYear,
                 User = user,
             };
 
@@ -339,7 +363,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 CalculatorRunId = id,
                 CheckInterval = checkInterval,
-                FinancialYear = financialYear,
+                CalendarYear = this.CalendarYear,
                 MaxCheckCount = maxCheckCount,
                 PipelineUrl = pipelineUrl,
                 PipelineName = orgPipelineName,
@@ -349,7 +373,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 CalculatorRunId = id,
                 CheckInterval = checkInterval,
-                FinancialYear = financialYear,
+                CalendarYear = this.CalendarYear,
                 MaxCheckCount = maxCheckCount,
                 PipelineUrl = pipelineUrl,
                 PipelineName = pomPipelineName,
@@ -362,8 +386,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.AzureSynapseRunner.Setup(t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
                 p.PipelineName == pomPipelineName))).ReturnsAsync(true);
 
+            this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
+
             // Act
-            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters);
+            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters, runName);
 
             // Assert
             Assert.IsTrue(result);
@@ -388,8 +414,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             // Arrange
             var id = this.Fixture.Create<int>();
-            var financialYear = "2024-25";
             var user = this.Fixture.Create<string>();
+            var runName = "Test Run Name";
 
             var checkInterval = 5;
             Environment.SetEnvironmentVariable(
@@ -428,7 +454,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var calculatorRunParameters = new CalculatorRunParameter
             {
                 Id = id,
-                FinancialYear = financialYear,
+                FinancialYear = this.FinancialYear,
                 User = user,
             };
 
@@ -439,8 +465,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.AzureSynapseRunner.Setup(t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
                 p.PipelineName == pomPipelineName))).ReturnsAsync(false);
 
+            this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
+
             // Act
-            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters);
+            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters, runName);
 
             // Assert
             Assert.IsFalse(result);
@@ -485,9 +513,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var calculatorRunParameters = this.Fixture.Create<CalculatorRunParameter>();
             calculatorRunParameters.FinancialYear = "2024-25";
+            var runName = "Test Run Name";
+
+            this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
 
             // Act
-            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters);
+            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters, runName);
 
             // Assert
             Assert.IsFalse(result);
@@ -522,12 +553,118 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var calculatorRunParameters = this.Fixture.Create<CalculatorRunParameter>();
             calculatorRunParameters.FinancialYear = "2024-25";
+            var runName = "Test Run Name";
+
+            this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
 
             // Act
-            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters);
+            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters, runName);
 
             // Assert
             Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task StartProcess_ShouldLogErrorOn_TaskCanceledException()
+        {
+            // Arrange
+            var calculatorRunParameter = new CalculatorRunParameter { Id = 123, User = "testUser", FinancialYear = new FinancialYear("2024-25") };
+            string runName = "testRun";
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.RpdStatusTimeout,
+                "0.00000001");
+
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.StatusUpdateEndpoint,
+                "http://test.com/status");
+
+            this.PipelineClientFactory.Setup(p => p.GetHttpClient(It.IsAny<Uri>())).Throws(new Exception("StartProcess - Task was canceled"));
+
+            // Act & Assert
+            var exception = await Assert.ThrowsExceptionAsync<Exception>(async () =>
+            {
+                await this.CalculatorRunService.StartProcess(calculatorRunParameter, runName);
+            });
+
+            // Verify the exception message
+            Assert.AreEqual("StartProcess - Task was canceled", exception.Message);
+        }
+
+        [TestMethod]
+        public async Task StartProcess_ShouldReturnFalseOn_TaskCanceledException()
+        {
+            // Arrange
+            var calculatorRunParameter = new CalculatorRunParameter { Id = 1, User = "TestUser", FinancialYear = new FinancialYear("2024-25") };
+            var runName = "TestRun";
+            var mockHttpClient = new Mock<HttpClient>();
+
+            this.PipelineClientFactory.Setup(p => p.GetHttpClient(It.IsAny<Uri>())).Returns(mockHttpClient.Object);
+            this.TransposeService.Setup(t => t.TransposeBeforeCalcResults(It.IsAny<CalcResultsRequestDto>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new TaskCanceledException());
+
+            // Act
+            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameter, runName);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task StartProcess_ShouldReturnFalseOn_Exception()
+        {
+            // Arrange
+            var calculatorRunParameter = new CalculatorRunParameter { Id = 1, User = "TestUser", FinancialYear = new FinancialYear("2024-25") };
+            var runName = "TestRun";
+            var mockHttpClient = new Mock<HttpClient>();
+
+            this.PipelineClientFactory.Setup(p => p.GetHttpClient(It.IsAny<Uri>())).Returns(mockHttpClient.Object);
+            this.TransposeService.Setup(t => t.TransposeBeforeCalcResults(It.IsAny<CalcResultsRequestDto>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new Exception("Test Exception"));
+
+            // Act
+            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameter, runName);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task StartProcess_ShouldLogErrorOn_Exception()
+        {
+            // Arrange
+            var calculatorRunParameter = new CalculatorRunParameter { Id = 123, User = "testUser", FinancialYear = new FinancialYear("2024-25") };
+            string runName = "testRun";
+            this.PipelineClientFactory.Setup(p => p.GetHttpClient(It.IsAny<Uri>())).Throws(new Exception("Test Exception"));
+
+            // Mock the StatusEndpoint
+            this.Configuration.Setup(c => c.StatusEndpoint).Returns(new Uri("http://test.com/status"));
+
+            // Act & Assert
+            var exception = await Assert.ThrowsExceptionAsync<Exception>(async () =>
+            {
+                await this.CalculatorRunService.StartProcess(calculatorRunParameter, runName);
+            });
+
+            // Verify the exception message
+            Assert.AreEqual("Test Exception", exception.Message);
+        }
+
+        [TestMethod]
+        public void GetCalcResultMessage_ShouldReturnCorrect_StringContent()
+        {
+            // Arrange
+            int calculatorRunId = 123;
+            var expectedJson = JsonSerializer.Serialize(new { runId = calculatorRunId });
+            var expectedContent = new StringContent(expectedJson, Encoding.UTF8, "application/json");
+
+            // Act
+            var result = CalculatorRunService.GetCalcResultMessage(calculatorRunId);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedContent.Headers.ContentType?.MediaType, result.Headers.ContentType?.MediaType);
+            Assert.AreEqual(expectedContent.Headers.ContentType?.CharSet, result.Headers.ContentType?.CharSet);
+            Assert.AreEqual(expectedJson, result.ReadAsStringAsync().Result);
         }
 
         /// <summary>

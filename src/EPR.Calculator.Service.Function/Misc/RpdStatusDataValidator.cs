@@ -2,12 +2,12 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-using EPR.Calculator.Service.Function.Data.DataModels;
-using EPR.Calculator.Service.Function.Interface;
-using EPR.Calculator.Service.Function.Models;
-using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
-using System.Linq;
+    using EPR.Calculator.Service.Function.Data.DataModels;
+    using EPR.Calculator.Service.Function.Interface;
+    using EPR.Calculator.Service.Function.Models;
+    using Microsoft.AspNetCore.Http;
+    using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RpdStatusDataValidator"/> class.
@@ -86,7 +86,6 @@ using System.Linq;
             {
                 isValid = true,
             };
-
         }
     }
 }

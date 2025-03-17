@@ -8,9 +8,9 @@
         public int CalculatorRunId { get; init; }
 
         /// <summary>
-        /// Gets the Financial Year.
+        /// Gets the Calendar Year, in the format yyyy.
         /// </summary>
-        required public string FinancialYear { get; init; }
+        required public CalendarYear CalendarYear { get; init; }
 
         /// <summary>Gets the URL of the pipeline to run.</summary>
         required public Uri PipelineUrl { get; init; }

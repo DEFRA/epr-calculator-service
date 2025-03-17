@@ -36,6 +36,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.LaDisposalCost
                         Total = "null",
                         ProducerReportedHouseholdPackagingWasteTonnage = "null",
                         ReportedPublicBinTonnage = string.Empty,
+                        HouseholdDrinkContainers = "100.12345",
+                        ProducerReportedTotalTonnage = "200.12345",
                     },
                     new CalcResultLaDisposalCostDataDetail
                     {
@@ -73,6 +75,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.LaDisposalCost
 
             // Assert
             Assert.IsTrue(result.Contains("LA Disposal Cost Data"));
+            Assert.IsTrue(result.Contains("200.123"));
+            Assert.IsFalse(result.Contains("200.12345"));
+            Assert.IsTrue(result.Contains("100.123"));
+            Assert.IsFalse(result.Contains("100.12345"));
         }
     }
 }

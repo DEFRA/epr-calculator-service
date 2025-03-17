@@ -5,13 +5,13 @@
 
     public interface IConfigurationService
     {
-        string CheckInterval { get; }
+        int CheckInterval { get; }
 
         string DbConnectionString { get; }
 
-        string ExecuteRPDPipeline { get; }
+        bool ExecuteRPDPipeline { get; }
 
-        string MaxCheckCount { get; }
+        int MaxCheckCount { get; }
 
         string OrgDataPipelineName { get; }
 
@@ -34,6 +34,8 @@
         string BlobContainerName { get; }
 
         string BlobConnectionString { get; }
+
+        string InstrumentationKey { get; }
 
         /// <summary>
         /// Gets the database command timout from the envirionment variables.

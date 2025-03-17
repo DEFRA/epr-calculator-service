@@ -3,6 +3,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
     using System;
     using AutoFixture;
     using EPR.Calculator.Service.Common.AzureSynapse;
+    using EPR.Calculator.Service.Common.UnitTests.AutoFixtureCustomisations;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     /// <summary>
@@ -17,9 +18,10 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
         public AzureSynapseRunnerParametersTests()
         {
             var fixture = new Fixture();
+            fixture.Customizations.Add(new CalendarYearCustomisation());
 
             this.CalculatorRunId = fixture.Create<int>();
-            this.FinancialYear = "2024-25";
+            this.CalendarYear = fixture.Create<CalendarYear>();
             this.CheckInterval = fixture.Create<int>();
             this.MaxCheckCount = fixture.Create<int>();
             this.PipelineName = fixture.Create<string>();
@@ -30,7 +32,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             this.TestClass = new AzureSynapseRunnerParameters
             {
                 CalculatorRunId = this.CalculatorRunId,
-                FinancialYear = this.FinancialYear,
+                CalendarYear = this.CalendarYear,
                 CheckInterval = this.CheckInterval,
                 MaxCheckCount = this.MaxCheckCount,
                 PipelineName = this.PipelineName,
@@ -42,7 +44,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
         private int CalculatorRunId { get; }
 
-        private string FinancialYear { get; }
+        private CalendarYear CalendarYear { get; }
 
         private int CheckInterval { get; }
 
@@ -66,7 +68,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             var instance = new AzureSynapseRunnerParameters
             {
                 CalculatorRunId = this.CalculatorRunId,
-                FinancialYear = this.FinancialYear,
+                CalendarYear = this.CalendarYear,
                 CheckInterval = this.CheckInterval,
                 MaxCheckCount = this.MaxCheckCount,
                 PipelineName = this.PipelineName,
@@ -76,7 +78,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             // Assert
             Assert.IsNotNull(instance);
             Assert.AreEqual(this.CalculatorRunId, this.TestClass.CalculatorRunId);
-            Assert.AreEqual(this.FinancialYear, this.TestClass.FinancialYear);
+            Assert.AreEqual(this.CalendarYear, this.TestClass.CalendarYear);
             Assert.AreEqual(this.CheckInterval, this.TestClass.CheckInterval);
             Assert.AreEqual(this.MaxCheckCount, this.TestClass.MaxCheckCount);
             Assert.AreEqual(this.PipelineName, this.TestClass.PipelineName);
