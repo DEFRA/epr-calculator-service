@@ -1,10 +1,10 @@
 namespace EPR.Calculator.Service.Function.UnitTests
 {
+    using System;
     using AutoFixture;
     using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Function.Misc;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System;
 
     [TestClass]
     public class CalculatorRunValidatorTests

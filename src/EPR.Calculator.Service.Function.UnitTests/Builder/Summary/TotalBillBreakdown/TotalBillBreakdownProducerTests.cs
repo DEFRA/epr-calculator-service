@@ -528,17 +528,18 @@
                         MaterialId = materialId,
                         ProducerDetailId = producerDetailId,
                         PackagingType = "HH",
-                        PackagingTonnage = (materialId * 100),
+                        PackagingTonnage = materialId * 100,
                     });
                     _dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
                     {
                         MaterialId = materialId,
                         ProducerDetailId = producerDetailId,
                         PackagingType = "CW",
-                        PackagingTonnage = (materialId * 50),
+                        PackagingTonnage = materialId * 50,
                     });
                 }
             }
+
             _dbContext.SaveChanges();
         }
 

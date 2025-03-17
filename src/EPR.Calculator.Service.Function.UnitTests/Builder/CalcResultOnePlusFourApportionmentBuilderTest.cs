@@ -59,7 +59,7 @@
                             WalesValue = 114.00m,
                             ScotlandValue = 117.00m,
                             NorthernIrelandValue = 19.00m,
-                            TotalValue=365.45m,
+                            TotalValue = 365.45m,
                         },
                     },
                 },

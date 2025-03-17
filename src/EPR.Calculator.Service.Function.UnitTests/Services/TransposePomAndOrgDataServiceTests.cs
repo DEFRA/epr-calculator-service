@@ -25,12 +25,12 @@
         public TransposePomAndOrgDataServiceTests()
         {
             this.CommandTimeoutService = new Mock<ICommandTimeoutService>().Object;
-            _dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
+            this._dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
             .Options;
 
-            this._context = new ApplicationDBContext(_dbContextOptions);
+            this._context = new ApplicationDBContext(this._dbContextOptions);
             this.ContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
             this.ContextFactory.Setup(f => f.CreateDbContext()).Returns(this._context);
 
