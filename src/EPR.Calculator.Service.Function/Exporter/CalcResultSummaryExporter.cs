@@ -1,14 +1,14 @@
-﻿using EPR.Calculator.API.Utils;
-using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Enums;
-using EPR.Calculator.Service.Function.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace EPR.Calculator.Service.Function.Exporter
+﻿namespace EPR.Calculator.Service.Function.Exporter
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using EPR.Calculator.API.Utils;
+    using EPR.Calculator.Service.Function.Constants;
+    using EPR.Calculator.Service.Function.Enums;
+    using EPR.Calculator.Service.Function.Models;
+
     public class CalcResultSummaryExporter : ICalcResultSummaryExporter
     {
         private readonly IEnumerable<string> extraColumns = [MaterialCodes.Glass];

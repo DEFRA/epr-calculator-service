@@ -105,8 +105,8 @@
         public void TestCleanup()
         {
             _producers = null;
-            _allResults = null;
             _calcResult = null;
+            _allResults = null;
         }
 
         [TestMethod]
