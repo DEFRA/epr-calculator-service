@@ -3,8 +3,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using System;
     using System.Threading.Tasks;
     using AutoFixture;
-    using EPR.Calculator.Service.Function.Data;
-    using EPR.Calculator.Service.Function.Data.DataModels;
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Function.Interface;
     using EPR.Calculator.Service.Function.Services;
     using Microsoft.ApplicationInsights;
@@ -12,7 +12,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using Microsoft.EntityFrameworkCore;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
-    using TRecord = System.String;
 
     /// <summary>Unit tests for <see cref="DbLoadingChunkerService{TRecord}"/>.</summary>
     [TestClass]

@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using EPR.Calculator.Service.Function.Data.DataModels;
+    using EPR.Calculator.API.Data.DataModels;
     using FluentValidation;
 
     public class CalculatorRunValidator : AbstractValidator<string>
@@ -29,7 +29,7 @@
             return new ValidationResult
             {
                 IsValid = errorMessages.Count == 0,
-                ErrorMessages = errorMessages
+                ErrorMessages = errorMessages,
             };
         }
     }

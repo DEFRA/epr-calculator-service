@@ -1,15 +1,13 @@
-﻿using EPR.Calculator.Service.Function.Builder;
-using EPR.Calculator.Service.Function.Builder.LateReportingTonnages;
-using EPR.Calculator.Service.Function.Data;
-using EPR.Calculator.Service.Function.Data.DataModels;
-using EPR.Calculator.Service.Function.Dtos;
-using EPR.Calculator.Service.Function.Enums;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace EPR.Calculator.Service.Function.UnitTests.Builder
+﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.Service.Function.Builder.LateReportingTonnages;
+    using EPR.Calculator.Service.Function.Dtos;
+    using EPR.Calculator.Service.Function.Enums;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Diagnostics;
+
     [TestClass]
     public class CalcResultLateReportingBuilderTest
     {
@@ -41,19 +39,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         Financial_Year = "2024-25",
                         CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
                         CreatedBy = "Test User",
-                        LapcapDataMasterId = 2
-                      }
+                        LapcapDataMasterId = 2,
+                      },
             };
 
             var defaultParameterSettings = new List<DefaultParameterSettingMaster>
             {
-                new() { Id = 1 }
+                new() { Id = 1 },
             };
 
             var defaultParameterTemplateMasterList = new List<DefaultParameterTemplateMaster>
             {
                 new() { ParameterUniqueReferenceId = "1", ParameterType = "Late Reporting Tonnage", ParameterCategory = "Aluminium" },
-                new() { ParameterUniqueReferenceId = "2", ParameterType = "Late Reporting Tonnage", ParameterCategory = "Fibre composite" }
+                new() { ParameterUniqueReferenceId = "2", ParameterType = "Late Reporting Tonnage", ParameterCategory = "Fibre composite" },
             };
 
             var defaultParameterSettingDetails = new List<DefaultParameterSettingDetail>
@@ -71,7 +69,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     ParameterUniqueReferenceId = "2",
                     ParameterValue = 200,
                     DefaultParameterSettingMaster = defaultParameterSettings[0],
-                }
+                },
             };
 
             dbContext.CalculatorRuns.AddRange(calculatorRuns);

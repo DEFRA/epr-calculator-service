@@ -2,18 +2,16 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-using EPR.Calculator.Service.Function.Data.DataModels;
-using EPR.Calculator.Service.Function.Interface;
-using EPR.Calculator.Service.Function.Models;
-using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
-using System.Linq;
+    using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.Service.Function.Interface;
+    using EPR.Calculator.Service.Function.Models;
+    using Microsoft.AspNetCore.Http;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RpdStatusDataValidator"/> class.
     /// </summary>
     public class RpdStatusDataValidator(IOrgAndPomWrapper wrapper) : IRpdStatusDataValidator
-        {
+    {
         private readonly IOrgAndPomWrapper wrapper = wrapper;
 
         public RpdStatusValidation IsValidRun(CalculatorRun? calcRun, int runId, IEnumerable<CalculatorRunClassification> calculatorRunClassifications)
@@ -48,7 +46,7 @@ using System.Linq;
                 };
             }
 
-            var expectedRunClassifications = calculatorRunClassifications.Where(cl => 
+            var expectedRunClassifications = calculatorRunClassifications.Where(cl =>
                 cl.Status == "RUNNING" || cl.Status == "IN THE QUEUE"
             );
 

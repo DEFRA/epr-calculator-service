@@ -1,4 +1,4 @@
-﻿using EPR.Calculator.Service.Function.Data.DataModels;
+﻿using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.Builder.Summary;
 

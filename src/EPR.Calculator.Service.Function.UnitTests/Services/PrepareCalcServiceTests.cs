@@ -6,10 +6,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using System.Threading;
     using System.Threading.Tasks;
     using AutoFixture;
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.API.Exporter;
     using EPR.Calculator.Service.Function.Builder;
-    using EPR.Calculator.Service.Function.Data;
-    using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Interface;
@@ -57,12 +57,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 {
                     RunId = 4,
                     RunDate = DateTime.Now,
-                    RunName = "RunName"
+                    RunName = "RunName",
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
                     Name = string.Empty,
-                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>()
+                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>(),
                 },
                 CalcResultParameterOtherCost = new()
                 {
@@ -71,15 +71,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Details = new List<CalcResultParameterOtherCostDetail>(),
                     Materiality = new List<CalcResultMateriality>(),
                     SaOperatingCost = new List<CalcResultParameterOtherCostDetail>(),
-                    SchemeSetupCost = new CalcResultParameterOtherCostDetail()
+                    SchemeSetupCost = new CalcResultParameterOtherCostDetail(),
                 },
                 CalcResultLateReportingTonnageData = new()
                 {
                     Name = string.Empty,
                     CalcResultLateReportingTonnageDetails = new List<CalcResultLateReportingTonnageDetail>(),
                     MaterialHeading = string.Empty,
-                    TonnageHeading = string.Empty
-                }
+                    TonnageHeading = string.Empty,
+                },
             };
 
             var fixture = new Fixture();
@@ -223,15 +223,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     CalendarYear = "2024-25",
                     EffectiveFrom = DateTime.Now,
                     CreatedBy = "Test user",
-                    CreatedAt = DateTime.Now
+                    CreatedAt = DateTime.Now,
                 },
                 new() {
                     Id = 2,
                     CalendarYear = "2024-25",
                     EffectiveFrom = DateTime.Now,
                     CreatedBy = "Test user",
-                    CreatedAt = DateTime.Now
-                }
+                    CreatedAt = DateTime.Now,
+                },
             };
             return list;
         }
@@ -248,7 +248,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     SubsidaryId ="1",
                     LoadTimeStamp = DateTime.Now,
                     CalculatorRunOrganisationDataMasterId = 1,
-                    SubmissionPeriodDesc = "January to June 2023"
+                    SubmissionPeriodDesc = "January to June 2023",
                 },
                 new() {
                     Id = 2,
@@ -256,16 +256,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     OrganisationName = "Test LIMITED",
                     LoadTimeStamp = DateTime.Now,
                     CalculatorRunOrganisationDataMasterId = 1,
-                    SubmissionPeriodDesc = "July to December 2023"
+                    SubmissionPeriodDesc = "July to December 2023",
                 },
-                 new() {
+                new() {
                     Id = 3,
                     OrganisationId = 2,
                     SubsidaryId = "1",
                     OrganisationName = "Subsid2",
                     LoadTimeStamp = DateTime.Now,
                     CalculatorRunOrganisationDataMasterId = 2,
-                    SubmissionPeriodDesc = "July to December 2023"
+                    SubmissionPeriodDesc = "July to December 2023",
                 },
             });
             return list;
@@ -279,50 +279,50 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Id = 1,
                     Code = "AL",
                     Name = "Aluminium",
-                    Description = "Aluminium"
+                    Description = "Aluminium",
                 },
                 new() {
                     Id = 2,
                     Code = "FC",
                     Name = "Fibre composite",
-                    Description = "Fibre composite"
+                    Description = "Fibre composite",
                 },
                 new() {
                     Id = 3,
                     Code = "GL",
                     Name = "Glass",
-                    Description = "Glass"
+                    Description = "Glass",
                 },
                 new() {
                     Id = 4,
                     Code = "PC",
                     Name = "Paper or card",
-                    Description = "Paper or card"
+                    Description = "Paper or card",
                 },
                 new() {
                     Id = 5,
                     Code = "PL",
                     Name = "Plastic",
-                    Description = "Plastic"
+                    Description = "Plastic",
                 },
                 new() {
                     Id = 6,
                     Code = "ST",
                     Name = "Steel",
-                    Description = "Steel"
+                    Description = "Steel",
                 },
                 new() {
                     Id = 7,
                     Code = "WD",
                     Name = "Wood",
-                    Description = "Wood"
+                    Description = "Wood",
                 },
                 new() {
                     Id = 8,
                     Code = "OT",
                     Name = "Other materials",
-                    Description = "Other materials"
-                }
+                    Description = "Other materials",
+                },
             };
             return list;
         }
@@ -336,15 +336,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     CalendarYear = "2024-25",
                     EffectiveFrom = DateTime.Now,
                     CreatedBy = "Test user",
-                    CreatedAt = DateTime.Now
+                    CreatedAt = DateTime.Now,
                 },
-                 new() {
+                new() {
                     Id = 2,
                     CalendarYear = "2024-25",
                     EffectiveFrom = DateTime.Now,
                     CreatedBy = "Test user",
-                    CreatedAt = DateTime.Now
-                }
+                    CreatedAt = DateTime.Now,
+                },
             };
             return list;
         }
@@ -365,7 +365,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     PackagingMaterialWeight = 1000,
                     LoadTimeStamp = DateTime.Now,
                     CalculatorRunPomDataMasterId = 1,
-                    SubmissionPeriodDesc = "July to December 2023"
+                    SubmissionPeriodDesc = "July to December 2023",
                 },
                 new() {
                     Id = 2,
@@ -378,7 +378,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     PackagingMaterialWeight = 1000,
                     LoadTimeStamp = DateTime.Now,
                     CalculatorRunPomDataMasterId = 1,
-                    SubmissionPeriodDesc = "July to December 2023"
+                    SubmissionPeriodDesc = "July to December 2023",
                 },
                 new() {
                     Id = 3,
@@ -392,7 +392,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     PackagingMaterialWeight = 1000,
                     LoadTimeStamp = DateTime.Now,
                     CalculatorRunPomDataMasterId = 1,
-                    SubmissionPeriodDesc = "January to June 2023"
+                    SubmissionPeriodDesc = "January to June 2023",
                 },
                  new() {
                     Id = 4,
@@ -406,7 +406,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     PackagingMaterialWeight = 1000,
                     LoadTimeStamp = DateTime.Now,
                     CalculatorRunPomDataMasterId = 2,
-                    SubmissionPeriodDesc = "January to June 2024"
+                    SubmissionPeriodDesc = "January to June 2024",
                 },
             };
             return list;
@@ -427,7 +427,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     CalculatorRunOrganisationDataMasterId = 2,
                     CalculatorRunPomDataMasterId = 2,
                     DefaultParameterSettingMasterId = 5,
-                    LapcapDataMasterId = 6
+                    LapcapDataMasterId = 6,
                 },
                 new ()
                 {
@@ -438,7 +438,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     CreatedAt = new DateTime(2024, 8, 21, 14, 16, 27, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                     DefaultParameterSettingMasterId = 5,
-                    LapcapDataMasterId = 6
+                    LapcapDataMasterId = 6,
                 },
                 new ()
                 {
@@ -451,7 +451,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     CalculatorRunOrganisationDataMasterId = 1,
                     CalculatorRunPomDataMasterId = 1,
                     DefaultParameterSettingMasterId = 5,
-                    LapcapDataMasterId = 6
+                    LapcapDataMasterId = 6,
                 },
                 new ()
                 {
@@ -464,7 +464,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     CalculatorRunOrganisationDataMasterId = 2,
                     CalculatorRunPomDataMasterId = 2,
                     DefaultParameterSettingMasterId = 5,
-                    LapcapDataMasterId = 6
+                    LapcapDataMasterId = 6,
                 },
             };
             return list;

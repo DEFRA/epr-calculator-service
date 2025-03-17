@@ -5,12 +5,11 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using EPR.Calculator.Service.Function.Data;
-    using EPR.Calculator.Service.Function.Data.DataModels;
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Interface;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
 
@@ -18,12 +17,17 @@
     {
         private readonly ApplicationDBContext context;
         private const string PeriodSeparator = "-P";
+
         public class OrganisationDetails
         {
             public int? OrganisationId { get; set; }
+
             public required string OrganisationName { get; set; }
+
             public string? SubmissionPeriod { get; set; }
+
             public string? SubmissionPeriodDescription { get; set; }
+
             public string? SubsidaryId { get; set; }
         }
 
@@ -104,27 +108,27 @@
 
         public async Task<bool> Transpose(CalcResultsRequestDto resultsRequestDto, CancellationToken cancellationToken)
         {
-            context.ChangeTracker.AutoDetectChangesEnabled = false;
+            this.context.ChangeTracker.AutoDetectChangesEnabled = false;
             var newProducerDetails = new List<ProducerDetail>();
             var newProducerReportedMaterials = new List<ProducerReportedMaterial>();
 
             var materials = await this.context.Material.ToListAsync(cancellationToken);
 
-            var calculatorRun = await context.CalculatorRuns
+            var calculatorRun = await this.context.CalculatorRuns
                 .Where(x => x.Id == resultsRequestDto.RunId)
                 .SingleAsync(cancellationToken);
-            var calculatorRunPomDataDetails = await context.CalculatorRunPomDataDetails
+            var calculatorRunPomDataDetails = await this.context.CalculatorRunPomDataDetails
                 .Where(x => x.CalculatorRunPomDataMasterId == calculatorRun.CalculatorRunPomDataMasterId)
                 .OrderBy(x => x.SubmissionPeriodDesc)
                 .ToListAsync(cancellationToken);
-            var calculatorRunOrgDataDetails = await context.CalculatorRunOrganisationDataDetails
+            var calculatorRunOrgDataDetails = await this.context.CalculatorRunOrganisationDataDetails
                 .Where(x => x.CalculatorRunOrganisationDataMasterId == calculatorRun.CalculatorRunOrganisationDataMasterId)
                 .OrderBy(x => x.SubmissionPeriodDesc)
                 .ToListAsync(cancellationToken);
 
             if (calculatorRun.CalculatorRunPomDataMasterId != null)
             {
-                var organisationDataMaster = await context.CalculatorRunOrganisationDataMaster
+                var organisationDataMaster = await this.context.CalculatorRunOrganisationDataMaster
                     .SingleAsync(x => x.Id == calculatorRun.CalculatorRunOrganisationDataMasterId, cancellationToken);
 
                 var SubmissionPeriodDetails = (from s in calculatorRunPomDataDetails
@@ -132,7 +136,7 @@
                                                select new SubmissionDetails
                                                {
                                                    SubmissionPeriod = s.SubmissionPeriod,
-                                                   SubmissionPeriodDesc = s.SubmissionPeriodDesc
+                                                   SubmissionPeriodDesc = s.SubmissionPeriodDesc,
                                                }
                                         ).Distinct().ToList();
 
@@ -148,7 +152,7 @@
                     .ToList();
 
                 // Get the calculator run pom data master record based on the CalculatorRunPomDataMasterId
-                var pomDataMaster = await context.CalculatorRunPomDataMaster
+                var pomDataMaster = await this.context.CalculatorRunPomDataMaster
                     .SingleAsync(x => x.Id == calculatorRun.CalculatorRunPomDataMasterId, cancellationToken);
 
 
@@ -184,7 +188,7 @@
                                 ProducerId = producer.OrganisationId.Value,
                                 SubsidiaryId = producer.SubsidaryId,
                                 ProducerName = string.IsNullOrWhiteSpace(producer.SubsidaryId) ? GetLatestOrganisationName(producer.OrganisationId.Value, OrganisationsBySubmissionPeriod, OrganisationsList) : GetLatestSubsidaryName(producer.OrganisationId.Value, producer.SubsidaryId, OrganisationsBySubmissionPeriod, OrganisationsList),
-                                CalculatorRun = calculatorRun
+                                CalculatorRun = calculatorRun,
                             };
 
                             // Add producer detail record to the database context
@@ -248,7 +252,7 @@
                         OrganisationName = org.OrganisationName,
                         SubmissionPeriodDescription = org.SubmissionPeriodDescription,
                         SubmissionPeriod = sub.SubmissionPeriod,
-                        SubsidaryId = org.SubsidaryId
+                        SubsidaryId = org.SubsidaryId,
                     });
                 }
             }
@@ -265,7 +269,7 @@
                         OrganisationId = org.OrganisationId,
                         OrganisationName = org.OrganisationName,
                         SubmissionPeriodDescription = org.SubmissionPeriodDesc,
-                        SubsidaryId = org.SubsidaryId
+                        SubsidaryId = org.SubsidaryId,
                     }).Distinct();
         }
 

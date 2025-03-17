@@ -1,20 +1,18 @@
-﻿using EPR.Calculator.Service.Function.Builder.ParametersOther;
-using EPR.Calculator.Service.Function.Data;
-using EPR.Calculator.Service.Function.Data.DataModels;
-using EPR.Calculator.Service.Function.Dtos;
-using EPR.Calculator.Service.Function.Enums;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace EPR.Calculator.Service.Function.UnitTests.Builder
+﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.Service.Function.Builder.ParametersOther;
+    using EPR.Calculator.Service.Function.Dtos;
+    using EPR.Calculator.Service.Function.Enums;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Diagnostics;
+
     [TestClass]
     public class CalcResultParameterOtherCostBuilderTest
     {
         public CalcResultParameterOtherCostBuilder builder;
         protected ApplicationDBContext dbContext;
-       
 
         public CalcResultParameterOtherCostBuilderTest()
         {
@@ -50,7 +48,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 Financial_Year = "2024-25",
                 CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
                 CreatedBy = "Test User",
-                DefaultParameterSettingMasterId = 1
+                DefaultParameterSettingMasterId = 1,
             };
 
             var templateMasterList = dbContext.DefaultParameterTemplateMasterList.ToList();
@@ -144,7 +142,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 otherCost.Materiality.Where(x => x.SevenMateriality == "Increase" || x.SevenMateriality == "Decrease")
                     .All(x => x.Amount == "£10.00" && x.Percentage == "10.00%"));
         }
-            
+
         private static decimal GetValue(DefaultParameterTemplateMaster templateMaster)
         {
             if (templateMaster.ParameterType == "Scheme setup costs" ||

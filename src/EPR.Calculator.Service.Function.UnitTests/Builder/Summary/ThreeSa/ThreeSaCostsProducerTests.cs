@@ -1,17 +1,14 @@
-﻿using EPR.Calculator.Service.Function.Data.DataModels;
-using EPR.Calculator.Service.Function.Data;
-using EPR.Calculator.Service.Function.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using EPR.Calculator.Service.Function.Builder.Summary.SaSetupCosts;
-using EPR.Calculator.Service.Function.Builder.Summary.ThreeSa;
-using EPR.Calculator.Service.Function.Builder.Summary.ThreeSA;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Enums;
-
-namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
+﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
 {
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.Service.Function.Builder.Summary.ThreeSa;
+    using EPR.Calculator.Service.Function.Builder.Summary.ThreeSA;
+    using EPR.Calculator.Service.Function.Enums;
+    using EPR.Calculator.Service.Function.Models;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Diagnostics;
+
     [TestClass]
     public class ThreeSaCostsProducerTests
     {
@@ -116,7 +113,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                             NorthernIreland = "£10.00",
                             NorthernIrelandValue = 10,
                             Total = "£100.00",
-                            TotalValue = 100
+                            TotalValue = 100,
                         }
                     ],
                     Materiality =
@@ -127,7 +124,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                             AmountValue = 0,
                             Percentage = "%",
                             PercentageValue = 0,
-                            SevenMateriality = "7 Materiality"
+                            SevenMateriality = "7 Materiality",
                         }
                     ],
                     Name = "Parameters - Other",
@@ -146,7 +143,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                             NorthernIreland = "£10.00",
                             NorthernIrelandValue = 10,
                             Total = "£100.00",
-                            TotalValue = 100
+                            TotalValue = 100,
                         }
                     ],
                     SchemeSetupCost =
@@ -162,8 +159,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                         NorthernIreland = "£10.00",
                         NorthernIrelandValue = 10,
                         Total = "£100.00",
-                        TotalValue = 100
-                    }
+                        TotalValue = 100,
+                    },
                 },
                 CalcResultDetail = new CalcResultDetail()
                 {
@@ -183,7 +180,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                             NorthernIreland = "NorthernIrelandTest",
                             Total = string.Empty,
                             ProducerReportedHouseholdPackagingWasteTonnage = string.Empty,
-                            ReportedPublicBinTonnage = string.Empty
+                            ReportedPublicBinTonnage = string.Empty,
                         },
                         new CalcResultLaDisposalCostDataDetail
                         {
@@ -195,7 +192,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                             NorthernIreland = "NorthernIrelandTest",
                             Total = string.Empty,
                             ProducerReportedHouseholdPackagingWasteTonnage = string.Empty,
-                            ReportedPublicBinTonnage = string.Empty
+                            ReportedPublicBinTonnage = string.Empty,
                         },
                         new CalcResultLaDisposalCostDataDetail
                         {
@@ -207,16 +204,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                             NorthernIreland = "NorthernIrelandTest",
                             Total = "100",
                             ProducerReportedHouseholdPackagingWasteTonnage = string.Empty,
-                            ReportedPublicBinTonnage = string.Empty
-                        }
+                            ReportedPublicBinTonnage = string.Empty,
+                        },
                     },
-                    Name = "some test"
+                    Name = "some test",
                 },
                 CalcResultLapcapData = new CalcResultLapcapData()
                 {
                     CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>()
                     {
-                    }
+                    },
                 },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment
                 {
@@ -286,14 +283,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                             ScotlandTotal = 1.15M,
                             WalesTotal = 020M,
                             Name = "Test",
-                            OrderId = 4
+                            OrderId = 4,
                         }
                     ],
-                    Name = "some test"
+                    Name = "some test",
                 },
                 CalcResultParameterCommunicationCost = new CalcResultParameterCommunicationCost
                 {
-                    Name = "some test"
+                    Name = "some test",
                 },
                 CalcResultSummary = new CalcResultSummary
                 {
@@ -314,9 +311,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                             TotalProducerDisposalFeeWithBadDebtProvision = 100,
                             TotalProducerCommsFeeWithBadDebtProvision = 100,
                             SubsidiaryId = "1",
-                            ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 1
-                        }
-                    }
+                            ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 1,
+                        },
+                    },
                 },
                 CalcResultCommsCostReportDetail = new CalcResultCommsCost()
                 {
@@ -334,7 +331,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                             Name = "Glass",
 
                         }
-                    ]
+                    ],
                 },
                 CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage()
                 {
@@ -362,7 +359,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                     EnglandWithBadDebtProvision = 348.06m,
                     WalesWithBadDebtProvision = 78.46m,
                     ScotlandWithBadDebtProvision = 156.28m,
-                    NorthernIrelandWithBadDebtProvision = 61.18m
+                    NorthernIrelandWithBadDebtProvision = 61.18m,
                 });
 
                 _commsCostSummary.Add(material, new CalcResultSummaryProducerCommsFeesCostByMaterial
@@ -375,7 +372,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                     EnglandWithBadDebtProvision = 348.06m,
                     WalesWithBadDebtProvision = 78.46m,
                     ScotlandWithBadDebtProvision = 156.28m,
-                    NorthernIrelandWithBadDebtProvision = 61.18m
+                    NorthernIrelandWithBadDebtProvision = 61.18m,
                 });
             }
         }
@@ -520,7 +517,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                 {
                     Name = materialKv.Value,
                     Code = materialKv.Key,
-                    Description = "Some"
+                    Description = "Some",
                 });
             }
 
@@ -540,7 +537,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                 "Good Fruit Co",
                 "Happy Shopper",
                 "Icicle Foods",
-                "Jumbo Box Store"
+                "Jumbo Box Store",
             };
 
             var producerId = 1;
@@ -566,17 +563,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                         MaterialId = materialId,
                         ProducerDetailId = producerDetailId,
                         PackagingType = "HH",
-                        PackagingTonnage = (materialId * 100)
+                        PackagingTonnage = (materialId * 100),
                     });
                     _dbContext?.ProducerReportedMaterial.Add(new ProducerReportedMaterial
                     {
                         MaterialId = materialId,
                         ProducerDetailId = producerDetailId,
                         PackagingType = "CW",
-                        PackagingTonnage = (materialId * 50)
+                        PackagingTonnage = (materialId * 50),
                     });
                 }
             }
+
             _dbContext?.SaveChanges();
         }
     }

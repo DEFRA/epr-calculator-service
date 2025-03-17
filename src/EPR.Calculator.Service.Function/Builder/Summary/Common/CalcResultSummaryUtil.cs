@@ -4,9 +4,9 @@
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Function.Builder.CommsCost;
     using EPR.Calculator.Service.Function.Builder.ParametersOther;
-    using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
     using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA;
     using EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts;
     using EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C;
@@ -15,7 +15,6 @@
     using EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown;
     using EPR.Calculator.Service.Function.Builder.Summary.TwoCCommsCost;
     using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Models;
 
@@ -546,7 +545,7 @@
                 new CalcResultSummaryHeader { Name = $"£{Math.Round(result.TotalOnePlus2A2B2CFeeWithBadDebtProvision, decimalRoundUp)}", ColumnIndex = OnePlus2A2B2CProducer.ColumnIndex },
             ]);
 
-            //Section-3 -first header
+            // Section-3 -first header
             materialsBreakdownHeaders.AddRange([
                new CalcResultSummaryHeader { Name = $"£{Math.Round(result.SaOperatingCostsWoTitleSection3, decimalRoundUp)}", ColumnIndex = ThreeSaCostsSummary.ColumnIndex },
                 new CalcResultSummaryHeader { Name = $"£{Math.Round(result.BadDebtProvisionTitleSection3, decimalRoundUp)}", ColumnIndex = ThreeSaCostsSummary.ColumnIndex + 1 },
@@ -674,10 +673,10 @@
                 new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.NorthernIrelandTotalwithBadDebtprovision }
             ]);
 
-        // Percentage of Producer Tonnage vs All Producers
-        columnHeaders.AddRange([
-            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.PercentageofProducerTonnagevsAllProducers },
-        ]);
+            // Percentage of Producer Tonnage vs All Producers
+            columnHeaders.AddRange([
+                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.PercentageofProducerTonnagevsAllProducers },
+            ]);
 
             // 2b comms total
             columnHeaders.AddRange([

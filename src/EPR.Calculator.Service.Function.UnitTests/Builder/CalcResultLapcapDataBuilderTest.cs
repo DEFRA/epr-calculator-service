@@ -1,16 +1,14 @@
-﻿using EPR.Calculator.Service.Function.Builder.Lapcap;
-using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Data;
-using EPR.Calculator.Service.Function.Data.DataModels;
-using EPR.Calculator.Service.Function.Dtos;
-using EPR.Calculator.Service.Function.Enums;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-
-namespace EPR.Calculator.Service.Function.UnitTests.Builder
+﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.Service.Function.Builder.Lapcap;
+    using EPR.Calculator.Service.Function.Constants;
+    using EPR.Calculator.Service.Function.Dtos;
+    using EPR.Calculator.Service.Function.Enums;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Diagnostics;
+
     [TestClass]
     public class CalcResultLapcapDataBuilderTest
     {
@@ -53,10 +51,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 Financial_Year = "2024-25",
                 CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
                 CreatedBy = "Test User",
-                LapcapDataMasterId = 2
+                LapcapDataMasterId = 2,
             };
 
-            
             var lapcapDataMaster = new LapcapDataMaster
             {
                 Id = 2,
@@ -193,18 +190,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
         public static decimal GetTotalCostByCountry(string uniqueRef)
         {
-            if(uniqueRef.StartsWith("ENG-"))
+            if (uniqueRef.StartsWith("ENG-"))
             {
                 return 100M;
             }
-            else if(uniqueRef.StartsWith("SCT-"))
+            else if (uniqueRef.StartsWith("SCT-"))
             {
                 return 75M;
             }
-            else if(uniqueRef.StartsWith("WLS-"))
+            else if (uniqueRef.StartsWith("WLS-"))
             {
                 return 50M;
             }
+
             return 25M;
         }
     }

@@ -1,11 +1,11 @@
-﻿using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs;
-using EPR.Calculator.Service.Function.Data.DataModels;
-using EPR.Calculator.Service.Function.Models;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace EPR.Calculator.Service.Function.Builder.Summary.TwoCCommsCost
+﻿namespace EPR.Calculator.Service.Function.Builder.Summary.TwoCCommsCost
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs;
+    using EPR.Calculator.Service.Function.Models;
+
     public class TwoCCommsCostUtil
     {
         #region Constants
@@ -88,7 +88,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.TwoCCommsCost
 
         public static void UpdateHeaderTotal(CalcResult calcResult, CalcResultSummary result)
         {
-            //Section 2c
+            // Section 2c
             result.TwoCCommsCostsByCountryWithoutBadDebtProvision = calcResult.CalcResultCommsCostReportDetail
                 .CommsCostByCountry.Last().TotalValue;
 

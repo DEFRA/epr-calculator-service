@@ -1,20 +1,11 @@
-﻿using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Data;
-using EPR.Calculator.Service.Function.Dtos;
-using EPR.Calculator.Service.Function.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment;
-using AutoFixture;
-
-namespace EPR.Calculator.Service.Function.UnitTests.Builder
+﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
+    using AutoFixture;
+    using EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment;
+    using EPR.Calculator.Service.Function.Constants;
+    using EPR.Calculator.Service.Function.Dtos;
+    using EPR.Calculator.Service.Function.Models;
+
     [TestClass]
     public class CalcResultOnePlusFourApportionmentBuilderTest : CalcResultOnePlusFourApportionmentBuilder
     {
@@ -42,13 +33,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             ScotlandDisposalCost = "£161.07",
                             NorthernIrelandDisposalCost = "£91.00",
                             TotalDisposalCost = "£13,742.80",
-                             EnglandCost = 13280.45m,
-                             WalesCost=210.28m,
-                             ScotlandCost=91.00m,
-                             NorthernIrelandCost =91.00m,
-                             TotalCost=13742.80m
-                        } ,
-                    }
+                            EnglandCost = 13280.45m,
+                            WalesCost = 210.28m,
+                            ScotlandCost = 91.00m,
+                            NorthernIrelandCost = 91.00m,
+                            TotalCost = 13742.80m,
+                        },
+                    },
                 },
 
                 CalcResultParameterOtherCost = new CalcResultParameterOtherCost
@@ -59,18 +50,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         new CalcResultParameterOtherCostDetail
                         {
                             Name = "4 LA Data Prep Charge",
-                            England= "£115.45",
+                            England = "£115.45",
                             Wales = "£114.00",
                             Scotland = "£117.00",
                             NorthernIreland = "£19.00",
                             Total = "£365.45",
-                            EnglandValue= 115.45m,
-                             WalesValue=114.00m,
-                             ScotlandValue=117.00m,
-                             NorthernIrelandValue =19.00m,
-                             TotalValue=365.45m
-                        } ,
-                    }
+                            EnglandValue = 115.45m,
+                            WalesValue = 114.00m,
+                            ScotlandValue = 117.00m,
+                            NorthernIrelandValue = 19.00m,
+                            TotalValue=365.45m,
+                        },
+                    },
                 },
                 CalcResultLateReportingTonnageData = Fixture.Create<CalcResultLateReportingTonnage>(),
             };
