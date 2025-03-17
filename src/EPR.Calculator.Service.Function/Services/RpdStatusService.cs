@@ -6,6 +6,8 @@
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using EPR.Calculator.Service.Common;
+    using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Common.Utils;
     using EPR.Calculator.Service.Function.Data;
     using EPR.Calculator.Service.Function.Enums;
@@ -15,6 +17,9 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
 
+    /// <summary>
+    /// Service for updating RPD status.
+    /// </summary>
     public class RpdStatusService : IRpdStatusService
     {
         /// <summary>
@@ -27,14 +32,18 @@
             IDbContextFactory<ApplicationDBContext> context,
             ICommandTimeoutService commandTimeoutService,
             IRpdStatusDataValidator validator,
-            IOrgAndPomWrapper wrapper)
+            IOrgAndPomWrapper wrapper,
+            ICalculatorTelemetryLogger telemetryLogger)
         {
             this.Config = config;
             this.Context = context.CreateDbContext();
             this.CommandTimeoutService = commandTimeoutService;
             this.Validator = validator;
             this.Wrapper = wrapper;
+            this.TelemetryLogger = telemetryLogger;
         }
+
+        private ICalculatorTelemetryLogger TelemetryLogger { get; init; }
 
         private ICommandTimeoutService CommandTimeoutService { get; init; }
 
@@ -49,10 +58,18 @@
         /// <inheritdoc/>
         public async Task<RunClassification> UpdateRpdStatus(
             int runId,
+            string runName,
             string updatedBy,
             bool isPomSuccessful,
             CancellationToken timeout)
         {
+            this.TelemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = runId,
+                RunName = runName,
+                Message = $"Updating RPD status...",
+            });
+
             this.CommandTimeoutService.SetCommandTimeout(this.Context.Database);
 
             var calcRun = await this.Context.CalculatorRuns.SingleOrDefaultAsync(
@@ -64,11 +81,19 @@
             var validationResult = this.Validator.IsValidRun(calcRun, runId, runClassifications);
             if (!validationResult.isValid)
             {
+                this.TelemetryLogger.LogError(new ErrorMessage
+                {
+                    RunId = runId,
+                    RunName = runName,
+                    Message = validationResult.ToString(),
+                    Exception = new ValidationException(validationResult.ToString()),
+                });
                 throw new ValidationException(validationResult.ToString());
             }
 
             if (!isPomSuccessful && calcRun != null)
             {
+                this.TelemetryLogger.LogInformation(new TrackMessage { RunId = runId, RunName = runName, Message = $"POM failed for run: {runId}" });
                 calcRun.CalculatorRunClassificationId = runClassifications.Single(x => x.Status == RunClassification.ERROR.ToString()).Id;
                 await this.Context.SaveChangesAsync(timeout);
                 return RunClassification.ERROR;
@@ -77,6 +102,13 @@
             var vr = this.Validator.IsValidSuccessfulRun(runId);
             if (!vr.isValid)
             {
+                this.TelemetryLogger.LogError(new ErrorMessage
+                {
+                    RunId = runId,
+                    RunName = runName,
+                    Message = vr.ToString(),
+                    Exception = new ValidationException(vr.ToString()),
+                });
                 throw new ValidationException(vr.ToString());
             }
 
@@ -87,6 +119,7 @@
             {
                 try
                 {
+                    this.TelemetryLogger.LogInformation(new TrackMessage { RunId = runId, RunName = runName, Message = $"Creating run organization and POM for run: {runId}" });
                     var createRunOrgCommand = Util.GetFormattedSqlString("dbo.CreateRunOrganization", runId, calendarYear, createdBy);
                     await this.Wrapper.ExecuteSqlAsync(createRunOrgCommand, timeout);
                     var createRunPomCommand = Util.GetFormattedSqlString("dbo.CreateRunPom", runId, calendarYear, createdBy);
@@ -99,6 +132,13 @@
                 }
                 catch (Exception)
                 {
+                    this.TelemetryLogger.LogError(new ErrorMessage
+                    {
+                        RunId = runId,
+                        RunName = runName,
+                        Message = "Error updating RPD status",
+                        Exception = new Exception("Error updating RPD status"),
+                    });
                     await transaction.RollbackAsync();
                     throw;
                 }
