@@ -58,14 +58,6 @@ namespace EPR.Calculator.Service.Function
         public override void Configure(IFunctionsHostBuilder builder)
         {
             RegisterDependencies(builder.Services);
-            //Read from environment variable
-            builder.Services.AddSingleton<TelemetryClient>(provider =>
-            {
-                var configuration = TelemetryConfiguration.CreateDefault();
-                var instrumentationKey = Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY");
-                configuration.ConnectionString = $"InstrumentationKey={instrumentationKey}";
-                return new TelemetryClient(configuration);
-            });
 
             // Configure the database context.
             builder.Services.AddDbContextFactory<ApplicationDBContext>(options =>
