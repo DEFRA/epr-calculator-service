@@ -392,7 +392,7 @@
             Assert.AreEqual(expectedResult.ProducerId, producerDetail.ProducerId);
             Assert.AreEqual(expectedResult.ProducerName, producerDetail.ProducerName);
         }
-
+        
         [TestMethod]
         public async Task Transpose_Should_Return_Correct_ProducerDetail_When_Submission_Period_Not_Exists()
         {
@@ -413,6 +413,15 @@
                 new Mock<ICalculatorTelemetryLogger>().Object);
 
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
+
+            // Detach existing CalculatorRun entity if it is already being tracked
+            var existingCalculatorRun = _context.ChangeTracker.Entries<CalculatorRun>()
+                                                .FirstOrDefault(e => e.Entity.Id == expectedResult.CalculatorRunId);
+            if (existingCalculatorRun != null)
+            {
+                _context.Entry(existingCalculatorRun.Entity).State = EntityState.Detached;
+            }
+
             await service.Transpose(resultsRequestDto, CancellationToken.None);
 
             var producerDetail = this._context.ProducerDetail.FirstOrDefault();
