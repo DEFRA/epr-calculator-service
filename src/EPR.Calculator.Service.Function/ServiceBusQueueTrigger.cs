@@ -66,13 +66,15 @@ namespace EPR.Calculator.Service.Function
                     throw new JsonException("Deserialized object is null");
                 }
 
+                string? runName = string.Empty;
                 var calculatorRunParameter = this.calculatorRunParameterMapper.Map(param);
-                var runName = await this.runNameService.GetRunNameAsync(calculatorRunParameter.Id);
-
-                if (runName == null)
+                try
                 {
-                    this.LogError("Run name not found", new InvalidOperationException($"Run name not found for ID {calculatorRunParameter.Id}"));
-                    throw new InvalidOperationException($"Run name not found for ID {calculatorRunParameter.Id}");
+                    runName = await this.runNameService.GetRunNameAsync(calculatorRunParameter.Id);
+                }
+                catch (Exception ex)
+                {
+                    this.LogError("Run name not found", ex);
                 }
 
                 bool processStatus = await this.calculatorRunService.StartProcess(calculatorRunParameter, runName);

@@ -591,7 +591,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public async Task StartProcess_Should_Return_False_On_TaskCanceledException()
+        public async Task StartProcess_ShouldReturnFalseOn_TaskCanceledException()
         {
             // Arrange
             var calculatorRunParameter = new CalculatorRunParameter { Id = 1, User = "TestUser", FinancialYear = new FinancialYear("2024-25") };
@@ -610,7 +610,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public async Task StartProcess_Should_Return_False_On_Exception()
+        public async Task StartProcess_ShouldReturnFalseOn_Exception()
         {
             // Arrange
             var calculatorRunParameter = new CalculatorRunParameter { Id = 1, User = "TestUser", FinancialYear = new FinancialYear("2024-25") };

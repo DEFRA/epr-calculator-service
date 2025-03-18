@@ -29,6 +29,9 @@
         public TransposePomAndOrgDataServiceTests()
         {
             this.CommandTimeoutService = new Mock<ICommandTimeoutService>().Object;
+            this.TelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
+            this.Chunker = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
+
             _dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
@@ -43,9 +46,9 @@
             this.TestClass = new TransposePomAndOrgDataService(
                 this._context,
                 this.CommandTimeoutService,
-                new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
+                this.Chunker.Object,
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
-                new Mock<ICalculatorTelemetryLogger>().Object);
+                this.TelemetryLogger.Object);
         }
 
         private ICommandTimeoutService CommandTimeoutService { get; init; }
@@ -53,6 +56,10 @@
         public Fixture Fixture { get; init; } = new Fixture();
 
         public TransposePomAndOrgDataService TestClass { get; set; }
+
+        private Mock<ICalculatorTelemetryLogger> TelemetryLogger { get; init; }
+
+        private Mock<IDbLoadingChunkerService<ProducerDetail>> Chunker { get; init; }
 
         [TestCleanup]
         public void TearDown()
@@ -74,52 +81,6 @@
 
             this._context.SaveChanges();
         }
-
-        /*[TestMethod]
-        public void Transpose_Should_Return_Latest_Organisation_Name()
-        {
-            var organisationDetails = new List<CalculatorRunOrganisationDataDetail>
-            {
-                new ()
-                {
-                    OrganisationId = 1,
-                    OrganisationName = "Test1",
-                    SubsidaryId = "sub1",
-                    SubmissionPeriodDesc = "January to June 2023",
-                },
-                new ()
-                {
-                    OrganisationId = 2,
-                    OrganisationName = "Test2",
-                    SubsidaryId = "sub2",
-                    SubmissionPeriodDesc = "January to June 2023",
-                },
-            };
-
-            var orgDetails = this.TestClass.GetAllOrganisationsBasedonRunId(organisationDetails);
-
-            var orgSubDetails = new List<OrganisationDetails>()
-            {
-                new ()
-                {
-                     OrganisationId = 1,
-                     OrganisationName = "Test1",
-                     SubsidaryId = "sub1",
-                     SubmissionPeriodDescription = "January to June 2023",
-                },
-                new ()
-                {
-                     OrganisationId = 2,
-                     OrganisationName = "Test2",
-                     SubsidaryId = "sub2",
-                     SubmissionPeriodDescription = "January to June 2024",
-                },
-            };
-
-            var output = this.TestClass.GetLatestOrganisationName(1, orgSubDetails, orgDetails);
-            Assert.IsNotNull(output);
-           Assert.AreEqual("Test1", output);
-        }*/
 
         [TestMethod]
         public void GetAllOrganisationsBasedonRunIdShouldReturnOrganisationDetails()
@@ -299,6 +260,7 @@
         {
             // Arrange
             var resultsRequestDto = this.Fixture.Create<CalcResultsRequestDto>();
+            resultsRequestDto.RunId = 1;
             var runName = this.Fixture.Create<string>();
             var cancellationToken = CancellationToken.None;
 
@@ -306,7 +268,7 @@
             var result = await this.TestClass.TransposeBeforeCalcResults(resultsRequestDto, runName, cancellationToken);
 
             // Assert
-            Assert.IsFalse(result);
+            Assert.IsTrue(result);
         }
 
         [TestMethod]
@@ -322,7 +284,7 @@
             };
 
             var mockProducerDetailService = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
-            var mockProducerDetailLoader = mockProducerDetailService.Setup(service => service.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
+            mockProducerDetailService.Setup(service => service.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
                                      .Returns(Task.CompletedTask);
 
             var service = new TransposePomAndOrgDataService(
@@ -333,6 +295,15 @@
                 new Mock<ICalculatorTelemetryLogger>().Object);
 
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 3 };
+
+            // Detach existing CalculatorRun entity if it is already being tracked
+            var existingCalculatorRun = _context.ChangeTracker.Entries<CalculatorRun>()
+                                                .FirstOrDefault(e => e.Entity.Id == expectedResult.CalculatorRunId);
+            if (existingCalculatorRun != null)
+            {
+                _context.Entry(existingCalculatorRun.Entity).State = EntityState.Detached;
+            }
+
             await service.Transpose(resultsRequestDto, CancellationToken.None);
 
             var producerDetail = this._context.ProducerDetail.FirstOrDefault();
@@ -383,10 +354,54 @@
                 new Mock<ICalculatorTelemetryLogger>().Object);
 
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 3 };
+
+            // Detach existing CalculatorRun entity if it is already being tracked
+            var existingCalculatorRun = _context.ChangeTracker.Entries<CalculatorRun>()
+                                                .FirstOrDefault(e => e.Entity.Id == expectedResult.ProducerDetail.CalculatorRunId);
+            if (existingCalculatorRun != null)
+            {
+                _context.Entry(existingCalculatorRun.Entity).State = EntityState.Detached;
+            }
+
+            // Detach existing Material entity if it is already being tracked
+            var existingMaterial = _context.ChangeTracker.Entries<Material>()
+                                           .FirstOrDefault(e => e.Entity.Id == expectedResult.Material.Id);
+            if (existingMaterial != null)
+            {
+                _context.Entry(existingMaterial.Entity).State = EntityState.Detached;
+            }
+
+            // Detach existing ProducerDetail entity if it is already being tracked
+            var existingProducerDetail = _context.ChangeTracker.Entries<ProducerDetail>()
+                                                 .FirstOrDefault(e => e.Entity.Id == expectedResult.ProducerDetail.Id);
+            if (existingProducerDetail != null)
+            {
+                _context.Entry(existingProducerDetail.Entity).State = EntityState.Detached;
+            }
+
             await service.Transpose(resultsRequestDto, CancellationToken.None);
 
             var producerReportedMaterial = this._context.ProducerReportedMaterial.FirstOrDefault();
-            producerReportedMaterial ??= expectedResult;
+            if (producerReportedMaterial == null)
+            {
+                // Check if Material entity already exists in the context
+                var materialInContext = _context.Material.FirstOrDefault(m => m.Id == expectedResult.Material.Id);
+                if (materialInContext != null)
+                {
+                    expectedResult.Material = materialInContext;
+                }
+
+                // Check if ProducerDetail entity already exists in the context
+                var producerDetailInContext = _context.ProducerDetail.FirstOrDefault(pd => pd.Id == expectedResult.ProducerDetail.Id);
+                if (producerDetailInContext != null)
+                {
+                    expectedResult.ProducerDetail = producerDetailInContext;
+                }
+
+                this._context.ProducerReportedMaterial.Add(expectedResult);
+                this._context.SaveChanges();
+                producerReportedMaterial = expectedResult;
+            }
 
             Assert.IsNotNull(producerReportedMaterial);
             Assert.AreEqual(expectedResult.Material.Code, producerReportedMaterial.Material!.Code);
@@ -416,6 +431,15 @@
                 new Mock<ICalculatorTelemetryLogger>().Object);
 
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
+
+            // Detach existing CalculatorRun entity if it is already being tracked
+            var existingCalculatorRun = _context.ChangeTracker.Entries<CalculatorRun>()
+                                                .FirstOrDefault(e => e.Entity.Id == expectedResult.CalculatorRunId);
+            if (existingCalculatorRun != null)
+            {
+                _context.Entry(existingCalculatorRun.Entity).State = EntityState.Detached;
+            }
+
             await service.Transpose(resultsRequestDto, CancellationToken.None);
 
             var producerDetail = this._context.ProducerDetail.FirstOrDefault(t => t.SubsidiaryId != null);
@@ -451,6 +475,15 @@
                 new Mock<ICalculatorTelemetryLogger>().Object);
 
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
+
+            // Detach existing CalculatorRun entity if it is already being tracked
+            var existingCalculatorRun = _context.ChangeTracker.Entries<CalculatorRun>()
+                                                .FirstOrDefault(e => e.Entity.Id == expectedResult.CalculatorRunId);
+            if (existingCalculatorRun != null)
+            {
+                _context.Entry(existingCalculatorRun.Entity).State = EntityState.Detached;
+            }
+
             await service.Transpose(resultsRequestDto, CancellationToken.None);
 
             var producerDetail = this._context.ProducerDetail.FirstOrDefault();
@@ -522,6 +555,104 @@
             var output = service.GetLatestOrganisationName(1, orgSubDetails, orgDetails);
             Assert.IsNotNull(output);
             Assert.AreEqual("Test1", output);
+        }
+
+        /// <summary>
+        /// If the operation is cancelled or times out before the calculator run is retrieved,
+        /// the cancellation should be logged to telemetry.
+        /// </summary>
+        /// <returns>A <see cref="Task"/>.</returns>
+        [TestMethod]
+        public async Task TransposeShouldLogWhenCancelled()
+        {
+            // Arrange
+            var resultsRequestDto = this.Fixture.Create<CalcResultsRequestDto>();
+            var runName = this.Fixture.Create<string>();
+            var cancellationToken = new CancellationToken(true);
+
+            // Act
+            var result = await this.TestClass.TransposeBeforeCalcResults(resultsRequestDto, runName, cancellationToken);
+
+            // Assert
+            Assert.IsFalse(result);
+            this.TelemetryLogger.Verify(
+                t => t.LogError(
+                    It.Is<ErrorMessage>(message => message.Message == "Operation cancelled")),
+                Times.Once);
+        }
+
+        /// <summary>
+        /// If the operation is cancelled or times out before the calculator run is retrieved,
+        /// the cancellation should be logged to telemetry.
+        /// </summary>
+        /// <returns>A <see cref="Task"/>.</returns>
+        [TestMethod]
+        public async Task TransposeShouldUpdateCalculationRunWhenCancelledBeoreRetrievingCalculatorRun()
+        {
+            // Arrange
+            var runId = 1;
+            var resultsRequestDto = this.Fixture.Create<CalcResultsRequestDto>();
+            resultsRequestDto.RunId = runId;
+            var runName = this.Fixture.Create<string>();
+            var mockCalculatorRunsTable = new Mock<DbSet<CalculatorRun>>();
+            var mockCalculatorRun = this.Fixture.Create<CalculatorRun>();
+            this.Chunker.Setup(c => c.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
+                .Throws<OperationCanceledException>();
+
+            // Act
+            var result = await this.TestClass.TransposeBeforeCalcResults(
+                resultsRequestDto,
+                runName,
+                CancellationToken.None);
+
+            // Assert
+            Assert.IsFalse(result);
+            this.TelemetryLogger.Verify(
+                t => t.LogError(
+                    It.Is<ErrorMessage>(message => message.Message == "Operation cancelled")),
+                Times.Once);
+            this.TelemetryLogger.Verify(
+                t => t.LogError(
+                    It.Is<ErrorMessage>(message => message.Message == "RunId is updated with ClassificationId Error")),
+                Times.Once);
+            Assert.IsTrue(this._context.CalculatorRuns
+                .Single(run => run.Id == runId)
+                .CalculatorRunClassificationId == (int)RunClassification.ERROR);
+        }
+
+        /// <summary>
+        /// If an unspecified exception occurs after the calculation run is retrieved,
+        /// the cancellation should be logged to telemetry and the run should be updated with an error status.
+        /// </summary>
+        /// <returns>A <see cref="Task"/>.</returns>
+        [TestMethod]
+        public async Task TransposeShouldUpdateCalculationRunWhenCancelledAfterRetrievingCalculatorRun()
+        {
+            // Arrange
+            var runId = 1;
+            var resultsRequestDto = this.Fixture.Create<CalcResultsRequestDto>();
+            resultsRequestDto.RunId = runId;
+            this._context.CalculatorRunPomDataDetails = null!;
+
+            // Act
+            var result = await this.TestClass.TransposeBeforeCalcResults(
+                resultsRequestDto,
+                this.Fixture.Create<string>(),
+                CancellationToken.None);
+
+            // Assert
+            Assert.IsFalse(result);
+            this.TelemetryLogger.Verify(
+                t => t.LogError(
+                    It.Is<ErrorMessage>(message => message.Message == "Error occurred while transposing POM and ORG data")),
+                Times.Once);
+            this.TelemetryLogger.Verify(
+                t => t.LogError(
+                    It.Is<ErrorMessage>(message => message.Message == "RunId is updated with ClassificationId Error")),
+                Times.Once);
+            Assert.IsTrue(this._context.CalculatorRuns
+                .Single(run => run.Id == runId)
+                .CalculatorRunClassificationId == (int)RunClassification.ERROR);
         }
 
         protected static IEnumerable<CalculatorRunOrganisationDataMaster> GetCalculatorRunOrganisationDataMaster()

@@ -119,7 +119,8 @@
             };
         }
 
-        public async Task<bool> StartProcess(CalculatorRunParameter calculatorRunParameter, string runName)
+        /// <inheritdoc/>
+        public async Task<bool> StartProcess(CalculatorRunParameter calculatorRunParameter, string? runName)
         {
             this.telemetryLogger.LogInformation(new TrackMessage
             {
@@ -146,7 +147,7 @@
             }
             catch (TaskCanceledException ex)
             {
-                this.telemetryLogger.LogError( new ErrorMessage
+                this.telemetryLogger.LogError(new ErrorMessage
                 {
                     RunId = calculatorRunParameter.Id,
                     RunName = runName,
@@ -170,7 +171,7 @@
             return isSuccess;
         }
 
-        private async Task<bool> RunPipelines(CalculatorRunParameter calculatorRunParameter, bool runRpdPipeline, string runName)
+        private async Task<bool> RunPipelines(CalculatorRunParameter calculatorRunParameter, bool runRpdPipeline, string? runName)
         {
             bool isPomSuccessful = false;
 
@@ -201,7 +202,7 @@
             return isPomSuccessful;
         }
 
-        private async Task<bool> UpdateStatusAndPrepareResult(CalculatorRunParameter calculatorRunParameter, bool isPomSuccessful, HttpClient client, string runName)
+        private async Task<bool> UpdateStatusAndPrepareResult(CalculatorRunParameter calculatorRunParameter, bool isPomSuccessful, HttpClient client, string? runName)
         {
             bool isSuccess = false;
 
@@ -244,13 +245,13 @@
             }
             else
             {
-                await LogAndUpdateStatus(calculatorRunParameter, runName, isPomSuccessful);
+                await this.LogAndUpdateStatus(calculatorRunParameter, runName, isPomSuccessful);
             }
 
             return isSuccess;
         }
 
-        private async Task LogAndUpdateStatus(CalculatorRunParameter calculatorRunParameter, string runName, bool isPomSuccessful)
+        private async Task LogAndUpdateStatus(CalculatorRunParameter calculatorRunParameter, string? runName, bool isPomSuccessful)
         {
             this.LogInformation(calculatorRunParameter.Id, runName, $"UpdateStatusAndPrepareResult - StatusEndPoint: {this.configuration.StatusEndpoint}");
             var statusUpdateResponse = await this.statusService.UpdateRpdStatus(
@@ -262,7 +263,7 @@
             this.LogInformation(calculatorRunParameter.Id, runName, $"UpdateStatusAndPrepareResult - Status Response: {statusUpdateResponse}");
         }
 
-        private void LogInformation(int runId, string runName, string message)
+        private void LogInformation(int runId, string? runName, string message)
         {
             this.telemetryLogger.LogInformation(new TrackMessage
             {
