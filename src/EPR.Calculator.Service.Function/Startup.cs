@@ -37,10 +37,10 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.Configuration;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
 using EPR.Calculator.Service.Common.Logging;
+using System;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -61,8 +61,8 @@ namespace EPR.Calculator.Service.Function
             builder.Services.AddSingleton<TelemetryClient>(provider =>
             {
                 var configuration = TelemetryConfiguration.CreateDefault();
-                var config = provider.GetRequiredService<IConfigurationService>();
-                configuration.ConnectionString = $"InstrumentationKey={config.InstrumentationKey}";
+                var instrumentationKey = Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY");
+                configuration.ConnectionString = $"InstrumentationKey={instrumentationKey}";
                 return new TelemetryClient(configuration);
             });
 
