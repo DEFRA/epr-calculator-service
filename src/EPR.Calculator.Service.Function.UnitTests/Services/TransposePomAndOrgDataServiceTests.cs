@@ -295,6 +295,15 @@
                 new Mock<ICalculatorTelemetryLogger>().Object);
 
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 3 };
+
+            // Detach existing CalculatorRun entity if it is already being tracked
+            var existingCalculatorRun = _context.ChangeTracker.Entries<CalculatorRun>()
+                                                .FirstOrDefault(e => e.Entity.Id == expectedResult.CalculatorRunId);
+            if (existingCalculatorRun != null)
+            {
+                _context.Entry(existingCalculatorRun.Entity).State = EntityState.Detached;
+            }
+
             await service.Transpose(resultsRequestDto, CancellationToken.None);
 
             var producerDetail = this._context.ProducerDetail.FirstOrDefault();
@@ -345,6 +354,15 @@
                 new Mock<ICalculatorTelemetryLogger>().Object);
 
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 3 };
+
+            // Detach existing CalculatorRun entity if it is already being tracked
+            var existingCalculatorRun = _context.ChangeTracker.Entries<CalculatorRun>()
+                                                .FirstOrDefault(e => e.Entity.Id == expectedResult.CalculatorRunId);
+            if (existingCalculatorRun != null)
+            {
+                _context.Entry(existingCalculatorRun.Entity).State = EntityState.Detached;
+            }
+
             await service.Transpose(resultsRequestDto, CancellationToken.None);
 
             var producerReportedMaterial = this._context.ProducerReportedMaterial.FirstOrDefault();
@@ -378,6 +396,15 @@
                 new Mock<ICalculatorTelemetryLogger>().Object);
 
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
+
+            // Detach existing CalculatorRun entity if it is already being tracked
+            var existingCalculatorRun = _context.ChangeTracker.Entries<CalculatorRun>()
+                                                .FirstOrDefault(e => e.Entity.Id == expectedResult.CalculatorRunId);
+            if (existingCalculatorRun != null)
+            {
+                _context.Entry(existingCalculatorRun.Entity).State = EntityState.Detached;
+            }
+
             await service.Transpose(resultsRequestDto, CancellationToken.None);
 
             var producerDetail = this._context.ProducerDetail.FirstOrDefault(t => t.SubsidiaryId != null);
