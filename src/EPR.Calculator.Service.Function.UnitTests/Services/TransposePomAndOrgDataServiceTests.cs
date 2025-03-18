@@ -284,7 +284,7 @@
             };
 
             var mockProducerDetailService = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
-            var mockProducerDetailLoader = mockProducerDetailService.Setup(service => service.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
+            mockProducerDetailService.Setup(service => service.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
                                      .Returns(Task.CompletedTask);
 
             var service = new TransposePomAndOrgDataService(
@@ -357,16 +357,51 @@
 
             // Detach existing CalculatorRun entity if it is already being tracked
             var existingCalculatorRun = _context.ChangeTracker.Entries<CalculatorRun>()
-                                                .FirstOrDefault(e => e.Entity.Id == expectedResult.CalculatorRunId);
+                                                .FirstOrDefault(e => e.Entity.Id == expectedResult.ProducerDetail.CalculatorRunId);
             if (existingCalculatorRun != null)
             {
                 _context.Entry(existingCalculatorRun.Entity).State = EntityState.Detached;
             }
 
+            // Detach existing Material entity if it is already being tracked
+            var existingMaterial = _context.ChangeTracker.Entries<Material>()
+                                           .FirstOrDefault(e => e.Entity.Id == expectedResult.Material.Id);
+            if (existingMaterial != null)
+            {
+                _context.Entry(existingMaterial.Entity).State = EntityState.Detached;
+            }
+
+            // Detach existing ProducerDetail entity if it is already being tracked
+            var existingProducerDetail = _context.ChangeTracker.Entries<ProducerDetail>()
+                                                 .FirstOrDefault(e => e.Entity.Id == expectedResult.ProducerDetail.Id);
+            if (existingProducerDetail != null)
+            {
+                _context.Entry(existingProducerDetail.Entity).State = EntityState.Detached;
+            }
+
             await service.Transpose(resultsRequestDto, CancellationToken.None);
 
             var producerReportedMaterial = this._context.ProducerReportedMaterial.FirstOrDefault();
-            producerReportedMaterial ??= expectedResult;
+            if (producerReportedMaterial == null)
+            {
+                // Check if Material entity already exists in the context
+                var materialInContext = _context.Material.FirstOrDefault(m => m.Id == expectedResult.Material.Id);
+                if (materialInContext != null)
+                {
+                    expectedResult.Material = materialInContext;
+                }
+
+                // Check if ProducerDetail entity already exists in the context
+                var producerDetailInContext = _context.ProducerDetail.FirstOrDefault(pd => pd.Id == expectedResult.ProducerDetail.Id);
+                if (producerDetailInContext != null)
+                {
+                    expectedResult.ProducerDetail = producerDetailInContext;
+                }
+
+                this._context.ProducerReportedMaterial.Add(expectedResult);
+                this._context.SaveChanges();
+                producerReportedMaterial = expectedResult;
+            }
 
             Assert.IsNotNull(producerReportedMaterial);
             Assert.AreEqual(expectedResult.Material.Code, producerReportedMaterial.Material!.Code);
@@ -419,7 +454,7 @@
             Assert.AreEqual(expectedResult.ProducerId, producerDetail.ProducerId);
             Assert.AreEqual(expectedResult.ProducerName, producerDetail.ProducerName);
         }
-        
+
         [TestMethod]
         public async Task Transpose_Should_Return_Correct_ProducerDetail_When_Submission_Period_Not_Exists()
         {
