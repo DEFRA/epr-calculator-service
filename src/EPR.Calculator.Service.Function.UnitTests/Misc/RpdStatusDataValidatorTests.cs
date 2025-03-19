@@ -2,8 +2,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
 {
     using System.Collections.Generic;
     using AutoFixture;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.API.Validators;
-    using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Interface;
     using Microsoft.AspNetCore.Http;

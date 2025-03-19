@@ -9,6 +9,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.23.0" />
+    <PackageReference Include="EPR.Calculator.API.Data" Version="1.0.0" />
     <PackageReference Include="FluentValidation" Version="11.11.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.Web" Version="2.23.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
@@ -22,7 +23,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EPR.Calculator.Service.Common\EPR.Calculator.Service.Common.csproj" />
-    <ProjectReference Include="..\EPR.Calculator.Service.Data\EPR.Calculator.Service.Data.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Dockerfile">

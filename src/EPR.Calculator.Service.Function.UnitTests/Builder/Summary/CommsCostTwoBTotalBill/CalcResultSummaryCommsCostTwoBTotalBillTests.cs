@@ -1,12 +1,12 @@
-﻿using AutoFixture;
-using EPR.Calculator.Service.Function.Builder.Summary;
-using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoBTotalBill;
-using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs;
-using EPR.Calculator.Service.Function.Data.DataModels;
-using EPR.Calculator.Service.Function.Models;
-
-namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwoBTotalBill
+﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwoBTotalBill
 {
+    using AutoFixture;
+    using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.Service.Function.Builder.Summary;
+    using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoBTotalBill;
+    using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs;
+    using EPR.Calculator.Service.Function.Models;
+
     [TestClass]
     public class CalcResultSummaryCommsCostTwoBTotalBillTests
     {
@@ -33,7 +33,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                 CalcResultSummary = TestDataHelper.GetCalcResultSummary(),
                 CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
                 CalcResultLateReportingTonnageData = GetCalcResultLateReportingTonnage(),
-                CalcResultScaledupProducers =  TestDataHelper.GetScaledupProducers(),
+                CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers(),
             };
 
             // Set up consistent data
@@ -50,7 +50,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                         CalculatorRunId = 1,
                         SubsidiaryId = "1",
                         ProducerId = 1,
-                        ProducerName = "Producer1"
+                        ProducerName = "Producer1",
                     },
                     ProducerReportedMaterial = new ProducerReportedMaterial
                     {
@@ -64,7 +64,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                             Id = 1,
                             Code = "HH",
                             Name = "Material1",
-                            Description = "Material1"
+                            Description = "Material1",
                         },
                     },
                 },
@@ -76,7 +76,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                         CalculatorRunId = 1,
                         SubsidiaryId = "1",
                         ProducerId = 2,
-                        ProducerName = "Producer2"
+                        ProducerName = "Producer2",
                     },
                     ProducerReportedMaterial = new ProducerReportedMaterial
                     {
@@ -90,9 +90,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                             Id = 1,
                             Code = "HH",
                             Name = "Material1",
-                            Description = "Material1"
-                        }
-                    }
+                            Description = "Material1",
+                        },
+                    },
                 },
             };
 

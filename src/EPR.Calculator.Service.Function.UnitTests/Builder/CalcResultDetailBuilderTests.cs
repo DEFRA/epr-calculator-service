@@ -1,9 +1,9 @@
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
     using System;
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Function.Builder.Detail;
-    using EPR.Calculator.Service.Function.Data;
-    using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Dtos;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -47,7 +47,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     LapcapFileName = "LapcapFile.csv",
                     CreatedAt = new DateTime(2023, 1, 1),
                     CreatedBy = "TestUser",
-                    ProjectionYear = "2024-25"
+                    ProjectionYear = "2024-25",
                 },
                 DefaultParameterSettingMaster = new DefaultParameterSettingMaster
                 {

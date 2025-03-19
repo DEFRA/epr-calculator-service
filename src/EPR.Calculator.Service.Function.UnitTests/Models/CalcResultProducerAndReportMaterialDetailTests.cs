@@ -1,7 +1,7 @@
 namespace EPR.Calculator.Service.Function.UnitTests.Models
 {
     using AutoFixture;
-    using EPR.Calculator.Service.Function.Data.DataModels;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 

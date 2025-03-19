@@ -1,9 +1,8 @@
 ﻿namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
     using System.Threading.Tasks;
-    using EPR.Calculator.Service.Common.Logging;
-    using EPR.Calculator.Service.Function.Data;
-    using EPR.Calculator.Service.Function.Data.DataModels;
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Function.Services;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.VisualStudio.TestTools.UnitTesting;

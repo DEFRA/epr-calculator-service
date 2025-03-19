@@ -1,7 +1,7 @@
 ﻿namespace EPR.Calculator.Service.Function.Services
 {
     using System.Threading.Tasks;
-    using EPR.Calculator.Service.Function.Data;
+    using EPR.Calculator.API.Data;
     using EPR.Calculator.Service.Function.Interface;
     using Microsoft.EntityFrameworkCore;
 

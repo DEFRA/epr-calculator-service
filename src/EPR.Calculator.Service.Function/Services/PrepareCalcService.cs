@@ -1,19 +1,15 @@
 ﻿namespace EPR.Calculator.Service.Function.Services
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.API.Exporter;
     using EPR.Calculator.API.Validators;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.Logging;
-    using EPR.Calculator.Service.Data.DataModels;
     using EPR.Calculator.Service.Function.Builder;
-    using EPR.Calculator.Service.Function.Data;
-    using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Interface;

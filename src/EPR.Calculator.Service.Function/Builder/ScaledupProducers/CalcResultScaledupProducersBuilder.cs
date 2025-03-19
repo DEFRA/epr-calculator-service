@@ -3,19 +3,15 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Numerics;
     using System.Threading.Tasks;
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Data;
-    using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Mappers;
     using EPR.Calculator.Service.Function.Misc;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Metadata.Internal;
-    using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-    using static System.Formats.Asn1.AsnWriter;
 
     public class CalcResultScaledupProducersBuilder : ICalcResultScaledupProducersBuilder
     {

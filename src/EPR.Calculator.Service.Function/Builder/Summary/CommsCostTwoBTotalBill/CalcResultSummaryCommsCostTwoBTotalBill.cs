@@ -1,13 +1,13 @@
-﻿using EPR.Calculator.Service.Function.Builder.Summary.Common;
-using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs;
-using EPR.Calculator.Service.Function.Data.DataModels;
-using EPR.Calculator.Service.Function.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoBTotalBill
+﻿namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoBTotalBill
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.Service.Function.Builder.Summary.Common;
+    using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs;
+    using EPR.Calculator.Service.Function.Models;
+
     public static class CalcResultSummaryCommsCostTwoBTotalBill
     {
         #region Constants

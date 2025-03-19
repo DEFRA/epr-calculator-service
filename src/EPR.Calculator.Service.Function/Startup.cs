@@ -4,6 +4,8 @@
 
 using System.Configuration;
 using Azure.Storage.Blobs;
+using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Exporter;
 using EPR.Calculator.API.Services;
 using EPR.Calculator.API.Validators;
@@ -20,8 +22,6 @@ using EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment;
 using EPR.Calculator.Service.Function.Builder.ParametersOther;
 using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
 using EPR.Calculator.Service.Function.Builder.Summary;
-using EPR.Calculator.Service.Function.Data;
-using EPR.Calculator.Service.Function.Data.DataModels;
 using EPR.Calculator.Service.Function.Exporter;
 using EPR.Calculator.Service.Function.Exporter.CommsCost;
 using EPR.Calculator.Service.Function.Exporter.Detail;

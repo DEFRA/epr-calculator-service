@@ -1,19 +1,18 @@
-﻿using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Data;
-using EPR.Calculator.Service.Function.Dtos;
-using EPR.Calculator.Service.Function.Models;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
-using System;
-using EPR.Calculator.Service.Function.Data.DataModels;
-using Microsoft.ApplicationInsights;
-using System.Diagnostics.CodeAnalysis;
-
-namespace EPR.Calculator.Service.Function.Builder.CommsCost
+﻿namespace EPR.Calculator.Service.Function.Builder.CommsCost
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.Service.Function.Constants;
+    using EPR.Calculator.Service.Function.Dtos;
+    using EPR.Calculator.Service.Function.Models;
+    using Microsoft.ApplicationInsights;
+    using Microsoft.EntityFrameworkCore;
+
     public class CalcResultCommsCostBuilder(ApplicationDBContext context, TelemetryClient telemetryClient)
         : ICalcResultCommsCostBuilder
     {
@@ -169,7 +168,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                 NorthernIrelandValue = (commsCostByUk.ParameterValue * apportionmentDetail.NorthernIrelandTotal) / 100,
                 TotalValue = commsCostByUk.ParameterValue,
                 Name = TwoBCommsCostUkWide,
-                OrderId = 2
+                OrderId = 2,
             };
 
             telemetryClient.TrackTrace("Getting comms cost by country...");
@@ -234,8 +233,10 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
         }
 
         private static CalcResultCommsCostCommsCostByMaterial GetCommsCost(
-            IEnumerable<CalcCommsBuilderResult> materialDefaults, string materialName,
-            CalcResultOnePlusFourApportionmentDetail apportionmentDetail, CultureInfo culture)
+            IEnumerable<CalcCommsBuilderResult> materialDefaults,
+            string materialName,
+            CalcResultOnePlusFourApportionmentDetail apportionmentDetail,
+            CultureInfo culture)
         {
             var materialDefault = materialDefaults.Single(m => m.ParameterCategory == materialName);
             var commsCost = new CalcResultCommsCostCommsCostByMaterial();
@@ -259,7 +260,8 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
 
         private static List<CalcResultCommsCostOnePlusFourApportionment> GetCommsCostByCountryList(
             CalcResultCommsCostOnePlusFourApportionment ukCost,
-            IEnumerable<CalcCommsBuilderResult> allDefaultResults, CultureInfo culture)
+            IEnumerable<CalcCommsBuilderResult> allDefaultResults,
+            CultureInfo culture)
         {
             var commsCostByCountryList = new List<CalcResultCommsCostOnePlusFourApportionment>();
             commsCostByCountryList.Add(new CalcResultCommsCostCommsCostByMaterial()
@@ -269,7 +271,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                 Scotland = CommsCostByMaterialHeaderConstant.Scotland,
                 NorthernIreland = CommsCostByMaterialHeaderConstant.NorthernIreland,
                 Total = CommsCostByMaterialHeaderConstant.Total,
-                OrderId = 1
+                OrderId = 1,
             });
             commsCostByCountryList.Add(ukCost);
 
@@ -298,7 +300,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                 NorthernIrelandValue = niValue,
                 TotalValue = englandValue + walesValue + scotlandValue + niValue,
                 Name = TwoCCommsCostByCountry,
-                OrderId = 3
+                OrderId = 3,
             };
 
             commsCostByCountryList.Add(countryCost);
@@ -316,7 +318,8 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             return commsCostByCountryList;
         }
 
-        private static void CalculateApportionment(CalcResultOnePlusFourApportionmentDetail apportionmentDetail,
+        private static void CalculateApportionment(
+            CalcResultOnePlusFourApportionmentDetail apportionmentDetail,
             CalcResultCommsCost result)
         {
             var commsApportionmentHeader = new CalcResultCommsCostOnePlusFourApportionment
@@ -325,7 +328,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                 Wales = CommsCostByMaterialHeaderConstant.Wales,
                 Scotland = CommsCostByMaterialHeaderConstant.Scotland,
                 NorthernIreland = CommsCostByMaterialHeaderConstant.NorthernIreland,
-                Total = CommsCostByMaterialHeaderConstant.Total
+                Total = CommsCostByMaterialHeaderConstant.Total,
             };
 
             var commsApportionments = new List<CalcResultCommsCostOnePlusFourApportionment> { commsApportionmentHeader };
