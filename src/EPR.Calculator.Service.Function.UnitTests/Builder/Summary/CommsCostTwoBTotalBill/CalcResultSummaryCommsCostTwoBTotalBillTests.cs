@@ -97,6 +97,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             };
 
             var materails = TestDataHelper.GetMaterials();
+            CalcResultSummaryBuilder.ScaledupProducers = new List<CalcResultScaledupProducer>();
             TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(_allResults, materails, 1);
         }
 
