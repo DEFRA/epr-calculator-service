@@ -8,8 +8,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Constants
     [TestClass]
     public class BlobStorageSettingsTests
     {
-        private BlobStorageSettings TestClass;
-        private IFixture Fixture;
+        private BlobStorageSettings? TestClass;
+        private IFixture? Fixture;
 
         [TestInitialize]
         public void SetUp()

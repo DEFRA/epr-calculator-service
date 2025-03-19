@@ -689,7 +689,7 @@
         {
 
             var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-            this.calcResult.CalcResultScaledupProducers.ScaledupProducers = GetScaledUpProducers();
+            this.calcResult.CalcResultScaledupProducers!.ScaledupProducers = GetScaledUpProducers();
             var results = this.calcResultsService.Construct(calcResultsRequestDto, this.calcResult);
 
             var orderedProducerDetails = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, this.context.ProducerDetail.ToList());

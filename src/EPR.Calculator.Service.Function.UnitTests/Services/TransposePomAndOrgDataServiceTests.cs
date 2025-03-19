@@ -500,7 +500,7 @@
         }
 
         [TestMethod]
-        public async Task Transpose_Should_Return_Latest_Organisation_Name()
+        public void Transpose_Should_Return_Latest_Organisation_Name()
         {
             var mockContext = new Mock<ApplicationDBContext>();
             var mockCommandTimeoutService = new Mock<ICommandTimeoutService>();

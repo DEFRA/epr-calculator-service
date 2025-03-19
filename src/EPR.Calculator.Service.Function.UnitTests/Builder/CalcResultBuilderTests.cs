@@ -31,7 +31,9 @@ namespace EPR.Calculator.Service.Function.UnitTests
         private readonly Mock<ICalcResultParameterOtherCostBuilder> mockCalcResultParameterOtherCostBuilder;
         private readonly Mock<ICalcResultOnePlusFourApportionmentBuilder> mockOnePlusFourApportionmentBuilder;
         private readonly Mock<ICalcResultScaledupProducersBuilder> mockCalcResultScaledupProducersBuilder;
+#pragma warning disable SA1309 // Field names should not begin with underscore
         private TelemetryClient _telemetryClient = new();
+#pragma warning restore SA1309 // Field names should not begin with underscore
 
         public CalcResultBuilderTests()
         {

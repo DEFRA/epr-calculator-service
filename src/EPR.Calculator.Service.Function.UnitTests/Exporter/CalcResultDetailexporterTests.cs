@@ -10,7 +10,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
     [TestClass]
     public class CalcResultDetailexporterTests
     {
-        private CalcResultDetailexporter _testClass;
+        private CalcResultDetailexporter? _testClass;
 
         [TestInitialize]
         public void SetUp()

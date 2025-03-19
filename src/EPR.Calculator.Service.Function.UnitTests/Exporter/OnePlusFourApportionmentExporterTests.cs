@@ -10,7 +10,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
     [TestClass]
     public class OnePlusFourApportionmentExporterTests
     {
-        private OnePlusFourApportionmentExporter _testClass;
+        private OnePlusFourApportionmentExporter? _testClass;
 
         [TestInitialize]
         public void SetUp()

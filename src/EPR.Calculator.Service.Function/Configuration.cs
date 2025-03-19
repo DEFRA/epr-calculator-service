@@ -27,6 +27,7 @@ namespace EPR.Calculator.Service.Function
         /// <summary>
         /// Gets the pipeline URL from environment variables.
         /// </summary>
+#pragma warning disable CS8603 // Possible null reference return.
         public string PipelineUrl => Environment.GetEnvironmentVariable(EnvironmentVariableKeys.PipelineUrl);
 
         /// <summary>
@@ -142,6 +143,8 @@ namespace EPR.Calculator.Service.Function
 
         public int DbLoadingChunkSize => int.Parse(
             Environment.GetEnvironmentVariable(EnvironmentVariableKeys.DbLoadingChunkSize) ?? "1000");
+
+#pragma warning restore CS8603 // Possible null reference return.
 
         /// <summary>
         /// Parses a string value to a TimeSpan.

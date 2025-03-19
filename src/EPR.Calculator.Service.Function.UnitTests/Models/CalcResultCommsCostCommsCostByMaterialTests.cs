@@ -8,7 +8,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
     [TestClass]
     public class CalcResultCommsCostCommsCostByMaterialTests
     {
-        private CalcResultCommsCostCommsCostByMaterial _testClass;
+        private CalcResultCommsCostCommsCostByMaterial? _testClass;
 
         [TestInitialize]
         public void SetUp()
