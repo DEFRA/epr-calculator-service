@@ -37,6 +37,10 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Extensibility;
+using EPR.Calculator.Service.Common.Logging;
+using System;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -62,6 +66,9 @@ namespace EPR.Calculator.Service.Function
                 options.UseSqlServer(
                     config.DbConnectionString);
             });
+
+            // Register CustomTelemetryLogger
+            builder.Services.AddSingleton<ICalculatorTelemetryLogger, CalculatorTelemetryLogger>();
         }
 
         private static void SetupBlobStorage(IServiceCollection services)
@@ -69,7 +76,7 @@ namespace EPR.Calculator.Service.Function
             services.AddSingleton<IStorageService>(provider =>
             {
                 var configuration = provider.GetRequiredService<IConfigurationService>();
-                var logger = provider.GetRequiredService<ILogger<BlobStorageService>>();
+                var logger = provider.GetRequiredService<ICalculatorTelemetryLogger>();
                 var connectionString = configuration.BlobConnectionString;
                 if (string.IsNullOrEmpty(connectionString))
                 {
@@ -120,6 +127,8 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<IDbLoadingChunkerService<ProducerReportedMaterial>, DbLoadingChunkerService<ProducerReportedMaterial>>();
             services.AddTransient<ICalcResultSummaryExporter, CalcResultSummaryExporter>();
             services.AddTransient<ILateReportingExporter, LateReportingExporter>();
+            services.AddTransient<IRunNameService, RunNameService>();
+            services.AddTransient<ITelemetryClientWrapper, TelemetryClientWrapper>();
 #if !DEBUG
             SetupBlobStorage(services);
             services.AddTransient<IConfigurationService, Configuration>();

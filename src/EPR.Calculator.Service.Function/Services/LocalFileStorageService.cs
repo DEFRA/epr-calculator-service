@@ -9,7 +9,7 @@
 
     public class LocalFileStorageService : IStorageService
     {
-        public Task<string> UploadResultFileContentAsync(string fileName, string content)
+        public Task<string> UploadResultFileContentAsync(string fileName, string content, string runName)
         {
             var path = Path.Combine(Directory.GetCurrentDirectory(), fileName);
             File.WriteAllText(path, content, Encoding.UTF8);

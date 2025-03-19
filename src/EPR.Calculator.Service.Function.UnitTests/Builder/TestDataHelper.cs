@@ -180,7 +180,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         Scotland = "Scotland",
                         NorthernIreland = "Northern Ireland",
                         Total = "Total",
-                        ProducerReportedHouseholdPackagingWasteTonnage = "Producer Reported Household Packaging Waste Tonnage",
+                        ProducerReportedHouseholdPackagingWasteTonnage = "Producer Reported Household Packaging Tonnage",
                         ReportedPublicBinTonnage = "Reported Public Bin Tonnage",
                         LateReportingTonnage = "Late Reporting Tonnage",
                         ProducerReportedTotalTonnage = "Producer Reported Household Tonnage + Late Reporting Tonnage",
