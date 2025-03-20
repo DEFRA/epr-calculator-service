@@ -400,7 +400,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails?.Single(x => x.Name == MaterialNames.Plastic);
             Assert.IsNotNull(laDisposalCost);
             Assert.AreEqual("700", laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage);
-        }
+        }        
 
         [TestMethod]
         public async Task Should_Calculate_ProducerDataTotal_For_Specific_Material_NoScaledUpData()
@@ -421,6 +421,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails?.Single(x => x.Name == MaterialNames.Plastic);
             Assert.IsNotNull(laDisposalCost);
             Assert.AreEqual(400, double.Parse(laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage));
+        }
+
+        [TestMethod]
+        public void GetDecimalValue_InvalidDecimalString_ReturnsZero()
+        {
+            // Arrange
+            string value = "invalid";
+
+            // Act
+            decimal result = CalcRunLaDisposalCostBuilder.GetDecimalValue(value);
+
+            // Assert
+            Assert.AreEqual(0m, result);
         }
 
         private static CalcResultScaledupProducers GetScaledUpProducers()

@@ -1,4 +1,7 @@
-﻿namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
+﻿using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("EPR.Calculator.Service.Function.UnitTests")]
+namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
 {
     using System;
     using System.Collections.Generic;
@@ -197,7 +200,7 @@
             };
         }
 
-        private static decimal GetDecimalValue(string value)
+        internal static decimal GetDecimalValue(string value)
         {
             var isParseSuccessful = decimal.TryParse(value, CultureInfo.InvariantCulture, out decimal result);
             return isParseSuccessful ? result : 0;
