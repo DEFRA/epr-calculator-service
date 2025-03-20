@@ -10,7 +10,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
     [TestClass]
     public class OnePlusFourApportionmentExporterTests
     {
-        private OnePlusFourApportionmentExporter? _testClass;
+        private OnePlusFourApportionmentExporter? _testClass = new OnePlusFourApportionmentExporter();
 
         [TestInitialize]
         public void SetUp()
@@ -44,7 +44,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
             var csvContent = new StringBuilder();
 
             // Act
-            this._testClass.Export(calcResult1Plus4Apportionment, csvContent);
+            this._testClass?.Export(calcResult1Plus4Apportionment, csvContent);
 
             var result = csvContent.ToString();
             var rows = result.Split(Environment.NewLine);

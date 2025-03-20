@@ -220,7 +220,7 @@
             decimal expectedValue = 0.50m;
 
             // Act
-            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetRegionApportionment(this._calcResult, "England");
+            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetRegionApportionment(this._calcResult!, "England");
 
             // Assert
             Assert.AreEqual(expectedValue, result);
