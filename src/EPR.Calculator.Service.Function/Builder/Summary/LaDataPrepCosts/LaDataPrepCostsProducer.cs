@@ -4,7 +4,8 @@ using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Models;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Runtime.CompilerServices;
+[assembly: InternalsVisibleTo("EPR.Calculator.Service.Function.UnitTests")]
 namespace EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts
 {
     public static class LaDataPrepCostsProducer
@@ -69,7 +70,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts
             }
         }
 
-        private static decimal GetLaDataPrepCostsWithoutBadDebtProvision(CalcResult calcResult)
+        internal static decimal GetLaDataPrepCostsWithoutBadDebtProvision(CalcResult calcResult)
         {
             var dataPrepCharge = calcResult.CalcResultParameterOtherCost.Details.FirstOrDefault(
                 cost => cost.Name == OnePlus4ApportionmentColumnHeaders.LADataPrepCharge);

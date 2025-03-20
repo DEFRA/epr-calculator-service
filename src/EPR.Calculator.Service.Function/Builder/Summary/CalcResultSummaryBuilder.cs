@@ -1,4 +1,7 @@
-﻿namespace EPR.Calculator.Service.Function.Builder.Summary
+﻿using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("EPR.Calculator.Service.Function.UnitTests")]
+namespace EPR.Calculator.Service.Function.Builder.Summary
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -472,7 +475,7 @@
             return result;
         }
 
-        private static string GetScaledupProducerStatusTotalRow(
+        internal static string GetScaledupProducerStatusTotalRow(
             ProducerDetail producer,
             IEnumerable<CalcResultScaledupProducer> scaledupProducers,
             bool isOverAllTotalRow)
