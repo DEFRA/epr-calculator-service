@@ -150,7 +150,7 @@
 
         private static string GetProducerReportedTotalTonnage(CalcResultLaDisposalCostDataDetail detail)
         {
-            var householdDrinkContainersValue = detail.HouseholdDrinkContainers == null
+            var householdDrinkContainersValue = detail.HouseholdDrinkContainers == string.Empty
                 ? 0
                 : GetDecimalValue(detail.HouseholdDrinkContainers);
 
