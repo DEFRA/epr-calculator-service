@@ -4,6 +4,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using System.Net.Http;
     using System.Text;
     using System.Text.Json;
+    using System.Threading.Tasks;
     using AutoFixture;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
@@ -56,8 +57,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 It.IsAny<CancellationToken>()))
                 .ReturnsAsync(true);
 
-            var statusService = new Mock<IRpdStatusService>();
-            statusService.Setup(s => s.UpdateRpdStatus(
+            this.StatusService = new Mock<IRpdStatusService>();
+            this.StatusService.Setup(s => s.UpdateRpdStatus(
                 It.IsAny<int>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
@@ -81,7 +82,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 this.TransposeService.Object,
                 new Configuration(),
                 this.PrepareCalcService.Object,
-                statusService.Object);
+                this.StatusService.Object);
 
             this.TransposeService.Setup(t => t.TransposeBeforeCalcResults(
                 It.IsAny<CalcResultsRequestDto>(),
@@ -119,6 +120,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         private Mock<IConfigurationService> Configuration { get; }
 
         private Mock<ICalculatorTelemetryLogger> TelemetryLogger { get; }
+
+        private Mock<IRpdStatusService> StatusService { get; }
 
         /// <summary>
         /// Checks that the service calls the Azure Synapse runner and passes the correct parameters to it.
@@ -514,6 +517,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var calculatorRunParameters = this.Fixture.Create<CalculatorRunParameter>();
             calculatorRunParameters.FinancialYear = "2024-25";
             var runName = "Test Run Name";
+
+            this.StatusService.Setup(s => s.UpdateRpdStatus(
+                It.IsAny<int>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<bool>(),
+                It.IsAny<CancellationToken>()))
+                .Throws(new TaskCanceledException("Timed out!"));
 
             this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
 
