@@ -22,7 +22,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
         private readonly ApplicationDBContext context;
         private List<ProducerData> producerData;
 
-        private class ProducerData
+        internal class ProducerData
         {
             public required string MaterialName { get; set; }
 
