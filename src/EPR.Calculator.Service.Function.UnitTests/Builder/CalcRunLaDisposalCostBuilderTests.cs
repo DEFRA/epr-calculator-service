@@ -4,6 +4,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
     using System.Globalization;
     using AutoFixture;
     using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
+    using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Data;
     using EPR.Calculator.Service.Function.Data.DataModels;
@@ -400,7 +401,23 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails?.Single(x => x.Name == MaterialNames.Plastic);
             Assert.IsNotNull(laDisposalCost);
             Assert.AreEqual("700", laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage);
-        }        
+        }
+
+        [TestMethod]
+        public async Task GetProducerData_ExcludesScaledupProducers()
+        {
+            // Arrange
+            var resultsDto = new CalcResultsRequestDto { RunId = 2 };
+            var calcResult = TestDataHelper.GetCalcResult();
+            SeedDatabase(this.dbContext);
+            calcResult.CalcResultScaledupProducers = Fixture.Create<CalcResultScaledupProducers>();
+
+            // Act
+            await this.builder.Construct(resultsDto, calcResult);
+
+            // Assert
+            Assert.AreEqual(0, this.builder.producerData.Count);
+        }
 
         [TestMethod]
         public async Task Should_Calculate_ProducerDataTotal_For_Specific_Material_NoScaledUpData()

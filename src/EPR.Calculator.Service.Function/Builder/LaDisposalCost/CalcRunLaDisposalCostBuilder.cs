@@ -20,7 +20,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
     {
         private const string EmptyString = "0";
         private readonly ApplicationDBContext context;
-        private List<ProducerData> producerData;
+        internal List<ProducerData> producerData;
 
         internal class ProducerData
         {
