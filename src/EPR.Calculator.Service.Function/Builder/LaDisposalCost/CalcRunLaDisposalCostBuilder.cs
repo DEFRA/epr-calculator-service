@@ -20,9 +20,9 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
     {
         private const string EmptyString = "0";
         private readonly ApplicationDBContext context;
-        internal List<ProducerData> producerData;
+        private List<ProducerData> producerData;
 
-        internal class ProducerData
+        private class ProducerData
         {
             public required string MaterialName { get; set; }
 
@@ -47,7 +47,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
             await this.SetProducerData(resultsRequestDto);
 
             var scaledUpProducerReportedOn = calcResult.CalcResultScaledupProducers!.ScaledupProducers.FirstOrDefault(x => x.IsTotalRow);
-            this.producerData = this.producerData.Where(t => !calcResult.CalcResultScaledupProducers.ScaledupProducers.Any(i => i.ProducerId == t.ProducerDetail?.ProducerId)).ToList();
+            this.producerData = this.producerData.Where(t => !calcResult.CalcResultScaledupProducers.ScaledupProducers.Any(i => i.ProducerId == t.ProducerDetail!.ProducerId)).ToList();
 
             var lapcapDetails = calcResult.CalcResultLapcapData.CalcResultLapcapDataDetails
                 .Where(t => t.OrderId != 1 && t.Name != CalcResultLapcapDataBuilder.CountryApportionment).ToList();

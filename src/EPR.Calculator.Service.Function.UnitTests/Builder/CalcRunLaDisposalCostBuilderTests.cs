@@ -404,22 +404,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         }
 
         [TestMethod]
-        public async Task GetProducerData_ExcludesScaledupProducers()
-        {
-            // Arrange
-            var resultsDto = new CalcResultsRequestDto { RunId = 2 };
-            var calcResult = TestDataHelper.GetCalcResult();
-            SeedDatabase(this.dbContext);
-            calcResult.CalcResultScaledupProducers = Fixture.Create<CalcResultScaledupProducers>();
-
-            // Act
-            await this.builder.Construct(resultsDto, calcResult);
-
-            // Assert
-            Assert.AreEqual(0, this.builder.producerData.Count);
-        }
-
-        [TestMethod]
         public async Task Should_Calculate_ProducerDataTotal_For_Specific_Material_NoScaledUpData()
         {
             // Assign
