@@ -1,4 +1,7 @@
-﻿namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
+﻿using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("EPR.Calculator.Service.Function.UnitTests")]
+namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
 {
     using System;
     using System.Collections.Generic;
@@ -43,8 +46,8 @@
 
             await this.SetProducerData(resultsRequestDto);
 
-            var scaledUpProducerReportedOn = calcResult.CalcResultScaledupProducers.ScaledupProducers.FirstOrDefault(x => x.IsTotalRow);
-            this.producerData = this.producerData.Where(t => !calcResult.CalcResultScaledupProducers.ScaledupProducers.Any(i => i.ProducerId == t?.ProducerDetail.ProducerId)).ToList();
+            var scaledUpProducerReportedOn = calcResult.CalcResultScaledupProducers!.ScaledupProducers.FirstOrDefault(x => x.IsTotalRow);
+            this.producerData = this.producerData.Where(t => !calcResult.CalcResultScaledupProducers.ScaledupProducers.Any(i => i.ProducerId == t.ProducerDetail!.ProducerId)).ToList();
 
             var lapcapDetails = calcResult.CalcResultLapcapData.CalcResultLapcapDataDetails
                 .Where(t => t.OrderId != 1 && t.Name != CalcResultLapcapDataBuilder.CountryApportionment).ToList();
@@ -150,7 +153,7 @@
 
         private static string GetProducerReportedTotalTonnage(CalcResultLaDisposalCostDataDetail detail)
         {
-            var householdDrinkContainersValue = detail.HouseholdDrinkContainers == null
+            var householdDrinkContainersValue = detail.HouseholdDrinkContainers == string.Empty
                 ? 0
                 : GetDecimalValue(detail.HouseholdDrinkContainers);
 
@@ -197,7 +200,7 @@
             };
         }
 
-        private static decimal GetDecimalValue(string value)
+        internal static decimal GetDecimalValue(string value)
         {
             var isParseSuccessful = decimal.TryParse(value, CultureInfo.InvariantCulture, out decimal result);
             return isParseSuccessful ? result : 0;

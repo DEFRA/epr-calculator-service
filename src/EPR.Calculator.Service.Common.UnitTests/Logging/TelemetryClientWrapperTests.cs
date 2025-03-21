@@ -10,9 +10,9 @@
     [TestClass]
     public class TelemetryClientWrapperTests
     {
-        private Mock<ITelemetryClientWrapper> mockTelemetryClient;
-        private TelemetryClient telemetryClient;
-        private TelemetryClientWrapper telemetryClientWrapper;
+        private Mock<ITelemetryClientWrapper>? mockTelemetryClient;
+        private TelemetryClient? telemetryClient;
+        private TelemetryClientWrapper? telemetryClientWrapper;
 
         [TestInitialize]
         public void Setup()
@@ -29,10 +29,10 @@
             var traceTelemetry = new TraceTelemetry("Test trace message", SeverityLevel.Information);
 
             // Act
-            this.telemetryClientWrapper.TrackTrace(traceTelemetry);
+            this.telemetryClientWrapper?.TrackTrace(traceTelemetry);
 
             // Assert
-            this.mockTelemetryClient.Verify(client => client.TrackTrace(traceTelemetry), Times.Never);
+            this.mockTelemetryClient?.Verify(client => client.TrackTrace(traceTelemetry), Times.Never);
         }
 
         [TestMethod]
@@ -42,10 +42,10 @@
             var exceptionTelemetry = new ExceptionTelemetry(new System.Exception("Test exception"));
 
             // Act
-            this.telemetryClientWrapper.TrackException(exceptionTelemetry);
+            this.telemetryClientWrapper?.TrackException(exceptionTelemetry);
 
             // Assert
-            this.mockTelemetryClient.Verify(client => client.TrackException(exceptionTelemetry), Times.Never);
+            this.mockTelemetryClient?.Verify(client => client.TrackException(exceptionTelemetry), Times.Never);
         }
     }
 }

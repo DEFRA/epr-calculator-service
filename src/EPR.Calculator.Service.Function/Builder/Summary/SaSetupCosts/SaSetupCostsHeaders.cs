@@ -1,6 +1,6 @@
 ﻿namespace EPR.Calculator.Service.Function.Builder.Summary.SaSetupCosts
 {
-    public class SaSetupCostsHeaders
+    public static class SaSetupCostsHeaders
     {
         public static readonly string BadDebtProvisionTitle = "Bad Debt provision";
         public static readonly string OneOffFeeSetupCostsWithBadDebtProvisionTitle = "5 One-off fee for SA Set Up Costs with Bad Debt provision";

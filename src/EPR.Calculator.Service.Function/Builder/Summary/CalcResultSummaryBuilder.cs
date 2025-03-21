@@ -1,4 +1,7 @@
-﻿namespace EPR.Calculator.Service.Function.Builder.Summary
+﻿using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("EPR.Calculator.Service.Function.UnitTests")]
+namespace EPR.Calculator.Service.Function.Builder.Summary
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -26,7 +29,7 @@
     {
         private readonly ApplicationDBContext context;
 
-        public static IEnumerable<CalcResultScaledupProducer> ScaledupProducers { get; set; }
+        public static IEnumerable<CalcResultScaledupProducer>? ScaledupProducers { get; set; }
 
         public CalcResultSummaryBuilder(ApplicationDBContext context)
         {
@@ -41,7 +44,7 @@
             var materialsFromDb = await this.context.Material.ToListAsync();
             var materials = Mappers.MaterialMapper.Map(materialsFromDb);
 
-            ScaledupProducers = calcResult.CalcResultScaledupProducers.ScaledupProducers;
+            ScaledupProducers = calcResult.CalcResultScaledupProducers!.ScaledupProducers;
 
             var runProducerMaterialDetails = await (from pd in this.context.ProducerDetail
                                                     join prm in this.context.ProducerReportedMaterial on pd.Id equals prm.ProducerDetailId
@@ -466,13 +469,13 @@
                     total += scaledupProducer.ScaledupProducerTonnageByMaterial.Sum(x => x.Value.ScaledupTotalReportedTonnage);
                 }
 
-                result.Add(new TotalPackagingTonnagePerRun() { ProducerId = item.ProducerId, SubsidiaryId = item.SubsidiaryId, TotalPackagingTonnage = total });
+                result.Add(new TotalPackagingTonnagePerRun() { ProducerId = item.ProducerId, SubsidiaryId = item.SubsidiaryId!, TotalPackagingTonnage = total });
             }
 
             return result;
         }
 
-        private static string GetScaledupProducerStatusTotalRow(
+        internal static string GetScaledupProducerStatusTotalRow(
             ProducerDetail producer,
             IEnumerable<CalcResultScaledupProducer> scaledupProducers,
             bool isOverAllTotalRow)

@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace EPR.Calculator.Service.Function.Builder.Summary.TwoCCommsCost
 {
-    public class TwoCCommsCostUtil
+    public static class TwoCCommsCostUtil
     {
         #region Constants
         private const string England = "England";

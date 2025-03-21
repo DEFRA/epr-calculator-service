@@ -1,6 +1,6 @@
 ﻿namespace EPR.Calculator.Service.Function.Builder.Summary.TwoCCommsCost;
 
-public class TwoCCommsConstantsHeader
+public static class TwoCCommsConstantsHeader
 {
     public static readonly string TwoCCommsCostByCountryWithout =
         "2c Comms Costs - by Country w/o Bad Debt provision";
