@@ -17,7 +17,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
         public void SetUp()
         {
             var fixture = new Fixture();
-            var calcResult1Plus4Apportionment = new CalcResultOnePlusFourApportionment
+            this.calcResult1Plus4Apportionment = new CalcResultOnePlusFourApportionment
             {
                 Name = "Apportionment",
                 CalcResultOnePlusFourApportionmentDetails = new List<CalcResultOnePlusFourApportionmentDetail>()
@@ -56,7 +56,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
             var result = csvContent.ToString();
             var rows = result.Split(Environment.NewLine);
             Assert.AreEqual(6, rows.Length);
-            Assert.AreSame("Apportionment", rows[2]);
+            Assert.AreEqual("Apportionment", rows[2]);
         }
     }
 }
