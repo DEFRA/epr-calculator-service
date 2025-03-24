@@ -15,15 +15,11 @@
     [TestClass]
     public class RunNameServiceTests
     {
-        private Mock<IDbContextFactory<ApplicationDBContext>>? dbContextFactory;
-        private ApplicationDBContext? dbContext;
-        private RunNameService? runNameService;
+        private Mock<IDbContextFactory<ApplicationDBContext>> dbContextFactory;
+        private ApplicationDBContext dbContext;
+        private RunNameService runNameService;
 
-        /// <summary>
-        /// Initializes the test setup.
-        /// </summary>
-        [TestInitialize]
-        public void Setup()
+        RunNameServiceTests()
         {
             var options = new DbContextOptionsBuilder<ApplicationDBContext>()
                 .UseInMemoryDatabase(databaseName: "TestDatabase")
@@ -54,11 +50,11 @@
             var runId = 1;
             var expectedRunName = "Test Run Name";
 
-            this.dbContext?.CalculatorRuns.Add(new CalculatorRun { Id = runId, Name = expectedRunName, Financial_Year = "2024-25" });
-            await this.dbContext!.SaveChangesAsync();
+            this.dbContext.CalculatorRuns.Add(new CalculatorRun { Id = runId, Name = expectedRunName, Financial_Year = "2024-25" });
+            await this.dbContext.SaveChangesAsync();
 
             // Act
-            var result = await this.runNameService!.GetRunNameAsync(runId);
+            var result = await this.runNameService.GetRunNameAsync(runId);
 
             // Assert
             Assert.AreEqual(expectedRunName, result);
@@ -75,7 +71,7 @@
             var runId = 10;
 
             // Act
-            var result = await this.runNameService!.GetRunNameAsync(runId);
+            var result = await this.runNameService.GetRunNameAsync(runId);
 
             // Assert
             Assert.AreEqual(null, result);

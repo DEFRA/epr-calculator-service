@@ -10,11 +10,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
     [TestClass]
     public class OnePlusFourApportionmentExporterTests
     {
-        private OnePlusFourApportionmentExporter? _testClass = new OnePlusFourApportionmentExporter();
-        private CalcResultOnePlusFourApportionment? calcResult1Plus4Apportionment;
+        private OnePlusFourApportionmentExporter _testClass = new OnePlusFourApportionmentExporter();
+        private CalcResultOnePlusFourApportionment calcResult1Plus4Apportionment;
 
-        [TestInitialize]
-        public void SetUp()
+        OnePlusFourApportionmentExporterTests()
         {
             var fixture = new Fixture();
             this.calcResult1Plus4Apportionment = new CalcResultOnePlusFourApportionment
@@ -50,7 +49,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
             var csvContent = new StringBuilder();
 
             // Act
-            this._testClass?.Export(this.calcResult1Plus4Apportionment!, csvContent);
+            this._testClass.Export(this.calcResult1Plus4Apportionment, csvContent);
 
             // Assert
             var result = csvContent.ToString();

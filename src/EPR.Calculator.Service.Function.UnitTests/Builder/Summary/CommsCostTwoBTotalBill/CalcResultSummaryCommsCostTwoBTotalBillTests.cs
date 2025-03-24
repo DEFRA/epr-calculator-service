@@ -11,14 +11,12 @@
     public class CalcResultSummaryCommsCostTwoBTotalBillTests
     {
         public required IEnumerable<TotalPackagingTonnagePerRun> TotalPackagingTonnage;
-        private CalcResult? _calcResult;
-        private List<ProducerDetail>? _producers;
-        private List<CalcResultsProducerAndReportMaterialDetail>? _allResults;
-
+        private CalcResult _calcResult;
+        private List<ProducerDetail> _producers;
+        private List<CalcResultsProducerAndReportMaterialDetail> _allResults;
         private Fixture Fixture { get; init; } = new Fixture();
 
-        [TestInitialize]
-        public void Setup()
+        CalcResultSummaryCommsCostTwoBTotalBillTests()
         {
             this._producers = GetProducers();
 
@@ -104,9 +102,9 @@
         [TestCleanup]
         public void TestCleanup()
         {
-            this._producers = null;
-            this._calcResult = null;
-            this._allResults = null;
+            this._producers = null!;
+            this._calcResult = null!;
+            this._allResults = null!;
         }
 
         [TestMethod]
@@ -116,7 +114,7 @@
             decimal expectedValue = 278.300m;
 
             // Act
-            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsProducerFeeWithBadDebtFor2bTotalsRow(this._calcResult!, this._producers!, this.TotalPackagingTonnage);
+            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsProducerFeeWithBadDebtFor2bTotalsRow(this._calcResult, this._producers, this.TotalPackagingTonnage);
 
             // Assert
             Assert.AreEqual(expectedValue, result);
@@ -129,7 +127,7 @@
             decimal expectedValue = 139.1500m;
 
             // Act
-            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsEnglandWithBadDebtTotalsRow(this._calcResult!, this._producers!, this.TotalPackagingTonnage);
+            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsEnglandWithBadDebtTotalsRow(this._calcResult, this._producers, this.TotalPackagingTonnage);
 
             // Assert
             Assert.AreEqual(expectedValue, result);
@@ -142,7 +140,7 @@
             decimal expectedValue = 27.8300m;
 
             // Act
-            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsNorthernIrelandWithBadDebtTotalsRow(this._calcResult!, this._producers!, this.TotalPackagingTonnage);
+            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsNorthernIrelandWithBadDebtTotalsRow(this._calcResult, this._producers, this.TotalPackagingTonnage);
 
             // Assert
             Assert.AreEqual(expectedValue, result);
@@ -155,7 +153,7 @@
             decimal expectedValue = 139.1500m;
 
             // Act
-            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsEnglandWithBadDebt(this._calcResult!, this._producers![0], this.TotalPackagingTonnage);
+            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsEnglandWithBadDebt(this._calcResult, this._producers[0], this.TotalPackagingTonnage);
 
             // Assert
             Assert.AreEqual(expectedValue, result);
@@ -168,7 +166,7 @@
             decimal expectedValue = 55.6600m;
 
             // Act
-            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsWalesWithBadDebt(this._calcResult!, this._producers![0], this.TotalPackagingTonnage);
+            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsWalesWithBadDebt(this._calcResult, this._producers[0], this.TotalPackagingTonnage);
 
             // Assert
             Assert.AreEqual(expectedValue, result);
@@ -181,7 +179,7 @@
             decimal expectedValue = 55.6600m;
 
             // Act
-            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsScotlandWithBadDebt(this._calcResult!, this._producers![0], this.TotalPackagingTonnage);
+            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsScotlandWithBadDebt(this._calcResult, this._producers[0], this.TotalPackagingTonnage);
 
             // Assert
             Assert.AreEqual(expectedValue, result);
@@ -194,7 +192,7 @@
             decimal expectedValue = 27.8300m;
 
             // Act
-            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsNorthernIrelandWithBadDebt(this._calcResult!, this._producers![0], this.TotalPackagingTonnage);
+            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsNorthernIrelandWithBadDebt(this._calcResult, this._producers[0], this.TotalPackagingTonnage);
 
             // Assert
             Assert.AreEqual(expectedValue, result);
@@ -207,7 +205,7 @@
             decimal expectedValue = 139.1500m;
 
             // Act
-            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsWithBadDebt(this._calcResult!, this._producers![0], this.TotalPackagingTonnage, "England");
+            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsWithBadDebt(this._calcResult, this._producers[0], this.TotalPackagingTonnage, "England");
 
             // Assert
             Assert.AreEqual(expectedValue, result);
@@ -220,7 +218,7 @@
             decimal expectedValue = 0.50m;
 
             // Act
-            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetRegionApportionment(this._calcResult!, "England");
+            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetRegionApportionment(this._calcResult, "England");
 
             // Assert
             Assert.AreEqual(expectedValue, result);
@@ -233,7 +231,7 @@
             decimal expectedValue = 25.300m;
 
             // Act
-            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsBadDebtProvisionFor2b(this._calcResult!, this._producers![0], this.TotalPackagingTonnage);
+            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsBadDebtProvisionFor2b(this._calcResult, this._producers[0], this.TotalPackagingTonnage);
 
             // Assert
             Assert.AreEqual(expectedValue, result);
@@ -246,7 +244,7 @@
             decimal expectedValue = 278.300m;
 
             // Act
-            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsProducerFeeWithBadDebtFor2b(this._calcResult!, this._producers![0], this.TotalPackagingTonnage);
+            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsProducerFeeWithBadDebtFor2b(this._calcResult, this._producers[0], this.TotalPackagingTonnage);
 
             // Assert
             Assert.AreEqual(expectedValue, result);
@@ -259,7 +257,7 @@
             decimal expectedValue = 253.0m;
 
             // Act
-            var result = CalcResultSummaryCommsCostTwoBTotalBill.CalculateProducerFee(this._calcResult!, this._producers![0], this.TotalPackagingTonnage, false);
+            var result = CalcResultSummaryCommsCostTwoBTotalBill.CalculateProducerFee(this._calcResult, this._producers[0], this.TotalPackagingTonnage, false);
 
             // Assert
             Assert.AreEqual(expectedValue, result);
@@ -272,7 +270,7 @@
             decimal expectedValue = 253.0m;
 
             // Act
-            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsProducerFeeWithoutBadDebtFor2b(this._calcResult!, this._producers![0], this.TotalPackagingTonnage);
+            var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsProducerFeeWithoutBadDebtFor2b(this._calcResult, this._producers[0], this.TotalPackagingTonnage);
 
             // Assert
             Assert.AreEqual(expectedValue, result);

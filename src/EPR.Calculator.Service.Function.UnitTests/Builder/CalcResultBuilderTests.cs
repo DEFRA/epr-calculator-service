@@ -31,9 +31,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         private readonly Mock<ICalcResultParameterOtherCostBuilder> mockCalcResultParameterOtherCostBuilder;
         private readonly Mock<ICalcResultOnePlusFourApportionmentBuilder> mockOnePlusFourApportionmentBuilder;
         private readonly Mock<ICalcResultScaledupProducersBuilder> mockCalcResultScaledupProducersBuilder;
-#pragma warning disable SA1309 // Field names should not begin with underscore
-        private TelemetryClient _telemetryClient = new();
-#pragma warning restore SA1309 // Field names should not begin with underscore
+        private TelemetryClient telemetryClient = new();
 
         public CalcResultBuilderTests()
         {
@@ -59,7 +57,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 this.mockCalcRunLaDisposalCostBuilder.Object,
                 this.mockCalcResultScaledupProducersBuilder.Object,
                 this.mockSummaryBuilder.Object,
-                this._telemetryClient);
+                this.telemetryClient);
         }
 
         private Fixture Fixture { get; init; }
@@ -78,7 +76,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 this.mockCalcRunLaDisposalCostBuilder.Object,
                 this.mockCalcResultScaledupProducersBuilder.Object,
                 this.mockSummaryBuilder.Object,
-                this._telemetryClient);
+                this.telemetryClient);
 
             // Assert
             Assert.IsNotNull(instance);

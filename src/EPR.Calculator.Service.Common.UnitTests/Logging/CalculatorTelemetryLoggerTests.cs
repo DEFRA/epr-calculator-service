@@ -13,14 +13,10 @@
     [TestClass]
     public class CalculatorTelemetryLoggerTests
     {
-        private Mock<ITelemetryClientWrapper>? mockTelemetryClient;
-        private CalculatorTelemetryLogger? calculatorTelemetryLogger;
+        private Mock<ITelemetryClientWrapper> mockTelemetryClient;
+        private CalculatorTelemetryLogger calculatorTelemetryLogger;
 
-        /// <summary>
-        /// Initializes the test setup.
-        /// </summary>
-        [TestInitialize]
-        public void Setup()
+        CalculatorTelemetryLoggerTests()
         {
             this.mockTelemetryClient = new Mock<ITelemetryClientWrapper>();
             this.calculatorTelemetryLogger = new CalculatorTelemetryLogger(this.mockTelemetryClient.Object);
@@ -41,10 +37,10 @@
             };
 
             // Act
-            this.calculatorTelemetryLogger?.LogInformation(logMessage);
+            this.calculatorTelemetryLogger.LogInformation(logMessage);
 
             // Assert
-            this.mockTelemetryClient?.Verify(
+            this.mockTelemetryClient.Verify(
                 tc => tc.TrackTrace(It.Is<TraceTelemetry>(t =>
                 t.Message.Contains(logMessage.RunId.ToString() ?? string.Empty) &&
                 t.Message.Contains(logMessage.RunName ?? string.Empty) &&
@@ -68,10 +64,10 @@
             };
 
             // Act
-            this.calculatorTelemetryLogger?.LogError(errorMessage);
+            this.calculatorTelemetryLogger.LogError(errorMessage);
 
             // Assert
-            this.mockTelemetryClient?.Verify(
+            this.mockTelemetryClient.Verify(
                 tc => tc.TrackException(It.Is<ExceptionTelemetry>(et =>
                 et.Exception == errorMessage.Exception &&
                 et.Message.Contains(errorMessage.RunId.ToString() ?? string.Empty) &&
@@ -158,18 +154,18 @@
             };
 
             // Act
-            this.calculatorTelemetryLogger?.LogInformation(logMessage);
-            this.calculatorTelemetryLogger?.LogError(new ErrorMessage { RunId = 123, RunName = "TestRun", Message = "This is an error message", Exception = new Exception("Test exception") });
+            this.calculatorTelemetryLogger.LogInformation(logMessage);
+            this.calculatorTelemetryLogger.LogError(new ErrorMessage { RunId = 123, RunName = "TestRun", Message = "This is an error message", Exception = new Exception("Test exception") });
 
             // Assert
-            this.mockTelemetryClient?.Verify(
+            this.mockTelemetryClient.Verify(
                 tc => tc.TrackTrace(It.Is<TraceTelemetry>(t =>
                 t.Message.Contains(logMessage.RunId.ToString() ?? string.Empty) &&
                 t.Message.Contains(logMessage.RunName ?? string.Empty) &&
                 t.Message.Contains(logMessage.Message ?? string.Empty) &&
                 t.SeverityLevel == SeverityLevel.Information)), Times.Once);
 
-            this.mockTelemetryClient?.Verify(
+            this.mockTelemetryClient.Verify(
                 tc => tc.TrackException(It.Is<ExceptionTelemetry>(et =>
                 et.Exception.Message.Contains("Test exception") &&
                 et.Message.Contains("This is an error message") &&
