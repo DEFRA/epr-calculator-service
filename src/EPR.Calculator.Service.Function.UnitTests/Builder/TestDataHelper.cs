@@ -10,6 +10,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResult
             {
+                CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultParameterOtherCost = GetCalcResultParameterOtherCost(),
                 CalcResultDetail = GetCalcResultDetail(),
                 CalcResultLapcapData = GetCalcResultLapcapData(),

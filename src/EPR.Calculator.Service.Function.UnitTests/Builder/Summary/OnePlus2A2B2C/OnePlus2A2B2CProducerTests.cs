@@ -31,6 +31,7 @@
 
             _calcResult = new CalcResult
             {
+                CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultLateReportingTonnageData = Fixture.Create<CalcResultLateReportingTonnage>(),
                 CalcResultParameterOtherCost = new CalcResultParameterOtherCost
                 {

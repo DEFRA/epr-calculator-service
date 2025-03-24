@@ -24,6 +24,7 @@
 
             this.calcResult = new CalcResult
             {
+                CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultParameterOtherCost = TestDataHelper.GetCalcResultParameterOtherCost(),
                 CalcResultDetail = TestDataHelper.GetCalcResultDetail(),
                 CalcResultLaDisposalCostData = TestDataHelper.GetCalcResultLaDisposalCostData(),

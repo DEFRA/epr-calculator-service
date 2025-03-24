@@ -35,6 +35,7 @@
 
             _calcResult = new CalcResult
             {
+                CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultParameterOtherCost = new CalcResultParameterOtherCost
                 {
                     BadDebtProvision = new KeyValuePair<string, string>("key1", "6%"),
