@@ -14,6 +14,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.ApplicationInsights;
+    using Microsoft.ApplicationInsights.Extensibility;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
 
@@ -31,7 +32,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         private readonly Mock<ICalcResultParameterOtherCostBuilder> mockCalcResultParameterOtherCostBuilder;
         private readonly Mock<ICalcResultOnePlusFourApportionmentBuilder> mockOnePlusFourApportionmentBuilder;
         private readonly Mock<ICalcResultScaledupProducersBuilder> mockCalcResultScaledupProducersBuilder;
-        private TelemetryClient telemetryClient = new();
+        private TelemetryClient telemetryClient;
 
         public CalcResultBuilderTests()
         {
@@ -46,6 +47,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             this.mockOnePlusFourApportionmentBuilder = new Mock<ICalcResultOnePlusFourApportionmentBuilder>();
             this.mockCalcRunLaDisposalCostBuilder = new Mock<ICalcRunLaDisposalCostBuilder>();
             this.mockCalcResultScaledupProducersBuilder = new Mock<ICalcResultScaledupProducersBuilder>();
+            this.telemetryClient = new TelemetryClient(new TelemetryConfiguration());
 
             this.calcResultBuilder = new CalcResultBuilder(
                 this.mockCalcResultDetailBuilder.Object,
