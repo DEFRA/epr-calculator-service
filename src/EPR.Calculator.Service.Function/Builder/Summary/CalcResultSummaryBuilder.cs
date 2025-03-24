@@ -29,7 +29,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
     {
         private readonly ApplicationDBContext context;
 
-        public required IEnumerable<CalcResultScaledupProducer> ScaledupProducers { get; set; }
+        public static IEnumerable<CalcResultScaledupProducer>? ScaledupProducers { get; set; }
 
         public CalcResultSummaryBuilder(ApplicationDBContext context)
         {
@@ -427,7 +427,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             return result;
         }
 
-        public IEnumerable<TotalPackagingTonnagePerRun> GetTotalPackagingTonnagePerRun(
+        public static IEnumerable<TotalPackagingTonnagePerRun> GetTotalPackagingTonnagePerRun(
      IEnumerable<CalcResultsProducerAndReportMaterialDetail> allResults,
      IEnumerable<MaterialDetail> materials,
      int runId)
