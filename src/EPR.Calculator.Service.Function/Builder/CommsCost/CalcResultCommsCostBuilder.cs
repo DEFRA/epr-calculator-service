@@ -102,7 +102,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
 
             telemetryClient.TrackTrace("Getting scaled up producer reported on...");
             var scaledUpProducerReportedOn = calcResult.CalcResultScaledupProducers
-                  .ScaledupProducers.FirstOrDefault(t => t.IsTotalRow);
+                  .ScaledupProducers?.FirstOrDefault(t => t.IsTotalRow);
 
             telemetryClient.TrackTrace($"Generating comms costs for {materialNames.Count} materials...");
             foreach (var materialName in materialNames)
