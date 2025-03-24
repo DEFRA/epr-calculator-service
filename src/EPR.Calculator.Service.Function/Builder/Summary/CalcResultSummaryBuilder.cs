@@ -29,7 +29,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
     {
         private readonly ApplicationDBContext context;
 
-        public static IEnumerable<CalcResultScaledupProducer>? ScaledupProducers { get; set; }
+        public required IEnumerable<CalcResultScaledupProducer> ScaledupProducers { get; set; }
 
         public CalcResultSummaryBuilder(ApplicationDBContext context)
         {
@@ -44,7 +44,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             var materialsFromDb = await this.context.Material.ToListAsync();
             var materials = Mappers.MaterialMapper.Map(materialsFromDb);
 
-            ScaledupProducers = calcResult.CalcResultScaledupProducers!.ScaledupProducers;
+            ScaledupProducers = calcResult.CalcResultScaledupProducers.ScaledupProducers;
 
             var runProducerMaterialDetails = await (from pd in this.context.ProducerDetail
                                                     join prm in this.context.ProducerReportedMaterial on pd.Id equals prm.ProducerDetailId
@@ -427,7 +427,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             return result;
         }
 
-        public static IEnumerable<TotalPackagingTonnagePerRun> GetTotalPackagingTonnagePerRun(
+        public IEnumerable<TotalPackagingTonnagePerRun> GetTotalPackagingTonnagePerRun(
      IEnumerable<CalcResultsProducerAndReportMaterialDetail> allResults,
      IEnumerable<MaterialDetail> materials,
      int runId)
@@ -469,7 +469,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     total += scaledupProducer.ScaledupProducerTonnageByMaterial.Sum(x => x.Value.ScaledupTotalReportedTonnage);
                 }
 
-                result.Add(new TotalPackagingTonnagePerRun() { ProducerId = item.ProducerId, SubsidiaryId = item.SubsidiaryId!, TotalPackagingTonnage = total });
+                result.Add(new TotalPackagingTonnagePerRun() { ProducerId = item.ProducerId, SubsidiaryId = item.SubsidiaryId, TotalPackagingTonnage = total });
             }
 
             return result;
