@@ -14,6 +14,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.ApplicationInsights;
+    using Microsoft.ApplicationInsights.Extensibility;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
 
@@ -31,7 +32,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         private readonly Mock<ICalcResultParameterOtherCostBuilder> mockCalcResultParameterOtherCostBuilder;
         private readonly Mock<ICalcResultOnePlusFourApportionmentBuilder> mockOnePlusFourApportionmentBuilder;
         private readonly Mock<ICalcResultScaledupProducersBuilder> mockCalcResultScaledupProducersBuilder;
-        private TelemetryClient _telemetryClient = new();
+        private TelemetryClient telemetryClient;
 
         public CalcResultBuilderTests()
         {
@@ -46,6 +47,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             this.mockOnePlusFourApportionmentBuilder = new Mock<ICalcResultOnePlusFourApportionmentBuilder>();
             this.mockCalcRunLaDisposalCostBuilder = new Mock<ICalcRunLaDisposalCostBuilder>();
             this.mockCalcResultScaledupProducersBuilder = new Mock<ICalcResultScaledupProducersBuilder>();
+            this.telemetryClient = new TelemetryClient(new TelemetryConfiguration());
 
             this.calcResultBuilder = new CalcResultBuilder(
                 this.mockCalcResultDetailBuilder.Object,
@@ -57,7 +59,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 this.mockCalcRunLaDisposalCostBuilder.Object,
                 this.mockCalcResultScaledupProducersBuilder.Object,
                 this.mockSummaryBuilder.Object,
-                this._telemetryClient);
+                this.telemetryClient);
         }
 
         private Fixture Fixture { get; init; }
@@ -76,7 +78,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 this.mockCalcRunLaDisposalCostBuilder.Object,
                 this.mockCalcResultScaledupProducersBuilder.Object,
                 this.mockSummaryBuilder.Object,
-                this._telemetryClient);
+                this.telemetryClient);
 
             // Assert
             Assert.IsNotNull(instance);

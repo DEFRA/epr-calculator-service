@@ -27,8 +27,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var resultsDto = new CalcResultsRequestDto { RunId = 6 };
             var calcResult = new CalcResult
             {
-
-
+                CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
                     Name = "LAPCAP Data",

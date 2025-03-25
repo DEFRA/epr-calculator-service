@@ -96,6 +96,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
 
             _calcResult = new CalcResult
             {
+                CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultParameterOtherCost = new CalcResultParameterOtherCost
                 {
                     BadDebtProvision = new KeyValuePair<string, string>("key1", "6%"),

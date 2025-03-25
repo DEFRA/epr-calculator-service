@@ -16,11 +16,7 @@
         private Mock<ITelemetryClientWrapper> mockTelemetryClient;
         private CalculatorTelemetryLogger calculatorTelemetryLogger;
 
-        /// <summary>
-        /// Initializes the test setup.
-        /// </summary>
-        [TestInitialize]
-        public void Setup()
+        CalculatorTelemetryLoggerTests()
         {
             this.mockTelemetryClient = new Mock<ITelemetryClientWrapper>();
             this.calculatorTelemetryLogger = new CalculatorTelemetryLogger(this.mockTelemetryClient.Object);

@@ -11,8 +11,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
         private CalcResultParameterCommunicationCostDetail TestClass;
         private IFixture Fixture;
 
-        [TestInitialize]
-        public void SetUp()
+        CalcResultParameterCommunicationCostDetailTests()
         {
             Fixture = new Fixture();
             this.TestClass = Fixture.Create<CalcResultParameterCommunicationCostDetail>();

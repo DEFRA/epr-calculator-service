@@ -74,6 +74,7 @@ namespace EPR.Calculator.Service.Function.Builder
                 {
                     Name = string.Empty,
                 },
+                CalcResultScaledupProducers = new CalcResultScaledupProducers(),
             };
             this._telemetryClient.TrackTrace("calcResultDetailBuilder started...");
             result.CalcResultDetail = await this.calcResultDetailBuilder.Construct(resultsRequestDto);

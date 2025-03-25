@@ -231,25 +231,25 @@
         {
             var scaledupProducerTonnages = new Dictionary<string, CalcResultScaledupProducerTonnage>();
 
-            foreach (var material in materials)
+            foreach (var material in materials.Select(m => m.Code))
             {
                 var scaledupProducerTonnage = new CalcResultScaledupProducerTonnage();
 
-                var materialPomData = pomData.Where(pom => pom.PackagingMaterial == material.Code && pom.SubmissionPeriod == submissionPeriod);
+                var materialPomData = pomData.Where(pom => pom.PackagingMaterial == material && pom.SubmissionPeriod == submissionPeriod);
 
-                scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage = (decimal)materialPomData
+                scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage = materialPomData
                     .Where(pom => pom.PackagingType == PackagingTypes.Household)
                     .Sum(pom => CommonUtil.ConvertKilogramToTonne(pom.PackagingMaterialWeight ?? 0));
 
-                scaledupProducerTonnage.ReportedPublicBinTonnage = (decimal)materialPomData
+                scaledupProducerTonnage.ReportedPublicBinTonnage = materialPomData
                     .Where(pom => pom.PackagingType == PackagingTypes.PublicBin)
                     .Sum(pom => CommonUtil.ConvertKilogramToTonne(pom.PackagingMaterialWeight ?? 0));
 
-                var hdc = (decimal)materialPomData
+                var hdc = materialPomData
                     .Where(pom => pom.PackagingType == PackagingTypes.HouseholdDrinksContainers)
                     .Sum(pom => CommonUtil.ConvertKilogramToTonne(pom.PackagingMaterialWeight ?? 0));
 
-                if (material.Code == MaterialCodes.Glass)
+                if (material == MaterialCodes.Glass)
                 {
                     scaledupProducerTonnage.HouseholdDrinksContainersTonnageGlass = hdc;
                     scaledupProducerTonnage.TotalReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
@@ -261,14 +261,14 @@
                     scaledupProducerTonnage.ReportedPublicBinTonnage;
                 }
 
-                scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage = (decimal)materialPomData
+                scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage = materialPomData
                     .Where(pom => pom.PackagingType == PackagingTypes.ConsumerWaste)
                     .Sum(pom => CommonUtil.ConvertKilogramToTonne(pom.PackagingMaterialWeight ?? 0));
 
                 scaledupProducerTonnage.NetReportedTonnage = scaledupProducerTonnage.TotalReportedTonnage - scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage;
                 scaledupProducerTonnage.ScaledupReportedHouseholdPackagingWasteTonnage = Math.Round(scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage * scaleUpFactor, 3);
                 scaledupProducerTonnage.ScaledupReportedPublicBinTonnage = Math.Round(scaledupProducerTonnage.ReportedPublicBinTonnage * scaleUpFactor, 3);
-                if (material.Code == MaterialCodes.Glass)
+                if (material == MaterialCodes.Glass)
                 {
                     scaledupProducerTonnage.ScaledupHouseholdDrinksContainersTonnageGlass = scaledupProducerTonnage.HouseholdDrinksContainersTonnageGlass * scaleUpFactor;
                 }
@@ -276,7 +276,7 @@
                 scaledupProducerTonnage.ScaledupTotalReportedTonnage = Math.Round(scaledupProducerTonnage.TotalReportedTonnage * scaleUpFactor, 3);
                 scaledupProducerTonnage.ScaledupReportedSelfManagedConsumerWasteTonnage = Math.Round(scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage * scaleUpFactor, 3);
                 scaledupProducerTonnage.ScaledupNetReportedTonnage = Math.Round(scaledupProducerTonnage.NetReportedTonnage * scaleUpFactor, 3);
-                scaledupProducerTonnages.Add(material.Code, scaledupProducerTonnage);
+                scaledupProducerTonnages.Add(material, scaledupProducerTonnage);
             }
 
             return scaledupProducerTonnages;
