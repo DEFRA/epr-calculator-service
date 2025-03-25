@@ -14,15 +14,11 @@
     [TestClass]
     public class RunNameServiceTests
     {
-        private Mock<IDbContextFactory<ApplicationDBContext>>? dbContextFactory;
-        private ApplicationDBContext? dbContext;
+        private Mock<IDbContextFactory<ApplicationDBContext>> dbContextFactory;
+        private ApplicationDBContext dbContext;
         private RunNameService runNameService;
 
-        /// <summary>
-        /// Initializes the test setup.
-        /// </summary>
-        [TestInitialize]
-        public void Setup()
+        RunNameServiceTests()
         {
             var options = new DbContextOptionsBuilder<ApplicationDBContext>()
                 .UseInMemoryDatabase(databaseName: "TestDatabase")

@@ -10,8 +10,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.ScaledupProducers
     {
         private CalcResultScaledupProducersExporter exporter;
 
-        [TestInitialize]
-        public void SetUp()
+        CalcResultScaledupProducersExporterTests()
         {
             this.exporter = new CalcResultScaledupProducersExporter();
         }

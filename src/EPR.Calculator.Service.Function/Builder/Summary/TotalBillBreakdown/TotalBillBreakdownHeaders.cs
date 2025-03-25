@@ -1,6 +1,6 @@
 ﻿namespace EPR.Calculator.Service.Function.Builder.Summary.TotalProducerBillBreakdown
 {
-    public class TotalBillBreakdownHeaders
+    public static class TotalBillBreakdownHeaders
     {
         //section-TotalBill
         public static readonly string TotalProducerBillBreakdown = "Total Producer Bill Breakdown";

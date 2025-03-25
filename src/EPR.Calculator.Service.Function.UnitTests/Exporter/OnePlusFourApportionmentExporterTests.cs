@@ -10,13 +10,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
     [TestClass]
     public class OnePlusFourApportionmentExporterTests
     {
-        private OnePlusFourApportionmentExporter _testClass;
+        private OnePlusFourApportionmentExporter _testClass = new OnePlusFourApportionmentExporter();
+        private CalcResultOnePlusFourApportionment calcResult1Plus4Apportionment;
 
-        [TestInitialize]
-        public void SetUp()
+        OnePlusFourApportionmentExporterTests()
         {
             var fixture = new Fixture();
-            var calcResult1Plus4Apportionment = new CalcResultOnePlusFourApportionment
+            this.calcResult1Plus4Apportionment = new CalcResultOnePlusFourApportionment
             {
                 Name = "Apportionment",
                 CalcResultOnePlusFourApportionmentDetails = new List<CalcResultOnePlusFourApportionmentDetail>()
@@ -41,15 +41,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
                     },
                 },
             };
+        }
+
+        [TestMethod]
+        public void CanCallExport() {
+            // Arrange
             var csvContent = new StringBuilder();
 
             // Act
-            this._testClass.Export(calcResult1Plus4Apportionment, csvContent);
+            this._testClass.Export(this.calcResult1Plus4Apportionment, csvContent);
 
+            // Assert
             var result = csvContent.ToString();
             var rows = result.Split(Environment.NewLine);
             Assert.AreEqual(6, rows.Length);
-            Assert.AreSame("Apportionment", rows[2]);
+            Assert.AreEqual("Apportionment", rows[2]);
         }
     }
 }

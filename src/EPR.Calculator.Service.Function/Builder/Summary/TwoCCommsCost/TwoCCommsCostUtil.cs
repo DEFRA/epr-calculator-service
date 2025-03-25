@@ -6,7 +6,7 @@
     using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs;
     using EPR.Calculator.Service.Function.Models;
 
-    public class TwoCCommsCostUtil
+    public static class TwoCCommsCostUtil
     {
         #region Constants
         private const string England = "England";

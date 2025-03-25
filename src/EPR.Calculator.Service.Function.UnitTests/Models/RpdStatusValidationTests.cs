@@ -10,8 +10,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
     {
         private RpdStatusValidation _testClass;
 
-        [TestInitialize]
-        public void SetUp()
+        RpdStatusValidationTests()
         {
             _testClass = new RpdStatusValidation();
         }

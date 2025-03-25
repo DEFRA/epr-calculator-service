@@ -17,6 +17,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
         {
             _calcResult = new CalcResult
             {
+                CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultParameterOtherCost = new CalcResultParameterOtherCost
                 {
                     BadDebtProvision = new KeyValuePair<string, string>("key1",

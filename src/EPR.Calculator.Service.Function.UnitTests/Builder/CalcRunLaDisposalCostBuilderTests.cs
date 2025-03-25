@@ -423,6 +423,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual(400, double.Parse(laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage));
         }
 
+        [TestMethod]
+        public void GetDecimalValue_InvalidDecimalString_ReturnsZero()
+        {
+            // Arrange
+            string value = "invalid";
+
+            // Act
+            decimal result = CalcRunLaDisposalCostBuilder.GetDecimalValue(value);
+
+            // Assert
+            Assert.AreEqual(0m, result);
+        }
+
         private static CalcResultScaledupProducers GetScaledUpProducers()
         {
             return new CalcResultScaledupProducers()
