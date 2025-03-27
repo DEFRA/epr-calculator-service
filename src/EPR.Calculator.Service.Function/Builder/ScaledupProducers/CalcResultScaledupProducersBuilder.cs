@@ -95,7 +95,7 @@
 
             foreach (var row in level2Rows)
             {
-                if (runProducerMaterialDetails.Exists(x => x.ProducerId == row.Key.ProducerId && x.SubsidiaryId != null)
+                if (runProducerMaterialDetails.Exists(x => x.ProducerId == row.Key.ProducerId && x.SubsidiaryId != null && x.SubsidiaryId != string.Empty)
                     &&
                     row.Any())
                 {
@@ -108,7 +108,7 @@
             }
 
             var groupByResult = runProducerMaterialDetails
-                .Where(x => x.SubsidiaryId != null)
+                .Where(x => x.SubsidiaryId != null && x.SubsidiaryId != string.Empty)
                 .GroupBy(x => new { x.ProducerId, x.SubmissionPeriodCode })
                 .Where(x => x.Count() > 1)
                 .ToList();
@@ -204,7 +204,7 @@
                                     SubmissionPeriodCode = spl.SubmissionPeriod,
                                     DaysInSubmissionPeriod = spl.DaysInSubmissionPeriod,
                                     DaysInWholePeriod = spl.DaysInWholePeriod,
-                                    Level = pd.SubsidiaryId != null ? CommonConstants.LevelTwo.ToString() : CommonConstants.LevelOne.ToString(),
+                                    Level = !string.IsNullOrEmpty(pd.SubsidiaryId) ? CommonConstants.LevelTwo.ToString() : CommonConstants.LevelOne.ToString(),
                                 }).Distinct().ToListAsync();
             return result ?? new List<CalcResultScaledupProducer>();
         }
