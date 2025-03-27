@@ -1,14 +1,10 @@
-﻿using EPR.Calculator.Service.Function.Builder.CommsCost;
-using EPR.Calculator.Service.Function.Builder.Summary.Common;
-using EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C;
-using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Data.DataModels;
-using EPR.Calculator.Service.Function.Enums;
-using EPR.Calculator.Service.Function.Models;
-using System.Collections.Generic;
-
-namespace EPR.Calculator.Service.Function.Builder.Summary.SaSetupCosts
+﻿namespace EPR.Calculator.Service.Function.Builder.Summary.SaSetupCosts
 {
+    using System.Collections.Generic;
+    using EPR.Calculator.Service.Function.Builder.Summary.Common;
+    using EPR.Calculator.Service.Function.Enums;
+    using EPR.Calculator.Service.Function.Models;
+
     public static class SaSetupCostsProducer
     {
         public static readonly int ColumnIndex = 224;
@@ -24,13 +20,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.SaSetupCosts
                 new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.ScotlandTotalWithBadDebtProvision, ColumnIndex = ColumnIndex + 5 },
                 new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.NorthernIrelandTotalWithBadDebtProvision, ColumnIndex = ColumnIndex + 6 }
             ];
-        }      
+        }
 
 
         public static void GetProducerSetUpCosts(CalcResult calcResult, CalcResultSummary summary)
         {
             summary.SaSetupCostsTitleSection5 = SaSetupCostsSummary.GetOneOffFeeSetupCostsWithoutBadDebtProvision(calcResult);
-            summary.SaSetupCostsBadDebtProvisionTitleSection5  = (summary.SaSetupCostsTitleSection5 * SaSetupCostsSummary.GetSetUpBadDebtProvision(calcResult))/100;             
+            summary.SaSetupCostsBadDebtProvisionTitleSection5 = (summary.SaSetupCostsTitleSection5 * SaSetupCostsSummary.GetSetUpBadDebtProvision(calcResult)) / 100;
             summary.SaSetupCostsWithBadDebtProvisionTitleSection5 = summary.SaSetupCostsBadDebtProvisionTitleSection5 + summary.SaSetupCostsTitleSection5;
 
             foreach (var item in summary.ProducerDisposalFees)
@@ -57,8 +53,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.SaSetupCosts
 
         public static decimal GetCountryTotalWithBadDebtProvision(CalcResult calcResult, decimal oneOffFeeSetupCostsWithoutBadDebtProvision, decimal badDebtProvisionSection5Setup, decimal ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries country)
         {
-            var countryTotal = (CalcResultSummaryUtil.GetCountryOnePlusFourApportionment(calcResult, country))/100;
-            return oneOffFeeSetupCostsWithoutBadDebtProvision * (1 + (badDebtProvisionSection5Setup/100)) * (ProducerOverallPercentageOfCostsForOnePlus2A2B2C/100) * countryTotal;
+            var countryTotal = (CalcResultSummaryUtil.GetCountryOnePlusFourApportionment(calcResult, country)) / 100;
+            return oneOffFeeSetupCostsWithoutBadDebtProvision * (1 + (badDebtProvisionSection5Setup / 100)) * (ProducerOverallPercentageOfCostsForOnePlus2A2B2C / 100) * countryTotal;
         }
 
     }

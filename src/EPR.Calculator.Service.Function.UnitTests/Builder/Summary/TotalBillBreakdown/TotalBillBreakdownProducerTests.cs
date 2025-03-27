@@ -1,29 +1,54 @@
-﻿using EPR.Calculator.Service.Function.Builder.Summary.TotalProducerBillBreakdown;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-
-namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBreakdown
+﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBreakdown
 {
     using AutoFixture;
-    using EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts;
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown;
-    using EPR.Calculator.Service.Function.Data;
-    using EPR.Calculator.Service.Function.Data.DataModels;
+    using EPR.Calculator.Service.Function.Builder.Summary.TotalProducerBillBreakdown;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Diagnostics;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System;
 
+    /// <summary>
+    /// Defines the <see cref="TotalBillBreakdownProducerTests" />
+    /// </summary>
     [TestClass]
     public class TotalBillBreakdownProducerTests
     {
+        /// <summary>
+        /// Defines the _dbContext
+        /// </summary>
         private readonly ApplicationDBContext _dbContext;
+
+        /// <summary>
+        /// Defines the _materials
+        /// </summary>
         private readonly IEnumerable<MaterialDetail> _materials;
+
+        /// <summary>
+        /// Defines the _calcResult
+        /// </summary>
         private readonly CalcResult _calcResult;
+
+        /// <summary>
+        /// Defines the _materialCostSummary
+        /// </summary>
         private readonly Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial> _materialCostSummary;
+
+        /// <summary>
+        /// Defines the _commsCostSummary
+        /// </summary>
         private readonly Dictionary<MaterialDetail, CalcResultSummaryProducerCommsFeesCostByMaterial> _commsCostSummary;
 
+        /// <summary>
+        /// Gets the Fixture
+        /// </summary>
         private Fixture Fixture { get; init; } = new Fixture();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TotalBillBreakdownProducerTests"/> class.
+        /// </summary>
         public TotalBillBreakdownProducerTests()
         {
             var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
@@ -43,56 +68,56 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
                     Id = 1,
                     Code = "AL",
                     Name = "Aluminium",
-                    Description = "Aluminium"
+                    Description = "Aluminium",
                 },
                 new MaterialDetail
                 {
                     Id = 2,
                     Code = "FC",
                     Name = "Fibre composite",
-                    Description = "Fibre composite"
+                    Description = "Fibre composite",
                 },
                 new MaterialDetail
                 {
                     Id = 3,
                     Code = "GL",
                     Name = "Glass",
-                    Description = "Glass"
+                    Description = "Glass",
                 },
                 new MaterialDetail
                 {
                     Id = 4,
                     Code = "PC",
                     Name = "Paper or card",
-                    Description = "Paper or card"
+                    Description = "Paper or card",
                 },
                 new MaterialDetail
                 {
                     Id = 5,
                     Code = "PL",
                     Name = "Plastic",
-                    Description = "Plastic"
+                    Description = "Plastic",
                 },
                 new MaterialDetail
                 {
                     Id = 6,
                     Code = "ST",
                     Name = "Steel",
-                    Description = "Steel"
+                    Description = "Steel",
                 },
                 new MaterialDetail
                 {
                     Id = 7,
                     Code = "WD",
                     Name = "Wood",
-                    Description = "Wood"
+                    Description = "Wood",
                 },
                 new MaterialDetail
                 {
                     Id = 8,
                     Code = "OT",
                     Name = "Other materials",
-                    Description = "Other materials"
+                    Description = "Other materials",
                 }
             ];
 
@@ -117,7 +142,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
                             NorthernIreland = "£10.00",
                             NorthernIrelandValue = 10,
                             Total = "£100.00",
-                            TotalValue = 100
+                            TotalValue = 100,
                         }
                     ],
                     Materiality = [
@@ -127,7 +152,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
                             AmountValue = 0,
                             Percentage = "%",
                             PercentageValue = 0,
-                            SevenMateriality = "7 Materiality"
+                            SevenMateriality = "7 Materiality",
                         }
                     ],
                     Name = "Parameters - Other",
@@ -145,7 +170,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
                             NorthernIreland = "Northern Ireland",
                             NorthernIrelandValue = 0,
                             Total = "Total",
-                            TotalValue = 0
+                            TotalValue = 0,
                         }
                     ],
                     SchemeSetupCost = {
@@ -160,8 +185,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
                         NorthernIreland = "£10.00",
                         NorthernIrelandValue = 10,
                         Total = "£100.00",
-                        TotalValue = 100
-                    }
+                        TotalValue = 100,
+                    },
                 },
                 CalcResultDetail = new CalcResultDetail() { },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData()
@@ -181,7 +206,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
                             Total = "TotalTest",
                             ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
                             ProducerReportedTotalTonnage = Fixture.Create<string>(),
-                            ReportedPublicBinTonnage= Fixture.Create<string>(),
+                            ReportedPublicBinTonnage = Fixture.Create<string>(),
                         },
                         new()
                         {
@@ -194,7 +219,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
                             Total = "TotalTest",
                             ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
                             ProducerReportedTotalTonnage = Fixture.Create<string>(),
-                            ReportedPublicBinTonnage= Fixture.Create<string>(),
+                            ReportedPublicBinTonnage = Fixture.Create<string>(),
                         },
                         new()
                         {
@@ -207,15 +232,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
                             Total = "TotalTest",
                             ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
                             ProducerReportedTotalTonnage = Fixture.Create<string>(),
-                            ReportedPublicBinTonnage= Fixture.Create<string>(),
-                        }
-                    }
+                            ReportedPublicBinTonnage = Fixture.Create<string>(),
+                        },
+                    },
                 },
                 CalcResultLapcapData = new CalcResultLapcapData()
                 {
                     CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>()
                     {
-                    }
+                    },
                 },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment()
                 {
@@ -224,7 +249,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
                     [
                         new()
                         {
-                            EnglandDisposalTotal="80",
+                            EnglandDisposalTotal = "80",
                             NorthernIrelandDisposalTotal="70",
                             ScotlandDisposalTotal="30",
                             WalesDisposalTotal="20",
@@ -286,13 +311,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
                             ScotlandTotal=0.15M,
                             WalesTotal=020M,
                             Name="Test",
-                        }
-                    ]
+                        },
+                    ],
                 },
                 CalcResultParameterCommunicationCost = Fixture.Create<CalcResultParameterCommunicationCost>(),
                 CalcResultSummary = new CalcResultSummary
                 {
-                    ProducerDisposalFees = GetProducerDisposalFees()
+                    ProducerDisposalFees = GetProducerDisposalFees(),
                 },
                 CalcResultCommsCostReportDetail = new CalcResultCommsCost()
                 {
@@ -308,9 +333,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
                         {
                             CommsCostByMaterialPricePerTonne="0.3",
                             Name ="Glass",
-
-                        }
-                    ]
+                        },
+                    ],
                 },
                 CalcResultLateReportingTonnageData = Fixture.Create<CalcResultLateReportingTonnage>(),
             };
@@ -332,7 +356,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
                     EnglandWithBadDebtProvision = 348.06m,
                     WalesWithBadDebtProvision = 78.46m,
                     ScotlandWithBadDebtProvision = 156.28m,
-                    NorthernIrelandWithBadDebtProvision = 61.18m
+                    NorthernIrelandWithBadDebtProvision = 61.18m,
                 });
 
                 _commsCostSummary.Add(material, new CalcResultSummaryProducerCommsFeesCostByMaterial
@@ -345,17 +369,23 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
                     EnglandWithBadDebtProvision = 348.06m,
                     WalesWithBadDebtProvision = 78.46m,
                     ScotlandWithBadDebtProvision = 156.28m,
-                    NorthernIrelandWithBadDebtProvision = 61.18m
+                    NorthernIrelandWithBadDebtProvision = 61.18m,
                 });
             }
         }
 
+        /// <summary>
+        /// The TearDown
+        /// </summary>
         [TestCleanup]
         public void TearDown()
         {
             _dbContext?.Database.EnsureDeleted();
         }
 
+        /// <summary>
+        /// The CanCallGetHeaders
+        /// </summary>
         [TestMethod]
         public void CanCallGetHeaders()
         {
@@ -391,6 +421,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
             Assert.AreEqual(expectedResult[6].ColumnIndex, result[6].ColumnIndex);
         }
 
+        /// <summary>
+        /// The CanCallGetSummaryHeaders
+        /// </summary>
         [TestMethod]
         public void CanCallGetSummaryHeaders()
         {
@@ -407,6 +440,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
             Assert.AreEqual(expectedResult[0].ColumnIndex, result[0].ColumnIndex);
         }
 
+        /// <summary>
+        /// The CanCallSetValues
+        /// </summary>
         [TestMethod]
         public void CanCallSetValues()
         {
@@ -423,6 +459,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
             Assert.AreEqual(4039, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].NorthernIrelandTotalWithBadDebtProvisionTotalBill);
         }
 
+        /// <summary>
+        /// The CreateMaterials
+        /// </summary>
         private void CreateMaterials()
         {
             var materialDictionary = new Dictionary<string, string>();
@@ -441,13 +480,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
                 {
                     Name = materialKv.Value,
                     Code = materialKv.Key,
-                    Description = "Some"
+                    Description = "Some",
                 });
             }
 
             _dbContext.SaveChanges();
         }
 
+        /// <summary>
+        /// The CreateProducerDetail
+        /// </summary>
         private void CreateProducerDetail()
         {
             var producerNames = new string[]
@@ -461,7 +503,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
                 "Good Fruit Co",
                 "Happy Shopper",
                 "Icicle Foods",
-                "Jumbo Box Store"
+                "Jumbo Box Store",
             };
 
             var producerId = 1;
@@ -487,20 +529,25 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
                         MaterialId = materialId,
                         ProducerDetailId = producerDetailId,
                         PackagingType = "HH",
-                        PackagingTonnage = (materialId * 100)
+                        PackagingTonnage = materialId * 100,
                     });
                     _dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
                     {
                         MaterialId = materialId,
                         ProducerDetailId = producerDetailId,
                         PackagingType = "CW",
-                        PackagingTonnage = (materialId * 50)
+                        PackagingTonnage = materialId * 50,
                     });
                 }
             }
+
             _dbContext.SaveChanges();
         }
 
+        /// <summary>
+        /// The GetProducerDisposalFees
+        /// </summary>
+        /// <returns>The <see cref="List{CalcResultSummaryProducerDisposalFees}"/></returns>
         private static List<CalcResultSummaryProducerDisposalFees> GetProducerDisposalFees()
         {
             return new List<CalcResultSummaryProducerDisposalFees>()
@@ -566,8 +613,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
                     TwoCTotalProducerFeeForCommsCostsWithBadDebt = 23.54m,
                     Total3SAOperatingCostswithBadDebtprovision = 35.87m,
                     LaDataPrepCostsTotalWithBadDebtProvisionSection4 = 65,
-                    TotalProducerFeeWithBadDebtProvisionSection5 = 49.32m
-                }
+                    TotalProducerFeeWithBadDebtProvisionSection5 = 49.32m,
+                },
             };
         }
     }

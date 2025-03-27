@@ -6,11 +6,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using System.Threading;
     using System.Threading.Tasks;
     using AutoFixture;
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.API.Exporter;
     using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Function.Builder;
-    using EPR.Calculator.Service.Function.Data;
-    using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Interface;
@@ -74,7 +74,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Details = new List<CalcResultParameterOtherCostDetail>(),
                     Materiality = new List<CalcResultMateriality>(),
                     SaOperatingCost = new List<CalcResultParameterOtherCostDetail>(),
-                    SchemeSetupCost = new CalcResultParameterOtherCostDetail()
+                    SchemeSetupCost = new CalcResultParameterOtherCostDetail(),
                 },
                 CalcResultLateReportingTonnageData = new()
                 {

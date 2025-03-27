@@ -1,9 +1,9 @@
-﻿using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Data.DataModels;
-using EPR.Calculator.Service.Function.Models;
-
-namespace EPR.Calculator.Service.Function.UnitTests.Builder
+﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
+    using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.Service.Function.Constants;
+    using EPR.Calculator.Service.Function.Models;
+
     public static class TestDataHelper
     {
         public static CalcResult GetCalcResult()

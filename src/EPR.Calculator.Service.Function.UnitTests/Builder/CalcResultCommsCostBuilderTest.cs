@@ -2,10 +2,10 @@
 {
     using System.Collections.Generic;
     using AutoFixture;
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Function.Builder.CommsCost;
     using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Data;
-    using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Models;

@@ -2,7 +2,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 {
     using System;
     using AutoFixture;
-    using EPR.Calculator.Service.Function.Data;
+    using EPR.Calculator.API.Data;
     using EPR.Calculator.Service.Function.Interface;
     using EPR.Calculator.Service.Function.Services;
     using Microsoft.EntityFrameworkCore;
@@ -10,7 +10,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
     using Microsoft.Extensions.Configuration;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
-    using Newtonsoft.Json.Linq;
 
     [TestClass]
     public class CommandTimeoutServiceTests

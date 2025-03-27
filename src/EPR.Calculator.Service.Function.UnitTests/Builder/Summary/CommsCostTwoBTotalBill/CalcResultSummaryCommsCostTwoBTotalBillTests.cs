@@ -1,10 +1,10 @@
 ﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwoBTotalBill
 {
     using AutoFixture;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Function.Builder.Summary;
     using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoBTotalBill;
     using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs;
-    using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Models;
 
     [TestClass]

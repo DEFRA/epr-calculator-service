@@ -1,12 +1,12 @@
 ﻿namespace EPR.Calculator.Service.Function.UnitTests
 {
     using AutoFixture;
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
     using EPR.Calculator.Service.Function.Builder.Summary;
     using EPR.Calculator.Service.Function.Builder.Summary.OneAndTwoA;
     using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Data;
-    using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Models;
     using EPR.Calculator.Service.Function.UnitTests.Builder;

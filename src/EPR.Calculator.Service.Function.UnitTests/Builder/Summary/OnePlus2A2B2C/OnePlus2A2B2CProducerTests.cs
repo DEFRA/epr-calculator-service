@@ -1,9 +1,9 @@
 ﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.OnePlus2A2B2C
 {
     using AutoFixture;
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C;
-    using EPR.Calculator.Service.Function.Data;
-    using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -52,7 +52,7 @@
                             NorthernIreland = "£10.00",
                             NorthernIrelandValue = 10,
                             Total = "£100.00",
-                            TotalValue = 100
+                            TotalValue = 100,
                         }
                     ],
                     Materiality =
@@ -63,7 +63,7 @@
                             AmountValue = 0,
                             Percentage = "%",
                             PercentageValue = 0,
-                            SevenMateriality = "7 Materiality"
+                            SevenMateriality = "7 Materiality",
                         }
                     ],
                     Name = "Parameters - Other",
@@ -82,7 +82,7 @@
                             NorthernIreland = "Northern Ireland",
                             NorthernIrelandValue = 0,
                             Total = "Total",
-                            TotalValue = 0
+                            TotalValue = 0,
                         }
                     ],
                     SchemeSetupCost =
@@ -98,8 +98,8 @@
                         NorthernIreland = "£10.00",
                         NorthernIrelandValue = 10,
                         Total = "£100.00",
-                        TotalValue = 100
-                    }
+                        TotalValue = 100,
+                    },
                 },
                 CalcResultDetail = new CalcResultDetail() { },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData()
@@ -143,14 +143,14 @@
                             ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
                             ReportedPublicBinTonnage = Fixture.Create<string>(),
                             Total = Fixture.Create<string>(),
-                        }
-                    }
+                        },
+                    },
                 },
                 CalcResultLapcapData = new CalcResultLapcapData()
                 {
                     CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>()
                     {
-                    }
+                    },
                 },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment()
                 {
@@ -221,8 +221,8 @@
                             ScotlandTotal = 0.15M,
                             WalesTotal = 020M,
                             Name = "Test",
-                        }
-                    ]
+                        },
+                    ],
                 },
                 CalcResultParameterCommunicationCost = Fixture.Create<CalcResultParameterCommunicationCost>(),
                 CalcResultSummary = new CalcResultSummary
@@ -243,8 +243,8 @@
                             TotalProducerFeeforLADisposalCostswithBadDebtprovision = 10,
                             TotalProducerFeeforCommsCostsbyMaterialwithBadDebtprovision = 10,
                             TotalProducerFeeWithBadDebtFor2bComms = 10,
-                            TwoCTotalProducerFeeForCommsCostsWithBadDebt = 10
-                        }
+                            TwoCTotalProducerFeeForCommsCostsWithBadDebt = 10,
+                        },
                     },
                     TotalFeeforLADisposalCostswithBadDebtprovision1 = 100,
                     TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A = 100,
@@ -265,10 +265,9 @@
                         {
                             CommsCostByMaterialPricePerTonne = "0.3",
                             Name = "Glass",
-
                         }
-                    ]
-                }
+                    ],
+                },
             };
         }
 
@@ -346,7 +345,7 @@
                 {
                     Name = materialKv.Value,
                     Code = materialKv.Key,
-                    Description = "Some"
+                    Description = "Some",
                 });
             }
 
@@ -366,7 +365,7 @@
                 "Good Fruit Co",
                 "Happy Shopper",
                 "Icicle Foods",
-                "Jumbo Box Store"
+                "Jumbo Box Store",
             };
 
             var producerId = 1;
@@ -403,6 +402,7 @@
                     });
                 }
             }
+
             _dbContext.SaveChanges();
         }
     }

@@ -4,9 +4,9 @@
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Function.Builder.Summary.Common;
     using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Models;
 
     public static class CalcResultSummaryCommsCostTwoA

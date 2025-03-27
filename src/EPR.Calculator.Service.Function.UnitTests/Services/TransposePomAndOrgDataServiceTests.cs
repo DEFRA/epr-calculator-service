@@ -1,20 +1,17 @@
 ﻿namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
     using AutoFixture;
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Common.Logging;
-    using EPR.Calculator.Service.Function.Data;
-    using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Interface;
     using EPR.Calculator.Service.Function.Services;
     using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.ChangeTracking;
     using Microsoft.EntityFrameworkCore.Diagnostics;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
-    using Moq.Protected;
-    using System.Linq.Expressions;
     using static EPR.Calculator.Service.Function.Services.TransposePomAndOrgDataService;
 
     [TestClass]
@@ -37,7 +34,7 @@
                 .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
             .Options;
 
-            this._context = new ApplicationDBContext(_dbContextOptions);
+            this._context = new ApplicationDBContext(this._dbContextOptions);
             this.ContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
             this.ContextFactory.Setup(f => f.CreateDbContext()).Returns(this._context);
 
