@@ -1,15 +1,15 @@
 ﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.LaDataPrepCosts
 {
     using AutoFixture;
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts;
-    using Data;
-    using Data.DataModels;
-    using Models;
+    using EPR.Calculator.Service.Function.Models;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System.Collections.Generic;
-    using EPR.Calculator.Service.Function.Models;
+    using EPR.Calculator.Service.Function.Enums;
 
     [TestClass]
     public class LaDataPrepCostsProducerTests
@@ -34,6 +34,7 @@
 
             _calcResult = new CalcResult
             {
+                CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultParameterOtherCost = new CalcResultParameterOtherCost
                 {
                     BadDebtProvision = new KeyValuePair<string, string>("key1", "6%"),
@@ -375,6 +376,32 @@
             Assert.AreEqual(31.80m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LaDataPrepCostsWalesTotalWithBadDebtProvisionSection4);
             Assert.AreEqual(21.20m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LaDataPrepCostsScotlandTotalWithBadDebtProvisionSection4);
             Assert.AreEqual(10.60m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LaDataPrepCostsNorthernIrelandTotalWithBadDebtProvisionSection4);
+        }
+
+        [TestMethod]
+        public void GetLaDataPrepCostsWithoutBadDebtProvision_NoDataPrepCharge_Returns0()
+        {
+            // Arrange
+            _calcResult.CalcResultParameterOtherCost.Details.ToList()[0].Name = null;
+
+            // Act
+            var result = LaDataPrepCostsProducer.GetLaDataPrepCostsWithoutBadDebtProvision(_calcResult);
+
+            // Assert
+            Assert.AreEqual(0m, result);
+        }
+
+        [TestMethod]
+        public void GetCountryTotalWithBadDebtProvision_CostsForOnePlus2A2B2Cis0_Returns0()
+        {
+            // Arrange
+            _calcResult.CalcResultParameterOtherCost.Details.ToList()[0].Name = null;
+
+            // Act
+            var result = LaDataPrepCostsProducer.GetCountryTotalWithBadDebtProvision(_calcResult, 0, 0, Countries.England);
+
+            // Assert
+            Assert.AreEqual(0m, result);
         }
 
         private void CreateMaterials()

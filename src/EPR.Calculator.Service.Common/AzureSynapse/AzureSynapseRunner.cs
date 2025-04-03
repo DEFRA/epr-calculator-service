@@ -2,6 +2,7 @@
 {
     using System.Text;
     using System.Text.Json;
+    using Azure.Analytics.Synapse.Artifacts.Models;
     using Azure.Identity;
     using Microsoft.Extensions.Logging;
 
@@ -48,12 +49,17 @@
 
             // Instead of year, get financial year and map financial year to calendar year.
             // Trigger the pipeline.
-            Guid pipelineRunId;
-            pipelineRunId = await StartPipelineRun(
+            var pipelineRunId = await this.StartPipelineRun(
                 this.PipelineClientFactory,
                 args.PipelineUrl,
                 args.PipelineName,
                 args.CalendarYear);
+
+            // If PipelineId null just return false
+            if (pipelineRunId == null)
+            {
+                return false;
+            }
 
             this.logger.LogInformation($"pipelineRunId: {pipelineRunId}");
 
@@ -107,6 +113,23 @@
         }
 
         /// <summary>
+        /// Retrieves the status of a pipeline run.
+        /// </summary>
+        /// <param name="factory">The factory to create pipeline clients.</param>
+        /// <param name="pipelineUrl">The URL of the pipeline.</param>
+        /// <param name="runId">The ID of the pipeline run.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the status of the pipeline run.</returns>
+        private static async Task<string> GetPipelineRunStatus(IPipelineClientFactory factory, Uri pipelineUrl, Guid? runId)
+        {
+            var credentials = new ManagedIdentityCredential();
+
+            var pipelineClient = factory.GetPipelineRunClient(pipelineUrl, credentials);
+
+            var result = await pipelineClient.GetPipelineRunAsync(runId.ToString());
+            return result.Value.Status;
+        }
+
+        /// <summary>
         /// Starts a pipeline run.
         /// </summary>
         /// <param name="factory">The factory to create pipeline clients.</param>
@@ -114,7 +137,7 @@
         /// <param name="pipelineName">The name of the pipeline.</param>
         /// <param name="year">The year parameter for the pipeline.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the pipeline run ID.</returns>
-        private static async Task<Guid> StartPipelineRun(
+        private async Task<Guid?> StartPipelineRun(
             IPipelineClientFactory factory,
             Uri pipelineUrl,
             string pipelineName,
@@ -124,31 +147,24 @@
 
             var pipelineClient = factory.GetPipelineClient(pipelineUrl, credentials);
 
-            var result = await pipelineClient.CreatePipelineRunAsync(
-                pipelineName,
-                parameters: new Dictionary<string, object>
+            try
+            {
+                var result = await pipelineClient.CreatePipelineRunAsync(pipelineName, parameters: new Dictionary<string, object> 
                 {
-            { DateParameter, year },
+                    {
+                        DateParameter, year },
                 });
 
-            return Guid.Parse(result.Value.RunId);
-        }
+                return Guid.Parse(result.Value.RunId);
+            }
+            catch (Exception e)
+            {
+                // Log that exception info 
+                this.logger.LogInformation($"pipeline url is not reached : {e.Message}");
 
-        /// <summary>
-        /// Retrieves the status of a pipeline run.
-        /// </summary>
-        /// <param name="factory">The factory to create pipeline clients.</param>
-        /// <param name="pipelineUrl">The URL of the pipeline.</param>
-        /// <param name="runId">The ID of the pipeline run.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result contains the status of the pipeline run.</returns>
-        private static async Task<string> GetPipelineRunStatus(IPipelineClientFactory factory, Uri pipelineUrl, Guid runId)
-        {
-            var credentials = new ManagedIdentityCredential();
-
-            var pipelineClient = factory.GetPipelineRunClient(pipelineUrl, credentials);
-
-            var result = await pipelineClient.GetPipelineRunAsync(runId.ToString());
-            return result.Value.Status;
+                // return null
+                return null;
+            }
         }
     }
 }

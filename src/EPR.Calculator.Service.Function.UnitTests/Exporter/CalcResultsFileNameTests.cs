@@ -4,10 +4,9 @@ namespace EPR.Calculator.API.UnitTests.Exporter
     using System.Reflection;
     using System.Text;
     using AutoFixture;
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.API.Exporter;
-    using EPR.Calculator.API.Utils;
-    using EPR.Calculator.Service.Function.Data;
-    using EPR.Calculator.Service.Function.Data.DataModels;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
     using Moq.EntityFrameworkCore;
@@ -46,7 +45,7 @@ namespace EPR.Calculator.API.UnitTests.Exporter
         [DataRow("   ")]
         public void CannotConstructWithInvalidRunName(string value)
         {
-            //Arrange
+            // Arrange
             Exception? exception = null;
 
             // Act

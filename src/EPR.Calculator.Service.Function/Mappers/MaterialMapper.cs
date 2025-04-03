@@ -1,10 +1,9 @@
-﻿using EPR.Calculator.Service.Function.Data.DataModels;
-using EPR.Calculator.Service.Function.Dtos;
-using EPR.Calculator.Service.Function.Models;
-using System.Collections.Generic;
-
-namespace EPR.Calculator.Service.Function.Mappers
+﻿namespace EPR.Calculator.Service.Function.Mappers
 {
+    using System.Collections.Generic;
+    using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.Service.Function.Models;
+
     public static class MaterialMapper
     {
         public static List<MaterialDetail> Map(IEnumerable<Material> materialsInDb)
@@ -18,7 +17,7 @@ namespace EPR.Calculator.Service.Function.Mappers
                     Id = material.Id,
                     Code = material.Code,
                     Name = material.Name,
-                    Description = material.Description ?? string.Empty
+                    Description = material.Description ?? string.Empty,
                 });
             }
 

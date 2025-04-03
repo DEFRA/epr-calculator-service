@@ -4,6 +4,8 @@
 
 using System.Configuration;
 using Azure.Storage.Blobs;
+using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Exporter;
 using EPR.Calculator.API.Services;
 using EPR.Calculator.API.Validators;
@@ -20,8 +22,6 @@ using EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment;
 using EPR.Calculator.Service.Function.Builder.ParametersOther;
 using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
 using EPR.Calculator.Service.Function.Builder.Summary;
-using EPR.Calculator.Service.Function.Data;
-using EPR.Calculator.Service.Function.Data.DataModels;
 using EPR.Calculator.Service.Function.Exporter;
 using EPR.Calculator.Service.Function.Exporter.CommsCost;
 using EPR.Calculator.Service.Function.Exporter.Detail;
@@ -37,10 +37,10 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.Configuration;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
 using EPR.Calculator.Service.Common.Logging;
+using System;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -58,13 +58,6 @@ namespace EPR.Calculator.Service.Function
         public override void Configure(IFunctionsHostBuilder builder)
         {
             RegisterDependencies(builder.Services);
-            builder.Services.AddSingleton<TelemetryClient>(provider =>
-            {
-                var configuration = TelemetryConfiguration.CreateDefault();
-                var config = provider.GetRequiredService<IConfigurationService>();
-                configuration.ConnectionString = $"InstrumentationKey={config.InstrumentationKey}";
-                return new TelemetryClient(configuration);
-            });
 
             // Configure the database context.
             builder.Services.AddDbContextFactory<ApplicationDBContext>(options =>

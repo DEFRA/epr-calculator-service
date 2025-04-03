@@ -1,20 +1,17 @@
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
     using System;
+    using System.Globalization;
     using AutoFixture;
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
-    using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
     using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Data;
-    using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Dtos;
-    using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System;
-    using System.Globalization;
 
     [TestClass]
     public class CalcRunLaDisposalCostBuilderTests
@@ -424,6 +421,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails?.Single(x => x.Name == MaterialNames.Plastic);
             Assert.IsNotNull(laDisposalCost);
             Assert.AreEqual(400, double.Parse(laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage));
+        }
+
+        [TestMethod]
+        public void GetDecimalValue_InvalidDecimalString_ReturnsZero()
+        {
+            // Arrange
+            string value = "invalid";
+
+            // Act
+            decimal result = CalcRunLaDisposalCostBuilder.GetDecimalValue(value);
+
+            // Assert
+            Assert.AreEqual(0m, result);
         }
 
         private static CalcResultScaledupProducers GetScaledUpProducers()

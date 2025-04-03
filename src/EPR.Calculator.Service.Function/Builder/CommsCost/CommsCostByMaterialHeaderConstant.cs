@@ -1,6 +1,6 @@
 ﻿namespace EPR.Calculator.Service.Function.Builder.CommsCost
 {
-    public class CommsCostByMaterialHeaderConstant
+    public static class CommsCostByMaterialHeaderConstant
     {
         public const string Name = "2a Comms Costs - by Material";
         public const string England = "England";

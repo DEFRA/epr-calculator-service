@@ -134,10 +134,21 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             this.MockPipelineRunClient.Setup(client => client.GetPipelineRunAsync(
                 It.IsAny<string?>(),
                 It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(MockPipelineRunResponse(statusReturned)));
-
+                .Returns(Task.FromResult(MockPipelineRunResponse(statusReturned)));            
             // Act
-            var pipelineSucceeded = await this.TestClass.Process(this.Parameters);
+            var testdat = new AzureSynapseRunnerParameters
+            {
+                CalculatorRunId = CalculatorRunId,
+                CalendarYear = this.Fixture.Create<CalendarYear>(),
+                CheckInterval = CheckInterval,
+                MaxCheckCount = MaxCheckCount,
+                PipelineUrl = new Uri(TestPipelineUrl),
+                PipelineName = TestPipelineName,
+            };
+
+            
+
+            var pipelineSucceeded = await this.TestClass.Process(testdat);
 
             // Assert
             Assert.AreEqual(expectedPipelineResult, pipelineSucceeded);
@@ -201,6 +212,35 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
             // Assert
             Assert.IsFalse(pipelineSucceeded);
+        }
+
+        /// <summary>
+        /// Check that <see cref="AzureSynapseRunner.Process(string, string, string)"/> returns false when the
+        /// pipeline run immediately failed.
+        /// </summary>
+        /// <param name="statusReturned">The status of the pipeline.</param>
+        /// <param name="expectedPipelineResult">
+        /// The result the method is expected to return for the given pipeline status.
+        /// </param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        [TestMethod]
+        [DataRow(nameof(PipelineStatus.Succeeded), false)]
+        [DataRow(nameof(PipelineStatus.Failed), true)]
+        public async Task CallProcessFailedReturnFalse(
+            string statusReturned,
+            bool expectedPipelineResult)
+        {
+            // Arrange
+            this.MockPipelineRunClient.Setup(client => client.GetPipelineRunAsync(
+                It.IsAny<string?>(),
+                It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(MockPipelineRunResponse(statusReturned)));
+
+            // Act
+            var pipelineFailed = await this.TestClass.Process(this.Parameters);
+
+            // Assert
+            Assert.AreEqual(false, pipelineFailed);
         }
 
         /// <summary>

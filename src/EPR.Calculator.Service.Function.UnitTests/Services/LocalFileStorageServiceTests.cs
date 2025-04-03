@@ -11,8 +11,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
     {
         private LocalFileStorageService _testClass;
 
-        [TestInitialize]
-        public void SetUp()
+        LocalFileStorageServiceTests()
         {
             this._testClass = new LocalFileStorageService();
         }

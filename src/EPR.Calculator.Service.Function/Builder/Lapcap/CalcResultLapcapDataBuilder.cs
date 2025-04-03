@@ -1,16 +1,16 @@
-﻿using EPR.Calculator.Service.Function.Data;
-using EPR.Calculator.Service.Function.Dtos;
-using EPR.Calculator.Service.Function.Models;
-using System.Globalization;
-using EPR.Calculator.Service.Function.Data.DataModels;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System;
-
-namespace EPR.Calculator.Service.Function.Builder.Lapcap
+﻿namespace EPR.Calculator.Service.Function.Builder.Lapcap
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.Service.Function.Dtos;
+    using EPR.Calculator.Service.Function.Models;
+    using Microsoft.EntityFrameworkCore;
+
     public class CalcResultLapcapDataBuilder : ICalcResultLapcapDataBuilder
     {
         private readonly ApplicationDBContext context;
@@ -18,6 +18,7 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
         public const string CountryApportionment = "1 Country Apportionment %s";
         public const string Total = "Total";
         public const int HundredPercent = 100;
+
         public CalcResultLapcapDataBuilder(ApplicationDBContext context)
         {
             this.context = context;
@@ -38,26 +39,26 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
                 ScotlandDisposalCost = LapcapHeaderConstants.ScotlandDisposalCost,
                 NorthernIrelandDisposalCost = LapcapHeaderConstants.NorthernIrelandDisposalCost,
                 OrderId = orderId,
-                TotalDisposalCost = LapcapHeaderConstants.TotalDisposalCost
+                TotalDisposalCost = LapcapHeaderConstants.TotalDisposalCost,
             });
 
-            var results = await (from run in context.CalculatorRuns
-                           join lapcapMaster in context.LapcapDataMaster on run.LapcapDataMasterId equals lapcapMaster.Id
-                           join lapcapDetail in context.LapcapDataDetail on lapcapMaster.Id equals lapcapDetail.LapcapDataMasterId
-                           join lapcapTemplate in context.LapcapDataTemplateMaster on lapcapDetail.UniqueReference equals lapcapTemplate.UniqueReference
+            var results = await (from run in this.context.CalculatorRuns
+                           join lapcapMaster in this.context.LapcapDataMaster on run.LapcapDataMasterId equals lapcapMaster.Id
+                           join lapcapDetail in this.context.LapcapDataDetail on lapcapMaster.Id equals lapcapDetail.LapcapDataMasterId
+                           join lapcapTemplate in this.context.LapcapDataTemplateMaster on lapcapDetail.UniqueReference equals lapcapTemplate.UniqueReference
                            where run.Id == resultsRequestDto.RunId
                            select new ResultsClass
                            {
                                Material = lapcapTemplate.Material,
                                Country = lapcapTemplate.Country,
-                               TotalCost = lapcapDetail.TotalCost
+                               TotalCost = lapcapDetail.TotalCost,
                            }).ToListAsync();
 
-            var materials = await context.Material.Select(x => x.Name).ToListAsync();
+            var materials = await this.context.Material.Select(x => x.Name).ToListAsync();
 
-            var countries = await context.Country.ToListAsync();
+            var countries = await this.context.Country.ToListAsync();
 
-            var costType = await context.CostType.SingleAsync(x => x.Name == "Fee for LA Disposal Costs");
+            var costType = await this.context.CostType.SingleAsync(x => x.Name == "Fee for LA Disposal Costs");
             var costTypeId = costType.Id;
 
             foreach (var material in materials)
@@ -70,7 +71,7 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
                     ScotlandCost = GetMaterialDisposalCostPerCountry(CountryConstants.Scotland, material, results),
                     WalesCost = GetMaterialDisposalCostPerCountry(CountryConstants.Wales, material, results),
                     OrderId = ++orderId,
-                    TotalCost = GetTotalMaterialDisposalCost(material, results)
+                    TotalCost = GetTotalMaterialDisposalCost(material, results),
                 };
 
                 detail.EnglandDisposalCost = detail.EnglandCost.ToString("C", culture);
@@ -90,7 +91,7 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
                 ScotlandCost = data.Sum(x => x.ScotlandCost),
                 WalesCost = data.Sum(x => x.WalesCost),
                 TotalCost = data.Sum(x => x.TotalCost),
-                OrderId = ++orderId
+                OrderId = ++orderId,
             };
             totalDetail.EnglandDisposalCost = totalDetail.EnglandCost.ToString("C", culture);
             totalDetail.NorthernIrelandDisposalCost = totalDetail.NorthernIrelandCost.ToString("C", culture);
@@ -108,7 +109,7 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
                 ScotlandCost = CalculateApportionment(totalDetail.ScotlandCost, totalDetail.TotalCost),
                 WalesCost = CalculateApportionment(totalDetail.WalesCost, totalDetail.TotalCost),
                 TotalCost = HundredPercent,
-                OrderId = ++orderId
+                OrderId = ++orderId,
             };
             countryApportionment.EnglandDisposalCost = $"{countryApportionment.EnglandCost.ToString("N", new NumberFormatInfo { NumberDecimalDigits = 8 })}%";
             countryApportionment.NorthernIrelandDisposalCost = $"{countryApportionment.NorthernIrelandCost.ToString("N", new NumberFormatInfo { NumberDecimalDigits = 8 })}%";
@@ -117,39 +118,39 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
             countryApportionment.TotalDisposalCost = $"{countryApportionment.TotalCost.ToString("N", new NumberFormatInfo { NumberDecimalDigits = 8 })}%";
             data.Add(countryApportionment);
 
-            context.CountryApportionment.Add(new CountryApportionment
+            this.context.CountryApportionment.Add(new CountryApportionment
             {
                 CalculatorRunId = resultsRequestDto.RunId,
                 CountryId = countries.Single(x => x.Name == "England").Id,
                 CostTypeId = costTypeId,
-                Apportionment = totalDetail.EnglandCost
+                Apportionment = totalDetail.EnglandCost,
             });
 
-            context.CountryApportionment.Add(new CountryApportionment
+            this.context.CountryApportionment.Add(new CountryApportionment
             {
                 CalculatorRunId = resultsRequestDto.RunId,
                 CountryId = countries.Single(x => x.Name == "Wales").Id,
                 CostTypeId = costTypeId,
-                Apportionment = totalDetail.WalesCost
+                Apportionment = totalDetail.WalesCost,
             });
 
-            context.CountryApportionment.Add(new CountryApportionment
+            this.context.CountryApportionment.Add(new CountryApportionment
             {
                 CalculatorRunId = resultsRequestDto.RunId,
                 CountryId = countries.Single(x => x.Name == "Northern Ireland").Id,
                 CostTypeId = costTypeId,
-                Apportionment = totalDetail.NorthernIrelandCost
+                Apportionment = totalDetail.NorthernIrelandCost,
             });
 
-            context.CountryApportionment.Add(new CountryApportionment
+            this.context.CountryApportionment.Add(new CountryApportionment
             {
                 CalculatorRunId = resultsRequestDto.RunId,
                 CountryId = countries.Single(x => x.Name == "Scotland").Id,
                 CostTypeId = costTypeId,
-                Apportionment = totalDetail.ScotlandCost
+                Apportionment = totalDetail.ScotlandCost,
             });
 
-            await context.SaveChangesAsync();
+            await this.context.SaveChangesAsync();
 
             return new CalcResultLapcapData { Name = LapcapHeader, CalcResultLapcapDataDetails = data };
         }
@@ -161,6 +162,7 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
                 var total = (countryCost / totalCost);
                 return total * 100;
             }
+
             return 0;
         }
 

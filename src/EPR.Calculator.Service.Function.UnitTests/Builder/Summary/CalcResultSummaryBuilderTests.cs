@@ -1,12 +1,12 @@
 ﻿namespace EPR.Calculator.Service.Function.UnitTests
 {
     using AutoFixture;
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
     using EPR.Calculator.Service.Function.Builder.Summary;
     using EPR.Calculator.Service.Function.Builder.Summary.OneAndTwoA;
     using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Data;
-    using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Models;
     using EPR.Calculator.Service.Function.UnitTests.Builder;
@@ -706,6 +706,51 @@
             Assert.AreEqual(3, totalPackagingTonnage.Count());
             Assert.IsNotNull(scaledUpProducer.ProducerId);
             Assert.AreEqual(100, scaledUpProducer.TotalPackagingTonnage);
+        }
+
+        [TestMethod]
+        public void GetScaledupProducerStatusTotalRow_IsOverAllTotalRow_ReturnsTotals()
+        {
+            // Arrange
+            var producer = new ProducerDetail();
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
+            bool isOverAllTotalRow = true;
+
+            // Act
+            var result = CalcResultSummaryBuilder.GetScaledupProducerStatusTotalRow(producer, scaledupProducers, isOverAllTotalRow);
+
+            // Assert
+            Assert.AreEqual(CommonConstants.Totals, result);
+        }
+
+        [TestMethod]
+        public void GetScaledupProducerStatusTotalRow_ProducerScaledup_ReturnsScaledupProducersYes()
+        {
+            // Arrange
+            var producer = new ProducerDetail();
+            var scaledupProducers = new List<CalcResultScaledupProducer> { new CalcResultScaledupProducer { ProducerId = producer.Id } };
+            bool isOverAllTotalRow = false;
+
+            // Act
+            var result = CalcResultSummaryBuilder.GetScaledupProducerStatusTotalRow(producer, scaledupProducers, isOverAllTotalRow);
+
+            // Assert
+            Assert.AreEqual(CommonConstants.ScaledupProducersYes, result);
+        }
+
+        [TestMethod]
+        public void GetScaledupProducerStatusTotalRow_ProducerNotScaledup_ReturnsScaledupProducersNo()
+        {
+            // Arrange
+            var producer = new ProducerDetail();
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
+            bool isOverAllTotalRow = false;
+
+            // Act
+            var result = CalcResultSummaryBuilder.GetScaledupProducerStatusTotalRow(producer, scaledupProducers, isOverAllTotalRow);
+
+            // Assert
+            Assert.AreEqual(CommonConstants.ScaledupProducersNo, result);
         }
 
         public static List<CalcResultScaledupProducer> GetScaledUpProducers()
