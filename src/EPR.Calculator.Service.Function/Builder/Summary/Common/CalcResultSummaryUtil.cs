@@ -7,6 +7,7 @@
     using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Function.Builder.CommsCost;
     using EPR.Calculator.Service.Function.Builder.ParametersOther;
+    using EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions;
     using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA;
     using EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts;
     using EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C;
@@ -464,6 +465,9 @@
             // Section Total bill headers
             resultSummaryHeaders.AddRange(TotalBillBreakdownProducer.GetSummaryHeaders());
 
+            // Section Billing instructions headers
+            resultSummaryHeaders.AddRange(BillingInstructionsProducer.GetSummaryHeaders());
+
             return resultSummaryHeaders;
         }
 
@@ -714,6 +718,9 @@
 
             // Section-TotalBill column headers
             columnHeaders.AddRange(TotalBillBreakdownProducer.GetHeaders());
+
+            // Billing instructions section
+            columnHeaders.AddRange(BillingInstructionsProducer.GetHeaders());
 
             return columnHeaders;
         }

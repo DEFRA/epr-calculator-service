@@ -171,5 +171,27 @@ namespace EPR.Calculator.Service.Function.Models
 
         public decimal NorthernIrelandTotalWithBadDebtProvisionTotalBill { get; set; }
         // End Section-TotalBill
+
+        // Section - Billing Instructions
+        public decimal CurrentYearInvoicedTotalToDate { get; set; }
+
+        public required string TonnageChangeSinceLastInvoice { get; set; }
+
+        public decimal LiabilityDifference { get; set; }
+
+        public required string MaterialThresholdBreached { get; set; }
+
+        public required string TonnageThresholdBreached { get; set; }
+
+        public required string PercentageLiabilityDifference { get; set; }
+
+        public required string MaterialPercentageThresholdBreached { get; set; }
+
+        public required string TonnagePercentagThresholdBreached { get; set; }
+
+        public required string SuggestedBillingInstruction { get; set; }
+
+        public decimal SuggestedInvoiceAmount { get; set; }
+        // End Section - Billing Instructions
     }
 }
