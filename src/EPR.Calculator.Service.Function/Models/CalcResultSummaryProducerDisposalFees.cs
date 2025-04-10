@@ -175,21 +175,21 @@ namespace EPR.Calculator.Service.Function.Models
         // Section - Billing Instructions
         public decimal CurrentYearInvoicedTotalToDate { get; set; }
 
-        public required string TonnageChangeSinceLastInvoice { get; set; }
+        public string? TonnageChangeSinceLastInvoice { get; set; }
 
         public decimal LiabilityDifference { get; set; }
 
-        public required string MaterialThresholdBreached { get; set; }
+        public string? MaterialThresholdBreached { get; set; }
 
-        public required string TonnageThresholdBreached { get; set; }
+        public string? TonnageThresholdBreached { get; set; }
 
-        public required string PercentageLiabilityDifference { get; set; }
+        public string? PercentageLiabilityDifference { get; set; }
 
-        public required string MaterialPercentageThresholdBreached { get; set; }
+        public string? MaterialPercentageThresholdBreached { get; set; }
 
-        public required string TonnagePercentagThresholdBreached { get; set; }
+        public string? TonnagePercentageThresholdBreached { get; set; }
 
-        public required string SuggestedBillingInstruction { get; set; }
+        public string? SuggestedBillingInstruction { get; set; }
 
         public decimal SuggestedInvoiceAmount { get; set; }
         // End Section - Billing Instructions

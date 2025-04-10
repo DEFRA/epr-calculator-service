@@ -9,7 +9,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
 {
     public static class BillingInstructionsProducer
     {
-        public static readonly int ColumnIndex = 266;
+        public static readonly int ColumnIndex = 273;
 
         public static IEnumerable<CalcResultSummaryHeader> GetHeaders()
         {
@@ -45,7 +45,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
                 fee.TonnageThresholdBreached = GetTonnageThresholdBreached(fee);
                 fee.PercentageLiabilityDifference = GetPercentageLiabilityDifference(fee);
                 fee.MaterialPercentageThresholdBreached = GetMaterialPercentageThresholdBreached(fee);
-                fee.TonnagePercentagThresholdBreached = GetTonnagePercentagThresholdBreached(fee);
+                fee.TonnagePercentageThresholdBreached = GetTonnagePercentagThresholdBreached(fee);
                 fee.SuggestedBillingInstruction = GetSuggestedBillingInstruction(fee);
                 fee.SuggestedInvoiceAmount = GetSuggestedInvoiceAmount(fee);
             }
