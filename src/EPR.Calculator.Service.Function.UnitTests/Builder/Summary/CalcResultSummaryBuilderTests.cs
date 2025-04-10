@@ -753,6 +753,20 @@
             Assert.AreEqual(CommonConstants.ScaledupProducersNo, result);
         }
 
+        [TestMethod]
+        public void GetPreviousInvoicedTonnage_Level1()
+        {
+            var result = CalcResultSummaryBuilder.GetPreviousInvoicedTonnage(1);
+            Assert.AreEqual("0", result);
+        }
+
+        [TestMethod]
+        public void GetPreviousInvoicedTonnage_Level2()
+        {
+            var result = CalcResultSummaryBuilder.GetPreviousInvoicedTonnage(2);
+            Assert.AreEqual("-", result);
+        }
+
         public static List<CalcResultScaledupProducer> GetScaledUpProducers()
         {
             var test = new List<CalcResultScaledupProducer>

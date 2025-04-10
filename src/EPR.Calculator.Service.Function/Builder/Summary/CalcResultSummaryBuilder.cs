@@ -494,7 +494,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 : CommonConstants.ScaledupProducersNo;
         }
 
-        protected static string GetPreviousInvoicedTonnage(int level)
+        internal static string GetPreviousInvoicedTonnage(int level)
         {
             return level == (int)CalcResultSummaryLevelIndex.One ? "0" : "-";
         }
