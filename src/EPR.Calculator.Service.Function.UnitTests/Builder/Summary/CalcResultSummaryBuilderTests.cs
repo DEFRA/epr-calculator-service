@@ -551,7 +551,7 @@
             Assert.IsNotNull(result);
             Assert.AreEqual(CalcResultSummaryHeaders.CalculationResult, result.ResultSummaryHeader!.Name);
             Assert.AreEqual(25, result.ProducerDisposalFeesHeaders!.Count());
-            var isColumnHeaderExists = result.ProducerDisposalFeesHeaders!.Select(dict => dict.ColumnIndex == 213 || dict.ColumnIndex == 214 || dict.ColumnIndex == 215).ToList();
+            var isColumnHeaderExists = result.ProducerDisposalFeesHeaders!.Select(dict => dict.ColumnIndex == 229 || dict.ColumnIndex == 230 || dict.ColumnIndex == 215).ToList();
             Assert.IsTrue(isColumnHeaderExists.Contains(true));
             Assert.IsNotNull(result.ProducerDisposalFees);
             Assert.AreEqual(4, result.ProducerDisposalFees.Count());
@@ -612,7 +612,7 @@
             var result = new CalcResultSummaryBuilder(this.context).GetCalcResultSummary(orderedProducerDetails, materials, this.calcResult, totalPackagingTonnage);
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(128, result.ColumnHeaders.Count());
+            Assert.AreEqual(132, result.ColumnHeaders.Count());
 
             var producerDisposalFees = result.ProducerDisposalFees;
             Assert.IsNotNull(producerDisposalFees);

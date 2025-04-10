@@ -8,6 +8,7 @@
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
+    using Microsoft.EntityFrameworkCore.Query.Internal;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     /// <summary>
@@ -40,6 +41,8 @@
         /// Defines the _commsCostSummary
         /// </summary>
         private readonly Dictionary<MaterialDetail, CalcResultSummaryProducerCommsFeesCostByMaterial> _commsCostSummary;
+
+        private readonly int columnIndex = 282;
 
         /// <summary>
         /// Gets the Fixture
@@ -391,7 +394,6 @@
         {
             // Act
             var result = TotalBillBreakdownProducer.GetHeaders().ToList();
-            var columnIndex = 266;
 
             var expectedResult = new List<CalcResultSummaryHeader>();
             expectedResult.AddRange([
@@ -432,7 +434,7 @@
 
             var expectedResult = new List<CalcResultSummaryHeader>();
             expectedResult.AddRange([
-                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.TotalProducerBillBreakdown, ColumnIndex = 266 }
+                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.TotalProducerBillBreakdown, ColumnIndex = columnIndex }
             ]);
 
             // Assert
