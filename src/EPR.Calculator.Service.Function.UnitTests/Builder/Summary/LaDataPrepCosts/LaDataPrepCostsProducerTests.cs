@@ -16,6 +16,7 @@
     {
         private readonly ApplicationDBContext _dbContext;
         private readonly CalcResult _calcResult;
+        private readonly int columnIndex = 268;
 
         private Fixture Fixture { get; init; } = new Fixture();
 
@@ -307,7 +308,6 @@
         {
             // Act
             var result = LaDataPrepCostsProducer.GetHeaders().ToList();
-            var columnIndex = 252;
             var expectedResult = new List<CalcResultSummaryHeader>();
             expectedResult.AddRange([
                 new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.TotalProducerFeeWithoutBadDebtProvision , ColumnIndex = columnIndex },
@@ -340,8 +340,7 @@
         public void CanCallGetSummaryHeaders()
         {
             // Act
-            var result = LaDataPrepCostsProducer.GetSummaryHeaders().ToList();
-            var columnIndex = 252;
+            var result = LaDataPrepCostsProducer.GetSummaryHeaders().ToList();            
 
             var expectedResult = new List<CalcResultSummaryHeader>();
             expectedResult.AddRange([

@@ -11,13 +11,13 @@ namespace EPR.Calculator.Service.Function.UnitTests
     {
         private LocalFileStorageService _testClass;
 
-        LocalFileStorageServiceTests()
+        public LocalFileStorageServiceTests()
         {
             this._testClass = new LocalFileStorageService();
         }
 
         [TestMethod]
-        public async Task CanCallUploadResultFileContentAsync()
+        public async void CanCallUploadResultFileContentAsync()
         {
             // Arrange
             var fixture = new Fixture();

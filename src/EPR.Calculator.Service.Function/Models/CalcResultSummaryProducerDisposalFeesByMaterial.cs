@@ -30,5 +30,8 @@
 
         public decimal NorthernIrelandWithBadDebtProvision { get; set; }
 
+        public string PreviousInvoicedTonnage { get; set; }
+
+        public string TonnageChange { get; set; }
     }
 }

@@ -14,6 +14,7 @@
     {
         private readonly ApplicationDBContext _dbContext;
         private readonly CalcResult _calcResult;
+        private readonly int columnIndex = 259;
 
         public OnePlus2A2B2CProducerTests()
         {
@@ -284,7 +285,6 @@
         {
             // Act
             var result = OnePlus2A2B2CProducer.GetHeaders().ToList();
-            var columnIndex = 243;
 
             var expectedResult = new List<CalcResultSummaryHeader>();
             expectedResult.AddRange([
@@ -307,7 +307,7 @@
 
             var expectedResult = new List<CalcResultSummaryHeader>();
             expectedResult.AddRange([
-                new CalcResultSummaryHeader { Name = OnePlus2A2B2CHeaders.TotalWithBadDebtProvision, ColumnIndex = 243 },
+                new CalcResultSummaryHeader { Name = OnePlus2A2B2CHeaders.TotalWithBadDebtProvision, ColumnIndex = columnIndex },
             ]);
 
             // Assert

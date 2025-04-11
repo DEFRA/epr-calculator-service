@@ -18,7 +18,7 @@
         private ApplicationDBContext dbContext;
         private RunNameService runNameService;
 
-        RunNameServiceTests()
+        public RunNameServiceTests()
         {
             var options = new DbContextOptionsBuilder<ApplicationDBContext>()
                 .UseInMemoryDatabase(databaseName: "TestDatabase")
