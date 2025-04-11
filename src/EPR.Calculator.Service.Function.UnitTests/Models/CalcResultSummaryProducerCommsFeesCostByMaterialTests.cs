@@ -10,7 +10,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
     {
         private CalcResultSummaryProducerCommsFeesCostByMaterial _testClass;
 
-        CalcResultSummaryProducerCommsFeesCostByMaterialTests()
+        public CalcResultSummaryProducerCommsFeesCostByMaterialTests()
         {
             _testClass = new CalcResultSummaryProducerCommsFeesCostByMaterial();
         }

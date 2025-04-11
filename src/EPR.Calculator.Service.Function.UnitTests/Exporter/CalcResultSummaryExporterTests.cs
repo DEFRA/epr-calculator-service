@@ -12,7 +12,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
     {
         private CalcResultSummaryExporter _testClass;
 
-        CalcResultSummaryExporterTests()
+        public CalcResultSummaryExporterTests()
         {
             _testClass = new CalcResultSummaryExporter();
         }
@@ -126,7 +126,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
             producer.ProducerCommsFeesByMaterial.Add(materialDetail, producerCommsFees);
             _testClass.AddNewRow(csvContent, producer);
             var results = csvContent.ToString().Split(",");
-            Assert.AreEqual(103, results.Length);
+            Assert.AreEqual(113, results.Length);
         }
 
         [TestMethod]

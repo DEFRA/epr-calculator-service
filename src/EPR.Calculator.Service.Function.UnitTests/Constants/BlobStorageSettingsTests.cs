@@ -11,7 +11,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Constants
         private BlobStorageSettings TestClass;
         private IFixture Fixture;
 
-        BlobStorageSettingsTests()
+        public BlobStorageSettingsTests()
         {
             Fixture = new Fixture();
             this.TestClass = new BlobStorageSettings();

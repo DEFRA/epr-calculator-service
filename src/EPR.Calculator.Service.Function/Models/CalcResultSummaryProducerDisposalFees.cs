@@ -173,11 +173,11 @@ namespace EPR.Calculator.Service.Function.Models
         // End Section-TotalBill
 
         // Section - Billing Instructions
-        public decimal CurrentYearInvoicedTotalToDate { get; set; }
+        public string? CurrentYearInvoicedTotalToDate { get; set; }
 
         public string? TonnageChangeSinceLastInvoice { get; set; }
 
-        public decimal LiabilityDifference { get; set; }
+        public string? LiabilityDifference { get; set; }
 
         public string? MaterialThresholdBreached { get; set; }
 

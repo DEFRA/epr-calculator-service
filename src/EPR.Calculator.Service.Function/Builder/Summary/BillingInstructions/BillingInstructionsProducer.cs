@@ -1,4 +1,5 @@
-﻿using EPR.Calculator.Service.Function.Models;
+﻿using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,54 +52,77 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
             }
         }
 
-        private static decimal GetCurrentYearInvoicedTotalToDate(CalcResultSummaryProducerDisposalFees fee)
+        private static string GetCurrentYearInvoicedTotalToDate(CalcResultSummaryProducerDisposalFees fee)
         {
-            return 0;
+            return fee.IsProducerScaledup == "Totals"
+                ? "£0"
+                : "-";
         }
 
         private static string GetTonnageChangeSinceLastInvoice(CalcResultSummaryProducerDisposalFees fee)
         {
-            return "-";
+            return fee.IsProducerScaledup == "Totals"
+                ? string.Empty
+                : "-";
         }
 
-        private static decimal GetLiabilityDifference(CalcResultSummaryProducerDisposalFees fee)
+        private static string GetLiabilityDifference(CalcResultSummaryProducerDisposalFees fee)
         {
-            return 0;
+            return fee.IsProducerScaledup == "Totals"
+                ? "£0"
+                : "-";
         }
 
         private static string GetMaterialThresholdBreached(CalcResultSummaryProducerDisposalFees fee)
         {
-            return "-";
+            return fee.IsProducerScaledup == "Totals"
+                ? string.Empty
+                : "-";
         }
 
         private static string GetTonnageThresholdBreached(CalcResultSummaryProducerDisposalFees fee)
         {
-            return "-";
+            return fee.IsProducerScaledup == "Totals"
+                ? string.Empty
+                : "-";
         }
 
         private static string GetPercentageLiabilityDifference(CalcResultSummaryProducerDisposalFees fee)
         {
-            return "-";
+            return fee.IsProducerScaledup == "Totals"
+                ? string.Empty
+                : "-";
         }
 
         private static string GetMaterialPercentageThresholdBreached(CalcResultSummaryProducerDisposalFees fee)
         {
-            return "-";
+            return fee.IsProducerScaledup == "Totals"
+                ? string.Empty
+                : "-";
         }
 
         private static string GetTonnagePercentagThresholdBreached(CalcResultSummaryProducerDisposalFees fee)
         {
-            return "-";
+            return fee.IsProducerScaledup == "Totals"
+                ? string.Empty
+                : "-";
         }
 
         private static string GetSuggestedBillingInstruction(CalcResultSummaryProducerDisposalFees fee)
         {
-            return "-";
+            if (fee.IsProducerScaledup == "Totals")
+            {
+                return string.Empty;
+            }
+
+            return fee.Level == CommonConstants.LevelOne.ToString()
+                ? "INITIAL"
+                : "-";
         }
 
         private static decimal GetSuggestedInvoiceAmount(CalcResultSummaryProducerDisposalFees fee)
         {
-            return 0;
+            return fee.TotalProducerBillWithBadDebtProvision;
         }
     }
 }
