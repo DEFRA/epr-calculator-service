@@ -12,7 +12,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
     {
         private CalcResultDetailexporter _testClass;
 
-        CalcResultDetailexporterTests()
+        public CalcResultDetailexporterTests()
         {
             _testClass = new CalcResultDetailexporter();
         }
