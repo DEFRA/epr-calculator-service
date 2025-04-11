@@ -58,7 +58,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
 
         private static string GetTonnageChangeSinceLastInvoice(CalcResultSummaryProducerDisposalFees fee)
         {
-            return string.Empty;
+            return "-";
         }
 
         private static decimal GetLiabilityDifference(CalcResultSummaryProducerDisposalFees fee)
@@ -68,32 +68,32 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
 
         private static string GetMaterialThresholdBreached(CalcResultSummaryProducerDisposalFees fee)
         {
-            return string.Empty;
+            return "-";
         }
 
         private static string GetTonnageThresholdBreached(CalcResultSummaryProducerDisposalFees fee)
         {
-            return string.Empty;
+            return "-";
         }
 
         private static string GetPercentageLiabilityDifference(CalcResultSummaryProducerDisposalFees fee)
         {
-            return string.Empty;
+            return "-";
         }
 
         private static string GetMaterialPercentageThresholdBreached(CalcResultSummaryProducerDisposalFees fee)
         {
-            return string.Empty;
+            return "-";
         }
 
         private static string GetTonnagePercentagThresholdBreached(CalcResultSummaryProducerDisposalFees fee)
         {
-            return string.Empty;
+            return "-";
         }
 
         private static string GetSuggestedBillingInstruction(CalcResultSummaryProducerDisposalFees fee)
         {
-            return string.Empty;
+            return "-";
         }
 
         private static decimal GetSuggestedInvoiceAmount(CalcResultSummaryProducerDisposalFees fee)

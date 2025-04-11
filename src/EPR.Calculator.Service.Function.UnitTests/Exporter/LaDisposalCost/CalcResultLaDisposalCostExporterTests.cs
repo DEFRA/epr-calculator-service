@@ -10,7 +10,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.LaDisposalCost
     {
         private CalcResultLaDisposalCostExporter exporter;
 
-        CalcResultLaDisposalCostExporterTests()
+        public CalcResultLaDisposalCostExporterTests()
         {
             this.exporter = new CalcResultLaDisposalCostExporter();
         }

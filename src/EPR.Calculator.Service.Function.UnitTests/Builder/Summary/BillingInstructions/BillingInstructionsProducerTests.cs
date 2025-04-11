@@ -454,14 +454,14 @@
 
             // Assert
             Assert.AreEqual(0m, fee.CurrentYearInvoicedTotalToDate);
-            Assert.AreEqual(string.Empty, fee.TonnageChangeSinceLastInvoice);
+            Assert.AreEqual("-", fee.TonnageChangeSinceLastInvoice);
             Assert.AreEqual(0m, fee.LiabilityDifference);
-            Assert.AreEqual(string.Empty, fee.MaterialThresholdBreached);
-            Assert.AreEqual(string.Empty, fee.TonnageThresholdBreached);
-            Assert.AreEqual(string.Empty, fee.PercentageLiabilityDifference);
-            Assert.AreEqual(string.Empty, fee.MaterialPercentageThresholdBreached);
-            Assert.AreEqual(string.Empty, fee.TonnagePercentageThresholdBreached);
-            Assert.AreEqual(string.Empty, fee.SuggestedBillingInstruction);
+            Assert.AreEqual("-", fee.MaterialThresholdBreached);
+            Assert.AreEqual("-", fee.TonnageThresholdBreached);
+            Assert.AreEqual("-", fee.PercentageLiabilityDifference);
+            Assert.AreEqual("-", fee.MaterialPercentageThresholdBreached);
+            Assert.AreEqual("-", fee.TonnagePercentageThresholdBreached);
+            Assert.AreEqual("-", fee.SuggestedBillingInstruction);
             Assert.AreEqual(0, fee.SuggestedInvoiceAmount);
         }
 

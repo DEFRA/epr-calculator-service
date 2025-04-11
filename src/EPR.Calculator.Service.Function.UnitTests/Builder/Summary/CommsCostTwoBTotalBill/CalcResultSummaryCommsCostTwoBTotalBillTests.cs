@@ -16,7 +16,7 @@
         private List<CalcResultsProducerAndReportMaterialDetail> _allResults;
         private Fixture Fixture { get; init; } = new Fixture();
 
-        CalcResultSummaryCommsCostTwoBTotalBillTests()
+        public CalcResultSummaryCommsCostTwoBTotalBillTests()
         {
             this._producers = GetProducers();
 
