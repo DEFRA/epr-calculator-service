@@ -23,19 +23,19 @@
         public const int ResultSummaryHeaderColumnIndex = 1;
         public const int NotesHeaderColumnIndex = 1;
         public const int ProducerDisposalFeesHeaderColumnIndex = 6;
-        public const int CommsCostHeaderColumnIndex = 118;
+        public const int CommsCostHeaderColumnIndex = 134;
         public const int MaterialsBreakdownHeaderInitialColumnIndex = 6;
-        public const int MaterialsBreakdownHeaderIncrementalColumnIndex = 13;
+        public const int MaterialsBreakdownHeaderIncrementalColumnIndex = 15;
 
-        public const int DisposalFeeSummaryColumnIndex = 111;
-        public const int MaterialsBreakdownHeaderCommsInitialColumnIndex = 118;
+        public const int DisposalFeeSummaryColumnIndex = 127;
+        public const int MaterialsBreakdownHeaderCommsInitialColumnIndex = 134;
         public const int MaterialsBreakdownHeaderCommsIncrementalColumnIndex = 11;
 
         // Section-(1) & (2a)
-        public const int DisposalFeeCommsCostsHeaderInitialColumnIndex = 214;
+        public const int DisposalFeeCommsCostsHeaderInitialColumnIndex = 230;
 
         // Section-(2b)
-        private const int CommsCost2bColumnIndex = 229;
+        private const int CommsCost2bColumnIndex = 245;
         public const int decimalRoundUp = 2;
 
         public static int GetLevelIndex(
@@ -585,11 +585,13 @@
             {
                 var columnHeadersList = new List<CalcResultSummaryHeader>
                 {
+                    new () { Name = CalcResultSummaryHeaders.PreviousInvoicedTonnage },
                     new () { Name = CalcResultSummaryHeaders.HouseholdPackagingWasteTonnage },
                     new () { Name = CalcResultSummaryHeaders.PublicBinTonnage },
                     new () { Name = CalcResultSummaryHeaders.TotalTonnage },
                     new () { Name = CalcResultSummaryHeaders.SelfManagedConsumerWasteTonnage },
                     new () { Name = CalcResultSummaryHeaders.NetTonnage },
+                    new () { Name = CalcResultSummaryHeaders.TonnageChange },
                     new () { Name = CalcResultSummaryHeaders.PricePerTonne },
                     new () { Name = CalcResultSummaryHeaders.ProducerDisposalFee },
                     new () { Name = CalcResultSummaryHeaders.BadDebtProvision },

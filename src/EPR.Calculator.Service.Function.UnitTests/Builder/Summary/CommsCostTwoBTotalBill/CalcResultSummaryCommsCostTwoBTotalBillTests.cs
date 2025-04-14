@@ -16,7 +16,7 @@
         private List<CalcResultsProducerAndReportMaterialDetail> _allResults;
         private Fixture Fixture { get; init; } = new Fixture();
 
-        CalcResultSummaryCommsCostTwoBTotalBillTests()
+        public CalcResultSummaryCommsCostTwoBTotalBillTests()
         {
             this._producers = GetProducers();
 
@@ -31,7 +31,7 @@
                 CalcResultSummary = TestDataHelper.GetCalcResultSummary(),
                 CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
                 CalcResultLateReportingTonnageData = this.GetCalcResultLateReportingTonnage(),
-                CalcResultScaledupProducers =  TestDataHelper.GetScaledupProducers(),
+                CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers(),
             };
 
             // Set up consistent data

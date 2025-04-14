@@ -9,7 +9,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
     {
         private CalcResultLaDisposalCostDataDetail _testClass;
 
-        CalcResultLaDisposalCostDataDetailTests()
+        public CalcResultLaDisposalCostDataDetailTests()
         {
             _testClass = new CalcResultLaDisposalCostDataDetail
             {

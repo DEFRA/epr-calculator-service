@@ -14,7 +14,7 @@
         private TelemetryClient telemetryClient;
         private TelemetryClientWrapper telemetryClientWrapper;
 
-        TelemetryClientWrapperTests()
+        public TelemetryClientWrapperTests()
         {
             this.mockTelemetryClient = new Mock<ITelemetryClientWrapper>();
             this.telemetryClient = new TelemetryClient(new TelemetryConfiguration());

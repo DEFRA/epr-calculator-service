@@ -13,7 +13,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
         private OnePlusFourApportionmentExporter _testClass = new OnePlusFourApportionmentExporter();
         private CalcResultOnePlusFourApportionment calcResult1Plus4Apportionment;
 
-        OnePlusFourApportionmentExporterTests()
+        public OnePlusFourApportionmentExporterTests()
         {
             var fixture = new Fixture();
             this.calcResult1Plus4Apportionment = new CalcResultOnePlusFourApportionment
