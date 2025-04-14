@@ -3,6 +3,7 @@
 [assembly: InternalsVisibleTo("EPR.Calculator.Service.Function.UnitTests")]
 namespace EPR.Calculator.Service.Function.Builder.Summary
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -345,7 +346,10 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     WalesWithBadDebtProvision = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, material, calcResult, Countries.Wales, ScaledupProducers),
                     ScotlandWithBadDebtProvision = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, material, calcResult, Countries.Scotland, ScaledupProducers),
                     NorthernIrelandWithBadDebtProvision = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, material, calcResult, Countries.NorthernIreland, ScaledupProducers),
+                    TonnageChange = GetPreviousInvoicedTonnage(result.Level),
+                    PreviousInvoicedTonnage = GetPreviousInvoicedTonnage(result.Level),
                 };
+
 
                 materialCostSummary.Add(material.Code, calcResultSummaryProducerDisposalFeesByMaterial);
 
@@ -492,6 +496,12 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             return CalcResultSummaryUtil.IsProducerScaledup(producer, scaledupProducers)
                 ? CommonConstants.ScaledupProducersYes
                 : CommonConstants.ScaledupProducersNo;
+        }
+
+        internal static string GetPreviousInvoicedTonnage(string level)
+        {
+            var levelOne = (int)CalcResultSummaryLevelIndex.One;
+            return level == levelOne.ToString() ? "0" : "-";
         }
     }
 }
