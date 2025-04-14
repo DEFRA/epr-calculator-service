@@ -505,7 +505,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             return level == levelOne.ToString() ? "0" : "-";
         }
 
-        private static Dictionary<string, (string Count, string Advice)> GetTonnageByLevel()
+        internal static Dictionary<string, (string Count, string Advice)> GetTonnageByLevel()
         {
             return new Dictionary<string, (string Count, string Advice)>
             {
