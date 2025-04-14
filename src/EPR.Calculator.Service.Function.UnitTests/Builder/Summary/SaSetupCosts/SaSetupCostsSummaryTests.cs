@@ -245,7 +245,7 @@
         {
             // Act
             var result = SaSetupCostsSummary.GetHeaders().ToList();
-            var columnIndex = 275;
+            var columnIndex = 277;
 
             var expectedResult = new List<CalcResultSummaryHeader>();
             expectedResult.AddRange([
