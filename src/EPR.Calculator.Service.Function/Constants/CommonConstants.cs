@@ -24,7 +24,7 @@
         public const string Hyphen = "-";
         public const int LevelOne = 1;
         public const int LevelTwo = 2;
-        public const int SecondaryHeaderMaxColumnSize = 286;
+        public const int SecondaryHeaderMaxColumnSize = 298;
         public const string ScaledupProducersYes = "Yes";
         public const string ScaledupProducersNo = "No";
         public const string ParametersOther = "Parameters - Other";
