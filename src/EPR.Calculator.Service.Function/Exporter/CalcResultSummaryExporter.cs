@@ -62,7 +62,12 @@
             this.AddLaDataPrepCosts(csvContent, producer);
 
             this.AddSection5(csvContent, producer);
+
+            // Total bill section
             this.AddTotalSection(csvContent, producer);
+
+            // Billing instructions section
+            this.AddBillingInstructionsSection(csvContent, producer);
 
             csvContent.AppendLine();
         }
@@ -87,6 +92,20 @@
             csvContent.Append(CsvSanitiser.SanitiseData(producer.WalesTotalWithBadDebtProvisionSection5, DecimalPlaces.Two, null, true));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.ScotlandTotalWithBadDebtProvisionSection5, DecimalPlaces.Two, null, true));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.NorthernIrelandTotalWithBadDebtProvisionSection5, DecimalPlaces.Two, null, true));
+        }
+
+        public void AddBillingInstructionsSection(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
+        {
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.CurrentYearInvoicedTotalToDate, DecimalPlaces.Two, null, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.TonnageChangeSinceLastInvoice));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.LiabilityDifference, DecimalPlaces.Two, null, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.MaterialThresholdBreached));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.TonnageThresholdBreached));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.PercentageLiabilityDifference, DecimalPlaces.Two, null, false, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.MaterialPercentageThresholdBreached));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.TonnagePercentageThresholdBreached));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.SuggestedBillingInstruction));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.SuggestedInvoiceAmount, DecimalPlaces.Two, null, true));
         }
 
         public void AddLaDataPrepCosts(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)

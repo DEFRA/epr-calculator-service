@@ -9,6 +9,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
     using System.Threading.Tasks;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions;
     using EPR.Calculator.Service.Function.Builder.Summary.Common;
     using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA;
     using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoBTotalBill;
@@ -138,6 +139,9 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
                 // Total bill section
                 TotalBillBreakdownProducer.SetValues(result);
+
+                // Billing instructions section
+                BillingInstructionsProducer.SetValues(result);
             }
 
             // Set headers with calculated column index
