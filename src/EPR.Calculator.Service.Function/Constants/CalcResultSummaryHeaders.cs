@@ -75,6 +75,9 @@ namespace EPR.Calculator.Service.Function.Constants
         public static readonly string NorthernIrelandTotal = "Northern Ireland Total";
         public static readonly string OneCountryApportionment = "1 Country Apportionment %s";
 
+        public static readonly string TonnageChangeCount = "Tonnage Change Count";
+        public static readonly string TonnageChangeAdvice = "Tonnage Change Advice";
+
         //section 7
         public static readonly string TotalProducerFeeforLADisposalCostswoBadDebtprovision =
             "1 Total Producer Fee for LA Disposal Costs w/o Bad Debt provision";
