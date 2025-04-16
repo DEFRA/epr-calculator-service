@@ -24,19 +24,19 @@
         public const int ResultSummaryHeaderColumnIndex = 1;
         public const int NotesHeaderColumnIndex = 1;
         public const int ProducerDisposalFeesHeaderColumnIndex = 6;
-        public const int CommsCostHeaderColumnIndex = 134;
+        public const int CommsCostHeaderColumnIndex = 136;
         public const int MaterialsBreakdownHeaderInitialColumnIndex = 6;
         public const int MaterialsBreakdownHeaderIncrementalColumnIndex = 15;
 
         public const int DisposalFeeSummaryColumnIndex = 127;
-        public const int MaterialsBreakdownHeaderCommsInitialColumnIndex = 134;
+        public const int MaterialsBreakdownHeaderCommsInitialColumnIndex = 136;
         public const int MaterialsBreakdownHeaderCommsIncrementalColumnIndex = 11;
 
         // Section-(1) & (2a)
-        public const int DisposalFeeCommsCostsHeaderInitialColumnIndex = 230;
+        public const int DisposalFeeCommsCostsHeaderInitialColumnIndex = 232;
 
         // Section-(2b)
-        private const int CommsCost2bColumnIndex = 245;
+        private const int CommsCost2bColumnIndex = 247;
         public const int decimalRoundUp = 2;
 
         public static int GetLevelIndex(
@@ -621,7 +621,9 @@
                 new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.EnglandTotal },
                 new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.WalesTotal },
                 new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.ScotlandTotal },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.NorthernIrelandTotal }
+                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.NorthernIrelandTotal },
+                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.TonnageChangeCount },
+                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.TonnageChangeAdvice }
             ]);
 
             foreach (var material in materials)

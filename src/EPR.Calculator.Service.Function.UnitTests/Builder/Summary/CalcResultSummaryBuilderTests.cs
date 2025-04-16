@@ -550,8 +550,8 @@
 
             Assert.IsNotNull(result);
             Assert.AreEqual(CalcResultSummaryHeaders.CalculationResult, result.ResultSummaryHeader!.Name);
-            Assert.AreEqual(26, result.ProducerDisposalFeesHeaders!.Count());
-            var isColumnHeaderExists = result.ProducerDisposalFeesHeaders!.Select(dict => dict.ColumnIndex == 229 || dict.ColumnIndex == 230 || dict.ColumnIndex == 215).ToList();
+            Assert.AreEqual(25, result.ProducerDisposalFeesHeaders!.Count());
+            var isColumnHeaderExists = result.ProducerDisposalFeesHeaders!.Select(dict => dict.ColumnIndex == 229 || dict.ColumnIndex == 232 || dict.ColumnIndex == 215).ToList();
             Assert.IsTrue(isColumnHeaderExists.Contains(true));
             Assert.IsNotNull(result.ProducerDisposalFees);
             Assert.AreEqual(4, result.ProducerDisposalFees.Count());
@@ -800,6 +800,50 @@
             return test;
         }
 
+        [TestMethod]
+        public void GetTonnage_Level1_AssignsValuesCorrectly()
+        {
+            var result = new TestResult { Level = "1" };
+            if (CalcResultSummaryBuilder.GetTonnageByLevel().TryGetValue(result.Level, out var values))
+            {
+                result.TonnageChangeCount = values.Count;
+                result.TonnageChangeAdvice = values.Advice;
+            }
+
+            Assert.AreEqual("0", result.TonnageChangeCount);
+            Assert.AreEqual(string.Empty, result.TonnageChangeAdvice);
+        }
+
+        [TestMethod]
+        public void GetTonnage_Level2_AssignsValuesCorrectly()
+        {
+            var result = new TestResult { Level = "2" };
+            if (CalcResultSummaryBuilder.GetTonnageByLevel().TryGetValue(result.Level, out var values))
+            {
+                result.TonnageChangeCount = values.Count;
+                result.TonnageChangeAdvice = values.Advice;
+            }
+
+            Assert.AreEqual("-", result.TonnageChangeCount);
+            Assert.AreEqual("-", result.TonnageChangeAdvice);
+        }
+
+        [TestMethod]
+        public void GetTonnage_LevelDoesNotExist_DoesNotAssignValues()
+        {
+            var result = new TestResult { Level = "999" };
+            var found = CalcResultSummaryBuilder.GetTonnageByLevel().TryGetValue(result.Level, out var values);
+            if (found)
+            {
+                result.TonnageChangeCount = values.Count;
+                result.TonnageChangeAdvice = values.Advice;
+            }
+
+            Assert.IsFalse(found);
+            Assert.IsNull(result.TonnageChangeCount);
+            Assert.IsNull(result.TonnageChangeAdvice);
+        }
+
         private static void SeedDatabase(ApplicationDBContext context)
         {
             context.Material.AddRange(new List<Material>
@@ -829,6 +873,15 @@
                 new() { Id = 8, MaterialId = 1, PackagingType = "HH", PackagingTonnage = 300m, ProducerDetailId = 5 },
             });
             context.SaveChanges();
+        }
+
+        private class TestResult
+        {
+            public string Level { get; set; }
+
+            public string TonnageChangeCount { get; set; }
+
+            public string TonnageChangeAdvice { get; set; }
         }
     }
 }

@@ -170,6 +170,11 @@ namespace EPR.Calculator.Service.Function.Models
         public decimal ScotlandTotalWithBadDebtProvisionTotalBill { get; set; }
 
         public decimal NorthernIrelandTotalWithBadDebtProvisionTotalBill { get; set; }
+
+        public string TonnageChangeCount { get; set; }
+
+        public string TonnageChangeAdvice { get; set; }
+
         // End Section-TotalBill
 
         // Section - Billing Instructions

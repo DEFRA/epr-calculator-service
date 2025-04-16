@@ -408,6 +408,11 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             result.WalesTotalWithBadDebtProvision = result.WalesTotal;
             result.ScotlandTotalWithBadDebtProvision = result.ScotlandTotal;
             result.NorthernIrelandTotalWithBadDebtProvision = result.NorthernIrelandTotal;
+            if (GetTonnageByLevel().TryGetValue(result.Level, out var values))
+            {
+                result.TonnageChangeCount = values.Count;
+                result.TonnageChangeAdvice = values.Advice;
+            }
 
             result.TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision = result.TotalProducerCommsFee;
             result.BadDebtProvisionFor2A = result.BadDebtProvisionComms;
@@ -502,6 +507,15 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         {
             var levelOne = (int)CalcResultSummaryLevelIndex.One;
             return level == levelOne.ToString() ? "0" : "-";
+        }
+
+        internal static Dictionary<string, (string Count, string Advice)> GetTonnageByLevel()
+        {
+            return new Dictionary<string, (string Count, string Advice)>
+            {
+                { "1", ("0", string.Empty) },
+                { "2", ("-", "-") },
+            };
         }
     }
 }
