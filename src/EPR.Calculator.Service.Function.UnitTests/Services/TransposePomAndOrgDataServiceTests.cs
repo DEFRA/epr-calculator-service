@@ -871,13 +871,15 @@
 
         protected static IEnumerable<CalculatorRun> GetCalculatorRuns()
         {
+            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
+
             var list = new List<CalculatorRun>
             {
                 new ()
                 {
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Run",
-                    Financial_Year = "2024-25",
+                    Financial_Year = calculatorRunFinancialYear,
                     CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                     CalculatorRunOrganisationDataMasterId = 2,
@@ -887,7 +889,7 @@
                 {
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Calculated Result",
-                    Financial_Year = "2024-25",
+                    Financial_Year = calculatorRunFinancialYear,
                     CreatedAt = new DateTime(2024, 8, 21, 14, 16, 27, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                 },
@@ -895,7 +897,7 @@
                 {
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Run",
-                    Financial_Year = "2024-25",
+                    Financial_Year = calculatorRunFinancialYear,
                     CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                     CalculatorRunOrganisationDataMasterId = 1,
@@ -905,7 +907,7 @@
                 {
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Calculated Result",
-                    Financial_Year = "2024-25",
+                    Financial_Year = calculatorRunFinancialYear,
                     CreatedAt = new DateTime(2024, 8, 21, 14, 16, 27, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                     CalculatorRunOrganisationDataMasterId = 2,

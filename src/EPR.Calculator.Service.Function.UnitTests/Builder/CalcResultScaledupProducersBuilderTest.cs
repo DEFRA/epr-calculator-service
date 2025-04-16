@@ -49,11 +49,12 @@
                 CreatedAt = DateTime.Now,
                 CreatedBy = "Test User",
             };
+            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
             this.dbContext.CalculatorRunPomDataMaster.Add(calcRunPomDataMaster);
             this.dbContext.CalculatorRuns.Add(new CalculatorRun
             {
                 Id = runId,
-                Financial_Year = "2024-25",
+                Financial_Year = calculatorRunFinancialYear,
                 Name = "Name",
                 CalculatorRunPomDataMaster = calcRunPomDataMaster,
             });
@@ -83,7 +84,7 @@
                 new CalculatorRun
                 {
                     Id = 2,
-                    Financial_Year = "2024-25",
+                    Financial_Year = calculatorRunFinancialYear,
                     Name = "Name",
                 });
 
