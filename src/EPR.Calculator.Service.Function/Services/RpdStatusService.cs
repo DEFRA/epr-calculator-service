@@ -108,7 +108,7 @@
                 throw new ValidationException(vr.ToString());
             }
 
-            string financialYear = calcRun?.Financial_Year ?? string.Empty;
+            string financialYear = calcRun?.FinancialYearId ?? string.Empty;
             var calendarYear = Util.GetCalendarYearFromFinancialYear(financialYear);
             var createdBy = updatedBy;
             using (var transaction = await this.Context.Database.BeginTransactionAsync(timeout))
