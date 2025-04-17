@@ -21,11 +21,14 @@
         public const string CsvFileDelimiter = ",";
         public const string TabSpace = "\t";
         public const string DoubleQuote = "\"";
+        public const string Hyphen = "-";
         public const int LevelOne = 1;
         public const int LevelTwo = 2;
-        public const int SecondaryHeaderMaxColumnSize = 286;
+        public const int SecondaryHeaderMaxColumnSize = 298;
         public const string ScaledupProducersYes = "Yes";
         public const string ScaledupProducersNo = "No";
         public const string ParametersOther = "Parameters - Other";
+        public const string ZeroCurrency = "£0";
+        public const string Initial = "INITIAL";
     }
 }
