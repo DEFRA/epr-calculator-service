@@ -41,6 +41,8 @@ using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
 using EPR.Calculator.Service.Common.Logging;
 using System;
+using Microsoft.Extensions.Configuration;
+using System.Reflection;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -136,6 +138,18 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<IStorageService, LocalFileStorageService>();
             services.AddTransient<IConfigurationService, LocalDevelopmentConfiguration>();
 #endif
+        }
+
+        public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
+        {
+            var builtConfig = builder.ConfigurationBuilder.Build();
+
+            builder.ConfigurationBuilder
+               .SetBasePath(Environment.CurrentDirectory)
+               .AddUserSecrets(Assembly.GetExecutingAssembly(), true)
+               .AddEnvironmentVariables()
+               .Build();
+
         }
     }
 }
