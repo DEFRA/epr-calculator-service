@@ -234,7 +234,8 @@
 
         private void SeedDatabase(ApplicationDBContext context)
         {
-            var run = new CalculatorRun { Id = 1, Financial_Year = "2024-25", Name = "CalculatorRunTest1" };
+            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
+            var run = new CalculatorRun { Id = 1, Financial_Year = calculatorRunFinancialYear, Name = "CalculatorRunTest1" };
             context.CalculatorRuns.Add(run);
 
             var producerDetail = new ProducerDetail { Id = 1, CalculatorRunId = 1 };
@@ -389,11 +390,12 @@
 
         private void CreateNewRun()
         {
+            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2025-26" };
             var run = new CalculatorRun
             {
                 CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                 Name = "Test Run",
-                Financial_Year = "2024-25",
+                Financial_Year = calculatorRunFinancialYear,
                 CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
                 CreatedBy = "Test User",
                 DefaultParameterSettingMasterId = 1,
@@ -405,10 +407,10 @@
         private void CreateDefaultParameters()
         {
             var templateMasterList = this.dbContext.DefaultParameterTemplateMasterList.ToList();
-
+            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
             var defaultMaster = new DefaultParameterSettingMaster
             {
-                ParameterYear = "2024-25",
+                ParameterYear = calculatorRunFinancialYear,
             };
 
             this.dbContext.DefaultParameterSettings.Add(defaultMaster);
