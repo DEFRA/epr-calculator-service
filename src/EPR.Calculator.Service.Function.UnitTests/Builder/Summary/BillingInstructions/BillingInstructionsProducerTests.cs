@@ -390,7 +390,7 @@
         {
             // Act
             var result = BillingInstructionsProducer.GetHeaders().ToList();
-            var columnIndex = 289;
+            var columnIndex = 291;
 
             var expectedResult = new List<CalcResultSummaryHeader>();
             expectedResult.AddRange([
@@ -434,7 +434,7 @@
 
             var expectedResult = new List<CalcResultSummaryHeader>();
             expectedResult.AddRange([
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.Title, ColumnIndex = 289 }
+                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.Title, ColumnIndex = 291 }
             ]);
 
             // Assert
