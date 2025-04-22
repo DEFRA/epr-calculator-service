@@ -196,7 +196,7 @@ namespace EPR.Calculator.Service.Function.Models
 
         public string? SuggestedBillingInstruction { get; set; }
 
-        public decimal SuggestedInvoiceAmount { get; set; }
+        public string? SuggestedInvoiceAmount { get; set; }
         // End Section - Billing Instructions
     }
 }

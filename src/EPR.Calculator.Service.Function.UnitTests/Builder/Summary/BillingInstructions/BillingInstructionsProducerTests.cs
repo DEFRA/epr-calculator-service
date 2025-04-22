@@ -462,7 +462,7 @@
             Assert.AreEqual("-", fee.MaterialPercentageThresholdBreached);
             Assert.AreEqual("-", fee.TonnagePercentageThresholdBreached);
             Assert.AreEqual("-", fee.SuggestedBillingInstruction);
-            Assert.AreEqual(0, fee.SuggestedInvoiceAmount);
+            Assert.AreEqual("-", fee.SuggestedInvoiceAmount);
         }
 
         /// <summary>
@@ -629,7 +629,7 @@
                     MaterialPercentageThresholdBreached = string.Empty,
                     TonnagePercentageThresholdBreached = string.Empty,
                     SuggestedBillingInstruction = string.Empty,
-                    SuggestedInvoiceAmount = 4039
+                    SuggestedInvoiceAmount = "4039"
                 },
             };
         }

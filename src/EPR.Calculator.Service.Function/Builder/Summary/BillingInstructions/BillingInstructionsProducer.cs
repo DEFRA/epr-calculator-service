@@ -120,9 +120,16 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
                 : CommonConstants.Hyphen;
         }
 
-        private static decimal GetSuggestedInvoiceAmount(CalcResultSummaryProducerDisposalFees fee)
+        private static string GetSuggestedInvoiceAmount(CalcResultSummaryProducerDisposalFees fee)
         {
-            return fee.TotalProducerBillWithBadDebtProvision;
+            if (fee.IsProducerScaledup == CommonConstants.Totals)
+            {
+                return fee.TotalProducerBillWithBadDebtProvision.ToString();
+            }
+
+            return fee.Level == CommonConstants.LevelOne.ToString()
+                ? fee.TotalProducerBillWithBadDebtProvision.ToString()
+                : CommonConstants.Hyphen;
         }
     }
 }
