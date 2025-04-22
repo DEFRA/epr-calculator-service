@@ -390,7 +390,7 @@
         {
             // Act
             var result = BillingInstructionsProducer.GetHeaders().ToList();
-            var columnIndex = 289;
+            var columnIndex = 291;
 
             var expectedResult = new List<CalcResultSummaryHeader>();
             expectedResult.AddRange([
@@ -434,7 +434,7 @@
 
             var expectedResult = new List<CalcResultSummaryHeader>();
             expectedResult.AddRange([
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.Title, ColumnIndex = 289 }
+                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.Title, ColumnIndex = 291 }
             ]);
 
             // Assert
@@ -462,7 +462,7 @@
             Assert.AreEqual("-", fee.MaterialPercentageThresholdBreached);
             Assert.AreEqual("-", fee.TonnagePercentageThresholdBreached);
             Assert.AreEqual("-", fee.SuggestedBillingInstruction);
-            Assert.AreEqual(0, fee.SuggestedInvoiceAmount);
+            Assert.AreEqual("-", fee.SuggestedInvoiceAmount);
         }
 
         /// <summary>
@@ -629,7 +629,7 @@
                     MaterialPercentageThresholdBreached = string.Empty,
                     TonnagePercentageThresholdBreached = string.Empty,
                     SuggestedBillingInstruction = string.Empty,
-                    SuggestedInvoiceAmount = 4039
+                    SuggestedInvoiceAmount = "4039"
                 },
             };
         }
