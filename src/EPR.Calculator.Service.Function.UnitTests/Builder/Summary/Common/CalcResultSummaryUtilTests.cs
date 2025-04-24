@@ -321,6 +321,30 @@
         }
 
         [TestMethod]
+        public void CanGetNetReportedTonnageNotBelowZero()
+        {
+            // Arrange
+            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
+            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+
+            // We are increasing aluminum's packaging tonnage to ensure the managedConsumerWasteTonnage
+            // is greater than the reportedTonnage within the GetNetReportedTonnage method
+            var aluminum =
+                producer.ProducerReportedMaterials
+                    .First(p => p.Material.Code == material.Code && 
+                                p.PackagingType == PackagingTypes.ConsumerWaste);
+            aluminum.PackagingTonnage =+ 5000m;
+            
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
+
+            // Act
+            var result = CalcResultSummaryUtil.GetNetReportedTonnage(producer, material, scaledupProducers);
+
+            // Assert
+            Assert.AreEqual(0.00m, result);
+        }
+
+        [TestMethod]
         public void CanGetNetReportedTonnageProducerTotal()
         {
             // Arrange
