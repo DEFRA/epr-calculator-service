@@ -5,6 +5,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using System.Threading.Tasks;
     using EPR.Calculator.API.Data;
@@ -26,6 +27,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.EntityFrameworkCore;
+    using static EPR.Calculator.Service.Function.Services.TransposePomAndOrgDataService;
 
     public class CalcResultSummaryBuilder : ICalcResultSummaryBuilder
     {
@@ -154,7 +156,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             int runId,
             IEnumerable<ProducerDetail> producerDetails)
         {
-            return producerDetails.Where(pd => pd.CalculatorRunId == runId).OrderBy(pd => pd.ProducerId).ToList();
+            return producerDetails.Where(pd => pd.CalculatorRunId == runId).OrderBy(pd => pd.ProducerId).ThenBy(pd => pd.SubsidiaryId).ToList();
         }
 
         public static IEnumerable<CalcResultsProducerAndReportMaterialDetail> GetProducerRunMaterialDetails(
@@ -240,9 +242,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             var totalRow = new CalcResultSummaryProducerDisposalFees
             {
                 ProducerId = isOverAllTotalRow ? string.Empty : producersAndSubsidiaries[0].ProducerId.ToString(),
-                ProducerName = isOverAllTotalRow
-                    ? string.Empty
-                    : producersAndSubsidiaries[0].ProducerName ?? string.Empty,
+                ProducerName = GetOrganisationName(isOverAllTotalRow, producersAndSubsidiaries[0].ProducerId),
                 SubsidiaryId = string.Empty,
                 Level = isOverAllTotalRow ? string.Empty : CommonConstants.LevelOne.ToString(),
                 IsProducerScaledup = GetScaledupProducerStatusTotalRow(producersAndSubsidiaries[0], ScaledupProducers, isOverAllTotalRow),
@@ -303,6 +303,15 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             TwoCCommsCostUtil.UpdateTwoCTotals(calcResult, producerDisposalFees, isOverAllTotalRow, totalRow, producersAndSubsidiaries, TotalPackagingTonnage);
 
             return totalRow;
+        }
+
+        private string GetOrganisationName(bool isOverAllTotalRow,  int producerId) {
+            var producerName = this.context.OrganisationData.FirstOrDefault(x => x.OrganisationId == producerId)?.OrganisationName;
+             
+            return isOverAllTotalRow
+                        ? string.Empty
+                        : producerName ?? string.Empty;
+
         }
 
         public CalcResultSummaryProducerDisposalFees GetProducerRow(
