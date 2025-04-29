@@ -307,7 +307,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         }
 
         public string GetOrganisationName(bool isOverAllTotalRow,  int producerId, List<OrganisationData> OrganisationData) {
-            var producerName = OrganisationData.FirstOrDefault(x => x.OrganisationId == producerId)?.OrganisationName;
+            var producerName = OrganisationData.Find(x => x.OrganisationId == producerId)?.OrganisationName;
              
             return isOverAllTotalRow
                         ? string.Empty
