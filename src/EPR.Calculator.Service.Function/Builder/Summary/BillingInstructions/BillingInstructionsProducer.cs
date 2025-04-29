@@ -10,7 +10,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
 {
     public static class BillingInstructionsProducer
     {
-        public static readonly int ColumnIndex = 289;
+        public static readonly int ColumnIndex = 291;
 
         public static IEnumerable<CalcResultSummaryHeader> GetHeaders()
         {
@@ -120,9 +120,16 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
                 : CommonConstants.Hyphen;
         }
 
-        private static decimal GetSuggestedInvoiceAmount(CalcResultSummaryProducerDisposalFees fee)
+        private static string GetSuggestedInvoiceAmount(CalcResultSummaryProducerDisposalFees fee)
         {
-            return fee.TotalProducerBillWithBadDebtProvision;
+            if (fee.IsProducerScaledup == CommonConstants.Totals)
+            {
+                return fee.TotalProducerBillWithBadDebtProvision.ToString();
+            }
+
+            return fee.Level == CommonConstants.LevelOne.ToString()
+                ? fee.TotalProducerBillWithBadDebtProvision.ToString()
+                : CommonConstants.Hyphen;
         }
     }
 }
