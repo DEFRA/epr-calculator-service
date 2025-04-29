@@ -222,7 +222,7 @@
         {
             this.PrepareNonScaledUpProducer();
             this.PrepareScaledUpProducer();
-            var task = this.builder?.GetScaledUpOrganisationIdsAsync(this.runId);
+            var task = this.builder?.GetScaledUpOrganisationsAsync(this.runId);
             task?.Wait();
 
             var result = task?.Result;
@@ -305,7 +305,7 @@
                 ProducerId = 2,
                 SubsidiaryId = "Sub4",
             });
-            CalcResultScaledupProducersBuilder.AddExtraRows(runProducerMaterialDetails);
+            CalcResultScaledupProducersBuilder.AddExtraRows(runProducerMaterialDetails, new List<ScaledupOrganisation>());
 
             Assert.AreEqual(8, runProducerMaterialDetails.Count);
             var allProducersWithLevel2 = runProducerMaterialDetails.Where(x => x.SubsidiaryId == null);
