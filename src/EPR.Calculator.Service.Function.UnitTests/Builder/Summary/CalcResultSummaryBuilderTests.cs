@@ -21,6 +21,7 @@
         private readonly CalcResultSummaryBuilder calcResultsService;
         private readonly CalcResult calcResult;
         private readonly CalcResultScaledupProducers scaledupProducers;
+        private readonly List<OrganisationData> organisationData;
 
         private Fixture Fixture { get; init; } = new Fixture();
 
@@ -276,6 +277,11 @@
                     ColumnHeaders = null,
                     ScaledupProducers = new List<CalcResultScaledupProducer>(),
                 },
+            };
+
+            organisationData = new List<OrganisationData>
+            {
+                new OrganisationData { OrganisationId = 1, OrganisationName = "Org1", LoadTimestamp = DateTime.Now, SubmissionPeriodDesc = "" }
             };
 
             // Seed database
@@ -842,6 +848,36 @@
             Assert.IsFalse(found);
             Assert.IsNull(result.TonnageChangeCount);
             Assert.IsNull(result.TonnageChangeAdvice);
+        }        
+
+        [TestMethod]
+        public void GetOrganisationName_ShouldReturnEmpty_WhenIsOverAllTotalRowIsTrue()
+        {
+            // Act
+            var result = new CalcResultSummaryBuilder(this.context).GetOrganisationName(true, 1, organisationData);
+
+            // Assert
+            Assert.AreEqual(string.Empty, result);
+        }
+
+        [TestMethod]
+        public void GetOrganisationName_ShouldReturnProducerName_WhenProducerExists()
+        {
+            // Act
+            var result = new CalcResultSummaryBuilder(this.context).GetOrganisationName(false, 1, organisationData);
+
+            // Assert
+            Assert.AreEqual("Org1", result);
+        }
+
+        [TestMethod]
+        public void GetOrganisationName_ShouldReturnEmpty_WhenProducerDoesNotExist()
+        {
+            // Act
+            var result = new CalcResultSummaryBuilder(this.context).GetOrganisationName(false, 99, organisationData);
+
+            // Assert
+            Assert.AreEqual(string.Empty, result);
         }
 
         private static void SeedDatabase(ApplicationDBContext context)

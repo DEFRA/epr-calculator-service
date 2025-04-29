@@ -85,7 +85,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             if (orderedProducerDetails.Any())
             {
                 var producerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>();
-
+                var organisationData = this.context.OrganisationData.ToList();
                 foreach (var producer in orderedProducerDetails)
                 {
                     // We have to write an additional row if a producer have at least one subsidiary
@@ -96,7 +96,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     if (producersAndSubsidiaries.Count() > 1 &&
                         producerDisposalFees.Find(pdf => pdf.ProducerId == producer.ProducerId.ToString()) == null)
                     {
-                        var totalRow = this.GetProducerTotalRow(producersAndSubsidiaries.ToList(), materials, calcResult, producerDisposalFees, false, TotalPackagingTonnage);
+                        var totalRow = this.GetProducerTotalRow(producersAndSubsidiaries.ToList(), materials, calcResult, producerDisposalFees, false, TotalPackagingTonnage, organisationData);
                         producerDisposalFees.Add(totalRow);
                     }
 
@@ -106,7 +106,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
                 // Calculate the total for all the producers
 
-                var allTotalRow = this.GetProducerTotalRow(orderedProducerDetails.ToList(), materials, calcResult, producerDisposalFees, true, TotalPackagingTonnage);
+                var allTotalRow = this.GetProducerTotalRow(orderedProducerDetails.ToList(), materials, calcResult, producerDisposalFees, true, TotalPackagingTonnage, organisationData);
                 producerDisposalFees.Add(allTotalRow);
 
                 result.ProducerDisposalFees = producerDisposalFees;
@@ -181,7 +181,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             CalcResult calcResult,
             IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
             bool isOverAllTotalRow,
-            IEnumerable<TotalPackagingTonnagePerRun> TotalPackagingTonnage)
+            IEnumerable<TotalPackagingTonnagePerRun> TotalPackagingTonnage,
+            List<OrganisationData> organisationData)
         {
             var materialCostSummary = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>();
             var commsCostSummary = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>();
@@ -242,7 +243,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             var totalRow = new CalcResultSummaryProducerDisposalFees
             {
                 ProducerId = isOverAllTotalRow ? string.Empty : producersAndSubsidiaries[0].ProducerId.ToString(),
-                ProducerName = GetOrganisationName(isOverAllTotalRow, producersAndSubsidiaries[0].ProducerId),
+                ProducerName = GetOrganisationName(isOverAllTotalRow, producersAndSubsidiaries[0].ProducerId, organisationData),
                 SubsidiaryId = string.Empty,
                 Level = isOverAllTotalRow ? string.Empty : CommonConstants.LevelOne.ToString(),
                 IsProducerScaledup = GetScaledupProducerStatusTotalRow(producersAndSubsidiaries[0], ScaledupProducers, isOverAllTotalRow),
@@ -305,13 +306,12 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             return totalRow;
         }
 
-        private string GetOrganisationName(bool isOverAllTotalRow,  int producerId) {
-            var producerName = this.context.OrganisationData.FirstOrDefault(x => x.OrganisationId == producerId)?.OrganisationName;
+        public string GetOrganisationName(bool isOverAllTotalRow,  int producerId, List<OrganisationData> OrganisationData) {
+            var producerName = OrganisationData.FirstOrDefault(x => x.OrganisationId == producerId)?.OrganisationName;
              
             return isOverAllTotalRow
                         ? string.Empty
                         : producerName ?? string.Empty;
-
         }
 
         public CalcResultSummaryProducerDisposalFees GetProducerRow(
