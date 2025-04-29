@@ -597,7 +597,7 @@
         {
             var result = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, this.context.ProducerDetail.ToList());
             Assert.IsNotNull(result);
-            Assert.AreEqual(3, result.Count());
+            Assert.AreEqual(4, result.Count());
             Assert.AreEqual("Producer1", result.First().ProducerName);
             Assert.AreEqual("Producer5", result.Last().ProducerName);
         }
@@ -630,8 +630,8 @@
 
             Assert.AreEqual(string.Empty, totals?.ProducerName);
             Assert.IsNotNull(producer.ProducerName);
-            Assert.AreEqual("Producer1", producer.ProducerName);
-        }
+            Assert.AreEqual("", producer.ProducerName);
+        }        
 
         [TestMethod]
         public void GetTonnages_ShouldCalculateCorrectlyForGlass()
@@ -895,6 +895,7 @@
                 new() { Id = 3, ProducerName = "Producer3", ProducerId = 3, CalculatorRunId = 3, CalculatorRun = new CalculatorRun { Financial_Year = "2024-25", Name = "Test3" } },
                 new() { Id = 4, ProducerName = "Producer4", ProducerId = 4, CalculatorRunId = 1 },
                 new() { Id = 5, ProducerName = "Producer5", ProducerId = 5, CalculatorRunId = 1 },
+                new() { Id = 6, ProducerName = "Producer1", ProducerId = 1, CalculatorRunId = 1, SubsidiaryId = "1" },
             });
 
             context.ProducerReportedMaterial.AddRange(new List<ProducerReportedMaterial>
