@@ -631,7 +631,7 @@
             Assert.AreEqual(string.Empty, totals?.ProducerName);
             Assert.IsNotNull(producer.ProducerName);
             Assert.AreEqual("", producer.ProducerName);
-        }        
+        }
 
         [TestMethod]
         public void GetTonnages_ShouldCalculateCorrectlyForGlass()

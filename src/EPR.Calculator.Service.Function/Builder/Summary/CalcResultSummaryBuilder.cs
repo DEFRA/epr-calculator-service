@@ -5,7 +5,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using System.Threading.Tasks;
     using EPR.Calculator.API.Data;
@@ -27,7 +26,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.EntityFrameworkCore;
-    using static EPR.Calculator.Service.Function.Services.TransposePomAndOrgDataService;
 
     public class CalcResultSummaryBuilder : ICalcResultSummaryBuilder
     {
