@@ -141,52 +141,45 @@
         /// <inheritdoc/>
         public async Task<CalcResultScaledupProducers> Construct(CalcResultsRequestDto resultsRequestDto)
         {
-            try
+            var runId = resultsRequestDto.RunId;
+            var materialsFromDb = await this.context.Material.ToListAsync();
+            var materials = MaterialMapper.Map(materialsFromDb);
+
+            List<CalcResultScaledupProducer> orderedRunProducerMaterialDetails = new List<CalcResultScaledupProducer>();
+
+            var scaledupOrganisations = await this.GetScaledUpOrganisationsAsync(resultsRequestDto.RunId);
+
+            var organisationIds = scaledupOrganisations.Select(so => so.OrganisationId).ToList();
+
+            if (scaledupOrganisations.Any())
             {
-                var runId = resultsRequestDto.RunId;
-                var materialsFromDb = await this.context.Material.ToListAsync();
-                var materials = MaterialMapper.Map(materialsFromDb);
+                var runProducerMaterialDetails = await this.GetProducerReportedMaterialsAsync(runId, organisationIds);
 
-                List<CalcResultScaledupProducer> orderedRunProducerMaterialDetails = new List<CalcResultScaledupProducer>();
+                var allOrganisationPomDetails = await this.GetScaledupOrganisationDetails(runId, organisationIds);
 
-                var scaledupOrganisations = await this.GetScaledUpOrganisationsAsync(resultsRequestDto.RunId);
+                AddExtraRows(runProducerMaterialDetails, scaledupOrganisations);
 
-                var organisationIds = scaledupOrganisations.Select(so => so.OrganisationId).ToList();
+                CalculateScaledupTonnage(runProducerMaterialDetails, allOrganisationPomDetails, materials);
 
-                if (scaledupOrganisations.Any())
-                {
-                    var runProducerMaterialDetails = await this.GetProducerReportedMaterialsAsync(runId, organisationIds);
+                orderedRunProducerMaterialDetails = runProducerMaterialDetails
+                    .OrderBy(p => p.ProducerId)
+                    .ThenBy(p => p.Level)
+                    .ThenBy(p => p.SubsidiaryId)
+                    .ThenBy(p => p.SubmissionPeriodCode)
+                    .ToList();
 
-                    var allOrganisationPomDetails = await this.GetScaledupOrganisationDetails(runId, organisationIds);
+                var overallTotalRow = GetOverallTotalRow(orderedRunProducerMaterialDetails, materials);
 
-                    AddExtraRows(runProducerMaterialDetails, scaledupOrganisations);
-
-                    CalculateScaledupTonnage(runProducerMaterialDetails, allOrganisationPomDetails, materials);
-
-                    orderedRunProducerMaterialDetails = runProducerMaterialDetails
-                        .OrderBy(p => p.ProducerId)
-                        .ThenBy(p => p.Level)
-                        .ThenBy(p => p.SubsidiaryId)
-                        .ThenBy(p => p.SubmissionPeriodCode)
-                        .ToList();
-
-                    var overallTotalRow = GetOverallTotalRow(orderedRunProducerMaterialDetails, materials);
-
-                    orderedRunProducerMaterialDetails.Add(overallTotalRow);
-                }
-
-                var scaledupProducersSummary = new CalcResultScaledupProducers
-                {
-                    ScaledupProducers = orderedRunProducerMaterialDetails,
-                };
-
-                SetHeaders(scaledupProducersSummary, materials);
-                return scaledupProducersSummary;
+                orderedRunProducerMaterialDetails.Add(overallTotalRow);
             }
-            catch (Exception ex)
+
+            var scaledupProducersSummary = new CalcResultScaledupProducers
             {
-                throw ex;
-            }
+                ScaledupProducers = orderedRunProducerMaterialDetails,
+            };
+
+            SetHeaders(scaledupProducersSummary, materials);
+            return scaledupProducersSummary;
         }
 
         public async Task<IEnumerable<CalculatorRunPomDataDetail>> GetScaledupOrganisationDetails(int runId, IEnumerable<int> organisationIds)

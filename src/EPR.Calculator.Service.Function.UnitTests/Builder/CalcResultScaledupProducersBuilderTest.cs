@@ -20,88 +20,113 @@
 
         private void PrepareNonScaledUpProducer()
         {
-            //var producerDetail = new ProducerDetail
-            //{
-            //    Id = 1,
-            //    CalculatorRunId = this.runId,
-            //    ProducerId = 11,
-            //    SubsidiaryId = "Subsidary 1",
-            //    ProducerName = "Producer Name",
-            //};
-            //this.dbContext.ProducerDetail.Add(producerDetail);
-            //this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-            //{
-            //    Id = 1,
-            //    PackagingType = "HH",
-            //    ProducerDetail = producerDetail,
-            //});
-            //this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-            //{
-            //    Id = 2,
-            //    PackagingType = "HDC",
-            //    ProducerDetail = producerDetail,
-            //});
-            //var calcRunPomDataMaster = new CalculatorRunPomDataMaster
-            //{
-            //    Id = 1,
-            //    CalendarYear = "2024",
-            //    EffectiveFrom = DateTime.Now,
-            //    CreatedAt = DateTime.Now,
-            //    CreatedBy = "Test User",
-            //};
-            //this.dbContext.CalculatorRunPomDataMaster.Add(calcRunPomDataMaster);
-            //this.dbContext.CalculatorRuns.Add(new CalculatorRun
-            //{
-            //    Id = runId,
-            //    Financial_Year = "2025-26",
-            //    Name = "Name",
-            //    CalculatorRunPomDataMaster = calcRunPomDataMaster,
-            //});
-            //this.dbContext.CalculatorRunPomDataDetails.Add(
-            //    new CalculatorRunPomDataDetail
-            //    {
-            //        LoadTimeStamp = DateTime.Now,
-            //        SubmissionPeriod = "2024-P1",
-            //        SubmissionPeriodDesc = "desc",
-            //        CalculatorRunPomDataMaster = calcRunPomDataMaster,
-            //        OrganisationId = 10,
-            //    });
+            var producerDetail = new ProducerDetail
+            {
+                Id = 1,
+                CalculatorRunId = this.runId,
+                ProducerId = 11,
+                SubsidiaryId = "Subsidary 1",
+                ProducerName = "Producer Name",
+            };
+            this.dbContext.ProducerDetail.Add(producerDetail);
 
-            //this.dbContext.SubmissionPeriodLookup.Add(
-            //    new SubmissionPeriodLookup
-            //    {
-            //        DaysInSubmissionPeriod = 0,
-            //        DaysInWholePeriod = 0,
-            //        EndDate = DateTime.Now,
-            //        StartDate = DateTime.Now,
-            //        ScaleupFactor = 1,
-            //        SubmissionPeriod = "2024-P1",
-            //        SubmissionPeriodDesc = string.Empty,
-            //    });
+            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            {
+                Id = 1,
+                PackagingType = "HH",
+                ProducerDetail = producerDetail,
+            });
+            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            {
+                Id = 2,
+                PackagingType = "HDC",
+                ProducerDetail = producerDetail,
+            });
 
-            //this.dbContext.CalculatorRuns.Add(
-            //    new CalculatorRun
-            //    {
-            //        Id = 2,
-            //        Financial_Year = "2024-25",
-            //        Name = "Name",
-            //    });
+            var calcRunPomDataMaster = new CalculatorRunPomDataMaster
+            {
+                Id = 1,
+                CalendarYear = "2024",
+                EffectiveFrom = DateTime.Now,
+                CreatedAt = DateTime.Now,
+                CreatedBy = "Test User",
+            };
+            this.dbContext.CalculatorRunPomDataMaster.Add(calcRunPomDataMaster);
 
-            //var producerDetail1 = new ProducerDetail
-            //{
-            //    Id = 2,
-            //    CalculatorRunId = 2,
-            //    ProducerId = 11,
-            //    ProducerName = "Producer Test",
-            //};
-            //this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-            //{
-            //    Id = 3,
-            //    PackagingType = "HH",
-            //    ProducerDetail = producerDetail1,
-            //});
+            var calcRunOrganisationDataMaster = new CalculatorRunOrganisationDataMaster
+            {
+                Id = 11,
+                CalendarYear = "2024",
+                EffectiveFrom = DateTime.Now,
+                CreatedAt = DateTime.Now,
+                CreatedBy = "Test User",
+            };
+            this.dbContext.CalculatorRunOrganisationDataMaster.Add(calcRunOrganisationDataMaster);
 
-            //this.dbContext.SaveChanges();
+            this.dbContext.CalculatorRuns.Add(new CalculatorRun
+            {
+                Id = runId,
+                Financial_Year = "2025-26",
+                Name = "Name",
+                CalculatorRunOrganisationDataMaster = calcRunOrganisationDataMaster,
+                CalculatorRunPomDataMaster = calcRunPomDataMaster,
+            });
+
+            this.dbContext.CalculatorRunOrganisationDataDetails.Add(
+                new CalculatorRunOrganisationDataDetail
+                {
+                    Id = 1,
+                    OrganisationId = 11,
+                    SubsidaryId = null,
+                    OrganisationName = "Allied Packaging",
+                    LoadTimeStamp = DateTime.Now,
+                    SubmissionPeriodDesc = "January to June 2023",
+                    CalculatorRunOrganisationDataMaster = calcRunOrganisationDataMaster
+                });
+
+            this.dbContext.CalculatorRunPomDataDetails.Add(
+                new CalculatorRunPomDataDetail
+                {
+                    LoadTimeStamp = DateTime.Now,
+                    SubmissionPeriod = "2024-P1",
+                    SubmissionPeriodDesc = "desc",
+                    CalculatorRunPomDataMaster = calcRunPomDataMaster,
+                    OrganisationId = 10,
+                });
+
+            this.dbContext.SubmissionPeriodLookup.Add(
+                new SubmissionPeriodLookup
+                {
+                    DaysInSubmissionPeriod = 0,
+                    DaysInWholePeriod = 0,
+                    EndDate = DateTime.Now,
+                    StartDate = DateTime.Now,
+                    ScaleupFactor = 1,
+                    SubmissionPeriod = "2024-P1",
+                    SubmissionPeriodDesc = string.Empty,
+                });
+
+            this.dbContext.CalculatorRuns.Add(
+                new CalculatorRun
+                {
+                    Id = 2,
+                    Financial_Year = "2024-25",
+                    Name = "Name",
+                });
+
+            var producerDetail1 = new ProducerDetail
+            {
+                Id = 2,
+                CalculatorRunId = 2,
+                ProducerId = 11,
+                ProducerName = "Producer Test",
+            };
+            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            {
+                Id = 3,
+                PackagingType = "HH",
+                ProducerDetail = producerDetail1,
+            });
 
             this.dbContext.Material.AddRange(
                 new Material { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
@@ -113,11 +138,6 @@
                 new Material { Id = 7, Code = "WD", Name = "Wood", Description = "Wood" },
                 new Material { Id = 8, Code = "OT", Name = "Other materials", Description = "Other materials" }
             );
-
-            this.dbContext.ProducerDetail.AddRange(TestDataHelper.GetProducers());
-            this.dbContext.CalculatorRunPomDataDetails.AddRange(TestDataHelper.GetCalculatorRunPomDataDetails());
-            this.dbContext.CalculatorRunOrganisationDataDetails.AddRange(TestDataHelper.GetCalculatorRunOrganisationDataDetails());
-            this.dbContext.CalculatorRuns.AddRange(TestDataHelper.GetCaculatorRuns());
 
             this.dbContext.SaveChanges();
         }
@@ -193,8 +213,7 @@
             var result = await this.builder.Construct(requestDto);
 
             // Assert
-            var expectedNumberOfRuns = await this.dbContext.CalculatorRuns.CountAsync(); // The +1 is the totals row.
-            Assert.AreEqual(expectedNumberOfRuns, result.ScaledupProducers.Count());
+            Assert.AreEqual(3, result.ScaledupProducers.Count());
         }
 
         /// <summary>
@@ -215,7 +234,7 @@
 
             // Assert
             var actualNumberScaledUpProducer = result.ScaledupProducers.Where(t => !t.IsTotalRow);
-            Assert.AreEqual(1, actualNumberScaledUpProducer.Count());
+            Assert.AreEqual(2, actualNumberScaledUpProducer.Count());
         }
 
         /// <summary>
@@ -297,35 +316,52 @@
         {
             this.builder = new CalcResultScaledupProducersBuilder(this.dbContext!);
             var runProducerMaterialDetails = new List<CalcResultScaledupProducer>();
-            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
-            {
-                ProducerId = 1,
-            });
-            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
-            {
-                ProducerId = 1,
-                SubsidiaryId = "Sub1",
-            });
-            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
-            {
-                ProducerId = 1,
-                SubsidiaryId = "Sub2",
-            });
-            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
-            {
-                ProducerId = 2,
-            });
-            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
-            {
-                ProducerId = 2,
-                SubsidiaryId = "Sub3",
-            });
-            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
-            {
-                ProducerId = 2,
-                SubsidiaryId = "Sub4",
-            });
-            CalcResultScaledupProducersBuilder.AddExtraRows(runProducerMaterialDetails, new List<ScaledupOrganisation>());
+            runProducerMaterialDetails.AddRange([
+                new CalcResultScaledupProducer
+                {
+                    ProducerId = 1,
+                },
+                new CalcResultScaledupProducer
+                {
+                    ProducerId = 1,
+                    SubsidiaryId = "Sub1",
+                },
+                new CalcResultScaledupProducer
+                {
+                    ProducerId = 1,
+                    SubsidiaryId = "Sub2",
+                },
+                new CalcResultScaledupProducer
+                {
+                    ProducerId = 2,
+                },
+                new CalcResultScaledupProducer
+                {
+                    ProducerId = 2,
+                    SubsidiaryId = "Sub3",
+                },
+                new CalcResultScaledupProducer
+                {
+                    ProducerId = 2,
+                    SubsidiaryId = "Sub4",
+                }
+            ]);
+
+            var scaledupOrganisations = new List<ScaledupOrganisation>();
+            scaledupOrganisations.AddRange([
+                new ScaledupOrganisation
+                {
+                    OrganisationId = 1,
+                    OrganisationName = "Allied Packaging",
+                },
+                new ScaledupOrganisation
+                {
+                    OrganisationId = 2,
+                    OrganisationName = "Beeline Materials",
+                },
+            ]);
+
+            CalcResultScaledupProducersBuilder.AddExtraRows(runProducerMaterialDetails, scaledupOrganisations);
 
             Assert.AreEqual(8, runProducerMaterialDetails.Count);
             var allProducersWithLevel2 = runProducerMaterialDetails.Where(x => x.SubsidiaryId == null);
