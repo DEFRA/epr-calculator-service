@@ -167,7 +167,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             int runId,
             IEnumerable<ProducerDetail> producerDetails)
         {
-            return producerDetails.Where(pd => pd.CalculatorRunId == runId).OrderBy(pd => pd.ProducerId).ToList();
+            return producerDetails.Where(pd => pd.CalculatorRunId == runId).OrderBy(pd => pd.ProducerId).ThenBy(pd => pd.SubsidiaryId).ToList();
         }
 
         public static IEnumerable<CalcResultsProducerAndReportMaterialDetail> GetProducerRunMaterialDetails(
@@ -499,7 +499,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             return result;
         }
 
-        private bool CanAddTotalRow(ProducerDetail producer,
+        public bool CanAddTotalRow(ProducerDetail producer,
             IEnumerable<ProducerDetail> producersAndSubsidiaries,
             List<CalcResultSummaryProducerDisposalFees> producerDisposalFees)
         {
@@ -521,7 +521,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             return false;
         }
 
-        private string GetProducerNameForTotalRow(int producerId, bool isOverAllTotalRow)
+        public string GetProducerNameForTotalRow(int producerId, bool isOverAllTotalRow)
         {
             if (isOverAllTotalRow)
             {
