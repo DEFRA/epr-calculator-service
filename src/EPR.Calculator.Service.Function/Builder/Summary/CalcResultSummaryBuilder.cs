@@ -9,6 +9,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
     using System.Threading.Tasks;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
     using EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions;
     using EPR.Calculator.Service.Function.Builder.Summary.Common;
     using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA;
@@ -32,6 +33,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         private readonly ApplicationDBContext context;
 
         public static IEnumerable<CalcResultScaledupProducer>? ScaledupProducers { get; set; }
+
+        public static IEnumerable<ScaledupOrganisation> ParentOrganisations { get; set; } = [];
 
         public CalcResultSummaryBuilder(ApplicationDBContext context)
         {
@@ -64,6 +67,17 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             // Household + PublicBin + HDC
             var totalPackagingTonnage = GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, runId);
 
+            // Get parent organisations
+            ParentOrganisations = await (from run in this.context.CalculatorRuns
+                                         join crodm in this.context.CalculatorRunOrganisationDataMaster on run.CalculatorRunOrganisationDataMasterId equals crodm.Id
+                                         join crodd in this.context.CalculatorRunOrganisationDataDetails on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
+                                         where run.Id == runId && crodd.SubsidaryId == null
+                                         select new ScaledupOrganisation
+                                         {
+                                             OrganisationId = crodd.OrganisationId ?? 0,
+                                             OrganisationName = crodd.OrganisationName
+                                         }).Distinct().ToListAsync();
+
             var result = GetCalcResultSummary(
                 orderedProducerDetails,
                 materials,
@@ -91,8 +105,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     var producersAndSubsidiaries = orderedProducerDetails.Where(pd => pd.ProducerId == producer.ProducerId);
 
                     // Make sure the total row is written only once
-                    if (producersAndSubsidiaries.Count() > 1 &&
-                        producerDisposalFees.Find(pdf => pdf.ProducerId == producer.ProducerId.ToString()) == null)
+                    if (CanAddTotalRow(producer, producersAndSubsidiaries, producerDisposalFees))
                     {
                         var totalRow = this.GetProducerTotalRow(producersAndSubsidiaries.ToList(), materials, calcResult, producerDisposalFees, false, TotalPackagingTonnage);
                         producerDisposalFees.Add(totalRow);
@@ -240,9 +253,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             var totalRow = new CalcResultSummaryProducerDisposalFees
             {
                 ProducerId = isOverAllTotalRow ? string.Empty : producersAndSubsidiaries[0].ProducerId.ToString(),
-                ProducerName = isOverAllTotalRow
-                    ? string.Empty
-                    : producersAndSubsidiaries[0].ProducerName ?? string.Empty,
+                ProducerName = GetProducerNameForTotalRow(producersAndSubsidiaries[0].ProducerId, isOverAllTotalRow),
                 SubsidiaryId = string.Empty,
                 Level = isOverAllTotalRow ? string.Empty : CommonConstants.LevelOne.ToString(),
                 IsProducerScaledup = GetScaledupProducerStatusTotalRow(producersAndSubsidiaries[0], ScaledupProducers, isOverAllTotalRow),
@@ -441,9 +452,9 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         }
 
         public static IEnumerable<TotalPackagingTonnagePerRun> GetTotalPackagingTonnagePerRun(
-     IEnumerable<CalcResultsProducerAndReportMaterialDetail> allResults,
-     IEnumerable<MaterialDetail> materials,
-     int runId)
+            IEnumerable<CalcResultsProducerAndReportMaterialDetail> allResults,
+            IEnumerable<MaterialDetail> materials,
+            int runId)
         {
             var allProducerDetails = allResults.Select(x => x.ProducerDetail).Distinct();
             var filteredProducers = allProducerDetails.Where(t => !ScaledupProducers.
@@ -486,6 +497,44 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             }
 
             return result;
+        }
+
+        private bool CanAddTotalRow(ProducerDetail producer,
+            IEnumerable<ProducerDetail> producersAndSubsidiaries,
+            List<CalcResultSummaryProducerDisposalFees> producerDisposalFees)
+        {
+            var parentProducer = ParentOrganisations.FirstOrDefault(po => po.OrganisationId == producer.ProducerId);
+            if (parentProducer == null)
+            {
+                return false;
+            }
+
+            var pomDataExistsForParentProducer = producersAndSubsidiaries.Any(ps => ps.ProducerId == parentProducer.OrganisationId && ps.SubsidiaryId == null);
+            if (producersAndSubsidiaries.Count() > 1 || !pomDataExistsForParentProducer)
+            {
+                if (producerDisposalFees.Find(pdf => pdf.ProducerId == producer.ProducerId.ToString()) == null)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private string GetProducerNameForTotalRow(int producerId, bool isOverAllTotalRow)
+        {
+            if (isOverAllTotalRow)
+            {
+                return string.Empty;
+            }
+
+            var parentProducer = ParentOrganisations.FirstOrDefault(po => po.OrganisationId == producerId);
+            if (parentProducer == null)
+            {
+                return string.Empty;
+            }
+
+            return parentProducer.OrganisationName ?? string.Empty;
         }
 
         internal static string GetScaledupProducerStatusTotalRow(

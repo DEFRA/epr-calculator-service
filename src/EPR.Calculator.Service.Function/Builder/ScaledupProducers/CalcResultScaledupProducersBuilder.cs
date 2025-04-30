@@ -230,13 +230,15 @@
                                             where run.Id == runId && crpdd.OrganisationId != null && spl.ScaleupFactor > NormalScaleup
                                             select crpdd.OrganisationId.GetValueOrDefault()).Distinct().ToListAsync() ?? [];
 
-            var scaledupOrganisations = await (from crodd in this.context.CalculatorRunOrganisationDataDetails
-                                               where scaleupOrganisationIds.Contains(crodd.OrganisationId ?? 0) && crodd.SubsidaryId == null
-                                               select new ScaledupOrganisation
-                                               {
-                                                   OrganisationId = crodd.OrganisationId ?? 0,
-                                                   OrganisationName = crodd.OrganisationName
-                                               }).Distinct().ToListAsync();
+            var scaledupOrganisations = await (from run in this.context.CalculatorRuns
+                                            join crodm in this.context.CalculatorRunOrganisationDataMaster on run.CalculatorRunOrganisationDataMasterId equals crodm.Id
+                                            join crodd in this.context.CalculatorRunOrganisationDataDetails on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
+                                            where run.Id == runId && scaleupOrganisationIds.Contains(crodd.OrganisationId ?? 0) && crodd.SubsidaryId == null
+                                            select new ScaledupOrganisation
+                                            {
+                                                OrganisationId = crodd.OrganisationId ?? 0,
+                                                OrganisationName = crodd.OrganisationName
+                                            }).Distinct().ToListAsync();
 
             return scaledupOrganisations ?? [];
         }
