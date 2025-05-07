@@ -41,11 +41,12 @@
         [TestMethod]
         public void ConstructTest()
         {
+            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2023-24" };
             var run = new CalculatorRun
             {
                 CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                 Name = "Test Run",
-                Financial_Year = "2024-25",
+                Financial_Year = calculatorRunFinancialYear,
                 CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
                 CreatedBy = "Test User",
                 DefaultParameterSettingMasterId = 1,
@@ -53,8 +54,7 @@
 
             var templateMasterList = dbContext.DefaultParameterTemplateMasterList.ToList();
 
-            var defaultMaster = new DefaultParameterSettingMaster();
-            defaultMaster.ParameterYear = "2024-25";
+            var defaultMaster = new DefaultParameterSettingMaster { ParameterYear = calculatorRunFinancialYear };
 
             dbContext.DefaultParameterSettings.Add(defaultMaster);
             dbContext.CalculatorRuns.Add(run);

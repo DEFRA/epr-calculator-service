@@ -1148,6 +1148,7 @@
 
         public static List<ProducerDetail> GetProducers()
         {
+            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
             var producers = new List<ProducerDetail>
             {
                 new ProducerDetail
@@ -1156,7 +1157,7 @@
                     ProducerId = 1,
                     ProducerName = "Allied Packaging",
                     CalculatorRunId = 1,
-                    CalculatorRun = new CalculatorRun { Financial_Year = "2024-25", Name = "Test Run 1" },
+                    CalculatorRun = new CalculatorRun { Financial_Year = calculatorRunFinancialYear, Name = "Test Run 1" },
                 },
                 new ProducerDetail
                 {
@@ -1164,7 +1165,7 @@
                     ProducerId = 2,
                     ProducerName = "Beeline Materials",
                     CalculatorRunId = 1,
-                    CalculatorRun = new CalculatorRun { Financial_Year = "2024-25", Name = "Test Run 1" },
+                    CalculatorRun = new CalculatorRun { Financial_Year = calculatorRunFinancialYear, Name = "Test Run 1" },
                 },
                 new ProducerDetail
                 {
@@ -1172,7 +1173,7 @@
                     ProducerId = 3,
                     ProducerName = "Cloud Boxes",
                     CalculatorRunId = 1,
-                    CalculatorRun = new CalculatorRun { Financial_Year = "2024-25", Name = "Test Run 1" },
+                    CalculatorRun = new CalculatorRun { Financial_Year = calculatorRunFinancialYear, Name = "Test Run 1" },
                 },
             };
 

@@ -17,7 +17,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         }
 
         [TestMethod]
-        public async void CanCallUploadResultFileContentAsync()
+        public async Task CanCallUploadResultFileContentAsync()
         {
             // Arrange
             var fixture = new Fixture();
