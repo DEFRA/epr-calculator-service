@@ -1569,5 +1569,149 @@
             });
             return list;
         }
+
+        public static IEnumerable<CalculatorRun> GetCaculatorRuns()
+        {
+            var list = new List<CalculatorRun>();
+            list.Add(new CalculatorRun
+            {
+                Id = 1,
+                CalculatorRunClassificationId = 3,
+                Name = "Test Run 1",
+                Financial_Year = "2025-26",
+                CreatedAt = DateTime.Now,
+                CreatedBy = "Test user",
+                CalculatorRunOrganisationDataMasterId = 1,
+                CalculatorRunPomDataMasterId = 1,
+                DefaultParameterSettingMasterId = 1,
+                LapcapDataMasterId = 1
+            });
+            list.Add(new CalculatorRun
+            {
+                Id = 2,
+                CalculatorRunClassificationId = 2,
+                Name = "Test Run 2",
+                Financial_Year = "2025-26",
+                CreatedAt = DateTime.Now,
+                CreatedBy = "Test user",
+                CalculatorRunOrganisationDataMasterId = 2,
+                CalculatorRunPomDataMasterId = 2,
+                DefaultParameterSettingMasterId = 1,
+                LapcapDataMasterId = 1
+            });
+            return list;
+        }
+
+        public static IEnumerable<CalculatorRunOrganisationDataDetail> GetCalculatorRunOrganisationDataDetails()
+        {
+            var list = new List<CalculatorRunOrganisationDataDetail>();
+            list.Add(new CalculatorRunOrganisationDataDetail
+            {
+                Id = 1,
+                OrganisationId = 1,
+                SubsidaryId = null,
+                OrganisationName = "Allied Packaging",
+                LoadTimeStamp = DateTime.Now,
+                SubmissionPeriodDesc = "January to June 2023",
+                CalculatorRunOrganisationDataMasterId = GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
+                CalculatorRunOrganisationDataMaster = GetCalculatorRunOrganisationDataMaster().ToList()[0]
+            });
+            list.Add(new CalculatorRunOrganisationDataDetail
+            {
+                Id = 1,
+                OrganisationId = 1,
+                SubsidaryId = "901",
+                OrganisationName = "Allied Subsidiary",
+                LoadTimeStamp = DateTime.Now,
+                SubmissionPeriodDesc = "January to June 2023",
+                CalculatorRunOrganisationDataMasterId = GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
+                CalculatorRunOrganisationDataMaster = GetCalculatorRunOrganisationDataMaster().ToList()[0]
+            });
+            return list;
+        }
+
+        public static IEnumerable<CalculatorRunOrganisationDataMaster> GetCalculatorRunOrganisationDataMaster()
+        {
+            var list = new List<CalculatorRunOrganisationDataMaster>();
+            list.Add(new CalculatorRunOrganisationDataMaster
+            {
+                Id = 1,
+                CalendarYear = "2024",
+                EffectiveFrom = DateTime.Now,
+                EffectiveTo = DateTime.Now,
+                CreatedAt = DateTime.Now,
+                CreatedBy = "Test user",
+            });
+            list.Add(new CalculatorRunOrganisationDataMaster
+            {
+                Id = 2,
+                CalendarYear = "2024",
+                EffectiveFrom = DateTime.Now,
+                EffectiveTo = DateTime.Now,
+                CreatedAt = DateTime.Now,
+                CreatedBy = "Test user",
+            });
+            return list;
+        }
+
+        public static IEnumerable<CalculatorRunPomDataDetail> GetCalculatorRunPomDataDetails()
+        {
+            var list = new List<CalculatorRunPomDataDetail>();
+            list.Add(new CalculatorRunPomDataDetail
+            {
+                Id = 1,
+                OrganisationId = 1,
+                SubsidaryId = null,
+                SubmissionPeriod = "2024-P2",
+                PackagingActivity = null,
+                PackagingType = "HH",
+                PackagingClass = "O1",
+                PackagingMaterial = "AL",
+                PackagingMaterialWeight = 1000,
+                LoadTimeStamp = DateTime.Now,
+                CalculatorRunPomDataMasterId = 1,
+                SubmissionPeriodDesc = "January to June 2024",
+                CalculatorRunPomDataMaster = GetCalculatorRunPomDataMaster().ToList()[0]
+            });
+            list.Add(new CalculatorRunPomDataDetail
+            {
+                Id = 1,
+                OrganisationId = 1,
+                SubsidaryId = null,
+                SubmissionPeriod = "2024-P4",
+                PackagingActivity = null,
+                PackagingType = "HH",
+                PackagingClass = "O1",
+                PackagingMaterial = "AL",
+                PackagingMaterialWeight = 2000,
+                LoadTimeStamp = DateTime.Now,
+                CalculatorRunPomDataMasterId = 1,
+                SubmissionPeriodDesc = "July to December 2024",
+                CalculatorRunPomDataMaster = GetCalculatorRunPomDataMaster().ToList()[0]
+            });
+            return list;
+        }
+
+        public static IEnumerable<CalculatorRunPomDataMaster> GetCalculatorRunPomDataMaster()
+        {
+            var list = new List<CalculatorRunPomDataMaster>();
+            list.Add(new CalculatorRunPomDataMaster
+            {
+                Id = 1,
+                CalendarYear = "2024",
+                EffectiveFrom = DateTime.Now,
+                CreatedAt = DateTime.Now,
+                CreatedBy = "Test User",
+            });
+            list.Add(new CalculatorRunPomDataMaster
+            {
+                Id = 2,
+                CalendarYear = "2024",
+                EffectiveFrom = DateTime.Now,
+                CreatedAt = DateTime.Now,
+                CreatedBy = "Test User",
+            });
+            return list;
+        }
     }
 }
