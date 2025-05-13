@@ -608,7 +608,7 @@
 
                 if (material.Code == MaterialCodes.Glass)
                 {
-                    columnHeadersList.Insert(2, new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdDrinksContainersTonnage });
+                    columnHeadersList.Insert(3, new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdDrinksContainersTonnage });
             }
 
                 columnHeaders.AddRange(columnHeadersList);
