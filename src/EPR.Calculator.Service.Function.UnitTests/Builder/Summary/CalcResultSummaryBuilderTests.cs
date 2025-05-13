@@ -3,6 +3,7 @@
     using AutoFixture;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
     using EPR.Calculator.Service.Function.Builder.Summary;
     using EPR.Calculator.Service.Function.Builder.Summary.OneAndTwoA;
@@ -612,7 +613,7 @@
             var result = new CalcResultSummaryBuilder(this.context).GetCalcResultSummary(orderedProducerDetails, materials, this.calcResult, totalPackagingTonnage);
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(144, result.ColumnHeaders.Count());
+            Assert.AreEqual(145, result.ColumnHeaders.Count());
 
             var producerDisposalFees = result.ProducerDisposalFees;
             Assert.IsNotNull(producerDisposalFees);
@@ -852,11 +853,13 @@
                 new() { Id = 2, Name = "Material2", Code = MaterialCodes.Glass },
             });
 
+            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
+
             context.ProducerDetail.AddRange(new List<ProducerDetail>
             {
-                new() { Id = 1, ProducerName = "Producer1", ProducerId = 1, CalculatorRunId = 1, CalculatorRun = new CalculatorRun { Financial_Year = "2024-25", Name = "Test1" } },
-                new() { Id = 2, ProducerName = "Producer2", ProducerId = 2, CalculatorRunId = 2, CalculatorRun = new CalculatorRun { Financial_Year = "2024-25", Name = "Test2" } },
-                new() { Id = 3, ProducerName = "Producer3", ProducerId = 3, CalculatorRunId = 3, CalculatorRun = new CalculatorRun { Financial_Year = "2024-25", Name = "Test3" } },
+                new() { Id = 1, ProducerName = "Producer1", ProducerId = 1, CalculatorRunId = 1, CalculatorRun = new CalculatorRun { Financial_Year = calculatorRunFinancialYear, Name = "Test1" } },
+                new() { Id = 2, ProducerName = "Producer2", ProducerId = 2, CalculatorRunId = 2, CalculatorRun = new CalculatorRun { Financial_Year = calculatorRunFinancialYear, Name = "Test2" } },
+                new() { Id = 3, ProducerName = "Producer3", ProducerId = 3, CalculatorRunId = 3, CalculatorRun = new CalculatorRun { Financial_Year = calculatorRunFinancialYear, Name = "Test3" } },
                 new() { Id = 4, ProducerName = "Producer4", ProducerId = 4, CalculatorRunId = 1 },
                 new() { Id = 5, ProducerName = "Producer5", ProducerId = 5, CalculatorRunId = 1 },
             });

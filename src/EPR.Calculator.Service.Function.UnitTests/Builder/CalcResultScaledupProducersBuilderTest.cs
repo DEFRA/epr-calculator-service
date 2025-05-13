@@ -49,11 +49,12 @@
                 CreatedAt = DateTime.Now,
                 CreatedBy = "Test User",
             };
+            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
             this.dbContext.CalculatorRunPomDataMaster.Add(calcRunPomDataMaster);
             this.dbContext.CalculatorRuns.Add(new CalculatorRun
             {
                 Id = runId,
-                Financial_Year = "2024-25",
+                Financial_Year = calculatorRunFinancialYear,
                 Name = "Name",
                 CalculatorRunPomDataMaster = calcRunPomDataMaster,
             });
@@ -83,7 +84,7 @@
                 new CalculatorRun
                 {
                     Id = 2,
-                    Financial_Year = "2024-25",
+                    Financial_Year = calculatorRunFinancialYear,
                     Name = "Name",
                 });
 
@@ -439,7 +440,7 @@
             var materialDetails = MaterialMapper.Map(materials);
             var columnHeaders = CalcResultScaledupProducersBuilder.GetColumnHeaders(materialDetails);
             Assert.IsNotNull(columnHeaders);
-            Assert.AreEqual(18, columnHeaders.Count);
+            Assert.AreEqual(19, columnHeaders.Count);
         }
 
         [TestMethod]
@@ -464,7 +465,7 @@
             materials.Add(new Material { Code = "AL", Name = "Aluminium" });
             var materialDetails = MaterialMapper.Map(materials);
             CalcResultScaledupProducersBuilder.SetHeaders(producers, materialDetails);
-            Assert.AreEqual(18, producers?.ColumnHeaders?.Count());
+            Assert.AreEqual(19, producers?.ColumnHeaders?.Count());
             Assert.AreEqual(2, producers?.MaterialBreakdownHeaders?.Count());
         }
 

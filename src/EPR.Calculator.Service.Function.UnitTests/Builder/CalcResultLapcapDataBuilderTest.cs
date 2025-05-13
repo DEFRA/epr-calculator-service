@@ -43,12 +43,13 @@
         {
             const string aluminium = "Aluminium";
             const string plastic = "Plastic";
+            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
             var run = new CalculatorRun
             {
                 Id = 1,
                 CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                 Name = "Test Run",
-                Financial_Year = "2024-25",
+                Financial_Year = calculatorRunFinancialYear,
                 CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
                 CreatedBy = "Test User",
                 LapcapDataMasterId = 2,
@@ -57,7 +58,7 @@
             var lapcapDataMaster = new LapcapDataMaster
             {
                 Id = 2,
-                ProjectionYear = "2024-25",
+                ProjectionYear = calculatorRunFinancialYear,
                 CreatedBy = "Testuser",
                 CreatedAt = DateTime.Now,
                 EffectiveFrom = DateTime.Now,
