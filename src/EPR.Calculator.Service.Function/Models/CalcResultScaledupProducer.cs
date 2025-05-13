@@ -10,6 +10,8 @@
 
         public string? ProducerName { get; set; }
 
+        public string? TradingName { get; set; }
+
         public string? Level { get; set; }
 
         public bool IsSubtotalRow { get; set; } = false;

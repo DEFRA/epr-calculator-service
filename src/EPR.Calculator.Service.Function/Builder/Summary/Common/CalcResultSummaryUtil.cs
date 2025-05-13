@@ -581,6 +581,7 @@
                 new () { Name = CalcResultSummaryHeaders.ProducerId },
                 new () { Name = CalcResultSummaryHeaders.SubsidiaryId },
                 new () { Name = CalcResultSummaryHeaders.ProducerOrSubsidiaryName },
+                new () { Name = CalcResultSummaryHeaders.TradingName },
                 new () { Name = CalcResultSummaryHeaders.Level },
                 new () { Name = CalcResultSummaryHeaders.ScaledupTonnages }
             ]);
