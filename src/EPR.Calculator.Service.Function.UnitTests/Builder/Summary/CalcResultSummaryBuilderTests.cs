@@ -845,6 +845,131 @@
             Assert.IsNull(result.TonnageChangeAdvice);
         }
 
+        [TestMethod]
+        public void CanAddTotalRow_ParentProducerNotFound_ReturnsFalse()
+        {
+            // Arrange
+            ProducerDetail producer = context.ProducerDetail.FirstOrDefault()!;
+            IEnumerable<ProducerDetail> producersAndSubsidiaries = context.ProducerDetail;
+            List<CalcResultSummaryProducerDisposalFees> producerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>();
+
+            CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation>(); 
+
+            // Act
+            var result = calcResultsService.CanAddTotalRow(producer, producersAndSubsidiaries, producerDisposalFees);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void CanAddTotalRow_ProducerDisposalFeeExists_ReturnsFalse()
+        {
+            // Arrange
+            ProducerDetail producer = context.ProducerDetail.FirstOrDefault()!;
+            IEnumerable<ProducerDetail> producersAndSubsidiaries = context.ProducerDetail;
+            List<CalcResultSummaryProducerDisposalFees> producerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> {
+                    new CalcResultSummaryProducerDisposalFees { ProducerId = "1", ProducerName="Org1", SubsidiaryId = "" }
+                };
+
+            CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation> {
+                    new ScaledupOrganisation { OrganisationId = 1, OrganisationName = "Org1" }
+                };
+
+            // Act
+            var result = calcResultsService.CanAddTotalRow(producer, producersAndSubsidiaries, producerDisposalFees);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void CanAddTotalRow_ValidConditions_ReturnsTrue()
+        {
+            // Arrange
+            ProducerDetail producer = context.ProducerDetail.FirstOrDefault()!;
+            IEnumerable<ProducerDetail> producersAndSubsidiaries = context.ProducerDetail;
+            List<CalcResultSummaryProducerDisposalFees> producerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> {
+                    new CalcResultSummaryProducerDisposalFees { ProducerId = "2", ProducerName="Org1", SubsidiaryId = "" }
+                };
+
+            CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation> {
+                    new ScaledupOrganisation { OrganisationId = 1, OrganisationName = "Org1" }
+                };
+
+            // Act
+            var result = calcResultsService.CanAddTotalRow(producer, producersAndSubsidiaries, producerDisposalFees);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void GetProducerNameForTotalRow_IsOverallTotalRow_ReturnsEmptyString()
+        {
+            // Arrange
+            int producerId = 1;
+            bool isOverAllTotalRow = true;
+
+            // Act
+            var result = calcResultsService.GetProducerNameForTotalRow(producerId, isOverAllTotalRow);
+
+            // Assert
+            Assert.AreEqual(string.Empty, result);
+        }
+
+        [TestMethod]
+        public void GetProducerNameForTotalRow_ParentProducerNotFound_ReturnsEmptyString()
+        {
+            // Arrange
+            int producerId = 1;
+            bool isOverAllTotalRow = false;
+
+            CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation>();
+
+            // Act
+            var result = calcResultsService.GetProducerNameForTotalRow(producerId, isOverAllTotalRow);
+
+            // Assert
+            Assert.AreEqual(string.Empty, result);
+        }
+
+        [TestMethod]
+        public void GetProducerNameForTotalRow_ParentProducerFoundWithName_ReturnsOrganisationName()
+        {
+            // Arrange
+            int producerId = 1;
+            bool isOverAllTotalRow = false;
+
+            CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation> {
+                    new ScaledupOrganisation { OrganisationId = 1, OrganisationName = "Org1" }
+                };
+
+            // Act
+            var result = calcResultsService.GetProducerNameForTotalRow(producerId, isOverAllTotalRow);
+
+            // Assert
+            Assert.AreEqual("Org1", result);
+        }
+
+        [TestMethod]
+        public void GetProducerNameForTotalRow_ParentProducerFoundWithoutName_ReturnsEmptyString()
+        {
+            // Arrange
+            int producerId = 1;
+            bool isOverAllTotalRow = false;
+
+            CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation> {
+                    new ScaledupOrganisation { OrganisationId = 1, OrganisationName = null }
+                };
+
+            // Act
+            var result = calcResultsService.GetProducerNameForTotalRow(producerId, isOverAllTotalRow);
+
+            // Assert
+            Assert.AreEqual(string.Empty, result);
+        }
+
         private static void SeedDatabase(ApplicationDBContext context)
         {
             context.Material.AddRange(new List<Material>
