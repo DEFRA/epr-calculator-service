@@ -36,7 +36,7 @@
             {
                 if (producer.IsTotalRow)
                 {
-                    _ = csvContent.Append(new string(CommonConstants.CsvFileDelimiter[0], 7));
+                    _ = csvContent.Append(new string(CommonConstants.CsvFileDelimiter[0], 8));
                     csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.Totals));
                 }
                 else
