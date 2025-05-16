@@ -203,6 +203,7 @@
             csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerId));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.SubsidiaryId));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerName));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.TradingName));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.Level));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.IsProducerScaledup));
         }

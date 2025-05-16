@@ -30,6 +30,8 @@
 
             public required string OrganisationName { get; set; }
 
+            public string? TradingName { get; set; }
+
             public string? SubmissionPeriod { get; set; }
 
             public string? SubmissionPeriodDescription { get; set; }
@@ -236,6 +238,7 @@
                             {
                                 CalculatorRunId = resultsRequestDto.RunId,
                                 ProducerId = producer.OrganisationId.Value,
+                                TradingName = organisation.TradingName,
                                 SubsidiaryId = producer.SubsidaryId,
                                 ProducerName = string.IsNullOrWhiteSpace(producer.SubsidaryId) ? GetLatestOrganisationName(producer.OrganisationId.Value, OrganisationsBySubmissionPeriod, OrganisationsList) : GetLatestSubsidaryName(producer.OrganisationId.Value, producer.SubsidaryId, OrganisationsBySubmissionPeriod, OrganisationsList),
                                 CalculatorRun = calculatorRun,
@@ -300,6 +303,7 @@
                     {
                         OrganisationId = org.OrganisationId,
                         OrganisationName = org.OrganisationName,
+                        TradingName = org.TradingName,
                         SubmissionPeriodDescription = org.SubmissionPeriodDescription,
                         SubmissionPeriod = sub.SubmissionPeriod,
                         SubsidaryId = org.SubsidaryId,
@@ -318,6 +322,7 @@
                     {
                         OrganisationId = org.OrganisationId,
                         OrganisationName = org.OrganisationName,
+                        TradingName = org.TradingName,
                         SubmissionPeriodDescription = org.SubmissionPeriodDesc,
                         SubsidaryId = org.SubsidaryId,
                     }).Distinct();

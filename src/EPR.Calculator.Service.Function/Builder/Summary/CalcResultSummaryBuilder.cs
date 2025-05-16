@@ -331,6 +331,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 ProducerId = producer.ProducerId.ToString(),
                 ProducerName = producer.ProducerName ?? string.Empty,
                 SubsidiaryId = producer.SubsidiaryId ?? string.Empty,
+                TradingName = producer.TradingName ?? string.Empty,
                 Level = CalcResultSummaryUtil.GetLevelIndex(producerDisposalFeesLookup, producer).ToString(),
                 IsProducerScaledup = CalcResultSummaryUtil.IsProducerScaledup(producer, ScaledupProducers)
                     ? CommonConstants.ScaledupProducersYes

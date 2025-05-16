@@ -511,7 +511,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
         private static void SeedDatabase(ApplicationDBContext context)
         {
-            var run = new CalculatorRun { Id = 1, Financial_Year = "2024-25", Name = "CalculatorRunTest1" };
+            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
+
+            var run = new CalculatorRun { Id = 1, Financial_Year = calculatorRunFinancialYear, Name = "CalculatorRunTest1" };
             context.CalculatorRuns.Add(run);
 
             var producerDetail = new List<ProducerDetail>

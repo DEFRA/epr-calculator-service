@@ -126,7 +126,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
             producer.ProducerCommsFeesByMaterial.Add(materialDetail, producerCommsFees);
             _testClass.AddNewRow(csvContent, producer);
             var results = csvContent.ToString().Split(",");
-            Assert.AreEqual(117, results.Length);
+            Assert.AreEqual(118, results.Length);
         }
 
         [TestMethod]

@@ -21,6 +21,7 @@ namespace EPR.Calculator.Service.Function.Constants
         public static readonly string ProducerId = "Producer ID";
         public static readonly string SubsidiaryId = "Subsidiary ID";
         public static readonly string ProducerOrSubsidiaryName = "Producer / Subsidiary Name";
+        public static readonly string TradingName = "Trading Name";
         public static readonly string Level = "Level";
         public static readonly string ScaledupTonnages = "Scaled-up tonnages?";
 

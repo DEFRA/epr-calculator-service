@@ -157,6 +157,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.ScaledupProducers
                 new CalcResultScaledupProducerHeader { Name = "Producer Id" },
                 new CalcResultScaledupProducerHeader { Name = "Subsidiary Id" },
                 new CalcResultScaledupProducerHeader { Name = "Producer / Subsidiary Name" },
+                new CalcResultScaledupProducerHeader { Name = "Trading Name" },
                 new CalcResultScaledupProducerHeader { Name = "Level" },
                 new CalcResultScaledupProducerHeader { Name = "Submission period code" },
                 new CalcResultScaledupProducerHeader { Name = "Days in submission period" },
