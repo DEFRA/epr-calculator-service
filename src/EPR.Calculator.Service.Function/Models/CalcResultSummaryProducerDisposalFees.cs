@@ -10,6 +10,8 @@ namespace EPR.Calculator.Service.Function.Models
 
         public required string ProducerName { get; set; }
 
+        public string? TradingName { get; set; }
+
         public string? Level { get; set; }
 
         public string IsProducerScaledup { get; set; } = "No";

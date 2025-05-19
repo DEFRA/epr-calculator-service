@@ -75,7 +75,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                                          select new ScaledupOrganisation
                                          {
                                              OrganisationId = crodd.OrganisationId ?? 0,
-                                             OrganisationName = crodd.OrganisationName
+                                             OrganisationName = crodd.OrganisationName,
+                                             TradingName = crodd.TradingName,
                                          }).Distinct().ToListAsync();
 
             var result = GetCalcResultSummary(
@@ -250,11 +251,14 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 }
             }
 
+            var producerForTotalRow = GetProducerDetailsForTotalRow(producersAndSubsidiaries[0].ProducerId, isOverAllTotalRow);
+
             var totalRow = new CalcResultSummaryProducerDisposalFees
             {
                 ProducerId = isOverAllTotalRow ? string.Empty : producersAndSubsidiaries[0].ProducerId.ToString(),
-                ProducerName = GetProducerNameForTotalRow(producersAndSubsidiaries[0].ProducerId, isOverAllTotalRow),
+                ProducerName = producerForTotalRow == null ? string.Empty : producerForTotalRow.OrganisationName,
                 SubsidiaryId = string.Empty,
+                TradingName = producerForTotalRow == null ? string.Empty : producerForTotalRow.TradingName,
                 Level = isOverAllTotalRow ? string.Empty : CommonConstants.LevelOne.ToString(),
                 IsProducerScaledup = GetScaledupProducerStatusTotalRow(producersAndSubsidiaries[0], ScaledupProducers, isOverAllTotalRow),
                 ProducerDisposalFeesByMaterial = materialCostSummary,
@@ -331,6 +335,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 ProducerId = producer.ProducerId.ToString(),
                 ProducerName = producer.ProducerName ?? string.Empty,
                 SubsidiaryId = producer.SubsidiaryId ?? string.Empty,
+                TradingName = producer.TradingName ?? string.Empty,
                 Level = CalcResultSummaryUtil.GetLevelIndex(producerDisposalFeesLookup, producer).ToString(),
                 IsProducerScaledup = CalcResultSummaryUtil.IsProducerScaledup(producer, ScaledupProducers)
                     ? CommonConstants.ScaledupProducersYes
@@ -521,20 +526,15 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             return false;
         }
 
-        public string GetProducerNameForTotalRow(int producerId, bool isOverAllTotalRow)
+        public ScaledupOrganisation? GetProducerDetailsForTotalRow(int producerId, bool isOverAllTotalRow)
         {
             if (isOverAllTotalRow)
             {
-                return string.Empty;
+                return null;
             }
 
             var parentProducer = ParentOrganisations.FirstOrDefault(po => po.OrganisationId == producerId);
-            if (parentProducer == null)
-            {
-                return string.Empty;
-            }
-
-            return parentProducer.OrganisationName ?? string.Empty;
+            return parentProducer;
         }
 
         internal static string GetScaledupProducerStatusTotalRow(

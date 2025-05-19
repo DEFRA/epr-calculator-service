@@ -125,6 +125,7 @@
                         ProducerId = pair.Key.ProducerId,
                         SubsidiaryId = string.Empty,
                         ProducerName = parentProducer.OrganisationName,
+                        TradingName = parentProducer.TradingName,
                         ScaleupFactor = first.ScaleupFactor,
                         SubmissionPeriodCode = pair.Key.SubmissionPeriodCode,
                         DaysInSubmissionPeriod = first.DaysInSubmissionPeriod,
@@ -197,13 +198,14 @@
             var result = await (from run in this.context.CalculatorRuns
                                 join crpdd in this.context.CalculatorRunPomDataDetails on run.CalculatorRunPomDataMasterId equals crpdd.CalculatorRunPomDataMasterId
                                 join spl in this.context.SubmissionPeriodLookup on crpdd.SubmissionPeriod equals spl.SubmissionPeriod
-                                join pd in this.context.ProducerDetail.Include(x => x.ProducerReportedMaterials) on crpdd.OrganisationId equals pd.ProducerId
+                                join pd in this.context.ProducerDetail.Include(x => x.ProducerReportedMaterials) on crpdd.OrganisationId equals pd.ProducerId                                
                                 where run.Id == runId && organisationIds.Contains(crpdd.OrganisationId.GetValueOrDefault()) && pd.CalculatorRunId == runId
                                 select new CalcResultScaledupProducer
                                 {
                                     ProducerId = pd.ProducerId,
                                     SubsidiaryId = pd.SubsidiaryId!,
                                     ProducerName = pd.ProducerName!,
+                                    TradingName = pd.TradingName!,
                                     ScaleupFactor = spl.ScaleupFactor,
                                     SubmissionPeriodCode = spl.SubmissionPeriod,
                                     DaysInSubmissionPeriod = spl.DaysInSubmissionPeriod,
@@ -230,7 +232,8 @@
                                             select new ScaledupOrganisation
                                             {
                                                 OrganisationId = crodd.OrganisationId ?? 0,
-                                                OrganisationName = crodd.OrganisationName
+                                                OrganisationName = crodd.OrganisationName,
+                                                TradingName = crodd.TradingName,
                                             }).Distinct().ToListAsync();
 
             return scaledupOrganisations ?? [];
@@ -342,6 +345,7 @@
                 new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ProducerId },
                 new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.SubsidiaryId },
                 new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ProducerOrSubsidiaryName },
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.TradingName },
                 new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.Level },
                 new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.SubmissionPeriodCode },
                 new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.DaysInSubmissionPeriod },

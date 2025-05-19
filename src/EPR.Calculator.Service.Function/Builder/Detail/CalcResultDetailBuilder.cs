@@ -34,7 +34,7 @@
                 results.RunName = calcResultDetail.Name ?? string.Empty;
                 results.RunBy = calcResultDetail.CreatedBy;
                 results.RunDate = calcResultDetail.CreatedAt;
-                results.FinancialYear = calcResultDetail.Financial_Year?? string.Empty;
+                results.FinancialYear = calcResultDetail.FinancialYearId?? string.Empty;
                 if (calcResultDetail.CalculatorRunOrganisationDataMaster != null)
                     results.RpdFileORG = calcResultDetail.CalculatorRunOrganisationDataMaster.CreatedAt.ToString(CalculationResults.DateFormat);
                 if (calcResultDetail.CalculatorRunPomDataMaster != null)
