@@ -26,6 +26,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Models;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
 
     public class CalcResultSummaryBuilder : ICalcResultSummaryBuilder
@@ -121,7 +122,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 var allTotalRow = this.GetProducerTotalRow(orderedProducerDetails.ToList(), materials, calcResult, producerDisposalFees, true, TotalPackagingTonnage);
                 producerDisposalFees.Add(allTotalRow);
 
-                result.ProducerDisposalFees = producerDisposalFees;
+                result.ProducerDisposalFees = ApplyNegativeTonnages(producerDisposalFees, materials);
 
                 // Section-(1) & (2a)
                 result.TotalFeeforLADisposalCostswoBadDebtprovision1 = CalcResultOneAndTwoAUtil.GetTotalDisposalCostswoBadDebtprovision1(producerDisposalFees);
@@ -565,6 +566,52 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 { "1", ("0", string.Empty) },
                 { "2", ("-", "-") },
             };
+        }
+
+        internal static List<CalcResultSummaryProducerDisposalFees> ApplyNegativeTonnages(List<CalcResultSummaryProducerDisposalFees> producerDisposalFees, IEnumerable<MaterialDetail> materials)
+        {
+            var result = new List<CalcResultSummaryProducerDisposalFees>();
+
+            var levelOneRows = producerDisposalFees.Where(pdf => pdf.Level == CommonConstants.LevelOne.ToString());
+            foreach (var levelOneRow in levelOneRows)
+            {
+                var levelTwoRows = producerDisposalFees.Where(pdf => pdf.ProducerId == levelOneRow.ProducerId && pdf.Level == CommonConstants.LevelTwo.ToString());
+
+                var levelTwoRowCounter = 0;
+                do
+                {
+                    foreach (var material in materials)
+                    {
+                        var levelOneProducerDisposalFee = levelOneRow.ProducerDisposalFeesByMaterial[material.Code];
+                        if (levelOneProducerDisposalFee != null)
+                        {
+                            if (levelOneProducerDisposalFee.ManagedConsumerWasteTonnage > levelOneProducerDisposalFee.TotalReportedTonnage)
+                            {
+                                levelOneProducerDisposalFee.NetReportedTonnage = 0;
+                                levelOneProducerDisposalFee.ProducerDisposalFee = 0;
+                            }
+
+                            if (levelTwoRows.Any())
+                            {
+                                var levelTwoProducerDisposalFee = levelTwoRows.ToList()[levelTwoRowCounter].ProducerDisposalFeesByMaterial[material.Code];
+                                if (levelTwoProducerDisposalFee != null)
+                                {
+                                    if (levelOneProducerDisposalFee.ProducerDisposalFee == 0)
+                                    {
+                                        levelTwoProducerDisposalFee.ProducerDisposalFee = 0;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    levelTwoRowCounter++;
+                } while (levelTwoRowCounter < levelTwoRows.Count());
+
+                result.Add(levelOneRow);
+                result.AddRange(levelTwoRows);
+            }
+
+            return result;
         }
     }
 }
