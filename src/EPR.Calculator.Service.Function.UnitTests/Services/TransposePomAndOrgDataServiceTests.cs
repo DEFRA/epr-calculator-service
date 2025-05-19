@@ -457,8 +457,8 @@
         {
             var expectedResult = new ProducerDetail
             {
-                Id = 1,
-                ProducerId = 2,
+                Id = 9993,
+                ProducerId = 9994,
                 ProducerName = "Subsid2",
                 CalculatorRunId = 1,
                 CalculatorRun = this.Fixture.Create<CalculatorRun>(),
