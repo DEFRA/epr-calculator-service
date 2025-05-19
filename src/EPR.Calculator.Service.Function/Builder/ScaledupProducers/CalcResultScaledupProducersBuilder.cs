@@ -125,6 +125,7 @@
                         ProducerId = pair.Key.ProducerId,
                         SubsidiaryId = string.Empty,
                         ProducerName = parentProducer.OrganisationName,
+                        TradingName = parentProducer.TradingName,
                         ScaleupFactor = first.ScaleupFactor,
                         SubmissionPeriodCode = pair.Key.SubmissionPeriodCode,
                         DaysInSubmissionPeriod = first.DaysInSubmissionPeriod,
@@ -231,7 +232,8 @@
                                             select new ScaledupOrganisation
                                             {
                                                 OrganisationId = crodd.OrganisationId ?? 0,
-                                                OrganisationName = crodd.OrganisationName
+                                                OrganisationName = crodd.OrganisationName,
+                                                TradingName = crodd.TradingName,
                                             }).Distinct().ToListAsync();
 
             return scaledupOrganisations ?? [];

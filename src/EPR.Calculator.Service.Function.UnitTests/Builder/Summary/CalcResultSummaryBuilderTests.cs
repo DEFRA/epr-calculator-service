@@ -905,21 +905,21 @@
         }
 
         [TestMethod]
-        public void GetProducerNameForTotalRow_IsOverallTotalRow_ReturnsEmptyString()
+        public void GetProducerDetailsForTotalRow_IsOverallTotalRow_ReturnsNullObject()
         {
             // Arrange
             int producerId = 1;
             bool isOverAllTotalRow = true;
 
             // Act
-            var result = calcResultsService.GetProducerNameForTotalRow(producerId, isOverAllTotalRow);
+            var result = calcResultsService.GetProducerDetailsForTotalRow(producerId, isOverAllTotalRow);
 
             // Assert
-            Assert.AreEqual(string.Empty, result);
+            Assert.IsNull(result);
         }
 
         [TestMethod]
-        public void GetProducerNameForTotalRow_ParentProducerNotFound_ReturnsEmptyString()
+        public void GetProducerDetailsForTotalRow_ParentProducerNotFound_ReturnsNullObject()
         {
             // Arrange
             int producerId = 1;
@@ -928,14 +928,14 @@
             CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation>();
 
             // Act
-            var result = calcResultsService.GetProducerNameForTotalRow(producerId, isOverAllTotalRow);
+            var result = calcResultsService.GetProducerDetailsForTotalRow(producerId, isOverAllTotalRow);
 
             // Assert
-            Assert.AreEqual(string.Empty, result);
+            Assert.IsNull(result);
         }
 
         [TestMethod]
-        public void GetProducerNameForTotalRow_ParentProducerFoundWithName_ReturnsOrganisationName()
+        public void GetProducerDetailsForTotalRow_ParentProducerFoundWithName_ReturnsOrganisationName()
         {
             // Arrange
             int producerId = 1;
@@ -946,14 +946,14 @@
                 };
 
             // Act
-            var result = calcResultsService.GetProducerNameForTotalRow(producerId, isOverAllTotalRow);
+            var result = calcResultsService.GetProducerDetailsForTotalRow(producerId, isOverAllTotalRow);
 
             // Assert
-            Assert.AreEqual("Org1", result);
+            Assert.AreEqual("Org1", result.OrganisationName);
         }
 
         [TestMethod]
-        public void GetProducerNameForTotalRow_ParentProducerFoundWithoutName_ReturnsEmptyString()
+        public void GetProducerDetailsForTotalRow_ParentProducerFoundWithoutName_ReturnsNullString()
         {
             // Arrange
             int producerId = 1;
@@ -964,10 +964,28 @@
                 };
 
             // Act
-            var result = calcResultsService.GetProducerNameForTotalRow(producerId, isOverAllTotalRow);
+            var result = calcResultsService.GetProducerDetailsForTotalRow(producerId, isOverAllTotalRow);
 
             // Assert
-            Assert.AreEqual(string.Empty, result);
+            Assert.IsNull(result.OrganisationName);
+        }
+
+        [TestMethod]
+        public void GetProducerDetailsForTotalRow_ParentProducerFoundWithTradingName_ReturnsTradingName()
+        {
+            // Arrange
+            int producerId = 1;
+            bool isOverAllTotalRow = false;
+
+            CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation> {
+                    new ScaledupOrganisation { OrganisationId = 1, OrganisationName = "Good Fruit", TradingName = "GF Trading Name 1" }
+                };
+
+            // Act
+            var result = calcResultsService.GetProducerDetailsForTotalRow(producerId, isOverAllTotalRow);
+
+            // Assert
+            Assert.AreEqual("GF Trading Name 1", result.TradingName);
         }
 
         private static void SeedDatabase(ApplicationDBContext context)

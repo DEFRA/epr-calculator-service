@@ -5,5 +5,7 @@
         public int OrganisationId { get; set; }
 
         public string? OrganisationName { get; set; }
+
+        public string? TradingName { get; set; }
     }
 }
