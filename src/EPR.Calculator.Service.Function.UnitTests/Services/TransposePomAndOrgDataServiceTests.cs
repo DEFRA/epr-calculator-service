@@ -273,8 +273,8 @@
         {
             var expectedResult = new ProducerDetail
             {
-                Id = 1,
-                ProducerId = 1,
+                Id = 9991,
+                ProducerId = 9991,
                 ProducerName = "UPU LIMITED",
                 CalculatorRunId = 1,
                 CalculatorRun = Fixture.Create<CalculatorRun>(),
