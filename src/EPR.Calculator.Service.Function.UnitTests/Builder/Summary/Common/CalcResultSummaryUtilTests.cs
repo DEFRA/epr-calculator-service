@@ -321,6 +321,21 @@
         }
 
         [TestMethod]
+        public void GetNetReportedTonnageReturnsZeroIfLevelOneAndConsumerWasteTonnageGreaterThanReportedTonnage()
+        {
+            // Arrange
+            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
+            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
+
+            // Act
+            var result = CalcResultSummaryUtil.GetNetReportedTonnage(producer, material, scaledupProducers, CommonConstants.LevelOne);
+
+            // Assert
+            Assert.AreEqual(0, result);
+        }
+
+        [TestMethod]
         public void CanGetNetReportedTonnageProducerTotal()
         {
             // Arrange

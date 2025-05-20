@@ -145,6 +145,11 @@
             var reportedTonnage = GetReportedTonnage(producer, material, scaledUpProducers);
             var managedConsumerWasteTonnage = GetTonnage(producer, material, PackagingTypes.ConsumerWaste, scaledUpProducers);
 
+            if (level == CommonConstants.LevelOne && managedConsumerWasteTonnage > reportedTonnage)
+            {
+                return 0;
+            }
+
             return reportedTonnage - managedConsumerWasteTonnage;
         }
 

@@ -26,7 +26,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Models;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
 
     public class CalcResultSummaryBuilder : ICalcResultSummaryBuilder
@@ -331,13 +330,15 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             var materialCostSummary = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>();
             var commsCostSummary = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>();
 
+            var level = CalcResultSummaryUtil.GetLevelIndex(producerDisposalFeesLookup, producer);
+
             var result = new CalcResultSummaryProducerDisposalFees
             {
                 ProducerId = producer.ProducerId.ToString(),
                 ProducerName = producer.ProducerName ?? string.Empty,
                 SubsidiaryId = producer.SubsidiaryId ?? string.Empty,
                 TradingName = producer.TradingName ?? string.Empty,
-                Level = CalcResultSummaryUtil.GetLevelIndex(producerDisposalFeesLookup, producer).ToString(),
+                Level = level.ToString(),
                 IsProducerScaledup = CalcResultSummaryUtil.IsProducerScaledup(producer, ScaledupProducers)
                     ? CommonConstants.ScaledupProducersYes
                     : CommonConstants.ScaledupProducersNo,
@@ -354,7 +355,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     PublicBinTonnage = publicBinTonnage,
                     TotalReportedTonnage = CalcResultSummaryUtil.GetReportedTonnage(producer, material, ScaledupProducers),
                     ManagedConsumerWasteTonnage = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.ConsumerWaste, ScaledupProducers),
-                    NetReportedTonnage = CalcResultSummaryUtil.GetNetReportedTonnage(producer, material, ScaledupProducers),
+                    NetReportedTonnage = CalcResultSummaryUtil.GetNetReportedTonnage(producer, material, ScaledupProducers, level),
                     PricePerTonne = CalcResultSummaryUtil.GetPricePerTonne(material, calcResult),
                     ProducerDisposalFee = CalcResultSummaryUtil.GetProducerDisposalFee(producer, producersAndSubsidiaries, material, calcResult, ScaledupProducers),
                     BadDebtProvision = CalcResultSummaryUtil.GetBadDebtProvision(producer, producersAndSubsidiaries, material, calcResult, ScaledupProducers),
