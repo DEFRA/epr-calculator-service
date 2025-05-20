@@ -139,7 +139,8 @@
         public static decimal GetNetReportedTonnage(
             ProducerDetail producer,
             MaterialDetail material,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
+            IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
+            int level = CommonConstants.LevelTwo)
         {
             var reportedTonnage = GetReportedTonnage(producer, material, scaledUpProducers);
             var managedConsumerWasteTonnage = GetTonnage(producer, material, PackagingTypes.ConsumerWaste, scaledUpProducers);
@@ -152,6 +153,10 @@
             MaterialDetail material,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
+            if (SubsidiaryContainsNegativeTonnage(producers, material, scaledUpProducers))
+            {
+                return 0;
+            }
             return producers.Sum(producer => GetNetReportedTonnage(producer, material, scaledUpProducers));
         }
 
@@ -173,10 +178,16 @@
 
         public static decimal GetProducerDisposalFee(
             ProducerDetail producer,
+            IEnumerable<ProducerDetail> producers,
             MaterialDetail material,
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
+            if (SubsidiaryContainsNegativeTonnage(producers, material, scaledUpProducers))
+            {
+                return 0;
+            }
+
             var netReportedTonnage = GetNetReportedTonnage(producer, material, scaledUpProducers);
             var pricePerTonne = GetPricePerTonne(material, calcResult);
 
@@ -189,16 +200,21 @@
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
-            return producers.Sum(producer => GetProducerDisposalFee(producer, material, calcResult, scaledUpProducers));
+            if (SubsidiaryContainsNegativeTonnage(producers, material, scaledUpProducers))
+            {
+                return 0;
+            }
+            return producers.Sum(producer => GetProducerDisposalFee(producer, producers, material, calcResult, scaledUpProducers));
         }
 
         public static decimal GetBadDebtProvision(
             ProducerDetail producer,
+            IEnumerable<ProducerDetail> producers,
             MaterialDetail material,
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
-            var producerDisposalFee = GetProducerDisposalFee(producer, material, calcResult, scaledUpProducers);
+            var producerDisposalFee = GetProducerDisposalFee(producer, producers, material, calcResult, scaledUpProducers);
 
             var isParseSuccessful = decimal.TryParse(calcResult.CalcResultParameterOtherCost.BadDebtProvision.Value.Replace("%", string.Empty), out decimal value);
 
@@ -216,16 +232,17 @@
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
-            return producers.Sum(producer => GetBadDebtProvision(producer, material, calcResult, scaledUpProducers));
+            return producers.Sum(producer => GetBadDebtProvision(producer, producers, material, calcResult, scaledUpProducers));
         }
 
         public static decimal GetProducerDisposalFeeWithBadDebtProvision(
             ProducerDetail producer,
+            IEnumerable<ProducerDetail> producers,
             MaterialDetail material,
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
-            var producerDisposalFee = GetProducerDisposalFee(producer, material, calcResult, scaledUpProducers);
+            var producerDisposalFee = GetProducerDisposalFee(producer, producers, material, calcResult, scaledUpProducers);
 
             var isParseSuccessful = decimal.TryParse(calcResult.CalcResultParameterOtherCost.BadDebtProvision.Value.Replace("%", string.Empty), out decimal value);
 
@@ -243,17 +260,18 @@
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
-            return producers.Sum(producer => GetProducerDisposalFeeWithBadDebtProvision(producer, material, calcResult, scaledUpProducers));
+            return producers.Sum(producer => GetProducerDisposalFeeWithBadDebtProvision(producer, producers, material, calcResult, scaledUpProducers));
         }
 
         public static decimal GetCountryBadDebtProvision(
             ProducerDetail producer,
+            IEnumerable<ProducerDetail> producers,
             MaterialDetail material,
             CalcResult calcResult,
             Countries country,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
-            var producerDisposalFeeWithBadDebtProvision = GetProducerDisposalFeeWithBadDebtProvision(producer, material, calcResult, scaledUpProducers);
+            var producerDisposalFeeWithBadDebtProvision = GetProducerDisposalFeeWithBadDebtProvision(producer, producers, material, calcResult, scaledUpProducers);
 
             var countryApportionmentPercentage = GetCountryApportionmentPercentage(calcResult);
             if (countryApportionmentPercentage == null)
@@ -293,7 +311,7 @@
             Countries country,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
-            return producers.Sum(producer => GetCountryBadDebtProvision(producer, material, calcResult, country, scaledUpProducers));
+            return producers.Sum(producer => GetCountryBadDebtProvision(producer, producers, material, calcResult, country, scaledUpProducers));
         }
 
         public static CalcResultLapcapDataDetails? GetCountryApportionmentPercentage(CalcResult calcResult)
@@ -883,6 +901,36 @@
                 default:
                     return 0;
             }
+        }
+
+        public static bool ProducerContainsNegativeTonnage(
+            ProducerDetail producer,
+            MaterialDetail material,
+            IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
+        {
+            var reportedTonnage = GetReportedTonnage(producer, material, scaledUpProducers);
+            var managedConsumerWasteTonnage = GetTonnage(producer, material, PackagingTypes.ConsumerWaste, scaledUpProducers);
+
+            if (managedConsumerWasteTonnage > reportedTonnage)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool SubsidiaryContainsNegativeTonnage(
+            IEnumerable<ProducerDetail> producers,
+            MaterialDetail material,
+            IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
+        {
+            foreach (var producer in producers)
+            {
+                if (ProducerContainsNegativeTonnage(producer, material, scaledUpProducers))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
