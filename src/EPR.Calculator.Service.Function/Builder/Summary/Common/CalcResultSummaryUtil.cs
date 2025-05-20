@@ -69,7 +69,7 @@
 
             if (scaledupProducerForAllSubmissionPeriods.Any())
             {
-                decimal tonnage = 0;
+                decimal tonnage = CommonConstants.DefaultMinValue;
                 foreach (var scaledupProducerTonnageByMaterial in scaledupProducerForAllSubmissionPeriods.Select(x => x.ScaledupProducerTonnageByMaterial))
                 {
                     switch (packagingType)
@@ -87,7 +87,7 @@
                             tonnage += scaledupProducerTonnageByMaterial[material.Code].ScaledupHouseholdDrinksContainersTonnageGlass;
                             break;
                         default:
-                            tonnage += 0;
+                            tonnage += CommonConstants.DefaultMinValue;
                             break;
                     }
                 }
@@ -98,7 +98,7 @@
             var reportedMaterials = producer.ProducerReportedMaterials
                 .FirstOrDefault(p => p.Material?.Code == material.Code && p.PackagingType == packagingType);
 
-            return reportedMaterials?.PackagingTonnage ?? 0;
+            return reportedMaterials?.PackagingTonnage ?? CommonConstants.DefaultMinValue;
         }
 
         public static decimal GetTonnageTotal(
@@ -147,7 +147,7 @@
 
             if (level == CommonConstants.LevelOne && managedConsumerWasteTonnage > reportedTonnage)
             {
-                return 0;
+                return CommonConstants.DefaultMinValue;
             }
 
             return reportedTonnage - managedConsumerWasteTonnage;
@@ -160,7 +160,7 @@
         {
             if (SubsidiaryContainsNegativeTonnage(producers, material, scaledUpProducers))
             {
-                return 0;
+                return CommonConstants.DefaultMinValue;
             }
             return producers.Sum(producer => GetNetReportedTonnage(producer, material, scaledUpProducers));
         }
@@ -173,12 +173,12 @@
 
             if (laDisposalCostDataDetail == null)
             {
-                return 0;
+                return CommonConstants.DefaultMinValue;
             }
 
             var isParseSuccessful = decimal.TryParse(laDisposalCostDataDetail.DisposalCostPricePerTonne, NumberStyles.Currency, CultureInfo.GetCultureInfo("en-GB"), out decimal value);
 
-            return isParseSuccessful ? value : 0;
+            return isParseSuccessful ? value : CommonConstants.DefaultMinValue;
         }
 
         public static decimal GetProducerDisposalFee(
@@ -190,7 +190,7 @@
         {
             if (SubsidiaryContainsNegativeTonnage(producers, material, scaledUpProducers))
             {
-                return 0;
+                return CommonConstants.DefaultMinValue;
             }
 
             var netReportedTonnage = GetNetReportedTonnage(producer, material, scaledUpProducers);
@@ -207,7 +207,7 @@
         {
             if (SubsidiaryContainsNegativeTonnage(producers, material, scaledUpProducers))
             {
-                return 0;
+                return CommonConstants.DefaultMinValue;
             }
             return producers.Sum(producer => GetProducerDisposalFee(producer, producers, material, calcResult, scaledUpProducers));
         }
@@ -228,7 +228,7 @@
                 return producerDisposalFee * value / 100;
             }
 
-            return 0;
+            return CommonConstants.DefaultMinValue;
         }
 
         public static decimal GetBadDebtProvisionProducerTotal(
@@ -256,7 +256,7 @@
                 return producerDisposalFee * (1 + (value / 100));
             }
 
-            return 0;
+            return CommonConstants.DefaultMinValue;
         }
 
         public static decimal GetProducerDisposalFeeWithBadDebtProvisionProducerTotal(
@@ -281,7 +281,7 @@
             var countryApportionmentPercentage = GetCountryApportionmentPercentage(calcResult);
             if (countryApportionmentPercentage == null)
             {
-                return 0;
+                return CommonConstants.DefaultMinValue;
             }
 
             string? disposalCost;
@@ -306,7 +306,7 @@
 
             var isParseSuccessful = decimal.TryParse(disposalCost.Replace("%", string.Empty), out decimal value);
 
-            return isParseSuccessful ? producerDisposalFeeWithBadDebtProvision * value / 100 : 0;
+            return isParseSuccessful ? producerDisposalFeeWithBadDebtProvision * value / 100 : CommonConstants.DefaultMinValue;
         }
 
         public static decimal GetCountryBadDebtProvisionTotal(
@@ -326,7 +326,7 @@
 
         public static decimal GetTotalProducerDisposalFee(Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> materialCostSummary)
         {
-            decimal totalProducerDisposalFee = 0;
+            decimal totalProducerDisposalFee = CommonConstants.DefaultMinValue;
 
             foreach (var material in materialCostSummary)
             {
@@ -338,7 +338,7 @@
 
         public static decimal GetTotalBadDebtProvision(Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> materialCostSummary)
         {
-            decimal totalBadDebtProvision = 0;
+            decimal totalBadDebtProvision = CommonConstants.DefaultMinValue;
 
             foreach (var material in materialCostSummary)
             {
@@ -350,7 +350,7 @@
 
         public static decimal GetTotalProducerDisposalFeeWithBadDebtProvision(Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> materialCostSummary)
         {
-            decimal totalProducerDisposalFeeWithBadDebtProvision = 0;
+            decimal totalProducerDisposalFeeWithBadDebtProvision = CommonConstants.DefaultMinValue;
 
             foreach (var material in materialCostSummary)
             {
@@ -362,7 +362,7 @@
 
         public static decimal GetEnglandTotal(Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> materialCostSummary)
         {
-            decimal totalEngland = 0;
+            decimal totalEngland = CommonConstants.DefaultMinValue;
 
             foreach (var material in materialCostSummary)
             {
@@ -374,7 +374,7 @@
 
         public static decimal GetWalesTotal(Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> materialCostSummary)
         {
-            decimal totalWales = 0;
+            decimal totalWales = CommonConstants.DefaultMinValue;
 
             foreach (var material in materialCostSummary)
             {
@@ -386,7 +386,7 @@
 
         public static decimal GetScotlandTotal(Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> materialCostSummary)
         {
-            decimal totalScotland = 0;
+            decimal totalScotland = CommonConstants.DefaultMinValue;
 
             foreach (var material in materialCostSummary)
             {
@@ -398,7 +398,7 @@
 
         public static decimal GetNorthernIrelandTotal(Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> materialCostSummary)
         {
-            decimal totalNorthernIreland = 0;
+            decimal totalNorthernIreland = CommonConstants.DefaultMinValue;
 
             foreach (var material in materialCostSummary)
             {
@@ -755,7 +755,7 @@
 
         public static decimal GetTotalProducerCommsFee(Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostSummary)
         {
-            decimal producerTotalCostWithoutBadDebtProvision = 0;
+            decimal producerTotalCostWithoutBadDebtProvision = CommonConstants.DefaultMinValue;
 
             foreach (var material in commsCostSummary)
             {
@@ -767,7 +767,7 @@
 
         public static decimal GetCommsTotalBadDebtProvision(Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> materialCostSummary)
         {
-            decimal totalBadDebtProvision = 0;
+            decimal totalBadDebtProvision = CommonConstants.DefaultMinValue;
 
             foreach (var material in materialCostSummary)
             {
@@ -779,7 +779,7 @@
 
         public static decimal GetTotalProducerCommsFeeWithBadDebtProvision(Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostSummary)
         {
-            decimal totalCommsCostsbyMaterialwithBadDebtprovision = 0;
+            decimal totalCommsCostsbyMaterialwithBadDebtprovision = CommonConstants.DefaultMinValue;
 
             foreach (var material in commsCostSummary)
             {
@@ -791,7 +791,7 @@
 
         public static decimal GetNorthernIrelandCommsTotal(Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostSummary)
         {
-            decimal northernIrelandTotalwithBadDebtprovision = 0;
+            decimal northernIrelandTotalwithBadDebtprovision = CommonConstants.DefaultMinValue;
 
             foreach (var material in commsCostSummary)
             {
@@ -803,7 +803,7 @@
 
         public static decimal GetScotlandCommsTotal(Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostSummary)
         {
-            decimal scotlandTotalwithBadDebtprovision = 0;
+            decimal scotlandTotalwithBadDebtprovision = CommonConstants.DefaultMinValue;
 
             foreach (var material in commsCostSummary)
             {
@@ -815,7 +815,7 @@
 
         public static decimal GetWalesCommsTotal(Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostSummary)
         {
-            decimal walesTotalwithBadDebtprovision = 0;
+            decimal walesTotalwithBadDebtprovision = CommonConstants.DefaultMinValue;
 
             foreach (var material in commsCostSummary)
             {
@@ -827,7 +827,7 @@
 
         public static decimal GetEnglandCommsTotal(Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostSummary)
         {
-            decimal englandTotalwithBadDebtprovision = 0;
+            decimal englandTotalwithBadDebtprovision = CommonConstants.DefaultMinValue;
 
             foreach (var material in commsCostSummary)
             {
@@ -877,7 +877,7 @@
                 case Countries.NorthernIreland:
                     return onePlusFourApportionment.NorthernIrelandTotal;
                 default:
-                    return 0;
+                    return CommonConstants.DefaultMinValue;
             }
         }
 
@@ -890,7 +890,7 @@
 
             if (fourCountryApportionment == null)
             {
-                return 0;
+                return CommonConstants.DefaultMinValue;
             }
 
             switch (country)
@@ -904,7 +904,7 @@
                 case Countries.NorthernIreland:
                     return fourCountryApportionment.NorthernIrelandValue;
                 default:
-                    return 0;
+                    return CommonConstants.DefaultMinValue;
             }
         }
 
@@ -918,9 +918,9 @@
 
             if (managedConsumerWasteTonnage > reportedTonnage)
             {
-                return true;
+                return CommonConstants.True;
             }
-            return false;
+            return CommonConstants.False;
         }
 
         public static bool SubsidiaryContainsNegativeTonnage(
@@ -932,10 +932,10 @@
             {
                 if (ProducerContainsNegativeTonnage(producer, material, scaledUpProducers))
                 {
-                    return true;
+                    return CommonConstants.True;
                 }
             }
-            return false;
+            return CommonConstants.False;
         }
     }
 }
