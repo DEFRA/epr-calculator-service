@@ -272,7 +272,7 @@
             var result = CalcResultSummaryUtil.GetTonnage(producer, material, "Invalid packaging type", scaledupProducers!);
 
             // Assert
-            Assert.AreEqual(0, result);
+            Assert.AreEqual(CommonConstants.DefaultMinValue, result);
         }
 
         [TestMethod]
@@ -332,7 +332,7 @@
             var result = CalcResultSummaryUtil.GetNetReportedTonnage(producer, material, scaledupProducers, CommonConstants.LevelOne);
 
             // Assert
-            Assert.AreEqual(0, result);
+            Assert.AreEqual(CommonConstants.DefaultMinValue, result);
         }
 
         [TestMethod]
@@ -348,6 +348,21 @@
 
             // Assert
             Assert.AreEqual(2940.00m, result);
+        }
+
+        [TestMethod]
+        public void CanGetNetReportedTonnageProducerTotalForNegativeTonnage()
+        {
+            // Arrange
+            var producers = TestDataHelper.GetProducers();
+            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
+
+            // Act
+            var result = CalcResultSummaryUtil.GetNetReportedTonnageTotal(producers, material, scaledupProducers);
+
+            // Assert
+            Assert.AreEqual(CommonConstants.DefaultMinValue, result);
         }
 
         [TestMethod]
@@ -408,6 +423,21 @@
         }
 
         [TestMethod]
+        public void CanGetProducerDisposalFeeProducerTotalForNegativeTonnage()
+        {
+            // Arrange
+            var producers = TestDataHelper.GetProducers();
+            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
+
+            // Act
+            var result = CalcResultSummaryUtil.GetProducerDisposalFeeProducerTotal(producers, material, this.calcResult, scaledupProducers);
+
+            // Assert
+            Assert.AreEqual(CommonConstants.DefaultMinValue, result);
+        }
+
+        [TestMethod]
         public void CanGetBadDebtProvision()
         {
             // Arrange
@@ -421,6 +451,24 @@
 
             // Assert
             Assert.AreEqual(39.254880m, result);
+        }
+
+        [TestMethod]
+        public void CanGetBadDebtProvisionReturnsZeroForInvalidValue()
+        {
+            // Arrange
+            var producers = TestDataHelper.GetProducers();
+            var producer = producers.First(p => p.Id == 1);
+            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
+            var calculatorResult = this.calcResult;
+            calculatorResult.CalcResultParameterOtherCost.BadDebtProvision = new KeyValuePair<string, string>("6 Bad Debt Provision", "some value");
+
+            // Act
+            var result = CalcResultSummaryUtil.GetBadDebtProvision(producer, producers, material, this.calcResult, scaledupProducers);
+
+            // Assert
+            Assert.AreEqual(CommonConstants.DefaultMinValue, result);
         }
 
         [TestMethod]
@@ -439,6 +487,23 @@
         }
 
         [TestMethod]
+        public void CanGetBadDebtProvisionProducerTotalReturnsZeroForInvalidValue()
+        {
+            // Arrange
+            var producers = TestDataHelper.GetProducers();
+            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
+            var calculatorResult = this.calcResult;
+            calculatorResult.CalcResultParameterOtherCost.BadDebtProvision = new KeyValuePair<string, string>("6 Bad Debt Provision", "some value");
+
+            // Act
+            var result = CalcResultSummaryUtil.GetBadDebtProvisionProducerTotal(producers, material, this.calcResult, scaledupProducers);
+
+            // Assert
+            Assert.AreEqual(CommonConstants.DefaultMinValue, result);
+        }
+
+        [TestMethod]
         public void CanGetProducerDisposalFeeWithBadDebtProvision()
         {
             // Arrange
@@ -452,6 +517,25 @@
 
             // Assert
             Assert.AreEqual(693.50288000m, result);
+        }
+
+        [TestMethod]
+        public void CanGetProducerDisposalFeeWithBadDebtProvisionReturnsZeroForInvalid()
+        {
+            // Arrange
+            var producers = TestDataHelper.GetProducers();
+            var producer = producers.First(p => p.Id == 1);
+            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
+            var calculatorResult = this.calcResult;
+            calculatorResult.CalcResultParameterOtherCost.BadDebtProvision = new KeyValuePair<string, string>("6 Bad Debt Provision", "some value");
+
+
+            // Act
+            var result = CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvision(producer, producers, material, this.calcResult, scaledupProducers);
+
+            // Assert
+            Assert.AreEqual(CommonConstants.DefaultMinValue, result);
         }
 
         [TestMethod]
