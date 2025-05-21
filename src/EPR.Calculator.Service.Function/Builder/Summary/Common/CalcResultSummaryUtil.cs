@@ -158,11 +158,10 @@
             MaterialDetail material,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
-            if (SubsidiaryContainsNegativeTonnage(producers, material, scaledUpProducers))
-            {
-                return CommonConstants.DefaultMinValue;
-            }
-            return producers.Sum(producer => GetNetReportedTonnage(producer, material, scaledUpProducers));
+            var reportedTonnage = producers.Sum(producer => GetReportedTonnage(producer, material, scaledUpProducers));
+            var managedConsumerWasteTonnage = producers.Sum(producer => GetTonnage(producer, material, PackagingTypes.ConsumerWaste, scaledUpProducers));
+
+            return reportedTonnage - managedConsumerWasteTonnage;
         }
 
         public static decimal GetPricePerTonne(
@@ -205,11 +204,10 @@
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
-            if (SubsidiaryContainsNegativeTonnage(producers, material, scaledUpProducers))
-            {
-                return CommonConstants.DefaultMinValue;
-            }
-            return producers.Sum(producer => GetProducerDisposalFee(producer, producers, material, calcResult, scaledUpProducers));
+            var netReportedTonnage = producers.Sum(producer => GetNetReportedTonnage(producer, material, scaledUpProducers));
+            var pricePerTonne = producers.Sum(producer => GetPricePerTonne(material, calcResult));
+
+            return netReportedTonnage * pricePerTonne;
         }
 
         public static decimal GetBadDebtProvision(
@@ -913,6 +911,11 @@
             MaterialDetail material,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
+            if (producer.ProducerId == 101007 && material.Code == "FC")
+            {
+                var a = 1;
+            }
+
             var reportedTonnage = GetReportedTonnage(producer, material, scaledUpProducers);
             var managedConsumerWasteTonnage = GetTonnage(producer, material, PackagingTypes.ConsumerWaste, scaledUpProducers);
 
