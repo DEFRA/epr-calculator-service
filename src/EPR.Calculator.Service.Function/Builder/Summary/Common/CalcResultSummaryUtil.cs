@@ -69,7 +69,7 @@
 
             if (scaledupProducerForAllSubmissionPeriods.Any())
             {
-                decimal tonnage = 0;
+                decimal tonnage = CommonConstants.DefaultMinValue;
                 foreach (var scaledupProducerTonnageByMaterial in scaledupProducerForAllSubmissionPeriods.Select(x => x.ScaledupProducerTonnageByMaterial))
                 {
                     switch (packagingType)
@@ -87,7 +87,7 @@
                             tonnage += scaledupProducerTonnageByMaterial[material.Code].ScaledupHouseholdDrinksContainersTonnageGlass;
                             break;
                         default:
-                            tonnage += 0;
+                            tonnage += CommonConstants.DefaultMinValue;
                             break;
                     }
                 }
@@ -98,7 +98,7 @@
             var reportedMaterials = producer.ProducerReportedMaterials
                 .FirstOrDefault(p => p.Material?.Code == material.Code && p.PackagingType == packagingType);
 
-            return reportedMaterials?.PackagingTonnage ?? 0;
+            return reportedMaterials?.PackagingTonnage ?? CommonConstants.DefaultMinValue;
         }
 
         public static decimal GetTonnageTotal(
@@ -139,10 +139,16 @@
         public static decimal GetNetReportedTonnage(
             ProducerDetail producer,
             MaterialDetail material,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
+            IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
+            int level = CommonConstants.LevelTwo)
         {
             var reportedTonnage = GetReportedTonnage(producer, material, scaledUpProducers);
             var managedConsumerWasteTonnage = GetTonnage(producer, material, PackagingTypes.ConsumerWaste, scaledUpProducers);
+
+            if (level == CommonConstants.LevelOne && managedConsumerWasteTonnage > reportedTonnage)
+            {
+                return CommonConstants.DefaultMinValue;
+            }
 
             return reportedTonnage - managedConsumerWasteTonnage;
         }
@@ -152,7 +158,10 @@
             MaterialDetail material,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
-            return producers.Sum(producer => GetNetReportedTonnage(producer, material, scaledUpProducers));
+            var reportedTonnage = producers.Sum(producer => GetReportedTonnage(producer, material, scaledUpProducers));
+            var managedConsumerWasteTonnage = producers.Sum(producer => GetTonnage(producer, material, PackagingTypes.ConsumerWaste, scaledUpProducers));
+
+            return reportedTonnage - managedConsumerWasteTonnage;
         }
 
         public static decimal GetPricePerTonne(
@@ -163,20 +172,26 @@
 
             if (laDisposalCostDataDetail == null)
             {
-                return 0;
+                return CommonConstants.DefaultMinValue;
             }
 
             var isParseSuccessful = decimal.TryParse(laDisposalCostDataDetail.DisposalCostPricePerTonne, NumberStyles.Currency, CultureInfo.GetCultureInfo("en-GB"), out decimal value);
 
-            return isParseSuccessful ? value : 0;
+            return isParseSuccessful ? value : CommonConstants.DefaultMinValue;
         }
 
         public static decimal GetProducerDisposalFee(
             ProducerDetail producer,
+            IEnumerable<ProducerDetail> producers,
             MaterialDetail material,
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
+            if (SubsidiaryContainsNegativeTonnage(producers, material, scaledUpProducers))
+            {
+                return CommonConstants.DefaultMinValue;
+            }
+
             var netReportedTonnage = GetNetReportedTonnage(producer, material, scaledUpProducers);
             var pricePerTonne = GetPricePerTonne(material, calcResult);
 
@@ -189,16 +204,20 @@
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
-            return producers.Sum(producer => GetProducerDisposalFee(producer, material, calcResult, scaledUpProducers));
+            var netReportedTonnage = producers.Sum(producer => GetNetReportedTonnage(producer, material, scaledUpProducers));
+            var pricePerTonne = producers.Sum(producer => GetPricePerTonne(material, calcResult));
+
+            return netReportedTonnage * pricePerTonne;
         }
 
         public static decimal GetBadDebtProvision(
             ProducerDetail producer,
+            IEnumerable<ProducerDetail> producers,
             MaterialDetail material,
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
-            var producerDisposalFee = GetProducerDisposalFee(producer, material, calcResult, scaledUpProducers);
+            var producerDisposalFee = GetProducerDisposalFee(producer, producers, material, calcResult, scaledUpProducers);
 
             var isParseSuccessful = decimal.TryParse(calcResult.CalcResultParameterOtherCost.BadDebtProvision.Value.Replace("%", string.Empty), out decimal value);
 
@@ -207,7 +226,7 @@
                 return producerDisposalFee * value / 100;
             }
 
-            return 0;
+            return CommonConstants.DefaultMinValue;
         }
 
         public static decimal GetBadDebtProvisionProducerTotal(
@@ -216,16 +235,17 @@
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
-            return producers.Sum(producer => GetBadDebtProvision(producer, material, calcResult, scaledUpProducers));
+            return producers.Sum(producer => GetBadDebtProvision(producer, producers, material, calcResult, scaledUpProducers));
         }
 
         public static decimal GetProducerDisposalFeeWithBadDebtProvision(
             ProducerDetail producer,
+            IEnumerable<ProducerDetail> producers,
             MaterialDetail material,
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
-            var producerDisposalFee = GetProducerDisposalFee(producer, material, calcResult, scaledUpProducers);
+            var producerDisposalFee = GetProducerDisposalFee(producer, producers, material, calcResult, scaledUpProducers);
 
             var isParseSuccessful = decimal.TryParse(calcResult.CalcResultParameterOtherCost.BadDebtProvision.Value.Replace("%", string.Empty), out decimal value);
 
@@ -234,7 +254,7 @@
                 return producerDisposalFee * (1 + (value / 100));
             }
 
-            return 0;
+            return CommonConstants.DefaultMinValue;
         }
 
         public static decimal GetProducerDisposalFeeWithBadDebtProvisionProducerTotal(
@@ -243,22 +263,23 @@
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
-            return producers.Sum(producer => GetProducerDisposalFeeWithBadDebtProvision(producer, material, calcResult, scaledUpProducers));
+            return producers.Sum(producer => GetProducerDisposalFeeWithBadDebtProvision(producer, producers, material, calcResult, scaledUpProducers));
         }
 
         public static decimal GetCountryBadDebtProvision(
             ProducerDetail producer,
+            IEnumerable<ProducerDetail> producers,
             MaterialDetail material,
             CalcResult calcResult,
             Countries country,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
-            var producerDisposalFeeWithBadDebtProvision = GetProducerDisposalFeeWithBadDebtProvision(producer, material, calcResult, scaledUpProducers);
+            var producerDisposalFeeWithBadDebtProvision = GetProducerDisposalFeeWithBadDebtProvision(producer, producers, material, calcResult, scaledUpProducers);
 
             var countryApportionmentPercentage = GetCountryApportionmentPercentage(calcResult);
             if (countryApportionmentPercentage == null)
             {
-                return 0;
+                return CommonConstants.DefaultMinValue;
             }
 
             string? disposalCost;
@@ -283,7 +304,7 @@
 
             var isParseSuccessful = decimal.TryParse(disposalCost.Replace("%", string.Empty), out decimal value);
 
-            return isParseSuccessful ? producerDisposalFeeWithBadDebtProvision * value / 100 : 0;
+            return isParseSuccessful ? producerDisposalFeeWithBadDebtProvision * value / 100 : CommonConstants.DefaultMinValue;
         }
 
         public static decimal GetCountryBadDebtProvisionTotal(
@@ -293,7 +314,7 @@
             Countries country,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
-            return producers.Sum(producer => GetCountryBadDebtProvision(producer, material, calcResult, country, scaledUpProducers));
+            return producers.Sum(producer => GetCountryBadDebtProvision(producer, producers, material, calcResult, country, scaledUpProducers));
         }
 
         public static CalcResultLapcapDataDetails? GetCountryApportionmentPercentage(CalcResult calcResult)
@@ -303,7 +324,7 @@
 
         public static decimal GetTotalProducerDisposalFee(Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> materialCostSummary)
         {
-            decimal totalProducerDisposalFee = 0;
+            decimal totalProducerDisposalFee = CommonConstants.DefaultMinValue;
 
             foreach (var material in materialCostSummary)
             {
@@ -315,7 +336,7 @@
 
         public static decimal GetTotalBadDebtProvision(Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> materialCostSummary)
         {
-            decimal totalBadDebtProvision = 0;
+            decimal totalBadDebtProvision = CommonConstants.DefaultMinValue;
 
             foreach (var material in materialCostSummary)
             {
@@ -327,7 +348,7 @@
 
         public static decimal GetTotalProducerDisposalFeeWithBadDebtProvision(Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> materialCostSummary)
         {
-            decimal totalProducerDisposalFeeWithBadDebtProvision = 0;
+            decimal totalProducerDisposalFeeWithBadDebtProvision = CommonConstants.DefaultMinValue;
 
             foreach (var material in materialCostSummary)
             {
@@ -339,7 +360,7 @@
 
         public static decimal GetEnglandTotal(Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> materialCostSummary)
         {
-            decimal totalEngland = 0;
+            decimal totalEngland = CommonConstants.DefaultMinValue;
 
             foreach (var material in materialCostSummary)
             {
@@ -351,7 +372,7 @@
 
         public static decimal GetWalesTotal(Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> materialCostSummary)
         {
-            decimal totalWales = 0;
+            decimal totalWales = CommonConstants.DefaultMinValue;
 
             foreach (var material in materialCostSummary)
             {
@@ -363,7 +384,7 @@
 
         public static decimal GetScotlandTotal(Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> materialCostSummary)
         {
-            decimal totalScotland = 0;
+            decimal totalScotland = CommonConstants.DefaultMinValue;
 
             foreach (var material in materialCostSummary)
             {
@@ -375,7 +396,7 @@
 
         public static decimal GetNorthernIrelandTotal(Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> materialCostSummary)
         {
-            decimal totalNorthernIreland = 0;
+            decimal totalNorthernIreland = CommonConstants.DefaultMinValue;
 
             foreach (var material in materialCostSummary)
             {
@@ -732,7 +753,7 @@
 
         public static decimal GetTotalProducerCommsFee(Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostSummary)
         {
-            decimal producerTotalCostWithoutBadDebtProvision = 0;
+            decimal producerTotalCostWithoutBadDebtProvision = CommonConstants.DefaultMinValue;
 
             foreach (var material in commsCostSummary)
             {
@@ -744,7 +765,7 @@
 
         public static decimal GetCommsTotalBadDebtProvision(Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> materialCostSummary)
         {
-            decimal totalBadDebtProvision = 0;
+            decimal totalBadDebtProvision = CommonConstants.DefaultMinValue;
 
             foreach (var material in materialCostSummary)
             {
@@ -756,7 +777,7 @@
 
         public static decimal GetTotalProducerCommsFeeWithBadDebtProvision(Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostSummary)
         {
-            decimal totalCommsCostsbyMaterialwithBadDebtprovision = 0;
+            decimal totalCommsCostsbyMaterialwithBadDebtprovision = CommonConstants.DefaultMinValue;
 
             foreach (var material in commsCostSummary)
             {
@@ -768,7 +789,7 @@
 
         public static decimal GetNorthernIrelandCommsTotal(Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostSummary)
         {
-            decimal northernIrelandTotalwithBadDebtprovision = 0;
+            decimal northernIrelandTotalwithBadDebtprovision = CommonConstants.DefaultMinValue;
 
             foreach (var material in commsCostSummary)
             {
@@ -780,7 +801,7 @@
 
         public static decimal GetScotlandCommsTotal(Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostSummary)
         {
-            decimal scotlandTotalwithBadDebtprovision = 0;
+            decimal scotlandTotalwithBadDebtprovision = CommonConstants.DefaultMinValue;
 
             foreach (var material in commsCostSummary)
             {
@@ -792,7 +813,7 @@
 
         public static decimal GetWalesCommsTotal(Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostSummary)
         {
-            decimal walesTotalwithBadDebtprovision = 0;
+            decimal walesTotalwithBadDebtprovision = CommonConstants.DefaultMinValue;
 
             foreach (var material in commsCostSummary)
             {
@@ -804,7 +825,7 @@
 
         public static decimal GetEnglandCommsTotal(Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostSummary)
         {
-            decimal englandTotalwithBadDebtprovision = 0;
+            decimal englandTotalwithBadDebtprovision = CommonConstants.DefaultMinValue;
 
             foreach (var material in commsCostSummary)
             {
@@ -854,7 +875,7 @@
                 case Countries.NorthernIreland:
                     return onePlusFourApportionment.NorthernIrelandTotal;
                 default:
-                    return 0;
+                    return CommonConstants.DefaultMinValue;
             }
         }
 
@@ -867,7 +888,7 @@
 
             if (fourCountryApportionment == null)
             {
-                return 0;
+                return CommonConstants.DefaultMinValue;
             }
 
             switch (country)
@@ -881,8 +902,43 @@
                 case Countries.NorthernIreland:
                     return fourCountryApportionment.NorthernIrelandValue;
                 default:
-                    return 0;
+                    return CommonConstants.DefaultMinValue;
             }
+        }
+
+        public static bool ProducerContainsNegativeTonnage(
+            ProducerDetail producer,
+            MaterialDetail material,
+            IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
+        {
+            if (producer.ProducerId == 101007 && material.Code == "FC")
+            {
+                var a = 1;
+            }
+
+            var reportedTonnage = GetReportedTonnage(producer, material, scaledUpProducers);
+            var managedConsumerWasteTonnage = GetTonnage(producer, material, PackagingTypes.ConsumerWaste, scaledUpProducers);
+
+            if (managedConsumerWasteTonnage > reportedTonnage)
+            {
+                return CommonConstants.True;
+            }
+            return CommonConstants.False;
+        }
+
+        public static bool SubsidiaryContainsNegativeTonnage(
+            IEnumerable<ProducerDetail> producers,
+            MaterialDetail material,
+            IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
+        {
+            foreach (var producer in producers)
+            {
+                if (ProducerContainsNegativeTonnage(producer, material, scaledUpProducers))
+                {
+                    return CommonConstants.True;
+                }
+            }
+            return CommonConstants.False;
         }
     }
 }

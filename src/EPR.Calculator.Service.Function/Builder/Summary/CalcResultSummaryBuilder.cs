@@ -113,11 +113,10 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     }
 
                     // Calculate the values for the producer
-                    producerDisposalFees.Add(this.GetProducerRow(producerDisposalFees, producer, materials, calcResult, TotalPackagingTonnage));
+                    producerDisposalFees.Add(this.GetProducerRow(producerDisposalFees, producer, producersAndSubsidiaries.ToList(), materials, calcResult, TotalPackagingTonnage));
                 }
 
                 // Calculate the total for all the producers
-
                 var allTotalRow = this.GetProducerTotalRow(orderedProducerDetails.ToList(), materials, calcResult, producerDisposalFees, true, TotalPackagingTonnage);
                 producerDisposalFees.Add(allTotalRow);
 
@@ -323,6 +322,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         public CalcResultSummaryProducerDisposalFees GetProducerRow(
             List<CalcResultSummaryProducerDisposalFees> producerDisposalFeesLookup,
             ProducerDetail producer,
+            List<ProducerDetail> producersAndSubsidiaries,
             IEnumerable<MaterialDetail> materials,
             CalcResult calcResult,
             IEnumerable<TotalPackagingTonnagePerRun> TotalPackagingTonnage)
@@ -330,13 +330,15 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             var materialCostSummary = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>();
             var commsCostSummary = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>();
 
+            var level = CalcResultSummaryUtil.GetLevelIndex(producerDisposalFeesLookup, producer);
+
             var result = new CalcResultSummaryProducerDisposalFees
             {
                 ProducerId = producer.ProducerId.ToString(),
                 ProducerName = producer.ProducerName ?? string.Empty,
                 SubsidiaryId = producer.SubsidiaryId ?? string.Empty,
                 TradingName = producer.TradingName ?? string.Empty,
-                Level = CalcResultSummaryUtil.GetLevelIndex(producerDisposalFeesLookup, producer).ToString(),
+                Level = level.ToString(),
                 IsProducerScaledup = CalcResultSummaryUtil.IsProducerScaledup(producer, ScaledupProducers)
                     ? CommonConstants.ScaledupProducersYes
                     : CommonConstants.ScaledupProducersNo,
@@ -353,15 +355,15 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     PublicBinTonnage = publicBinTonnage,
                     TotalReportedTonnage = CalcResultSummaryUtil.GetReportedTonnage(producer, material, ScaledupProducers),
                     ManagedConsumerWasteTonnage = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.ConsumerWaste, ScaledupProducers),
-                    NetReportedTonnage = CalcResultSummaryUtil.GetNetReportedTonnage(producer, material, ScaledupProducers),
+                    NetReportedTonnage = CalcResultSummaryUtil.GetNetReportedTonnage(producer, material, ScaledupProducers, level),
                     PricePerTonne = CalcResultSummaryUtil.GetPricePerTonne(material, calcResult),
-                    ProducerDisposalFee = CalcResultSummaryUtil.GetProducerDisposalFee(producer, material, calcResult, ScaledupProducers),
-                    BadDebtProvision = CalcResultSummaryUtil.GetBadDebtProvision(producer, material, calcResult, ScaledupProducers),
-                    ProducerDisposalFeeWithBadDebtProvision = CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvision(producer, material, calcResult, ScaledupProducers),
-                    EnglandWithBadDebtProvision = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, material, calcResult, Countries.England, ScaledupProducers),
-                    WalesWithBadDebtProvision = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, material, calcResult, Countries.Wales, ScaledupProducers),
-                    ScotlandWithBadDebtProvision = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, material, calcResult, Countries.Scotland, ScaledupProducers),
-                    NorthernIrelandWithBadDebtProvision = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, material, calcResult, Countries.NorthernIreland, ScaledupProducers),
+                    ProducerDisposalFee = CalcResultSummaryUtil.GetProducerDisposalFee(producer, producersAndSubsidiaries, material, calcResult, ScaledupProducers),
+                    BadDebtProvision = CalcResultSummaryUtil.GetBadDebtProvision(producer, producersAndSubsidiaries, material, calcResult, ScaledupProducers),
+                    ProducerDisposalFeeWithBadDebtProvision = CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvision(producer, producersAndSubsidiaries, material, calcResult, ScaledupProducers),
+                    EnglandWithBadDebtProvision = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, producersAndSubsidiaries, material, calcResult, Countries.England, ScaledupProducers),
+                    WalesWithBadDebtProvision = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, producersAndSubsidiaries, material, calcResult, Countries.Wales, ScaledupProducers),
+                    ScotlandWithBadDebtProvision = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, producersAndSubsidiaries, material, calcResult, Countries.Scotland, ScaledupProducers),
+                    NorthernIrelandWithBadDebtProvision = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, producersAndSubsidiaries, material, calcResult, Countries.NorthernIreland, ScaledupProducers),
                     TonnageChange = GetPreviousInvoicedTonnage(result.Level),
                     PreviousInvoicedTonnage = GetPreviousInvoicedTonnage(result.Level),
                 };
