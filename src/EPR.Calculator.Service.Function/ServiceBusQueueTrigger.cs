@@ -59,15 +59,27 @@ namespace EPR.Calculator.Service.Function
 
             try
             {
-                var param = JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem);
-                if (param == null)
+                BillingInstruction billingInstructionParameter;
+                var calculatorParameter = JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem);
+                if (calculatorParameter == null 
+                    || 
+                    calculatorParameter.CalculatorRunId <= 0)
                 {
-                    this.LogError("Deserialized object is null", new JsonException($"Deserialized object is null"));
-                    throw new JsonException("Deserialized object is null");
+                    // this.LogError("Deserialized object is null", new JsonException($"Deserialized object is null"));
+                    // throw new JsonException("Deserialized object is null");
+
+                    billingInstructionParameter = JsonConvert.DeserializeObject<BillingInstruction>(myQueueItem);
+                    if (billingInstructionParameter == null)
+                    {
+                        this.LogError("Deserialized object is null", new JsonException($"Deserialized object is null"));
+                        throw new JsonException("Deserialized object is null");
+                    }
                 }
+                
+
 
                 string? runName = string.Empty;
-                var calculatorRunParameter = this.calculatorRunParameterMapper.Map(param);
+                var calculatorRunParameter = this.calculatorRunParameterMapper.Map(calculatorParameter);
                 try
                 {
                     runName = await this.runNameService.GetRunNameAsync(calculatorRunParameter.Id);
