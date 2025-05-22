@@ -453,7 +453,7 @@
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0];
 
             // Assert
-            Assert.AreEqual("-", fee.CurrentYearInvoicedTotalToDate);
+            Assert.AreEqual("-", fee.CurrentYearInvoiceTotalToDate);
             Assert.AreEqual("-", fee.TonnageChangeSinceLastInvoice);
             Assert.AreEqual("-", fee.LiabilityDifference);
             Assert.AreEqual("-", fee.MaterialThresholdBreached);
@@ -620,7 +620,7 @@
                     Total3SAOperatingCostswithBadDebtprovision = 35.87m,
                     LaDataPrepCostsTotalWithBadDebtProvisionSection4 = 65,
                     TotalProducerFeeWithBadDebtProvisionSection5 = 49.32m,
-                    CurrentYearInvoicedTotalToDate = "1250.89m",
+                    CurrentYearInvoiceTotalToDate = "1250.89m",
                     TonnageChangeSinceLastInvoice = string.Empty,
                     LiabilityDifference = "580.73m",
                     MaterialThresholdBreached = string.Empty,
