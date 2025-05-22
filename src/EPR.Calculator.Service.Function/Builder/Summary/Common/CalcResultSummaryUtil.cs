@@ -160,6 +160,14 @@
                 : totalReportedTonnage - totalManagedConsumerWasteTonnage;
         }
 
+        public static decimal GetNetReportedTonnageOverallTotal(
+            IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
+            MaterialDetail material)
+        {
+            var levelOneRows = producerDisposalFees.Where(fee => fee.Level == CommonConstants.LevelOne.ToString());
+            return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial[material.Code].NetReportedTonnage);
+        }
+
         public static decimal GetPricePerTonne(
             MaterialDetail material,
             CalcResult calcResult)
@@ -215,6 +223,30 @@
             var totalPricePerTonne = producers.Sum(producer => GetPricePerTonne(material, calcResult));
 
             return totalNetReportedTonnage * totalPricePerTonne;
+        }
+
+        public static decimal GetProducerDisposalFeeOverallTotal(
+            IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
+            MaterialDetail material)
+        {
+            var levelOneRows = producerDisposalFees.Where(fee => fee.Level == CommonConstants.LevelOne.ToString());
+            return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial[material.Code].ProducerDisposalFee);
+        }
+
+        public static decimal GetBadDebtProvisionOverallTotal(
+            IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
+            MaterialDetail material)
+        {
+            var levelOneRows = producerDisposalFees.Where(fee => fee.Level == CommonConstants.LevelOne.ToString());
+            return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial[material.Code].BadDebtProvision);
+        }
+
+        public static decimal GetProducerDisposalFeeWithBadDebtProvisionOverallTotal(
+            IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
+            MaterialDetail material)
+        {
+            var levelOneRows = producerDisposalFees.Where(fee => fee.Level == CommonConstants.LevelOne.ToString());
+            return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial[material.Code].ProducerDisposalFeeWithBadDebtProvision);
         }
 
         public static decimal GetBadDebtProvision(

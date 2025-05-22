@@ -209,12 +209,19 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     PublicBinTonnage = publicBinTonnage,
                     TotalReportedTonnage = CalcResultSummaryUtil.GetReportedTonnageTotal(producersAndSubsidiaries, material, ScaledupProducers),
                     ManagedConsumerWasteTonnage = CalcResultSummaryUtil.GetTonnageTotal(producersAndSubsidiaries, material, PackagingTypes.ConsumerWaste, ScaledupProducers),
-                    NetReportedTonnage = CalcResultSummaryUtil.GetNetReportedTonnageTotal(producersAndSubsidiaries, material, ScaledupProducers),
+                    NetReportedTonnage = isOverAllTotalRow
+                        ? CalcResultSummaryUtil.GetNetReportedTonnageOverallTotal(producerDisposalFees, material)
+                        : CalcResultSummaryUtil.GetNetReportedTonnageTotal(producersAndSubsidiaries, material, ScaledupProducers),
                     PricePerTonne = CalcResultSummaryUtil.GetPricePerTonne(material, calcResult),
-                    ProducerDisposalFee = CalcResultSummaryUtil.GetProducerDisposalFeeProducerTotal(producersAndSubsidiaries, material, calcResult, ScaledupProducers),
-                    BadDebtProvision = CalcResultSummaryUtil.GetBadDebtProvisionProducerTotal(producersAndSubsidiaries, material, calcResult, ScaledupProducers),
-                    ProducerDisposalFeeWithBadDebtProvision = CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvisionProducerTotal(producersAndSubsidiaries, material,
-                        calcResult, ScaledupProducers),
+                    ProducerDisposalFee = isOverAllTotalRow
+                        ? CalcResultSummaryUtil.GetProducerDisposalFeeOverallTotal(producerDisposalFees, material)
+                        : CalcResultSummaryUtil.GetProducerDisposalFeeProducerTotal(producersAndSubsidiaries, material, calcResult, ScaledupProducers),
+                    BadDebtProvision = isOverAllTotalRow
+                        ? CalcResultSummaryUtil.GetBadDebtProvisionOverallTotal(producerDisposalFees, material)
+                        : CalcResultSummaryUtil.GetBadDebtProvisionProducerTotal(producersAndSubsidiaries, material, calcResult, ScaledupProducers),
+                    ProducerDisposalFeeWithBadDebtProvision = isOverAllTotalRow
+                        ? CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvisionOverallTotal(producerDisposalFees, material)
+                        : CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvisionProducerTotal(producersAndSubsidiaries, material, calcResult, ScaledupProducers),
                     EnglandWithBadDebtProvision = CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producersAndSubsidiaries, material, calcResult, Countries.England, ScaledupProducers),
                     WalesWithBadDebtProvision = CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producersAndSubsidiaries, material, calcResult, Countries.Wales, ScaledupProducers),
                     ScotlandWithBadDebtProvision = CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producersAndSubsidiaries, material, calcResult, Countries.Scotland, ScaledupProducers),
