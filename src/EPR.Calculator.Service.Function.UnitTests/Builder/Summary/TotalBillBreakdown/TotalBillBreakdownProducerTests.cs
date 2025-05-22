@@ -42,7 +42,7 @@
         /// </summary>
         private readonly Dictionary<MaterialDetail, CalcResultSummaryProducerCommsFeesCostByMaterial> _commsCostSummary;
 
-        private readonly int columnIndex = 284;
+        private readonly int columnIndex = 285;
 
         /// <summary>
         /// Gets the Fixture

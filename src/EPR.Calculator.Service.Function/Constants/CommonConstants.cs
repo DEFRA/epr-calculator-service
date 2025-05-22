@@ -2,6 +2,14 @@
 {
     public static class CommonConstants
     {
+        public const bool True = true;
+        public const bool False = false;
+
+        public const int DefaultMinValue = 0;
+        public const int LevelOne = 1;
+        public const int LevelTwo = 2;
+        public const int SecondaryHeaderMaxColumnSize = 298;
+
         public const string Material = "Material";
         public const string England = "England";
         public const string Wales = "Wales";
@@ -22,9 +30,6 @@
         public const string TabSpace = "\t";
         public const string DoubleQuote = "\"";
         public const string Hyphen = "-";
-        public const int LevelOne = 1;
-        public const int LevelTwo = 2;
-        public const int SecondaryHeaderMaxColumnSize = 298;
         public const string ScaledupProducersYes = "Yes";
         public const string ScaledupProducersNo = "No";
         public const string ParametersOther = "Parameters - Other";

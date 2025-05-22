@@ -1221,9 +1221,25 @@
                 new ProducerReportedMaterial
                 {
                     Material = new Material { Id = 4, Code = "GL", Name = "Glass", Description = "Glass" },
-                    PackagingTonnage = 50.00m,
+                    PackagingTonnage = 40.00m,
+                    PackagingType = "HH",
+                    MaterialId = 4,
+                    ProducerDetail = null,
+                },
+                new ProducerReportedMaterial
+                {
+                    Material = new Material { Id = 4, Code = "GL", Name = "Glass", Description = "Glass" },
+                    PackagingTonnage = 20.00m,
                     PackagingType = "HDC",
                     MaterialId = 4,
+                    ProducerDetail = null,
+                },
+                new ProducerReportedMaterial
+                {
+                    Material = new Material { Id = 1, Code = "GL", Name = "Glass", Description = "Glass" },
+                    PackagingTonnage = 100.00m,
+                    PackagingType = "CW",
+                    MaterialId = 1,
                     ProducerDetail = null,
                 },
             };
