@@ -23,20 +23,20 @@
     {
         public const int ResultSummaryHeaderColumnIndex = 1;
         public const int NotesHeaderColumnIndex = 1;
-        public const int ProducerDisposalFeesHeaderColumnIndex = 6;
-        public const int CommsCostHeaderColumnIndex = 136;
-        public const int MaterialsBreakdownHeaderInitialColumnIndex = 6;
+        public const int ProducerDisposalFeesHeaderColumnIndex = 7;
+        public const int CommsCostHeaderColumnIndex = 137;
+        public const int MaterialsBreakdownHeaderInitialColumnIndex = 7;
         public const int MaterialsBreakdownHeaderIncrementalColumnIndex = 15;
 
-        public const int DisposalFeeSummaryColumnIndex = 127;
-        public const int MaterialsBreakdownHeaderCommsInitialColumnIndex = 136;
+        public const int DisposalFeeSummaryColumnIndex = 128;
+        public const int MaterialsBreakdownHeaderCommsInitialColumnIndex = 137;
         public const int MaterialsBreakdownHeaderCommsIncrementalColumnIndex = 11;
 
         // Section-(1) & (2a)
-        public const int DisposalFeeCommsCostsHeaderInitialColumnIndex = 232;
+        public const int DisposalFeeCommsCostsHeaderInitialColumnIndex = 233;
 
         // Section-(2b)
-        private const int CommsCost2bColumnIndex = 247;
+        private const int CommsCost2bColumnIndex = 248;
         public const int decimalRoundUp = 2;
 
         public static int GetLevelIndex(
@@ -241,14 +241,6 @@
             return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial[material.Code].BadDebtProvision);
         }
 
-        public static decimal GetProducerDisposalFeeWithBadDebtProvisionOverallTotal(
-            IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
-            MaterialDetail material)
-        {
-            var levelOneRows = producerDisposalFees.Where(fee => fee.Level == CommonConstants.LevelOne.ToString());
-            return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial[material.Code].ProducerDisposalFeeWithBadDebtProvision);
-        }
-
         public static decimal GetBadDebtProvision(
             ProducerDetail producer,
             IEnumerable<ProducerDetail> producerAndSubsidiaries,
@@ -321,6 +313,14 @@
             }
 
             return 0;
+        }
+
+        public static decimal GetProducerDisposalFeeWithBadDebtProvisionOverallTotal(
+            IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
+            MaterialDetail material)
+        {
+            var levelOneRows = producerDisposalFees.Where(fee => fee.Level == CommonConstants.LevelOne.ToString());
+            return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial[material.Code].ProducerDisposalFeeWithBadDebtProvision);
         }
 
         public static decimal GetCountryBadDebtProvision(
@@ -974,36 +974,6 @@
                 default:
                     return 0;
             }
-        }
-
-        public static bool ProducerContainsNegativeTonnage(
-            ProducerDetail producer,
-            MaterialDetail material,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
-        {
-            var reportedTonnage = GetReportedTonnage(producer, material, scaledUpProducers);
-            var managedConsumerWasteTonnage = GetTonnage(producer, material, PackagingTypes.ConsumerWaste, scaledUpProducers);
-
-            if (managedConsumerWasteTonnage > reportedTonnage)
-            {
-                return CommonConstants.True;
-            }
-            return CommonConstants.False;
-        }
-
-        public static bool SubsidiaryContainsNegativeTonnage(
-            IEnumerable<ProducerDetail> producers,
-            MaterialDetail material,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
-        {
-            foreach (var producer in producers)
-            {
-                if (ProducerContainsNegativeTonnage(producer, material, scaledUpProducers))
-                {
-                    return CommonConstants.True;
-                }
-            }
-            return CommonConstants.False;
         }
     }
 }
