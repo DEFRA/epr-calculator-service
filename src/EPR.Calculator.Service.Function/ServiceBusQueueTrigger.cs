@@ -21,6 +21,7 @@ namespace EPR.Calculator.Service.Function
         private readonly ICalculatorRunParameterMapper calculatorRunParameterMapper;
         private readonly ICalculatorTelemetryLogger telemetryLogger;
         private readonly IRunNameService runNameService;
+        private readonly IPrepareBillingService prepareBillingService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceBusQueueTrigger"/> class.
@@ -33,12 +34,14 @@ namespace EPR.Calculator.Service.Function
             ICalculatorRunService calculatorRunService,
             ICalculatorRunParameterMapper calculatorRunParameterMapper,
             IRunNameService runNameService,
-            ICalculatorTelemetryLogger telemetryLogger)
+            ICalculatorTelemetryLogger telemetryLogger,
+            IPrepareBillingService prepareBillingService)
         {
             this.calculatorRunService = calculatorRunService;
             this.calculatorRunParameterMapper = calculatorRunParameterMapper;
             this.runNameService = runNameService;
             this.telemetryLogger = telemetryLogger;
+            this.prepareBillingService = prepareBillingService;
         }
 
         /// <summary>
@@ -89,13 +92,24 @@ namespace EPR.Calculator.Service.Function
                     this.LogError("Run name not found", ex);
                 }
 
-                bool processStatus = await this.calculatorRunService.StartProcess(calculatorRunParameter, runName);
-                this.telemetryLogger.LogInformation(new TrackMessage
+                if (calculatorParameter != null && calculatorParameter.CalculatorRunId <= 0)
                 {
-                    RunId = calculatorRunParameter.Id,
-                    RunName = runName,
-                    Message = $"Process status: {processStatus}",
-                });
+                    bool processStatus = await this.calculatorRunService.StartProcess(calculatorRunParameter, runName);
+                    this.telemetryLogger.LogInformation(new TrackMessage
+                    {
+                        RunId = calculatorRunParameter.Id,
+                        RunName = runName,
+                        Message = $"Process status: {processStatus}",
+                    });
+                }
+                else
+                {
+                    var resultsRequestDto = new Dtos.CalcResultsRequestDto
+                    {
+                        RunId = calculatorParameter.CalculatorRunId
+                    };
+                    await this.prepareBillingService.PrepareBilling(resultsRequestDto);
+                }
             }
             catch (JsonException jsonex)
             {
