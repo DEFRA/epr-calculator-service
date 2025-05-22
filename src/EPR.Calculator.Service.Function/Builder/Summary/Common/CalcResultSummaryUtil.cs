@@ -144,7 +144,7 @@
             var reportedTonnage = GetReportedTonnage(producer, material, scaledUpProducers);
             var managedConsumerWasteTonnage = GetTonnage(producer, material, PackagingTypes.ConsumerWaste, scaledUpProducers);
 
-            return reportedTonnage - managedConsumerWasteTonnage;
+            return Math.Max(0, reportedTonnage - managedConsumerWasteTonnage);
         }
 
         public static decimal GetNetReportedTonnageTotal(
