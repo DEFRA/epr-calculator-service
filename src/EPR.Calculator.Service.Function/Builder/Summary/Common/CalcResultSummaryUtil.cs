@@ -219,10 +219,16 @@
                 return 0;
             }
 
-            var totalNetReportedTonnage = producers.Sum(producer => GetNetReportedTonnage(producer, material, scaledUpProducers));
-            var totalPricePerTonne = producers.Sum(producer => GetPricePerTonne(material, calcResult));
+            var totalProducerDisposalFees = 0m;
+            foreach(var producer in producers)
+            {
+                var netReportedTonnage = GetNetReportedTonnage(producer, material, scaledUpProducers);
+                var pricePerTonne = GetPricePerTonne(material, calcResult);
 
-            return totalNetReportedTonnage * totalPricePerTonne;
+                totalProducerDisposalFees += netReportedTonnage * pricePerTonne;
+            }
+
+            return totalProducerDisposalFees;
         }
 
         public static decimal GetProducerDisposalFeeOverallTotal(
