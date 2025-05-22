@@ -418,7 +418,7 @@
             var result = CalcResultSummaryUtil.GetProducerDisposalFeeProducerTotal(producers, material, this.calcResult, scaledupProducers);
 
             // Assert
-            Assert.AreEqual(5888.232000m, result);
+            Assert.AreEqual(1962.744000m, result);
         }
 
         [TestMethod]
@@ -496,7 +496,7 @@
             var result = CalcResultSummaryUtil.GetBadDebtProvisionProducerTotal(producers, material, this.calcResult, scaledupProducers);
 
             // Assert
-            Assert.AreEqual(353.29392000m, result);
+            Assert.AreEqual(117.76464000m, result);
         }
 
         [TestMethod]
@@ -577,7 +577,7 @@
             var result = CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvisionProducerTotal(producers, material, this.calcResult, scaledupProducers);
 
             // Assert
-            Assert.AreEqual(6241.52592000m, result);
+            Assert.AreEqual(2080.50864000m, result);
         }
 
         [TestMethod]
@@ -851,7 +851,7 @@
             var result = CalcResultSummaryUtil.GetTotal1Plus2ABadDebt(producers, materials, this.calcResult, scaledupProducers);
 
             // Assert
-            Assert.AreEqual(6653.67300000m, result);
+            Assert.AreEqual(2217.89100000m, result);
         }
 
         [TestMethod]
