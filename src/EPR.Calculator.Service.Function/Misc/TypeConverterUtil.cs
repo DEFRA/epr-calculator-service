@@ -26,13 +26,11 @@ namespace EPR.Calculator.Service.Function.Misc
                 return (T)value;
 
             try
-            {           
-
+            {
                 return (T)Convert.ChangeType(value, targetType);
             }
             catch (Exception)
             {
-
                 var converter =  TypeDescriptor.GetConverter(targetType);
                 if (converter != null && converter.CanConvertFrom(value.GetType()))
                 {
