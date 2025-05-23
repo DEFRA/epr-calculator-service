@@ -128,6 +128,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICommsCostExporter, CommsCostExporter>();
             services.AddTransient<IDbLoadingChunkerService<ProducerDetail>, DbLoadingChunkerService<ProducerDetail>>();
             services.AddTransient<IDbLoadingChunkerService<ProducerReportedMaterial>, DbLoadingChunkerService<ProducerReportedMaterial>>();
+            services.AddTransient<IDbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction>, DbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction>>();
             services.AddTransient<ICalcResultSummaryExporter, CalcResultSummaryExporter>();
             services.AddTransient<ILateReportingExporter, LateReportingExporter>();
             services.AddTransient<IRunNameService, RunNameService>();

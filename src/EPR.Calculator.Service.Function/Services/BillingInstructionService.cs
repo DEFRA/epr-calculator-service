@@ -9,17 +9,19 @@ using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.ApplicationInsights;
+using EPR.Calculator.Service.Function.Misc;
+
 
 namespace EPR.Calculator.Service.Function.Services
 {
     public class BillingInstructionService : IBillingInstructionService
     {
-        private IDbLoadingChunkerService<BillingInstruction> billingInstructionChunker { get; init; }
+        private IDbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction> billingInstructionChunker { get; init; }
 
         private readonly ICalculatorTelemetryLogger telemetryLogger;
 
         public BillingInstructionService(
-            IDbLoadingChunkerService<BillingInstruction> billingInstructionChunker,
+            IDbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction> billingInstructionChunker,
             ICalculatorTelemetryLogger telemetryLogger)
         {
             this.billingInstructionChunker = billingInstructionChunker;
@@ -30,10 +32,10 @@ namespace EPR.Calculator.Service.Function.Services
         {
             try
             {
-                var startTime = DateTime.Now;
+                var startTime = DateTime.UtcNow;
 
                 // TODO: Delete the BillingInstruction class from this project and use it from the API.Data project
-                var billingInstructions = new List<BillingInstruction>();
+                var billingInstructions = new List<ProducerResultFileSuggestedBillingInstruction>();
 
                 var producers = calcResult.CalcResultSummary.ProducerDisposalFees.Where(producer => producer.Level == CommonConstants.LevelOne.ToString());
 
@@ -44,19 +46,19 @@ namespace EPR.Calculator.Service.Function.Services
 
                     if (isProducerIdParseSuccessful && isSuggestedInvoiceAmountParseSuccessful)
                     {
-                        var billingInstruction = new BillingInstruction
+                        var billingInstruction = new ProducerResultFileSuggestedBillingInstruction
                         {
                             CalculatorRunId = calcResult.CalcResultDetail.RunId,
                             ProducerId = producerId,
                             TotalProducerBillWithBadDebt = producer.TotalProducerBillWithBadDebtProvision,
-                            CurrentYearInvoiceTotalToDate = GetParsedValue(producer.CurrentYearInvoiceTotalToDate),
-                            TonnageChangeSinceLastInvoice = producer.TonnageChangeSinceLastInvoice,
-                            AmountLiabilityDifferenceCalcVsPrev = GetParsedValue(producer.LiabilityDifference),
-                            MaterialPoundThresholdBreached = producer.MaterialThresholdBreached,
-                            TonnagePoundThresholdBreached = producer.TonnageThresholdBreached,
-                            PercentageLiabilityDifferenceCalcVsPrev = GetParsedValue(producer.PercentageLiabilityDifference),
-                            MaterialPercentageThresholdBreached = producer.MaterialPercentageThresholdBreached,
-                            TonnagePercentageThresholdBreached = producer.TonnagePercentageThresholdBreached,
+                            CurrentYearInvoiceTotalToDate = IsDefaultValue(producer.CurrentYearInvoiceTotalToDate) ? null: TypeConverterUtil.ConvertTo<decimal>(producer.CurrentYearInvoiceTotalToDate),
+                            TonnageChangeSinceLastInvoice = IsDefaultValue(producer.TonnageChangeSinceLastInvoice)? null: TypeConverterUtil.ConvertTo<string>(producer.TonnageChangeSinceLastInvoice),
+                            AmountLiabilityDifferenceCalcVsPrev = IsDefaultValue(producer.LiabilityDifference) ? null : TypeConverterUtil.ConvertTo<decimal>(producer.LiabilityDifference) ,
+                            MaterialPoundThresholdBreached = IsDefaultValue(producer.MaterialThresholdBreached) ? null : TypeConverterUtil.ConvertTo<string>(producer.MaterialThresholdBreached),
+                            TonnagePoundThresholdBreached = IsDefaultValue(producer.TonnageThresholdBreached) ? null : TypeConverterUtil.ConvertTo<string>(producer.TonnageThresholdBreached),
+                            PercentageLiabilityDifferenceCalcVsPrev = IsDefaultValue(producer.PercentageLiabilityDifference) ? null : TypeConverterUtil.ConvertTo<decimal>(producer.PercentageLiabilityDifference) ,
+                            MaterialPercentageThresholdBreached = IsDefaultValue(producer.MaterialPercentageThresholdBreached) ? null : TypeConverterUtil.ConvertTo<string>(producer.MaterialPercentageThresholdBreached),
+                            TonnagePercentageThresholdBreached = IsDefaultValue(producer.TonnagePercentageThresholdBreached) ? null : TypeConverterUtil.ConvertTo<string>(producer.TonnagePercentageThresholdBreached),
                             SuggestedBillingInstruction = producer.SuggestedBillingInstruction,
                             SuggestedInvoiceAmount = suggestedInvoiceAmount
                         };
@@ -66,16 +68,22 @@ namespace EPR.Calculator.Service.Function.Services
                     }
                 }
 
-                this.telemetryLogger.LogInformation(new TrackMessage
+                if (billingInstructions.Count > 0)
                 {
-                    RunId = calcResult.CalcResultDetail.RunId,
-                    RunName = calcResult.CalcResultDetail.RunName,
-                    Message = $"Inserting records {billingInstructions.Count} into billing instructions table for {calcResult.CalcResultDetail.RunId} started",
-                });
+                    await this.billingInstructionChunker.InsertRecords(billingInstructions);
+                }
+                else
+                {
+                    this.telemetryLogger.LogInformation(new TrackMessage
+                    {
+                        RunId = calcResult.CalcResultDetail.RunId,
+                        RunName = calcResult.CalcResultDetail.RunName,
+                        Message = $"No billing instructions to insert into table for {calcResult.CalcResultDetail.RunId}",
+                    });
+                    return false;
+                }
 
-                await this.billingInstructionChunker.InsertRecords(billingInstructions);
-
-                var endTime = DateTime.Now;
+                var endTime = DateTime.UtcNow;
                 var timeDiff = startTime - endTime;
                 this.telemetryLogger.LogInformation(new TrackMessage
                 {
@@ -84,7 +92,8 @@ namespace EPR.Calculator.Service.Function.Services
                     Message = $"Inserting records {billingInstructions.Count} into billing instructions table for {calcResult.CalcResultDetail.RunId} completed in {timeDiff.TotalSeconds} seconds",
                 });
 
-                return true;
+                return true;     
+               
             }
             catch(Exception exception)
             {
@@ -100,16 +109,11 @@ namespace EPR.Calculator.Service.Function.Services
             }
         }
 
-        private decimal? GetParsedValue(string value)
+        private bool IsDefaultValue(string value)
         {
-            if (string.IsNullOrEmpty(value) || value == CommonConstants.Hyphen)
-            {
-                return null;
-            }
-
-            var isParseSuccessful = decimal.TryParse(value, out decimal result);
-
-            return isParseSuccessful ? result : null;
+            return (string.IsNullOrEmpty(value) || value == CommonConstants.Hyphen);
         }
+
+       
     }
 }
