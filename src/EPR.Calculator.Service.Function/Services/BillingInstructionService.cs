@@ -32,9 +32,7 @@ namespace EPR.Calculator.Service.Function.Services
         {
             try
             {
-                var startTime = DateTime.UtcNow;
-
-                // TODO: Delete the BillingInstruction class from this project and use it from the API.Data project
+                var startTime = DateTime.UtcNow;                
                 var billingInstructions = new List<ProducerResultFileSuggestedBillingInstruction>();
 
                 var producers = calcResult.CalcResultSummary.ProducerDisposalFees.Where(producer => producer.Level == CommonConstants.LevelOne.ToString());
@@ -62,7 +60,6 @@ namespace EPR.Calculator.Service.Function.Services
                             SuggestedBillingInstruction = producer.SuggestedBillingInstruction,
                             SuggestedInvoiceAmount = suggestedInvoiceAmount
                         };
-
 
                         billingInstructions.Add(billingInstruction);
                     }
@@ -112,8 +109,6 @@ namespace EPR.Calculator.Service.Function.Services
         private bool IsDefaultValue(string value)
         {
             return (string.IsNullOrEmpty(value) || value == CommonConstants.Hyphen);
-        }
-
-       
+        }       
     }
 }
