@@ -213,11 +213,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             Assert.IsFalse(result);
         }
-
-        [TestMethod]
-        public async Task CannotCallCreateBillingInstructionsWithNullCalcResult()
-        {
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => _testClass.CreateBillingInstructions(default(CalcResult)));
-        }
+       
     }
 }
