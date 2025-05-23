@@ -180,7 +180,7 @@ namespace EPR.Calculator.Service.Function.Models
         // End Section-TotalBill
 
         // Section - Billing Instructions
-        public string? CurrentYearInvoicedTotalToDate { get; set; }
+        public string? CurrentYearInvoiceTotalToDate { get; set; }
 
         public string? TonnageChangeSinceLastInvoice { get; set; }
 

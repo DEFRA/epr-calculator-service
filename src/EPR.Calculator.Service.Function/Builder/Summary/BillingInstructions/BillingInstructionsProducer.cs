@@ -39,7 +39,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
         {
             foreach (var fee in result.ProducerDisposalFees)
             {
-                fee.CurrentYearInvoicedTotalToDate = GetCurrentYearInvoicedTotalToDate(fee);
+                fee.CurrentYearInvoiceTotalToDate = GetCurrentYearInvoicedTotalToDate(fee);
                 fee.TonnageChangeSinceLastInvoice = GetTonnageChangeSinceLastInvoice(fee);
                 fee.LiabilityDifference = GetLiabilityDifference(fee);
                 fee.MaterialThresholdBreached = GetMaterialThresholdBreached(fee);

@@ -96,7 +96,7 @@
 
         public void AddBillingInstructionsSection(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
         {
-            csvContent.Append(CsvSanitiser.SanitiseData(producer.CurrentYearInvoicedTotalToDate, DecimalPlaces.Two, null, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.CurrentYearInvoiceTotalToDate, DecimalPlaces.Two, null, true));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.TonnageChangeSinceLastInvoice));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.LiabilityDifference, DecimalPlaces.Two, null, true));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.MaterialThresholdBreached));
