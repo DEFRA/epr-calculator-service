@@ -222,11 +222,18 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     ProducerDisposalFeeWithBadDebtProvision = isOverAllTotalRow
                         ? CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvisionOverallTotal(producerDisposalFees, material)
                         : CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvisionProducerTotal(producersAndSubsidiaries, material, calcResult, ScaledupProducers),
-                    EnglandWithBadDebtProvision = CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producersAndSubsidiaries, material, calcResult, Countries.England, ScaledupProducers),
-                    WalesWithBadDebtProvision = CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producersAndSubsidiaries, material, calcResult, Countries.Wales, ScaledupProducers),
-                    ScotlandWithBadDebtProvision = CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producersAndSubsidiaries, material, calcResult, Countries.Scotland, ScaledupProducers),
-                    NorthernIrelandWithBadDebtProvision = CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producersAndSubsidiaries, material,
-                        calcResult, Countries.NorthernIreland, ScaledupProducers),
+                    EnglandWithBadDebtProvision = isOverAllTotalRow
+                        ? CalcResultSummaryUtil.GetCountryBadDebtProvisionOverallTotal(producerDisposalFees, material, Countries.England)
+                        : CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producersAndSubsidiaries, material, calcResult, Countries.England, ScaledupProducers),
+                    WalesWithBadDebtProvision = isOverAllTotalRow
+                        ? CalcResultSummaryUtil.GetCountryBadDebtProvisionOverallTotal(producerDisposalFees, material, Countries.Wales)
+                        : CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producersAndSubsidiaries, material, calcResult, Countries.Wales, ScaledupProducers),
+                    ScotlandWithBadDebtProvision = isOverAllTotalRow
+                        ? CalcResultSummaryUtil.GetCountryBadDebtProvisionOverallTotal(producerDisposalFees, material, Countries.Scotland)
+                        : CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producersAndSubsidiaries, material, calcResult, Countries.Scotland, ScaledupProducers),
+                    NorthernIrelandWithBadDebtProvision = isOverAllTotalRow
+                        ? CalcResultSummaryUtil.GetCountryBadDebtProvisionOverallTotal(producerDisposalFees, material, Countries.NorthernIreland)
+                        : CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producersAndSubsidiaries, material, calcResult, Countries.NorthernIreland, ScaledupProducers),
                 });
 
                 if (material.Code == MaterialCodes.Glass && materialCostSummary.TryGetValue(material.Code, out var materialCost))

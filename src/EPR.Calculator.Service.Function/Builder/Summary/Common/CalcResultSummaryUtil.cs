@@ -377,20 +377,29 @@
             Countries country,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
-            var parentProducerIds = producers.Select(producer => producer.ProducerId).Distinct();
+            return producers.Sum(producer => GetCountryBadDebtProvision(producer, producers, material, calcResult, country, scaledUpProducers));
+        }
 
-            var countryBadDebtProvisionTotal = 0m;
-            foreach (var parentProducerId in parentProducerIds)
+        public static decimal GetCountryBadDebtProvisionOverallTotal(
+            IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
+            MaterialDetail material,
+            Countries country)
+        {
+            var levelOneRows = producerDisposalFees.Where(fee => fee.Level == CommonConstants.LevelOne.ToString());
+
+            switch (country)
             {
-                var parentProducer = producers.FirstOrDefault(producer => producer.ProducerId == parentProducerId);
-                if (parentProducer != null)
-                {
-                    var producerAndSubsidiaries = producers.Where(producer => producer.ProducerId == parentProducerId).ToList();
-                    countryBadDebtProvisionTotal += GetCountryBadDebtProvision(parentProducer, producerAndSubsidiaries, material, calcResult, country, scaledUpProducers);
-                }
+                case Countries.England:
+                    return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial[material.Code].EnglandWithBadDebtProvision);
+                case Countries.Wales:
+                    return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial[material.Code].EnglandWithBadDebtProvision);
+                case Countries.Scotland:
+                    return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial[material.Code].EnglandWithBadDebtProvision);
+                case Countries.NorthernIreland:
+                    return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial[material.Code].EnglandWithBadDebtProvision);
+                default:
+                    return 0m;
             }
-
-            return countryBadDebtProvisionTotal;
         }
 
         public static CalcResultLapcapDataDetails? GetCountryApportionmentPercentage(CalcResult calcResult)
