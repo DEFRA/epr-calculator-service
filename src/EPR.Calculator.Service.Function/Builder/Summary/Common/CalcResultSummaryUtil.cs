@@ -136,7 +136,7 @@
             return producers.Sum(producer => GetReportedTonnage(producer, material, scaledUpProducers));
         }
 
-        public static decimal GetNetReportedTonnage(
+        public static decimal GetNetReportedTonnageWithoutNegativeTonnages(
             ProducerDetail producer,
             MaterialDetail material,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
@@ -145,6 +145,19 @@
             var managedConsumerWasteTonnage = GetTonnage(producer, material, PackagingTypes.ConsumerWaste, scaledUpProducers);
 
             return reportedTonnage - managedConsumerWasteTonnage;
+        }
+
+        public static decimal GetNetReportedTonnage(
+            ProducerDetail producer,
+            MaterialDetail material,
+            IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
+        {
+            var reportedTonnage = GetReportedTonnage(producer, material, scaledUpProducers);
+            var managedConsumerWasteTonnage = GetTonnage(producer, material, PackagingTypes.ConsumerWaste, scaledUpProducers);
+
+            return managedConsumerWasteTonnage > reportedTonnage
+                ? 0
+                : reportedTonnage - managedConsumerWasteTonnage;
         }
 
         public static decimal GetNetReportedTonnageTotal(
@@ -199,7 +212,8 @@
                 return 0;
             }
 
-            var netReportedTonnage = GetNetReportedTonnage(producer, material, scaledUpProducers);
+            var netReportedTonnage = GetNetReportedTonnageWithoutNegativeTonnages(producer, material, scaledUpProducers);
+
             var pricePerTonne = GetPricePerTonne(material, calcResult);
 
             return netReportedTonnage * pricePerTonne;
@@ -222,7 +236,8 @@
             var totalProducerDisposalFees = 0m;
             foreach(var producer in producers)
             {
-                var netReportedTonnage = GetNetReportedTonnage(producer, material, scaledUpProducers);
+                var netReportedTonnage = GetNetReportedTonnageWithoutNegativeTonnages(producer, material, scaledUpProducers);
+
                 var pricePerTonne = GetPricePerTonne(material, calcResult);
 
                 totalProducerDisposalFees += netReportedTonnage * pricePerTonne;
@@ -392,11 +407,11 @@
                 case Countries.England:
                     return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial[material.Code].EnglandWithBadDebtProvision);
                 case Countries.Wales:
-                    return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial[material.Code].EnglandWithBadDebtProvision);
+                    return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial[material.Code].WalesWithBadDebtProvision);
                 case Countries.Scotland:
-                    return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial[material.Code].EnglandWithBadDebtProvision);
+                    return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial[material.Code].ScotlandWithBadDebtProvision);
                 case Countries.NorthernIreland:
-                    return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial[material.Code].EnglandWithBadDebtProvision);
+                    return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial[material.Code].NorthernIrelandWithBadDebtProvision);
                 default:
                     return 0m;
             }
