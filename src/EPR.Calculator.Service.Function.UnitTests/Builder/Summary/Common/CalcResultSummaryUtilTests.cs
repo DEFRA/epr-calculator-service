@@ -344,7 +344,7 @@
             var scaledupProducers = new List<CalcResultScaledupProducer>();
 
             // Act
-            var result = CalcResultSummaryUtil.GetNetReportedTonnage(producer, material, scaledupProducers);
+            var result = CalcResultSummaryUtil.GetNetReportedTonnage(producer, material, scaledupProducers, CommonConstants.LevelTwo);
 
             // Assert
             Assert.AreEqual(980.00m, result);

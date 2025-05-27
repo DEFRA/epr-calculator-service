@@ -150,10 +150,16 @@
         public static decimal GetNetReportedTonnage(
             ProducerDetail producer,
             MaterialDetail material,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
+            IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
+            int level = CommonConstants.LevelOne)
         {
             var reportedTonnage = GetReportedTonnage(producer, material, scaledUpProducers);
             var managedConsumerWasteTonnage = GetTonnage(producer, material, PackagingTypes.ConsumerWaste, scaledUpProducers);
+
+            if (level == CommonConstants.LevelTwo)
+            {
+                return reportedTonnage - managedConsumerWasteTonnage;
+            }
 
             return managedConsumerWasteTonnage > reportedTonnage
                 ? 0
