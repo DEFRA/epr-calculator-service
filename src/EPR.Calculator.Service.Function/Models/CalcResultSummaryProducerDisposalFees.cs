@@ -10,6 +10,8 @@ namespace EPR.Calculator.Service.Function.Models
 
         public required string ProducerName { get; set; }
 
+        public string? TradingName { get; set; }
+
         public string? Level { get; set; }
 
         public string IsProducerScaledup { get; set; } = "No";
@@ -138,7 +140,7 @@ namespace EPR.Calculator.Service.Function.Models
         public decimal NorthernIrelandTotalWithBadDebtProvisionSection5 { get; set; }
         // End Section-5 SA setup costs
 
-        public Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>? ProducerDisposalFeesByMaterial { get; set; }
+        public Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> ProducerDisposalFeesByMaterial { get; set; }
 
         public Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>? ProducerCommsFeesByMaterial { get; set; }
 

@@ -30,13 +30,14 @@
             dbContext.CalculatorRuns.RemoveRange(dbContext.CalculatorRuns);
             dbContext.SaveChanges();
 
+            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
             var calculatorRuns = new List<CalculatorRun>
             {
                 new() { Id = 1,
                         DefaultParameterSettingMasterId = 1,
                         CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                         Name = "Test Run",
-                        Financial_Year = "2024-25",
+                        Financial_Year = calculatorRunFinancialYear,
                         CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
                         CreatedBy = "Test User",
                         LapcapDataMasterId = 2,
@@ -45,7 +46,7 @@
 
             var defaultParameterSettings = new List<DefaultParameterSettingMaster>
             {
-                new() { Id = 1 },
+                new() { Id = 1, ParameterYear = calculatorRunFinancialYear },
             };
 
             var defaultParameterTemplateMasterList = new List<DefaultParameterTemplateMaster>

@@ -273,8 +273,8 @@
         {
             var expectedResult = new ProducerDetail
             {
-                Id = 1,
-                ProducerId = 1,
+                Id = 9991,
+                ProducerId = 9991,
                 ProducerName = "UPU LIMITED",
                 CalculatorRunId = 1,
                 CalculatorRun = Fixture.Create<CalculatorRun>(),
@@ -457,8 +457,8 @@
         {
             var expectedResult = new ProducerDetail
             {
-                Id = 1,
-                ProducerId = 2,
+                Id = 9993,
+                ProducerId = 9994,
                 ProducerName = "Subsid2",
                 CalculatorRunId = 1,
                 CalculatorRun = this.Fixture.Create<CalculatorRun>(),
@@ -871,13 +871,14 @@
 
         protected static IEnumerable<CalculatorRun> GetCalculatorRuns()
         {
+            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
             var list = new List<CalculatorRun>
             {
                 new ()
                 {
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Run",
-                    Financial_Year = "2024-25",
+                    Financial_Year = calculatorRunFinancialYear,
                     CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                     CalculatorRunOrganisationDataMasterId = 2,
@@ -887,7 +888,7 @@
                 {
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Calculated Result",
-                    Financial_Year = "2024-25",
+                    Financial_Year = calculatorRunFinancialYear,
                     CreatedAt = new DateTime(2024, 8, 21, 14, 16, 27, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                 },
@@ -895,7 +896,7 @@
                 {
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Run",
-                    Financial_Year = "2024-25",
+                    Financial_Year = calculatorRunFinancialYear,
                     CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                     CalculatorRunOrganisationDataMasterId = 1,
@@ -905,7 +906,7 @@
                 {
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Calculated Result",
-                    Financial_Year = "2024-25",
+                    Financial_Year = calculatorRunFinancialYear,
                     CreatedAt = new DateTime(2024, 8, 21, 14, 16, 27, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                     CalculatorRunOrganisationDataMasterId = 2,

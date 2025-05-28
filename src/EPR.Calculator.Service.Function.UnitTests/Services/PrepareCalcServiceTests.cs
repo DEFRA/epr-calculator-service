@@ -429,6 +429,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         protected static IEnumerable<CalculatorRun> GetCalculatorRuns()
         {
+            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
             var list = new List<CalculatorRun>
             {
                 new ()
@@ -436,7 +437,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Id = 1,
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Run",
-                    Financial_Year = "2024-25",
+                    Financial_Year = calculatorRunFinancialYear,
                     CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                     CalculatorRunOrganisationDataMasterId = 2,
@@ -449,7 +450,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Id = 2,
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Calculated Result",
-                    Financial_Year = "2024-25",
+                    Financial_Year = calculatorRunFinancialYear,
                     CreatedAt = new DateTime(2024, 8, 21, 14, 16, 27, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                     DefaultParameterSettingMasterId = 5,
@@ -460,7 +461,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Id = 3,
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Run",
-                    Financial_Year = "2024-25",
+                    Financial_Year = calculatorRunFinancialYear,
                     CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                     CalculatorRunOrganisationDataMasterId = 1,
@@ -473,7 +474,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Id = 4,
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Calculated Result",
-                    Financial_Year = "2024-25",
+                    Financial_Year = calculatorRunFinancialYear,
                     CreatedAt = new DateTime(2024, 8, 21, 14, 16, 27, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                     CalculatorRunOrganisationDataMasterId = 2,
