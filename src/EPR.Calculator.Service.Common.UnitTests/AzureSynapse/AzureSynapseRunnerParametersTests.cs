@@ -1,7 +1,9 @@
 namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 {
     using System;
+    using AutoFixture;
     using EPR.Calculator.Service.Common.AzureSynapse;
+    using EPR.Calculator.Service.Common.UnitTests.AutoFixtureCustomisations;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     /// <summary>
@@ -15,12 +17,26 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
         /// </summary>
         public AzureSynapseRunnerParametersTests()
         {
-            this.CalculatorRunId = 72177078;
-            this.FinancialYear = new FinancialYear(DateTime.UtcNow);
+            var fixture = new Fixture();
+            fixture.Customizations.Add(new CalendarYearCustomisation());
+
+            this.CalculatorRunId = fixture.Create<int>();
+            this.CalendarYear = fixture.Create<CalendarYear>();
+            this.CheckInterval = fixture.Create<int>();
+            this.MaxCheckCount = fixture.Create<int>();
+            this.PipelineName = fixture.Create<string>();
+            this.PipelineUrl = fixture.Create<Uri>();
+            this.StatusUpdateEndpoint = fixture.Create<Uri>();
+            this.PrepareCalcResultEndPoint = fixture.Create<Uri>();
+
             this.TestClass = new AzureSynapseRunnerParameters
             {
                 CalculatorRunId = this.CalculatorRunId,
-                FinancialYear = this.FinancialYear,
+                CalendarYear = this.CalendarYear,
+                CheckInterval = this.CheckInterval,
+                MaxCheckCount = this.MaxCheckCount,
+                PipelineName = this.PipelineName,
+                PipelineUrl = this.PipelineUrl,
             };
         }
 
@@ -28,7 +44,19 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
         private int CalculatorRunId { get; }
 
-        private FinancialYear FinancialYear { get; }
+        private CalendarYear CalendarYear { get; }
+
+        private int CheckInterval { get; }
+
+        private int MaxCheckCount { get; }
+
+        private string PipelineName { get; }
+
+        private Uri PipelineUrl { get; }
+
+        private Uri StatusUpdateEndpoint { get; }
+
+        private Uri PrepareCalcResultEndPoint { get; }
 
         /// <summary>
         /// Test that the class can be initialised successfully.
@@ -40,13 +68,21 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             var instance = new AzureSynapseRunnerParameters
             {
                 CalculatorRunId = this.CalculatorRunId,
-                FinancialYear = this.FinancialYear,
+                CalendarYear = this.CalendarYear,
+                CheckInterval = this.CheckInterval,
+                MaxCheckCount = this.MaxCheckCount,
+                PipelineName = this.PipelineName,
+                PipelineUrl = this.PipelineUrl,
             };
 
             // Assert
             Assert.IsNotNull(instance);
             Assert.AreEqual(this.CalculatorRunId, this.TestClass.CalculatorRunId);
-            Assert.AreSame(this.FinancialYear, this.TestClass.FinancialYear);
+            Assert.AreEqual(this.CalendarYear, this.TestClass.CalendarYear);
+            Assert.AreEqual(this.CheckInterval, this.TestClass.CheckInterval);
+            Assert.AreEqual(this.MaxCheckCount, this.TestClass.MaxCheckCount);
+            Assert.AreEqual(this.PipelineName, this.TestClass.PipelineName);
+            Assert.AreEqual(this.PipelineUrl, this.TestClass.PipelineUrl);
         }
     }
 }

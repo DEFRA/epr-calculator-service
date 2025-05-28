@@ -18,7 +18,7 @@ namespace EPR.Calculator.Service.Common.UnitTests
             // Arrange
             var testId = 60754953;
             var testUser = "TestValue2015204409";
-            var testFinancialYear = "TestValue1106807557";
+            var testFinancialYear = "2024-25";
 
             // Act
             var calculatorRunParameter = new CalculatorRunParameter
