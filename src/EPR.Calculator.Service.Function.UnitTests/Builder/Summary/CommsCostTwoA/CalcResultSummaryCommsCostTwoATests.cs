@@ -297,7 +297,7 @@
         public void GetTotalReportedTonnageTotalForHDCShouldReturnCorrectTotal()
         {
             // Arrange
-            decimal expectedCost1 = 150;
+            decimal expectedCost1 = 180;
             var material = GetHDCMaterial();
 
             // Act

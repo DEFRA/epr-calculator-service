@@ -16,7 +16,7 @@
     public class CalcResultScaledupProducersBuilder : ICalcResultScaledupProducersBuilder
     {
         private const decimal NormalScaleup = 1.0M;
-        private const int MaterialsBreakdownHeaderInitialColumnIndex = 9;
+        private const int MaterialsBreakdownHeaderInitialColumnIndex = 10;
         private const int MaterialsBreakdownHeaderIncrementalColumnIndex = 10;
 
         private readonly ApplicationDBContext context;
