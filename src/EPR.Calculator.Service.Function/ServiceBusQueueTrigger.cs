@@ -1,8 +1,11 @@
 using System;
 using System.Threading.Tasks;
+using EPR.Calculator.Service.Common;
 using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function;
+using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Interface;
+using EPR.Calculator.Service.Function.Services;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
@@ -21,6 +24,7 @@ namespace EPR.Calculator.Service.Function
         private readonly ICalculatorRunParameterMapper calculatorRunParameterMapper;
         private readonly ICalculatorTelemetryLogger telemetryLogger;
         private readonly IRunNameService runNameService;
+        private readonly IClassificationService classificationService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceBusQueueTrigger"/> class.
@@ -33,11 +37,13 @@ namespace EPR.Calculator.Service.Function
             ICalculatorRunService calculatorRunService,
             ICalculatorRunParameterMapper calculatorRunParameterMapper,
             IRunNameService runNameService,
+            IClassificationService classificationService,
             ICalculatorTelemetryLogger telemetryLogger)
         {
             this.calculatorRunService = calculatorRunService;
             this.calculatorRunParameterMapper = calculatorRunParameterMapper;
             this.runNameService = runNameService;
+            this.classificationService = classificationService;
             this.telemetryLogger = telemetryLogger;
         }
 
@@ -57,17 +63,13 @@ namespace EPR.Calculator.Service.Function
                 return;
             }
 
+            CalculatorRunParameter? calculatorRunParameter = null;
+
             try
             {
-                var param = JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem);
-                if (param == null)
-                {
-                    this.LogError("Deserialized object is null", new JsonException($"Deserialized object is null"));
-                    throw new JsonException("Deserialized object is null");
-                }
+                calculatorRunParameter = GetCalculatorRunParameter(myQueueItem);
 
-                string? runName = string.Empty;
-                var calculatorRunParameter = this.calculatorRunParameterMapper.Map(param);
+                var runName = string.Empty;
                 try
                 {
                     runName = await this.runNameService.GetRunNameAsync(calculatorRunParameter.Id);
@@ -88,13 +90,32 @@ namespace EPR.Calculator.Service.Function
             catch (JsonException jsonex)
             {
                 this.LogError($"Incorrect format - {myQueueItem} - {jsonex.Message}", jsonex);
+                throw;
             }
             catch (Exception ex)
             {
                 this.LogError($"Error - {myQueueItem} - {ex.Message}", ex);
+
+                if (calculatorRunParameter != null)
+                {
+                    // Set the run classification as ERROR
+                    this.classificationService.UpdateRunClassification(calculatorRunParameter.Id, RunClassification.ERROR);
+                }
             }
 
             this.telemetryLogger.LogInformation(new TrackMessage { Message = "Azure function app execution finished" });
+        }
+
+        private CalculatorRunParameter GetCalculatorRunParameter(string message)
+        {
+            var param = JsonConvert.DeserializeObject<CalculatorParameter>(message);
+            if (param == null)
+            {
+                this.LogError("Deserialized object is null", new JsonException($"Deserialized object is null"));
+                throw new JsonException("Deserialized object is null");
+            }
+
+            return this.calculatorRunParameterMapper.Map(param);
         }
 
         private void LogError(string message, Exception exception)

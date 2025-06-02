@@ -7,6 +7,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Function.Interface;
+    using EPR.Calculator.Service.Function.Services;
     using Moq;
     using Newtonsoft.Json;
     using NuGet.Frameworks;
@@ -21,6 +22,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         private readonly Mock<ICalculatorRunService> calculatorRunService;
         private readonly Mock<ICalculatorRunParameterMapper> parameterMapper;
         private readonly Mock<IRunNameService> runNameService;
+        private readonly Mock<IClassificationService> classificationService;
         private readonly Mock<ICalculatorTelemetryLogger> telemetryLogger;
 
         /// <summary>
@@ -31,11 +33,13 @@ namespace EPR.Calculator.Service.Function.UnitTests
             this.calculatorRunService = new Mock<ICalculatorRunService>();
             this.parameterMapper = new Mock<ICalculatorRunParameterMapper>();
             this.runNameService = new Mock<IRunNameService>();
+            this.classificationService = new Mock<IClassificationService>();
             this.telemetryLogger = new Mock<ICalculatorTelemetryLogger>();
             this.function = new ServiceBusQueueTrigger(
                 this.calculatorRunService.Object,
                 this.parameterMapper.Object,
                 this.runNameService.Object,
+                this.classificationService.Object,
                 this.telemetryLogger.Object);
         }
 
