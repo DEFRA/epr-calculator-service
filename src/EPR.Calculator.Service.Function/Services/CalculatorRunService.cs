@@ -45,7 +45,8 @@
             ITransposePomAndOrgDataService transposePomAndOrgDataService,
             IConfigurationService configuration,
             IPrepareCalcService prepareCalcService,
-            IRpdStatusService statusService)
+            IRpdStatusService statusService,
+            IPrepareBillingService prepareBillingService)
         {
             this.telemetryLogger = telemetryLogger;
             this.azureSynapseRunner = azureSynapseRunner;
