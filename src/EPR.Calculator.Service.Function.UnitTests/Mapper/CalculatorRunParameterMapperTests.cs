@@ -33,11 +33,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
         public void Calculator_Run_Mapper_Map_Test()
         {
             // Arrange
-            var calculatorParameter = new CalculatorParameter
+            var calculatorParameter = new CreateResultFileMessage
             {
                 FinancialYear = "2024-25",
                 CreatedBy = "Test user",
                 CalculatorRunId = 678767,
+                MessageType = "Result",
             };
 
             // Act

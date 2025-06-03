@@ -8,22 +8,32 @@ namespace EPR.Calculator.Service.Function.Mapper
     using EPR.Calculator.Service.Function.Interface;
 
     /// <summary>
-    /// Maps <see cref="CalculatorParameter"/> to <see cref="CalculatorRunParameter"/>.
+    /// Maps <see cref="CreateResultFileMessage"/> to <see cref="ICalculatorRunParameterMapper"/>.
     /// </summary>
     public class CalculatorRunParameterMapper : ICalculatorRunParameterMapper
     {
         /// <summary>
-        /// Maps a <see cref="CalculatorParameter"/> to a <see cref="CalculatorRunParameter"/>.
+        /// Maps a <see cref="CreateResultFileMessage"/> to a <see cref="CalculatorRunParameter"/>.
         /// </summary>
         /// <param name="calculatorParameter">The calculator parameter to map.</param>
         /// <returns>The mapped calculator run parameter.</returns>
-        public CalculatorRunParameter Map(CalculatorParameter calculatorParameter)
+        public CalculatorRunParameter Map(CreateResultFileMessage calculatorParameter)
         {
             return new CalculatorRunParameter()
             {
                 FinancialYear = calculatorParameter.FinancialYear,
                 User = calculatorParameter.CreatedBy,
                 Id = calculatorParameter.CalculatorRunId,
+            };
+        }
+
+        public BillingFileMessage Map(CreateBillingFileMessage billingMessageQueue)
+        {
+            return new BillingFileMessage()
+            {
+                Id = billingMessageQueue.RunId,
+                ApprovedBy = billingMessageQueue.ApprovedBy,
+                MessageType = billingMessageQueue.MessageType,
             };
         }
     }

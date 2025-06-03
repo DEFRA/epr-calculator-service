@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function;
 using EPR.Calculator.Service.Function.Interface;
+using EPR.Calculator.Service.Function.Services;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
@@ -21,6 +22,7 @@ namespace EPR.Calculator.Service.Function
         private readonly ICalculatorRunParameterMapper calculatorRunParameterMapper;
         private readonly ICalculatorTelemetryLogger telemetryLogger;
         private readonly IRunNameService runNameService;
+        private readonly IMessageTypeService messageTypeService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceBusQueueTrigger"/> class.
@@ -33,12 +35,15 @@ namespace EPR.Calculator.Service.Function
             ICalculatorRunService calculatorRunService,
             ICalculatorRunParameterMapper calculatorRunParameterMapper,
             IRunNameService runNameService,
-            ICalculatorTelemetryLogger telemetryLogger)
+            ICalculatorTelemetryLogger telemetryLogger,
+            IMessageTypeService messageTypeService
+            )
         {
             this.calculatorRunService = calculatorRunService;
             this.calculatorRunParameterMapper = calculatorRunParameterMapper;
             this.runNameService = runNameService;
             this.telemetryLogger = telemetryLogger;
+            this.messageTypeService = messageTypeService;
         }
 
         /// <summary>
@@ -59,31 +64,32 @@ namespace EPR.Calculator.Service.Function
 
             try
             {
-                var param = JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem);
-                if (param == null)
-                {
-                    this.LogError("Deserialized object is null", new JsonException($"Deserialized object is null"));
-                    throw new JsonException("Deserialized object is null");
-                }
+                var resultMessageType = messageTypeService.DeserializeMessage(myQueueItem);
 
-                string? runName = string.Empty;
-                var calculatorRunParameter = this.calculatorRunParameterMapper.Map(param);
-                try
+                if (resultMessageType is CreateBillingFileMessage billingmessage)
                 {
-                    runName = await this.runNameService.GetRunNameAsync(calculatorRunParameter.Id);
+                    var calculatorRunParameter = this.calculatorRunParameterMapper.Map(billingmessage);
                 }
-                catch (Exception ex)
+                else if (resultMessageType is CreateResultFileMessage resultmessage)
                 {
-                    this.LogError("Run name not found", ex);
+                    string? runName = string.Empty;
+                    var calculatorRunParameter = this.calculatorRunParameterMapper.Map(resultmessage);
+                    try
+                    {
+                        runName = await this.runNameService.GetRunNameAsync(calculatorRunParameter.Id);
+                    }
+                    catch (Exception ex)
+                    {
+                        this.LogError("Run name not found", ex);
+                    }
+                    bool processStatus = await this.calculatorRunService.StartProcess(calculatorRunParameter, runName);
+                    this.telemetryLogger.LogInformation(new TrackMessage
+                    {
+                        RunId = calculatorRunParameter.Id,
+                        RunName = runName,
+                        Message = $"Process status: {processStatus}",
+                    });
                 }
-
-                bool processStatus = await this.calculatorRunService.StartProcess(calculatorRunParameter, runName);
-                this.telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = calculatorRunParameter.Id,
-                    RunName = runName,
-                    Message = $"Process status: {processStatus}",
-                });
             }
             catch (JsonException jsonex)
             {
