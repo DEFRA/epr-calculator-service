@@ -202,6 +202,13 @@
             return false;
         }
 
+        public Task<bool> PrepareBillingResults([FromBody] CalcResultsRequestDto resultsRequestDto,
+            string runName,
+            CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException("PrepareBillingResults is not implemented yet.");
+        }
+
         private async Task HandleErrorAsync(CalculatorRun? calculatorRun, RunClassification classification)
         {
             if (calculatorRun != null)

@@ -11,10 +11,7 @@ namespace EPR.Calculator.Service.Function
     /// </summary>
     public class CreateResultFileMessage : MessageBase
     {
-        /// <summary>
-        /// Gets or sets the identifier for the calculator run.
-        /// </summary>
-        public int CalculatorRunId { get; set; }
+        
 
         /// <summary>
         /// Gets or sets the financial year for the calculator run.

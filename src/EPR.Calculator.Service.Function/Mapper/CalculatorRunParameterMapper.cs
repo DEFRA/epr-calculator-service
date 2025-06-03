@@ -31,7 +31,7 @@ namespace EPR.Calculator.Service.Function.Mapper
         {
             return new BillingFileMessage()
             {
-                Id = billingMessageQueue.RunId,
+                Id = billingMessageQueue.CalculatorRunId,
                 ApprovedBy = billingMessageQueue.ApprovedBy,
                 MessageType = billingMessageQueue.MessageType,
             };
