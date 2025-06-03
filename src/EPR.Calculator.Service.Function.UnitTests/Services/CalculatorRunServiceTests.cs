@@ -62,7 +62,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 It.IsAny<int>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
-                It.IsAny<bool>(),
                 It.IsAny<CancellationToken>()))
                 .ReturnsAsync(RunClassification.RUNNING);
 
@@ -522,7 +521,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 It.IsAny<int>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
-                It.IsAny<bool>(),
                 It.IsAny<CancellationToken>()))
                 .Throws(new TaskCanceledException("Timed out!"));
 

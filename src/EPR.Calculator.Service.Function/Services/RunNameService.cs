@@ -1,5 +1,6 @@
 ﻿namespace EPR.Calculator.Service.Function.Services
 {
+    using System;
     using System.Threading.Tasks;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.Service.Function.Interface;
@@ -28,10 +29,18 @@
         /// <returns>The run name.</returns>
         public async Task<string?> GetRunNameAsync(int runId)
         {
-            var run = await this.Context.CalculatorRuns
+            try
+            {
+                var run = await this.Context.CalculatorRuns
                 .SingleOrDefaultAsync(r => r.Id == runId);
 
-            return run?.Name;
+                return run?.Name;
+            }
+            catch (Exception exception)
+            {
+                throw new Exception($"Run name not found for the run id {runId}", exception);
+            }
+            
         }
     }
 }

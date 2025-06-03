@@ -69,15 +69,7 @@ namespace EPR.Calculator.Service.Function
             {
                 calculatorRunParameter = GetCalculatorRunParameter(myQueueItem);
 
-                var runName = string.Empty;
-                try
-                {
-                    runName = await this.runNameService.GetRunNameAsync(calculatorRunParameter.Id);
-                }
-                catch (Exception ex)
-                {
-                    this.LogError("Run name not found", ex);
-                }
+                var runName = await this.runNameService.GetRunNameAsync(calculatorRunParameter.Id);
 
                 bool processStatus = await this.calculatorRunService.StartProcess(calculatorRunParameter, runName);
                 this.telemetryLogger.LogInformation(new TrackMessage
@@ -86,11 +78,12 @@ namespace EPR.Calculator.Service.Function
                     RunName = runName,
                     Message = $"Process status: {processStatus}",
                 });
-            }
-            catch (JsonException jsonex)
-            {
-                this.LogError($"Incorrect format - {myQueueItem} - {jsonex.Message}", jsonex);
-                throw;
+
+                if (!processStatus)
+                {
+                    // Set the run classification as ERROR
+                    this.classificationService.UpdateRunClassification(calculatorRunParameter.Id, RunClassification.ERROR);
+                }
             }
             catch (Exception ex)
             {
@@ -108,14 +101,20 @@ namespace EPR.Calculator.Service.Function
 
         private CalculatorRunParameter GetCalculatorRunParameter(string message)
         {
-            var param = JsonConvert.DeserializeObject<CalculatorParameter>(message);
-            if (param == null)
+            try
             {
-                this.LogError("Deserialized object is null", new JsonException($"Deserialized object is null"));
-                throw new JsonException("Deserialized object is null");
-            }
+                var param = JsonConvert.DeserializeObject<CalculatorParameter>(message);
+                if (param == null)
+                {
+                    throw new JsonException("Deserializing service bus message object resulted in null");
+                }
 
-            return this.calculatorRunParameterMapper.Map(param);
+                return this.calculatorRunParameterMapper.Map(param);
+            }
+            catch (Exception exception)
+            {
+                throw exception;
+            }
         }
 
         private void LogError(string message, Exception exception)

@@ -110,7 +110,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 runId,
                 this.Fixture.Create<string>(),
                 this.Fixture.Create<string>(),
-                false,
                 CancellationToken.None);
 
             // Assert
@@ -136,7 +135,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 runId,
                 this.Fixture.Create<string>(),
                 this.Fixture.Create<string>(),
-                true,
                 CancellationToken.None);
 
             // Assert
@@ -176,7 +174,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     runId,
                     this.Fixture.Create<string>(),
                     this.Fixture.Create<string>(),
-                    true,
                     CancellationToken.None);
             }
             catch (Exception ex)
@@ -210,7 +207,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     runId,
                     this.Fixture.Create<string>(),
                     this.Fixture.Create<string>(),
-                    true,
                     CancellationToken.None);
             }
             catch (Exception ex)
@@ -246,7 +242,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     runId,
                     this.Fixture.Create<string>(),
                     this.Fixture.Create<string>(),
-                    true,
                     CancellationToken.None);
             }
             catch (Exception ex)

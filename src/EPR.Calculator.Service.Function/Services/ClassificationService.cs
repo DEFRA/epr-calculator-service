@@ -1,19 +1,24 @@
 ﻿using System;
 using System.Linq;
 using EPR.Calculator.API.Data;
+using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Services
 {
     public class ClassificationService : IClassificationService
     {
-        private ApplicationDBContext Context;
+        private readonly ApplicationDBContext Context;
+        private readonly ICalculatorTelemetryLogger telemetryLogger;
 
         public ClassificationService(
-            IDbContextFactory<ApplicationDBContext> context)
+            IDbContextFactory<ApplicationDBContext> context,
+            ICalculatorTelemetryLogger telemetryLogger)
         {
             this.Context = context.CreateDbContext();
+            this.telemetryLogger = telemetryLogger;
         }
 
         public async void UpdateRunClassification(int runId, RunClassification runClassification)
@@ -23,7 +28,7 @@ namespace EPR.Calculator.Service.Function.Services
                 var calculatorRun = this.Context.CalculatorRuns.FirstOrDefault(run => run.Id == runId);
                 if (calculatorRun == null)
                 {
-                    throw new Exception("run id");
+                    throw new Exception($"Calculator run id {runId} not found");
                 }
 
                 calculatorRun.CalculatorRunClassificationId = (int)runClassification;
@@ -32,7 +37,13 @@ namespace EPR.Calculator.Service.Function.Services
             }
             catch (Exception exception)
             {
-
+                this.telemetryLogger.LogError(new ErrorMessage
+                {
+                    RunId = runId,
+                    RunName = string.Empty,
+                    Message = "",
+                    Exception = exception,
+                });
             }
         }
     }
