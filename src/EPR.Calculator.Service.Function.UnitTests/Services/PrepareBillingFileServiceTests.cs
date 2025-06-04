@@ -10,44 +10,91 @@ using EPR.Calculator.Service.Common.Utils;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
+using EPR.Calculator.Service.Common.Logging;
+using Moq;
+using EPR.Calculator.Service.Function.Interface;
+using EPR.Calculator.Service.Function.Dtos;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
+    /// <summary>
+    /// Contains unit tests for the PrepareBillingFileService class.
+    /// </summary>
     [TestClass] 
     public class PrepareBillingFileServiceTests
     {
+        private readonly DbContextOptions<ApplicationDBContext> _dbContextOptions;
+        private Mock<IDbContextFactory<ApplicationDBContext>> _dbContextFactory;
+        private ApplicationDBContext _context;
+        private Mock<ICalculatorTelemetryLogger> MockLogger { get; }
+        private Mock<IPrepareCalcService> PrepareCalcService { get; init; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PrepareBillingFileServiceTests"/> class.
+        /// </summary>
+        public PrepareBillingFileServiceTests()
+        {
+            this._dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
+                .Options;
+
+            this._context = new ApplicationDBContext(this._dbContextOptions);
+            this._dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
+            this._dbContextFactory.Setup(f => f.CreateDbContext()).Returns(this._context);
+
+            this.MockLogger = new Mock<ICalculatorTelemetryLogger>();
+
+            this.PrepareCalcService = new Mock<IPrepareCalcService>();
+            this.PrepareCalcService.Setup(s => s.PrepareCalcResults(
+                It.IsAny<CalcResultsRequestDto>(),
+                It.IsAny<string>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(true);
+        }
+                
         [TestMethod]
         public async Task PrepareBillingFileAsync_ReturnsUnprocessableContent_WhenRunNotFound()
         {
             // Arrange
-            var dbContext = TestDbContextFactory.Create();
-            var service = new PrepareBillingFileService(dbContext);
+            var calculatorRunId = 99854;
+            var calculatorName = "Test";
+            var service = new PrepareBillingFileService(
+                this._context, 
+                this.PrepareCalcService.Object, 
+                this.MockLogger.Object);
 
             // Act
-            var result = await service.PrepareBillingFileAsync(999);
+            var result = await service.PrepareBillingFileAsync(calculatorRunId, calculatorName);
 
             // Assert
             Assert.AreEqual(false, result);
-            // Assert.AreEqual(HttpStatusCode.UnprocessableContent, result.StatusCode);
-            // Assert.AreEqual(ErrorMessages.InvalidRunId, result.Message);
         }
 
         [TestMethod]
         public async Task PrepareBillingFileAsync_ReturnsUnprocessableContent_WhenNoBillingInstructions()
         {
             // Arrange
-            var dbContext = TestDbContextFactory.Create();
-            dbContext.CalculatorRuns.Add(new CalculatorRun { Id = 1, CalculatorRunClassificationId = Util.AcceptableRunStatusForBillingInstructions().First(), Name = "Test", Financial_Year = new CalculatorRunFinancialYear { Name = "2025" }, CreatedBy = "user", CreatedAt = System.DateTime.Now });
-            dbContext.SaveChanges();
-            var service = new PrepareBillingFileService(dbContext);
+            var calculatorRunId = 99854;
+            var calculatorName = "Test";
+            _context.CalculatorRuns.Add(
+                new CalculatorRun { 
+                    Id = calculatorRunId, 
+                    CalculatorRunClassificationId = 8, 
+                    Name = calculatorName, 
+                    Financial_Year = new CalculatorRunFinancialYear { Name = "2025" }, CreatedBy = "user", CreatedAt = System.DateTime.Now });
+            _context.SaveChanges();
+            var service = new PrepareBillingFileService(
+                this._context,
+                this.PrepareCalcService.Object,
+                this.MockLogger.Object);
 
             // Act
-            var result = await service.PrepareBillingFileAsync(1);
+            var result = await service.PrepareBillingFileAsync(calculatorRunId, calculatorName);
 
             // Assert
             Assert.AreEqual(false, result);
-            // Assert.AreEqual(HttpStatusCode.UnprocessableContent, result.StatusCode);
-            // Assert.AreEqual(ErrorMessages.InvalidOrganisationId, result.Message);
         }
 
         // Add more tests for the success path when you implement the file builder logic

@@ -67,8 +67,6 @@ namespace EPR.Calculator.Service.Function
                 return;
             }
 
-
-
             try
             {
                 var resultMessageType = messageTypeService.DeserializeMessage(myQueueItem);
@@ -85,7 +83,7 @@ namespace EPR.Calculator.Service.Function
                 if (resultMessageType is CreateBillingFileMessage billingmessage)
                 {
                     var calculatorRunParameter = this.calculatorRunParameterMapper.Map(billingmessage);
-                    this.prepareBillingFileService.PrepareBillingFileAsync(calculatorRunParameter.Id, runName);
+                    await this.prepareBillingFileService.PrepareBillingFileAsync(calculatorRunParameter.Id, runName);
                 }
                 else if (resultMessageType is CreateResultFileMessage resultmessage)
                 {

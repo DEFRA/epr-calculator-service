@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using EPR.Calculator.API.Data;
+using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Common.Utils;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Dtos;
@@ -15,50 +16,47 @@ using Microsoft.Extensions.Options;
 
 namespace EPR.Calculator.Service.Function.Services
 {
-    public class PrepareBillingFileService(ApplicationDBContext applicationDBContext, IPrepareCalcService prepareCalcService) : IPrepareBillingFileService
+    public class PrepareBillingFileService(
+        ApplicationDBContext applicationDBContext, 
+        IPrepareCalcService prepareCalcService, 
+        ICalculatorTelemetryLogger telemetryLogger) : IPrepareBillingFileService
     {
         public async Task<bool> PrepareBillingFileAsync(int calculatorRunId, string runName)
         {
+            // TODO We need validate the Run Classification Id But not part of this ticket
             var calculatorRun = await applicationDBContext.CalculatorRuns
             .SingleOrDefaultAsync(x => x.Id == calculatorRunId);
-
-            // We need validate the Run Classification Id But not part of this ticket
-
+            
             if (calculatorRun is null)
             {
+                telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = calculatorRunId,
+                    RunName = runName,
+                    Message = PrepareBillingFileConstants.CalculatorRunNotFound,                    
+                });
                 return false;
-                //return new ServiceProcessResponseDto
-                //{
-                //    StatusCode = HttpStatusCode.UnprocessableContent,
-                //    Message = ErrorMessages.InvalidRunId,
-                //};
             }
 
             var acceptedProducerIds = await applicationDBContext.ProducerResultFileSuggestedBillingInstruction
             .Where(x => x.CalculatorRunId == calculatorRunId
                     &&
-                    x.BillingInstructionAcceptReject == "Accepted")
+                    x.BillingInstructionAcceptReject == PrepareBillingFileConstants.BillingInstructionAccepted)
             .Select(x => x.ProducerId).Distinct()
             .ToListAsync();
 
             if (acceptedProducerIds.Count == 0)
             {
-                return false;
-                //return new ServiceProcessResponseDto
-                //{
-                //    StatusCode = HttpStatusCode.UnprocessableContent,
-                //    Message = ErrorMessages.InvalidOrganisationId,
-                //};
+                telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = calculatorRunId,
+                    RunName = runName,
+                    Message = PrepareBillingFileConstants.AcceptedProducerIdsAreNull,
+                });
+                return false;                
             }
 
-
-            //return new ServiceProcessResponseDto
-            //{
-            //    StatusCode = HttpStatusCode.OK,
-            //    Message = "Billing file prepared successfully (stub)."
-            //};
-
-            prepareCalcService.PrepareBillingResults(
+            var result = await prepareCalcService.PrepareBillingResults(
                 new CalcResultsRequestDto
                 {
                     RunId = calculatorRunId,
@@ -68,27 +66,7 @@ namespace EPR.Calculator.Service.Function.Services
                 runName,
                 CancellationToken.None);
 
-            return true;
-
-            // TODO
-            //return await _calcResultsFileBuilder.BuildBillingFileAsync(calculatorRunId, rows, CancellationToken.None)
-            //    .ContinueWith(t =>
-            //    {
-            //        if (t.IsFaulted)
-            //        {
-            //            return new ServiceProcessResponseDto
-            //            {
-            //                StatusCode = HttpStatusCode.InternalServerError,
-            //                Message = t.Exception?.Message ?? "An error occurred while preparing the billing file.",
-            //            };
-            //        }
-
-            //        return new ServiceProcessResponseDto
-            //        {
-            //            StatusCode = HttpStatusCode.OK,
-            //            Message = "Billing file prepared successfully.",
-            //        };
-            //    });
+            return result;
         }
     }
 }

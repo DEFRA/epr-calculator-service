@@ -24,6 +24,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         private readonly Mock<IRunNameService> runNameService;
         private readonly Mock<ICalculatorTelemetryLogger> telemetryLogger;
         private readonly Mock<IMessageTypeService> messageTypeService;
+        private readonly Mock<IPrepareBillingFileService> prepareBillingFileService;
 
 
         /// <summary>
@@ -36,12 +37,14 @@ namespace EPR.Calculator.Service.Function.UnitTests
             this.runNameService = new Mock<IRunNameService>();
             this.messageTypeService = new Mock<IMessageTypeService>();
             this.telemetryLogger = new Mock<ICalculatorTelemetryLogger>();
+            this.prepareBillingFileService = new Mock<IPrepareBillingFileService>();
             this.function = new ServiceBusQueueTrigger(
                 this.calculatorRunService.Object,
                 this.parameterMapper.Object,
                 this.runNameService.Object,
                 this.telemetryLogger.Object,
-                this.messageTypeService.Object);
+                this.messageTypeService.Object,
+                this.prepareBillingFileService.Object);
         }
 
         /// <summary>

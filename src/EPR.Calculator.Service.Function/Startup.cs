@@ -132,6 +132,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<IRunNameService, RunNameService>();
             services.AddTransient<ITelemetryClientWrapper, TelemetryClientWrapper>();
             services.AddTransient<IMessageTypeService, MessageTypeService>();
+            services.AddTransient<IPrepareBillingFileService, PrepareBillingFileService>();
 #if !DEBUG
             SetupBlobStorage(services);
             services.AddTransient<IConfigurationService, Configuration>();
