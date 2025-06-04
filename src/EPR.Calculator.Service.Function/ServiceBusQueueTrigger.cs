@@ -56,8 +56,7 @@ namespace EPR.Calculator.Service.Function
         [FunctionName("EPRCalculatorRunServiceBusQueueTrigger")]
         public async Task Run([ServiceBusTrigger(queueName: "%ServiceBusQueueName%", Connection = "ServiceBusConnectionString")] string myQueueItem)
         {
-            this.telemetryLogger.LogInformation(new TrackMessage { Message = "Executing the function app started" });
-            string runName = string.Empty;
+            this.telemetryLogger.LogInformation(new TrackMessage { Message = "Executing the function app started" });            
 
             if (string.IsNullOrEmpty(myQueueItem))
             {
@@ -68,6 +67,7 @@ namespace EPR.Calculator.Service.Function
             try
             {
                 var resultMessageType = messageTypeService.DeserializeMessage(myQueueItem);
+                string runName = string.Empty;
 
                 try
                 {
