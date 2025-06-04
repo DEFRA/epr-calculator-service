@@ -37,7 +37,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         private Mock<IStorageService> _storageService;
         private CalculatorRunValidator _validationRules;
         private Mock<ICommandTimeoutService> _commandTimeoutService;
-        private Mock<ICalculatorTelemetryLogger> telemetryLogger;
+        private Mock<ICalculatorTelemetryLogger> _telemetryLogger;
+        private Mock<IBillingInstructionService> _billingInstructionService;
 
         public PrepareCalcServiceTests()
         {
@@ -49,7 +50,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this._context = new ApplicationDBContext(this._dbContextOptions);
             this._dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
             this._dbContextFactory.Setup(f => f.CreateDbContext()).Returns(this._context);
-            this.telemetryLogger = new Mock<ICalculatorTelemetryLogger>();
+            this._telemetryLogger = new Mock<ICalculatorTelemetryLogger>();
 
             this.SeedDatabase();
 
@@ -96,7 +97,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this._storageService = new Mock<IStorageService>();
             this._validationRules = fixture.Create<CalculatorRunValidator>();
             this._commandTimeoutService = new Mock<ICommandTimeoutService>();
-            this._testClass = new PrepareCalcService(this._dbContextFactory.Object, this._rpdStatusDataValidator.Object, this._wrapper.Object, this._builder.Object, this._exporter.Object, this._transposePomAndOrgDataService.Object, this._storageService.Object, this._validationRules, this._commandTimeoutService.Object, this.telemetryLogger.Object);
+            this._billingInstructionService = new Mock<IBillingInstructionService>();
+            this._testClass = new PrepareCalcService(this._dbContextFactory.Object,
+                this._rpdStatusDataValidator.Object,
+                this._wrapper.Object,
+                this._builder.Object,
+                this._exporter.Object,
+                this._transposePomAndOrgDataService.Object,
+                this._storageService.Object,
+                this._validationRules,
+                this._commandTimeoutService.Object,
+                this._telemetryLogger.Object,
+                this._billingInstructionService.Object);
         }
 
         [TestCleanup]
@@ -116,7 +128,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public void CanConstruct()
         {
             // Act
-            var instance = new PrepareCalcService(this._dbContextFactory.Object, this._rpdStatusDataValidator.Object, this._wrapper.Object, this._builder.Object, this._exporter.Object, this._transposePomAndOrgDataService.Object, this._storageService.Object, this._validationRules, this._commandTimeoutService.Object, this.telemetryLogger.Object);
+            var instance = new PrepareCalcService(this._dbContextFactory.Object,
+                this._rpdStatusDataValidator.Object,
+                this._wrapper.Object,
+                this._builder.Object,
+                this._exporter.Object,
+                this._transposePomAndOrgDataService.Object,
+                this._storageService.Object,
+                this._validationRules,
+                this._commandTimeoutService.Object,
+                this._telemetryLogger.Object,
+                this._billingInstructionService.Object);
 
             // Assert
             Assert.IsNotNull(instance);

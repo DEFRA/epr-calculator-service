@@ -36,7 +36,8 @@
             IStorageService storageService,
             CalculatorRunValidator validationRules,
             ICommandTimeoutService commandTimeoutService,
-            ICalculatorTelemetryLogger telemetryLogger)
+            ICalculatorTelemetryLogger telemetryLogger,
+            IBillingInstructionService billingInstructionService)
         {
             this.Context = context.CreateDbContext();
             this.rpdStatusDataValidator = rpdStatusDataValidator;
@@ -48,6 +49,7 @@
             this.validatior = validationRules;
             this.commandTimeoutService = commandTimeoutService;
             this.telemetryLogger = telemetryLogger;
+            this.billingInstructionService = billingInstructionService;
         }
 
         private readonly ICalculatorTelemetryLogger telemetryLogger;
@@ -69,6 +71,8 @@
         private CalculatorRunValidator validatior { get; init; }
 
         private ICommandTimeoutService commandTimeoutService { get; init; }
+
+        private IBillingInstructionService billingInstructionService { get; init; }
 
         public async Task<bool> PrepareCalcResults(
             [FromBody] CalcResultsRequestDto resultsRequestDto,
@@ -109,6 +113,22 @@
                     RunName = runName,
                     Message = "Builder end...",
                 });
+
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = resultsRequestDto.RunId,
+                    RunName = runName,
+                    Message = "Create billing instructions started...",
+                });
+
+                await this.billingInstructionService.CreateBillingInstructions(results);
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = resultsRequestDto.RunId,
+                    RunName = runName,
+                    Message = "Create billing instructions end...",
+                });
+
                 this.telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = resultsRequestDto.RunId,
