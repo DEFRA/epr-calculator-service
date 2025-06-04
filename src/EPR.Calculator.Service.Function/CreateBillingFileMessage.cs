@@ -1,4 +1,4 @@
-﻿// <copyright file="CalculatorParameter.cs" company="PlaceholderCompany">
+﻿// <copyright file="CreateBillingFileMessage.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 

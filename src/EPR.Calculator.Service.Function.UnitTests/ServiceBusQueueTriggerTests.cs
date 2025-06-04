@@ -281,7 +281,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
             {
                 CalculatorRunId = 1,
                 FinancialYear = "2024-25",
-                MessageType = "Result",
                 CreatedBy = "TestUser"
             };
 
