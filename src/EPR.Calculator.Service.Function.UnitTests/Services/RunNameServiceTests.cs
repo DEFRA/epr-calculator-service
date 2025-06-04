@@ -65,7 +65,7 @@
         /// </summary>
         /// <returns>A task that represents the asynchronous operation.</returns>
         [TestMethod]
-        public async Task GetRunNameAsync_ShouldReturnNullWhenRunDoesNotExist()
+        public async Task GetRunNameAsync_ShouldReturnRecordNotFoundExceptionWhenRunDoesNotExist()
         {
             // Arrange
             var runId = 10;
@@ -75,6 +75,26 @@
 
             // Assert
             Assert.AreEqual("Calculator run with id 10 not found", exceptionResult.Message);
+        }
+
+        /// <summary>
+        /// Tests that <see cref="RunNameService.GetRunNameAsync(int)"/> returns exception when the run name is null or empty.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        [TestMethod]
+        public async Task GetRunNameAsync_ShouldReturnNullValueFoundExceptionWhenRunNameIsNullOrEmpty()
+        {
+            // Arrange
+            var runId = 2;
+            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2028-29" };
+            this.dbContext.CalculatorRuns.Add(new CalculatorRun { Id = runId, Name = string.Empty, Financial_Year = calculatorRunFinancialYear });
+            await this.dbContext.SaveChangesAsync();
+
+            // Act
+            var exceptionResult = await Assert.ThrowsExceptionAsync<NullValueException>(() => this.runNameService.GetRunNameAsync(runId));
+
+            // Assert
+            Assert.AreEqual("Run name not found for the run id 2", exceptionResult.Message);
         }
     }
 }
