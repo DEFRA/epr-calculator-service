@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace EPR.Calculator.Service.Function
 {
     /// <summary>
-    /// Represents the base class for all message types in the system.
+    /// Represents the base class for all message types.
     /// </summary>
     public abstract class MessageBase
     {

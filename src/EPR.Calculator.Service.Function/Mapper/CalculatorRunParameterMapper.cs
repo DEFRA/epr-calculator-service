@@ -15,8 +15,8 @@ namespace EPR.Calculator.Service.Function.Mapper
         /// <summary>
         /// Maps a <see cref="CreateResultFileMessage"/> to a <see cref="CalculatorRunParameter"/>.
         /// </summary>
-        /// <param name="createResultFileMessage">The result file message parameter to map.</param>
-        /// <returns>The mapped calculator run parameter.</returns>
+        /// <param name="createResultFileMessage">The result file message to map.</param>
+        /// <returns>The mapped result file message.</returns>
         public CalculatorRunParameter Map(CreateResultFileMessage createResultFileMessage)
         {
             return new CalculatorRunParameter()
@@ -30,8 +30,8 @@ namespace EPR.Calculator.Service.Function.Mapper
         /// <summary>
         /// Maps a <see cref="CreateBillingFileMessage"/> to a <see cref="CalculatorRunParameter"/>.
         /// </summary>
-        /// <param name="createBillingFileMessage">The billing file message parameter to map.</param>
-        /// <returns>The mapped calculator run parameter.</returns>
+        /// <param name="createBillingFileMessage">The billing file message to map.</param>
+        /// <returns>The mapped billing file message.</returns>
         public BillingFileMessage Map(CreateBillingFileMessage createBillingFileMessage)
         {
             return new BillingFileMessage()
