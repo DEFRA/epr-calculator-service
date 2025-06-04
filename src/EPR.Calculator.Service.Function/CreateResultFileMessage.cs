@@ -2,8 +2,6 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-using EPR.Calculator.Service.Function.Interface;
-
 namespace EPR.Calculator.Service.Function
 {
     /// <summary>

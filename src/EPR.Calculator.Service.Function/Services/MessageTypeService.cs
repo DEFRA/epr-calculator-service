@@ -2,15 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Configuration;
-    using System.Threading.Tasks;
-    using Azure.Storage;
-    using Azure.Storage.Blobs;
-    using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Interface;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 

@@ -1,8 +1,6 @@
-﻿// <copyright file="CalculatorParameter.cs" company="PlaceholderCompany">
+﻿// <copyright file="CreateBillingFileMessage.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
-
-using EPR.Calculator.Service.Function.Interface;
 
 namespace EPR.Calculator.Service.Function
 {
@@ -12,7 +10,7 @@ namespace EPR.Calculator.Service.Function
     public class CreateBillingFileMessage : MessageBase
     {
         /// <summary>
-        /// Gets or sets the financial year for the calculator run.
+        /// Gets or sets the user who approved the billing file.
         /// </summary>
         public required string ApprovedBy { get; set; }
     }

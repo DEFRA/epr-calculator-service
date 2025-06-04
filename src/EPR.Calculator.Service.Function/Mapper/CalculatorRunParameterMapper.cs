@@ -8,32 +8,37 @@ namespace EPR.Calculator.Service.Function.Mapper
     using EPR.Calculator.Service.Function.Interface;
 
     /// <summary>
-    /// Maps <see cref="CreateResultFileMessage"/> to <see cref="ICalculatorRunParameterMapper"/>.
+    /// Maps <see cref="CreateResultFileMessage"/> and <see cref="CreateBillingFileMessage"/> to <see cref="ICalculatorRunParameterMapper"/>.
     /// </summary>
     public class CalculatorRunParameterMapper : ICalculatorRunParameterMapper
     {
         /// <summary>
         /// Maps a <see cref="CreateResultFileMessage"/> to a <see cref="CalculatorRunParameter"/>.
         /// </summary>
-        /// <param name="calculatorParameter">The calculator parameter to map.</param>
-        /// <returns>The mapped calculator run parameter.</returns>
-        public CalculatorRunParameter Map(CreateResultFileMessage calculatorParameter)
+        /// <param name="createResultFileMessage">The result file message to map.</param>
+        /// <returns>The mapped result file message.</returns>
+        public CalculatorRunParameter Map(CreateResultFileMessage createResultFileMessage)
         {
             return new CalculatorRunParameter()
             {
-                FinancialYear = calculatorParameter.FinancialYear,
-                User = calculatorParameter.CreatedBy,
-                Id = calculatorParameter.CalculatorRunId,
+                FinancialYear = createResultFileMessage.FinancialYear,
+                User = createResultFileMessage.CreatedBy,
+                Id = createResultFileMessage.CalculatorRunId,
             };
         }
 
-        public BillingFileMessage Map(CreateBillingFileMessage billingMessageQueue)
+        /// <summary>
+        /// Maps a <see cref="CreateBillingFileMessage"/> to a <see cref="CalculatorRunParameter"/>.
+        /// </summary>
+        /// <param name="createBillingFileMessage">The billing file message to map.</param>
+        /// <returns>The mapped billing file message.</returns>
+        public BillingFileMessage Map(CreateBillingFileMessage createBillingFileMessage)
         {
             return new BillingFileMessage()
             {
-                Id = billingMessageQueue.CalculatorRunId,
-                ApprovedBy = billingMessageQueue.ApprovedBy,
-                MessageType = billingMessageQueue.MessageType,
+                Id = createBillingFileMessage.CalculatorRunId,
+                ApprovedBy = createBillingFileMessage.ApprovedBy,
+                MessageType = createBillingFileMessage.MessageType,
             };
         }
     }

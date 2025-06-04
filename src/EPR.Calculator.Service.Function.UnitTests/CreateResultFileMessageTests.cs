@@ -25,8 +25,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             {
                 CalculatorRunId = testCalculatorRunId,
                 FinancialYear = testFinancialYear,
-                CreatedBy = testCreatedBy,
-                MessageType = "Result",
+                CreatedBy = testCreatedBy
             };
 
             // Assert

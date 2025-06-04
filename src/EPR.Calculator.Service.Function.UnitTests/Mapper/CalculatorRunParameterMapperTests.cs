@@ -38,7 +38,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
                 FinancialYear = "2024-25",
                 CreatedBy = "Test user",
                 CalculatorRunId = 678767,
-                MessageType = "Result",
             };
 
             // Act

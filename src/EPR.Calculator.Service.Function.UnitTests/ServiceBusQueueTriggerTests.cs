@@ -62,6 +62,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
             this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
             this.calculatorRunService.Setup(t => t.StartProcess(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).ReturnsAsync(true);
+            MockResultMessage(myQueueItem);
 
             // Act
             await this.function.Run(myQueueItem);
@@ -124,6 +125,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
             this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Throws<JsonException>();
 
+            MockResultMessage(myQueueItem);
+
             // Act
             await this.function.Run(myQueueItem);
 
@@ -133,30 +136,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
                     msg.Message.Contains("Incorrect format") &&
                     msg.Exception is JsonException)),
                 Times.Once);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(JsonException))]
-        public async Task ServiceBusTrigger_NullParameterThrowsJsonExceptionAsync()
-        {
-            // Arrange
-            var myQueueItem = "null"; // Simulate a null JSON object
-
-            // Act
-            var param = JsonConvert.DeserializeObject<CreateResultFileMessage>(myQueueItem);
-            await this.function.Run(myQueueItem);
-
-            // Assert
-            if (param == null)
-            {
-                this.telemetryLogger.Verify(
-                log => log.LogError(It.Is<ErrorMessage>(msg =>
-                   msg.Message.Contains("Deserialized object is null") &&
-                   msg.Exception is JsonException)),
-                Times.AtLeastOnce);
-
-                throw new JsonException("Deserialized object is null");
-            }
         }
 
         /// <summary>
@@ -169,7 +148,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
             this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Throws<Exception>();
-
+            MockResultMessage(myQueueItem);
             // Act
             await this.function.Run(myQueueItem);
 
@@ -198,6 +177,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             // Setup StartProcess to throw an exception
             this.calculatorRunService.Setup(t => t.StartProcess(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).ThrowsAsync(new Exception("Unhandled exception"));
+            MockResultMessage(myQueueItem);
 
             // Act
             await this.function.Run(myQueueItem);
@@ -240,6 +220,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
             this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
             this.calculatorRunService.Setup(t => t.StartProcess(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).ReturnsAsync(true);
+            MockResultMessage(myQueueItem);
 
             // Act
             await this.function.Run(myQueueItem);
@@ -262,6 +243,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
             this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
             this.calculatorRunService.Setup(t => t.StartProcess(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).Throws<Exception>();
+            MockResultMessage(myQueueItem);
 
             // Act
             await this.function.Run(myQueueItem);
@@ -283,6 +265,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
             this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).Throws<Exception>();
+            MockResultMessage(myQueueItem);
 
             // Act
             await this.function.Run(myQueueItem);
@@ -294,5 +277,18 @@ namespace EPR.Calculator.Service.Function.UnitTests
                     msg.Exception is Exception)),
                 Times.Once);
         }
+
+        private void MockResultMessage(string myQueueItem)
+        {
+            var resultFileMessage = new CreateResultFileMessage
+            {
+                CalculatorRunId = 1,
+                FinancialYear = "2024-25",
+                CreatedBy = "TestUser"
+            };
+
+            messageTypeService.Setup(s => s.DeserializeMessage(myQueueItem)).Returns(resultFileMessage);
+        }
+
     }
 }

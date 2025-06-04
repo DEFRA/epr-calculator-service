@@ -11,13 +11,13 @@
         public int Id { get; set; }
 
         /// <summary>
-        /// Gets or sets the user who approved billing file.
+        /// Gets or sets the user who approved the billing file.
         /// </summary>
         required public string ApprovedBy { get; set; }
 
         /// <summary>
         /// Gets or sets the message type for calculator.
         /// </summary>
-        required public string MessageType { get; set; }
+        public string? MessageType { get; set; }
     }
 }
