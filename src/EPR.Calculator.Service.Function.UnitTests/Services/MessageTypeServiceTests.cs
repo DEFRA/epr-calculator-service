@@ -20,7 +20,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Arrange
             var json = @"{
                             'MessageType': 'Billing',
-                            'RunId': 123,
+                            'CalculatorRunId': 123,
                             'ApprovedBy': 'Test User'
                 }";
 
