@@ -18,6 +18,6 @@
         /// <summary>
         /// Gets or sets the message type for calculator.
         /// </summary>
-        required public string MessageType { get; set; }
+        public string? MessageType { get; set; }
     }
 }
