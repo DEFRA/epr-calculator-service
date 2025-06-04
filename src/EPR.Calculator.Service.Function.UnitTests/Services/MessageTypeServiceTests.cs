@@ -37,16 +37,27 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void DeserializeMessage_MissingMessageType_ThrowsArgumentException()
+        public void DeserializeMessage_MissingMessageType_ReturnsCreateResultFileMessage()
         {
             // Arrange
             var json = @"{
-                            'RunId': 123
+                            'CalculatorRunId': 123,
+                            'CreatedBy': 'Test User',
+                            'FinancialYear': '2024-25'
                          }";
 
             // Act
-            _service.DeserializeMessage(json);
+            var result = _service.DeserializeMessage(json);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result, typeof(CreateResultFileMessage));
+
+            var billingMessage = (CreateResultFileMessage)result;
+            Assert.AreEqual(123, billingMessage.CalculatorRunId);
+            Assert.AreEqual("Test User", billingMessage.CreatedBy);
+            Assert.AreEqual("2024-25", billingMessage.FinancialYear);
+            Assert.AreEqual(null, billingMessage.MessageType);
         }
 
         [TestMethod]

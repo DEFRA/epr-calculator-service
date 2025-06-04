@@ -17,25 +17,24 @@
             { MessageTypes.Billing, typeof(CreateBillingFileMessage) },
             { MessageTypes.Result, typeof(CreateResultFileMessage) }
         };
-
+        
         public MessageBase DeserializeMessage(string json)
         {
             var jObject = JObject.Parse(json);
-
             var messageType = jObject["MessageType"]?.ToString();
-            if (string.IsNullOrWhiteSpace(messageType))
-                throw new ArgumentException("MessageType not found in the message.");
 
-            if (!_typeMappings.TryGetValue(messageType, out var targetType))
+            var targetType = messageType != null ? _typeMappings.GetValueOrDefault(messageType) : null;
+
+            if (messageType != null && targetType == null)
                 throw new NotSupportedException($"Unsupported MessageType: {messageType}");
 
-            var result = JsonConvert.DeserializeObject(json, targetType);
+            var typeToDeserialize = targetType ?? typeof(CreateResultFileMessage);
 
-            if (result == null)
-                throw new JsonException("Deserialized object is null");
+            var result = JsonConvert.DeserializeObject(json, typeToDeserialize)
+                         ?? throw new JsonException("Deserialized object is null");
 
             if (result is not MessageBase message)
-                throw new InvalidCastException($"Deserialized object is not of type IMessage.");
+                throw new InvalidCastException($"Deserialized object is not of type {nameof(MessageBase)}.");
 
             return message;
         }
