@@ -29,18 +29,20 @@
         /// <returns>The run name.</returns>
         public async Task<string?> GetRunNameAsync(int runId)
         {
-            try
-            {
-                var run = await this.Context.CalculatorRuns
+            var run = await this.Context.CalculatorRuns
                 .SingleOrDefaultAsync(r => r.Id == runId);
 
-                return run?.Name;
-            }
-            catch (Exception exception)
+            if (run == null)
             {
-                throw new Exception($"Run name not found for the run id {runId}", exception);
+                throw new Exception($"Calculator run with id {runId} not found");
             }
-            
+
+            if (string.IsNullOrEmpty(run?.Name))
+            {
+                throw new Exception($"Run name not found for the run id {runId}");
+            }
+
+            return run?.Name;            
         }
     }
 }

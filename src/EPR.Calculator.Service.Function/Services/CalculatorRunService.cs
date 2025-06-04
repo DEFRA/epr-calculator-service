@@ -154,7 +154,7 @@
                 {
                     RunId = calculatorRunParameter.Id,
                     RunName = runName,
-                    Message = "StartProcess - Task was cancelled",
+                    Message = "StartProcess - Task was canceled",
                     Exception = ex,
                 });
                 return false;

@@ -60,7 +60,7 @@
         }
 
         /// <summary>
-        /// Tests that <see cref="RunNameService.GetRunNameAsync(int)"/> returns null when the run does not exist.
+        /// Tests that <see cref="RunNameService.GetRunNameAsync(int)"/> returns exception when the run does not exist.
         /// </summary>
         /// <returns>A task that represents the asynchronous operation.</returns>
         [TestMethod]
@@ -70,10 +70,10 @@
             var runId = 10;
 
             // Act
-            var result = await this.runNameService.GetRunNameAsync(runId);
+            var exceptionResult = await Assert.ThrowsExceptionAsync<Exception>(() => this.runNameService.GetRunNameAsync(runId));
 
             // Assert
-            Assert.AreEqual(null, result);
+            Assert.AreEqual("Calculator run with id 10 not found", exceptionResult.Message);
         }
     }
 }
