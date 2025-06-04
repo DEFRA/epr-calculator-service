@@ -3,6 +3,7 @@
     using System.Threading.Tasks;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.Service.Function.Exceptions;
     using EPR.Calculator.Service.Function.Services;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -70,7 +71,7 @@
             var runId = 10;
 
             // Act
-            var exceptionResult = await Assert.ThrowsExceptionAsync<Exception>(() => this.runNameService.GetRunNameAsync(runId));
+            var exceptionResult = await Assert.ThrowsExceptionAsync<RecordNotFoundException>(() => this.runNameService.GetRunNameAsync(runId));
 
             // Assert
             Assert.AreEqual("Calculator run with id 10 not found", exceptionResult.Message);

@@ -4,6 +4,7 @@
     using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Function.Enums;
+    using EPR.Calculator.Service.Function.Exceptions;
     using EPR.Calculator.Service.Function.Services;
     using Microsoft.EntityFrameworkCore;
     using Moq;
@@ -14,7 +15,6 @@
     [TestClass]
     public class ClassificationServiceTests
     {
-        private Mock<ICalculatorTelemetryLogger> TelemetryLogger { get; init; }
         private Mock<IDbContextFactory<ApplicationDBContext>> dbContextFactory;
         private ApplicationDBContext dbContext;
         private ClassificationService classificationService;
@@ -28,8 +28,7 @@
             this.dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
             this.dbContext = new ApplicationDBContext(options);
             this.dbContextFactory.Setup(factory => factory.CreateDbContext()).Returns(this.dbContext);
-            this.TelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
-            this.classificationService = new ClassificationService(this.dbContextFactory.Object, this.TelemetryLogger.Object);
+            this.classificationService = new ClassificationService(this.dbContextFactory.Object);
         }
 
         [TestCleanup]
@@ -57,6 +56,19 @@
             // Assert
             var calculatorRun = this.dbContext.CalculatorRuns.FirstOrDefault(run => run.Id == runId);
             Assert.AreEqual(calculatorRun?.CalculatorRunClassificationId, (int)runClassification);
+        }
+
+        [TestMethod]
+        public async Task ShouldReturnRecordNotFoundException()
+        {
+            // Arrange
+            var runId = 10;
+
+            // Act
+            var exceptionResult = await Assert.ThrowsExceptionAsync<RecordNotFoundException>(() => this.classificationService.UpdateRunClassification(runId, RunClassification.ERROR));
+
+            // Assert
+            Assert.AreEqual("Calculator run id 10 not found", exceptionResult.Message);
         }
     }
 }

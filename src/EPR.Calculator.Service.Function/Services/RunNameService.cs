@@ -3,6 +3,7 @@
     using System;
     using System.Threading.Tasks;
     using EPR.Calculator.API.Data;
+    using EPR.Calculator.Service.Function.Exceptions;
     using EPR.Calculator.Service.Function.Interface;
     using Microsoft.EntityFrameworkCore;
 
@@ -34,12 +35,12 @@
 
             if (run == null)
             {
-                throw new Exception($"Calculator run with id {runId} not found");
+                throw new RecordNotFoundException($"Calculator run with id {runId} not found");
             }
 
-            if (string.IsNullOrEmpty(run?.Name))
+            if (string.IsNullOrEmpty(run.Name))
             {
-                throw new Exception($"Run name not found for the run id {runId}");
+                throw new NullValueException($"Run name not found for the run id {runId}");
             }
 
             return run?.Name;            

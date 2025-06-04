@@ -138,15 +138,7 @@
                     return false;
                 }
 
-                using var client = this.pipelineClientFactory.GetHttpClient(this.configuration.StatusEndpoint);
-                this.telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = calculatorRunParameter.Id,
-                    RunName = runName,
-                    Message = $"HTTP Client: {client}",
-                });
-
-                return await this.UpdateStatusAndPrepareResult(calculatorRunParameter, client, runName);
+                return await this.UpdateStatusAndPrepareResult(calculatorRunParameter, runName);
             }
             catch (TaskCanceledException ex)
             {
@@ -199,7 +191,7 @@
             return isPomSuccessful;
         }
 
-        private async Task<bool> UpdateStatusAndPrepareResult(CalculatorRunParameter calculatorRunParameter, HttpClient client, string? runName)
+        private async Task<bool> UpdateStatusAndPrepareResult(CalculatorRunParameter calculatorRunParameter, string? runName)
         {
             var isSuccess = false;
 
