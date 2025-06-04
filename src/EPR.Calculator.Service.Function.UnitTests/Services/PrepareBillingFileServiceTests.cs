@@ -21,7 +21,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     /// <summary>
     /// Contains unit tests for the PrepareBillingFileService class.
     /// </summary>
-    [TestClass] 
+    [TestClass]
     public class PrepareBillingFileServiceTests
     {
         private readonly DbContextOptions<ApplicationDBContext> _dbContextOptions;
@@ -53,16 +53,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 It.IsAny<CancellationToken>()))
                 .ReturnsAsync(true);
         }
-                
+
         [TestMethod]
-        public async Task PrepareBillingFileAsync_ReturnsUnprocessableContent_WhenRunNotFound()
+        public async Task PrepareBillingFileAsync_ReturnsFalse_WhenRunNotFound()
         {
             // Arrange
             var calculatorRunId = 99854;
             var calculatorName = "Test";
             var service = new PrepareBillingFileService(
-                this._context, 
-                this.PrepareCalcService.Object, 
+                this._context,
+                this.PrepareCalcService.Object,
                 this.MockLogger.Object);
 
             // Act
@@ -73,16 +73,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public async Task PrepareBillingFileAsync_ReturnsUnprocessableContent_WhenNoBillingInstructions()
+        public async Task PrepareBillingFileAsync_ReturnsFalse_WhenNoBillingInstructions()
         {
             // Arrange
             var calculatorRunId = 99854;
             var calculatorName = "Test";
             _context.CalculatorRuns.Add(
-                new CalculatorRun { 
-                    Id = calculatorRunId, 
-                    CalculatorRunClassificationId = 8, 
-                    Name = calculatorName, 
+                new CalculatorRun {
+                    Id = calculatorRunId,
+                    CalculatorRunClassificationId = 8,
+                    Name = calculatorName,
                     Financial_Year = new CalculatorRunFinancialYear { Name = "2025" }, CreatedBy = "user", CreatedAt = System.DateTime.Now });
             _context.SaveChanges();
             var service = new PrepareBillingFileService(
@@ -97,7 +97,63 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.AreEqual(false, result);
         }
 
-        // Add more tests for the success path when you implement the file builder logic
+        [TestMethod]
+        public async Task PrepareBillingFileAsync_ReturnsTrue_WhenRunAndAcceptedBillingInstructionsExist()
+        {
+            // Arrange
+            var calculatorRunId = 122444;
+            var calculatorName = "TestRun";
+            var acceptedProducerId = 999;
+            var calcFinancialYear = new CalculatorRunFinancialYear { Name = "2025" };
+
+            // Add a CalculatorRun to the context
+            _context.CalculatorRuns.Add(new CalculatorRun
+                {
+                    Id = calculatorRunId,
+                    CalculatorRunClassificationId = 1,
+                    Name = calculatorName,
+                    Financial_Year = calcFinancialYear,
+                    CreatedBy = "user",
+                    CreatedAt = DateTime.Now
+                });
+
+            // Add an accepted billing instruction
+            _context.Add(new ProducerResultFileSuggestedBillingInstruction
+            {
+                CalculatorRunId = calculatorRunId,
+                ProducerId = acceptedProducerId,
+                BillingInstructionAcceptReject = PrepareBillingFileConstants.BillingInstructionAccepted,
+                SuggestedBillingInstruction = "TestInstruction",
+            });
+
+            _context.SaveChanges();
+
+            // Setup PrepareCalcService to return true
+            PrepareCalcService
+                .Setup(s => s.PrepareBillingResults(
+                    It.IsAny<CalcResultsRequestDto>(),
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(true);
+
+            var service = new PrepareBillingFileService(
+                _context,
+                PrepareCalcService.Object,
+                MockLogger.Object);
+
+            // Act
+            var result = await service.PrepareBillingFileAsync(calculatorRunId, calculatorName);
+
+            // Assert
+            Assert.IsTrue(result);
+            PrepareCalcService.Verify(s => s.PrepareBillingResults(
+                It.Is<CalcResultsRequestDto>(dto =>
+                    dto.RunId == calculatorRunId &&
+                    dto.AcceptedProducerIds.Contains(acceptedProducerId) &&
+                    dto.IsBillingFile),
+                calculatorName,
+                CancellationToken.None), Times.Once);
+        }
     }
 
     // Helper factory for in-memory db context
