@@ -1,9 +1,10 @@
-﻿using EPR.Calculator.Service.Function.Enums;
+﻿using System.Threading.Tasks;
+using EPR.Calculator.Service.Function.Enums;
 
 namespace EPR.Calculator.Service.Function.Services
 {
     public interface IClassificationService
     {
-        public void UpdateRunClassification(int runId, RunClassification runClassification);
+        public Task UpdateRunClassification(int runId, RunClassification runClassification);
     }
 }

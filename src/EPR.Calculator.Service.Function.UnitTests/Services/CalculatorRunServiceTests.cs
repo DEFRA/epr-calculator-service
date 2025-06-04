@@ -574,32 +574,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public async Task StartProcess_ShouldLogErrorOn_TaskCanceledException()
-        {
-            // Arrange
-            var calculatorRunParameter = new CalculatorRunParameter { Id = 123, User = "testUser", FinancialYear = new FinancialYear("2024-25") };
-            string runName = "testRun";
-            Environment.SetEnvironmentVariable(
-                EnvironmentVariableKeys.RpdStatusTimeout,
-                "0.00000001");
-
-            Environment.SetEnvironmentVariable(
-                EnvironmentVariableKeys.StatusUpdateEndpoint,
-                "http://test.com/status");
-
-            this.PipelineClientFactory.Setup(p => p.GetHttpClient(It.IsAny<Uri>())).Throws(new Exception("StartProcess - Task was canceled"));
-
-            // Act & Assert
-            var exception = await Assert.ThrowsExceptionAsync<Exception>(async () =>
-            {
-                await this.CalculatorRunService.StartProcess(calculatorRunParameter, runName);
-            });
-
-            // Verify the exception message
-            Assert.AreEqual("StartProcess - Task was canceled", exception.Message);
-        }
-
-        [TestMethod]
         public async Task StartProcess_ShouldReturnFalseOn_TaskCanceledException()
         {
             // Arrange
@@ -635,27 +609,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Assert
             Assert.IsFalse(result);
-        }
-
-        [TestMethod]
-        public async Task StartProcess_ShouldLogErrorOn_Exception()
-        {
-            // Arrange
-            var calculatorRunParameter = new CalculatorRunParameter { Id = 123, User = "testUser", FinancialYear = new FinancialYear("2024-25") };
-            string runName = "testRun";
-            this.PipelineClientFactory.Setup(p => p.GetHttpClient(It.IsAny<Uri>())).Throws(new Exception("Test Exception"));
-
-            // Mock the StatusEndpoint
-            this.Configuration.Setup(c => c.StatusEndpoint).Returns(new Uri("http://test.com/status"));
-
-            // Act & Assert
-            var exception = await Assert.ThrowsExceptionAsync<Exception>(async () =>
-            {
-                await this.CalculatorRunService.StartProcess(calculatorRunParameter, runName);
-            });
-
-            // Verify the exception message
-            Assert.AreEqual("Test Exception", exception.Message);
         }
 
         [TestMethod]

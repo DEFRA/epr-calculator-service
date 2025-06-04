@@ -48,7 +48,7 @@
             // Arrange
             var runId = 1;
             var expectedRunName = "Test Run Name";
-            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
+            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2027-28" };
             this.dbContext.CalculatorRuns.Add(new CalculatorRun { Id = runId, Name = expectedRunName, Financial_Year = calculatorRunFinancialYear });
             await this.dbContext.SaveChangesAsync();
 

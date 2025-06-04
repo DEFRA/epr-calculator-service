@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Enums;
@@ -21,30 +22,17 @@ namespace EPR.Calculator.Service.Function.Services
             this.telemetryLogger = telemetryLogger;
         }
 
-        public async void UpdateRunClassification(int runId, RunClassification runClassification)
+        public async Task UpdateRunClassification(int runId, RunClassification runClassification)
         {
-            try
+            var calculatorRun = this.Context.CalculatorRuns.FirstOrDefault(run => run.Id == runId);
+            if (calculatorRun == null)
             {
-                var calculatorRun = this.Context.CalculatorRuns.FirstOrDefault(run => run.Id == runId);
-                if (calculatorRun == null)
-                {
-                    throw new Exception($"Calculator run id {runId} not found");
-                }
+                throw new Exception($"Calculator run id {runId} not found");
+            }
 
-                calculatorRun.CalculatorRunClassificationId = (int)runClassification;
-                this.Context.CalculatorRuns.Update(calculatorRun);
-                await this.Context.SaveChangesAsync();
-            }
-            catch (Exception exception)
-            {
-                this.telemetryLogger.LogError(new ErrorMessage
-                {
-                    RunId = runId,
-                    RunName = string.Empty,
-                    Message = "",
-                    Exception = exception,
-                });
-            }
+            calculatorRun.CalculatorRunClassificationId = (int)runClassification;
+            this.Context.CalculatorRuns.Update(calculatorRun);
+            await this.Context.SaveChangesAsync();
         }
     }
 }

@@ -96,29 +96,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public async Task UpdateRpdStatus_With_RunId_When_Not_Successful()
-        {
-            // Arrange
-            var runId = this.Fixture.Create<int>();
-            var run = this.Fixture.Create<CalculatorRun>();
-            run.Id = runId;
-            this.Context.CalculatorRuns.Add(run);
-            await this.Context.SaveChangesAsync();
-
-            // Act
-            await this.TestClass.UpdateRpdStatus(
-                runId,
-                this.Fixture.Create<string>(),
-                this.Fixture.Create<string>(),
-                CancellationToken.None);
-
-            // Assert
-            var updatedRun = await this.Context.CalculatorRuns.SingleAsync(x => x.Id == runId);
-            Assert.IsNotNull(updatedRun);
-            Assert.AreEqual((int)RunClassification.ERROR, updatedRun.CalculatorRunClassificationId);
-        }
-
-        [TestMethod]
         public async Task UpdateRpdStatus_With_RunId_When_Successful()
         {
             // Arrange

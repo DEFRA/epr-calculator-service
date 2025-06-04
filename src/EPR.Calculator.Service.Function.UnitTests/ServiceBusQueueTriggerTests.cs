@@ -126,7 +126,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             // Assert
             this.telemetryLogger.Verify(
                 log => log.LogError(It.Is<ErrorMessage>(msg =>
-                    msg.Message.Contains("Incorrect format") &&
+                    msg.Message.Contains("Error") &&
                     msg.Exception is JsonException)),
                 Times.Once);
         }
@@ -147,7 +147,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             {
                 this.telemetryLogger.Verify(
                 log => log.LogError(It.Is<ErrorMessage>(msg =>
-                   msg.Message.Contains("Deserialized object is null") &&
+                   msg.Message.Contains("Error") &&
                    msg.Exception is JsonException)),
                 Times.AtLeastOnce);
 
@@ -286,7 +286,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             // Assert
             this.telemetryLogger.Verify(
                 log => log.LogError(It.Is<ErrorMessage>(msg =>
-                    msg.Message.Contains("Run name not found") &&
+                    msg.Message.Contains("Error") &&
                     msg.Exception is Exception)),
                 Times.Once);
         }

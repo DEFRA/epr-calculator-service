@@ -82,18 +82,18 @@ namespace EPR.Calculator.Service.Function
                 if (!processStatus)
                 {
                     // Set the run classification as ERROR
-                    this.classificationService.UpdateRunClassification(calculatorRunParameter.Id, RunClassification.ERROR);
+                    await this.classificationService.UpdateRunClassification(calculatorRunParameter.Id, RunClassification.ERROR);
                 }
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                this.LogError($"Error - {myQueueItem} - {ex.Message}", ex);
-
                 if (calculatorRunParameter != null)
                 {
                     // Set the run classification as ERROR
-                    this.classificationService.UpdateRunClassification(calculatorRunParameter.Id, RunClassification.ERROR);
+                    await this.classificationService.UpdateRunClassification(calculatorRunParameter.Id, RunClassification.ERROR);
                 }
+
+                this.LogError($"Error - {myQueueItem} - {exception.Message}", exception);
             }
 
             this.telemetryLogger.LogInformation(new TrackMessage { Message = "Azure function app execution finished" });
@@ -101,20 +101,13 @@ namespace EPR.Calculator.Service.Function
 
         private CalculatorRunParameter GetCalculatorRunParameter(string message)
         {
-            try
+            var param = JsonConvert.DeserializeObject<CalculatorParameter>(message);
+            if (param == null)
             {
-                var param = JsonConvert.DeserializeObject<CalculatorParameter>(message);
-                if (param == null)
-                {
-                    throw new JsonException("Deserializing service bus message object resulted in null");
-                }
+                throw new JsonException("Deserializing service bus message object resulted in null");
+            }
 
-                return this.calculatorRunParameterMapper.Map(param);
-            }
-            catch (Exception exception)
-            {
-                throw exception;
-            }
+            return this.calculatorRunParameterMapper.Map(param);
         }
 
         private void LogError(string message, Exception exception)
