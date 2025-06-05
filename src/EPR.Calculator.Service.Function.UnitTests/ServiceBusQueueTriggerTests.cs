@@ -81,6 +81,34 @@ namespace EPR.Calculator.Service.Function.UnitTests
         }
 
         /// <summary>
+        /// Tests the Run method with a valid message to ensure it processes the queue item correctly and returns true for billing file.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [TestMethod]
+        public async Task ServiceBusTrigger_ValidMessageRun_BiilingTest()
+        {
+            // Arrange
+            var myQueueItem = @"{ Id: 678767, ApprovedBy: 'Test User', MessageType: 'Billing'}";
+            var resultFileMessage = new CreateBillingFileMessage
+            {
+                CalculatorRunId = 123,
+                ApprovedBy = "Test User",
+                MessageType = "Billing"
+            };
+
+            messageTypeService.Setup(s => s.DeserializeMessage(myQueueItem)).Returns(resultFileMessage);
+
+            // Act
+            await this.function.Run(myQueueItem);
+
+            // Assert
+            this.telemetryLogger.Verify(
+                x => x.LogInformation(It.Is<TrackMessage>(log =>
+                    log.Message.Contains("Azure function app execution finished"))),
+                Times.Once);
+        }
+
+        /// <summary>
         /// Tests the Run method to ensure it logs an error and returns false when the message is null or empty.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>

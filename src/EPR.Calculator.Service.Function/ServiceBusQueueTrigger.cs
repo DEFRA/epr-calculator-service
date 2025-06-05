@@ -84,9 +84,9 @@ namespace EPR.Calculator.Service.Function
                     await this.prepareBillingFileService.PrepareBillingFileAsync(calculatorRunParameter.Id, runName);
                 }
                 else if (resultMessageType is CreateResultFileMessage resultmessage)
-                {
+                {                    
                     var calculatorRunParameter = this.calculatorRunParameterMapper.Map(resultmessage);
-
+                    
                     bool processStatus = await this.calculatorRunService.StartProcess(calculatorRunParameter, runName);
                     this.telemetryLogger.LogInformation(new TrackMessage
                     {
