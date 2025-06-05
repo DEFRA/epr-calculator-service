@@ -3,7 +3,7 @@
     /// <summary>
     /// Billing file message model class.
     /// </summary>
-    public class BillingFileMessage
+    public record BillingFileMessage
     {
         /// <summary>
         /// Gets or sets the identifier for the calculator run.
