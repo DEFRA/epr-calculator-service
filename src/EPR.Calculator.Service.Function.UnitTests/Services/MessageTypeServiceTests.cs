@@ -43,7 +43,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var json = @"{
                             'CalculatorRunId': 123,
                             'CreatedBy': 'Test User',
-                            'FinancialYear': '&&***',
+                            'FinancialYear': '2024-25',
                          }";
 
             // Act
