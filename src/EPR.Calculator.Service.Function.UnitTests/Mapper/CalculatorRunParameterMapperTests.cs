@@ -4,6 +4,7 @@
 
 namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 {
+    using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Function;
     using EPR.Calculator.Service.Function.Interface;
     using EPR.Calculator.Service.Function.Mapper;
@@ -48,6 +49,30 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             Assert.AreEqual(calculatorParameter.FinancialYear, result?.FinancialYear);
             Assert.AreEqual(calculatorParameter.CreatedBy, result?.User);
             Assert.AreEqual(calculatorParameter.CalculatorRunId, result?.Id);
+        }
+
+        /// <summary>
+        /// Tests the Map method of the CalculatorRunParameterMapper class for billing file.
+        /// </summary>
+        [TestMethod]
+        public void Calculator_Run_Mapper_Map_Billing_Test()
+        {
+            // Arrange
+            var billingFileMessage = new CreateBillingFileMessage
+            {
+                RunId = 123,
+                ApprovedBy = "Test user",
+                MessageType = "Billing",
+            };
+
+            // Act
+            var result = this.calculatorRunParameterMapper?.Map(billingFileMessage);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(billingFileMessage.RunId, result?.Id);
+            Assert.AreEqual(billingFileMessage.ApprovedBy, result?.ApprovedBy);
+            Assert.AreEqual(billingFileMessage.MessageType, result?.MessageType);
         }
     }
 }
