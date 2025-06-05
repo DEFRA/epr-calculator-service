@@ -17,9 +17,12 @@
             { MessageTypes.Billing, typeof(CreateBillingFileMessage) },
             { MessageTypes.Result, typeof(CreateResultFileMessage) }
         };
-        
+
         public MessageBase DeserializeMessage(string json)
         {
+            if (string.IsNullOrWhiteSpace(json))
+                throw new JsonException("Input JSON is null or empty.");
+
             var jObject = JObject.Parse(json);
             var messageType = jObject["MessageType"]?.ToString();
 
@@ -30,8 +33,7 @@
 
             var typeToDeserialize = targetType ?? typeof(CreateResultFileMessage);
 
-            var result = JsonConvert.DeserializeObject(json, typeToDeserialize)
-                         ?? throw new JsonException("Deserialized object is null");
+            var result = JsonConvert.DeserializeObject(json, typeToDeserialize);
 
             if (result is not MessageBase message)
                 throw new InvalidCastException($"Deserialized object is not of type {nameof(MessageBase)}.");

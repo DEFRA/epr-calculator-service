@@ -43,7 +43,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var json = @"{
                             'CalculatorRunId': 123,
                             'CreatedBy': 'Test User',
-                            'FinancialYear': '2024-25'
+                            'FinancialYear': '&&***',
                          }";
 
             // Act
@@ -72,6 +72,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Act
             _service.DeserializeMessage(json);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(JsonException))]
+        public void DeserializeMessage_NullOrEmpty_ThrowsJsonException()
+        {
+            // Act
+            _service.DeserializeMessage(null);
         }
 
         [TestMethod]
