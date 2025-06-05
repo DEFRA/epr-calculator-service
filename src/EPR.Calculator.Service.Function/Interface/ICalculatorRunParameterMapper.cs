@@ -12,10 +12,17 @@ namespace EPR.Calculator.Service.Function.Interface
     public interface ICalculatorRunParameterMapper
     {
         /// <summary>
-        /// Maps a <see cref="CalculatorParameter"/> to a <see cref="CalculatorRunParameter"/>.
+        /// Maps a <see cref="CreateResultFileMessage"/> to a <see cref="CalculatorRunParameter"/>.
         /// </summary>
-        /// <param name="calculatorParameter">The calculator parameter to map.</param>
+        /// <param name="createResultFileMessage">The result file message parameter to map.</param>
         /// <returns>The mapped calculator run parameter.</returns>
-        CalculatorRunParameter Map(CalculatorParameter calculatorParameter);
+        CalculatorRunParameter Map(CreateResultFileMessage createResultFileMessage);
+
+        /// <summary>
+        /// Maps a <see cref="CreateBillingFileMessage"/> to a <see cref="CalculatorRunParameter"/>.
+        /// </summary>
+        /// <param name="createBillingFileMessage">The billing file message parameter to map.</param>
+        /// <returns>The mapped calculator run parameter.</returns>
+        BillingFileMessage Map(CreateBillingFileMessage createBillingFileMessage);
     }
 }
