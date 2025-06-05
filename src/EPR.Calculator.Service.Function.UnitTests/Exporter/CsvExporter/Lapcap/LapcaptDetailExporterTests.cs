@@ -1,4 +1,4 @@
-﻿namespace EPR.Calculator.Service.Function.Exporter.Lapcap.Tests
+﻿namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Lapcap
 {
     using System.Text;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
@@ -16,7 +16,7 @@
             var csvContent = new StringBuilder();
 
             // Act
-            this.lapcaptDetailExporter.Export(TestDataHelper.GetCalcResultLapcapData(), csvContent);
+            lapcaptDetailExporter.Export(TestDataHelper.GetCalcResultLapcapData(), csvContent);
 
             // Assert
             var result = csvContent.ToString();

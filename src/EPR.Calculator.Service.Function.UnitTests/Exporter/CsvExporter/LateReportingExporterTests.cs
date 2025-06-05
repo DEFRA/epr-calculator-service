@@ -1,4 +1,4 @@
-namespace EPR.Calculator.Service.Function.UnitTests.Exporter
+namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 {
     using System;
     using AutoFixture;
@@ -17,8 +17,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
         /// </summary>
         public LateReportingExporterTests()
         {
-            this.Fixture = new Fixture();
-            this.TestClass = new LateReportingExporter();
+            Fixture = new Fixture();
+            TestClass = new LateReportingExporter();
         }
 
         private LateReportingExporter TestClass { get; init; }
@@ -32,7 +32,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
         public void CanCallPrepareData()
         {
             // Arrange
-            var input = this.Fixture.Create<CalcResultLateReportingTonnage>();
+            var input = Fixture.Create<CalcResultLateReportingTonnage>();
             var expectedheader = $"\"{input.Name}\"," + Environment.NewLine +
                 $"\"{input.MaterialHeading}\",\"{input.TonnageHeading}\"," + Environment.NewLine;
             var expectedMaterials = input.CalcResultLateReportingTonnageDetails.Select(m
@@ -45,7 +45,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
                 + Environment.NewLine;
 
             // Act
-            var result = this.TestClass.Export(input);
+            var result = TestClass.Export(input);
 
             // Assert
             Assert.AreEqual(expectedResult, result);

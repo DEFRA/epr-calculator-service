@@ -1,4 +1,4 @@
-namespace EPR.Calculator.Service.Function.UnitTests.Exporter
+namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 {
     using System;
     using System.Text;
@@ -16,7 +16,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
         public OnePlusFourApportionmentExporterTests()
         {
             var fixture = new Fixture();
-            this.calcResult1Plus4Apportionment = new CalcResultOnePlusFourApportionment
+            calcResult1Plus4Apportionment = new CalcResultOnePlusFourApportionment
             {
                 Name = "Apportionment",
                 CalcResultOnePlusFourApportionmentDetails = new List<CalcResultOnePlusFourApportionmentDetail>()
@@ -44,12 +44,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter
         }
 
         [TestMethod]
-        public void CanCallExport() {
+        public void CanCallExport()
+        {
             // Arrange
             var csvContent = new StringBuilder();
 
             // Act
-            this._testClass.Export(this.calcResult1Plus4Apportionment, csvContent);
+            _testClass.Export(calcResult1Plus4Apportionment, csvContent);
 
             // Assert
             var result = csvContent.ToString();

@@ -1,4 +1,4 @@
-namespace EPR.Calculator.API.UnitTests.Exporter
+namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 {
     using System;
     using System.Reflection;
@@ -84,7 +84,7 @@ namespace EPR.Calculator.API.UnitTests.Exporter
             char[] delimiters = ['-', '_', '.'];
             var expectedRunNameLength = Math.Min(nameLength, CalcResultsFileName.MaxRunNameLength);
             var expectedRunName = runName.Substring(0, expectedRunNameLength);
-            var expectedTimeStamp = this.TimeStamp.ToString("yyyyMMdd");
+            var expectedTimeStamp = TimeStamp.ToString("yyyyMMdd");
 
             // Act
             var testClass = new CalcResultsFileName(RunId, runName, TimeStamp);
@@ -92,14 +92,14 @@ namespace EPR.Calculator.API.UnitTests.Exporter
             // Assert
             var components = testClass.ToString().Split(delimiters);
 
-            Assert.AreEqual(this.RunId, int.Parse(components[0]));
+            Assert.AreEqual(RunId, int.Parse(components[0]));
             Assert.IsTrue(components[1].Length <= 30);
             Assert.AreEqual(expectedRunName, components[1]);
             Assert.AreEqual(expectedTimeStamp, components[3]);
             Assert.AreEqual(CalcResultsFileName.FileExtension, components[4]);
             Assert.AreEqual(
                 testClass,
-                $"{this.RunId}-{expectedRunName}_Results File_{expectedTimeStamp}.csv");
+                $"{RunId}-{expectedRunName}_Results File_{expectedTimeStamp}.csv");
         }
 
         /// <summary>

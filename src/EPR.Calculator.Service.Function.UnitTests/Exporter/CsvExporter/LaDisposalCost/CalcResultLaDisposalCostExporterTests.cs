@@ -1,4 +1,4 @@
-namespace EPR.Calculator.Service.Function.UnitTests.Exporter.LaDisposalCost
+namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDisposalCost
 {
     using System.Text;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
@@ -12,7 +12,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.LaDisposalCost
 
         public CalcResultLaDisposalCostExporterTests()
         {
-            this.exporter = new CalcResultLaDisposalCostExporter();
+            exporter = new CalcResultLaDisposalCostExporter();
         }
 
         [TestMethod]
@@ -69,7 +69,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.LaDisposalCost
             var csvContent = new StringBuilder();
 
             // Act
-            this.exporter.Export(calcResultLaDisposalCostData, csvContent);
+            exporter.Export(calcResultLaDisposalCostData, csvContent);
             var result = csvContent.ToString();
 
             // Assert

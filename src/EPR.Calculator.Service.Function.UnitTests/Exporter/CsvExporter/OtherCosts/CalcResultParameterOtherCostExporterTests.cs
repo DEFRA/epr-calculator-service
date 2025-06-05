@@ -1,4 +1,4 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Exporter
+﻿namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.OtherCosts
 {
     using System.Text;
     using EPR.Calculator.Service.Function.Constants;
@@ -133,7 +133,7 @@
             };
             var csvContent = new StringBuilder();
 
-            this.exporter.LaDataPrepCosts(otherCost, csvContent);
+            exporter.LaDataPrepCosts(otherCost, csvContent);
             var result = csvContent.ToString();
 
             // Assert
@@ -167,7 +167,7 @@
             var csvContent = new StringBuilder();
 
             // Assert
-            this.exporter.SchemeSetupCost(otherCost, csvContent);
+            exporter.SchemeSetupCost(otherCost, csvContent);
             var result = csvContent.ToString();
             Assert.IsTrue(result.Contains("£40"));
             Assert.IsTrue(result.Contains("£100"));
@@ -199,7 +199,7 @@
             var csvContent = new StringBuilder();
 
             // Assert
-            this.exporter.Materiality(otherCost, csvContent);
+            exporter.Materiality(otherCost, csvContent);
             var result = csvContent.ToString();
             Assert.IsTrue(result.Contains("Amount £s"));
             Assert.IsTrue(result.Contains("%"));
@@ -240,7 +240,7 @@
                     ],
             };
             var csvContent = new StringBuilder();
-            this.exporter.SaOpertingCosts(otherCost, csvContent);
+            exporter.SaOpertingCosts(otherCost, csvContent);
             var result = csvContent.ToString();
 
             // Assert

@@ -1,4 +1,4 @@
-﻿namespace EPR.Calculator.API.UnitTests.Exporter
+﻿namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 {
     using System;
     using System.Collections.Generic;
@@ -20,26 +20,26 @@
     {
         public CalcResultsExporterTests()
         {
-            this.Fixture = new Fixture();
-            this.MockLateReportingExporter = new();
-            this.MockResultDetailexporter = new();
-            this.MockOnePlusFourExporter = new();
-            this.MockLaDisposalCostDataExporter = new();
-            this.MockScaledupProducersExporter = new();
-            this.MockLapcaptDetailExporter = new();
-            this.MockParameterOtherCostExporter = new();
-            this.MockCalcResultSummaryExporter = new();
-            this.MockCommsCostExporter = new();
-            this.TestClass = new CalcResultsExporter(
-                this.MockLateReportingExporter.Object,
-                this.MockResultDetailexporter.Object,
-                this.MockOnePlusFourExporter.Object,
-                this.MockLaDisposalCostDataExporter.Object,
-                this.MockScaledupProducersExporter.Object,
-                this.MockLapcaptDetailExporter.Object,
-                this.MockParameterOtherCostExporter.Object,
-                this.MockCommsCostExporter.Object,
-                this.MockCalcResultSummaryExporter.Object);
+            Fixture = new Fixture();
+            MockLateReportingExporter = new();
+            MockResultDetailexporter = new();
+            MockOnePlusFourExporter = new();
+            MockLaDisposalCostDataExporter = new();
+            MockScaledupProducersExporter = new();
+            MockLapcaptDetailExporter = new();
+            MockParameterOtherCostExporter = new();
+            MockCalcResultSummaryExporter = new();
+            MockCommsCostExporter = new();
+            TestClass = new CalcResultsExporter(
+                MockLateReportingExporter.Object,
+                MockResultDetailexporter.Object,
+                MockOnePlusFourExporter.Object,
+                MockLaDisposalCostDataExporter.Object,
+                MockScaledupProducersExporter.Object,
+                MockLapcaptDetailExporter.Object,
+                MockParameterOtherCostExporter.Object,
+                MockCommsCostExporter.Object,
+                MockCalcResultSummaryExporter.Object);
         }
 
         private Mock<ICalcResultDetailExporter> mockResultDetailexporter = new();
@@ -74,20 +74,20 @@
             var calcResult = CreateCalcResult();
 
             // Act
-            var result = this.TestClass.Export(calcResult);
+            var result = TestClass.Export(calcResult);
 
             // Assert
             Assert.IsNotNull(result);
 
-            this.MockLateReportingExporter.Verify(x => x.Export(calcResult.CalcResultLateReportingTonnageData));
-            this.MockCalcResultSummaryExporter.Verify(x => x.Export(It.IsAny<CalcResultSummary>(), It.IsAny<StringBuilder>()));
-            this.MockLapcaptDetailExporter.Verify(x => x.Export(It.IsAny<CalcResultLapcapData>(), It.IsAny<StringBuilder>()));
-            this.MockResultDetailexporter.Verify(x => x.Export(It.IsAny<CalcResultDetail>(), It.IsAny<StringBuilder>()));
-            this.MockLaDisposalCostDataExporter.Verify(x => x.Export(It.IsAny<CalcResultLaDisposalCostData>(), It.IsAny<StringBuilder>()));
-            this.MockCommsCostExporter.Verify(x => x.Export(It.IsAny<CalcResultCommsCost>(), It.IsAny<StringBuilder>()));
-            this.MockOnePlusFourExporter.Verify(x => x.Export(It.IsAny<CalcResultOnePlusFourApportionment>(), It.IsAny<StringBuilder>()));
-            this.MockScaledupProducersExporter.Verify(x => x.Export(It.IsAny<CalcResultScaledupProducers>(), It.IsAny<StringBuilder>()));
-            this.MockParameterOtherCostExporter.Verify(x => x.Export(It.IsAny<CalcResultParameterOtherCost>(), It.IsAny<StringBuilder>()));
+            MockLateReportingExporter.Verify(x => x.Export(calcResult.CalcResultLateReportingTonnageData));
+            MockCalcResultSummaryExporter.Verify(x => x.Export(It.IsAny<CalcResultSummary>(), It.IsAny<StringBuilder>()));
+            MockLapcaptDetailExporter.Verify(x => x.Export(It.IsAny<CalcResultLapcapData>(), It.IsAny<StringBuilder>()));
+            MockResultDetailexporter.Verify(x => x.Export(It.IsAny<CalcResultDetail>(), It.IsAny<StringBuilder>()));
+            MockLaDisposalCostDataExporter.Verify(x => x.Export(It.IsAny<CalcResultLaDisposalCostData>(), It.IsAny<StringBuilder>()));
+            MockCommsCostExporter.Verify(x => x.Export(It.IsAny<CalcResultCommsCost>(), It.IsAny<StringBuilder>()));
+            MockOnePlusFourExporter.Verify(x => x.Export(It.IsAny<CalcResultOnePlusFourApportionment>(), It.IsAny<StringBuilder>()));
+            MockScaledupProducersExporter.Verify(x => x.Export(It.IsAny<CalcResultScaledupProducers>(), It.IsAny<StringBuilder>()));
+            MockParameterOtherCostExporter.Verify(x => x.Export(It.IsAny<CalcResultParameterOtherCost>(), It.IsAny<StringBuilder>()));
         }
 
         [TestMethod]

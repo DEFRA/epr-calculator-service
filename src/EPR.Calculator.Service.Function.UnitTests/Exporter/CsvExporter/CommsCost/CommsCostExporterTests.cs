@@ -1,4 +1,4 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CommsCost
+﻿namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.CommsCost
 {
     using System;
     using System.Text;
@@ -28,7 +28,7 @@
 
             // Act
             var csvContent = new StringBuilder();
-            this.exporter.Export(communicationCost, csvContent);
+            exporter.Export(communicationCost, csvContent);
             var result = csvContent.ToString();
 
             // Assert
@@ -59,7 +59,7 @@
 
             // Act
             var csvContent = new StringBuilder();
-            this.exporter.Export(communicationCost, csvContent);
+            exporter.Export(communicationCost, csvContent);
             var result = csvContent.ToString();
 
             // Assert

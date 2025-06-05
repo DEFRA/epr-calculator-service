@@ -1,4 +1,4 @@
-namespace EPR.Calculator.Service.Function.UnitTests.Exporter.ScaledupProducers
+namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.ScaledupProducers
 {
     using System.Text;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
@@ -12,7 +12,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.ScaledupProducers
 
         public CalcResultScaledupProducersExporterTests()
         {
-            this.exporter = new CalcResultScaledupProducersExporter();
+            exporter = new CalcResultScaledupProducersExporter();
         }
 
         [TestMethod]
@@ -21,16 +21,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.ScaledupProducers
             // Arrange
             var scaledupProducers = new CalcResultScaledupProducers
             {
-                TitleHeader = this.GetTitleHeader(),
-                MaterialBreakdownHeaders = this.GetMaterialBreakdownHeaders(),
-                ColumnHeaders = this.GetCoulmnHeaders(),
-                ScaledupProducers = this.GetCalcResultScaledupProducerList(),
+                TitleHeader = GetTitleHeader(),
+                MaterialBreakdownHeaders = GetMaterialBreakdownHeaders(),
+                ColumnHeaders = GetCoulmnHeaders(),
+                ScaledupProducers = GetCalcResultScaledupProducerList(),
             };
 
             var csvContent = new StringBuilder();
 
             // Act
-            this.exporter.Export(scaledupProducers, csvContent);
+            exporter.Export(scaledupProducers, csvContent);
             var result = csvContent.ToString();
 
             // Assert
@@ -44,16 +44,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.ScaledupProducers
             // Arrange
             var scaledupProducers = new CalcResultScaledupProducers
             {
-                TitleHeader = this.GetTitleHeader(),
-                MaterialBreakdownHeaders = this.GetMaterialBreakdownHeaders(),
-                ColumnHeaders = this.GetCoulmnHeaders(),
+                TitleHeader = GetTitleHeader(),
+                MaterialBreakdownHeaders = GetMaterialBreakdownHeaders(),
+                ColumnHeaders = GetCoulmnHeaders(),
                 ScaledupProducers = null!,
             };
 
             var csvContent = new StringBuilder();
 
             // Act
-            this.exporter.Export(scaledupProducers, csvContent);
+            exporter.Export(scaledupProducers, csvContent);
             var result = csvContent.ToString();
 
             // Assert
@@ -71,16 +71,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.ScaledupProducers
             // Arrange
             var scaledupProducers = new CalcResultScaledupProducers
             {
-                TitleHeader = this.GetTitleHeader(),
-                MaterialBreakdownHeaders = this.GetMaterialBreakdownHeaders(),
-                ColumnHeaders = this.GetCoulmnHeaders(),
-                ScaledupProducers = this.GetCalcResultScaledupProducerList(),
+                TitleHeader = GetTitleHeader(),
+                MaterialBreakdownHeaders = GetMaterialBreakdownHeaders(),
+                ColumnHeaders = GetCoulmnHeaders(),
+                ScaledupProducers = GetCalcResultScaledupProducerList(),
             };
 
             var csvContent = new StringBuilder();
 
             // Act
-            this.exporter.Export(scaledupProducers, csvContent);
+            exporter.Export(scaledupProducers, csvContent);
             var result = csvContent.ToString();
 
             // Assert

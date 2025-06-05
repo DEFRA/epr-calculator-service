@@ -1,4 +1,4 @@
-namespace EPR.Calculator.Service.Function.UnitTests.Exporter
+namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 {
     using System;
     using System.Text;
