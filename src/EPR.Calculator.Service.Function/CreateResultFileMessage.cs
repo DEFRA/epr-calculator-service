@@ -7,7 +7,7 @@ namespace EPR.Calculator.Service.Function
     /// <summary>
     /// Calculator Run Parameter
     /// </summary>
-    public record CalculatorParameter
+    public class CreateResultFileMessage : MessageBase
     {
         /// <summary>
         /// Gets or sets the identifier for the calculator run.
