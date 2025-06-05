@@ -1,13 +1,15 @@
-﻿namespace EPR.Calculator.API.Exporter
+﻿using EPR.Calculator.API.Exporter;
+
+namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 {
     using System;
     using System.Text;
-    using EPR.Calculator.Service.Function.Exporter;
-    using EPR.Calculator.Service.Function.Exporter.CommsCost;
-    using EPR.Calculator.Service.Function.Exporter.Detail;
-    using EPR.Calculator.Service.Function.Exporter.LaDisposalCost;
-    using EPR.Calculator.Service.Function.Exporter.OtherCosts;
-    using EPR.Calculator.Service.Function.Exporter.ScaledupProducers;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
     using EPR.Calculator.Service.Function.Models;
 
     public class CalcResultsExporter : ICalcResultsExporter<CalcResult>
@@ -52,23 +54,23 @@
             }
 
             var csvContent = new StringBuilder();
-            this.resultDetailexporter.Export(results.CalcResultDetail, csvContent);
+            resultDetailexporter.Export(results.CalcResultDetail, csvContent);
 
-            this.lapcaptDetailExporter.Export(results.CalcResultLapcapData, csvContent);
+            lapcaptDetailExporter.Export(results.CalcResultLapcapData, csvContent);
 
             csvContent.Append(lateReportingExporter.Export(results.CalcResultLateReportingTonnageData));
 
-            this.parameterOtherCosts.Export(results.CalcResultParameterOtherCost, csvContent);
+            parameterOtherCosts.Export(results.CalcResultParameterOtherCost, csvContent);
 
-            this.onePlusFourApportionmentExporter.Export(results.CalcResultOnePlusFourApportionment, csvContent);
+            onePlusFourApportionmentExporter.Export(results.CalcResultOnePlusFourApportionment, csvContent);
 
-            this.commsCostExporter.Export(results.CalcResultCommsCostReportDetail, csvContent);
+            commsCostExporter.Export(results.CalcResultCommsCostReportDetail, csvContent);
 
-            this.laDisposalCostExporter.Export(results.CalcResultLaDisposalCostData, csvContent);
+            laDisposalCostExporter.Export(results.CalcResultLaDisposalCostData, csvContent);
 
-            this.calcResultScaledupProducersExporter.Export(results.CalcResultScaledupProducers, csvContent);
+            calcResultScaledupProducersExporter.Export(results.CalcResultScaledupProducers, csvContent);
 
-            this.calcResultSummaryExporter.Export(results.CalcResultSummary, csvContent);
+            calcResultSummaryExporter.Export(results.CalcResultSummary, csvContent);
 
             return csvContent.ToString();
         }

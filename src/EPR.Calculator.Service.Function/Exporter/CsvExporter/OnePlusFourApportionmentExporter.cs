@@ -3,7 +3,7 @@ using EPR.Calculator.Service.Function.Models;
 using System.Linq;
 using System.Text;
 
-namespace EPR.Calculator.Service.Function.Exporter
+namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 {
 
     public class OnePlusFourApportionmentExporter : IOnePlusFourApportionmentExporter

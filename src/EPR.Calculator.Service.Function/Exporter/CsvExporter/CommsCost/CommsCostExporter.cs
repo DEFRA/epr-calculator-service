@@ -1,4 +1,4 @@
-﻿namespace EPR.Calculator.Service.Function.Exporter.CommsCost
+﻿namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost
 {
     using System.Text;
     using EPR.Calculator.API.Utils;
@@ -17,7 +17,7 @@
         /// <param name="communicationCost">The communication cost details to export.</param>
         /// <param name="csvContent">The csv contenst.</param>
         public void Export(CalcResultCommsCost communicationCost, StringBuilder csvContent)
-            {
+        {
             csvContent.AppendLine();
             csvContent.AppendLine();
             csvContent.AppendLine(communicationCost.Name);

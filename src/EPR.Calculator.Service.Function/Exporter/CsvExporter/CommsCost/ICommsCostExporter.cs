@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EPR.Calculator.Service.Function.Exporter.CommsCost
+namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost
 {
     public interface ICommsCostExporter
     {

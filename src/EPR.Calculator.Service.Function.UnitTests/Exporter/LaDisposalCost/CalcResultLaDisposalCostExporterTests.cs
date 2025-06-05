@@ -1,7 +1,7 @@
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.LaDisposalCost
 {
     using System.Text;
-    using EPR.Calculator.Service.Function.Exporter.LaDisposalCost;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 

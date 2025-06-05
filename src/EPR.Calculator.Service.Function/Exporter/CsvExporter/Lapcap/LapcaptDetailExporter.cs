@@ -1,11 +1,11 @@
-﻿namespace EPR.Calculator.Service.Function.Exporter
+﻿namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap
 {
     using System.Linq;
     using System.Text;
     using EPR.Calculator.API.Utils;
     using EPR.Calculator.Service.Function.Models;
 
-    public class LapcaptDetailExporter: ILapcaptDetailExporter
+    public class LapcaptDetailExporter : ILapcaptDetailExporter
     {
         public void Export(CalcResultLapcapData calcResultLapcapData, StringBuilder csvContent)
         {

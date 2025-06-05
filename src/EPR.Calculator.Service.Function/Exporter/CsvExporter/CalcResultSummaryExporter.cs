@@ -1,4 +1,4 @@
-﻿namespace EPR.Calculator.Service.Function.Exporter
+﻿namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 {
     using System;
     using System.Collections.Generic;
@@ -20,7 +20,7 @@
             csvContent.AppendLine();
 
             // Add headers
-            this.PrepareSummaryDataHeader(resultSummary, csvContent);
+            PrepareSummaryDataHeader(resultSummary, csvContent);
 
             // Add data
             foreach (var producer in resultSummary.ProducerDisposalFees)
@@ -31,43 +31,43 @@
 
         public void AddNewRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
         {
-            this.AddFirstFiveColumns(csvContent, producer);
+            AddFirstFiveColumns(csvContent, producer);
 
-            this.AppendProducerDisposalFeesByMaterial(csvContent, producer);
+            AppendProducerDisposalFeesByMaterial(csvContent, producer);
 
-            this.AddProducerDisposal(csvContent, producer);
+            AddProducerDisposal(csvContent, producer);
 
-            this.AppendProducerCommsFeesByMaterial(csvContent, producer);
+            AppendProducerCommsFeesByMaterial(csvContent, producer);
 
-            this.AddProducerCommsFee(csvContent, producer);
+            AddProducerCommsFee(csvContent, producer);
 
-            this.AddProducerFee(csvContent, producer);
+            AddProducerFee(csvContent, producer);
 
-            this.AddProducerFeeForComms(csvContent, producer);
+            AddProducerFeeForComms(csvContent, producer);
 
             csvContent.Append(CsvSanitiser.SanitiseData(producer.PercentageofProducerReportedTonnagevsAllProducers, DecimalPlaces.Eight, null, false, true));
 
-            this.AddTotalProducerFee(csvContent, producer);
+            AddTotalProducerFee(csvContent, producer);
 
             // 2c comms Total
-            this.AddTwoC(csvContent, producer);
+            AddTwoC(csvContent, producer);
 
             // Total bill 1 + 2a + 2b + 2c
             csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerTotalOnePlus2A2B2CWithBadDeptProvision, DecimalPlaces.Two, null, true));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, DecimalPlaces.Eight, null, false, true));
 
-            this.AddTotal3SA(csvContent, producer);
+            AddTotal3SA(csvContent, producer);
 
             // LA data prep costs section 4
-            this.AddLaDataPrepCosts(csvContent, producer);
+            AddLaDataPrepCosts(csvContent, producer);
 
-            this.AddSection5(csvContent, producer);
+            AddSection5(csvContent, producer);
 
             // Total bill section
-            this.AddTotalSection(csvContent, producer);
+            AddTotalSection(csvContent, producer);
 
             // Billing instructions section
-            this.AddBillingInstructionsSection(csvContent, producer);
+            AddBillingInstructionsSection(csvContent, producer);
 
             csvContent.AppendLine();
         }
@@ -218,7 +218,7 @@
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.HouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
 
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.PublicBinTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                if (this.extraColumns.Contains(disposalFee.Key))
+                if (extraColumns.Contains(disposalFee.Key))
                 {
                     csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.HouseholdDrinksContainersTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 }
@@ -226,7 +226,7 @@
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.TotalReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ManagedConsumerWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.NetReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.TonnageChange, DecimalPlaces.Zero,DecimalFormats.F2));
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.TonnageChange, DecimalPlaces.Zero, DecimalFormats.F2));
 
                 csvContent.Append(producer.IsProducerScaledup != CommonConstants.Totals ? CsvSanitiser.SanitiseData(disposalFee.Value.PricePerTonne, null, null, true) : CommonConstants.CsvFileDelimiter);
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ProducerDisposalFee, DecimalPlaces.Two, null, true));
@@ -245,7 +245,7 @@
             {
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.HouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ReportedPublicBinTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                if (this.extraColumns.Contains(disposalFee.Key))
+                if (extraColumns.Contains(disposalFee.Key))
                 {
                     csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.HouseholdDrinksContainers, DecimalPlaces.Three, DecimalFormats.F3));
                 }
@@ -297,13 +297,13 @@
             csvContent.AppendLine(CsvSanitiser.SanitiseData(resultSummary.NotesHeader?.Name));
 
             // Add producer disposal fees header
-            this.WriteSecondaryHeaders(csvContent, resultSummary.ProducerDisposalFeesHeaders);
+            WriteSecondaryHeaders(csvContent, resultSummary.ProducerDisposalFeesHeaders);
 
             // Add material breakdown header
-            this.WriteSecondaryHeaders(csvContent, resultSummary.MaterialBreakdownHeaders);
+            WriteSecondaryHeaders(csvContent, resultSummary.MaterialBreakdownHeaders);
 
             // Add column header
-            this.WriteColumnHeaders(resultSummary, csvContent);
+            WriteColumnHeaders(resultSummary, csvContent);
 
             csvContent.AppendLine();
         }

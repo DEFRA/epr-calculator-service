@@ -4,8 +4,8 @@
     using System.Text;
     using AutoFixture;
     using EPR.Calculator.Service.Function.Exporter;
-    using EPR.Calculator.Service.Function.Exporter.CommsCost;
-    using EPR.Calculator.Service.Function.Exporter.OtherCosts;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 

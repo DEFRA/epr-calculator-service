@@ -1,10 +1,9 @@
 ﻿using EPR.Calculator.API.Utils;
-using EPR.Calculator.Service.Function.Exporter.OtherCosts;
 using EPR.Calculator.Service.Function.Models;
 using System.Linq;
 using System.Text;
 
-namespace EPR.Calculator.Service.Function.Exporter
+namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts
 {
     public class CalcResultParameterOtherCostExporter : ICalcResultParameterOtherCostExporter
     {
@@ -13,21 +12,21 @@ namespace EPR.Calculator.Service.Function.Exporter
             csvContent.AppendLine();
             csvContent.AppendLine();
             csvContent.AppendLine(otherCost.Name);
-            this.SaOpertingCosts(otherCost, csvContent);
+            SaOpertingCosts(otherCost, csvContent);
 
             csvContent.AppendLine();
 
-            this.LaDataPrepCosts(otherCost, csvContent);
+            LaDataPrepCosts(otherCost, csvContent);
 
             csvContent.AppendLine();
-            this.SchemeSetupCost(otherCost, csvContent);
+            SchemeSetupCost(otherCost, csvContent);
 
             csvContent.AppendLine();
             csvContent.Append($"{CsvSanitiser.SanitiseData(otherCost.BadDebtProvision.Key)}");
             csvContent.AppendLine($"{CsvSanitiser.SanitiseData(otherCost.BadDebtProvision.Value)}");
 
             csvContent.AppendLine();
-            this.Materiality(otherCost, csvContent);
+            Materiality(otherCost, csvContent);
         }
 
         public void Materiality(CalcResultParameterOtherCost otherCost, StringBuilder csvContent)

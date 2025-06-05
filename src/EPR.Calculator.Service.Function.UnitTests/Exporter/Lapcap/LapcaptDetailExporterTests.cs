@@ -1,6 +1,7 @@
 ﻿namespace EPR.Calculator.Service.Function.Exporter.Lapcap.Tests
 {
     using System.Text;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
     using EPR.Calculator.Service.Function.UnitTests.Builder;
 
     [TestClass]

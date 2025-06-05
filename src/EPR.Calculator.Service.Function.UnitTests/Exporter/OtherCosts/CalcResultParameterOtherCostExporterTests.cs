@@ -2,8 +2,7 @@
 {
     using System.Text;
     using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Exporter;
-    using EPR.Calculator.Service.Function.Exporter.OtherCosts;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 

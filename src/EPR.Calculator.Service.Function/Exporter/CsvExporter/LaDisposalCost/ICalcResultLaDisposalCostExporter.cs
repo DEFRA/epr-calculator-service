@@ -1,4 +1,4 @@
-﻿namespace EPR.Calculator.Service.Function.Exporter.LaDisposalCost
+﻿namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost
 {
     using System.Text;
     using EPR.Calculator.Service.Function.Models;

@@ -6,7 +6,7 @@ namespace EPR.Calculator.API.UnitTests.Exporter
     using AutoFixture;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.API.Exporter;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
     using Moq.EntityFrameworkCore;

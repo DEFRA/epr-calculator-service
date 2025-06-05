@@ -1,4 +1,4 @@
-﻿namespace EPR.Calculator.Service.Function.Exporter
+﻿namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 {
     using System;
     using System.Linq;

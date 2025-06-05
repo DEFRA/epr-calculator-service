@@ -1,4 +1,4 @@
-﻿namespace EPR.Calculator.API.Exporter
+﻿namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 {
     using System;
     using System.IO;
@@ -58,7 +58,7 @@
         {
             var runDetails = context.CalculatorRuns
                 .Where(run => run.Id == runId)
-                .Select(run => new { run.Name, run.CreatedAt}).Single();
+                .Select(run => new { run.Name, run.CreatedAt }).Single();
 
             return new CalcResultsFileName(runId, runDetails.Name ?? string.Empty, runDetails.CreatedAt);
         }
