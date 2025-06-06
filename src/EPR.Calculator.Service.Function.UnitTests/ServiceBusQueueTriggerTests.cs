@@ -7,6 +7,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Function.Interface;
+    using EPR.Calculator.Service.Function.Services;
     using Moq;
     using Newtonsoft.Json;
     using NuGet.Frameworks;
@@ -22,6 +23,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
         private readonly Mock<ICalculatorRunParameterMapper> parameterMapper;
         private readonly Mock<IRunNameService> runNameService;
         private readonly Mock<ICalculatorTelemetryLogger> telemetryLogger;
+        private readonly Mock<IMessageTypeService> messageTypeService;
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceBusQueueTriggerTests"/> class.
@@ -31,12 +34,14 @@ namespace EPR.Calculator.Service.Function.UnitTests
             this.calculatorRunService = new Mock<ICalculatorRunService>();
             this.parameterMapper = new Mock<ICalculatorRunParameterMapper>();
             this.runNameService = new Mock<IRunNameService>();
+            this.messageTypeService = new Mock<IMessageTypeService>();
             this.telemetryLogger = new Mock<ICalculatorTelemetryLogger>();
             this.function = new ServiceBusQueueTrigger(
                 this.calculatorRunService.Object,
                 this.parameterMapper.Object,
                 this.runNameService.Object,
-                this.telemetryLogger.Object);
+                this.telemetryLogger.Object,
+                this.messageTypeService.Object);
         }
 
         /// <summary>
@@ -52,8 +57,9 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var runName = "Test Run Name";
 
             this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
-            this.parameterMapper.Setup(t => t.Map(It.IsAny<CalculatorParameter>())).Returns(processedParameterData);
+            this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
             this.calculatorRunService.Setup(t => t.StartProcess(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).ReturnsAsync(true);
+            MockResultMessage(myQueueItem);
 
             // Act
             await this.function.Run(myQueueItem);
@@ -68,6 +74,34 @@ namespace EPR.Calculator.Service.Function.UnitTests
             this.telemetryLogger.Verify(
                 x => x.LogInformation(It.Is<TrackMessage>(log =>
                     log.Message.Contains("Executing the function app started"))),
+                Times.Once);
+        }
+
+        /// <summary>
+        /// Tests the Run method with a valid message to ensure it processes the queue item correctly and returns true for billing file.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [TestMethod]
+        public async Task ServiceBusTrigger_ValidMessageRun_BiilingTest()
+        {
+            // Arrange
+            var myQueueItem = @"{ Id: 678767, ApprovedBy: 'Test User', MessageType: 'Billing'}";
+            var resultFileMessage = new CreateBillingFileMessage
+            {
+                RunId = 123,
+                ApprovedBy = "Test User",
+                MessageType = "Billing"
+            };
+
+            messageTypeService.Setup(s => s.DeserializeMessage(myQueueItem)).Returns(resultFileMessage);
+
+            // Act
+            await this.function.Run(myQueueItem);
+
+            // Assert
+            this.telemetryLogger.Verify(
+                x => x.LogInformation(It.Is<TrackMessage>(log =>
+                    log.Message.Contains("Azure function app execution finished"))),
                 Times.Once);
         }
 
@@ -114,7 +148,9 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
-            this.parameterMapper.Setup(t => t.Map(It.IsAny<CalculatorParameter>())).Throws<JsonException>();
+            this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Throws<JsonException>();
+
+            MockResultMessage(myQueueItem);
 
             // Act
             await this.function.Run(myQueueItem);
@@ -127,30 +163,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 Times.Once);
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(JsonException))]
-        public async Task ServiceBusTrigger_NullParameterThrowsJsonExceptionAsync()
-        {
-            // Arrange
-            var myQueueItem = "null"; // Simulate a null JSON object
-
-            // Act
-            var param = JsonConvert.DeserializeObject<CalculatorParameter>(myQueueItem);
-            await this.function.Run(myQueueItem);
-
-            // Assert
-            if (param == null)
-            {
-                this.telemetryLogger.Verify(
-                log => log.LogError(It.Is<ErrorMessage>(msg =>
-                   msg.Message.Contains("Deserialized object is null") &&
-                   msg.Exception is JsonException)),
-                Times.AtLeastOnce);
-
-                throw new JsonException("Deserialized object is null");
-            }
-        }
-
         /// <summary>
         /// Tests the Run method to ensure it logs an error and returns false when mapper throw unhandled exception.
         /// </summary>
@@ -160,8 +172,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
-            this.parameterMapper.Setup(t => t.Map(It.IsAny<CalculatorParameter>())).Throws<Exception>();
-
+            this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Throws<Exception>();
+            MockResultMessage(myQueueItem);
             // Act
             await this.function.Run(myQueueItem);
 
@@ -185,11 +197,12 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var processedParameterData = new CalculatorRunParameter() { FinancialYear = "2024-25", User = "Test user", Id = 678767 };
             var runName = "Test Run Name";
 
-            this.parameterMapper.Setup(t => t.Map(It.IsAny<CalculatorParameter>())).Returns(processedParameterData);
+            this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
             this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
 
             // Setup StartProcess to throw an exception
             this.calculatorRunService.Setup(t => t.StartProcess(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).ThrowsAsync(new Exception("Unhandled exception"));
+            MockResultMessage(myQueueItem);
 
             // Act
             await this.function.Run(myQueueItem);
@@ -207,7 +220,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
-            this.parameterMapper.Setup(t => t.Map(It.IsAny<CalculatorParameter>())).Returns(default(CalculatorRunParameter?));
+            this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(default(CalculatorRunParameter?));
 
             // Act
             await this.function.Run(myQueueItem);
@@ -224,14 +237,15 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public async Task ServiceBusTrigger_SuccessfulProcess_Run()
         {
             // Arrange
-            this.parameterMapper.Setup(t => t.Map(It.IsAny<CalculatorParameter>())).Returns((CalculatorRunParameter?)null);
+            this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns((CalculatorRunParameter?)null);
             var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
             var processedParameterData = new CalculatorRunParameter() { FinancialYear = "2024-25", User = "Test user", Id = 678767 };
             var runName = "Test Run Name";
 
-            this.parameterMapper.Setup(t => t.Map(It.IsAny<CalculatorParameter>())).Returns(processedParameterData);
+            this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
             this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
             this.calculatorRunService.Setup(t => t.StartProcess(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).ReturnsAsync(true);
+            MockResultMessage(myQueueItem);
 
             // Act
             await this.function.Run(myQueueItem);
@@ -252,8 +266,9 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var runName = "Test Run Name";
 
             this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
-            this.parameterMapper.Setup(t => t.Map(It.IsAny<CalculatorParameter>())).Returns(processedParameterData);
+            this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
             this.calculatorRunService.Setup(t => t.StartProcess(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).Throws<Exception>();
+            MockResultMessage(myQueueItem);
 
             // Act
             await this.function.Run(myQueueItem);
@@ -273,8 +288,9 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
             var processedParameterData = new CalculatorRunParameter() { FinancialYear = "2024-25", User = "Test user", Id = 678767 };
 
-            this.parameterMapper.Setup(t => t.Map(It.IsAny<CalculatorParameter>())).Returns(processedParameterData);
+            this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
             this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).Throws<Exception>();
+            MockResultMessage(myQueueItem);
 
             // Act
             await this.function.Run(myQueueItem);
@@ -286,5 +302,18 @@ namespace EPR.Calculator.Service.Function.UnitTests
                     msg.Exception is Exception)),
                 Times.Once);
         }
+
+        private void MockResultMessage(string myQueueItem)
+        {
+            var resultFileMessage = new CreateResultFileMessage
+            {
+                CalculatorRunId = 1,
+                FinancialYear = "2024-25",
+                CreatedBy = "TestUser"
+            };
+
+            messageTypeService.Setup(s => s.DeserializeMessage(myQueueItem)).Returns(resultFileMessage);
+        }
+
     }
 }

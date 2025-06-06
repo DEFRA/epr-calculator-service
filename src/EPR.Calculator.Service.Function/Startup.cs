@@ -134,6 +134,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ILateReportingExporter, LateReportingExporter>();
             services.AddTransient<IRunNameService, RunNameService>();
             services.AddTransient<ITelemetryClientWrapper, TelemetryClientWrapper>();
+            services.AddTransient<IMessageTypeService, MessageTypeService>();
 #if !DEBUG
             SetupBlobStorage(services);
             services.AddTransient<IConfigurationService, Configuration>();
