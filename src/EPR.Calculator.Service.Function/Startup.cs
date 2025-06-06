@@ -22,12 +22,6 @@ using EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment;
 using EPR.Calculator.Service.Function.Builder.ParametersOther;
 using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
 using EPR.Calculator.Service.Function.Builder.Summary;
-using EPR.Calculator.Service.Function.Exporter;
-using EPR.Calculator.Service.Function.Exporter.CommsCost;
-using EPR.Calculator.Service.Function.Exporter.Detail;
-using EPR.Calculator.Service.Function.Exporter.LaDisposalCost;
-using EPR.Calculator.Service.Function.Exporter.OtherCosts;
-using EPR.Calculator.Service.Function.Exporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Misc;
@@ -43,6 +37,13 @@ using EPR.Calculator.Service.Common.Logging;
 using System;
 using Microsoft.Extensions.Configuration;
 using System.Reflection;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 

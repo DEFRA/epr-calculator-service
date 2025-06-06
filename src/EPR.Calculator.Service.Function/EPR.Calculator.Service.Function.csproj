@@ -6,6 +6,11 @@
     <UserSecretsId>118d1712-5b35-4a86-a724-8053529b76ca</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Exporter\Summary\**" />
+    <EmbeddedResource Remove="Exporter\Summary\**" />
+    <None Remove="Exporter\Summary\**" />
+  </ItemGroup>
+  <ItemGroup>
     <AdditionalFiles Include="..\stylecop.json" Link="Properties\stylecop.json" />
   </ItemGroup>
   <ItemGroup>
@@ -50,8 +55,5 @@
 		<SonarQubeSetting Include="sonar.cpd.exclusions">
 			<Value>Constants/*.cs,Models/*.cs,Startup.cs</Value>
 		</SonarQubeSetting>
-	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Exporter\Summary\" />
 	</ItemGroup>
 </Project>
