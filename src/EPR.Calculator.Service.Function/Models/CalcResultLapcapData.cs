@@ -2,7 +2,7 @@
 
 namespace EPR.Calculator.Service.Function.Models
 {
-    public record CalcResultLapcapData
+    public class CalcResultLapcapData
     {
         public string Name { get; set; } = string.Empty;
 

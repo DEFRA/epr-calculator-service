@@ -1,6 +1,6 @@
 ﻿namespace EPR.Calculator.Service.Function.Models
 {
-    public record CalcResultLapcapDataDetails
+    public class CalcResultLapcapDataDetails
     {
         public required string Name { get; set; }
 
