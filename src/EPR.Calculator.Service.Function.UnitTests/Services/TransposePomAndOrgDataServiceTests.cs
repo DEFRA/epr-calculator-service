@@ -1,20 +1,17 @@
 ﻿namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
     using AutoFixture;
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Common.Logging;
-    using EPR.Calculator.Service.Function.Data;
-    using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Interface;
     using EPR.Calculator.Service.Function.Services;
     using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.ChangeTracking;
     using Microsoft.EntityFrameworkCore.Diagnostics;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
-    using Moq.Protected;
-    using System.Linq.Expressions;
     using static EPR.Calculator.Service.Function.Services.TransposePomAndOrgDataService;
 
     [TestClass]
@@ -37,7 +34,7 @@
                 .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
             .Options;
 
-            this._context = new ApplicationDBContext(_dbContextOptions);
+            this._context = new ApplicationDBContext(this._dbContextOptions);
             this.ContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
             this.ContextFactory.Setup(f => f.CreateDbContext()).Returns(this._context);
 
@@ -276,8 +273,8 @@
         {
             var expectedResult = new ProducerDetail
             {
-                Id = 1,
-                ProducerId = 1,
+                Id = 9991,
+                ProducerId = 9991,
                 ProducerName = "UPU LIMITED",
                 CalculatorRunId = 1,
                 CalculatorRun = Fixture.Create<CalculatorRun>(),
@@ -460,8 +457,8 @@
         {
             var expectedResult = new ProducerDetail
             {
-                Id = 1,
-                ProducerId = 2,
+                Id = 9993,
+                ProducerId = 9994,
                 ProducerName = "Subsid2",
                 CalculatorRunId = 1,
                 CalculatorRun = this.Fixture.Create<CalculatorRun>(),
@@ -474,7 +471,7 @@
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
                 new Mock<ICalculatorTelemetryLogger>().Object);
 
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
+            var resultsRequestDto = new CalcResultsRequestDto { RunId = 2 };
 
             // Detach existing CalculatorRun entity if it is already being tracked
             var existingCalculatorRun = _context.ChangeTracker.Entries<CalculatorRun>()
@@ -500,7 +497,7 @@
         }
 
         [TestMethod]
-        public async Task Transpose_Should_Return_Latest_Organisation_Name()
+        public void Transpose_Should_Return_Latest_Organisation_Name()
         {
             var mockContext = new Mock<ApplicationDBContext>();
             var mockCommandTimeoutService = new Mock<ICommandTimeoutService>();
@@ -874,13 +871,14 @@
 
         protected static IEnumerable<CalculatorRun> GetCalculatorRuns()
         {
+            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
             var list = new List<CalculatorRun>
             {
                 new ()
                 {
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Run",
-                    Financial_Year = "2024-25",
+                    Financial_Year = calculatorRunFinancialYear,
                     CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                     CalculatorRunOrganisationDataMasterId = 2,
@@ -890,7 +888,7 @@
                 {
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Calculated Result",
-                    Financial_Year = "2024-25",
+                    Financial_Year = calculatorRunFinancialYear,
                     CreatedAt = new DateTime(2024, 8, 21, 14, 16, 27, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                 },
@@ -898,7 +896,7 @@
                 {
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Run",
-                    Financial_Year = "2024-25",
+                    Financial_Year = calculatorRunFinancialYear,
                     CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                     CalculatorRunOrganisationDataMasterId = 1,
@@ -908,7 +906,7 @@
                 {
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Calculated Result",
-                    Financial_Year = "2024-25",
+                    Financial_Year = calculatorRunFinancialYear,
                     CreatedAt = new DateTime(2024, 8, 21, 14, 16, 27, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                     CalculatorRunOrganisationDataMasterId = 2,

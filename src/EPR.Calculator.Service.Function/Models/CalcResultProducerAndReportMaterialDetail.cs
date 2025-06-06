@@ -1,6 +1,6 @@
 ﻿namespace EPR.Calculator.Service.Function.Models
 {
-    using EPR.Calculator.Service.Function.Data.DataModels;
+    using EPR.Calculator.API.Data.DataModels;
 
     public class CalcResultProducerAndReportMaterialDetail
     {

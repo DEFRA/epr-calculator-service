@@ -62,7 +62,12 @@
             this.AddLaDataPrepCosts(csvContent, producer);
 
             this.AddSection5(csvContent, producer);
+
+            // Total bill section
             this.AddTotalSection(csvContent, producer);
+
+            // Billing instructions section
+            this.AddBillingInstructionsSection(csvContent, producer);
 
             csvContent.AppendLine();
         }
@@ -87,6 +92,20 @@
             csvContent.Append(CsvSanitiser.SanitiseData(producer.WalesTotalWithBadDebtProvisionSection5, DecimalPlaces.Two, null, true));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.ScotlandTotalWithBadDebtProvisionSection5, DecimalPlaces.Two, null, true));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.NorthernIrelandTotalWithBadDebtProvisionSection5, DecimalPlaces.Two, null, true));
+        }
+
+        public void AddBillingInstructionsSection(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
+        {
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.CurrentYearInvoiceTotalToDate, DecimalPlaces.Two, null, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.TonnageChangeSinceLastInvoice));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.LiabilityDifference, DecimalPlaces.Two, null, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.MaterialThresholdBreached));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.TonnageThresholdBreached));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.PercentageLiabilityDifference, DecimalPlaces.Two, null, false, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.MaterialPercentageThresholdBreached));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.TonnagePercentageThresholdBreached));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.SuggestedBillingInstruction));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.SuggestedInvoiceAmount, DecimalPlaces.Two, null, true));
         }
 
         public void AddLaDataPrepCosts(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
@@ -175,6 +194,8 @@
             csvContent.Append(CsvSanitiser.SanitiseData(producer.WalesTotal, DecimalPlaces.Two, null, true));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.ScotlandTotal, DecimalPlaces.Two, null, true));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.NorthernIrelandTotal, DecimalPlaces.Two, null, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.Level == ((int)CalcResultSummaryLevelIndex.One).ToString() ? "0" : producer.TonnageChangeCount));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.TonnageChangeAdvice));
         }
 
         public void AddFirstFiveColumns(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
@@ -182,6 +203,7 @@
             csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerId));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.SubsidiaryId));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerName));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.TradingName));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.Level));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.IsProducerScaledup));
         }
@@ -192,6 +214,7 @@
         {
             foreach (var disposalFee in producer.ProducerDisposalFeesByMaterial!)
             {
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.PreviousInvoicedTonnage, DecimalPlaces.Zero, DecimalFormats.F2));
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.HouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
 
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.PublicBinTonnage, DecimalPlaces.Three, DecimalFormats.F3));
@@ -203,6 +226,7 @@
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.TotalReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ManagedConsumerWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.NetReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.TonnageChange, DecimalPlaces.Zero,DecimalFormats.F2));
 
                 csvContent.Append(producer.IsProducerScaledup != CommonConstants.Totals ? CsvSanitiser.SanitiseData(disposalFee.Value.PricePerTonne, null, null, true) : CommonConstants.CsvFileDelimiter);
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ProducerDisposalFee, DecimalPlaces.Two, null, true));

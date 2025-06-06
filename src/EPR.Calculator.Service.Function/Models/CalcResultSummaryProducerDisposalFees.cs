@@ -10,6 +10,8 @@ namespace EPR.Calculator.Service.Function.Models
 
         public required string ProducerName { get; set; }
 
+        public string? TradingName { get; set; }
+
         public string? Level { get; set; }
 
         public string IsProducerScaledup { get; set; } = "No";
@@ -138,7 +140,7 @@ namespace EPR.Calculator.Service.Function.Models
         public decimal NorthernIrelandTotalWithBadDebtProvisionSection5 { get; set; }
         // End Section-5 SA setup costs
 
-        public Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>? ProducerDisposalFeesByMaterial { get; set; }
+        public Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> ProducerDisposalFeesByMaterial { get; set; }
 
         public Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>? ProducerCommsFeesByMaterial { get; set; }
 
@@ -170,6 +172,33 @@ namespace EPR.Calculator.Service.Function.Models
         public decimal ScotlandTotalWithBadDebtProvisionTotalBill { get; set; }
 
         public decimal NorthernIrelandTotalWithBadDebtProvisionTotalBill { get; set; }
+
+        public string TonnageChangeCount { get; set; }
+
+        public string TonnageChangeAdvice { get; set; }
+
         // End Section-TotalBill
+
+        // Section - Billing Instructions
+        public string? CurrentYearInvoiceTotalToDate { get; set; }
+
+        public string? TonnageChangeSinceLastInvoice { get; set; }
+
+        public string? LiabilityDifference { get; set; }
+
+        public string? MaterialThresholdBreached { get; set; }
+
+        public string? TonnageThresholdBreached { get; set; }
+
+        public string? PercentageLiabilityDifference { get; set; }
+
+        public string? MaterialPercentageThresholdBreached { get; set; }
+
+        public string? TonnagePercentageThresholdBreached { get; set; }
+
+        public string? SuggestedBillingInstruction { get; set; }
+
+        public string? SuggestedInvoiceAmount { get; set; }
+        // End Section - Billing Instructions
     }
 }

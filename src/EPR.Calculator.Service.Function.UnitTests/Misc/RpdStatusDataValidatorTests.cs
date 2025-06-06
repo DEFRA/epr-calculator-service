@@ -2,8 +2,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
 {
     using System.Collections.Generic;
     using AutoFixture;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.API.Validators;
-    using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Interface;
     using Microsoft.AspNetCore.Http;
@@ -58,7 +58,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         [TestMethod]
         [DataRow(RunClassification.INTHEQUEUE)]
         [DataRow(RunClassification.RUNNING)]
-        public async Task IsValidRun_Success(RunClassification runClassification)
+        public void IsValidRun_Success(RunClassification runClassification)
         {
             // Arrange
             var runId = this.Fixture.Create<int>();
@@ -80,7 +80,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         }
 
         [TestMethod]
-        public async Task IsValidRun_With_CalcRun_Missing()
+        public void IsValidRun_With_CalcRun_Missing()
         {
             // Arrange
             var runId = this.Fixture.Create<int>();
@@ -98,7 +98,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         }
 
         [TestMethod]
-        public async Task IsValidRun_With_RunId_Having_OrganisationDataMasterId()
+        public void IsValidRun_With_RunId_Having_OrganisationDataMasterId()
         {
             // Arrange
             var runId = this.Fixture.Create<int>();
@@ -118,7 +118,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         }
 
         [TestMethod]
-        public async Task IsValidRun_With_RunId_Having_PomDataMasterId()
+        public void IsValidRun_With_RunId_Having_PomDataMasterId()
         {
             // Arrange
             var runId = this.Fixture.Create<int>();
@@ -139,7 +139,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         }
 
         [TestMethod]
-        public async Task IsValidRun_With_RunId_With_Incorrect_Classification()
+        public void IsValidRun_With_RunId_With_Incorrect_Classification()
         {
             // Arrange
             var runId = this.Fixture.Create<int>();
@@ -164,7 +164,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         }
 
         [TestMethod]
-        public async Task IsValidSuccessfullRun_Success()
+        public void IsValidSuccessfullRun_Success()
         {
             // Arrange
             var runId = this.Fixture.Create<int>();
@@ -187,7 +187,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         [DataRow(false, true)]
         [DataRow(true, false)]
         [DataRow(false, false)]
-        public async Task IsValidSuccessfullRun_With_RunId_Having_Pom_Data_Missing(bool pomDataExists, bool orgDataExists)
+        public void IsValidSuccessfullRun_With_RunId_Having_Pom_Data_Missing(bool pomDataExists, bool orgDataExists)
         {
             // Arrange
             var runId = this.Fixture.Create<int>();

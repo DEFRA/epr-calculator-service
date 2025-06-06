@@ -2,7 +2,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 {
     using System;
     using AutoFixture;
-    using EPR.Calculator.Service.Function.Data.DataModels;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Function.Misc;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -26,6 +26,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void CheckForNullIds_ShouldReturnErrorMessages_WhenIdsAreNull()
         {
             // Arrange
+            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
             var calculatorRun = new CalculatorRun
             {
                 CalculatorRunOrganisationDataMasterId = null,
@@ -33,7 +34,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 CalculatorRunPomDataMasterId = 1,
                 LapcapDataMasterId = null,
                 Name = "soe",
-                Financial_Year = "2024-25",
+                Financial_Year = calculatorRunFinancialYear,
             };
 
             var validator = new CalculatorRunValidator();
@@ -56,6 +57,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void CheckForNullIds_ShouldReturnEmptyList_WhenNoIdsAreNull()
         {
             // Arrange
+            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
             var calculatorRun = new CalculatorRun
             {
                 CalculatorRunOrganisationDataMasterId = 1,
@@ -63,7 +65,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 CalculatorRunPomDataMasterId = 1,
                 LapcapDataMasterId = 1,
                 Name = "soe",
-                Financial_Year = "2024-25",
+                Financial_Year = calculatorRunFinancialYear,
             };
 
             var validator = new CalculatorRunValidator();

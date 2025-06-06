@@ -6,11 +6,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using System.Threading;
     using System.Threading.Tasks;
     using AutoFixture;
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.API.Exporter;
     using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Function.Builder;
-    using EPR.Calculator.Service.Function.Data;
-    using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Interface;
@@ -37,7 +37,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         private Mock<IStorageService> _storageService;
         private CalculatorRunValidator _validationRules;
         private Mock<ICommandTimeoutService> _commandTimeoutService;
-        private Mock<ICalculatorTelemetryLogger> telemetryLogger;
+        private Mock<ICalculatorTelemetryLogger> _telemetryLogger;
+        private Mock<IBillingInstructionService> _billingInstructionService;
 
         public PrepareCalcServiceTests()
         {
@@ -49,12 +50,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this._context = new ApplicationDBContext(this._dbContextOptions);
             this._dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
             this._dbContextFactory.Setup(f => f.CreateDbContext()).Returns(this._context);
-            this.telemetryLogger = new Mock<ICalculatorTelemetryLogger>();
+            this._telemetryLogger = new Mock<ICalculatorTelemetryLogger>();
 
             this.SeedDatabase();
 
             var calcResult = new CalcResult
             {
+                CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultDetail = new CalcResultDetail
                 {
                     RunId = 4,
@@ -73,7 +75,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Details = new List<CalcResultParameterOtherCostDetail>(),
                     Materiality = new List<CalcResultMateriality>(),
                     SaOperatingCost = new List<CalcResultParameterOtherCostDetail>(),
-                    SchemeSetupCost = new CalcResultParameterOtherCostDetail()
+                    SchemeSetupCost = new CalcResultParameterOtherCostDetail(),
                 },
                 CalcResultLateReportingTonnageData = new()
                 {
@@ -95,7 +97,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this._storageService = new Mock<IStorageService>();
             this._validationRules = fixture.Create<CalculatorRunValidator>();
             this._commandTimeoutService = new Mock<ICommandTimeoutService>();
-            this._testClass = new PrepareCalcService(this._dbContextFactory.Object, this._rpdStatusDataValidator.Object, this._wrapper.Object, this._builder.Object, this._exporter.Object, this._transposePomAndOrgDataService.Object, this._storageService.Object, this._validationRules, this._commandTimeoutService.Object, this.telemetryLogger.Object);
+            this._billingInstructionService = new Mock<IBillingInstructionService>();
+            this._testClass = new PrepareCalcService(this._dbContextFactory.Object,
+                this._rpdStatusDataValidator.Object,
+                this._wrapper.Object,
+                this._builder.Object,
+                this._exporter.Object,
+                this._transposePomAndOrgDataService.Object,
+                this._storageService.Object,
+                this._validationRules,
+                this._commandTimeoutService.Object,
+                this._telemetryLogger.Object,
+                this._billingInstructionService.Object);
         }
 
         [TestCleanup]
@@ -115,7 +128,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public void CanConstruct()
         {
             // Act
-            var instance = new PrepareCalcService(this._dbContextFactory.Object, this._rpdStatusDataValidator.Object, this._wrapper.Object, this._builder.Object, this._exporter.Object, this._transposePomAndOrgDataService.Object, this._storageService.Object, this._validationRules, this._commandTimeoutService.Object, this.telemetryLogger.Object);
+            var instance = new PrepareCalcService(this._dbContextFactory.Object,
+                this._rpdStatusDataValidator.Object,
+                this._wrapper.Object,
+                this._builder.Object,
+                this._exporter.Object,
+                this._transposePomAndOrgDataService.Object,
+                this._storageService.Object,
+                this._validationRules,
+                this._commandTimeoutService.Object,
+                this._telemetryLogger.Object,
+                this._billingInstructionService.Object);
 
             // Assert
             Assert.IsNotNull(instance);
@@ -428,6 +451,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         protected static IEnumerable<CalculatorRun> GetCalculatorRuns()
         {
+            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
             var list = new List<CalculatorRun>
             {
                 new ()
@@ -435,7 +459,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Id = 1,
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Run",
-                    Financial_Year = "2024-25",
+                    Financial_Year = calculatorRunFinancialYear,
                     CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                     CalculatorRunOrganisationDataMasterId = 2,
@@ -448,7 +472,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Id = 2,
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Calculated Result",
-                    Financial_Year = "2024-25",
+                    Financial_Year = calculatorRunFinancialYear,
                     CreatedAt = new DateTime(2024, 8, 21, 14, 16, 27, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                     DefaultParameterSettingMasterId = 5,
@@ -459,7 +483,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Id = 3,
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Run",
-                    Financial_Year = "2024-25",
+                    Financial_Year = calculatorRunFinancialYear,
                     CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                     CalculatorRunOrganisationDataMasterId = 1,
@@ -472,7 +496,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Id = 4,
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Calculated Result",
-                    Financial_Year = "2024-25",
+                    Financial_Year = calculatorRunFinancialYear,
                     CreatedAt = new DateTime(2024, 8, 21, 14, 16, 27, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                     CalculatorRunOrganisationDataMasterId = 2,

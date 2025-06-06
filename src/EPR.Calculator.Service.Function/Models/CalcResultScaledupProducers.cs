@@ -10,6 +10,6 @@
 
         public IEnumerable<CalcResultScaledupProducerHeader>? ColumnHeaders { get; set; }
 
-        required public IEnumerable<CalcResultScaledupProducer> ScaledupProducers { get; set; }
+        public IEnumerable<CalcResultScaledupProducer>? ScaledupProducers { get; set; }
     }
 }

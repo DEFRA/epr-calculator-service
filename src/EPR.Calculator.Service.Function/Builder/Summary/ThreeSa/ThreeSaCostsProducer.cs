@@ -1,15 +1,11 @@
-﻿using EPR.Calculator.Service.Function.Builder.CommsCost;
-using EPR.Calculator.Service.Function.Builder.Summary.Common;
-using EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C;
-using EPR.Calculator.Service.Function.Builder.Summary.ThreeSa;
-using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Data.DataModels;
-using EPR.Calculator.Service.Function.Enums;
-using EPR.Calculator.Service.Function.Models;
-using System.Collections.Generic;
-
-namespace EPR.Calculator.Service.Function.Builder.Summary.ThreeSA
+﻿namespace EPR.Calculator.Service.Function.Builder.Summary.ThreeSA
 {
+    using System.Collections.Generic;
+    using EPR.Calculator.Service.Function.Builder.Summary.Common;
+    using EPR.Calculator.Service.Function.Builder.Summary.ThreeSa;
+    using EPR.Calculator.Service.Function.Enums;
+    using EPR.Calculator.Service.Function.Models;
+
     public static class ThreeSaCostsProducer
     {
         public static readonly int ColumnIndex = 210;

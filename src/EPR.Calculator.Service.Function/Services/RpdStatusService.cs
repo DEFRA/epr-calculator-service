@@ -1,20 +1,16 @@
 ﻿namespace EPR.Calculator.Service.Function.Services
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.Logging;
+    using EPR.Calculator.API.Data;
     using EPR.Calculator.Service.Common.Utils;
-    using EPR.Calculator.Service.Function.Data;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Interface;
     using FluentValidation;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
 
     /// <summary>
@@ -112,7 +108,7 @@
                 throw new ValidationException(vr.ToString());
             }
 
-            string financialYear = calcRun?.Financial_Year ?? string.Empty;
+            string financialYear = calcRun?.FinancialYearId ?? string.Empty;
             var calendarYear = Util.GetCalendarYearFromFinancialYear(financialYear);
             var createdBy = updatedBy;
             using (var transaction = await this.Context.Database.BeginTransactionAsync(timeout))

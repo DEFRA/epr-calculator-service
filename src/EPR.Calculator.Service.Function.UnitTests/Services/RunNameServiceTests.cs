@@ -1,9 +1,8 @@
 ﻿namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
     using System.Threading.Tasks;
-    using EPR.Calculator.Service.Common.Logging;
-    using EPR.Calculator.Service.Function.Data;
-    using EPR.Calculator.Service.Function.Data.DataModels;
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Function.Services;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -15,15 +14,11 @@
     [TestClass]
     public class RunNameServiceTests
     {
-        private Mock<IDbContextFactory<ApplicationDBContext>>? dbContextFactory;
-        private ApplicationDBContext? dbContext;
+        private Mock<IDbContextFactory<ApplicationDBContext>> dbContextFactory;
+        private ApplicationDBContext dbContext;
         private RunNameService runNameService;
 
-        /// <summary>
-        /// Initializes the test setup.
-        /// </summary>
-        [TestInitialize]
-        public void Setup()
+        public RunNameServiceTests()
         {
             var options = new DbContextOptionsBuilder<ApplicationDBContext>()
                 .UseInMemoryDatabase(databaseName: "TestDatabase")
@@ -53,8 +48,8 @@
             // Arrange
             var runId = 1;
             var expectedRunName = "Test Run Name";
-
-            this.dbContext.CalculatorRuns.Add(new CalculatorRun { Id = runId, Name = expectedRunName, Financial_Year = "2024-25" });
+            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
+            this.dbContext.CalculatorRuns.Add(new CalculatorRun { Id = runId, Name = expectedRunName, Financial_Year = calculatorRunFinancialYear });
             await this.dbContext.SaveChangesAsync();
 
             // Act

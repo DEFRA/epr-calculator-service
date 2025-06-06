@@ -1,20 +1,17 @@
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
     using System;
+    using System.Globalization;
     using AutoFixture;
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
-    using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
     using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Data;
-    using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Dtos;
-    using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System;
-    using System.Globalization;
 
     [TestClass]
     public class CalcRunLaDisposalCostBuilderTests
@@ -426,6 +423,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual(400, double.Parse(laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage));
         }
 
+        [TestMethod]
+        public void GetDecimalValue_InvalidDecimalString_ReturnsZero()
+        {
+            // Arrange
+            string value = "invalid";
+
+            // Act
+            decimal result = CalcRunLaDisposalCostBuilder.GetDecimalValue(value);
+
+            // Assert
+            Assert.AreEqual(0m, result);
+        }
+
         private static CalcResultScaledupProducers GetScaledUpProducers()
         {
             return new CalcResultScaledupProducers()
@@ -501,7 +511,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
         private static void SeedDatabase(ApplicationDBContext context)
         {
-            var run = new CalculatorRun { Id = 1, Financial_Year = "2024-25", Name = "CalculatorRunTest1" };
+            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
+
+            var run = new CalculatorRun { Id = 1, Financial_Year = calculatorRunFinancialYear, Name = "CalculatorRunTest1" };
             context.CalculatorRuns.Add(run);
 
             var producerDetail = new List<ProducerDetail>

@@ -1,9 +1,9 @@
 ﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
     using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Data;
-    using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Mappers;
     using EPR.Calculator.Service.Function.Models;
@@ -29,6 +29,7 @@
                 ProducerName = "Producer Name",
             };
             this.dbContext.ProducerDetail.Add(producerDetail);
+
             this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
             {
                 Id = 1,
@@ -41,6 +42,7 @@
                 PackagingType = "HDC",
                 ProducerDetail = producerDetail,
             });
+
             var calcRunPomDataMaster = new CalculatorRunPomDataMaster
             {
                 Id = 1,
@@ -49,14 +51,40 @@
                 CreatedAt = DateTime.Now,
                 CreatedBy = "Test User",
             };
+            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
             this.dbContext.CalculatorRunPomDataMaster.Add(calcRunPomDataMaster);
+
+            var calcRunOrganisationDataMaster = new CalculatorRunOrganisationDataMaster
+            {
+                Id = 11,
+                CalendarYear = "2024",
+                EffectiveFrom = DateTime.Now,
+                CreatedAt = DateTime.Now,
+                CreatedBy = "Test User",
+            };
+            this.dbContext.CalculatorRunOrganisationDataMaster.Add(calcRunOrganisationDataMaster);
+
             this.dbContext.CalculatorRuns.Add(new CalculatorRun
             {
                 Id = runId,
-                Financial_Year = "2024-25",
+                Financial_Year = calculatorRunFinancialYear,
                 Name = "Name",
+                CalculatorRunOrganisationDataMaster = calcRunOrganisationDataMaster,
                 CalculatorRunPomDataMaster = calcRunPomDataMaster,
             });
+
+            this.dbContext.CalculatorRunOrganisationDataDetails.Add(
+                new CalculatorRunOrganisationDataDetail
+                {
+                    Id = 1,
+                    OrganisationId = 11,
+                    SubsidaryId = null,
+                    OrganisationName = "Allied Packaging",
+                    LoadTimeStamp = DateTime.Now,
+                    SubmissionPeriodDesc = "January to June 2023",
+                    CalculatorRunOrganisationDataMaster = calcRunOrganisationDataMaster
+                });
+
             this.dbContext.CalculatorRunPomDataDetails.Add(
                 new CalculatorRunPomDataDetail
                 {
@@ -83,7 +111,7 @@
                 new CalculatorRun
                 {
                     Id = 2,
-                    Financial_Year = "2024-25",
+                    Financial_Year = calculatorRunFinancialYear,
                     Name = "Name",
                 });
 
@@ -100,6 +128,17 @@
                 PackagingType = "HH",
                 ProducerDetail = producerDetail1,
             });
+
+            this.dbContext.Material.AddRange(
+                new Material { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
+                new Material { Id = 2, Code = "FC", Name = "Fibre composite", Description = "Fibre composite" },
+                new Material { Id = 3, Code = "GL", Name = "Glass", Description = "Glass" },
+                new Material { Id = 4, Code = "PC", Name = "Paper or card", Description = "Paper or card" },
+                new Material { Id = 5, Code = "PL", Name = "Plastic", Description = "Plastic" },
+                new Material { Id = 6, Code = "ST", Name = "Steel", Description = "Steel" },
+                new Material { Id = 7, Code = "WD", Name = "Wood", Description = "Wood" },
+                new Material { Id = 8, Code = "OT", Name = "Other materials", Description = "Other materials" }
+            );
 
             this.dbContext.SaveChanges();
         }
@@ -156,6 +195,8 @@
             }
         }
 
+
+
         /// <summary>
         /// Tests that the <see cref="ICalcResultScaledupProducersBuilder.Construct(CalcResultsRequestDto)"/>
         /// method returns the correct result when scaled up data is present.
@@ -173,8 +214,7 @@
             var result = await this.builder.Construct(requestDto);
 
             // Assert
-            var expectedNumberOfRuns = await this.dbContext.CalculatorRuns.CountAsync(); // The +1 is the totals row.
-            Assert.AreEqual(expectedNumberOfRuns, result.ScaledupProducers.Count());
+            Assert.AreEqual(3, result.ScaledupProducers.Count());
         }
 
         /// <summary>
@@ -195,7 +235,7 @@
 
             // Assert
             var actualNumberScaledUpProducer = result.ScaledupProducers.Where(t => !t.IsTotalRow);
-            Assert.AreEqual(1, actualNumberScaledUpProducer.Count());
+            Assert.AreEqual(2, actualNumberScaledUpProducer.Count());
         }
 
         /// <summary>
@@ -218,11 +258,11 @@
         }
 
         [TestMethod]
-        public void GetScaledUpProducerIds_Test()
+        public void GetScaledUpOrganisations_Test()
         {
             this.PrepareNonScaledUpProducer();
             this.PrepareScaledUpProducer();
-            var task = this.builder?.GetScaledUpOrganisationIdsAsync(this.runId);
+            var task = this.builder?.GetScaledUpOrganisationsAsync(this.runId);
             task?.Wait();
 
             var result = task?.Result;
@@ -277,35 +317,52 @@
         {
             this.builder = new CalcResultScaledupProducersBuilder(this.dbContext!);
             var runProducerMaterialDetails = new List<CalcResultScaledupProducer>();
-            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
-            {
-                ProducerId = 1,
-            });
-            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
-            {
-                ProducerId = 1,
-                SubsidiaryId = "Sub1",
-            });
-            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
-            {
-                ProducerId = 1,
-                SubsidiaryId = "Sub2",
-            });
-            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
-            {
-                ProducerId = 2,
-            });
-            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
-            {
-                ProducerId = 2,
-                SubsidiaryId = "Sub3",
-            });
-            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
-            {
-                ProducerId = 2,
-                SubsidiaryId = "Sub4",
-            });
-            CalcResultScaledupProducersBuilder.AddExtraRows(runProducerMaterialDetails);
+            runProducerMaterialDetails.AddRange([
+                new CalcResultScaledupProducer
+                {
+                    ProducerId = 1,
+                },
+                new CalcResultScaledupProducer
+                {
+                    ProducerId = 1,
+                    SubsidiaryId = "Sub1",
+                },
+                new CalcResultScaledupProducer
+                {
+                    ProducerId = 1,
+                    SubsidiaryId = "Sub2",
+                },
+                new CalcResultScaledupProducer
+                {
+                    ProducerId = 2,
+                },
+                new CalcResultScaledupProducer
+                {
+                    ProducerId = 2,
+                    SubsidiaryId = "Sub3",
+                },
+                new CalcResultScaledupProducer
+                {
+                    ProducerId = 2,
+                    SubsidiaryId = "Sub4",
+                }
+            ]);
+
+            var scaledupOrganisations = new List<ScaledupOrganisation>();
+            scaledupOrganisations.AddRange([
+                new ScaledupOrganisation
+                {
+                    OrganisationId = 1,
+                    OrganisationName = "Allied Packaging",
+                },
+                new ScaledupOrganisation
+                {
+                    OrganisationId = 2,
+                    OrganisationName = "Beeline Materials",
+                },
+            ]);
+
+            CalcResultScaledupProducersBuilder.AddExtraRows(runProducerMaterialDetails, scaledupOrganisations);
 
             Assert.AreEqual(8, runProducerMaterialDetails.Count);
             var allProducersWithLevel2 = runProducerMaterialDetails.Where(x => x.SubsidiaryId == null);
@@ -439,7 +496,7 @@
             var materialDetails = MaterialMapper.Map(materials);
             var columnHeaders = CalcResultScaledupProducersBuilder.GetColumnHeaders(materialDetails);
             Assert.IsNotNull(columnHeaders);
-            Assert.AreEqual(18, columnHeaders.Count);
+            Assert.AreEqual(19, columnHeaders.Count);
         }
 
         [TestMethod]
@@ -464,7 +521,7 @@
             materials.Add(new Material { Code = "AL", Name = "Aluminium" });
             var materialDetails = MaterialMapper.Map(materials);
             CalcResultScaledupProducersBuilder.SetHeaders(producers, materialDetails);
-            Assert.AreEqual(18, producers?.ColumnHeaders?.Count());
+            Assert.AreEqual(19, producers?.ColumnHeaders?.Count());
             Assert.AreEqual(2, producers?.MaterialBreakdownHeaders?.Count());
         }
 

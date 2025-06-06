@@ -1,16 +1,14 @@
-﻿using EPR.Calculator.Service.Function.Data.DataModels;
-using EPR.Calculator.Service.Function.Data;
-using EPR.Calculator.Service.Function.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using EPR.Calculator.Service.Function.Builder.Summary.SaSetupCosts;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using AutoFixture;
-using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Enums;
-
-namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
+﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
 {
+    using AutoFixture;
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.Service.Function.Builder.Summary.SaSetupCosts;
+    using EPR.Calculator.Service.Function.Enums;
+    using EPR.Calculator.Service.Function.Models;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Diagnostics;
+
     [TestClass]
     public class SaSetupCostsProducerTests
     {
@@ -41,61 +39,62 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                     Id = 1,
                     Code = "AL",
                     Name = "Aluminium",
-                    Description = "Aluminium"
+                    Description = "Aluminium",
                 },
                 new MaterialDetail
                 {
                     Id = 2,
                     Code = "FC",
                     Name = "Fibre composite",
-                    Description = "Fibre composite"
+                    Description = "Fibre composite",
                 },
                 new MaterialDetail
                 {
                     Id = 3,
                     Code = "GL",
                     Name = "Glass",
-                    Description = "Glass"
+                    Description = "Glass",
                 },
                 new MaterialDetail
                 {
                     Id = 4,
                     Code = "PC",
                     Name = "Paper or card",
-                    Description = "Paper or card"
+                    Description = "Paper or card",
                 },
                 new MaterialDetail
                 {
                     Id = 5,
                     Code = "PL",
                     Name = "Plastic",
-                    Description = "Plastic"
+                    Description = "Plastic",
                 },
                 new MaterialDetail
                 {
                     Id = 6,
                     Code = "ST",
                     Name = "Steel",
-                    Description = "Steel"
+                    Description = "Steel",
                 },
                 new MaterialDetail
                 {
                     Id = 7,
                     Code = "WD",
                     Name = "Wood",
-                    Description = "Wood"
+                    Description = "Wood",
                 },
                 new MaterialDetail
                 {
                     Id = 8,
                     Code = "OT",
                     Name = "Other materials",
-                    Description = "Other materials"
+                    Description = "Other materials",
                 }
             ];
 
             _calcResult = new CalcResult
             {
+                CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultParameterOtherCost = new CalcResultParameterOtherCost
                 {
                     BadDebtProvision = new KeyValuePair<string, string>("key1", "6%"),
@@ -114,7 +113,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                             NorthernIreland = "£10.00",
                             NorthernIrelandValue = 10,
                             Total = "£100.00",
-                            TotalValue = 100
+                            TotalValue = 100,
                         }
                     ],
                     Materiality = [
@@ -124,7 +123,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                             AmountValue = 0,
                             Percentage = "%",
                             PercentageValue = 0,
-                            SevenMateriality = "7 Materiality"
+                            SevenMateriality = "7 Materiality",
                         }
                     ],
                     Name = "Parameters - Other",
@@ -142,8 +141,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                             NorthernIreland = "Northern Ireland",
                             NorthernIrelandValue = 0,
                             Total = "Total",
-                            TotalValue = 0
-                        }
+                            TotalValue = 0,
+                        },
                     ],
                     SchemeSetupCost = {
                         Name = "5 Scheme set up cost Yearly Cost",
@@ -157,8 +156,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                         NorthernIreland = "£10.00",
                         NorthernIrelandValue = 10,
                         Total = "£100.00",
-                        TotalValue = 100
-                    }
+                        TotalValue = 100,
+                    },
                 },
                 CalcResultDetail = new CalcResultDetail() { },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData()
@@ -205,14 +204,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                             ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
                             ReportedPublicBinTonnage = Fixture.Create<string>(),
                             ProducerReportedTotalTonnage = Fixture.Create<string>(),
-                        }
-                    }
+                        },
+                    },
                 },
                 CalcResultLapcapData = new CalcResultLapcapData()
                 {
                     CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>()
                     {
-                    }
+                    },
                 },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment()
                 {
@@ -273,19 +272,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                         },
                         new()
                         {
-                            EnglandDisposalTotal="80",
-                            NorthernIrelandDisposalTotal="70",
-                            ScotlandDisposalTotal="30",
-                            WalesDisposalTotal="20",
-                            AllTotal=0.1M,
-                            EnglandTotal=14.53M,
-                            NorthernIrelandTotal=0.15M,
-                            ScotlandTotal=1.15M,
-                            WalesTotal=020M,
-                            Name="Test",
-                            OrderId=4
-                        }
-                    ]
+                            EnglandDisposalTotal = "80",
+                            NorthernIrelandDisposalTotal = "70",
+                            ScotlandDisposalTotal = "30",
+                            WalesDisposalTotal = "20",
+                            AllTotal = 0.1M,
+                            EnglandTotal = 14.53M,
+                            NorthernIrelandTotal = 0.15M,
+                            ScotlandTotal = 1.15M,
+                            WalesTotal = 020M,
+                            Name = "Test",
+                            OrderId = 4
+                        },
+                    ],
                 },
                 CalcResultParameterCommunicationCost = Fixture.Create<CalcResultParameterCommunicationCost>(),
                 CalcResultSummary = new CalcResultSummary
@@ -301,9 +300,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                             TotalProducerDisposalFeeWithBadDebtProvision =100,
                             TotalProducerCommsFeeWithBadDebtProvision =100,
                             SubsidiaryId ="1",
-                            ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 1
-                        }
-                    }
+                            ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 1,
+                        },
+                    },
                 },
                 CalcResultCommsCostReportDetail = new CalcResultCommsCost()
                 {
@@ -311,17 +310,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                     [
                         new ()
                         {
-                            CommsCostByMaterialPricePerTonne="0.42",
-                            Name ="Aluminium",
+                            CommsCostByMaterialPricePerTonne = "0.42",
+                            Name = "Aluminium",
 
                         },
                         new ()
                         {
-                            CommsCostByMaterialPricePerTonne="0.3",
-                            Name ="Glass",
+                            CommsCostByMaterialPricePerTonne = "0.3",
+                            Name = "Glass",
 
                         }
-                    ]
+                    ],
                 },
                 CalcResultLateReportingTonnageData = Fixture.Create<CalcResultLateReportingTonnage>(),
             };
@@ -473,7 +472,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                 {
                     Name = materialKv.Value,
                     Code = materialKv.Key,
-                    Description = "Some"
+                    Description = "Some",
                 });
             }
 
@@ -493,7 +492,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                 "Good Fruit Co",
                 "Happy Shopper",
                 "Icicle Foods",
-                "Jumbo Box Store"
+                "Jumbo Box Store",
             };
 
             var producerId = 1;
@@ -519,17 +518,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                         MaterialId = materialId,
                         ProducerDetailId = producerDetailId,
                         PackagingType = "HH",
-                        PackagingTonnage = (materialId * 100)
+                        PackagingTonnage = materialId * 100,
                     });
                     dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
                     {
                         MaterialId = materialId,
                         ProducerDetailId = producerDetailId,
                         PackagingType = "CW",
-                        PackagingTonnage = (materialId * 50)
+                        PackagingTonnage = materialId * 50,
                     });
                 }
             }
+
             dbContext.SaveChanges();
         }
     }

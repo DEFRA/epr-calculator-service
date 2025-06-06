@@ -1,20 +1,16 @@
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
     using System;
-    using System.ComponentModel.DataAnnotations;
-    using System.Linq;
-    using System.Runtime.CompilerServices;
     using System.Threading;
     using System.Threading.Tasks;
     using AutoFixture;
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Common.Logging;
-    using EPR.Calculator.Service.Function.Data;
-    using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Interface;
     using EPR.Calculator.Service.Function.Models;
     using EPR.Calculator.Service.Function.Services;
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -131,7 +127,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var run = this.Fixture.Create<CalculatorRun>();
             var financialYear = this.Fixture.Create<DateTime>();
             run.Id = runId;
-            run.Financial_Year = financialYear.ToString("yyyy-yy");
+            run.Financial_Year.Name = financialYear.ToString("yyyy-yy");
             this.Context.CalculatorRuns.Add(run);
             await this.Context.SaveChangesAsync();
 
@@ -162,7 +158,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var runId = this.Fixture.Create<int>();
             var run = this.Fixture.Create<CalculatorRun>();
             run.Id = runId;
-            run.Financial_Year = this.Fixture.Create<DateTime>().ToString("yyyy-yy");
+            run.Financial_Year.Name = this.Fixture.Create<DateTime>().ToString("yyyy-yy");
             this.Context.CalculatorRuns.Add(run);
             await this.Context.SaveChangesAsync();
 
@@ -199,7 +195,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var runId = this.Fixture.Create<int>();
             var run = this.Fixture.Create<CalculatorRun>();
             run.Id = runId;
-            run.Financial_Year = this.Fixture.Create<DateTime>().ToString("yyyy-yy");
+            run.Financial_Year.Name = this.Fixture.Create<DateTime>().ToString("yyyy-yy");
             this.Context.CalculatorRuns.Add(run);
             await this.Context.SaveChangesAsync();
 
@@ -233,7 +229,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var runId = this.Fixture.Create<int>();
             var run = this.Fixture.Create<CalculatorRun>();
             run.Id = runId;
-            run.Financial_Year = this.Fixture.Create<DateTime>().ToString("yyyy-yy");
+            run.Financial_Year.Name = this.Fixture.Create<DateTime>().ToString("yyyy-yy");
             this.Context.CalculatorRuns.Add(run);
             await this.Context.SaveChangesAsync();
 

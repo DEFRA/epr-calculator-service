@@ -1,6 +1,6 @@
 ﻿namespace EPR.Calculator.Service.Function.Builder.Summary.ThreeSa
 {
-    public class ThreeSaCostHeader
+    public static class ThreeSaCostHeader
     {
         // SA data prep costs section 3
         public static readonly string SaOperatingCostsWithoutBadDebtProvisionTitleSection3 = "3 SA Operating Costs w/o Bad Debt provision";

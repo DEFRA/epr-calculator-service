@@ -9,6 +9,7 @@
         public static readonly string ProducerId = "Producer ID";
         public static readonly string SubsidiaryId = "Subsidiary ID";
         public static readonly string ProducerOrSubsidiaryName = "Producer / Subsidiary Name";
+        public static readonly string TradingName = "Trading Name";
         public static readonly string Level = "Level";
         public static readonly string SubmissionPeriodCode = "Submission period code";
         public static readonly string DaysInSubmissionPeriod = "Days in submission period";

@@ -1,6 +1,6 @@
 ﻿namespace EPR.Calculator.Service.Function.Builder.Summary.TwoCCommsCost;
 
-public class TwoCCommsCostColumnIndex
+public static class TwoCCommsCostColumnIndex
 {
-    public const int Value = 236;
+    public const int Value = 255;
 }

@@ -7,7 +7,7 @@ namespace EPR.Calculator.Service.Function
     /// <summary>
     /// Calculator Run Parameter
     /// </summary>
-    public record CalculatorParameter
+    public class CreateResultFileMessage : MessageBase
     {
         /// <summary>
         /// Gets or sets the identifier for the calculator run.
@@ -17,11 +17,11 @@ namespace EPR.Calculator.Service.Function
         /// <summary>
         /// Gets or sets the financial year for the calculator run.
         /// </summary>
-        public string FinancialYear { get; set; }
+        public required string FinancialYear { get; set; }
 
         /// <summary>
         /// Gets or sets the user who initiated the calculator run.
         /// </summary>
-        public string CreatedBy { get; set; }
+        public required string CreatedBy { get; set; }
     }
 }

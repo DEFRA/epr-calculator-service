@@ -20,6 +20,7 @@
         {
             _calcResult = new CalcResult
             {
+                CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultParameterOtherCost = new CalcResultParameterOtherCost
                 {
                     BadDebtProvision = new KeyValuePair<string, string>("key1", "6%"),
@@ -244,7 +245,7 @@
         {
             // Act
             var result = SaSetupCostsSummary.GetHeaders().ToList();
-            var columnIndex = 259;
+            var columnIndex = 278;
 
             var expectedResult = new List<CalcResultSummaryHeader>();
             expectedResult.AddRange([

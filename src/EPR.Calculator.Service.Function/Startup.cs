@@ -4,6 +4,8 @@
 
 using System.Configuration;
 using Azure.Storage.Blobs;
+using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Exporter;
 using EPR.Calculator.API.Services;
 using EPR.Calculator.API.Validators;
@@ -20,8 +22,6 @@ using EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment;
 using EPR.Calculator.Service.Function.Builder.ParametersOther;
 using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
 using EPR.Calculator.Service.Function.Builder.Summary;
-using EPR.Calculator.Service.Function.Data;
-using EPR.Calculator.Service.Function.Data.DataModels;
 using EPR.Calculator.Service.Function.Exporter;
 using EPR.Calculator.Service.Function.Exporter.CommsCost;
 using EPR.Calculator.Service.Function.Exporter.Detail;
@@ -41,6 +41,8 @@ using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
 using EPR.Calculator.Service.Common.Logging;
 using System;
+using Microsoft.Extensions.Configuration;
+using System.Reflection;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -114,6 +116,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcRunLaDisposalCostBuilder, CalcRunLaDisposalCostBuilder>();
             services.AddScoped<ICalcResultScaledupProducersBuilder, CalcResultScaledupProducersBuilder>();
             services.AddTransient<ICalcResultSummaryBuilder, CalcResultSummaryBuilder>();
+            services.AddTransient<IBillingInstructionService, BillingInstructionService>();
             services.AddTransient<IOnePlusFourApportionmentExporter, OnePlusFourApportionmentExporter>();
             services.AddTransient<IRpdStatusService, RpdStatusService>();
             services.AddTransient<ILapcaptDetailExporter, LapcaptDetailExporter>();
@@ -125,10 +128,12 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICommsCostExporter, CommsCostExporter>();
             services.AddTransient<IDbLoadingChunkerService<ProducerDetail>, DbLoadingChunkerService<ProducerDetail>>();
             services.AddTransient<IDbLoadingChunkerService<ProducerReportedMaterial>, DbLoadingChunkerService<ProducerReportedMaterial>>();
+            services.AddTransient<IDbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction>, DbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction>>();
             services.AddTransient<ICalcResultSummaryExporter, CalcResultSummaryExporter>();
             services.AddTransient<ILateReportingExporter, LateReportingExporter>();
             services.AddTransient<IRunNameService, RunNameService>();
             services.AddTransient<ITelemetryClientWrapper, TelemetryClientWrapper>();
+            services.AddTransient<IMessageTypeService, MessageTypeService>();
 #if !DEBUG
             SetupBlobStorage(services);
             services.AddTransient<IConfigurationService, Configuration>();
@@ -136,6 +141,18 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<IStorageService, LocalFileStorageService>();
             services.AddTransient<IConfigurationService, LocalDevelopmentConfiguration>();
 #endif
+        }
+
+        public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
+        {
+            var builtConfig = builder.ConfigurationBuilder.Build();
+
+            builder.ConfigurationBuilder
+               .SetBasePath(Environment.CurrentDirectory)
+               .AddUserSecrets(Assembly.GetExecutingAssembly(), true)
+               .AddEnvironmentVariables()
+               .Build();
+
         }
     }
 }

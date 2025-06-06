@@ -17,6 +17,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
         {
             _calcResult = new CalcResult
             {
+                CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultParameterOtherCost = new CalcResultParameterOtherCost
                 {
                     BadDebtProvision = new KeyValuePair<string, string>("key1",
@@ -272,7 +273,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
         {
             // Act
             var result = ThreeSaCostsSummary.GetHeaders().ToList();
-            var columnIndex = 245;
+            var columnIndex = 264;
 
             var expectedResult = new List<CalcResultSummaryHeader>();
             expectedResult.AddRange([

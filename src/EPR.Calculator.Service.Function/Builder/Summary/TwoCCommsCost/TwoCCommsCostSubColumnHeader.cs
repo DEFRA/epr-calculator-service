@@ -1,6 +1,6 @@
 ﻿namespace EPR.Calculator.Service.Function.Builder.Summary.TwoCCommsCost
 {
-    public class TwoCCommsCostSubColumnHeader
+    public static class TwoCCommsCostSubColumnHeader
     {
         public static readonly string TwoCCommsCostCountryInPropertionWithoutBadDebt =
             "2c Total Producer Fee for Comms Costs - by Country In proportion to Producer Tonnage w/o Bad Debt provision";

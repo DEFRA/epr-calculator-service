@@ -4,17 +4,18 @@ using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Models;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Runtime.CompilerServices;
+[assembly: InternalsVisibleTo("EPR.Calculator.Service.Function.UnitTests")]
 namespace EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts
 {
     public static class LaDataPrepCostsProducer
     {
-        public static readonly int ColumnIndex = 252;
+        public static readonly int ColumnIndex = 271;
 
         public static IEnumerable<CalcResultSummaryHeader> GetHeaders()
         {
             return [
-                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.TotalProducerFeeWithoutBadDebtProvision , ColumnIndex = ColumnIndex },
+                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.TotalProducerFeeWithoutBadDebtProvision, ColumnIndex = ColumnIndex },
                 new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.BadDebtProvision, ColumnIndex = ColumnIndex + 1 },
                 new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.TotalProducerFeeWithBadDebtProvision, ColumnIndex = ColumnIndex + 2 },
                 new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.EnglandTotalWithBadDebtProvision, ColumnIndex = ColumnIndex + 3 },
@@ -69,7 +70,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts
             }
         }
 
-        private static decimal GetLaDataPrepCostsWithoutBadDebtProvision(CalcResult calcResult)
+        internal static decimal GetLaDataPrepCostsWithoutBadDebtProvision(CalcResult calcResult)
         {
             var dataPrepCharge = calcResult.CalcResultParameterOtherCost.Details.FirstOrDefault(
                 cost => cost.Name == OnePlus4ApportionmentColumnHeaders.LADataPrepCharge);
@@ -87,6 +88,12 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts
             return GetLaDataPrepCostsWithoutBadDebtProvision(calcResult) * calcResult.CalcResultParameterOtherCost.BadDebtValue / 100;
         }
 
+        private static decimal GetBadDebtProvision(CalcResult calcResult, CalcResultSummaryProducerDisposalFees fee)
+        {
+            return (fee.LaDataPrepCostsTotalWithoutBadDebtProvisionSection4 *
+                    calcResult.CalcResultParameterOtherCost.BadDebtValue) / 100;
+        }
+
         private static decimal GetLaDataPrepCostsWithBadDebtProvision(CalcResult calcResult)
         {
             return GetLaDataPrepCostsWithoutBadDebtProvision(calcResult) + GetBadDebtProvision(calcResult);
@@ -95,12 +102,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts
         private static decimal GetTotalWithoutBadDebtProvision(CalcResultSummary result, CalcResultSummaryProducerDisposalFees fee)
         {
             return (fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C * result.LaDataPrepCostsTitleSection4) / 100;
-        }
-
-        private static decimal GetBadDebtProvision(CalcResult calcResult, CalcResultSummaryProducerDisposalFees fee)
-        {
-            return (fee.LaDataPrepCostsTotalWithoutBadDebtProvisionSection4 *
-                    calcResult.CalcResultParameterOtherCost.BadDebtValue) / 100;
         }
 
         private static decimal GetTotalWithBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)

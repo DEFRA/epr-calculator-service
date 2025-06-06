@@ -1,19 +1,15 @@
 ﻿namespace EPR.Calculator.Service.Function.Services
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.API.Exporter;
     using EPR.Calculator.API.Validators;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.Logging;
-    using EPR.Calculator.Service.Data.DataModels;
     using EPR.Calculator.Service.Function.Builder;
-    using EPR.Calculator.Service.Function.Data;
-    using EPR.Calculator.Service.Function.Data.DataModels;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Interface;
@@ -40,7 +36,8 @@
             IStorageService storageService,
             CalculatorRunValidator validationRules,
             ICommandTimeoutService commandTimeoutService,
-            ICalculatorTelemetryLogger telemetryLogger)
+            ICalculatorTelemetryLogger telemetryLogger,
+            IBillingInstructionService billingInstructionService)
         {
             this.Context = context.CreateDbContext();
             this.rpdStatusDataValidator = rpdStatusDataValidator;
@@ -52,6 +49,7 @@
             this.validatior = validationRules;
             this.commandTimeoutService = commandTimeoutService;
             this.telemetryLogger = telemetryLogger;
+            this.billingInstructionService = billingInstructionService;
         }
 
         private readonly ICalculatorTelemetryLogger telemetryLogger;
@@ -73,6 +71,8 @@
         private CalculatorRunValidator validatior { get; init; }
 
         private ICommandTimeoutService commandTimeoutService { get; init; }
+
+        private IBillingInstructionService billingInstructionService { get; init; }
 
         public async Task<bool> PrepareCalcResults(
             [FromBody] CalcResultsRequestDto resultsRequestDto,
@@ -113,6 +113,22 @@
                     RunName = runName,
                     Message = "Builder end...",
                 });
+
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = resultsRequestDto.RunId,
+                    RunName = runName,
+                    Message = "Create billing instructions started...",
+                });
+
+                await this.billingInstructionService.CreateBillingInstructions(results);
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = resultsRequestDto.RunId,
+                    RunName = runName,
+                    Message = "Create billing instructions end...",
+                });
+
                 this.telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = resultsRequestDto.RunId,

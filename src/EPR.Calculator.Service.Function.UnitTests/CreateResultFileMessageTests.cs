@@ -4,10 +4,10 @@ namespace EPR.Calculator.Service.Function.UnitTests
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     /// <summary>
-    /// Unit tests for the <see cref="CalculatorParameterTests"/> class.
+    /// Unit tests for the <see cref="CreateResultFileMessageTests"/> class.
     /// </summary>
     [TestClass]
-    public class CalculatorParameterTests
+    public class CreateResultFileMessageTests
     {
         /// <summary>
         /// Tests initialisation of the class and it's properties.
@@ -21,11 +21,11 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var testCreatedBy = "TestValue873880154";
 
             // Act
-            var testClass = new CalculatorParameter
+            var testClass = new CreateResultFileMessage
             {
                 CalculatorRunId = testCalculatorRunId,
                 FinancialYear = testFinancialYear,
-                CreatedBy = testCreatedBy,
+                CreatedBy = testCreatedBy
             };
 
             // Assert
