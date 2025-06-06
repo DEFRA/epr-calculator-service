@@ -3,5 +3,6 @@
     public class CalcResultsRequestDto
     {
         public int RunId { get; set; }
+        public bool IsBilling { get; set; }
     }
 }

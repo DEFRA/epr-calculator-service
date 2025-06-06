@@ -6,8 +6,10 @@
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Enums;
+    using EPR.Calculator.Service.Function.Services;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
+    using Moq;
 
     [TestClass]
     public class CalcResultLapcapDataBuilderTest
@@ -29,7 +31,9 @@
             dbContext.DefaultParameterTemplateMasterList.AddRange(TestDataHelper.GetDefaultParameterTemplateMasterData().ToList());
             dbContext.SaveChanges();
 
-            builder = new CalcResultLapcapDataBuilder(dbContext);
+            var mockService = new Mock<ICalcCountryApportionmentService>();
+
+            builder = new CalcResultLapcapDataBuilder(dbContext, mockService.Object);
         }
 
         [TestCleanup]

@@ -9,6 +9,7 @@
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Models;
+    using EPR.Calculator.Service.Function.Services;
     using Microsoft.EntityFrameworkCore;
 
     public class CalcResultParameterOtherCostBuilder : ICalcResultParameterOtherCostBuilder
@@ -23,8 +24,10 @@
         private const string SaOperatingCostHeader = "3 SA Operating Costs";
         private const string LaDataPrepChargeHeader = "4 LA Data Prep Charge";
         private readonly ApplicationDBContext context;
+        private readonly ICalcCountryApportionmentService calcCountryApportionmentService;
 
-        public CalcResultParameterOtherCostBuilder(ApplicationDBContext context) 
+        public CalcResultParameterOtherCostBuilder(ApplicationDBContext context,
+            ICalcCountryApportionmentService calcCountryApportionmentService) 
         {
             this.context = context;
         }
@@ -161,39 +164,19 @@
             var costType = await this.context.CostType.SingleAsync(x => x.Name == "LA Data Prep Charge");
             var costTypeId = costType.Id;
 
-            this.context.CountryApportionment.Add(new CountryApportionment
+            if (!resultsRequestDto.IsBilling)
             {
-                CalculatorRunId = resultsRequestDto.RunId,
-                CountryId = countries.Single(x => x.Name == "England").Id,
-                CostTypeId = costTypeId,
-                Apportionment = laDataPrep.EnglandValue,
-            });
-
-            this.context.CountryApportionment.Add(new CountryApportionment
-            {
-                CalculatorRunId = resultsRequestDto.RunId,
-                CountryId = countries.Single(x => x.Name == "Wales").Id,
-                CostTypeId = costTypeId,
-                Apportionment = laDataPrep.WalesValue,
-            });
-
-            this.context.CountryApportionment.Add(new CountryApportionment
-            {
-                CalculatorRunId = resultsRequestDto.RunId,
-                CountryId = countries.Single(x => x.Name == "Northern Ireland").Id,
-                CostTypeId = costTypeId,
-                Apportionment = laDataPrep.NorthernIrelandValue,
-            });
-
-            this.context.CountryApportionment.Add(new CountryApportionment
-            {
-                CalculatorRunId = resultsRequestDto.RunId,
-                CountryId = countries.Single(x => x.Name == "Scotland").Id,
-                CostTypeId = costTypeId,
-                Apportionment = laDataPrep.ScotlandValue,
-            });
-
-            await this.context.SaveChangesAsync();
+                await this.calcCountryApportionmentService.SaveChangesAsync(new CalcCountryApportionmentServiceDto
+                {
+                    RunId = resultsRequestDto.RunId,
+                    Countries = countries,
+                    CostTypeId = costTypeId,
+                    EnglandCost = laDataPrep.EnglandValue,
+                    NorthernIrelandCost = laDataPrep.NorthernIrelandValue,
+                    ScotlandCost = laDataPrep.ScotlandValue,
+                    WalesCost = laDataPrep.WalesValue,
+                });
+            }
 
             return other;
         }
