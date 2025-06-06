@@ -1,6 +1,6 @@
 ﻿using EPR.Calculator.Service.Function.Models;
 
-namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.JsonExporter
+namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.Lapcap
 {
     /// <summary>
     /// Interface for <see cref="CalcResultLapcapExporter"/> to allow it to be injected as a service.

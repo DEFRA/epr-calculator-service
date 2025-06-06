@@ -2,7 +2,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.JsonExp
 {
     using System;
     using AutoFixture;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.JsonExporter;
+    using EPR.Calculator.Service.Function.Exporter.JsonExporter.Lapcap;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 

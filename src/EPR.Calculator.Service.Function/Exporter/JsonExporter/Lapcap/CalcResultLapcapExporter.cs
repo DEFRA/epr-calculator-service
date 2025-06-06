@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 
-namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.JsonExporter
+namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.Lapcap
 {
     /// <summary>
     /// Converts lapcap data to JSON string format.
