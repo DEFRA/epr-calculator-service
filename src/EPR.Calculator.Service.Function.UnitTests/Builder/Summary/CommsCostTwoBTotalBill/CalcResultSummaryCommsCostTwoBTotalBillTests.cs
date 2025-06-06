@@ -95,8 +95,8 @@
             };
 
             var materails = TestDataHelper.GetMaterials();
-            CalcResultSummaryBuilder.ScaledupProducers = Fixture.Create<List<CalcResultScaledupProducer>>();
-            this.TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(this._allResults, materails, 1);
+            CalcResultSummaryBuilder.ScaledupProducers = new List<CalcResultScaledupProducer>();
+            this.TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(_allResults, materails, 1);
         }
 
         [TestCleanup]
