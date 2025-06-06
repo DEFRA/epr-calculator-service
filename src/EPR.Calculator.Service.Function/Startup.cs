@@ -136,6 +136,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<IRunNameService, RunNameService>();
             services.AddTransient<ITelemetryClientWrapper, TelemetryClientWrapper>();
             services.AddTransient<IMessageTypeService, MessageTypeService>();
+            services.AddTransient<IPrepareBillingFileService, PrepareBillingFileService>();
             services.AddTransient<ILateReportingTonnageMapper, LateReportingTonnageMapper>();
             services.AddTransient<ILateReportingTonnage, LateReportingTonnage>();
 #if !DEBUG

@@ -11,5 +11,10 @@
         /// This property may be <c>null</c> if the message type is not specified.
         /// </summary>
         public string? MessageType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the identifier for the calculator run.
+        /// </summary>
+        public int CalculatorRunId { get; set; }     
     }
 }
