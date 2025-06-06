@@ -237,6 +237,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.AreEqual(false, result);
         }
 
+        [TestMethod]
+        public async Task PrepareBillingResults_ShouldThrowNotImplementedException()
+        {
+            // Arrange
+            var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
+            var runName = "TestRun";
+            var cancellationToken = CancellationToken.None;
+
+            // Act & Assert
+            await Assert.ThrowsExceptionAsync<NotImplementedException>(async () =>
+            {
+                await _testClass.PrepareBillingResults(resultsRequestDto, runName, cancellationToken);
+            });
+        }
+
         private void SeedDatabase()
         {
             this._context.CalculatorRunOrganisationDataMaster.AddRange(GetCalculatorRunOrganisationDataMaster());

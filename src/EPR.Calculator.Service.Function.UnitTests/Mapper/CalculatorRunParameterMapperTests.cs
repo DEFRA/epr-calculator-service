@@ -60,7 +60,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             // Arrange
             var billingFileMessage = new CreateBillingFileMessage
             {
-                RunId = 123,
+                CalculatorRunId = 123,
                 ApprovedBy = "Test user",
                 MessageType = "Billing",
             };
@@ -70,7 +70,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(billingFileMessage.RunId, result?.Id);
+            Assert.AreEqual(billingFileMessage.CalculatorRunId, result?.Id);
             Assert.AreEqual(billingFileMessage.ApprovedBy, result?.ApprovedBy);
             Assert.AreEqual(billingFileMessage.MessageType, result?.MessageType);
         }
