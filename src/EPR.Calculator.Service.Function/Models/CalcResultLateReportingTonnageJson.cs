@@ -1,30 +1,34 @@
-﻿using System;
+﻿using EPR.Calculator.Service.Function.Converter;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResultLateReportingTonnageJson
     {
-        [JsonPropertyName("name")]
+        [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
-        [JsonPropertyName("calcResultLateReportingTonnageDetails")]
+        [JsonProperty(PropertyName = "calcResultLateReportingTonnageDetails")]
         public List<CalcResultLateReportingTonnageDetailsJson> calcResultLateReportingTonnageDetails { get; set; }
 
-        [JsonPropertyName("calcResultLateReportingTonnageTotal")]
+        [JsonProperty(PropertyName = "calcResultLateReportingTonnageTotal")]
+        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
         public decimal CalcResultLateReportingTonnageTotal { get; set; }
     }
 
     public class CalcResultLateReportingTonnageDetailsJson
     {
-        [JsonPropertyName("materialName")]
+        [JsonProperty(PropertyName = "materialName")]
         public string MaterialName { get; set; }
 
-        [JsonPropertyName("totalLateReportingTonnage")]
+        
+        [JsonProperty(PropertyName = "totalLateReportingTonnage")]
+        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
         public decimal TotalLateReportingTonnage { get; set; }
     }
 }
