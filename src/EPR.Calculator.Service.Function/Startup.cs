@@ -44,6 +44,7 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -134,6 +135,8 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ILateReportingExporter, LateReportingExporter>();
             services.AddTransient<IRunNameService, RunNameService>();
             services.AddTransient<ITelemetryClientWrapper, TelemetryClientWrapper>();
+            services.AddTransient<ILateReportingTonnageMapper, LateReportingTonnageMapper>();
+            services.AddTransient<ILateReportingTonnage, LateReportingTonnage>();
 #if !DEBUG
             SetupBlobStorage(services);
             services.AddTransient<IConfigurationService, Configuration>();
