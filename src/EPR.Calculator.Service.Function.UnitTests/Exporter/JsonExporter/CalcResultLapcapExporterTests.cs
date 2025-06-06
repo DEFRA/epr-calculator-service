@@ -1,4 +1,4 @@
-namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.JsonExporter
+namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
 {
     using System;
     using AutoFixture;

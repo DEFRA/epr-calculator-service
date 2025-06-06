@@ -89,7 +89,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             var resultsRequestDto = new CalcResultsRequestDto();
             var mockResultDetail = new Mock<CalcResultDetail>();
-            var mockLapcapData = new Mock<CalcResultLapcapData>();
+            var mockLapcapData = new Fixture().Create<CalcResultLapcapData>();
             var mockOtherParams = new Mock<CalcResultParameterOtherCost>();
             var mockOnePlusFourApp = new Mock<CalcResultOnePlusFourApportionment>();
             var mockCalcResultCommsCost = new Mock<CalcResultCommsCost>();
@@ -98,7 +98,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var mockCalcResultSummary = new Mock<CalcResultSummary>();
 
             this.mockCalcResultDetailBuilder.Setup(m => m.Construct(resultsRequestDto)).ReturnsAsync(mockResultDetail.Object);
-            this.mockLapcapBuilder.Setup(m => m.Construct(resultsRequestDto)).ReturnsAsync(mockLapcapData.Object);
+            this.mockLapcapBuilder.Setup(m => m.Construct(resultsRequestDto)).ReturnsAsync(mockLapcapData);
             this.mockCalcResultParameterOtherCostBuilder.Setup(m => m.Construct(resultsRequestDto))
                 .ReturnsAsync(mockOtherParams.Object);
             this.mockOnePlusFourApportionmentBuilder.Setup(m => m.Construct(resultsRequestDto, It.IsAny<CalcResult>()))
@@ -119,7 +119,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             Assert.IsNotNull(result);
             Assert.AreEqual(mockResultDetail.Object, result.CalcResultDetail);
-            Assert.AreEqual(mockLapcapData.Object, result.CalcResultLapcapData);
+            Assert.AreEqual(mockLapcapData, result.CalcResultLapcapData);
             Assert.AreEqual(mockOtherParams.Object, result.CalcResultParameterOtherCost);
             Assert.AreEqual(mockOnePlusFourApp.Object, result.CalcResultOnePlusFourApportionment);
             Assert.AreEqual(mockCalcResultCommsCost.Object, result.CalcResultCommsCostReportDetail);
