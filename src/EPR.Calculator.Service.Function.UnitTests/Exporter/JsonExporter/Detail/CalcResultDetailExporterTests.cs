@@ -35,7 +35,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.Detail
 
             // Assert
             // Expected JSON output
-            string? expected = "{\"runName\":\"Test Run\",\"runId\":123,\"runDate\":\"21/07/2017 17:32\",\"runBy\":\"John Doe\",\"financialYear\":\"2025\",\"rpdFileORG\":\"\",\"rpdFileORGTimeStamp\":\"21/07/2017 17:32\",\"rpdFilePOM\":\"\",\"rpdFilePOMTimeStamp\":\"21/07/2017 17:32\",\"lapcapFile\":\"lapcap_file.csv\",\"lapcapFileTimeStamp\":\"21/07/2017 17:32\",\"lapcapFileUploader\":\"John Doe\",\"parametersFile\":\"parameters_file.csv\",\"parametersFileTimeStamp\":\"21/07/2017 17:32\",\"parametersFileUploader\":\"John Doe\"}";
+            string expected = "{\"runName\":\"Test Run\",\"runId\":123,\"runDate\":\"21/07/2017 17:32\",\"runBy\":\"John Doe\",\"financialYear\":\"2025\",\"rpdFileORG\":\"\",\"rpdFileORGTimeStamp\":\"21/07/2017 17:32\",\"rpdFilePOM\":\"\",\"rpdFilePOMTimeStamp\":\"21/07/2017 17:32\",\"lapcapFile\":\"lapcap_file.csv\",\"lapcapFileTimeStamp\":\"21/07/2017 17:32\",\"lapcapFileUploader\":\"John Doe\",\"parametersFile\":\"parameters_file.csv\",\"parametersFileTimeStamp\":\"21/07/2017 17:32\",\"parametersFileUploader\":\"John Doe\"}";
 
             Assert.AreEqual(expected, actualJson);
         }

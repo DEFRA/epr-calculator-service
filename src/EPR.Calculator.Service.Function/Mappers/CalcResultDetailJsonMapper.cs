@@ -4,7 +4,7 @@ using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Mappers
 {
-    public class CalcResultDetailJsonMapper
+    public static class CalcResultDetailJsonMapper
     {
         public static CalcResultDetailJson Map(CalcResultDetail calcResultDetail)
         {
