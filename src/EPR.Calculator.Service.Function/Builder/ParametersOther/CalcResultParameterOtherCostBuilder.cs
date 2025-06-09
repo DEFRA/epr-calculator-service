@@ -164,7 +164,7 @@
             var costType = await this.context.CostType.SingleAsync(x => x.Name == "LA Data Prep Charge");
             var costTypeId = costType.Id;
 
-            if (!resultsRequestDto.IsBilling)
+            if (!resultsRequestDto.IsBillingFile)
             {
                 await this.calcCountryApportionmentService.SaveChangesAsync(new CalcCountryApportionmentServiceDto
                 {

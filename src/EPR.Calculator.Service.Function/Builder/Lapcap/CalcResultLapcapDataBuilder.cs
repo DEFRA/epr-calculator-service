@@ -122,7 +122,7 @@
             countryApportionment.TotalDisposalCost = $"{countryApportionment.TotalCost.ToString("N", new NumberFormatInfo { NumberDecimalDigits = 8 })}%";
             data.Add(countryApportionment);
 
-            if(!resultsRequestDto.IsBilling)
+            if(!resultsRequestDto.IsBillingFile)
             {
                 await this.calcCountryApportionmentService.SaveChangesAsync(new CalcCountryApportionmentServiceDto
                 {
