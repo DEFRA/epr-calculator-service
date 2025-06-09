@@ -11,12 +11,13 @@ namespace EPR.Calculator.Service.Function.Mapper
     {
         public CalcResultOnePlusFourApportionmentJson Map(CalcResultOnePlusFourApportionment calcResultOnePlusFourApportionment)
         {
+            var i = 2;
             return new CalcResultOnePlusFourApportionmentJson()
             {
                 OnePlusFourApportionment = new CalcResultOnePlusFourApportionmentDetailsJson()
                 {
                     OneFeeForLADisposalCosts = calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.
-            Where(t => t.OrderId == 2).
+            Where(t => t.OrderId == i).
             Select(y => new CalcResultOnePlusFourApportionmentDetailJson
             {
                 England = y.EnglandTotal,
@@ -26,7 +27,7 @@ namespace EPR.Calculator.Service.Function.Mapper
                 Total = y.Total
             }).SingleOrDefault(),
                     FourLADataPrepCharge = calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.
-            Where(t => t.OrderId == 3).
+            Where(t => t.OrderId == i+1).
             Select(y => new CalcResultOnePlusFourApportionmentDetailJson
             {
                 England = y.EnglandTotal,
@@ -36,7 +37,7 @@ namespace EPR.Calculator.Service.Function.Mapper
                 Total = y.Total
             }).SingleOrDefault(),
                     TotalOfonePlusFour = calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.
-            Where(t => t.OrderId == 4).
+            Where(t => t.OrderId == i+2).
             Select(y => new CalcResultOnePlusFourApportionmentDetailJson
             {
                 England = y.EnglandTotal,
@@ -46,7 +47,7 @@ namespace EPR.Calculator.Service.Function.Mapper
                 Total = y.Total
             }).SingleOrDefault(),
                     OnePlusFourApportionmentPercentages = calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.
-            Where(t => t.OrderId == 5).
+            Where(t => t.OrderId == i+3).
             Select(y => new CalcResultOnePlusFourApportionmentDetailJson
             {
                 England = y.EnglandTotal,
