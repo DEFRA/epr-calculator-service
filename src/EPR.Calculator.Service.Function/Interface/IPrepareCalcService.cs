@@ -8,5 +8,7 @@
     public interface IPrepareCalcService
     {
         Task<bool> PrepareCalcResults([FromBody] CalcResultsRequestDto resultsRequestDto, string? runName, CancellationToken cancellationToken);
+
+        Task<bool> PrepareBillingResults([FromBody] CalcResultsRequestDto resultsRequestDto, string runName, CancellationToken cancellationToken);
     }
 }
