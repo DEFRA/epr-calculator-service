@@ -20,7 +20,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Arrange
             var json = @"{
                             'MessageType': 'Billing',
-                            'RunId': 123,
+                            'CalculatorRunId': 123,
                             'ApprovedBy': 'Test User'
                 }";
 
@@ -32,7 +32,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.IsInstanceOfType(result, typeof(CreateBillingFileMessage));
 
             var billingMessage = (CreateBillingFileMessage)result;
-            Assert.AreEqual(123, billingMessage.RunId);
+            Assert.AreEqual(123, billingMessage.CalculatorRunId);
             Assert.AreEqual("Billing", billingMessage.MessageType);
         }
 
