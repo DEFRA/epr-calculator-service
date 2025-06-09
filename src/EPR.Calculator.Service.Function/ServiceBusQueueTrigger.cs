@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using EPR.Calculator.Service.Common;
 using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function;
 using EPR.Calculator.Service.Function.Interface;
@@ -21,6 +22,7 @@ namespace EPR.Calculator.Service.Function
         private readonly ICalculatorTelemetryLogger telemetryLogger;
         private readonly IRunNameService runNameService;
         private readonly IMessageTypeService messageTypeService;
+        private readonly IPrepareBillingFileService prepareBillingFileService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceBusQueueTrigger"/> class.
@@ -34,7 +36,8 @@ namespace EPR.Calculator.Service.Function
             ICalculatorRunParameterMapper calculatorRunParameterMapper,
             IRunNameService runNameService,
             ICalculatorTelemetryLogger telemetryLogger,
-            IMessageTypeService messageTypeService
+            IMessageTypeService messageTypeService,
+            IPrepareBillingFileService prepareBillingFileService
             )
         {
             this.calculatorRunService = calculatorRunService;
@@ -42,6 +45,7 @@ namespace EPR.Calculator.Service.Function
             this.runNameService = runNameService;
             this.telemetryLogger = telemetryLogger;
             this.messageTypeService = messageTypeService;
+            this.prepareBillingFileService = prepareBillingFileService;
         }
 
         /// <summary>
@@ -52,7 +56,7 @@ namespace EPR.Calculator.Service.Function
         [FunctionName("EPRCalculatorRunServiceBusQueueTrigger")]
         public async Task Run([ServiceBusTrigger(queueName: "%ServiceBusQueueName%", Connection = "ServiceBusConnectionString")] string myQueueItem)
         {
-            this.telemetryLogger.LogInformation(new TrackMessage { Message = "Executing the function app started" });
+            this.telemetryLogger.LogInformation(new TrackMessage { Message = "Executing the function app started" });            
 
             if (string.IsNullOrEmpty(myQueueItem))
             {
@@ -63,23 +67,26 @@ namespace EPR.Calculator.Service.Function
             try
             {
                 var resultMessageType = messageTypeService.DeserializeMessage(myQueueItem);
+                string runName = string.Empty;
+
+                try
+                {
+                    runName = await this.runNameService.GetRunNameAsync(resultMessageType.CalculatorRunId);
+                }
+                catch (Exception ex)
+                {
+                    this.LogError("Run name not found", ex);
+                }
 
                 if (resultMessageType is CreateBillingFileMessage billingmessage)
                 {
                     var calculatorRunParameter = this.calculatorRunParameterMapper.Map(billingmessage);
+                    await this.prepareBillingFileService.PrepareBillingFileAsync(calculatorRunParameter.Id, runName);
                 }
                 else if (resultMessageType is CreateResultFileMessage resultmessage)
-                {
-                    string? runName = string.Empty;
+                {                    
                     var calculatorRunParameter = this.calculatorRunParameterMapper.Map(resultmessage);
-                    try
-                    {
-                        runName = await this.runNameService.GetRunNameAsync(calculatorRunParameter.Id);
-                    }
-                    catch (Exception ex)
-                    {
-                        this.LogError("Run name not found", ex);
-                    }
+                    
                     bool processStatus = await this.calculatorRunService.StartProcess(calculatorRunParameter, runName);
                     this.telemetryLogger.LogInformation(new TrackMessage
                     {
