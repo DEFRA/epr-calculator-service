@@ -35,5 +35,6 @@
         public const string ParametersOther = "Parameters - Other";
         public const string ZeroCurrency = "£0";
         public const string Initial = "INITIAL";
+        public const char Comma = ',';
     }
 }

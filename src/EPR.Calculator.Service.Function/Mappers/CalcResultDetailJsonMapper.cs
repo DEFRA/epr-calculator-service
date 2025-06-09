@@ -30,7 +30,7 @@ namespace EPR.Calculator.Service.Function.Mappers
 
         private static string[] GetFileInfo(string filePath)
         {
-            return filePath.Split(',');
+            return filePath.Split(CommonConstants.Comma);
         }
     }
 }
