@@ -30,6 +30,7 @@
             ICalcCountryApportionmentService calcCountryApportionmentService) 
         {
             this.context = context;
+            this.calcCountryApportionmentService = calcCountryApportionmentService;
         }
 
         public async Task<CalcResultParameterOtherCost> Construct(CalcResultsRequestDto resultsRequestDto)

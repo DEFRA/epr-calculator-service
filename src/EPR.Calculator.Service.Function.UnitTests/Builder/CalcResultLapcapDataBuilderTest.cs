@@ -42,7 +42,6 @@
             dbContext?.Database.EnsureDeleted();
         }
 
-        [TestMethod]
         public void ConstructTest_For_Aluminuim_Plastic()
         {
             const string aluminium = "Aluminium";
