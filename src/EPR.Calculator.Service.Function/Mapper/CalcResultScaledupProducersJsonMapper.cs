@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
@@ -8,7 +9,9 @@ namespace EPR.Calculator.Service.Function.Mapper
 {
     public class CalcResultScaledupProducersJsonMapper : ICalcResultScaledupProducersJsonMapper
     {
-        public CalcResultScaledupProducersJson Map(CalcResultScaledupProducers calcResultScaledupProducers)
+        public CalcResultScaledupProducersJson Map(
+            CalcResultScaledupProducers calcResultScaledupProducers,
+            IEnumerable<int> acceptedProducerIds)
         {
             if (calcResultScaledupProducers == null)
             {
@@ -18,15 +21,19 @@ namespace EPR.Calculator.Service.Function.Mapper
             return new CalcResultScaledupProducersJson
             {
                 Name = CalcResultScaledupProducerHeaders.ScaledupProducers,
-                ProducerSubmissions = GetProducerSubmissions(calcResultScaledupProducers)
+                ProducerSubmissions = GetProducerSubmissions(calcResultScaledupProducers, acceptedProducerIds)
             };
         }
 
-        private IEnumerable<ProducerSubmission> GetProducerSubmissions(CalcResultScaledupProducers calcResultScaledupProducers)
+        private IEnumerable<ProducerSubmission> GetProducerSubmissions(
+            CalcResultScaledupProducers calcResultScaledupProducers,
+            IEnumerable<int> acceptedProducerIds)
         {
             var producerSubmissions = new List<ProducerSubmission>();
 
-            foreach (var item in calcResultScaledupProducers.ScaledupProducers!)
+            var filteredProducers = calcResultScaledupProducers?.ScaledupProducers?.Where(producer => acceptedProducerIds.Contains(producer.ProducerId)) ?? [];
+
+            foreach (var item in filteredProducers)
             {
                 int? level = null;
                 if (!string.IsNullOrWhiteSpace(item.Level) && int.TryParse(item.Level, out int result))

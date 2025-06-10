@@ -26,9 +26,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             // Arrange
             var fixture = new Fixture();
             var calcResultScaledupProducers = fixture.Create<CalcResultScaledupProducers>();
+            var acceptedProducerIds = fixture.Create<IEnumerable<int>>();
 
             // Act
-            var result = ((ICalcResultScaledupProducersJsonMapper)_testClass).Map(calcResultScaledupProducers);
+            var result = ((ICalcResultScaledupProducersJsonMapper)_testClass).Map(calcResultScaledupProducers, acceptedProducerIds);
 
             // Assert
             Assert.IsNotNull(result);

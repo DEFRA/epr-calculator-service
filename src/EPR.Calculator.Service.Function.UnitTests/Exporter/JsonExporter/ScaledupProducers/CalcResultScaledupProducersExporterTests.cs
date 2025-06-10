@@ -26,14 +26,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.Scaled
             // Arrange
             var fixture = new Fixture();
             var calcResultScaledupProducers = fixture.Create<CalcResultScaledupProducers>();
+            var acceptedProducerIds = fixture.Create<IEnumerable<int>>();
 
-            _testMapper.Setup(mock => mock.Map(It.IsAny<CalcResultScaledupProducers>())).Returns(fixture.Create<CalcResultScaledupProducersJson>());
+            _testMapper.Setup(mock => mock.Map(It.IsAny<CalcResultScaledupProducers>(), It.IsAny<IEnumerable<int>>())).Returns(fixture.Create<CalcResultScaledupProducersJson>());
 
             // Act
-            var result = _testClass.Export(calcResultScaledupProducers);
+            var result = _testClass.Export(calcResultScaledupProducers, acceptedProducerIds);
 
             // Assert
-            _testMapper.Verify(mock => mock.Map(It.IsAny<CalcResultScaledupProducers>()));
+            _testMapper.Verify(mock => mock.Map(It.IsAny<CalcResultScaledupProducers>(), It.IsAny<IEnumerable<int>>()));
 
             Assert.AreNotEqual(string.Empty, result);
         }

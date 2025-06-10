@@ -1,14 +1,10 @@
-﻿using EPR.Calculator.Service.Function.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.ScaledupProducers
 {
     public interface ICalcResultScaledupProducersExporter
     {
-        public string Export(CalcResultScaledupProducers calcResultScaledupProducers);
+        public string Export(CalcResultScaledupProducers calcResultScaledupProducers, IEnumerable<int> acceptedProducerIds);
     }
 }
