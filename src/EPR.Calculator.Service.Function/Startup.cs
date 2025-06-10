@@ -139,6 +139,8 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<IPrepareBillingFileService, PrepareBillingFileService>();
             services.AddTransient<ILateReportingTonnageMapper, LateReportingTonnageMapper>();
             services.AddTransient<ILateReportingTonnage, LateReportingTonnage>();
+            services.AddTransient<IOnePlusFourApportionmentJsonExporter, OnePlusFourApportionmentJsonExporter>();
+            services.AddTransient<IOnePlusFourApportionmentMapper, OnePlusFourApportionmentMapper>();
 #if !DEBUG
             SetupBlobStorage(services);
             services.AddTransient<IConfigurationService, Configuration>();
