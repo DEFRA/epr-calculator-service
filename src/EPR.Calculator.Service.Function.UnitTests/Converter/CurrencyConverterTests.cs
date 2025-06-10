@@ -1,4 +1,4 @@
-namespace EPR.Calculator.Service.Function.UnitTests.Converter
+﻿namespace EPR.Calculator.Service.Function.UnitTests.Converter
 {
     using AutoFixture;
     using EPR.Calculator.Service.Function.Converter;
@@ -35,7 +35,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Converter
         {
             // Arrange
             var expectedValue = Fixture.Create<decimal>();
-            var testJson = $"{{\"testValue\":\"�{expectedValue}\"}}";
+            var testJson = $"{{\"testValue\":\"£{expectedValue}\"}}";
             var reader = BuildReader(testJson);
 
             // Act

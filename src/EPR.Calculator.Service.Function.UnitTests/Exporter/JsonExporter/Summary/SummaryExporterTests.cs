@@ -1,4 +1,4 @@
-namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CalcResult
+﻿namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CalcResult
 {
     using System;
     using AutoFixture;
