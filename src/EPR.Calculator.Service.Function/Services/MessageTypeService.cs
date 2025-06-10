@@ -35,7 +35,7 @@
             var result = JsonConvert.DeserializeObject(json, targetType);
 
             if (result is not MessageBase message)
-                throw new InvalidCastException($"Deserialized object is not of type IMessage.");
+                throw new InvalidCastException($"Deserialized object is not of type {nameof(MessageBase)}.");
 
             return message;
         }
