@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EPR.Calculator.Service.Function.Models
+namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
     public class CalcResultLateReportingTonnageJson
     {
@@ -26,7 +26,7 @@ namespace EPR.Calculator.Service.Function.Models
         [JsonProperty(PropertyName = "materialName")]
         public string MaterialName { get; set; }
 
-        
+
         [JsonProperty(PropertyName = "totalLateReportingTonnage")]
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
         public decimal TotalLateReportingTonnage { get; set; }

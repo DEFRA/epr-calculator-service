@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.Mapper
 {
-    public interface ILateReportingTonnageMapper
+    public interface ICalcResultScaledupProducersJsonMapper
     {
-        CalcResultLateReportingTonnageJson Map(CalcResultLateReportingTonnage calcResultLateReportingTonnage);
+        CalcResultScaledupProducersJson Map(CalcResultScaledupProducers calcResultScaledupProducers);
     }
 }

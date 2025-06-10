@@ -1,17 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using EPR.Calculator.Service.Function.Exporter.JsonExporter.Model;
+using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Models.JsonExporter;
 
-namespace EPR.Calculator.Service.Function.Mappers
+namespace EPR.Calculator.Service.Function.Mapper
 {
     public class CalcResultScaledupProducersJsonMapper : ICalcResultScaledupProducersJsonMapper
     {
-        public CalcResultScaledupProducerJson Map(CalcResultScaledupProducers calcResultScaledupProducers)
+        public CalcResultScaledupProducersJson Map(CalcResultScaledupProducers calcResultScaledupProducers)
         {
-            return new CalcResultScaledupProducerJson
+            if (calcResultScaledupProducers == null)
             {
-                Name = "Scaled-up Producers",
+                return new CalcResultScaledupProducersJson();
+            }
+
+            return new CalcResultScaledupProducersJson
+            {
+                Name = CalcResultScaledupProducerHeaders.ScaledupProducers,
                 ProducerSubmissions = GetProducerSubmissions(calcResultScaledupProducers)
             };
         }
@@ -19,8 +25,8 @@ namespace EPR.Calculator.Service.Function.Mappers
         private IEnumerable<ProducerSubmission> GetProducerSubmissions(CalcResultScaledupProducers calcResultScaledupProducers)
         {
             var producerSubmissions = new List<ProducerSubmission>();
-            
-            foreach (var item in calcResultScaledupProducers.ScaledupProducers)
+
+            foreach (var item in calcResultScaledupProducers.ScaledupProducers!)
             {
                 int? level = null;
                 if (!string.IsNullOrWhiteSpace(item.Level) && int.TryParse(item.Level, out int result))

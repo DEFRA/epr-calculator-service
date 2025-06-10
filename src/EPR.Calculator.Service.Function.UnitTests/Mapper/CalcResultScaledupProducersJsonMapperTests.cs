@@ -1,5 +1,5 @@
 ﻿using AutoFixture;
-using EPR.Calculator.Service.Function.Mappers;
+using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
 using System;
 using System.Collections.Generic;

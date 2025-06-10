@@ -5,6 +5,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
     using EPR.Calculator.Service.Function.Exporter.JsonExporter;
     using EPR.Calculator.Service.Function.Mapper;
     using EPR.Calculator.Service.Function.Models;
+    using EPR.Calculator.Service.Function.Models.JsonExporter;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
 

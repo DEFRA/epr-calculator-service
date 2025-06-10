@@ -5,15 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.Model
+namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
-    public record CalcResultScaledupProducerJson
+    public record CalcResultScaledupProducersJson
     {
         [JsonProperty("name")]
-        public required string Name { get; set; }
+        public string? Name { get; set; }
 
         [JsonProperty("producerSubmissions")]
-        public required IEnumerable<ProducerSubmission> ProducerSubmissions { get; set; }
+        public IEnumerable<ProducerSubmission>? ProducerSubmissions { get; set; }
     }
 
     public record ProducerSubmission
@@ -52,7 +52,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.Model
     public record MaterialBreakdown
     {
         [JsonProperty("materialName")]
-        public required string MaterialName { get; set; }
+        public string? MaterialName { get; set; }
 
         [JsonProperty("reportedHouseholdPackagingWasteTonnage")]
         public decimal ReportedHouseholdPackagingWasteTonnage { get; set; }
