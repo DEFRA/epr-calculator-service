@@ -4,6 +4,7 @@
     using EPR.Calculator.Service.Function.Converter;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System;
+    using System.Globalization;
     using System.Text;
     using System.Text.Encodings.Web;
     using System.Text.Json;
@@ -90,7 +91,7 @@
             var result = new StreamReader(stream).ReadToEnd();
 
             // Assert
-            Assert.AreEqual($"\"{value.ToString("C")}\"", result);
+            Assert.AreEqual($"\"{value.ToString("C", CultureInfo.GetCultureInfo("en-GB"))}\"", result);
         }
 
         private Utf8JsonReader BuildReader(string value)
