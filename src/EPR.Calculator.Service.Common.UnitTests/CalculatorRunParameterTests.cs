@@ -1,6 +1,7 @@
 namespace EPR.Calculator.Service.Common.UnitTests
 {
     using EPR.Calculator.Service.Common;
+    using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     /// <summary>
@@ -19,6 +20,8 @@ namespace EPR.Calculator.Service.Common.UnitTests
             var testId = 60754953;
             var testUser = "TestValue2015204409";
             var testFinancialYear = "2024-25";
+            var testMessageType = "Result";
+
 
             // Act
             var calculatorRunParameter = new CalculatorRunParameter
@@ -26,12 +29,14 @@ namespace EPR.Calculator.Service.Common.UnitTests
                 FinancialYear = testFinancialYear,
                 Id = testId,
                 User = testUser,
+                MessageType = testMessageType
             };
 
             // Assert
             Assert.AreEqual(testId, calculatorRunParameter.Id);
             Assert.AreEqual(testUser, calculatorRunParameter.User);
             Assert.AreEqual(testFinancialYear, calculatorRunParameter.FinancialYear);
+            Assert.AreEqual(testMessageType, calculatorRunParameter.MessageType);
         }
     }
 }

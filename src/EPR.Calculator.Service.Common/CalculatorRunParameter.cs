@@ -19,5 +19,10 @@
         /// Gets or sets the financial year for the calculator run.
         /// </summary>
         required public FinancialYear FinancialYear { get; set; }
+
+        /// <summary>
+        /// Gets or sets the message type for calculator.
+        /// </summary>
+        public string? MessageType { get; set; }
     }
 }
