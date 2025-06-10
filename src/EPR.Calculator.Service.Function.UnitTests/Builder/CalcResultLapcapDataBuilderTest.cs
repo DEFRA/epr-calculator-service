@@ -6,14 +6,17 @@
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Enums;
+    using EPR.Calculator.Service.Function.Services;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
+    using Moq;
 
     [TestClass]
     public class CalcResultLapcapDataBuilderTest
     {
         public CalcResultLapcapDataBuilder builder;
         protected ApplicationDBContext dbContext;
+        private Mock<ICalcCountryApportionmentService> mockService;
 
         public CalcResultLapcapDataBuilderTest()
         {
@@ -29,13 +32,16 @@
             dbContext.DefaultParameterTemplateMasterList.AddRange(TestDataHelper.GetDefaultParameterTemplateMasterData().ToList());
             dbContext.SaveChanges();
 
-            builder = new CalcResultLapcapDataBuilder(dbContext);
+            mockService = new Mock<ICalcCountryApportionmentService>();
+
+            builder = new CalcResultLapcapDataBuilder(dbContext, mockService.Object);
         }
 
         [TestCleanup]
         public void TearDown()
         {
             dbContext?.Database.EnsureDeleted();
+            dbContext?.Dispose();
         }
 
         [TestMethod]
@@ -139,34 +145,7 @@
             Assert.AreEqual("10.00000000%", countryApp.NorthernIrelandDisposalCost);
             Assert.AreEqual("100.00000000%", countryApp.TotalDisposalCost);
 
-            var countryAppList = dbContext.CountryApportionment.Where(x => x.CalculatorRunId == run.Id);
-            Assert.IsNotNull(countryAppList);
-            Assert.AreEqual(4, countryAppList.Count());
-
-            var englandApp = countryAppList.Single(x => x.CountryId == 1);
-            Assert.IsNotNull(englandApp);
-            Assert.AreEqual(englandApp.CalculatorRunId, run.Id);
-            Assert.AreEqual(1, englandApp.CostTypeId);
-            Assert.AreEqual(englandApp.Apportionment, totalRow.EnglandCost);
-
-            var walesApp = countryAppList.Single(x => x.CountryId == 2);
-            Assert.IsNotNull(walesApp);
-            Assert.AreEqual(walesApp.CalculatorRunId, run.Id);
-            Assert.AreEqual(1, walesApp.CostTypeId);
-            Assert.AreEqual(walesApp.Apportionment, totalRow.WalesCost);
-
-            var scotlandApp = countryAppList.Single(x => x.CountryId == 3);
-            Assert.IsNotNull(scotlandApp);
-            Assert.AreEqual(scotlandApp.CalculatorRunId, run.Id);
-            Assert.AreEqual(1, scotlandApp.CostTypeId);
-            Assert.AreEqual(scotlandApp.Apportionment, totalRow.ScotlandCost);
-
-            var niApp = countryAppList.Single(x => x.CountryId == 4);
-            Assert.IsNotNull(niApp);
-            Assert.AreEqual(niApp.CalculatorRunId, run.Id);
-            Assert.AreEqual(1, niApp.CostTypeId);
-            Assert.AreEqual(niApp.Apportionment, totalRow.NorthernIrelandCost);
-
+            this.mockService.Verify(x => x.SaveChangesAsync(It.IsAny<CalcCountryApportionmentServiceDto>()));
         }
 
         public static List<LapcapDataDetail> GetLapcapDetails(LapcapDataMaster master)
