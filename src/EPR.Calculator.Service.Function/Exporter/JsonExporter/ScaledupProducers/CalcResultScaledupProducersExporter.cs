@@ -7,7 +7,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.ScaledupProducer
 {
     public class CalcResultScaledupProducersExporter : ICalcResultScaledupProducersExporter
     {
-        private ICalcResultScaledupProducersJsonMapper mapper;
+        private readonly ICalcResultScaledupProducersJsonMapper mapper;
 
         public CalcResultScaledupProducersExporter(ICalcResultScaledupProducersJsonMapper mapper)
         {
