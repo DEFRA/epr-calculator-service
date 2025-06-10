@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Unicode;
 using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
@@ -23,7 +24,9 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                     WriteIndented = true,
                     Converters = { new Converter.CurrencyConverter() },
-                    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                    
+                    // This is required in order to output the £ symbol as-is rather than encoding it.
+                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.All) 
                 });
 
         /// <summary>
