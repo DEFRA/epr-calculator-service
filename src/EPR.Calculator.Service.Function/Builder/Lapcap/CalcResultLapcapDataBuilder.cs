@@ -9,19 +9,23 @@
     using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Models;
+    using EPR.Calculator.Service.Function.Services;
     using Microsoft.EntityFrameworkCore;
 
     public class CalcResultLapcapDataBuilder : ICalcResultLapcapDataBuilder
     {
+        private readonly ICalcCountryApportionmentService calcCountryApportionmentService;
         private readonly ApplicationDBContext context;
         public const string LapcapHeader = "LAPCAP Data";
         public const string CountryApportionment = "1 Country Apportionment %s";
         public const string Total = "Total";
         public const int HundredPercent = 100;
 
-        public CalcResultLapcapDataBuilder(ApplicationDBContext context)
+        public CalcResultLapcapDataBuilder(ApplicationDBContext context,
+            ICalcCountryApportionmentService calcCountryApportionmentService)
         {
             this.context = context;
+            this.calcCountryApportionmentService = calcCountryApportionmentService;
         }
 
         public async Task<CalcResultLapcapData> Construct(CalcResultsRequestDto resultsRequestDto)
@@ -118,39 +122,19 @@
             countryApportionment.TotalDisposalCost = $"{countryApportionment.TotalCost.ToString("N", new NumberFormatInfo { NumberDecimalDigits = 8 })}%";
             data.Add(countryApportionment);
 
-            this.context.CountryApportionment.Add(new CountryApportionment
+            if(!resultsRequestDto.IsBillingFile)
             {
-                CalculatorRunId = resultsRequestDto.RunId,
-                CountryId = countries.Single(x => x.Name == "England").Id,
-                CostTypeId = costTypeId,
-                Apportionment = totalDetail.EnglandCost,
-            });
-
-            this.context.CountryApportionment.Add(new CountryApportionment
-            {
-                CalculatorRunId = resultsRequestDto.RunId,
-                CountryId = countries.Single(x => x.Name == "Wales").Id,
-                CostTypeId = costTypeId,
-                Apportionment = totalDetail.WalesCost,
-            });
-
-            this.context.CountryApportionment.Add(new CountryApportionment
-            {
-                CalculatorRunId = resultsRequestDto.RunId,
-                CountryId = countries.Single(x => x.Name == "Northern Ireland").Id,
-                CostTypeId = costTypeId,
-                Apportionment = totalDetail.NorthernIrelandCost,
-            });
-
-            this.context.CountryApportionment.Add(new CountryApportionment
-            {
-                CalculatorRunId = resultsRequestDto.RunId,
-                CountryId = countries.Single(x => x.Name == "Scotland").Id,
-                CostTypeId = costTypeId,
-                Apportionment = totalDetail.ScotlandCost,
-            });
-
-            await this.context.SaveChangesAsync();
+                await this.calcCountryApportionmentService.SaveChangesAsync(new CalcCountryApportionmentServiceDto
+                {
+                    RunId = resultsRequestDto.RunId,
+                    Countries = countries,
+                    CostTypeId = costTypeId,
+                    EnglandCost = countryApportionment.EnglandCost,
+                    NorthernIrelandCost = countryApportionment.NorthernIrelandCost,
+                    ScotlandCost = countryApportionment.ScotlandCost,
+                    WalesCost = countryApportionment.WalesCost,
+                });
+            }
 
             return new CalcResultLapcapData { Name = LapcapHeader, CalcResultLapcapDataDetails = data };
         }
