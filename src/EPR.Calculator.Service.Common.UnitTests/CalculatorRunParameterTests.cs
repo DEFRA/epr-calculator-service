@@ -1,7 +1,6 @@
 namespace EPR.Calculator.Service.Common.UnitTests
 {
     using EPR.Calculator.Service.Common;
-    using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     /// <summary>
