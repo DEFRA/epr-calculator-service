@@ -1,51 +1,52 @@
 ﻿namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CalcResult
 {
-    using System;
-    using System.Dynamic;
     using System.Text.Json;
     using System.Text.Json.Nodes;
     using AutoFixture;
     using EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System.Linq;
     using System.Globalization;
 
     [TestClass]
     public class SummaryExporterTests
     {
-        private SummaryExporter TestClass { get; init; }
+        private CalculationResultsExporter TestClass { get; init; }
 
         private IFixture Fixture { get; init; }
 
         public SummaryExporterTests()
         {
             Fixture = new Fixture();
-            this.TestClass = new SummaryExporter();
+            this.TestClass = new CalculationResultsExporter();
         }
 
         [TestMethod]
-        public void CanCallConvertToJson()
+        public void CanCallExport()
         {
             // Arrange
             var data = Fixture.Create<CalcResultSummary>();
 
             // Act
-            var result = this.TestClass.SerialiseToJson(data, null);
+            var result = this.TestClass.Export(data, new List<object>());
 
 
             // Assert
             Assert.IsNotNull(result);
         }
 
+        /// <summary>
+        /// Serialises a <see cref="CalcResultSummary"/>, then parses the resulting JSON
+        /// and checks that the values still match up with the original.
+        /// </summary>
         [TestMethod]
-        public void RoundTrip()
+        public void Export_ValuesAreValid()
         {
             // Arrange
             var data = Fixture.Create<CalcResultSummary>();
 
             // Act
-            var json = this.TestClass.SerialiseToJson(data, null);
+            var json = this.TestClass.Export(data, null);
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["calculationResults"]!

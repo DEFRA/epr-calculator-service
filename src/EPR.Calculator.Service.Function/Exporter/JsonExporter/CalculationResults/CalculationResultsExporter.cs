@@ -1,23 +1,18 @@
 ﻿using EPR.Calculator.Service.Function.Models;
-using Microsoft.Azure.Amqp.Framing;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
 {
     /// <summary>
     /// Converts a <see cref="CalcResultSummary"/> to a JSON string representation.
     /// </summary>
-    public class SummaryExporter
+    public class CalculationResultsExporter : ICalculationResultsExporter
     {
         /// <inheritdoc/>
-        public string SerialiseToJson(CalcResultSummary summary, IEnumerable<object> producerCalculationR)
+        public string Export(CalcResultSummary summary, IEnumerable<object> producerCalculations)
             => JsonSerializer.Serialize(
                 new
                 {
