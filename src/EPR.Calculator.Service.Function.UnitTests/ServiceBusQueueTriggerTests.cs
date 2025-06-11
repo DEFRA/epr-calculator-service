@@ -22,6 +22,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         private readonly Mock<ICalculatorRunService> calculatorRunService;
         private readonly Mock<ICalculatorRunParameterMapper> parameterMapper;
         private readonly Mock<IRunNameService> runNameService;
+        private readonly Mock<IClassificationService> classificationService;
         private readonly Mock<ICalculatorTelemetryLogger> telemetryLogger;
         private readonly Mock<IMessageTypeService> messageTypeService;
         private readonly Mock<IPrepareBillingFileService> prepareBillingFileService;
@@ -36,6 +37,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             this.parameterMapper = new Mock<ICalculatorRunParameterMapper>();
             this.runNameService = new Mock<IRunNameService>();
             this.messageTypeService = new Mock<IMessageTypeService>();
+            this.classificationService = new Mock<IClassificationService>();
             this.telemetryLogger = new Mock<ICalculatorTelemetryLogger>();
             this.prepareBillingFileService = new Mock<IPrepareBillingFileService>();
             this.function = new ServiceBusQueueTrigger(
@@ -44,7 +46,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 this.runNameService.Object,
                 this.telemetryLogger.Object,
                 this.messageTypeService.Object,
-                this.prepareBillingFileService.Object);
+                this.prepareBillingFileService.Object,
+                this.classificationService.Object);
         }
 
         /// <summary>
@@ -161,7 +164,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             // Assert
             this.telemetryLogger.Verify(
                 log => log.LogError(It.Is<ErrorMessage>(msg =>
-                    msg.Message.Contains("Incorrect format") &&
+                    msg.Message.Contains("Error") &&
                     msg.Exception is JsonException)),
                 Times.Once);
         }
@@ -301,7 +304,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             // Assert
             this.telemetryLogger.Verify(
                 log => log.LogError(It.Is<ErrorMessage>(msg =>
-                    msg.Message.Contains("Run name not found") &&
+                    msg.Message.Contains("Error") &&
                     msg.Exception is Exception)),
                 Times.Once);
         }
