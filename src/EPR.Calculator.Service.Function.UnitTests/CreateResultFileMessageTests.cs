@@ -1,6 +1,7 @@
 namespace EPR.Calculator.Service.Function.UnitTests
 {
     using EPR.Calculator.Service.Function;
+    using EPR.Calculator.Service.Function.Constants;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     /// <summary>
@@ -25,7 +26,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
             {
                 CalculatorRunId = testCalculatorRunId,
                 FinancialYear = testFinancialYear,
-                CreatedBy = testCreatedBy
+                CreatedBy = testCreatedBy,
+                MessageType = MessageTypes.Result
             };
 
             // Assert

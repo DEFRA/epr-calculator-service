@@ -51,7 +51,7 @@
         /// <param name="runName">The name of the run.</param>
         /// <param name="message">The message to log.</param>
         /// <returns>A formatted log message string.</returns>
-        internal static string CreateLogMessage(int? runId, string? runName, string? messageType, string message)
+        internal static string CreateLogMessage(int? runId, string? runName, string messageType, string message)
         {
             return $"[{DateTime.Now}] RunId: {runId}, RunName: {runName}, MessageType: {messageType}, Message: {message}";
         }
