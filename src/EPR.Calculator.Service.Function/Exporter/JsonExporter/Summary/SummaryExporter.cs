@@ -1,4 +1,5 @@
 ﻿using EPR.Calculator.Service.Function.Models;
+using Microsoft.Azure.Amqp.Framing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,88 +17,64 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
     public class SummaryExporter
     {
         /// <inheritdoc/>
-        public string ConvertToJson(CalcResultSummary data)
+        public string SerialiseToJson(CalcResultSummary summary, IEnumerable<object> producerCalculationR)
             => JsonSerializer.Serialize(
-                new { producerCalculationResultsSummary = new CalcResultLapcapDataToSerialise(data) },
+                new
+                {
+                    calculationResults = new
+                    {
+                        producerCalculationResultsSummary = ArrangeSummary(summary),
+                        producerCalculationResults = new List<object>(),
+                    },
+                },
                 new JsonSerializerOptions
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                     WriteIndented = true,
                     Converters = { new Converter.CurrencyConverter() },
-                    
+
                     // This is required in order to output the £ symbol as-is rather than encoding it.
-                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.All) 
+                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
                 });
 
         /// <summary>
-        /// Structure to arrange the CalcResultSummary data using the property
+        /// Arrange the CalcResultSummary data using the property
         /// names and ordering required for serialisation.
         /// </summary>
-        private readonly record struct CalcResultLapcapDataToSerialise(
-            decimal FeeForLaDisposalCostsWithoutBadDebtprovision1,
-            decimal BadDebtProvision1,
-            decimal FeeForLaDisposalCostsWithBadDebtprovision1,
-
-            decimal FeeForCommsCostsByMaterialWithoutBadDebtprovision2a,
-            decimal BadDebtProvision2a,
-            decimal FeeForCommsCostsByMaterialWitBadDebtprovision2a,
-
-            decimal FeeForCommsCostsUkWideWithoutBadDebtprovision2b,
-            decimal BadDebtProvision2b,
-            decimal FeeForCommsCostsUkWideWithBadDebtprovision2b,
-
-            decimal FeeForCommsCostsByCountryWithoutBadDebtprovision2c,
-            decimal BadDebtProvision2c,
-            decimal FeeForCommsCostsByCountryWideWithBadDebtprovision2c,
-
-            decimal Total12a2b2cWithBadDebt,
-
-            decimal SaOperatingCostsWithoutBadDebtProvision3,
-            decimal BadDebtProvision3,
-            decimal SaOperatingCostsWithBadDebtProvision3,
-
-            decimal LaDataPrepCostsWithoutBadDebtProvision4,
-            decimal BadDebtProvision4,
-            decimal LaDataPrepCostsWithbadDebtProvision4,
-
-            decimal OneOffFeeSaSetuCostsWithbadDebtProvision5,
-            decimal BadDebtProvision5,
-            decimal OneOffFeeSaSetuCostsWithoutbadDebtProvision5)
+        private object ArrangeSummary(CalcResultSummary data)
         {
-            public CalcResultLapcapDataToSerialise(CalcResultSummary data)
-            : this(data.TotalFeeforLADisposalCostswoBadDebtprovision1,
-                data.BadDebtProvisionFor1,
-                data.TotalFeeforLADisposalCostswithBadDebtprovision1,
-
-                data.TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A,
-                data.BadDebtProvisionFor2A,
-                data.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A,
-
-                data.CommsCostHeaderWithoutBadDebtFor2bTitle,
-                data.CommsCostHeaderBadDebtProvisionFor2bTitle,
-                data.CommsCostHeaderWithBadDebtFor2bTitle,
-
-                data.TwoCCommsCostsByCountryWithoutBadDebtProvision,
-                data.TwoCBadDebtProvision,
-                data.TwoCCommsCostsByCountryWithBadDebtProvision,
-
-                data.TotalOnePlus2A2B2CFeeWithBadDebtProvision,
-
-                data.SaOperatingCostsWoTitleSection3,
-                data.BadDebtProvisionTitleSection3,
-                data.SaOperatingCostsWithTitleSection3,
-
-                data.LaDataPrepCostsTitleSection4,
-                data.LaDataPrepCostsBadDebtProvisionTitleSection4,
-                data.LaDataPrepCostsWithBadDebtProvisionTitleSection4,
-
-                data.SaSetupCostsTitleSection5,
-                data.SaSetupCostsBadDebtProvisionTitleSection5,
-                data.SaSetupCostsWithBadDebtProvisionTitleSection5)
+            return new
             {
-            }
+                FeeForLaDisposalCostsWithoutBadDebtprovision1 = data.TotalFeeforLADisposalCostswoBadDebtprovision1,
+                BadDebtProvision1 = data.BadDebtProvisionFor1,
+                FeeForLaDisposalCostsWithBadDebtprovision1 = data.TotalFeeforLADisposalCostswithBadDebtprovision1,
 
+                FeeForCommsCostsByMaterialWithoutBadDebtprovision2a = data.TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A,
+                BadDebtProvision2a = data.BadDebtProvisionFor2A = data.BadDebtProvisionFor2A,
+                FeeForCommsCostsByMaterialWitBadDebtprovision2a = data.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A,
 
+                FeeForCommsCostsUkWideWithoutBadDebtprovision2b = data.CommsCostHeaderWithoutBadDebtFor2bTitle,
+                BadDebtProvision2b = data.CommsCostHeaderBadDebtProvisionFor2bTitle,
+                FeeForCommsCostsUkWideWithBadDebtprovision2b = data.CommsCostHeaderWithBadDebtFor2bTitle,
+
+                FeeForCommsCostsByCountryWithoutBadDebtprovision2c = data.TwoCCommsCostsByCountryWithoutBadDebtProvision,
+                BadDebtProvision2c = data.TwoCBadDebtProvision,
+                FeeForCommsCostsByCountryWideWithBadDebtprovision2c = data.TwoCCommsCostsByCountryWithBadDebtProvision,
+
+                Total12a2b2cWithBadDebt = data.TotalOnePlus2A2B2CFeeWithBadDebtProvision,
+
+                SaOperatingCostsWithoutBadDebtProvision3 = data.SaOperatingCostsWoTitleSection3,
+                BadDebtProvision3 = data.BadDebtProvisionTitleSection3,
+                SaOperatingCostsWithBadDebtProvision3 = data.SaOperatingCostsWithTitleSection3,
+
+                LaDataPrepCostsWithoutBadDebtProvision4 = data.LaDataPrepCostsTitleSection4,
+                BadDebtProvision4 = data.LaDataPrepCostsBadDebtProvisionTitleSection4,
+                LaDataPrepCostsWithbadDebtProvision4 = data.LaDataPrepCostsWithBadDebtProvisionTitleSection4,
+
+                OneOffFeeSaSetuCostsWithbadDebtProvision5 = data.SaSetupCostsTitleSection5,
+                BadDebtProvision5 = data.SaSetupCostsBadDebtProvisionTitleSection5,
+                OneOffFeeSaSetuCostsWithoutbadDebtProvision5 = data.SaSetupCostsWithBadDebtProvisionTitleSection5,
+            };
         }
     }
 }
