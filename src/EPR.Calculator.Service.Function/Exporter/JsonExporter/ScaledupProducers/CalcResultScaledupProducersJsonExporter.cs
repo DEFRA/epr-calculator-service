@@ -5,11 +5,11 @@ using Newtonsoft.Json;
 
 namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.ScaledupProducers
 {
-    public class CalcResultScaledupProducersExporter : ICalcResultScaledupProducersExporter
+    public class CalcResultScaledupProducersJsonExporter : ICalcResultScaledupProducersJsonExporter
     {
         private readonly ICalcResultScaledupProducersJsonMapper mapper;
 
-        public CalcResultScaledupProducersExporter(ICalcResultScaledupProducersJsonMapper mapper)
+        public CalcResultScaledupProducersJsonExporter(ICalcResultScaledupProducersJsonMapper mapper)
         {
             this.mapper = mapper;
         }
