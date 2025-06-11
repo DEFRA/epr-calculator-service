@@ -134,6 +134,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcResultSummaryExporter, CalcResultSummaryExporter>();
             services.AddTransient<ILateReportingExporter, LateReportingExporter>();
             services.AddTransient<IRunNameService, RunNameService>();
+            services.AddTransient<IClassificationService, ClassificationService>();
             services.AddTransient<ITelemetryClientWrapper, TelemetryClientWrapper>();
             services.AddTransient<IMessageTypeService, MessageTypeService>();
             services.AddTransient<IPrepareBillingFileService, PrepareBillingFileService>();
