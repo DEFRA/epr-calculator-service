@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.Model
+namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
     public class CalcResultDetailJson
     {
