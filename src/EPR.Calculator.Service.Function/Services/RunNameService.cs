@@ -1,7 +1,9 @@
 ﻿namespace EPR.Calculator.Service.Function.Services
 {
+    using System;
     using System.Threading.Tasks;
     using EPR.Calculator.API.Data;
+    using EPR.Calculator.Service.Function.Exceptions;
     using EPR.Calculator.Service.Function.Interface;
     using Microsoft.EntityFrameworkCore;
 
@@ -31,7 +33,17 @@
             var run = await this.Context.CalculatorRuns
                 .SingleOrDefaultAsync(r => r.Id == runId);
 
-            return run?.Name;
+            if (run == null)
+            {
+                throw new RecordNotFoundException($"Calculator run with id {runId} not found");
+            }
+
+            if (string.IsNullOrEmpty(run.Name))
+            {
+                throw new NullValueException($"Run name not found for the run id {runId}");
+            }
+
+            return run?.Name;            
         }
     }
 }

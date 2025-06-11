@@ -56,7 +56,6 @@
             int runId,
             string runName,
             string updatedBy,
-            bool isPomSuccessful,
             CancellationToken timeout)
         {
             this.TelemetryLogger.LogInformation(new TrackMessage
@@ -85,14 +84,6 @@
                     Exception = new ValidationException(validationResult.ToString()),
                 });
                 throw new ValidationException(validationResult.ToString());
-            }
-
-            if (!isPomSuccessful && calcRun != null)
-            {
-                this.TelemetryLogger.LogInformation(new TrackMessage { RunId = runId, RunName = runName, Message = $"POM failed for run: {runId}" });
-                calcRun.CalculatorRunClassificationId = runClassifications.Single(x => x.Status == RunClassification.ERROR.ToString()).Id;
-                await this.Context.SaveChangesAsync(timeout);
-                return RunClassification.ERROR;
             }
 
             var vr = this.Validator.IsValidSuccessfulRun(runId);
