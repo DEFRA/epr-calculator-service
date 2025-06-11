@@ -37,7 +37,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public void DeserializeMessage_MissingMessageType_ReturnsCreateResultFileMessage()
+        public void DeserializeMessage_ResultMessageType_ReturnsCreateResultFileMessage()
         {
             // Arrange
             var json = @"{
@@ -59,6 +59,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.AreEqual("Test User", billingMessage.CreatedBy);
             Assert.AreEqual("2024-25", billingMessage.FinancialYear);
             Assert.AreEqual("Result", billingMessage.MessageType);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void DeserializeMessage_MissingMessageType_ReturnsCreateResultFileMessage()
+        {
+            // Arrange
+            var json = @"{
+                            'CalculatorRunId': 123,
+                            'CreatedBy': 'Test User',
+                            'FinancialYear': '2024-25'
+                         }";
+
+            // Act
+            var result = _service.DeserializeMessage(json);
         }
 
         [TestMethod]

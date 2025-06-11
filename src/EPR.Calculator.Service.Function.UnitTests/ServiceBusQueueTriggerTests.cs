@@ -95,8 +95,13 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 ApprovedBy = "Test User",
                 MessageType = "Billing"
             };
+            
+            var processedParameterData = new BillingFileMessage() { ApprovedBy = "2024-25", MessageType = "Billing", Id = 678767 };
+            var runName = "Test Run Name";
 
+            this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateBillingFileMessage>())).Returns(processedParameterData);
             messageTypeService.Setup(s => s.DeserializeMessage(myQueueItem)).Returns(resultFileMessage);
+            this.prepareBillingFileService.Setup(t => t.PrepareBillingFileAsync(processedParameterData.Id, runName)).ReturnsAsync(true);
 
             // Act
             await this.function.Run(myQueueItem);
@@ -312,7 +317,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
             {
                 CalculatorRunId = 1,
                 FinancialYear = "2024-25",
-                CreatedBy = "TestUser"
+                CreatedBy = "TestUser",
+                MessageType = "Result"
             };
 
             messageTypeService.Setup(s => s.DeserializeMessage(myQueueItem)).Returns(resultFileMessage);
