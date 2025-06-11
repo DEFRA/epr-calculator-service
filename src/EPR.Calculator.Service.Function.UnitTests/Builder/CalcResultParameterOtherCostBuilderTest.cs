@@ -5,8 +5,10 @@
     using EPR.Calculator.Service.Function.Builder.ParametersOther;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Enums;
+    using EPR.Calculator.Service.Function.Services;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
+    using Moq;
 
     [TestClass]
     public class CalcResultParameterOtherCostBuilderTest
@@ -29,7 +31,8 @@
             // dbContext.LapcapDataTemplateMaster.AddRange(BaseControllerTest.GetLapcapTemplateMasterData().ToList());
             dbContext.SaveChanges();
 
-            builder = new CalcResultParameterOtherCostBuilder(dbContext);
+            var mockService = new Mock<ICalcCountryApportionmentService>();
+            builder = new CalcResultParameterOtherCostBuilder(dbContext, mockService.Object);
         }
 
         [TestCleanup]

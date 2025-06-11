@@ -28,7 +28,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             var result = ((ILateReportingTonnageMapper)_testClass).Map(calcResultLateReportingTonnage);
 
             // Assert
-           Assert.IsNotNull(result);
+            Assert.IsNotNull(result);
             Assert.IsNotNull(result.CalcResultLateReportingTonnageTotal);
         }
 
