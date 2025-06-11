@@ -21,7 +21,6 @@ namespace EPR.Calculator.Service.Common.UnitTests
             var testFinancialYear = "2024-25";
             var testMessageType = "Result";
 
-
             // Act
             var calculatorRunParameter = new CalculatorRunParameter
             {
