@@ -12,7 +12,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
     public class CalculationResultsExporter : ICalculationResultsExporter
     {
         /// <inheritdoc/>
-        public string Export(CalcResultSummary summary, IEnumerable<object> producerCalculations)
+        public string Export(CalcResultSummary summary, IEnumerable<object>? producerCalculations)
             => JsonSerializer.Serialize(
                 new
                 {
@@ -45,7 +45,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
                 FeeForLaDisposalCostsWithBadDebtprovision1 = data.TotalFeeforLADisposalCostswithBadDebtprovision1,
 
                 FeeForCommsCostsByMaterialWithoutBadDebtprovision2a = data.TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A,
-                BadDebtProvision2a = data.BadDebtProvisionFor2A = data.BadDebtProvisionFor2A,
+                BadDebtProvision2a = data.BadDebtProvisionFor2A,
                 FeeForCommsCostsByMaterialWitBadDebtprovision2a = data.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A,
 
                 FeeForCommsCostsUkWideWithoutBadDebtprovision2b = data.CommsCostHeaderWithoutBadDebtFor2bTitle,

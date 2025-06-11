@@ -1,14 +1,11 @@
 ﻿namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CalcResult
 {
-    using System;
-    using System.Dynamic;
     using System.Text.Json;
     using System.Text.Json.Nodes;
     using AutoFixture;
     using EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System.Linq;
     using System.Globalization;
 
     [TestClass]
