@@ -2,7 +2,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
 {
     using System;
     using AutoFixture;
-    using EPR.Calculator.Service.Function.Exporter.JsonExporter;
+    using EPR.Calculator.Service.Function.Exporter.JsonExporter.OnePlusFourApportionment;
     using EPR.Calculator.Service.Function.Mapper;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
