@@ -9,13 +9,13 @@
     using System.Globalization;
 
     [TestClass]
-    public class SummaryExporterTests
+    public class CalculationResultsExporterTests
     {
         private CalculationResultsExporter TestClass { get; init; }
 
         private IFixture Fixture { get; init; }
 
-        public SummaryExporterTests()
+        public CalculationResultsExporterTests()
         {
             Fixture = new Fixture();
             this.TestClass = new CalculationResultsExporter();
