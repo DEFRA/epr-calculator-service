@@ -327,6 +327,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 PercentageofProducerReportedTonnagevsAllProducers = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducersTotal(producersAndSubsidiaries, TotalPackagingTonnage),
 
                 isTotalRow = true,
+                isOverallTotalRow = isOverAllTotalRow,
             };
 
             TwoCCommsCostUtil.UpdateTwoCTotals(calcResult, producerDisposalFees, isOverAllTotalRow, totalRow, producersAndSubsidiaries, TotalPackagingTonnage);

@@ -18,6 +18,8 @@ namespace EPR.Calculator.Service.Function.Models
 
         public bool isTotalRow { get; set; } = false;
 
+        public bool isOverallTotalRow { get; set; } = false;
+
         public decimal TotalProducerDisposalFee { get; set; }
 
         public decimal BadDebtProvision { get; set; }
