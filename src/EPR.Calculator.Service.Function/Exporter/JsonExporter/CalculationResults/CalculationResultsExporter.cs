@@ -1,4 +1,5 @@
 ﻿using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Models.JsonExporter;
 using System.Collections.Generic;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -19,7 +20,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
                     calculationResults = new
                     {
                         producerCalculationResultsSummary = ArrangeSummary(summary),
-                        producerCalculationResults = new List<object>(),
+                        producerCalculationResults = new List<CalcSummaryProducerCalculationResults>(),
                     },
                 },
                 new JsonSerializerOptions
