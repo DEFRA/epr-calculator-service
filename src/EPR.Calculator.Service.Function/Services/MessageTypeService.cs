@@ -26,14 +26,13 @@
             var jObject = JObject.Parse(json);
             var messageType = jObject["MessageType"]?.ToString();
 
-            var targetType = messageType != null ? _typeMappings.GetValueOrDefault(messageType) : null;
+            if (string.IsNullOrWhiteSpace(messageType))
+                throw new ArgumentException("MessageType not found in the message.");
 
-            if (messageType != null && targetType == null)
+            if (!_typeMappings.TryGetValue(messageType, out var targetType))
                 throw new NotSupportedException($"Unsupported MessageType: {messageType}");
 
-            var typeToDeserialize = targetType ?? typeof(CreateResultFileMessage);
-
-            var result = JsonConvert.DeserializeObject(json, typeToDeserialize);
+            var result = JsonConvert.DeserializeObject(json, targetType);
 
             if (result is not MessageBase message)
                 throw new InvalidCastException($"Deserialized object is not of type {nameof(MessageBase)}.");

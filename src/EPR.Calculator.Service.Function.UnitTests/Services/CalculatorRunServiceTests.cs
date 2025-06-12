@@ -174,6 +174,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 Id = id,
                 FinancialYear = this.FinancialYear,
                 User = user,
+                MessageType = MessageTypes.Result
             };
 
             // The values that the service is expected to pass to the pipeline runner.
@@ -280,6 +281,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 Id = id,
                 FinancialYear = this.FinancialYear,
                 User = user,
+                MessageType = MessageTypes.Result
             };
 
             // The values that the service is expected to pass to the pipeline runner.
@@ -359,6 +361,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 Id = id,
                 FinancialYear = this.FinancialYear,
                 User = user,
+                MessageType = MessageTypes.Result
             };
 
             // The values that the service is expected to pass to the pipeline runner.
@@ -459,6 +462,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 Id = id,
                 FinancialYear = this.FinancialYear,
                 User = user,
+                MessageType = MessageTypes.Result
             };
 
             // Mock the AzureSynapseRunner to return true for the org pipeline and false for the pom pipeline
@@ -579,7 +583,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task StartProcess_ShouldLogErrorOn_TaskCanceledException()
         {
             // Arrange
-            var calculatorRunParameter = new CalculatorRunParameter { Id = 123, User = "testUser", FinancialYear = new FinancialYear("2024-25") };
+            var calculatorRunParameter = new CalculatorRunParameter { Id = 123, User = "testUser", FinancialYear = new FinancialYear("2024-25") , MessageType = MessageTypes.Result };
             string runName = "testRun";
             Environment.SetEnvironmentVariable(
                 EnvironmentVariableKeys.RpdStatusTimeout,
@@ -605,7 +609,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task StartProcess_ShouldReturnFalseOn_TaskCanceledException()
         {
             // Arrange
-            var calculatorRunParameter = new CalculatorRunParameter { Id = 1, User = "TestUser", FinancialYear = new FinancialYear("2024-25") };
+            var calculatorRunParameter = new CalculatorRunParameter { Id = 1, User = "TestUser", FinancialYear = new FinancialYear("2024-25"), MessageType = MessageTypes.Result };
             var runName = "TestRun";
             var mockHttpClient = new Mock<HttpClient>();
 
@@ -624,7 +628,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task StartProcess_ShouldReturnFalseOn_Exception()
         {
             // Arrange
-            var calculatorRunParameter = new CalculatorRunParameter { Id = 1, User = "TestUser", FinancialYear = new FinancialYear("2024-25") };
+            var calculatorRunParameter = new CalculatorRunParameter { Id = 1, User = "TestUser", FinancialYear = new FinancialYear("2024-25") , MessageType = MessageTypes.Result };
             var runName = "TestRun";
             var mockHttpClient = new Mock<HttpClient>();
 
@@ -643,7 +647,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task StartProcess_ShouldLogErrorOn_Exception()
         {
             // Arrange
-            var calculatorRunParameter = new CalculatorRunParameter { Id = 123, User = "testUser", FinancialYear = new FinancialYear("2024-25") };
+            var calculatorRunParameter = new CalculatorRunParameter { Id = 123, User = "testUser", FinancialYear = new FinancialYear("2024-25") , MessageType = MessageTypes.Result };
             string runName = "testRun";
             this.PipelineClientFactory.Setup(p => p.GetHttpClient(It.IsAny<Uri>())).Throws(new Exception("Test Exception"));
 

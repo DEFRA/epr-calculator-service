@@ -1,4 +1,4 @@
-namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.ScaledupProducers
+﻿namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.ScaledupProducers
 {
     using System.Text;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
