@@ -7,6 +7,8 @@
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System.Globalization;
+    using Moq;
+    using EPR.Calculator.Service.Function.Mapper;
 
     [TestClass]
     public class CalculationResultsExporterTests
@@ -18,7 +20,7 @@
         public CalculationResultsExporterTests()
         {
             Fixture = new Fixture();
-            this.TestClass = new CalculationResultsExporter();
+            this.TestClass = new CalculationResultsExporter(new Mock<ICommsCostsByMaterialFeesSummary2aMapper>().Object);
         }
 
         [TestMethod]
@@ -28,7 +30,7 @@
             var data = Fixture.Create<CalcResultSummary>();
 
             // Act
-            var result = this.TestClass.Export(data, new List<object>());
+            var result = this.TestClass.Export(data, new List<object>(), new List<int>());
 
 
             // Assert
@@ -45,8 +47,10 @@
             // Arrange
             var data = Fixture.Create<CalcResultSummary>();
 
+            var acceptIds = Fixture.Create<List<int>>();
+
             // Act
-            var json = this.TestClass.Export(data, null);
+            var json = this.TestClass.Export(data, null, acceptIds);
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["calculationResults"]!

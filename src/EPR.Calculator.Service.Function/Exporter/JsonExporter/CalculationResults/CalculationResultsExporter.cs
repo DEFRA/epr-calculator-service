@@ -1,6 +1,9 @@
-﻿using EPR.Calculator.Service.Function.Models;
+﻿using EPR.Calculator.Service.Function.Mapper;
+using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
@@ -12,15 +15,24 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
     /// </summary>
     public class CalculationResultsExporter : ICalculationResultsExporter
     {
+        private ICommsCostsByMaterialFeesSummary2aMapper commsCostsByMaterialFeesSummary2AMapper;
+
+
+        public CalculationResultsExporter(ICommsCostsByMaterialFeesSummary2aMapper commsCostsByMaterialFeesSummary2AMapper)
+        {
+            this.commsCostsByMaterialFeesSummary2AMapper = commsCostsByMaterialFeesSummary2AMapper;
+        }
+
+
         /// <inheritdoc/>
-        public string Export(CalcResultSummary summary, IEnumerable<object>? producerCalculations)
+        public string Export(CalcResultSummary summary, IEnumerable<object>? producerCalculations, IEnumerable<int> acceptedProducerIds)
             => JsonSerializer.Serialize(
                 new
                 {
                     calculationResults = new
                     {
                         producerCalculationResultsSummary = ArrangeSummary(summary),
-                        producerCalculationResults = new List<CalcSummaryProducerCalculationResults>(),
+                        producerCalculationResults = ArrangeProducerCalculationResult(summary, acceptedProducerIds),
                     },
                 },
                 new JsonSerializerOptions
@@ -71,6 +83,22 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
                 BadDebtProvision5 = data.SaSetupCostsBadDebtProvisionTitleSection5,
                 OneOffFeeSaSetuCostsWithoutbadDebtProvision5 = data.SaSetupCostsWithBadDebtProvisionTitleSection5,
             };
+        }
+
+
+        private List<CalcSummaryProducerCalculationResults> ArrangeProducerCalculationResult(CalcResultSummary calcResultSummary, IEnumerable<int> acceptedProducerIds)
+        {
+            var results = new List<CalcSummaryProducerCalculationResults>();
+           
+
+            var filteredProducers = calcResultSummary.ProducerDisposalFees.Where(producer => acceptedProducerIds.ToString().Contains(producer.ProducerId) && !producer.isTotalRow) ?? [];
+
+            foreach (var producer in filteredProducers)
+            {
+                results.Add(new CalcSummaryProducerCalculationResults { CommsCostsByMaterialFeesSummary2a = this.commsCostsByMaterialFeesSummary2AMapper.Map(producer) });
+            }
+
+            return results;
         }
     }
 }

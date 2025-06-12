@@ -8,6 +8,6 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
     public class CalcSummaryProducerCalculationResults
     {
-        public List<CalcResultSummaryCommsCostsByMaterialFeesSummary2a> CommsCostsByMaterialFeesSummary2a { get; set; }
+        public CalcResultSummaryCommsCostsByMaterialFeesSummary2a CommsCostsByMaterialFeesSummary2a { get; set; }
     }
 }

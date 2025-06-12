@@ -11,6 +11,6 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
         /// <param name="summary">The calculation result summary.</param>
         /// <param name="producerCalculations">The producer calculations.</param>
         /// <returns></returns>
-        string Export(CalcResultSummary summary, IEnumerable<object> producerCalculations);
+        string Export(CalcResultSummary summary, IEnumerable<object> producerCalculations, IEnumerable<int> acceptedProducerIds);
     }
 }
