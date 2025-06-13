@@ -14,6 +14,7 @@
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
 
     [TestClass]
     public class CalcResultsExporterTests

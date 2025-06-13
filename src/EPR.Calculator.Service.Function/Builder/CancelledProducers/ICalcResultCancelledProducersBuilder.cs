@@ -2,7 +2,7 @@
 using EPR.Calculator.Service.Function.Models;
 using System.Threading.Tasks;
 
-namespace EPR.Calculator.Service.Function.Builder.LateReportingTonnages
+namespace EPR.Calculator.Service.Function.Builder.CancelledProducers
 {
     public interface ICalcResultCancelledProducersBuilder
     {

@@ -44,6 +44,7 @@
         public const string TradingName = "Trading Name";
 
         public const string LastTonnage = "Last Tonnage";
+        public const int LastTonnageSubHeaderIndex = 4;
 
         public const string Aluminium = "Aluminium";
         public const string FibreComposite = "Fibre composite";
@@ -55,6 +56,7 @@
         public const string OtherMaterials = "Other materials";
 
         public const string LatestInvoice = "Latest Invoice";
+        public const int LatestInvoiceSubHeaderIndex = 11;
 
         public const string LastInvoicedTotal = "Last Invoiced Total";
         public const string RunNumber = "Run Number";

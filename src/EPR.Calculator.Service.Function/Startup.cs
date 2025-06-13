@@ -46,6 +46,8 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.ScaledupProducers;
+using EPR.Calculator.Service.Function.Builder.CancelledProducers;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 

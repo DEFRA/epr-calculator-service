@@ -2,6 +2,7 @@ namespace EPR.Calculator.Service.Function.Builder
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using EPR.Calculator.Service.Function.Builder.CancelledProducers;
     using EPR.Calculator.Service.Function.Builder.CommsCost;
     using EPR.Calculator.Service.Function.Builder.Detail;
     using EPR.Calculator.Service.Function.Builder.LaDisposalCost;

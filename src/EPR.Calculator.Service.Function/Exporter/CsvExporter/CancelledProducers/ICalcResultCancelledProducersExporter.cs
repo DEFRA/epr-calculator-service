@@ -1,4 +1,4 @@
-﻿namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers
+﻿namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers
 {
     using System.Text;
     using EPR.Calculator.Service.Function.Models;

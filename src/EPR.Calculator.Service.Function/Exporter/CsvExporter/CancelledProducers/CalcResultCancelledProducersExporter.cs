@@ -1,4 +1,4 @@
-﻿namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers
+﻿namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -39,8 +39,8 @@
             const int maxColumnSize = CommonConstants.SecondaryHeaderMaxColumnSize;
             var headerRows = new string[maxColumnSize];
 
-            headerRows[4] = CsvSanitiser.SanitiseData(CommonConstants.LastTonnage);
-            headerRows[11] = CsvSanitiser.SanitiseData(CommonConstants.LatestInvoice);
+            headerRows[CommonConstants.LastTonnageSubHeaderIndex] = CsvSanitiser.SanitiseData(CommonConstants.LastTonnage);
+            headerRows[CommonConstants.LatestInvoiceSubHeaderIndex] = CsvSanitiser.SanitiseData(CommonConstants.LatestInvoice);
 
             var headerRow = string.Join(CommonConstants.CsvFileDelimiter, headerRows);
             csvContent.AppendLine(headerRow);
@@ -67,7 +67,7 @@
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.OtherMaterials));
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.LastInvoicedTotal));
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.RunNumber));
-            csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.RunNumber));
+            csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.RunName));
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.BillingInstructionId));
         }
     }

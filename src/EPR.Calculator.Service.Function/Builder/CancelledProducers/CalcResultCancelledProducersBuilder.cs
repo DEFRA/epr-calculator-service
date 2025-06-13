@@ -1,4 +1,4 @@
-﻿namespace EPR.Calculator.Service.Function.Builder.LateReportingTonnages
+﻿namespace EPR.Calculator.Service.Function.Builder.CancelledProducers
 {
     using System.Collections.Generic;
     using System.Globalization;
@@ -11,20 +11,9 @@
     using Microsoft.EntityFrameworkCore;
 
     public class CalcResultCancelledProducersBuilder : ICalcResultCancelledProducersBuilder
-    {
-        private readonly ApplicationDBContext context;
-
-        public CalcResultCancelledProducersBuilder(ApplicationDBContext context)
-        {
-            this.context = context;
-        }
-
+    {        
         public async Task<CalcResultCancelledProducersResponse> Construct(CalcResultsRequestDto resultsRequestDto)
-        {
-            var culture = CultureInfo.CreateSpecificCulture("en-GB");
-            culture.NumberFormat.CurrencySymbol = "£";
-            culture.NumberFormat.CurrencyPositivePattern = 0;
-
+        {        
             // Set up Top Header
             var topHeader = new CalcResultCancelledProducersDTO
             {

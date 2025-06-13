@@ -4,6 +4,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 {
     using System;
     using System.Text;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;

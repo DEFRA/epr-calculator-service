@@ -2,6 +2,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 {
     using AutoFixture;
     using EPR.Calculator.Service.Function.Builder;
+    using EPR.Calculator.Service.Function.Builder.CancelledProducers;
     using EPR.Calculator.Service.Function.Builder.CommsCost;
     using EPR.Calculator.Service.Function.Builder.Detail;
     using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
