@@ -1,4 +1,6 @@
-﻿using EPR.Calculator.Service.Function.Mapper;
+﻿using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Mapper;
+using EPR.Calculator.Service.Function.Mappers;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
 using System;
@@ -89,12 +91,13 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
         private List<CalcSummaryProducerCalculationResults> ArrangeProducerCalculationResult(CalcResultSummary calcResultSummary, IEnumerable<int> acceptedProducerIds)
         {
             var results = new List<CalcSummaryProducerCalculationResults>();
-           
 
-            var filteredProducers = calcResultSummary.ProducerDisposalFees.Where(producer => acceptedProducerIds.ToString().Contains(producer.ProducerId) && !producer.isTotalRow) ?? [];
+            var filteredProducers = calcResultSummary.ProducerDisposalFees.Where(producer => acceptedProducerIds.Contains(int.Parse(producer.ProducerId)) && !string.IsNullOrEmpty(producer.Level)) ?? [];
 
             foreach (var producer in filteredProducers)
             {
+                results.Add(new CalcSummaryProducerCalculationResults { ProducerDisposalFeesWithBadDebtProvision1 = ProducerDisposalFeesWithBadDebtProvision1JsonMapper.Map(producer.ProducerDisposalFeesByMaterial) });
+
                 results.Add(new CalcSummaryProducerCalculationResults { CommsCostsByMaterialFeesSummary2a = this.commsCostsByMaterialFeesSummary2AMapper.Map(producer) });
             }
 
