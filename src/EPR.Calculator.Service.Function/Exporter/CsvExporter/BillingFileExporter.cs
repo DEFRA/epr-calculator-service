@@ -48,7 +48,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             this.commsCostExporter = commsCostExporter;
         }
 
-        public string Export(CalcResult results, IEnumerable<int> acceptedOrganisations)
+        public string Export(CalcResult results, IEnumerable<int> acceptedProducerIds)
         {
             if(results == null)
             {
@@ -70,11 +70,98 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 
             laDisposalCostExporter.Export(results.CalcResultLaDisposalCostData, csvContent);
 
+            var acceptedProducers = GetScaledUpProducersForExport(
+                results.CalcResultScaledupProducers,
+                acceptedProducerIds);
             calcResultScaledupProducersExporter.Export(results.CalcResultScaledupProducers, csvContent);
 
-            calcResultSummaryExporter.Export(results.CalcResultSummary, csvContent);
+            var acceptedCalcResultSummary = GetAcceptedProducersCalcResults(results.CalcResultSummary, acceptedProducerIds);
+            calcResultSummaryExporter.Export(acceptedCalcResultSummary, csvContent);
 
             return csvContent.ToString();
+        }
+
+        private CalcResultSummary GetAcceptedProducersCalcResults(CalcResultSummary calcResultSummary, IEnumerable<int> acceptedProducerIds)
+        {
+            return new CalcResultSummary
+            {
+                BadDebtProvisionFor1 = calcResultSummary.BadDebtProvisionFor1,
+                BadDebtProvisionFor2A = calcResultSummary.BadDebtProvisionFor2A,
+                BadDebtProvisionTitleSection3 = calcResultSummary.BadDebtProvisionTitleSection3,
+                ColumnHeaders = calcResultSummary.ColumnHeaders,
+                CommsCostHeaderBadDebtProvisionFor2bTitle = calcResultSummary.CommsCostHeaderBadDebtProvisionFor2bTitle,
+                CommsCostHeaderWithBadDebtFor2bTitle = calcResultSummary.CommsCostHeaderWithBadDebtFor2bTitle,
+                CommsCostHeaderWithoutBadDebtFor2bTitle = calcResultSummary.CommsCostHeaderWithoutBadDebtFor2bTitle,
+                LaDataPrepCostsBadDebtProvisionTitleSection4 = calcResultSummary.LaDataPrepCostsBadDebtProvisionTitleSection4,
+                LaDataPrepCostsTitleSection4 = calcResultSummary.LaDataPrepCostsTitleSection4,
+                LaDataPrepCostsWithBadDebtProvisionTitleSection4 = calcResultSummary.LaDataPrepCostsWithBadDebtProvisionTitleSection4,
+                MaterialBreakdownHeaders = calcResultSummary.MaterialBreakdownHeaders,
+                NotesHeader = calcResultSummary.NotesHeader,
+                ProducerDisposalFees = GetAcceptedProducerDisposalFees(calcResultSummary.ProducerDisposalFees, acceptedProducerIds),
+                ProducerDisposalFeesHeaders = calcResultSummary.ProducerDisposalFeesHeaders,
+                ResultSummaryHeader = calcResultSummary.ResultSummaryHeader,
+                SaOperatingCostsWithTitleSection3 = calcResultSummary.SaOperatingCostsWithTitleSection3,
+                SaOperatingCostsWoTitleSection3 = calcResultSummary.SaOperatingCostsWoTitleSection3,
+                SaSetupCostsBadDebtProvisionTitleSection5 = calcResultSummary.SaSetupCostsBadDebtProvisionTitleSection5,
+                SaSetupCostsTitleSection5 = calcResultSummary.SaSetupCostsTitleSection5,
+                SaSetupCostsWithBadDebtProvisionTitleSection5 = calcResultSummary.SaSetupCostsWithBadDebtProvisionTitleSection5,
+                TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A = calcResultSummary.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A,
+                TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A = calcResultSummary.TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A,
+                TotalFeeforLADisposalCostswithBadDebtprovision1 = calcResultSummary.TotalFeeforLADisposalCostswithBadDebtprovision1,
+                TotalFeeforLADisposalCostswoBadDebtprovision1 = calcResultSummary.TotalFeeforLADisposalCostswoBadDebtprovision1,
+                TotalOnePlus2A2B2CFeeWithBadDebtProvision = calcResultSummary.TotalOnePlus2A2B2CFeeWithBadDebtProvision,
+                TwoCBadDebtProvision = calcResultSummary.TwoCBadDebtProvision,
+                TwoCCommsCostsByCountryWithBadDebtProvision = calcResultSummary.TwoCCommsCostsByCountryWithBadDebtProvision,
+                TwoCCommsCostsByCountryWithoutBadDebtProvision = calcResultSummary.TwoCCommsCostsByCountryWithoutBadDebtProvision,
+            };
+        }
+
+        private IEnumerable<CalcResultSummaryProducerDisposalFees> GetAcceptedProducerDisposalFees(
+            IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
+            IEnumerable<int> acceptedProducerIds)
+        {
+            var acceptedProducerFees = producerDisposalFees.Where(x => acceptedProducerIds.Contains(x.ProducerIdInt)).ToList();
+
+            acceptedProducerFees.ForEach(x =>
+            {
+                if (x.isOverallTotalRow)
+                {
+                    //Update the Rows
+                }
+            });
+            return acceptedProducerFees;
+        }
+
+        public CalcResultScaledupProducers GetScaledUpProducersForExport(
+            CalcResultScaledupProducers producers,
+            IEnumerable<int> acceptedProducerIds)
+        {
+            return new CalcResultScaledupProducers
+            {
+                ColumnHeaders = producers.ColumnHeaders,
+                MaterialBreakdownHeaders = producers.MaterialBreakdownHeaders,
+                ScaledupProducers = producers.ScaledupProducers != null
+                    ?
+                    GetScaledupProducers(producers.ScaledupProducers, acceptedProducerIds)
+                    :
+                    new List<CalcResultScaledupProducer>(),
+                TitleHeader = producers.TitleHeader,
+            };
+        }
+
+        private IEnumerable<CalcResultScaledupProducer> GetScaledupProducers(
+            IEnumerable<CalcResultScaledupProducer> scaledupProducers, 
+            IEnumerable<int> acceptedProducerIds)
+        {
+            var acceptedProducers = scaledupProducers.Where(x => acceptedProducerIds.Contains(x.ProducerId)).ToList();
+            acceptedProducers.ForEach(x => 
+            {
+                if (x.IsTotalRow)
+                {
+                    //Update the Rows
+                }
+            });
+            return acceptedProducers;
         }
     }
 }

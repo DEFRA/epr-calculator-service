@@ -4,6 +4,8 @@ namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResultSummaryProducerDisposalFees
     {
+        public int ProducerIdInt { get; set; }
+
         public required string ProducerId { get; set; }
 
         public required string SubsidiaryId { get; set; }
