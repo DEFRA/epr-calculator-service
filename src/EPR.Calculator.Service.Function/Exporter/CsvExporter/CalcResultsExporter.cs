@@ -23,6 +23,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         private readonly ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter;
         private readonly ICalcResultLaDisposalCostExporter laDisposalCostExporter;
         private readonly ICommsCostExporter commsCostExporter;
+        private readonly ICalcResultCancelledProducersExporter calcResultCancelledProducersExporter;
 
         public CalcResultsExporter(
             ILateReportingExporter lateReportingExporter,
@@ -33,7 +34,8 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             ILapcaptDetailExporter lapcaptDetailExporter,
             ICalcResultParameterOtherCostExporter parameterOtherCosts,
             ICommsCostExporter commsCostExporter,
-            ICalcResultSummaryExporter calcResultSummaryExporter)
+            ICalcResultSummaryExporter calcResultSummaryExporter,
+            ICalcResultCancelledProducersExporter calcResultCancelledProducersExporter)
         {
             this.resultDetailexporter = resultDetailexporter;
             this.onePlusFourApportionmentExporter = onePlusFourApportionmentExporter;
@@ -44,6 +46,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             this.calcResultSummaryExporter = calcResultSummaryExporter;
             this.laDisposalCostExporter = laDisposalCostExporter;
             this.commsCostExporter = commsCostExporter;
+            this.calcResultCancelledProducersExporter = calcResultCancelledProducersExporter;
         }
 
         public string Export(CalcResult results)
@@ -67,6 +70,8 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             commsCostExporter.Export(results.CalcResultCommsCostReportDetail, csvContent);
 
             laDisposalCostExporter.Export(results.CalcResultLaDisposalCostData, csvContent);
+
+            calcResultCancelledProducersExporter.Export(results.CalcResultCancelledProducers, csvContent);
 
             calcResultScaledupProducersExporter.Export(results.CalcResultScaledupProducers, csvContent);
 

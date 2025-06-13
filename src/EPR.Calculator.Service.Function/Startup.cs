@@ -145,6 +145,8 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcCountryApportionmentService, CalcCountryApportionmentService>();
             services.AddTransient<ICalcResultScaledupProducersJsonExporter, CalcResultScaledupProducersJsonExporter>();
             services.AddTransient<ICalcResultScaledupProducersJsonMapper, CalcResultScaledupProducersJsonMapper>();
+            services.AddTransient<ICalcResultCancelledProducersBuilder, CalcResultCancelledProducersBuilder>();
+            services.AddTransient<ICalcResultCancelledProducersExporter, CalcResultCancelledProducersExporter>();
 #if !DEBUG
             SetupBlobStorage(services);
             services.AddTransient<IConfigurationService, Configuration>();
