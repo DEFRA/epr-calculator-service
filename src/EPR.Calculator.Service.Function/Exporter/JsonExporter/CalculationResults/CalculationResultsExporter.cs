@@ -91,7 +91,8 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
             var results = new List<CalcSummaryProducerCalculationResults>();
            
 
-            var filteredProducers = calcResultSummary.ProducerDisposalFees.Where(producer => acceptedProducerIds.ToString().Contains(producer.ProducerId) && !producer.isTotalRow) ?? [];
+            var filteredProducers = calcResultSummary.ProducerDisposalFees.Where(producer => acceptedProducerIds.Contains(int.Parse(producer.ProducerId)) 
+            && !producer.isTotalRow && !string.IsNullOrWhiteSpace(producer.Level)) ?? [];
 
             foreach (var producer in filteredProducers)
             {
