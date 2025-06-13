@@ -27,7 +27,7 @@
         public void CanCallExport()
         {
             // Arrange
-            var data = Fixture.Create<CalcResultSummary>();
+            var data = SetCalcResultSummayData();
 
             // Act
             var result = this.TestClass.Export(data, new List<object>(), new List<int>());
@@ -35,7 +35,7 @@
 
             // Assert
             Assert.IsNotNull(result);
-        }
+        }        
 
         /// <summary>
         /// Serialises a <see cref="CalcResultSummary"/>, then parses the resulting JSON
@@ -45,12 +45,12 @@
         public void Export_ValuesAreValid()
         {
             // Arrange
-            var data = Fixture.Create<CalcResultSummary>();
+            var data = SetCalcResultSummayData();
 
-            var acceptIds = Fixture.Create<List<int>>();
+            var acceptIds = new List<int> { 1, 2, 3 };
 
             // Act
-            var json = this.TestClass.Export(data, null, acceptIds);
+            var json = this.TestClass.Export(data, null, new List<int> { 1, 2, 3 });
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["calculationResults"]!
@@ -126,17 +126,10 @@
         public void Export_ProducerDisposalFeesWithBadDebtProvision1_ReturnsValidValues()
         {
             // Arrange
-            var data = Fixture.Create<CalcResultSummary>();
-
-            var acceptIds = new List<int> {1, 2, 3 };            
-
-            for (var i = 1; i <= data.ProducerDisposalFees.Count(); i++)
-            {
-                data.ProducerDisposalFees.ToList()[i-1].ProducerId = i.ToString();
-            }
+            var data = SetCalcResultSummayData();
 
             // Act
-            var json = this.TestClass.Export(data, null, acceptIds);
+            var json = this.TestClass.Export(data, null, new List<int> { 1, 2, 3 });
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["calculationResults"]!
@@ -173,6 +166,20 @@
                 expected.ToString("C", CultureInfo.CreateSpecificCulture("en-GB")),
                 actual.GetValue<string>(),
                 $"Expected {expected} to be equal to {actual}");
+        }
+
+        private CalcResultSummary SetCalcResultSummayData()
+        {            
+            var data = Fixture.Create<CalcResultSummary>();
+
+            var acceptIds = new List<int> { 1, 2, 3 };
+
+            for (var i = 1; i <= data.ProducerDisposalFees.Count(); i++)
+            {
+                data.ProducerDisposalFees.ToList()[i - 1].ProducerId = i.ToString();
+            }
+
+            return data;
         }
     }
 }
