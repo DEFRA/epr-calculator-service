@@ -18,13 +18,13 @@
             csvContent.AppendLine();
 
             // Add headers
-            PrepareCancelledProducersHeader(cancelledProducers, csvContent);            
+            PrepareCancelledProducersHeader(cancelledProducers, csvContent);
         }
 
         private static void PrepareCancelledProducersHeader(CalcResultCancelledProducersResponse response, StringBuilder csvContent)
         {
             // Add cancelled producers header
-            csvContent.AppendLine(CsvSanitiser.SanitiseData(response.TitleHeader!));            
+            csvContent.AppendLine(CsvSanitiser.SanitiseData(response.TitleHeader!));
 
             // Add sub header
             WriteCancelledProducersSecondaryHeaders(response.CancelledProducers!, csvContent);
@@ -48,8 +48,7 @@
 
         private static void WriteCancelledProducersColumnHeaders(IEnumerable<CalcResultCancelledProducersDTO> producers, StringBuilder csvContent)
         {
-            var header = producers.FirstOrDefault();
-            if (header == null)
+            if (!producers.Any())
             {
                 return;
             }
