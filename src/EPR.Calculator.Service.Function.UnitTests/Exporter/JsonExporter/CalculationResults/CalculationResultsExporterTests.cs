@@ -28,6 +28,13 @@
         {
             // Arrange
             var data = Fixture.Create<CalcResultSummary>();
+            var acceptIds = new List<int> { 1, 2, 3 };
+
+            for (int i = 1; i <= data.ProducerDisposalFees.Count(); i++)
+            {
+                data.ProducerDisposalFees.ToList()[i - 1].ProducerId = i.ToString();
+            }
+
 
             // Act
             var result = this.TestClass.Export(data, new List<object>(), new List<int>());
@@ -47,7 +54,13 @@
             // Arrange
             var data = Fixture.Create<CalcResultSummary>();
 
-            var acceptIds = Fixture.Create<List<int>>();
+            var acceptIds = new List<int> { 1, 2, 3 };
+
+            for (int i = 1; i <= data.ProducerDisposalFees.Count(); i++)
+            {
+                data.ProducerDisposalFees.ToList()[i - 1].ProducerId = i.ToString();
+            }
+
 
             // Act
             var json = this.TestClass.Export(data, null, acceptIds);
