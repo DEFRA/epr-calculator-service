@@ -16,6 +16,11 @@
         public string? RunName { get; set; }
 
         /// <summary>
+        /// Gets or sets the message Type of the run.
+        /// </summary>
+        public string? MessageType { get; set; }
+
+        /// <summary>
         /// Gets or sets the message to log.
         /// </summary>
         required public string Message { get; set; }

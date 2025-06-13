@@ -76,12 +76,14 @@
                 RunId = 123,
                 RunName = "Test Run",
                 Message = "Test Message",
+                MessageType = "Result"
             };
 
             // Assert
             Assert.AreEqual(123, trackMessage.RunId);
             Assert.AreEqual("Test Run", trackMessage.RunName);
             Assert.AreEqual("Test Message", trackMessage.Message);
+            Assert.AreEqual("Result", trackMessage.MessageType);
         }
     }
 }

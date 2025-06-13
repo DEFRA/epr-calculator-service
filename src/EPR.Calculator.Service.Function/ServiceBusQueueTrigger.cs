@@ -86,12 +86,14 @@ namespace EPR.Calculator.Service.Function
                 else if (resultMessageType is CreateResultFileMessage resultmessage)
                 {                    
                     var calculatorRunParameter = this.calculatorRunParameterMapper.Map(resultmessage);
-                    
+                    this.telemetryLogger.LogInformation(new TrackMessage { Message = $"Process is going start with message type: {calculatorRunParameter.MessageType}" });
+
                     bool processStatus = await this.calculatorRunService.StartProcess(calculatorRunParameter, runName);
                     this.telemetryLogger.LogInformation(new TrackMessage
                     {
                         RunId = calculatorRunParameter.Id,
                         RunName = runName,
+                        MessageType = calculatorRunParameter.MessageType,
                         Message = $"Process status: {processStatus}",
                     });
                 }

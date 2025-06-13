@@ -17,10 +17,10 @@ namespace EPR.Calculator.Service.Function.Mapper
                 EnglandTotalWithBadDebtProvision = calcResultSummaryProducerDisposalFees.EnglandTotalWithBadDebtProvision2A,
                 NorthernIrelandTotalWithBadDebtProvision = calcResultSummaryProducerDisposalFees.NorthernIrelandTotalWithBadDebtProvision2A,
                 ScotlandTotalWithBadDebtProvision = calcResultSummaryProducerDisposalFees.ScotlandTotalWithBadDebtProvision2A,
-                TotalProducerFeeForCommsCostsWithBadDebtProvision2a = calcResultSummaryProducerDisposalFees.TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision,
+                TotalProducerFeeForCommsCostsWithBadDebtProvision2a = calcResultSummaryProducerDisposalFees.TotalProducerFeeforCommsCostsbyMaterialwithBadDebtprovision,
                 TotalBadDebtProvision = calcResultSummaryProducerDisposalFees.BadDebtProvisionFor2A,
                 WalesTotalWithBadDebtProvision = calcResultSummaryProducerDisposalFees.WalesTotalWithBadDebtProvision2A,
-                TotalProducerFeeForCommsCostsWithoutBadDebtProvision2a = calcResultSummaryProducerDisposalFees.TotalProducerFeeforCommsCostsbyMaterialwithBadDebtprovision
+                TotalProducerFeeForCommsCostsWithoutBadDebtProvision2a = calcResultSummaryProducerDisposalFees.TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision
             };
 
         }
