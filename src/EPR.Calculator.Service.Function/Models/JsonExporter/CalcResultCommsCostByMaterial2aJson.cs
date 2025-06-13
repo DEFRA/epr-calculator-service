@@ -1,9 +1,16 @@
-﻿using EPR.Calculator.Service.Function.Converter;
+﻿using System.Collections.Generic;
+using EPR.Calculator.Service.Function.Converter;
 using Newtonsoft.Json;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
-    public class CalcResultCommsCostByMaterial2aJson
+    public record CalcResultCommsCostByMaterial2aJson
+    {
+        [JsonProperty(PropertyName = "materialBreakdown")]
+        public IEnumerable<CalcResultCommsCostByMaterial2aMaterialBreakdown> MaterialBreakdown { get; set; }
+    }
+
+    public record CalcResultCommsCostByMaterial2aMaterialBreakdown
     {
         [JsonProperty(PropertyName = "materialName")]
         public required string MaterialName { get; set; }

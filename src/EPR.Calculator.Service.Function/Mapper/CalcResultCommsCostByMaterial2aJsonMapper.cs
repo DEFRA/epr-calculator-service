@@ -6,13 +6,23 @@ namespace EPR.Calculator.Service.Function.Mapper
 {
     public class CalcResultCommsCostByMaterial2aJsonMapper : ICalcResultCommsCostByMaterial2aJsonMapper
     {
-        public IEnumerable<CalcResultCommsCostByMaterial2aJson> Map(CalcResultSummaryProducerDisposalFees calcResultSummaryProducerDisposalFees)
+        public CalcResultCommsCostByMaterial2aJson Map(
+            Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostByMaterial)
         {
-            var result = new List<CalcResultCommsCostByMaterial2aJson>();
-
-            foreach (var item in calcResultSummaryProducerDisposalFees.ProducerCommsFeesByMaterial!)
+            return new CalcResultCommsCostByMaterial2aJson
             {
-                result.Add(new CalcResultCommsCostByMaterial2aJson
+                MaterialBreakdown = GetMaterialBreakdown(commsCostByMaterial)
+            };
+        }
+
+        public IEnumerable<CalcResultCommsCostByMaterial2aMaterialBreakdown> GetMaterialBreakdown(
+            Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostByMaterial)
+        {
+            var materialBreakdown = new List<CalcResultCommsCostByMaterial2aMaterialBreakdown>();
+
+            foreach (var item in commsCostByMaterial)
+            {
+                materialBreakdown.Add(new CalcResultCommsCostByMaterial2aMaterialBreakdown
                 {
                     MaterialName = item.Key,
                     HouseholdPackagingWasteTonnage = item.Value.HouseholdPackagingWasteTonnage,
@@ -30,7 +40,7 @@ namespace EPR.Calculator.Service.Function.Mapper
                 });
             }
 
-            return result;
+            return materialBreakdown;
         }
     }
 }

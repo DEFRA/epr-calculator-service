@@ -9,6 +9,9 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
     public class CalcSummaryProducerCalculationResults
     {
         public ProducerDisposalFeesWithBadDebtProvision1 ProducerDisposalFeesWithBadDebtProvision1 { get; set; }
+
+        public CalcResultCommsCostByMaterial2aJson CalcResultCommsCostByMaterial2aJson { get; set; }
+
         public CalcResultSummaryCommsCostsByMaterialFeesSummary2a CommsCostsByMaterialFeesSummary2a { get; set; }
     }
 }

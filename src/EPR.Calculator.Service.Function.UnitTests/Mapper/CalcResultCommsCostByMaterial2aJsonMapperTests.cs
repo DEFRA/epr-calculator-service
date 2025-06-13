@@ -20,10 +20,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
         {
             // Arrange
             var fixture = new Fixture();
-            var calcResultSummaryProducerDisposalFees = fixture.Create<CalcResultSummaryProducerDisposalFees>();
+            var commsCostByMaterial = fixture.Create<Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>>();
 
             // Act
-            var result = ((ICalcResultCommsCostByMaterial2aJsonMapper)_testClass).Map(calcResultSummaryProducerDisposalFees);
+            var result = ((ICalcResultCommsCostByMaterial2aJsonMapper)_testClass).Map(commsCostByMaterial);
 
             // Assert
             Assert.IsNotNull(result);

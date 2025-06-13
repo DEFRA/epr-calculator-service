@@ -18,11 +18,13 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
     public class CalculationResultsExporter : ICalculationResultsExporter
     {
         private ICommsCostsByMaterialFeesSummary2aMapper commsCostsByMaterialFeesSummary2AMapper;
+        private ICalcResultCommsCostByMaterial2aJsonMapper commsCostByMaterial2aJsonMapper;
 
-
-        public CalculationResultsExporter(ICommsCostsByMaterialFeesSummary2aMapper commsCostsByMaterialFeesSummary2AMapper)
+        public CalculationResultsExporter(ICommsCostsByMaterialFeesSummary2aMapper commsCostsByMaterialFeesSummary2AMapper,
+            ICalcResultCommsCostByMaterial2aJsonMapper commsCostByMaterial2aJsonMapper)
         {
             this.commsCostsByMaterialFeesSummary2AMapper = commsCostsByMaterialFeesSummary2AMapper;
+            this.commsCostByMaterial2aJsonMapper = commsCostByMaterial2aJsonMapper;
         }
 
 
@@ -96,9 +98,11 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
 
             foreach (var producer in filteredProducers)
             {
-                results.Add(new CalcSummaryProducerCalculationResults { ProducerDisposalFeesWithBadDebtProvision1 = ProducerDisposalFeesWithBadDebtProvision1JsonMapper.Map(producer.ProducerDisposalFeesByMaterial) });
-
-                results.Add(new CalcSummaryProducerCalculationResults { CommsCostsByMaterialFeesSummary2a = this.commsCostsByMaterialFeesSummary2AMapper.Map(producer) });
+                results.Add(new CalcSummaryProducerCalculationResults {
+                    ProducerDisposalFeesWithBadDebtProvision1 = ProducerDisposalFeesWithBadDebtProvision1JsonMapper.Map(producer.ProducerDisposalFeesByMaterial),
+                    CalcResultCommsCostByMaterial2aJson = this.commsCostByMaterial2aJsonMapper.Map(producer.ProducerCommsFeesByMaterial),
+                    CommsCostsByMaterialFeesSummary2a = this.commsCostsByMaterialFeesSummary2AMapper.Map(producer)
+                });
             }
 
             return results;

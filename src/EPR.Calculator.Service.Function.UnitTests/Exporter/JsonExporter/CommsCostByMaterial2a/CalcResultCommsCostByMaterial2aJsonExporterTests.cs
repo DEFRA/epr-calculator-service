@@ -25,15 +25,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
         {
             // Arrange
             var fixture = new Fixture();
-            var calcResultSummaryProducerDisposalFees = fixture.Create<CalcResultSummaryProducerDisposalFees>();
+            var commsCostByMaterial = fixture.Create<Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>>();
 
-            _testMapper.Setup(mock => mock.Map(It.IsAny<CalcResultSummaryProducerDisposalFees>())).Returns(fixture.Create<IEnumerable<CalcResultCommsCostByMaterial2aJson>>());
+            _testMapper.Setup(mock => mock.Map(It.IsAny<Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>>())).Returns(fixture.Create<CalcResultCommsCostByMaterial2aJson>());
 
             // Act
-            var result = _testClass.Export(calcResultSummaryProducerDisposalFees);
+            var result = _testClass.Export(commsCostByMaterial);
 
             // Assert
-            _testMapper.Verify(mock => mock.Map(It.IsAny<CalcResultSummaryProducerDisposalFees>()));
+            _testMapper.Verify(mock => mock.Map(It.IsAny<Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>>()));
 
             Assert.AreNotEqual(string.Empty, result);
         }

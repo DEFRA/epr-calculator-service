@@ -1,10 +1,8 @@
-﻿using EPR.Calculator.Service.Function.Constants;
+﻿using System.Collections.Generic;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
-using System;
-using System.Collections.Generic;
 
-namespace EPR.Calculator.Service.Function.Mappers
+namespace EPR.Calculator.Service.Function.Mapper
 {
     public static class ProducerDisposalFeesWithBadDebtProvision1JsonMapper
     {

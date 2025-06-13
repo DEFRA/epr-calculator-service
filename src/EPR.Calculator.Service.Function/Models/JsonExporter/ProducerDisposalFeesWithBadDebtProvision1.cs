@@ -1,17 +1,12 @@
-﻿using EPR.Calculator.Service.Function.Converter;
+﻿using System.Collections.Generic;
+using EPR.Calculator.Service.Function.Converter;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
     public record ProducerDisposalFeesWithBadDebtProvision1
     {
-        [JsonProperty("materialBreakdown")]
+        [JsonProperty(PropertyName = "materialBreakdown")]
         public IEnumerable<ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown> MaterialBreakdown { get; set; }
     }
 
