@@ -8,9 +8,8 @@
         /// <summary>
         /// Gets or sets the type identifier of the message.
         /// This value is typically used to determine the specific message subclass during deserialization.
-        /// This property may be <c>null</c> if the message type is not specified.
         /// </summary>
-        public string? MessageType { get; set; }
+        required public string MessageType { get; set; }
 
         /// <summary>
         /// Gets or sets the identifier for the calculator run.
