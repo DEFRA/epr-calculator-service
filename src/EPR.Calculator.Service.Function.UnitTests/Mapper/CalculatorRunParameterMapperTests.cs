@@ -6,6 +6,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 {
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Function;
+    using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Interface;
     using EPR.Calculator.Service.Function.Mapper;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -39,6 +40,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
                 FinancialYear = "2024-25",
                 CreatedBy = "Test user",
                 CalculatorRunId = 678767,
+                MessageType = MessageTypes.Result
             };
 
             // Act
