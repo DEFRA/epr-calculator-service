@@ -83,9 +83,10 @@
             int? runId = 1;
             string? runName = "TestRun";
             string message = "Test message";
+            string? messageType = "Result";
 
             // Act
-            var result = CalculatorTelemetryLogger.CreateLogMessage(runId, runName, message);
+            var result = CalculatorTelemetryLogger.CreateLogMessage(runId, runName, messageType, message);
 
             // Assert
             Assert.IsTrue(result.Contains("RunId: 1"));
@@ -100,9 +101,10 @@
             int? runId = null;
             string? runName = null;
             string message = "Test message";
+            string? messageType = "Result";
 
             // Act
-            var result = CalculatorTelemetryLogger.CreateLogMessage(runId, runName, message);
+            var result = CalculatorTelemetryLogger.CreateLogMessage(runId, runName, messageType, message);
 
             // Assert
             Assert.IsTrue(result.Contains("RunId: "));
