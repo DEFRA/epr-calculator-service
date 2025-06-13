@@ -7,6 +7,8 @@
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System.Globalization;
+    using Moq;
+    using EPR.Calculator.Service.Function.Mapper;
 
     [TestClass]
     public class CalculationResultsExporterTests
@@ -18,22 +20,22 @@
         public CalculationResultsExporterTests()
         {
             Fixture = new Fixture();
-            this.TestClass = new CalculationResultsExporter();
+            this.TestClass = new CalculationResultsExporter(new CommsCostsByMaterialFeesSummary2aMapper());
         }
 
         [TestMethod]
         public void CanCallExport()
         {
             // Arrange
-            var data = Fixture.Create<CalcResultSummary>();
+            var data = SetCalcResultSummayData();
 
             // Act
-            var result = this.TestClass.Export(data, new List<object>());
+            var result = this.TestClass.Export(data, new List<object>(), new List<int>());
 
 
             // Assert
             Assert.IsNotNull(result);
-        }
+        }        
 
         /// <summary>
         /// Serialises a <see cref="CalcResultSummary"/>, then parses the resulting JSON
@@ -43,16 +45,18 @@
         public void Export_ValuesAreValid()
         {
             // Arrange
-            var data = Fixture.Create<CalcResultSummary>();
+            var data = SetCalcResultSummayData();
+
+            var acceptIds = new List<int> { 1, 2, 3 };
 
             // Act
-            var json = this.TestClass.Export(data, null);
+            var json = this.TestClass.Export(data, null, new List<int> { 1, 2, 3 });
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["calculationResults"]!
                 ["producerCalculationResultsSummary"];
-            
-                
+
+
             // Assert
             Assert.IsNotNull(roundTrippedData);
 
@@ -117,13 +121,65 @@
                 roundTrippedData["oneOffFeeSaSetuCostsWithoutbadDebtProvision5"]);
         }
 
+
+        [TestMethod]
+        public void Export_ProducerDisposalFeesWithBadDebtProvision1_ReturnsValidValues()
+        {
+            // Arrange
+            var data = SetCalcResultSummayData();
+
+            // Act
+            var json = this.TestClass.Export(data, null, new List<int> { 1, 2, 3 });
+
+            var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
+                ["calculationResults"]!
+                ["producerCalculationResults"];
+
+            // Assert
+            Assert.IsNotNull(roundTrippedData);
+
+            var actual = roundTrippedData[0]!["producerDisposalFeesWithBadDebtProvision1"]!["materialBreakdown"]![0]!;
+            var expected = data.ProducerDisposalFees.First().ProducerDisposalFeesByMaterial.First();
+
+            Assert.AreEqual(expected.Value.PreviousInvoicedTonnage, actual["previousInvoicedTonnage"]!.ToString());
+            AssertAreEqual(expected.Value.HouseholdPackagingWasteTonnage, actual["householdPackagingWasteTonnage"]);
+            AssertAreEqual(expected.Value.PublicBinTonnage, actual["publicBinTonnage"]);
+            AssertAreEqual(expected.Value.TotalReportedTonnage, actual["totalTonnage"]);
+            AssertAreEqual(expected.Value.ManagedConsumerWasteTonnage, actual["selfManagedConsumerWasteTonnage"]);
+            AssertAreEqual(expected.Value.NetReportedTonnage, actual["netTonnage"]);
+            Assert.AreEqual(expected.Value.TonnageChange, actual["tonnageChange"]!.ToString());
+            AssertAreEqual(expected.Value.PricePerTonne, actual["pricePerTonne"]);
+            AssertAreEqual(expected.Value.ProducerDisposalFee, actual["producerDisposalFeeWithoutBadDebtProvision"]);
+            AssertAreEqual(expected.Value.BadDebtProvision, actual["badDebtProvision"]);
+            AssertAreEqual(expected.Value.ProducerDisposalFeeWithBadDebtProvision, actual["producerDisposalFeeWithBadDebtProvision"]);
+            AssertAreEqual(expected.Value.EnglandWithBadDebtProvision, actual["englandWithBadDebtProvision"]);
+            AssertAreEqual(expected.Value.WalesWithBadDebtProvision, actual["walesWithBadDebtProvision"]);
+            AssertAreEqual(expected.Value.ScotlandWithBadDebtProvision, actual["scotlandWithBadDebtProvision"]);
+            AssertAreEqual(expected.Value.NorthernIrelandWithBadDebtProvision, actual["northernIrelandWithBadDebtProvision"]);
+
+        }
+
         private void AssertAreEqual(decimal expected, JsonNode? actual)
-        { 
+        {
             Assert.IsNotNull(actual, "Actual value should not be null.");
             Assert.AreEqual(
                 expected.ToString("C", CultureInfo.CreateSpecificCulture("en-GB")),
                 actual.GetValue<string>(),
                 $"Expected {expected} to be equal to {actual}");
+        }
+
+        private CalcResultSummary SetCalcResultSummayData()
+        {            
+            var data = Fixture.Create<CalcResultSummary>();
+
+            var acceptIds = new List<int> { 1, 2, 3 };
+
+            for (var i = 1; i <= data.ProducerDisposalFees.Count(); i++)
+            {
+                data.ProducerDisposalFees.ToList()[i - 1].ProducerId = i.ToString();
+            }
+
+            return data;
         }
     }
 }

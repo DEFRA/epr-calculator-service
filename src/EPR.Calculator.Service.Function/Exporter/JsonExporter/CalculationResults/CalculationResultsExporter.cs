@@ -1,5 +1,11 @@
-﻿using EPR.Calculator.Service.Function.Models;
+﻿using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Mapper;
+using EPR.Calculator.Service.Function.Mappers;
+using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Models.JsonExporter;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
@@ -11,15 +17,26 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
     /// </summary>
     public class CalculationResultsExporter : ICalculationResultsExporter
     {
+        private ICommsCostsByMaterialFeesSummary2aMapper commsCostsByMaterialFeesSummary2AMapper;
+        private ICalcResultCommsCostByMaterial2aJsonMapper commsCostByMaterial2aJsonMapper;
+
+        public CalculationResultsExporter(ICommsCostsByMaterialFeesSummary2aMapper commsCostsByMaterialFeesSummary2AMapper,
+            ICalcResultCommsCostByMaterial2aJsonMapper commsCostByMaterial2aJsonMapper)
+        {
+            this.commsCostsByMaterialFeesSummary2AMapper = commsCostsByMaterialFeesSummary2AMapper;
+            this.commsCostByMaterial2aJsonMapper = commsCostByMaterial2aJsonMapper;
+        }
+
+
         /// <inheritdoc/>
-        public string Export(CalcResultSummary summary, IEnumerable<object>? producerCalculations)
+        public string Export(CalcResultSummary summary, IEnumerable<object>? producerCalculations, IEnumerable<int> acceptedProducerIds)
             => JsonSerializer.Serialize(
                 new
                 {
                     calculationResults = new
                     {
                         producerCalculationResultsSummary = ArrangeSummary(summary),
-                        producerCalculationResults = new List<object>(),
+                        producerCalculationResults = ArrangeProducerCalculationResult(summary, acceptedProducerIds),
                     },
                 },
                 new JsonSerializerOptions
@@ -70,6 +87,25 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
                 BadDebtProvision5 = data.SaSetupCostsBadDebtProvisionTitleSection5,
                 OneOffFeeSaSetuCostsWithoutbadDebtProvision5 = data.SaSetupCostsWithBadDebtProvisionTitleSection5,
             };
+        }
+
+
+        private List<CalcSummaryProducerCalculationResults> ArrangeProducerCalculationResult(CalcResultSummary calcResultSummary, IEnumerable<int> acceptedProducerIds)
+        {
+            var results = new List<CalcSummaryProducerCalculationResults>();
+
+            var filteredProducers = calcResultSummary.ProducerDisposalFees.Where(producer => int.TryParse(producer.ProducerId, out int producerId) && acceptedProducerIds.Contains(producerId) && !string.IsNullOrEmpty(producer.Level)) ?? [];
+
+            foreach (var producer in filteredProducers)
+            {
+                results.Add(new CalcSummaryProducerCalculationResults {
+                    ProducerDisposalFeesWithBadDebtProvision1 = ProducerDisposalFeesWithBadDebtProvision1JsonMapper.Map(producer.ProducerDisposalFeesByMaterial),
+                    CalcResultCommsCostByMaterial2aJson = this.commsCostByMaterial2aJsonMapper.Map(producer.ProducerCommsFeesByMaterial),
+                    CommsCostsByMaterialFeesSummary2a = this.commsCostsByMaterialFeesSummary2AMapper.Map(producer)
+                });
+            }
+
+            return results;
         }
     }
 }
