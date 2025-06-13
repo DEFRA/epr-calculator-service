@@ -24,6 +24,7 @@ namespace EPR.Calculator.Service.Function.Mapper
                 FinancialYear = createResultFileMessage.FinancialYear,
                 User = createResultFileMessage.CreatedBy,
                 Id = createResultFileMessage.CalculatorRunId,
+                MessageType = createResultFileMessage.MessageType,
             };
         }
 
