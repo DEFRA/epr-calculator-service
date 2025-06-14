@@ -1,5 +1,4 @@
-﻿using EPR.Calculator.API.Exporter;
-using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
+﻿using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
@@ -10,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 {
@@ -73,7 +71,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             var acceptedProducers = GetScaledUpProducersForExport(
                 results.CalcResultScaledupProducers,
                 acceptedProducerIds);
-            calcResultScaledupProducersExporter.Export(results.CalcResultScaledupProducers, csvContent);
+            calcResultScaledupProducersExporter.Export(acceptedProducers, csvContent);
 
             var acceptedCalcResultSummary = GetAcceptedProducersCalcResults(results.CalcResultSummary, acceptedProducerIds);
             calcResultSummaryExporter.Export(acceptedCalcResultSummary, csvContent);
@@ -120,13 +118,15 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
             IEnumerable<int> acceptedProducerIds)
         {
-            var acceptedProducerFees = producerDisposalFees.Where(x => acceptedProducerIds.Contains(x.ProducerIdInt)).ToList();
+            var acceptedProducerFees = producerDisposalFees.Where(
+                x => acceptedProducerIds.Contains(x.ProducerIdInt)
+                || x.ProducerIdInt == 0).ToList();
 
             acceptedProducerFees.ForEach(x =>
             {
                 if (x.isOverallTotalRow)
                 {
-                    //Update the Rows
+                    // add code
                 }
             });
             return acceptedProducerFees;
@@ -153,12 +153,14 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             IEnumerable<CalcResultScaledupProducer> scaledupProducers, 
             IEnumerable<int> acceptedProducerIds)
         {
-            var acceptedProducers = scaledupProducers.Where(x => acceptedProducerIds.Contains(x.ProducerId)).ToList();
+            var acceptedProducers = scaledupProducers.Where(
+                x => acceptedProducerIds.Contains(x.ProducerId)
+                || x.ProducerId == 0).ToList();
             acceptedProducers.ForEach(x => 
             {
                 if (x.IsTotalRow)
                 {
-                    //Update the Rows
+                    // add Code
                 }
             });
             return acceptedProducers;

@@ -38,7 +38,8 @@
             CalculatorRunValidator validationRules,
             ICommandTimeoutService commandTimeoutService,
             ICalculatorTelemetryLogger telemetryLogger,
-            IBillingInstructionService billingInstructionService)
+            IBillingInstructionService billingInstructionService,
+            IBillingFileExporter<CalcResult> billingFileExporter)
         {
             this.Context = context.CreateDbContext();
             this.rpdStatusDataValidator = rpdStatusDataValidator;
@@ -51,6 +52,7 @@
             this.commandTimeoutService = commandTimeoutService;
             this.telemetryLogger = telemetryLogger;
             this.billingInstructionService = billingInstructionService;
+            this.BillingFileExporter = billingFileExporter;
         }
 
         private readonly ICalculatorTelemetryLogger telemetryLogger;
@@ -64,6 +66,8 @@
         private ICalcResultBuilder Builder { get; init; }
 
         private ICalcResultsExporter<CalcResult> Exporter { get; init; }
+
+        private IBillingFileExporter<CalcResult> BillingFileExporter { get; init; }
 
         private ITransposePomAndOrgDataService transposePomAndOrgDataService { get; init; }
 
@@ -223,11 +227,19 @@
             return false;
         }
 
-        public Task<bool> PrepareBillingResults([FromBody] CalcResultsRequestDto resultsRequestDto,
+        public async Task<bool> PrepareBillingResults([FromBody] CalcResultsRequestDto resultsRequestDto,
             string runName,
             CancellationToken cancellationToken)
         {
-            throw new NotImplementedException("PrepareBillingResults is not implemented yet.");
+            var results = await this.Builder.Build(resultsRequestDto);
+
+            var exportedResults = this.BillingFileExporter.Export(results, resultsRequestDto.AcceptedProducerIds);
+
+            var fileName = "4-Uday Billing.csv";
+            var blobUri = await this.storageService.UploadResultFileContentAsync(fileName, exportedResults, runName);
+
+
+            return true;
         }
 
         private async Task HandleErrorAsync(CalculatorRun? calculatorRun, RunClassification classification)
