@@ -107,6 +107,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<IOrgAndPomWrapper, OrgAndPomWrapper>();
             services.AddTransient<ICalcResultBuilder, CalcResultBuilder>();
             services.AddTransient<ICalcResultsExporter<CalcResult>, CalcResultsExporter>();
+            services.AddTransient<IBillingFileExporter<CalcResult>, BillingFileExporter>();
             services.AddTransient<CalculatorRunValidator, CalculatorRunValidator>();
             services.AddTransient<ICommandTimeoutService, CommandTimeoutService>();
             services.AddTransient<IPrepareCalcService, PrepareCalcService>();
