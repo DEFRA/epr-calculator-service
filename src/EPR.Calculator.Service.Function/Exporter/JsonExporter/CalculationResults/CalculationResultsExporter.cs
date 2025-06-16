@@ -92,13 +92,15 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
         {
             var results = new List<CalcSummaryProducerCalculationResults>();
 
-            var filteredProducers = calcResultSummary.ProducerDisposalFees.Where(producer => int.TryParse(producer.ProducerId, out int producerId) && acceptedProducerIds.Contains(producerId) && !string.IsNullOrEmpty(producer.Level)) ?? [];
+            var filteredProducers = calcResultSummary.ProducerDisposalFees.Where(producer => int.TryParse(producer.ProducerId , out int parseId) &&  acceptedProducerIds.Contains(parseId)
+            && !producer.isTotalRow && !string.IsNullOrWhiteSpace(producer.Level));
 
             foreach (var producer in filteredProducers)
             {
-                results.Add(new CalcSummaryProducerCalculationResults { ProducerDisposalFeesWithBadDebtProvision1 = ProducerDisposalFeesWithBadDebtProvision1JsonMapper.Map(producer.ProducerDisposalFeesByMaterial) });
-
-                results.Add(new CalcSummaryProducerCalculationResults { CommsCostsByMaterialFeesSummary2a = this.commsCostsByMaterialFeesSummary2AMapper.Map(producer) });
+                results.Add(new CalcSummaryProducerCalculationResults { 
+                    ProducerDisposalFeesWithBadDebtProvision1 = ProducerDisposalFeesWithBadDebtProvision1JsonMapper.Map(producer.ProducerDisposalFeesByMaterial),
+                    CommsCostsByMaterialFeesSummary2a = this.commsCostsByMaterialFeesSummary2AMapper.Map(producer)
+                });
             }
 
             return results;
