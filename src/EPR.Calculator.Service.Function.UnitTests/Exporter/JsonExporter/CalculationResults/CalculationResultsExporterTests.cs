@@ -34,7 +34,7 @@
 
             // Assert
             Assert.IsNotNull(result);
-        }        
+        }
 
         /// <summary>
         /// Serialises a <see cref="CalcResultSummary"/>, then parses the resulting JSON
@@ -196,7 +196,7 @@
         }
 
         private CalcResultSummary SetCalcResultSummayData()
-        {            
+        {
             var data = Fixture.Create<CalcResultSummary>();
 
             var acceptIds = new List<int> { 1, 2, 3 };

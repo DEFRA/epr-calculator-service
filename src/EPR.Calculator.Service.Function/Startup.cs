@@ -44,10 +44,7 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
-using EPR.Calculator.Service.Function.Exporter.JsonExporter;
-using EPR.Calculator.Service.Function.Exporter.JsonExporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.LateReportingTonnage;
-using EPR.Calculator.Service.Function.Exporter.JsonExporter.OnePlusFourApportionment;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 

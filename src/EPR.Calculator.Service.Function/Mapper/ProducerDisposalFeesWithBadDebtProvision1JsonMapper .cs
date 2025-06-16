@@ -1,10 +1,8 @@
-﻿using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Models;
+﻿using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
-using System;
 using System.Collections.Generic;
 
-namespace EPR.Calculator.Service.Function.Mappers
+namespace EPR.Calculator.Service.Function.Mapper
 {
     public static class ProducerDisposalFeesWithBadDebtProvision1JsonMapper
     {
@@ -13,7 +11,6 @@ namespace EPR.Calculator.Service.Function.Mappers
             return new ProducerDisposalFeesWithBadDebtProvision1
             {
                 MaterialBreakdown = GetMaterialBreakdown(ProducerDisposalFeesByMaterial)
-
             };
         }
 
