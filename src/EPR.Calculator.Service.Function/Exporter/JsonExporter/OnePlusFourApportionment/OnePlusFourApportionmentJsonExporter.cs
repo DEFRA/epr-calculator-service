@@ -7,21 +7,21 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
+namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.OnePlusFourApportionment
 {
     public class OnePlusFourApportionmentJsonExporter : IOnePlusFourApportionmentJsonExporter
     {
-        private IOnePlusFourApportionmentMapper onePlusFourApportionmentMapper {  get; set; }
+        private IOnePlusFourApportionmentMapper onePlusFourApportionmentMapper { get; set; }
 
         public OnePlusFourApportionmentJsonExporter(IOnePlusFourApportionmentMapper mapper)
         {
-            this.onePlusFourApportionmentMapper = mapper;
+            onePlusFourApportionmentMapper = mapper;
         }
 
         public string Export(CalcResultOnePlusFourApportionment calcResult1Plus4Apportionment)
         {
             if (calcResult1Plus4Apportionment.CalcResultOnePlusFourApportionmentDetails is null) return string.Empty;
-            var details = this.onePlusFourApportionmentMapper.Map(calcResult1Plus4Apportionment);
+            var details = onePlusFourApportionmentMapper.Map(calcResult1Plus4Apportionment);
             return JsonSerializer.Serialize(details);
         }
     }
