@@ -6,7 +6,7 @@
     using EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System.Globalization;
+    using static EPR.Calculator.Service.Common.UnitTests.Utils.JsonNodeComparer;
 
     [TestClass]
     public class CalculationResultsExporterTests
@@ -115,15 +115,6 @@
                 roundTrippedData["badDebtProvision5"]);
             AssertAreEqual(data.SaSetupCostsWithBadDebtProvisionTitleSection5,
                 roundTrippedData["oneOffFeeSaSetuCostsWithoutbadDebtProvision5"]);
-        }
-
-        private void AssertAreEqual(decimal expected, JsonNode? actual)
-        { 
-            Assert.IsNotNull(actual, "Actual value should not be null.");
-            Assert.AreEqual(
-                expected.ToString("C", CultureInfo.CreateSpecificCulture("en-GB")),
-                actual.GetValue<string>(),
-                $"Expected {expected} to be equal to {actual}");
         }
     }
 }
