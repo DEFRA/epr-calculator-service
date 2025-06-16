@@ -11,7 +11,6 @@ namespace EPR.Calculator.Service.Function.Mapper
             return new ProducerDisposalFeesWithBadDebtProvision1
             {
                 MaterialBreakdown = GetMaterialBreakdown(ProducerDisposalFeesByMaterial)
-
             };
         }
 
