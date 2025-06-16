@@ -12,7 +12,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
     public record ProducerDisposalFeesWithBadDebtProvision1
     {
         [JsonProperty("materialBreakdown")]
-        public IEnumerable<ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown> MaterialBreakdown { get; set; }
+        public required IEnumerable<ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown> MaterialBreakdown { get; set; }
     }
 
     public record ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown
