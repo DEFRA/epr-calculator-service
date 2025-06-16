@@ -29,11 +29,6 @@
             // Arrange
             var data = SetCalcResultSummayData();
 
-            for (int i = 1; i <= data.ProducerDisposalFees.Count(); i++)
-            {
-                data.ProducerDisposalFees.ToList()[i - 1].ProducerId = i.ToString();
-            }
-
             // Act
             var result = this.TestClass.Export(data, new List<object>(), new List<int>());
 
@@ -57,7 +52,6 @@
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["calculationResults"]!
                 ["producerCalculationResultsSummary"];
-
 
             // Assert
             Assert.IsNotNull(roundTrippedData);
@@ -122,7 +116,6 @@
             AssertAreEqual(data.SaSetupCostsWithBadDebtProvisionTitleSection5,
                 roundTrippedData["oneOffFeeSaSetuCostsWithoutbadDebtProvision5"]);
         }
-
 
         [TestMethod]
         public void Export_ProducerDisposalFeesWithBadDebtProvision1_ReturnsValidValues()
@@ -200,7 +193,6 @@
             AssertAreEqual(producer.TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision, twoACosts["totalProducerFeeForCommsCostsWithoutBadDebtProvision2a"]);
             AssertAreEqual(producer.TotalProducerFeeforCommsCostsbyMaterialwithBadDebtprovision, twoACosts["totalProducerFeeForCommsCostsWithBadDebtProvision2a"]);
             AssertAreEqual(producer.BadDebtProvisionFor2A, twoACosts["totalBadDebtProvision"]);
-
         }
 
         private CalcResultSummary SetCalcResultSummayData()
