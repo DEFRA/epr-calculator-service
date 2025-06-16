@@ -14,13 +14,15 @@
     public class CalculationResultsExporterTests
     {
         private CalculationResultsExporter TestClass { get; init; }
+        private ICalcResultCommsCostByMaterial2aJsonMapper calcResultCommsCostByMaterial2AJsonMapper { get; init; }
 
         private IFixture Fixture { get; init; }
 
-        public CalculationResultsExporterTests()
+        public CalculationResultsExporterTests(ICalcResultCommsCostByMaterial2aJsonMapper calcResultCommsCostByMaterial2AJsonMapper)
         {
             Fixture = new Fixture();
-            this.TestClass = new CalculationResultsExporter(new CommsCostsByMaterialFeesSummary2aMapper());
+            this.calcResultCommsCostByMaterial2AJsonMapper = calcResultCommsCostByMaterial2AJsonMapper;
+            this.TestClass = new CalculationResultsExporter(new CommsCostsByMaterialFeesSummary2aMapper(), calcResultCommsCostByMaterial2AJsonMapper);
         }
 
         [TestMethod]
