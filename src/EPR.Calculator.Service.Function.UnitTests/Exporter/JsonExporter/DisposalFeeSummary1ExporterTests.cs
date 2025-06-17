@@ -4,6 +4,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
     using EPR.Calculator.Service.Function.Exporter.JsonExporter;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System.Globalization;
     using System.Text.Json;
     using System.Text.Json.Nodes;
     using static EPR.Calculator.Service.Common.UnitTests.Utils.JsonNodeComparer;
