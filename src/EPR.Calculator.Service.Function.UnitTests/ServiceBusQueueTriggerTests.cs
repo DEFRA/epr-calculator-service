@@ -6,6 +6,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 {
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.Logging;
+    using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Interface;
     using EPR.Calculator.Service.Function.Services;
     using Moq;
@@ -59,7 +60,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
-            var processedParameterData = new CalculatorRunParameter() { FinancialYear = "2024-25", User = "Test user", Id = 678767 };
+            var processedParameterData = new CalculatorRunParameter() { FinancialYear = "2024-25", User = "Test user", Id = 678767, MessageType = MessageTypes.Result };
             var runName = "Test Run Name";
 
             this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
@@ -99,7 +100,12 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 MessageType = "Billing"
             };
 
+            var processedParameterData = new BillingFileMessage() { ApprovedBy = "2024-25", MessageType = "Billing", Id = 678767 };
+            var runName = "Test Run Name";
+
+            this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateBillingFileMessage>())).Returns(processedParameterData);
             messageTypeService.Setup(s => s.DeserializeMessage(myQueueItem)).Returns(resultFileMessage);
+            this.prepareBillingFileService.Setup(t => t.PrepareBillingFileAsync(processedParameterData.Id, runName)).ReturnsAsync(true);
 
             // Act
             await this.function.Run(myQueueItem);
@@ -200,7 +206,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
-            var processedParameterData = new CalculatorRunParameter() { FinancialYear = "2024-25", User = "Test user", Id = 678767 };
+            var processedParameterData = new CalculatorRunParameter() { FinancialYear = "2024-25", User = "Test user", Id = 678767 , MessageType = MessageTypes.Result };
             var runName = "Test Run Name";
 
             this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
@@ -245,7 +251,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             // Arrange
             this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns((CalculatorRunParameter?)null);
             var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
-            var processedParameterData = new CalculatorRunParameter() { FinancialYear = "2024-25", User = "Test user", Id = 678767 };
+            var processedParameterData = new CalculatorRunParameter() { FinancialYear = "2024-25", User = "Test user", Id = 678767 , MessageType = MessageTypes.Result };
             var runName = "Test Run Name";
 
             this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
@@ -268,7 +274,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
-            var processedParameterData = new CalculatorRunParameter() { FinancialYear = "2024-25", User = "Test user", Id = 678767 };
+            var processedParameterData = new CalculatorRunParameter() { FinancialYear = "2024-25", User = "Test user", Id = 678767 , MessageType = MessageTypes.Result };
             var runName = "Test Run Name";
 
             this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
@@ -292,7 +298,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
-            var processedParameterData = new CalculatorRunParameter() { FinancialYear = "2024-25", User = "Test user", Id = 678767 };
+            var processedParameterData = new CalculatorRunParameter() { FinancialYear = "2024-25", User = "Test user", Id = 678767 , MessageType = MessageTypes.Result };
 
             this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
             this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).Throws<Exception>();
@@ -315,7 +321,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
             {
                 CalculatorRunId = 1,
                 FinancialYear = "2024-25",
-                CreatedBy = "TestUser"
+                CreatedBy = "TestUser",
+                MessageType = "Result"
             };
 
             messageTypeService.Setup(s => s.DeserializeMessage(myQueueItem)).Returns(resultFileMessage);

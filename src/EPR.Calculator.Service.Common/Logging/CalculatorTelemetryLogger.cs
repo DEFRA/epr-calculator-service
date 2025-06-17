@@ -34,7 +34,7 @@
         /// <param name="errorMessage">The error message to log.</param>
         public void LogError(ErrorMessage errorMessage)
         {
-            var formattedMessage = CreateLogMessage(errorMessage.RunId, errorMessage.RunName, errorMessage.Message);
+            var formattedMessage = CreateLogMessage(errorMessage.RunId, errorMessage.RunName, errorMessage.MessageType, errorMessage.Message);
             var exceptionTelemetry = new ExceptionTelemetry(errorMessage.Exception)
             {
                 SeverityLevel = SeverityLevel.Error,
@@ -51,9 +51,9 @@
         /// <param name="runName">The name of the run.</param>
         /// <param name="message">The message to log.</param>
         /// <returns>A formatted log message string.</returns>
-        internal static string CreateLogMessage(int? runId, string? runName, string message)
+        internal static string CreateLogMessage(int? runId, string? runName, string messageType, string message)
         {
-            return $"[{DateTime.Now}] RunId: {runId}, RunName: {runName}, Message: {message}";
+            return $"[{DateTime.Now}] RunId: {runId}, RunName: {runName}, MessageType: {messageType}, Message: {message}";
         }
 
         /// <summary>
@@ -77,7 +77,7 @@
 
         private void TrackTrace(TrackMessage logMessage, SeverityLevel severityLevel)
         {
-            var formattedMessage = CreateLogMessage(logMessage.RunId, logMessage.RunName, logMessage.Message);
+            var formattedMessage = CreateLogMessage(logMessage.RunId, logMessage.RunName, logMessage.MessageType, logMessage.Message);
             var traceTelemetry = new TraceTelemetry
             {
                 Message = formattedMessage,
