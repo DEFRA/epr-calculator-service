@@ -48,6 +48,8 @@ using EPR.Calculator.Service.Function.Exporter.JsonExporter;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Builder.CancelledProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter.LateReportingTonnage;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMaterial2A;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -142,13 +144,13 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<IPrepareBillingFileService, PrepareBillingFileService>();
             services.AddTransient<ILateReportingTonnageMapper, LateReportingTonnageMapper>();
             services.AddTransient<ILateReportingTonnage, LateReportingTonnage>();
-            services.AddTransient<IOnePlusFourApportionmentJsonExporter, OnePlusFourApportionmentJsonExporter>();
-            services.AddTransient<IOnePlusFourApportionmentMapper, OnePlusFourApportionmentMapper>();
+            services.AddTransient<ICommsCostsByMaterialFeesSummary2aMapper, CommsCostsByMaterialFeesSummary2aMapper>();
             services.AddTransient<ICalcCountryApportionmentService, CalcCountryApportionmentService>();
             services.AddTransient<ICalcResultScaledupProducersJsonExporter, CalcResultScaledupProducersJsonExporter>();
             services.AddTransient<ICalcResultScaledupProducersJsonMapper, CalcResultScaledupProducersJsonMapper>();
             services.AddTransient<ICalcResultCancelledProducersBuilder, CalcResultCancelledProducersBuilder>();
             services.AddTransient<ICalcResultCancelledProducersExporter, CalcResultCancelledProducersExporter>();
+            services.AddTransient<ICalcResultCommsCostByMaterial2AJsonExporter, CalcResultCommsCostByMaterial2AJsonExporter>();
 #if !DEBUG
             SetupBlobStorage(services);
             services.AddTransient<IConfigurationService, Configuration>();

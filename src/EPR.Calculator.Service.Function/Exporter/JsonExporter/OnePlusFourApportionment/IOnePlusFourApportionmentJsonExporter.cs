@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
+namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.OnePlusFourApportionment
 {
     public interface IOnePlusFourApportionmentJsonExporter
     {
