@@ -1,7 +1,9 @@
 ﻿using EPR.Calculator.Service.Function.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Unicode;
 
 namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.Lapcap
 {
@@ -18,6 +20,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.Lapcap
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                     WriteIndented = true,
+                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                 });
 
         /// <summary>
