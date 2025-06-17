@@ -156,16 +156,6 @@
 
         }
 
-        private void AssertAreEqual(decimal expected, JsonNode? actual)
-        {
-            Assert.IsNotNull(actual, "Actual value should not be null.");
-            Assert.AreEqual(
-                expected.ToString("C", CultureInfo.CreateSpecificCulture("en-GB")),
-                actual.GetValue<string>(),
-                $"Expected {expected} to be equal to {actual}");
-        }
-
-
         /// <summary>
         /// Serialises a <see cref="CalcResultSummary"/>, then parses the resulting JSON
         /// and checks that the values still match up with the original.
