@@ -20,7 +20,9 @@
         public CalculationResultsExporterTests()
         {
             Fixture = new Fixture();
-            this.TestClass = new CalculationResultsExporter(new CommsCostsByMaterialFeesSummary2aMapper());
+            this.TestClass = new CalculationResultsExporter(
+                new CommsCostsByMaterialFeesSummary2aMapper(), 
+                new FeeForCommsCostsWithBadDebtProvision2aMapper());
         }
 
         [TestMethod]
@@ -193,6 +195,36 @@
             AssertAreEqual(producer.TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision, twoACosts["totalProducerFeeForCommsCostsWithoutBadDebtProvision2a"]);
             AssertAreEqual(producer.TotalProducerFeeforCommsCostsbyMaterialwithBadDebtprovision, twoACosts["totalProducerFeeForCommsCostsWithBadDebtProvision2a"]);
             AssertAreEqual(producer.BadDebtProvisionFor2A, twoACosts["totalBadDebtProvision"]);
+        }
+
+        /// <summary>
+        /// Serialises a <see cref="CalcResultSummary"/>, then parses the resulting JSON
+        /// and checks that the values still match up with the original.
+        /// </summary>
+        [TestMethod]
+        public void Export_FeeForCommsCostsWithBadDebtProvision2a_AreValid()
+        {
+            // Arrange
+            var data = SetCalcResultSummayData();
+
+            // Act
+            var json = this.TestClass.Export(data, null, new List<int> { 1, 2, 3 });
+
+            var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
+                     ["calculationResults"]!
+                ["producerCalculationResults"];
+
+            // Assert
+            Assert.IsNotNull(roundTrippedData);
+            var twoACosts = roundTrippedData[0]["feeForCommsCostsWithBadDebtProvision2a"];
+            var producer = data.ProducerDisposalFees.SingleOrDefault(t => !t.isTotalRow && !string.IsNullOrEmpty(t.Level));
+            AssertAreEqual(producer.NorthernIrelandTotalWithBadDebtProvision2A, twoACosts["northernIrelandTotalWithBadDebtProvision"]);
+            AssertAreEqual(producer.ScotlandTotalWithBadDebtProvision2A, twoACosts["scotlandTotalWithBadDebtProvision"]);
+            AssertAreEqual(producer.WalesTotalWithBadDebtProvision2A, twoACosts["walesTotalWithBadDebtProvision"]);
+            AssertAreEqual(producer.EnglandTotalWithBadDebtProvision2A, twoACosts["englandTotalWithBadDebtProvision"]);
+            AssertAreEqual(producer.TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision, twoACosts["totalProducerFeeForCommsCostsWithoutBadDebtProvision"]);
+            AssertAreEqual(producer.BadDebtProvisionFor2A, twoACosts["badDebProvisionFor2a"]);
+            AssertAreEqual(producer.TotalProducerFeeforCommsCostsbyMaterialwithBadDebtprovision, twoACosts["totalProducerFeeForCommsCostsWithBadDebtProvision"]);
         }
 
         private CalcResultSummary SetCalcResultSummayData()

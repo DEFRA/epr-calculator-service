@@ -140,6 +140,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ILateReportingTonnageMapper, LateReportingTonnageMapper>();
             services.AddTransient<ILateReportingTonnage, LateReportingTonnage>();
             services.AddTransient<ICommsCostsByMaterialFeesSummary2aMapper, CommsCostsByMaterialFeesSummary2aMapper>();
+            services.AddTransient<IFeeForCommsCostsWithBadDebtProvision2aMapper, FeeForCommsCostsWithBadDebtProvision2aMapper>();
             services.AddTransient<ICalcCountryApportionmentService, CalcCountryApportionmentService>();            
 #if !DEBUG
             SetupBlobStorage(services);
