@@ -9,7 +9,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
     [TestClass]
     public class ProducerDisposalFeesWithBadDebtProvision1JsonMapperTest
     {
-        private ProducerDisposalFeesWithBadDebtProvision1JsonMapper _testClass;
+        private ProducerDisposalFeesWithBadDebtProvision1JsonMapper? _testClass;
 
         [TestInitialize]
         public void SetUp()
@@ -25,16 +25,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             var calcResultSummaryProducerDisposalFeesByMaterial = fixture.Create<CalcResultSummaryProducerDisposalFeesByMaterial>();
             calcResultSummaryProducerDisposalFeesByMaterial.HouseholdDrinksContainersTonnage = 100m;
             var producerDisposalFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>()
-                        {
-                            { MaterialCodes.Glass, calcResultSummaryProducerDisposalFeesByMaterial }
-                        };
+                {
+                    { MaterialCodes.Glass, calcResultSummaryProducerDisposalFeesByMaterial }
+                };
 
             // Act
-            var result = _testClass.Map(producerDisposalFeesByMaterial);
+            var result = _testClass?.Map(producerDisposalFeesByMaterial);
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(result.MaterialBreakdown.First().HouseholdDrinksContainersTonnageGlass, producerDisposalFeesByMaterial.First().Value.HouseholdDrinksContainersTonnage);
+            Assert.AreEqual(producerDisposalFeesByMaterial.First().Value.HouseholdDrinksContainersTonnage, result.MaterialBreakdown.First().HouseholdDrinksContainersTonnageGlass);
         }
 
         [TestMethod]
@@ -44,16 +44,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             var fixture = new Fixture();
             var calcResultSummaryProducerDisposalFeesByMaterial = fixture.Create<CalcResultSummaryProducerDisposalFeesByMaterial>();
             var producerDisposalFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>()
-                        {
-                            { MaterialCodes.Aluminium, calcResultSummaryProducerDisposalFeesByMaterial }
-                        };
+                {
+                    { MaterialCodes.Aluminium, calcResultSummaryProducerDisposalFeesByMaterial }
+                };
 
             // Act
-            var result = _testClass.Map(producerDisposalFeesByMaterial);
+            var result = _testClass?.Map(producerDisposalFeesByMaterial);
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(result.MaterialBreakdown.First().HouseholdDrinksContainersTonnageGlass, null);
+            Assert.IsNull(result.MaterialBreakdown.First().HouseholdDrinksContainersTonnageGlass);
         }
     }
 }

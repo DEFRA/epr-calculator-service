@@ -8,7 +8,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
     [TestClass]
     public class TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapperTests
     {
-        private TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper _testClass;
+        private TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper? _testClass;
 
         [TestInitialize]
         public void SetUp()
@@ -24,7 +24,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             var calcResultSummaryProducerDisposalFees = fixture.Create<CalcResultSummaryProducerDisposalFees>();
 
             // Act
-            var result = _testClass.Map(calcResultSummaryProducerDisposalFees);
+            var result = _testClass?.Map(calcResultSummaryProducerDisposalFees);
 
             // Assert
             Assert.IsNotNull(result);

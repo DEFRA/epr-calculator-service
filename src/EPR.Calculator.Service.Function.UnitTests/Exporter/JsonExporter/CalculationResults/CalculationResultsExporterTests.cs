@@ -175,7 +175,7 @@
 
             // Assert
             Assert.IsNotNull(roundTrippedData);
-            var actual = roundTrippedData[0]!["totalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2c"];
+            var actual = roundTrippedData[0]!["totalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2c"]!;
             var producer = data.ProducerDisposalFees.SingleOrDefault(t => !t.isTotalRow && !string.IsNullOrEmpty(t.Level))!;
 
             AssertAreEqual(producer.ProducerTotalOnePlus2A2B2CWithBadDeptProvision, actual["totalFeeWithBadDebtProvision"]);
