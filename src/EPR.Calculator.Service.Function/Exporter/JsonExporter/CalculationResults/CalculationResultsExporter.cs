@@ -17,14 +17,17 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
     {
         private ICommsCostsByMaterialFeesSummary2aMapper commsCostsByMaterialFeesSummary2AMapper;
         private ICalcResultCommsCostByMaterial2AJsonMapper commsCostByMaterial2AJsonMapper;
+        private ISAOperatingCostsWithBadDebtProvisionMapper sAOperatingCostsWithBadDebtProvisionMapper;
         private IFeeForCommsCostsWithBadDebtProvision2aMapper feeForCommsCostsWithBadDebtProvision2aMapper;
 
         public CalculationResultsExporter(ICommsCostsByMaterialFeesSummary2aMapper commsCostsByMaterialFeesSummary2AMapper,
-            ICalcResultCommsCostByMaterial2AJsonMapper commsCostByMaterial2AJsonMapper,
+            ICalcResultCommsCostByMaterial2AJsonMapper commsCostByMaterial2AJsonMapper, 
+            ISAOperatingCostsWithBadDebtProvisionMapper sAOperatingCostsWithBadDebtProvisionMapper,
             IFeeForCommsCostsWithBadDebtProvision2aMapper feeForCommsCostsWithBadDebtProvision2aMapper)
         {
             this.commsCostsByMaterialFeesSummary2AMapper = commsCostsByMaterialFeesSummary2AMapper;
             this.commsCostByMaterial2AJsonMapper = commsCostByMaterial2AJsonMapper;
+            this.sAOperatingCostsWithBadDebtProvisionMapper = sAOperatingCostsWithBadDebtProvisionMapper;
             this.feeForCommsCostsWithBadDebtProvision2aMapper = feeForCommsCostsWithBadDebtProvision2aMapper;
         }
 
@@ -100,15 +103,16 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
 
             foreach (var producer in filteredProducers)
             {
-                results.Add(new CalcSummaryProducerCalculationResults { 
+                results.Add(new CalcSummaryProducerCalculationResults {
                     ProducerDisposalFeesWithBadDebtProvision1 = ProducerDisposalFeesWithBadDebtProvision1JsonMapper.Map(producer.ProducerDisposalFeesByMaterial),
                     CalcResultCommsCostByMaterial2AJson = this.commsCostByMaterial2AJsonMapper.Map(producer.ProducerCommsFeesByMaterial!),
                     CommsCostsByMaterialFeesSummary2a = this.commsCostsByMaterialFeesSummary2AMapper.Map(producer),
+                    calcResultSAOperatingCostsWithBadDebtProvision = this.sAOperatingCostsWithBadDebtProvisionMapper.Map(producer),
                     FeeForCommsCostsWithBadDebtProvision2a = this.feeForCommsCostsWithBadDebtProvision2aMapper.Map(producer)
                 });
             }
 
             return results;
-        }
+        }               
     }
 }

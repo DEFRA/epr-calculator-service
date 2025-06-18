@@ -8,6 +8,8 @@
 
         public CalcResultSummaryCommsCostsByMaterialFeesSummary2a? CommsCostsByMaterialFeesSummary2a { get; set; }
 
+        public CalcResultSAOperatingCostsWithBadDebtProvision calcResultSAOperatingCostsWithBadDebtProvision { get; set; }
+
         public CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2a? FeeForCommsCostsWithBadDebtProvision2a { get; set; }
     }
 }
