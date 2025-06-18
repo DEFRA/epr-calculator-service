@@ -16,13 +16,15 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
     public class CalculationResultsExporter : ICalculationResultsExporter
     {
         private ICommsCostsByMaterialFeesSummary2aMapper commsCostsByMaterialFeesSummary2AMapper;
+        private ICalcResultCommsCostByMaterial2AJsonMapper commsCostByMaterial2AJsonMapper;
         private IFeeForCommsCostsWithBadDebtProvision2aMapper feeForCommsCostsWithBadDebtProvision2aMapper;
 
-        public CalculationResultsExporter
-            (ICommsCostsByMaterialFeesSummary2aMapper commsCostsByMaterialFeesSummary2AMapper,
-             IFeeForCommsCostsWithBadDebtProvision2aMapper feeForCommsCostsWithBadDebtProvision2aMapper)
+        public CalculationResultsExporter(ICommsCostsByMaterialFeesSummary2aMapper commsCostsByMaterialFeesSummary2AMapper,
+            ICalcResultCommsCostByMaterial2AJsonMapper commsCostByMaterial2AJsonMapper,
+            IFeeForCommsCostsWithBadDebtProvision2aMapper feeForCommsCostsWithBadDebtProvision2aMapper)
         {
             this.commsCostsByMaterialFeesSummary2AMapper = commsCostsByMaterialFeesSummary2AMapper;
+            this.commsCostByMaterial2AJsonMapper = commsCostByMaterial2AJsonMapper;
             this.feeForCommsCostsWithBadDebtProvision2aMapper = feeForCommsCostsWithBadDebtProvision2aMapper;
         }
 
@@ -100,6 +102,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
             {
                 results.Add(new CalcSummaryProducerCalculationResults { 
                     ProducerDisposalFeesWithBadDebtProvision1 = ProducerDisposalFeesWithBadDebtProvision1JsonMapper.Map(producer.ProducerDisposalFeesByMaterial),
+                    CalcResultCommsCostByMaterial2AJson = this.commsCostByMaterial2AJsonMapper.Map(producer.ProducerCommsFeesByMaterial!),
                     CommsCostsByMaterialFeesSummary2a = this.commsCostsByMaterialFeesSummary2AMapper.Map(producer),
                     FeeForCommsCostsWithBadDebtProvision2a = this.feeForCommsCostsWithBadDebtProvision2aMapper.Map(producer)
                 });

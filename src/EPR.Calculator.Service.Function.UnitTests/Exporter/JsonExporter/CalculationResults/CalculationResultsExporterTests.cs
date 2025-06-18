@@ -9,6 +9,7 @@
     using System.Globalization;
     using Moq;
     using EPR.Calculator.Service.Function.Mapper;
+    using static EPR.Calculator.Service.Common.UnitTests.Utils.JsonNodeComparer;
 
     [TestClass]
     public class CalculationResultsExporterTests
@@ -20,9 +21,7 @@
         public CalculationResultsExporterTests()
         {
             Fixture = new Fixture();
-            this.TestClass = new CalculationResultsExporter(
-                new CommsCostsByMaterialFeesSummary2aMapper(), 
-                new FeeForCommsCostsWithBadDebtProvision2aMapper());
+            this.TestClass = new CalculationResultsExporter(new CommsCostsByMaterialFeesSummary2aMapper(), new CalcResultCommsCostByMaterial2AJsonMapper(), new FeeForCommsCostsWithBadDebtProvision2aMapper());
         }
 
         [TestMethod]
@@ -156,16 +155,6 @@
             AssertAreEqual(expected.Value.NorthernIrelandWithBadDebtProvision, actual["northernIrelandWithBadDebtProvision"]);
 
         }
-
-        private void AssertAreEqual(decimal expected, JsonNode? actual)
-        {
-            Assert.IsNotNull(actual, "Actual value should not be null.");
-            Assert.AreEqual(
-                expected.ToString("C", CultureInfo.CreateSpecificCulture("en-GB")),
-                actual.GetValue<string>(),
-                $"Expected {expected} to be equal to {actual}");
-        }
-
 
         /// <summary>
         /// Serialises a <see cref="CalcResultSummary"/>, then parses the resulting JSON

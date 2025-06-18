@@ -45,6 +45,7 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.LateReportingTonnage;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMaterial2A;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -140,8 +141,9 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ILateReportingTonnageMapper, LateReportingTonnageMapper>();
             services.AddTransient<ILateReportingTonnage, LateReportingTonnage>();
             services.AddTransient<ICommsCostsByMaterialFeesSummary2aMapper, CommsCostsByMaterialFeesSummary2aMapper>();
+            services.AddTransient<ICalcCountryApportionmentService, CalcCountryApportionmentService>();
+            services.AddTransient<ICalcResultCommsCostByMaterial2AJsonExporter, CalcResultCommsCostByMaterial2AJsonExporter>();
             services.AddTransient<IFeeForCommsCostsWithBadDebtProvision2aMapper, FeeForCommsCostsWithBadDebtProvision2aMapper>();
-            services.AddTransient<ICalcCountryApportionmentService, CalcCountryApportionmentService>();            
 #if !DEBUG
             SetupBlobStorage(services);
             services.AddTransient<IConfigurationService, Configuration>();
