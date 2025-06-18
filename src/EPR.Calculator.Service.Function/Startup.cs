@@ -143,6 +143,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICommsCostsByMaterialFeesSummary2aMapper, CommsCostsByMaterialFeesSummary2aMapper>();
             services.AddTransient<ICalcCountryApportionmentService, CalcCountryApportionmentService>();
             services.AddTransient<ICalcResultCommsCostByMaterial2AJsonExporter, CalcResultCommsCostByMaterial2AJsonExporter>();
+            services.AddTransient<ISAOperatingCostsWithBadDebtProvisionMapper, SAOperatingCostsWithBadDebtProvisionMapper>();
 #if !DEBUG
             SetupBlobStorage(services);
             services.AddTransient<IConfigurationService, Configuration>();

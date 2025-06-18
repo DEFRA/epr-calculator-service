@@ -13,5 +13,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         public required CalcResultCommsCostByMaterial2AJson CalcResultCommsCostByMaterial2AJson { get; set; }
 
         public CalcResultSummaryCommsCostsByMaterialFeesSummary2a? CommsCostsByMaterialFeesSummary2a { get; set; }
+
+        public CalcResultSAOperatingCostsWithBadDebtProvision calcResultSAOperatingCostsWithBadDebtProvision { get; set; }
     }
 }
