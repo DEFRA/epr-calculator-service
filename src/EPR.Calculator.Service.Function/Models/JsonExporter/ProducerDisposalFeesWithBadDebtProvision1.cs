@@ -31,6 +31,10 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
         public required decimal PublicBinTonnage { get; init; }
 
+        [JsonProperty(PropertyName = "householdDrinksContainersTonnageGlass")]
+        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
+        public decimal? HouseholdDrinksContainersTonnageGlass { get; set; }
+
         [JsonProperty(PropertyName = "totalTonnage")]
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
         public required decimal TotalTonnage { get; init; }
@@ -51,31 +55,31 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         public required decimal PricePerTonne { get; init; }
 
         [JsonProperty(PropertyName = "producerDisposalFeeWithoutBadDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
+        [JsonConverter(typeof(DecimalPrecisionConverter), 2)]
         public required decimal ProducerDisposalFeeWithoutBadDebtProvision { get; init; }
 
         [JsonProperty(PropertyName = "badDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
+        [JsonConverter(typeof(DecimalPrecisionConverter), 2)]
         public required decimal BadDebtProvision { get; init; }
 
         [JsonProperty(PropertyName = "producerDisposalFeeWithBadDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
+        [JsonConverter(typeof(DecimalPrecisionConverter), 2)]
         public required decimal ProducerDisposalFeeWithBadDebtProvision { get; init; }
 
         [JsonProperty(PropertyName = "englandWithBadDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
+        [JsonConverter(typeof(DecimalPrecisionConverter), 2)]
         public required decimal EnglandWithBadDebtProvision { get; init; }
 
         [JsonProperty(PropertyName = "walesWithBadDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
+        [JsonConverter(typeof(DecimalPrecisionConverter), 2)]
         public required decimal WalesWithBadDebtProvision { get; init; }
 
         [JsonProperty(PropertyName = "scotlandWithBadDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
+        [JsonConverter(typeof(DecimalPrecisionConverter), 2)]
         public required decimal ScotlandWithBadDebtProvision { get; init; }
 
         [JsonProperty(PropertyName = "northernIrelandWithBadDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
+        [JsonConverter(typeof(DecimalPrecisionConverter), 2)]
         public required decimal NorthernIrelandWithBadDebtProvision { get; init; }
     }
 
