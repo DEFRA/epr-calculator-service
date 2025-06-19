@@ -10,22 +10,22 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
     using static EPR.Calculator.Service.Common.UnitTests.Utils.JsonNodeComparer;
 
     [TestClass]
-    public class CalcResultParameterCommunicationCostDetail2ExporterTests
+    public class CalcResultCommsCostOnePlusFourApportionmentExporterTests
     {
-        private CalcResultParameterCommunicationCostDetail2Exporter TestClass { get; init; }
+        private CalcResultCommsCostOnePlusFourApportionmentExporter TestClass { get; init; }
         private IFixture Fixture { get; init; }
 
-        public CalcResultParameterCommunicationCostDetail2ExporterTests()
+        public CalcResultCommsCostOnePlusFourApportionmentExporterTests()
         {
             Fixture = new Fixture();
-            this.TestClass = new CalcResultParameterCommunicationCostDetail2Exporter();
+            this.TestClass = new CalcResultCommsCostOnePlusFourApportionmentExporter();
         }
 
         [TestMethod]
         public void CanCallConvertToJson()
         {
             // Arrange
-            var data = Fixture.Create<CalcResultParameterCommunicationCostDetail2>();
+            var data = Fixture.Create<CalcResultCommsCostOnePlusFourApportionment>();
 
             // Act
             var result = this.TestClass.ConvertToJson(data);
@@ -38,7 +38,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
         public void Export_ValuesAreValid()
         {
             // Arrange
-            var data = Fixture.Create<CalcResultParameterCommunicationCostDetail2>();
+            var data = Fixture.Create<CalcResultCommsCostOnePlusFourApportionment>();
 
             // Act
             var json = this.TestClass.ConvertToJson(data);
