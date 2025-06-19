@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMaterial2A
 {
-    public class CalcResultCommsCostOnePlusFourApportionmentExporter
+    public class CalcResultCommsCostOnePlusFourApportionmentExporter : ICalcResultCommsCostOnePlusFourApportionmentExporter
     {
         public string ConvertToJson(CalcResultCommsCostOnePlusFourApportionment data)
             => JsonSerializer.Serialize(
