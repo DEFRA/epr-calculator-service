@@ -1,24 +1,25 @@
-﻿using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.Models.JsonExporter;
-using System.Collections.Generic;
-
-namespace EPR.Calculator.Service.Function.Mapper
+﻿namespace EPR.Calculator.Service.Function.Mapper
 {
-    public static class ProducerDisposalFeesWithBadDebtProvision1JsonMapper
+    using System.Collections.Generic;
+    using EPR.Calculator.Service.Function.Constants;
+    using EPR.Calculator.Service.Function.Models;
+    using EPR.Calculator.Service.Function.Models.JsonExporter;
+
+    public class ProducerDisposalFeesWithBadDebtProvision1JsonMapper : IProducerDisposalFeesWithBadDebtProvision1JsonMapper
     {
-        public static ProducerDisposalFeesWithBadDebtProvision1 Map(Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> ProducerDisposalFeesByMaterial)
+        public ProducerDisposalFeesWithBadDebtProvision1 Map(Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> producerDisposalFeesByMaterial)
         {
             return new ProducerDisposalFeesWithBadDebtProvision1
             {
-                MaterialBreakdown = GetMaterialBreakdown(ProducerDisposalFeesByMaterial)
+                MaterialBreakdown = GetMaterialBreakdown(producerDisposalFeesByMaterial),
             };
         }
 
-        private static IEnumerable<ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown> GetMaterialBreakdown(Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> ProducerDisposalFeesByMaterial)
+        private static IEnumerable<ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown> GetMaterialBreakdown(Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> producerDisposalFeesByMaterial)
         {
             var materialBreakdown = new List<ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown>();
 
-            foreach (var producerTonnage in ProducerDisposalFeesByMaterial)
+            foreach (var producerTonnage in producerDisposalFeesByMaterial)
             {
                 var breakdown = new ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown
                 {
@@ -37,8 +38,13 @@ namespace EPR.Calculator.Service.Function.Mapper
                     EnglandWithBadDebtProvision = producerTonnage.Value.EnglandWithBadDebtProvision,
                     WalesWithBadDebtProvision = producerTonnage.Value.WalesWithBadDebtProvision,
                     ScotlandWithBadDebtProvision = producerTonnage.Value.ScotlandWithBadDebtProvision,
-                    NorthernIrelandWithBadDebtProvision = producerTonnage.Value.NorthernIrelandWithBadDebtProvision
+                    NorthernIrelandWithBadDebtProvision = producerTonnage.Value.NorthernIrelandWithBadDebtProvision,
                 };
+
+                if (producerTonnage.Key == MaterialCodes.Glass)
+                {
+                    breakdown.HouseholdDrinksContainersTonnageGlass = producerTonnage.Value.HouseholdDrinksContainersTonnage;
+                }
                 materialBreakdown.Add(breakdown);
             }
 
