@@ -75,19 +75,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
             Assert.IsNotNull(roundTrippedUkWideData);
 
             // Disposal Fee
-            AssertAreEqual(countryData.Name,
+            AssertAreEqual(ukWideData.Name,
                 roundTrippedUkWideData["name"]);
 
-            AssertAreEqual(countryData.England,
+            AssertAreEqual(ukWideData.England,
                 roundTrippedUkWideData["englandCommsCostUKWide"]);
-            AssertAreEqual(countryData.Wales,
+            AssertAreEqual(ukWideData.Wales,
                 roundTrippedUkWideData["walesCommsCostUKWide"]);
-            AssertAreEqual(countryData.Scotland,
+            AssertAreEqual(ukWideData.Scotland,
                 roundTrippedUkWideData["scotlandCommsCostUKWide"]);
-            AssertAreEqual(countryData.NorthernIreland,
+            AssertAreEqual(ukWideData.NorthernIreland,
                 roundTrippedUkWideData["northernIrelandCommsCostUKWide"]);
 
-            AssertAreEqual(countryData.Total,
+            AssertAreEqual(ukWideData.Total,
                 roundTrippedUkWideData["totalCommsCostUKWide"]);
         }
 
