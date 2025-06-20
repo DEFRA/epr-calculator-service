@@ -3,6 +3,7 @@ using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -24,6 +25,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
         private readonly IFeeForSASetUpCostsWithBadDebtProvision_5Mapper feeForSASetUpCostsWithBadDebtProvision_5Mapper;
         private readonly ICalcResultCommsCostsWithBadDebtProvision2cMapper calcResultCommsCostsWithBadDebtProvision2CMapper;
 
+        [SuppressMessage("Constructor has 8 parameters, which is greater than the 7 authorized.", "S107", Justification = "This is suppressed for now and will be refactored later")]
         public CalculationResultsExporter(
             IProducerDisposalFeesWithBadDebtProvision1JsonMapper producerDisposalFeesWithBadDebtProvision1JsonMapper,
             ICommsCostsByMaterialFeesSummary2aMapper commsCostsByMaterialFeesSummary2AMapper,
