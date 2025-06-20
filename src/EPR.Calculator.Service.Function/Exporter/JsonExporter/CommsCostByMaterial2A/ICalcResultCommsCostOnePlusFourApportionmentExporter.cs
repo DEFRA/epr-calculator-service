@@ -4,6 +4,6 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMater
 {
     public interface ICalcResultCommsCostOnePlusFourApportionmentExporter
     {
-        string ConvertToJson(CalcResultCommsCostOnePlusFourApportionment data);
+        string ConvertToJson(CalcResultCommsCost data);
     }
 }

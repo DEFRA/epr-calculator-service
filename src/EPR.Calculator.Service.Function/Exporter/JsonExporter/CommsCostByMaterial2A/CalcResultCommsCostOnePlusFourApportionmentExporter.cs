@@ -1,4 +1,6 @@
-﻿using EPR.Calculator.Service.Function.Models;
+﻿using EPR.Calculator.Service.Function.Builder.CommsCost;
+using EPR.Calculator.Service.Function.Models;
+using Microsoft.Azure.Amqp.Framing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,25 +14,53 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMater
 {
     public class CalcResultCommsCostOnePlusFourApportionmentExporter : ICalcResultCommsCostOnePlusFourApportionmentExporter
     {
-        public string ConvertToJson(CalcResultCommsCostOnePlusFourApportionment data)
-            => JsonSerializer.Serialize(
+        public virtual string ConvertToJson(CalcResultCommsCost data)
+        {
+            var ukWide = data.CalcResultCommsCostOnePlusFourApportionment
+                .Single(r => r.Name == CalcResultCommsCostBuilder.TwoBCommsCostUkWide);
+            var byCountry = data.CalcResultCommsCostOnePlusFourApportionment
+                .Single(r=> r.Name == CalcResultCommsCostBuilder.TwoCCommsCostByCountry);
+
+            return
+                JsonSerializer.Serialize(
                 new
                 {
-                    calcResult2cCommsDataByCountry = new
-                    {
-                        name = data.Name,
-                        englandCommsCostByCountry = data.England,
-                        walesCommsCostByCountry = data.Wales,
-                        scotlandCommsCostByCountry = data.Scotland,
-                        northernIrelandCommsCostByCountry = data.NorthernIreland,
-                        totalCommsCostByCountry = data.Total,
-                    }
+                    calcResult2bCommsDataByUkWide = MapUkWide(ukWide),
+                    calcResult2cCommsDataByCountry = MapByCountry(byCountry),
                 },
-                new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                    WriteIndented = true,
-                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-                });
+                GetJsonSerializerOptions());
+        }
+
+        protected static object MapUkWide(CalcResultCommsCostOnePlusFourApportionment record)
+        => new
+        {
+            name = record.Name,
+            englandCommsCostUKWide = record.England,
+            walesCommsCostUKWide = record.Wales,
+            scotlandCommsCostUKWide = record.Scotland,
+            northernIrelandCommsCostUKWide = record.NorthernIreland,
+            totalCommsCostUKWide = record.Total,
+        };
+
+        protected static object MapByCountry(CalcResultCommsCostOnePlusFourApportionment record)
+        => new
+        {
+            name = record.Name,
+            englandCommsCostByCountry = record.England,
+            walesCommsCostByCountry = record.Wales,
+            scotlandCommsCostByCountry = record.Scotland,
+            northernIrelandCommsCostByCountry = record.NorthernIreland,
+            totalCommsCostByCountry = record.Total,
+        };
+
+        protected static JsonSerializerOptions GetJsonSerializerOptions()
+        {
+            return new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = true,
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+            };
+        }
     }
 }
