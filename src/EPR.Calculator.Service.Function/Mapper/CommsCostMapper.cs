@@ -42,11 +42,13 @@ namespace EPR.Calculator.Service.Function.Mapper
 
         private static string AppendPercent(string input)
         {
-            return string.IsNullOrWhiteSpace(input)
-                ? "0.00%"
-                : input.Trim().EndsWith("%")
-                    ? input.Trim()
-                    : input.Trim() + "%";
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return "0.00%";
+            }
+
+            string trimmedInput = input.Trim();
+            return trimmedInput.EndsWith('%') ? trimmedInput : trimmedInput + "%";
         }
     }
 }
