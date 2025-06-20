@@ -10,33 +10,34 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
     public class CalcResultsCommsCostsWithBadDebtProvision2c
     {
-        [JsonProperty(PropertyName = "totalProducerFeeForCommsCostsByCountryWithoutBadDebtProvision")]
+        
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
+        [JsonProperty(PropertyName = "totalProducerFeeForCommsCostsByCountryWithoutBadDebtProvision")]
         public decimal TotalProducerFeeForCommsCostsByCountryWithoutBadDebtProvision { get; set; }
 
-        [JsonProperty(PropertyName = "badDebProvisionFor2c")]
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
+        [JsonProperty(PropertyName = "badDebProvisionFor2c")]        
         public decimal BadDebProvisionFor2c { get; set; }
-
-        [JsonProperty(PropertyName = "totalProducerFeeForCommsCostsByCountryWithBadDebtProvision")]
+        
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
+        [JsonProperty(PropertyName = "totalProducerFeeForCommsCostsByCountryWithBadDebtProvision")]
         public decimal TotalProducerFeeForCommsCostsByCountryWithBadDebtProvision { get; set; }
 
-
+        
+        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
         [JsonProperty(PropertyName = "englandTotalWithBadDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
         public decimal EnglandTotalWithBadDebtProvision { get; set; }
-
+        
+        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
         [JsonProperty(PropertyName = "walesTotalWithBadDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
         public decimal WalesTotalWithBadDebtProvision { get; set; }
-
+        
+        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
         [JsonProperty(PropertyName = "scotlandTotalWithBadDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
         public decimal ScotlandTotalWithBadDebtProvision { get; set; }
-
-        [JsonProperty(PropertyName = "northernIrelandTotalWithBadDebtProvision")]
+        
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
+        [JsonProperty(PropertyName = "northernIrelandTotalWithBadDebtProvision")]
         public decimal NorthernIrelandTotalWithBadDebtProvision { get; set; }
 
     }
