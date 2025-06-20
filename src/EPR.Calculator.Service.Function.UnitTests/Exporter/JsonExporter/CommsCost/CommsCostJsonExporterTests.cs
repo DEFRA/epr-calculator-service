@@ -18,8 +18,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
         private Mock<ICommsCostMapper> mockMapper;
         private CommsCostJsonExporter exporter;
 
-        [TestInitialize]
-        public void Setup()
+        public CommsCostJsonExporterTests()
         {
             mockMapper = new Mock<ICommsCostMapper>();
             exporter = new CommsCostJsonExporter(mockMapper.Object);

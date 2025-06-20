@@ -13,10 +13,9 @@ namespace EPR.Calculator.Service.Function.UnitTests
     {
         private CommsCostMapper _mapper;
 
-        [TestInitialize]
-        public void Setup()
+        public CommsCostMapperTests()
         {
-            _mapper = new CommsCostMapper();
+            _mapper = new CommsCostMapper();            
         }
 
         [TestMethod]
