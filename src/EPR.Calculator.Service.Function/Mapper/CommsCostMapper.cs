@@ -43,7 +43,7 @@ namespace EPR.Calculator.Service.Function.Mapper
         private static string AppendPercent(string input)
         {
             return string.IsNullOrWhiteSpace(input)
-                ? "0.00000000%"
+                ? "0.00%"
                 : input.Trim().EndsWith("%")
                     ? input.Trim()
                     : input.Trim() + "%";
