@@ -21,7 +21,12 @@
         public CalculationResultsExporterTests()
         {
             Fixture = new Fixture();
-            this.TestClass = new CalculationResultsExporter(new CommsCostsByMaterialFeesSummary2aMapper(), new CalcResultCommsCostByMaterial2AJsonMapper(), new SAOperatingCostsWithBadDebtProvisionMapper(), new FeeForCommsCostsWithBadDebtProvision2aMapper());
+            this.TestClass = new CalculationResultsExporter(
+                new CommsCostsByMaterialFeesSummary2aMapper(),
+                new CalcResultCommsCostByMaterial2AJsonMapper(),
+                new SAOperatingCostsWithBadDebtProvisionMapper(),
+                new FeeForCommsCostsWithBadDebtProvision2aMapper(),
+                new CalcResultBillingInstructionsJsonMapper());
         }
 
         [TestMethod]

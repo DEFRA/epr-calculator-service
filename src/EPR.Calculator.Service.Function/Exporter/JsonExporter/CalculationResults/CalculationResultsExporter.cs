@@ -19,16 +19,19 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
         private ICalcResultCommsCostByMaterial2AJsonMapper commsCostByMaterial2AJsonMapper;
         private ISAOperatingCostsWithBadDebtProvisionMapper sAOperatingCostsWithBadDebtProvisionMapper;
         private IFeeForCommsCostsWithBadDebtProvision2aMapper feeForCommsCostsWithBadDebtProvision2aMapper;
+        private IBillingInstructionsJsonMapper billingInstructionsJsonMapper;
 
         public CalculationResultsExporter(ICommsCostsByMaterialFeesSummary2aMapper commsCostsByMaterialFeesSummary2AMapper,
             ICalcResultCommsCostByMaterial2AJsonMapper commsCostByMaterial2AJsonMapper, 
             ISAOperatingCostsWithBadDebtProvisionMapper sAOperatingCostsWithBadDebtProvisionMapper,
-            IFeeForCommsCostsWithBadDebtProvision2aMapper feeForCommsCostsWithBadDebtProvision2aMapper)
+            IFeeForCommsCostsWithBadDebtProvision2aMapper feeForCommsCostsWithBadDebtProvision2aMapper,
+            IBillingInstructionsJsonMapper billingInstructionsJsonMapper)
         {
             this.commsCostsByMaterialFeesSummary2AMapper = commsCostsByMaterialFeesSummary2AMapper;
             this.commsCostByMaterial2AJsonMapper = commsCostByMaterial2AJsonMapper;
             this.sAOperatingCostsWithBadDebtProvisionMapper = sAOperatingCostsWithBadDebtProvisionMapper;
             this.feeForCommsCostsWithBadDebtProvision2aMapper = feeForCommsCostsWithBadDebtProvision2aMapper;
+            this.billingInstructionsJsonMapper = billingInstructionsJsonMapper;
         }
 
 
@@ -108,7 +111,8 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
                     CalcResultCommsCostByMaterial2AJson = this.commsCostByMaterial2AJsonMapper.Map(producer.ProducerCommsFeesByMaterial!),
                     CommsCostsByMaterialFeesSummary2a = this.commsCostsByMaterialFeesSummary2AMapper.Map(producer),
                     calcResultSAOperatingCostsWithBadDebtProvision = this.sAOperatingCostsWithBadDebtProvisionMapper.Map(producer),
-                    FeeForCommsCostsWithBadDebtProvision2a = this.feeForCommsCostsWithBadDebtProvision2aMapper.Map(producer)
+                    FeeForCommsCostsWithBadDebtProvision2a = this.feeForCommsCostsWithBadDebtProvision2aMapper.Map(producer),
+                    CalcResultBillingInstructionJson = this.billingInstructionsJsonMapper.Map(producer)
                 });
             }
 
