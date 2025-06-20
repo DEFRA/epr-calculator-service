@@ -27,7 +27,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.Billin
             var fixture = new Fixture();
             var fees = fixture.Create<CalcResultSummaryProducerDisposalFees>();
 
-            _testMapper.Setup(mock => mock.Map(It.IsAny<CalcResultSummaryProducerDisposalFees>())).Returns(fixture.Create<CalcResultBillingInstructionJson>());
+            _testMapper.Setup(mock => mock.Map(It.IsAny<CalcResultSummaryProducerDisposalFees>())).Returns(fixture.Create<CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts>());
 
             // Act
             var result = _testClass.Export(fees);

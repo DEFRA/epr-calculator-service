@@ -121,7 +121,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
                     FeeForCommsCostsWithBadDebtProvision2a = this.feeForCommsCostsWithBadDebtProvision2aMapper.Map(producer),
                     CommsCostsByMaterialFeesSummary2a = this.commsCostsByMaterialFeesSummary2AMapper.Map(producer),
                     TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2c = this.totalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper.Map(producer),
-                    CalcResultBillingInstructionJson = this.billingInstructionsJsonMapper.Map(producer)
+                    CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts = this.billingInstructionsJsonMapper.Map(producer)
                 });
             }
 

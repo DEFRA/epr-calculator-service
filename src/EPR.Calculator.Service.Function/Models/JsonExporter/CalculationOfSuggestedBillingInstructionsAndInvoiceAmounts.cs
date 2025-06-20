@@ -2,12 +2,6 @@
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
-    public record CalcResultBillingInstructionJson
-    {
-        [JsonProperty(PropertyName = "calculationOfSuggestedBillingInstructionsAndInvoiceAmounts")]
-        public required CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts calculationOfSuggestedBillingInstructionsAndInvoiceAmounts { get; init; }
-    }
-
     public record CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts
     {
         [JsonProperty(PropertyName = "currentYearInvoicedTotalToDate")]

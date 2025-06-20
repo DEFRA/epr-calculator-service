@@ -5,16 +5,7 @@ namespace EPR.Calculator.Service.Function.Mapper
 {
     public class CalcResultBillingInstructionsJsonMapper : IBillingInstructionsJsonMapper
     {
-        public CalcResultBillingInstructionJson Map(CalcResultSummaryProducerDisposalFees fees)
-        {
-            return new CalcResultBillingInstructionJson
-            {
-                calculationOfSuggestedBillingInstructionsAndInvoiceAmounts = GetSuggestedBillingInstructionsAndInvoiceAmounts(fees)
-            };
-        }
-
-        public CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts GetSuggestedBillingInstructionsAndInvoiceAmounts(
-            CalcResultSummaryProducerDisposalFees fees)
+        public CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts Map(CalcResultSummaryProducerDisposalFees fees)
         {
             return new CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts
             {
