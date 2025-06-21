@@ -74,5 +74,39 @@ namespace EPR.Calculator.Service.Function.UnitTests
             Assert.AreEqual("10%", result.ParametersCommsCost.Percentages.NorthernIreland);
             Assert.AreEqual("110%", result.ParametersCommsCost.Percentages.Total);
         }
+
+        [TestMethod]
+        public void Map_ShouldHandleEmptyOrNullInput_WhenDataRowIsPresent()
+        {
+            // Arrange  
+            var calcResultCommsCost = new CalcResultCommsCost
+            {
+                CalcResultCommsCostOnePlusFourApportionment = new List<CalcResultCommsCostOnePlusFourApportionment>
+               {
+                   new CalcResultCommsCostOnePlusFourApportionment(),
+                   new CalcResultCommsCostOnePlusFourApportionment
+                   {
+                       England = null,
+                       Wales = "30%",
+                       Scotland = "20",
+                       NorthernIreland = "10%",
+                       Total = "110"
+                   }
+               }
+            };
+
+            // Act  
+            var result = _mapper.Map(calcResultCommsCost);
+
+            // Assert  
+            Assert.IsNotNull(result);
+            Assert.IsNotNull(result.ParametersCommsCost);
+            Assert.IsNotNull(result.ParametersCommsCost.Percentages);
+            Assert.AreEqual("0.00%", result.ParametersCommsCost.Percentages.England);
+            Assert.AreEqual("30%", result.ParametersCommsCost.Percentages.Wales);
+            Assert.AreEqual("20%", result.ParametersCommsCost.Percentages.Scotland);
+            Assert.AreEqual("10%", result.ParametersCommsCost.Percentages.NorthernIreland);
+            Assert.AreEqual("110%", result.ParametersCommsCost.Percentages.Total);
+        }
     }
 }
