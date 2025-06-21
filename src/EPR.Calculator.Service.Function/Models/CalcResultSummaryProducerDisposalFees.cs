@@ -4,6 +4,8 @@ namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResultSummaryProducerDisposalFees
     {
+        public int ProducerIdInt { get; set; }
+
         public required string ProducerId { get; set; }
 
         public required string SubsidiaryId { get; set; }
@@ -17,6 +19,8 @@ namespace EPR.Calculator.Service.Function.Models
         public string IsProducerScaledup { get; set; } = "No";
 
         public bool isTotalRow { get; set; } = false;
+
+        public bool isOverallTotalRow { get; set; } = false;
 
         public decimal TotalProducerDisposalFee { get; set; }
 
