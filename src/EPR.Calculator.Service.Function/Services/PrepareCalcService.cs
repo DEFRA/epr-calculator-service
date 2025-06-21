@@ -1,6 +1,7 @@
 ﻿namespace EPR.Calculator.Service.Function.Services
 {
     using System;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using EPR.Calculator.API.Data;
@@ -250,7 +251,11 @@
 
             // Update the calculator run is_billing_generating to true
 
-            throw new NotImplementedException("PrepareBillingResults is not implemented yet.");
+            var calcRun = await this.Context.CalculatorRuns.SingleAsync(run => run.Id == resultsRequestDto.RunId);
+            calcRun.IsBillingFileGenerating = false;
+            await this.Context.SaveChangesAsync();
+
+            return true;
         }
 
         private async Task HandleErrorAsync(CalculatorRun? calculatorRun, RunClassification classification)

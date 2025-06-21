@@ -238,18 +238,27 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public async Task PrepareBillingResults_ShouldThrowNotImplementedException()
+        public void PrepareBillingResults_Test()
         {
-            // Arrange
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-            var runName = "TestRun";
-            var cancellationToken = CancellationToken.None;
+            var calcRun = this._context.CalculatorRuns.Single(x => x.Id == 1);
+            calcRun.IsBillingFileGenerating = true;
+            this._context.SaveChanges();
 
-            // Act & Assert
-            await Assert.ThrowsExceptionAsync<NotImplementedException>(async () =>
+            var calcResultsRequestDto = new CalcResultsRequestDto
             {
-                await _testClass.PrepareBillingResults(resultsRequestDto, runName, cancellationToken);
-            });
+                RunId = 1,
+                IsBillingFile = true,
+                AcceptedProducerIds = new List<int> { 1, 2 }
+            };
+            var billingResult = _testClass.PrepareBillingResults(calcResultsRequestDto, "TestRun", CancellationToken.None);
+            billingResult.Wait();
+
+            Assert.IsTrue(billingResult.Result);
+            calcRun = this._context.CalculatorRuns.Single(x => x.Id == 1);
+            Assert.IsFalse(calcRun.IsBillingFileGenerating);
+
+            this._builder
+                .Verify(b => b.Build(It.Is<CalcResultsRequestDto>(x => x.RunId == 1 && x.IsBillingFile)), Times.Once);
         }
 
         private void SeedDatabase()
