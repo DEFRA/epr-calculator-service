@@ -1,19 +1,17 @@
 using AutoFixture;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 {
     [TestClass]
     public class ParametersOtherMapperTests
     {
-        private ParametersOtherMapper _testClass;
+        private ParametersOtherMapper TestClass { get; init; }
 
-        [TestInitialize]
-        public void Setup()
+        public ParametersOtherMapperTests()
         {
-            _testClass = new ParametersOtherMapper();
+            this.TestClass = new ParametersOtherMapper();
         }
 
         [TestMethod]
@@ -24,7 +22,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             var otherCost = fixture.Create<CalcResultParameterOtherCost>();
 
             // Act
-            var result = ((IParametersOtherMapper)_testClass).Map(otherCost);
+            var result = ((IParametersOtherMapper)TestClass).Map(otherCost);
 
             // Assert
             Assert.IsNotNull(result);
@@ -36,7 +34,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
         {
             var otherCost = new CalcResultParameterOtherCost
             {
-                Name = "8 Tonnage Costs",
+                Name = ParametersOtherMapper.EightTonnageChangeHeader,
                 SaOperatingCost = Enumerable.Empty<CalcResultParameterOtherCostDetail>(),
                 Details = new List<CalcResultParameterOtherCostDetail>(),
                 SchemeSetupCost = new CalcResultParameterOtherCostDetail(),
@@ -44,7 +42,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
                 Materiality = new List<CalcResultMateriality>()
             };
 
-            var result = _testClass.Map(otherCost);
+            var result = TestClass.Map(otherCost);
             Assert.IsNotNull(result.ParametersOther.ThreeSAOperatingCost);
             Assert.AreEqual(string.Empty, result.ParametersOther.ThreeSAOperatingCost.England);
         }
@@ -54,7 +52,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
         {
             var otherCost = new CalcResultParameterOtherCost
             {
-                Name = "8 Tonnage Costs",
+                Name = ParametersOtherMapper.EightTonnageChangeHeader,
                 SaOperatingCost = new List<CalcResultParameterOtherCostDetail>(),
                 Details = new List<CalcResultParameterOtherCostDetail>(),
                 SchemeSetupCost = new CalcResultParameterOtherCostDetail(),
@@ -62,7 +60,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
                 Materiality = new List<CalcResultMateriality>()
             };
 
-            var result = _testClass.Map(otherCost);
+            var result = TestClass.Map(otherCost);
             Assert.IsNotNull(result.ParametersOther.FourLADataPrepCosts);
             Assert.AreEqual(string.Empty, result.ParametersOther.FourLADataPrepCosts.England);
         }
@@ -72,7 +70,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
         {
             var otherCost = new CalcResultParameterOtherCost
             {
-                Name = "8 Tonnage Costs",
+                Name = ParametersOtherMapper.EightTonnageChangeHeader,
                 SaOperatingCost = new List<CalcResultParameterOtherCostDetail>(),
                 Details = new List<CalcResultParameterOtherCostDetail>(),
                 SchemeSetupCost = new CalcResultParameterOtherCostDetail(),
@@ -80,7 +78,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
                 Materiality = new List<CalcResultMateriality>()
             };
 
-            var result = _testClass.Map(otherCost);
+            var result = TestClass.Map(otherCost);
             Assert.IsNotNull(result.ParametersOther.FourCountryApportionmentPercentages);
             Assert.AreEqual(string.Empty, result.ParametersOther.FourCountryApportionmentPercentages.England);
         }
@@ -99,7 +97,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 
             var otherCost = new CalcResultParameterOtherCost
             {
-                Name = "8 Tonnage Costs",
+                Name = ParametersOtherMapper.EightTonnageChangeHeader,
                 SaOperatingCost = new List<CalcResultParameterOtherCostDetail>(),
                 Details = new List<CalcResultParameterOtherCostDetail>(),
                 SchemeSetupCost = new CalcResultParameterOtherCostDetail(),
@@ -107,7 +105,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
                 Materiality = materiality
             };
 
-            var result = _testClass.Map(otherCost);
+            var result = TestClass.Map(otherCost);
 
             Assert.AreEqual("£1", result.ParametersOther.SevenMateriality.Increase.Amount);
             Assert.AreEqual("£2", result.ParametersOther.SevenMateriality.Decrease.Amount);
@@ -120,6 +118,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
         {
             var section = new List<CalcResultMateriality>
             {
+                new() { SevenMateriality = "Other", Amount = "£0", Percentage = "0%" },
                 new() { SevenMateriality = "Other", Amount = "£0", Percentage = "0%" }
             };
 
@@ -128,8 +127,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
                 .Invoke(null, new object[] { section }) as ChangeJson;
 
             Assert.IsNotNull(result);
-            Assert.AreEqual("£0", result.Increase.Amount);
-            Assert.AreEqual("0%", result.Increase.Percentage);
+            Assert.AreEqual(string.Empty, result.Increase.Amount);
+            Assert.AreEqual(string.Empty, result.Increase.Percentage);
             Assert.AreEqual(string.Empty, result.Decrease.Amount);
         }
 

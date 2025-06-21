@@ -6,13 +6,14 @@ namespace EPR.Calculator.Service.Function.Mapper
 {
     public class ParametersOtherMapper : IParametersOtherMapper
     {
+        public const string FourCountryApportionmentPercentage = "4 Country Apportionment %s";
+        public const string EightTonnageChangeHeader = "8 Tonnage Change";
+
         public CalcResultParametersOtherJson Map(CalcResultParameterOtherCost otherCost)
         {
-            // Find the apportionment detail by name
             var apportionmentDetail = otherCost.Details
-                .FirstOrDefault(d => d.Name == "4 Country Apportionment %s");
+                .FirstOrDefault(d => d.Name == FourCountryApportionmentPercentage);
 
-            // Extract materiality and tonnage change sections
             var (materiality, tonnageChange) = SplitMaterialitySections(otherCost.Materiality);
 
             return new CalcResultParametersOtherJson
@@ -33,32 +34,31 @@ namespace EPR.Calculator.Service.Function.Mapper
             };
         }
 
-        // Helper to split the materiality list into two sections
         private static (IEnumerable<CalcResultMateriality> materiality, IEnumerable<CalcResultMateriality> tonnageChange)
             SplitMaterialitySections(IEnumerable<CalcResultMateriality> materialities)
         {
-            var list = materialities?.ToList() ?? new List<CalcResultMateriality>();
-            // Find the index of the "8 Tonnage Change" header
-            var tonnageHeaderIndex = list.FindIndex(m => m.SevenMateriality == "8 Tonnage Change");
-            if (tonnageHeaderIndex >= 0)
+            var allItems = materialities?.ToList() ?? new List<CalcResultMateriality>();
+
+            var tonnageHeader = EightTonnageChangeHeader;
+            int tonnageHeaderIndex = allItems.FindIndex(m => m.SevenMateriality == tonnageHeader);
+
+            if (tonnageHeaderIndex == -1)
             {
-                // Materiality is before the header, tonnage change is after
-                return (
-                    list.Take(tonnageHeaderIndex),
-                    list.Skip(tonnageHeaderIndex + 1)
-                );
+                return (allItems, Enumerable.Empty<CalcResultMateriality>());
             }
-            // If not found, treat all as materiality, none as tonnage change
-            return (list, Enumerable.Empty<CalcResultMateriality>());
+
+            var materialitySection = allItems.Take(tonnageHeaderIndex);
+            var tonnageChangeSection = allItems.Skip(tonnageHeaderIndex + 1);
+
+            return (materialitySection, tonnageChangeSection);
         }
 
-        // Map a section (increase/decrease) to ChangeJson
-        private static ChangeJson MapChangeSection(IEnumerable<CalcResultMateriality> section)
+        private static ChangeJson MapChangeSection(IEnumerable<CalcResultMateriality> materialities)
         {
-            if (section == null) return new ChangeJson();
+            if (!materialities.Any()) return new ChangeJson();
 
-            var increase = section.FirstOrDefault(m => m.SevenMateriality == "Increase");
-            var decrease = section.FirstOrDefault(m => m.SevenMateriality == "Decrease");
+            var increase = materialities.FirstOrDefault(m => m.SevenMateriality == "Increase");
+            var decrease = materialities.FirstOrDefault(m => m.SevenMateriality == "Decrease");
 
             return new ChangeJson
             {
@@ -67,26 +67,26 @@ namespace EPR.Calculator.Service.Function.Mapper
             };
         }
 
-        private static CountryAmountJson MapCountryAmount(CalcResultParameterOtherCostDetail? source)
+        private static CountryAmountJson MapCountryAmount(CalcResultParameterOtherCostDetail? costDetail)
         {
-            if (source == null) return new CountryAmountJson();
+            if (costDetail == null) return new CountryAmountJson();
             return new CountryAmountJson
             {
-                England = source.England,
-                Wales = source.Wales,
-                Scotland = source.Scotland,
-                NorthernIreland = source.NorthernIreland,
-                Total = source.Total,
+                England = costDetail.England,
+                Wales = costDetail.Wales,
+                Scotland = costDetail.Scotland,
+                NorthernIreland = costDetail.NorthernIreland,
+                Total = costDetail.Total,
             };
         }
 
-        private static ChangeDetailJson MapChangeDetail(CalcResultMateriality? source)
+        private static ChangeDetailJson MapChangeDetail(CalcResultMateriality? materiality)
         {
-            if (source == null) return new ChangeDetailJson();
+            if (materiality == null) return new ChangeDetailJson();
             return new ChangeDetailJson
             {
-                Amount = source.Amount,
-                Percentage = source.Percentage,
+                Amount = materiality.Amount,
+                Percentage = materiality.Percentage,
             };
         }
     }
