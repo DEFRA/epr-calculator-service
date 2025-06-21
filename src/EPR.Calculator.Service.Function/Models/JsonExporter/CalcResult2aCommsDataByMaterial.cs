@@ -20,38 +20,37 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
 
         [JsonProperty(PropertyName = "englandCommsCost")]
-        public required string EnglandCommsCost { get; init; }
+        public required decimal EnglandCommsCost { get; init; }
 
         [JsonProperty(PropertyName = "walesCommsCost")]
-        public required string WalesCommsCost { get; init; }
+        public required decimal WalesCommsCost { get; init; }
 
         [JsonProperty(PropertyName = "scotlandCommsCost")]
-        public required string ScotlandCommsCost { get; init; }
+        public required decimal ScotlandCommsCost { get; init; }
 
         [JsonProperty(PropertyName = "northernIrelandCommsCost")]
-        public required string NorthernIrelandCommsCost { get; init; }
+        public required decimal NorthernIrelandCommsCost { get; init; }
 
         [JsonProperty(PropertyName = "totalCommsCost")]
-        public required string TotalCommsCost { get; init; }
+        public required decimal TotalCommsCost { get; init; }
 
         [JsonProperty(PropertyName = "producerHouseholdPackagingWasteTonnage")]
-        public required string ProducerHouseholdPackagingWasteTonnage { get; init; }
+        public required decimal ProducerHouseholdPackagingWasteTonnage { get; init; }
 
         [JsonProperty(PropertyName = "publicBinTonnage")]
-        public required string PublicBinTonnage { get; init; }
+        public required decimal PublicBinTonnage { get; init; }
 
         [JsonProperty(PropertyName = "householdDrinksContainersTonnage")]
-        public required string HouseholdDrinksContainersTonnage { get; init; }
+        public required decimal HouseholdDrinksContainersTonnage { get; init; }
 
         [JsonProperty(PropertyName = "lateReportingTonnage")]
-        public required string LateReportingTonnage { get; init; }
+        public required decimal LateReportingTonnage { get; init; }
 
         [JsonProperty(PropertyName = "totalTonnage")]
-        public required string TotalTonnage { get; init; }
+        public required decimal TotalTonnage { get; init; }
 
         [JsonProperty(PropertyName = "commsCostByMaterialPricePerTonne")]
-        public required string CommsCostByMaterialPricePerTonne { get; init; }
-
+        public required decimal CommsCostByMaterialPricePerTonne { get; init; }
 
     }
 }

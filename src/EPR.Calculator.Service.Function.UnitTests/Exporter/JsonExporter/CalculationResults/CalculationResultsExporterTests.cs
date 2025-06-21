@@ -26,7 +26,8 @@
                 new SAOperatingCostsWithBadDebtProvisionMapper(),
                 new FeeForCommsCostsWithBadDebtProvision2aMapper(),
                 new TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper(),
-                new CalcResultCommsCostsWithBadDebtProvision2cMapper()
+                new CalcResultCommsCostsWithBadDebtProvision2cMapper(),
+                new CalcResult2aCommsDataByMaterialMapper()
             );
         }
 
