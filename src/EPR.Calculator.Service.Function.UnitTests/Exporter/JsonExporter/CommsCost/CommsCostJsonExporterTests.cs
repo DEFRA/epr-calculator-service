@@ -61,7 +61,20 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
         {
             // Arrange  
             var communicationCost = new CalcResultCommsCost();
-            var mappedResult = new CalcResultCommsCostJson();
+            var mappedResult = new CalcResultCommsCostJson
+            {
+                ParametersCommsCost = new ParametersCommsCost
+                {
+                    Percentages = new OnePlusFourCommsCostApportionmentPercentages
+                    {
+                        England = "0.00%",
+                        Wales = "0.00%",
+                        Scotland = "0.00%",
+                        NorthernIreland = "0.00%",
+                        Total = "0.00%"
+                    }
+                }
+            };
             mockMapper.Setup(m => m.Map(communicationCost)).Returns(mappedResult);
 
             // Act  
