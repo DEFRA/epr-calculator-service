@@ -259,6 +259,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             this._builder
                 .Verify(b => b.Build(It.Is<CalcResultsRequestDto>(x => x.RunId == 1 && x.IsBillingFile)), Times.Once);
+
+            var billingFileMetaData = this._context.CalculatorRunBillingFileMetadata.SingleOrDefault(x => x.CalculatorRunId == 1);
+
+            Assert.IsNotNull(billingFileMetaData);
+
+            Assert.AreEqual($"1-TestRun_Billing File_{DateTime.Today:yyyyMMdd}.csv", billingFileMetaData.BillingCsvFileName);
+            Assert.AreEqual("1Billing.json", billingFileMetaData.BillingJsonFileName);
+
         }
 
         private void SeedDatabase()

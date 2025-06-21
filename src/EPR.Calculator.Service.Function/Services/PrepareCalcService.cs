@@ -228,14 +228,16 @@
             string runName,
             CancellationToken cancellationToken)
         {
-            var results = await this.Builder.Build(resultsRequestDto);
+            await this.Builder.Build(resultsRequestDto);
 
             // Get File name for the billing json file
-            var billingFileName = new CalcResultsAndBillingFileName(
+            var billingFileCsvName = new CalcResultsAndBillingFileName(
                 resultsRequestDto.RunId,
                 runName,
                 DateTime.Now,
                 true);
+
+            var billingFileJsonName = new CalcResultsAndBillingFileName( resultsRequestDto.RunId, true, true);
 
             // call json Exporter
 
@@ -249,10 +251,21 @@
 
             // Update the calculator run with the billing file metadata
 
-            // Update the calculator run is_billing_generating to true
-
             var calcRun = await this.Context.CalculatorRuns.SingleAsync(run => run.Id == resultsRequestDto.RunId);
             calcRun.IsBillingFileGenerating = false;
+
+            var billingFileMetadata = new CalculatorRunBillingFileMetadata
+            {
+                BillingCsvFileName = billingFileCsvName.ToString(),
+                BillingFileCreatedBy = "System",
+                CalculatorRunId = resultsRequestDto.RunId,
+                BillingFileCreatedDate = DateTime.UtcNow,
+                BillingFileAuthorisedBy = "System",
+                BillingJsonFileName = billingFileJsonName.ToString(),
+            };
+
+            this.Context.CalculatorRunBillingFileMetadata.Add(billingFileMetadata);
+
             await this.Context.SaveChangesAsync();
 
             return true;

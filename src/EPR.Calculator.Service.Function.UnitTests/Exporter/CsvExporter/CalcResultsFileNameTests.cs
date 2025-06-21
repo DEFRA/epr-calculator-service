@@ -39,11 +39,23 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         /// but a blank run name is used.
         /// </summary>
         /// <param name="value"></param>
-        [DataTestMethod]
-        public void CannotCreateBillingRunName()
+        [TestMethod]
+        public void CanCreateBillingCsvFileName()
         {
-            var billingFileName = new CalcResultsAndBillingFileName(10223, "RunName", new DateTime(2025, 10, 1), true);
-            Assert.AreEqual(billingFileName, "10223-RunName_Billing File_20251001.csv");
+            var billingFileCsvName = new CalcResultsAndBillingFileName(10223, "RunName", new DateTime(2025, 10, 1), true);
+            Assert.AreEqual("10223-RunName_Billing File_20251001.csv", billingFileCsvName);
+        }
+
+        /// <summary>
+        /// Check that an exception is thrown when trying to construct the file name,
+        /// but a blank run name is used.
+        /// </summary>
+        /// <param name="value"></param>
+        [TestMethod]
+        public void CanCreateBillingJsonFileName()
+        {
+            var billingFileJsonName = new CalcResultsAndBillingFileName(10223, true, true);
+            Assert.AreEqual("10223Billing.json", billingFileJsonName);
         }
 
         /// <summary>
@@ -108,7 +120,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             Assert.IsTrue(components[1].Length <= 30);
             Assert.AreEqual(expectedRunName, components[1]);
             Assert.AreEqual(expectedTimeStamp, components[3]);
-            Assert.AreEqual(CalcResultsAndBillingFileName.FileExtension, components[4]);
+            Assert.AreEqual(CalcResultsAndBillingFileName.CsvFileExtension, components[4]);
             Assert.AreEqual(
                 testClass,
                 $"{RunId}-{expectedRunName}_Results File_{expectedTimeStamp}.csv");

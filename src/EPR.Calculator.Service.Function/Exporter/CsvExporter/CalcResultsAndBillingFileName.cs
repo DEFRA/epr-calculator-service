@@ -13,7 +13,12 @@
         /// <summary>
         /// The file extension to append to the file name.
         /// </summary>
-        public const string FileExtension = "csv";
+        public const string CsvFileExtension = "csv";
+
+        /// <summary>
+        /// The file extension to append to the file name.
+        /// </summary>
+        public const string JsonFileExtension = "json";
 
         /// <summary>
         /// The maximum number of characters to from the run name to include in the file name.
@@ -25,6 +30,7 @@
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CalcResultsAndBillingFileName"/> class.
+        /// Only use it for CSV results files.
         /// </summary>
         /// <param name="runId">The calculator run ID.</param>
         /// <param name="runName">The calculator run name.</param>
@@ -39,7 +45,22 @@
             var truncatedRunName = string.Join(string.Empty, runName.Take(MaxRunNameLength));
             var filePart = isDraftBillingFile ? "Billing" : "Results";
             var name = $"{runId}-{truncatedRunName}_{filePart} File_{timeStamp:yyyyMMdd}";
-            Value = Path.ChangeExtension(name, FileExtension);
+            Value = Path.ChangeExtension(name, CsvFileExtension);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CalcResultsAndBillingFileName"/> class.
+        /// Only use it for JSON billing files.
+        /// </summary>
+        /// <param name="runId"></param>
+        public CalcResultsAndBillingFileName(int runId, bool isDraftBillingFile, bool isJson)
+        {
+            if (!isJson || !isDraftBillingFile)
+            {
+                throw new ArgumentException("This constructor is only for JSON billing files.");
+            }
+            var name = $"{runId}Billing";
+            Value = Path.ChangeExtension(name, JsonFileExtension);
         }
 
         /// <inheritdoc/>
