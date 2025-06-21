@@ -2,7 +2,7 @@
 using EPR.Calculator.Service.Function.Models;
 using Newtonsoft.Json;
 
-namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.ParametersOther
+namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
 {
     public class ParametersOtherJsonExporter : IParametersOtherJsonExporter
     {
@@ -13,7 +13,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.ParametersOther
             _mapper = mapper;
         }
 
-        public string Export(CalcResultParametersOther calcResultParametersOther)
+        public string Export(CalcResultParameterOtherCost calcResultParametersOther)
         {
             var result = _mapper.Map(calcResultParametersOther);
             return JsonConvert.SerializeObject(result);

@@ -1,9 +1,9 @@
 ﻿using EPR.Calculator.Service.Function.Models;
 
-namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.ParametersOther
+namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
 {
     public interface IParametersOtherJsonExporter
     {
-        string Export(CalcResultParametersOther calcResultParametersOther);
+        string Export(CalcResultParameterOtherCost calcResultParametersOther);
     }
 }
