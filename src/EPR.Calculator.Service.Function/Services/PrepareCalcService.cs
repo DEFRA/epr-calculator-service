@@ -1,6 +1,7 @@
 ﻿namespace EPR.Calculator.Service.Function.Services
 {
     using System;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using EPR.Calculator.API.Data;
@@ -151,7 +152,7 @@
                     Message = "Uploader started...",
                 });
 
-                var fileName = new CalcResultsFileName(
+                var fileName = new CalcResultsAndBillingFileName(
                     results.CalcResultDetail.RunId,
                     results.CalcResultDetail.RunName,
                     results.CalcResultDetail.RunDate);
@@ -223,11 +224,51 @@
             return false;
         }
 
-        public Task<bool> PrepareBillingResults([FromBody] CalcResultsRequestDto resultsRequestDto,
+        public async Task<bool> PrepareBillingResults([FromBody] CalcResultsRequestDto resultsRequestDto,
             string runName,
             CancellationToken cancellationToken)
         {
-            throw new NotImplementedException("PrepareBillingResults is not implemented yet.");
+            await this.Builder.Build(resultsRequestDto);
+
+            // Get File name for the billing json file
+            var billingFileCsvName = new CalcResultsAndBillingFileName(
+                resultsRequestDto.RunId,
+                runName,
+                DateTime.Now,
+                true);
+
+            var billingFileJsonName = new CalcResultsAndBillingFileName( resultsRequestDto.RunId, true, true);
+
+            // call json Exporter
+
+            // upload the Json file to blob storage
+
+            // Get File name for the billing json file
+
+            // call csv Exporter
+
+            // upload the csv file to blob storage
+
+            // Update the calculator run with the billing file metadata
+
+            var calcRun = await this.Context.CalculatorRuns.SingleAsync(run => run.Id == resultsRequestDto.RunId);
+            calcRun.IsBillingFileGenerating = false;
+
+            var billingFileMetadata = new CalculatorRunBillingFileMetadata
+            {
+                BillingCsvFileName = billingFileCsvName.ToString(),
+                BillingFileCreatedBy = "System",
+                CalculatorRunId = resultsRequestDto.RunId,
+                BillingFileCreatedDate = DateTime.UtcNow,
+                BillingFileAuthorisedBy = "System",
+                BillingJsonFileName = billingFileJsonName.ToString(),
+            };
+
+            this.Context.CalculatorRunBillingFileMetadata.Add(billingFileMetadata);
+
+            await this.Context.SaveChangesAsync();
+
+            return true;
         }
 
         private async Task HandleErrorAsync(CalculatorRun? calculatorRun, RunClassification classification)
