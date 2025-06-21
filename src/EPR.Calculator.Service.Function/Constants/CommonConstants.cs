@@ -36,5 +36,8 @@
         public const string ZeroCurrency = "£0";
         public const string Initial = "INITIAL";
         public const char Comma = ',';
+
+        public const string OnePlusFourCommsCostApportionmentPercentages = "onePlusFourCommsCostApportionmentPercentages";
+        public const string ParametersCommsCost = "parametersCommsCost";
     }
 }
