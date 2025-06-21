@@ -8,7 +8,7 @@
     /// <summary>
     /// Builds the file name for the calculator results file.
     /// </summary>
-    public class CalcResultsFileName
+    public class CalcResultsAndBillingFileName
     {
         /// <summary>
         /// The file extension to append to the file name.
@@ -24,16 +24,21 @@
         private string Value { get; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CalcResultsFileName"/> class.
+        /// Initializes a new instance of the <see cref="CalcResultsAndBillingFileName"/> class.
         /// </summary>
         /// <param name="runId">The calculator run ID.</param>
         /// <param name="runName">The calculator run name.</param>
         /// <param name="timeStamp">The date when the report is generated.</param>
-        public CalcResultsFileName(int runId, string runName, DateTime timeStamp)
+        /// <param name="isDraftBillingFile">The boolean value for isDraftBillingFile</param>
+        public CalcResultsAndBillingFileName(int runId,
+            string runName,
+            DateTime timeStamp,
+            bool isDraftBillingFile = false)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(runName);
             var truncatedRunName = string.Join(string.Empty, runName.Take(MaxRunNameLength));
-            var name = $"{runId}-{truncatedRunName}_Results File_{timeStamp:yyyyMMdd}";
+            var filePart = isDraftBillingFile ? "Billing" : "Results";
+            var name = $"{runId}-{truncatedRunName}_{filePart} File_{timeStamp:yyyyMMdd}";
             Value = Path.ChangeExtension(name, FileExtension);
         }
 
@@ -44,7 +49,7 @@
         /// Implicitly converts the <paramref name="calcResultsFileName"/> object to a string.
         /// </summary>
         /// <param name="calcResultsFileName"></param>
-        public static implicit operator string(CalcResultsFileName calcResultsFileName)
+        public static implicit operator string(CalcResultsAndBillingFileName calcResultsFileName)
             => calcResultsFileName.ToString();
 
         /// <summary>
@@ -54,13 +59,13 @@
         /// <param name="context">The database context.</param>
         /// <param name="runId">The run ID.</param>
         /// <returns></returns>
-        public static CalcResultsFileName FromDatabase(ApplicationDBContext context, int runId)
+        public static CalcResultsAndBillingFileName FromDatabase(ApplicationDBContext context, int runId)
         {
             var runDetails = context.CalculatorRuns
                 .Where(run => run.Id == runId)
                 .Select(run => new { run.Name, run.CreatedAt }).Single();
 
-            return new CalcResultsFileName(runId, runDetails.Name ?? string.Empty, runDetails.CreatedAt);
+            return new CalcResultsAndBillingFileName(runId, runDetails.Name ?? string.Empty, runDetails.CreatedAt);
         }
     }
 }

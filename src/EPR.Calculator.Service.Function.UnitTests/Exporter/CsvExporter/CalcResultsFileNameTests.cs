@@ -40,10 +40,22 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         /// </summary>
         /// <param name="value"></param>
         [DataTestMethod]
+        public void CannotCreateBillingRunName()
+        {
+            var billingFileName = new CalcResultsAndBillingFileName(10223, "RunName", new DateTime(2025, 10, 1), true);
+            Assert.AreEqual(billingFileName, "10223-RunName_Billing File_20251001.csv");
+        }
+
+        /// <summary>
+        /// Check that an exception is thrown when trying to construct the file name,
+        /// but a blank run name is used.
+        /// </summary>
+        /// <param name="value"></param>
+        [DataTestMethod]
         [DataRow(null)]
         [DataRow("")]
         [DataRow("   ")]
-        public void CannotConstructWithInvalidRunName(string value)
+        public void CannotConstructBillingFileWithInvalidRunName(string value)
         {
             // Arrange
             Exception? exception = null;
@@ -51,7 +63,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             // Act
             try
             {
-                _ = new CalcResultsFileName(RunId, value, TimeStamp);
+                _ = new CalcResultsAndBillingFileName(RunId, value, TimeStamp, true);
             }
             catch (Exception ex)
             {
@@ -82,12 +94,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var runName = GetRandomString(nameLength);
 
             char[] delimiters = ['-', '_', '.'];
-            var expectedRunNameLength = Math.Min(nameLength, CalcResultsFileName.MaxRunNameLength);
+            var expectedRunNameLength = Math.Min(nameLength, CalcResultsAndBillingFileName.MaxRunNameLength);
             var expectedRunName = runName.Substring(0, expectedRunNameLength);
             var expectedTimeStamp = TimeStamp.ToString("yyyyMMdd");
 
             // Act
-            var testClass = new CalcResultsFileName(RunId, runName, TimeStamp);
+            var testClass = new CalcResultsAndBillingFileName(RunId, runName, TimeStamp);
 
             // Assert
             var components = testClass.ToString().Split(delimiters);
@@ -96,7 +108,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             Assert.IsTrue(components[1].Length <= 30);
             Assert.AreEqual(expectedRunName, components[1]);
             Assert.AreEqual(expectedTimeStamp, components[3]);
-            Assert.AreEqual(CalcResultsFileName.FileExtension, components[4]);
+            Assert.AreEqual(CalcResultsAndBillingFileName.FileExtension, components[4]);
             Assert.AreEqual(
                 testClass,
                 $"{RunId}-{expectedRunName}_Results File_{expectedTimeStamp}.csv");
@@ -120,7 +132,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 $".csv";
 
             // Act
-            var result = CalcResultsFileName.FromDatabase(context.Object, mockRun.Id);
+            var result = CalcResultsAndBillingFileName.FromDatabase(context.Object, mockRun.Id);
 
             // Assert
             Assert.AreEqual(expectedFileName, (string)result);

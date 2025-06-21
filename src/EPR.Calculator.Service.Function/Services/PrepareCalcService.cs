@@ -151,7 +151,7 @@
                     Message = "Uploader started...",
                 });
 
-                var fileName = new CalcResultsFileName(
+                var fileName = new CalcResultsAndBillingFileName(
                     results.CalcResultDetail.RunId,
                     results.CalcResultDetail.RunName,
                     results.CalcResultDetail.RunDate);
@@ -223,10 +223,33 @@
             return false;
         }
 
-        public Task<bool> PrepareBillingResults([FromBody] CalcResultsRequestDto resultsRequestDto,
+        public async Task<bool> PrepareBillingResults([FromBody] CalcResultsRequestDto resultsRequestDto,
             string runName,
             CancellationToken cancellationToken)
         {
+            var results = await this.Builder.Build(resultsRequestDto);
+
+            // Get File name for the billing json file
+            var billingFileName = new CalcResultsAndBillingFileName(
+                resultsRequestDto.RunId,
+                runName,
+                DateTime.Now,
+                true);
+
+            // call json Exporter
+
+            // upload the Json file to blob storage
+
+            // Get File name for the billing json file
+
+            // call csv Exporter
+
+            // upload the csv file to blob storage
+
+            // Update the calculator run with the billing file metadata
+
+            // Update the calculator run is_billing_generating to true
+
             throw new NotImplementedException("PrepareBillingResults is not implemented yet.");
         }
 
