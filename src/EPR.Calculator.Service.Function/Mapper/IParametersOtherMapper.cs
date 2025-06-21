@@ -4,6 +4,6 @@ namespace EPR.Calculator.Service.Function.Mapper
 {
     public interface IParametersOtherMapper
     {
-        CalcResultParametersOtherJson Map(CalcResultParameterOtherCost calcResultsSummary);
+        CalcResultParametersOtherJson Map(CalcResultParameterOtherCost otherCost);
     }
 }

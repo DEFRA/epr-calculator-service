@@ -9,14 +9,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
     [TestClass]
     public class ParametersOtherJsonExporterTests
     {
-        private ParametersOtherJsonExporter _testClass;
-        private Mock<IParametersOtherMapper> _testMapper;
+        private ParametersOtherJsonExporter TestClass { get; init; }
+        private Mock<IParametersOtherMapper> TestMapper{ get; init; }
 
-        [TestInitialize]
-        public void Setup()
+        public ParametersOtherJsonExporterTests()
         {
-            _testMapper = new Mock<IParametersOtherMapper>();
-            _testClass = new ParametersOtherJsonExporter(_testMapper.Object);
+            this.TestMapper = new Mock<IParametersOtherMapper>();
+            this.TestClass = new ParametersOtherJsonExporter(this.TestMapper.Object);
         }
 
         [TestMethod]
@@ -26,15 +25,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
             var fixture = new Fixture();
             var otherCost = fixture.Create<CalcResultParameterOtherCost>();
 
-            _testMapper
+            TestMapper
                 .Setup(mock => mock.Map(It.IsAny<CalcResultParameterOtherCost>()))
                 .Returns(fixture.Create<CalcResultParametersOtherJson>());
 
             // Act
-            var result = _testClass.Export(otherCost);
+            var result = TestClass.Export(otherCost);
 
             // Assert
-            _testMapper.Verify(mock => mock.Map(It.IsAny<CalcResultParameterOtherCost>()));
+            TestMapper.Verify(mock => mock.Map(It.IsAny<CalcResultParameterOtherCost>()));
             Assert.IsFalse(string.IsNullOrEmpty(result));
         }
     }
