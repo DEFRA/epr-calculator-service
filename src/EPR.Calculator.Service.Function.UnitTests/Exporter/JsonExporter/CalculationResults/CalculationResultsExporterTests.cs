@@ -27,7 +27,8 @@
                 new FeeForCommsCostsWithBadDebtProvision2aMapper(),
                 new TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper(),
                 new FeeForSASetUpCostsWithBadDebtProvision_5Mapper(),
-                new CalcResultCommsCostsWithBadDebtProvision2cMapper()
+                new CalcResultCommsCostsWithBadDebtProvision2cMapper(),
+                new CalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper()
             );
         }
 
@@ -329,6 +330,25 @@
             AssertAreEqual(producer.TwoCTotalProducerFeeForCommsCostsWithoutBadDebt, twoCCosts["totalProducerFeeForCommsCostsByCountryWithoutBadDebtProvision"]);
             AssertAreEqual(producer.TwoCTotalProducerFeeForCommsCostsWithBadDebt, twoCCosts["totalProducerFeeForCommsCostsByCountryWithBadDebtProvision"]);
             AssertAreEqual(producer.TwoCBadDebtProvision, twoCCosts["badDebProvisionFor2c"]);
+        }
+
+        [TestMethod]
+        public void Export_BillingInstructions_AreValid()
+        {
+            // Arrange
+            var data = SetCalcResultSummayData();
+
+            // Act
+            var json = this.TestClass.Export(data, null, new List<int> { 1, 2, 3 });
+
+            var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
+                     ["calculationResults"]!
+                ["producerCalculationResults"];
+
+            // Assert
+            Assert.IsNotNull(roundTrippedData);
+            var billingInstructions = roundTrippedData[0]["calculationOfSuggestedBillingInstructionsAndInvoiceAmounts"];
+            Assert.IsNotNull(billingInstructions);
         }
 
         private CalcResultSummary SetCalcResultSummayData()
