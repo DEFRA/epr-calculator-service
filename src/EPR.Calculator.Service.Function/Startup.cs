@@ -44,6 +44,7 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.LateReportingTonnage;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMaterial2A;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.BillingInstructions;
@@ -151,6 +152,8 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcResultCommsCostsWithBadDebtProvision2cMapper, CalcResultCommsCostsWithBadDebtProvision2cMapper>();
             services.AddTransient<ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsExporter, CalculationOfSuggestedBillingInstructionsAndInvoiceAmountsExporter>();
             services.AddTransient<ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper, CalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper>();
+            services.AddTransient<IParametersOtherMapper, ParametersOtherMapper>();
+            services.AddTransient<IParametersOtherJsonExporter, ParametersOtherJsonExporter>();
 #if !DEBUG
             SetupBlobStorage(services);
             services.AddTransient<IConfigurationService, Configuration>();

@@ -130,7 +130,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
                     TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2c = this.totalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper.Map(producer),
                     FeeForSASetUpCostsWithBadDebtProvision_5 = this.feeForSASetUpCostsWithBadDebtProvision_5Mapper.Map(producer),
                     FeeForCommsCostsWithBadDebtProvision2c = this.calcResultCommsCostsWithBadDebtProvision2CMapper.Map(producer),
-                    CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts = this.calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper.Map(producer)
+                    CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts = this.calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper.Map(producer),
                 });
             }
 
