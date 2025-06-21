@@ -2,6 +2,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 {
     using AutoFixture;
     using EPR.Calculator.Service.Function.Builder;
+    using EPR.Calculator.Service.Function.Builder.CancelledProducers;
     using EPR.Calculator.Service.Function.Builder.CommsCost;
     using EPR.Calculator.Service.Function.Builder.Detail;
     using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
@@ -32,6 +33,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         private readonly Mock<ICalcResultParameterOtherCostBuilder> mockCalcResultParameterOtherCostBuilder;
         private readonly Mock<ICalcResultOnePlusFourApportionmentBuilder> mockOnePlusFourApportionmentBuilder;
         private readonly Mock<ICalcResultScaledupProducersBuilder> mockCalcResultScaledupProducersBuilder;
+        private readonly Mock<ICalcResultCancelledProducersBuilder> mockCalcResultCancelledProducersBuilder;
         private TelemetryClient telemetryClient;
 
         public CalcResultBuilderTests()
@@ -47,6 +49,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             this.mockOnePlusFourApportionmentBuilder = new Mock<ICalcResultOnePlusFourApportionmentBuilder>();
             this.mockCalcRunLaDisposalCostBuilder = new Mock<ICalcRunLaDisposalCostBuilder>();
             this.mockCalcResultScaledupProducersBuilder = new Mock<ICalcResultScaledupProducersBuilder>();
+            this.mockCalcResultCancelledProducersBuilder = new Mock<ICalcResultCancelledProducersBuilder>();
             this.telemetryClient = new TelemetryClient(new TelemetryConfiguration());
 
             this.calcResultBuilder = new CalcResultBuilder(
@@ -59,6 +62,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 this.mockCalcRunLaDisposalCostBuilder.Object,
                 this.mockCalcResultScaledupProducersBuilder.Object,
                 this.mockSummaryBuilder.Object,
+                this.mockCalcResultCancelledProducersBuilder.Object,
                 this.telemetryClient);
         }
 
@@ -78,6 +82,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 this.mockCalcRunLaDisposalCostBuilder.Object,
                 this.mockCalcResultScaledupProducersBuilder.Object,
                 this.mockSummaryBuilder.Object,
+                this.mockCalcResultCancelledProducersBuilder.Object,
                 this.telemetryClient);
 
             // Assert
