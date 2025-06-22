@@ -67,5 +67,33 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             Assert.AreEqual("500", result.SuggestedInvoiceAmount);
         }
 
+
+        [TestMethod]
+        public void Map_ShouldHandleNullValues()
+        {
+            // Arrange  
+            var fees = new CalcResultSummaryProducerDisposalFees
+            {
+                ProducerId = "Producer123",
+                ProducerName = "Producer Name",
+                SubsidiaryId = "Subsidiary456",
+            };
+
+            // Act  
+            var result = _testClass.Map(fees);
+
+            // Assert  
+            Assert.AreEqual(string.Empty, result.CurrentYearInvoicedTotalToDate);
+            Assert.AreEqual(string.Empty, result.TonnageChangeSinceLastInvoice);
+            Assert.AreEqual(string.Empty, result.LiabilityDifferenceCalcVsPrev);
+            Assert.AreEqual(string.Empty, result.MaterialThresholdBreached);
+            Assert.AreEqual(string.Empty, result.TonnageThresholdBreached);
+            Assert.AreEqual(string.Empty, result.PercentageLiabilityDifferenceCalcVsPrev);
+            Assert.AreEqual(string.Empty, result.MaterialPercentageThresholdBreached);
+            Assert.AreEqual(string.Empty, result.TonnagePercentageThresholdBreached);
+            Assert.AreEqual(string.Empty, result.SuggestedBillingInstruction);
+            Assert.AreEqual(string.Empty, result.SuggestedInvoiceAmount);
+        }
+
     }
 }
