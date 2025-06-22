@@ -15,7 +15,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
         public CommsCostMapperTests()
         {
-            _mapper = new CommsCostMapper();            
+            _mapper = new CommsCostMapper();
         }
 
         [TestMethod]
@@ -86,7 +86,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                    new CalcResultCommsCostOnePlusFourApportionment(),
                    new CalcResultCommsCostOnePlusFourApportionment
                    {
-                       England = null,
+                       England = string.Empty,
                        Wales = "30%",
                        Scotland = "20",
                        NorthernIreland = "10%",
