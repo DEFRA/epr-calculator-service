@@ -21,6 +21,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
         private readonly ICalcResultCommsCostByMaterial2AJsonMapper commsCostByMaterial2AJsonMapper;
         private readonly ISAOperatingCostsWithBadDebtProvisionMapper sAOperatingCostsWithBadDebtProvisionMapper;
         private readonly IFeeForCommsCostsWithBadDebtProvision2aMapper feeForCommsCostsWithBadDebtProvision2aMapper;
+        private readonly IFeeForCommsCostsWithBadDebtProvision2bMapper feeForCommsCostsWithBadDebtProvision2bMapper;
         private readonly ITotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper totalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper;
         private readonly IFeeForSASetUpCostsWithBadDebtProvision_5Mapper feeForSASetUpCostsWithBadDebtProvision_5Mapper;
         private readonly ICalcResultCommsCostsWithBadDebtProvision2cMapper calcResultCommsCostsWithBadDebtProvision2CMapper;
@@ -34,6 +35,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
             ICalcResultCommsCostByMaterial2AJsonMapper commsCostByMaterial2AJsonMapper,
             ISAOperatingCostsWithBadDebtProvisionMapper sAOperatingCostsWithBadDebtProvisionMapper,
             IFeeForCommsCostsWithBadDebtProvision2aMapper feeForCommsCostsWithBadDebtProvision2aMapper,
+            IFeeForCommsCostsWithBadDebtProvision2bMapper feeForCommsCostsWithBadDebtProvision2bMapper,
             ITotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper totalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper,
             IFeeForSASetUpCostsWithBadDebtProvision_5Mapper feeForSASetUpCostsWithBadDebtProvision_5Mapper,
             ICalcResultCommsCostsWithBadDebtProvision2cMapper calcResultCommsCostsWithBadDebtProvision2CMapper,
@@ -45,6 +47,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
             this.commsCostByMaterial2AJsonMapper = commsCostByMaterial2AJsonMapper;
             this.sAOperatingCostsWithBadDebtProvisionMapper = sAOperatingCostsWithBadDebtProvisionMapper;
             this.feeForCommsCostsWithBadDebtProvision2aMapper = feeForCommsCostsWithBadDebtProvision2aMapper;
+            this.feeForCommsCostsWithBadDebtProvision2bMapper = feeForCommsCostsWithBadDebtProvision2bMapper;
             this.totalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper = totalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper;
             this.feeForSASetUpCostsWithBadDebtProvision_5Mapper = feeForSASetUpCostsWithBadDebtProvision_5Mapper;
             this.calcResultCommsCostsWithBadDebtProvision2CMapper = calcResultCommsCostsWithBadDebtProvision2CMapper;
@@ -130,6 +133,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
                     CalcResultCommsCostByMaterial2AJson = this.commsCostByMaterial2AJsonMapper.Map(producer.ProducerCommsFeesByMaterial!),
                     CalcResultSAOperatingCostsWithBadDebtProvision = this.sAOperatingCostsWithBadDebtProvisionMapper.Map(producer),
                     FeeForCommsCostsWithBadDebtProvision2a = this.feeForCommsCostsWithBadDebtProvision2aMapper.Map(producer),
+                    FeeForCommsCostsWithBadDebtProvision2b = this.feeForCommsCostsWithBadDebtProvision2bMapper.Map(producer),
                     CommsCostsByMaterialFeesSummary2a = this.commsCostsByMaterialFeesSummary2AMapper.Map(producer),
                     TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2c = this.totalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper.Map(producer),
                     FeeForSASetUpCostsWithBadDebtProvision_5 = this.feeForSASetUpCostsWithBadDebtProvision_5Mapper.Map(producer),
