@@ -321,8 +321,9 @@
 
             // Assert
             Assert.IsNotNull(roundTrippedData);
-            var twoCCosts = roundTrippedData[0]["feeForCommsCostsWithBadDebtProvision2c"];
+            var twoCCosts = roundTrippedData?[0]?["feeForCommsCostsWithBadDebtProvision2c"];
             var producer = data.ProducerDisposalFees.SingleOrDefault(t => !t.isTotalRow && !string.IsNullOrEmpty(t.Level));
+            Assert.IsNotNull(producer);
             AssertAreEqual(producer.TwoCNorthernIrelandTotalWithBadDebt, twoCCosts["northernIrelandTotalWithBadDebtProvision"]);
             AssertAreEqual(producer.TwoCScotlandTotalWithBadDebt, twoCCosts["scotlandTotalWithBadDebtProvision"]);
             AssertAreEqual(producer.TwoCWalesTotalWithBadDebt, twoCCosts["walesTotalWithBadDebtProvision"]);
