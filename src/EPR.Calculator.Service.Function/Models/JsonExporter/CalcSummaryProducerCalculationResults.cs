@@ -12,6 +12,8 @@
 
         public required CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2a? FeeForCommsCostsWithBadDebtProvision2a { get; set; }
 
+        public required CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2b? FeeForCommsCostsWithBadDebtProvision2b { get; set; }
+
         public required CalcResultsCommsCostsWithBadDebtProvision2c? FeeForCommsCostsWithBadDebtProvision2c { get; set; }
 
         public required TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2c TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2c { get; set; }
