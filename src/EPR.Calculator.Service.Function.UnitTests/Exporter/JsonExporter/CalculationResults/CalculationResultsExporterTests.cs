@@ -29,7 +29,8 @@
                 new TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper(),
                 new FeeForSASetUpCostsWithBadDebtProvision_5Mapper(),
                 new CalcResultCommsCostsWithBadDebtProvision2cMapper(),
-                new CalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper()
+                new CalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper(),
+                new CalcResultProducerCalculationResultsTotalMapper()
             );
         }
 
@@ -376,6 +377,22 @@
             Assert.IsNotNull(roundTrippedData);
             var billingInstructions = roundTrippedData[0]["calculationOfSuggestedBillingInstructionsAndInvoiceAmounts"];
             Assert.IsNotNull(billingInstructions);
+        }
+
+        [TestMethod]
+        public void Export_ProducerCalculationResultsTotal_CanBeNull()
+        {
+            // Arrange
+            var data = SetCalcResultSummayData();
+
+            // Act
+            var json = this.TestClass.Export(data, null, new List<int> { 1, 2, 3 });
+
+            var calculationResults = JsonSerializer.Deserialize<JsonObject>(json)!["calculationResults"]!;
+            var total = calculationResults["producerCalculationResultsTotal"];
+
+            // Assert
+            Assert.IsNull(total);
         }
 
         private CalcResultSummary SetCalcResultSummayData()
