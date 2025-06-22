@@ -46,6 +46,7 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.LateReportingTonnage;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMaterial2A;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter.BillingInstructions;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -147,6 +148,10 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ISAOperatingCostsWithBadDebtProvisionMapper, SAOperatingCostsWithBadDebtProvisionMapper>();
             services.AddTransient<IFeeForCommsCostsWithBadDebtProvision2aMapper, FeeForCommsCostsWithBadDebtProvision2aMapper>();
             services.AddTransient<ITotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper, TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper>();
+            services.AddTransient<IFeeForSASetUpCostsWithBadDebtProvision_5Mapper, FeeForSASetUpCostsWithBadDebtProvision_5Mapper>();
+            services.AddTransient<ICalcResultCommsCostsWithBadDebtProvision2cMapper, CalcResultCommsCostsWithBadDebtProvision2cMapper>();
+            services.AddTransient<ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsExporter, CalculationOfSuggestedBillingInstructionsAndInvoiceAmountsExporter>();
+            services.AddTransient<ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper, CalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper>();
 #if !DEBUG
             SetupBlobStorage(services);
             services.AddTransient<IConfigurationService, Configuration>();

@@ -3,6 +3,7 @@ using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -21,14 +22,21 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
         private readonly ISAOperatingCostsWithBadDebtProvisionMapper sAOperatingCostsWithBadDebtProvisionMapper;
         private readonly IFeeForCommsCostsWithBadDebtProvision2aMapper feeForCommsCostsWithBadDebtProvision2aMapper;
         private readonly ITotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper totalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper;
+        private readonly IFeeForSASetUpCostsWithBadDebtProvision_5Mapper feeForSASetUpCostsWithBadDebtProvision_5Mapper;
+        private readonly ICalcResultCommsCostsWithBadDebtProvision2cMapper calcResultCommsCostsWithBadDebtProvision2CMapper;
+        private readonly ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper;
 
+        [SuppressMessage("Constructor has 8 parameters, which is greater than the 7 authorized.", "S107", Justification = "This is suppressed for now and will be refactored later")]
         public CalculationResultsExporter(
             IProducerDisposalFeesWithBadDebtProvision1JsonMapper producerDisposalFeesWithBadDebtProvision1JsonMapper,
             ICommsCostsByMaterialFeesSummary2aMapper commsCostsByMaterialFeesSummary2AMapper,
             ICalcResultCommsCostByMaterial2AJsonMapper commsCostByMaterial2AJsonMapper,
             ISAOperatingCostsWithBadDebtProvisionMapper sAOperatingCostsWithBadDebtProvisionMapper,
             IFeeForCommsCostsWithBadDebtProvision2aMapper feeForCommsCostsWithBadDebtProvision2aMapper,
-            ITotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper totalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper)
+            ITotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper totalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper,
+            IFeeForSASetUpCostsWithBadDebtProvision_5Mapper feeForSASetUpCostsWithBadDebtProvision_5Mapper,
+            ICalcResultCommsCostsWithBadDebtProvision2cMapper calcResultCommsCostsWithBadDebtProvision2CMapper,
+            ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper)
         {
             this.producerDisposalFeesWithBadDebtProvision1JsonMapper = producerDisposalFeesWithBadDebtProvision1JsonMapper;
             this.commsCostsByMaterialFeesSummary2AMapper = commsCostsByMaterialFeesSummary2AMapper;
@@ -36,6 +44,9 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
             this.sAOperatingCostsWithBadDebtProvisionMapper = sAOperatingCostsWithBadDebtProvisionMapper;
             this.feeForCommsCostsWithBadDebtProvision2aMapper = feeForCommsCostsWithBadDebtProvision2aMapper;
             this.totalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper = totalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper;
+            this.feeForSASetUpCostsWithBadDebtProvision_5Mapper = feeForSASetUpCostsWithBadDebtProvision_5Mapper;
+            this.calcResultCommsCostsWithBadDebtProvision2CMapper = calcResultCommsCostsWithBadDebtProvision2CMapper;
+            this.calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper = calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper;
         }
 
 
@@ -96,7 +107,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
 
                 OneOffFeeSaSetuCostsWithbadDebtProvision5 = data.SaSetupCostsTitleSection5,
                 BadDebtProvision5 = data.SaSetupCostsBadDebtProvisionTitleSection5,
-                OneOffFeeSaSetuCostsWithoutbadDebtProvision5 = data.SaSetupCostsWithBadDebtProvisionTitleSection5,
+                OneOffFeeSaSetuCostsWithoutbadDebtProvision5 = data.SaSetupCostsWithBadDebtProvisionTitleSection5,                 
             };
         }
 
@@ -116,7 +127,10 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
                     CalcResultSAOperatingCostsWithBadDebtProvision = this.sAOperatingCostsWithBadDebtProvisionMapper.Map(producer),
                     FeeForCommsCostsWithBadDebtProvision2a = this.feeForCommsCostsWithBadDebtProvision2aMapper.Map(producer),
                     CommsCostsByMaterialFeesSummary2a = this.commsCostsByMaterialFeesSummary2AMapper.Map(producer),
-                    TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2c = this.totalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper.Map(producer)
+                    TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2c = this.totalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper.Map(producer),
+                    FeeForSASetUpCostsWithBadDebtProvision_5 = this.feeForSASetUpCostsWithBadDebtProvision_5Mapper.Map(producer),
+                    FeeForCommsCostsWithBadDebtProvision2c = this.calcResultCommsCostsWithBadDebtProvision2CMapper.Map(producer),
+                    CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts = this.calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper.Map(producer)
                 });
             }
 
