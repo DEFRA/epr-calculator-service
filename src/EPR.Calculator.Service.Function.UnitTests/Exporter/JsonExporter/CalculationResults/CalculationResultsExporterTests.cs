@@ -27,7 +27,9 @@
                 new FeeForCommsCostsWithBadDebtProvision2aMapper(),
                 new FeeForCommsCostsWithBadDebtProvision2bMapper(),
                 new TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper(),
+                new FeeForSASetUpCostsWithBadDebtProvision_5Mapper(),
                 new CalcResultCommsCostsWithBadDebtProvision2cMapper(),
+                new CalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper(),
                 new CalcResult2aCommsDataByMaterialMapper()
             );
         }
