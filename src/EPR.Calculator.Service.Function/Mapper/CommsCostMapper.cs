@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Linq;
+using EPR.Calculator.Service.Function.Builder.CommsCost;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
 using Microsoft.Azure.Amqp.Framing;
@@ -9,11 +10,11 @@ namespace EPR.Calculator.Service.Function.Mapper
     public class CommsCostMapper : ICommsCostMapper
     {
         public CalcResultCommsCostJson Map(CalcResultCommsCost calcResultCommsCost)
-        {
-            // Get the second row (index 1) which contains the actual values
-            var dataRow = calcResultCommsCost.CalcResultCommsCostOnePlusFourApportionment.Skip(1).FirstOrDefault();
+        {            
+            var onePlusFourApportionment = calcResultCommsCost.CalcResultCommsCostOnePlusFourApportionment                
+                .SingleOrDefault(x => x.Name == CalcResultCommsCostBuilder.OnePlusFourApportionment);
 
-            if (dataRow == null)
+            if (onePlusFourApportionment == null)
             {
                 return new CalcResultCommsCostJson { ParametersCommsCost = new ParametersCommsCost { Percentages = new OnePlusFourCommsCostApportionmentPercentages() } };
             }
@@ -22,7 +23,7 @@ namespace EPR.Calculator.Service.Function.Mapper
             {
                 ParametersCommsCost = new ParametersCommsCost
                 {
-                    Percentages = OnePlusFourCommsCostApportionmentPercentagesMap(dataRow)
+                    Percentages = OnePlusFourCommsCostApportionmentPercentagesMap(onePlusFourApportionment)
                 }
             };
         }

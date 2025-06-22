@@ -1,4 +1,5 @@
-﻿using EPR.Calculator.Service.Function.Mapper;
+﻿using EPR.Calculator.Service.Function.Builder.CommsCost;
+using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
 using System;
 using System.Collections.Generic;
@@ -52,6 +53,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                    new CalcResultCommsCostOnePlusFourApportionment(),
                    new CalcResultCommsCostOnePlusFourApportionment
                    {
+                       Name = CalcResultCommsCostBuilder.OnePlusFourApportionment,
                        England = "50",
                        Wales = "30%",
                        Scotland = "20",
@@ -86,6 +88,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                    new CalcResultCommsCostOnePlusFourApportionment(),
                    new CalcResultCommsCostOnePlusFourApportionment
                    {
+                       Name = CalcResultCommsCostBuilder.OnePlusFourApportionment,
                        England = string.Empty,
                        Wales = "30%",
                        Scotland = "20",
