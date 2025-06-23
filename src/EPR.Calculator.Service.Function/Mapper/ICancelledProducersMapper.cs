@@ -3,7 +3,7 @@ using EPR.Calculator.Service.Function.Models.JsonExporter;
 
 namespace EPR.Calculator.Service.Function.Mapper
 {
-    public interface ICancelledProducerMapper
+    public interface ICancelledProducersMapper
     {
         public CancelledProducers Map(CalcResultCancelledProducersResponse calcResultCancelledProducersResponse);
     }

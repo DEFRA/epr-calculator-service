@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 {
     [TestClass]
-    public class CancelledProducerMapperTests
+    public class CancelledProducersMapperTests
     {
-        private CancelledProducerMapper _testClass;
+        private CancelledProducersMapper _testClass;
 
         [TestInitialize]
         public void Setup()
         {
-            _testClass = new CancelledProducerMapper();
+            _testClass = new CancelledProducersMapper();
         }
 
         [TestMethod]
@@ -28,7 +28,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             var cancelledProducers = fixture.Create<CalcResultCancelledProducersResponse>();
 
             // Act
-            var result  = ((ICancelledProducerMapper)_testClass).Map(cancelledProducers);
+            var result  = ((ICancelledProducersMapper)_testClass).Map(cancelledProducers);
 
             // Assert
             Assert.IsNotNull(result);

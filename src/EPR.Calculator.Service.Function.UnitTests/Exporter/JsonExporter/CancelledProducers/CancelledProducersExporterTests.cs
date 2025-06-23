@@ -14,14 +14,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.Cancel
     [TestClass]
     public class CancelledProducersExporterTests
     {
-        private CancelledProducerExporter _testClass;
-        private Mock<ICancelledProducerMapper> _testMapper;
+        private CancelledProducersExporter _testClass;
+        private Mock<ICancelledProducersMapper> _testMapper;
 
         [TestInitialize]
         public void Setup()
         {
-            _testMapper = new Mock<ICancelledProducerMapper>();
-            _testClass = new CancelledProducerExporter(_testMapper.Object);
+            _testMapper = new Mock<ICancelledProducersMapper>();
+            _testClass = new CancelledProducersExporter(_testMapper.Object);
         }
 
         [TestMethod]

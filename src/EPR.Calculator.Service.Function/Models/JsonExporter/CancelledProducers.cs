@@ -15,7 +15,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
     public record CancelledProducerTonnageInvoice
     {
         [JsonProperty(PropertyName = "producerId")]
-        public int ProducerId { get; init; }
+        public int? ProducerId { get; init; }
 
         [JsonProperty(PropertyName = "subsidiaryId")]
         public string SubsidiaryId { get; init; }

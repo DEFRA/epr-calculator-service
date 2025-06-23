@@ -4,11 +4,11 @@ using Newtonsoft.Json;
 
 namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CancelledProducers
 {
-    public class CancelledProducerExporter : ICancelledProducersExporter
+    public class CancelledProducersExporter : ICancelledProducersExporter
     {
-        private readonly ICancelledProducerMapper mapper;
+        private readonly ICancelledProducersMapper mapper;
 
-        public CancelledProducerExporter(ICancelledProducerMapper mapper)
+        public CancelledProducersExporter(ICancelledProducersMapper mapper)
         {
             this.mapper = mapper;
         }
