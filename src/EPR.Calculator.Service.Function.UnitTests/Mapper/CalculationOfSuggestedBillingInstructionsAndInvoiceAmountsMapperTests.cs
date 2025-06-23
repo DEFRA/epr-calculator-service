@@ -23,8 +23,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             var fixture = new Fixture();
             var fees = fixture.Create<CalcResultSummaryProducerDisposalFees>();
 
+
             // Act
-            var result = (_testClass as ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper).Map(fees);
+            var result = _testClass?.Map(fees);
 
             // Assert
             Assert.IsNotNull(result);
@@ -52,7 +53,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             };
 
             // Act  
-            var result = _testClass.Map(fees);
+            var result = _testClass?.Map(fees);
+            
+            Assert.IsNotNull(result);
 
             // Assert  
             Assert.AreEqual("1000", result.CurrentYearInvoicedTotalToDate);
@@ -80,7 +83,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             };
 
             // Act  
-            var result = _testClass.Map(fees);
+            var result = _testClass?.Map(fees);
+            Assert.IsNotNull(result);
 
             // Assert  
             Assert.AreEqual(string.Empty, result.CurrentYearInvoicedTotalToDate);
