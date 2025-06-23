@@ -165,8 +165,7 @@
                     results.CalcResultDetail.RunName,
                     results.CalcResultDetail.RunDate);
 
-                string containerName = this.Config.ResultFileCSVContainerName
-                        ?? throw new ConfigurationErrorsException(ContainerNameMissingError);
+                string containerName = this.Config.ResultFileCSVContainerName;
 
                 var blobUri = await this.storageService.UploadFileContentAsync(
                     (FileName: fileName, 
