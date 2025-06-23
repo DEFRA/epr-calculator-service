@@ -23,5 +23,7 @@
         public required CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts { get; set; }
 
         public required TotalProducerBillWithBadDebtProvision TotalProducerBillWithBadDebtProvision { get; set; }
+
+        public required CalculationResultsProducerCalculationResultsFeeForLADisposalCosts1 FeeForLADisposalCosts1 { get; set; }
     }
 }
