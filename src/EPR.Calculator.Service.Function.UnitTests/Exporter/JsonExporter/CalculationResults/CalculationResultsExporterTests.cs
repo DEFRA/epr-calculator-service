@@ -30,7 +30,8 @@
                 new FeeForSASetUpCostsWithBadDebtProvision_5Mapper(),
                 new CalcResultCommsCostsWithBadDebtProvision2cMapper(),
                 new CalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper(),
-                new TotalProducerBillWithBadDebtProvisionMapper()
+                new TotalProducerBillWithBadDebtProvisionMapper(),
+                new CalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper()
             );
         }
 
@@ -384,6 +385,41 @@
         /// and checks that the values still match up with the original.
         /// </summary>
         [TestMethod]
+        public void Export_FeeForLADisposalCost1_AreValid()
+        {
+            // Arrange
+            var data = SetCalcResultSummayData();
+
+            // Act
+            var json = this.TestClass.Export(data, null, new List<int> { 1, 2, 3 });
+
+            var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
+                     ["calculationResults"]!
+                ["producerCalculationResults"];
+
+            // Assert
+            Assert.IsNotNull(roundTrippedData);
+           
+            var feeForLADisposalCosts1 = roundTrippedData[0]?["feeForLADisposalCosts1"];
+            var producer = data.ProducerDisposalFees.SingleOrDefault(t => !t.isTotalRow && !string.IsNullOrEmpty(t.Level));
+            if (producer == null)
+            {
+                Assert.Fail("Producer not found.");
+            }
+            AssertAreEqual(producer.NorthernIrelandTotalWithBadDebtProvision, feeForLADisposalCosts1?["northernIrelandTotalForLADisposalCostsWithBadDebtProvision"]);
+            AssertAreEqual(producer.ScotlandTotalWithBadDebtProvision, feeForLADisposalCosts1?["scotlandTotalForLADisposalCostsWithBadDebtProvision"]);
+            AssertAreEqual(producer.WalesTotalWithBadDebtProvision, feeForLADisposalCosts1?["walesTotalForLADisposalCostsWithBadDebtProvision"]);
+            AssertAreEqual(producer.EnglandTotalWithBadDebtProvision, feeForLADisposalCosts1?["englandTotalForLADisposalCostsWithBadDebtProvision"]);
+            AssertAreEqual(producer.TotalProducerFeeforLADisposalCostswithBadDebtprovision, feeForLADisposalCosts1?["totalProducerFeeForLADisposalCostsWithBadDebtProvision"]);
+            AssertAreEqual(producer.BadDebtProvisionFor1, feeForLADisposalCosts1?["badDebtProvisionForLADisposalCosts"]);
+            AssertAreEqual(producer.TotalProducerFeeforLADisposalCostswoBadDebtprovision, feeForLADisposalCosts1?["totalProducerFeeForLADisposalCostsWithoutBadDebtProvision"]);
+        }
+
+        /// <summary>
+        /// Serialises a <see cref="CalcResultSummary"/>, then parses the resulting JSON
+        /// and checks that the values still match up with the original.
+        /// </summary>
+        [TestMethod]
         public void Export_ProducerIdSubsidiaryId_AreValid()
         {
             // Arrange
@@ -409,6 +445,7 @@
             AssertAreEqual(producer.Level, roundTrippedData[0]!?["level"]?.ToString());
             AssertAreEqual(producer.IsProducerScaledup, roundTrippedData[0]!?["scaledUpTonnages"]?.ToString());
         }
+
         private CalcResultSummary SetCalcResultSummayData()
         {
             var data = Fixture.Create<CalcResultSummary>();
