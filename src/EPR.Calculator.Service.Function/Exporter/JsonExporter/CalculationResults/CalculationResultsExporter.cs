@@ -26,6 +26,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
         private readonly ICalcResultCommsCostsWithBadDebtProvision2cMapper calcResultCommsCostsWithBadDebtProvision2CMapper;
         private readonly ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper;
         private readonly ITotalProducerBillWithBadDebtProvisionMapper totalProducerBillWithBadDebtProvisionMapper;
+        private readonly ICalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper calculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper;
         private readonly ICalcResultProducerCalculationResultsTotalMapper calcResultProducerCalculationResultsTotalMapper;
 
         [SuppressMessage("Constructor has 8 parameters, which is greater than the 7 authorized.", "S107", Justification = "This is suppressed for now and will be refactored later")]
@@ -41,6 +42,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
             ICalcResultCommsCostsWithBadDebtProvision2cMapper calcResultCommsCostsWithBadDebtProvision2CMapper,
             ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper,
             ITotalProducerBillWithBadDebtProvisionMapper totalProducerBillWithBadDebtProvisionMapper,
+            ICalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper calculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper,
             ICalcResultProducerCalculationResultsTotalMapper calcResultProducerCalculationResultsTotalMapper)
         {
             this.producerDisposalFeesWithBadDebtProvision1JsonMapper = producerDisposalFeesWithBadDebtProvision1JsonMapper;
@@ -54,9 +56,9 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
             this.calcResultCommsCostsWithBadDebtProvision2CMapper = calcResultCommsCostsWithBadDebtProvision2CMapper;
             this.calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper = calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper;
             this.totalProducerBillWithBadDebtProvisionMapper = totalProducerBillWithBadDebtProvisionMapper;
+            this.calculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper = calculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper;
             this.calcResultProducerCalculationResultsTotalMapper = calcResultProducerCalculationResultsTotalMapper;
         }
-
 
         /// <inheritdoc/>
         public string Export(CalcResultSummary summary, IEnumerable<object>? producerCalculations, IEnumerable<int> acceptedProducerIds)
@@ -142,7 +144,8 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
                     FeeForSASetUpCostsWithBadDebtProvision_5 = this.feeForSASetUpCostsWithBadDebtProvision_5Mapper.Map(producer),
                     FeeForCommsCostsWithBadDebtProvision2c = this.calcResultCommsCostsWithBadDebtProvision2CMapper.Map(producer),
                     CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts = this.calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper.Map(producer),
-                    TotalProducerBillWithBadDebtProvision = this.totalProducerBillWithBadDebtProvisionMapper.Map(producer)
+                    TotalProducerBillWithBadDebtProvision = this.totalProducerBillWithBadDebtProvisionMapper.Map(producer),
+                    FeeForLADisposalCosts1 = this.calculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper.Map(producer)
                 });
             }
 

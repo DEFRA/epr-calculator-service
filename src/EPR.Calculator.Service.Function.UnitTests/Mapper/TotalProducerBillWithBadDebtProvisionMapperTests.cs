@@ -24,6 +24,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             var result = Mapper.Map(calcResultSummaryProducerDisposalFees);
 
             // Assert  
+            Assert.IsNotNull(result);
             Assert.AreEqual(calcResultSummaryProducerDisposalFees.TotalProducerBillWithoutBadDebtProvision, result.TotalProducerBillWithoutBadDebtProvision);
             Assert.AreEqual(calcResultSummaryProducerDisposalFees.BadDebtProvisionForTotalProducerBill, result.BadDebtProvisionForTotalProducerBill);
             Assert.AreEqual(calcResultSummaryProducerDisposalFees.EnglandTotalWithBadDebtProvision, result.EnglandTotalForProducerBillWithBadDebtProvision);

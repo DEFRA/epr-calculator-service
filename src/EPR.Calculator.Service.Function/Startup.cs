@@ -155,8 +155,10 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper, CalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper>();
             services.AddTransient<IParametersOtherMapper, ParametersOtherMapper>();
             services.AddTransient<IParametersOtherJsonExporter, ParametersOtherJsonExporter>();
+            services.AddTransient<ICalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper, CalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper>();
             services.AddTransient<ICalcResultProducerCalculationResultsTotalMapper, CalcResultProducerCalculationResultsTotalMapper>();
 #if !DEBUG
+
             SetupBlobStorage(services);
             services.AddTransient<IConfigurationService, Configuration>();
 #elif DEBUG
