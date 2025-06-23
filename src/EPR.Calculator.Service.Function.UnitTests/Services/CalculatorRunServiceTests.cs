@@ -77,7 +77,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.CalculatorRunService = new CalculatorRunService(
                 this.AzureSynapseRunner.Object,
                 this.MockLogger.Object,
-                this.PipelineClientFactory.Object,
                 this.TransposeService.Object,
                 new Configuration(),
                 this.PrepareCalcService.Object,
