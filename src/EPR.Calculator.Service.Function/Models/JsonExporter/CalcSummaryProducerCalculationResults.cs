@@ -8,9 +8,9 @@
 
         public required string ProducerName { get; set; }
 
-        public required string TradingName { get; set; }
+        public required string? TradingName { get; set; }
 
-        public required string Level { get; set; }
+        public required string? Level { get; set; }
 
         public required string ScaledUpTonnages { get; set; }
 

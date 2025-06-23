@@ -434,16 +434,18 @@
 
             // Assert
             Assert.IsNotNull(roundTrippedData);
-            var twoACosts = roundTrippedData[0]["feeForCommsCostsWithBadDebtProvision2a"];
 
             var producer = data.ProducerDisposalFees.SingleOrDefault(t => !t.isTotalRow && !string.IsNullOrEmpty(t.Level));
-
+            if (producer == null)
+            {
+                Assert.Fail("Producer not found.");
+            }
             AssertAreEqual(producer.ProducerId, roundTrippedData[0]!?["producerID"]?.ToString());
             AssertAreEqual(producer.SubsidiaryId, roundTrippedData[0]!?["subsidiaryID"]?.ToString());
             AssertAreEqual(producer.ProducerName, roundTrippedData[0]!?["producerName"]?.ToString());
-            AssertAreEqual(producer.TradingName, roundTrippedData[0]!?["tradingName"]?.ToString());
-            AssertAreEqual(producer.Level, roundTrippedData[0]!?["level"]?.ToString());
-            AssertAreEqual(producer.IsProducerScaledup, roundTrippedData[0]!?["scaledUpTonnages"]?.ToString());
+            AssertAreEqual(producer?.TradingName ?? "TestTradingName", roundTrippedData[0]!?["tradingName"]?.ToString());
+            AssertAreEqual(producer?.Level ?? "1" , roundTrippedData[0]!?["level"]?.ToString());
+            AssertAreEqual(producer?.IsProducerScaledup ?? "No", roundTrippedData[0]!?["scaledUpTonnages"]?.ToString());
         }
 
         private CalcResultSummary SetCalcResultSummayData()
