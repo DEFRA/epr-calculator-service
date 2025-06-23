@@ -5,17 +5,17 @@ namespace EPR.Calculator.Service.Function.Mapper
 {
     public class FeeForCommsCostsWithBadDebtProvision2bMapper : IFeeForCommsCostsWithBadDebtProvision2bMapper
     {
-        public CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2b Map(CalcResultSummaryProducerDisposalFees source)
+        public CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2b Map(CalcResultSummaryProducerDisposalFees calcResultSummaryProducerDisposalFees)
         {
             return new CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2b
             {
-                TotalProducerFeeForCommsCostsUKWideWithoutBadDebtProvision = source.TotalProducerFeeWithoutBadDebtFor2bComms,
-                BadDebtProvisionFor2bComms = source.BadDebtProvisionFor2bComms,
-                TotalProducerFeeForCommsCostsUKWideWithBadDebtProvision = source.TotalProducerFeeWithBadDebtFor2bComms,
-                EnglandTotalWithBadDebtProvision = source.EnglandTotalWithBadDebtFor2bComms,
-                WalesTotalWithBadDebtProvision = source.WalesTotalWithBadDebtFor2bComms,
-                ScotlandTotalWithBadDebtProvision = source.ScotlandTotalWithBadDebtFor2bComms,
-                NorthernIrelandTotalWithBadDebtProvision = source.NorthernIrelandTotalWithBadDebtFor2bComms
+                TotalProducerFeeForCommsCostsUKWideWithoutBadDebtProvision = calcResultSummaryProducerDisposalFees.TotalProducerFeeWithoutBadDebtFor2bComms,
+                BadDebtProvisionFor2bComms = calcResultSummaryProducerDisposalFees.BadDebtProvisionFor2bComms,
+                TotalProducerFeeForCommsCostsUKWideWithBadDebtProvision = calcResultSummaryProducerDisposalFees.TotalProducerFeeWithBadDebtFor2bComms,
+                EnglandTotalWithBadDebtProvision = calcResultSummaryProducerDisposalFees.EnglandTotalWithBadDebtFor2bComms,
+                WalesTotalWithBadDebtProvision = calcResultSummaryProducerDisposalFees.WalesTotalWithBadDebtFor2bComms,
+                ScotlandTotalWithBadDebtProvision = calcResultSummaryProducerDisposalFees.ScotlandTotalWithBadDebtFor2bComms,
+                NorthernIrelandTotalWithBadDebtProvision = calcResultSummaryProducerDisposalFees.NorthernIrelandTotalWithBadDebtFor2bComms
             };
         }
     }
