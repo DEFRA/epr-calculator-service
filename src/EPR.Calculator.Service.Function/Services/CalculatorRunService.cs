@@ -48,7 +48,6 @@
         {
             this.telemetryLogger = telemetryLogger;
             this.azureSynapseRunner = azureSynapseRunner;
-            this.pipelineClientFactory = pipelineClientFactory;
             this.transposePomAndOrgDataService = transposePomAndOrgDataService;
             this.configuration = configuration;
             this.prepareCalcService = prepareCalcService;
