@@ -32,7 +32,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.MockBlobClient = new Mock<BlobClient>();
 
             this.ConfigurationService = new Mock<IConfigurationService>();
-            this.ConfigurationService.Setup(s => s.BlobContainerName)
+            this.ConfigurationService.Setup(s => s.CalcResultBlobContainerName)
                 .Returns(this.Fixture.Create<string>());
 
             this.MockBlobServiceClient.Setup(x => x.GetBlobContainerClient(It.IsAny<string>()))
@@ -70,6 +70,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var fileName = "test.txt";
             var content = "test content";
             var runName = "test";
+            var containerName = Fixture.Create<string>();
             var expectedUri = new Uri("https://example.com/test.txt");
 
             var responseMock = new Mock<Response<BlobContentInfo>>();
@@ -78,7 +79,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.MockBlobClient.Setup(x => x.Uri).Returns(expectedUri);
 
             // Act
-            var result = await this.BlobStorageService.UploadResultFileContentAsync(fileName, content, runName);
+            var result = await this.BlobStorageService.UploadFileContentAsync(
+                (FileName: fileName, 
+                Content: content, 
+                RunName: runName,
+                ContainerName: containerName));
 
             // Assert
             Assert.AreEqual(result, expectedUri.ToString());
@@ -92,12 +97,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var fileName = "test.txt";
             var content = "test content";
             var runName = "test";
+            var containerName = Fixture.Create<string>();
 
             this.MockBlobClient.Setup(x => x.UploadAsync(It.IsAny<BinaryData>()))
                 .ThrowsAsync(new Exception("Upload failed"));
 
             // Act
-            var result = await this.BlobStorageService.UploadResultFileContentAsync(fileName, content, runName);
+            var result = await this.BlobStorageService.UploadFileContentAsync(
+                (FileName: fileName, 
+                Content: content,
+                RunName: runName,
+                ContainerName: containerName));
 
             // Assert
             Assert.AreEqual(result, string.Empty);

@@ -1,8 +1,6 @@
 ﻿namespace EPR.Calculator.Service.Function.Services
 {
-    using System;
-    using System.Threading;
-    using System.Threading.Tasks;
+    using Azure.Storage.Blobs;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.API.Exporter;
@@ -21,6 +19,10 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.IdentityModel.Abstractions;
+    using System;
+    using System.Configuration;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Service for preparing calculation results.
@@ -38,7 +40,9 @@
             CalculatorRunValidator validationRules,
             ICommandTimeoutService commandTimeoutService,
             ICalculatorTelemetryLogger telemetryLogger,
-            IBillingInstructionService billingInstructionService)
+            IBillingInstructionService billingInstructionService,
+            BlobServiceClient blobServiceClient,
+            IConfigurationService config)
         {
             this.Context = context.CreateDbContext();
             this.rpdStatusDataValidator = rpdStatusDataValidator;
@@ -51,7 +55,10 @@
             this.commandTimeoutService = commandTimeoutService;
             this.telemetryLogger = telemetryLogger;
             this.billingInstructionService = billingInstructionService;
+            this.Config = config;
         }
+
+        public const string ContainerNameMissingError = "Container name is missing in configuration.";
 
         private readonly ICalculatorTelemetryLogger telemetryLogger;
 
@@ -74,6 +81,8 @@
         private ICommandTimeoutService commandTimeoutService { get; init; }
 
         private IBillingInstructionService billingInstructionService { get; init; }
+
+        private IConfigurationService Config { get; init; }
 
         public async Task<bool> PrepareCalcResults(
             [FromBody] CalcResultsRequestDto resultsRequestDto,
@@ -155,7 +164,15 @@
                     results.CalcResultDetail.RunId,
                     results.CalcResultDetail.RunName,
                     results.CalcResultDetail.RunDate);
-                var blobUri = await this.storageService.UploadResultFileContentAsync(fileName, exportedResults, runName);
+
+                string containerName = this.Config.CalcResultBlobContainerName
+                        ?? throw new ConfigurationErrorsException(ContainerNameMissingError);
+
+                var blobUri = await this.storageService.UploadFileContentAsync(
+                    (FileName: fileName, 
+                    Content: exportedResults, 
+                    RunName: runName,
+                    ContainerName: containerName));
 
                 this.telemetryLogger.LogInformation(new TrackMessage
                 {
