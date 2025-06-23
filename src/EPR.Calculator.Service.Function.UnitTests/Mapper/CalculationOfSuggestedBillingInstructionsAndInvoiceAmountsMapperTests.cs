@@ -8,7 +8,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
     public class CalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapperTests
     {
 
-        private CalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper _testClass;
+        private CalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper? _testClass;
 
         [TestInitialize]
         public void Setup()
@@ -24,7 +24,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             var fees = fixture.Create<CalcResultSummaryProducerDisposalFees>();
 
             // Act
-            var result = ((ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper)_testClass).Map(fees);
+            var result = (_testClass as ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper).Map(fees);
 
             // Assert
             Assert.IsNotNull(result);
