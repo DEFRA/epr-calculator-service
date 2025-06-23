@@ -7,10 +7,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
     [TestClass]
     public class CalcResultLADataPrepCostsWithBadDebtProvision4MapperTests
     {
-        private CalcResultLADataPrepCostsWithBadDebtProvision4Mapper? _mapper;
+        private CalcResultLADataPrepCostsWithBadDebtProvision4Mapper _mapper;
 
-        [TestInitialize]
-        public void Setup()
+        public CalcResultLADataPrepCostsWithBadDebtProvision4MapperTests()
         {
             _mapper = new CalcResultLADataPrepCostsWithBadDebtProvision4Mapper();
         }
