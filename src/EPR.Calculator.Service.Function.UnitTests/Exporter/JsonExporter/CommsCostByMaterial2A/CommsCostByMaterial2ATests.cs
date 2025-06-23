@@ -16,21 +16,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
     [TestClass]
     public class CommsCostByMaterial2ATests
     {
-        private CommsCostByMaterial2A _testClass;
+        private CommsCostByMaterial2AExporter _testClass;
         private ICalcResult2aCommsDataByMaterialMapper _mapper;
 
         [TestInitialize]
         public void SetUp()
         {
             _mapper =  new CalcResult2aCommsDataByMaterialMapper();
-            _testClass = new CommsCostByMaterial2A(_mapper);
+            _testClass = new CommsCostByMaterial2AExporter(_mapper);
         }
 
         [TestMethod]
         public void CanConstruct()
         {
             // Act
-            var instance = new CommsCostByMaterial2A(_mapper);
+            var instance = new CommsCostByMaterial2AExporter(_mapper);
 
             // Assert
             Assert.IsNotNull(instance);
