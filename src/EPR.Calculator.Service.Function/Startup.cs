@@ -157,7 +157,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<IParametersOtherMapper, ParametersOtherMapper>();
             services.AddTransient<IParametersOtherJsonExporter, ParametersOtherJsonExporter>();
             services.AddTransient<ICalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper, CalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper>();
-            services.AddTransient<ICalcResult2aCommsDataByMaterialMapper, CalcResult2aCommsDataByMaterialMapper>();
+            services.AddTransient<ICalcResult2ACommsDataByMaterialMapper, CalcResult2ACommsDataByMaterialMapper>();
             services.AddTransient<ICommsCostByMaterial2AExporter, CommsCostByMaterial2AExporter>();
 #if !DEBUG
 

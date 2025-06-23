@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
-    public class CalcResult2aCommsDataByMaterial
+    public class CalcResult2ACommsDataByMaterial
     {
         [JsonProperty(PropertyName = "calcResult2aCommsDataDetails")]
-        public IEnumerable<CalcResult2aCommsDataDetails> CalcResult2aCommsDataDetails {  get; set; }
+        public IEnumerable<CalcResult2ACommsDataDetails> CalcResult2ACommsDataDetails {  get; set; }
     }
 
-    public class CalcResult2aCommsDataDetails
+    public class CalcResult2ACommsDataDetails
     {
         [JsonProperty(PropertyName = "materialName")]
 

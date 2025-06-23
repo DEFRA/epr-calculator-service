@@ -17,20 +17,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
     public class CommsCostByMaterial2ATests
     {
         private CommsCostByMaterial2AExporter? _testClass;
-        private ICalcResult2aCommsDataByMaterialMapper? _mapper;
 
         [TestInitialize]
         public void SetUp()
         {
-            _mapper =  new CalcResult2aCommsDataByMaterialMapper();
-            _testClass = new CommsCostByMaterial2AExporter(_mapper);
+           
+            _testClass = new CommsCostByMaterial2AExporter(new CalcResult2ACommsDataByMaterialMapper());
         }
 
         [TestMethod]
         public void CanConstruct()
         {
             // Act
-            var instance = new CommsCostByMaterial2AExporter(_mapper);
+            var instance = new CommsCostByMaterial2AExporter(new CalcResult2ACommsDataByMaterialMapper());
 
             // Assert
             Assert.IsNotNull(instance);
@@ -45,7 +44,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
             var commsCostByMaterial = fixture.Create<List<CalcResultCommsCostCommsCostByMaterial>>();
 
             // Act
-            var result = _testClass.Export(commsCostByMaterial);
+            var result = _testClass?.Export(commsCostByMaterial) ?? string.Empty;
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(result)!
                 ["calcResult2aCommsDataDetails"];

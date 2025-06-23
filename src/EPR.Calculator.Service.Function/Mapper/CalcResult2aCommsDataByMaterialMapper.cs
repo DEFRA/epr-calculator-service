@@ -1,31 +1,32 @@
-﻿using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.Models.JsonExporter;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EPR.Calculator.Service.Function.Mapper;
+using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Models.JsonExporter;
 
 namespace EPR.Calculator.Service.Function.Mapper
 {
-    public class CalcResult2aCommsDataByMaterialMapper : ICalcResult2aCommsDataByMaterialMapper
+    public class CalcResult2ACommsDataByMaterialMapper : ICalcResult2ACommsDataByMaterialMapper
     {
-        public CalcResult2aCommsDataByMaterial Map(List<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial)
+        public CalcResult2ACommsDataByMaterial Map(List<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial)
         {
-            return new CalcResult2aCommsDataByMaterial
+            return new CalcResult2ACommsDataByMaterial
             {
-                CalcResult2aCommsDataDetails = GetMaterialBreakdown(commsCostByMaterial)
+                CalcResult2ACommsDataDetails = GetMaterialBreakdown(commsCostByMaterial)
             };
         }
 
-        public IEnumerable<CalcResult2aCommsDataDetails> GetMaterialBreakdown(
+        public IEnumerable<CalcResult2ACommsDataDetails> GetMaterialBreakdown(
            List<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial)
         {
-            var commsByMaterialDataDetails = new List<CalcResult2aCommsDataDetails>();
+            var commsByMaterialDataDetails = new List<CalcResult2ACommsDataDetails>();
 
             foreach (var item in commsCostByMaterial)
             {
-                commsByMaterialDataDetails.Add(new CalcResult2aCommsDataDetails
+                commsByMaterialDataDetails.Add(new CalcResult2ACommsDataDetails
                 {
                     MaterialName = item.Name,
                     ProducerHouseholdPackagingWasteTonnage = item.ProducerReportedHouseholdPackagingWasteTonnageValue,

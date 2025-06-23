@@ -9,9 +9,9 @@ using static Microsoft.Azure.Amqp.Serialization.SerializableType;
 
 namespace EPR.Calculator.Service.Function.Mapper
 {
-    public interface ICalcResult2aCommsDataByMaterialMapper
+    public interface ICalcResult2ACommsDataByMaterialMapper
     {
-       public CalcResult2aCommsDataByMaterial Map(List<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial);
+       public CalcResult2ACommsDataByMaterial Map(List<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial);
 
     }
 }

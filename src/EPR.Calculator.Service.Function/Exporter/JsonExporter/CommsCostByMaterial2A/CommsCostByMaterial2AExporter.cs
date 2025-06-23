@@ -11,9 +11,9 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMater
 {
     public class CommsCostByMaterial2AExporter : ICommsCostByMaterial2AExporter
     {
-        private ICalcResult2aCommsDataByMaterialMapper mapper;
+        private readonly ICalcResult2ACommsDataByMaterialMapper mapper;
 
-        public CommsCostByMaterial2AExporter(ICalcResult2aCommsDataByMaterialMapper mapper)
+        public CommsCostByMaterial2AExporter(ICalcResult2ACommsDataByMaterialMapper mapper)
         {
             this.mapper = mapper;
         }

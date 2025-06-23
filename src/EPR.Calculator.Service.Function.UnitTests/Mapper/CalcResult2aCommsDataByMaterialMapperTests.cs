@@ -10,12 +10,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
     [TestClass]
     public class CalcResult2aCommsDataByMaterialMapperTests
     {
-        private CalcResult2aCommsDataByMaterialMapper? _testClass;
+        private CalcResult2ACommsDataByMaterialMapper? _testClass;
 
         [TestInitialize]
         public void SetUp()
         {
-            _testClass = new CalcResult2aCommsDataByMaterialMapper();
+            _testClass = new CalcResult2ACommsDataByMaterialMapper();
         }
 
         [TestMethod]
