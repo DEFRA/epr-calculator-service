@@ -37,7 +37,7 @@ namespace EPR.Calculator.Service.Function.Mapper
         private static (IEnumerable<CalcResultMateriality> materiality, IEnumerable<CalcResultMateriality> tonnageChange)
             SplitMaterialitySections(IEnumerable<CalcResultMateriality> materialities)
         {
-            var allItems = materialities?.ToList() ?? new List<CalcResultMateriality>();
+            var allItems = materialities.ToList();
 
             var tonnageHeader = EightTonnageChangeHeader;
             int tonnageHeaderIndex = allItems.FindIndex(m => m.SevenMateriality == tonnageHeader);
