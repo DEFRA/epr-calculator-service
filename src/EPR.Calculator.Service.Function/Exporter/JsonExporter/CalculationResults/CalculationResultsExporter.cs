@@ -133,10 +133,11 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
 
             foreach (var producer in filteredProducers)
             {
-                results.Add(new CalcSummaryProducerCalculationResults {
-                    ProducerId = producer.ProducerId,
+                results.Add(new CalcSummaryProducerCalculationResults
+                {
+                    producerID= producer.ProducerId,
+                    SubsidiaryID = producer.SubsidiaryId,
                     ProducerName = producer.ProducerName,
-                    SubsidiaryId = producer.SubsidiaryId,
                     TradingName = producer.TradingName,
                     Level = producer.Level,
                     ScaledUpTonnages = producer.IsProducerScaledup,

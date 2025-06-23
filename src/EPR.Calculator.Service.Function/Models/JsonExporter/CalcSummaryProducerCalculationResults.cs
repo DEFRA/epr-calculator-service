@@ -5,11 +5,11 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
     public class CalcSummaryProducerCalculationResults
     {
 
-        [JsonProperty("producerId")]
-        public required string ProducerId { get; set; }
+        [JsonProperty("producerID")]
+        public required string producerID { get; set; }
 
-        [JsonProperty("subsidiaryId")]
-        public required string SubsidiaryId { get; set; }
+        [JsonProperty("SubsidiaryID")]
+        public required string SubsidiaryID { get; set; }
 
         [JsonProperty("producerName")]
         public required string ProducerName { get; set; }
