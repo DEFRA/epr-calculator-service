@@ -21,7 +21,6 @@
     {
         private const string JsonMediaType = "application/json";
         private readonly IAzureSynapseRunner azureSynapseRunner;
-        private readonly IPipelineClientFactory pipelineClientFactory;
         private readonly ITransposePomAndOrgDataService transposePomAndOrgDataService;
         private readonly IConfigurationService configuration;
         private readonly IPrepareCalcService prepareCalcService;
