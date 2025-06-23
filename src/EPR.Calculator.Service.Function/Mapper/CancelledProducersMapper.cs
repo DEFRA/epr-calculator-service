@@ -37,10 +37,10 @@ namespace EPR.Calculator.Service.Function.Mapper
                 cancelledProducerTonnageInvoices.Add(new CancelledProducerTonnageInvoice
                 {
                     ProducerId = producerId,
-                    SubsidiaryId = producer.SubsidiaryIdValue,
-                    ProducerName = producer.ProducerOrSubsidiaryNameValue,
-                    TradingName = producer.TradingNameValue,
-                    LastProducerTonnages = GetLastProducerTonnages(producer.LastTonnage)
+                    SubsidiaryId = producer.SubsidiaryIdValue ?? string.Empty,
+                    ProducerName = producer.ProducerOrSubsidiaryNameValue ?? string.Empty,
+                    TradingName = producer.TradingNameValue ?? string.Empty,
+                    LastProducerTonnages = GetLastProducerTonnages(producer.LastTonnage!)
                 });
             }
 
