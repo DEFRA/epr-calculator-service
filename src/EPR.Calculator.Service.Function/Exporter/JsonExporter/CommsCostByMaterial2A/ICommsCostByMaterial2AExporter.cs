@@ -9,6 +9,6 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMater
 {
     public interface ICommsCostByMaterial2AExporter
     {
-        public string Export(List<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial);
+        public string Export(IEnumerable<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial);
     }
 }

@@ -11,7 +11,7 @@ namespace EPR.Calculator.Service.Function.Mapper
 {
     public class CalcResult2ACommsDataByMaterialMapper : ICalcResult2ACommsDataByMaterialMapper
     {
-        public CalcResult2ACommsDataByMaterial Map(List<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial)
+        public CalcResult2ACommsDataByMaterial Map(IEnumerable<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial)
         {
             return new CalcResult2ACommsDataByMaterial
             {
@@ -20,7 +20,7 @@ namespace EPR.Calculator.Service.Function.Mapper
         }
 
         public IEnumerable<CalcResult2ACommsDataDetails> GetMaterialBreakdown(
-           List<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial)
+           IEnumerable<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial)
         {
             var commsByMaterialDataDetails = new List<CalcResult2ACommsDataDetails>();
 
