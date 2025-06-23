@@ -2,6 +2,18 @@
 {
     public class CalcSummaryProducerCalculationResults
     {
+        public required string ProducerID { get; set; }
+
+        public required string SubsidiaryID { get; set; }
+
+        public required string ProducerName { get; set; }
+
+        public required string? TradingName { get; set; }
+
+        public required string? Level { get; set; }
+
+        public required string ScaledUpTonnages { get; set; }
+
         public required ProducerDisposalFeesWithBadDebtProvision1 ProducerDisposalFeesWithBadDebtProvision1 { get; set; }
 
         public required CalcResultCommsCostByMaterial2AJson CalcResultCommsCostByMaterial2AJson { get; set; }
