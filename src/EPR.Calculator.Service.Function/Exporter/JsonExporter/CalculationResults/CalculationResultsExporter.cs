@@ -1,7 +1,6 @@
 ﻿using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -28,6 +27,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
         private readonly ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper;
         private readonly ITotalProducerBillWithBadDebtProvisionMapper totalProducerBillWithBadDebtProvisionMapper;
         private readonly ICalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper calculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper;
+        private readonly ICalcResultProducerCalculationResultsTotalMapper calcResultProducerCalculationResultsTotalMapper;
 
         [SuppressMessage("Constructor has 8 parameters, which is greater than the 7 authorized.", "S107", Justification = "This is suppressed for now and will be refactored later")]
         public CalculationResultsExporter(
@@ -42,7 +42,8 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
             ICalcResultCommsCostsWithBadDebtProvision2cMapper calcResultCommsCostsWithBadDebtProvision2CMapper,
             ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper,
             ITotalProducerBillWithBadDebtProvisionMapper totalProducerBillWithBadDebtProvisionMapper,
-            ICalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper calculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper)
+            ICalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper calculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper,
+            ICalcResultProducerCalculationResultsTotalMapper calcResultProducerCalculationResultsTotalMapper)
         {
             this.producerDisposalFeesWithBadDebtProvision1JsonMapper = producerDisposalFeesWithBadDebtProvision1JsonMapper;
             this.commsCostsByMaterialFeesSummary2AMapper = commsCostsByMaterialFeesSummary2AMapper;
@@ -56,6 +57,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
             this.calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper = calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper;
             this.totalProducerBillWithBadDebtProvisionMapper = totalProducerBillWithBadDebtProvisionMapper;
             this.calculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper = calculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper;
+            this.calcResultProducerCalculationResultsTotalMapper = calcResultProducerCalculationResultsTotalMapper;
         }
 
         /// <inheritdoc/>
@@ -67,6 +69,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
                     {
                         producerCalculationResultsSummary = ArrangeSummary(summary),
                         producerCalculationResults = ArrangeProducerCalculationResult(summary, acceptedProducerIds),
+                        producerCalculationResultsTotal = ArrangeProducerCalculationResultsTotal(summary),
                     },
                 },
                 new JsonSerializerOptions
@@ -153,6 +156,11 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
             }
 
             return results;
+        }        
+        
+        private CalcResultProducerCalculationResultsTotal? ArrangeProducerCalculationResultsTotal(CalcResultSummary calcResultSummary)
+        {
+            return calcResultProducerCalculationResultsTotalMapper.Map(calcResultSummary);
         }
     }
 }
