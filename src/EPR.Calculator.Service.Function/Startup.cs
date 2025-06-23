@@ -137,6 +137,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcResultSummaryExporter, CalcResultSummaryExporter>();
             services.AddTransient<ILateReportingExporter, LateReportingExporter>();
             services.AddTransient<IRunNameService, RunNameService>();
+            services.AddTransient<IClassificationService, ClassificationService>();
             services.AddTransient<ITelemetryClientWrapper, TelemetryClientWrapper>();
             services.AddTransient<IMessageTypeService, MessageTypeService>();
             services.AddTransient<IPrepareBillingFileService, PrepareBillingFileService>();
@@ -155,7 +156,9 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper, CalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper>();
             services.AddTransient<IParametersOtherMapper, ParametersOtherMapper>();
             services.AddTransient<IParametersOtherJsonExporter, ParametersOtherJsonExporter>();
+            services.AddTransient<ICalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper, CalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper>();
 #if !DEBUG
+
             SetupBlobStorage(services);
             services.AddTransient<IConfigurationService, Configuration>();
 #elif DEBUG

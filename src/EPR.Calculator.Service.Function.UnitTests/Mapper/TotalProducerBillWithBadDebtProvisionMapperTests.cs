@@ -12,7 +12,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
     [TestClass]
     public class TotalProducerBillWithBadDebtProvisionMapperTests
     {
-        private TotalProducerBillWithBadDebtProvisionMapper _mapper;
+        private TotalProducerBillWithBadDebtProvisionMapper? _mapper;
 
         [TestInitialize]
         public void Setup()
@@ -28,9 +28,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             var calcResultSummaryProducerDisposalFees = fixture.Create<CalcResultSummaryProducerDisposalFees>();
 
             // Act
-            var result = _mapper.Map(calcResultSummaryProducerDisposalFees);
+            var result = _mapper?.Map(calcResultSummaryProducerDisposalFees);
 
             // Assert  
+            Assert.IsNotNull(result);
             Assert.AreEqual(calcResultSummaryProducerDisposalFees.TotalProducerBillWithoutBadDebtProvision, result.TotalProducerBillWithoutBadDebtProvision);
             Assert.AreEqual(calcResultSummaryProducerDisposalFees.BadDebtProvisionForTotalProducerBill, result.BadDebtProvisionForTotalProducerBill);
             Assert.AreEqual(calcResultSummaryProducerDisposalFees.EnglandTotalWithBadDebtProvision, result.EnglandTotalForProducerBillWithBadDebtProvision);
