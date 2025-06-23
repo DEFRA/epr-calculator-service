@@ -30,6 +30,7 @@
                 new FeeForSASetUpCostsWithBadDebtProvision_5Mapper(),
                 new CalcResultCommsCostsWithBadDebtProvision2cMapper(),
                 new CalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper(),
+                new TotalProducerBillWithBadDebtProvisionMapper(),
                 new CalcResultProducerCalculationResultsTotalMapper()
             );
         }
