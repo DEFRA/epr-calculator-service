@@ -134,6 +134,12 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
             {
                 results.Add(new CalcSummaryProducerCalculationResults
                 {
+                    ProducerID= producer.ProducerId,
+                    SubsidiaryID = producer.SubsidiaryId,
+                    ProducerName = producer.ProducerName,
+                    TradingName = producer.TradingName,
+                    Level = producer.Level,
+                    ScaledUpTonnages = producer.IsProducerScaledup,
                     ProducerDisposalFeesWithBadDebtProvision1 = this.producerDisposalFeesWithBadDebtProvision1JsonMapper.Map(producer.ProducerDisposalFeesByMaterial),
                     CalcResultCommsCostByMaterial2AJson = this.commsCostByMaterial2AJsonMapper.Map(producer.ProducerCommsFeesByMaterial!),
                     CalcResultSAOperatingCostsWithBadDebtProvision = this.sAOperatingCostsWithBadDebtProvisionMapper.Map(producer),

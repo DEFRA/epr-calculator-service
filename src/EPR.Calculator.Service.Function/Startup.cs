@@ -161,6 +161,8 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ITotalProducerBillWithBadDebtProvisionMapper, TotalProducerBillWithBadDebtProvisionMapper>();
             services.AddTransient<ICommsCostMapper, CommsCostMapper>();
             services.AddTransient<ICommsCostJsonExporter, CommsCostJsonExporter>();
+            services.AddTransient<ICalcResult2ACommsDataByMaterialMapper, CalcResult2ACommsDataByMaterialMapper>();
+            services.AddTransient<ICommsCostByMaterial2AExporter, CommsCostByMaterial2AExporter>();
 #if !DEBUG
 
             SetupBlobStorage(services);

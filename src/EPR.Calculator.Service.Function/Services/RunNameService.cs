@@ -43,7 +43,7 @@
                 throw new ArgumentNullException($"Run name not found for the run id {runId}");
             }
 
-            return run?.Name;
+            return run.Name;
         }
     }
 }
