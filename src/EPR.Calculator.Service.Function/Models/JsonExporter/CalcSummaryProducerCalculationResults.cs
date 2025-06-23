@@ -19,5 +19,7 @@
         public required FeeForSASetUpCostsWithBadDebtProvision_5 FeeForSASetUpCostsWithBadDebtProvision_5 { get; set; }
 
         public required CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts { get; set; }
+
+        public required DisposalFeeSummary1 DisposalFeeSummary1 { get; set; }
     }
 }

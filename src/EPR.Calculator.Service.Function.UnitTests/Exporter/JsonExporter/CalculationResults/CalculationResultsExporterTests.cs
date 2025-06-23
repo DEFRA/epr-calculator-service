@@ -28,7 +28,8 @@
                 new TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper(),
                 new FeeForSASetUpCostsWithBadDebtProvision_5Mapper(),
                 new CalcResultCommsCostsWithBadDebtProvision2cMapper(),
-                new CalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper()
+                new CalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper(),
+                new DisposalFeeSummary1Mapper()
             );
         }
 
@@ -330,6 +331,49 @@
             AssertAreEqual(producer.TwoCTotalProducerFeeForCommsCostsWithoutBadDebt, twoCCosts["totalProducerFeeForCommsCostsByCountryWithoutBadDebtProvision"]);
             AssertAreEqual(producer.TwoCTotalProducerFeeForCommsCostsWithBadDebt, twoCCosts["totalProducerFeeForCommsCostsByCountryWithBadDebtProvision"]);
             AssertAreEqual(producer.TwoCBadDebtProvision, twoCCosts["badDebProvisionFor2c"]);
+        }
+
+        [TestMethod]
+        public void Export_DisposalFeeSummary1()
+        {
+            // Arrange
+            var data = SetCalcResultSummayData();
+
+            // Act
+            var json = this.TestClass.Export(data, null, new List<int> { 1, 2, 3 });
+
+            var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
+                     ["calculationResults"]!
+                ["producerCalculationResults"];
+
+            // Assert
+            Assert.IsNotNull(roundTrippedData);
+            var disposalFeeSummary1 = roundTrippedData[0]!["disposalFeeSummary1"]!;
+            var producer = data.ProducerDisposalFees.SingleOrDefault(t => !t.isTotalRow && !string.IsNullOrEmpty(t.Level))!;
+
+            // Disposal Fee
+            AssertAreEqual(producer.TotalProducerDisposalFee,
+                disposalFeeSummary1["totalProducerDisposalFeeWithoutBadDebtProvision"]);
+            AssertAreEqual(producer.BadDebtProvision,
+                disposalFeeSummary1["badDebtProvision"]);
+            AssertAreEqual(producer.TotalProducerDisposalFeeWithBadDebtProvision,
+                disposalFeeSummary1["totalProducerDisposalFeeWithBadDebtProvision"]);
+
+            // Countries
+            AssertAreEqual(producer.EnglandTotal,
+                disposalFeeSummary1["englandTotal"]);
+            AssertAreEqual(producer.WalesTotal,
+                disposalFeeSummary1["walesTotal"]);
+            AssertAreEqual(producer.ScotlandTotal,
+                disposalFeeSummary1["scotlandTotal"]);
+            AssertAreEqual(producer.NorthernIrelandTotal,
+                disposalFeeSummary1["northernIrelandTotal"]);
+
+            // Tonnage Change
+            AssertAreEqual(producer.TonnageChangeCount,
+                disposalFeeSummary1["tonnageChangeCount"]);
+            AssertAreEqual(producer.TonnageChangeAdvice,
+                disposalFeeSummary1["tonnageChangeAdvice"]);
         }
 
         [TestMethod]
