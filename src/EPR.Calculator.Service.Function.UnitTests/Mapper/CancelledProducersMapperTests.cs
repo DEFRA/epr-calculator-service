@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Models.JsonExporter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 
             // Assert
             Assert.IsNotNull(result);
+        }
+
+        [TestMethod]
+        public void CanCallMap_ReturnsEmptyObject()
+        {
+            // Arrange
+            CalcResultCancelledProducersResponse? cancelledProducers = null;
+
+            // Act
+            var result = ((ICancelledProducersMapper)_testClass).Map(cancelledProducers!);
+
+            // Assert
+            Assert.AreEqual(new CancelledProducers(), result);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
@@ -9,7 +10,7 @@ namespace EPR.Calculator.Service.Function.Mapper
     {
         public CancelledProducers Map(CalcResultCancelledProducersResponse calcResultCancelledProducersResponse)
         {
-            if (calcResultCancelledProducersResponse == null)
+            if (calcResultCancelledProducersResponse == null || !calcResultCancelledProducersResponse.CancelledProducers.Any())
             {
                 return new CancelledProducers();
             }
