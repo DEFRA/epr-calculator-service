@@ -146,7 +146,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcCountryApportionmentService, CalcCountryApportionmentService>();
             services.AddTransient<ICalcResultCommsCostByMaterial2AJsonExporter, CalcResultCommsCostByMaterial2AJsonExporter>();
             services.AddTransient<ISAOperatingCostsWithBadDebtProvisionMapper, SAOperatingCostsWithBadDebtProvisionMapper>();
-            services.AddTransient<ICalcResultLADataPrepCostsWithBadDebtProvisionMapper, CalcResultLADataPrepCostsWithBadDebtProvisionMapper>();
+            services.AddTransient<ICalcResultLADataPrepCostsWithBadDebtProvision4Mapper, CalcResultLADataPrepCostsWithBadDebtProvision4Mapper>();
             services.AddTransient<IFeeForCommsCostsWithBadDebtProvision2aMapper, FeeForCommsCostsWithBadDebtProvision2aMapper>();
             services.AddTransient<IFeeForCommsCostsWithBadDebtProvision2bMapper, FeeForCommsCostsWithBadDebtProvision2bMapper>();
             services.AddTransient<ITotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper, TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper>();
@@ -157,6 +157,9 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<IParametersOtherMapper, ParametersOtherMapper>();
             services.AddTransient<IParametersOtherJsonExporter, ParametersOtherJsonExporter>();
             services.AddTransient<ICalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper, CalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper>();
+            services.AddTransient<ITotalProducerBillWithBadDebtProvisionMapper, TotalProducerBillWithBadDebtProvisionMapper>();
+            services.AddTransient<ICommsCostMapper, CommsCostMapper>();
+            services.AddTransient<ICommsCostJsonExporter, CommsCostJsonExporter>();
 #if !DEBUG
 
             SetupBlobStorage(services);

@@ -1,9 +1,10 @@
 ﻿using EPR.Calculator.Service.Function.Converter;
 using Newtonsoft.Json;
 
+
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
-    public class CalcResultLADataPrepCostsWithBadDebtProvision
+    public class FeeForLADataPrepCostsWithBadDebtProvision_4
     {
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
         [JsonProperty(PropertyName = "totalProducerFeeForLADataPrepCostsWithoutBadDebtProvision")]

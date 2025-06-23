@@ -5,35 +5,46 @@ using EPR.Calculator.Service.Function.Models;
 namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 {
     [TestClass]
-    public class CalcResultLADataPrepCostsWithBadDebtProvisionMapperTests
+    public class CalcResultLADataPrepCostsWithBadDebtProvision4MapperTests
     {
-        private CalcResultLADataPrepCostsWithBadDebtProvisionMapper _testClass;
+        private CalcResultLADataPrepCostsWithBadDebtProvision4Mapper _mapper;
 
         [TestInitialize]
-        public void SetUp()
+        public void Setup()
         {
-            _testClass = new CalcResultLADataPrepCostsWithBadDebtProvisionMapper();
+            _mapper = new CalcResultLADataPrepCostsWithBadDebtProvision4Mapper();
         }
 
         [TestMethod]
-        public void CanCallMap()
+        public void Map_ShouldMapCorrectly()
         {
-            // Arrange
-            var fixture = new Fixture();
-            var fees = fixture.Create<CalcResultSummaryProducerDisposalFees>();
+            // Arrange  
+            var input = new CalcResultSummaryProducerDisposalFees
+            {
+                LaDataPrepCostsTotalWithoutBadDebtProvisionSection4 = 100m,
+                LaDataPrepCostsBadDebtProvisionSection4 = 10m,
+                LaDataPrepCostsTotalWithBadDebtProvisionSection4 = 110m,
+                LaDataPrepCostsEnglandTotalWithBadDebtProvisionSection4 = 50m,
+                LaDataPrepCostsWalesTotalWithBadDebtProvisionSection4 = 30m,
+                LaDataPrepCostsScotlandTotalWithBadDebtProvisionSection4 = 20m,
+                LaDataPrepCostsNorthernIrelandTotalWithBadDebtProvisionSection4 = 10m,
+                ProducerId = "Producer123",
+                ProducerName = "Test Producer",
+                SubsidiaryId = "Subsidiary456",
+            };
 
-            // Act
-            var result = _testClass.Map(fees);
+            // Act  
+            var result = _mapper.Map(input);
 
-            // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(result.TotalProducerFeeForLADataPrepCostsWithoutBadDebtProvision, fees.LaDataPrepCostsTotalWithoutBadDebtProvisionSection4);
-            Assert.AreEqual(result.BadDebtProvisionFor4, fees.LaDataPrepCostsBadDebtProvisionSection4);
-            Assert.AreEqual(result.TotalProducerFeeForLADataPrepCostsWithBadDebtProvision, fees.LaDataPrepCostsTotalWithBadDebtProvisionSection4);
-            Assert.AreEqual(result.EnglandTotalForLADataPrepCostsWithBadDebtProvision, fees.LaDataPrepCostsEnglandTotalWithBadDebtProvisionSection4);
-            Assert.AreEqual(result.WalesTotalForLADataPrepCostsWithBadDebtProvision, fees.LaDataPrepCostsWalesTotalWithBadDebtProvisionSection4);
-            Assert.AreEqual(result.ScotlandTotalForLADataPrepCostsWithBadDebtProvision, fees.LaDataPrepCostsScotlandTotalWithBadDebtProvisionSection4);
-            Assert.AreEqual(result.NorthernIrelandTotalForLADataPrepCostsWithBadDebtProvision, fees.LaDataPrepCostsNorthernIrelandTotalWithBadDebtProvisionSection4);
+            // Assert  
+            Assert.IsNotNull(result);            
+            Assert.AreEqual(100m, result.TotalProducerFeeForLADataPrepCostsWithoutBadDebtProvision);
+            Assert.AreEqual(10m, result.BadDebtProvisionFor4);
+            Assert.AreEqual(110m, result.TotalProducerFeeForLADataPrepCostsWithBadDebtProvision);
+            Assert.AreEqual(50m, result.EnglandTotalForLADataPrepCostsWithBadDebtProvision);
+            Assert.AreEqual(30m, result.WalesTotalForLADataPrepCostsWithBadDebtProvision);
+            Assert.AreEqual(20m, result.ScotlandTotalForLADataPrepCostsWithBadDebtProvision);
+            Assert.AreEqual(10m, result.NorthernIrelandTotalForLADataPrepCostsWithBadDebtProvision);
         }
     }
 }

@@ -26,6 +26,6 @@
 
         public required CalculationResultsProducerCalculationResultsFeeForLADisposalCosts1 FeeForLADisposalCosts1 { get; set; }
 
-        public required CalcResultLADataPrepCostsWithBadDebtProvision CalcResultLaDataPrepCostsWithBadDebtProvision { get; set; }
+        public required FeeForLADataPrepCostsWithBadDebtProvision_4 FeeForLADataPrepCostsWithBadDebtProvision_4 { get; set; }
     }
 }
