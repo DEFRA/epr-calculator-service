@@ -48,7 +48,7 @@
             // Arrange
             var runId = 1;
             var expectedRunName = "Test Run Name";
-            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
+            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2027-28" };
             this.dbContext.CalculatorRuns.Add(new CalculatorRun { Id = runId, Name = expectedRunName, Financial_Year = calculatorRunFinancialYear });
             await this.dbContext.SaveChangesAsync();
 
@@ -60,20 +60,40 @@
         }
 
         /// <summary>
-        /// Tests that <see cref="RunNameService.GetRunNameAsync(int)"/> returns null when the run does not exist.
+        /// Tests that <see cref="RunNameService.GetRunNameAsync(int)"/> returns exception when the run does not exist.
         /// </summary>
         /// <returns>A task that represents the asynchronous operation.</returns>
         [TestMethod]
-        public async Task GetRunNameAsync_ShouldReturnNullWhenRunDoesNotExist()
+        public async Task GetRunNameAsync_ShouldReturnKeyNotFoundExceptionWhenRunDoesNotExist()
         {
             // Arrange
             var runId = 10;
 
             // Act
-            var result = await this.runNameService.GetRunNameAsync(runId);
+            var exceptionResult = await Assert.ThrowsExceptionAsync<KeyNotFoundException>(() => this.runNameService.GetRunNameAsync(runId));
 
             // Assert
-            Assert.AreEqual(null, result);
+            Assert.AreEqual("Calculator run with id 10 not found", exceptionResult.Message);
+        }
+
+        /// <summary>
+        /// Tests that <see cref="RunNameService.GetRunNameAsync(int)"/> returns exception when the run name is null or empty.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        [TestMethod]
+        public async Task GetRunNameAsync_ShouldReturnArgumentNullExceptionWhenRunNameIsNullOrEmpty()
+        {
+            // Arrange
+            var runId = 2;
+            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2028-29" };
+            this.dbContext.CalculatorRuns.Add(new CalculatorRun { Id = runId, Name = string.Empty, Financial_Year = calculatorRunFinancialYear });
+            await this.dbContext.SaveChangesAsync();
+
+            // Act
+            var exceptionResult = await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => this.runNameService.GetRunNameAsync(runId));
+
+            // Assert
+            Assert.AreEqual("Value cannot be null. (Parameter 'Run name not found for the run id 2')", exceptionResult.Message);
         }
     }
 }

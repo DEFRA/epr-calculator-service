@@ -1,6 +1,8 @@
 ﻿using AutoFixture;
+using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Models.JsonExporter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,12 +48,25 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 
             // Act
             var result = _testClass.Map(scaledupProducers, acceptedProducerIds);
-            var abc = 1;
 
             // Assert
             Assert.AreEqual(2, result.ProducerSubmissions?.Count());
             Assert.AreEqual(1, result.ProducerSubmissions?.ToList()[0].ProducerId);
             Assert.AreEqual(3, result.ProducerSubmissions?.ToList()[1].ProducerId);
+        }
+
+        [TestMethod]
+        public void CanCallMap_ReturnsEmptyObject()
+        {
+            // Arrange
+            CalcResultScaledupProducers? scaledupProducers = null;
+            var acceptedProducerIds = new List<int>();
+
+            // Act
+            var result = _testClass.Map(scaledupProducers!, acceptedProducerIds);
+
+            // Assert
+            Assert.AreEqual(new CalcResultScaledupProducersJson(), result);
         }
 
         private static CalcResultScaledupProducers GetScaledUpProducers()
@@ -64,6 +79,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
                      {
                         ProducerId = 1,
                         IsTotalRow = true,
+                        Level = CommonConstants.LevelTwo.ToString(),
                         ScaledupProducerTonnageByMaterial = new()
                         {
                             ["Aluminium"] = new CalcResultScaledupProducerTonnage
@@ -85,6 +101,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
                      {
                         ProducerId = 2,
                         IsTotalRow = true,
+                        Level = CommonConstants.LevelTwo.ToString(),
                         ScaledupProducerTonnageByMaterial = new()
                         {
                             ["Glass"] = new CalcResultScaledupProducerTonnage
@@ -106,6 +123,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
                      {
                         ProducerId = 3,
                         IsTotalRow = true,
+                        Level = CommonConstants.LevelTwo.ToString(),
                         ScaledupProducerTonnageByMaterial = new()
                         {
                             ["Plastic"] = new CalcResultScaledupProducerTonnage
