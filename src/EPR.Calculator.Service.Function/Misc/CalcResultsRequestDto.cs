@@ -9,5 +9,7 @@ namespace EPR.Calculator.Service.Function.Dtos
         public IEnumerable<int> AcceptedProducerIds { get; set; } = new List<int>();
 
         public bool IsBillingFile { get; set; }
+
+        public string ApprovedBy { get; set; } = string.Empty;
     }
 }

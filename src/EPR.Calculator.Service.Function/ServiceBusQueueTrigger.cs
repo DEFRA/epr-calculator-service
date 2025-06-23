@@ -79,7 +79,7 @@ namespace EPR.Calculator.Service.Function
                 {
                     var billingFileMessage = this.calculatorRunParameterMapper.Map(billingmessage);
 
-                    processStatus = await this.prepareBillingFileService.PrepareBillingFileAsync(billingFileMessage.Id, runName!);
+                    processStatus = await this.prepareBillingFileService.PrepareBillingFileAsync(billingFileMessage.Id, runName!, billingFileMessage.ApprovedBy);
                 }
                 
                 if (resultMessageType is CreateResultFileMessage resultmessage)

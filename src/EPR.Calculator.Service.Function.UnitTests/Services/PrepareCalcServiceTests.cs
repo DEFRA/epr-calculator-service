@@ -248,7 +248,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 RunId = 1,
                 IsBillingFile = true,
-                AcceptedProducerIds = new List<int> { 1, 2 }
+                AcceptedProducerIds = new List<int> { 1, 2 },
+                ApprovedBy = "Test User 234",
             };
             var billingResult = _testClass.PrepareBillingResults(calcResultsRequestDto, "TestRun", CancellationToken.None);
             billingResult.Wait();
@@ -264,6 +265,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             Assert.IsNotNull(billingFileMetaData);
 
+            billingFileMetaData.BillingFileCreatedBy = "Test User 234";
             Assert.AreEqual($"1-TestRun_Billing File_{DateTime.Today:yyyyMMdd}.csv", billingFileMetaData.BillingCsvFileName);
             Assert.AreEqual("1Billing.json", billingFileMetaData.BillingJsonFileName);
 

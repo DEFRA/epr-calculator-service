@@ -224,20 +224,20 @@
             return false;
         }
 
-        public async Task<bool> PrepareBillingResults([FromBody] CalcResultsRequestDto resultsRequestDto,
+        public async Task<bool> PrepareBillingResults([FromBody] CalcResultsRequestDto requestDto,
             string runName,
             CancellationToken cancellationToken)
         {
-            await this.Builder.Build(resultsRequestDto);
+            await this.Builder.Build(requestDto);
 
             // Get File name for the billing json file
             var billingFileCsvName = new CalcResultsAndBillingFileName(
-                resultsRequestDto.RunId,
+                requestDto.RunId,
                 runName,
                 DateTime.Now,
                 true);
 
-            var billingFileJsonName = new CalcResultsAndBillingFileName( resultsRequestDto.RunId, true, true);
+            var billingFileJsonName = new CalcResultsAndBillingFileName( requestDto.RunId, true, true);
 
             // call json Exporter
 
@@ -251,16 +251,15 @@
 
             // Update the calculator run with the billing file metadata
 
-            var calcRun = await this.Context.CalculatorRuns.SingleAsync(run => run.Id == resultsRequestDto.RunId);
+            var calcRun = await this.Context.CalculatorRuns.SingleAsync(run => run.Id == requestDto.RunId);
             calcRun.IsBillingFileGenerating = false;
 
             var billingFileMetadata = new CalculatorRunBillingFileMetadata
             {
                 BillingCsvFileName = billingFileCsvName.ToString(),
-                BillingFileCreatedBy = "System",
-                CalculatorRunId = resultsRequestDto.RunId,
+                BillingFileCreatedBy = requestDto.ApprovedBy,
+                CalculatorRunId = requestDto.RunId,
                 BillingFileCreatedDate = DateTime.UtcNow,
-                BillingFileAuthorisedBy = "System",
                 BillingJsonFileName = billingFileJsonName.ToString(),
             };
 
