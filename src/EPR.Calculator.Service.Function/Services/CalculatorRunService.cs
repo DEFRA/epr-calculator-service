@@ -40,7 +40,6 @@
         public CalculatorRunService(
             IAzureSynapseRunner azureSynapseRunner,
             ICalculatorTelemetryLogger telemetryLogger,
-            IPipelineClientFactory pipelineClientFactory,
             ITransposePomAndOrgDataService transposePomAndOrgDataService,
             IConfigurationService configuration,
             IPrepareCalcService prepareCalcService,
