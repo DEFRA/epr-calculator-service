@@ -1,23 +1,16 @@
 ﻿using AutoFixture;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 {
     [TestClass]
     public class TotalProducerBillWithBadDebtProvisionMapperTests
     {
-        private TotalProducerBillWithBadDebtProvisionMapper _mapper;
-
-        [TestInitialize]
-        public void Setup()
+        private TotalProducerBillWithBadDebtProvisionMapper Mapper;
+        public TotalProducerBillWithBadDebtProvisionMapperTests()
         {
-            _mapper = new TotalProducerBillWithBadDebtProvisionMapper();
+            this.Mapper = new TotalProducerBillWithBadDebtProvisionMapper();
         }
 
         [TestMethod]
@@ -28,7 +21,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             var calcResultSummaryProducerDisposalFees = fixture.Create<CalcResultSummaryProducerDisposalFees>();
 
             // Act
-            var result = _mapper.Map(calcResultSummaryProducerDisposalFees);
+            var result = Mapper.Map(calcResultSummaryProducerDisposalFees);
 
             // Assert  
             Assert.AreEqual(calcResultSummaryProducerDisposalFees.TotalProducerBillWithoutBadDebtProvision, result.TotalProducerBillWithoutBadDebtProvision);
