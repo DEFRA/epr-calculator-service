@@ -399,22 +399,20 @@
 
             // Assert
             Assert.IsNotNull(roundTrippedData);
-            if(roundTrippedData[0] is JsonObject item && item.TryGetPropertyValue("feeForLADisposalCosts1", out var feeForLADisposalCosts1))
+           
+            var feeForLADisposalCosts1 = roundTrippedData[0]?["feeForLADisposalCosts1"];
+            var producer = data.ProducerDisposalFees.SingleOrDefault(t => !t.isTotalRow && !string.IsNullOrEmpty(t.Level));
+            if (producer == null)
             {
-                var producer = data.ProducerDisposalFees.SingleOrDefault(t => !t.isTotalRow && !string.IsNullOrEmpty(t.Level));
-                AssertAreEqual(producer.NorthernIrelandTotalWithBadDebtProvision, feeForLADisposalCosts1?["northernIrelandTotalForLADisposalCostsWithBadDebtProvision"]);
-                AssertAreEqual(producer.ScotlandTotalWithBadDebtProvision, feeForLADisposalCosts1?["scotlandTotalForLADisposalCostsWithBadDebtProvision"]);
-                AssertAreEqual(producer.WalesTotalWithBadDebtProvision, feeForLADisposalCosts1?["walesTotalForLADisposalCostsWithBadDebtProvision"]);
-                AssertAreEqual(producer.EnglandTotalWithBadDebtProvision, feeForLADisposalCosts1?["englandTotalForLADisposalCostsWithBadDebtProvision"]);
-                AssertAreEqual(producer.TotalProducerFeeforLADisposalCostswithBadDebtprovision, feeForLADisposalCosts1?["totalProducerFeeForLADisposalCostsWithBadDebtProvision"]);
-                AssertAreEqual(producer.BadDebtProvisionFor1, feeForLADisposalCosts1?["badDebtProvisionForLADisposalCosts"]);
-                AssertAreEqual(producer.TotalProducerFeeforLADisposalCostswoBadDebtprovision, feeForLADisposalCosts1?["totalProducerFeeForLADisposalCostsWithoutBadDebtProvision"]);
+                Assert.Fail("Producer not found.");
             }
-            else
-            {
-                Assert.Fail("Missing or invalid 'feeForLADisposalCosts1' value in first item of roundTrippedData.");
-            }
-
+            AssertAreEqual(producer.NorthernIrelandTotalWithBadDebtProvision, feeForLADisposalCosts1?["northernIrelandTotalForLADisposalCostsWithBadDebtProvision"]);
+            AssertAreEqual(producer.ScotlandTotalWithBadDebtProvision, feeForLADisposalCosts1?["scotlandTotalForLADisposalCostsWithBadDebtProvision"]);
+            AssertAreEqual(producer.WalesTotalWithBadDebtProvision, feeForLADisposalCosts1?["walesTotalForLADisposalCostsWithBadDebtProvision"]);
+            AssertAreEqual(producer.EnglandTotalWithBadDebtProvision, feeForLADisposalCosts1?["englandTotalForLADisposalCostsWithBadDebtProvision"]);
+            AssertAreEqual(producer.TotalProducerFeeforLADisposalCostswithBadDebtprovision, feeForLADisposalCosts1?["totalProducerFeeForLADisposalCostsWithBadDebtProvision"]);
+            AssertAreEqual(producer.BadDebtProvisionFor1, feeForLADisposalCosts1?["badDebtProvisionForLADisposalCosts"]);
+            AssertAreEqual(producer.TotalProducerFeeforLADisposalCostswoBadDebtprovision, feeForLADisposalCosts1?["totalProducerFeeForLADisposalCostsWithoutBadDebtProvision"]);
         }
 
         private CalcResultSummary SetCalcResultSummayData()
