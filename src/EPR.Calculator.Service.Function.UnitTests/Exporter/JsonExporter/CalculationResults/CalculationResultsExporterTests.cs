@@ -399,15 +399,22 @@
 
             // Assert
             Assert.IsNotNull(roundTrippedData);
-            var feeForLADisposalCosts1 = roundTrippedData[0]["feeForLADisposalCosts1"];
-            var producer = data.ProducerDisposalFees.SingleOrDefault(t => !t.isTotalRow && !string.IsNullOrEmpty(t.Level));
-            AssertAreEqual(producer.NorthernIrelandTotalWithBadDebtProvision, feeForLADisposalCosts1["northernIrelandTotalForLADisposalCostsWithBadDebtProvision"]);
-            AssertAreEqual(producer.ScotlandTotalWithBadDebtProvision, feeForLADisposalCosts1["scotlandTotalForLADisposalCostsWithBadDebtProvision"]);
-            AssertAreEqual(producer.WalesTotalWithBadDebtProvision, feeForLADisposalCosts1["walesTotalForLADisposalCostsWithBadDebtProvision"]);
-            AssertAreEqual(producer.EnglandTotalWithBadDebtProvision, feeForLADisposalCosts1["englandTotalForLADisposalCostsWithBadDebtProvision"]);
-            AssertAreEqual(producer.TotalProducerFeeforLADisposalCostswithBadDebtprovision, feeForLADisposalCosts1["totalProducerFeeForLADisposalCostsWithBadDebtProvision"]);
-            AssertAreEqual(producer.BadDebtProvisionFor1, feeForLADisposalCosts1["badDebtProvisionForLADisposalCosts"]);
-            AssertAreEqual(producer.TotalProducerFeeforLADisposalCostswoBadDebtprovision, feeForLADisposalCosts1["totalProducerFeeForLADisposalCostsWithoutBadDebtProvision"]);
+            if(roundTrippedData[0] is JsonObject item && item.TryGetPropertyValue("feeForLADisposalCosts1", out var feeForLADisposalCosts1))
+            {
+                var producer = data.ProducerDisposalFees.SingleOrDefault(t => !t.isTotalRow && !string.IsNullOrEmpty(t.Level));
+                AssertAreEqual(producer.NorthernIrelandTotalWithBadDebtProvision, feeForLADisposalCosts1?["northernIrelandTotalForLADisposalCostsWithBadDebtProvision"]);
+                AssertAreEqual(producer.ScotlandTotalWithBadDebtProvision, feeForLADisposalCosts1?["scotlandTotalForLADisposalCostsWithBadDebtProvision"]);
+                AssertAreEqual(producer.WalesTotalWithBadDebtProvision, feeForLADisposalCosts1?["walesTotalForLADisposalCostsWithBadDebtProvision"]);
+                AssertAreEqual(producer.EnglandTotalWithBadDebtProvision, feeForLADisposalCosts1?["englandTotalForLADisposalCostsWithBadDebtProvision"]);
+                AssertAreEqual(producer.TotalProducerFeeforLADisposalCostswithBadDebtprovision, feeForLADisposalCosts1?["totalProducerFeeForLADisposalCostsWithBadDebtProvision"]);
+                AssertAreEqual(producer.BadDebtProvisionFor1, feeForLADisposalCosts1?["badDebtProvisionForLADisposalCosts"]);
+                AssertAreEqual(producer.TotalProducerFeeforLADisposalCostswoBadDebtprovision, feeForLADisposalCosts1?["totalProducerFeeForLADisposalCostsWithoutBadDebtProvision"]);
+            }
+            else
+            {
+                Assert.Fail("Missing or invalid 'feeForLADisposalCosts1' value in first item of roundTrippedData.");
+            }
+
         }
 
         private CalcResultSummary SetCalcResultSummayData()
