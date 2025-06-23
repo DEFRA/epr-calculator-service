@@ -31,25 +31,18 @@
     {
         public PrepareCalcService(
             IDbContextFactory<ApplicationDBContext> context,
-            IRpdStatusDataValidator rpdStatusDataValidator,
-            IOrgAndPomWrapper wrapper,
             ICalcResultBuilder builder,
             ICalcResultsExporter<CalcResult> exporter,
-            ITransposePomAndOrgDataService transposePomAndOrgDataService,
             IStorageService storageService,
             CalculatorRunValidator validationRules,
             ICommandTimeoutService commandTimeoutService,
             ICalculatorTelemetryLogger telemetryLogger,
             IBillingInstructionService billingInstructionService,
-            BlobServiceClient blobServiceClient,
             IConfigurationService config)
         {
             this.Context = context.CreateDbContext();
-            this.rpdStatusDataValidator = rpdStatusDataValidator;
-            this.Wrapper = wrapper;
             this.Builder = builder;
             this.Exporter = exporter;
-            this.transposePomAndOrgDataService = transposePomAndOrgDataService;
             this.storageService = storageService;
             this.validatior = validationRules;
             this.commandTimeoutService = commandTimeoutService;
@@ -64,15 +57,9 @@
 
         private ApplicationDBContext Context { get; init; }
 
-        private IRpdStatusDataValidator rpdStatusDataValidator { get; init; }
-
-        private IOrgAndPomWrapper Wrapper { get; init; }
-
         private ICalcResultBuilder Builder { get; init; }
 
         private ICalcResultsExporter<CalcResult> Exporter { get; init; }
-
-        private ITransposePomAndOrgDataService transposePomAndOrgDataService { get; init; }
 
         private IStorageService storageService { get; init; }
 
