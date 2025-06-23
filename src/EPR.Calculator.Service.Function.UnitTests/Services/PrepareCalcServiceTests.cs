@@ -103,7 +103,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             this.ConfigurationService = new Mock<IConfigurationService>();
             this.ConfigurationService
-                .Setup(c => c.CalcResultBlobContainerName)
+                .Setup(c => c.ResultFileCSVContainerName)
                 .Returns(fixture.Create<string>());
 
             this._testClass = new PrepareCalcService(this._dbContextFactory.Object,

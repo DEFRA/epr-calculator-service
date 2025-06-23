@@ -32,7 +32,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.MockBlobClient = new Mock<BlobClient>();
 
             this.ConfigurationService = new Mock<IConfigurationService>();
-            this.ConfigurationService.Setup(s => s.CalcResultBlobContainerName)
+            this.ConfigurationService.Setup(s => s.ResultFileCSVContainerName)
                 .Returns(this.Fixture.Create<string>());
 
             this.MockBlobServiceClient.Setup(x => x.GetBlobContainerClient(It.IsAny<string>()))

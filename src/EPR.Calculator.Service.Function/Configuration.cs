@@ -123,7 +123,8 @@ namespace EPR.Calculator.Service.Function
         /// <summary>
         /// Gets the blob container name from environment variables.
         /// </summary>
-        public string CalcResultBlobContainerName => Environment.GetEnvironmentVariable(EnvironmentVariableKeys.CalcResultBlobContainerName);
+        public string ResultFileCSVContainerName => Environment
+            .GetEnvironmentVariable(EnvironmentVariableKeys.ResultFileCSVContainerName);
 
         /// <summary>
         /// Gets the blob connection string from environment variables.
