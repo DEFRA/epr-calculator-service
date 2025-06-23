@@ -107,17 +107,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 .Returns(fixture.Create<string>());
 
             this._testClass = new PrepareCalcService(this._dbContextFactory.Object,
-                this._rpdStatusDataValidator.Object,
-                this._wrapper.Object,
                 this._builder.Object,
                 this._exporter.Object,
-                this._transposePomAndOrgDataService.Object,
                 this._storageService.Object,
                 this._validationRules,
                 this._commandTimeoutService.Object,
                 this._telemetryLogger.Object,
                 this._billingInstructionService.Object,
-                this.BlobStorageService.Object,
                 this.ConfigurationService.Object);
         }
 
@@ -142,17 +138,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             // Act
             var instance = new PrepareCalcService(this._dbContextFactory.Object,
-                this._rpdStatusDataValidator.Object,
-                this._wrapper.Object,
                 this._builder.Object,
                 this._exporter.Object,
-                this._transposePomAndOrgDataService.Object,
                 this._storageService.Object,
                 this._validationRules,
                 this._commandTimeoutService.Object,
                 this._telemetryLogger.Object,
                 this._billingInstructionService.Object,
-                this.BlobStorageService.Object,
                 this.ConfigurationService.Object);
 
             // Assert
