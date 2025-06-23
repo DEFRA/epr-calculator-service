@@ -359,19 +359,17 @@
 
             // Assert
             Assert.IsNotNull(roundTrippedData);
-            Assert.IsNotNull(roundTrippedData[0]);
-            var twoBCosts = roundTrippedData[0]!["feeForCommsCostsWithBadDebtProvision2b"];
-            Assert.IsNotNull(twoBCosts);
+            var twoBCosts = roundTrippedData[0]?["feeForCommsCostsWithBadDebtProvision2b"];
             var producer = data.ProducerDisposalFees.SingleOrDefault(t => !t.isTotalRow && !string.IsNullOrEmpty(t.Level));
             Assert.IsNotNull(producer);
-            Assert.IsNotNull(twoCCosts);
-            AssertAreEqual(producer.TwoCNorthernIrelandTotalWithBadDebt, twoCCosts["northernIrelandTotalWithBadDebtProvision"]);
-            AssertAreEqual(producer.TwoCScotlandTotalWithBadDebt, twoCCosts["scotlandTotalWithBadDebtProvision"]);
-            AssertAreEqual(producer.TwoCWalesTotalWithBadDebt, twoCCosts["walesTotalWithBadDebtProvision"]);
-            AssertAreEqual(producer.TwoCEnglandTotalWithBadDebt, twoCCosts["englandTotalWithBadDebtProvision"]);
-            AssertAreEqual(producer.TwoCTotalProducerFeeForCommsCostsWithoutBadDebt, twoCCosts["totalProducerFeeForCommsCostsByCountryWithoutBadDebtProvision"]);
-            AssertAreEqual(producer.TwoCTotalProducerFeeForCommsCostsWithBadDebt, twoCCosts["totalProducerFeeForCommsCostsByCountryWithBadDebtProvision"]);
-            AssertAreEqual(producer.TwoCBadDebtProvision, twoCCosts["badDebProvisionFor2c"]);
+            Assert.IsNotNull(twoBCosts);
+            AssertAreEqual(producer.NorthernIrelandTotalWithBadDebtFor2bComms, twoBCosts["northernIrelandTotalWithBadDebtProvision"]);
+            AssertAreEqual(producer.ScotlandTotalWithBadDebtFor2bComms, twoBCosts["scotlandTotalWithBadDebtProvision"]);
+            AssertAreEqual(producer.WalesTotalWithBadDebtFor2bComms, twoBCosts["walesTotalWithBadDebtProvision"]);
+            AssertAreEqual(producer.EnglandTotalWithBadDebtFor2bComms, twoBCosts["englandTotalWithBadDebtProvision"]);
+            AssertAreEqual(producer.TotalProducerFeeWithoutBadDebtFor2bComms, twoBCosts["totalProducerFeeForCommsCostsUKWideWithoutBadDebtProvision"]);
+            AssertAreEqual(producer.BadDebtProvisionFor2bComms, twoBCosts["badDebtProvisionFor2bComms"]);
+            AssertAreEqual(producer.TotalProducerFeeWithBadDebtFor2bComms, twoBCosts["totalProducerFeeForCommsCostsUKWideWithBadDebtProvision"]);
         }
 
         [TestMethod]
@@ -389,17 +387,8 @@
 
             // Assert
             Assert.IsNotNull(roundTrippedData);
-            Assert.IsNotNull(roundTrippedData[0]);
-            var billingInstructions = roundTrippedData[0]!["calculationOfSuggestedBillingInstructionsAndInvoiceAmounts"];
+            var billingInstructions = roundTrippedData[0]?["calculationOfSuggestedBillingInstructionsAndInvoiceAmounts"];
             Assert.IsNotNull(billingInstructions);
-            Assert.IsNotNull(producer);
-            AssertAreEqual(producer.NorthernIrelandTotalWithBadDebtFor2bComms, twoBCosts["northernIrelandTotalWithBadDebtProvision"]);
-            AssertAreEqual(producer.ScotlandTotalWithBadDebtFor2bComms, twoBCosts["scotlandTotalWithBadDebtProvision"]);
-            AssertAreEqual(producer.WalesTotalWithBadDebtFor2bComms, twoBCosts["walesTotalWithBadDebtProvision"]);
-            AssertAreEqual(producer.EnglandTotalWithBadDebtFor2bComms, twoBCosts["englandTotalWithBadDebtProvision"]);
-            AssertAreEqual(producer.TotalProducerFeeWithoutBadDebtFor2bComms, twoBCosts["totalProducerFeeForCommsCostsUKWideWithoutBadDebtProvision"]);
-            AssertAreEqual(producer.BadDebtProvisionFor2bComms, twoBCosts["badDebtProvisionFor2bComms"]);
-            AssertAreEqual(producer.TotalProducerFeeWithBadDebtFor2bComms, twoBCosts["totalProducerFeeForCommsCostsUKWideWithBadDebtProvision"]);
         }
 
         /// <summary>
