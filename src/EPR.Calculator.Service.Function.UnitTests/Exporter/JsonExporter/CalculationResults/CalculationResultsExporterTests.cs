@@ -379,6 +379,36 @@
             Assert.IsNotNull(billingInstructions);
         }
 
+        /// <summary>
+        /// Serialises a <see cref="CalcResultSummary"/>, then parses the resulting JSON
+        /// and checks that the values still match up with the original.
+        /// </summary>
+        [TestMethod]
+        public void Export_ProducerIdSubsidiaryId_AreValid()
+        {
+            // Arrange
+            var data = SetCalcResultSummayData();
+
+            // Act
+            var json = this.TestClass.Export(data, null, new List<int> { 1, 2, 3 });
+
+            var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
+                     ["calculationResults"]!
+                ["producerCalculationResults"];
+
+            // Assert
+            Assert.IsNotNull(roundTrippedData);
+            var twoACosts = roundTrippedData[0]["feeForCommsCostsWithBadDebtProvision2a"];
+
+            var producer = data.ProducerDisposalFees.SingleOrDefault(t => !t.isTotalRow && !string.IsNullOrEmpty(t.Level));
+
+            AssertAreEqual(producer.ProducerId, roundTrippedData[0]!?["producerID"]?.ToString());
+            AssertAreEqual(producer.SubsidiaryId, roundTrippedData[0]!?["subsidiaryID"]?.ToString());
+            AssertAreEqual(producer.ProducerName, roundTrippedData[0]!?["producerName"]?.ToString());
+            AssertAreEqual(producer.TradingName, roundTrippedData[0]!?["tradingName"]?.ToString());
+            AssertAreEqual(producer.Level, roundTrippedData[0]!?["level"]?.ToString());
+            AssertAreEqual(producer.IsProducerScaledup, roundTrippedData[0]!?["scaledUpTonnages"]?.ToString());
+        }
         private CalcResultSummary SetCalcResultSummayData()
         {
             var data = Fixture.Create<CalcResultSummary>();
