@@ -1,9 +1,11 @@
 ﻿using EPR.Calculator.Service.Function.Converter;
 using Newtonsoft.Json;
+using System.Diagnostics.CodeAnalysis;
 
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
+    [SuppressMessage("Naming", "S101:Types should be named in PascalCase", Justification = "Required for JSON contract")]
     public class FeeForLADataPrepCostsWithBadDebtProvision_4
     {
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
