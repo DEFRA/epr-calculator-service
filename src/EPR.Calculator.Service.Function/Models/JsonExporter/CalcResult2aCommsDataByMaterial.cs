@@ -11,7 +11,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
     public class CalcResult2ACommsDataByMaterial
     {
         [JsonProperty(PropertyName = "calcResult2aCommsDataDetails")]
-        public IEnumerable<CalcResult2ACommsDataDetails> CalcResult2ACommsDataDetails {  get; set; }
+        public required IEnumerable<CalcResult2ACommsDataDetails> CalcResult2ACommsDataDetails {  get; set; }
     }
 
     public class CalcResult2ACommsDataDetails
