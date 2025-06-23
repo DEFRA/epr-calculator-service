@@ -16,8 +16,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
     [TestClass]
     public class CommsCostByMaterial2ATests
     {
-        private CommsCostByMaterial2AExporter _testClass;
-        private ICalcResult2aCommsDataByMaterialMapper _mapper;
+        private CommsCostByMaterial2AExporter? _testClass;
+        private ICalcResult2aCommsDataByMaterialMapper? _mapper;
 
         [TestInitialize]
         public void SetUp()
@@ -54,17 +54,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
             var actual = roundTrippedData![0]!;
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(expected.ProducerReportedHouseholdPackagingWasteTonnageValue, actual["producerHouseholdPackagingWasteTonnage"].GetValue<decimal>());
-            Assert.AreEqual(expected.ReportedPublicBinTonnageValue, actual["publicBinTonnage"].GetValue<decimal>());
-            Assert.AreEqual(expected.ProducerReportedTotalTonnage, actual["totalTonnage"].GetValue<decimal>());
-            Assert.AreEqual(expected.HouseholdDrinksContainersValue, actual["householdDrinksContainersTonnage"].GetValue<decimal>());
-            Assert.AreEqual(expected.CommsCostByMaterialPricePerTonneValue, actual["commsCostByMaterialPricePerTonne"].GetValue<decimal>());
-            Assert.AreEqual(expected.EnglandValue, actual["englandCommsCost"].GetValue<decimal>());
-            Assert.AreEqual(expected.WalesValue, actual["walesCommsCost"].GetValue<decimal>());
-            Assert.AreEqual(expected.ScotlandValue, actual["scotlandCommsCost"].GetValue<decimal>());
-            Assert.AreEqual(expected.NorthernIrelandValue, actual["northernIrelandCommsCost"].GetValue<decimal>());
-            Assert.AreEqual(expected.TotalValue, actual["totalCommsCost"].GetValue<decimal>());
-            Assert.AreEqual(expected.LateReportingTonnageValue, actual["lateReportingTonnage"].GetValue<decimal>());
+            Assert.IsNotNull(actual);
+            Assert.AreEqual(expected.ProducerReportedHouseholdPackagingWasteTonnageValue, actual?["producerHouseholdPackagingWasteTonnage"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.ReportedPublicBinTonnageValue, actual?["publicBinTonnage"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.ProducerReportedTotalTonnage, actual?["totalTonnage"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.HouseholdDrinksContainersValue, actual?["householdDrinksContainersTonnage"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.CommsCostByMaterialPricePerTonneValue, actual?["commsCostByMaterialPricePerTonne"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.EnglandValue, actual?["englandCommsCost"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.WalesValue, actual?["walesCommsCost"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.ScotlandValue, actual?["scotlandCommsCost"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.NorthernIrelandValue, actual?["northernIrelandCommsCost"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.TotalValue, actual?["totalCommsCost"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.LateReportingTonnageValue, actual?["lateReportingTonnage"]?.GetValue<decimal>());
         }       
     }
 }

@@ -10,7 +10,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
     [TestClass]
     public class CalcResult2aCommsDataByMaterialMapperTests
     {
-        private CalcResult2aCommsDataByMaterialMapper _testClass;
+        private CalcResult2aCommsDataByMaterialMapper? _testClass;
 
         [TestInitialize]
         public void SetUp()
@@ -26,7 +26,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             var commsCostByMaterial = fixture.Create<List<CalcResultCommsCostCommsCostByMaterial>>();
 
             // Act
-            var result = _testClass.Map(commsCostByMaterial);
+            var result = _testClass?.Map(commsCostByMaterial);
 
             // Assert
             Assert.IsNotNull(result);
@@ -40,7 +40,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             var commsCostByMaterial = fixture.Create<List<CalcResultCommsCostCommsCostByMaterial>>();
 
             // Act
-            var result = _testClass.GetMaterialBreakdown(commsCostByMaterial);
+            var result = _testClass?.GetMaterialBreakdown(commsCostByMaterial);
 
             // Assert
             Assert.IsNotNull(result);

@@ -28,7 +28,6 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
         private readonly ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper;
         private readonly ITotalProducerBillWithBadDebtProvisionMapper totalProducerBillWithBadDebtProvisionMapper;
         private readonly ICalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper calculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper;
-        private readonly ICalcResult2aCommsDataByMaterialMapper calcResult2ACommsDataByMaterialMapper;
 
         [SuppressMessage("Constructor has 8 parameters, which is greater than the 7 authorized.", "S107", Justification = "This is suppressed for now and will be refactored later")]
         public CalculationResultsExporter(
@@ -43,8 +42,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
             ICalcResultCommsCostsWithBadDebtProvision2cMapper calcResultCommsCostsWithBadDebtProvision2CMapper,
             ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper,
             ITotalProducerBillWithBadDebtProvisionMapper totalProducerBillWithBadDebtProvisionMapper,
-            ICalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper calculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper,            
-            ICalcResult2aCommsDataByMaterialMapper calcResult2ACommsDataByMaterialMapper)
+            ICalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper calculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper)
         {
             this.producerDisposalFeesWithBadDebtProvision1JsonMapper = producerDisposalFeesWithBadDebtProvision1JsonMapper;
             this.commsCostsByMaterialFeesSummary2AMapper = commsCostsByMaterialFeesSummary2AMapper;
@@ -58,7 +56,6 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
             this.calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper = calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper;
             this.totalProducerBillWithBadDebtProvisionMapper = totalProducerBillWithBadDebtProvisionMapper;
             this.calculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper = calculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper;
-            this.calcResult2ACommsDataByMaterialMapper = calcResult2ACommsDataByMaterialMapper;
         }
 
         /// <inheritdoc/>
