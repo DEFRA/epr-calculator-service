@@ -31,7 +31,7 @@
                 new CalcResultCommsCostsWithBadDebtProvision2cMapper(),
                 new CalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper(),
                 new TotalProducerBillWithBadDebtProvisionMapper(),
-                new CalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper()
+                new CalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper(),
                 new CalcResultProducerCalculationResultsTotalMapper()
             );
         }
