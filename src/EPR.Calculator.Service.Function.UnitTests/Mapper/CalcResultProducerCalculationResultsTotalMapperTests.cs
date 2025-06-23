@@ -7,12 +7,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
     [TestClass]
     public class CalcResultProducerCalculationResultsTotalMapperTests
     {
-        private CalcResultProducerCalculationResultsTotalMapper _mapper;
+        private CalcResultProducerCalculationResultsTotalMapper Mapper;
 
-        [TestInitialize]
-        public void SetUp()
+        public CalcResultProducerCalculationResultsTotalMapperTests()
         {
-            _mapper = new CalcResultProducerCalculationResultsTotalMapper();
+            this.Mapper = new CalcResultProducerCalculationResultsTotalMapper();
         }
 
         [TestMethod]
@@ -23,7 +22,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             var summary = fixture.Create<CalcResultSummary>();
 
             // Act
-            var result = _mapper.Map(summary);
+            var result = this.Mapper.Map(summary);
 
             // Assert
             Assert.IsNull(result);
