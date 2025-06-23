@@ -21,7 +21,6 @@
     {
         private const string JsonMediaType = "application/json";
         private readonly IAzureSynapseRunner azureSynapseRunner;
-        private readonly IPipelineClientFactory pipelineClientFactory;
         private readonly ITransposePomAndOrgDataService transposePomAndOrgDataService;
         private readonly IConfigurationService configuration;
         private readonly IPrepareCalcService prepareCalcService;
@@ -41,7 +40,6 @@
         public CalculatorRunService(
             IAzureSynapseRunner azureSynapseRunner,
             ICalculatorTelemetryLogger telemetryLogger,
-            IPipelineClientFactory pipelineClientFactory,
             ITransposePomAndOrgDataService transposePomAndOrgDataService,
             IConfigurationService configuration,
             IPrepareCalcService prepareCalcService,
@@ -49,7 +47,6 @@
         {
             this.telemetryLogger = telemetryLogger;
             this.azureSynapseRunner = azureSynapseRunner;
-            this.pipelineClientFactory = pipelineClientFactory;
             this.transposePomAndOrgDataService = transposePomAndOrgDataService;
             this.configuration = configuration;
             this.prepareCalcService = prepareCalcService;
