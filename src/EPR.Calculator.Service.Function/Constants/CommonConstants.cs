@@ -39,5 +39,7 @@
 
         public const string OnePlusFourCommsCostApportionmentPercentages = "onePlusFourCommsCostApportionmentPercentages";
         public const string ParametersCommsCost = "parametersCommsCost";
+
+        public const string CancelledProducers = "Cancelled Producers";
     }
 }
