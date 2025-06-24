@@ -7,11 +7,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.Detail
     public class CalcResultDetailExporterTests
     {
 
-        private CalcResultDetailExporter calcResultDetailExporter;
+        private CalcResultDetailJsonExporter calcResultDetailExporter;
 
         public CalcResultDetailExporterTests()
         {
-            calcResultDetailExporter = new CalcResultDetailExporter();
+            calcResultDetailExporter = new CalcResultDetailJsonExporter();
         }
         [TestMethod]
         public void Export_ValidCalcResultDetail_ReturnsCorrectJson()

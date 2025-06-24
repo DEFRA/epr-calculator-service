@@ -18,7 +18,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
     {
         private Fixture fixture;
         private CalcResultsJsonExporter testClass;
-        private Mock<ICalcResultDetailExporter> mockCalcResultDetailExporter;
+        private Mock<ICalcResultDetailJsonExporter> mockCalcResultDetailExporter;
         private Mock<ICalcResultLapcapExporter> mockCalcResultLapcapExporter;
         private Mock<ILateReportingTonnage> mockLateReportingTonnage;
         private Mock<IOnePlusFourApportionmentJsonExporter> mockOnePlusFourApportionmentJsonExporter;
@@ -31,7 +31,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         public CalcResultsJsonExporterTests()
         {
             fixture = new Fixture();
-            mockCalcResultDetailExporter = new Mock<ICalcResultDetailExporter>();
+            mockCalcResultDetailExporter = new Mock<ICalcResultDetailJsonExporter>();
             mockCalcResultLapcapExporter = new Mock<ICalcResultLapcapExporter>();
             mockLateReportingTonnage = new Mock<ILateReportingTonnage>();
             mockOnePlusFourApportionmentJsonExporter = new Mock<IOnePlusFourApportionmentJsonExporter>();

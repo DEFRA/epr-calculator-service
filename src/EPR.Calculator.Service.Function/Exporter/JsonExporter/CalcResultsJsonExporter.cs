@@ -16,7 +16,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
 {
     public class CalcResultsJsonExporter : ICalcBillingJsonExporter<CalcResult>
     {
-        private readonly ICalcResultDetailExporter calcResultDetailExporter;
+        private readonly ICalcResultDetailJsonExporter calcResultDetailExporter;
         private readonly ICalcResultLapcapExporter lapcapExporter;
         private readonly ILateReportingTonnage lateReportingTonnageExporter;
         private readonly IOnePlusFourApportionmentJsonExporter onePlusFourApportionmentJsonExporter;
@@ -27,7 +27,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
         private readonly ICalculationResultsExporter calculationResultsExporter;
 
         public CalcResultsJsonExporter(
-            ICalcResultDetailExporter calcResultDetailExporter,
+            ICalcResultDetailJsonExporter calcResultDetailExporter,
             ICalcResultLapcapExporter calcResultLapcapExporter,
             ILateReportingTonnage lateReportingTonnageExporter,
             IOnePlusFourApportionmentJsonExporter onePlusFourApportionmentJsonExporter,
@@ -58,8 +58,8 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
             var content = new StringBuilder();
 
             // Detail section
-            //var caclResultDetail = calcResultDetailExporter.Export(results.CalcResultDetail);
-            //content.Append(caclResultDetail);
+            var caclResultDetail = calcResultDetailExporter.Export(results.CalcResultDetail);
+            content.Append(caclResultDetail);
 
             // Lapcap data section
             var lapcapData = lapcapExporter.ConvertToJson(results.CalcResultLapcapData);

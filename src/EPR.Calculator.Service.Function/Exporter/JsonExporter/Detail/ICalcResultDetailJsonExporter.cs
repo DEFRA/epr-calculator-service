@@ -3,7 +3,7 @@ using System.Text;
 
 namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.Detail
 {
-    public interface ICalcResultDetailExporter
+    public interface ICalcResultDetailJsonExporter
     {
         string Export(CalcResultDetail calcResultDetail);
     }

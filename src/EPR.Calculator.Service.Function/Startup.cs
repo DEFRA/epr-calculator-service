@@ -34,6 +34,7 @@ using EPR.Calculator.Service.Function.Exporter.JsonExporter.BillingInstructions;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResults;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CancelledProducers;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMaterial2A;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter.Detail;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.Lapcap;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.LateReportingTonnage;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.OnePlusFourApportionment;
@@ -183,6 +184,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<IProducerDisposalFeesWithBadDebtProvision1JsonMapper, ProducerDisposalFeesWithBadDebtProvision1JsonMapper>();
             services.AddTransient<ICalcResultCommsCostByMaterial2AJsonMapper, CalcResultCommsCostByMaterial2AJsonMapper>();
             services.AddTransient<ISAOperatingCostsWithBadDebtProvisionMapper, SAOperatingCostsWithBadDebtProvisionMapper>();
+            services.AddTransient<ICalcResultDetailJsonExporter, CalcResultDetailJsonExporter>();
 #if !DEBUG
 
             SetupBlobStorage(services);

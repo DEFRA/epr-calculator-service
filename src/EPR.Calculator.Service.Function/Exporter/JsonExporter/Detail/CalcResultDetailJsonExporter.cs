@@ -5,7 +5,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.Detail
 {
-    public class CalcResultDetailExporter : ICalcResultDetailExporter
+    public class CalcResultDetailJsonExporter : ICalcResultDetailJsonExporter
     {
         public string Export(CalcResultDetail calcResultDetail)
         {
