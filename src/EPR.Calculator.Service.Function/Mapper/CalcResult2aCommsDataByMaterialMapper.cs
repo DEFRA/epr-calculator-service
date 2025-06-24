@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EPR.Calculator.Service.Common.Utils;
+using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
@@ -15,7 +18,26 @@ namespace EPR.Calculator.Service.Function.Mapper
         {
             return new CalcResult2ACommsDataByMaterial
             {
-                CalcResult2ACommsDataDetails = GetMaterialBreakdown(commsCostByMaterial)
+                CalcResult2ACommsDataDetails = GetMaterialBreakdown(commsCostByMaterial),
+                CalcResult2ACommsDataDetailsTotal = GetTotalRow(commsCostByMaterial.Single(t => t.Name == CommonConstants.Total)),
+            };
+        }
+
+        public calcResult2aCommsDataDetailsTotal GetTotalRow(CalcResultCommsCostCommsCostByMaterial commsCostByMaterial)
+        {  
+            return new calcResult2aCommsDataDetailsTotal
+            {
+                EnglandCommsCostTotal = CurrencyUtil.ConvertToCurrency(commsCostByMaterial.EnglandValue),
+                HouseholdDrinksContainersTonnageTotal = commsCostByMaterial.HouseholdDrinksContainersValue,
+                LateReportingTonnageTotal = commsCostByMaterial.LateReportingTonnageValue,
+                NorthernIrelandCommsCostTotal = CurrencyUtil.ConvertToCurrency(commsCostByMaterial.NorthernIrelandValue),
+                ScotlandCommsCostTotal = CurrencyUtil.ConvertToCurrency(commsCostByMaterial.ScotlandValue),
+                WalesCommsCostTotal = CurrencyUtil.ConvertToCurrency(commsCostByMaterial.WalesValue),
+                ProducerHouseholdPackagingWasteTonnageTotal = commsCostByMaterial.ProducerReportedHouseholdPackagingWasteTonnageValue,
+                PublicBinTonnage = commsCostByMaterial.ReportedPublicBinTonnageValue,
+                Total = commsCostByMaterial.Name,
+                TotalCommsCostTotal = CurrencyUtil.ConvertToCurrency(commsCostByMaterial.TotalValue),
+                TotalTonnageTotal = commsCostByMaterial.ProducerReportedTotalTonnage
             };
         }
 
@@ -24,7 +46,7 @@ namespace EPR.Calculator.Service.Function.Mapper
         {
             var commsByMaterialDataDetails = new List<CalcResult2ACommsDataDetails>();
 
-            foreach (var item in commsCostByMaterial)
+            foreach (var item in commsCostByMaterial.Where(t=>t.Name != CommonConstants.Total))
             {
                 commsByMaterialDataDetails.Add(new CalcResult2ACommsDataDetails
                 {
@@ -33,17 +55,18 @@ namespace EPR.Calculator.Service.Function.Mapper
                     PublicBinTonnage = item.ReportedPublicBinTonnageValue,
                     TotalTonnage = item.ProducerReportedTotalTonnage,
                     HouseholdDrinksContainersTonnage = item.HouseholdDrinksContainersValue,
-                    CommsCostByMaterialPricePerTonne = item.CommsCostByMaterialPricePerTonneValue,
-                    EnglandCommsCost = item.EnglandValue,
-                    WalesCommsCost = item.WalesValue,
-                    ScotlandCommsCost = item.ScotlandValue,
-                    NorthernIrelandCommsCost = item.NorthernIrelandValue,
-                    TotalCommsCost = item.TotalValue,
+                    CommsCostByMaterialPricePerTonne = CurrencyUtil.ConvertToCurrency(item.CommsCostByMaterialPricePerTonneValue),
+                    EnglandCommsCost = CurrencyUtil.ConvertToCurrency(item.EnglandValue),
+                    WalesCommsCost = CurrencyUtil.ConvertToCurrency(item.WalesValue),
+                    ScotlandCommsCost = CurrencyUtil.ConvertToCurrency(item.ScotlandValue),
+                    NorthernIrelandCommsCost = CurrencyUtil.ConvertToCurrency(item.NorthernIrelandValue),
+                    TotalCommsCost = CurrencyUtil.ConvertToCurrency(item.TotalValue),
                     LateReportingTonnage = item.LateReportingTonnageValue
                 });
             }
 
             return commsByMaterialDataDetails;
         }
+
     }
 }
