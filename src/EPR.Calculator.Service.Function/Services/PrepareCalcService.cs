@@ -300,6 +300,8 @@
 
             await this.Context.SaveChangesAsync();
 
+            await this.storageService.UploadResultFileContentAsync(billingFileJsonName, jsonResponse, runName);
+
             return true;
         }
 

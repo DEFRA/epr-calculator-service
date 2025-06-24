@@ -58,8 +58,8 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
             var content = new StringBuilder();
 
             // Detail section
-            var caclResultDetail = calcResultDetailExporter.Export(results.CalcResultDetail);
-            content.Append(caclResultDetail);
+            //var caclResultDetail = calcResultDetailExporter.Export(results.CalcResultDetail);
+            //content.Append(caclResultDetail);
 
             // Lapcap data section
             var lapcapData = lapcapExporter.ConvertToJson(results.CalcResultLapcapData);
