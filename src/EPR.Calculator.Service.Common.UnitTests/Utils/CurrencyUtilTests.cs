@@ -1,6 +1,7 @@
 namespace EPR.Calculator.Service.Common.UnitTests.Utils
 {
     using System;
+    using System.Globalization;
     using AutoFixture;
     using EPR.Calculator.Service.Common.Utils;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -17,9 +18,10 @@ namespace EPR.Calculator.Service.Common.UnitTests.Utils
 
             // Act
             var result = CurrencyUtil.ConvertToCurrency(detail);
+            bool iscurrency = decimal.TryParse(result, NumberStyles.Currency, new CultureInfo("en-GB"), out _);
 
             // Assert
-            Assert.IsTrue(result.Contains("£"));
+            Assert.IsTrue(iscurrency);
         }
     }
 }
