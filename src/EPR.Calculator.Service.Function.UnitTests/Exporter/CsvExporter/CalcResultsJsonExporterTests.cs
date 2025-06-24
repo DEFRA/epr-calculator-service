@@ -54,33 +54,35 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 mockCalculationResultsExporter.Object);
         }
 
-        // [TestMethod]
-        //public void Export_ShouldReturnJsonContent()
-        //{
-        //    // Arrange
-        //    var calcResult = CreateCalcResult();
+        [TestMethod]
+        public void Export_ShouldReturnJsonContent()
+        {
+            // Arrange
+            var calcResult = CreateCalcResult();
 
-        //    // Act
-        //    var result = testClass.Export(calcResult, new List<int> { 1,2 });
+            // Act
+            var result = testClass.Export(calcResult, new List<int> { 1, 2 });
 
-        //    // Assert
-        //    Assert.IsNotNull(result);
-
-        //    //mockCalcResultDetailExporter.Verify(x = x.Export(calcResult.CalcResultDetail));
-        //    //mockCalcResultLapcapExporter.Verify(x = x.ConvertToJson(calcResult.CalcResultLapcapData));
-        //    //mockLateReportingTonnage.Verify(x = x.Export(calcResult.CalcResultLateReportingTonnageData));
-        //    //mockOnePlusFourApportionmentJsonExporter.Verify(x = x.Export(calcResult.CalcResultOnePlusFourApportionment));
-        //    //mockCommsCostExporter.Verify(x = x.Export(calcResult.CalcResultCommsCostReportDetail));
-        //    //mockCommsCostByMaterial2AExporter.Verify(x = x.Export(calcResult.CalcResultCommsCostReportDetail.CalcResultCommsCostCommsCostByMaterial));
-        //    //mockCancelledProducersExporter.Verify(x = x.Export(calcResult.CalcResultCancelledProducers));
-        //    //mockCalcResultScaledupProducersJsonExporter.Verify(x = x.Export(calcResult.CalcResultScaledupProducers, It.IsAny<List<int()));
-        //    //mockCalculationResultsExporter.Verify(x = x.Export(It.IsAny<CalcResultSummary(), It.IsAny<List<int()));
-        //}
+            // Assert
+            Assert.IsNotNull(result);
+        }
 
         private static CalcResult CreateCalcResult()
         {
             return new CalcResult
             {
+                CalcResultDetail = new CalcResultDetail
+                {
+                    RunId = 1,
+                    RunDate = DateTime.Now,
+                    RunName = "CalculatorRunName",
+                    RunBy = "Test user",
+                    FinancialYear = "2024-25",
+                    RpdFileORG = string.Empty,
+                    RpdFilePOM = string.Empty,
+                    LapcapFile = "lapcap-data.csv,24/06/2025 10:00:00, test",
+                    ParametersFile = "parameter-data.csv,24/06/2025 10:00:00, test"
+                },
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
                     Name = "LAPCAP Data",
@@ -243,6 +245,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                             CommsCostByMaterialPricePerTonne = "0.3",
                             Name = "Glass",
                         },
+                        new CalcResultCommsCostCommsCostByMaterial
+                        {
+                            CommsCostByMaterialPricePerTonne = "0.51",
+                            Name = "Total",
+                        },
                     },
                     CalcResultCommsCostOnePlusFourApportionment =
                         new Fixture().CreateMany<CalcResultCommsCostOnePlusFourApportionment>(1),
@@ -359,12 +366,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                             ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 1,
                         },
                     },
-                },
-                CalcResultDetail = new CalcResultDetail
-                {
-                    RunId = 1,
-                    RunDate = DateTime.Now,
-                    RunName = "CalculatorRunName",
                 },
             };
         }
