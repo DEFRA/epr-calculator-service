@@ -412,7 +412,7 @@
         {
             var expectedResult = new ProducerDetail
             {
-                Id = 1,
+                Id = 2,
                 ProducerId = 2,
                 SubsidiaryId = "1",
                 ProducerName = "Subsid2",
