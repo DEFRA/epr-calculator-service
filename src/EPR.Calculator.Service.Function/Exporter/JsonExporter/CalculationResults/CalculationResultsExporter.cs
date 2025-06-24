@@ -29,6 +29,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
         private readonly ITotalProducerBillWithBadDebtProvisionMapper totalProducerBillWithBadDebtProvisionMapper;
         private readonly ICalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper calculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper;
         private readonly ICalcResultProducerCalculationResultsTotalMapper calcResultProducerCalculationResultsTotalMapper;
+        private readonly IDisposalFeeSummary1Mapper disposalFeeSummary1Mapper;
 
         [SuppressMessage("Constructor has 8 parameters, which is greater than the 7 authorized.", "S107", Justification = "This is suppressed for now and will be refactored later")]
         public CalculationResultsExporter(
@@ -45,7 +46,9 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
             ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper,
             ITotalProducerBillWithBadDebtProvisionMapper totalProducerBillWithBadDebtProvisionMapper,
             ICalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper calculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper,
-            ICalcResultProducerCalculationResultsTotalMapper calcResultProducerCalculationResultsTotalMapper)
+            ICalcResultProducerCalculationResultsTotalMapper calcResultProducerCalculationResultsTotalMapper,
+            IDisposalFeeSummary1Mapper disposalFeeSummary1Mapper
+            )
         {
             this.producerDisposalFeesWithBadDebtProvision1JsonMapper = producerDisposalFeesWithBadDebtProvision1JsonMapper;
             this.commsCostsByMaterialFeesSummary2AMapper = commsCostsByMaterialFeesSummary2AMapper;
@@ -61,6 +64,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
             this.totalProducerBillWithBadDebtProvisionMapper = totalProducerBillWithBadDebtProvisionMapper;
             this.calculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper = calculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper;
             this.calcResultProducerCalculationResultsTotalMapper = calcResultProducerCalculationResultsTotalMapper;
+            this.disposalFeeSummary1Mapper = disposalFeeSummary1Mapper;
         }
 
         /// <inheritdoc/>
@@ -144,18 +148,19 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
                     Level = producer.Level,
                     ScaledUpTonnages = producer.IsProducerScaledup,
                     ProducerDisposalFeesWithBadDebtProvision1 = this.producerDisposalFeesWithBadDebtProvision1JsonMapper.Map(producer.ProducerDisposalFeesByMaterial),
-                    CalcResultCommsCostByMaterial2AJson = this.commsCostByMaterial2AJsonMapper.Map(producer.ProducerCommsFeesByMaterial!),
-                    CalcResultSAOperatingCostsWithBadDebtProvision = this.sAOperatingCostsWithBadDebtProvisionMapper.Map(producer),
+                    FeesForCommsCostsWithBadDebtProvision2a = this.commsCostByMaterial2AJsonMapper.Map(producer.ProducerCommsFeesByMaterial!),
+                    FeeForSAOperatingCostsWithBadDebtProvision_3 = this.sAOperatingCostsWithBadDebtProvisionMapper.Map(producer),
                     FeeForLADataPrepCostsWithBadDebtProvision_4 = this.laDataPrepCostsWithBadDebtProvision4Mapper.Map(producer),
-                    FeeForCommsCostsWithBadDebtProvision2a = this.feeForCommsCostsWithBadDebtProvision2aMapper.Map(producer),
-                    FeeForCommsCostsWithBadDebtProvision2b = this.feeForCommsCostsWithBadDebtProvision2bMapper.Map(producer),
+                    FeeForCommsCostsWithBadDebtProvision_2a = this.feeForCommsCostsWithBadDebtProvision2aMapper.Map(producer),
+                    FeeForCommsCostsWithBadDebtProvision_2b = this.feeForCommsCostsWithBadDebtProvision2bMapper.Map(producer),
                     CommsCostsByMaterialFeesSummary2a = this.commsCostsByMaterialFeesSummary2AMapper.Map(producer),
                     TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2c = this.totalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper.Map(producer),
                     FeeForSASetUpCostsWithBadDebtProvision_5 = this.feeForSASetUpCostsWithBadDebtProvision_5Mapper.Map(producer),
-                    FeeForCommsCostsWithBadDebtProvision2c = this.calcResultCommsCostsWithBadDebtProvision2CMapper.Map(producer),
+                    FeeForCommsCostsWithBadDebtProvision_2c = this.calcResultCommsCostsWithBadDebtProvision2CMapper.Map(producer),
                     CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts = this.calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper.Map(producer),
                     TotalProducerBillWithBadDebtProvision = this.totalProducerBillWithBadDebtProvisionMapper.Map(producer),
-                    FeeForLADisposalCosts1 = this.calculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper.Map(producer)
+                    FeeForLADisposalCosts1 = this.calculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper.Map(producer),
+                    DisposalFeeSummary1 = this.disposalFeeSummary1Mapper.Map(producer),
                 });
             }
 
