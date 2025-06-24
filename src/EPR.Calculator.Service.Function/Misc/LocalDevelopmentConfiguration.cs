@@ -40,6 +40,12 @@
         /// <inheritdoc/>
         public string ResultFileCSVContainerName => Configuration.GetValue("ResultFileCSVContainerName", string.Empty);
 
+        /// <inheritdoc/>
+        public string BillingFileCSVBlobContainerName => Configuration.GetValue("BillingFileCSVBlobContainerName", string.Empty);
+
+        /// <inheritdoc/>
+        public string BillingFileJsonBlobContainerName => Configuration.GetValue("BillingFileJsonBlobContainerName", string.Empty);
+
         public string BlobConnectionString
             => Configuration.GetValue("BlobConnectionString", string.Empty);
 

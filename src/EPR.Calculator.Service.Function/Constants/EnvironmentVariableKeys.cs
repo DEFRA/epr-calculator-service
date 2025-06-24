@@ -50,6 +50,12 @@ namespace EPR.Calculator.Service.Function.Constants
         /// <summary>The key for the CalcResultBlobContainerName environment variable.</summary>
         public const string ResultFileCSVContainerName = "ResultFileCSVContainerName";
 
+        /// <summary>The key for the BlobStorageContainerName environment variable.</summary>
+        public const string BillingFileCSVBlobContainerName = "BillingFileCSVBlobContainerName";
+
+        /// <summary>The key for the BlobStorageContainerName environment variable.</summary>
+        public const string BillingFileJsonBlobContainerName = "BillingFileJsonBlobContainerName";
+
         /// <summary>The key for the BlobConnectionString environment variable.</summary>
         public const string BlobConnectionString = "BlobConnectionString";
 

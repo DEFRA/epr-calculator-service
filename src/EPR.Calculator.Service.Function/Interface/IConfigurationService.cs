@@ -43,5 +43,9 @@
         TimeSpan CommandTimeout { get; }
 
         int DbLoadingChunkSize { get; }
+
+        string BillingFileCSVBlobContainerName { get; }
+
+        string BillingFileJsonBlobContainerName { get; }
     }
 }
