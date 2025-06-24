@@ -163,6 +163,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICommsCostJsonExporter, CommsCostJsonExporter>();
             services.AddTransient<ICalcResult2ACommsDataByMaterialMapper, CalcResult2ACommsDataByMaterialMapper>();
             services.AddTransient<ICommsCostByMaterial2AExporter, CommsCostByMaterial2AExporter>();
+            services.AddTransient<ICalcResultProducerCalculationResultsTotalMapper, CalcResultProducerCalculationResultsTotalMapper>();
 #if !DEBUG
 
             SetupBlobStorage(services);
