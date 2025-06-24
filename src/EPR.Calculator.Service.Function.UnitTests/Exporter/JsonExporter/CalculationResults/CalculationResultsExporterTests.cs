@@ -31,7 +31,8 @@
                 new CalcResultCommsCostsWithBadDebtProvision2cMapper(),
                 new CalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper(),
                 new TotalProducerBillWithBadDebtProvisionMapper(),
-                new CalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper()
+                new CalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper(),
+                new CalcResultProducerCalculationResultsTotalMapper()
             );
         }
 
@@ -455,6 +456,22 @@
             AssertAreEqual(producer?.TradingName ?? "TestTradingName", roundTrippedData[0]!?["tradingName"]?.ToString());
             AssertAreEqual(producer?.Level ?? "1" , roundTrippedData[0]!?["level"]?.ToString());
             AssertAreEqual(producer?.IsProducerScaledup ?? "No", roundTrippedData[0]!?["scaledUpTonnages"]?.ToString());
+        }
+
+        [TestMethod]
+        public void Export_ProducerCalculationResultsTotal_CanBeNull()
+        {
+            // Arrange
+            var data = SetCalcResultSummayData();
+
+            // Act
+            var json = this.TestClass.Export(data, null, new List<int> { 1, 2, 3 });
+
+            var calculationResults = JsonSerializer.Deserialize<JsonObject>(json)!["calculationResults"]!;
+            var total = calculationResults["producerCalculationResultsTotal"];
+
+            // Assert
+            Assert.IsNull(total);
         }
 
         private CalcResultSummary SetCalcResultSummayData()
