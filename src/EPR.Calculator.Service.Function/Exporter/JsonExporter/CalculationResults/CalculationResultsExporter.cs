@@ -68,7 +68,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResul
         }
 
         /// <inheritdoc/>
-        public string Export(CalcResultSummary summary, IEnumerable<object>? producerCalculations, IEnumerable<int> acceptedProducerIds)
+        public string Export(CalcResultSummary summary, IEnumerable<int> acceptedProducerIds)
             => JsonSerializer.Serialize(
                 new
                 {

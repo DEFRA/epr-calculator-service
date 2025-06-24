@@ -45,7 +45,7 @@
             var data = SetCalcResultSummayData();
 
             // Act
-            var result = this.TestClass.Export(data, new List<object>(), new List<int>());
+            var result = this.TestClass.Export(data, new List<int>());
 
             // Assert
             Assert.IsNotNull(result);
@@ -62,7 +62,7 @@
             var data = SetCalcResultSummayData();
 
             // Act
-            var json = this.TestClass.Export(data, null, new List<int> { 1, 2, 3 });
+            var json = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["calculationResults"]!
@@ -139,7 +139,7 @@
             var data = SetCalcResultSummayData();
 
             // Act
-            var json = this.TestClass.Export(data, null, new List<int> { 1, 2, 3 });
+            var json = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["calculationResults"]!
@@ -176,7 +176,7 @@
             var data = SetCalcResultSummayData();
 
             // Act
-            var json = this.TestClass.Export(data, null, new List<int> { 1, 2, 3 });
+            var json = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["calculationResults"]!
@@ -202,7 +202,7 @@
             var data = SetCalcResultSummayData();
 
             // Act
-            var json = this.TestClass.Export(data, null, new List<int> { 1, 2, 3 });
+            var json = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                      ["calculationResults"]!
@@ -229,7 +229,7 @@
             var data = SetCalcResultSummayData();
 
             // Act
-            var json = this.TestClass.Export(data, null, new List<int> { 1, 2, 3 });
+            var json = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["calculationResults"]!
@@ -260,7 +260,7 @@
             var data = SetCalcResultSummayData();
 
             // Act
-            var json = this.TestClass.Export(data, null, new List<int> { 1, 2, 3 });
+            var json = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                      ["calculationResults"]!
@@ -292,7 +292,7 @@
             var data = SetCalcResultSummayData();
 
             // Act
-            var json = this.TestClass.Export(data, null, new List<int> { 1, 2, 3 });
+            var json = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                      ["calculationResults"]!
@@ -319,7 +319,7 @@
             var data = SetCalcResultSummayData();
 
             // Act
-            var json = this.TestClass.Export(data, null, new List<int> { 1, 2, 3 });
+            var json = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["calculationResults"]!
@@ -351,7 +351,7 @@
             var data = SetCalcResultSummayData();
 
             // Act
-            var json = this.TestClass.Export(data, null, new List<int> { 1, 2, 3 });
+            var json = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                      ["calculationResults"]!
@@ -379,7 +379,7 @@
             var data = SetCalcResultSummayData();
 
             // Act
-            var json = this.TestClass.Export(data, null, new List<int> { 1, 2, 3 });
+            var json = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                      ["calculationResults"]!
@@ -422,7 +422,7 @@
             var data = SetCalcResultSummayData();
 
             // Act
-            var json = this.TestClass.Export(data, null, new List<int> { 1, 2, 3 });
+            var json = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                      ["calculationResults"]!
@@ -445,7 +445,7 @@
             var data = SetCalcResultSummayData();
 
             // Act
-            var json = this.TestClass.Export(data, null, new List<int> { 1, 2, 3 });
+            var json = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                      ["calculationResults"]!
@@ -480,7 +480,7 @@
             var data = SetCalcResultSummayData();
 
             // Act
-            var json = this.TestClass.Export(data, null, new List<int> { 1, 2, 3 });
+            var json = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                      ["calculationResults"]!
@@ -509,7 +509,7 @@
             var data = SetCalcResultSummayData();
 
             // Act
-            var json = this.TestClass.Export(data, null, new List<int> { 1, 2, 3 });
+            var json = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
 
             var calculationResults = JsonSerializer.Deserialize<JsonObject>(json)!["calculationResults"]!;
             var total = calculationResults["producerCalculationResultsTotal"];
@@ -525,7 +525,7 @@
             var data = SetCalcResultSummayData();
 
             // Act
-            var json = this.TestClass.Export(data, null, new List<int> { 1, 2, 3 });
+            var json = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                      ["calculationResults"]!
@@ -554,7 +554,7 @@
             var data = SetCalcResultSummayData();
 
             // Act
-            var json = this.TestClass.Export(data, null, new List<int> { 1, 2, 3 });
+            var json = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                     ["calculationResults"]!

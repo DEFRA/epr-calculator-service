@@ -93,7 +93,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
             content.Append(scaledupProducers);
 
             // Summary section
-            var summary = calculationResultsExporter.Export(results.CalcResultSummary, null, acceptedProducerIds);
+            var summary = calculationResultsExporter.Export(results.CalcResultSummary, acceptedProducerIds);
             content.Append(summary);
 
             return content.ToString();

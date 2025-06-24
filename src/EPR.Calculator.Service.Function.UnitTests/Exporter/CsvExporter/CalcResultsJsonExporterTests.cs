@@ -73,7 +73,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             mockCommsCostByMaterial2AExporter.Verify(x => x.Export(calcResult.CalcResultCommsCostReportDetail.CalcResultCommsCostCommsCostByMaterial));
             mockCancelledProducersExporter.Verify(x => x.Export(calcResult.CalcResultCancelledProducers));
             mockCalcResultScaledupProducersJsonExporter.Verify(x => x.Export(calcResult.CalcResultScaledupProducers, It.IsAny<List<int>>()));
-            mockCalculationResultsExporter.Verify(x => x.Export(It.IsAny<CalcResultSummary>(), null, It.IsAny<List<int>>()));
+            mockCalculationResultsExporter.Verify(x => x.Export(It.IsAny<CalcResultSummary>(), It.IsAny<List<int>>()));
         }
     }
 }
