@@ -274,15 +274,9 @@
 
             var jsonResponse = this.JsonExporter.Export(calcResults, resultsRequestDto.AcceptedProducerIds);
 
-            // upload the Json file to blob storage
-
-            // Get File name for the billing json file
-
             // call csv Exporter
 
             // upload the csv file to blob storage
-
-            // Update the calculator run with the billing file metadata
 
             var calcRun = await this.Context.CalculatorRuns.SingleAsync(run => run.Id == resultsRequestDto.RunId);
             calcRun.IsBillingFileGenerating = false;
