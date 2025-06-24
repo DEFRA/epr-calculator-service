@@ -18,7 +18,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.LaDisposalCostDa
             this.mapper = mapper;
         }
 
-        public string Export(List<CalcResultLaDisposalCostDataDetail> laDisposalCostData)
+        public string Export(IEnumerable<CalcResultLaDisposalCostDataDetail> laDisposalCostData)
         {
             var result = this.mapper.Map(laDisposalCostData);
             return JsonConvert.SerializeObject(result);

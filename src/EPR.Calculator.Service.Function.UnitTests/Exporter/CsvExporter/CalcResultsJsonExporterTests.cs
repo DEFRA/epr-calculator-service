@@ -4,6 +4,7 @@ using EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResults;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CancelledProducers;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMaterial2A;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.Detail;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter.LaDisposalCostData;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.Lapcap;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.LateReportingTonnage;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.OnePlusFourApportionment;
@@ -25,6 +26,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         private IOnePlusFourApportionmentJsonExporter mockOnePlusFourApportionmentJsonExporter;
         private ICommsCostJsonExporter mockCommsCostExporter;
         private ICommsCostByMaterial2AExporter mockCommsCostByMaterial2AExporter;
+        private ICalcResultLaDisposalCostDataExporter mockCalcResultLaDisposalCostDataExporter;
         private ICancelledProducersExporter mockCancelledProducersExporter;
         private ICalcResultScaledupProducersJsonExporter mockCalcResultScaledupProducersJsonExporter;
         private Mock<ICalculationResultsExporter> mockCalculationResultsExporter;
@@ -38,6 +40,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             mockOnePlusFourApportionmentJsonExporter = new OnePlusFourApportionmentJsonExporter(new OnePlusFourApportionmentMapper());
             mockCommsCostExporter = new CommsCostJsonExporter(new CommsCostMapper());
             mockCommsCostByMaterial2AExporter = new CommsCostByMaterial2AExporter(new CalcResult2ACommsDataByMaterialMapper());
+            mockCalcResultLaDisposalCostDataExporter = new CalcResultLaDisposalCostDataExporter(new CalcResultLaDisposalCostDataMapper());
             mockCancelledProducersExporter = new CancelledProducersExporter(new CancelledProducersMapper());
             mockCalcResultScaledupProducersJsonExporter = new CalcResultScaledupProducersJsonExporter(new CalcResultScaledupProducersJsonMapper());
             mockCalculationResultsExporter =new Mock<ICalculationResultsExporter>();
@@ -49,6 +52,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 mockOnePlusFourApportionmentJsonExporter,
                 mockCommsCostExporter,
                 mockCommsCostByMaterial2AExporter,
+                mockCalcResultLaDisposalCostDataExporter,
                 mockCancelledProducersExporter,
                 mockCalcResultScaledupProducersJsonExporter,
                 mockCalculationResultsExporter.Object);

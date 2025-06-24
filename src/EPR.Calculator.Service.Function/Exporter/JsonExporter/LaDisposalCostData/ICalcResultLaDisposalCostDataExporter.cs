@@ -9,6 +9,6 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.LaDisposalCostDa
 {
     public interface ICalcResultLaDisposalCostDataExporter
     {
-        public string Export(List<CalcResultLaDisposalCostDataDetail> laDisposalCostData);
+        public string Export(IEnumerable<CalcResultLaDisposalCostDataDetail> laDisposalCostData);
     }
 }
