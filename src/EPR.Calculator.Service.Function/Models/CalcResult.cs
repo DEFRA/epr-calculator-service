@@ -55,6 +55,13 @@ namespace EPR.Calculator.Service.Function.Models
 
         public required CalcResultScaledupProducers CalcResultScaledupProducers { get; set; }
 
+        public CalcResultCancelledProducersResponse CalcResultCancelledProducers { get; set; }
+            = new()
+            {
+                TitleHeader = string.Empty,
+                CancelledProducers = []
+            };
+
         public CalcResultSummary CalcResultSummary { get; set; } = new();
 
         public CalcResultCancelledProducersResponse CalcResultCancelledProducers { get; set; }

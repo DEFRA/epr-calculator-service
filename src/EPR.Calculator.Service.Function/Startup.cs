@@ -48,8 +48,10 @@ using EPR.Calculator.Service.Function.Exporter.JsonExporter;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Builder.CancelledProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.LateReportingTonnage;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMaterial2A;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter.BillingInstructions;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -139,6 +141,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcResultSummaryExporter, CalcResultSummaryExporter>();
             services.AddTransient<ILateReportingExporter, LateReportingExporter>();
             services.AddTransient<IRunNameService, RunNameService>();
+            services.AddTransient<IClassificationService, ClassificationService>();
             services.AddTransient<ITelemetryClientWrapper, TelemetryClientWrapper>();
             services.AddTransient<IMessageTypeService, MessageTypeService>();
             services.AddTransient<IPrepareBillingFileService, PrepareBillingFileService>();
@@ -151,7 +154,28 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcResultCancelledProducersBuilder, CalcResultCancelledProducersBuilder>();
             services.AddTransient<ICalcResultCancelledProducersExporter, CalcResultCancelledProducersExporter>();
             services.AddTransient<ICalcResultCommsCostByMaterial2AJsonExporter, CalcResultCommsCostByMaterial2AJsonExporter>();
+            services.AddTransient<ISAOperatingCostsWithBadDebtProvisionMapper, SAOperatingCostsWithBadDebtProvisionMapper>();
+            services.AddTransient<ICalcResultLADataPrepCostsWithBadDebtProvision4Mapper, CalcResultLADataPrepCostsWithBadDebtProvision4Mapper>();
+            services.AddTransient<IFeeForCommsCostsWithBadDebtProvision2aMapper, FeeForCommsCostsWithBadDebtProvision2aMapper>();
+            services.AddTransient<IFeeForCommsCostsWithBadDebtProvision2bMapper, FeeForCommsCostsWithBadDebtProvision2bMapper>();
+            services.AddTransient<ITotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper, TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper>();
+            services.AddTransient<IFeeForSASetUpCostsWithBadDebtProvision_5Mapper, FeeForSASetUpCostsWithBadDebtProvision_5Mapper>();
+            services.AddTransient<ICalcResultCommsCostsWithBadDebtProvision2cMapper, CalcResultCommsCostsWithBadDebtProvision2cMapper>();
+            services.AddTransient<ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsExporter, CalculationOfSuggestedBillingInstructionsAndInvoiceAmountsExporter>();
+            services.AddTransient<ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper, CalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper>();
+            services.AddTransient<IParametersOtherMapper, ParametersOtherMapper>();
+            services.AddTransient<IParametersOtherJsonExporter, ParametersOtherJsonExporter>();
+            services.AddTransient<ICalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper, CalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper>();
+            services.AddTransient<ITotalProducerBillWithBadDebtProvisionMapper, TotalProducerBillWithBadDebtProvisionMapper>();
+            services.AddTransient<ICommsCostMapper, CommsCostMapper>();
+            services.AddTransient<ICommsCostJsonExporter, CommsCostJsonExporter>();
+            services.AddTransient<ICalcResult2ACommsDataByMaterialMapper, CalcResult2ACommsDataByMaterialMapper>();
+            services.AddTransient<ICommsCostByMaterial2AExporter, CommsCostByMaterial2AExporter>();
+            services.AddTransient<ICalcResultProducerCalculationResultsTotalMapper, CalcResultProducerCalculationResultsTotalMapper>();
+            services.AddTransient<IDisposalFeeSummary1Mapper, DisposalFeeSummary1Mapper>();
+            
 #if !DEBUG
+
             SetupBlobStorage(services);
             services.AddTransient<IConfigurationService, Configuration>();
 #elif DEBUG

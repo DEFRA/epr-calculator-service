@@ -37,6 +37,11 @@
         public const string Initial = "INITIAL";
         public const char Comma = ',';
 
+        public const string OnePlusFourCommsCostApportionmentPercentages = "onePlusFourCommsCostApportionmentPercentages";
+        public const string ParametersCommsCost = "parametersCommsCost";
+
+        public const string CancelledProducers = "Cancelled Producers";
+
         public const string CancelledProducers = "Cancelled Producers";
         public const string ProducerId = "Producer ID";
         public const string SubsidiaryId = "Subsidiary ID";
