@@ -39,6 +39,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         private Mock<ICommandTimeoutService> _commandTimeoutService;
         private Mock<ICalculatorTelemetryLogger> _telemetryLogger;
         private Mock<IBillingInstructionService> _billingInstructionService;
+        private Mock<ICalcBillingJsonExporter<CalcResult>> _jsonExporter;
 
         public PrepareCalcServiceTests()
         {
@@ -98,6 +99,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this._validationRules = fixture.Create<CalculatorRunValidator>();
             this._commandTimeoutService = new Mock<ICommandTimeoutService>();
             this._billingInstructionService = new Mock<IBillingInstructionService>();
+            this._jsonExporter = new Mock<ICalcBillingJsonExporter<CalcResult>>();
             this._testClass = new PrepareCalcService(this._dbContextFactory.Object,
                 this._rpdStatusDataValidator.Object,
                 this._wrapper.Object,
@@ -108,7 +110,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 this._validationRules,
                 this._commandTimeoutService.Object,
                 this._telemetryLogger.Object,
-                this._billingInstructionService.Object);
+                this._billingInstructionService.Object,
+                this._jsonExporter.Object);
         }
 
         [TestCleanup]
@@ -138,7 +141,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 this._validationRules,
                 this._commandTimeoutService.Object,
                 this._telemetryLogger.Object,
-                this._billingInstructionService.Object);
+                this._billingInstructionService.Object,
+                this._jsonExporter.Object);
 
             // Assert
             Assert.IsNotNull(instance);

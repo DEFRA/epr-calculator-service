@@ -60,7 +60,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var calcResult = fixture.Create<CalcResult>();
 
             // Act
-            var result = testClass.Export(calcResult);
+            var result = testClass.Export(calcResult, new List<int> { 1,2});
 
             // Assert
             Assert.IsNotNull(result);

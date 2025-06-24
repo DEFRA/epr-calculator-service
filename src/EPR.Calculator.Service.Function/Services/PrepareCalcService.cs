@@ -39,7 +39,8 @@
             CalculatorRunValidator validationRules,
             ICommandTimeoutService commandTimeoutService,
             ICalculatorTelemetryLogger telemetryLogger,
-            IBillingInstructionService billingInstructionService)
+            IBillingInstructionService billingInstructionService,
+            ICalcBillingJsonExporter<CalcResult> jsonExporter)
         {
             this.Context = context.CreateDbContext();
             this.rpdStatusDataValidator = rpdStatusDataValidator;
@@ -52,6 +53,7 @@
             this.commandTimeoutService = commandTimeoutService;
             this.telemetryLogger = telemetryLogger;
             this.billingInstructionService = billingInstructionService;
+            this.JsonExporter = jsonExporter;
         }
 
         private readonly ICalculatorTelemetryLogger telemetryLogger;
@@ -63,6 +65,8 @@
         private IOrgAndPomWrapper Wrapper { get; init; }
 
         private ICalcResultBuilder Builder { get; init; }
+
+        private ICalcBillingJsonExporter<CalcResult> JsonExporter { get; init; }
 
         private ICalcResultsExporter<CalcResult> Exporter { get; init; }
 
@@ -236,7 +240,7 @@
                 Message = "Billing Builder started...",
             });
 
-            await this.Builder.Build(resultsRequestDto);
+            var calcResults = await this.Builder.Build(resultsRequestDto);
 
             this.telemetryLogger.LogInformation(new TrackMessage
             {
@@ -268,7 +272,7 @@
                 Message = $"Billing file JSON file name only is created {billingFileJsonName}",
             });
 
-            // call json Exporter
+            var jsonResponse = this.JsonExporter.Export(calcResults, resultsRequestDto.AcceptedProducerIds);
 
             // upload the Json file to blob storage
 

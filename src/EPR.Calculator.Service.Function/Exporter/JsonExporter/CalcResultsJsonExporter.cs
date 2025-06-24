@@ -14,7 +14,7 @@ using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
 {
-    public class CalcResultsJsonExporter : ICalcResultsExporter<CalcResult>
+    public class CalcResultsJsonExporter : ICalcBillingJsonExporter<CalcResult>
     {
         private readonly ICalcResultDetailExporter calcResultDetailExporter;
         private readonly ICalcResultLapcapExporter lapcapExporter;
@@ -48,14 +48,12 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
             this.calculationResultsExporter = calculationResultsExporter;
         }
 
-        public string Export(CalcResult results)
+        public string Export(CalcResult results, IEnumerable<int> acceptedProducerIds)
         {
             if (results == null)
             {
                 throw new ArgumentNullException(nameof(results), "The results parameter cannot be null.");
             }
-
-            var acceptedProducerIds = new List<int>();
 
             var content = new StringBuilder();
 
