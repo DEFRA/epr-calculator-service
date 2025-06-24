@@ -6,6 +6,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using System.Threading;
     using System.Threading.Tasks;
     using AutoFixture;
+    using Azure.Storage.Blobs;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.API.Exporter;
@@ -98,18 +99,26 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this._validationRules = fixture.Create<CalculatorRunValidator>();
             this._commandTimeoutService = new Mock<ICommandTimeoutService>();
             this._billingInstructionService = new Mock<IBillingInstructionService>();
+            this.BlobStorageService = new Mock<BlobServiceClient>();
+
+            this.ConfigurationService = new Mock<IConfigurationService>();
+            this.ConfigurationService
+                .Setup(c => c.ResultFileCSVContainerName)
+                .Returns(fixture.Create<string>());
+
             this._testClass = new PrepareCalcService(this._dbContextFactory.Object,
-                this._rpdStatusDataValidator.Object,
-                this._wrapper.Object,
                 this._builder.Object,
                 this._exporter.Object,
-                this._transposePomAndOrgDataService.Object,
                 this._storageService.Object,
                 this._validationRules,
                 this._commandTimeoutService.Object,
                 this._telemetryLogger.Object,
-                this._billingInstructionService.Object);
+                this._billingInstructionService.Object,
+                this.ConfigurationService.Object);
         }
+
+        private Mock<BlobServiceClient> BlobStorageService { get; init; }
+        private Mock<IConfigurationService> ConfigurationService { get; init; }
 
         [TestCleanup]
         public void TearDown()
@@ -129,16 +138,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             // Act
             var instance = new PrepareCalcService(this._dbContextFactory.Object,
-                this._rpdStatusDataValidator.Object,
-                this._wrapper.Object,
                 this._builder.Object,
                 this._exporter.Object,
-                this._transposePomAndOrgDataService.Object,
                 this._storageService.Object,
                 this._validationRules,
                 this._commandTimeoutService.Object,
                 this._telemetryLogger.Object,
-                this._billingInstructionService.Object);
+                this._billingInstructionService.Object,
+                this.ConfigurationService.Object);
 
             // Assert
             Assert.IsNotNull(instance);
@@ -152,7 +159,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
             var runName = fixture.Create<string>();
 
-            this._storageService.Setup(x => x.UploadResultFileContentAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+            this._storageService.Setup(x => x.UploadFileContentAsync(
+                It.IsAny<(string, string, string, string)>()))
                 .ReturnsAsync("expected result");
             // Act
             var result = await this._testClass.PrepareCalcResults(resultsRequestDto, runName, CancellationToken.None);
