@@ -1,9 +1,5 @@
 ﻿namespace EPR.Calculator.Service.Function.Services
 {
-    using System;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
     using Azure.Storage.Blobs;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
@@ -24,8 +20,13 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.IdentityModel.Abstractions;
     using System;
+    using System;
     using System.Configuration;
+    using System.Linq;
+    using System.Reflection.Metadata;
     using System.Threading;
+    using System.Threading;
+    using System.Threading.Tasks;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -273,7 +274,7 @@
                 Message = $"Billing file CSV file name only is created {billingFileCsvName}",
             });
 
-            var billingFileJsonName = new CalcResultsAndBillingFileName( resultsRequestDto.RunId, true, true);
+            var billingFileJsonName = new CalcResultsAndBillingFileName(resultsRequestDto.RunId, true, true);
 
             this.telemetryLogger.LogInformation(new TrackMessage
             {
@@ -302,7 +303,11 @@
                 Message = $"Billing file JSON file before upload {billingFileJsonName}",
             });
 
-            // await this.storageService.UploadResultFileContentAsync(billingFileJsonName, jsonResponse, runName, ConfigService.ResultFileCSVContainerName);
+            await this.storageService.UploadFileContentAsync((
+                FileName: billingFileJsonName,
+                Content: jsonResponse,
+                RunName: runName,
+                ContainerName: ConfigService.ResultFileCSVContainerName));
 
             this.telemetryLogger.LogInformation(new TrackMessage
             {
