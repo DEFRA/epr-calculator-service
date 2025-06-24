@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using EPR.Calculator.API.Exporter;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResults;
@@ -26,6 +27,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
         private readonly ICalcResultScaledupProducersJsonExporter calcResultScaledupProducersJsonExporter;
         private readonly ICalculationResultsExporter calculationResultsExporter;
 
+        [SuppressMessage("Constructor has 8 parameters, which is greater than the 7 authorized.", "S107", Justification = "This is suppressed for now and will be refactored later")]
         public CalcResultsJsonExporter(
             ICalcResultDetailJsonExporter calcResultDetailExporter,
             ICalcResultLapcapExporter calcResultLapcapExporter,
