@@ -10,6 +10,9 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
     public class CalcResultLaDisposalCostDataJson
     {
+        [JsonProperty(PropertyName = "name")]
+        public required string Name { get; set; }
+
         [JsonProperty(PropertyName = "calcResultLaDisposalCostDataDetails")]
         public required IEnumerable<CalcResultLaDisposalCostDetails> CalcResultLaDisposalCostDetails { get; set; }
 

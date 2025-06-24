@@ -18,6 +18,7 @@ namespace EPR.Calculator.Service.Function.Mapper
         {
             return new CalcResultLaDisposalCostDataJson
             {
+                Name = CommonConstants.LADisposalCostData,
                 CalcResultLaDisposalCostDetails = GetMaterialBreakdown(laDisposalCostDataDetail),
                 CalcResultLaDisposalCostDataDetailsTotal = GetTotalRow(laDisposalCostDataDetail),
             };

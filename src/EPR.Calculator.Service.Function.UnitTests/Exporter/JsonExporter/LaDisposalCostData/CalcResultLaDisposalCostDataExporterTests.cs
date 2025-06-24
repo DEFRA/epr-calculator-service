@@ -3,6 +3,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
     using System;
     using System.Collections.Generic;
     using AutoFixture;
+    using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMaterial2A;
     using EPR.Calculator.Service.Function.Mapper;
     using EPR.Calculator.Service.Function.Models;
@@ -42,6 +43,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
 
             var CalcResultLaDisposalCostDataJson = new CalcResultLaDisposalCostDataJson()
             {
+                Name = CommonConstants.LADisposalCostData,
                 CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDetails>()
                 {
                     new CalcResultLaDisposalCostDetails()
