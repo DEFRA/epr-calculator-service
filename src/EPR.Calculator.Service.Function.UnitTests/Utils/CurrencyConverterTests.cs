@@ -1,4 +1,4 @@
-namespace EPR.Calculator.Service.Function.UnitTests
+﻿namespace EPR.Calculator.Service.Function.UnitTests
 {
     using System;
     using AutoFixture;
@@ -24,7 +24,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var result = CurrencyConverter.FormatAsGbpCurrency("650.95");
 
             // Assert
-            Assert.AreEqual(result, "�650.95");
+            Assert.AreEqual(result, "£650.95");
         }
     }
 }
