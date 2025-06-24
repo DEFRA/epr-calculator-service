@@ -1,7 +1,8 @@
-﻿using EPR.Calculator.Service.Function.Mappers;
+﻿using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
 
 namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.Detail
 {
@@ -9,15 +10,17 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.Detail
     {
         public string Export(CalcResultDetail calcResultDetail)
         {
-            var settings = new JsonSerializerSettings
+            var settings = new JsonSerializerOptions
             {
-                ContractResolver = new DefaultContractResolver
-                {
-                    NamingStrategy = new CamelCaseNamingStrategy()
-                }
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = true,
+                Converters = { new Converter.CurrencyConverter() },
+
+                // This is required in order to output the £ symbol as-is rather than encoding it.
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
             };
 
-            return JsonConvert.SerializeObject(CalcResultDetailJsonMapper.Map(calcResultDetail), settings);
+            return JsonSerializer.Serialize(CalcResultDetailJsonMapper.Map(calcResultDetail), settings);
         }
     }
 }

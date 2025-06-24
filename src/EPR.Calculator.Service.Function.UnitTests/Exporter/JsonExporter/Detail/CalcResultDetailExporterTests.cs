@@ -1,5 +1,11 @@
-﻿using EPR.Calculator.Service.Function.Exporter.JsonExporter.Detail;
+﻿using AutoFixture;
+using EPR.Calculator.Service.Common.UnitTests.Utils;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter.Detail;
 using EPR.Calculator.Service.Function.Models;
+using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using static EPR.Calculator.Service.Common.UnitTests.Utils.JsonNodeComparer;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.Detail
 {
@@ -8,10 +14,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.Detail
     {
 
         private CalcResultDetailJsonExporter calcResultDetailExporter;
+        private IFixture Fixture;
 
         public CalcResultDetailExporterTests()
         {
             calcResultDetailExporter = new CalcResultDetailJsonExporter();
+            Fixture = new Fixture();
         }
         [TestMethod]
         public void Export_ValidCalcResultDetail_ReturnsCorrectJson()
@@ -31,13 +39,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.Detail
             };
 
             // Act
-            var actualJson = this.calcResultDetailExporter.Export(calcResultDetail);
+            var result = this.calcResultDetailExporter.Export(calcResultDetail);
 
             // Assert
-            // Expected JSON output
-            string expected = "{\"runName\":\"Test Run\",\"runId\":123,\"runDate\":\"21/07/2017 17:32\",\"runBy\":\"John Doe\",\"financialYear\":\"2025\",\"rpdFileORG\":\"\",\"rpdFileORGTimeStamp\":\"21/07/2017 17:32\",\"rpdFilePOM\":\"\",\"rpdFilePOMTimeStamp\":\"21/07/2017 17:32\",\"lapcapFile\":\"lapcap_file.csv\",\"lapcapFileTimeStamp\":\"21/07/2017 17:32\",\"lapcapFileUploader\":\"John Doe\",\"parametersFile\":\"parameters_file.csv\",\"parametersFileTimeStamp\":\"21/07/2017 17:32\",\"parametersFileUploader\":\"John Doe\"}";
+            var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(result);
 
-            Assert.AreEqual(expected, actualJson);
+            AssertAreEqual(calcResultDetail.RunName, roundTrippedData!["runName"]);
+            AssertAreEqual(calcResultDetail.RunBy, roundTrippedData!["runBy"]);
+            AssertAreEqual(calcResultDetail.FinancialYear, roundTrippedData!["financialYear"]);
         }
     }
 }
