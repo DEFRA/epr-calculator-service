@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMaterial2A
+namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.LaDisposalCostData
 {
     public class CalcResultLaDisposalCostDataExporter : ICalcResultLaDisposalCostDataExporter
     {

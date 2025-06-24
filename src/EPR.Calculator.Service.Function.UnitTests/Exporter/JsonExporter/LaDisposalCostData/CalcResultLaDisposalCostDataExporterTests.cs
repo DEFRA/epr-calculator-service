@@ -4,7 +4,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
     using System.Collections.Generic;
     using AutoFixture;
     using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMaterial2A;
+    using EPR.Calculator.Service.Function.Exporter.JsonExporter.LaDisposalCostData;
     using EPR.Calculator.Service.Function.Mapper;
     using EPR.Calculator.Service.Function.Models;
     using EPR.Calculator.Service.Function.Models.JsonExporter;

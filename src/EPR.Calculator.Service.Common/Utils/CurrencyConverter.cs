@@ -1,28 +1,31 @@
 ﻿using System;
 using System.Globalization;
 
-public static class CurrencyConverter
+namespace EPR.Calculator.Service.Common.Utils
 {
-    /// <summary>
-    /// Safely parses a string to decimal using invariant culture.
-    /// Returns 0 if parsing fails.
-    /// </summary>
-    public static decimal GetDecimalValue(string value)
+    public static class CurrencyConverter
     {
-        var isParseSuccessful = decimal.TryParse(value, CultureInfo.InvariantCulture, out decimal result);
-        return isParseSuccessful ? result : 0;
-    }
+        /// <summary>
+        /// Safely parses a string to decimal using invariant culture.
+        /// Returns 0 if parsing fails.
+        /// </summary>
+        public static decimal GetDecimalValue(string value)
+        {
+            var isParseSuccessful = decimal.TryParse(value, CultureInfo.InvariantCulture, out decimal result);
+            return isParseSuccessful ? result : 0;
+        }
 
-    /// <summary>
-    /// Converts a string input to GBP currency format (e.g., £12.3456) if valid.
-    /// Returns an empty string if input is not valid.
-    /// </summary>
-    public static string FormatAsGbpCurrency(string value)
-    {
-        var decimalValue = GetDecimalValue(value);
-        var culture = CultureInfo.CreateSpecificCulture("en-GB");
-        culture.NumberFormat.CurrencySymbol = "£";
-        culture.NumberFormat.CurrencyPositivePattern = 0;
-        return decimalValue.ToString("C", culture);
+        /// <summary>
+        /// Converts a string input to GBP currency format (e.g., £12.3456) if valid.
+        /// Returns an empty string if input is not valid.
+        /// </summary>
+        public static string FormatAsGbpCurrency(string value)
+        {
+            var decimalValue = GetDecimalValue(value);
+            var culture = CultureInfo.CreateSpecificCulture("en-GB");
+            culture.NumberFormat.CurrencySymbol = "£";
+            culture.NumberFormat.CurrencyPositivePattern = 0;
+            return decimalValue.ToString("C", culture);
+        }
     }
 }

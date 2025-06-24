@@ -11,7 +11,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
     [TestClass]
     public class CalcResultLaDisposalCostDataMapperTests
     {
-        private CalcResultLaDisposalCostDataMapper _testClass;
+        private  CalcResultLaDisposalCostDataMapper _testClass;
         List<CalcResultLaDisposalCostDataDetail> laDisposalCostDataDetail = new List<CalcResultLaDisposalCostDataDetail>();
 
         [TestInitialize]

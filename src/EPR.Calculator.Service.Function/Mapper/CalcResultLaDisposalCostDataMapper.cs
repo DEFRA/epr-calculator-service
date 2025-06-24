@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EPR.Calculator.Service.Common.Utils;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
@@ -13,7 +14,6 @@ namespace EPR.Calculator.Service.Function.Mapper
 {
     public class CalcResultLaDisposalCostDataMapper : ICalcResultLaDisposalCostDataMapper
     {
-        private const string EmptyString = "0";
         public CalcResultLaDisposalCostDataJson Map(List<CalcResultLaDisposalCostDataDetail> laDisposalCostDataDetail)
         {
             return new CalcResultLaDisposalCostDataJson
@@ -26,7 +26,8 @@ namespace EPR.Calculator.Service.Function.Mapper
 
         public CalcResultLaDisposalCostDataDetailsTotal GetTotalRow(List<CalcResultLaDisposalCostDataDetail> laDisposalCostDataDetail)
         {
-            var laDisposalCostDetailTotal = laDisposalCostDataDetail.Where(t => t.Name == CommonConstants.Total).SingleOrDefault();
+            var laDisposalCostDetailTotal = laDisposalCostDataDetail
+    .SingleOrDefault(t => t.Name == CommonConstants.Total);
             if (laDisposalCostDetailTotal == null)
             {
                 return new CalcResultLaDisposalCostDataDetailsTotal()

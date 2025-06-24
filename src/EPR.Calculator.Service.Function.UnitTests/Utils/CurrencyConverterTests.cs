@@ -3,6 +3,7 @@
     using System;
     using AutoFixture;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using EPR.Calculator.Service.Common.Utils;
 
     [TestClass]
     public class CurrencyConverterTests
@@ -14,7 +15,7 @@
             var result = CurrencyConverter.GetDecimalValue("650.95");
 
             // Assert
-            Assert.AreEqual(result, 650.95M);
+            Assert.AreEqual(650.95M, result);
         }
 
         [TestMethod]
@@ -24,7 +25,7 @@
             var result = CurrencyConverter.FormatAsGbpCurrency("650.95");
 
             // Assert
-            Assert.AreEqual(result, "£650.95");
+            Assert.AreEqual("£650.95", result);
         }
     }
 }
