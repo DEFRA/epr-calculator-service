@@ -48,7 +48,7 @@ namespace EPR.Calculator.Service.Function.Constants
         public const string DbConnectionString = "DbConnectionString";
 
         /// <summary>The key for the CalcResultBlobContainerName environment variable.</summary>
-        public const string ResultFileCSVContainerName = "ResultFileCSVContainerName ";
+        public const string ResultFileCSVContainerName = "ResultFileCSVContainerName";
 
         /// <summary>The key for the BlobConnectionString environment variable.</summary>
         public const string BlobConnectionString = "BlobConnectionString";
