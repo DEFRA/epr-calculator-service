@@ -18,7 +18,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using EPR.Calculator.Service.Function.Misc;
     using EPR.Calculator.Service.Function.Models;
     using EPR.Calculator.Service.Function.Services;
-    using Microsoft.ApplicationInsights;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
@@ -114,9 +113,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 this._jsonExporter.Object,
                 this._configService.Object);
         }
-
-        private Mock<BlobServiceClient> BlobStorageService { get; init; }
-        private Mock<IConfigurationService> ConfigurationService { get; init; }
 
         [TestCleanup]
         public void TearDown()
