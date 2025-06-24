@@ -204,5 +204,22 @@ namespace EPR.Calculator.Service.Function.UnitTests
             // Assert
             Assert.AreEqual(dbLoadingChunkSize, result);
         }
+
+        [TestMethod]
+        public void CanGetResultFileCSVContainerName()
+        {
+            // Arrange
+            var resultFileCSVContainerName = this.Fixture.Create<string>();
+
+            Environment.SetEnvironmentVariable(
+               EnvironmentVariableKeys.ResultFileCSVContainerName,
+               resultFileCSVContainerName.ToString());
+
+            // Act
+            var result = new Configuration().ResultFileCSVContainerName;
+
+            // Assert
+            Assert.AreEqual(resultFileCSVContainerName, result);
+        }
     }
 }

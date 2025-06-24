@@ -16,13 +16,11 @@
     public class BlobStorageService : IStorageService
     {
         public const string BlobConnectionStringMissingError = "BlobStorage settings are missing in configuration.";
-        public const string ContainerNameMissingError = "Container name is missing in configuration.";
         public const string AccountNameMissingError = "Account name is missing in configuration.";
         public const string AccountKeyMissingError = "Account name is missing in configuration.";
 
-        private readonly BlobContainerClient containerClient;
-        private readonly StorageSharedKeyCredential sharedKeyCredential;
         private readonly ICalculatorTelemetryLogger telemetryLogger;
+        private readonly BlobServiceClient blobServiceClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BlobStorageService"/> class.
@@ -36,30 +34,34 @@
             IConfigurationService config,
             ICalculatorTelemetryLogger telemetryLogger)
         {
-            this.containerClient = blobServiceClient.GetBlobContainerClient(config.BlobContainerName
-                                                                            ?? throw new ConfigurationErrorsException(ContainerNameMissingError));
+            this.blobServiceClient = blobServiceClient;
             this.telemetryLogger = telemetryLogger;
         }
 
         /// <inheritdoc/>
-        public async Task<string> UploadResultFileContentAsync(string fileName, string content, string runName)
+        public async Task<string> UploadFileContentAsync(
+            (string FileName, string Content, string RunName, string ContainerName) args)
         {
-            int? runId = int.TryParse(fileName.Split('-')[0], out var id) ? id : (int?)null;
+            int? runId = int.TryParse(args.FileName.Split('-')[0], out var id) ? id : (int?)null;
             try
             {
                 this.telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = runId,
-                    RunName = runName,
+                    RunName = args.RunName,
                     Message = "Upload Blob started...",
                 });
-                var blobClient = this.containerClient.GetBlobClient(fileName);
-                var binaryData = BinaryData.FromString(content);
+
+                var blobContainerClient = blobServiceClient.GetBlobContainerClient(args.ContainerName);
+                await blobContainerClient.CreateIfNotExistsAsync();
+
+                var blobClient = blobContainerClient.GetBlobClient(args.FileName);
+                var binaryData = BinaryData.FromString(args.Content);
                 await blobClient.UploadAsync(binaryData);
                 this.telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = runId,
-                    RunName = runName,
+                    RunName = args.RunName,
                     Message = "Upload Blob end...",
                 });
                 return blobClient.Uri.ToString();
@@ -69,7 +71,7 @@
                 this.telemetryLogger.LogError(new ErrorMessage
                 {
                     RunId = runId,
-                    RunName = runName,
+                    RunName = args.RunName,
                     Message = "Error writing a Blob",
                     Exception = ex,
                 });
