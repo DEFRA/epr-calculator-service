@@ -63,12 +63,5 @@ namespace EPR.Calculator.Service.Function.Models
             };
 
         public CalcResultSummary CalcResultSummary { get; set; } = new();
-
-        public CalcResultCancelledProducersResponse CalcResultCancelledProducers { get; set; }
-        = new()
-        {
-            TitleHeader = string.Empty,
-            CancelledProducers = []
-        };
     }
 }

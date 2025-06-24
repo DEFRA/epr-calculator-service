@@ -41,8 +41,7 @@
         public const string ParametersCommsCost = "parametersCommsCost";
 
         public const string CancelledProducers = "Cancelled Producers";
-
-        public const string CancelledProducers = "Cancelled Producers";
+        
         public const string ProducerId = "Producer ID";
         public const string SubsidiaryId = "Subsidiary ID";
         public const string ProducerOrSubsidiaryName = "Producer / Subsidiary Name";
