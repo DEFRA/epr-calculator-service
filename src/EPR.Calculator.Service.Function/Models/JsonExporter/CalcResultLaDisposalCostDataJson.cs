@@ -20,7 +20,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         public required CalcResultLaDisposalCostDataDetailsTotal CalcResultLaDisposalCostDataDetailsTotal { get; set; }
     }
 
-    public class CalcResultLaDisposalCostDetails
+    public class CalcResultLaDisposalCostDetails : BaseLaDisposalcostAnd2aCommsData
     {
         [JsonProperty(PropertyName = "materialName")]
         public required string MaterialName { get; init; }
@@ -39,26 +39,6 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
         [JsonProperty(PropertyName = "totalLaDisposalCost")]
         public required string TotalLaDisposalCost { get; init; }
-
-        [JsonProperty(PropertyName = "producerHouseholdPackagingWasteTonnage")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public required decimal ProducerHouseholdPackagingWasteTonnage { get; init; }
-
-        [JsonProperty(PropertyName = "publicBinTonnage")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public required decimal PublicBinTonnage { get; init; }
-
-        [JsonProperty(PropertyName = "householdDrinksContainersTonnage")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public required decimal HouseholdDrinksContainersTonnage { get; init; }
-
-        [JsonProperty(PropertyName = "lateReportingTonnage")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public required decimal LateReportingTonnage { get; init; }
-
-        [JsonProperty(PropertyName = "totalTonnage")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public required decimal TotalTonnage { get; init; }
 
         [JsonProperty(PropertyName = "disposalCostPricePerTonne")]
         public required string? DisposalCostPricePerTonne { get; init; }

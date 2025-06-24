@@ -11,7 +11,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
     [TestClass]
     public class CalcResultLaDisposalCostDataMapperTests
     {
-        private  CalcResultLaDisposalCostDataMapper _testClass;
+        CalcResultLaDisposalCostDataMapper _testClass = new CalcResultLaDisposalCostDataMapper();
         List<CalcResultLaDisposalCostDataDetail> laDisposalCostDataDetail = new List<CalcResultLaDisposalCostDataDetail>();
 
         [TestInitialize]
@@ -65,7 +65,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             //Arrange
             laDisposalCostDataDetail.Add(new CalcResultLaDisposalCostDataDetail()
             {
-                Name = "Totals",
+                Name = "Total",
                 England = "England",
                 Wales = "Wales",
                 NorthernIreland = "NorthernIreland",
