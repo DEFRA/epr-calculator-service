@@ -595,7 +595,7 @@
             var feeForSAOperatingCostsWithBadDebtProvision_3 = roundTrippedData[0]!["feeForSAOperatingCostsWithBadDebtProvision_3"];
             Assert.IsNotNull(feeForSAOperatingCostsWithBadDebtProvision_3);
             var feeForLADataPrepCostsWithBadDebtProvision_4 = roundTrippedData[0]!["feeForLADataPrepCostsWithBadDebtProvision_4"];
-            //Assert.IsNotNull(feeForLADataPrepCostsWithBadDebtProvision_4);
+            Assert.IsNotNull(feeForLADataPrepCostsWithBadDebtProvision_4);
             var feeForSASetUpCostsWithBadDebtProvision_5 = roundTrippedData[0]!["feeForSASetUpCostsWithBadDebtProvision_5"];
             Assert.IsNotNull(feeForSASetUpCostsWithBadDebtProvision_5);
             var totalProducerBillWithBadDebtProvision = roundTrippedData[0]!["totalProducerBillWithBadDebtProvision"];
