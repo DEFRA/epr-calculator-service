@@ -25,7 +25,10 @@ namespace EPR.Calculator.Service.Common.Utils
             return FormatCurrencyWithGbpSymbol(decimalValue);
         }
 
-       
+        /// <summary>
+        /// Converts a decimal input to GBP currency format (e.g., £12.3456) if valid.
+        /// Returns an empty string if input is not valid.
+        /// </summary>
         public static string ConvertToCurrency(decimal detail)
         {
             if (detail == 0)
@@ -36,6 +39,11 @@ namespace EPR.Calculator.Service.Common.Utils
             return FormatCurrencyWithGbpSymbol(detail);
         }
 
+        /// <summary>
+        /// Formats decimal to gbp currency.
+        /// </summary>
+        /// <param name="decimalValue"></param>
+        /// <returns>gbp currency.</returns>
         private static string FormatCurrencyWithGbpSymbol(decimal decimalValue)
         {
             var culture = CultureInfo.CreateSpecificCulture("en-GB");
