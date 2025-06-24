@@ -55,7 +55,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         public void CanCreateBillingJsonFileName()
         {
             var billingFileJsonName = new CalcResultsAndBillingFileName(10223, true, true);
-            Assert.AreEqual("10223Billing.json", billingFileJsonName);
+            Assert.AreEqual("10223 Billing.json", billingFileJsonName);
         }
 
         /// <summary>

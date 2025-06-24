@@ -228,7 +228,22 @@
             string runName,
             CancellationToken cancellationToken)
         {
+
+            this.telemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = requestDto.RunId,
+                RunName = runName,
+                Message = "Billing Builder started...",
+            });
+
             await this.Builder.Build(requestDto);
+
+            this.telemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = requestDto.RunId,
+                RunName = runName,
+                Message = "Billing Builder ended...",
+            });
 
             // Get File name for the billing json file
             var billingFileCsvName = new CalcResultsAndBillingFileName(
@@ -237,7 +252,21 @@
                 DateTime.Now,
                 true);
 
+            this.telemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = requestDto.RunId,
+                RunName = runName,
+                Message = $"Billing file CSV file name only is created {billingFileCsvName}",
+            });
+
             var billingFileJsonName = new CalcResultsAndBillingFileName( requestDto.RunId, true, true);
+
+            this.telemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = requestDto.RunId,
+                RunName = runName,
+                Message = $"Billing file JSON file name only is created {billingFileJsonName}",
+            });
 
             // call json Exporter
 
