@@ -274,12 +274,36 @@
 
             var jsonResponse = this.JsonExporter.Export(calcResults, resultsRequestDto.AcceptedProducerIds);
 
+            this.telemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = resultsRequestDto.RunId,
+                RunName = runName,
+                Message = $"Billing file JSON content is now created",
+            });
+
             // call csv Exporter
 
             // upload the csv file to blob storage
 
+            this.telemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = resultsRequestDto.RunId,
+                RunName = runName,
+                Message = $"Billing file JSON file before upload {billingFileJsonName}",
+            });
+
+            await this.storageService.UploadResultFileContentAsync(billingFileJsonName, jsonResponse, runName);
+
+            this.telemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = resultsRequestDto.RunId,
+                RunName = runName,
+                Message = $"Billing file JSON file after upload {billingFileJsonName}",
+            });
+
             var calcRun = await this.Context.CalculatorRuns.SingleAsync(run => run.Id == resultsRequestDto.RunId);
             calcRun.IsBillingFileGenerating = false;
+
 
             var billingFileMetadata = new CalculatorRunBillingFileMetadata
             {
@@ -294,7 +318,12 @@
 
             await this.Context.SaveChangesAsync();
 
-            await this.storageService.UploadResultFileContentAsync(billingFileJsonName, jsonResponse, runName);
+            this.telemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = resultsRequestDto.RunId,
+                RunName = runName,
+                Message = $"Billing file All generated and updated successfully",
+            });
 
             return true;
         }
