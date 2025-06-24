@@ -8,7 +8,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 
-namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
+namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResults
 {
     /// <summary>
     /// Converts a <see cref="CalcResultSummary"/> to a JSON string representation.

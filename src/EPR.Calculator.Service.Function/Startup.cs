@@ -48,6 +48,7 @@ using EPR.Calculator.Service.Function.Exporter.JsonExporter;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.LateReportingTonnage;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMaterial2A;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.BillingInstructions;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter.CancelledProducers;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -165,7 +166,8 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICommsCostByMaterial2AExporter, CommsCostByMaterial2AExporter>();
             services.AddTransient<ICalcResultProducerCalculationResultsTotalMapper, CalcResultProducerCalculationResultsTotalMapper>();
             services.AddTransient<IDisposalFeeSummary1Mapper, DisposalFeeSummary1Mapper>();
-            
+            services.AddTransient<ICancelledProducersMapper, CancelledProducersMapper>();
+            services.AddTransient<ICancelledProducersExporter, CancelledProducersExporter>();
 #if !DEBUG
 
             SetupBlobStorage(services);

@@ -3,7 +3,7 @@
     using System.Text.Json;
     using System.Text.Json.Nodes;
     using AutoFixture;
-    using EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult;
+    using EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResults;
     using EPR.Calculator.Service.Function.Mapper;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;

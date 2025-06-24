@@ -18,7 +18,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMater
             this.mapper = mapper;
         }
 
-        public string Export(List<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial)
+        public string Export(IEnumerable<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial)
         {
             var result = this.mapper.Map(commsCostByMaterial);
             return JsonConvert.SerializeObject(result);
