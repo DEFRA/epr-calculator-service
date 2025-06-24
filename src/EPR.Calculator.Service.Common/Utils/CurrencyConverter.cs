@@ -19,13 +19,30 @@ namespace EPR.Calculator.Service.Common.Utils
         /// Converts a string input to GBP currency format (e.g., £12.3456) if valid.
         /// Returns an empty string if input is not valid.
         /// </summary>
-        public static string FormatAsGbpCurrency(string value)
+        public static string ConvertToCurrency(string value)
         {
             var decimalValue = GetDecimalValue(value);
+            return FormatCurrencyWithGbpSymbol(decimalValue);
+        }
+
+       
+        public static string ConvertToCurrency(decimal detail)
+        {
+            if (detail == 0)
+            {
+                return string.Empty;
+            }
+
+            return FormatCurrencyWithGbpSymbol(detail);
+        }
+
+        private static string FormatCurrencyWithGbpSymbol(decimal decimalValue)
+        {
             var culture = CultureInfo.CreateSpecificCulture("en-GB");
             culture.NumberFormat.CurrencySymbol = "£";
             culture.NumberFormat.CurrencyPositivePattern = 0;
             return decimalValue.ToString("C", culture);
         }
+
     }
 }

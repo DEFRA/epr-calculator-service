@@ -48,11 +48,11 @@ namespace EPR.Calculator.Service.Function.Mapper
             return new CalcResultLaDisposalCostDataDetailsTotal
             {
                 Total = laDisposalCostDetailTotal.Name,
-                EnglandLaDisposalCostTotal = CurrencyConverter.FormatAsGbpCurrency(laDisposalCostDetailTotal.England),
-                WalesLaDisposalCostTotal = CurrencyConverter.FormatAsGbpCurrency(laDisposalCostDetailTotal.Wales),
-                ScotlandLaDisposalCostTotal = CurrencyConverter.FormatAsGbpCurrency(laDisposalCostDetailTotal.Scotland),
-                NorthernIrelandLaDisposalCostTotal = CurrencyConverter.FormatAsGbpCurrency(laDisposalCostDetailTotal.NorthernIreland),
-                TotalLaDisposalCostTotal = CurrencyConverter.FormatAsGbpCurrency(laDisposalCostDetailTotal.Total),
+                EnglandLaDisposalCostTotal = CurrencyConverter.ConvertToCurrency(laDisposalCostDetailTotal.England),
+                WalesLaDisposalCostTotal = CurrencyConverter.ConvertToCurrency(laDisposalCostDetailTotal.Wales),
+                ScotlandLaDisposalCostTotal = CurrencyConverter.ConvertToCurrency(laDisposalCostDetailTotal.Scotland),
+                NorthernIrelandLaDisposalCostTotal = CurrencyConverter.ConvertToCurrency(laDisposalCostDetailTotal.NorthernIreland),
+                TotalLaDisposalCostTotal = CurrencyConverter.ConvertToCurrency(laDisposalCostDetailTotal.Total),
                 ProducerHouseholdPackagingWasteTonnageTotal = CurrencyConverter.GetDecimalValue(laDisposalCostDetailTotal.ProducerReportedHouseholdPackagingWasteTonnage),
                 PublicBinTonnage = CurrencyConverter.GetDecimalValue(laDisposalCostDetailTotal.ReportedPublicBinTonnage),
                 HouseholdDrinksContainersTonnageTotal = CurrencyConverter.GetDecimalValue(laDisposalCostDetailTotal.HouseholdDrinkContainers),
@@ -72,17 +72,17 @@ namespace EPR.Calculator.Service.Function.Mapper
                 commsByMaterialDataDetails.Add(new CalcResultLaDisposalCostDetails
                 {
                     MaterialName = item.Name,
-                    EnglandLaDisposalCost = CurrencyConverter.FormatAsGbpCurrency(item.England),
-                    WalesLaDisposalCost = CurrencyConverter.FormatAsGbpCurrency(item.Wales),
-                    ScotlandLaDisposalCost = CurrencyConverter.FormatAsGbpCurrency(item.Scotland),
-                    NorthernIrelandLaDisposalCost = CurrencyConverter.FormatAsGbpCurrency(item.NorthernIreland),
-                    TotalLaDisposalCost = CurrencyConverter.FormatAsGbpCurrency(item.Total),
+                    EnglandLaDisposalCost = CurrencyConverter.ConvertToCurrency(item.England),
+                    WalesLaDisposalCost = CurrencyConverter.ConvertToCurrency(item.Wales),
+                    ScotlandLaDisposalCost = CurrencyConverter.ConvertToCurrency(item.Scotland),
+                    NorthernIrelandLaDisposalCost = CurrencyConverter.ConvertToCurrency(item.NorthernIreland),
+                    TotalLaDisposalCost = CurrencyConverter.ConvertToCurrency(item.Total),
                     ProducerHouseholdPackagingWasteTonnage = CurrencyConverter.GetDecimalValue(item.ProducerReportedHouseholdPackagingWasteTonnage),
                     PublicBinTonnage = CurrencyConverter.GetDecimalValue(item.ReportedPublicBinTonnage),
                     HouseholdDrinksContainersTonnage = CurrencyConverter.GetDecimalValue(item.HouseholdDrinkContainers),
                     LateReportingTonnage = CurrencyConverter.GetDecimalValue(item.LateReportingTonnage),
                     TotalTonnage = CurrencyConverter.GetDecimalValue(item.ProducerReportedTotalTonnage),
-                    DisposalCostPricePerTonne = item.DisposalCostPricePerTonne != null ? CurrencyConverter.FormatAsGbpCurrency(item.DisposalCostPricePerTonne) : "£0.00",
+                    DisposalCostPricePerTonne = item.DisposalCostPricePerTonne != null ? CurrencyConverter.ConvertToCurrency(item.DisposalCostPricePerTonne) : "£0.00",
                 });
             }
 

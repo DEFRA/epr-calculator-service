@@ -22,7 +22,7 @@
         public void CanCallFormatAsGbpCurrency()
         {
             // Act
-            var result = CurrencyConverter.FormatAsGbpCurrency("650.95");
+            var result = CurrencyConverter.ConvertToCurrency("650.95");
 
             // Assert
             Assert.AreEqual("£650.95", result);
