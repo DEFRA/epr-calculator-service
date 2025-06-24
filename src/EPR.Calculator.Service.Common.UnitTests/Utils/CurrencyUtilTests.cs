@@ -13,7 +13,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.Utils
         {
             // Arrange
             var fixture = new Fixture();
-            var detail = fixture.Create<decimal>();
+            var detail = 100.00m;
 
             // Act
             var result = CurrencyUtil.ConvertToCurrency(detail);
