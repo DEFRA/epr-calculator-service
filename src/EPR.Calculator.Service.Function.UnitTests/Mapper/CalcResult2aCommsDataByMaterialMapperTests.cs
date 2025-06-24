@@ -44,6 +44,20 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 
             // Assert
             Assert.IsNotNull(result);
-        }       
+        }
+
+        [TestMethod]
+        public void CanCallGetTotalRow()
+        {
+            // Arrange
+            var fixture = new Fixture();
+            var commsCostByMaterial = fixture.Create<CalcResultCommsCostCommsCostByMaterial>();
+
+            // Act
+            var result = _testClass?.GetTotalRow(commsCostByMaterial);
+
+            // Assert
+            Assert.IsNotNull(result);
+        }
     }
 }
