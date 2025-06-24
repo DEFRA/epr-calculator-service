@@ -44,8 +44,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
             ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper,
             ITotalProducerBillWithBadDebtProvisionMapper totalProducerBillWithBadDebtProvisionMapper,
             ICalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper calculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper,
-            ICalcResultProducerCalculationResultsTotalMapper calcResultProducerCalculationResultsTotalMapper)
-            ICalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper calculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper,
+            ICalcResultProducerCalculationResultsTotalMapper calcResultProducerCalculationResultsTotalMapper,
             IDisposalFeeSummary1Mapper disposalFeeSummary1Mapper
             )
         {
