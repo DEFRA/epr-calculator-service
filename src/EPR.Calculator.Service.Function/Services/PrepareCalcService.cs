@@ -4,6 +4,7 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Azure.Storage.Blobs;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.API.Exporter;
@@ -22,55 +23,55 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.IdentityModel.Abstractions;
+    using System;
+    using System.Configuration;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Service for preparing calculation results.
     /// </summary>
     public class PrepareCalcService : IPrepareCalcService
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Major Code Smell",
+            "S107:Methods should not have too many parameters",
+            Justification = "To be refactored later.")]
         public PrepareCalcService(
             IDbContextFactory<ApplicationDBContext> context,
-            IRpdStatusDataValidator rpdStatusDataValidator,
-            IOrgAndPomWrapper wrapper,
             ICalcResultBuilder builder,
             ICalcResultsExporter<CalcResult> exporter,
-            ITransposePomAndOrgDataService transposePomAndOrgDataService,
             IStorageService storageService,
             CalculatorRunValidator validationRules,
             ICommandTimeoutService commandTimeoutService,
             ICalculatorTelemetryLogger telemetryLogger,
             IBillingInstructionService billingInstructionService,
-            ICalcBillingJsonExporter<CalcResult> jsonExporter)
+            ICalcBillingJsonExporter<CalcResult> jsonExporter,
+            IConfigurationService configService)
         {
             this.Context = context.CreateDbContext();
-            this.rpdStatusDataValidator = rpdStatusDataValidator;
-            this.Wrapper = wrapper;
             this.Builder = builder;
             this.Exporter = exporter;
-            this.transposePomAndOrgDataService = transposePomAndOrgDataService;
             this.storageService = storageService;
             this.validatior = validationRules;
             this.commandTimeoutService = commandTimeoutService;
             this.telemetryLogger = telemetryLogger;
             this.billingInstructionService = billingInstructionService;
+            this.ConfigService = configService;
             this.JsonExporter = jsonExporter;
         }
+
+        public const string ContainerNameMissingError = "Container name is missing in configuration.";
 
         private readonly ICalculatorTelemetryLogger telemetryLogger;
 
         private ApplicationDBContext Context { get; init; }
-
-        private IRpdStatusDataValidator rpdStatusDataValidator { get; init; }
-
-        private IOrgAndPomWrapper Wrapper { get; init; }
 
         private ICalcResultBuilder Builder { get; init; }
 
         private ICalcBillingJsonExporter<CalcResult> JsonExporter { get; init; }
 
         private ICalcResultsExporter<CalcResult> Exporter { get; init; }
-
-        private ITransposePomAndOrgDataService transposePomAndOrgDataService { get; init; }
 
         private IStorageService storageService { get; init; }
 
@@ -79,6 +80,8 @@
         private ICommandTimeoutService commandTimeoutService { get; init; }
 
         private IBillingInstructionService billingInstructionService { get; init; }
+
+        private IConfigurationService ConfigService { get; init; }
 
         public async Task<bool> PrepareCalcResults(
             [FromBody] CalcResultsRequestDto resultsRequestDto,
@@ -160,7 +163,14 @@
                     results.CalcResultDetail.RunId,
                     results.CalcResultDetail.RunName,
                     results.CalcResultDetail.RunDate);
-                var blobUri = await this.storageService.UploadResultFileContentAsync(fileName, exportedResults, runName);
+
+                string containerName = this.ConfigService.ResultFileCSVContainerName;
+
+                var blobUri = await this.storageService.UploadFileContentAsync(
+                    (FileName: fileName, 
+                    Content: exportedResults, 
+                    RunName: runName,
+                    ContainerName: containerName));
 
                 this.telemetryLogger.LogInformation(new TrackMessage
                 {
@@ -292,7 +302,7 @@
                 Message = $"Billing file JSON file before upload {billingFileJsonName}",
             });
 
-            await this.storageService.UploadResultFileContentAsync(billingFileJsonName, jsonResponse, runName);
+            // await this.storageService.UploadResultFileContentAsync(billingFileJsonName, jsonResponse, runName, ConfigService.ResultFileCSVContainerName);
 
             this.telemetryLogger.LogInformation(new TrackMessage
             {
