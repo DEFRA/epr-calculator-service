@@ -6,7 +6,6 @@
     using EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult;
     using EPR.Calculator.Service.Function.Mapper;
     using EPR.Calculator.Service.Function.Models;
-    using Microsoft.Azure.Amqp.Framing;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using static EPR.Calculator.Service.Common.UnitTests.Utils.JsonNodeComparer;
 

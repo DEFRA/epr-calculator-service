@@ -141,7 +141,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
             {
                 results.Add(new CalcSummaryProducerCalculationResults
                 {
-                    producerID= producer.ProducerId,
+                    ProducerID= producer.ProducerId,
                     SubsidiaryID = producer.SubsidiaryId,
                     ProducerName = producer.ProducerName,
                     TradingName = producer.TradingName,
