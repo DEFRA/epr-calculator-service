@@ -224,46 +224,46 @@
             return false;
         }
 
-        public async Task<bool> PrepareBillingResults([FromBody] CalcResultsRequestDto requestDto,
+        public async Task<bool> PrepareBillingResults([FromBody] CalcResultsRequestDto resultsRequestDto,
             string runName,
             CancellationToken cancellationToken)
         {
 
             this.telemetryLogger.LogInformation(new TrackMessage
             {
-                RunId = requestDto.RunId,
+                RunId = resultsRequestDto.RunId,
                 RunName = runName,
                 Message = "Billing Builder started...",
             });
 
-            await this.Builder.Build(requestDto);
+            await this.Builder.Build(resultsRequestDto);
 
             this.telemetryLogger.LogInformation(new TrackMessage
             {
-                RunId = requestDto.RunId,
+                RunId = resultsRequestDto.RunId,
                 RunName = runName,
                 Message = "Billing Builder ended...",
             });
 
             // Get File name for the billing json file
             var billingFileCsvName = new CalcResultsAndBillingFileName(
-                requestDto.RunId,
+                resultsRequestDto.RunId,
                 runName,
                 DateTime.Now,
                 true);
 
             this.telemetryLogger.LogInformation(new TrackMessage
             {
-                RunId = requestDto.RunId,
+                RunId = resultsRequestDto.RunId,
                 RunName = runName,
                 Message = $"Billing file CSV file name only is created {billingFileCsvName}",
             });
 
-            var billingFileJsonName = new CalcResultsAndBillingFileName( requestDto.RunId, true, true);
+            var billingFileJsonName = new CalcResultsAndBillingFileName( resultsRequestDto.RunId, true, true);
 
             this.telemetryLogger.LogInformation(new TrackMessage
             {
-                RunId = requestDto.RunId,
+                RunId = resultsRequestDto.RunId,
                 RunName = runName,
                 Message = $"Billing file JSON file name only is created {billingFileJsonName}",
             });
@@ -280,14 +280,14 @@
 
             // Update the calculator run with the billing file metadata
 
-            var calcRun = await this.Context.CalculatorRuns.SingleAsync(run => run.Id == requestDto.RunId);
+            var calcRun = await this.Context.CalculatorRuns.SingleAsync(run => run.Id == resultsRequestDto.RunId);
             calcRun.IsBillingFileGenerating = false;
 
             var billingFileMetadata = new CalculatorRunBillingFileMetadata
             {
                 BillingCsvFileName = billingFileCsvName.ToString(),
-                BillingFileCreatedBy = requestDto.ApprovedBy,
-                CalculatorRunId = requestDto.RunId,
+                BillingFileCreatedBy = resultsRequestDto.ApprovedBy,
+                CalculatorRunId = resultsRequestDto.RunId,
                 BillingFileCreatedDate = DateTime.UtcNow,
                 BillingJsonFileName = billingFileJsonName.ToString(),
             };
