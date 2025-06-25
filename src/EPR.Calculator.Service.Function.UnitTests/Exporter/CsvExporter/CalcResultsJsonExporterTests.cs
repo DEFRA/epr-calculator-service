@@ -1,4 +1,6 @@
 ﻿using AutoFixture;
+using EPR.Calculator.Service.Function.Builder.CommsCost;
+using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResults;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CancelledProducersData;
@@ -26,6 +28,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         private IOnePlusFourApportionmentJsonExporter mockOnePlusFourApportionmentJsonExporter;
         private ICommsCostJsonExporter mockCommsCostExporter;
         private ICommsCostByMaterial2AExporter mockCommsCostByMaterial2AExporter;
+        private ICalcResultCommsCostOnePlusFourApportionmentExporter mockCalcResultCommsCostOnePlusFourApportionmentExporter;
         private ICalcResultLaDisposalCostDataExporter mockCalcResultLaDisposalCostDataExporter;
         private ICancelledProducersExporter mockCancelledProducersExporter;
         private ICalcResultScaledupProducersJsonExporter mockCalcResultScaledupProducersJsonExporter;
@@ -40,6 +43,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             mockOnePlusFourApportionmentJsonExporter = new OnePlusFourApportionmentJsonExporter(new OnePlusFourApportionmentMapper());
             mockCommsCostExporter = new CommsCostJsonExporter(new CommsCostMapper());
             mockCommsCostByMaterial2AExporter = new CommsCostByMaterial2AExporter(new CalcResult2ACommsDataByMaterialMapper());
+            mockCalcResultCommsCostOnePlusFourApportionmentExporter = new CalcResultCommsCostOnePlusFourApportionmentExporter();
             mockCalcResultLaDisposalCostDataExporter = new CalcResultLaDisposalCostDataExporter(new CalcResultLaDisposalCostDataMapper());
             mockCancelledProducersExporter = new CancelledProducersExporter(new CancelledProducersMapper());
             mockCalcResultScaledupProducersJsonExporter = new CalcResultScaledupProducersJsonExporter(new CalcResultScaledupProducersJsonMapper());
@@ -52,6 +56,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 mockOnePlusFourApportionmentJsonExporter,
                 mockCommsCostExporter,
                 mockCommsCostByMaterial2AExporter,
+                mockCalcResultCommsCostOnePlusFourApportionmentExporter,
                 mockCalcResultLaDisposalCostDataExporter,
                 mockCancelledProducersExporter,
                 mockCalcResultScaledupProducersJsonExporter,
@@ -255,9 +260,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                             Name = "Total",
                         },
                     },
-                    CalcResultCommsCostOnePlusFourApportionment =
-                        new Fixture().CreateMany<CalcResultCommsCostOnePlusFourApportionment>(1),
-                    CommsCostByCountry = new Fixture().CreateMany<CalcResultCommsCostOnePlusFourApportionment>(1),
+                    CalcResultCommsCostOnePlusFourApportionment = new List<CalcResultCommsCostOnePlusFourApportionment>
+                    {
+                        new CalcResultCommsCostCommsCostByMaterial { Name = CalcResultCommsCostBuilder.TwoBCommsCostUkWide, England = "10", Wales = "20", Scotland = "30", NorthernIreland = "40", Total = "100", ProducerReportedHouseholdPackagingWasteTonnage = "50", ReportedPublicBinTonnage = "60", HouseholdDrinksContainers = "70", LateReportingTonnage = "80", ProducerReportedHouseholdPlusLateReportingTonnage = "90", CommsCostByMaterialPricePerTonne = "100" },
+                        new CalcResultCommsCostOnePlusFourApportionment { Name = CalcResultCommsCostBuilder.TwoCCommsCostByCountry, England = "10", Wales = "20", Scotland = "30", NorthernIreland = "40", Total = "100" }
+                    },
+                    CommsCostByCountry = new List<CalcResultCommsCostOnePlusFourApportionment>
+                    {
+                        new CalcResultCommsCostOnePlusFourApportionment { Name = CalcResultCommsCostBuilder.TwoCCommsCostByCountry, England = "10", Wales = "20", Scotland = "30", NorthernIreland = "40", Total = "100" }
+                    }
                 },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData
                 {

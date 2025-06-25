@@ -26,6 +26,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
         private readonly IOnePlusFourApportionmentJsonExporter onePlusFourApportionmentJsonExporter;
         private readonly ICommsCostJsonExporter commsCostExporter;
         private readonly ICommsCostByMaterial2AExporter commsCostByMaterial2AExporter;
+        private readonly ICalcResultCommsCostOnePlusFourApportionmentExporter calcResultCommsCostOnePlusFourApportionmentExporter;
         private readonly ICalcResultLaDisposalCostDataExporter calcResultLaDisposalCostDataExporter;
         private readonly ICancelledProducersExporter cancelledProducersExporter;
         private readonly ICalcResultScaledupProducersJsonExporter calcResultScaledupProducersJsonExporter;
@@ -39,6 +40,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
             IOnePlusFourApportionmentJsonExporter onePlusFourApportionmentJsonExporter,
             ICommsCostJsonExporter commsCostExporter,
             ICommsCostByMaterial2AExporter commsCostByMaterial2AExporter,
+            ICalcResultCommsCostOnePlusFourApportionmentExporter calcResultCommsCostOnePlusFourApportionmentExporter,
             ICalcResultLaDisposalCostDataExporter calcResultLaDisposalCostDataExporter,
             ICancelledProducersExporter cancelledProducersExporter,
             ICalcResultScaledupProducersJsonExporter calcResultScaledupProducersJsonExporter,
@@ -50,6 +52,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
             this.onePlusFourApportionmentJsonExporter = onePlusFourApportionmentJsonExporter;
             this.commsCostExporter = commsCostExporter;
             this.commsCostByMaterial2AExporter = commsCostByMaterial2AExporter;
+            this.calcResultCommsCostOnePlusFourApportionmentExporter = calcResultCommsCostOnePlusFourApportionmentExporter;
             this.calcResultLaDisposalCostDataExporter = calcResultLaDisposalCostDataExporter;
             this.cancelledProducersExporter = cancelledProducersExporter;
             this.calcResultScaledupProducersJsonExporter = calcResultScaledupProducersJsonExporter;
@@ -63,19 +66,19 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
                 throw new ArgumentNullException(nameof(results), "The results parameter cannot be null.");
             }
 
-            var billingFileContent = new JsonBillingFileExporter()
-            {
-                CalcResultDetail = calcResultDetailExporter.Export(results.CalcResultDetail),
-                CalcResultLapcapData = lapcapExporter.Export(results.CalcResultLapcapData),
-                CalcResultLateReportingTonnageData = lateReportingTonnageExporter.Export(results.CalcResultLateReportingTonnageData),
-                OnePlusFourApportionment = onePlusFourApportionmentJsonExporter.Export(results.CalcResultOnePlusFourApportionment),
-                ParametersCommsCost = commsCostExporter.Export(results.CalcResultCommsCostReportDetail),
-                CalcResult2aCommsDataByMaterial = commsCostByMaterial2AExporter.Export(results.CalcResultCommsCostReportDetail.CalcResultCommsCostCommsCostByMaterial),
-                CalcResultLaDisposalCostData = calcResultLaDisposalCostDataExporter.Export(results.CalcResultLaDisposalCostData.CalcResultLaDisposalCostDetails),
-                CancelledProducers = cancelledProducersExporter.Export(results.CalcResultCancelledProducers),
-                ScaleUpProducers = calcResultScaledupProducersJsonExporter.Export(results.CalcResultScaledupProducers, acceptedProducerIds),
-                CalculationResults = calculationResultsExporter.Export(results.CalcResultSummary, acceptedProducerIds)
-            };
+            var billingFileContent = new JsonBillingFileExporter();
+            billingFileContent.CalcResultDetail = calcResultDetailExporter.Export(results.CalcResultDetail);
+            billingFileContent.CalcResultLapcapData = lapcapExporter.Export(results.CalcResultLapcapData);
+            billingFileContent.CalcResultLateReportingTonnageData = lateReportingTonnageExporter.Export(results.CalcResultLateReportingTonnageData);
+            billingFileContent.OnePlusFourApportionment = onePlusFourApportionmentJsonExporter.Export(results.CalcResultOnePlusFourApportionment);
+            billingFileContent.ParametersCommsCost = commsCostExporter.Export(results.CalcResultCommsCostReportDetail);
+            billingFileContent.CalcResult2aCommsDataByMaterial = commsCostByMaterial2AExporter.Export(results.CalcResultCommsCostReportDetail.CalcResultCommsCostCommsCostByMaterial);
+            // billingFileContent.CalcResult2bCommsDataByUkWide = calcResultCommsCostOnePlusFourApportionmentExporter.ConvertToJsonByUKWide(results.CalcResultCommsCostReportDetail);
+            // billingFileContent.CalcResult2cCommsDataByCountry = calcResultCommsCostOnePlusFourApportionmentExporter.ConvertToJsonByCountry(results.CalcResultCommsCostReportDetail);
+            billingFileContent.CalcResultLaDisposalCostData = calcResultLaDisposalCostDataExporter.Export(results.CalcResultLaDisposalCostData.CalcResultLaDisposalCostDetails);
+            billingFileContent.CancelledProducers = cancelledProducersExporter.Export(results.CalcResultCancelledProducers);
+            billingFileContent.ScaleUpProducers = calcResultScaledupProducersJsonExporter.Export(results.CalcResultScaledupProducers, acceptedProducerIds);
+            billingFileContent.CalculationResults = calculationResultsExporter.Export(results.CalcResultSummary, acceptedProducerIds);
 
             return JsonConvert.SerializeObject(billingFileContent);
         }
