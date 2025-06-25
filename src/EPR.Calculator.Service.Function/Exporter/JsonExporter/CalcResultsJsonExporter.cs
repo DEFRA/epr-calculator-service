@@ -70,8 +70,6 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
             billingFileContent.OnePlusFourApportionment = onePlusFourApportionmentJsonExporter.Export(results.CalcResultOnePlusFourApportionment);
             billingFileContent.ParametersCommsCost = commsCostExporter.Export(results.CalcResultCommsCostReportDetail);
             billingFileContent.CalcResult2aCommsDataByMaterial = commsCostByMaterial2AExporter.Export(results.CalcResultCommsCostReportDetail.CalcResultCommsCostCommsCostByMaterial);
-            // billingFileContent.CalcResult2bCommsDataByUkWide = calcResultCommsCostOnePlusFourApportionmentExporter.ConvertToJsonByUKWide(results.CalcResultCommsCostReportDetail);
-            // billingFileContent.CalcResult2cCommsDataByCountry = calcResultCommsCostOnePlusFourApportionmentExporter.ConvertToJsonByCountry(results.CalcResultCommsCostReportDetail);
             billingFileContent.CalcResultLaDisposalCostData = calcResultLaDisposalCostDataExporter.Export(results.CalcResultLaDisposalCostData.CalcResultLaDisposalCostDetails);
             billingFileContent.CancelledProducers = cancelledProducersExporter.Export(results.CalcResultCancelledProducers);
             billingFileContent.ScaleUpProducers = calcResultScaledupProducersJsonExporter.Export(results.CalcResultScaledupProducers, acceptedProducerIds);
