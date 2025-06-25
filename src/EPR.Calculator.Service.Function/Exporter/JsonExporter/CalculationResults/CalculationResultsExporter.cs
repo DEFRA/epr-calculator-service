@@ -68,8 +68,8 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResul
         }
 
         /// <inheritdoc/>
-        public string Export(CalcResultSummary summary, IEnumerable<int> acceptedProducerIds)
-            => JsonSerializer.Serialize(
+        public object Export(CalcResultSummary summary, IEnumerable<int> acceptedProducerIds)
+            =>
                 new
                 {
                     calculationResults = new
@@ -78,16 +78,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResul
                         producerCalculationResults = ArrangeProducerCalculationResult(summary, acceptedProducerIds),
                         producerCalculationResultsTotal = ArrangeProducerCalculationResultsTotal(summary),
                     },
-                },
-                new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                    WriteIndented = true,
-                    Converters = { new Converter.CurrencyConverter() },
-
-                    // This is required in order to output the £ symbol as-is rather than encoding it.
-                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
-                });
+                };
 
         /// <summary>
         /// Arrange the CalcResultSummary data using the property
@@ -141,7 +132,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResul
             {
                 results.Add(new CalcSummaryProducerCalculationResults
                 {
-                    ProducerID= producer.ProducerId,
+                    ProducerID = producer.ProducerId,
                     SubsidiaryID = producer.SubsidiaryId,
                     ProducerName = producer.ProducerName,
                     TradingName = producer.TradingName,
@@ -165,8 +156,8 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResul
             }
 
             return results;
-        }        
-        
+        }
+
         private CalcResultProducerCalculationResultsTotal? ArrangeProducerCalculationResultsTotal(CalcResultSummary calcResultSummary)
         {
             return calcResultProducerCalculationResultsTotalMapper.Map(calcResultSummary);

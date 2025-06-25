@@ -80,6 +80,13 @@ namespace EPR.Calculator.Service.Function.Mapper
                     ScaledUpReportedSelfManagedConsumerWasteTonnage = Math.Round(producerTonnage.Value.ScaledupReportedSelfManagedConsumerWasteTonnage, 3),
                     ScaledUpNetReportedTonnage = Math.Round(producerTonnage.Value.ScaledupNetReportedTonnage, 3)
                 };
+
+                if (producerTonnage.Key == MaterialCodes.Glass)
+                {
+                    breakdown.HouseholdDrinksContainersTonnageGlass = producerTonnage.Value.HouseholdDrinksContainersTonnageGlass;
+                    breakdown.ScaledupHouseholdDrinksContainersTonnageGlass = producerTonnage.Value.ScaledupHouseholdDrinksContainersTonnageGlass;
+                }
+
                 materialBreakdown.Add(breakdown);
             }
 

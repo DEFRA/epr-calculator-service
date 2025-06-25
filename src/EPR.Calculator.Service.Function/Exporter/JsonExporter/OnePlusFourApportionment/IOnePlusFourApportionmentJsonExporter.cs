@@ -9,6 +9,6 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.OnePlusFourAppor
 {
     public interface IOnePlusFourApportionmentJsonExporter
     {
-        public string Export(CalcResultOnePlusFourApportionment calcResult1Plus4Apportionment);
+        public CalcResultOnePlusFourApportionmentJson Export(CalcResultOnePlusFourApportionment calcResult1Plus4Apportionment);
     }
 }

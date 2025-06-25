@@ -320,7 +320,7 @@
         {
             var expectedResult = new ProducerReportedMaterial
             {
-                Id = 1,
+                Id = 3,
                 MaterialId = 4,
                 ProducerDetailId = 1,
                 PackagingType = "CW",
@@ -427,7 +427,7 @@
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
                 new Mock<ICalculatorTelemetryLogger>().Object);
 
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
+            var resultsRequestDto = new CalcResultsRequestDto { RunId = 2 };
 
             // Detach existing CalculatorRun entity if it is already being tracked
             var existingCalculatorRun = _context.ChangeTracker.Entries<CalculatorRun>()

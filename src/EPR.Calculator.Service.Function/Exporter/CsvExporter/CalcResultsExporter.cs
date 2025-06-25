@@ -4,6 +4,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 {
     using System;
     using System.Text;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
@@ -23,7 +24,10 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         private readonly ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter;
         private readonly ICalcResultLaDisposalCostExporter laDisposalCostExporter;
         private readonly ICommsCostExporter commsCostExporter;
+        private readonly ICalcResultCancelledProducersExporter calcResultCancelledProducersExporter;
 
+        // Suppress SonarQube warning for constructor parameter count  
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         public CalcResultsExporter(
             ILateReportingExporter lateReportingExporter,
             ICalcResultDetailExporter resultDetailexporter,
@@ -33,7 +37,8 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             ILapcaptDetailExporter lapcaptDetailExporter,
             ICalcResultParameterOtherCostExporter parameterOtherCosts,
             ICommsCostExporter commsCostExporter,
-            ICalcResultSummaryExporter calcResultSummaryExporter)
+            ICalcResultSummaryExporter calcResultSummaryExporter,
+            ICalcResultCancelledProducersExporter calcResultCancelledProducersExporter)
         {
             this.resultDetailexporter = resultDetailexporter;
             this.onePlusFourApportionmentExporter = onePlusFourApportionmentExporter;
@@ -44,6 +49,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             this.calcResultSummaryExporter = calcResultSummaryExporter;
             this.laDisposalCostExporter = laDisposalCostExporter;
             this.commsCostExporter = commsCostExporter;
+            this.calcResultCancelledProducersExporter = calcResultCancelledProducersExporter;
         }
 
         public string Export(CalcResult results)
@@ -67,6 +73,8 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             commsCostExporter.Export(results.CalcResultCommsCostReportDetail, csvContent);
 
             laDisposalCostExporter.Export(results.CalcResultLaDisposalCostData, csvContent);
+
+            calcResultCancelledProducersExporter.Export(results.CalcResultCancelledProducers, csvContent);
 
             calcResultScaledupProducersExporter.Export(results.CalcResultScaledupProducers, csvContent);
 

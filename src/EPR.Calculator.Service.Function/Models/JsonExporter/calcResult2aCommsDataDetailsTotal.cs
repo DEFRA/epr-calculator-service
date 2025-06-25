@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
-    public record calcResult2aCommsDataDetailsTotal
+    public record CalcResult2ACommsDataDetailsTotal
     {
         [JsonProperty(PropertyName = "total")]
 

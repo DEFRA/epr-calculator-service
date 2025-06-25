@@ -27,9 +27,9 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
         public decimal TotalReportedTonnage { get; init; }
 
-        [JsonProperty(PropertyName = "householdDrinksContainers")]
+        [JsonProperty(PropertyName = "householdDrinksContainers", NullValueHandling = NullValueHandling.Ignore)]
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal HouseholdDrinksContainers { get; init; }
+        public decimal? HouseholdDrinksContainers { get; set; }
 
         [JsonProperty(PropertyName = "pricePerTonne")]
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]

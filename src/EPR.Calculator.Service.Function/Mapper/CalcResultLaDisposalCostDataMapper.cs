@@ -27,7 +27,7 @@ namespace EPR.Calculator.Service.Function.Mapper
         public CalcResultLaDisposalCostDataDetailsTotal GetTotalRow(IEnumerable<CalcResultLaDisposalCostDataDetail> laDisposalCostDataDetail)
         {
             var laDisposalCostDetailTotal = laDisposalCostDataDetail
-                .SingleOrDefault(t => t.Name == CommonConstants.Total);
+    .SingleOrDefault(t => t.Name == CommonConstants.Total);
             if (laDisposalCostDetailTotal == null)
             {
                 return new CalcResultLaDisposalCostDataDetailsTotal()

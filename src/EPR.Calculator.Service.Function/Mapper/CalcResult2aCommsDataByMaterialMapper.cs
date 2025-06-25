@@ -23,9 +23,9 @@ namespace EPR.Calculator.Service.Function.Mapper
             };
         }
 
-        public calcResult2aCommsDataDetailsTotal GetTotalRow(CalcResultCommsCostCommsCostByMaterial commsCostByMaterial)
+        public CalcResult2ACommsDataDetailsTotal GetTotalRow(CalcResultCommsCostCommsCostByMaterial commsCostByMaterial)
         {  
-            return new calcResult2aCommsDataDetailsTotal
+            return new CalcResult2ACommsDataDetailsTotal
             {
                 EnglandCommsCostTotal = CurrencyConverter.ConvertToCurrency(commsCostByMaterial.EnglandValue),
                 HouseholdDrinksContainersTonnageTotal = commsCostByMaterial.HouseholdDrinksContainersValue,

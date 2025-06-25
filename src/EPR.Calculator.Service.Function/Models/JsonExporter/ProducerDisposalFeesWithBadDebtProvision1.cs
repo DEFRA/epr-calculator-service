@@ -31,7 +31,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
         public required decimal PublicBinTonnage { get; init; }
 
-        [JsonProperty(PropertyName = "householdDrinksContainersTonnageGlass")]
+        [JsonProperty(PropertyName = "householdDrinksContainersTonnageGlass", NullValueHandling = NullValueHandling.Ignore)]
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
         public decimal? HouseholdDrinksContainersTonnageGlass { get; set; }
 

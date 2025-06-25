@@ -6,7 +6,7 @@ namespace EPR.Calculator.Service.Function.Mapper
 {
     public class LateReportingTonnageMapper : ILateReportingTonnageMapper
     {
-        CalcResultLateReportingTonnageJson ILateReportingTonnageMapper.Map(CalcResultLateReportingTonnage calcResultLateReportingTonnage)
+        CalcResultLateReportingTonnageJson ILateReportingTonnageMapper.Map(CalcResultLateReportingTonnage? calcResultLateReportingTonnage)
         {
             if (calcResultLateReportingTonnage is null) return new CalcResultLateReportingTonnageJson();
             return new CalcResultLateReportingTonnageJson

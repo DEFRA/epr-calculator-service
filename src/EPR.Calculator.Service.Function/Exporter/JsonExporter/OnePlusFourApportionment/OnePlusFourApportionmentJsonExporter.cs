@@ -18,11 +18,10 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.OnePlusFourAppor
             onePlusFourApportionmentMapper = mapper;
         }
 
-        public string Export(CalcResultOnePlusFourApportionment calcResult1Plus4Apportionment)
+        public CalcResultOnePlusFourApportionmentJson Export(CalcResultOnePlusFourApportionment calcResult1Plus4Apportionment)
         {
-            if (calcResult1Plus4Apportionment.CalcResultOnePlusFourApportionmentDetails is null) return string.Empty;
-            var details = onePlusFourApportionmentMapper.Map(calcResult1Plus4Apportionment);
-            return JsonSerializer.Serialize(details);
+            if (calcResult1Plus4Apportionment.CalcResultOnePlusFourApportionmentDetails is null) return new CalcResultOnePlusFourApportionmentJson();
+            return onePlusFourApportionmentMapper.Map(calcResult1Plus4Apportionment);
         }
     }
 }

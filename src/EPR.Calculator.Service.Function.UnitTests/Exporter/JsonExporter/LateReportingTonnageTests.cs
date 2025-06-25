@@ -37,7 +37,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
             // Assert
             _lateReportingMapper.Verify(mock => mock.Map(It.IsAny<CalcResultLateReportingTonnage>()));
 
-            Assert.AreNotEqual(string.Empty, result);
+            Assert.AreNotEqual(null, result);
         }
     }
 }

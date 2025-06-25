@@ -36,7 +36,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.Scaled
             // Assert
             _testMapper.Verify(mock => mock.Map(It.IsAny<CalcResultScaledupProducers>(), It.IsAny<IEnumerable<int>>()));
 
-            Assert.AreNotEqual(string.Empty, result);
+            Assert.AreNotEqual(null, result);
         }
     }
 }
