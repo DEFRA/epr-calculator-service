@@ -50,7 +50,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.CommandTimeoutService = new Mock<ICommandTimeoutService>();
 
             this.Configuration = new Mock<IConfigurationService>();
-            this.Configuration.Setup(s => s.ResultFileCSVContainerName)
+            this.Configuration.Setup(s => s.BillingFileCSVBlobContainerName)
                 .Returns(this.Fixture.Create<string>());
             this.TelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
 

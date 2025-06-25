@@ -38,7 +38,7 @@
         public TimeSpan TransposeTimeout => TimeSpan.FromDays(1);
 
         /// <inheritdoc/>
-        public string ResultFileCSVContainerName => Configuration.GetValue("ResultFileCSVContainerName", string.Empty);
+        public string BillingFileCSVBlobContainerName => Configuration.GetValue("BillingFileCSVBlobContainerName", string.Empty);
 
         public string BlobConnectionString
             => Configuration.GetValue("BlobConnectionString", string.Empty);

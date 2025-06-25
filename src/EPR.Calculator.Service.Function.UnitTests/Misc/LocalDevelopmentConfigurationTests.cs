@@ -184,11 +184,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
             resultFileNameSection.Setup(v => v.Value).Returns(expectedResult);
 
             this.Configuration
-                .Setup(c => c.GetSection(nameof(LocalDevelopmentConfiguration.ResultFileCSVContainerName)))
+                .Setup(c => c.GetSection(nameof(LocalDevelopmentConfiguration.BillingFileCSVBlobContainerName)))
                 .Returns(resultFileNameSection.Object);
 
             // Assert
-            Assert.IsInstanceOfType(this.TestClass.ResultFileCSVContainerName, typeof(string));
+            Assert.IsInstanceOfType(this.TestClass.BillingFileCSVBlobContainerName, typeof(string));
         }
     }
 }

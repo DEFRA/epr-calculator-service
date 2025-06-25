@@ -212,11 +212,11 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var resultFileCSVContainerName = this.Fixture.Create<string>();
 
             Environment.SetEnvironmentVariable(
-               EnvironmentVariableKeys.ResultFileCSVContainerName,
+               EnvironmentVariableKeys.BillingFileCSVBlobContainerName,
                resultFileCSVContainerName.ToString());
 
             // Act
-            var result = new Configuration().ResultFileCSVContainerName;
+            var result = new Configuration().BillingFileCSVBlobContainerName;
 
             // Assert
             Assert.AreEqual(resultFileCSVContainerName, result);

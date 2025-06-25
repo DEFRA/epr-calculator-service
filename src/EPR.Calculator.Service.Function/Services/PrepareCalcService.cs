@@ -156,7 +156,7 @@
                     results.CalcResultDetail.RunName,
                     results.CalcResultDetail.RunDate);
 
-                string containerName = this.Config.ResultFileCSVContainerName;
+                string containerName = this.Config.BillingFileCSVBlobContainerName;
 
                 var blobUri = await this.storageService.UploadFileContentAsync(
                     (FileName: fileName, 
