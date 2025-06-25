@@ -1,4 +1,5 @@
 ﻿using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Models.JsonExporter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMater
 {
     public interface ICommsCostByMaterial2AExporter
     {
-        public string Export(IEnumerable<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial);
+        public CalcResult2ACommsDataByMaterial Export(IEnumerable<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial);
     }
 }

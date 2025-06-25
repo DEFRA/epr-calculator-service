@@ -5,22 +5,22 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
     public class JsonBillingFileExporter
     {
         [JsonProperty(PropertyName = "calcResultDetail")]
-        public required string CalcResultDetail { get; set; }
+        public required CalcResultDetailJson CalcResultDetail { get; set; }
 
         [JsonProperty(PropertyName = "calcResultLapcapData")]
-        public required string CalcResultLapcapData { get; set; }
+        public required object CalcResultLapcapData { get; set; }
 
         [JsonProperty(PropertyName = "calcResultLateReportingTonnageData")]
-        public required string CalcResultLateReportingTonnageData { get; set; }
+        public required CalcResultLateReportingTonnageJson CalcResultLateReportingTonnageData { get; set; }
 
         [JsonProperty(PropertyName = "onePlusFourApportionment")]
-        public required string OnePlusFourApportionment { get; set; }
+        public required CalcResultOnePlusFourApportionmentJson OnePlusFourApportionment { get; set; }
 
         [JsonProperty(PropertyName = "parametersCommsCost")]
-        public required string ParametersCommsCost { get; set; }
+        public required CalcResultCommsCostJson ParametersCommsCost { get; set; }
 
         [JsonProperty(PropertyName = "calcResult2aCommsDataByMaterial")]
-        public required string CalcResult2aCommsDataByMaterial { get; set; }
+        public required CalcResult2ACommsDataByMaterial CalcResult2aCommsDataByMaterial { get; set; }
 
         [JsonProperty(PropertyName = "calcResult2bCommsDataByUkWide")]
         public string? CalcResult2bCommsDataByUkWide { get; set; }
@@ -29,15 +29,15 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         public string? CalcResult2cCommsDataByCountry { get; set; }
 
         [JsonProperty(PropertyName = "calcResultLaDisposalCostData")]
-        public string? CalcResultLaDisposalCostData { get; set; }
+        public CalcResultLaDisposalCostDataJson? CalcResultLaDisposalCostData { get; set; }
 
         [JsonProperty(PropertyName = "cancelledProducers")]
-        public required string CancelledProducers { get; set; }
+        public required CancelledProducers CancelledProducers { get; set; }
 
         [JsonProperty(PropertyName = "scaleUpProducers")]
-        public required string ScaleUpProducers { get; set; }
+        public required CalcResultScaledupProducersJson ScaleUpProducers { get; set; }
 
         [JsonProperty(PropertyName = "calculationResults")]
-        public required string CalculationResults { get; set; }
+        public required object CalculationResults { get; set; }
     }
 }

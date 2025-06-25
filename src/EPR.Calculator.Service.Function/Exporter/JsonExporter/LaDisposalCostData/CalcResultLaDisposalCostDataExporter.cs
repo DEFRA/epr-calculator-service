@@ -1,5 +1,6 @@
 ﻿using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Models.JsonExporter;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,10 +19,9 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.LaDisposalCostDa
             this.mapper = mapper;
         }
 
-        public string Export(IEnumerable<CalcResultLaDisposalCostDataDetail> laDisposalCostData)
+        public CalcResultLaDisposalCostDataJson Export(IEnumerable<CalcResultLaDisposalCostDataDetail> laDisposalCostData)
         {
-            var result = this.mapper.Map(laDisposalCostData);
-            return JsonConvert.SerializeObject(result);
+            return this.mapper.Map(laDisposalCostData);
         }
     }
 }

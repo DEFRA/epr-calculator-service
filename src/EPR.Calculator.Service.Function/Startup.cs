@@ -35,7 +35,7 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.BillingInstructions;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResults;
-using EPR.Calculator.Service.Function.Exporter.JsonExporter.CancelledProducers;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter.CancelledProducersData;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMaterial2A;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.Detail;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.LaDisposalCostData;

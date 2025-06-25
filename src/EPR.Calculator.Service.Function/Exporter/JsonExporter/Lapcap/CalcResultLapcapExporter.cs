@@ -11,14 +11,8 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.Lapcap
     public class CalcResultLapcapExporter : ICalcResultLapcapExporter
     {
         /// <inheritdoc/>
-        public string ConvertToJson(CalcResultLapcapData data)
-            => JsonSerializer.Serialize(
-                new CalcResultLapcapDataToSerialise(data),
-                new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                    WriteIndented = true,
-                });
+        public object Export(CalcResultLapcapData data)
+            =>  new CalcResultLapcapDataToSerialise(data);
 
         /// <summary>
         /// Holds the lapcap data in a structure that will be serialised to the expected JSON layout.

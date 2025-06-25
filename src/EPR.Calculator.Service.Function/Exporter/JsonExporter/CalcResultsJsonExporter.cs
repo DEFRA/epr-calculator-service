@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using EPR.Calculator.API.Exporter;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResults;
-using EPR.Calculator.Service.Function.Exporter.JsonExporter.CancelledProducers;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter.CancelledProducersData;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMaterial2A;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.Detail;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.LaDisposalCostData;
@@ -66,7 +66,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
             var billingFileContent = new JsonBillingFileExporter()
             {
                 CalcResultDetail = calcResultDetailExporter.Export(results.CalcResultDetail),
-                CalcResultLapcapData = lapcapExporter.ConvertToJson(results.CalcResultLapcapData),
+                CalcResultLapcapData = lapcapExporter.Export(results.CalcResultLapcapData),
                 CalcResultLateReportingTonnageData = lateReportingTonnageExporter.Export(results.CalcResultLateReportingTonnageData),
                 OnePlusFourApportionment = onePlusFourApportionmentJsonExporter.Export(results.CalcResultOnePlusFourApportionment),
                 ParametersCommsCost = commsCostExporter.Export(results.CalcResultCommsCostReportDetail),

@@ -40,13 +40,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.Detail
 
             // Act
             var result = this.calcResultDetailExporter.Export(calcResultDetail);
-
+            var json = JsonSerializer.Serialize(result);
             // Assert
-            var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(result);
+            var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json);
 
-            AssertAreEqual(calcResultDetail.RunName, roundTrippedData!["runName"]);
-            AssertAreEqual(calcResultDetail.RunBy, roundTrippedData!["runBy"]);
-            AssertAreEqual(calcResultDetail.FinancialYear, roundTrippedData!["financialYear"]);
+            Assert.AreEqual(calcResultDetail.RunName, roundTrippedData!["RunName"]?.GetValue<string>());
+            Assert.AreEqual(calcResultDetail.RunBy, roundTrippedData!["RunBy"]?.GetValue<string>());
+            Assert.AreEqual(calcResultDetail.FinancialYear, roundTrippedData!["FinancialYear"]?.GetValue<string>());
         }
     }
 }

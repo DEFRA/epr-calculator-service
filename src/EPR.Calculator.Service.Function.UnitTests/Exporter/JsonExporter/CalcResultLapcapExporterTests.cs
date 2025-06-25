@@ -25,7 +25,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
             var data = Fixture.Create<CalcResultLapcapData>();
 
             // Act
-            var result = TestClass.ConvertToJson(data);
+            var result = TestClass.Export(data);
 
             // Assert
             Assert.AreNotEqual(string.Empty, result);

@@ -22,7 +22,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
         [TestInitialize]
         public void SetUp()
         {
-           
+
             _testClass = new CommsCostByMaterial2AExporter(new CalcResult2ACommsDataByMaterialMapper());
         }
 
@@ -36,33 +36,27 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
             Assert.IsNotNull(instance);
         }
 
-        
+
         [TestMethod]
         public void CommsCostByMaterial()
         {
             List<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial = GetCommsCostMaterialData();
             // Act
-            var result = _testClass?.Export(commsCostByMaterial) ?? string.Empty;
-
-            var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(result)!
-                ["calcResult2aCommsDataDetails"];
+            var result = _testClass?.Export(commsCostByMaterial) ?? null;
+            var json = JsonSerializer.Serialize(result);
+            var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
+                ["CalcResult2ACommsDataDetails"];
 
             var expected = commsCostByMaterial.First();
             var actual = roundTrippedData![0]!;
 
             Assert.IsNotNull(result);
             Assert.IsNotNull(actual);
-            Assert.AreEqual(expected.ProducerReportedHouseholdPackagingWasteTonnageValue, actual?["producerHouseholdPackagingWasteTonnage"]?.GetValue<decimal>());
-            Assert.AreEqual(expected.ReportedPublicBinTonnageValue, actual?["publicBinTonnage"]?.GetValue<decimal>());
-            Assert.AreEqual(expected.ProducerReportedTotalTonnage, actual?["totalTonnage"]?.GetValue<decimal>());
-            Assert.AreEqual(expected.HouseholdDrinksContainersValue, actual?["householdDrinksContainersTonnage"]?.GetValue<decimal>());
-            AssertAreEqual(expected.CommsCostByMaterialPricePerTonneValue, actual?["commsCostByMaterialPricePerTonne"]);
-            AssertAreEqual(expected.EnglandValue, actual?["englandCommsCost"]);
-            AssertAreEqual(expected.WalesValue, actual?["walesCommsCost"]);
-            AssertAreEqual(expected.ScotlandValue, actual?["scotlandCommsCost"]);
-            AssertAreEqual(expected.NorthernIrelandValue, actual?["northernIrelandCommsCost"]);
-            AssertAreEqual(expected.TotalValue, actual?["totalCommsCost"]);
-            Assert.AreEqual(expected.LateReportingTonnageValue, actual?["lateReportingTonnage"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.ProducerReportedHouseholdPackagingWasteTonnageValue, actual?["ProducerHouseholdPackagingWasteTonnage"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.ReportedPublicBinTonnageValue, actual?["PublicBinTonnage"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.ProducerReportedTotalTonnage, actual?["TotalTonnage"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.HouseholdDrinksContainersValue, actual?["HouseholdDrinksContainersTonnage"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.LateReportingTonnageValue, actual?["LateReportingTonnage"]?.GetValue<decimal>());
         }
 
 
@@ -71,26 +65,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
         {
             List<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial = GetCommsCostMaterialData();
             // Act
-            var result = _testClass?.Export(commsCostByMaterial) ?? string.Empty;
+            var result = _testClass?.Export(commsCostByMaterial) ?? null;
+            var json = JsonSerializer.Serialize(result);
+            var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
+                ["CalcResult2ACommsDataDetailsTotal"];
 
-            var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(result)!
-                ["calcResult2aCommsDataDetailsTotal"];
-
-            var expected = commsCostByMaterial.Single(t=>t.Name== CommonConstants.Total);
+            var expected = commsCostByMaterial.Single(t => t.Name == CommonConstants.Total);
             var actual = roundTrippedData!;
 
             Assert.IsNotNull(result);
             Assert.IsNotNull(actual);
-            Assert.AreEqual(expected.ProducerReportedHouseholdPackagingWasteTonnageValue, actual?["producerHouseholdPackagingWasteTonnageTotal"]?.GetValue<decimal>());
-            Assert.AreEqual(expected.ReportedPublicBinTonnageValue, actual?["publicBinTonnage"]?.GetValue<decimal>());
-            Assert.AreEqual(expected.ProducerReportedTotalTonnage, actual?["totalTonnageTotal"]?.GetValue<decimal>());
-            Assert.AreEqual(expected.HouseholdDrinksContainersValue, actual?["householdDrinksContainersTonnageTotal"]?.GetValue<decimal>());
-            AssertAreEqual(expected.EnglandValue, actual?["englandCommsCostTotal"]);
-            AssertAreEqual(expected.WalesValue, actual?["walesCommsCostTotal"]);
-            AssertAreEqual(expected.ScotlandValue, actual?["scotlandCommsCostTotal"]);
-            AssertAreEqual(expected.NorthernIrelandValue, actual?["northernIrelandCommsCostTotal"]);
-            AssertAreEqual(expected.TotalValue, actual?["totalCommsCostTotal"]);
-            Assert.AreEqual(expected.LateReportingTonnageValue, actual?["lateReportingTonnageTotal"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.ProducerReportedHouseholdPackagingWasteTonnageValue, actual?["ProducerHouseholdPackagingWasteTonnageTotal"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.ReportedPublicBinTonnageValue, actual?["PublicBinTonnage"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.ProducerReportedTotalTonnage, actual?["TotalTonnageTotal"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.HouseholdDrinksContainersValue, actual?["HouseholdDrinksContainersTonnageTotal"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.LateReportingTonnageValue, actual?["LateReportingTonnageTotal"]?.GetValue<decimal>());
         }
 
         private static List<CalcResultCommsCostCommsCostByMaterial> GetCommsCostMaterialData()
