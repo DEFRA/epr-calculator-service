@@ -799,6 +799,7 @@
                         WalesWithBadDebtProvision = 291.10m,
                         ScotlandWithBadDebtProvision = 579.85m,
                         NorthernIrelandWithBadDebtProvision = 227,
+                        HouseholdDrinksContainersTonnage = 220,
                     }
                 },
                 {
