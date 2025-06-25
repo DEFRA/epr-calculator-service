@@ -16,16 +16,16 @@
         public static readonly string DaysInWholePeriod = "Days in whole period";
         public static readonly string ScaleupFactor = "Scale-up factor";
 
-        public static readonly string ReportedHouseholdPackagingWasteTonnage = "Reported Household Packaging Tonnage";
-        public static readonly string ReportedPublicBinTonnage = "Reported Public Bin Tonnage";
-        public static readonly string TotalReportedTonnage = "Total Reported Tonnage";
-        public static readonly string ReportedSelfManagedConsumerWasteTonnage = "Reported Self Managed Consumer Waste Tonnage";
-        public static readonly string NetReportedTonnage = "Net Reported Tonnage";
-        public static readonly string ScaledupReportedHouseholdPackagingWasteTonnage = "Scaled-up Reported Household Packaging Tonnage";
-        public static readonly string ScaledupReportedPublicBinTonnage = "Scaled-up Reported Public Bin Tonnage";
-        public static readonly string ScaledupTotalReportedTonnage = "Scaled-up Total Reported Tonnage";
-        public static readonly string ScaledupReportedSelfManagedConsumerWasteTonnage = "Scaled-up Reported Self Managed Consumer Waste Tonnage";
-        public static readonly string ScaledupNetReportedTonnage = "Scaled-up Net Reported Tonnage";
+        public static readonly string HouseholdPackagingWasteTonnage = "Household Packaging Tonnage";
+        public static readonly string PublicBinTonnage = "Public Bin Tonnage";
+        public static readonly string TotalTonnage = "Total Tonnage";
+        public static readonly string SelfManagedConsumerWasteTonnage = "Self Managed Consumer Waste Tonnage";
+        public static readonly string NetTonnage = "Net Tonnage";
+        public static readonly string ScaledupHouseholdPackagingWasteTonnage = "Scaled-up Household Packaging Tonnage";
+        public static readonly string ScaledupPublicBinTonnage = "Scaled-up Public Bin Tonnage";
+        public static readonly string ScaledupTotalReportedTonnage = "Scaled-up Total Tonnage";
+        public static readonly string ScaledupReportedSelfManagedConsumerWasteTonnage = "Scaled-up Self Managed Consumer Waste Tonnage";
+        public static readonly string ScaledupNetReportedTonnage = "Scaled-up Net Tonnage";
         public static readonly string HouseholdDrinksContainersTonnageGlass = "Household Drinks Containers Tonnage - Glass";
         public static readonly string ScaledupHouseholdDrinksContainersTonnageGlass = "Scaled-up Household Drinks Containers Tonnage - Glass";
         public static readonly string NoScaledupProducers = "None";
