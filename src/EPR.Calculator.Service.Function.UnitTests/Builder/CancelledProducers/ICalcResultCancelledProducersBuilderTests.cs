@@ -17,8 +17,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
     {
         private Mock<ICalcResultCancelledProducersBuilder> _builderMock;
 
-        [TestInitialize]
-        public void Setup()
+        public ICalcResultCancelledProducersBuilderTests()
         {
             _builderMock = new Mock<ICalcResultCancelledProducersBuilder>();
         }

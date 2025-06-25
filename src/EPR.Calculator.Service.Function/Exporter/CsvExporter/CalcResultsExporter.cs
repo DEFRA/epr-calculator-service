@@ -26,6 +26,8 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         private readonly ICommsCostExporter commsCostExporter;
         private readonly ICalcResultCancelledProducersExporter calcResultCancelledProducersExporter;
 
+        // Suppress SonarQube warning for constructor parameter count  
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         public CalcResultsExporter(
             ILateReportingExporter lateReportingExporter,
             ICalcResultDetailExporter resultDetailexporter,

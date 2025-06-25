@@ -14,8 +14,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
     {
         private CalcResultCancelledProducersBuilder _builder;
 
-        [TestInitialize]
-        public void Setup()
+        public CalcResultCancelledProducersBuilderTests()
         {
             _builder = new CalcResultCancelledProducersBuilder();
         }

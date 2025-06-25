@@ -14,8 +14,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Cancell
     {
         private Mock<ICalcResultCancelledProducersExporter> _exporterMock;
 
-        [TestInitialize]
-        public void Setup()
+        public ICalcResultCancelledProducersExporterTests()
         {
             _exporterMock = new Mock<ICalcResultCancelledProducersExporter>();
         }
