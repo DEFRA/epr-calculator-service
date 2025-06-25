@@ -19,7 +19,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMater
             var ukWide = data.CalcResultCommsCostOnePlusFourApportionment
                 .SingleOrDefault(r => r.Name == CalcResultCommsCostBuilder.TwoBCommsCostUkWide);
 
-            return MapUkWide(ukWide);
+            return MapUkWide(ukWide!);
         }
 
         public virtual object? ConvertToJsonByCountry(CalcResultCommsCost data)
@@ -27,7 +27,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMater
             var byCountry = data.CalcResultCommsCostOnePlusFourApportionment
                 .SingleOrDefault(r => r.Name == CalcResultCommsCostBuilder.TwoCCommsCostByCountry);
 
-            return byCountry == null ? null : MapByCountry(byCountry);
+            return MapByCountry(byCountry!);
         }
 
         protected static object? MapUkWide(CalcResultCommsCostOnePlusFourApportionment record)
