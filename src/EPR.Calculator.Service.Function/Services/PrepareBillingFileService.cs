@@ -23,6 +23,13 @@ namespace EPR.Calculator.Service.Function.Services
     {
         public async Task<bool> PrepareBillingFileAsync(int calculatorRunId, string runName, string approvedBy)
         {
+            telemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = calculatorRunId,
+                RunName = runName,
+                Message = "PrepareBillingFileAsync started",
+            });
+
             // TODO We need validate the Run Classification Id But not part of this ticket
             var calculatorRun = await applicationDBContext.CalculatorRuns
             .SingleOrDefaultAsync(x => x.Id == calculatorRunId);
