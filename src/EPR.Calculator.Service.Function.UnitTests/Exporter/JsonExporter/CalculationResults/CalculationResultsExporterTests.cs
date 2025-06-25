@@ -306,6 +306,7 @@
             // Assert
             Assert.IsNotNull(roundTrippedData);
             var twoACosts = roundTrippedData[0]!["FeeForCommsCostsWithBadDebtProvision_2a"];
+            Assert.IsNotNull(twoACosts);
             var producer = data.ProducerDisposalFees.SingleOrDefault(t => !t.isTotalRow && !string.IsNullOrEmpty(t.Level));
             Assert.IsNotNull(producer);
             Assert.AreEqual(producer.NorthernIrelandTotalWithBadDebtProvision2A, twoACosts["NorthernIrelandTotalWithBadDebtProvision"]!.GetValue<decimal>());
@@ -393,6 +394,7 @@
             // Assert
             Assert.IsNotNull(roundTrippedData);
             var disposalFeeSummary1 = roundTrippedData[0]!["DisposalFeeSummary1"]!;
+            Assert.IsNotNull(roundTrippedData);
             var producer = data.ProducerDisposalFees.SingleOrDefault(t => !t.isTotalRow && !string.IsNullOrEmpty(t.Level))!;
 
             // Disposal Fee
@@ -415,9 +417,9 @@
 
             // Tonnage Change
             Assert.AreEqual(producer.TonnageChangeCount,
-                disposalFeeSummary1["TonnageChangeCount"].ToString());
+                disposalFeeSummary1["TonnageChangeCount"]?.ToString());
             Assert.AreEqual(producer.TonnageChangeAdvice,
-                disposalFeeSummary1["TonnageChangeAdvice"].ToString());
+                disposalFeeSummary1["TonnageChangeAdvice"]?.ToString());
         }
 
         [TestMethod]

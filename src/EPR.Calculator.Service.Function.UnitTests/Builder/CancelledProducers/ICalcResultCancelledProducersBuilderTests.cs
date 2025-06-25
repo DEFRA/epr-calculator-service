@@ -34,9 +34,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             var expectedResponse = new CalcResultCancelledProducersResponse
             {
                 TitleHeader = "Cancelled Producers",
-                CancelledProducers = new List<CalcResultCancelledProducersDTO>
+                CancelledProducers = new List<CalcResultCancelledProducersDto>
                 {
-                    new CalcResultCancelledProducersDTO
+                    new CalcResultCancelledProducersDto
                     {
                         ProducerIdValue = "P123",
                         TradingNameValue = "ABC Ltd",

@@ -26,7 +26,6 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
         private readonly IOnePlusFourApportionmentJsonExporter onePlusFourApportionmentJsonExporter;
         private readonly ICommsCostJsonExporter commsCostExporter;
         private readonly ICommsCostByMaterial2AExporter commsCostByMaterial2AExporter;
-        private readonly ICalcResultCommsCostOnePlusFourApportionmentExporter calcResultCommsCostOnePlusFourApportionmentExporter;
         private readonly ICalcResultLaDisposalCostDataExporter calcResultLaDisposalCostDataExporter;
         private readonly ICancelledProducersExporter cancelledProducersExporter;
         private readonly ICalcResultScaledupProducersJsonExporter calcResultScaledupProducersJsonExporter;
@@ -40,7 +39,6 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
             IOnePlusFourApportionmentJsonExporter onePlusFourApportionmentJsonExporter,
             ICommsCostJsonExporter commsCostExporter,
             ICommsCostByMaterial2AExporter commsCostByMaterial2AExporter,
-            ICalcResultCommsCostOnePlusFourApportionmentExporter calcResultCommsCostOnePlusFourApportionmentExporter,
             ICalcResultLaDisposalCostDataExporter calcResultLaDisposalCostDataExporter,
             ICancelledProducersExporter cancelledProducersExporter,
             ICalcResultScaledupProducersJsonExporter calcResultScaledupProducersJsonExporter,
@@ -52,7 +50,6 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
             this.onePlusFourApportionmentJsonExporter = onePlusFourApportionmentJsonExporter;
             this.commsCostExporter = commsCostExporter;
             this.commsCostByMaterial2AExporter = commsCostByMaterial2AExporter;
-            this.calcResultCommsCostOnePlusFourApportionmentExporter = calcResultCommsCostOnePlusFourApportionmentExporter;
             this.calcResultLaDisposalCostDataExporter = calcResultLaDisposalCostDataExporter;
             this.cancelledProducersExporter = cancelledProducersExporter;
             this.calcResultScaledupProducersJsonExporter = calcResultScaledupProducersJsonExporter;

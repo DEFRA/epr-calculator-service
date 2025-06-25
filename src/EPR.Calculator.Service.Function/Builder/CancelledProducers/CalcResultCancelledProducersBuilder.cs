@@ -17,7 +17,7 @@ public async Task<CalcResultCancelledProducersResponse> Construct(CalcResultsReq
             return await Task.Run(() =>
             {
                 // Set up Top Header  
-                var topHeader = new CalcResultCancelledProducersDTO
+                var topHeader = new CalcResultCancelledProducersDto
                 {
                     ProducerId_Header = CommonConstants.ProducerId,
                     SubsidiaryId_Header = CommonConstants.SubsidiaryId,
@@ -48,7 +48,7 @@ public async Task<CalcResultCancelledProducersResponse> Construct(CalcResultsReq
                 var response = new CalcResultCancelledProducersResponse
                 {
                     TitleHeader = CommonConstants.CancelledProducers,
-                    CancelledProducers = new List<CalcResultCancelledProducersDTO> { topHeader }
+                    CancelledProducers = new List<CalcResultCancelledProducersDto> { topHeader }
                 };
 
                 return response;

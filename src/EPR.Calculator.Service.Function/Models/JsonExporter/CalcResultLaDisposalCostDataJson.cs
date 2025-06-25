@@ -20,7 +20,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         public required CalcResultLaDisposalCostDataDetailsTotal CalcResultLaDisposalCostDataDetailsTotal { get; set; }
     }
 
-    public class CalcResultLaDisposalCostDetails : BaseLaDisposalcostAnd2aCommsData
+    public class CalcResultLaDisposalCostDetails : BaseLaDisposalcostAnd2ACommsData
     {
         [JsonProperty(PropertyName = "materialName")]
         public required string MaterialName { get; init; }
