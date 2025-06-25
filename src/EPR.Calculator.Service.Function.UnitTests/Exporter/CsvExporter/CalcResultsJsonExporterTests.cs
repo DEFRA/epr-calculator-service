@@ -1,6 +1,5 @@
 ﻿using AutoFixture;
 using EPR.Calculator.Service.Function.Builder.CommsCost;
-using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResults;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CancelledProducersData;
@@ -13,7 +12,7 @@ using EPR.Calculator.Service.Function.Exporter.JsonExporter.OnePlusFourApportion
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
-using Moq;
+using EPR.Calculator.Service.Function.UnitTests.Builder;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 {
@@ -32,7 +31,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         private ICalcResultLaDisposalCostDataExporter mockCalcResultLaDisposalCostDataExporter;
         private ICancelledProducersExporter mockCancelledProducersExporter;
         private ICalcResultScaledupProducersJsonExporter mockCalcResultScaledupProducersJsonExporter;
-        private Mock<ICalculationResultsExporter> mockCalculationResultsExporter;
+        private ICalculationResultsExporter mockCalculationResultsExporter;
 
         public CalcResultsJsonExporterTests()
         {
@@ -47,7 +46,22 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             mockCalcResultLaDisposalCostDataExporter = new CalcResultLaDisposalCostDataExporter(new CalcResultLaDisposalCostDataMapper());
             mockCancelledProducersExporter = new CancelledProducersExporter(new CancelledProducersMapper());
             mockCalcResultScaledupProducersJsonExporter = new CalcResultScaledupProducersJsonExporter(new CalcResultScaledupProducersJsonMapper());
-            mockCalculationResultsExporter =new Mock<ICalculationResultsExporter>();
+            mockCalculationResultsExporter = new CalculationResultsExporter(
+                new ProducerDisposalFeesWithBadDebtProvision1JsonMapper(),
+                new CommsCostsByMaterialFeesSummary2aMapper(),
+                new CalcResultCommsCostByMaterial2AJsonMapper(),
+                new SAOperatingCostsWithBadDebtProvisionMapper(),
+                new CalcResultLADataPrepCostsWithBadDebtProvision4Mapper(),
+                new FeeForCommsCostsWithBadDebtProvision2aMapper(),
+                new FeeForCommsCostsWithBadDebtProvision2bMapper(),
+                new TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper(),
+                new FeeForSASetUpCostsWithBadDebtProvision_5Mapper(),
+                new CalcResultCommsCostsWithBadDebtProvision2cMapper(),
+                new CalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper(),
+                new TotalProducerBillWithBadDebtProvisionMapper(),
+                new CalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper(),
+                new CalcResultProducerCalculationResultsTotalMapper(),
+                new DisposalFeeSummary1Mapper());
 
             testClass = new CalcResultsJsonExporter(
                 mockCalcResultDetailExporter,
@@ -60,7 +74,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 mockCalcResultLaDisposalCostDataExporter,
                 mockCancelledProducersExporter,
                 mockCalcResultScaledupProducersJsonExporter,
-                mockCalculationResultsExporter.Object);
+                mockCalculationResultsExporter);
         }
 
         [TestMethod]
@@ -335,53 +349,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                     },
                     ScaledupProducers = GetCalcResultScaledupProducerList(),
                 },
-                CalcResultSummary = new CalcResultSummary
-                {
-                    ResultSummaryHeader = new CalcResultSummaryHeader
-                    {
-                        Name = "SummaryData",
-                    },
-                    ProducerDisposalFeesHeaders = new List<CalcResultSummaryHeader>
-                    {
-                       new CalcResultSummaryHeader
-                       {
-                           Name = "Producer disposal fees header",
-                           ColumnIndex = 1,
-                       },
-                    },
-                    MaterialBreakdownHeaders = new List<CalcResultSummaryHeader>
-                    {
-                       new CalcResultSummaryHeader
-                       {
-                           Name = "Material breakdown header",
-                           ColumnIndex = 1,
-                       },
-                    },
-                    ColumnHeaders = new List<CalcResultSummaryHeader>
-                    {
-                       new CalcResultSummaryHeader
-                       {
-                           Name = "Column header",
-                           ColumnIndex = 1,
-                       },
-                    },
-                    ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
-                    {
-                        new CalcResultSummaryProducerDisposalFees
-                        {
-                            ProducerCommsFeesByMaterial =
-                                new Fixture().Create<Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>>(),
-                            ProducerDisposalFeesByMaterial =
-                                new Fixture().Create<Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>>(),
-                            ProducerId = "1",
-                            ProducerName = "Test",
-                            TotalProducerDisposalFeeWithBadDebtProvision = 100,
-                            TotalProducerCommsFeeWithBadDebtProvision = 100,
-                            SubsidiaryId = "1",
-                            ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 1,
-                        },
-                    },
-                },
+                CalcResultSummary = TestDataHelper.GetCalcResultSummary()
             };
         }
 

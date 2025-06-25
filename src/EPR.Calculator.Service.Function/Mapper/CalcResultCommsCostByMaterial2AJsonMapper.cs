@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
+using System.Collections.Generic;
 
 namespace EPR.Calculator.Service.Function.Mapper
 {
@@ -22,13 +23,12 @@ namespace EPR.Calculator.Service.Function.Mapper
 
             foreach (var item in commsCostByMaterial)
             {
-                materialBreakdown.Add(new CalcResultCommsCostByMaterial2AMaterialBreakdown
+                var breakdown = new CalcResultCommsCostByMaterial2AMaterialBreakdown
                 {
                     MaterialName = item.Key,
                     HouseholdPackagingWasteTonnage = item.Value.HouseholdPackagingWasteTonnage,
                     ReportedPublicBinTonnage = item.Value.ReportedPublicBinTonnage,
                     TotalReportedTonnage = item.Value.TotalReportedTonnage,
-                    HouseholdDrinksContainers = item.Value.HouseholdDrinksContainers,
                     PriceperTonne = item.Value.PriceperTonne,
                     ProducerTotalCostWithoutBadDebtProvision = item.Value.ProducerTotalCostWithoutBadDebtProvision,
                     BadDebtProvision = item.Value.BadDebtProvision,
@@ -37,7 +37,14 @@ namespace EPR.Calculator.Service.Function.Mapper
                     WalesWithBadDebtProvision = item.Value.WalesWithBadDebtProvision,
                     ScotlandWithBadDebtProvision = item.Value.ScotlandWithBadDebtProvision,
                     NorthernIrelandWithBadDebtProvision = item.Value.NorthernIrelandWithBadDebtProvision
-                });
+                };
+
+                if (item.Key == MaterialCodes.Glass)
+                {
+                    breakdown.HouseholdDrinksContainers = item.Value.HouseholdDrinksContainers;
+                }
+
+                materialBreakdown.Add(breakdown);
             }
 
             return materialBreakdown;
