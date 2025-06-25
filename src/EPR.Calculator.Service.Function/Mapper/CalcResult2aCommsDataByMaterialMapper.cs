@@ -27,16 +27,16 @@ namespace EPR.Calculator.Service.Function.Mapper
         {  
             return new calcResult2aCommsDataDetailsTotal
             {
-                EnglandCommsCostTotal = CurrencyUtil.ConvertToCurrency(commsCostByMaterial.EnglandValue),
+                EnglandCommsCostTotal = CurrencyConverter.ConvertToCurrency(commsCostByMaterial.EnglandValue),
                 HouseholdDrinksContainersTonnageTotal = commsCostByMaterial.HouseholdDrinksContainersValue,
                 LateReportingTonnageTotal = commsCostByMaterial.LateReportingTonnageValue,
-                NorthernIrelandCommsCostTotal = CurrencyUtil.ConvertToCurrency(commsCostByMaterial.NorthernIrelandValue),
-                ScotlandCommsCostTotal = CurrencyUtil.ConvertToCurrency(commsCostByMaterial.ScotlandValue),
-                WalesCommsCostTotal = CurrencyUtil.ConvertToCurrency(commsCostByMaterial.WalesValue),
+                NorthernIrelandCommsCostTotal = CurrencyConverter.ConvertToCurrency(commsCostByMaterial.NorthernIrelandValue),
+                ScotlandCommsCostTotal = CurrencyConverter.ConvertToCurrency(commsCostByMaterial.ScotlandValue),
+                WalesCommsCostTotal = CurrencyConverter.ConvertToCurrency(commsCostByMaterial.WalesValue),
                 ProducerHouseholdPackagingWasteTonnageTotal = commsCostByMaterial.ProducerReportedHouseholdPackagingWasteTonnageValue,
                 PublicBinTonnage = commsCostByMaterial.ReportedPublicBinTonnageValue,
                 Total = commsCostByMaterial.Name,
-                TotalCommsCostTotal = CurrencyUtil.ConvertToCurrency(commsCostByMaterial.TotalValue),
+                TotalCommsCostTotal = CurrencyConverter.ConvertToCurrency(commsCostByMaterial.TotalValue),
                 TotalTonnageTotal = commsCostByMaterial.ProducerReportedTotalTonnage
             };
         }
@@ -55,12 +55,12 @@ namespace EPR.Calculator.Service.Function.Mapper
                     PublicBinTonnage = item.ReportedPublicBinTonnageValue,
                     TotalTonnage = item.ProducerReportedTotalTonnage,
                     HouseholdDrinksContainersTonnage = item.HouseholdDrinksContainersValue,
-                    CommsCostByMaterialPricePerTonne = CurrencyUtil.ConvertToCurrency(item.CommsCostByMaterialPricePerTonneValue),
-                    EnglandCommsCost = CurrencyUtil.ConvertToCurrency(item.EnglandValue),
-                    WalesCommsCost = CurrencyUtil.ConvertToCurrency(item.WalesValue),
-                    ScotlandCommsCost = CurrencyUtil.ConvertToCurrency(item.ScotlandValue),
-                    NorthernIrelandCommsCost = CurrencyUtil.ConvertToCurrency(item.NorthernIrelandValue),
-                    TotalCommsCost = CurrencyUtil.ConvertToCurrency(item.TotalValue),
+                    CommsCostByMaterialPricePerTonne = CurrencyConverter.ConvertToCurrency(item.CommsCostByMaterialPricePerTonneValue),
+                    EnglandCommsCost = CurrencyConverter.ConvertToCurrency(item.EnglandValue),
+                    WalesCommsCost = CurrencyConverter.ConvertToCurrency(item.WalesValue),
+                    ScotlandCommsCost = CurrencyConverter.ConvertToCurrency(item.ScotlandValue),
+                    NorthernIrelandCommsCost = CurrencyConverter.ConvertToCurrency(item.NorthernIrelandValue),
+                    TotalCommsCost = CurrencyConverter.ConvertToCurrency(item.TotalValue),
                     LateReportingTonnage = item.LateReportingTonnageValue
                 });
             }
