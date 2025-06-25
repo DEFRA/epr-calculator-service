@@ -28,14 +28,14 @@
             csvContent.AppendLine(CsvSanitiser.SanitiseData(response.TitleHeader!));
 
             // Add sub header
-            WriteCancelledProducersSecondaryHeaders(response.CancelledProducers!, csvContent);
+            WriteCancelledProducersSecondaryHeaders(csvContent);
 
             // Add column header
             WriteCancelledProducersColumnHeaders(response.CancelledProducers!, csvContent);
             csvContent.AppendLine();
         }
 
-        private static void WriteCancelledProducersSecondaryHeaders(IEnumerable<CalcResultCancelledProducersDTO> headers, StringBuilder csvContent)
+        private static void WriteCancelledProducersSecondaryHeaders(StringBuilder csvContent)
         {
             const int maxColumnSize = CommonConstants.SecondaryHeaderMaxColumnSize;
             var headerRows = new string[maxColumnSize];
