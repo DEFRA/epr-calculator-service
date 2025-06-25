@@ -320,7 +320,7 @@
         {
             var expectedResult = new ProducerReportedMaterial
             {
-                Id = 1,
+                Id = 3,
                 MaterialId = 4,
                 ProducerDetailId = 1,
                 PackagingType = "CW",
