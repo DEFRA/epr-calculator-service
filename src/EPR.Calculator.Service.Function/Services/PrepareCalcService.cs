@@ -36,7 +36,8 @@
             ICalculatorTelemetryLogger telemetryLogger,
             IBillingInstructionService billingInstructionService,
             ICalcBillingJsonExporter<CalcResult> jsonExporter,
-            IConfigurationService configService)
+            IConfigurationService configService,
+            IBillingFileExporter<CalcResult> billingFileExporter)
         {
             this.Context = context.CreateDbContext();
             this.Builder = builder;
@@ -48,6 +49,7 @@
             this.billingInstructionService = billingInstructionService;
             this.ConfigService = configService;
             this.JsonExporter = jsonExporter;
+            this.BillingFileExporter = billingFileExporter;
         }
 
         public const string ContainerNameMissingError = "Container name is missing in configuration.";
@@ -71,6 +73,8 @@
         private IBillingInstructionService billingInstructionService { get; init; }
 
         private IConfigurationService ConfigService { get; init; }
+
+        private IBillingFileExporter<CalcResult> BillingFileExporter { get; init; }
 
         public async Task<bool> PrepareCalcResults(
             [FromBody] CalcResultsRequestDto resultsRequestDto,
@@ -263,6 +267,9 @@
             });
 
             var billingFileJsonName = new CalcResultsAndBillingFileName(resultsRequestDto.RunId, true, true);
+            var billngFileCSVName = new CalcResultsAndBillingFileName(resultsRequestDto.RunId,runName,DateTime.UtcNow,true);
+
+
 
             this.telemetryLogger.LogInformation(new TrackMessage
             {
@@ -281,6 +288,15 @@
             });
 
             // call csv Exporter
+
+            var exportedResults = this.BillingFileExporter.Export(calcResults, resultsRequestDto.AcceptedProducerIds);
+
+            await this.storageService.UploadFileContentAsync((
+                FileName: billngFileCSVName,
+                Content: exportedResults,
+                RunName: runName,
+                ContainerName: ConfigService.ResultFileCSVContainerName));
+            
 
             // upload the csv file to blob storage
 
@@ -331,6 +347,8 @@
             return true;
         }
 
+
+
         private async Task HandleErrorAsync(CalculatorRun? calculatorRun, RunClassification classification)
         {
             if (calculatorRun != null)
@@ -351,5 +369,8 @@
             };
             await this.Context.CalculatorRunCsvFileMetadata.AddAsync(csvFileMetadata);
         }
+
+
+
     }
 }

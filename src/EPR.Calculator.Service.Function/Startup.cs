@@ -185,6 +185,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcResultDetailJsonExporter, CalcResultDetailJsonExporter>();
             services.AddTransient<ICalcResultLaDisposalCostDataMapper, CalcResultLaDisposalCostDataMapper>();
             services.AddTransient<ICalcResultLaDisposalCostDataExporter, CalcResultLaDisposalCostDataExporter>();
+            services.AddTransient<IBillingFileExporter<CalcResult>, BillingFileExporter>();
 #if !DEBUG
 
             SetupBlobStorage(services);

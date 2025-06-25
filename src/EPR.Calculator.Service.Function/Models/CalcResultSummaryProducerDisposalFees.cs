@@ -200,5 +200,9 @@ namespace EPR.Calculator.Service.Function.Models
 
         public string? SuggestedInvoiceAmount { get; set; }
         // End Section - Billing Instructions
+
+        public int ProducerIdInt { get; set; }
+
+        public bool isOverallTotalRow { get; set; } = false;
     }
 }
