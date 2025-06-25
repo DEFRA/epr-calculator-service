@@ -7,6 +7,7 @@ using EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResults;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CancelledProducers;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMaterial2A;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.Detail;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter.LaDisposalCostData;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.Lapcap;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.LateReportingTonnage;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.OnePlusFourApportionment;
@@ -25,6 +26,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
         private readonly IOnePlusFourApportionmentJsonExporter onePlusFourApportionmentJsonExporter;
         private readonly ICommsCostJsonExporter commsCostExporter;
         private readonly ICommsCostByMaterial2AExporter commsCostByMaterial2AExporter;
+        private readonly ICalcResultLaDisposalCostDataExporter calcResultLaDisposalCostDataExporter;
         private readonly ICancelledProducersExporter cancelledProducersExporter;
         private readonly ICalcResultScaledupProducersJsonExporter calcResultScaledupProducersJsonExporter;
         private readonly ICalculationResultsExporter calculationResultsExporter;
@@ -37,6 +39,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
             IOnePlusFourApportionmentJsonExporter onePlusFourApportionmentJsonExporter,
             ICommsCostJsonExporter commsCostExporter,
             ICommsCostByMaterial2AExporter commsCostByMaterial2AExporter,
+            ICalcResultLaDisposalCostDataExporter calcResultLaDisposalCostDataExporter,
             ICancelledProducersExporter cancelledProducersExporter,
             ICalcResultScaledupProducersJsonExporter calcResultScaledupProducersJsonExporter,
             ICalculationResultsExporter calculationResultsExporter)
@@ -47,6 +50,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
             this.onePlusFourApportionmentJsonExporter = onePlusFourApportionmentJsonExporter;
             this.commsCostExporter = commsCostExporter;
             this.commsCostByMaterial2AExporter = commsCostByMaterial2AExporter;
+            this.calcResultLaDisposalCostDataExporter = calcResultLaDisposalCostDataExporter;
             this.cancelledProducersExporter = cancelledProducersExporter;
             this.calcResultScaledupProducersJsonExporter = calcResultScaledupProducersJsonExporter;
             this.calculationResultsExporter = calculationResultsExporter;
@@ -67,6 +71,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
                 OnePlusFourApportionment = onePlusFourApportionmentJsonExporter.Export(results.CalcResultOnePlusFourApportionment),
                 ParametersCommsCost = commsCostExporter.Export(results.CalcResultCommsCostReportDetail),
                 CalcResult2aCommsDataByMaterial = commsCostByMaterial2AExporter.Export(results.CalcResultCommsCostReportDetail.CalcResultCommsCostCommsCostByMaterial),
+                CalcResultLaDisposalCostData = calcResultLaDisposalCostDataExporter.Export(results.CalcResultLaDisposalCostData.CalcResultLaDisposalCostDetails),
                 CancelledProducers = cancelledProducersExporter.Export(results.CalcResultCancelledProducers),
                 ScaleUpProducers = calcResultScaledupProducersJsonExporter.Export(results.CalcResultScaledupProducers, acceptedProducerIds),
                 CalculationResults = calculationResultsExporter.Export(results.CalcResultSummary, acceptedProducerIds)
