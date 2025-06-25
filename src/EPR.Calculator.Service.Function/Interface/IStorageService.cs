@@ -4,6 +4,7 @@
 
     public interface IStorageService
     {
-        Task<string> UploadResultFileContentAsync(string fileName, string content, string runName);
+        Task<string> UploadFileContentAsync(
+            (string FileName, string Content, string RunName, string ContainerName) args);
     }
 }

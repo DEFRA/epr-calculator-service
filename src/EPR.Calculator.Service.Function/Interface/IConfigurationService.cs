@@ -31,7 +31,7 @@
 
         TimeSpan TransposeTimeout { get; }
 
-        string BlobContainerName { get; }
+        string ResultFileCSVContainerName { get; }
 
         string BlobConnectionString { get; }
 

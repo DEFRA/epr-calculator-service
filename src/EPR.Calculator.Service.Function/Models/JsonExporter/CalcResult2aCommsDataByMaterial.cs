@@ -7,74 +7,41 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
-{
+{   
     public class CalcResult2ACommsDataByMaterial
     {
+        [JsonProperty(PropertyName = "name")]
+        public string Name { get; set; } = "2a Comms Costs - by Material";
+
         [JsonProperty(PropertyName = "calcResult2aCommsDataDetails")]
         public required IEnumerable<CalcResult2ACommsDataDetails> CalcResult2ACommsDataDetails {  get; set; }
+
+        [JsonProperty(PropertyName = "calcResult2aCommsDataDetailsTotal")]
+        public required calcResult2aCommsDataDetailsTotal CalcResult2ACommsDataDetailsTotal { get; set; }
     }
 
-    public class CalcResult2ACommsDataDetails
+    public class CalcResult2ACommsDataDetails : BaseLaDisposalcostAnd2aCommsData
     {
         [JsonProperty(PropertyName = "materialName")]
-
         public required string MaterialName { get; init; }
 
-
         [JsonProperty(PropertyName = "englandCommsCost")]
-
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public required decimal EnglandCommsCost { get; init; }
+        public required string EnglandCommsCost { get; init; }
 
         [JsonProperty(PropertyName = "walesCommsCost")]
-
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public required decimal WalesCommsCost { get; init; }
+        public required string WalesCommsCost { get; init; }
 
         [JsonProperty(PropertyName = "scotlandCommsCost")]
-
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public required decimal ScotlandCommsCost { get; init; }
+        public required string ScotlandCommsCost { get; init; }
 
         [JsonProperty(PropertyName = "northernIrelandCommsCost")]
-
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public required decimal NorthernIrelandCommsCost { get; init; }
+        public required string NorthernIrelandCommsCost { get; init; }
 
         [JsonProperty(PropertyName = "totalCommsCost")]
-
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public required decimal TotalCommsCost { get; init; }
-
-        [JsonProperty(PropertyName = "producerHouseholdPackagingWasteTonnage")]
-
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public required decimal ProducerHouseholdPackagingWasteTonnage { get; init; }
-
-        [JsonProperty(PropertyName = "publicBinTonnage")]
-
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public required decimal PublicBinTonnage { get; init; }
-
-        [JsonProperty(PropertyName = "householdDrinksContainersTonnage")]
-
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public required decimal HouseholdDrinksContainersTonnage { get; init; }
-
-        [JsonProperty(PropertyName = "lateReportingTonnage")]
-
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public required decimal LateReportingTonnage { get; init; }
-
-        [JsonProperty(PropertyName = "totalTonnage")]
-
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public required decimal TotalTonnage { get; init; }
+        public required string TotalCommsCost { get; init; }
 
         [JsonProperty(PropertyName = "commsCostByMaterialPricePerTonne")]
-
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public required decimal CommsCostByMaterialPricePerTonne { get; init; }
+        public required string CommsCostByMaterialPricePerTonne { get; init; }
 
     }
 }
