@@ -14,18 +14,29 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMater
 {
     public class CalcResultCommsCostOnePlusFourApportionmentExporter : ICalcResultCommsCostOnePlusFourApportionmentExporter
     {
-        public virtual string ConvertToJson(CalcResultCommsCost data)
+        public virtual string ConvertToJsonByUKWide(CalcResultCommsCost data)
         {
             var ukWide = data.CalcResultCommsCostOnePlusFourApportionment
                 .Single(r => r.Name == CalcResultCommsCostBuilder.TwoBCommsCostUkWide);
-            var byCountry = data.CalcResultCommsCostOnePlusFourApportionment
-                .Single(r=> r.Name == CalcResultCommsCostBuilder.TwoCCommsCostByCountry);
 
             return
                 JsonSerializer.Serialize(
                 new
                 {
                     calcResult2bCommsDataByUkWide = MapUkWide(ukWide),
+                },
+                GetJsonSerializerOptions());
+        }
+
+        public virtual string ConvertToJsonByCountry(CalcResultCommsCost data)
+        {
+            var byCountry = data.CalcResultCommsCostOnePlusFourApportionment
+                .Single(r => r.Name == CalcResultCommsCostBuilder.TwoCCommsCostByCountry);
+
+            return
+                JsonSerializer.Serialize(
+                new
+                {
                     calcResult2cCommsDataByCountry = MapByCountry(byCountry),
                 },
                 GetJsonSerializerOptions());
