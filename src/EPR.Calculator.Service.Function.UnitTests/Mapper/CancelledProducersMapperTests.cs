@@ -1,4 +1,5 @@
 ﻿using AutoFixture;
+using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
@@ -47,6 +48,47 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 
             // Assert
             Assert.AreEqual(new CancelledProducers(), result);
+        }
+
+        [TestMethod]
+        public void Map_ShouldMapCancelledProducersCorrectly()
+        {
+            // Arrange  
+            var input = new CalcResultCancelledProducersResponse
+            {
+                CancelledProducers = new List<CalcResultCancelledProducersDTO>
+               {
+                   new CalcResultCancelledProducersDTO
+                   {
+                       ProducerIdValue = "123",
+                       SubsidiaryIdValue = "Sub123",
+                       ProducerOrSubsidiaryNameValue = "Producer A",
+                       TradingNameValue = "Trading A",
+                       LastTonnage = new LastTonnage
+                       {
+                           AluminiumValue = 10,
+                           FibreCompositeValue = 20,
+                           GlassValue = 30
+                       }
+                   }
+               }
+            };
+
+            // Act  
+            var result = _testClass.Map(input);
+
+            // Assert  
+            Assert.IsNotNull(result);
+            Assert.IsNotNull(result.CancelledProducerTonnageInvoice);
+            Assert.AreEqual(CommonConstants.CancelledProducers, result.Name);
+            Assert.AreEqual(1, result.CancelledProducerTonnageInvoice.Count());
+
+            var invoice = result.CancelledProducerTonnageInvoice.First();
+            Assert.AreEqual(123, invoice.ProducerId);
+            Assert.AreEqual("Sub123", invoice.SubsidiaryId);
+            Assert.AreEqual("Producer A", invoice.ProducerName);
+            Assert.AreEqual("Trading A", invoice.TradingName);
+            Assert.AreEqual(8, invoice.LastProducerTonnages.Count());
         }
     }
 }
