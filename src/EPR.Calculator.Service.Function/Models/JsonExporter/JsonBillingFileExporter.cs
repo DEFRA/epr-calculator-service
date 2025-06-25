@@ -23,10 +23,10 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         public CalcResult2ACommsDataByMaterial? CalcResult2aCommsDataByMaterial { get; set; }
 
         [JsonProperty(PropertyName = "calcResult2bCommsDataByUkWide")]
-        public string? CalcResult2bCommsDataByUkWide { get; set; }
+        public object? CalcResult2bCommsDataByUkWide { get; set; }
 
         [JsonProperty(PropertyName = "calcResult2cCommsDataByCountry")]
-        public string? CalcResult2cCommsDataByCountry { get; set; }
+        public object? CalcResult2cCommsDataByCountry { get; set; }
 
         [JsonProperty(PropertyName = "calcResultLaDisposalCostData")]
         public CalcResultLaDisposalCostDataJson? CalcResultLaDisposalCostData { get; set; }

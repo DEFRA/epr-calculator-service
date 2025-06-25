@@ -4,11 +4,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
     using EPR.Calculator.Service.Function.Builder.CommsCost;
     using EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMaterial2A;
     using EPR.Calculator.Service.Function.Models;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System.Linq;
     using System.Text.Json;
     using System.Text.Json.Nodes;
     using static EPR.Calculator.Service.Common.UnitTests.Utils.JsonNodeComparer;
-    using System.Linq;
 
     [TestClass]
     public class CalcResultCommsCostOnePlusFourApportionmentExporterTests
@@ -45,10 +46,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
             var commsCostData = BuildTestCommsCostData(countryData, ukWideData);
 
             // Act
-            var json = this.TestClass.ConvertToJsonByUKWide(commsCostData);
-
-            var roundTrippedUkWideData = JsonSerializer.Deserialize<JsonObject>(json)!
-                ["calcResult2bCommsDataByUkWide"];
+            var result = this.TestClass.ConvertToJsonByUKWide(commsCostData);
+            var json = JsonSerializer.Serialize(result);
+            var roundTrippedUkWideData = JsonSerializer.Deserialize<JsonObject>(json);
 
             // Assert
             Assert.IsNotNull(roundTrippedUkWideData);
@@ -92,10 +92,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
             var commsCostData = BuildTestCommsCostData(countryData, ukWideData);
 
             // Act
-            var json = this.TestClass.ConvertToJsonByCountry(commsCostData);
-
-            var roundTrippedCountryData = JsonSerializer.Deserialize<JsonObject>(json)!
-                ["calcResult2cCommsDataByCountry"];
+            var result = this.TestClass.ConvertToJsonByCountry(commsCostData);
+            var json = JsonSerializer.Serialize(result);
+            var roundTrippedCountryData = JsonSerializer.Deserialize<JsonObject>(json);
 
             // Assert
             Assert.IsNotNull(roundTrippedCountryData);
