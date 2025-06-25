@@ -327,27 +327,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                     },
                     Name = "LA Disposal Cost Data",
                 },
-                CalcResultScaledupProducers = new CalcResultScaledupProducers
-                {
-                    TitleHeader = new CalcResultScaledupProducerHeader
-                    {
-                        Name = "Scaled-up Producers",
-                    },
-                    MaterialBreakdownHeaders = new List<CalcResultScaledupProducerHeader>()
-                    {
-                        new CalcResultScaledupProducerHeader { Name = "Each submission for the year", ColumnIndex = 1 },
-                        new CalcResultScaledupProducerHeader { Name = "Aluminium Breakdown", ColumnIndex = 2 },
-                        new CalcResultScaledupProducerHeader { Name = "Glass Breakdown", ColumnIndex = 3 },
-                    },
-                    ColumnHeaders = new List<CalcResultScaledupProducerHeader>()
-                    {
-                        new CalcResultScaledupProducerHeader { Name = "Producer ID" },
-                        new CalcResultScaledupProducerHeader { Name = "Subsidiary ID" },
-                        new CalcResultScaledupProducerHeader { Name = "HouseholdDrinksContainersTonnageGlass" },
-                        new CalcResultScaledupProducerHeader { Name = "ScaledupHouseholdDrinksContainersTonnageGlass" },
-                    },
-                    ScaledupProducers = GetCalcResultScaledupProducerList(),
-                },
+                CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers(),
                 CalcResultSummary = TestDataHelper.GetCalcResultSummary()
             };
         }
