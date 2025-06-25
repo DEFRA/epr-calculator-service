@@ -79,5 +79,50 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Cancell
             Assert.IsTrue(csvOutput.Contains(CommonConstants.RunName), "CSV should include RunName column.");
             Assert.IsTrue(csvOutput.Contains(CommonConstants.BillingInstructionId), "CSV should include BillingInstructionId column.");
         }
+
+        [TestMethod]
+        public void Export_ShouldAddEmptyLinesAndHeaders()
+        {
+            // Arrange  
+            var exporter = new CalcResultCancelledProducersExporter();
+            var response = new CalcResultCancelledProducersResponse
+            {
+                TitleHeader = "Cancelled Producers",
+                CancelledProducers = new List<CalcResultCancelledProducersDTO>()
+            };
+            var csvContent = new StringBuilder();
+
+            // Act  
+            exporter.Export(response, csvContent);
+
+            // Assert  
+            var result = csvContent.ToString();
+            Assert.IsTrue(result.Contains("Cancelled Producers"));
+            Assert.IsTrue(result.Contains("Last Tonnage"));
+            Assert.IsTrue(result.Contains("Latest Invoice"));
+            Assert.IsTrue(result.Contains(",,,,,")); // Check for empty values         
+        
+        }
+
+        [TestMethod]
+        public void Export_ShouldHandleEmptyCancelledProducers()
+        {
+            // Arrange  
+            var exporter = new CalcResultCancelledProducersExporter();
+            var response = new CalcResultCancelledProducersResponse
+            {
+                TitleHeader = "Cancelled Producers",
+                CancelledProducers = new List<CalcResultCancelledProducersDTO>()
+            };
+            var csvContent = new StringBuilder();
+
+            // Act  
+            exporter.Export(response, csvContent);
+
+            // Assert  
+            var result = csvContent.ToString();
+            Assert.IsTrue(result.Contains("Cancelled Producers"));
+            Assert.IsFalse(result.Contains("ProducerId"));
+        }
     }
 }
