@@ -5,6 +5,6 @@
 
     public interface ICalcResultCancelledProducersExporter
     {
-        public void Export(CalcResultCancelledProducersResponse calcResultCancelledProducers, StringBuilder stringBuilder);
+        public void Export(CalcResultCancelledProducersResponse calcResultCancelledProducers, StringBuilder csvContent);
     }
 }

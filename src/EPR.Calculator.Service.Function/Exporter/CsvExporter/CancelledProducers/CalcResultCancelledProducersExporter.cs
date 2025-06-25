@@ -11,14 +11,15 @@
 
     public class CalcResultCancelledProducersExporter : ICalcResultCancelledProducersExporter
     {
-        public void Export(CalcResultCancelledProducersResponse cancelledProducers, StringBuilder csvContent)
+
+        public void Export(CalcResultCancelledProducersResponse calcResultCancelledProducers, StringBuilder csvContent)
         {
             // Add empty lines
             csvContent.AppendLine();
             csvContent.AppendLine();
 
             // Add headers
-            PrepareCancelledProducersHeader(cancelledProducers, csvContent);
+            PrepareCancelledProducersHeader(calcResultCancelledProducers, csvContent);
         }
 
         private static void PrepareCancelledProducersHeader(CalcResultCancelledProducersResponse response, StringBuilder csvContent)
