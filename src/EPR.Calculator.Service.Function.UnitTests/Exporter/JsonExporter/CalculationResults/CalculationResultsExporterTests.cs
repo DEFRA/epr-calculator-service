@@ -430,7 +430,8 @@
 
             // Assert
             Assert.IsNotNull(roundTrippedData);
-            var billingInstructions = roundTrippedData[0]?["calculationOfSuggestedBillingInstructionsAndInvoiceAmounts"];
+            Assert.IsNotNull(roundTrippedData[0]);
+            var billingInstructions = roundTrippedData[0]!["calculationOfSuggestedBillingInstructionsAndInvoiceAmounts"];
             Assert.IsNotNull(billingInstructions);
         }
 
