@@ -9,79 +9,85 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
     public record CalcResultScaledupProducersJson
     {
-        [JsonProperty("name")]
+        [JsonProperty(PropertyName = "name")]
         public string? Name { get; set; }
 
-        [JsonProperty("producerSubmissions")]
+        [JsonProperty(PropertyName = "producerSubmissions")]
         public IEnumerable<ProducerSubmission>? ProducerSubmissions { get; set; }
     }
 
     public record ProducerSubmission
     {
-        [JsonProperty("producerId")]
+        [JsonProperty(PropertyName = "producerId")]
         public int ProducerId { get; set; }
 
-        [JsonProperty("subsidiaryId")]
+        [JsonProperty(PropertyName = "subsidiaryId")]
         public string? SubsidiaryId { get; set; }
 
-        [JsonProperty("producerName")]
+        [JsonProperty(PropertyName = "producerName")]
         public string? ProducerName { get; set; }
 
-        [JsonProperty("tradingName")]
+        [JsonProperty(PropertyName = "tradingName")]
         public string? TradingName { get; set; }
 
-        [JsonProperty("level")]
+        [JsonProperty(PropertyName = "level")]
         public int? Level { get; set; }
 
-        [JsonProperty("submissionPeriodCode")]
+        [JsonProperty(PropertyName = "submissionPeriodCode")]
         public string? SubmissionPeriodCode { get; set; }
 
-        [JsonProperty("daysInSubmissionPeriod")]
+        [JsonProperty(PropertyName = "daysInSubmissionPeriod")]
         public int DaysInSubmissionPeriod { get; set; }
 
-        [JsonProperty("daysInWholePeriod")]
+        [JsonProperty(PropertyName = "daysInWholePeriod")]
         public int DaysInWholePeriod { get; set; }
 
-        [JsonProperty("scaleUpFactor")]
+        [JsonProperty(PropertyName = "scaleUpFactor")]
         public decimal ScaleUpFactor { get; set; }
 
-        [JsonProperty("materialBreakdown")]
+        [JsonProperty(PropertyName = "materialBreakdown")]
         public required IEnumerable<MaterialBreakdown> MaterialBreakdown { get; set; }
     }
 
     public record MaterialBreakdown
     {
-        [JsonProperty("materialName")]
+        [JsonProperty(PropertyName = "materialName")]
         public string? MaterialName { get; set; }
 
-        [JsonProperty("reportedHouseholdPackagingWasteTonnage")]
+        [JsonProperty(PropertyName = "reportedHouseholdPackagingWasteTonnage")]
         public decimal ReportedHouseholdPackagingWasteTonnage { get; set; }
 
-        [JsonProperty("reportedPublicBinTonnage")]
+        [JsonProperty(PropertyName = "reportedPublicBinTonnage")]
         public decimal ReportedPublicBinTonnage { get; set; }
 
-        [JsonProperty("totalReportedTonnage")]
+        [JsonProperty(PropertyName = "householdDrinksContainersTonnageGlass", NullValueHandling = NullValueHandling.Ignore)]
+        public decimal? HouseholdDrinksContainersTonnageGlass { get; set; }
+
+        [JsonProperty(PropertyName = "totalReportedTonnage")]
         public decimal TotalReportedTonnage { get; set; }
 
-        [JsonProperty("reportedSelfManagedConsumerWasteTonnage")]
+        [JsonProperty(PropertyName = "reportedSelfManagedConsumerWasteTonnage")]
         public decimal ReportedSelfManagedConsumerWasteTonnage { get; set; }
 
-        [JsonProperty("netReportedTonnage")]
+        [JsonProperty(PropertyName = "netReportedTonnage")]
         public decimal NetReportedTonnage { get; set; }
 
-        [JsonProperty("scaledUpReportedHouseholdPackagingWasteTonnage")]
+        [JsonProperty(PropertyName = "scaledUpReportedHouseholdPackagingWasteTonnage")]
         public decimal ScaledUpReportedHouseholdPackagingWasteTonnage { get; set; }
 
-        [JsonProperty("scaledUpReportedPublicBinTonnage")]
+        [JsonProperty(PropertyName = "scaledUpReportedPublicBinTonnage")]
         public decimal ScaledUpReportedPublicBinTonnage { get; set; }
 
-        [JsonProperty("scaledUpTotalReportedTonnage")]
+        [JsonProperty(PropertyName = "scaledupHouseholdDrinksContainersTonnageGlass", NullValueHandling = NullValueHandling.Ignore)]
+        public decimal? ScaledupHouseholdDrinksContainersTonnageGlass { get; set; }
+
+        [JsonProperty(PropertyName = "scaledUpTotalReportedTonnage")]
         public decimal ScaledUpTotalReportedTonnage { get; set; }
 
-        [JsonProperty("scaledUpReportedSelfManagedConsumerWasteTonnage")]
+        [JsonProperty(PropertyName = "scaledUpReportedSelfManagedConsumerWasteTonnage")]
         public decimal ScaledUpReportedSelfManagedConsumerWasteTonnage { get; set; }
 
-        [JsonProperty("scaledUpNetReportedTonnage")]
+        [JsonProperty(PropertyName = "scaledUpNetReportedTonnage")]
         public decimal ScaledUpNetReportedTonnage { get; set; }
     }
 }

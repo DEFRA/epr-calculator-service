@@ -1025,7 +1025,7 @@
                 MaterialBreakdownHeaders = new List<CalcResultScaledupProducerHeader>(),
                 TitleHeader = new CalcResultScaledupProducerHeader()
                 {
-                    Name = "Title",
+                    Name = "Scaled-up Producers",
                     ColumnIndex = 1,
                 },
                 ScaledupProducers = new List<CalcResultScaledupProducer>()
