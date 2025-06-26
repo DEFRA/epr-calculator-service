@@ -1,8 +1,10 @@
 ﻿namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.ScaledupProducers
 {
     using System.Text;
+    using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
     using EPR.Calculator.Service.Function.Models;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
@@ -36,6 +38,16 @@
             // Assert
             Assert.IsTrue(result.Contains("101001"));
             Assert.IsTrue(result.Contains("Allied Packaging"));
+            Assert.IsTrue(result.Contains(CalcResultScaledupProducerHeaders.HouseholdPackagingWasteTonnage));
+            Assert.IsTrue(result.Contains(CalcResultScaledupProducerHeaders.PublicBinTonnage));
+            Assert.IsTrue(result.Contains(CalcResultScaledupProducerHeaders.TotalTonnage));
+            Assert.IsTrue(result.Contains(CalcResultScaledupProducerHeaders.SelfManagedConsumerWasteTonnage));
+            Assert.IsTrue(result.Contains(CalcResultScaledupProducerHeaders.NetTonnage));
+            Assert.IsTrue(result.Contains(CalcResultScaledupProducerHeaders.ScaledupHouseholdPackagingWasteTonnage));
+            Assert.IsTrue(result.Contains(CalcResultScaledupProducerHeaders.ScaledupPublicBinTonnage));
+            Assert.IsTrue(result.Contains(CalcResultScaledupProducerHeaders.ScaledupTotalTonnage));
+            Assert.IsTrue(result.Contains(CalcResultScaledupProducerHeaders.ScaledupSelfManagedConsumerWasteTonnage));
+            Assert.IsTrue(result.Contains(CalcResultScaledupProducerHeaders.ScaledupTotalTonnage));            
         }
 
         [TestMethod]
@@ -163,18 +175,18 @@
                 new CalcResultScaledupProducerHeader { Name = "Days in submission period" },
                 new CalcResultScaledupProducerHeader { Name = "Days in whole period" },
                 new CalcResultScaledupProducerHeader { Name = "Scale-up factor" },
-                new CalcResultScaledupProducerHeader { Name = "Reported Household Packaging Tonnage" },
-                new CalcResultScaledupProducerHeader { Name = "Reported Public Bin Tonnage" },
-                new CalcResultScaledupProducerHeader { Name = "Household Drinks Containers Tonnage - Glass" },
-                new CalcResultScaledupProducerHeader { Name = "Total Reported Tonnage" },
-                new CalcResultScaledupProducerHeader { Name = "Reported Self Managed Consumer Waste Tonnage" },
-                new CalcResultScaledupProducerHeader { Name = "Net Reported Tonnage" },
-                new CalcResultScaledupProducerHeader { Name = "Scaled-up Reported Household Packaging Tonnage" },
-                new CalcResultScaledupProducerHeader { Name = "Scaled-up Reported Public Bin Tonnage" },
-                new CalcResultScaledupProducerHeader { Name = "Scaled-up Household Drinks Containers Tonnage - Glass" },
-                new CalcResultScaledupProducerHeader { Name = "Scaled-up Total Reported Tonnage" },
-                new CalcResultScaledupProducerHeader { Name = "Scaled-up Reported Self Managed Consumer Waste Tonnage" },
-                new CalcResultScaledupProducerHeader { Name = "Scaled-up Net Reported Tonnage" },
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.HouseholdPackagingWasteTonnage },
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.PublicBinTonnage },
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.HouseholdDrinksContainersTonnageGlass },
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.TotalTonnage },
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.SelfManagedConsumerWasteTonnage },
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.NetTonnage },
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupHouseholdPackagingWasteTonnage },
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupPublicBinTonnage },
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupHouseholdDrinksContainersTonnageGlass },
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupTotalTonnage },
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupSelfManagedConsumerWasteTonnage },
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupTotalTonnage },
             };
         }
 
