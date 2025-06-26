@@ -350,8 +350,8 @@
             { BlobUri = csvBlobUri, CalculatorRunId = resultsRequestDto.RunId, FileName = billingFileCsvName };
 
             this.Context.CalculatorRunCsvFileMetadata.Add(csvFileMetaData);
-
-            await this.Context.SaveChangesAsync();
+                       
+                await this.Context.SaveChangesAsync();
 
             this.telemetryLogger.LogInformation(new TrackMessage
             {
