@@ -4,7 +4,6 @@
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
     using EPR.Calculator.Service.Function.Models;
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
