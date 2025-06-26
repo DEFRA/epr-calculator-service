@@ -36,9 +36,6 @@
             ICalculatorTelemetryLogger telemetryLogger,
             IBillingInstructionService billingInstructionService,
             ICalcBillingJsonExporter<CalcResult> jsonExporter,
-            IConfigurationService configService,
-            IBillingFileExporter<CalcResult> billingFileExporter)
-            ICalcBillingJsonExporter<CalcResult> jsonExporter,
             IConfigurationService configService)
         {
             this.Context = context.CreateDbContext();
@@ -49,9 +46,6 @@
             this.commandTimeoutService = commandTimeoutService;
             this.telemetryLogger = telemetryLogger;
             this.billingInstructionService = billingInstructionService;
-            this.ConfigService = configService;
-            this.JsonExporter = jsonExporter;
-            this.BillingFileExporter = billingFileExporter;
             this.ConfigService = configService;
             this.JsonExporter = jsonExporter;
         }
@@ -77,8 +71,6 @@
         private IBillingInstructionService billingInstructionService { get; init; }
 
         private IConfigurationService ConfigService { get; init; }
-
-        private IBillingFileExporter<CalcResult> BillingFileExporter { get; init; }
 
         public async Task<bool> PrepareCalcResults(
             [FromBody] CalcResultsRequestDto resultsRequestDto,
@@ -164,8 +156,8 @@
                 string containerName = this.ConfigService.ResultFileCSVContainerName;
 
                 var blobUri = await this.storageService.UploadFileContentAsync(
-                    (FileName: fileName, 
-                    Content: exportedResults, 
+                    (FileName: fileName,
+                    Content: exportedResults,
                     RunName: runName,
                     ContainerName: containerName));
 
