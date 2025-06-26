@@ -140,7 +140,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
             var commsCostData = BuildTestCommsCostData(countryData, ukWideData);
 
             // Act
-            var result = this.TestClass.ConvertToJsonByUKWide(commsCostData);
+            var result = this.TestClass.ConvertToJsonByCountry(commsCostData);
             var json = JsonSerializer.Serialize(result);
             var roundTrippedCountryData = JsonSerializer.Deserialize<JsonObject>(json);
 
