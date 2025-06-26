@@ -5,10 +5,10 @@ namespace EPR.Calculator.Service.Function.Models
     public class CalcResultCancelledProducersResponse
     {
         public string? TitleHeader { get; set; }
-        public IEnumerable<CalcResultCancelledProducersDTO> CancelledProducers { get; set; } = [];
+        public IEnumerable<CalcResultCancelledProducersDto> CancelledProducers { get; set; } = [];
     }
 
-    public class CalcResultCancelledProducersDTO
+    public class CalcResultCancelledProducersDto
     {
         public string? ProducerId_Header { get; set; }
         public string? SubsidiaryId_Header { get; set; }

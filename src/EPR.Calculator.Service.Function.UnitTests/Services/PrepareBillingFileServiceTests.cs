@@ -60,13 +60,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Arrange
             var calculatorRunId = 99854;
             var calculatorName = "Test";
+            var approvedBy = "user";
             var service = new PrepareBillingFileService(
                 this._context,
                 this.PrepareCalcService.Object,
                 this.MockLogger.Object);
 
             // Act
-            var result = await service.PrepareBillingFileAsync(calculatorRunId, calculatorName);
+            var result = await service.PrepareBillingFileAsync(calculatorRunId, calculatorName, approvedBy);
 
             // Assert
             Assert.AreEqual(false, result);
@@ -89,9 +90,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 this._context,
                 this.PrepareCalcService.Object,
                 this.MockLogger.Object);
+            var approvedBy = "user";
 
             // Act
-            var result = await service.PrepareBillingFileAsync(calculatorRunId, calculatorName);
+            var result = await service.PrepareBillingFileAsync(calculatorRunId, calculatorName, approvedBy);
 
             // Assert
             Assert.AreEqual(false, result);
@@ -140,9 +142,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 _context,
                 PrepareCalcService.Object,
                 MockLogger.Object);
+            var approvedBy = "user";
 
             // Act
-            var result = await service.PrepareBillingFileAsync(calculatorRunId, calculatorName);
+            var result = await service.PrepareBillingFileAsync(calculatorRunId, calculatorName, approvedBy);
 
             // Assert
             Assert.IsTrue(result);

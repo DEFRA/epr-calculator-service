@@ -11,7 +11,7 @@ namespace EPR.Calculator.Service.Function.Mapper
 {
     public interface ICalcResult2ACommsDataByMaterialMapper
     {
-       public CalcResult2ACommsDataByMaterial Map(List<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial);
+       public CalcResult2ACommsDataByMaterial Map(IEnumerable<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial);
 
     }
 }

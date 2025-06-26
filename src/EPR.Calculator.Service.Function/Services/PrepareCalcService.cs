@@ -1,11 +1,11 @@
 ﻿namespace EPR.Calculator.Service.Function.Services
 {
-    using Azure.Storage.Blobs;
+    using System;
+    using System.Threading;
+    using System.Threading.Tasks;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.API.Exporter;
-    using EPR.Calculator.API.Validators;
-    using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Function.Builder;
     using EPR.Calculator.Service.Function.Dtos;
@@ -14,15 +14,8 @@
     using EPR.Calculator.Service.Function.Interface;
     using EPR.Calculator.Service.Function.Misc;
     using EPR.Calculator.Service.Function.Models;
-    using Microsoft.ApplicationInsights;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
-    using Microsoft.IdentityModel.Abstractions;
-    using System;
-    using System.Configuration;
-    using System.Threading;
-    using System.Threading.Tasks;
 
     /// <summary>
     /// Service for preparing calculation results.
@@ -42,7 +35,8 @@
             ICommandTimeoutService commandTimeoutService,
             ICalculatorTelemetryLogger telemetryLogger,
             IBillingInstructionService billingInstructionService,
-            IConfigurationService config)
+            ICalcBillingJsonExporter<CalcResult> jsonExporter,
+            IConfigurationService configService)
         {
             this.Context = context.CreateDbContext();
             this.Builder = builder;
@@ -52,7 +46,8 @@
             this.commandTimeoutService = commandTimeoutService;
             this.telemetryLogger = telemetryLogger;
             this.billingInstructionService = billingInstructionService;
-            this.Config = config;
+            this.ConfigService = configService;
+            this.JsonExporter = jsonExporter;
         }
 
         public const string ContainerNameMissingError = "Container name is missing in configuration.";
@@ -62,6 +57,8 @@
         private ApplicationDBContext Context { get; init; }
 
         private ICalcResultBuilder Builder { get; init; }
+
+        private ICalcBillingJsonExporter<CalcResult> JsonExporter { get; init; }
 
         private ICalcResultsExporter<CalcResult> Exporter { get; init; }
 
@@ -73,7 +70,7 @@
 
         private IBillingInstructionService billingInstructionService { get; init; }
 
-        private IConfigurationService Config { get; init; }
+        private IConfigurationService ConfigService { get; init; }
 
         public async Task<bool> PrepareCalcResults(
             [FromBody] CalcResultsRequestDto resultsRequestDto,
@@ -151,12 +148,12 @@
                     Message = "Uploader started...",
                 });
 
-                var fileName = new CalcResultsFileName(
+                var fileName = new CalcResultsAndBillingFileName(
                     results.CalcResultDetail.RunId,
                     results.CalcResultDetail.RunName,
                     results.CalcResultDetail.RunDate);
 
-                string containerName = this.Config.ResultFileCSVContainerName;
+                string containerName = this.ConfigService.ResultFileCSVContainerName;
 
                 var blobUri = await this.storageService.UploadFileContentAsync(
                     (FileName: fileName, 
@@ -230,11 +227,108 @@
             return false;
         }
 
-        public Task<bool> PrepareBillingResults([FromBody] CalcResultsRequestDto resultsRequestDto,
+        public async Task<bool> PrepareBillingResults([FromBody] CalcResultsRequestDto resultsRequestDto,
             string runName,
             CancellationToken cancellationToken)
         {
-            throw new NotImplementedException("PrepareBillingResults is not implemented yet.");
+
+            this.telemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = resultsRequestDto.RunId,
+                RunName = runName,
+                Message = "Billing Builder started...",
+            });
+
+            var calcResults = await this.Builder.Build(resultsRequestDto);
+
+            this.telemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = resultsRequestDto.RunId,
+                RunName = runName,
+                Message = "Billing Builder ended...",
+            });
+
+            // Get File name for the billing json file
+            var billingFileCsvName = new CalcResultsAndBillingFileName(
+                resultsRequestDto.RunId,
+                runName,
+                DateTime.Now,
+                true);
+
+            this.telemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = resultsRequestDto.RunId,
+                RunName = runName,
+                Message = $"Billing file CSV file name only is created {billingFileCsvName}",
+            });
+
+            var billingFileJsonName = new CalcResultsAndBillingFileName(resultsRequestDto.RunId, true, true);
+
+            this.telemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = resultsRequestDto.RunId,
+                RunName = runName,
+                Message = $"Billing file JSON file name only is created {billingFileJsonName}",
+            });
+
+            var jsonResponse = this.JsonExporter.Export(calcResults, resultsRequestDto.AcceptedProducerIds);
+
+            this.telemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = resultsRequestDto.RunId,
+                RunName = runName,
+                Message = $"Billing file JSON content is now created",
+            });
+
+            // call csv Exporter
+
+            // upload the csv file to blob storage
+
+            this.telemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = resultsRequestDto.RunId,
+                RunName = runName,
+                Message = $"Billing file JSON file before upload {billingFileJsonName}",
+            });
+
+            await this.storageService.UploadFileContentAsync((
+                FileName: billingFileJsonName,
+                Content: jsonResponse,
+                RunName: runName,
+                ContainerName: ConfigService.ResultFileCSVContainerName));
+
+            this.telemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = resultsRequestDto.RunId,
+                RunName = runName,
+                Message = $"Billing file JSON file after upload {billingFileJsonName}",
+            });
+
+            var calcRun = await this.Context.CalculatorRuns.SingleAsync(run => run.Id == resultsRequestDto.RunId);
+            calcRun.IsBillingFileGenerating = false;
+
+
+            var billingFileMetadata = new CalculatorRunBillingFileMetadata
+            {
+                BillingCsvFileName = billingFileCsvName.ToString(),
+                BillingFileCreatedBy = resultsRequestDto.ApprovedBy,
+                CalculatorRunId = resultsRequestDto.RunId,
+                BillingFileCreatedDate = DateTime.UtcNow,
+                BillingJsonFileName = billingFileJsonName.ToString(),
+            };
+
+            this.Context.CalculatorRunBillingFileMetadata.Add(billingFileMetadata);
+
+            await this.Context.SaveChangesAsync();
+
+            this.telemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = resultsRequestDto.RunId,
+                RunName = runName,
+                Message = $"Billing file All generated and updated successfully",
+            });
+
+            return true;
         }
 
         private async Task HandleErrorAsync(CalculatorRun? calculatorRun, RunClassification classification)

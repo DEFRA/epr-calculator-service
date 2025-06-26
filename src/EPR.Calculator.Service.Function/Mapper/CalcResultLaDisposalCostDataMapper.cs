@@ -14,7 +14,7 @@ namespace EPR.Calculator.Service.Function.Mapper
 {
     public class CalcResultLaDisposalCostDataMapper : ICalcResultLaDisposalCostDataMapper
     {
-        public CalcResultLaDisposalCostDataJson Map(List<CalcResultLaDisposalCostDataDetail> laDisposalCostDataDetail)
+        public CalcResultLaDisposalCostDataJson Map(IEnumerable<CalcResultLaDisposalCostDataDetail> laDisposalCostDataDetail)
         {
             return new CalcResultLaDisposalCostDataJson
             {
@@ -24,7 +24,7 @@ namespace EPR.Calculator.Service.Function.Mapper
             };
         }
 
-        public CalcResultLaDisposalCostDataDetailsTotal GetTotalRow(List<CalcResultLaDisposalCostDataDetail> laDisposalCostDataDetail)
+        public CalcResultLaDisposalCostDataDetailsTotal GetTotalRow(IEnumerable<CalcResultLaDisposalCostDataDetail> laDisposalCostDataDetail)
         {
             var laDisposalCostDetailTotal = laDisposalCostDataDetail
     .SingleOrDefault(t => t.Name == CommonConstants.Total);
@@ -63,7 +63,7 @@ namespace EPR.Calculator.Service.Function.Mapper
         }
 
         public IEnumerable<CalcResultLaDisposalCostDetails> GetMaterialBreakdown(
-           List<CalcResultLaDisposalCostDataDetail> laDisposalCostDataDetail)
+           IEnumerable<CalcResultLaDisposalCostDataDetail> laDisposalCostDataDetail)
         {
             var commsByMaterialDataDetails = new List<CalcResultLaDisposalCostDetails>();
 

@@ -56,9 +56,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             // Arrange  
             var input = new CalcResultCancelledProducersResponse
             {
-                CancelledProducers = new List<CalcResultCancelledProducersDTO>
+                CancelledProducers = new List<CalcResultCancelledProducersDto>
                {
-                   new CalcResultCancelledProducersDTO
+                   new CalcResultCancelledProducersDto
                    {
                        ProducerIdValue = "123",
                        SubsidiaryIdValue = "Sub123",

@@ -1,4 +1,5 @@
 ﻿using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Models.JsonExporter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.LaDisposalCostDa
 {
     public interface ICalcResultLaDisposalCostDataExporter
     {
-        public string Export(List<CalcResultLaDisposalCostDataDetail> laDisposalCostData);
+        public CalcResultLaDisposalCostDataJson Export(IEnumerable<CalcResultLaDisposalCostDataDetail> laDisposalCostData);
     }
 }

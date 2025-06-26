@@ -47,7 +47,7 @@
             csvContent.AppendLine(headerRow);
         }
 
-        private static void WriteCancelledProducersColumnHeaders(IEnumerable<CalcResultCancelledProducersDTO> producers, StringBuilder csvContent)
+        private static void WriteCancelledProducersColumnHeaders(IEnumerable<CalcResultCancelledProducersDto> producers, StringBuilder csvContent)
         {
             if (!producers.Any())
             {

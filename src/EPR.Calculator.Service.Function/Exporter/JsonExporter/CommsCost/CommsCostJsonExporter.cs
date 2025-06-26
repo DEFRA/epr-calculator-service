@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Text.Unicode;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Models.JsonExporter;
 using Newtonsoft.Json;
 
 namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
@@ -17,10 +18,9 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
             this.mapper = mapper;
         }
 
-        public string Export(CalcResultCommsCost communicationCost)
+        public CalcResultCommsCostJson Export(CalcResultCommsCost communicationCost)
         {
-            var result = this.mapper.Map(communicationCost);
-            return JsonConvert.SerializeObject(result);
+            return this.mapper.Map(communicationCost);
         }       
     }
 }

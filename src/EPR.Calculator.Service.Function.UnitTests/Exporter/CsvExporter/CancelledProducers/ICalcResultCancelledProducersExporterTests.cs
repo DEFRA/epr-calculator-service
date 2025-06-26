@@ -26,9 +26,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Cancell
             var response = new CalcResultCancelledProducersResponse
             {
                 TitleHeader = "Cancelled Producers Export",
-                CancelledProducers = new List<CalcResultCancelledProducersDTO>
+                CancelledProducers = new List<CalcResultCancelledProducersDto>
                 {
-                    new CalcResultCancelledProducersDTO
+                    new CalcResultCancelledProducersDto
                     {
                         ProducerIdValue = "PR123",
                         TradingNameValue = "Acme Ltd",

@@ -46,7 +46,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
 
             mockMapper.Setup(m => m.Map(input)).Returns(mappedResult);
 
-            var expectedJson = JsonConvert.SerializeObject(mappedResult);
+            var expectedJson = mappedResult;
 
             // Act
             var actualJson = exporter.Export(input);
@@ -82,7 +82,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
 
             // Assert  
             Assert.IsNotNull(result);
-            Assert.AreEqual(Newtonsoft.Json.JsonConvert.SerializeObject(mappedResult), result);
+            Assert.AreEqual(mappedResult, result);
         }
     }
 }

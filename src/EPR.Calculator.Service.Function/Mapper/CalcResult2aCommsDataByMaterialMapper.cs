@@ -14,7 +14,7 @@ namespace EPR.Calculator.Service.Function.Mapper
 {
     public class CalcResult2ACommsDataByMaterialMapper : ICalcResult2ACommsDataByMaterialMapper
     {
-        public CalcResult2ACommsDataByMaterial Map(List<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial)
+        public CalcResult2ACommsDataByMaterial Map(IEnumerable<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial)
         {
             return new CalcResult2ACommsDataByMaterial
             {
@@ -23,9 +23,9 @@ namespace EPR.Calculator.Service.Function.Mapper
             };
         }
 
-        public calcResult2aCommsDataDetailsTotal GetTotalRow(CalcResultCommsCostCommsCostByMaterial commsCostByMaterial)
+        public CalcResult2ACommsDataDetailsTotal GetTotalRow(CalcResultCommsCostCommsCostByMaterial commsCostByMaterial)
         {  
-            return new calcResult2aCommsDataDetailsTotal
+            return new CalcResult2ACommsDataDetailsTotal
             {
                 EnglandCommsCostTotal = CurrencyConverter.ConvertToCurrency(commsCostByMaterial.EnglandValue),
                 HouseholdDrinksContainersTonnageTotal = commsCostByMaterial.HouseholdDrinksContainersValue,
@@ -42,7 +42,7 @@ namespace EPR.Calculator.Service.Function.Mapper
         }
 
         public IEnumerable<CalcResult2ACommsDataDetails> GetMaterialBreakdown(
-           List<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial)
+           IEnumerable<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial)
         {
             var commsByMaterialDataDetails = new List<CalcResult2ACommsDataDetails>();
 

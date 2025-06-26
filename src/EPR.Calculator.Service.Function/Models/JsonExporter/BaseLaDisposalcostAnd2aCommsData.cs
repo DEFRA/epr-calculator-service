@@ -9,7 +9,7 @@ using static Microsoft.Azure.Amqp.Serialization.SerializableType;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
-    public class BaseLaDisposalcostAnd2aCommsData
+    public class BaseLaDisposalcostAnd2ACommsData
     {
         [JsonProperty(PropertyName = "producerHouseholdPackagingWasteTonnage")]
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]

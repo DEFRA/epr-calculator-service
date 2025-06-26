@@ -14,52 +14,55 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMater
 {
     public class CalcResultCommsCostOnePlusFourApportionmentExporter : ICalcResultCommsCostOnePlusFourApportionmentExporter
     {
-        public virtual string ConvertToJson(CalcResultCommsCost data)
+        public virtual object? ConvertToJsonByUKWide(CalcResultCommsCost data)
         {
             var ukWide = data.CalcResultCommsCostOnePlusFourApportionment
-                .Single(r => r.Name == CalcResultCommsCostBuilder.TwoBCommsCostUkWide);
-            var byCountry = data.CalcResultCommsCostOnePlusFourApportionment
-                .Single(r=> r.Name == CalcResultCommsCostBuilder.TwoCCommsCostByCountry);
+                .SingleOrDefault(r => r.Name == CalcResultCommsCostBuilder.TwoBCommsCostUkWide);
 
-            return
-                JsonSerializer.Serialize(
-                new
-                {
-                    calcResult2bCommsDataByUkWide = MapUkWide(ukWide),
-                    calcResult2cCommsDataByCountry = MapByCountry(byCountry),
-                },
-                GetJsonSerializerOptions());
+            return MapUkWide(ukWide!);
         }
 
-        protected static object MapUkWide(CalcResultCommsCostOnePlusFourApportionment record)
-        => new
+        public virtual object? ConvertToJsonByCountry(CalcResultCommsCost data)
         {
-            name = record.Name,
-            englandCommsCostUKWide = record.England,
-            walesCommsCostUKWide = record.Wales,
-            scotlandCommsCostUKWide = record.Scotland,
-            northernIrelandCommsCostUKWide = record.NorthernIreland,
-            totalCommsCostUKWide = record.Total,
-        };
+            var byCountry = data.CalcResultCommsCostOnePlusFourApportionment
+                .SingleOrDefault(r => r.Name == CalcResultCommsCostBuilder.TwoCCommsCostByCountry);
 
-        protected static object MapByCountry(CalcResultCommsCostOnePlusFourApportionment record)
-        => new
-        {
-            name = record.Name,
-            englandCommsCostByCountry = record.England,
-            walesCommsCostByCountry = record.Wales,
-            scotlandCommsCostByCountry = record.Scotland,
-            northernIrelandCommsCostByCountry = record.NorthernIreland,
-            totalCommsCostByCountry = record.Total,
-        };
+            return MapByCountry(byCountry!);
+        }
 
-        protected static JsonSerializerOptions GetJsonSerializerOptions()
+        protected static object? MapUkWide(CalcResultCommsCostOnePlusFourApportionment record)
         {
-            return new JsonSerializerOptions
+            if (record == null)
             {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                WriteIndented = true,
-                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                return null;
+            }
+
+            return new
+            {
+                name = record.Name,
+                englandCommsCostUKWide = record.England,
+                walesCommsCostUKWide = record.Wales,
+                scotlandCommsCostUKWide = record.Scotland,
+                northernIrelandCommsCostUKWide = record.NorthernIreland,
+                totalCommsCostUKWide = record.Total,
+            };
+        }
+
+        protected static object? MapByCountry(CalcResultCommsCostOnePlusFourApportionment record)
+        {
+            if (record == null)
+            {
+                return null;
+            }
+
+            return new
+            {
+                name = record.Name,
+                englandCommsCostByCountry = record.England,
+                walesCommsCostByCountry = record.Wales,
+                scotlandCommsCostByCountry = record.Scotland,
+                northernIrelandCommsCostByCountry = record.NorthernIreland,
+                totalCommsCostByCountry = record.Total,
             };
         }
     }

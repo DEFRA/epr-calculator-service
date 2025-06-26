@@ -18,9 +18,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
 
             // Act  
             response.TitleHeader = "Test Title";
-            response.CancelledProducers = new List<CalcResultCancelledProducersDTO>
+            response.CancelledProducers = new List<CalcResultCancelledProducersDto>
            {
-               new CalcResultCancelledProducersDTO
+               new CalcResultCancelledProducersDto
                {
                    ProducerId_Header = "Producer ID Header",
                    ProducerIdValue = "Producer ID Value"
@@ -39,7 +39,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
         public void CalcResultCancelledProducersDTO_ShouldInitializeProperties()
         {
             // Arrange  
-            var dto = new CalcResultCancelledProducersDTO();
+            var dto = new CalcResultCancelledProducersDto();
 
             // Act  
             dto.ProducerId_Header = "Producer ID Header";

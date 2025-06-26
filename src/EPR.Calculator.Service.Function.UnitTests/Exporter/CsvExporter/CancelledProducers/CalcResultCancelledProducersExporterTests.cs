@@ -22,9 +22,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Cancell
             var cancelledProducersResponse = new CalcResultCancelledProducersResponse
             {
                 TitleHeader = CommonConstants.CancelledProducers,
-                CancelledProducers = new List<CalcResultCancelledProducersDTO>
+                CancelledProducers = new List<CalcResultCancelledProducersDto>
                 {
-                    new CalcResultCancelledProducersDTO
+                    new CalcResultCancelledProducersDto
                     {
                         ProducerId_Header = CommonConstants.ProducerId,
                         SubsidiaryId_Header = CommonConstants.SubsidiaryId,
@@ -88,7 +88,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Cancell
             var response = new CalcResultCancelledProducersResponse
             {
                 TitleHeader = "Cancelled Producers",
-                CancelledProducers = new List<CalcResultCancelledProducersDTO>()
+                CancelledProducers = new List<CalcResultCancelledProducersDto>()
             };
             var csvContent = new StringBuilder();
 
@@ -112,7 +112,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Cancell
             var response = new CalcResultCancelledProducersResponse
             {
                 TitleHeader = "Cancelled Producers",
-                CancelledProducers = new List<CalcResultCancelledProducersDTO>()
+                CancelledProducers = new List<CalcResultCancelledProducersDto>()
             };
             var csvContent = new StringBuilder();
 
