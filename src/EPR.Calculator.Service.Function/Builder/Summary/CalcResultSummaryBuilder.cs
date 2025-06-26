@@ -266,9 +266,10 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             }
 
             var producerForTotalRow = GetProducerDetailsForTotalRow(producersAndSubsidiaries[0].ProducerId, isOverAllTotalRow);
-
+            const int overallTotalId = 0;
             var totalRow = new CalcResultSummaryProducerDisposalFees
             {
+                ProducerIdInt = isOverAllTotalRow ? overallTotalId : producersAndSubsidiaries[0].ProducerId,
                 ProducerId = isOverAllTotalRow ? string.Empty : producersAndSubsidiaries[0].ProducerId.ToString(),
                 ProducerName = producerForTotalRow == null ? string.Empty : producerForTotalRow.OrganisationName,
                 SubsidiaryId = string.Empty,
@@ -327,6 +328,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 PercentageofProducerReportedTonnagevsAllProducers = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducersTotal(producersAndSubsidiaries, TotalPackagingTonnage),
 
                 isTotalRow = true,
+                isOverallTotalRow = isOverAllTotalRow,
             };
 
             TwoCCommsCostUtil.UpdateTwoCTotals(calcResult, producerDisposalFees, isOverAllTotalRow, totalRow, producersAndSubsidiaries, TotalPackagingTonnage);
@@ -348,6 +350,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
             var result = new CalcResultSummaryProducerDisposalFees
             {
+                ProducerIdInt = producer.ProducerId,
                 ProducerId = producer.ProducerId.ToString(),
                 ProducerName = producer.ProducerName ?? string.Empty,
                 SubsidiaryId = producer.SubsidiaryId ?? string.Empty,
