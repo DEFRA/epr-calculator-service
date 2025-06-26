@@ -1,4 +1,6 @@
-﻿using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
+﻿using EPR.Calculator.Service.Common.Utils;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
@@ -25,6 +27,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         private readonly ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter;
         private readonly ICalcResultLaDisposalCostExporter laDisposalCostExporter;
         private readonly ICommsCostExporter commsCostExporter;
+        private readonly ICalcResultCancelledProducersExporter calcResultCancelledProducersExporter;
 
         public BillingFileExporter(
             ILateReportingExporter lateReportingExporter,
@@ -35,7 +38,8 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             ILapcaptDetailExporter lapcaptDetailExporter,
             ICalcResultParameterOtherCostExporter parameterOtherCosts,
             ICommsCostExporter commsCostExporter,
-            ICalcResultSummaryExporter calcResultSummaryExporter)
+            ICalcResultSummaryExporter calcResultSummaryExporter,
+            ICalcResultCancelledProducersExporter calcResultCancelledProducersExporter)
         {
             this.resultDetailexporter = resultDetailexporter;
             this.onePlusFourApportionmentExporter = onePlusFourApportionmentExporter;
@@ -46,6 +50,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             this.calcResultSummaryExporter = calcResultSummaryExporter;
             this.laDisposalCostExporter = laDisposalCostExporter;
             this.commsCostExporter = commsCostExporter;
+            this.calcResultCancelledProducersExporter = calcResultCancelledProducersExporter;
         }
 
         public string Export(CalcResult results, IEnumerable<int> acceptedProducerIds)
@@ -69,6 +74,8 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             commsCostExporter.Export(results.CalcResultCommsCostReportDetail, csvContent);
 
             laDisposalCostExporter.Export(results.CalcResultLaDisposalCostData, csvContent);
+
+            calcResultCancelledProducersExporter.Export(results.CalcResultCancelledProducers, csvContent);
 
             var acceptedProducers = GetScaledUpProducersForExport(
                 results.CalcResultScaledupProducers,
@@ -122,19 +129,15 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         {
             var acceptedProducerFees = producerDisposalFees.Where(
                 x => acceptedProducerIds.Contains(x.ProducerIdInt)
-                || x.ProducerIdInt == 0).ToList();
-
-            //acceptedProducerFees.Remove(acceptedProducerFees.Where(t => t.isOverallTotalRow).SingleOrDefault());
-            //acceptedProducerFees.Add(new CalcResultSummaryProducerDisposalFees() { ProducerId = string.Empty, ProducerName = string.Empty, SubsidiaryId = string.Empty, isOverallTotalRow = true });
+                || x.ProducerIdInt == 0).ToList();            
 
             acceptedProducerFees.ForEach(x =>
             {
                 if (x.isOverallTotalRow)
                 {
-                    //acceptedProducerFees.Remove(x);
-                    //  acceptedProducerFees.Add(new CalcResultSummaryProducerDisposalFees() { ProducerId = string.Empty, ProducerName = string.Empty, SubsidiaryId = string.Empty, isOverallTotalRow = true });
-                    // x.LaDataPrepCostsBadDebtProvisionSection4 = string.Empty;7
-                    ResetObject(x);
+                    x.ProducerCommsFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>();
+                    x.ProducerDisposalFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>();
+                    ResetObjectUtil.ResetObject(x);
                 }
             });
             return acceptedProducerFees;
@@ -169,46 +172,11 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             {
                 if (x.IsTotalRow)
                 {
-                    ResetObject(x);
+                    ResetObjectUtil.ResetObject(x);
                 }
             });
             return acceptedProducers;
         }
-
-        public static void ResetObject(object j)
-        {
-            try
-            {
-                if (j == null) return;
-
-                Type type = j.GetType();
-                PropertyInfo[] properties = j.GetType().GetProperties();
-
-                foreach (var property in properties)
-                {
-                    if (!property.CanWrite) continue;
-                    if (property.Name == "IsProducerScaledup" && property.GetValue(j).ToString() == "Totals") continue;
-                    if ((property.Name == "IsTotalRow" || property.Name == "isOverallTotalRow") && (bool)property.GetValue(j)) continue;
-
-                    Type propType = property.PropertyType;
-                    if (propType == typeof(string))
-                    { property.SetValue(j, string.Empty); continue; }
-                    if (propType == typeof(int)) { property.SetValue(j, 0); continue; }
-                    if (propType == typeof(float)) { property.SetValue(j, 0); continue; }
-                    if (propType == typeof(double)) { property.SetValue(j, 0); continue; }
-                    if (propType == typeof(decimal)) { property.SetValue(j, 0m); continue; }
-                    if (propType.IsValueType) { object d = Activator.CreateInstance(propType); property.SetValue(j, d); }
-                    //if(typeof(IEnumerable).IsAssignableFrom(propType) && propType!= typeof(string)) { property.SetValue(j, null); }
-                    //if(typeof(IDictionary).IsAssignableFrom(propType))
-
-                    else
-                    {
-                        object c = property.GetValue(j);
-                        if (c != null) { ResetObject(c); }
-                    }
-                }
-            }
-            catch (Exception ex) { }
-        }
+       
     }
 }
