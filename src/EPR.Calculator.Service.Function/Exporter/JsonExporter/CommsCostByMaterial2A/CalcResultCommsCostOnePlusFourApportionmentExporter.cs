@@ -14,63 +14,55 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMater
 {
     public class CalcResultCommsCostOnePlusFourApportionmentExporter : ICalcResultCommsCostOnePlusFourApportionmentExporter
     {
-        public virtual string ConvertToJsonByUKWide(CalcResultCommsCost data)
+        public virtual object? ConvertToJsonByUKWide(CalcResultCommsCost data)
         {
             var ukWide = data.CalcResultCommsCostOnePlusFourApportionment
-                .Single(r => r.Name == CalcResultCommsCostBuilder.TwoBCommsCostUkWide);
+                .SingleOrDefault(r => r.Name == CalcResultCommsCostBuilder.TwoBCommsCostUkWide);
 
-            return
-                JsonSerializer.Serialize(
-                new
-                {
-                    calcResult2bCommsDataByUkWide = MapUkWide(ukWide),
-                },
-                GetJsonSerializerOptions());
+            return MapUkWide(ukWide!);
         }
 
-        public virtual string ConvertToJsonByCountry(CalcResultCommsCost data)
+        public virtual object? ConvertToJsonByCountry(CalcResultCommsCost data)
         {
             var byCountry = data.CalcResultCommsCostOnePlusFourApportionment
-                .Single(r => r.Name == CalcResultCommsCostBuilder.TwoCCommsCostByCountry);
+                .SingleOrDefault(r => r.Name == CalcResultCommsCostBuilder.TwoCCommsCostByCountry);
 
-            return
-                JsonSerializer.Serialize(
-                new
-                {
-                    calcResult2cCommsDataByCountry = MapByCountry(byCountry),
-                },
-                GetJsonSerializerOptions());
+            return MapByCountry(byCountry!);
         }
 
-        protected static object MapUkWide(CalcResultCommsCostOnePlusFourApportionment record)
-        => new
+        protected static object? MapUkWide(CalcResultCommsCostOnePlusFourApportionment record)
         {
-            name = record.Name,
-            englandCommsCostUKWide = record.England,
-            walesCommsCostUKWide = record.Wales,
-            scotlandCommsCostUKWide = record.Scotland,
-            northernIrelandCommsCostUKWide = record.NorthernIreland,
-            totalCommsCostUKWide = record.Total,
-        };
-
-        protected static object MapByCountry(CalcResultCommsCostOnePlusFourApportionment record)
-        => new
-        {
-            name = record.Name,
-            englandCommsCostByCountry = record.England,
-            walesCommsCostByCountry = record.Wales,
-            scotlandCommsCostByCountry = record.Scotland,
-            northernIrelandCommsCostByCountry = record.NorthernIreland,
-            totalCommsCostByCountry = record.Total,
-        };
-
-        protected static JsonSerializerOptions GetJsonSerializerOptions()
-        {
-            return new JsonSerializerOptions
+            if (record == null)
             {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                WriteIndented = true,
-                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                return null;
+            }
+
+            return new
+            {
+                name = record.Name,
+                englandCommsCostUKWide = record.England,
+                walesCommsCostUKWide = record.Wales,
+                scotlandCommsCostUKWide = record.Scotland,
+                northernIrelandCommsCostUKWide = record.NorthernIreland,
+                totalCommsCostUKWide = record.Total,
+            };
+        }
+
+        protected static object? MapByCountry(CalcResultCommsCostOnePlusFourApportionment record)
+        {
+            if (record == null)
+            {
+                return null;
+            }
+
+            return new
+            {
+                name = record.Name,
+                englandCommsCostByCountry = record.England,
+                walesCommsCostByCountry = record.Wales,
+                scotlandCommsCostByCountry = record.Scotland,
+                northernIrelandCommsCostByCountry = record.NorthernIreland,
+                totalCommsCostByCountry = record.Total,
             };
         }
     }

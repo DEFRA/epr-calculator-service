@@ -4,11 +4,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
     using EPR.Calculator.Service.Function.Builder.CommsCost;
     using EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMaterial2A;
     using EPR.Calculator.Service.Function.Models;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System.Linq;
     using System.Text.Json;
     using System.Text.Json.Nodes;
     using static EPR.Calculator.Service.Common.UnitTests.Utils.JsonNodeComparer;
-    using System.Linq;
 
     [TestClass]
     public class CalcResultCommsCostOnePlusFourApportionmentExporterTests
@@ -45,10 +46,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
             var commsCostData = BuildTestCommsCostData(countryData, ukWideData);
 
             // Act
-            var json = this.TestClass.ConvertToJsonByUKWide(commsCostData);
-
-            var roundTrippedUkWideData = JsonSerializer.Deserialize<JsonObject>(json)!
-                ["calcResult2bCommsDataByUkWide"];
+            var result = this.TestClass.ConvertToJsonByUKWide(commsCostData);
+            var json = JsonSerializer.Serialize(result);
+            var roundTrippedUkWideData = JsonSerializer.Deserialize<JsonObject>(json);
 
             // Assert
             Assert.IsNotNull(roundTrippedUkWideData);
@@ -68,6 +68,22 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
 
             AssertAreEqual(ukWideData.Total,
                 roundTrippedUkWideData["totalCommsCostUKWide"]);
+        }
+
+        [TestMethod]
+        public void Export_ReturnNull_ByUkWide()
+        {
+            // Arrange
+            var (countryData, ukWideData) = BuildTestDataToValidateNull();
+            var commsCostData = BuildTestCommsCostData(countryData, ukWideData);
+
+            // Act
+            var result = this.TestClass.ConvertToJsonByUKWide(commsCostData);
+            var json = JsonSerializer.Serialize(result);
+            var roundTrippedUkWideData = JsonSerializer.Deserialize<JsonObject>(json);
+
+            // Assert
+            Assert.IsNull(roundTrippedUkWideData);
         }
 
         [TestMethod]
@@ -92,10 +108,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
             var commsCostData = BuildTestCommsCostData(countryData, ukWideData);
 
             // Act
-            var json = this.TestClass.ConvertToJsonByCountry(commsCostData);
-
-            var roundTrippedCountryData = JsonSerializer.Deserialize<JsonObject>(json)!
-                ["calcResult2cCommsDataByCountry"];
+            var result = this.TestClass.ConvertToJsonByCountry(commsCostData);
+            var json = JsonSerializer.Serialize(result);
+            var roundTrippedCountryData = JsonSerializer.Deserialize<JsonObject>(json);
 
             // Assert
             Assert.IsNotNull(roundTrippedCountryData);
@@ -115,6 +130,22 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
 
             AssertAreEqual(countryData.Total,
                 roundTrippedCountryData["totalCommsCostByCountry"]);
+        }
+
+        [TestMethod]
+        public void Export_ReturnNull_ByCountry()
+        {
+            // Arrange
+            var (countryData, ukWideData) = BuildTestDataToValidateNull();
+            var commsCostData = BuildTestCommsCostData(countryData, ukWideData);
+
+            // Act
+            var result = this.TestClass.ConvertToJsonByCountry(commsCostData);
+            var json = JsonSerializer.Serialize(result);
+            var roundTrippedCountryData = JsonSerializer.Deserialize<JsonObject>(json);
+
+            // Assert
+            Assert.IsNull(roundTrippedCountryData);
         }
 
         private (CalcResultCommsCostOnePlusFourApportionment countryData,
@@ -138,6 +169,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
             var commsCostData = Fixture.Create<CalcResultCommsCost>();
             commsCostData.CalcResultCommsCostOnePlusFourApportionment = records.OrderBy(x => new Random().Next());
             return commsCostData;
+        }
+
+        private (CalcResultCommsCostOnePlusFourApportionment countryData,
+            CalcResultCommsCostOnePlusFourApportionment ukWideData) BuildTestDataToValidateNull()
+        {
+            var byCountryData = Fixture.Create<CalcResultCommsCostOnePlusFourApportionment>();
+            byCountryData.Name = "something incorrect";
+            var ukWideData = Fixture.Create<CalcResultCommsCostOnePlusFourApportionment>();
+            ukWideData.Name = "something incorrect";
+            return (byCountryData, ukWideData);
         }
     }
 }

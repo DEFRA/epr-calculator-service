@@ -70,6 +70,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 mockOnePlusFourApportionmentJsonExporter,
                 mockCommsCostExporter,
                 mockCommsCostByMaterial2AExporter,
+                mockCalcResultCommsCostOnePlusFourApportionmentExporter,
                 mockCalcResultLaDisposalCostDataExporter,
                 mockCancelledProducersExporter,
                 mockCalcResultScaledupProducersJsonExporter,
