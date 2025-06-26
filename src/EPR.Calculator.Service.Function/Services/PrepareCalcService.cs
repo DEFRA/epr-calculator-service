@@ -38,6 +38,8 @@
             ICalcBillingJsonExporter<CalcResult> jsonExporter,
             IConfigurationService configService,
             IBillingFileExporter<CalcResult> billingFileExporter)
+            ICalcBillingJsonExporter<CalcResult> jsonExporter,
+            IConfigurationService configService)
         {
             this.Context = context.CreateDbContext();
             this.Builder = builder;
@@ -50,6 +52,8 @@
             this.ConfigService = configService;
             this.JsonExporter = jsonExporter;
             this.BillingFileExporter = billingFileExporter;
+            this.ConfigService = configService;
+            this.JsonExporter = jsonExporter;
         }
 
         public const string ContainerNameMissingError = "Container name is missing in configuration.";
@@ -266,7 +270,7 @@
                 Message = $"Billing file CSV file name only is created {billingFileCsvName}",
             });
 
-            var billingFileJsonName = new CalcResultsAndBillingFileName(resultsRequestDto.RunId, true, true);            
+            var billingFileJsonName = new CalcResultsAndBillingFileName(resultsRequestDto.RunId, true, true);
 
             this.telemetryLogger.LogInformation(new TrackMessage
             {
@@ -286,29 +290,6 @@
 
             // call csv Exporter
 
-            var exportedResults = this.BillingFileExporter.Export(calcResults, resultsRequestDto.AcceptedProducerIds);
-
-            this.telemetryLogger.LogInformation(new TrackMessage
-            {
-                RunId = resultsRequestDto.RunId,
-                RunName = runName,
-                Message = $"Billing file CSV file before upload {billingFileCsvName}",
-            });
-
-
-           var csvBlobUri =  await this.storageService.UploadFileContentAsync((
-                FileName: billingFileCsvName,
-                Content: exportedResults,
-                RunName: runName,
-                ContainerName: ConfigService.ResultFileCSVContainerName));
-
-            this.telemetryLogger.LogInformation(new TrackMessage
-            {
-                RunId = resultsRequestDto.RunId,
-                RunName = runName,
-                Message = $"Billing file CSV file after upload {billingFileCsvName}",
-            });
-
             // upload the csv file to blob storage
 
             this.telemetryLogger.LogInformation(new TrackMessage
@@ -322,7 +303,7 @@
                 FileName: billingFileJsonName,
                 Content: jsonResponse,
                 RunName: runName,
-                ContainerName: ConfigService.ResultFileCSVContainerName));
+                ContainerName: ConfigService.BillingFileJsonBlobContainerName));
 
             this.telemetryLogger.LogInformation(new TrackMessage
             {
@@ -346,12 +327,7 @@
 
             this.Context.CalculatorRunBillingFileMetadata.Add(billingFileMetadata);
 
-            var csvFileMetaData = new CalculatorRunCsvFileMetadata
-            { BlobUri = csvBlobUri, CalculatorRunId = resultsRequestDto.RunId, FileName = billingFileCsvName };
-
-            this.Context.CalculatorRunCsvFileMetadata.Add(csvFileMetaData);
-                       
-                await this.Context.SaveChangesAsync();
+            await this.Context.SaveChangesAsync();
 
             this.telemetryLogger.LogInformation(new TrackMessage
             {
