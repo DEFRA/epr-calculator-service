@@ -248,9 +248,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         [TestMethod]
         public void PrepareBillingResults_Test()
         {
+            var fixture = new Fixture();
             var calcRun = this._context.CalculatorRuns.Single(x => x.Id == 1);
             calcRun.IsBillingFileGenerating = true;
             this._context.SaveChanges();
+
+            this._jsonExporter.Setup(t => t.Export(It.IsAny<CalcResult>(), It.IsAny<List<int>>())).Returns(fixture.Create<string>());
+            this._billingFileExporter.Setup(t => t.Export(It.IsAny<CalcResult>(), It.IsAny<List<int>>())).Returns(fixture.Create<string>());
+            this._storageService.Setup(x => x.UploadFileContentAsync(
+               It.IsAny<(string, string, string, string)>()))
+               .ReturnsAsync("fileName");
 
             var calcResultsRequestDto = new CalcResultsRequestDto
             {
