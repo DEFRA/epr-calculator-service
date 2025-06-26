@@ -295,7 +295,7 @@
                 FileName: billingFileJsonName,
                 Content: jsonResponse,
                 RunName: runName,
-                ContainerName: ConfigService.ResultFileCSVContainerName));
+                ContainerName: ConfigService.BillingFileJsonBlobContainerName));
 
             this.telemetryLogger.LogInformation(new TrackMessage
             {
