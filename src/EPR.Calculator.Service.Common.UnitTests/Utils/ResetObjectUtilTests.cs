@@ -24,7 +24,8 @@ namespace EPR.Calculator.Service.Common.UnitTests.Utils
                 Humidity = fixture.Create<double>(),
                 IsProducerScaledup = "Totals",
                 isOverallTotalRow = true,
-                Numbers = new List<int>() { 1, 2, 3 }
+                Numbers = new List<int>() { 1, 2, 3 },
+                CurrentDateTime = DateTime.UtcNow
             };
 
             // Act
@@ -42,6 +43,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.Utils
             Assert.IsFalse(j.IsTested);
             Assert.IsFalse(j.childTest.IsChild);
             Assert.AreEqual(3 ,j.Numbers.Count);
+            Assert.AreEqual(default(DateTime), j.CurrentDateTime);
         }
     }
 
@@ -62,6 +64,8 @@ namespace EPR.Calculator.Service.Common.UnitTests.Utils
         public required string IsProducerScaledup { get; set; }
 
         public required List<int> Numbers { get; set; }
+
+        public DateTime CurrentDateTime {  get; set; }
     }
 
     public class ChildTestClass
