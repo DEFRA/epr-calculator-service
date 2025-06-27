@@ -26,7 +26,14 @@ namespace EPR.Calculator.Service.Common.Utils
         {
             if (!property.CanWrite) return;
             else if (property.Name == "IsProducerScaledup" && property?.GetValue(resetObject)?.ToString() == "Totals") return;
-            else if ((property?.Name == "IsTotalRow" || property?.Name == "isOverallTotalRow") && (property is not null && (bool)property?.GetValue(resetObject))) return;
+            else if (property?.Name == "IsTotalRow" || property?.Name == "isOverallTotalRow") {
+                if (property is not null)
+                {
+                    var totalRowValue = (property?.GetValue(resetObject));
+
+                    if (totalRowValue is not null && (bool)totalRowValue) return;
+                }
+            }
 
             Type? propType = property?.PropertyType;
             if (propType == typeof(string))
@@ -34,10 +41,14 @@ namespace EPR.Calculator.Service.Common.Utils
             else if (propType == typeof(int)) { property?.SetValue(resetObject, 0); return; }
             else if (propType == typeof(double)) { property?.SetValue(resetObject, 0); return; }
             else if (propType == typeof(decimal)) { property?.SetValue(resetObject, 0m); return; }
-            else if ( propType is not null &&  propType.IsValueType) { object d = Activator.CreateInstance(propType); property?.SetValue(resetObject, d); }
+            else if (propType is not null && propType.IsValueType)
+            {
+                object? d = Activator.CreateInstance(propType);
+                property?.SetValue(resetObject, d);
+            }
             else
             {
-                object c = property.GetValue(resetObject);
+                object? c = property?.GetValue(resetObject);
                 if (c != null) { ResetObject(c); }
             }
         }
