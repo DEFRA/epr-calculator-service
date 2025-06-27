@@ -101,10 +101,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                     RunName = "CalculatorRunName",
                     RunBy = "Test user",
                     FinancialYear = "2024-25",
-                    RpdFileORG = string.Empty,
-                    RpdFilePOM = string.Empty,
-                    LapcapFile = "lapcap-data.csv,24/06/2025 10:00:00, test",
-                    ParametersFile = "parameter-data.csv,24/06/2025 10:00:00, test"
+                    RpdFileORG = "21/07/2017 17:32",
+                    RpdFilePOM = "21/07/2017 17:32",
+                    LapcapFile = "lapcap-data.csv,24/06/2025 10:00, test",
+                    ParametersFile = "parameter-data.csv,24/06/2025 10:00, test"
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
