@@ -21,7 +21,9 @@ namespace EPR.Calculator.Service.Common.UnitTests.Utils
                 IsTotalRow = true,
                 IsTested = true,
                 childTest = new ChildTestClass() { IsChild = true },
-                Humidity = fixture.Create<double>()
+                Humidity = fixture.Create<double>(),
+                IsProducerScaledup = "Totals",
+                isOverallTotalRow = true
             };
 
             // Act
@@ -33,7 +35,9 @@ namespace EPR.Calculator.Service.Common.UnitTests.Utils
             Assert.AreEqual(0, j.Temperature);
             Assert.AreEqual(0, j.Fruits);
             Assert.AreEqual(0, j.Humidity);
+            Assert.AreEqual("Totals", j.IsProducerScaledup);
             Assert.IsTrue(j.IsTotalRow);
+            Assert.IsTrue(j.isOverallTotalRow);
             Assert.IsFalse(j.IsTested);
             Assert.IsFalse(j.childTest.IsChild);
         }        
@@ -45,12 +49,15 @@ namespace EPR.Calculator.Service.Common.UnitTests.Utils
         public int Fruits { get; set; }
         public required string Name { get; set; }
         public bool IsTotalRow { get; set; }
+        public bool isOverallTotalRow { get; set; }
 
         public bool IsTested { get; set; }
 
         public double Humidity { get; set; }
 
         public required ChildTestClass childTest { get; set; }
+
+        public required string IsProducerScaledup { get; set; }
     }
 
     public class ChildTestClass
