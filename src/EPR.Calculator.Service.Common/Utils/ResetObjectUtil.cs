@@ -26,19 +26,18 @@ namespace EPR.Calculator.Service.Common.Utils
         {
             if (!property.CanWrite) return;
             else if (property.Name == "IsProducerScaledup" && property?.GetValue(resetObject)?.ToString() == "Totals") return;
-            else if ((property?.Name == "IsTotalRow" || property?.Name == "isOverallTotalRow")) return;
+            else if ((property?.Name == "IsTotalRow" || property?.Name == "isOverallTotalRow") && (property is not null && (bool)property?.GetValue(resetObject))) return;
 
             Type? propType = property?.PropertyType;
             if (propType == typeof(string))
             { property?.SetValue(resetObject, string.Empty); return; }
             else if (propType == typeof(int)) { property?.SetValue(resetObject, 0); return; }
-            else if (propType == typeof(float)) { property?.SetValue(resetObject, 0); return; }
             else if (propType == typeof(double)) { property?.SetValue(resetObject, 0); return; }
             else if (propType == typeof(decimal)) { property?.SetValue(resetObject, 0m); return; }
             else if ( propType is not null &&  propType.IsValueType) { object d = Activator.CreateInstance(propType); property?.SetValue(resetObject, d); }
             else
             {
-                object c = property?.GetValue(resetObject);
+                object c = property.GetValue(resetObject);
                 if (c != null) { ResetObject(c); }
             }
         }
