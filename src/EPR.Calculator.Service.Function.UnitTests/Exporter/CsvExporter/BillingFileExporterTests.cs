@@ -122,7 +122,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         {
             // Arrange
             var fixture = new Fixture();
-            Assert.ThrowsException<ArgumentNullException>(() => this.testClass.Export(fixture.Create<CalcResult>(), default(IEnumerable<int>)));
+            ArgumentNullException argumentNullException = Assert.ThrowsException<ArgumentNullException>(() => this.testClass.Export(fixture.Create<CalcResult>(), default(IEnumerable<int>)));
         }
     }
 }

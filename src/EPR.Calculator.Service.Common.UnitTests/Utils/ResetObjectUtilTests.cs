@@ -31,14 +31,14 @@ namespace EPR.Calculator.Service.Common.UnitTests.Utils
 
     public class TestClass
     {
-       public decimal Temperature { get; set; }
-       public int Fruits { get; set; }
-       public required string Name { get; set; }
-       public bool IsTotalRow { get; set; }
+        public decimal Temperature { get; set; }
+        public int Fruits { get; set; }
+        public required string Name { get; set; }
+        public bool IsTotalRow { get; set; }
 
-       public bool IsTested { get; set; }
+        public bool IsTested { get; set; }
 
-        public ChildTestClass childTest { get; set; }
+        public required ChildTestClass childTest { get; set; }
     }
 
     public class ChildTestClass
