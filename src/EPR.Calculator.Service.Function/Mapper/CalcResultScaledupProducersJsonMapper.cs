@@ -49,7 +49,7 @@ namespace EPR.Calculator.Service.Function.Mapper
                     ProducerId = item.ProducerId,
                     SubsidiaryId = string.IsNullOrWhiteSpace(item.SubsidiaryId) ? null : item.SubsidiaryId,
                     ProducerName = item.ProducerName,
-                    TradingName = item.TradingName,
+                    TradingName = string.IsNullOrWhiteSpace(item.TradingName) ? null : item.TradingName,
                     Level = level,
                     SubmissionPeriodCode = item.SubmissionPeriodCode,
                     DaysInSubmissionPeriod = item.DaysInSubmissionPeriod,
