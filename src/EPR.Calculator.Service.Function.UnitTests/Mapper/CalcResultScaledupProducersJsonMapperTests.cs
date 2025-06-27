@@ -3,6 +3,7 @@ using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
+using EPR.Calculator.Service.Function.UnitTests.Builder;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 {
@@ -24,9 +25,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             var fixture = new Fixture();
             var calcResultScaledupProducers = fixture.Create<CalcResultScaledupProducers>();
             var acceptedProducerIds = fixture.Create<IEnumerable<int>>();
+            var materials = fixture.Create<List<MaterialDetail>>();
 
             // Act
-            var result = ((ICalcResultScaledupProducersJsonMapper)_testClass).Map(calcResultScaledupProducers, acceptedProducerIds);
+            var result = ((ICalcResultScaledupProducersJsonMapper)_testClass).Map(calcResultScaledupProducers, acceptedProducerIds, materials);
 
             // Assert
             Assert.IsNotNull(result);
@@ -40,9 +42,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             var acceptedProducerIds = new List<int>();
             acceptedProducerIds.Add(1);
             acceptedProducerIds.Add(3);
+            var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var result = _testClass.Map(scaledupProducers, acceptedProducerIds);
+            var result = _testClass.Map(scaledupProducers, acceptedProducerIds, materials);
 
             // Assert
             Assert.AreEqual(2, result.ProducerSubmissions?.Count());
@@ -56,9 +59,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             // Arrange
             CalcResultScaledupProducers? scaledupProducers = null;
             var acceptedProducerIds = new List<int>();
+            var materials = new List<MaterialDetail>();
 
             // Act
-            var result = _testClass.Map(scaledupProducers!, acceptedProducerIds);
+            var result = _testClass.Map(scaledupProducers!, acceptedProducerIds, materials);
 
             // Assert
             Assert.AreEqual(new CalcResultScaledupProducersJson(), result);
@@ -77,7 +81,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
                         Level = CommonConstants.LevelTwo.ToString(),
                         ScaledupProducerTonnageByMaterial = new()
                         {
-                            ["Aluminium"] = new CalcResultScaledupProducerTonnage
+                            ["AL"] = new CalcResultScaledupProducerTonnage
                             {
                                 ReportedHouseholdPackagingWasteTonnage = 1000,
                                 ReportedPublicBinTonnage = 2000,
@@ -99,7 +103,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
                         Level = CommonConstants.LevelTwo.ToString(),
                         ScaledupProducerTonnageByMaterial = new()
                         {
-                            ["Glass"] = new CalcResultScaledupProducerTonnage
+                            ["GL"] = new CalcResultScaledupProducerTonnage
                             {
                                 ReportedHouseholdPackagingWasteTonnage = 1000,
                                 ReportedPublicBinTonnage = 2000,
@@ -121,7 +125,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
                         Level = CommonConstants.LevelTwo.ToString(),
                         ScaledupProducerTonnageByMaterial = new()
                         {
-                            ["Plastic"] = new CalcResultScaledupProducerTonnage
+                            ["PL"] = new CalcResultScaledupProducerTonnage
                             {
                                  ReportedHouseholdPackagingWasteTonnage = 1000,
                                  ReportedPublicBinTonnage = 2000,
