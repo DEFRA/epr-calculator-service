@@ -18,23 +18,28 @@ namespace EPR.Calculator.Service.Common.Utils
 
             foreach (var property in properties)
             {
-                if (!property.CanWrite) continue;
-                else if (property.Name == "IsProducerScaledup" && property.GetValue(resetObject).ToString() == "Totals") continue;
-                else if ((property.Name == "IsTotalRow" || property.Name == "isOverallTotalRow") && (bool)property.GetValue(resetObject)) continue;
+                ResetObjectValue(resetObject, property);
+            }
+        }
 
-                Type propType = property.PropertyType;
-                if (propType == typeof(string))
-                { property.SetValue(resetObject, string.Empty); continue; }
-                else if (propType == typeof(int)) { property.SetValue(resetObject, 0); continue; }
-                else if (propType == typeof(float)) { property.SetValue(resetObject, 0); continue; }
-                else if (propType == typeof(double)) { property.SetValue(resetObject, 0); continue; }
-                else if (propType == typeof(decimal)) { property.SetValue(resetObject, 0m); continue; }
-                else if (propType.IsValueType) { object d = Activator.CreateInstance(propType); property.SetValue(resetObject, d); }
-                else
-                {
-                    object c = property.GetValue(resetObject);
-                    if (c != null) { ResetObject(c); }
-                }
+        private static void ResetObjectValue(object resetObject, PropertyInfo property)
+        {
+            if (!property.CanWrite) return;
+            else if (property.Name == "IsProducerScaledup" && property.GetValue(resetObject).ToString() == "Totals") return;
+            else if ((property.Name == "IsTotalRow" || property.Name == "isOverallTotalRow") && (bool)property.GetValue(resetObject)) return;
+
+            Type propType = property.PropertyType;
+            if (propType == typeof(string))
+            { property.SetValue(resetObject, string.Empty); return; }
+            else if (propType == typeof(int)) { property.SetValue(resetObject, 0); return; }
+            else if (propType == typeof(float)) { property.SetValue(resetObject, 0); return; }
+            else if (propType == typeof(double)) { property.SetValue(resetObject, 0); return; }
+            else if (propType == typeof(decimal)) { property.SetValue(resetObject, 0m); return; }
+            else if (propType.IsValueType) { object d = Activator.CreateInstance(propType); property.SetValue(resetObject, d); }
+            else
+            {
+                object c = property.GetValue(resetObject);
+                if (c != null) { ResetObject(c); }
             }
         }
     }

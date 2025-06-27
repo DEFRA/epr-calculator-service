@@ -31,7 +31,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         private Mock<ICalcResultSummaryExporter> _calcResultSummaryExporter;
         private Mock<ICalcResultCancelledProducersExporter> _calcResultCancelledProducersExporter;
 
-        
+
         public BillingFileExporterTests()
         {
             _lateReportingExporter = new Mock<ILateReportingExporter>();
@@ -55,7 +55,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 
             // Assert
             Assert.IsNotNull(instance);
-        }       
+        }
 
         [TestMethod]
         public void CanCallExport()
@@ -94,7 +94,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             Assert.IsNotNull(result);
         }
 
-        
+
         [TestMethod]
         public void CanCallGetScaledUpProducersForExport()
         {
@@ -109,7 +109,20 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             // Assert
             Assert.IsNotNull(result);
             Assert.IsTrue(result.ScaledupProducers?.Count() > 0);
-        }       
-       
+        }
+
+        [TestMethod]
+        public void CannotCallExportWithNullResults()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => this.testClass.Export(default(CalcResult), new Mock<IEnumerable<int>>().Object));
+        }
+
+        [TestMethod]
+        public void CannotCallExportWithNullAcceptedProducerIds()
+        {
+            // Arrange
+            var fixture = new Fixture();
+            Assert.ThrowsException<ArgumentNullException>(() => this.testClass.Export(fixture.Create<CalcResult>(), default(IEnumerable<int>)));
+        }
     }
 }
