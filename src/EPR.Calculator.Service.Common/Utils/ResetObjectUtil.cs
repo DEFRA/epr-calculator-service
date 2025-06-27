@@ -13,7 +13,6 @@ namespace EPR.Calculator.Service.Common.Utils
         {
             if (resetObject == null) return;
 
-            Type type = resetObject.GetType();
             PropertyInfo[] properties = resetObject.GetType().GetProperties();
 
             foreach (var property in properties)
@@ -37,9 +36,14 @@ namespace EPR.Calculator.Service.Common.Utils
 
             Type? propType = property.PropertyType;
             if (propType == typeof(string))
-            { property.SetValue(resetObject, string.Empty); return; }
-            else if (propType == typeof(int)) { property.SetValue(resetObject, 0); return; }
-            else if (propType == typeof(double)) { property.SetValue(resetObject, 0); return; }
+            { 
+                property.SetValue(resetObject, string.Empty); return; 
+            }
+            else if (propType == typeof(int) || propType == typeof(double))
+            {
+                property.SetValue(resetObject, 0);
+                return; 
+            }
             else if (propType == typeof(decimal)) { property.SetValue(resetObject, 0m); return; }
             else if (propType is not null && propType.IsValueType)
             {
