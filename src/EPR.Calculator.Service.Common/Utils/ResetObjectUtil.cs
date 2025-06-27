@@ -29,8 +29,7 @@ namespace EPR.Calculator.Service.Common.Utils
         {
             if (!property.CanWrite || (resetObject is IEnumerable)) return;
             else if (property.Name == "IsProducerScaledup" && property.GetValue(resetObject)?.ToString() == "Totals") return;
-            else if (property.Name == "IsTotalRow" || property.Name == "isOverallTotalRow" && (bool)property.GetValue(resetObject)) return;
-          
+            else if (property.Name == "IsTotalRow" || property.Name == "isOverallTotalRow") return;         
 
             Type? propType = property.PropertyType;
             if (propType == typeof(string))
