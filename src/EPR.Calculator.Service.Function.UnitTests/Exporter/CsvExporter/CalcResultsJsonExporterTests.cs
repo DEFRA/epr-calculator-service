@@ -1,5 +1,6 @@
 ﻿using AutoFixture;
 using EPR.Calculator.Service.Function.Builder.CommsCost;
+using EPR.Calculator.Service.Function.Builder.Lapcap;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResults;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CancelledProducersData;
@@ -125,7 +126,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                             NorthernIrelandCost = 91.00m,
                             TotalCost = 13742.80m,
                         },
-
+                        new()
+                        {
+                            Name = CalcResultLapcapDataBuilder.CountryApportionment,
+                        }
                     },
                 },
                 CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
