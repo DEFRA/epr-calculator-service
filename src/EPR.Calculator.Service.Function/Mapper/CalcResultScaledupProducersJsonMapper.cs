@@ -47,7 +47,7 @@ namespace EPR.Calculator.Service.Function.Mapper
                 var producerSubmission = new ProducerSubmission
                 {
                     ProducerId = item.ProducerId,
-                    SubsidiaryId = item.SubsidiaryId,
+                    SubsidiaryId = string.IsNullOrWhiteSpace(item.SubsidiaryId) ? null : item.SubsidiaryId,
                     ProducerName = item.ProducerName,
                     TradingName = item.TradingName,
                     Level = level,
@@ -91,7 +91,7 @@ namespace EPR.Calculator.Service.Function.Mapper
                 if (producerTonnage.Key == MaterialCodes.Glass)
                 {
                     breakdown.HouseholdDrinksContainersTonnageGlass = producerTonnage.Value.HouseholdDrinksContainersTonnageGlass;
-                    breakdown.ScaledupHouseholdDrinksContainersTonnageGlass = producerTonnage.Value.ScaledupHouseholdDrinksContainersTonnageGlass;
+                    breakdown.ScaledUpHouseholdDrinksContainersTonnageGlass = producerTonnage.Value.ScaledupHouseholdDrinksContainersTonnageGlass;
                 }
 
                 materialBreakdown.Add(breakdown);

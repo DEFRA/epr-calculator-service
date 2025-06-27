@@ -78,8 +78,8 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonProperty(PropertyName = "scaledUpReportedPublicBinTonnage")]
         public decimal ScaledUpReportedPublicBinTonnage { get; set; }
 
-        [JsonProperty(PropertyName = "scaledupHouseholdDrinksContainersTonnageGlass", NullValueHandling = NullValueHandling.Ignore)]
-        public decimal? ScaledupHouseholdDrinksContainersTonnageGlass { get; set; }
+        [JsonProperty(PropertyName = "scaledUpHouseholdDrinksContainersTonnageGlass", NullValueHandling = NullValueHandling.Ignore)]
+        public decimal? ScaledUpHouseholdDrinksContainersTonnageGlass { get; set; }
 
         [JsonProperty(PropertyName = "scaledUpTotalReportedTonnage")]
         public decimal ScaledUpTotalReportedTonnage { get; set; }
