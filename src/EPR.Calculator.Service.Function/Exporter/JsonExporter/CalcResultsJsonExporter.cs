@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
 using EPR.Calculator.API.Exporter;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResults;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CancelledProducersData;
@@ -14,7 +17,6 @@ using EPR.Calculator.Service.Function.Exporter.JsonExporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
 using EPR.Calculator.Service.Function.Services;
-using Newtonsoft.Json;
 
 namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
 {
@@ -85,7 +87,14 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
             billingFileContent.ScaleUpProducers = calcResultScaledupProducersJsonExporter.Export(results.CalcResultScaledupProducers, acceptedProducerIds, materials);
             billingFileContent.CalculationResults = calculationResultsExporter.Export(results.CalcResultSummary, acceptedProducerIds);
 
-            return JsonConvert.SerializeObject(billingFileContent);
+            return JsonSerializer.Serialize(
+                billingFileContent,
+                new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    WriteIndented = true,
+                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                });
         }
     }
 }
