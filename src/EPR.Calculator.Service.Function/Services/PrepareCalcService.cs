@@ -300,7 +300,7 @@
                  FileName: billingFileCsvName,
                  Content: exportedResults,
                  RunName: runName,
-                 ContainerName: ConfigService.ResultFileCSVContainerName));
+                 ContainerName: ConfigService.BillingFileCSVBlobContainerName));
 
             this.telemetryLogger.LogInformation(new TrackMessage
             {
