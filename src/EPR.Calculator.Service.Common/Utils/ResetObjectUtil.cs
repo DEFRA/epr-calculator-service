@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -26,22 +27,23 @@ namespace EPR.Calculator.Service.Common.Utils
             Justification = "Temporaraly suppress - will refactor later.")]
         private static void ResetObjectValue(object resetObject, PropertyInfo property)
         {
-            if (!property.CanWrite) return;
+            if (!property.CanWrite || (resetObject is IEnumerable)) return;
             else if (property.Name == "IsProducerScaledup" && property.GetValue(resetObject)?.ToString() == "Totals") return;
-            else if (property.Name == "IsTotalRow" || property.Name == "isOverallTotalRow") {
-            var totalRowValue = (property.GetValue(resetObject));
-            if (totalRowValue is not null && (bool)totalRowValue) return;
+            else if (property.Name == "IsTotalRow" || property.Name == "isOverallTotalRow")
+            {
+                var totalRowValue = (property.GetValue(resetObject));
+                if (totalRowValue is not null && (bool)totalRowValue) return;
             }
 
             Type? propType = property.PropertyType;
             if (propType == typeof(string))
-            { 
-                property.SetValue(resetObject, string.Empty); return; 
+            {
+                property.SetValue(resetObject, string.Empty); return;
             }
             else if (propType == typeof(int) || propType == typeof(double))
             {
                 property.SetValue(resetObject, 0);
-                return; 
+                return;
             }
             else if (propType == typeof(decimal)) { property.SetValue(resetObject, 0m); return; }
             else if (propType is not null && propType.IsValueType)
