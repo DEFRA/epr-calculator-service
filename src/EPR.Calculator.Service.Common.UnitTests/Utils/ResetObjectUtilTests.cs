@@ -13,7 +13,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.Utils
         {
             // Arrange
             var fixture = new Fixture();
-            var j = new TestClass(){ Temperature = 10.9m, Fruits = 10, Name = "Test" };
+            var j = new TestClass(){ Temperature = 10.9m, Fruits = 10, Name = "Test", IsTotalRow=true };
 
             // Act
             ResetObjectUtil.ResetObject(j);
@@ -23,6 +23,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.Utils
             Assert.AreEqual(j.Name, string.Empty);
             Assert.AreEqual(j.Temperature, 0);
             Assert.AreEqual(j.Fruits, 0);
+            Assert.IsTrue(j.IsTotalRow);
         }        
     }
 
@@ -30,6 +31,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.Utils
     {
        public decimal Temperature { get; set; }
        public int Fruits { get; set; }
-       public string Name { get; set; }
+       public required string Name { get; set; }
+       public bool IsTotalRow { get; set; }
     }
 }
