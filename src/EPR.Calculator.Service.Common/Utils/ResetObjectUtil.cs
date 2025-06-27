@@ -19,18 +19,17 @@ namespace EPR.Calculator.Service.Common.Utils
             foreach (var property in properties)
             {
                 if (!property.CanWrite) continue;
-                if (property.Name == "IsProducerScaledup" && property.GetValue(resetObject).ToString() == "Totals") continue;
-                if ((property.Name == "IsTotalRow" || property.Name == "isOverallTotalRow") && (bool)property.GetValue(resetObject)) continue;
+                else if (property.Name == "IsProducerScaledup" && property.GetValue(resetObject).ToString() == "Totals") continue;
+                else if ((property.Name == "IsTotalRow" || property.Name == "isOverallTotalRow") && (bool)property.GetValue(resetObject)) continue;
 
                 Type propType = property.PropertyType;
                 if (propType == typeof(string))
                 { property.SetValue(resetObject, string.Empty); continue; }
-                if (propType == typeof(int)) { property.SetValue(resetObject, 0); continue; }
-                if (propType == typeof(float)) { property.SetValue(resetObject, 0); continue; }
-                if (propType == typeof(double)) { property.SetValue(resetObject, 0); continue; }
-                if (propType == typeof(decimal)) { property.SetValue(resetObject, 0m); continue; }
-                if (propType.IsValueType) { object d = Activator.CreateInstance(propType); property.SetValue(resetObject, d); }
-
+                else if (propType == typeof(int)) { property.SetValue(resetObject, 0); continue; }
+                else if (propType == typeof(float)) { property.SetValue(resetObject, 0); continue; }
+                else if (propType == typeof(double)) { property.SetValue(resetObject, 0); continue; }
+                else if (propType == typeof(decimal)) { property.SetValue(resetObject, 0m); continue; }
+                else if (propType.IsValueType) { object d = Activator.CreateInstance(propType); property.SetValue(resetObject, d); }
                 else
                 {
                     object c = property.GetValue(resetObject);
