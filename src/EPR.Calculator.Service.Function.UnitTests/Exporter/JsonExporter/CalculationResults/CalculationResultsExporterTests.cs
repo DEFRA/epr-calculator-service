@@ -3,6 +3,7 @@
     using System.Text.Json;
     using System.Text.Json.Nodes;
     using AutoFixture;
+    using EPR.Calculator.Service.Common.Utils;
     using EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResults;
     using EPR.Calculator.Service.Function.Mapper;
     using EPR.Calculator.Service.Function.Models;
@@ -66,71 +67,70 @@
             var json = JsonSerializer.Serialize(obj);
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
-                ["calculationResults"]!
                 ["producerCalculationResultsSummary"];
 
             // Assert
             Assert.IsNotNull(roundTrippedData);
 
             // 1
-            Assert.AreEqual(data.TotalFeeforLADisposalCostswoBadDebtprovision1,
-                roundTrippedData["FeeForLaDisposalCostsWithoutBadDebtprovision1"]!.GetValue<decimal>());
-            Assert.AreEqual(data.BadDebtProvisionFor1,
-                roundTrippedData["BadDebtProvision1"]!.GetValue<decimal>());
-            Assert.AreEqual(data.TotalFeeforLADisposalCostswithBadDebtprovision1,
-                roundTrippedData["FeeForLaDisposalCostsWithBadDebtprovision1"]!.GetValue<decimal>());
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.TotalFeeforLADisposalCostswoBadDebtprovision1),
+                roundTrippedData["FeeForLaDisposalCostsWithoutBadDebtprovision1"]);
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.BadDebtProvisionFor1),
+                roundTrippedData["BadDebtProvision1"]);
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.TotalFeeforLADisposalCostswithBadDebtprovision1),
+                roundTrippedData["TotalFeeforLADisposalCostswithBadDebtprovision1"]);
 
             // 2a
-            Assert.AreEqual(data.TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A,
-                roundTrippedData["FeeForCommsCostsByMaterialWithoutBadDebtprovision2a"]!.GetValue<decimal>());
-            Assert.AreEqual(data.BadDebtProvisionFor2A,
-                roundTrippedData["BadDebtProvision2a"]!.GetValue<decimal>());
-            Assert.AreEqual(data.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A,
-                roundTrippedData["FeeForCommsCostsByMaterialWitBadDebtprovision2a"]!.GetValue<decimal>());
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A),
+                roundTrippedData["FeeForCommsCostsByMaterialWithoutBadDebtprovision2a"]);
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.BadDebtProvisionFor2A),
+                roundTrippedData["BadDebtProvision2a"]);
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A),
+                roundTrippedData["FeeForCommsCostsByMaterialWitBadDebtprovision2a"]);
 
             // 2b
-            Assert.AreEqual(data.CommsCostHeaderWithoutBadDebtFor2bTitle,
-                roundTrippedData["FeeForCommsCostsUkWideWithoutBadDebtprovision2b"]!.GetValue<decimal>());
-            Assert.AreEqual(data.CommsCostHeaderBadDebtProvisionFor2bTitle,
-                roundTrippedData["BadDebtProvision2b"]!.GetValue<decimal>());
-            Assert.AreEqual(data.CommsCostHeaderWithBadDebtFor2bTitle,
-                roundTrippedData["FeeForCommsCostsUkWideWithBadDebtprovision2b"]!.GetValue<decimal>());
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.CommsCostHeaderWithoutBadDebtFor2bTitle),
+                roundTrippedData["FeeForCommsCostsUkWideWithoutBadDebtprovision2b"]);
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.CommsCostHeaderBadDebtProvisionFor2bTitle),
+                roundTrippedData["BadDebtProvision2b"]);
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.CommsCostHeaderWithBadDebtFor2bTitle),
+                roundTrippedData["FeeForCommsCostsUkWideWithBadDebtprovision2b"]);
 
             // 2c
-            Assert.AreEqual(data.TwoCCommsCostsByCountryWithoutBadDebtProvision,
-                roundTrippedData["FeeForCommsCostsByCountryWithoutBadDebtprovision2c"]!.GetValue<decimal>());
-            Assert.AreEqual(data.TwoCBadDebtProvision,
-                roundTrippedData["BadDebtProvision2c"]!.GetValue<decimal>());
-            Assert.AreEqual(data.TwoCCommsCostsByCountryWithBadDebtProvision,
-                roundTrippedData["FeeForCommsCostsByCountryWideWithBadDebtprovision2c"]!.GetValue<decimal>());
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.TwoCCommsCostsByCountryWithoutBadDebtProvision),
+                roundTrippedData["FeeForCommsCostsByCountryWithoutBadDebtprovision2c"]);
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.TwoCBadDebtProvision),
+                roundTrippedData["BadDebtProvision2c"]);
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.TwoCCommsCostsByCountryWithBadDebtProvision),
+                roundTrippedData["FeeForCommsCostsByCountryWideWithBadDebtprovision2c"]);
 
             // 1+2a+2b+2c
-            Assert.AreEqual(data.TotalOnePlus2A2B2CFeeWithBadDebtProvision,
-                roundTrippedData["Total12a2b2cWithBadDebt"]!.GetValue<decimal>());
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.TotalOnePlus2A2B2CFeeWithBadDebtProvision),
+                roundTrippedData["Total12a2b2cWithBadDebt"]);
 
             // 3
-            Assert.AreEqual(data.SaOperatingCostsWoTitleSection3,
-                roundTrippedData["SaOperatingCostsWithoutBadDebtProvision3"]!.GetValue<decimal>());
-            Assert.AreEqual(data.BadDebtProvisionTitleSection3,
-                roundTrippedData["BadDebtProvision3"]!.GetValue<decimal>());
-            Assert.AreEqual(data.SaOperatingCostsWithTitleSection3,
-                roundTrippedData["SaOperatingCostsWithBadDebtProvision3"]!.GetValue<decimal>());
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.SaOperatingCostsWoTitleSection3),
+                roundTrippedData["SaOperatingCostsWithoutBadDebtProvision3"]);
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.BadDebtProvisionTitleSection3),
+                roundTrippedData["BadDebtProvision3"]);
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.SaOperatingCostsWithTitleSection3),
+                roundTrippedData["SaOperatingCostsWithBadDebtProvision3"]);
 
             // 4
-            Assert.AreEqual(data.LaDataPrepCostsTitleSection4,
-                roundTrippedData["LaDataPrepCostsWithoutBadDebtProvision4"]!.GetValue<decimal>());
-            Assert.AreEqual(data.LaDataPrepCostsBadDebtProvisionTitleSection4,
-                roundTrippedData["BadDebtProvision4"]!.GetValue<decimal>());
-            Assert.AreEqual(data.LaDataPrepCostsWithBadDebtProvisionTitleSection4,
-                roundTrippedData["LaDataPrepCostsWithbadDebtProvision4"]!.GetValue<decimal>());
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.LaDataPrepCostsTitleSection4),
+                roundTrippedData["LaDataPrepCostsWithoutBadDebtProvision4"]);
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.LaDataPrepCostsBadDebtProvisionTitleSection4),
+                roundTrippedData["BadDebtProvision4"]);
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.LaDataPrepCostsWithBadDebtProvisionTitleSection4),
+                roundTrippedData["LaDataPrepCostsWithbadDebtProvision4"]);
 
             // 5
-            Assert.AreEqual(data.SaSetupCostsTitleSection5,
-                roundTrippedData["OneOffFeeSaSetuCostsWithbadDebtProvision5"]!.GetValue<decimal>());
-            Assert.AreEqual(data.SaSetupCostsBadDebtProvisionTitleSection5,
-                roundTrippedData["BadDebtProvision5"]!.GetValue<decimal>());
-            Assert.AreEqual(data.SaSetupCostsWithBadDebtProvisionTitleSection5,
-                roundTrippedData["OneOffFeeSaSetuCostsWithoutbadDebtProvision5"]!.GetValue<decimal>());
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.SaSetupCostsTitleSection5),
+                roundTrippedData["OneOffFeeSaSetuCostsWithbadDebtProvision5"]);
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.SaSetupCostsBadDebtProvisionTitleSection5),
+                roundTrippedData["BadDebtProvision5"]);
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.SaSetupCostsWithBadDebtProvisionTitleSection5),
+                roundTrippedData["OneOffFeeSaSetuCostsWithoutbadDebtProvision5"]);
         }
 
         [TestMethod]
@@ -144,7 +144,6 @@
             var json = JsonSerializer.Serialize(obj);
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
-                ["calculationResults"]!
                 ["producerCalculationResults"];
 
             // Assert
@@ -182,7 +181,6 @@
             var json = JsonSerializer.Serialize(obj);
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
-                ["calculationResults"]!
                 ["producerCalculationResults"];
 
             // Assert
@@ -209,7 +207,6 @@
             var json = JsonSerializer.Serialize(obj);
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
-                     ["calculationResults"]!
                 ["producerCalculationResults"];
 
             // Assert
@@ -236,7 +233,6 @@
             var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
-                ["calculationResults"]!
                 ["producerCalculationResults"];
 
             // Assert
@@ -268,7 +264,6 @@
             var json = JsonSerializer.Serialize(obj);
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
-                     ["calculationResults"]!
                 ["producerCalculationResults"];
 
             // Assert
@@ -300,7 +295,6 @@
             var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
-                     ["calculationResults"]!
                 ["producerCalculationResults"];
 
             // Assert
@@ -328,7 +322,6 @@
             var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
-                ["calculationResults"]!
                 ["producerCalculationResults"];
 
             // Assert
@@ -360,7 +353,6 @@
             var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
-                     ["calculationResults"]!
                 ["producerCalculationResults"];
 
             // Assert
@@ -388,7 +380,6 @@
             var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
-                     ["calculationResults"]!
                 ["producerCalculationResults"];
 
             // Assert
@@ -433,7 +424,6 @@
             var json = JsonSerializer.Serialize(obj);
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
-                     ["calculationResults"]!
                 ["producerCalculationResults"];
 
             // Assert
@@ -457,10 +447,7 @@
             var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
             var json = JsonSerializer.Serialize(obj);
             var node = JsonNode.Parse(json);
-            var roundTrippedData = node?["calculationResults"]?["producerCalculationResults"]?.AsArray();
-            //var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
-            //         ["calculationResults"]!
-            //    ["producerCalculationResults"];
+            var roundTrippedData = node?["producerCalculationResults"]?.AsArray();
 
             // Assert
             Assert.IsNotNull(roundTrippedData);
@@ -494,7 +481,6 @@
             var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
-                     ["calculationResults"]!
                 ["producerCalculationResults"];
 
             // Assert
@@ -522,11 +508,10 @@
             // Act
             var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
             var json = JsonSerializer.Serialize(obj);
-            var calculationResults = JsonSerializer.Deserialize<JsonObject>(json)!["calculationResults"]!;
-            var total = calculationResults["producerCalculationResultsTotal"];
+            var producerCalculationResultsTotal = JsonSerializer.Deserialize<JsonObject>(json)!["producerCalculationResultsTotal"]!;
 
             // Assert
-            Assert.IsNull(total);
+            Assert.IsNull(producerCalculationResultsTotal);
         }
 
         [TestMethod]
@@ -539,7 +524,6 @@
             var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
-                     ["calculationResults"]!
                 ["producerCalculationResults"];
 
             // Assert
@@ -568,7 +552,6 @@
             var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
-                    ["calculationResults"]!
                     ["producerCalculationResults"]!;
 
             // Assert

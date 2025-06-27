@@ -88,7 +88,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResul
             {
                 FeeForLaDisposalCostsWithoutBadDebtprovision1 = CurrencyConverter.ConvertToCurrency(data.TotalFeeforLADisposalCostswoBadDebtprovision1),
                 BadDebtProvision1 = CurrencyConverter.ConvertToCurrency(data.BadDebtProvisionFor1),
-                FeeForLaDisposalCostsWithBadDebtprovision1 = CurrencyConverter.ConvertToCurrency(data.TotalFeeforLADisposalCostswithBadDebtprovision1),
+                TotalFeeforLADisposalCostswithBadDebtprovision1 = CurrencyConverter.ConvertToCurrency(data.TotalFeeforLADisposalCostswithBadDebtprovision1),
 
                 FeeForCommsCostsByMaterialWithoutBadDebtprovision2a = CurrencyConverter.ConvertToCurrency(data.TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A),
                 BadDebtProvision2a = CurrencyConverter.ConvertToCurrency(data.BadDebtProvisionFor2A),
