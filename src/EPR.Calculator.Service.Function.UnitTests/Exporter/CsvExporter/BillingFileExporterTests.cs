@@ -110,19 +110,5 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             Assert.IsNotNull(result);
             Assert.IsTrue(result.ScaledupProducers?.Count() > 0);
         }
-
-        [TestMethod]
-        public void CannotCallExportWithNullResults()
-        {
-            Assert.ThrowsException<ArgumentNullException>(() => this.testClass.Export(default(CalcResult), new Mock<IEnumerable<int>>().Object));
-        }
-
-        [TestMethod]
-        public void CannotCallExportWithNullAcceptedProducerIds()
-        {
-            // Arrange
-            var fixture = new Fixture();
-            ArgumentNullException argumentNullException = Assert.ThrowsException<ArgumentNullException>(() => this.testClass.Export(fixture.Create<CalcResult>(), default(IEnumerable<int>)));
-        }
     }
 }

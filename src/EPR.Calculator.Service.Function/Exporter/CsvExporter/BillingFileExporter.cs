@@ -55,11 +55,6 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 
         public string Export(CalcResult results, IEnumerable<int> acceptedProducerIds)
         {
-            if (results == null)
-            {
-                throw new ArgumentNullException(nameof(results), "The results parameter cannot be null.");
-            }
-
             var csvContent = new StringBuilder();
             resultDetailexporterCsv.Export(results.CalcResultDetail, csvContent);
 
