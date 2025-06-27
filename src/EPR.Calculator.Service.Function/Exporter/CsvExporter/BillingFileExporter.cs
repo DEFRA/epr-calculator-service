@@ -29,6 +29,10 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         private readonly ICommsCostExporter commsCostExporterCsv;
         private readonly ICalcResultCancelledProducersExporter calcResultCancelledProducersExporterCsv;
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Major Code Smell",
+            "S107:Methods should not have too many parameters",
+            Justification = "Temporaraly suppressed - will refactor later.")]
         public BillingFileExporter(
             ILateReportingExporter lateReportingExporter,
             ICalcResultDetailExporter resultDetailexporter,
