@@ -59,7 +59,7 @@
             {
                 throw new ArgumentException("This constructor is only for JSON billing files.");
             }
-            var name = $"{runId} Billing";
+            var name = $"{runId}billing";
             Value = Path.ChangeExtension(name, JsonFileExtension);
         }
 

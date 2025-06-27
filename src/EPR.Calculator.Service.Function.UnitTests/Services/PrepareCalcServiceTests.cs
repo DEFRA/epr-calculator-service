@@ -282,7 +282,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             billingFileMetaData.BillingFileCreatedBy = "Test User 234";
             Assert.AreEqual($"1-TestRun_Billing File_{DateTime.Today:yyyyMMdd}.csv", billingFileMetaData.BillingCsvFileName);
-            Assert.AreEqual("1 Billing.json", billingFileMetaData.BillingJsonFileName);
+            Assert.AreEqual("1billing.json", billingFileMetaData.BillingJsonFileName);
 
         }
 
