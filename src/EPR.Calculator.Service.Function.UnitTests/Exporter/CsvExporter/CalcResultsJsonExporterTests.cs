@@ -1,5 +1,7 @@
 ﻿using AutoFixture;
+using EPR.Calculator.API.Data;
 using EPR.Calculator.Service.Function.Builder.CommsCost;
+using EPR.Calculator.Service.Function.Builder.Lapcap;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResults;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CancelledProducersData;
@@ -12,7 +14,10 @@ using EPR.Calculator.Service.Function.Exporter.JsonExporter.OnePlusFourApportion
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Models.JsonExporter;
+using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.Builder;
+using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 {
@@ -21,6 +26,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
     {
         private Fixture fixture;
         private CalcResultsJsonExporter testClass;
+        private Mock<IMaterialService> mockMaterialService;
         private ICalcResultDetailJsonExporter mockCalcResultDetailExporter;
         private ICalcResultLapcapExporter mockCalcResultLapcapExporter;
         private ILateReportingTonnage mockLateReportingTonnage;
@@ -36,6 +42,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         public CalcResultsJsonExporterTests()
         {
             fixture = new Fixture();
+            mockMaterialService = new Mock<IMaterialService>();
             mockCalcResultDetailExporter = new CalcResultDetailJsonExporter();
             mockCalcResultLapcapExporter = new CalcResultLapcapExporter();
             mockLateReportingTonnage = new LateReportingTonnage(new LateReportingTonnageMapper());
@@ -64,6 +71,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 new DisposalFeeSummary1Mapper());
 
             testClass = new CalcResultsJsonExporter(
+                mockMaterialService.Object,
                 mockCalcResultDetailExporter,
                 mockCalcResultLapcapExporter,
                 mockLateReportingTonnage,
@@ -82,6 +90,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         {
             // Arrange
             var calcResult = CreateCalcResult();
+            var materials = TestDataHelper.GetMaterials();
+            mockMaterialService.Setup(service => service.GetMaterials()).Returns(Task.FromResult(materials));
 
             // Act
             var result = testClass.Export(calcResult, new List<int> { 1, 2 });
@@ -101,10 +111,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                     RunName = "CalculatorRunName",
                     RunBy = "Test user",
                     FinancialYear = "2024-25",
-                    RpdFileORG = string.Empty,
-                    RpdFilePOM = string.Empty,
-                    LapcapFile = "lapcap-data.csv,24/06/2025 10:00:00, test",
-                    ParametersFile = "parameter-data.csv,24/06/2025 10:00:00, test"
+                    RpdFileORG = "21/07/2017 17:32",
+                    RpdFilePOM = "21/07/2017 17:32",
+                    LapcapFile = "lapcap-data.csv,24/06/2025 10:00, test",
+                    ParametersFile = "parameter-data.csv,24/06/2025 10:00, test"
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
@@ -125,7 +135,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                             NorthernIrelandCost = 91.00m,
                             TotalCost = 13742.80m,
                         },
-
+                        new()
+                        {
+                            Name = CalcResultLapcapDataBuilder.CountryApportionment,
+                        }
                     },
                 },
                 CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
@@ -390,5 +403,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 
             return scaledupProducerList;
         }
+
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
 using EPR.Calculator.API.Exporter;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResults;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CancelledProducersData;
@@ -14,12 +16,13 @@ using EPR.Calculator.Service.Function.Exporter.JsonExporter.OnePlusFourApportion
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
-using Newtonsoft.Json;
+using EPR.Calculator.Service.Function.Services;
 
 namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
 {
     public class CalcResultsJsonExporter : ICalcBillingJsonExporter<CalcResult>
     {
+        private readonly IMaterialService materialService;
         private readonly ICalcResultDetailJsonExporter calcResultDetailExporter;
         private readonly ICalcResultLapcapExporter lapcapExporter;
         private readonly ILateReportingTonnage lateReportingTonnageExporter;
@@ -34,6 +37,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
 
         [SuppressMessage("Constructor has 8 parameters, which is greater than the 7 authorized.", "S107", Justification = "This is suppressed for now and will be refactored later")]
         public CalcResultsJsonExporter(
+            IMaterialService materialService,
             ICalcResultDetailJsonExporter calcResultDetailExporter,
             ICalcResultLapcapExporter calcResultLapcapExporter,
             ILateReportingTonnage lateReportingTonnageExporter,
@@ -46,6 +50,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
             ICalcResultScaledupProducersJsonExporter calcResultScaledupProducersJsonExporter,
             ICalculationResultsExporter calculationResultsExporter)
         {
+            this.materialService = materialService;
             this.calcResultDetailExporter = calcResultDetailExporter;
             this.lapcapExporter = calcResultLapcapExporter;
             this.lateReportingTonnageExporter = lateReportingTonnageExporter;
@@ -66,6 +71,8 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
                 throw new ArgumentNullException(nameof(results), "The results parameter cannot be null.");
             }
 
+            var materials = this.materialService.GetMaterials().Result;
+
             var billingFileContent = new JsonBillingFileExporter();
             billingFileContent.CalcResultDetail = calcResultDetailExporter.Export(results.CalcResultDetail);
             billingFileContent.CalcResultLapcapData = lapcapExporter.Export(results.CalcResultLapcapData);
@@ -77,10 +84,17 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
             billingFileContent.CalcResult2cCommsDataByCountry = calcResultCommsCostOnePlusFourApportionmentExporter.ConvertToJsonByCountry(results.CalcResultCommsCostReportDetail);
             billingFileContent.CalcResultLaDisposalCostData = calcResultLaDisposalCostDataExporter.Export(results.CalcResultLaDisposalCostData.CalcResultLaDisposalCostDetails);
             billingFileContent.CancelledProducers = cancelledProducersExporter.Export(results.CalcResultCancelledProducers);
-            billingFileContent.ScaleUpProducers = calcResultScaledupProducersJsonExporter.Export(results.CalcResultScaledupProducers, acceptedProducerIds);
+            billingFileContent.ScaleUpProducers = calcResultScaledupProducersJsonExporter.Export(results.CalcResultScaledupProducers, acceptedProducerIds, materials);
             billingFileContent.CalculationResults = calculationResultsExporter.Export(results.CalcResultSummary, acceptedProducerIds);
 
-            return JsonConvert.SerializeObject(billingFileContent);
+            return JsonSerializer.Serialize(
+                billingFileContent,
+                new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    WriteIndented = true,
+                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                });
         }
     }
 }
