@@ -1,4 +1,5 @@
 ﻿using AutoFixture;
+using EPR.Calculator.API.Data;
 using EPR.Calculator.Service.Function.Builder.CommsCost;
 using EPR.Calculator.Service.Function.Builder.Lapcap;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter;
@@ -13,7 +14,10 @@ using EPR.Calculator.Service.Function.Exporter.JsonExporter.OnePlusFourApportion
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Models.JsonExporter;
+using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.Builder;
+using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 {
@@ -22,6 +26,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
     {
         private Fixture fixture;
         private CalcResultsJsonExporter testClass;
+        private Mock<IMaterialService> mockMaterialService;
         private ICalcResultDetailJsonExporter mockCalcResultDetailExporter;
         private ICalcResultLapcapExporter mockCalcResultLapcapExporter;
         private ILateReportingTonnage mockLateReportingTonnage;
@@ -37,6 +42,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         public CalcResultsJsonExporterTests()
         {
             fixture = new Fixture();
+            mockMaterialService = new Mock<IMaterialService>();
             mockCalcResultDetailExporter = new CalcResultDetailJsonExporter();
             mockCalcResultLapcapExporter = new CalcResultLapcapExporter();
             mockLateReportingTonnage = new LateReportingTonnage(new LateReportingTonnageMapper());
@@ -65,6 +71,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 new DisposalFeeSummary1Mapper());
 
             testClass = new CalcResultsJsonExporter(
+                mockMaterialService.Object,
                 mockCalcResultDetailExporter,
                 mockCalcResultLapcapExporter,
                 mockLateReportingTonnage,
@@ -83,6 +90,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         {
             // Arrange
             var calcResult = CreateCalcResult();
+            var materials = TestDataHelper.GetMaterials();
+            mockMaterialService.Setup(service => service.GetMaterials()).Returns(Task.FromResult(materials));
 
             // Act
             var result = testClass.Export(calcResult, new List<int> { 1, 2 });
@@ -394,5 +403,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 
             return scaledupProducerList;
         }
+
     }
 }

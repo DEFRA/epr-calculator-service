@@ -6,6 +6,9 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.ScaledupProducer
 {
     public interface ICalcResultScaledupProducersJsonExporter
     {
-        public CalcResultScaledupProducersJson Export(CalcResultScaledupProducers calcResultScaledupProducers, IEnumerable<int> acceptedProducerIds);
+        public CalcResultScaledupProducersJson Export(
+            CalcResultScaledupProducers calcResultScaledupProducers,
+            IEnumerable<int> acceptedProducerIds,
+            List<MaterialDetail> materials);
     }
 }

@@ -6,6 +6,9 @@ namespace EPR.Calculator.Service.Function.Mapper
 {
     public interface ICalcResultScaledupProducersJsonMapper
     {
-        public CalcResultScaledupProducersJson Map(CalcResultScaledupProducers calcResultScaledupProducers, IEnumerable<int> acceptedProducerIds);
+        public CalcResultScaledupProducersJson Map(
+            CalcResultScaledupProducers calcResultScaledupProducers,
+            IEnumerable<int> acceptedProducerIds,
+            List<MaterialDetail> materials);
     }
 }
