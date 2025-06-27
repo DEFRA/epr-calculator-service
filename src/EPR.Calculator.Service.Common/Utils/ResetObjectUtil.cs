@@ -12,7 +12,6 @@ namespace EPR.Calculator.Service.Common.Utils
         public static void ResetObject(object resetObject)
         {
             if (resetObject == null) return;
-
             PropertyInfo[] properties = resetObject.GetType().GetProperties();
 
             foreach (var property in properties)

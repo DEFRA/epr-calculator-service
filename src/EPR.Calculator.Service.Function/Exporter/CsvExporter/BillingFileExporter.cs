@@ -10,6 +10,7 @@ using EPR.Calculator.Service.Function.Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -29,10 +30,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         private readonly ICommsCostExporter commsCostExporterCsv;
         private readonly ICalcResultCancelledProducersExporter calcResultCancelledProducersExporterCsv;
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage(
-            "Major Code Smell",
-            "S107:Methods should not have too many parameters",
-            Justification = "Temporaraly suppressed - will refactor later.")]
+        [SuppressMessage("Constructor has 8 parameters, which is greater than the 7 authorized.", "S107", Justification = "This is suppressed for now and will be refactored later")]
         public BillingFileExporter(
             ILateReportingExporter lateReportingExporter,
             ICalcResultDetailExporter resultDetailexporter,
