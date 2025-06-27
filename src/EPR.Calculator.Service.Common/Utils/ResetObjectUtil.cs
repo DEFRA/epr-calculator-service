@@ -22,6 +22,10 @@ namespace EPR.Calculator.Service.Common.Utils
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Critical Code Smell",
+            "S3776:Cognitive Complexity of methods should not be too high",
+            Justification = "Temporaraly suppress - will refactor later.")]
         private static void ResetObjectValue(object resetObject, PropertyInfo property)
         {
             if (!property.CanWrite) return;

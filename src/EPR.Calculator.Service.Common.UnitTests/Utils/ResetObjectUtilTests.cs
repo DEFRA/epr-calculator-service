@@ -13,7 +13,16 @@ namespace EPR.Calculator.Service.Common.UnitTests.Utils
         {
             // Arrange
             var fixture = new Fixture();
-            var j = new TestClass() { Temperature = 10.9m, Fruits = 10, Name = "Test", IsTotalRow = true, IsTested = true, childTest = new ChildTestClass() { IsChild = true } };
+            var j = new TestClass()
+            {
+                Temperature = 10.9m,
+                Fruits = 10,
+                Name = "Test",
+                IsTotalRow = true,
+                IsTested = true,
+                childTest = new ChildTestClass() { IsChild = true },
+                Humidity = fixture.Create<double>()
+            };
 
             // Act
             ResetObjectUtil.ResetObject(j);
@@ -23,6 +32,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.Utils
             Assert.AreEqual(j.Name, string.Empty);
             Assert.AreEqual(0, j.Temperature);
             Assert.AreEqual(0, j.Fruits);
+            Assert.AreEqual(0, j.Humidity);
             Assert.IsTrue(j.IsTotalRow);
             Assert.IsFalse(j.IsTested);
             Assert.IsFalse(j.childTest.IsChild);
@@ -37,6 +47,8 @@ namespace EPR.Calculator.Service.Common.UnitTests.Utils
         public bool IsTotalRow { get; set; }
 
         public bool IsTested { get; set; }
+
+        public double Humidity { get; set; }
 
         public required ChildTestClass childTest { get; set; }
     }
