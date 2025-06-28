@@ -188,8 +188,8 @@
             var actual = roundTrippedData[0]!["TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2c"]!;
             var producer = data.ProducerDisposalFees.SingleOrDefault(t => !t.isTotalRow && !string.IsNullOrEmpty(t.Level))!;
 
-            Assert.AreEqual(producer.ProducerTotalOnePlus2A2B2CWithBadDeptProvision, actual["TotalFeeWithBadDebtProvision"]!.GetValue<decimal>());
-            Assert.AreEqual(producer.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, actual["ProducerPercentageOfOverallProducerCost"]!.GetValue<decimal>());
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(producer.ProducerTotalOnePlus2A2B2CWithBadDeptProvision), actual["TotalFeeWithBadDebtProvision"]);
+            AssertAreEqual($"{producer.ProducerOverallPercentageOfCostsForOnePlus2A2B2C}%", actual["ProducerPercentageOfOverallProducerCost"]);
         }
 
         /// <summary>

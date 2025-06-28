@@ -1,9 +1,11 @@
 namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 {
     using AutoFixture;
+    using EPR.Calculator.Service.Common.Utils;
     using EPR.Calculator.Service.Function.Mapper;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using static EPR.Calculator.Service.Common.UnitTests.Utils.JsonNodeComparer;
 
     [TestClass]
     public class TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapperTests
@@ -28,8 +30,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(calcResultSummaryProducerDisposalFees.ProducerTotalOnePlus2A2B2CWithBadDeptProvision, result.TotalFeeWithBadDebtProvision);
-            Assert.AreEqual(calcResultSummaryProducerDisposalFees.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, result.ProducerPercentageOfOverallProducerCost);
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.ProducerTotalOnePlus2A2B2CWithBadDeptProvision), result.TotalFeeWithBadDebtProvision);
+            AssertAreEqual($"{calcResultSummaryProducerDisposalFees.ProducerOverallPercentageOfCostsForOnePlus2A2B2C}%", result.ProducerPercentageOfOverallProducerCost);
         }
     }
 }
