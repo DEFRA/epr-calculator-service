@@ -4,23 +4,17 @@ namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResultParametersOtherJson
     {
-        [JsonProperty(PropertyName = "parametersOther")]
-        public ParametersOtherDetailsJson ParametersOther { get; set; } = new ParametersOtherDetailsJson();
-    }
-
-    public class ParametersOtherDetailsJson
-    {
         [JsonProperty(PropertyName = "threeSAOperatingCost")]
         public CountryAmountJson ThreeSAOperatingCost { get; set; } = new CountryAmountJson();
 
         [JsonProperty(PropertyName = "fourDataPreparationCharge")]
-        public CountryAmountJson FourLADataPrepCosts { get; set; } = new CountryAmountJson();
+        public CountryAmountJson FourDataPreparationCharge { get; set; } = new CountryAmountJson();
 
         [JsonProperty(PropertyName = "fourCountryApportionmentPercentages")]
         public CountryAmountJson FourCountryApportionmentPercentages { get; set; } = new CountryAmountJson();
 
         [JsonProperty(PropertyName = "fiveSchemeSetupCost")]
-        public CountryAmountJson FiveSchemeSetupYearlyCost { get; set; } = new CountryAmountJson();
+        public CountryAmountJson FiveSchemeSetupCost { get; set; } = new CountryAmountJson();
 
         [JsonProperty(PropertyName = "sixBadDebtProvision")]
         public PercentageJson SixBadDebtProvision { get; set; } = new PercentageJson();
