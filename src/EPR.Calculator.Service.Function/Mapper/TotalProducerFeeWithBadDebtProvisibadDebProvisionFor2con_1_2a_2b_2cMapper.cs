@@ -1,4 +1,5 @@
-﻿using EPR.Calculator.Service.Function.Models;
+﻿using EPR.Calculator.Service.Common.Utils;
+using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
 
 namespace EPR.Calculator.Service.Function.Mapper
@@ -9,8 +10,8 @@ namespace EPR.Calculator.Service.Function.Mapper
         {
             return new TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2c
             {
-                TotalFeeWithBadDebtProvision = calcResultSummaryProducerDisposalFees.ProducerTotalOnePlus2A2B2CWithBadDeptProvision,
-                ProducerPercentageOfOverallProducerCost = calcResultSummaryProducerDisposalFees.ProducerOverallPercentageOfCostsForOnePlus2A2B2C
+                TotalFeeWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.ProducerTotalOnePlus2A2B2CWithBadDeptProvision),
+                ProducerPercentageOfOverallProducerCost = $"{calcResultSummaryProducerDisposalFees.ProducerOverallPercentageOfCostsForOnePlus2A2B2C.ToString("F8")}%"
             };
 
         }
