@@ -34,7 +34,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
 
             // Assert
             TestMapper.Verify(mock => mock.Map(It.IsAny<CalcResultParameterOtherCost>()));
-            Assert.IsFalse(string.IsNullOrEmpty(result));
+            Assert.IsNotNull(result);
         }
     }
 }

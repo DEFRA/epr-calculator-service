@@ -6,17 +6,16 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
 {
     public class ParametersOtherJsonExporter : IParametersOtherJsonExporter
     {
-        private readonly IParametersOtherMapper _mapper;
+        private readonly IParametersOtherMapper mapper;
 
         public ParametersOtherJsonExporter(IParametersOtherMapper mapper)
         {
-            _mapper = mapper;
+            this.mapper = mapper;
         }
 
-        public string Export(CalcResultParameterOtherCost calcResultParametersOther)
+        public CalcResultParametersOtherJson Export(CalcResultParameterOtherCost calcResultParametersOther)
         {
-            var result = _mapper.Map(calcResultParametersOther);
-            return JsonConvert.SerializeObject(result);
+            return this.mapper.Map(calcResultParametersOther);
         }
     }
 }
