@@ -1,6 +1,6 @@
-﻿using EPR.Calculator.Service.Function.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Mapper
 {
@@ -18,19 +18,16 @@ namespace EPR.Calculator.Service.Function.Mapper
 
             return new CalcResultParametersOtherJson
             {
-                ParametersOther = new ParametersOtherDetailsJson
+                ThreeSAOperatingCost = MapCountryAmount(otherCost.SaOperatingCost.OrderBy(sa => sa.OrderId).FirstOrDefault()),
+                FourDataPreparationCharge = MapCountryAmount(otherCost.Details.OrderBy(sa => sa.OrderId).FirstOrDefault()),
+                FourCountryApportionmentPercentages = MapCountryAmount(apportionmentDetail),
+                FiveSchemeSetupCost = MapCountryAmount(otherCost.SchemeSetupCost),
+                SixBadDebtProvision = new PercentageJson
                 {
-                    ThreeSAOperatingCost = MapCountryAmount(otherCost.SaOperatingCost.OrderBy(sa => sa.OrderId).FirstOrDefault()),
-                    FourLADataPrepCosts = MapCountryAmount(otherCost.Details.OrderBy(sa => sa.OrderId).FirstOrDefault()),
-                    FourCountryApportionmentPercentages = MapCountryAmount(apportionmentDetail),
-                    FiveSchemeSetupYearlyCost = MapCountryAmount(otherCost.SchemeSetupCost),
-                    SixBadDebtProvision = new PercentageJson
-                    {
-                        Percentage = otherCost.BadDebtProvision.Value
-                    },
-                    SevenMateriality = MapChangeSection(materiality),
-                    EightTonnageChange = MapChangeSection(tonnageChange),
-                }
+                    Percentage = otherCost.BadDebtProvision.Value
+                },
+                SevenMateriality = MapChangeSection(materiality),
+                EightTonnageChange = MapChangeSection(tonnageChange),
             };
         }
 
