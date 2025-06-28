@@ -14,6 +14,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using EPR.Calculator.Service.Function.Builder;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Enums;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter;
     using EPR.Calculator.Service.Function.Interface;
     using EPR.Calculator.Service.Function.Misc;
     using EPR.Calculator.Service.Function.Models;
@@ -41,6 +42,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         private Mock<IBillingInstructionService> _billingInstructionService;
         private Mock<ICalcBillingJsonExporter<CalcResult>> _jsonExporter;
         private Mock<IConfigurationService> _configService;
+        private Mock<IBillingFileExporter<CalcResult>> _billingFileExporter;
 
         public PrepareCalcServiceTests()
         {
@@ -102,6 +104,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this._billingInstructionService = new Mock<IBillingInstructionService>();
             this._jsonExporter = new Mock<ICalcBillingJsonExporter<CalcResult>>();
             this._configService = new Mock<IConfigurationService>();
+            this._billingFileExporter = new Mock<IBillingFileExporter<CalcResult>>();
             this._testClass = new PrepareCalcService(this._dbContextFactory.Object,
                 this._builder.Object,
                 this._exporter.Object,
@@ -111,7 +114,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 this._telemetryLogger.Object,
                 this._billingInstructionService.Object,
                 this._jsonExporter.Object,
-                this._configService.Object);
+                this._configService.Object,
+                this._billingFileExporter.Object);
         }
 
         [TestCleanup]
@@ -140,7 +144,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 this._telemetryLogger.Object,
                 this._billingInstructionService.Object,
                 this._jsonExporter.Object,
-                this._configService.Object);
+                this._configService.Object,
+                this._billingFileExporter.Object);
 
             // Assert
             Assert.IsNotNull(instance);
@@ -243,9 +248,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         [TestMethod]
         public void PrepareBillingResults_Test()
         {
+            var fixture = new Fixture();
             var calcRun = this._context.CalculatorRuns.Single(x => x.Id == 1);
             calcRun.IsBillingFileGenerating = true;
             this._context.SaveChanges();
+
+            this._jsonExporter.Setup(t => t.Export(It.IsAny<CalcResult>(), It.IsAny<List<int>>())).Returns(fixture.Create<string>());
+            this._billingFileExporter.Setup(t => t.Export(It.IsAny<CalcResult>(), It.IsAny<List<int>>())).Returns(fixture.Create<string>());
+            this._storageService.Setup(x => x.UploadFileContentAsync(
+               It.IsAny<(string, string, string, string)>()))
+               .ReturnsAsync("fileName");
 
             var calcResultsRequestDto = new CalcResultsRequestDto
             {
