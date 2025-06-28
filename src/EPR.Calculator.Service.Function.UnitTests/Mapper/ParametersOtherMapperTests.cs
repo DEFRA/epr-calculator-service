@@ -61,8 +61,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             };
 
             var result = TestClass.Map(otherCost);
-            Assert.IsNotNull(result.FourLADataPrepCosts);
-            Assert.AreEqual(string.Empty, result.FourLADataPrepCosts.England);
+            Assert.IsNotNull(result.FourDataPreparationCharge);
+            Assert.AreEqual(string.Empty, result.FourDataPreparationCharge.England);
         }
 
         [TestMethod]

@@ -19,9 +19,9 @@ namespace EPR.Calculator.Service.Function.Mapper
             return new CalcResultParametersOtherJson
             {
                 ThreeSAOperatingCost = MapCountryAmount(otherCost.SaOperatingCost.OrderBy(sa => sa.OrderId).FirstOrDefault()),
-                FourLADataPrepCosts = MapCountryAmount(otherCost.Details.OrderBy(sa => sa.OrderId).FirstOrDefault()),
+                FourDataPreparationCharge = MapCountryAmount(otherCost.Details.OrderBy(sa => sa.OrderId).FirstOrDefault()),
                 FourCountryApportionmentPercentages = MapCountryAmount(apportionmentDetail),
-                FiveSchemeSetupYearlyCost = MapCountryAmount(otherCost.SchemeSetupCost),
+                FiveSchemeSetupCost = MapCountryAmount(otherCost.SchemeSetupCost),
                 SixBadDebtProvision = new PercentageJson
                 {
                     Percentage = otherCost.BadDebtProvision.Value
