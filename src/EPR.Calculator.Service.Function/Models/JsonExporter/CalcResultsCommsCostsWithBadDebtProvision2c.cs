@@ -13,32 +13,32 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
         [JsonProperty(PropertyName = "totalProducerFeeForCommsCostsByCountryWithoutBadDebtProvision")]
-        public decimal TotalProducerFeeForCommsCostsByCountryWithoutBadDebtProvision { get; set; }
+        public string? TotalProducerFeeForCommsCostsByCountryWithoutBadDebtProvision { get; set; }
 
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
         [JsonProperty(PropertyName = "badDebProvisionFor2c")]        
-        public decimal BadDebProvisionFor2c { get; set; }
+        public string? BadDebProvisionFor2c { get; set; }
         
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
         [JsonProperty(PropertyName = "totalProducerFeeForCommsCostsByCountryWithBadDebtProvision")]
-        public decimal TotalProducerFeeForCommsCostsByCountryWithBadDebtProvision { get; set; }
+        public string? TotalProducerFeeForCommsCostsByCountryWithBadDebtProvision { get; set; }
 
         
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
         [JsonProperty(PropertyName = "englandTotalWithBadDebtProvision")]
-        public decimal EnglandTotalWithBadDebtProvision { get; set; }
+        public string? EnglandTotalWithBadDebtProvision { get; set; }
         
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
         [JsonProperty(PropertyName = "walesTotalWithBadDebtProvision")]
-        public decimal WalesTotalWithBadDebtProvision { get; set; }
+        public string? WalesTotalWithBadDebtProvision { get; set; }
         
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
         [JsonProperty(PropertyName = "scotlandTotalWithBadDebtProvision")]
-        public decimal ScotlandTotalWithBadDebtProvision { get; set; }
+        public string? ScotlandTotalWithBadDebtProvision { get; set; }
         
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
         [JsonProperty(PropertyName = "northernIrelandTotalWithBadDebtProvision")]
-        public decimal NorthernIrelandTotalWithBadDebtProvision { get; set; }
+        public string? NorthernIrelandTotalWithBadDebtProvision { get; set; }
 
     }
 }

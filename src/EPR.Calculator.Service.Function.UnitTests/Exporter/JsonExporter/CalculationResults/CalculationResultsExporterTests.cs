@@ -361,13 +361,13 @@
             var producer = data.ProducerDisposalFees.SingleOrDefault(t => !t.isTotalRow && !string.IsNullOrEmpty(t.Level));
             Assert.IsNotNull(producer);
             Assert.IsNotNull(twoCCosts);
-            Assert.AreEqual(producer.TwoCNorthernIrelandTotalWithBadDebt, twoCCosts["NorthernIrelandTotalWithBadDebtProvision"]!.GetValue<int>());
-            Assert.AreEqual(producer.TwoCScotlandTotalWithBadDebt, twoCCosts["ScotlandTotalWithBadDebtProvision"]!.GetValue<int>());
-            Assert.AreEqual(producer.TwoCWalesTotalWithBadDebt, twoCCosts["WalesTotalWithBadDebtProvision"]!.GetValue<int>());
-            Assert.AreEqual(producer.TwoCEnglandTotalWithBadDebt, twoCCosts["EnglandTotalWithBadDebtProvision"]!.GetValue<int>());
-            Assert.AreEqual(producer.TwoCTotalProducerFeeForCommsCostsWithoutBadDebt, twoCCosts["TotalProducerFeeForCommsCostsByCountryWithoutBadDebtProvision"]!.GetValue<int>());
-            Assert.AreEqual(producer.TwoCTotalProducerFeeForCommsCostsWithBadDebt, twoCCosts["TotalProducerFeeForCommsCostsByCountryWithBadDebtProvision"]!.GetValue<int>());
-            Assert.AreEqual(producer.TwoCBadDebtProvision, twoCCosts["BadDebProvisionFor2c"]!.GetValue<int>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.TwoCNorthernIrelandTotalWithBadDebt), twoCCosts["NorthernIrelandTotalWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.TwoCScotlandTotalWithBadDebt), twoCCosts["ScotlandTotalWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.TwoCWalesTotalWithBadDebt), twoCCosts["WalesTotalWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.TwoCEnglandTotalWithBadDebt), twoCCosts["EnglandTotalWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.TwoCTotalProducerFeeForCommsCostsWithoutBadDebt), twoCCosts["TotalProducerFeeForCommsCostsByCountryWithoutBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.TwoCTotalProducerFeeForCommsCostsWithBadDebt), twoCCosts["TotalProducerFeeForCommsCostsByCountryWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.TwoCBadDebtProvision), twoCCosts["BadDebProvisionFor2c"]!.GetValue<string>());
         }
 
         [TestMethod]
