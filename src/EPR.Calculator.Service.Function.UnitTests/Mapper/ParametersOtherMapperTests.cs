@@ -122,9 +122,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
                 new() { SevenMateriality = "Other", Amount = "£0", Percentage = "0%" }
             };
 
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             var result = typeof(ParametersOtherMapper)
                 .GetMethod("MapChangeSection", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)
                 .Invoke(null, new object[] { section }) as ChangeJson;
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
             Assert.IsNotNull(result);
             Assert.AreEqual(string.Empty, result.Increase.Amount);
@@ -135,9 +137,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
         [TestMethod]
         public void MapCountryAmount_ReturnsDefault_WhenSourceIsNull()
         {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             var result = typeof(ParametersOtherMapper)
                 .GetMethod("MapCountryAmount", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)
                 .Invoke(null, new object[] { null }) as CountryAmountJson;
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
             Assert.IsNotNull(result);
             Assert.AreEqual(string.Empty, result.England);
@@ -146,9 +152,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
         [TestMethod]
         public void MapChangeDetail_ReturnsDefault_WhenSourceIsNull()
         {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             var result = typeof(ParametersOtherMapper)
                 .GetMethod("MapChangeDetail", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)
                 .Invoke(null, new object[] { null }) as ChangeDetailJson;
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
             Assert.IsNotNull(result);
             Assert.AreEqual(string.Empty, result.Amount);
