@@ -31,7 +31,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             // Assert
             Assert.IsNotNull(result);
             AssertAreEqual(CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.ProducerTotalOnePlus2A2B2CWithBadDeptProvision), result.TotalFeeWithBadDebtProvision);
-            AssertAreEqual($"{calcResultSummaryProducerDisposalFees.ProducerOverallPercentageOfCostsForOnePlus2A2B2C}%", result.ProducerPercentageOfOverallProducerCost);
+            AssertAreEqual($"{calcResultSummaryProducerDisposalFees.ProducerOverallPercentageOfCostsForOnePlus2A2B2C.ToString("F8")}%", result.ProducerPercentageOfOverallProducerCost);
         }
     }
 }

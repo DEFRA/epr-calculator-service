@@ -9,7 +9,6 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         public required string TotalFeeWithBadDebtProvision { get; set; }
 
         [JsonProperty(PropertyName = "producerPercentageOfOverallProducerCost")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 8)]
         public required string ProducerPercentageOfOverallProducerCost { get; set; }
     }
 }

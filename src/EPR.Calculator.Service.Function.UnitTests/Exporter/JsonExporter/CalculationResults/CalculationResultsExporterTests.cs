@@ -189,7 +189,7 @@
             var producer = data.ProducerDisposalFees.SingleOrDefault(t => !t.isTotalRow && !string.IsNullOrEmpty(t.Level))!;
 
             AssertAreEqual(CurrencyConverter.ConvertToCurrency(producer.ProducerTotalOnePlus2A2B2CWithBadDeptProvision), actual["TotalFeeWithBadDebtProvision"]);
-            AssertAreEqual($"{producer.ProducerOverallPercentageOfCostsForOnePlus2A2B2C}%", actual["ProducerPercentageOfOverallProducerCost"]);
+            AssertAreEqual($"{producer.ProducerOverallPercentageOfCostsForOnePlus2A2B2C.ToString("F8")}%", actual["ProducerPercentageOfOverallProducerCost"]);
         }
 
         /// <summary>
