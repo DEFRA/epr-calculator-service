@@ -8,7 +8,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonProperty("producerID")]
         public required string ProducerID { get; set; }
 
-        [JsonProperty("SubsidiaryID")]
+        [JsonProperty("subsidiaryID")]
         public required string SubsidiaryID { get; set; }
 
         [JsonProperty("producerName")]
