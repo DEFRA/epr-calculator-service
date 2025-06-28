@@ -606,6 +606,7 @@
             for (var i = 1; i <= data.ProducerDisposalFees.Count(); i++)
             {
                 data.ProducerDisposalFees.ToList()[i - 1].ProducerId = i.ToString();
+                if (i == 2) data.ProducerDisposalFees.ToList()[i - 1].isTotalRow = false;
             }
 
             return data;
