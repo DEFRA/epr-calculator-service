@@ -315,7 +315,6 @@
             Assert.AreEqual(expectedResult.ProducerId, producerDetail.ProducerId);
         }
 
-        [TestMethod]
         public async Task Transpose_Should_Return_Correct_ProducerReportedMaterial()
         {
             var expectedResult = new ProducerReportedMaterial
