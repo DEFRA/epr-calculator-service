@@ -389,22 +389,22 @@
             var producer = data.ProducerDisposalFees.SingleOrDefault(t => !t.isTotalRow && !string.IsNullOrEmpty(t.Level))!;
 
             // Disposal Fee
-            Assert.AreEqual(producer.TotalProducerDisposalFee,
-                disposalFeeSummary1["TotalProducerDisposalFeeWithoutBadDebtProvision"]!.GetValue<int>());
-            Assert.AreEqual(producer.BadDebtProvision,
-                disposalFeeSummary1["BadDebtProvision"]!.GetValue<int>());
-            Assert.AreEqual(producer.TotalProducerDisposalFeeWithBadDebtProvision,
-                disposalFeeSummary1["TotalProducerDisposalFeeWithBadDebtProvision"]!.GetValue<int>());
+            AssertAreEqual(producer.TotalProducerDisposalFee,
+                disposalFeeSummary1["TotalProducerDisposalFeeWithoutBadDebtProvision"]!);
+            AssertAreEqual(producer.BadDebtProvision,
+                disposalFeeSummary1["BadDebtProvision"]!);
+            AssertAreEqual(producer.TotalProducerDisposalFeeWithBadDebtProvision,
+                disposalFeeSummary1["TotalProducerDisposalFeeWithBadDebtProvision"]!);
 
             // Countries
-            Assert.AreEqual(producer.EnglandTotal,
-                disposalFeeSummary1["EnglandTotal"]!.GetValue<int>());
-            Assert.AreEqual(producer.WalesTotal,
-                disposalFeeSummary1["WalesTotal"]!.GetValue<int>());
-            Assert.AreEqual(producer.ScotlandTotal,
-                disposalFeeSummary1["ScotlandTotal"]!.GetValue<int>());
-            Assert.AreEqual(producer.NorthernIrelandTotal,
-                disposalFeeSummary1["NorthernIrelandTotal"]!.GetValue<int>());
+            AssertAreEqual(producer.EnglandTotal,
+                disposalFeeSummary1["EnglandTotal"]!);
+            AssertAreEqual(producer.WalesTotal,
+                disposalFeeSummary1["WalesTotal"]!);
+            AssertAreEqual(producer.ScotlandTotal,
+                disposalFeeSummary1["ScotlandTotal"]!);
+            AssertAreEqual(producer.NorthernIrelandTotal,
+                disposalFeeSummary1["NorthernIrelandTotal"]!);
 
             // Tonnage Change
             Assert.AreEqual(producer.TonnageChangeCount,
