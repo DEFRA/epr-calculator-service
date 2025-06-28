@@ -1,4 +1,4 @@
-using AutoFixture;
+ï»¿using AutoFixture;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
 
@@ -88,11 +88,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
         {
             var materiality = new List<CalcResultMateriality>
             {
-                new() { SevenMateriality = "Increase", Amount = "£1", Percentage = "10%" },
-                new() { SevenMateriality = "Decrease", Amount = "£2", Percentage = "20%" },
+                new() { SevenMateriality = "Increase", Amount = "Â£1", Percentage = "10%" },
+                new() { SevenMateriality = "Decrease", Amount = "Â£2", Percentage = "20%" },
                 new() { SevenMateriality = "8 Tonnage Change", Amount = "", Percentage = "" },
-                new() { SevenMateriality = "Increase", Amount = "£3", Percentage = "30%" },
-                new() { SevenMateriality = "Decrease", Amount = "£4", Percentage = "40%" }
+                new() { SevenMateriality = "Increase", Amount = "Â£3", Percentage = "30%" },
+                new() { SevenMateriality = "Decrease", Amount = "Â£4", Percentage = "40%" }
             };
 
             var otherCost = new CalcResultParameterOtherCost
@@ -107,10 +107,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 
             var result = TestClass.Map(otherCost);
 
-            Assert.AreEqual("£1", result.SevenMateriality.Increase.Amount);
-            Assert.AreEqual("£2", result.SevenMateriality.Decrease.Amount);
-            Assert.AreEqual("£3", result.EightTonnageChange.Increase.Amount);
-            Assert.AreEqual("£4", result.EightTonnageChange.Decrease.Amount);
+            Assert.AreEqual("Â£1", result.SevenMateriality.Increase.Amount);
+            Assert.AreEqual("Â£2", result.SevenMateriality.Decrease.Amount);
+            Assert.AreEqual("Â£3", result.EightTonnageChange.Increase.Amount);
+            Assert.AreEqual("Â£4", result.EightTonnageChange.Decrease.Amount);
         }
 
         [TestMethod]
@@ -118,8 +118,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
         {
             var section = new List<CalcResultMateriality>
             {
-                new() { SevenMateriality = "Other", Amount = "£0", Percentage = "0%" },
-                new() { SevenMateriality = "Other", Amount = "£0", Percentage = "0%" }
+                new() { SevenMateriality = "Other", Amount = "Â£0", Percentage = "0%" },
+                new() { SevenMateriality = "Other", Amount = "Â£0", Percentage = "0%" }
             };
 
             var result = typeof(ParametersOtherMapper)
