@@ -80,7 +80,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
             billingFileContent.CalcResultDetail = calcResultDetailExporter.Export(results.CalcResultDetail);
             billingFileContent.CalcResultLapcapData = lapcapExporter.Export(results.CalcResultLapcapData);
             billingFileContent.CalcResultLateReportingTonnageData = lateReportingTonnageExporter.Export(results.CalcResultLateReportingTonnageData);
-            billingFileContent.CalcResultParametersOtherData = parametersOtherExporter.Export(results.CalcResultParameterOtherCost);
+            billingFileContent.ParametersOther = parametersOtherExporter.Export(results.CalcResultParameterOtherCost);
             billingFileContent.OnePlusFourApportionment = onePlusFourApportionmentJsonExporter.Export(results.CalcResultOnePlusFourApportionment);
             billingFileContent.ParametersCommsCost = commsCostExporter.Export(results.CalcResultCommsCostReportDetail);
             billingFileContent.CalcResult2aCommsDataByMaterial = commsCostByMaterial2AExporter.Export(results.CalcResultCommsCostReportDetail.CalcResultCommsCostCommsCostByMaterial);

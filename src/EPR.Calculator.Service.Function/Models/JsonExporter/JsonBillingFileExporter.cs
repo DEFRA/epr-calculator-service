@@ -14,7 +14,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         public CalcResultLateReportingTonnageJson? CalcResultLateReportingTonnageData { get; set; }
 
         [JsonProperty(PropertyName = "parametersOther")]
-        public CalcResultParametersOtherJson? CalcResultParametersOtherData { get; set; }
+        public CalcResultParametersOtherJson? ParametersOther { get; set; }
 
         [JsonProperty(PropertyName = "onePlusFourApportionment")]
         public CalcResultOnePlusFourApportionmentJson? OnePlusFourApportionment { get; set; }
