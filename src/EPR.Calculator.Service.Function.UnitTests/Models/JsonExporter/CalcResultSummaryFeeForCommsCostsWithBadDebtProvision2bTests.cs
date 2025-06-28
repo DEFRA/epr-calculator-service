@@ -1,5 +1,7 @@
 ﻿using AutoFixture;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
+using EPR.Calculator.Service.Common.Utils;
+
 
 namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
 {
@@ -18,8 +20,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         {
             var fixture = new Fixture();
             var testValue = fixture.Create<decimal>();
-            _testClass.TotalProducerFeeForCommsCostsUKWideWithoutBadDebtProvision = testValue;
-            Assert.AreEqual(testValue, _testClass.TotalProducerFeeForCommsCostsUKWideWithoutBadDebtProvision);
+            var totalProducerFeeForCommsCostsUKWideWithoutBadDebtProvision = CurrencyConverter.ConvertToCurrency(testValue);
+            _testClass.TotalProducerFeeForCommsCostsUKWideWithoutBadDebtProvision = totalProducerFeeForCommsCostsUKWideWithoutBadDebtProvision;
+            Assert.AreEqual(totalProducerFeeForCommsCostsUKWideWithoutBadDebtProvision, _testClass.TotalProducerFeeForCommsCostsUKWideWithoutBadDebtProvision);
         }
 
         [TestMethod]
@@ -27,8 +30,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         {
             var fixture = new Fixture();
             var testValue = fixture.Create<decimal>();
-            _testClass.BadDebtProvisionFor2bComms = testValue;
-            Assert.AreEqual(testValue, _testClass.BadDebtProvisionFor2bComms);
+            var badDebtProvisionFor2bComms = CurrencyConverter.ConvertToCurrency(testValue);
+            _testClass.BadDebtProvisionFor2bComms = badDebtProvisionFor2bComms;
+            Assert.AreEqual(badDebtProvisionFor2bComms, _testClass.BadDebtProvisionFor2bComms);
         }
 
         [TestMethod]
@@ -36,8 +40,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         {
             var fixture = new Fixture();
             var testValue = fixture.Create<decimal>();
-            _testClass.TotalProducerFeeForCommsCostsUKWideWithBadDebtProvision = testValue;
-            Assert.AreEqual(testValue, _testClass.TotalProducerFeeForCommsCostsUKWideWithBadDebtProvision);
+            var totalProducerFeeForCommsCostsUKWideWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(testValue);
+            _testClass.TotalProducerFeeForCommsCostsUKWideWithBadDebtProvision = totalProducerFeeForCommsCostsUKWideWithBadDebtProvision;
+            Assert.AreEqual(totalProducerFeeForCommsCostsUKWideWithBadDebtProvision, _testClass.TotalProducerFeeForCommsCostsUKWideWithBadDebtProvision);
         }
 
         [TestMethod]
@@ -45,8 +50,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         {
             var fixture = new Fixture();
             var testValue = fixture.Create<decimal>();
-            _testClass.EnglandTotalWithBadDebtProvision = testValue;
-            Assert.AreEqual(testValue, _testClass.EnglandTotalWithBadDebtProvision);
+            var englandTotalWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(testValue);
+            _testClass.EnglandTotalWithBadDebtProvision = englandTotalWithBadDebtProvision;
+            Assert.AreEqual(englandTotalWithBadDebtProvision, _testClass.EnglandTotalWithBadDebtProvision);
         }
 
         [TestMethod]
@@ -54,8 +60,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         {
             var fixture = new Fixture();
             var testValue = fixture.Create<decimal>();
-            _testClass.WalesTotalWithBadDebtProvision = testValue;
-            Assert.AreEqual(testValue, _testClass.WalesTotalWithBadDebtProvision);
+            var walesTotalWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(testValue);
+            _testClass.WalesTotalWithBadDebtProvision = walesTotalWithBadDebtProvision;
+            Assert.AreEqual(walesTotalWithBadDebtProvision, _testClass.WalesTotalWithBadDebtProvision);
         }
 
         [TestMethod]
@@ -63,8 +70,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         {
             var fixture = new Fixture();
             var testValue = fixture.Create<decimal>();
-            _testClass.ScotlandTotalWithBadDebtProvision = testValue;
-            Assert.AreEqual(testValue, _testClass.ScotlandTotalWithBadDebtProvision);
+            var scotlandTotalWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(testValue);
+            _testClass.ScotlandTotalWithBadDebtProvision = scotlandTotalWithBadDebtProvision;
+            Assert.AreEqual(scotlandTotalWithBadDebtProvision, _testClass.ScotlandTotalWithBadDebtProvision);
         }
 
         [TestMethod]
@@ -72,8 +80,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         {
             var fixture = new Fixture();
             var testValue = fixture.Create<decimal>();
-            _testClass.NorthernIrelandTotalWithBadDebtProvision = testValue;
-            Assert.AreEqual(testValue, _testClass.NorthernIrelandTotalWithBadDebtProvision);
+            var northernIrelandTotalWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(testValue);
+            _testClass.NorthernIrelandTotalWithBadDebtProvision = northernIrelandTotalWithBadDebtProvision;
+            Assert.AreEqual(northernIrelandTotalWithBadDebtProvision, _testClass.NorthernIrelandTotalWithBadDebtProvision);
         }
     }
 }
