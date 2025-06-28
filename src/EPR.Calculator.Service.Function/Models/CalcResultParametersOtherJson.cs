@@ -4,12 +4,6 @@ namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResultParametersOtherJson
     {
-        [JsonProperty(PropertyName = "parametersOther")]
-        public ParametersOtherDetailsJson ParametersOther { get; set; } = new ParametersOtherDetailsJson();
-    }
-
-    public class ParametersOtherDetailsJson
-    {
         [JsonProperty(PropertyName = "threeSAOperatingCost")]
         public CountryAmountJson ThreeSAOperatingCost { get; set; } = new CountryAmountJson();
 

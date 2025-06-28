@@ -26,6 +26,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
         private readonly ICalcResultDetailJsonExporter calcResultDetailExporter;
         private readonly ICalcResultLapcapExporter lapcapExporter;
         private readonly ILateReportingTonnage lateReportingTonnageExporter;
+        private readonly IParametersOtherJsonExporter parametersOtherExporter;
         private readonly IOnePlusFourApportionmentJsonExporter onePlusFourApportionmentJsonExporter;
         private readonly ICommsCostJsonExporter commsCostExporter;
         private readonly ICommsCostByMaterial2AExporter commsCostByMaterial2AExporter;
@@ -41,6 +42,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
             ICalcResultDetailJsonExporter calcResultDetailExporter,
             ICalcResultLapcapExporter calcResultLapcapExporter,
             ILateReportingTonnage lateReportingTonnageExporter,
+            IParametersOtherJsonExporter parametersOtherExporter,
             IOnePlusFourApportionmentJsonExporter onePlusFourApportionmentJsonExporter,
             ICommsCostJsonExporter commsCostExporter,
             ICommsCostByMaterial2AExporter commsCostByMaterial2AExporter,
@@ -54,6 +56,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
             this.calcResultDetailExporter = calcResultDetailExporter;
             this.lapcapExporter = calcResultLapcapExporter;
             this.lateReportingTonnageExporter = lateReportingTonnageExporter;
+            this.parametersOtherExporter = parametersOtherExporter;
             this.onePlusFourApportionmentJsonExporter = onePlusFourApportionmentJsonExporter;
             this.commsCostExporter = commsCostExporter;
             this.commsCostByMaterial2AExporter = commsCostByMaterial2AExporter;
@@ -77,6 +80,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
             billingFileContent.CalcResultDetail = calcResultDetailExporter.Export(results.CalcResultDetail);
             billingFileContent.CalcResultLapcapData = lapcapExporter.Export(results.CalcResultLapcapData);
             billingFileContent.CalcResultLateReportingTonnageData = lateReportingTonnageExporter.Export(results.CalcResultLateReportingTonnageData);
+            billingFileContent.CalcResultParametersOtherData = parametersOtherExporter.Export(results.CalcResultParameterOtherCost);
             billingFileContent.OnePlusFourApportionment = onePlusFourApportionmentJsonExporter.Export(results.CalcResultOnePlusFourApportionment);
             billingFileContent.ParametersCommsCost = commsCostExporter.Export(results.CalcResultCommsCostReportDetail);
             billingFileContent.CalcResult2aCommsDataByMaterial = commsCostByMaterial2AExporter.Export(results.CalcResultCommsCostReportDetail.CalcResultCommsCostCommsCostByMaterial);

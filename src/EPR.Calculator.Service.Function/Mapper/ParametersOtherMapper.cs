@@ -18,8 +18,8 @@ namespace EPR.Calculator.Service.Function.Mapper
 
             return new CalcResultParametersOtherJson
             {
-                ParametersOther = new ParametersOtherDetailsJson
-                {
+                //ParametersOther = new ParametersOtherDetailsJson
+                //{
                     ThreeSAOperatingCost = MapCountryAmount(otherCost.SaOperatingCost.OrderBy(sa => sa.OrderId).FirstOrDefault()),
                     FourLADataPrepCosts = MapCountryAmount(otherCost.Details.OrderBy(sa => sa.OrderId).FirstOrDefault()),
                     FourCountryApportionmentPercentages = MapCountryAmount(apportionmentDetail),
@@ -30,7 +30,7 @@ namespace EPR.Calculator.Service.Function.Mapper
                     },
                     SevenMateriality = MapChangeSection(materiality),
                     EightTonnageChange = MapChangeSection(tonnageChange),
-                }
+                //}
             };
         }
 

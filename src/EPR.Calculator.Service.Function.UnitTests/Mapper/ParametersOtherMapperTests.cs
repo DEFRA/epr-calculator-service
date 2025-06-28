@@ -26,7 +26,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.IsNotNull(result.ParametersOther);
+            Assert.IsNotNull(result);
         }
 
         [TestMethod]
@@ -43,8 +43,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             };
 
             var result = TestClass.Map(otherCost);
-            Assert.IsNotNull(result.ParametersOther.ThreeSAOperatingCost);
-            Assert.AreEqual(string.Empty, result.ParametersOther.ThreeSAOperatingCost.England);
+            Assert.IsNotNull(result.ThreeSAOperatingCost);
+            Assert.AreEqual(string.Empty, result.ThreeSAOperatingCost.England);
         }
 
         [TestMethod]
@@ -61,8 +61,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             };
 
             var result = TestClass.Map(otherCost);
-            Assert.IsNotNull(result.ParametersOther.FourLADataPrepCosts);
-            Assert.AreEqual(string.Empty, result.ParametersOther.FourLADataPrepCosts.England);
+            Assert.IsNotNull(result.FourLADataPrepCosts);
+            Assert.AreEqual(string.Empty, result.FourLADataPrepCosts.England);
         }
 
         [TestMethod]
@@ -79,8 +79,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             };
 
             var result = TestClass.Map(otherCost);
-            Assert.IsNotNull(result.ParametersOther.FourCountryApportionmentPercentages);
-            Assert.AreEqual(string.Empty, result.ParametersOther.FourCountryApportionmentPercentages.England);
+            Assert.IsNotNull(result.FourCountryApportionmentPercentages);
+            Assert.AreEqual(string.Empty, result.FourCountryApportionmentPercentages.England);
         }
 
         [TestMethod]
@@ -107,10 +107,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 
             var result = TestClass.Map(otherCost);
 
-            Assert.AreEqual("£1", result.ParametersOther.SevenMateriality.Increase.Amount);
-            Assert.AreEqual("£2", result.ParametersOther.SevenMateriality.Decrease.Amount);
-            Assert.AreEqual("£3", result.ParametersOther.EightTonnageChange.Increase.Amount);
-            Assert.AreEqual("£4", result.ParametersOther.EightTonnageChange.Decrease.Amount);
+            Assert.AreEqual("£1", result.SevenMateriality.Increase.Amount);
+            Assert.AreEqual("£2", result.SevenMateriality.Decrease.Amount);
+            Assert.AreEqual("£3", result.EightTonnageChange.Increase.Amount);
+            Assert.AreEqual("£4", result.EightTonnageChange.Decrease.Amount);
         }
 
         [TestMethod]
