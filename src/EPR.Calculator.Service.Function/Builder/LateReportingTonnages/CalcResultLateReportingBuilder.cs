@@ -9,8 +9,7 @@
 
     public class CalcResultLateReportingBuilder : ICalcResultLateReportingBuilder
     {
-        public const string LateReportingHeader = "Parameters - Late Reporting Tonnages";
-        public const string Total = "Total";
+        public const string LateReportingHeader = "Late Reporting Tonnage";
         public const string MaterialHeading = "Material";
         public const string TonnageHeading = "Late Reporting Tonnage";
         private readonly ApplicationDBContext context;
@@ -33,12 +32,6 @@
                                     Name = template.ParameterCategory,
                                     TotalLateReportingTonnage = detail.ParameterValue,
                                 }).ToListAsync();
-
-            result.Add(new CalcResultLateReportingTonnageDetail
-            {
-                Name = Total,
-                TotalLateReportingTonnage = result.Sum(r => r.TotalLateReportingTonnage),
-            });
 
             return new CalcResultLateReportingTonnage
             {

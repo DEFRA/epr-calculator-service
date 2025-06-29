@@ -100,7 +100,7 @@
             Assert.AreEqual(CalcResultLateReportingBuilder.LateReportingHeader, result.Name);
             Assert.AreEqual(CalcResultLateReportingBuilder.MaterialHeading, result.MaterialHeading);
             Assert.AreEqual(CalcResultLateReportingBuilder.TonnageHeading, result.TonnageHeading);
-            Assert.AreEqual(3, result.CalcResultLateReportingTonnageDetails?.Count());
+            Assert.AreEqual(2, result.CalcResultLateReportingTonnageDetails?.Count());
 
             var material1 = result.CalcResultLateReportingTonnageDetails?.SingleOrDefault(x => x.Name == "Aluminium");
             Assert.IsNotNull(material1);
@@ -109,10 +109,6 @@
             var material2 = result.CalcResultLateReportingTonnageDetails?.SingleOrDefault(x => x.Name == "Fibre composite");
             Assert.IsNotNull(material2);
             Assert.AreEqual(200.000M, material2.TotalLateReportingTonnage);
-
-            var total = result.CalcResultLateReportingTonnageDetails?.SingleOrDefault(x => x.Name == CalcResultLateReportingBuilder.Total);
-            Assert.IsNotNull(total);
-            Assert.AreEqual(300.000M, total.TotalLateReportingTonnage);
         }
     }
 }
