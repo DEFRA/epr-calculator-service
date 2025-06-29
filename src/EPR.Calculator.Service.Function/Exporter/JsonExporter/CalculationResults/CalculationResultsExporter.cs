@@ -1,13 +1,10 @@
-﻿using EPR.Calculator.Service.Common.Utils;
+﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using EPR.Calculator.Service.Common.Utils;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Text.Unicode;
 
 namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResults
 {
@@ -69,12 +66,12 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResul
         }
 
         /// <inheritdoc/>
-        public object Export(CalcResultSummary summary, IEnumerable<int> acceptedProducerIds)
+        public object Export(CalcResultSummary summary, IEnumerable<int> acceptedProducerIds, List<MaterialDetail> materials)
             =>
                 new
                 {
                     producerCalculationResultsSummary = ArrangeSummary(summary),
-                    producerCalculationResults = ArrangeProducerCalculationResult(summary, acceptedProducerIds),
+                    producerCalculationResults = ArrangeProducerCalculationResult(summary, acceptedProducerIds, materials),
                     producerCalculationResultsTotal = ArrangeProducerCalculationResultsTotal(summary),
                 };
 
@@ -119,7 +116,10 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResul
         }
 
 
-        private List<CalcSummaryProducerCalculationResults> ArrangeProducerCalculationResult(CalcResultSummary calcResultSummary, IEnumerable<int> acceptedProducerIds)
+        private List<CalcSummaryProducerCalculationResults> ArrangeProducerCalculationResult(
+            CalcResultSummary calcResultSummary,
+            IEnumerable<int> acceptedProducerIds,
+            List<MaterialDetail> materials)
         {
             var results = new List<CalcSummaryProducerCalculationResults>();
 
@@ -137,7 +137,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResul
                     Level = producer.Level,
                     ScaledUpTonnages = producer.IsProducerScaledup,
                     ProducerDisposalFeesWithBadDebtProvision1 = this.producerDisposalFeesWithBadDebtProvision1JsonMapper.Map(producer.ProducerDisposalFeesByMaterial),
-                    FeesForCommsCostsWithBadDebtProvision2a = this.commsCostByMaterial2AJsonMapper.Map(producer.ProducerCommsFeesByMaterial!),
+                    FeesForCommsCostsWithBadDebtProvision2a = this.commsCostByMaterial2AJsonMapper.Map(producer.ProducerCommsFeesByMaterial!, materials),
                     FeeForSAOperatingCostsWithBadDebtProvision_3 = this.sAOperatingCostsWithBadDebtProvisionMapper.Map(producer),
                     FeeForLADataPrepCostsWithBadDebtProvision_4 = this.laDataPrepCostsWithBadDebtProvision4Mapper.Map(producer),
                     FeeForCommsCostsWithBadDebtProvision_2a = this.feeForCommsCostsWithBadDebtProvision2aMapper.Map(producer),

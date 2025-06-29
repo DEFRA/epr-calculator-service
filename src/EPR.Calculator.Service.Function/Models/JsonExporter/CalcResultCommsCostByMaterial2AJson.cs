@@ -21,46 +21,38 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
         [JsonProperty(PropertyName = "publicBinTonnage")]
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal ReportedPublicBinTonnage { get; init; }
+        public decimal PublicBinTonnage { get; init; }
 
         [JsonProperty(PropertyName = "totalTonnage")]
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal TotalReportedTonnage { get; init; }
+        public decimal TotalTonnage { get; init; }
 
-        [JsonProperty(PropertyName = "householdDrinksContainers", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "householdDrinksContainersTonnageGlass", NullValueHandling = NullValueHandling.Ignore)]
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal? HouseholdDrinksContainers { get; set; }
+        public decimal HouseholdDrinksContainersTonnageGlass { get; set; }
 
         [JsonProperty(PropertyName = "pricePerTonne")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal PriceperTonne { get; init; }
+        public required string PricePerTonne { get; init; }
 
         [JsonProperty(PropertyName = "producerTotalCostWithoutBadDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal ProducerTotalCostWithoutBadDebtProvision { get; init; }
+        public required string ProducerTotalCostWithoutBadDebtProvision { get; init; }
 
         [JsonProperty(PropertyName = "badDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal BadDebtProvision { get; init; }
+        public required string BadDebtProvision { get; init; }
 
         [JsonProperty(PropertyName = "producerTotalCostWithBadDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal ProducerTotalCostwithBadDebtProvision { get; init; }
+        public required string ProducerTotalCostwithBadDebtProvision { get; init; }
 
         [JsonProperty(PropertyName = "englandWithBadDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal EnglandWithBadDebtProvision { get; init; }
+        public required string EnglandWithBadDebtProvision { get; init; }
 
         [JsonProperty(PropertyName = "walesWithBadDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal WalesWithBadDebtProvision { get; init; }
+        public required string WalesWithBadDebtProvision { get; init; }
 
         [JsonProperty(PropertyName = "scotlandWithBadDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal ScotlandWithBadDebtProvision { get; init; }
+        public required string ScotlandWithBadDebtProvision { get; init; }
 
         [JsonProperty(PropertyName = "northernIrelandWithBadDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal NorthernIrelandWithBadDebtProvision { get; init; }
+        public required string NorthernIrelandWithBadDebtProvision { get; init; }
     }
 }

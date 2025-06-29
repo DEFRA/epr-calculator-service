@@ -89,7 +89,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
             billingFileContent.CalcResultLaDisposalCostData = calcResultLaDisposalCostDataExporter.Export(results.CalcResultLaDisposalCostData.CalcResultLaDisposalCostDetails);
             billingFileContent.CancelledProducers = cancelledProducersExporter.Export(results.CalcResultCancelledProducers);
             billingFileContent.ScaleUpProducers = calcResultScaledupProducersJsonExporter.Export(results.CalcResultScaledupProducers, acceptedProducerIds, materials);
-            billingFileContent.CalculationResults = calculationResultsExporter.Export(results.CalcResultSummary, acceptedProducerIds);
+            billingFileContent.CalculationResults = calculationResultsExporter.Export(results.CalcResultSummary, acceptedProducerIds, materials);
 
             return JsonSerializer.Serialize(
                 billingFileContent,
