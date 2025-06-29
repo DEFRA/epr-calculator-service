@@ -11,15 +11,9 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
     public class CalcResultCommsCostJson
     {
-        [JsonProperty(CommonConstants.ParametersCommsCost)]
-        public required ParametersCommsCost ParametersCommsCost { get; set; }
-    }
-
-    public class ParametersCommsCost
-    {
         [JsonProperty(CommonConstants.OnePlusFourCommsCostApportionmentPercentages)]
-        public required OnePlusFourCommsCostApportionmentPercentages Percentages { get; set; }
-    }
+        public required OnePlusFourCommsCostApportionmentPercentages OnePlusFourCommsCostApportionmentPercentages { get; set; }
+    }    
 
     public class OnePlusFourCommsCostApportionmentPercentages
     {

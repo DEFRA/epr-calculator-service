@@ -10,21 +10,20 @@ namespace EPR.Calculator.Service.Function.Mapper
     public class CommsCostMapper : ICommsCostMapper
     {
         public CalcResultCommsCostJson Map(CalcResultCommsCost calcResultCommsCost)
-        {            
-            var onePlusFourApportionment = calcResultCommsCost.CalcResultCommsCostOnePlusFourApportionment                
+        {
+            var onePlusFourApportionment = calcResultCommsCost.CalcResultCommsCostOnePlusFourApportionment
                 .SingleOrDefault(x => x.Name == CalcResultCommsCostBuilder.OnePlusFourApportionment);
 
             if (onePlusFourApportionment == null)
             {
-                return new CalcResultCommsCostJson { ParametersCommsCost = new ParametersCommsCost { Percentages = new OnePlusFourCommsCostApportionmentPercentages() } };
+                return new CalcResultCommsCostJson {  
+                    OnePlusFourCommsCostApportionmentPercentages = new OnePlusFourCommsCostApportionmentPercentages() 
+                };
             }
 
             return new CalcResultCommsCostJson
             {
-                ParametersCommsCost = new ParametersCommsCost
-                {
-                    Percentages = OnePlusFourCommsCostApportionmentPercentagesMap(onePlusFourApportionment)
-                }
+                OnePlusFourCommsCostApportionmentPercentages = OnePlusFourCommsCostApportionmentPercentagesMap(onePlusFourApportionment)
             };
         }
 
