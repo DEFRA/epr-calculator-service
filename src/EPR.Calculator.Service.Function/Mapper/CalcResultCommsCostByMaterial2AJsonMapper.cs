@@ -1,4 +1,5 @@
-﻿using EPR.Calculator.Service.Function.Constants;
+﻿using EPR.Calculator.Service.Common.Utils;
+using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
 using System.Collections.Generic;
@@ -34,14 +35,14 @@ namespace EPR.Calculator.Service.Function.Mapper
                     HouseholdPackagingWasteTonnage = item.Value.HouseholdPackagingWasteTonnage,
                     ReportedPublicBinTonnage = item.Value.ReportedPublicBinTonnage,
                     TotalReportedTonnage = item.Value.TotalReportedTonnage,
-                    PriceperTonne = item.Value.PriceperTonne,
-                    ProducerTotalCostWithoutBadDebtProvision = item.Value.ProducerTotalCostWithoutBadDebtProvision,
-                    BadDebtProvision = item.Value.BadDebtProvision,
-                    ProducerTotalCostwithBadDebtProvision = item.Value.ProducerTotalCostwithBadDebtProvision,
-                    EnglandWithBadDebtProvision = item.Value.EnglandWithBadDebtProvision,
-                    WalesWithBadDebtProvision = item.Value.WalesWithBadDebtProvision,
-                    ScotlandWithBadDebtProvision = item.Value.ScotlandWithBadDebtProvision,
-                    NorthernIrelandWithBadDebtProvision = item.Value.NorthernIrelandWithBadDebtProvision
+                    PriceperTonne = CurrencyConverter.ConvertToCurrency(item.Value.PriceperTonne),
+                    ProducerTotalCostWithoutBadDebtProvision = CurrencyConverter.ConvertToCurrency(item.Value.ProducerTotalCostWithoutBadDebtProvision),
+                    BadDebtProvision = CurrencyConverter.ConvertToCurrency(item.Value.BadDebtProvision),
+                    ProducerTotalCostwithBadDebtProvision = CurrencyConverter.ConvertToCurrency(item.Value.ProducerTotalCostwithBadDebtProvision),
+                    EnglandWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(item.Value.EnglandWithBadDebtProvision),
+                    WalesWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(item.Value.WalesWithBadDebtProvision),
+                    ScotlandWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(item.Value.ScotlandWithBadDebtProvision),
+                    NorthernIrelandWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(item.Value.NorthernIrelandWithBadDebtProvision)
                 };
 
                 if (item.Key == MaterialCodes.Glass)
