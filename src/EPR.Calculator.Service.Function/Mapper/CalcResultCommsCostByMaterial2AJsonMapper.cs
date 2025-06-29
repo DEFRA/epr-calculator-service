@@ -46,11 +46,6 @@ namespace EPR.Calculator.Service.Function.Mapper
                     HouseholdDrinksContainers = item.Value.HouseholdDrinksContainers
                 };
 
-                //if (item.Key == MaterialCodes.Glass)
-                //{
-                //    breakdown.HouseholdDrinksContainers = item.Value.HouseholdDrinksContainers;
-                //}
-
                 materialBreakdown.Add(breakdown);
             }
 
