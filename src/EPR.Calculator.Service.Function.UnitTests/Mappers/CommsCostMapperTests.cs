@@ -33,13 +33,12 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             // Assert  
             Assert.IsNotNull(result);
-            Assert.IsNotNull(result.ParametersCommsCost);
-            Assert.IsNotNull(result.ParametersCommsCost.Percentages);
-            Assert.AreEqual(null, result.ParametersCommsCost.Percentages.England);
-            Assert.AreEqual(null, result.ParametersCommsCost.Percentages.Wales);
-            Assert.AreEqual(null, result.ParametersCommsCost.Percentages.Scotland);
-            Assert.AreEqual(null, result.ParametersCommsCost.Percentages.NorthernIreland);
-            Assert.AreEqual(null, result.ParametersCommsCost.Percentages.Total);
+            Assert.IsNotNull(result.OnePlusFourCommsCostApportionmentPercentages);
+            Assert.AreEqual(null, result.OnePlusFourCommsCostApportionmentPercentages.England);
+            Assert.AreEqual(null, result.OnePlusFourCommsCostApportionmentPercentages.Wales);
+            Assert.AreEqual(null, result.OnePlusFourCommsCostApportionmentPercentages.Scotland);
+            Assert.AreEqual(null, result.OnePlusFourCommsCostApportionmentPercentages.NorthernIreland);
+            Assert.AreEqual(null, result.OnePlusFourCommsCostApportionmentPercentages.Total);
         }
 
         [TestMethod]
@@ -68,13 +67,12 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             // Assert  
             Assert.IsNotNull(result);
-            Assert.IsNotNull(result.ParametersCommsCost);
-            Assert.IsNotNull(result.ParametersCommsCost.Percentages);
-            Assert.AreEqual("50%", result.ParametersCommsCost.Percentages.England);
-            Assert.AreEqual("30%", result.ParametersCommsCost.Percentages.Wales);
-            Assert.AreEqual("20%", result.ParametersCommsCost.Percentages.Scotland);
-            Assert.AreEqual("10%", result.ParametersCommsCost.Percentages.NorthernIreland);
-            Assert.AreEqual("110%", result.ParametersCommsCost.Percentages.Total);
+            Assert.IsNotNull(result.OnePlusFourCommsCostApportionmentPercentages);
+            Assert.AreEqual("50%", result.OnePlusFourCommsCostApportionmentPercentages.England);
+            Assert.AreEqual("30%", result.OnePlusFourCommsCostApportionmentPercentages.Wales);
+            Assert.AreEqual("20%", result.OnePlusFourCommsCostApportionmentPercentages.Scotland);
+            Assert.AreEqual("10%", result.OnePlusFourCommsCostApportionmentPercentages.NorthernIreland);
+            Assert.AreEqual("110%", result.OnePlusFourCommsCostApportionmentPercentages.Total);
         }
 
         [TestMethod]
@@ -103,13 +101,12 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             // Assert  
             Assert.IsNotNull(result);
-            Assert.IsNotNull(result.ParametersCommsCost);
-            Assert.IsNotNull(result.ParametersCommsCost.Percentages);
-            Assert.AreEqual("0.00%", result.ParametersCommsCost.Percentages.England);
-            Assert.AreEqual("30%", result.ParametersCommsCost.Percentages.Wales);
-            Assert.AreEqual("20%", result.ParametersCommsCost.Percentages.Scotland);
-            Assert.AreEqual("10%", result.ParametersCommsCost.Percentages.NorthernIreland);
-            Assert.AreEqual("110%", result.ParametersCommsCost.Percentages.Total);
+            Assert.IsNotNull(result.OnePlusFourCommsCostApportionmentPercentages);
+            Assert.AreEqual("0.00%", result.OnePlusFourCommsCostApportionmentPercentages.England);
+            Assert.AreEqual("30%", result.OnePlusFourCommsCostApportionmentPercentages.Wales);
+            Assert.AreEqual("20%", result.OnePlusFourCommsCostApportionmentPercentages.Scotland);
+            Assert.AreEqual("10%", result.OnePlusFourCommsCostApportionmentPercentages.NorthernIreland);
+            Assert.AreEqual("110%", result.OnePlusFourCommsCostApportionmentPercentages.Total);
         }
     }
 }
