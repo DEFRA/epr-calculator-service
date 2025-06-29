@@ -2,30 +2,35 @@
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace EPR.Calculator.Service.Function.Mapper
 {
     public class CalcResultCommsCostByMaterial2AJsonMapper : ICalcResultCommsCostByMaterial2AJsonMapper
     {
         public CalcResultCommsCostByMaterial2AJson Map(
-            Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostByMaterial)
+            Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostByMaterial,
+            List<MaterialDetail> materials)
         {
             return new CalcResultCommsCostByMaterial2AJson
             {
-                MaterialBreakdown = GetMaterialBreakdown(commsCostByMaterial)
+                MaterialBreakdown = GetMaterialBreakdown(commsCostByMaterial, materials)
             };
         }
 
         public IEnumerable<CalcResultCommsCostByMaterial2AMaterialBreakdown> GetMaterialBreakdown(
-            Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostByMaterial)
+            Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostByMaterial,
+            List<MaterialDetail> materials)
         {
             var materialBreakdown = new List<CalcResultCommsCostByMaterial2AMaterialBreakdown>();
 
             foreach (var item in commsCostByMaterial)
             {
+                var material = materials.Single(m => m.Code == item.Key);
+
                 var breakdown = new CalcResultCommsCostByMaterial2AMaterialBreakdown
                 {
-                    MaterialName = item.Key,
+                    MaterialName = material.Name,
                     HouseholdPackagingWasteTonnage = item.Value.HouseholdPackagingWasteTonnage,
                     ReportedPublicBinTonnage = item.Value.ReportedPublicBinTonnage,
                     TotalReportedTonnage = item.Value.TotalReportedTonnage,
