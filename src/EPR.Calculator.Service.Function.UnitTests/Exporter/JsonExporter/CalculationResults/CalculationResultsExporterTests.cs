@@ -214,13 +214,13 @@
             var twoACosts = roundTrippedData[0]?["CommsCostsByMaterialFeesSummary2a"];
             var producer = data.ProducerDisposalFees.SingleOrDefault(t => !t.isTotalRow && !string.IsNullOrEmpty(t.Level));
             Assert.IsNotNull(producer);
-            Assert.AreEqual(producer.NorthernIrelandTotalWithBadDebtProvision2A, twoACosts?["NorthernIrelandTotalWithBadDebtProvision"]!.GetValue<decimal>());
-            Assert.AreEqual(producer.ScotlandTotalWithBadDebtProvision2A, twoACosts?["ScotlandTotalWithBadDebtProvision"]!.GetValue<decimal>());
-            Assert.AreEqual(producer.WalesTotalWithBadDebtProvision2A, twoACosts?["WalesTotalWithBadDebtProvision"]!.GetValue<decimal>());
-            Assert.AreEqual(producer.EnglandTotalWithBadDebtProvision2A, twoACosts?["EnglandTotalWithBadDebtProvision"]!.GetValue<decimal>());
-            Assert.AreEqual(producer.TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision, twoACosts?["TotalProducerFeeForCommsCostsWithoutBadDebtProvision2a"]!.GetValue<decimal>());
-            Assert.AreEqual(producer.TotalProducerFeeforCommsCostsbyMaterialwithBadDebtprovision, twoACosts?["TotalProducerFeeForCommsCostsWithBadDebtProvision2a"]!.GetValue<decimal>());
-            Assert.AreEqual(producer.BadDebtProvisionFor2A, twoACosts?["TotalBadDebtProvision"]!.GetValue<decimal>());
+            AssertAreEqual(producer.NorthernIrelandTotalWithBadDebtProvision2A, twoACosts?["NorthernIrelandTotalWithBadDebtProvision"]!);
+            AssertAreEqual(producer.ScotlandTotalWithBadDebtProvision2A, twoACosts?["ScotlandTotalWithBadDebtProvision"]!);
+            AssertAreEqual(producer.WalesTotalWithBadDebtProvision2A, twoACosts?["WalesTotalWithBadDebtProvision"]!);
+            AssertAreEqual(producer.EnglandTotalWithBadDebtProvision2A, twoACosts?["EnglandTotalWithBadDebtProvision"]!);
+            AssertAreEqual(producer.TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision, twoACosts?["TotalProducerFeeForCommsCostsWithoutBadDebtProvision2a"]!);
+            AssertAreEqual(producer.TotalProducerFeeforCommsCostsbyMaterialwithBadDebtprovision, twoACosts?["TotalProducerFeeForCommsCostsWithBadDebtProvision2a"]!);
+            AssertAreEqual(producer.BadDebtProvisionFor2A, twoACosts?["TotalBadDebtProvision"]);  
         }
 
         [TestMethod]
@@ -240,13 +240,13 @@
             var actual = roundTrippedData[0]!["FeeForSASetUpCostsWithBadDebtProvision_5"]!;
             var producer = data.ProducerDisposalFees.SingleOrDefault(t => !t.isTotalRow && !string.IsNullOrEmpty(t.Level))!;
 
-            Assert.AreEqual(producer.TotalProducerFeeWithoutBadDebtProvisionSection5, actual["TotalProducerOneOffFeeForSASetUpCostsWithoutBadDebtProvision"]!.GetValue<decimal>());
-            Assert.AreEqual(producer.BadDebtProvisionSection5, actual["BadDebtProvisionFor5"]!.GetValue<decimal>());
-            Assert.AreEqual(producer.TotalProducerFeeWithBadDebtProvisionSection5, actual["TotalProducerOneOffFeeForSASetUpCostsWithBadDebtProvision"]!.GetValue<decimal>());
-            Assert.AreEqual(producer.EnglandTotalWithBadDebtProvisionSection5, actual["EnglandTotalForSASetUpCostsWithBadDebtProvision"]!.GetValue<decimal>());
-            Assert.AreEqual(producer.WalesTotalWithBadDebtProvisionSection5, actual["WalesTotalForSASetUpCostsWithBadDebtProvision"]!.GetValue<decimal>());
-            Assert.AreEqual(producer.ScotlandTotalWithBadDebtProvisionSection5, actual["ScotlandTotalForSASetUpCostsWithBadDebtProvision"]!.GetValue<decimal>());
-            Assert.AreEqual(producer.NorthernIrelandTotalWithBadDebtProvisionSection5, actual["NorthernIrelandTotalForSASetUpCostsWithBadDebtProvision"]!.GetValue<decimal>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.TotalProducerFeeWithoutBadDebtProvisionSection5), actual["TotalProducerOneOffFeeForSASetUpCostsWithoutBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.BadDebtProvisionSection5), actual["BadDebtProvisionFor5"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.TotalProducerFeeWithBadDebtProvisionSection5), actual["TotalProducerOneOffFeeForSASetUpCostsWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.EnglandTotalWithBadDebtProvisionSection5), actual["EnglandTotalForSASetUpCostsWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.WalesTotalWithBadDebtProvisionSection5), actual["WalesTotalForSASetUpCostsWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.ScotlandTotalWithBadDebtProvisionSection5), actual["ScotlandTotalForSASetUpCostsWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.NorthernIrelandTotalWithBadDebtProvisionSection5), actual["NorthernIrelandTotalForSASetUpCostsWithBadDebtProvision"]!.GetValue<string>());
         }
 
         /// <summary>
@@ -303,13 +303,13 @@
             Assert.IsNotNull(twoACosts);
             var producer = data.ProducerDisposalFees.SingleOrDefault(t => !t.isTotalRow && !string.IsNullOrEmpty(t.Level));
             Assert.IsNotNull(producer);
-            Assert.AreEqual(producer.NorthernIrelandTotalWithBadDebtProvision2A, twoACosts["NorthernIrelandTotalWithBadDebtProvision"]!.GetValue<decimal>());
-            Assert.AreEqual(producer.ScotlandTotalWithBadDebtProvision2A, twoACosts["ScotlandTotalWithBadDebtProvision"]!.GetValue<decimal>());
-            Assert.AreEqual(producer.WalesTotalWithBadDebtProvision2A, twoACosts["WalesTotalWithBadDebtProvision"]!.GetValue<decimal>());
-            Assert.AreEqual(producer.EnglandTotalWithBadDebtProvision2A, twoACosts["EnglandTotalWithBadDebtProvision"]!.GetValue<decimal>());
-            Assert.AreEqual(producer.TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision, twoACosts["TotalProducerFeeForCommsCostsWithoutBadDebtProvision"]!.GetValue<decimal>());
-            Assert.AreEqual(producer.BadDebtProvisionFor2A, twoACosts["BadDebProvisionFor2a"]!.GetValue<decimal>());
-            Assert.AreEqual(producer.TotalProducerFeeforCommsCostsbyMaterialwithBadDebtprovision, twoACosts["TotalProducerFeeForCommsCostsWithBadDebtProvision"]!.GetValue<decimal>());
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(producer.NorthernIrelandTotalWithBadDebtProvision2A), twoACosts["NorthernIrelandTotalWithBadDebtProvision"]);
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(producer.ScotlandTotalWithBadDebtProvision2A), twoACosts["ScotlandTotalWithBadDebtProvision"]);
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(producer.WalesTotalWithBadDebtProvision2A), twoACosts["WalesTotalWithBadDebtProvision"]);
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(producer.EnglandTotalWithBadDebtProvision2A), twoACosts["EnglandTotalWithBadDebtProvision"]);
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(producer.TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision), twoACosts["TotalProducerFeeForCommsCostsWithoutBadDebtProvision"]);
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(producer.BadDebtProvisionFor2A), twoACosts["BadDebProvisionFor2a"]);
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(producer.TotalProducerFeeforCommsCostsbyMaterialwithBadDebtprovision), twoACosts["TotalProducerFeeForCommsCostsWithBadDebtProvision"]);
         }
 
         [TestMethod]
