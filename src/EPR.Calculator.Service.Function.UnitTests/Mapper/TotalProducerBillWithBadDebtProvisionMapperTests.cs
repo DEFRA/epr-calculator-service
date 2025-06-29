@@ -1,6 +1,8 @@
 ﻿using AutoFixture;
+using EPR.Calculator.Service.Common.Utils;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
+using static EPR.Calculator.Service.Common.UnitTests.Utils.JsonNodeComparer;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 {
@@ -25,13 +27,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 
             // Assert  
             Assert.IsNotNull(result);
-            Assert.AreEqual(calcResultSummaryProducerDisposalFees.TotalProducerBillWithoutBadDebtProvision, result.TotalProducerBillWithoutBadDebtProvision);
-            Assert.AreEqual(calcResultSummaryProducerDisposalFees.BadDebtProvisionForTotalProducerBill, result.BadDebtProvisionForTotalProducerBill);
-            Assert.AreEqual(calcResultSummaryProducerDisposalFees.EnglandTotalWithBadDebtProvision, result.EnglandTotalForProducerBillWithBadDebtProvision);
-            Assert.AreEqual(calcResultSummaryProducerDisposalFees.WalesTotalWithBadDebtProvision, result.WalesTotalForProducerBillWithBadDebtProvision);
-            Assert.AreEqual(calcResultSummaryProducerDisposalFees.ScotlandTotalWithBadDebtProvision, result.ScotlandTotalForProducerBillWithBadDebtProvision);
-            Assert.AreEqual(calcResultSummaryProducerDisposalFees.NorthernIrelandTotalWithBadDebtProvision, result.NorthernIrelandTotalForProducerBillWithBadDebtProvision);
-            Assert.AreEqual(calcResultSummaryProducerDisposalFees.TotalProducerBillWithBadDebtProvision, result.TotalProducerBillWithBadDebtProvisionAmount);
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.TotalProducerBillWithoutBadDebtProvision), result.TotalProducerBillWithoutBadDebtProvision);
+            AssertAreEqual(calcResultSummaryProducerDisposalFees.BadDebtProvisionForTotalProducerBill, result.BadDebtProvisionForTotalProducerBill);
+            AssertAreEqual(calcResultSummaryProducerDisposalFees.EnglandTotalWithBadDebtProvisionTotalBill, result.EnglandTotalForProducerBillWithBadDebtProvision);
+            AssertAreEqual(calcResultSummaryProducerDisposalFees.WalesTotalWithBadDebtProvisionTotalBill, result.WalesTotalForProducerBillWithBadDebtProvision);
+            AssertAreEqual(calcResultSummaryProducerDisposalFees.ScotlandTotalWithBadDebtProvisionTotalBill, result.ScotlandTotalForProducerBillWithBadDebtProvision);
+            AssertAreEqual(calcResultSummaryProducerDisposalFees.NorthernIrelandTotalWithBadDebtProvisionTotalBill, result.NorthernIrelandTotalForProducerBillWithBadDebtProvision);
+            AssertAreEqual(calcResultSummaryProducerDisposalFees.TotalProducerBillWithBadDebtProvision, result.TotalProducerBillWithBadDebtProvisionAmount);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using AutoFixture;
-using EPR.Calculator.Service.Function.Mapper;
+﻿using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Mapper
@@ -21,7 +20,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             var input = new CalcResultSummaryProducerDisposalFees
             {
                 LaDataPrepCostsTotalWithoutBadDebtProvisionSection4 = 100m,
-                LaDataPrepCostsBadDebtProvisionSection4 = 10m,
+                LaDataPrepCostsBadDebtProvisionSection4 = 10.06m,
                 LaDataPrepCostsTotalWithBadDebtProvisionSection4 = 110m,
                 LaDataPrepCostsEnglandTotalWithBadDebtProvisionSection4 = 50m,
                 LaDataPrepCostsWalesTotalWithBadDebtProvisionSection4 = 30m,
@@ -37,13 +36,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 
             // Assert  
             Assert.IsNotNull(result);            
-            Assert.AreEqual(100m, result.TotalProducerFeeForLADataPrepCostsWithoutBadDebtProvision);
-            Assert.AreEqual(10m, result.BadDebtProvisionFor4);
-            Assert.AreEqual(110m, result.TotalProducerFeeForLADataPrepCostsWithBadDebtProvision);
-            Assert.AreEqual(50m, result.EnglandTotalForLADataPrepCostsWithBadDebtProvision);
-            Assert.AreEqual(30m, result.WalesTotalForLADataPrepCostsWithBadDebtProvision);
-            Assert.AreEqual(20m, result.ScotlandTotalForLADataPrepCostsWithBadDebtProvision);
-            Assert.AreEqual(10m, result.NorthernIrelandTotalForLADataPrepCostsWithBadDebtProvision);
+            Assert.AreEqual("£100.00", result.TotalProducerFeeForLADataPrepCostsWithoutBadDebtProvision);
+            Assert.AreEqual("£10.06", result.BadDebtProvisionFor4);
+            Assert.AreEqual("£110.00", result.TotalProducerFeeForLADataPrepCostsWithBadDebtProvision);
+            Assert.AreEqual("£50.00", result.EnglandTotalForLADataPrepCostsWithBadDebtProvision);
+            Assert.AreEqual("£30.00", result.WalesTotalForLADataPrepCostsWithBadDebtProvision);
+            Assert.AreEqual("£20.00", result.ScotlandTotalForLADataPrepCostsWithBadDebtProvision);
+            Assert.AreEqual("£10.00", result.NorthernIrelandTotalForLADataPrepCostsWithBadDebtProvision);
         }
     }
 }
