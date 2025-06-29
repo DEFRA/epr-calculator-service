@@ -7,6 +7,7 @@ namespace EPR.Calculator.Service.Function.Mapper
     public class LateReportingTonnageMapper : ILateReportingTonnageMapper
     {
         public const string LateReportingJsonHeader = "Late Reporting Tonnage";
+        public const string Total = "total";
 
         CalcResultLateReportingTonnageJson ILateReportingTonnageMapper.Map(CalcResultLateReportingTonnage? calcResultLateReportingTonnage)
         {
@@ -15,11 +16,11 @@ namespace EPR.Calculator.Service.Function.Mapper
             {
                 Name = LateReportingJsonHeader,
                 calcResultLateReportingTonnageDetails = calcResultLateReportingTonnage.CalcResultLateReportingTonnageDetails
-                .Where(n=>n.Name.ToLower() != "total")
+                .Where(n=>n.Name.Trim().ToLower() != Total)
                 .Select(t => new CalcResultLateReportingTonnageDetailsJson { MaterialName = t.Name, TotalLateReportingTonnage = t.TotalLateReportingTonnage }).ToList(),
                 
                 CalcResultLateReportingTonnageTotal = calcResultLateReportingTonnage.CalcResultLateReportingTonnageDetails
-                .Where(n => n.Name.ToLower() != "total")
+                .Where(n => n.Name.Trim().ToLower() != Total)
                 .Sum(t => t.TotalLateReportingTonnage)
             };
         }
