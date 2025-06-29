@@ -31,16 +31,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
             var input = new CalcResultCommsCost { };
             var mappedResult = new CalcResultCommsCostJson
             {
-                ParametersCommsCost = new ParametersCommsCost
+                OnePlusFourCommsCostApportionmentPercentages = new OnePlusFourCommsCostApportionmentPercentages
                 {
-                    Percentages = new OnePlusFourCommsCostApportionmentPercentages
-                    {
-                        England = "52.49321900%",
-                        Wales = "13.24848700%",
-                        Scotland = "24.32714400%",
-                        NorthernIreland = "9.93115000%",
-                        Total = "100.00000000%"
-                    }
+                    England = "52.49321900%",
+                    Wales = "13.24848700%",
+                    Scotland = "24.32714400%",
+                    NorthernIreland = "9.93115000%",
+                    Total = "100.00000000%"
                 }
             };
 
@@ -63,16 +60,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
             var communicationCost = new CalcResultCommsCost();
             var mappedResult = new CalcResultCommsCostJson
             {
-                ParametersCommsCost = new ParametersCommsCost
+                OnePlusFourCommsCostApportionmentPercentages = new OnePlusFourCommsCostApportionmentPercentages
                 {
-                    Percentages = new OnePlusFourCommsCostApportionmentPercentages
-                    {
-                        England = "0.00%",
-                        Wales = "0.00%",
-                        Scotland = "0.00%",
-                        NorthernIreland = "0.00%",
-                        Total = "0.00%"
-                    }
+                    England = "0.00%",
+                    Wales = "0.00%",
+                    Scotland = "0.00%",
+                    NorthernIreland = "0.00%",
+                    Total = "0.00%"
                 }
             };
             mockMapper.Setup(m => m.Map(communicationCost)).Returns(mappedResult);
