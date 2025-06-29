@@ -26,5 +26,4 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.LateReportingTon
             return mapper.Map(calcResultLateReportingData);
         }
     }
-
 }
