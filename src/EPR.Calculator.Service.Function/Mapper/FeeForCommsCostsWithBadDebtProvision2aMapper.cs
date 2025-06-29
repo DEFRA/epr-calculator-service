@@ -1,5 +1,8 @@
-﻿using EPR.Calculator.Service.Function.Models;
+﻿using EPR.Calculator.Service.Common.Utils;
+using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
+using System;
 
 namespace EPR.Calculator.Service.Function.Mapper
 {
@@ -9,14 +12,14 @@ namespace EPR.Calculator.Service.Function.Mapper
         {
             return new CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2a
             {
-                TotalProducerFeeForCommsCostsWithoutBadDebtProvision = calcResultSummaryProducerDisposalFees.TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision,
-                BadDebProvisionFor2a = calcResultSummaryProducerDisposalFees.BadDebtProvisionFor2A,
-                TotalProducerFeeForCommsCostsWithBadDebtProvision = calcResultSummaryProducerDisposalFees.TotalProducerFeeforCommsCostsbyMaterialwithBadDebtprovision,
-                EnglandTotalWithBadDebtProvision = calcResultSummaryProducerDisposalFees.EnglandTotalWithBadDebtProvision2A,
-                NorthernIrelandTotalWithBadDebtProvision = calcResultSummaryProducerDisposalFees.NorthernIrelandTotalWithBadDebtProvision2A,
-                ScotlandTotalWithBadDebtProvision = calcResultSummaryProducerDisposalFees.ScotlandTotalWithBadDebtProvision2A,
-                WalesTotalWithBadDebtProvision = calcResultSummaryProducerDisposalFees.WalesTotalWithBadDebtProvision2A,
-                PercentageOfProducerTonnageVsAllProducers = calcResultSummaryProducerDisposalFees.PercentageofProducerReportedTonnagevsAllProducers,
+                TotalProducerFeeForCommsCostsWithoutBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision),
+                BadDebProvisionFor2a = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.BadDebtProvisionFor2A),
+                TotalProducerFeeForCommsCostsWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.TotalProducerFeeforCommsCostsbyMaterialwithBadDebtprovision),
+                EnglandTotalWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.EnglandTotalWithBadDebtProvision2A),
+                NorthernIrelandTotalWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.NorthernIrelandTotalWithBadDebtProvision2A),
+                ScotlandTotalWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.ScotlandTotalWithBadDebtProvision2A),
+                WalesTotalWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.WalesTotalWithBadDebtProvision2A),
+                PercentageOfProducerTonnageVsAllProducers = $"{Math.Round(calcResultSummaryProducerDisposalFees.PercentageofProducerReportedTonnagevsAllProducers, (int)DecimalPlaces.Eight).ToString()}%"
             };
         }
     }
