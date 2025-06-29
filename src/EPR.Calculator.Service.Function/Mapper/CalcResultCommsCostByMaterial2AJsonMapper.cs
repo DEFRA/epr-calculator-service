@@ -33,18 +33,22 @@ namespace EPR.Calculator.Service.Function.Mapper
                 {
                     MaterialName = material.Name,
                     HouseholdPackagingWasteTonnage = item.Value.HouseholdPackagingWasteTonnage,
-                    ReportedPublicBinTonnage = item.Value.ReportedPublicBinTonnage,
+                    PublicBinTonnage = item.Value.ReportedPublicBinTonnage,
                     TotalTonnage = item.Value.TotalReportedTonnage,
-                    PriceperTonne = CurrencyConverter.ConvertToCurrency(item.Value.PriceperTonne),
+                    PricePerTonne = CurrencyConverter.ConvertToCurrency(item.Value.PriceperTonne),
                     ProducerTotalCostWithoutBadDebtProvision = CurrencyConverter.ConvertToCurrency(item.Value.ProducerTotalCostWithoutBadDebtProvision),
                     BadDebtProvision = CurrencyConverter.ConvertToCurrency(item.Value.BadDebtProvision),
                     ProducerTotalCostwithBadDebtProvision = CurrencyConverter.ConvertToCurrency(item.Value.ProducerTotalCostwithBadDebtProvision),
                     EnglandWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(item.Value.EnglandWithBadDebtProvision),
                     WalesWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(item.Value.WalesWithBadDebtProvision),
                     ScotlandWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(item.Value.ScotlandWithBadDebtProvision),
-                    NorthernIrelandWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(item.Value.NorthernIrelandWithBadDebtProvision),
-                    HouseholdDrinksContainers = item.Value.HouseholdDrinksContainers
+                    NorthernIrelandWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(item.Value.NorthernIrelandWithBadDebtProvision)
                 };
+
+                if (item.Key == MaterialCodes.Glass)
+                {
+                    breakdown.HouseholdDrinksContainersTonnageGlass = item.Value.HouseholdDrinksContainers;
+                }
 
                 materialBreakdown.Add(breakdown);
             }

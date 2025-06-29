@@ -21,18 +21,18 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
         [JsonProperty(PropertyName = "publicBinTonnage")]
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal ReportedPublicBinTonnage { get; init; }
+        public decimal PublicBinTonnage { get; init; }
 
         [JsonProperty(PropertyName = "totalTonnage")]
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
         public decimal TotalTonnage { get; init; }
 
-        [JsonProperty(PropertyName = "householdDrinksContainers", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "householdDrinksContainersTonnageGlass", NullValueHandling = NullValueHandling.Ignore)]
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal HouseholdDrinksContainers { get; set; }
+        public decimal HouseholdDrinksContainersTonnageGlass { get; set; }
 
         [JsonProperty(PropertyName = "pricePerTonne")]
-        public required string PriceperTonne { get; init; }
+        public required string PricePerTonne { get; init; }
 
         [JsonProperty(PropertyName = "producerTotalCostWithoutBadDebtProvision")]
         public required string ProducerTotalCostWithoutBadDebtProvision { get; init; }
