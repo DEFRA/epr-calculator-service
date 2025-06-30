@@ -317,7 +317,7 @@
             AssertAreEqual(CurrencyConverter.ConvertToCurrency(producer.WalesTotalWithBadDebtProvision2A), twoACosts["WalesTotalWithBadDebtProvision"]);
             AssertAreEqual(CurrencyConverter.ConvertToCurrency(producer.EnglandTotalWithBadDebtProvision2A), twoACosts["EnglandTotalWithBadDebtProvision"]);
             AssertAreEqual(CurrencyConverter.ConvertToCurrency(producer.TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision), twoACosts["TotalProducerFeeForCommsCostsWithoutBadDebtProvision"]);
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(producer.BadDebtProvisionFor2A), twoACosts["BadDebProvisionFor2a"]);
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(producer.BadDebtProvisionFor2A), twoACosts["BadDebtProvisionFor2a"]);
             AssertAreEqual(CurrencyConverter.ConvertToCurrency(producer.TotalProducerFeeforCommsCostsbyMaterialwithBadDebtprovision), twoACosts["TotalProducerFeeForCommsCostsWithBadDebtProvision"]);
         }
 

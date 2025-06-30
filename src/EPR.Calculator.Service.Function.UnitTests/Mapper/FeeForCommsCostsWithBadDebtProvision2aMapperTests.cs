@@ -32,7 +32,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             //Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(result.TotalProducerFeeForCommsCostsWithoutBadDebtProvision, CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision));
-            Assert.AreEqual(result.BadDebProvisionFor2a, CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.BadDebtProvisionFor2A));
+            Assert.AreEqual(result.BadDebtProvisionFor2a, CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.BadDebtProvisionFor2A));
             Assert.AreEqual(result.TotalProducerFeeForCommsCostsWithBadDebtProvision, CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.TotalProducerFeeforCommsCostsbyMaterialwithBadDebtprovision));
             Assert.AreEqual(result.PercentageOfProducerTonnageVsAllProducers, $"{Math.Round(calcResultSummaryProducerDisposalFees.PercentageofProducerReportedTonnagevsAllProducers, (int)DecimalPlaces.Eight).ToString()}%");
             Assert.AreEqual(result.EnglandTotalWithBadDebtProvision, CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.EnglandTotalWithBadDebtProvision2A));
