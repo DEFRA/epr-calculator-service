@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using EPR.Calculator.Service.Function.Models;
 
@@ -18,7 +19,10 @@ namespace EPR.Calculator.Service.Function.Mapper
 
             return new CalcResultParametersOtherJson
             {
-                ThreeSAOperatingCost = MapCountryAmount(otherCost.SaOperatingCost.OrderBy(sa => sa.OrderId).FirstOrDefault()),
+                ThreeSAOperatingCost = MapCountryAmount(otherCost.SaOperatingCost
+                    .Where(sa => decimal.TryParse(sa.England, NumberStyles.Currency, CultureInfo.GetCultureInfo("en-GB"), out _)) // Filter out the header line.
+                    .OrderBy(sa => sa.OrderId)
+                    .FirstOrDefault()),
                 FourDataPreparationCharge = MapCountryAmount(otherCost.Details.OrderBy(sa => sa.OrderId).FirstOrDefault()),
                 FourCountryApportionmentPercentages = MapCountryAmount(apportionmentDetail),
                 FiveSchemeSetupCost = MapCountryAmount(otherCost.SchemeSetupCost),

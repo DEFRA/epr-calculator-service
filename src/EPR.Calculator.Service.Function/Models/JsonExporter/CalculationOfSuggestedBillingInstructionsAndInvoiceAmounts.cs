@@ -1,37 +1,37 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
     public record CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts
     {
-        [JsonProperty(PropertyName = "currentYearInvoicedTotalToDate")]
+        [JsonPropertyName("currentYearInvoicedTotalToDate")]
         public required string CurrentYearInvoicedTotalToDate { get; init; }
 
-        [JsonProperty(PropertyName = "tonnageChangeSinceLastInvoice")]
+        [JsonPropertyName("tonnageChangeSinceLastInvoice")]
         public required string TonnageChangeSinceLastInvoice { get; init; }
 
-        [JsonProperty(PropertyName = "liabilityDifferenceCalcVsPrev")]
+        [JsonPropertyName("liabilityDifferenceCalcVsPrev")]
         public required string LiabilityDifferenceCalcVsPrev { get; init; }
 
-        [JsonProperty(PropertyName = "materialThresholdBreached")]
+        [JsonPropertyName("material£ThresholdBreached")]
         public required string MaterialThresholdBreached { get; init; }
 
-        [JsonProperty(PropertyName = "tonnageThresholdBreached")]
+        [JsonPropertyName("tonnage£ThresholdBreached")]
         public required string TonnageThresholdBreached { get; init; }
 
-        [JsonProperty(PropertyName = "percentageLiabilityDifferenceCalcVsPrev")]
+        [JsonPropertyName("percentageLiabilityDifferenceCalcVsPrev")]
         public required string PercentageLiabilityDifferenceCalcVsPrev { get; init; }
 
-        [JsonProperty(PropertyName = "materialPercentageThresholdBreached")]
+        [JsonPropertyName("materialPercentageThresholdBreached")]
         public required string MaterialPercentageThresholdBreached { get; init; }
 
-        [JsonProperty(PropertyName = "tonnagePercentageThresholdBreached")]
+        [JsonPropertyName("tonnagePercentageThresholdBreached")]
         public required string TonnagePercentageThresholdBreached { get; init; }
 
-        [JsonProperty(PropertyName = "suggestedBillingInstruction")]
+        [JsonPropertyName("suggestedBillingInstruction")]
         public required string SuggestedBillingInstruction { get; init; }
 
-        [JsonProperty(PropertyName = "suggestedInvoiceAmount")]
+        [JsonPropertyName("suggestedInvoiceAmount")]
         public required string SuggestedInvoiceAmount { get; init; }
     }
 }
