@@ -91,13 +91,14 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
             billingFileContent.ScaleUpProducers = calcResultScaledupProducersJsonExporter.Export(results.CalcResultScaledupProducers, acceptedProducerIds, materials);
             billingFileContent.CalculationResults = calculationResultsExporter.Export(results.CalcResultSummary, acceptedProducerIds, materials);
 
+           
             return JsonSerializer.Serialize(
                 billingFileContent,
                 new JsonSerializerOptions
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                     WriteIndented = true,
-                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
                 });
         }
     }
