@@ -4,6 +4,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Mapper;
     using EPR.Calculator.Service.Function.Models;
+    using EPR.Calculator.Service.Function.UnitTests.Builder;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
@@ -28,9 +29,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
                 {
                     { MaterialCodes.Glass, calcResultSummaryProducerDisposalFeesByMaterial }
                 };
+            var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var result = _testClass?.Map(producerDisposalFeesByMaterial);
+            var result = _testClass?.Map(producerDisposalFeesByMaterial, materials);
 
             // Assert
             Assert.IsNotNull(result);
@@ -47,9 +49,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
                 {
                     { MaterialCodes.Aluminium, calcResultSummaryProducerDisposalFeesByMaterial }
                 };
+            var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var result = _testClass?.Map(producerDisposalFeesByMaterial);
+            var result = _testClass?.Map(producerDisposalFeesByMaterial, materials);
 
             // Assert
             Assert.IsNotNull(result);

@@ -164,14 +164,14 @@
             Assert.AreEqual(expected.Value.ManagedConsumerWasteTonnage, actual["SelfManagedConsumerWasteTonnage"]!.GetValue<decimal>());
             Assert.AreEqual(expected.Value.NetReportedTonnage, actual["NetTonnage"]!.GetValue<decimal>());
             Assert.AreEqual(expected.Value.TonnageChange, actual["TonnageChange"]!.ToString());
-            Assert.AreEqual(expected.Value.PricePerTonne, actual["PricePerTonne"]!.GetValue<decimal>());
-            Assert.AreEqual(expected.Value.ProducerDisposalFee, actual["ProducerDisposalFeeWithoutBadDebtProvision"]!.GetValue<decimal>());
-            Assert.AreEqual(expected.Value.BadDebtProvision, actual["BadDebtProvision"]!.GetValue<decimal>());
-            Assert.AreEqual(expected.Value.ProducerDisposalFeeWithBadDebtProvision, actual["ProducerDisposalFeeWithBadDebtProvision"]!.GetValue<decimal>());
-            Assert.AreEqual(expected.Value.EnglandWithBadDebtProvision, actual["EnglandWithBadDebtProvision"]!.GetValue<decimal>());
-            Assert.AreEqual(expected.Value.WalesWithBadDebtProvision, actual["WalesWithBadDebtProvision"]!.GetValue<decimal>());
-            Assert.AreEqual(expected.Value.ScotlandWithBadDebtProvision, actual["ScotlandWithBadDebtProvision"]!.GetValue<decimal>());
-            Assert.AreEqual(expected.Value.NorthernIrelandWithBadDebtProvision, actual["NorthernIrelandWithBadDebtProvision"]!.GetValue<decimal>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(expected.Value.PricePerTonne), actual["PricePerTonne"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(expected.Value.ProducerDisposalFee), actual["ProducerDisposalFeeWithoutBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(expected.Value.BadDebtProvision), actual["BadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(expected.Value.ProducerDisposalFeeWithBadDebtProvision), actual["ProducerDisposalFeeWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(expected.Value.EnglandWithBadDebtProvision), actual["EnglandWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(expected.Value.WalesWithBadDebtProvision), actual["WalesWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(expected.Value.ScotlandWithBadDebtProvision), actual["ScotlandWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(expected.Value.NorthernIrelandWithBadDebtProvision), actual["NorthernIrelandWithBadDebtProvision"]!.GetValue<string>());
         }
 
         [TestMethod]
