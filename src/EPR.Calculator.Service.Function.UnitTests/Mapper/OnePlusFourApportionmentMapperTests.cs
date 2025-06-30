@@ -107,5 +107,103 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             Assert.IsNotNull(result.FourLADataPrepCharge);
             Assert.IsNotNull(result.OnePlusFourApportionmentPercentages);
         }
+
+        [TestMethod]
+        public void Map_ShouldMapCorrectly_WhenValidInputIsProvided()
+        {
+            // Arrange  
+            var input = new CalcResultOnePlusFourApportionment
+            {
+                CalcResultOnePlusFourApportionmentDetails = new List<CalcResultOnePlusFourApportionmentDetail>
+               {
+                   new CalcResultOnePlusFourApportionmentDetail
+                   {
+                       OrderId = 1,
+                       Name = "Test1",
+                       EnglandTotal = 100,
+                       ScotlandTotal = 200,
+                       WalesTotal = 300,
+                       NorthernIrelandTotal = 400,
+                       Total = "1000",
+                       EnglandDisposalTotal = "80",
+                       ScotlandDisposalTotal = "30",
+                       WalesDisposalTotal = "20",
+                       NorthernIrelandDisposalTotal = "70",
+                   },
+                   new CalcResultOnePlusFourApportionmentDetail
+                   {
+                       OrderId = 2,
+                       Name = "Test2",
+                       EnglandTotal = 150,
+                       ScotlandTotal = 250,
+                       WalesTotal = 350,
+                       NorthernIrelandTotal = 450,
+                       Total = "1200",
+                       EnglandDisposalTotal = "80",
+                       ScotlandDisposalTotal = "30",
+                       WalesDisposalTotal = "20",
+                       NorthernIrelandDisposalTotal = "70",
+                   },
+                   new CalcResultOnePlusFourApportionmentDetail
+                   {
+                       OrderId = 3,
+                       Name = "Test3",
+                       EnglandTotal = 200,
+                       ScotlandTotal = 300,
+                       WalesTotal = 400,
+                       NorthernIrelandTotal = 500,
+                       Total = "1400",
+                       EnglandDisposalTotal = "80",
+                       ScotlandDisposalTotal = "30",
+                       WalesDisposalTotal = "20",
+                       NorthernIrelandDisposalTotal = "70",
+                   },
+                   new CalcResultOnePlusFourApportionmentDetail
+                   {
+                       OrderId = 4,
+                       Name = "Test4",
+                       EnglandTotal = 0.25m,
+                       ScotlandTotal = 0.35m,
+                       WalesTotal = 0.15m,
+                       NorthernIrelandTotal = 0.25m,
+                       Total = "1.00",
+                       EnglandDisposalTotal = "80",
+                       ScotlandDisposalTotal = "30",
+                       WalesDisposalTotal = "20",
+                       NorthernIrelandDisposalTotal = "70",
+                   }
+               },
+                Name = "Test One Plus Four Apportionment"
+            };
+
+            // Act  
+            var result = _testClass.Map(input);
+
+            // Assert  
+            Assert.IsNotNull(result);
+            Assert.AreEqual("£100.00", result.OneFeeForLADisposalCosts.England);
+            Assert.AreEqual("£200.00", result.OneFeeForLADisposalCosts.Scotland);
+            Assert.AreEqual("£300.00", result.OneFeeForLADisposalCosts.Wales);
+            Assert.AreEqual("£400.00", result.OneFeeForLADisposalCosts.NorthernIreland);
+            Assert.AreEqual("1000", result.OneFeeForLADisposalCosts.Total);
+
+            Assert.AreEqual("£150.00", result.FourLADataPrepCharge.England);
+            Assert.AreEqual("£250.00", result.FourLADataPrepCharge.Scotland);
+            Assert.AreEqual("£350.00", result.FourLADataPrepCharge.Wales);
+            Assert.AreEqual("£450.00", result.FourLADataPrepCharge.NorthernIreland);
+            Assert.AreEqual("1200", result.FourLADataPrepCharge.Total);
+
+            Assert.AreEqual("£200.00", result.TotalOfonePlusFour.England);
+            Assert.AreEqual("£300.00", result.TotalOfonePlusFour.Scotland);
+            Assert.AreEqual("£400.00", result.TotalOfonePlusFour.Wales);
+            Assert.AreEqual("£500.00", result.TotalOfonePlusFour.NorthernIreland);
+            Assert.AreEqual("1400", result.TotalOfonePlusFour.Total);
+
+            Assert.AreEqual("0.25%", result.OnePlusFourApportionmentPercentages.England);
+            Assert.AreEqual("0.35%", result.OnePlusFourApportionmentPercentages.Scotland);
+            Assert.AreEqual("0.15%", result.OnePlusFourApportionmentPercentages.Wales);
+            Assert.AreEqual("0.25%", result.OnePlusFourApportionmentPercentages.NorthernIreland);
+            Assert.AreEqual("1.00", result.OnePlusFourApportionmentPercentages.Total);
+        }
     }
 }

@@ -23,6 +23,7 @@ namespace EPR.Calculator.Service.Function.Converter
 
             // Format as ISO 8601
             return utcDate.ToString(CalculationResults.DateFormatISO8601);
+
         }
     }
 }
