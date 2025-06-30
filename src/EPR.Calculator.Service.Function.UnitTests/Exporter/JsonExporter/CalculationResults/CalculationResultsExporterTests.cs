@@ -81,7 +81,7 @@
             AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.BadDebtProvisionFor1),
                 roundTrippedData["BadDebtProvision1"]);
             AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.TotalFeeforLADisposalCostswithBadDebtprovision1),
-                roundTrippedData["FeeforLADisposalCostswithBadDebtprovision1"]);
+                roundTrippedData["FeeForLaDisposalCostsWithBadDebtprovision1"]);
 
             // 2a
             AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A),

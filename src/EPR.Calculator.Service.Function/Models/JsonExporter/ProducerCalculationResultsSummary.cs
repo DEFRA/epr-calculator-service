@@ -12,7 +12,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         public required string BadDebtProvision1 { get; init; }
 
         [JsonProperty(PropertyName = "feeForLaDisposalCostsWithBadDebtprovision1")]
-        public required string FeeforLADisposalCostswithBadDebtprovision1 { get; init; }
+        public required string FeeForLaDisposalCostsWithBadDebtprovision1 { get; init; }
 
         [JsonProperty(PropertyName = "feeForCommsCostsByMaterialWithoutBadDebtprovision2a")]
         public required string FeeForCommsCostsByMaterialWithoutBadDebtprovision2a { get; init; }
