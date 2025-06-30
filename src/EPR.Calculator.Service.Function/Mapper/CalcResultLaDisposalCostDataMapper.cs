@@ -48,16 +48,16 @@ namespace EPR.Calculator.Service.Function.Mapper
             return new CalcResultLaDisposalCostDataDetailsTotal
             {
                 Total = laDisposalCostDetailTotal.Name,
-                EnglandLaDisposalCostTotal = CurrencyConverter.ConvertToCurrency(laDisposalCostDetailTotal.England),
-                WalesLaDisposalCostTotal = CurrencyConverter.ConvertToCurrency(laDisposalCostDetailTotal.Wales),
-                ScotlandLaDisposalCostTotal = CurrencyConverter.ConvertToCurrency(laDisposalCostDetailTotal.Scotland),
-                NorthernIrelandLaDisposalCostTotal = CurrencyConverter.ConvertToCurrency(laDisposalCostDetailTotal.NorthernIreland),
-                TotalLaDisposalCostTotal = CurrencyConverter.ConvertToCurrency(laDisposalCostDetailTotal.Total),
+                EnglandLaDisposalCostTotal = laDisposalCostDetailTotal.England,
+                WalesLaDisposalCostTotal = laDisposalCostDetailTotal.Wales,
+                ScotlandLaDisposalCostTotal = laDisposalCostDetailTotal.Scotland,
+                NorthernIrelandLaDisposalCostTotal = laDisposalCostDetailTotal.NorthernIreland,
+                TotalLaDisposalCostTotal = laDisposalCostDetailTotal.Total,
                 ProducerHouseholdPackagingWasteTonnageTotal = CurrencyConverter.GetDecimalValue(laDisposalCostDetailTotal.ProducerReportedHouseholdPackagingWasteTonnage),
                 PublicBinTonnage = CurrencyConverter.GetDecimalValue(laDisposalCostDetailTotal.ReportedPublicBinTonnage),
                 HouseholdDrinksContainersTonnageTotal = CurrencyConverter.GetDecimalValue(laDisposalCostDetailTotal.HouseholdDrinkContainers),
                 LateReportingTonnageTotal = CurrencyConverter.GetDecimalValue(laDisposalCostDetailTotal.LateReportingTonnage),
-                TotalTonnageTotal = laDisposalCostDetailTotal.TotalReportedTonnage != null ? CurrencyConverter.GetDecimalValue(laDisposalCostDetailTotal.TotalReportedTonnage) : 0.00M,
+                TotalTonnageTotal = laDisposalCostDetailTotal.ProducerReportedTotalTonnage != null ? CurrencyConverter.GetDecimalValue(laDisposalCostDetailTotal.ProducerReportedTotalTonnage) : 0.00M,
             };
 
         }
@@ -67,22 +67,22 @@ namespace EPR.Calculator.Service.Function.Mapper
         {
             var commsByMaterialDataDetails = new List<CalcResultLaDisposalCostDetails>();
 
-            foreach (var item in laDisposalCostDataDetail.Where(t => t.Name != CommonConstants.Total))
+            foreach (var item in laDisposalCostDataDetail.Where(t => t.Name != CommonConstants.Total && t.Name != "Material"))
             {
                 commsByMaterialDataDetails.Add(new CalcResultLaDisposalCostDetails
                 {
                     MaterialName = item.Name,
-                    EnglandLaDisposalCost = CurrencyConverter.ConvertToCurrency(item.England),
-                    WalesLaDisposalCost = CurrencyConverter.ConvertToCurrency(item.Wales),
-                    ScotlandLaDisposalCost = CurrencyConverter.ConvertToCurrency(item.Scotland),
-                    NorthernIrelandLaDisposalCost = CurrencyConverter.ConvertToCurrency(item.NorthernIreland),
-                    TotalLaDisposalCost = CurrencyConverter.ConvertToCurrency(item.Total),
+                    EnglandLaDisposalCost = item.England,
+                    WalesLaDisposalCost = item.Wales,
+                    ScotlandLaDisposalCost = item.Scotland,
+                    NorthernIrelandLaDisposalCost = item.NorthernIreland,
+                    TotalLaDisposalCost = item.Total,
                     ProducerHouseholdPackagingWasteTonnage = CurrencyConverter.GetDecimalValue(item.ProducerReportedHouseholdPackagingWasteTonnage),
                     PublicBinTonnage = CurrencyConverter.GetDecimalValue(item.ReportedPublicBinTonnage),
                     HouseholdDrinksContainersTonnage = CurrencyConverter.GetDecimalValue(item.HouseholdDrinkContainers),
                     LateReportingTonnage = CurrencyConverter.GetDecimalValue(item.LateReportingTonnage),
                     TotalTonnage = CurrencyConverter.GetDecimalValue(item.ProducerReportedTotalTonnage),
-                    DisposalCostPricePerTonne = item.DisposalCostPricePerTonne != null ? CurrencyConverter.ConvertToCurrency(item.DisposalCostPricePerTonne) : "£0.00",
+                    DisposalCostPricePerTonne = item.DisposalCostPricePerTonne != null ? item.DisposalCostPricePerTonne : "£0.00",
                 });
             }
 
