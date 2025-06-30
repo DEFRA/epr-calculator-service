@@ -16,8 +16,10 @@ namespace EPR.Calculator.Service.Common.UnitTests.Utils
         public static void AssertAreEqual(decimal expected, JsonNode? actual)
         {
             Assert.IsNotNull(actual, "Actual value should not be null.");
+            var culture = CultureInfo.CreateSpecificCulture("en-GB");
+            culture.NumberFormat.CurrencyGroupSeparator = string.Empty;
             Assert.AreEqual(
-                expected.ToString("C", CultureInfo.CreateSpecificCulture("en-GB")),
+                expected.ToString("C", culture),
                 actual.GetValue<string>(),
                 $"Expected {expected} to be equal to {actual}");
         }
