@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
@@ -60,7 +61,8 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonProperty(PropertyName = "reportedPublicBinTonnage")]
         public decimal ReportedPublicBinTonnage { get; set; }
 
-        [JsonProperty(PropertyName = "householdDrinksContainersTonnageGlass", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "householdDrinksContainersTonnageGlass")]
+        [System.Text.Json.Serialization.JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public decimal? HouseholdDrinksContainersTonnageGlass { get; set; }
 
         [JsonProperty(PropertyName = "totalReportedTonnage")]
@@ -78,7 +80,8 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonProperty(PropertyName = "scaledUpReportedPublicBinTonnage")]
         public decimal ScaledUpReportedPublicBinTonnage { get; set; }
 
-        [JsonProperty(PropertyName = "scaledUpHouseholdDrinksContainersTonnageGlass", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "scaledUpHouseholdDrinksContainersTonnageGlass")]
+        [System.Text.Json.Serialization.JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public decimal? ScaledUpHouseholdDrinksContainersTonnageGlass { get; set; }
 
         [JsonProperty(PropertyName = "scaledUpTotalReportedTonnage")]
