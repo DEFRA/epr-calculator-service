@@ -317,7 +317,7 @@
             AssertAreEqual(CurrencyConverter.ConvertToCurrency(producer.WalesTotalWithBadDebtProvision2A), twoACosts["WalesTotalWithBadDebtProvision"]);
             AssertAreEqual(CurrencyConverter.ConvertToCurrency(producer.EnglandTotalWithBadDebtProvision2A), twoACosts["EnglandTotalWithBadDebtProvision"]);
             AssertAreEqual(CurrencyConverter.ConvertToCurrency(producer.TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision), twoACosts["TotalProducerFeeForCommsCostsWithoutBadDebtProvision"]);
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(producer.BadDebtProvisionFor2A), twoACosts["BadDebProvisionFor2a"]);
+            AssertAreEqual(CurrencyConverter.ConvertToCurrency(producer.BadDebtProvisionFor2A), twoACosts["BadDebtProvisionFor2a"]);
             AssertAreEqual(CurrencyConverter.ConvertToCurrency(producer.TotalProducerFeeforCommsCostsbyMaterialwithBadDebtprovision), twoACosts["TotalProducerFeeForCommsCostsWithBadDebtProvision"]);
         }
 
@@ -583,7 +583,7 @@
             Assert.AreEqual(producer.SubsidiaryId, calculationResult["SubsidiaryID"]?.GetValue<string>());
             Assert.AreEqual(producer.ProducerName, calculationResult["ProducerName"]?.GetValue<string>());
             Assert.AreEqual(producer.TradingName!, calculationResult["TradingName"]?.GetValue<string>());
-            Assert.AreEqual(producer.Level!, calculationResult["Level"]?.GetValue<string>());
+            Assert.AreEqual(int.Parse(producer.Level!), calculationResult["Level"]?.GetValue<int>());
             Assert.AreEqual(producer.IsProducerScaledup, calculationResult["ScaledUpTonnages"]?.GetValue<string>());
 
             // Sub-Sections
