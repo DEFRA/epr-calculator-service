@@ -6,6 +6,8 @@ namespace EPR.Calculator.Service.Function.Mapper
 {
     public interface IProducerDisposalFeesWithBadDebtProvision1JsonMapper
     {
-        ProducerDisposalFeesWithBadDebtProvision1 Map(Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> producerDisposalFeesByMaterial);
+        ProducerDisposalFeesWithBadDebtProvision1 Map(
+            Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> producerDisposalFeesByMaterial,
+            List<MaterialDetail> materials);
     }
 }
