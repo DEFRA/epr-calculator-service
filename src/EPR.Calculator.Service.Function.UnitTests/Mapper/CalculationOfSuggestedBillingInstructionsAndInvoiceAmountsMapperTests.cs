@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
+using static EPR.Calculator.Service.Common.UnitTests.Utils.JsonNodeComparer;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 {
@@ -58,7 +59,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             Assert.IsNotNull(result);
 
             // Assert  
-            Assert.AreEqual("£1,000.00", result.CurrentYearInvoicedTotalToDate);
+            AssertAreEqual("£1000.00", result.CurrentYearInvoicedTotalToDate);
             Assert.AreEqual("Tonnage Changed", result.TonnageChangeSinceLastInvoice);
             Assert.AreEqual("-£200.00", result.LiabilityDifferenceCalcVsPrev);
             Assert.AreEqual("-ve", result.MaterialThresholdBreached);

@@ -31,8 +31,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             var fixture = new Fixture();
             var testValue = fixture.Create<decimal>();
             var badDebtProvisionFor2bComms = CurrencyConverter.ConvertToCurrency(testValue);
-            _testClass.BadDebtProvisionFor2bComms = badDebtProvisionFor2bComms;
-            Assert.AreEqual(badDebtProvisionFor2bComms, _testClass.BadDebtProvisionFor2bComms);
+            _testClass.BadDebtProvisionFor2b = badDebtProvisionFor2bComms;
+            Assert.AreEqual(badDebtProvisionFor2bComms, _testClass.BadDebtProvisionFor2b);
         }
 
         [TestMethod]
