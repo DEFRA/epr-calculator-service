@@ -43,10 +43,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             var badDebProvisionFor2a = CurrencyConverter.ConvertToCurrency(testValue);
 
             // Act
-            _testClass.BadDebProvisionFor2a = badDebProvisionFor2a;
+            _testClass.BadDebtProvisionFor2a = badDebProvisionFor2a;
 
             // Assert
-            Assert.AreEqual(badDebProvisionFor2a, _testClass.BadDebProvisionFor2a);
+            Assert.AreEqual(badDebProvisionFor2a, _testClass.BadDebtProvisionFor2a);
         }
 
         [TestMethod]
