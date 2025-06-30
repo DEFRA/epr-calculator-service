@@ -5,6 +5,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using EPR.Calculator.API.Exporter;
+using EPR.Calculator.Service.Function.Converter;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResults;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CancelledProducersData;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMaterial2A;
@@ -22,6 +23,8 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
 {
     public class CalcResultsJsonExporter : ICalcBillingJsonExporter<CalcResult>
     {
+        private const int decimalPrecision = 3;
+
         private readonly IMaterialService materialService;
         private readonly ICalcResultDetailJsonExporter calcResultDetailExporter;
         private readonly ICalcResultLapcapExporter lapcapExporter;
@@ -98,6 +101,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                     WriteIndented = true,
                     Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                    Converters = { new DecimalPrecisionConverter(decimalPrecision), },
                 });
         }
     }
