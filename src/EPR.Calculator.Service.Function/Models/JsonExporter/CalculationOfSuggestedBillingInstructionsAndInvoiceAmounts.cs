@@ -13,10 +13,10 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonProperty(PropertyName = "liabilityDifferenceCalcVsPrev")]
         public required string LiabilityDifferenceCalcVsPrev { get; init; }
 
-        [JsonProperty(PropertyName = "materialThresholdBreached")]
+        [JsonProperty(PropertyName = "material£ThresholdBreached")]
         public required string MaterialThresholdBreached { get; init; }
 
-        [JsonProperty(PropertyName = "tonnageThresholdBreached")]
+        [JsonProperty(PropertyName = "tonnage£ThresholdBreached")]
         public required string TonnageThresholdBreached { get; init; }
 
         [JsonProperty(PropertyName = "percentageLiabilityDifferenceCalcVsPrev")]
