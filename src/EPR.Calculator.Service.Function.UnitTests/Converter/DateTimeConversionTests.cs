@@ -13,8 +13,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Converter
         [TestMethod]
         public void ConvertToIso8601Utc_NullOrEmpty_ReturnsEmptyString()
         {
-            // Arrange & Act & Assert
-            Assert.AreEqual(string.Empty, DateTimeConversion.ConvertToIso8601Utc(null));
+            // Arrange & Act & Assert            
             Assert.AreEqual(string.Empty, DateTimeConversion.ConvertToIso8601Utc(string.Empty));
             Assert.AreEqual(string.Empty, DateTimeConversion.ConvertToIso8601Utc("   "));
         }

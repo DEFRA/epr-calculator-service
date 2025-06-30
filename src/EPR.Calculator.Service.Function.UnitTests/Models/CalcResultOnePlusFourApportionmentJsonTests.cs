@@ -10,8 +10,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
     {
         private CalcResultOnePlusFourApportionmentJson _testClass;
 
-        [TestInitialize]
-        public void SetUp()
+        public CalcResultOnePlusFourApportionmentJsonTests()
         {
             _testClass = new CalcResultOnePlusFourApportionmentJson();
         }
