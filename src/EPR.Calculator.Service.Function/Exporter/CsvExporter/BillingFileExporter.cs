@@ -169,6 +169,8 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             {
                 if (x.IsTotalRow)
                 {
+                    x.ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>();
+                    
                     ResetObjectUtil.ResetObject(x);
                 }
             });
