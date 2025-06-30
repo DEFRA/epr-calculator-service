@@ -5,6 +5,7 @@ using EPR.Calculator.Service.Common.Utils;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
+using Microsoft.AspNetCore.JsonPatch.Internal;
 
 namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResults
 {
@@ -134,7 +135,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResul
                     SubsidiaryID = producer.SubsidiaryId,
                     ProducerName = producer.ProducerName,
                     TradingName = producer.TradingName,
-                    Level = producer.Level,
+                    Level = string.IsNullOrWhiteSpace(producer.Level) ? null : int.Parse(producer.Level),
                     ScaledUpTonnages = producer.IsProducerScaledup,
                     ProducerDisposalFeesWithBadDebtProvision1 = this.producerDisposalFeesWithBadDebtProvision1JsonMapper.Map(producer.ProducerDisposalFeesByMaterial, materials),
                     FeesForCommsCostsWithBadDebtProvision2a = this.commsCostByMaterial2AJsonMapper.Map(producer.ProducerCommsFeesByMaterial!, materials),

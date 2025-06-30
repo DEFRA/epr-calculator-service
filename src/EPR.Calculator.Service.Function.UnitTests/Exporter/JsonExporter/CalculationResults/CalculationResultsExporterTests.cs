@@ -583,7 +583,7 @@
             Assert.AreEqual(producer.SubsidiaryId, calculationResult["SubsidiaryID"]?.GetValue<string>());
             Assert.AreEqual(producer.ProducerName, calculationResult["ProducerName"]?.GetValue<string>());
             Assert.AreEqual(producer.TradingName!, calculationResult["TradingName"]?.GetValue<string>());
-            Assert.AreEqual(producer.Level!, calculationResult["Level"]?.GetValue<string>());
+            Assert.AreEqual(int.Parse(producer.Level!), calculationResult["Level"]?.GetValue<int>());
             Assert.AreEqual(producer.IsProducerScaledup, calculationResult["ScaledUpTonnages"]?.GetValue<string>());
 
             // Sub-Sections
