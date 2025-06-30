@@ -7,6 +7,7 @@
     using EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResults;
     using EPR.Calculator.Service.Function.Mapper;
     using EPR.Calculator.Service.Function.Models;
+    using EPR.Calculator.Service.Function.UnitTests.Builder;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using static EPR.Calculator.Service.Common.UnitTests.Utils.JsonNodeComparer;
 
@@ -43,10 +44,11 @@
         public void CanCallExport()
         {
             // Arrange
-            var data = SetCalcResultSummayData();
+            var data = TestDataHelper.GetCalcResultSummary();
+            var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var result = this.TestClass.Export(data, new List<int>());
+            var result = this.TestClass.Export(data, new List<int>(), materials);
 
             // Assert
             Assert.IsNotNull(result);
@@ -60,10 +62,11 @@
         public void Export_ValuesAreValid()
         {
             // Arrange
-            var data = SetCalcResultSummayData();
+            var data = TestDataHelper.GetCalcResultSummary();
+            var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
+            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
@@ -137,10 +140,11 @@
         public void Export_ProducerDisposalFeesWithBadDebtProvision1_ReturnsValidValues()
         {
             // Arrange
-            var data = SetCalcResultSummayData();
+            var data = TestDataHelper.GetCalcResultSummary();
+            var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
+            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
@@ -174,10 +178,11 @@
         public void Export_TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2c_ReturnsValidValues()
         {
             // Arrange
-            var data = SetCalcResultSummayData();
+            var data = TestDataHelper.GetCalcResultSummary();
+            var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
+            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
@@ -200,10 +205,11 @@
         public void Export_CommsCost2AValues_AreValid()
         {
             // Arrange
-            var data = SetCalcResultSummayData();
+            var data = TestDataHelper.GetCalcResultSummary();
+            var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
+            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
@@ -227,10 +233,11 @@
         public void Export_FeeForSASetUpCostsWithBadDebtProvision_5_ReturnsValidValues()
         {
             // Arrange
-            var data = SetCalcResultSummayData();
+            var data = TestDataHelper.GetCalcResultSummary();
+            var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
+            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["producerCalculationResults"];
@@ -257,10 +264,11 @@
         public void Export_CommsCost3SA_Operating_Costs_AreValid()
         {
             // Arrange
-            var data = SetCalcResultSummayData();
+            var data = TestDataHelper.GetCalcResultSummary();
+            var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
+            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
@@ -289,10 +297,11 @@
         public void Export_FeeForCommsCostsWithBadDebtProvision2a_AreValid()
         {
             // Arrange
-            var data = SetCalcResultSummayData();
+            var data = TestDataHelper.GetCalcResultSummary();
+            var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
+            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["producerCalculationResults"];
@@ -316,10 +325,11 @@
         public void Export_FeeForCommsCostsWithBadDebtProvision2b_AreValid()
         {
             // Arrange
-            var data = SetCalcResultSummayData();
+            var data = TestDataHelper.GetCalcResultSummary();
+            var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
+            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["producerCalculationResults"];
@@ -347,10 +357,11 @@
         public void Export_CommsCost2CValues_AreValid()
         {
             // Arrange
-            var data = SetCalcResultSummayData();
+            var data = TestDataHelper.GetCalcResultSummary();
+            var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
+            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["producerCalculationResults"];
@@ -374,10 +385,11 @@
         public void Export_DisposalFeeSummary1()
         {
             // Arrange
-            var data = SetCalcResultSummayData();
+            var data = TestDataHelper.GetCalcResultSummary();
+            var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
+            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["producerCalculationResults"];
@@ -417,10 +429,11 @@
         public void Export_BillingInstructions_AreValid()
         {
             // Arrange
-            var data = SetCalcResultSummayData();
+            var data = TestDataHelper.GetCalcResultSummary();
+            var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
+            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
@@ -441,10 +454,11 @@
         public void Export_FeeForLADisposalCost1_AreValid()
         {
             // Arrange
-            var data = SetCalcResultSummayData();
+            var data = TestDataHelper.GetCalcResultSummary();
+            var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
+            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
             var node = JsonNode.Parse(json);
             var roundTrippedData = node?["producerCalculationResults"]?.AsArray();
@@ -475,10 +489,11 @@
         public void Export_ProducerIdSubsidiaryId_AreValid()
         {
             // Arrange
-            var data = SetCalcResultSummayData();
+            var data = TestDataHelper.GetCalcResultSummary();
+            var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
+            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["producerCalculationResults"];
@@ -494,7 +509,7 @@
             Assert.AreEqual(producer.ProducerId, roundTrippedData[0]!?["ProducerID"]?.ToString());
             Assert.AreEqual(producer.SubsidiaryId, roundTrippedData[0]!?["SubsidiaryID"]?.ToString());
             Assert.AreEqual(producer.ProducerName, roundTrippedData[0]!?["ProducerName"]?.ToString());
-            Assert.AreEqual(producer?.TradingName ?? "TestTradingName", roundTrippedData[0]!?["TradingName"]?.ToString());
+            Assert.AreEqual(producer?.TradingName, roundTrippedData[0]!?["TradingName"]?.ToString());
             Assert.AreEqual(producer?.Level ?? "1" , roundTrippedData[0]!?["Level"]?.ToString());
             Assert.AreEqual(producer?.IsProducerScaledup ?? "No", roundTrippedData[0]!?["ScaledUpTonnages"]?.ToString());
         }
@@ -503,10 +518,11 @@
         public void Export_ProducerCalculationResultsTotal_CanBeNull()
         {
             // Arrange
-            var data = SetCalcResultSummayData();
+            var data = TestDataHelper.GetCalcResultSummary();
+            var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
+            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
             var producerCalculationResultsTotal = JsonSerializer.Deserialize<JsonObject>(json)!["producerCalculationResultsTotal"]!;
 
@@ -518,38 +534,42 @@
         public void Export_FeeForLADataPrepCostsWithBadDebtProvision_4_AreValid()
         {
             // Arrange
-            var data = SetCalcResultSummayData();
+            var data = TestDataHelper.GetCalcResultSummary();
+            var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
+            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["producerCalculationResults"];
+
 
             // Assert
             Assert.IsNotNull(roundTrippedData);
             Assert.IsNotNull(roundTrippedData[0]);
             var costs = roundTrippedData[0]!["FeeForLADataPrepCostsWithBadDebtProvision_4"];
             Assert.IsNotNull(costs);
+
             var producer = data.ProducerDisposalFees.SingleOrDefault(t => !t.isTotalRow && !string.IsNullOrEmpty(t.Level));
             Assert.IsNotNull(producer);
-            Assert.AreEqual(producer.LaDataPrepCostsTotalWithoutBadDebtProvisionSection4, costs["TotalProducerFeeForLADataPrepCostsWithoutBadDebtProvision"]!.GetValue<decimal>());
-            Assert.AreEqual(producer.LaDataPrepCostsBadDebtProvisionSection4, costs["BadDebtProvisionFor4"]!.GetValue<decimal>());
-            Assert.AreEqual(producer.LaDataPrepCostsTotalWithBadDebtProvisionSection4, costs["TotalProducerFeeForLADataPrepCostsWithBadDebtProvision"]!.GetValue<decimal>());
-            Assert.AreEqual(producer.LaDataPrepCostsNorthernIrelandTotalWithBadDebtProvisionSection4, costs["NorthernIrelandTotalForLADataPrepCostsWithBadDebtProvision"]!.GetValue<decimal>());
-            Assert.AreEqual(producer.LaDataPrepCostsScotlandTotalWithBadDebtProvisionSection4, costs["ScotlandTotalForLADataPrepCostsWithBadDebtProvision"]!.GetValue<decimal>());
-            Assert.AreEqual(producer.LaDataPrepCostsWalesTotalWithBadDebtProvisionSection4, costs["WalesTotalForLADataPrepCostsWithBadDebtProvision"]!.GetValue<decimal>());
-            Assert.AreEqual(producer.LaDataPrepCostsEnglandTotalWithBadDebtProvisionSection4, costs["EnglandTotalForLADataPrepCostsWithBadDebtProvision"]!.GetValue<decimal>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.LaDataPrepCostsTotalWithoutBadDebtProvisionSection4), costs["TotalProducerFeeForLADataPrepCostsWithoutBadDebtProvision"]!.GetValue<String>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.LaDataPrepCostsBadDebtProvisionSection4), costs["BadDebtProvisionFor4"]!.GetValue<String>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.LaDataPrepCostsTotalWithBadDebtProvisionSection4), costs["TotalProducerFeeForLADataPrepCostsWithBadDebtProvision"]!.GetValue<String>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.LaDataPrepCostsNorthernIrelandTotalWithBadDebtProvisionSection4), costs["NorthernIrelandTotalForLADataPrepCostsWithBadDebtProvision"]!.GetValue<String>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.LaDataPrepCostsScotlandTotalWithBadDebtProvisionSection4), costs["ScotlandTotalForLADataPrepCostsWithBadDebtProvision"]!.GetValue<String>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.LaDataPrepCostsWalesTotalWithBadDebtProvisionSection4), costs["WalesTotalForLADataPrepCostsWithBadDebtProvision"]!.GetValue<String>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.LaDataPrepCostsEnglandTotalWithBadDebtProvisionSection4), costs["EnglandTotalForLADataPrepCostsWithBadDebtProvision"]!.GetValue<String>());
         }
 
         [TestMethod]
         public void Export_CalculationResultsExporter_AreValid()
         {
             // Arrange
-            var data = SetCalcResultSummayData();
+            var data = TestDataHelper.GetCalcResultSummary();
+            var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 });
+            var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                     ["producerCalculationResults"]!;
@@ -595,21 +615,6 @@
             Assert.IsNotNull(totalProducerBillWithBadDebtProvision);
             var calculationOfSuggestedBillingInstructionsAndInvoiceAmounts = roundTrippedData[0]!["CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts"];
             Assert.IsNotNull(calculationOfSuggestedBillingInstructionsAndInvoiceAmounts);
-        }
-
-        private CalcResultSummary SetCalcResultSummayData()
-        {
-            var data = Fixture.Create<CalcResultSummary>();
-
-            var acceptIds = new List<int> { 1, 2, 3 };
-
-            for (var i = 1; i <= data.ProducerDisposalFees.Count(); i++)
-            {
-                data.ProducerDisposalFees.ToList()[i - 1].ProducerId = i.ToString();
-                if (i == 2) data.ProducerDisposalFees.ToList()[i - 1].isTotalRow = false;
-            }
-
-            return data;
         }
     }
 }

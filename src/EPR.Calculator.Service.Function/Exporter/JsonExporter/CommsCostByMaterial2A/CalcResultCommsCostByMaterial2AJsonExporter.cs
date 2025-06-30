@@ -14,9 +14,9 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMater
             this.mapper = mapper;
         }
 
-        public string Export(Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostByMaterial)
+        public string Export(Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostByMaterial, List<MaterialDetail> materials)
         {
-            var result = this.mapper.Map(commsCostByMaterial);
+            var result = this.mapper.Map(commsCostByMaterial, materials);
             return JsonConvert.SerializeObject(result);
         }
     }
