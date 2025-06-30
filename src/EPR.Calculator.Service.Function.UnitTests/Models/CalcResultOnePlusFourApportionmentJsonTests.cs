@@ -22,25 +22,25 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             // Arrange
             var fixture = new Fixture();
 
-            var testValue = fixture.Create<CalcResultOnePlusFourApportionmentDetailsJson>();
+            var testValue = fixture.Create<CalcResultOnePlusFourApportionmentJson>();
 
             // Act
-            _testClass.OnePlusFourApportionment = testValue;
+            _testClass = testValue;
 
             // Assert
-            Assert.AreSame(testValue, _testClass.OnePlusFourApportionment);
+            Assert.AreSame(testValue, _testClass);
         }
     }
 
     [TestClass]
     public class CalcResultOnePlusFourApportionmentDetailsJsonTests
     {
-        private CalcResultOnePlusFourApportionmentDetailsJson _testClass;
+        private CalcResultOnePlusFourApportionmentJson _testClass;
 
         [TestInitialize]
         public void SetUp()
         {
-            _testClass = new CalcResultOnePlusFourApportionmentDetailsJson();
+            _testClass = new CalcResultOnePlusFourApportionmentJson();
         }
 
         [TestMethod]

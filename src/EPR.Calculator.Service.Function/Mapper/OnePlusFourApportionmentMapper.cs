@@ -14,9 +14,7 @@ namespace EPR.Calculator.Service.Function.Mapper
             var i = 2;
             return new CalcResultOnePlusFourApportionmentJson()
             {
-                OnePlusFourApportionment = new CalcResultOnePlusFourApportionmentDetailsJson()
-                {
-                    OneFeeForLADisposalCosts = calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.
+                OneFeeForLADisposalCosts = calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.
             Where(t => t.OrderId == i).
             Select(y => new CalcResultOnePlusFourApportionmentDetailJson
             {
@@ -26,8 +24,8 @@ namespace EPR.Calculator.Service.Function.Mapper
                 NorthernIreland = y.NorthernIrelandTotal,
                 Total = y.Total
             }).SingleOrDefault(),
-                    FourLADataPrepCharge = calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.
-            Where(t => t.OrderId == i+1).
+                FourLADataPrepCharge = calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.
+            Where(t => t.OrderId == i + 1).
             Select(y => new CalcResultOnePlusFourApportionmentDetailJson
             {
                 England = y.EnglandTotal,
@@ -36,8 +34,8 @@ namespace EPR.Calculator.Service.Function.Mapper
                 NorthernIreland = y.NorthernIrelandTotal,
                 Total = y.Total
             }).SingleOrDefault(),
-                    TotalOfonePlusFour = calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.
-            Where(t => t.OrderId == i+2).
+                TotalOfonePlusFour = calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.
+            Where(t => t.OrderId == i + 2).
             Select(y => new CalcResultOnePlusFourApportionmentDetailJson
             {
                 England = y.EnglandTotal,
@@ -46,8 +44,8 @@ namespace EPR.Calculator.Service.Function.Mapper
                 NorthernIreland = y.NorthernIrelandTotal,
                 Total = y.Total
             }).SingleOrDefault(),
-                    OnePlusFourApportionmentPercentages = calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.
-            Where(t => t.OrderId == i+3).
+                OnePlusFourApportionmentPercentages = calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.
+            Where(t => t.OrderId == i + 3).
             Select(y => new CalcResultOnePlusFourApportionmentDetailJson
             {
                 England = y.EnglandTotal,
@@ -56,9 +54,7 @@ namespace EPR.Calculator.Service.Function.Mapper
                 NorthernIreland = y.NorthernIrelandTotal,
                 Total = y.Total
             }).SingleOrDefault()
-                }
             };
         }
+    }
 }
-}
-    

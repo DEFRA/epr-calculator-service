@@ -2,16 +2,8 @@
 using System.Collections.Generic;
 
 namespace EPR.Calculator.Service.Function.Models
-{
+{    
     public class CalcResultOnePlusFourApportionmentJson
-    {
-        [JsonProperty(PropertyName = "onePlusFourApportionment")]
-        public CalcResultOnePlusFourApportionmentDetailsJson OnePlusFourApportionment { get; set; }
-
-
-    }
-
-    public class CalcResultOnePlusFourApportionmentDetailsJson
     {
         [JsonProperty(PropertyName = "oneFeeForLADisposalCosts")]
         public CalcResultOnePlusFourApportionmentDetailJson OneFeeForLADisposalCosts { get; set; } = new CalcResultOnePlusFourApportionmentDetailJson();
@@ -25,5 +17,4 @@ namespace EPR.Calculator.Service.Function.Models
         [JsonProperty(PropertyName = "onePlusFourApportionmentPercentages")]
         public CalcResultOnePlusFourApportionmentDetailJson OnePlusFourApportionmentPercentages { get; set; } = new CalcResultOnePlusFourApportionmentDetailJson();
     }
-
 }

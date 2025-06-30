@@ -101,13 +101,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             var result = _testClass.Map(calcResultOnePlusFourApportionment);
 
             // Assert
-            Assert.IsNotNull(result);
-            Assert.IsNotNull(result.OnePlusFourApportionment);
-            Assert.IsNotNull(result.OnePlusFourApportionment.TotalOfonePlusFour);
-            Assert.IsNotNull(result.OnePlusFourApportionment.OnePlusFourApportionmentPercentages);
-            Assert.IsNotNull(result.OnePlusFourApportionment.FourLADataPrepCharge);
-            Assert.IsNotNull(result.OnePlusFourApportionment.OnePlusFourApportionmentPercentages);
+            Assert.IsNotNull(result); 
+            Assert.IsNotNull(result.TotalOfonePlusFour);
+            Assert.IsNotNull(result.OnePlusFourApportionmentPercentages);
+            Assert.IsNotNull(result.FourLADataPrepCharge);
+            Assert.IsNotNull(result.OnePlusFourApportionmentPercentages);
         }
-
     }
 }
