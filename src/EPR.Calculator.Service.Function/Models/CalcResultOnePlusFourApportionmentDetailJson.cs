@@ -12,19 +12,19 @@ namespace EPR.Calculator.Service.Function.Models
     {
         [JsonProperty(PropertyName = "england")]
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal England { get; set; }
+        public string England { get; set; }
 
         [JsonProperty(PropertyName = "wales")]
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal Wales { get; set; }
+        public string Wales { get; set; }
 
         [JsonProperty(PropertyName = "scotland")]
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal Scotland { get; set; }
+        public string Scotland { get; set; }
 
         [JsonProperty(PropertyName = "northernIreland")]
         [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal NorthernIreland { get; set; }
+        public string NorthernIreland { get; set; }
 
         [JsonProperty(PropertyName = "total")]
         public string Total { get; set; } = string.Empty;

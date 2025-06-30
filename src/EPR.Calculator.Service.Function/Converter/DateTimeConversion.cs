@@ -11,6 +11,11 @@ namespace EPR.Calculator.Service.Function.Converter
     {
         public static string ConvertToIso8601Utc(string dateTimeString)
         {
+            if (string.IsNullOrWhiteSpace(dateTimeString))
+            {
+                return string.Empty;
+            }
+
             // Parse the input string
             DateTime parsedDate = DateTime.ParseExact(dateTimeString, CalculationResults.DateFormat, CultureInfo.InvariantCulture);
 
