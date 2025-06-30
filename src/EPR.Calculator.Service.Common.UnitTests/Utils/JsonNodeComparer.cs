@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
+using EPR.Calculator.Service.Common.Utils;
 
 namespace EPR.Calculator.Service.Common.UnitTests.Utils
 {
@@ -16,10 +17,8 @@ namespace EPR.Calculator.Service.Common.UnitTests.Utils
         public static void AssertAreEqual(decimal expected, JsonNode? actual)
         {
             Assert.IsNotNull(actual, "Actual value should not be null.");
-            var culture = CultureInfo.CreateSpecificCulture("en-GB");
-            culture.NumberFormat.CurrencyGroupSeparator = string.Empty;
             Assert.AreEqual(
-                expected.ToString("C", culture),
+                CurrencyConverter.FormatCurrencyWithGbpSymbol(expected),
                 actual.GetValue<string>(),
                 $"Expected {expected} to be equal to {actual}");
         }

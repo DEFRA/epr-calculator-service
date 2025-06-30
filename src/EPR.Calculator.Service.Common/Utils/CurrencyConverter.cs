@@ -44,7 +44,7 @@ namespace EPR.Calculator.Service.Common.Utils
         /// </summary>
         /// <param name="decimalValue"></param>
         /// <returns>gbp currency.</returns>
-        private static string FormatCurrencyWithGbpSymbol(decimal decimalValue)
+        public static string FormatCurrencyWithGbpSymbol(decimal decimalValue)
         {
             var culture = CultureInfo.CreateSpecificCulture("en-GB");
             culture.NumberFormat.CurrencySymbol = "£";
