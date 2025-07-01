@@ -663,6 +663,7 @@
                 new CalcResultSummaryProducerDisposalFees()
                 {
                     ProducerId = "1",
+                    ProducerIdInt = 1,
                     SubsidiaryId = string.Empty,
                     ProducerName = "Allied Packaging",
                     Level = "1",
