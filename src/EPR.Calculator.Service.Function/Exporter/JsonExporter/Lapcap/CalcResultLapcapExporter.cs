@@ -17,7 +17,8 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.Lapcap
         /// </summary>
         private static readonly IEnumerable<string> SeperatedRecords = [
             CalcResultLapcapDataBuilder.Total,
-            CalcResultLapcapDataBuilder.CountryApportionment];
+            CalcResultLapcapDataBuilder.CountryApportionment,
+            "Material"];
 
         /// <inheritdoc/>
         public object Export(CalcResultLapcapData data)
@@ -57,11 +58,11 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.Lapcap
         /// </summary>
         private readonly record struct CalcResultLapcapDataDetailsToSerialise(
             string MaterialName,
-            string EnglandDisposalCost,
-            string WalesDisposalCost,
-            string ScotlandDisposalCost,
-            string NorthernIrelandDisposalCost,
-            string OneLaDisposalCostTotal)
+            string EnglandLaDisposalCost,
+            string WalesLaDisposalCost,
+            string ScotlandLaDisposalCost,
+            string NorthernIrelandLaDisposalCost,
+            string OneLaDisposalLaCostTotal)
         {
             public CalcResultLapcapDataDetailsToSerialise(CalcResultLapcapDataDetails data)
                 : this(data.Name,
@@ -79,10 +80,10 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.Lapcap
         /// Excludes the name field - used for total and country apportment records.
         /// </summary>
         private readonly record struct CalcResultLapcapDataDetailsToSerialiseWithoutName(
-            string EnglandDisposalCost,
-            string WalesDisposalCost,
-            string ScotlandDisposalCost,
-            string NorthernIrelandDisposalCost,
+            string EnglandLaDisposalCost,
+            string WalesLaDisposalCost,
+            string ScotlandLaDisposalCost,
+            string NorthernIrelandLaDisposalCost,
             string OneLaDisposalCostTotal)
         {
             public CalcResultLapcapDataDetailsToSerialiseWithoutName(CalcResultLapcapDataDetails data)

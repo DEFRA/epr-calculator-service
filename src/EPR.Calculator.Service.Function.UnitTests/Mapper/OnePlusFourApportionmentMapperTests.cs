@@ -27,6 +27,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
                 Name = "Test",
                 CalcResultOnePlusFourApportionmentDetails =
                     [
+                        new(){
+                                EnglandDisposalTotal="80",
+                                NorthernIrelandDisposalTotal="70",
+                                ScotlandDisposalTotal="30",
+                                WalesDisposalTotal="20",
+                                AllTotal=0.1M,
+                                EnglandTotal=0.10M,
+                                NorthernIrelandTotal=0.15M,
+                                ScotlandTotal=0.15M,
+                                WalesTotal=020M,
+                                Name="Test",
+                                OrderId=1
+                        },
                         new()
                         {
                             EnglandDisposalTotal="80",
@@ -102,12 +115,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.IsNotNull(result.OnePlusFourApportionment);
-            Assert.IsNotNull(result.OnePlusFourApportionment.TotalOfonePlusFour);
-            Assert.IsNotNull(result.OnePlusFourApportionment.OnePlusFourApportionmentPercentages);
-            Assert.IsNotNull(result.OnePlusFourApportionment.FourLADataPrepCharge);
-            Assert.IsNotNull(result.OnePlusFourApportionment.OnePlusFourApportionmentPercentages);
+            Assert.IsNotNull(result.TotalOfonePlusFour);
+            Assert.IsNotNull(result.OnePlusFourApportionmentPercentages);
+            Assert.IsNotNull(result.FourLADataPrepCharge);
+            Assert.IsNotNull(result.OnePlusFourApportionmentPercentages);
+            Assert.IsNotNull(result.OneFeeForLADisposalCosts);
         }
-
     }
 }
