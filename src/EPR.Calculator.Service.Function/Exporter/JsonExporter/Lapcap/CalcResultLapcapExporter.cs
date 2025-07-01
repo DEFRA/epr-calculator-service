@@ -17,7 +17,8 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.Lapcap
         /// </summary>
         private static readonly IEnumerable<string> SeperatedRecords = [
             CalcResultLapcapDataBuilder.Total,
-            CalcResultLapcapDataBuilder.CountryApportionment];
+            CalcResultLapcapDataBuilder.CountryApportionment,
+            "Material"];
 
         /// <inheritdoc/>
         public object Export(CalcResultLapcapData data)
