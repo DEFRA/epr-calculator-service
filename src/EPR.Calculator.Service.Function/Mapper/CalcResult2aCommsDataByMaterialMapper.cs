@@ -19,8 +19,8 @@ namespace EPR.Calculator.Service.Function.Mapper
         {
             return new CalcResult2ACommsDataByMaterial
             {
-                CalcResult2ACommsDataDetails = GetMaterialBreakdown(commsCostByMaterial),
-                CalcResult2ACommsDataDetailsTotal = GetTotalRow(commsCostByMaterial.Single(t => t.Name == CommonConstants.Total)),
+                CalcResult2aCommsDataDetails = GetMaterialBreakdown(commsCostByMaterial),
+                CalcResult2aCommsDataDetailsTotal = GetTotalRow(commsCostByMaterial.Single(t => t.Name == CommonConstants.Total)),
             };
         }
 
