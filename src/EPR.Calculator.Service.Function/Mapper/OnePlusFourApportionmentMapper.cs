@@ -29,6 +29,7 @@ namespace EPR.Calculator.Service.Function.Mapper
                     NorthernIreland = CurrencyConverter.ConvertToCurrency(y.NorthernIrelandTotal),
                     Total = y.Total
                 }).SingleOrDefault() ?? new CalcResultOnePlusFourApportionmentDetailJson(),
+
                 FourLADataPrepCharge = calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.
                 Where(t => t.OrderId == i + 1).
                 Select(y => new CalcResultOnePlusFourApportionmentDetailJson
@@ -39,6 +40,7 @@ namespace EPR.Calculator.Service.Function.Mapper
                     NorthernIreland = CurrencyConverter.ConvertToCurrency(y.NorthernIrelandTotal),
                     Total = y.Total
                 }).SingleOrDefault() ?? new CalcResultOnePlusFourApportionmentDetailJson(),
+
                 TotalOfonePlusFour = calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.
                 Where(t => t.OrderId == i + 2).
                 Select(y => new CalcResultOnePlusFourApportionmentDetailJson
@@ -49,6 +51,7 @@ namespace EPR.Calculator.Service.Function.Mapper
                     NorthernIreland = CurrencyConverter.ConvertToCurrency(y.NorthernIrelandTotal),
                     Total = y.Total
                 }).SingleOrDefault() ?? new CalcResultOnePlusFourApportionmentDetailJson(),
+
                 OnePlusFourApportionmentPercentages = calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.
                 Where(t => t.OrderId == i + 3).
                 Select(y => new CalcResultOnePlusFourApportionmentDetailJson
