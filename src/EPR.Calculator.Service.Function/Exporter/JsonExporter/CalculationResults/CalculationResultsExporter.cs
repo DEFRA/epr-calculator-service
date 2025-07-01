@@ -123,8 +123,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResul
         {
             var results = new List<CalcSummaryProducerCalculationResults>();
 
-            var filteredProducers = calcResultSummary.ProducerDisposalFees.Where(producer => int.TryParse(producer.ProducerId, out int parseId) && acceptedProducerIds.Contains(parseId)
-            && !producer.isTotalRow && !string.IsNullOrWhiteSpace(producer.Level));
+            var filteredProducers = calcResultSummary.ProducerDisposalFees.Where(producer => int.TryParse(producer.ProducerId, out int parseId) && acceptedProducerIds.Contains(parseId) && !string.IsNullOrWhiteSpace(producer.Level));
 
             foreach (var producer in filteredProducers)
             {
