@@ -16,7 +16,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMater
     {
         public virtual object? ConvertToJsonByUKWide(CalcResultCommsCost data)
         {
-            var ukWide = data.CalcResultCommsCostOnePlusFourApportionment
+            var ukWide = data.CommsCostByCountry
                 .SingleOrDefault(r => r.Name == CalcResultCommsCostBuilder.TwoBCommsCostUkWide);
 
             return MapUkWide(ukWide!);
@@ -24,7 +24,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMater
 
         public virtual object? ConvertToJsonByCountry(CalcResultCommsCost data)
         {
-            var byCountry = data.CalcResultCommsCostOnePlusFourApportionment
+            var byCountry = data.CommsCostByCountry
                 .SingleOrDefault(r => r.Name == CalcResultCommsCostBuilder.TwoCCommsCostByCountry);
 
             return MapByCountry(byCountry!);
