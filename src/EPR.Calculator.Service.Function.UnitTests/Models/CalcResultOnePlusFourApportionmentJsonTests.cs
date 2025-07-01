@@ -9,38 +9,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
     public class CalcResultOnePlusFourApportionmentJsonTests
     {
         private CalcResultOnePlusFourApportionmentJson _testClass;
-
-        [TestInitialize]
-        public void SetUp()
+       
+        public CalcResultOnePlusFourApportionmentJsonTests()
         {
             _testClass = new CalcResultOnePlusFourApportionmentJson();
-        }
-
-        [TestMethod]
-        public void CanSetAndGetOnePlusFourApportionment()
-        {
-            // Arrange
-            var fixture = new Fixture();
-
-            var testValue = fixture.Create<CalcResultOnePlusFourApportionmentDetailsJson>();
-
-            // Act
-            _testClass.OnePlusFourApportionment = testValue;
-
-            // Assert
-            Assert.AreSame(testValue, _testClass.OnePlusFourApportionment);
-        }
-    }
-
-    [TestClass]
-    public class CalcResultOnePlusFourApportionmentDetailsJsonTests
-    {
-        private CalcResultOnePlusFourApportionmentDetailsJson _testClass;
-
-        [TestInitialize]
-        public void SetUp()
-        {
-            _testClass = new CalcResultOnePlusFourApportionmentDetailsJson();
         }
 
         [TestMethod]
