@@ -1,14 +1,13 @@
-﻿using EPR.Calculator.Service.Function.Mapper;
-using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.Models.JsonExporter;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Text.Unicode;
+using EPR.Calculator.Service.Common.Utils;
+using EPR.Calculator.Service.Function.Mapper;
+using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Models.JsonExporter;
+using Microsoft.AspNetCore.JsonPatch.Internal;
 
-namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
+namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResults
 {
     /// <summary>
     /// Converts a <see cref="CalcResultSummary"/> to a JSON string representation.
@@ -68,26 +67,14 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
         }
 
         /// <inheritdoc/>
-        public string Export(CalcResultSummary summary, IEnumerable<object>? producerCalculations, IEnumerable<int> acceptedProducerIds)
-            => JsonSerializer.Serialize(
+        public object Export(CalcResultSummary summary, IEnumerable<int> acceptedProducerIds, List<MaterialDetail> materials)
+            =>
                 new
                 {
-                    calculationResults = new
-                    {
-                        producerCalculationResultsSummary = ArrangeSummary(summary),
-                        producerCalculationResults = ArrangeProducerCalculationResult(summary, acceptedProducerIds),
-                        producerCalculationResultsTotal = ArrangeProducerCalculationResultsTotal(summary),
-                    },
-                },
-                new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                    WriteIndented = true,
-                    Converters = { new Converter.CurrencyConverter() },
-
-                    // This is required in order to output the £ symbol as-is rather than encoding it.
-                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
-                });
+                    producerCalculationResultsSummary = ArrangeSummary(summary),
+                    producerCalculationResults = ArrangeProducerCalculationResult(summary, acceptedProducerIds, materials),
+                    producerCalculationResultsTotal = ArrangeProducerCalculationResultsTotal(summary),
+                };
 
         /// <summary>
         /// Arrange the CalcResultSummary data using the property
@@ -95,42 +82,45 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
         /// </summary>
         private object ArrangeSummary(CalcResultSummary data)
         {
-            return new
+            return new ProducerCalculationResultsSummary
             {
-                FeeForLaDisposalCostsWithoutBadDebtprovision1 = data.TotalFeeforLADisposalCostswoBadDebtprovision1,
-                BadDebtProvision1 = data.BadDebtProvisionFor1,
-                FeeForLaDisposalCostsWithBadDebtprovision1 = data.TotalFeeforLADisposalCostswithBadDebtprovision1,
+                FeeForLaDisposalCostsWithoutBadDebtprovision1 = CurrencyConverter.ConvertToCurrency(data.TotalFeeforLADisposalCostswoBadDebtprovision1),
+                BadDebtProvision1 = CurrencyConverter.ConvertToCurrency(data.BadDebtProvisionFor1),
+                FeeForLaDisposalCostsWithBadDebtprovision1 = CurrencyConverter.ConvertToCurrency(data.TotalFeeforLADisposalCostswithBadDebtprovision1),
 
-                FeeForCommsCostsByMaterialWithoutBadDebtprovision2a = data.TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A,
-                BadDebtProvision2a = data.BadDebtProvisionFor2A,
-                FeeForCommsCostsByMaterialWitBadDebtprovision2a = data.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A,
+                FeeForCommsCostsByMaterialWithoutBadDebtprovision2a = CurrencyConverter.ConvertToCurrency(data.TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A),
+                BadDebtProvision2a = CurrencyConverter.ConvertToCurrency(data.BadDebtProvisionFor2A),
+                FeeForCommsCostsByMaterialWitBadDebtprovision2a = CurrencyConverter.ConvertToCurrency(data.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A),
 
-                FeeForCommsCostsUkWideWithoutBadDebtprovision2b = data.CommsCostHeaderWithoutBadDebtFor2bTitle,
-                BadDebtProvision2b = data.CommsCostHeaderBadDebtProvisionFor2bTitle,
-                FeeForCommsCostsUkWideWithBadDebtprovision2b = data.CommsCostHeaderWithBadDebtFor2bTitle,
+                FeeForCommsCostsUkWideWithoutBadDebtprovision2b = CurrencyConverter.ConvertToCurrency(data.CommsCostHeaderWithoutBadDebtFor2bTitle),
+                BadDebtProvision2b = CurrencyConverter.ConvertToCurrency(data.CommsCostHeaderBadDebtProvisionFor2bTitle),
+                FeeForCommsCostsUkWideWithBadDebtprovision2b = CurrencyConverter.ConvertToCurrency(data.CommsCostHeaderWithBadDebtFor2bTitle),
 
-                FeeForCommsCostsByCountryWithoutBadDebtprovision2c = data.TwoCCommsCostsByCountryWithoutBadDebtProvision,
-                BadDebtProvision2c = data.TwoCBadDebtProvision,
-                FeeForCommsCostsByCountryWideWithBadDebtprovision2c = data.TwoCCommsCostsByCountryWithBadDebtProvision,
+                FeeForCommsCostsByCountryWithoutBadDebtprovision2c = CurrencyConverter.ConvertToCurrency(data.TwoCCommsCostsByCountryWithoutBadDebtProvision),
+                BadDebtProvision2c = CurrencyConverter.ConvertToCurrency(data.TwoCBadDebtProvision),
+                FeeForCommsCostsByCountryWideWithBadDebtprovision2c = CurrencyConverter.ConvertToCurrency(data.TwoCCommsCostsByCountryWithBadDebtProvision),
 
-                Total12a2b2cWithBadDebt = data.TotalOnePlus2A2B2CFeeWithBadDebtProvision,
+                Total12a2b2cWithBadDebt = CurrencyConverter.ConvertToCurrency(data.TotalOnePlus2A2B2CFeeWithBadDebtProvision),
 
-                SaOperatingCostsWithoutBadDebtProvision3 = data.SaOperatingCostsWoTitleSection3,
-                BadDebtProvision3 = data.BadDebtProvisionTitleSection3,
-                SaOperatingCostsWithBadDebtProvision3 = data.SaOperatingCostsWithTitleSection3,
+                SaOperatingCostsWithoutBadDebtProvision3 = CurrencyConverter.ConvertToCurrency(data.SaOperatingCostsWoTitleSection3),
+                BadDebtProvision3 = CurrencyConverter.ConvertToCurrency(data.BadDebtProvisionTitleSection3),
+                SaOperatingCostsWithBadDebtProvision3 = CurrencyConverter.ConvertToCurrency(data.SaOperatingCostsWithTitleSection3),
 
-                LaDataPrepCostsWithoutBadDebtProvision4 = data.LaDataPrepCostsTitleSection4,
-                BadDebtProvision4 = data.LaDataPrepCostsBadDebtProvisionTitleSection4,
-                LaDataPrepCostsWithbadDebtProvision4 = data.LaDataPrepCostsWithBadDebtProvisionTitleSection4,
+                LaDataPrepCostsWithoutBadDebtProvision4 = CurrencyConverter.ConvertToCurrency(data.LaDataPrepCostsTitleSection4),
+                BadDebtProvision4 = CurrencyConverter.ConvertToCurrency(data.LaDataPrepCostsBadDebtProvisionTitleSection4),
+                LaDataPrepCostsWithbadDebtProvision4 = CurrencyConverter.ConvertToCurrency(data.LaDataPrepCostsWithBadDebtProvisionTitleSection4),
 
-                OneOffFeeSaSetuCostsWithbadDebtProvision5 = data.SaSetupCostsTitleSection5,
-                BadDebtProvision5 = data.SaSetupCostsBadDebtProvisionTitleSection5,
-                OneOffFeeSaSetuCostsWithoutbadDebtProvision5 = data.SaSetupCostsWithBadDebtProvisionTitleSection5,
+                OneOffFeeSaSetuCostsWithbadDebtProvision5 = CurrencyConverter.ConvertToCurrency(data.SaSetupCostsTitleSection5),
+                BadDebtProvision5 = CurrencyConverter.ConvertToCurrency(data.SaSetupCostsBadDebtProvisionTitleSection5),
+                OneOffFeeSaSetuCostsWithoutbadDebtProvision5 = CurrencyConverter.ConvertToCurrency(data.SaSetupCostsWithBadDebtProvisionTitleSection5),
             };
         }
 
 
-        private List<CalcSummaryProducerCalculationResults> ArrangeProducerCalculationResult(CalcResultSummary calcResultSummary, IEnumerable<int> acceptedProducerIds)
+        private List<CalcSummaryProducerCalculationResults> ArrangeProducerCalculationResult(
+            CalcResultSummary calcResultSummary,
+            IEnumerable<int> acceptedProducerIds,
+            List<MaterialDetail> materials)
         {
             var results = new List<CalcSummaryProducerCalculationResults>();
 
@@ -141,14 +131,14 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
             {
                 results.Add(new CalcSummaryProducerCalculationResults
                 {
-                    ProducerID= producer.ProducerId,
+                    ProducerID = producer.ProducerId,
                     SubsidiaryID = producer.SubsidiaryId,
                     ProducerName = producer.ProducerName,
                     TradingName = producer.TradingName,
-                    Level = producer.Level,
+                    Level = string.IsNullOrWhiteSpace(producer.Level) ? null : int.Parse(producer.Level),
                     ScaledUpTonnages = producer.IsProducerScaledup,
-                    ProducerDisposalFeesWithBadDebtProvision1 = this.producerDisposalFeesWithBadDebtProvision1JsonMapper.Map(producer.ProducerDisposalFeesByMaterial),
-                    FeesForCommsCostsWithBadDebtProvision2a = this.commsCostByMaterial2AJsonMapper.Map(producer.ProducerCommsFeesByMaterial!),
+                    ProducerDisposalFeesWithBadDebtProvision1 = this.producerDisposalFeesWithBadDebtProvision1JsonMapper.Map(producer.ProducerDisposalFeesByMaterial, materials),
+                    FeesForCommsCostsWithBadDebtProvision2a = this.commsCostByMaterial2AJsonMapper.Map(producer.ProducerCommsFeesByMaterial!, materials),
                     FeeForSAOperatingCostsWithBadDebtProvision_3 = this.sAOperatingCostsWithBadDebtProvisionMapper.Map(producer),
                     FeeForLADataPrepCostsWithBadDebtProvision_4 = this.laDataPrepCostsWithBadDebtProvision4Mapper.Map(producer),
                     FeeForCommsCostsWithBadDebtProvision_2a = this.feeForCommsCostsWithBadDebtProvision2aMapper.Map(producer),
@@ -165,8 +155,8 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalcResult
             }
 
             return results;
-        }        
-        
+        }
+
         private CalcResultProducerCalculationResultsTotal? ArrangeProducerCalculationResultsTotal(CalcResultSummary calcResultSummary)
         {
             return calcResultProducerCalculationResultsTotalMapper.Map(calcResultSummary);

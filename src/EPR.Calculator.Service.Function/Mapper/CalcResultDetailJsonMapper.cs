@@ -1,8 +1,9 @@
 ﻿using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Converter;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
 
-namespace EPR.Calculator.Service.Function.Mappers
+namespace EPR.Calculator.Service.Function.Mapper
 {
     public static class CalcResultDetailJsonMapper
     {
@@ -12,18 +13,18 @@ namespace EPR.Calculator.Service.Function.Mappers
             {
                 RunName = calcResultDetail.RunName,
                 RunId = calcResultDetail.RunId,
-                RunDate = calcResultDetail.RunDate.ToString(CalculationResults.DateFormat),
+                RunDate = calcResultDetail.RunDate.ToString(CalculationResults.DateFormatISO8601),
                 RunBy = calcResultDetail.RunBy,
                 FinancialYear = calcResultDetail.FinancialYear,
-                RpdFileORG = string.Empty,
-                RpdFileORGTimeStamp = calcResultDetail.RpdFileORG,
-                RpdFilePOM = string.Empty,
-                RpdFilePOMTimeStamp = calcResultDetail.RpdFilePOM,
+                RpdFileORG = CalculationResults.ORG,
+                RpdFileORGTimeStamp = DateTimeConversion.ConvertToIso8601Utc(calcResultDetail.RpdFileORG),
+                RpdFilePOM = CalculationResults.POM,
+                RpdFilePOMTimeStamp = DateTimeConversion.ConvertToIso8601Utc(calcResultDetail.RpdFilePOM),
                 LapcapFile = GetFileInfo(calcResultDetail.LapcapFile)[0],
-                LapcapFileTimeStamp = GetFileInfo(calcResultDetail.LapcapFile)[1],
+                LapcapFileTimeStamp = DateTimeConversion.ConvertToIso8601Utc(GetFileInfo(calcResultDetail.LapcapFile)[1]),
                 LapcapFileUploader = GetFileInfo(calcResultDetail.LapcapFile)[2],
                 ParametersFile = GetFileInfo(calcResultDetail.ParametersFile)[0],
-                ParametersFileTimeStamp = GetFileInfo(calcResultDetail.ParametersFile)[1],
+                ParametersFileTimeStamp = DateTimeConversion.ConvertToIso8601Utc(GetFileInfo(calcResultDetail.ParametersFile)[1]),
                 ParametersFileUploader = GetFileInfo(calcResultDetail.ParametersFile)[2],
             };
         }

@@ -2,6 +2,7 @@ namespace EPR.Calculator.Service.Function.Builder
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using EPR.Calculator.Service.Function.Builder.CancelledProducers;
     using EPR.Calculator.Service.Function.Builder.CommsCost;
     using EPR.Calculator.Service.Function.Builder.Detail;
     using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
@@ -26,9 +27,11 @@ namespace EPR.Calculator.Service.Function.Builder
         private readonly ICalcResultLateReportingBuilder lateReportingBuilder;
         private readonly ICalcRunLaDisposalCostBuilder laDisposalCostBuilder;
         private readonly ICalcResultScaledupProducersBuilder calcResultScaledupProducersBuilder;
+        public readonly ICalcResultCancelledProducersBuilder CalcResultCancelledProducersBuilder;
         private readonly TelemetryClient _telemetryClient;
 
-#pragma warning restore S107 // Constructor has 9 parameters, which is greater than the 7 authorized
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         /// <summary>
         /// Initializes a new instance of the <see cref="CalcResultBuilder"/> class.
         /// </summary>
@@ -42,6 +45,7 @@ namespace EPR.Calculator.Service.Function.Builder
             ICalcRunLaDisposalCostBuilder calcRunLaDisposalCostBuilder,
             ICalcResultScaledupProducersBuilder calcResultScaledupProducersBuilder,
             ICalcResultSummaryBuilder summaryBuilder,
+            ICalcResultCancelledProducersBuilder calcResultCancelledProducersBuilder,
             TelemetryClient telemetryClient)
         {
             this.calcResultDetailBuilder = calcResultDetailBuilder;
@@ -53,9 +57,9 @@ namespace EPR.Calculator.Service.Function.Builder
             this.lapcapplusFourApportionmentBuilder = calcResultOnePlusFourApportionmentBuilder;
             this.calcResultScaledupProducersBuilder = calcResultScaledupProducersBuilder;
             this.summaryBuilder = summaryBuilder;
+            this.CalcResultCancelledProducersBuilder = calcResultCancelledProducersBuilder;
             this._telemetryClient = telemetryClient;
         }
-#pragma warning restore S107 // Constructor has 9 parameters, which is greater than the 7 authorized
 
         public async Task<CalcResult> Build(CalcResultsRequestDto resultsRequestDto)
         {
@@ -75,6 +79,7 @@ namespace EPR.Calculator.Service.Function.Builder
                     Name = string.Empty,
                 },
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
+                CalcResultCancelledProducers = new CalcResultCancelledProducersResponse(),
             };
             this._telemetryClient.TrackTrace("calcResultDetailBuilder started...");
             result.CalcResultDetail = await this.calcResultDetailBuilder.Construct(resultsRequestDto);
@@ -95,6 +100,10 @@ namespace EPR.Calculator.Service.Function.Builder
             this._telemetryClient.TrackTrace("lapcapplusFourApportionmentBuilder started...");
             result.CalcResultOnePlusFourApportionment = this.lapcapplusFourApportionmentBuilder.Construct(resultsRequestDto, result);
             this._telemetryClient.TrackTrace("lapcapplusFourApportionmentBuilder end...");
+
+            this._telemetryClient.TrackTrace("CalcResultCancelledProducersBuilder started...");
+            result.CalcResultCancelledProducers = await this.CalcResultCancelledProducersBuilder.Construct(resultsRequestDto);
+            this._telemetryClient.TrackTrace("CalcResultCancelledProducersBuilder end...");
 
             this._telemetryClient.TrackTrace("calcResultScaledupProducersBuilder started...");
             result.CalcResultScaledupProducers = await this.calcResultScaledupProducersBuilder.Construct(resultsRequestDto);

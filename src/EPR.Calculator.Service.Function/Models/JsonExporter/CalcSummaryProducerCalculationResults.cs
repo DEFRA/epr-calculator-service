@@ -8,7 +8,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonProperty("producerID")]
         public required string ProducerID { get; set; }
 
-        [JsonProperty("SubsidiaryID")]
+        [JsonProperty("subsidiaryID")]
         public required string SubsidiaryID { get; set; }
 
         [JsonProperty("producerName")]
@@ -18,7 +18,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         public string? TradingName { get; set; }
 
         [JsonProperty("level")]
-        public string? Level { get; set; }
+        public int? Level { get; set; }
 
         [JsonProperty("scaledUpTonnages")]
         public required string ScaledUpTonnages { get; set; }

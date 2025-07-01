@@ -14,11 +14,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using EPR.Calculator.Service.Function.Builder;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Enums;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter;
     using EPR.Calculator.Service.Function.Interface;
     using EPR.Calculator.Service.Function.Misc;
     using EPR.Calculator.Service.Function.Models;
     using EPR.Calculator.Service.Function.Services;
-    using Microsoft.ApplicationInsights;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
@@ -40,6 +40,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         private Mock<ICommandTimeoutService> _commandTimeoutService;
         private Mock<ICalculatorTelemetryLogger> _telemetryLogger;
         private Mock<IBillingInstructionService> _billingInstructionService;
+        private Mock<ICalcBillingJsonExporter<CalcResult>> _jsonExporter;
+        private Mock<IConfigurationService> _configService;
+        private Mock<IBillingFileExporter<CalcResult>> _billingFileExporter;
 
         public PrepareCalcServiceTests()
         {
@@ -99,13 +102,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this._validationRules = fixture.Create<CalculatorRunValidator>();
             this._commandTimeoutService = new Mock<ICommandTimeoutService>();
             this._billingInstructionService = new Mock<IBillingInstructionService>();
-            this.BlobStorageService = new Mock<BlobServiceClient>();
-
-            this.ConfigurationService = new Mock<IConfigurationService>();
-            this.ConfigurationService
-                .Setup(c => c.ResultFileCSVContainerName)
-                .Returns(fixture.Create<string>());
-
+            this._jsonExporter = new Mock<ICalcBillingJsonExporter<CalcResult>>();
+            this._configService = new Mock<IConfigurationService>();
+            this._billingFileExporter = new Mock<IBillingFileExporter<CalcResult>>();
             this._testClass = new PrepareCalcService(this._dbContextFactory.Object,
                 this._builder.Object,
                 this._exporter.Object,
@@ -114,11 +113,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 this._commandTimeoutService.Object,
                 this._telemetryLogger.Object,
                 this._billingInstructionService.Object,
-                this.ConfigurationService.Object);
+                this._jsonExporter.Object,
+                this._configService.Object,
+                this._billingFileExporter.Object);
         }
-
-        private Mock<BlobServiceClient> BlobStorageService { get; init; }
-        private Mock<IConfigurationService> ConfigurationService { get; init; }
 
         [TestCleanup]
         public void TearDown()
@@ -145,7 +143,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 this._commandTimeoutService.Object,
                 this._telemetryLogger.Object,
                 this._billingInstructionService.Object,
-                this.ConfigurationService.Object);
+                this._jsonExporter.Object,
+                this._configService.Object,
+                this._billingFileExporter.Object);
 
             // Assert
             Assert.IsNotNull(instance);
@@ -246,18 +246,44 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public async Task PrepareBillingResults_ShouldThrowNotImplementedException()
+        public void PrepareBillingResults_Test()
         {
-            // Arrange
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-            var runName = "TestRun";
-            var cancellationToken = CancellationToken.None;
+            var fixture = new Fixture();
+            var calcRun = this._context.CalculatorRuns.Single(x => x.Id == 1);
+            calcRun.IsBillingFileGenerating = true;
+            this._context.SaveChanges();
 
-            // Act & Assert
-            await Assert.ThrowsExceptionAsync<NotImplementedException>(async () =>
+            this._jsonExporter.Setup(t => t.Export(It.IsAny<CalcResult>(), It.IsAny<List<int>>())).Returns(fixture.Create<string>());
+            this._billingFileExporter.Setup(t => t.Export(It.IsAny<CalcResult>(), It.IsAny<List<int>>())).Returns(fixture.Create<string>());
+            this._storageService.Setup(x => x.UploadFileContentAsync(
+               It.IsAny<(string, string, string, string)>()))
+               .ReturnsAsync("fileName");
+
+            var calcResultsRequestDto = new CalcResultsRequestDto
             {
-                await _testClass.PrepareBillingResults(resultsRequestDto, runName, cancellationToken);
-            });
+                RunId = 1,
+                IsBillingFile = true,
+                AcceptedProducerIds = new List<int> { 1, 2 },
+                ApprovedBy = "Test User 234",
+            };
+            var billingResult = _testClass.PrepareBillingResults(calcResultsRequestDto, "TestRun", CancellationToken.None);
+            billingResult.Wait();
+
+            Assert.IsTrue(billingResult.Result);
+            calcRun = this._context.CalculatorRuns.Single(x => x.Id == 1);
+            Assert.IsFalse(calcRun.IsBillingFileGenerating);
+
+            this._builder
+                .Verify(b => b.Build(It.Is<CalcResultsRequestDto>(x => x.RunId == 1 && x.IsBillingFile)), Times.Once);
+
+            var billingFileMetaData = this._context.CalculatorRunBillingFileMetadata.SingleOrDefault(x => x.CalculatorRunId == 1);
+
+            Assert.IsNotNull(billingFileMetaData);
+
+            billingFileMetaData.BillingFileCreatedBy = "Test User 234";
+            Assert.AreEqual($"1-TestRun_Billing File_{DateTime.Today:yyyyMMdd}.csv", billingFileMetaData.BillingCsvFileName);
+            Assert.AreEqual("1billing.json", billingFileMetaData.BillingJsonFileName);
+
         }
 
         private void SeedDatabase()

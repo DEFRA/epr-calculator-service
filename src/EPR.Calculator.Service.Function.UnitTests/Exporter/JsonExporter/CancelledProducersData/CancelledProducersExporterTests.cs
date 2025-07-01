@@ -1,7 +1,9 @@
 ﻿using AutoFixture;
-using EPR.Calculator.Service.Function.Exporter.JsonExporter.CancelledProducers;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter.CancelledProducersData;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Models.JsonExporter;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -9,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CancelledProducers
+namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CancelledProducersData
 {
     [TestClass]
     public class CancelledProducersExporterTests
@@ -30,7 +32,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.Cancel
             var fixture = new Fixture();
             var cancelledProducers = fixture.Create<CalcResultCancelledProducersResponse>();
 
-            _testMapper.Setup(mock => mock.Map(It.IsAny<CalcResultCancelledProducersResponse>()));
+            var cancelledProducers1 = new CancelledProducers()
+            {
+                Name = CommonConstants.CancelledProducers,
+                CancelledProducerTonnageInvoice = new List<CancelledProducerTonnageInvoice>(),
+            };
+
+            _testMapper.Setup(mock => mock.Map(It.IsAny<CalcResultCancelledProducersResponse>())).Returns(cancelledProducers1);
 
             // Act
             var result = _testClass.Export(cancelledProducers);
@@ -38,7 +46,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.Cancel
             // Assert
             _testMapper.Verify(mock => mock.Map(It.IsAny<CalcResultCancelledProducersResponse>()));
 
-            Assert.AreNotEqual(string.Empty, result);
+            Assert.AreNotEqual(null, result);
         }
     }
 }

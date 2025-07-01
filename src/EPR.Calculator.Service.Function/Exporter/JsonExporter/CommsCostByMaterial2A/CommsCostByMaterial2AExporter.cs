@@ -1,5 +1,6 @@
 ﻿using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Models.JsonExporter;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,10 +19,9 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMater
             this.mapper = mapper;
         }
 
-        public string Export(List<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial)
+        public CalcResult2ACommsDataByMaterial Export(IEnumerable<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial)
         {
-            var result = this.mapper.Map(commsCostByMaterial);
-            return JsonConvert.SerializeObject(result);
+            return this.mapper.Map(commsCostByMaterial);
         }
     }
 }

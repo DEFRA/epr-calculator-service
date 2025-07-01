@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using EPR.Calculator.Service.Common.Utils;
 using EPR.Calculator.Service.Function.Constants;
@@ -14,7 +15,7 @@ namespace EPR.Calculator.Service.Function.Mapper
 {
     public class CalcResult2ACommsDataByMaterialMapper : ICalcResult2ACommsDataByMaterialMapper
     {
-        public CalcResult2ACommsDataByMaterial Map(List<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial)
+        public CalcResult2ACommsDataByMaterial Map(IEnumerable<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial)
         {
             return new CalcResult2ACommsDataByMaterial
             {
@@ -23,9 +24,9 @@ namespace EPR.Calculator.Service.Function.Mapper
             };
         }
 
-        public calcResult2aCommsDataDetailsTotal GetTotalRow(CalcResultCommsCostCommsCostByMaterial commsCostByMaterial)
-        {  
-            return new calcResult2aCommsDataDetailsTotal
+        public CalcResult2ACommsDataDetailsTotal GetTotalRow(CalcResultCommsCostCommsCostByMaterial commsCostByMaterial)
+        {
+            return new CalcResult2ACommsDataDetailsTotal
             {
                 EnglandCommsCostTotal = CurrencyConverter.ConvertToCurrency(commsCostByMaterial.EnglandValue),
                 HouseholdDrinksContainersTonnageTotal = commsCostByMaterial.HouseholdDrinksContainersValue,
@@ -42,11 +43,11 @@ namespace EPR.Calculator.Service.Function.Mapper
         }
 
         public IEnumerable<CalcResult2ACommsDataDetails> GetMaterialBreakdown(
-           List<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial)
+           IEnumerable<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial)
         {
             var commsByMaterialDataDetails = new List<CalcResult2ACommsDataDetails>();
 
-            foreach (var item in commsCostByMaterial.Where(t=>t.Name != CommonConstants.Total))
+            foreach (var item in commsCostByMaterial.Where(t=>t.Name != CommonConstants.Total && t.Name != CommonConstants.TwoACommsCostsbyMaterial))
             {
                 commsByMaterialDataDetails.Add(new CalcResult2ACommsDataDetails
                 {
@@ -55,7 +56,7 @@ namespace EPR.Calculator.Service.Function.Mapper
                     PublicBinTonnage = item.ReportedPublicBinTonnageValue,
                     TotalTonnage = item.ProducerReportedTotalTonnage,
                     HouseholdDrinksContainersTonnage = item.HouseholdDrinksContainersValue,
-                    CommsCostByMaterialPricePerTonne = CurrencyConverter.ConvertToCurrency(item.CommsCostByMaterialPricePerTonneValue),
+                    CommsCostByMaterialPricePerTonne = $"£{item.CommsCostByMaterialPricePerTonneValue.ToString("N4", CultureInfo.CreateSpecificCulture("en-GB"))}",
                     EnglandCommsCost = CurrencyConverter.ConvertToCurrency(item.EnglandValue),
                     WalesCommsCost = CurrencyConverter.ConvertToCurrency(item.WalesValue),
                     ScotlandCommsCost = CurrencyConverter.ConvertToCurrency(item.ScotlandValue),

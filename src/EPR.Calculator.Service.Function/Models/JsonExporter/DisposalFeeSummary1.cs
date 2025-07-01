@@ -6,32 +6,26 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
     public class DisposalFeeSummary1
     {
         [JsonProperty(PropertyName = "totalProducerDisposalFeeWithoutBadDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 2)]
-        public decimal TotalProducerDisposalFeeWithoutBadDebtProvision { get; set; }
+        public required string TotalProducerDisposalFeeWithoutBadDebtProvision { get; set; }
 
         [JsonProperty(PropertyName = "badDebtProvision")]
         [JsonConverter(typeof(DecimalPrecisionConverter), 2)]
-        public decimal BadDebtProvision { get; set; }
+        public required string BadDebtProvision { get; set; }
 
         [JsonProperty(PropertyName = "totalProducerDisposalFeeWithBadDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 2)]
-        public decimal TotalProducerDisposalFeeWithBadDebtProvision { get; set; }
+        public required string TotalProducerDisposalFeeWithBadDebtProvision { get; set; }
 
         [JsonProperty(PropertyName = "englandTotal")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 2)]
-        public decimal EnglandTotal { get; set; }
+        public required string EnglandTotal { get; set; }
 
         [JsonProperty(PropertyName = "walesTotal")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 2)]
-        public decimal WalesTotal { get; set; }
+        public required string WalesTotal { get; set; }
 
         [JsonProperty(PropertyName = "scotlandTotal")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 2)]
-        public decimal ScotlandTotal { get; set; }
+        public required string ScotlandTotal { get; set; }
 
         [JsonProperty(PropertyName = "northernIrelandTotal")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 2)]
-        public decimal NorthernIrelandTotal { get; set; }
+        public required string NorthernIrelandTotal { get; set; }
 
         [JsonProperty(PropertyName = "tonnageChangeCount")]
         public required string TonnageChangeCount { get; set; }

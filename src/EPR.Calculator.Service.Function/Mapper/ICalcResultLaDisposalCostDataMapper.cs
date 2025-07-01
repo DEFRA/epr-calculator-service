@@ -6,6 +6,6 @@ namespace EPR.Calculator.Service.Function.Mapper
 {
     public interface ICalcResultLaDisposalCostDataMapper
     {
-        public CalcResultLaDisposalCostDataJson Map(List<CalcResultLaDisposalCostDataDetail> laDisposalCostDataDetail);
+        public CalcResultLaDisposalCostDataJson Map(IEnumerable<CalcResultLaDisposalCostDataDetail> laDisposalCostDataDetail);
     }
 }

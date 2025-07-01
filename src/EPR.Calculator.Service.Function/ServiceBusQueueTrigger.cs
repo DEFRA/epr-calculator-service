@@ -77,9 +77,10 @@ namespace EPR.Calculator.Service.Function
 
                 if (resultMessageType is CreateBillingFileMessage billingmessage)
                 {
+                    this.telemetryLogger.LogInformation(new TrackMessage { Message = "CreateBillingFileMessage" });
                     var billingFileMessage = this.calculatorRunParameterMapper.Map(billingmessage);
-
-                    processStatus = await this.prepareBillingFileService.PrepareBillingFileAsync(billingFileMessage.Id, runName!);
+                    this.telemetryLogger.LogInformation(new TrackMessage { Message = "After Billing File Map" });
+                    processStatus = await this.prepareBillingFileService.PrepareBillingFileAsync(billingFileMessage.Id, runName!, billingFileMessage.ApprovedBy);
                 }
                 
                 if (resultMessageType is CreateResultFileMessage resultmessage)

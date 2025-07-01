@@ -2,7 +2,6 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-using System.Configuration;
 using Azure.Storage.Blobs;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
@@ -11,8 +10,10 @@ using EPR.Calculator.API.Services;
 using EPR.Calculator.API.Validators;
 using EPR.Calculator.API.Wrapper;
 using EPR.Calculator.Service.Common.AzureSynapse;
+using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function;
 using EPR.Calculator.Service.Function.Builder;
+using EPR.Calculator.Service.Function.Builder.CancelledProducers;
 using EPR.Calculator.Service.Function.Builder.CommsCost;
 using EPR.Calculator.Service.Function.Builder.Detail;
 using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
@@ -22,6 +23,25 @@ using EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment;
 using EPR.Calculator.Service.Function.Builder.ParametersOther;
 using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
 using EPR.Calculator.Service.Function.Builder.Summary;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter.BillingInstructions;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResults;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter.CancelledProducersData;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMaterial2A;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter.Detail;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter.LaDisposalCostData;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter.Lapcap;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter.LateReportingTonnage;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter.OnePlusFourApportionment;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Misc;
@@ -29,26 +49,11 @@ using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.Extensibility;
-using EPR.Calculator.Service.Common.Logging;
-using System;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Configuration;
 using System.Reflection;
-using EPR.Calculator.Service.Function.Exporter.CsvExporter;
-using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
-using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
-using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
-using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
-using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
-using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
-using EPR.Calculator.Service.Function.Exporter.JsonExporter;
-using EPR.Calculator.Service.Function.Exporter.JsonExporter.LateReportingTonnage;
-using EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMaterial2A;
-using EPR.Calculator.Service.Function.Exporter.JsonExporter.BillingInstructions;
-using EPR.Calculator.Service.Function.Exporter.JsonExporter.LaDisposalCostData;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -136,9 +141,11 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<IDbLoadingChunkerService<ProducerReportedMaterial>, DbLoadingChunkerService<ProducerReportedMaterial>>();
             services.AddTransient<IDbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction>, DbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction>>();
             services.AddTransient<ICalcResultSummaryExporter, CalcResultSummaryExporter>();
+            services.AddTransient<ICalcBillingJsonExporter<CalcResult>, CalcResultsJsonExporter>();
             services.AddTransient<ILateReportingExporter, LateReportingExporter>();
             services.AddTransient<IRunNameService, RunNameService>();
             services.AddTransient<IClassificationService, ClassificationService>();
+            services.AddTransient<IMaterialService, MaterialService>();
             services.AddTransient<ITelemetryClientWrapper, TelemetryClientWrapper>();
             services.AddTransient<IMessageTypeService, MessageTypeService>();
             services.AddTransient<IPrepareBillingFileService, PrepareBillingFileService>();
@@ -146,6 +153,10 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ILateReportingTonnage, LateReportingTonnage>();
             services.AddTransient<ICommsCostsByMaterialFeesSummary2aMapper, CommsCostsByMaterialFeesSummary2aMapper>();
             services.AddTransient<ICalcCountryApportionmentService, CalcCountryApportionmentService>();
+            services.AddTransient<ICalcResultScaledupProducersJsonExporter, CalcResultScaledupProducersJsonExporter>();
+            services.AddTransient<ICalcResultScaledupProducersJsonMapper, CalcResultScaledupProducersJsonMapper>();
+            services.AddTransient<ICalcResultCancelledProducersBuilder, CalcResultCancelledProducersBuilder>();
+            services.AddTransient<ICalcResultCancelledProducersExporter, CalcResultCancelledProducersExporter>();
             services.AddTransient<ICalcResultCommsCostByMaterial2AJsonExporter, CalcResultCommsCostByMaterial2AJsonExporter>();
             services.AddTransient<ISAOperatingCostsWithBadDebtProvisionMapper, SAOperatingCostsWithBadDebtProvisionMapper>();
             services.AddTransient<ICalcResultLADataPrepCostsWithBadDebtProvision4Mapper, CalcResultLADataPrepCostsWithBadDebtProvision4Mapper>();
@@ -166,8 +177,23 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICommsCostByMaterial2AExporter, CommsCostByMaterial2AExporter>();
             services.AddTransient<ICalcResultProducerCalculationResultsTotalMapper, CalcResultProducerCalculationResultsTotalMapper>();
             services.AddTransient<IDisposalFeeSummary1Mapper, DisposalFeeSummary1Mapper>();
+            services.AddTransient<ICancelledProducersMapper, CancelledProducersMapper>();
+            services.AddTransient<ICancelledProducersExporter, CancelledProducersExporter>();
+            services.AddTransient<ICalcResultLapcapExporter, CalcResultLapcapExporter>();
+            services.AddTransient<IOnePlusFourApportionmentJsonExporter, OnePlusFourApportionmentJsonExporter>();
+            services.AddTransient<ICalculationResultsExporter, CalculationResultsExporter>();
+            services.AddTransient<ICalcResultScaledupProducersJsonExporter, CalcResultScaledupProducersJsonExporter>();
+            services.AddTransient<IOnePlusFourApportionmentJsonExporter, OnePlusFourApportionmentJsonExporter>();
+            services.AddTransient<IOnePlusFourApportionmentMapper, OnePlusFourApportionmentMapper>();
+            services.AddTransient<ICalcResultScaledupProducersJsonMapper, CalcResultScaledupProducersJsonMapper>();
+            services.AddTransient<IProducerDisposalFeesWithBadDebtProvision1JsonMapper, ProducerDisposalFeesWithBadDebtProvision1JsonMapper>();
+            services.AddTransient<ICalcResultCommsCostByMaterial2AJsonMapper, CalcResultCommsCostByMaterial2AJsonMapper>();
+            services.AddTransient<ISAOperatingCostsWithBadDebtProvisionMapper, SAOperatingCostsWithBadDebtProvisionMapper>();
+            services.AddTransient<ICalcResultDetailJsonExporter, CalcResultDetailJsonExporter>();
             services.AddTransient<ICalcResultLaDisposalCostDataMapper, CalcResultLaDisposalCostDataMapper>();
             services.AddTransient<ICalcResultLaDisposalCostDataExporter, CalcResultLaDisposalCostDataExporter>();
+            services.AddTransient<ICalcResultCommsCostOnePlusFourApportionmentExporter, CalcResultCommsCostOnePlusFourApportionmentExporter>();
+            services.AddTransient<IBillingFileExporter<CalcResult>, BillingFileExporter>();
 #if !DEBUG
 
             SetupBlobStorage(services);

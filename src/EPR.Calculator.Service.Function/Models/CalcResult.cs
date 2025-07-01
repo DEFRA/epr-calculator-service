@@ -12,7 +12,7 @@ namespace EPR.Calculator.Service.Function.Models
             CalcResultLapcapDataDetails = []
         };
 
-        public CalcResultCommsCost CalcResultCommsCostReportDetail { get; set; } = new ();
+        public CalcResultCommsCost CalcResultCommsCostReportDetail { get; set; } = new();
 
         public required CalcResultLateReportingTonnage CalcResultLateReportingTonnageData { get; set; } =
             new()
@@ -40,7 +40,7 @@ namespace EPR.Calculator.Service.Function.Models
                 SchemeSetupCost = new CalcResultParameterOtherCostDetail()
             };
 
-        public CalcResultOnePlusFourApportionment CalcResultOnePlusFourApportionment {  get; set; }
+        public CalcResultOnePlusFourApportionment CalcResultOnePlusFourApportionment { get; set; }
             = new()
             {
                 Name = string.Empty

@@ -126,6 +126,12 @@ namespace EPR.Calculator.Service.Function
         public string ResultFileCSVContainerName => Environment
             .GetEnvironmentVariable(EnvironmentVariableKeys.ResultFileCSVContainerName);
 
+        public string BillingFileCSVBlobContainerName => Environment
+            .GetEnvironmentVariable(EnvironmentVariableKeys.BillingFileCSVBlobContainerName);
+
+        public string BillingFileJsonBlobContainerName => Environment
+            .GetEnvironmentVariable(EnvironmentVariableKeys.BillingFileJsonBlobContainerName);
+
         /// <summary>
         /// Gets the blob connection string from environment variables.
         /// </summary>

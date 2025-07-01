@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
+using static EPR.Calculator.Service.Common.UnitTests.Utils.JsonNodeComparer;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 {
@@ -38,14 +39,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             var fees = new CalcResultSummaryProducerDisposalFees
             {
                 CurrentYearInvoiceTotalToDate = "1000",
-                TonnageChangeSinceLastInvoice = "50",
-                LiabilityDifference = "200",
-                MaterialThresholdBreached = "Yes",
-                TonnageThresholdBreached = "No",
-                PercentageLiabilityDifference = "10%",
-                MaterialPercentageThresholdBreached = "5%",
-                TonnagePercentageThresholdBreached = "2%",
-                SuggestedBillingInstruction = "Instruction1",
+                TonnageChangeSinceLastInvoice = "Tonnage Changed",
+                LiabilityDifference = "-200",
+                MaterialThresholdBreached = "-ve",
+                TonnageThresholdBreached = "-ve",
+                PercentageLiabilityDifference = "10.05",
+                MaterialPercentageThresholdBreached = "-ve",
+                TonnagePercentageThresholdBreached = "-ve",
+                SuggestedBillingInstruction = "INITIAL",
                 SuggestedInvoiceAmount = "500",
                 ProducerId = "Producer123",
                 ProducerName = "Producer Name",
@@ -58,16 +59,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             Assert.IsNotNull(result);
 
             // Assert  
-            Assert.AreEqual("1000", result.CurrentYearInvoicedTotalToDate);
-            Assert.AreEqual("50", result.TonnageChangeSinceLastInvoice);
-            Assert.AreEqual("200", result.LiabilityDifferenceCalcVsPrev);
-            Assert.AreEqual("Yes", result.MaterialThresholdBreached);
-            Assert.AreEqual("No", result.TonnageThresholdBreached);
-            Assert.AreEqual("10%", result.PercentageLiabilityDifferenceCalcVsPrev);
-            Assert.AreEqual("5%", result.MaterialPercentageThresholdBreached);
-            Assert.AreEqual("2%", result.TonnagePercentageThresholdBreached);
-            Assert.AreEqual("Instruction1", result.SuggestedBillingInstruction);
-            Assert.AreEqual("500", result.SuggestedInvoiceAmount);
+            AssertAreEqual("£1000.00", result.CurrentYearInvoicedTotalToDate);
+            Assert.AreEqual("Tonnage Changed", result.TonnageChangeSinceLastInvoice);
+            Assert.AreEqual("-£200.00", result.LiabilityDifferenceCalcVsPrev);
+            Assert.AreEqual("-ve", result.MaterialThresholdBreached);
+            Assert.AreEqual("-ve", result.TonnageThresholdBreached);
+            Assert.AreEqual("10.05%", result.PercentageLiabilityDifferenceCalcVsPrev);
+            Assert.AreEqual("-ve", result.MaterialPercentageThresholdBreached);
+            Assert.AreEqual("-ve", result.TonnagePercentageThresholdBreached);
+            Assert.AreEqual("INITIAL", result.SuggestedBillingInstruction);
+            Assert.AreEqual("£500.00", result.SuggestedInvoiceAmount);
         }
 
 
@@ -97,6 +98,45 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             Assert.AreEqual(string.Empty, result.TonnagePercentageThresholdBreached);
             Assert.AreEqual(string.Empty, result.SuggestedBillingInstruction);
             Assert.AreEqual(string.Empty, result.SuggestedInvoiceAmount);
+        }
+
+        [TestMethod]
+        public void Map_ShouldHandleHyphenValues()
+        {
+            // Arrange  
+            var fees = new CalcResultSummaryProducerDisposalFees
+            {
+                CurrentYearInvoiceTotalToDate = "-",
+                TonnageChangeSinceLastInvoice = "-",
+                LiabilityDifference = "-",
+                MaterialThresholdBreached = "-",
+                TonnageThresholdBreached = "-",
+                PercentageLiabilityDifference = "-",
+                MaterialPercentageThresholdBreached = "-",
+                TonnagePercentageThresholdBreached = "-",
+                SuggestedBillingInstruction = "INITIAL",
+                SuggestedInvoiceAmount = "500",
+                ProducerId = "Producer123",
+                ProducerName = "Producer Name",
+                SubsidiaryId = "Subsidiary456",
+            };
+
+            // Act  
+            var result = _testClass?.Map(fees);
+
+            Assert.IsNotNull(result);
+
+            // Assert  
+            Assert.AreEqual("-", result.CurrentYearInvoicedTotalToDate);
+            Assert.AreEqual("-", result.TonnageChangeSinceLastInvoice);
+            Assert.AreEqual("-", result.LiabilityDifferenceCalcVsPrev);
+            Assert.AreEqual("-", result.MaterialThresholdBreached);
+            Assert.AreEqual("-", result.TonnageThresholdBreached);
+            Assert.AreEqual("-", result.PercentageLiabilityDifferenceCalcVsPrev);
+            Assert.AreEqual("-", result.MaterialPercentageThresholdBreached);
+            Assert.AreEqual("-", result.TonnagePercentageThresholdBreached);
+            Assert.AreEqual("INITIAL", result.SuggestedBillingInstruction);
+            Assert.AreEqual("£500.00", result.SuggestedInvoiceAmount);
         }
 
     }

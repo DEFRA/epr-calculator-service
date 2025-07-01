@@ -765,6 +765,8 @@
                         WalesWithBadDebtProvision = 78.46m,
                         ScotlandWithBadDebtProvision = 156.28m,
                         NorthernIrelandWithBadDebtProvision = 61.18m,
+                        PreviousInvoicedTonnage = "110",
+                        TonnageChange = "0"
                     }
                 },
                 {
@@ -782,6 +784,8 @@
                         WalesWithBadDebtProvision = 187.96m,
                         ScotlandWithBadDebtProvision = 374.40m,
                         NorthernIrelandWithBadDebtProvision = 146.57m,
+                        PreviousInvoicedTonnage = "110",
+                        TonnageChange = "0"
                     }
                 },
                 {
@@ -799,6 +803,9 @@
                         WalesWithBadDebtProvision = 291.10m,
                         ScotlandWithBadDebtProvision = 579.85m,
                         NorthernIrelandWithBadDebtProvision = 227,
+                        HouseholdDrinksContainersTonnage = 220,
+                        PreviousInvoicedTonnage = "110",
+                        TonnageChange = "0"
                     }
                 },
                 {
@@ -816,6 +823,8 @@
                         WalesWithBadDebtProvision = 5.63m,
                         ScotlandWithBadDebtProvision = 11.21m,
                         NorthernIrelandWithBadDebtProvision = 4.39m,
+                        PreviousInvoicedTonnage = "110",
+                        TonnageChange = "0"
                     }
                 },
                 {
@@ -833,6 +842,8 @@
                         WalesWithBadDebtProvision = 1.23m,
                         ScotlandWithBadDebtProvision = 2.44m,
                         NorthernIrelandWithBadDebtProvision = 0.96m,
+                        PreviousInvoicedTonnage = "110",
+                        TonnageChange = "0"
                     }
                 },
                 {
@@ -850,6 +861,8 @@
                         WalesWithBadDebtProvision = 0.00m,
                         ScotlandWithBadDebtProvision = 0.00m,
                         NorthernIrelandWithBadDebtProvision = 0.00m,
+                        PreviousInvoicedTonnage = "110",
+                        TonnageChange = "0"
                     }
                 },
                 {
@@ -867,6 +880,8 @@
                         WalesWithBadDebtProvision = 104.60m,
                         ScotlandWithBadDebtProvision = 208.36m,
                         NorthernIrelandWithBadDebtProvision = 81.57m,
+                        PreviousInvoicedTonnage = "110",
+                        TonnageChange = "0"
                     }
                 },
                 {
@@ -884,6 +899,8 @@
                         WalesWithBadDebtProvision = 6.87m,
                         ScotlandWithBadDebtProvision = 13.68m,
                         NorthernIrelandWithBadDebtProvision = 5.36m,
+                        PreviousInvoicedTonnage = "110",
+                        TonnageChange = "0"
                     }
                 },
             };
@@ -894,8 +911,8 @@
             return new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>
             {
                 {
-                       "AL",
-                       new CalcResultSummaryProducerCommsFeesCostByMaterial
+                    "AL",
+                    new CalcResultSummaryProducerCommsFeesCostByMaterial
                     {
                         HouseholdPackagingWasteTonnage = 1000,
                         PriceperTonne = 0.1916m,
@@ -1024,7 +1041,7 @@
                 MaterialBreakdownHeaders = new List<CalcResultScaledupProducerHeader>(),
                 TitleHeader = new CalcResultScaledupProducerHeader()
                 {
-                    Name = "Title",
+                    Name = "Scaled-up Producers",
                     ColumnIndex = 1,
                 },
                 ScaledupProducers = new List<CalcResultScaledupProducer>()

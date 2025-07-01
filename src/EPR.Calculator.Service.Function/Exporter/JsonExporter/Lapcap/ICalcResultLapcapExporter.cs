@@ -12,6 +12,6 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.Lapcap
         /// </summary>
         /// <param name="data">The data to convert.</param>
         /// <returns>The data in JSON string format.</returns>
-        string ConvertToJson(CalcResultLapcapData data);
+        object Export(CalcResultLapcapData data);
     }
 }
