@@ -1,7 +1,5 @@
 ﻿namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CalcResult
 {
-    using System.Text.Json;
-    using System.Text.Json.Nodes;
     using AutoFixture;
     using EPR.Calculator.Service.Common.Utils;
     using EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResults;
@@ -9,6 +7,9 @@
     using EPR.Calculator.Service.Function.Models;
     using EPR.Calculator.Service.Function.UnitTests.Builder;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System.Text.Json;
+    using System.Text.Json.Nodes;
+    using System.Text.Json.Serialization;
     using static EPR.Calculator.Service.Common.UnitTests.Utils.JsonNodeComparer;
 
     [TestClass]
@@ -434,7 +435,11 @@
 
             // Act
             var obj = this.TestClass.Export(data, new List<int> { 1, 2, 3 }, materials);
-            var json = JsonSerializer.Serialize(obj);
+            var options = new JsonSerializerOptions
+            {
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            };
+            var json = JsonSerializer.Serialize(obj, options);
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["producerCalculationResults"];
