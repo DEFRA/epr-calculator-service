@@ -1,6 +1,6 @@
-﻿using EPR.Calculator.Service.Function.Mapper;
+﻿using System.Text.Json;
+using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
-using Newtonsoft.Json;
 
 namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.BillingInstructions
 {
@@ -16,7 +16,8 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.BillingInstructi
         public string Export(CalcResultSummaryProducerDisposalFees fees)
         {
             var result = this.mapper.Map(fees);
-            return JsonConvert.SerializeObject(result);
+
+            return JsonSerializer.Serialize(result);
         }
     }
 }

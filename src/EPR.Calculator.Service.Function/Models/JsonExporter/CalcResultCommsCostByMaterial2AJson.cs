@@ -1,58 +1,55 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using EPR.Calculator.Service.Function.Converter;
-using Newtonsoft.Json;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
     public record CalcResultCommsCostByMaterial2AJson
     {
-        [JsonProperty(PropertyName = "materialBreakdown")]
+        [JsonPropertyName("materialBreakdown")]
         public required IEnumerable<CalcResultCommsCostByMaterial2AMaterialBreakdown> MaterialBreakdown { get; init; }
     }
 
     public record CalcResultCommsCostByMaterial2AMaterialBreakdown
     {
-        [JsonProperty(PropertyName = "materialName")]
+        [JsonPropertyName("materialName")]
         public required string MaterialName { get; init; }
 
-        [JsonProperty(PropertyName = "householdPackagingWasteTonnage")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
+        [JsonPropertyName("householdPackagingWasteTonnage")]
         public decimal HouseholdPackagingWasteTonnage { get; init; }
 
-        [JsonProperty(PropertyName = "publicBinTonnage")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
+        [JsonPropertyName("publicBinTonnage")]
         public decimal PublicBinTonnage { get; init; }
 
-        [JsonProperty(PropertyName = "totalTonnage")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
+        [JsonPropertyName("totalTonnage")]
         public decimal TotalTonnage { get; init; }
 
-        [JsonProperty(PropertyName = "householdDrinksContainersTonnageGlass", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal HouseholdDrinksContainersTonnageGlass { get; set; }
+        [JsonPropertyName("householdDrinksContainersTonnageGlass")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public decimal? HouseholdDrinksContainersTonnageGlass { get; set; }
 
-        [JsonProperty(PropertyName = "pricePerTonne")]
+        [JsonPropertyName("pricePerTonne")]
         public required string PricePerTonne { get; init; }
 
-        [JsonProperty(PropertyName = "producerTotalCostWithoutBadDebtProvision")]
+        [JsonPropertyName("producerTotalCostWithoutBadDebtProvision")]
         public required string ProducerTotalCostWithoutBadDebtProvision { get; init; }
 
-        [JsonProperty(PropertyName = "badDebtProvision")]
+        [JsonPropertyName("badDebtProvision")]
         public required string BadDebtProvision { get; init; }
 
-        [JsonProperty(PropertyName = "producerTotalCostWithBadDebtProvision")]
+        [JsonPropertyName("producerTotalCostWithBadDebtProvision")]
         public required string ProducerTotalCostwithBadDebtProvision { get; init; }
 
-        [JsonProperty(PropertyName = "englandWithBadDebtProvision")]
+        [JsonPropertyName("englandWithBadDebtProvision")]
         public required string EnglandWithBadDebtProvision { get; init; }
 
-        [JsonProperty(PropertyName = "walesWithBadDebtProvision")]
+        [JsonPropertyName("walesWithBadDebtProvision")]
         public required string WalesWithBadDebtProvision { get; init; }
 
-        [JsonProperty(PropertyName = "scotlandWithBadDebtProvision")]
+        [JsonPropertyName("scotlandWithBadDebtProvision")]
         public required string ScotlandWithBadDebtProvision { get; init; }
 
-        [JsonProperty(PropertyName = "northernIrelandWithBadDebtProvision")]
+        [JsonPropertyName("northernIrelandWithBadDebtProvision")]
         public required string NorthernIrelandWithBadDebtProvision { get; init; }
     }
 }

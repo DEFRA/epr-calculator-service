@@ -5,6 +5,7 @@ using EPR.Calculator.Service.Common.Utils;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
+using Microsoft.AspNetCore.JsonPatch.Internal;
 
 namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResults
 {
@@ -85,7 +86,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResul
             {
                 FeeForLaDisposalCostsWithoutBadDebtprovision1 = CurrencyConverter.ConvertToCurrency(data.TotalFeeforLADisposalCostswoBadDebtprovision1),
                 BadDebtProvision1 = CurrencyConverter.ConvertToCurrency(data.BadDebtProvisionFor1),
-                FeeforLADisposalCostswithBadDebtprovision1 = CurrencyConverter.ConvertToCurrency(data.TotalFeeforLADisposalCostswithBadDebtprovision1),
+                FeeForLaDisposalCostsWithBadDebtprovision1 = CurrencyConverter.ConvertToCurrency(data.TotalFeeforLADisposalCostswithBadDebtprovision1),
 
                 FeeForCommsCostsByMaterialWithoutBadDebtprovision2a = CurrencyConverter.ConvertToCurrency(data.TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A),
                 BadDebtProvision2a = CurrencyConverter.ConvertToCurrency(data.BadDebtProvisionFor2A),
@@ -133,9 +134,9 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResul
                     SubsidiaryID = producer.SubsidiaryId,
                     ProducerName = producer.ProducerName,
                     TradingName = producer.TradingName,
-                    Level = producer.Level,
+                    Level = string.IsNullOrWhiteSpace(producer.Level) ? null : int.Parse(producer.Level),
                     ScaledUpTonnages = producer.IsProducerScaledup,
-                    ProducerDisposalFeesWithBadDebtProvision1 = this.producerDisposalFeesWithBadDebtProvision1JsonMapper.Map(producer.ProducerDisposalFeesByMaterial),
+                    ProducerDisposalFeesWithBadDebtProvision1 = this.producerDisposalFeesWithBadDebtProvision1JsonMapper.Map(producer.ProducerDisposalFeesByMaterial, materials),
                     FeesForCommsCostsWithBadDebtProvision2a = this.commsCostByMaterial2AJsonMapper.Map(producer.ProducerCommsFeesByMaterial!, materials),
                     FeeForSAOperatingCostsWithBadDebtProvision_3 = this.sAOperatingCostsWithBadDebtProvisionMapper.Map(producer),
                     FeeForLADataPrepCostsWithBadDebtProvision_4 = this.laDataPrepCostsWithBadDebtProvision4Mapper.Map(producer),
