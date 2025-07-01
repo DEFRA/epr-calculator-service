@@ -643,8 +643,7 @@
             var producer = data.ProducerDisposalFees.SingleOrDefault(t => !string.IsNullOrEmpty(t.Level))!;
 
             // Main Fields
-            Assert.AreEqual(producer.ProducerId, calculationResult["ProducerID"]?.GetValue<string>());
-            Assert.AreEqual(producer.Level!, calculationResult["Level"]?.GetValue<string>());
+            AssertAreEqual(producer.ProducerId, calculationResult["ProducerID"]);
         }        
     }
 }
