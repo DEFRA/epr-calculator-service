@@ -18,7 +18,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.Utils
         {
             Assert.IsNotNull(actual, "Actual value should not be null.");
             Assert.AreEqual(
-                CurrencyConverter.FormatCurrencyWithGbpSymbol(expected),
+                CurrencyConverter.FormatCurrencyWithGbpSymbol(expected, 2),
                 actual.GetValue<string>(),
                 $"Expected {expected} to be equal to {actual}");
         }
