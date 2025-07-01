@@ -52,6 +52,5 @@ namespace EPR.Calculator.Service.Common.Utils
             culture.NumberFormat.CurrencyGroupSeparator = string.Empty;
             return decimalValue.ToString("C", culture);
         }
-
     }
 }

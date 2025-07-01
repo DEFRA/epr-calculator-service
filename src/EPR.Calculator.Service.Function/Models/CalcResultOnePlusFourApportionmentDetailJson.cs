@@ -10,21 +10,17 @@ namespace EPR.Calculator.Service.Function.Models
 {
     public record CalcResultOnePlusFourApportionmentDetailJson
     {
-        [JsonProperty(PropertyName = "england")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public string? England { get; set; }
+        [JsonProperty(PropertyName = "england")]        
+        public string England { get; set; } = string.Empty;
 
         [JsonProperty(PropertyName = "wales")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public string? Wales { get; set; }
+        public string Wales { get; set; } = string.Empty;
 
         [JsonProperty(PropertyName = "scotland")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public string? Scotland { get; set; }
+        public string Scotland { get; set; } = string.Empty;
 
         [JsonProperty(PropertyName = "northernIreland")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public string? NorthernIreland { get; set; }
+        public string NorthernIreland { get; set; } = string.Empty;
 
         [JsonProperty(PropertyName = "total")]
         public string Total { get; set; } = string.Empty;
