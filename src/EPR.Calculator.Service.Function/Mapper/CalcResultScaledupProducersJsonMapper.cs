@@ -76,16 +76,16 @@ namespace EPR.Calculator.Service.Function.Mapper
                 var breakdown = new MaterialBreakdown
                 {
                     MaterialName = material.Name,
-                    ReportedHouseholdPackagingWasteTonnage = Math.Round(producerTonnage.Value.ReportedHouseholdPackagingWasteTonnage, 3),
-                    ReportedPublicBinTonnage = Math.Round(producerTonnage.Value.ReportedPublicBinTonnage, 3),
-                    TotalReportedTonnage = Math.Round(producerTonnage.Value.TotalReportedTonnage, 3),
-                    ReportedSelfManagedConsumerWasteTonnage = Math.Round(producerTonnage.Value.ReportedSelfManagedConsumerWasteTonnage, 3),
-                    NetReportedTonnage = Math.Round(producerTonnage.Value.NetReportedTonnage, 3),
-                    ScaledUpReportedHouseholdPackagingWasteTonnage = Math.Round(producerTonnage.Value.ScaledupReportedHouseholdPackagingWasteTonnage, 3),
-                    ScaledUpReportedPublicBinTonnage = Math.Round(producerTonnage.Value.ScaledupReportedPublicBinTonnage, 3),
-                    ScaledUpTotalReportedTonnage = Math.Round(producerTonnage.Value.ScaledupTotalReportedTonnage, 3),
-                    ScaledUpReportedSelfManagedConsumerWasteTonnage = Math.Round(producerTonnage.Value.ScaledupReportedSelfManagedConsumerWasteTonnage, 3),
-                    ScaledUpNetReportedTonnage = Math.Round(producerTonnage.Value.ScaledupNetReportedTonnage, 3)
+                    ReportedHouseholdPackagingWasteTonnage = producerTonnage.Value.ReportedHouseholdPackagingWasteTonnage,
+                    ReportedPublicBinTonnage = producerTonnage.Value.ReportedPublicBinTonnage,
+                    TotalReportedTonnage = producerTonnage.Value.TotalReportedTonnage,
+                    ReportedSelfManagedConsumerWasteTonnage = producerTonnage.Value.ReportedSelfManagedConsumerWasteTonnage,
+                    NetReportedTonnage = producerTonnage.Value.NetReportedTonnage,
+                    ScaledUpReportedHouseholdPackagingWasteTonnage = producerTonnage.Value.ScaledupReportedHouseholdPackagingWasteTonnage,
+                    ScaledUpReportedPublicBinTonnage = producerTonnage.Value.ScaledupReportedPublicBinTonnage,
+                    ScaledUpTotalReportedTonnage = producerTonnage.Value.ScaledupTotalReportedTonnage,
+                    ScaledUpReportedSelfManagedConsumerWasteTonnage = producerTonnage.Value.ScaledupReportedSelfManagedConsumerWasteTonnage,
+                    ScaledUpNetReportedTonnage = producerTonnage.Value.ScaledupNetReportedTonnage,
                 };
 
                 if (producerTonnage.Key == MaterialCodes.Glass)
