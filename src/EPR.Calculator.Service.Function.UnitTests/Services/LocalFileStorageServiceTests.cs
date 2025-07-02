@@ -24,9 +24,14 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var fileName = fixture.Create<string>();
             var content = fixture.Create<string>();
             var runName = fixture.Create<string>();
+            var containerName = fixture.Create<string>();
 
             // Act
-            var result = await this._testClass.UploadResultFileContentAsync(fileName, content, runName);
+            var result = await this._testClass.UploadFileContentAsync(
+                (FileName: fileName,
+                Content: content,
+                RunName: runName,
+                ContainerName: containerName));
 
             // Assert
             Assert.IsNotNull(result);

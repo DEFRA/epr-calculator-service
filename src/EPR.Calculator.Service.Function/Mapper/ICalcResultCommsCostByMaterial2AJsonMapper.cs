@@ -6,6 +6,8 @@ namespace EPR.Calculator.Service.Function.Mapper
 {
     public interface ICalcResultCommsCostByMaterial2AJsonMapper
     {
-        public CalcResultCommsCostByMaterial2AJson Map(Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostByMaterial);
+        public CalcResultCommsCostByMaterial2AJson Map(
+            Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostByMaterial,
+            List<MaterialDetail> materials);
     }
 }

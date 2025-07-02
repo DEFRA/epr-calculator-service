@@ -173,5 +173,22 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
             // Assert
             Assert.IsInstanceOfType(this.TestClass.DbLoadingChunkSize, typeof(int));
         }
+
+        [TestMethod]
+        public void ResultFileCSVContainerName()
+        {
+            // Arrange
+            var expectedResult = this.Fixture.Create<string>();
+
+            var resultFileNameSection = new Mock<IConfigurationSection>();
+            resultFileNameSection.Setup(v => v.Value).Returns(expectedResult);
+
+            this.Configuration
+                .Setup(c => c.GetSection(nameof(LocalDevelopmentConfiguration.ResultFileCSVContainerName)))
+                .Returns(resultFileNameSection.Object);
+
+            // Assert
+            Assert.IsInstanceOfType(this.TestClass.ResultFileCSVContainerName, typeof(string));
+        }
     }
 }

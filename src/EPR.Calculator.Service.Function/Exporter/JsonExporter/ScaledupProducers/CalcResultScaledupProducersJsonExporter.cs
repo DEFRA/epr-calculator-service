@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
-using Newtonsoft.Json;
+using EPR.Calculator.Service.Function.Models.JsonExporter;
 
 namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.ScaledupProducers
 {
@@ -14,10 +14,12 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.ScaledupProducer
             this.mapper = mapper;
         }
 
-        public string Export(CalcResultScaledupProducers calcResultScaledupProducers, IEnumerable<int> acceptedProducerIds)
+        public CalcResultScaledupProducersJson Export(
+            CalcResultScaledupProducers calcResultScaledupProducers,
+            IEnumerable<int> acceptedProducerIds,
+            List<MaterialDetail> materials)
         {
-            var result = this.mapper.Map(calcResultScaledupProducers, acceptedProducerIds);
-            return JsonConvert.SerializeObject(result);
+            return this.mapper.Map(calcResultScaledupProducers, acceptedProducerIds, materials);
         }
     }
 }

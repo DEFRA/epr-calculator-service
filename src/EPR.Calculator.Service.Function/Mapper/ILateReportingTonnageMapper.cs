@@ -10,6 +10,6 @@ namespace EPR.Calculator.Service.Function.Mapper
 {
     public interface ILateReportingTonnageMapper
     {
-        CalcResultLateReportingTonnageJson Map(CalcResultLateReportingTonnage calcResultLateReportingTonnage);
+        CalcResultLateReportingTonnageJson Map(CalcResultLateReportingTonnage? calcResultLateReportingTonnage);
     }
 }

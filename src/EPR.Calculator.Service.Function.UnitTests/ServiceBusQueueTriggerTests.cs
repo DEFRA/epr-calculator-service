@@ -23,6 +23,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         private readonly Mock<ICalculatorRunService> calculatorRunService;
         private readonly Mock<ICalculatorRunParameterMapper> parameterMapper;
         private readonly Mock<IRunNameService> runNameService;
+        private readonly Mock<IClassificationService> classificationService;
         private readonly Mock<ICalculatorTelemetryLogger> telemetryLogger;
         private readonly Mock<IMessageTypeService> messageTypeService;
         private readonly Mock<IPrepareBillingFileService> prepareBillingFileService;
@@ -37,6 +38,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             this.parameterMapper = new Mock<ICalculatorRunParameterMapper>();
             this.runNameService = new Mock<IRunNameService>();
             this.messageTypeService = new Mock<IMessageTypeService>();
+            this.classificationService = new Mock<IClassificationService>();
             this.telemetryLogger = new Mock<ICalculatorTelemetryLogger>();
             this.prepareBillingFileService = new Mock<IPrepareBillingFileService>();
             this.function = new ServiceBusQueueTrigger(
@@ -45,7 +47,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 this.runNameService.Object,
                 this.telemetryLogger.Object,
                 this.messageTypeService.Object,
-                this.prepareBillingFileService.Object);
+                this.prepareBillingFileService.Object,
+                this.classificationService.Object);
         }
 
         /// <summary>
@@ -99,10 +102,11 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             var processedParameterData = new BillingFileMessage() { ApprovedBy = "2024-25", MessageType = "Billing", Id = 678767 };
             var runName = "Test Run Name";
+            var approvedBy = "Test User";
 
             this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateBillingFileMessage>())).Returns(processedParameterData);
             messageTypeService.Setup(s => s.DeserializeMessage(myQueueItem)).Returns(resultFileMessage);
-            this.prepareBillingFileService.Setup(t => t.PrepareBillingFileAsync(processedParameterData.Id, runName)).ReturnsAsync(true);
+            this.prepareBillingFileService.Setup(t => t.PrepareBillingFileAsync(processedParameterData.Id, runName, approvedBy)).ReturnsAsync(true);
 
             // Act
             await this.function.Run(myQueueItem);
@@ -167,7 +171,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             // Assert
             this.telemetryLogger.Verify(
                 log => log.LogError(It.Is<ErrorMessage>(msg =>
-                    msg.Message.Contains("Incorrect format") &&
+                    msg.Message.Contains("Error") &&
                     msg.Exception is JsonException)),
                 Times.Once);
         }
@@ -307,7 +311,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             // Assert
             this.telemetryLogger.Verify(
                 log => log.LogError(It.Is<ErrorMessage>(msg =>
-                    msg.Message.Contains("Run name not found") &&
+                    msg.Message.Contains("Error") &&
                     msg.Exception is Exception)),
                 Times.Once);
         }

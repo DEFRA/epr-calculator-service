@@ -31,7 +31,7 @@
 
         TimeSpan TransposeTimeout { get; }
 
-        string BlobContainerName { get; }
+        string ResultFileCSVContainerName { get; }
 
         string BlobConnectionString { get; }
 
@@ -43,5 +43,9 @@
         TimeSpan CommandTimeout { get; }
 
         int DbLoadingChunkSize { get; }
+
+        string BillingFileCSVBlobContainerName { get; }
+
+        string BillingFileJsonBlobContainerName { get; }
     }
 }

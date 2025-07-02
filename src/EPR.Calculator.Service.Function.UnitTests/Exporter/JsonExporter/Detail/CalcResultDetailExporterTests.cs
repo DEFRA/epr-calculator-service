@@ -1,5 +1,11 @@
-﻿using EPR.Calculator.Service.Function.Exporter.JsonExporter.Detail;
+﻿using AutoFixture;
+using EPR.Calculator.Service.Common.UnitTests.Utils;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter.Detail;
 using EPR.Calculator.Service.Function.Models;
+using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using static EPR.Calculator.Service.Common.UnitTests.Utils.JsonNodeComparer;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.Detail
 {
@@ -7,11 +13,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.Detail
     public class CalcResultDetailExporterTests
     {
 
-        private CalcResultDetailExporter calcResultDetailExporter;
+        private CalcResultDetailJsonExporter calcResultDetailExporter;
+        private IFixture Fixture;
 
         public CalcResultDetailExporterTests()
         {
-            calcResultDetailExporter = new CalcResultDetailExporter();
+            calcResultDetailExporter = new CalcResultDetailJsonExporter();
+            Fixture = new Fixture();
         }
         [TestMethod]
         public void Export_ValidCalcResultDetail_ReturnsCorrectJson()
@@ -31,13 +39,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.Detail
             };
 
             // Act
-            var actualJson = this.calcResultDetailExporter.Export(calcResultDetail);
-
+            var result = this.calcResultDetailExporter.Export(calcResultDetail);
+            var json = JsonSerializer.Serialize(result);
             // Assert
-            // Expected JSON output
-            string expected = "{\"runName\":\"Test Run\",\"runId\":123,\"runDate\":\"21/07/2017 17:32\",\"runBy\":\"John Doe\",\"financialYear\":\"2025\",\"rpdFileORG\":\"\",\"rpdFileORGTimeStamp\":\"21/07/2017 17:32\",\"rpdFilePOM\":\"\",\"rpdFilePOMTimeStamp\":\"21/07/2017 17:32\",\"lapcapFile\":\"lapcap_file.csv\",\"lapcapFileTimeStamp\":\"21/07/2017 17:32\",\"lapcapFileUploader\":\"John Doe\",\"parametersFile\":\"parameters_file.csv\",\"parametersFileTimeStamp\":\"21/07/2017 17:32\",\"parametersFileUploader\":\"John Doe\"}";
+            var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json);
 
-            Assert.AreEqual(expected, actualJson);
+            Assert.AreEqual(calcResultDetail.RunName, roundTrippedData!["RunName"]?.GetValue<string>());
+            Assert.AreEqual(calcResultDetail.RunBy, roundTrippedData!["RunBy"]?.GetValue<string>());
+            Assert.AreEqual(calcResultDetail.FinancialYear, roundTrippedData!["FinancialYear"]?.GetValue<string>());
         }
     }
 }

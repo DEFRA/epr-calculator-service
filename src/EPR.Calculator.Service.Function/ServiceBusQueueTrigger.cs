@@ -1,12 +1,12 @@
 using System;
 using System.Threading.Tasks;
-using EPR.Calculator.Service.Common;
 using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function;
+using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Interface;
+using EPR.Calculator.Service.Function.Services;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.WebJobs;
-using Newtonsoft.Json;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -23,6 +23,7 @@ namespace EPR.Calculator.Service.Function
         private readonly IRunNameService runNameService;
         private readonly IMessageTypeService messageTypeService;
         private readonly IPrepareBillingFileService prepareBillingFileService;
+        private readonly IClassificationService classificationService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceBusQueueTrigger"/> class.
@@ -37,8 +38,8 @@ namespace EPR.Calculator.Service.Function
             IRunNameService runNameService,
             ICalculatorTelemetryLogger telemetryLogger,
             IMessageTypeService messageTypeService,
-            IPrepareBillingFileService prepareBillingFileService
-            )
+            IPrepareBillingFileService prepareBillingFileService,
+            IClassificationService classificationService)
         {
             this.calculatorRunService = calculatorRunService;
             this.calculatorRunParameterMapper = calculatorRunParameterMapper;
@@ -46,6 +47,7 @@ namespace EPR.Calculator.Service.Function
             this.telemetryLogger = telemetryLogger;
             this.messageTypeService = messageTypeService;
             this.prepareBillingFileService = prepareBillingFileService;
+            this.classificationService = classificationService;
         }
 
         /// <summary>
@@ -64,47 +66,53 @@ namespace EPR.Calculator.Service.Function
                 return;
             }
 
+            MessageBase? resultMessageType = null;
+            bool processStatus = false;
+
             try
             {
-                var resultMessageType = messageTypeService.DeserializeMessage(myQueueItem);
-                string runName = string.Empty;
+                resultMessageType = messageTypeService.DeserializeMessage(myQueueItem);
 
-                try
-                {
-                    runName = await this.runNameService.GetRunNameAsync(resultMessageType.CalculatorRunId);
-                }
-                catch (Exception ex)
-                {
-                    this.LogError("Run name not found", ex);
-                }
+                var runName = await this.runNameService.GetRunNameAsync(resultMessageType.CalculatorRunId);
 
                 if (resultMessageType is CreateBillingFileMessage billingmessage)
                 {
-                    var calculatorRunParameter = this.calculatorRunParameterMapper.Map(billingmessage);
-                    await this.prepareBillingFileService.PrepareBillingFileAsync(calculatorRunParameter.Id, runName);
+                    this.telemetryLogger.LogInformation(new TrackMessage { Message = "CreateBillingFileMessage" });
+                    var billingFileMessage = this.calculatorRunParameterMapper.Map(billingmessage);
+                    this.telemetryLogger.LogInformation(new TrackMessage { Message = "After Billing File Map" });
+                    processStatus = await this.prepareBillingFileService.PrepareBillingFileAsync(billingFileMessage.Id, runName!, billingFileMessage.ApprovedBy);
                 }
-                else if (resultMessageType is CreateResultFileMessage resultmessage)
-                {                    
+                
+                if (resultMessageType is CreateResultFileMessage resultmessage)
+                {
                     var calculatorRunParameter = this.calculatorRunParameterMapper.Map(resultmessage);
                     this.telemetryLogger.LogInformation(new TrackMessage { Message = $"Process is going start with message type: {calculatorRunParameter.MessageType}" });
 
-                    bool processStatus = await this.calculatorRunService.StartProcess(calculatorRunParameter, runName);
-                    this.telemetryLogger.LogInformation(new TrackMessage
-                    {
-                        RunId = calculatorRunParameter.Id,
-                        RunName = runName,
-                        MessageType = calculatorRunParameter.MessageType,
-                        Message = $"Process status: {processStatus}",
-                    });
+                    processStatus = await this.calculatorRunService.StartProcess(calculatorRunParameter, runName);
+                }
+
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = resultMessageType.CalculatorRunId,
+                    RunName = runName,
+                    Message = $"Process status: {processStatus}",
+                });
+
+                if (!processStatus)
+                {
+                    // Set the run classification as ERROR
+                    await this.classificationService.UpdateRunClassification(resultMessageType.CalculatorRunId, RunClassification.ERROR);
                 }
             }
-            catch (JsonException jsonex)
+            catch (Exception exception)
             {
-                this.LogError($"Incorrect format - {myQueueItem} - {jsonex.Message}", jsonex);
-            }
-            catch (Exception ex)
-            {
-                this.LogError($"Error - {myQueueItem} - {ex.Message}", ex);
+                if (resultMessageType != null)
+                {
+                    // Set the run classification as ERROR
+                    await this.classificationService.UpdateRunClassification(resultMessageType.CalculatorRunId, RunClassification.ERROR);
+                }
+
+                this.LogError($"Error - {myQueueItem} - {exception.Message}", exception);
             }
 
             this.telemetryLogger.LogInformation(new TrackMessage { Message = "Azure function app execution finished" });

@@ -12,7 +12,7 @@ namespace EPR.Calculator.Service.Function.Models
             CalcResultLapcapDataDetails = []
         };
 
-        public CalcResultCommsCost CalcResultCommsCostReportDetail { get; set; } = new ();
+        public CalcResultCommsCost CalcResultCommsCostReportDetail { get; set; } = new();
 
         public required CalcResultLateReportingTonnage CalcResultLateReportingTonnageData { get; set; } =
             new()
@@ -40,7 +40,7 @@ namespace EPR.Calculator.Service.Function.Models
                 SchemeSetupCost = new CalcResultParameterOtherCostDetail()
             };
 
-        public CalcResultOnePlusFourApportionment CalcResultOnePlusFourApportionment {  get; set; }
+        public CalcResultOnePlusFourApportionment CalcResultOnePlusFourApportionment { get; set; }
             = new()
             {
                 Name = string.Empty
@@ -54,6 +54,13 @@ namespace EPR.Calculator.Service.Function.Models
             };
 
         public required CalcResultScaledupProducers CalcResultScaledupProducers { get; set; }
+
+        public CalcResultCancelledProducersResponse CalcResultCancelledProducers { get; set; }
+            = new()
+            {
+                TitleHeader = string.Empty,
+                CancelledProducers = []
+            };
 
         public CalcResultSummary CalcResultSummary { get; set; } = new();
     }

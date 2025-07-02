@@ -48,10 +48,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.IsTrue(result.Contains("OneFeeForLADisposalCosts"));
-            Assert.IsTrue(result.Contains("FourLADataPrepCharge"));
-            Assert.IsTrue(result.Contains("TotalOfonePlusFour"));
-            Assert.IsTrue(result.Contains("OnePlusFourApportionmentPercentages"));
+            Assert.IsNotNull(result.OneFeeForLADisposalCosts);
+            Assert.IsNotNull(result.FourLADataPrepCharge);
+            Assert.IsNotNull(result.TotalOfonePlusFour);
+            Assert.IsNotNull(result.OnePlusFourApportionmentPercentages);
         }
     }
 }

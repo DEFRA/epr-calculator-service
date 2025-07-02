@@ -5,6 +5,6 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMater
 {
     public interface ICalcResultCommsCostByMaterial2AJsonExporter
     {
-        public string Export(Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostByMaterial);
+        public string Export(Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostByMaterial, List<MaterialDetail> materials);
     }
 }

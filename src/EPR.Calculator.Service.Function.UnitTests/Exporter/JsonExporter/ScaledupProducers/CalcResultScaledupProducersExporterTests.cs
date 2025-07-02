@@ -27,16 +27,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.Scaled
             var fixture = new Fixture();
             var calcResultScaledupProducers = fixture.Create<CalcResultScaledupProducers>();
             var acceptedProducerIds = fixture.Create<IEnumerable<int>>();
+            var materials = fixture.Create<List<MaterialDetail>>();
 
-            _testMapper.Setup(mock => mock.Map(It.IsAny<CalcResultScaledupProducers>(), It.IsAny<IEnumerable<int>>())).Returns(fixture.Create<CalcResultScaledupProducersJson>());
+            _testMapper.Setup(mock => mock.Map(It.IsAny<CalcResultScaledupProducers>(),
+                It.IsAny<IEnumerable<int>>(),
+                It.IsAny<List<MaterialDetail>>())).Returns(fixture.Create<CalcResultScaledupProducersJson>());
 
             // Act
-            var result = _testClass.Export(calcResultScaledupProducers, acceptedProducerIds);
+            var result = _testClass.Export(calcResultScaledupProducers, acceptedProducerIds, materials);
 
             // Assert
-            _testMapper.Verify(mock => mock.Map(It.IsAny<CalcResultScaledupProducers>(), It.IsAny<IEnumerable<int>>()));
+            _testMapper.Verify(mock => mock.Map(It.IsAny<CalcResultScaledupProducers>(), It.IsAny<IEnumerable<int>>(), It.IsAny<List<MaterialDetail>>()));
 
-            Assert.AreNotEqual(string.Empty, result);
+            Assert.AreNotEqual(null, result);
         }
     }
 }

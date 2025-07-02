@@ -50,7 +50,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.CommandTimeoutService = new Mock<ICommandTimeoutService>();
 
             this.Configuration = new Mock<IConfigurationService>();
-            this.Configuration.Setup(s => s.BlobContainerName)
+            this.Configuration.Setup(s => s.ResultFileCSVContainerName)
                 .Returns(this.Fixture.Create<string>());
             this.TelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
 
@@ -96,30 +96,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public async Task UpdateRpdStatus_With_RunId_When_Not_Successful()
-        {
-            // Arrange
-            var runId = this.Fixture.Create<int>();
-            var run = this.Fixture.Create<CalculatorRun>();
-            run.Id = runId;
-            this.Context.CalculatorRuns.Add(run);
-            await this.Context.SaveChangesAsync();
-
-            // Act
-            await this.TestClass.UpdateRpdStatus(
-                runId,
-                this.Fixture.Create<string>(),
-                this.Fixture.Create<string>(),
-                false,
-                CancellationToken.None);
-
-            // Assert
-            var updatedRun = await this.Context.CalculatorRuns.SingleAsync(x => x.Id == runId);
-            Assert.IsNotNull(updatedRun);
-            Assert.AreEqual((int)RunClassification.ERROR, updatedRun.CalculatorRunClassificationId);
-        }
-
-        [TestMethod]
         public async Task UpdateRpdStatus_With_RunId_When_Successful()
         {
             // Arrange
@@ -136,7 +112,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 runId,
                 this.Fixture.Create<string>(),
                 this.Fixture.Create<string>(),
-                true,
                 CancellationToken.None);
 
             // Assert
@@ -176,7 +151,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     runId,
                     this.Fixture.Create<string>(),
                     this.Fixture.Create<string>(),
-                    true,
                     CancellationToken.None);
             }
             catch (Exception ex)
@@ -210,7 +184,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     runId,
                     this.Fixture.Create<string>(),
                     this.Fixture.Create<string>(),
-                    true,
                     CancellationToken.None);
             }
             catch (Exception ex)
@@ -246,7 +219,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     runId,
                     this.Fixture.Create<string>(),
                     this.Fixture.Create<string>(),
-                    true,
                     CancellationToken.None);
             }
             catch (Exception ex)
