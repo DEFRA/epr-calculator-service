@@ -187,10 +187,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     }).ToList();
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage(
-            "Critical Code Smell",
-            "S3776:Cognitive Complexity of methods should not be too high",
-            Justification = "Temporaraly suppress - will refactor later.")]
         public CalcResultSummaryProducerDisposalFees GetProducerTotalRow(
             List<ProducerDetail> producersAndSubsidiaries,
             IEnumerable<MaterialDetail> materials,
