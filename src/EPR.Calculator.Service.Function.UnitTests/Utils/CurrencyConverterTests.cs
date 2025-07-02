@@ -27,5 +27,35 @@
             // Assert
             Assert.AreEqual("£650.95", result);
         }
+
+        [TestMethod]
+        public void CanCallFormatAsGbpCurrencyForZeroCurrency()
+        {
+            // Act
+            var result = CurrencyConverter.ConvertToCurrency(0, 2);
+
+            // Assert
+            Assert.AreEqual("£0.00", result);
+        }
+
+        [TestMethod]
+        public void CanCallFormatAsGbpCurrencyWithRounding()
+        {
+            // Act
+            var result = CurrencyConverter.ConvertToCurrency(10.578m, 2);
+
+            // Assert
+            Assert.AreEqual("£10.58", result);
+        }
+
+        [TestMethod]
+        public void CanCallFormatAsGbpCurrencyWithRoundingFourDecimalPlaces()
+        {
+            // Act
+            var result = CurrencyConverter.ConvertToCurrency(10.53324785678m, 4);
+
+            // Assert
+            Assert.AreEqual("£10.5332", result);
+        }
     }
 }
