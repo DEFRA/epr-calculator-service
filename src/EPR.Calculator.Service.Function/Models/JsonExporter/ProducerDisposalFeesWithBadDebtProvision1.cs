@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using EPR.Calculator.Service.Function.Converter;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
@@ -18,22 +19,28 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         public required string PreviousInvoicedTonnage { get; init; }
 
         [JsonPropertyName("householdPackagingWasteTonnage")]
+        [JsonConverter(typeof(DecimalPrecision3Converter))]
         public required decimal HouseholdPackagingWasteTonnage { get; init; }
 
         [JsonPropertyName("publicBinTonnage")]
+        [JsonConverter(typeof(DecimalPrecision3Converter))]
         public required decimal PublicBinTonnage { get; init; }
 
-        [JsonPropertyName("householdDrinksContainersTonnageGlass")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("householdDrinksContainersTonnageGlass")]
+        [JsonConverter(typeof(DecimalPrecision3Converter))]
         public decimal? HouseholdDrinksContainersTonnageGlass { get; set; }
 
         [JsonPropertyName("totalTonnage")]
+        [JsonConverter(typeof(DecimalPrecision3Converter))]
         public required decimal TotalTonnage { get; init; }
 
         [JsonPropertyName("selfManagedConsumerWasteTonnage")]
+        [JsonConverter(typeof(DecimalPrecision3Converter))]
         public required decimal SelfManagedConsumerWasteTonnage { get; init; }
 
         [JsonPropertyName("netTonnage")]
+        [JsonConverter(typeof(DecimalPrecision3Converter))]
         public required decimal NetTonnage { get; init; }
 
         [JsonPropertyName("tonnageChange")]
