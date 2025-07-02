@@ -1,10 +1,10 @@
-﻿using EPR.Calculator.Service.Common.Utils;
-using System.Collections.Generic;
-using System.Linq;
+﻿using EPR.Calculator.API.Utils;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace EPR.Calculator.Service.Function.Mapper
 {
@@ -36,14 +36,14 @@ namespace EPR.Calculator.Service.Function.Mapper
                     HouseholdPackagingWasteTonnage = item.Value.HouseholdPackagingWasteTonnage,
                     PublicBinTonnage = item.Value.ReportedPublicBinTonnage,
                     TotalTonnage = item.Value.TotalReportedTonnage,
-                    PricePerTonne = CurrencyConverter.ConvertToCurrency(item.Value.PriceperTonne, (int)DecimalPlaces.Four),
-                    ProducerTotalCostWithoutBadDebtProvision = CurrencyConverter.ConvertToCurrency(item.Value.ProducerTotalCostWithoutBadDebtProvision),
-                    BadDebtProvision = CurrencyConverter.ConvertToCurrency(item.Value.BadDebtProvision),
-                    ProducerTotalCostwithBadDebtProvision = CurrencyConverter.ConvertToCurrency(item.Value.ProducerTotalCostwithBadDebtProvision),
-                    EnglandWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(item.Value.EnglandWithBadDebtProvision),
-                    WalesWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(item.Value.WalesWithBadDebtProvision),
-                    ScotlandWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(item.Value.ScotlandWithBadDebtProvision),
-                    NorthernIrelandWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(item.Value.NorthernIrelandWithBadDebtProvision)
+                    PricePerTonne = CsvSanitiser.SanitiseData(item.Value.PriceperTonne, DecimalPlaces.Four, null, true, false, false),
+                    ProducerTotalCostWithoutBadDebtProvision = CsvSanitiser.SanitiseData(item.Value.ProducerTotalCostWithoutBadDebtProvision, DecimalPlaces.Two, null, true, false, false),
+                    BadDebtProvision = CsvSanitiser.SanitiseData(item.Value.BadDebtProvision, DecimalPlaces.Two, null, true, false, false),
+                    ProducerTotalCostwithBadDebtProvision = CsvSanitiser.SanitiseData(item.Value.ProducerTotalCostwithBadDebtProvision, DecimalPlaces.Two, null, true, false, false),
+                    EnglandWithBadDebtProvision = CsvSanitiser.SanitiseData(item.Value.EnglandWithBadDebtProvision, DecimalPlaces.Two, null, true, false, false),
+                    WalesWithBadDebtProvision = CsvSanitiser.SanitiseData(item.Value.WalesWithBadDebtProvision, DecimalPlaces.Two, null, true, false, false),
+                    ScotlandWithBadDebtProvision = CsvSanitiser.SanitiseData(item.Value.ScotlandWithBadDebtProvision, DecimalPlaces.Two, null, true, false, false),
+                    NorthernIrelandWithBadDebtProvision = CsvSanitiser.SanitiseData(item.Value.NorthernIrelandWithBadDebtProvision, DecimalPlaces.Two, null, true, false, false),
                 };
 
                 if (item.Key == MaterialCodes.Glass)
