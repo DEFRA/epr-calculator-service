@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EPR.Calculator.Service.Function.Converter;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -43,6 +44,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         public int DaysInWholePeriod { get; set; }
 
         [JsonPropertyName("scaleUpFactor")]
+        [JsonConverter(typeof(DecimalPrecisionTwelveConverter))]
         public decimal ScaleUpFactor { get; set; }
 
         [JsonPropertyName("materialBreakdown")]
