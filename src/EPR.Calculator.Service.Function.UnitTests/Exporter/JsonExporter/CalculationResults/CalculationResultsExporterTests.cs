@@ -165,7 +165,7 @@
             Assert.AreEqual(expected.Value.ManagedConsumerWasteTonnage, actual["SelfManagedConsumerWasteTonnage"]!.GetValue<decimal>());
             Assert.AreEqual(expected.Value.NetReportedTonnage, actual["NetTonnage"]!.GetValue<decimal>());
             Assert.AreEqual(expected.Value.TonnageChange, actual["TonnageChange"]!.ToString());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(expected.Value.PricePerTonne), actual["PricePerTonne"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(expected.Value.PricePerTonne, 4), actual["PricePerTonne"]!.GetValue<string>());
             Assert.AreEqual(CurrencyConverter.ConvertToCurrency(expected.Value.ProducerDisposalFee), actual["ProducerDisposalFeeWithoutBadDebtProvision"]!.GetValue<string>());
             Assert.AreEqual(CurrencyConverter.ConvertToCurrency(expected.Value.BadDebtProvision), actual["BadDebtProvision"]!.GetValue<string>());
             Assert.AreEqual(CurrencyConverter.ConvertToCurrency(expected.Value.ProducerDisposalFeeWithBadDebtProvision), actual["ProducerDisposalFeeWithBadDebtProvision"]!.GetValue<string>());
