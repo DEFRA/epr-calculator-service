@@ -31,11 +31,6 @@ namespace EPR.Calculator.Service.Common.Utils
         /// </summary>
         public static string ConvertToCurrency(decimal detail, int precision = 2)
         {
-            if (detail == 0)
-            {
-                return string.Empty;
-            }
-
             return FormatCurrencyWithGbpSymbol(detail, precision);
         }
 
