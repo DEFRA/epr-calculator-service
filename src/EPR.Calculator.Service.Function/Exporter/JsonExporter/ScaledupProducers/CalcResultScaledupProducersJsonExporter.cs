@@ -2,7 +2,6 @@
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
-using Newtonsoft.Json;
 
 namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.ScaledupProducers
 {
@@ -15,9 +14,12 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.ScaledupProducer
             this.mapper = mapper;
         }
 
-        public CalcResultScaledupProducersJson Export(CalcResultScaledupProducers calcResultScaledupProducers, IEnumerable<int> acceptedProducerIds)
+        public CalcResultScaledupProducersJson Export(
+            CalcResultScaledupProducers calcResultScaledupProducers,
+            IEnumerable<int> acceptedProducerIds,
+            List<MaterialDetail> materials)
         {
-            return this.mapper.Map(calcResultScaledupProducers, acceptedProducerIds);
+            return this.mapper.Map(calcResultScaledupProducers, acceptedProducerIds, materials);
         }
     }
 }

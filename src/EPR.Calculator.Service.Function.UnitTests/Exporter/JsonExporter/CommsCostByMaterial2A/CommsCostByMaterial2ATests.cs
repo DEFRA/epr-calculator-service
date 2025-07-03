@@ -45,7 +45,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
             var result = _testClass?.Export(commsCostByMaterial) ?? null;
             var json = JsonSerializer.Serialize(result);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
-                ["CalcResult2ACommsDataDetails"];
+                ["CalcResult2aCommsDataDetails"];
 
             var expected = commsCostByMaterial.First();
             var actual = roundTrippedData![0]!;
@@ -68,7 +68,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
             var result = _testClass?.Export(commsCostByMaterial) ?? null;
             var json = JsonSerializer.Serialize(result);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
-                ["CalcResult2ACommsDataDetailsTotal"];
+                ["CalcResult2aCommsDataDetailsTotal"];
 
             var expected = commsCostByMaterial.Single(t => t.Name == CommonConstants.Total);
             var actual = roundTrippedData!;

@@ -14,10 +14,10 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         public string Name { get; set; } = "2a Comms Costs - by Material";
 
         [JsonProperty(PropertyName = "calcResult2aCommsDataDetails")]
-        public required IEnumerable<CalcResult2ACommsDataDetails> CalcResult2ACommsDataDetails {  get; set; }
+        public required IEnumerable<CalcResult2ACommsDataDetails> CalcResult2aCommsDataDetails {  get; set; }
 
-        [JsonProperty(PropertyName = "CalcResult2ACommsDataDetailsTotal")]
-        public required CalcResult2ACommsDataDetailsTotal CalcResult2ACommsDataDetailsTotal { get; set; }
+        [JsonProperty(PropertyName = "calcResult2aCommsDataDetailsTotal")]
+        public required CalcResult2ACommsDataDetailsTotal CalcResult2aCommsDataDetailsTotal { get; set; }
     }
 
     public class CalcResult2ACommsDataDetails : BaseLaDisposalcostAnd2ACommsData

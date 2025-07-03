@@ -6,31 +6,24 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
     public class CalculationResultsProducerCalculationResultsFeeForLADisposalCosts1
     {
         [JsonProperty(PropertyName = "totalProducerFeeForLADisposalCostsWithoutBadDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal TotalProducerFeeForLADisposalCostsWithoutBadDebtProvision { get; set; }
+        public required string TotalProducerFeeForLADisposalCostsWithoutBadDebtProvision { get; set; }
 
         [JsonProperty(PropertyName = "badDebtProvisionForLADisposalCosts")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal BadDebtProvisionForLADisposalCosts { get; set; }
+        public required string BadDebtProvisionForLADisposalCosts { get; set; }
 
         [JsonProperty(PropertyName = "totalProducerFeeForLADisposalCostsWithBadDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal TotalProducerFeeForLADisposalCostsWithBadDebtProvision { get; set; }
+        public required string TotalProducerFeeForLADisposalCostsWithBadDebtProvision { get; set; }
 
         [JsonProperty(PropertyName = "englandTotalForLADisposalCostsWithBadDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal EnglandTotalForLADisposalCostsWithBadDebtProvision { get; set; }
+        public required string EnglandTotalForLADisposalCostsWithBadDebtProvision { get; set; }
 
         [JsonProperty(PropertyName = "walesTotalForLADisposalCostsWithBadDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal WalesTotalForLADisposalCostsWithBadDebtProvision { get; set; }
+        public required string WalesTotalForLADisposalCostsWithBadDebtProvision { get; set; }
 
         [JsonProperty(PropertyName = "scotlandTotalForLADisposalCostsWithBadDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal ScotlandTotalForLADisposalCostsWithBadDebtProvision { get; set; }
+        public required string ScotlandTotalForLADisposalCostsWithBadDebtProvision { get; set; }
 
         [JsonProperty(PropertyName = "northernIrelandTotalForLADisposalCostsWithBadDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal NorthernIrelandTotalForLADisposalCostsWithBadDebtProvision { get; set; }
+        public required string NorthernIrelandTotalForLADisposalCostsWithBadDebtProvision { get; set; }
     }
 }

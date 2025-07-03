@@ -167,7 +167,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
             records.Add(ukWideData);
 
             var commsCostData = Fixture.Create<CalcResultCommsCost>();
-            commsCostData.CalcResultCommsCostOnePlusFourApportionment = records.OrderBy(x => new Random().Next());
+            commsCostData.CommsCostByCountry = records.OrderBy(x => new Random().Next());
             return commsCostData;
         }
 

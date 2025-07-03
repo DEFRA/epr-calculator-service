@@ -1,6 +1,8 @@
 namespace EPR.Calculator.Service.Function.UnitTests.Converter
 {
     using System;
+    using System.Text;
+    using System.Text.Json;
     using AutoFixture;
     using EPR.Calculator.Service.Function.Converter;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -15,12 +17,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Converter
             // Act
             var converter = new DecimalPrecisionConverter(3);
             var val = 123.9879908m;
-            var stringWriter =  new StringWriter();
-            var jsonWriter = new JsonTextWriter(stringWriter);
+            var stream = new MemoryStream();
+            var jsonWriter = new Utf8JsonWriter(stream);
 
-            converter.WriteJson(jsonWriter, val, new JsonSerializer());
+            converter.Write(jsonWriter, val, new JsonSerializerOptions { });
             jsonWriter.Flush();
-            var result = stringWriter.ToString();
+            stream.Position = 0;
+            var result = new StreamReader(stream).ReadToEnd();
 
             // Assert
             Assert.AreEqual("123.988",result);
@@ -32,11 +35,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Converter
             // Act
             var converter = new DecimalPrecisionConverter(3);
             var json = "\"123.988\"";
-            var stringReader = new StringReader(json);
-            var jsonReader = new JsonTextReader(stringReader);
+            var bytes = Encoding.UTF8.GetBytes(json);
+            var jsonReader = new Utf8JsonReader(bytes);
 
             jsonReader.Read();
-            var result = converter.ReadJson(jsonReader, typeof(decimal), null, new JsonSerializer());
+            var result = converter.Read(ref jsonReader, typeof(decimal), new JsonSerializerOptions { });
 
             // Assert
             Assert.AreEqual(123.988m, result);

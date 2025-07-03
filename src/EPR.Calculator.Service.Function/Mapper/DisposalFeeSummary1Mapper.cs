@@ -1,4 +1,5 @@
-﻿using EPR.Calculator.Service.Function.Models;
+﻿using EPR.Calculator.Service.Common.Utils;
+using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
 
 namespace EPR.Calculator.Service.Function.Mapper
@@ -9,13 +10,13 @@ namespace EPR.Calculator.Service.Function.Mapper
         {
             return new DisposalFeeSummary1
             {
-                TotalProducerDisposalFeeWithoutBadDebtProvision = summary.TotalProducerDisposalFee,
-                BadDebtProvision = summary.BadDebtProvision,
-                TotalProducerDisposalFeeWithBadDebtProvision = summary.TotalProducerDisposalFeeWithBadDebtProvision,
-                EnglandTotal = summary.EnglandTotal,
-                WalesTotal = summary.WalesTotal,
-                ScotlandTotal = summary.ScotlandTotal,
-                NorthernIrelandTotal = summary.NorthernIrelandTotal,
+                TotalProducerDisposalFeeWithoutBadDebtProvision = CurrencyConverter.ConvertToCurrency(summary.TotalProducerDisposalFee),
+                BadDebtProvision = CurrencyConverter.ConvertToCurrency(summary.BadDebtProvision),
+                TotalProducerDisposalFeeWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(summary.TotalProducerDisposalFeeWithBadDebtProvision),
+                EnglandTotal = CurrencyConverter.ConvertToCurrency(summary.EnglandTotal),
+                WalesTotal = CurrencyConverter.ConvertToCurrency(summary.WalesTotal),
+                ScotlandTotal = CurrencyConverter.ConvertToCurrency(summary.ScotlandTotal),
+                NorthernIrelandTotal = CurrencyConverter.ConvertToCurrency(summary.NorthernIrelandTotal),
                 TonnageChangeCount = summary.TonnageChangeCount,
                 TonnageChangeAdvice = summary.TonnageChangeAdvice,
             };

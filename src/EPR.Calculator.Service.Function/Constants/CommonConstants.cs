@@ -66,5 +66,6 @@
         public const string RunNumber = "Run Number";
         public const string RunName = "Run Name";
         public const string BillingInstructionId = "Billing Instruction ID";
+        public const string TwoACommsCostsbyMaterial = "2a Comms Costs - by Material";
     }
 }

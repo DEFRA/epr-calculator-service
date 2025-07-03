@@ -212,6 +212,7 @@
             StringBuilder csvContent,
             CalcResultSummaryProducerDisposalFees producer)
         {
+            if (producer.ProducerCommsFeesByMaterial == null) { return; }
             foreach (var disposalFee in producer.ProducerDisposalFeesByMaterial!)
             {
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.PreviousInvoicedTonnage, DecimalPlaces.Zero, DecimalFormats.F2));
@@ -241,6 +242,7 @@
 
         private void AppendProducerCommsFeesByMaterial(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
         {
+            if(producer.ProducerCommsFeesByMaterial == null) { return; }
             foreach (var disposalFee in producer.ProducerCommsFeesByMaterial!)
             {
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.HouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));

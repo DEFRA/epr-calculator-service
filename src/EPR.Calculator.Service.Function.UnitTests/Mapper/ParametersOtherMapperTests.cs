@@ -1,4 +1,4 @@
-using AutoFixture;
+ï»¿using AutoFixture;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
 
@@ -26,7 +26,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.IsNotNull(result.ParametersOther);
+            Assert.IsNotNull(result);
         }
 
         [TestMethod]
@@ -43,8 +43,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             };
 
             var result = TestClass.Map(otherCost);
-            Assert.IsNotNull(result.ParametersOther.ThreeSAOperatingCost);
-            Assert.AreEqual(string.Empty, result.ParametersOther.ThreeSAOperatingCost.England);
+            Assert.IsNotNull(result.ThreeSAOperatingCost);
+            Assert.AreEqual(string.Empty, result.ThreeSAOperatingCost.England);
         }
 
         [TestMethod]
@@ -61,8 +61,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             };
 
             var result = TestClass.Map(otherCost);
-            Assert.IsNotNull(result.ParametersOther.FourLADataPrepCosts);
-            Assert.AreEqual(string.Empty, result.ParametersOther.FourLADataPrepCosts.England);
+            Assert.IsNotNull(result.FourDataPreparationCharge);
+            Assert.AreEqual(string.Empty, result.FourDataPreparationCharge.England);
         }
 
         [TestMethod]
@@ -79,8 +79,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             };
 
             var result = TestClass.Map(otherCost);
-            Assert.IsNotNull(result.ParametersOther.FourCountryApportionmentPercentages);
-            Assert.AreEqual(string.Empty, result.ParametersOther.FourCountryApportionmentPercentages.England);
+            Assert.IsNotNull(result.FourCountryApportionmentPercentages);
+            Assert.AreEqual(string.Empty, result.FourCountryApportionmentPercentages.England);
         }
 
         [TestMethod]
@@ -88,11 +88,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
         {
             var materiality = new List<CalcResultMateriality>
             {
-                new() { SevenMateriality = "Increase", Amount = "£1", Percentage = "10%" },
-                new() { SevenMateriality = "Decrease", Amount = "£2", Percentage = "20%" },
+                new() { SevenMateriality = "Increase", Amount = "Â£1", Percentage = "10%" },
+                new() { SevenMateriality = "Decrease", Amount = "Â£2", Percentage = "20%" },
                 new() { SevenMateriality = "8 Tonnage Change", Amount = "", Percentage = "" },
-                new() { SevenMateriality = "Increase", Amount = "£3", Percentage = "30%" },
-                new() { SevenMateriality = "Decrease", Amount = "£4", Percentage = "40%" }
+                new() { SevenMateriality = "Increase", Amount = "Â£3", Percentage = "30%" },
+                new() { SevenMateriality = "Decrease", Amount = "Â£4", Percentage = "40%" }
             };
 
             var otherCost = new CalcResultParameterOtherCost
@@ -107,10 +107,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 
             var result = TestClass.Map(otherCost);
 
-            Assert.AreEqual("£1", result.ParametersOther.SevenMateriality.Increase.Amount);
-            Assert.AreEqual("£2", result.ParametersOther.SevenMateriality.Decrease.Amount);
-            Assert.AreEqual("£3", result.ParametersOther.EightTonnageChange.Increase.Amount);
-            Assert.AreEqual("£4", result.ParametersOther.EightTonnageChange.Decrease.Amount);
+            Assert.AreEqual("Â£1", result.SevenMateriality.Increase.Amount);
+            Assert.AreEqual("Â£2", result.SevenMateriality.Decrease.Amount);
+            Assert.AreEqual("Â£3", result.EightTonnageChange.Increase.Amount);
+            Assert.AreEqual("Â£4", result.EightTonnageChange.Decrease.Amount);
         }
 
         [TestMethod]
@@ -118,12 +118,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
         {
             var section = new List<CalcResultMateriality>
             {
-                new() { SevenMateriality = "Other", Amount = "£0", Percentage = "0%" },
-                new() { SevenMateriality = "Other", Amount = "£0", Percentage = "0%" }
+                new() { SevenMateriality = "Other", Amount = "Â£0", Percentage = "0%" },
+                new() { SevenMateriality = "Other", Amount = "Â£0", Percentage = "0%" }
             };
 
             var result = typeof(ParametersOtherMapper)
-                .GetMethod("MapChangeSection", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)
+                .GetMethod("MapChangeSection", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)?
                 .Invoke(null, new object[] { section }) as ChangeJson;
 
             Assert.IsNotNull(result);
@@ -135,9 +135,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
         [TestMethod]
         public void MapCountryAmount_ReturnsDefault_WhenSourceIsNull()
         {
-            var result = typeof(ParametersOtherMapper)
-                .GetMethod("MapCountryAmount", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)
-                .Invoke(null, new object[] { null }) as CountryAmountJson;
+            var result = typeof(ParametersOtherMapper)?
+                .GetMethod("MapCountryAmount", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)?
+                .Invoke(null, new object?[] { null }) as CountryAmountJson;
 
             Assert.IsNotNull(result);
             Assert.AreEqual(string.Empty, result.England);
@@ -146,9 +146,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
         [TestMethod]
         public void MapChangeDetail_ReturnsDefault_WhenSourceIsNull()
         {
-            var result = typeof(ParametersOtherMapper)
-                .GetMethod("MapChangeDetail", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)
-                .Invoke(null, new object[] { null }) as ChangeDetailJson;
+            var result = typeof(ParametersOtherMapper)?
+                .GetMethod("MapChangeDetail", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)?
+                .Invoke(null, new object?[] { null }) as ChangeDetailJson;
 
             Assert.IsNotNull(result);
             Assert.AreEqual(string.Empty, result.Amount);

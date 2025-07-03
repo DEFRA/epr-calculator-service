@@ -19,24 +19,19 @@ namespace EPR.Calculator.Service.Common.Utils
         /// Converts a string input to GBP currency format (e.g., £12.3456) if valid.
         /// Returns an empty string if input is not valid.
         /// </summary>
-        public static string ConvertToCurrency(string value)
+        public static string ConvertToCurrency(string value, int precision = 2)
         {
             var decimalValue = GetDecimalValue(value);
-            return FormatCurrencyWithGbpSymbol(decimalValue);
+            return FormatCurrencyWithGbpSymbol(decimalValue, precision);
         }
 
         /// <summary>
         /// Converts a decimal input to GBP currency format (e.g., £12.3456) if valid.
         /// Returns an empty string if input is not valid.
         /// </summary>
-        public static string ConvertToCurrency(decimal detail)
+        public static string ConvertToCurrency(decimal detail, int precision = 2)
         {
-            if (detail == 0)
-            {
-                return string.Empty;
-            }
-
-            return FormatCurrencyWithGbpSymbol(detail);
+            return FormatCurrencyWithGbpSymbol(detail, precision);
         }
 
         /// <summary>
@@ -44,13 +39,13 @@ namespace EPR.Calculator.Service.Common.Utils
         /// </summary>
         /// <param name="decimalValue"></param>
         /// <returns>gbp currency.</returns>
-        private static string FormatCurrencyWithGbpSymbol(decimal decimalValue)
+        public static string FormatCurrencyWithGbpSymbol(decimal decimalValue, int precision)
         {
             var culture = CultureInfo.CreateSpecificCulture("en-GB");
             culture.NumberFormat.CurrencySymbol = "£";
             culture.NumberFormat.CurrencyPositivePattern = 0;
-            return decimalValue.ToString("C", culture);
+            culture.NumberFormat.CurrencyGroupSeparator = string.Empty;
+            return decimalValue.ToString($"C{precision}", culture);
         }
-
     }
 }

@@ -1,66 +1,55 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using EPR.Calculator.Service.Function.Converter;
-using Newtonsoft.Json;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
     public record CalcResultCommsCostByMaterial2AJson
     {
-        [JsonProperty(PropertyName = "materialBreakdown")]
+        [JsonPropertyName("materialBreakdown")]
         public required IEnumerable<CalcResultCommsCostByMaterial2AMaterialBreakdown> MaterialBreakdown { get; init; }
     }
 
     public record CalcResultCommsCostByMaterial2AMaterialBreakdown
     {
-        [JsonProperty(PropertyName = "materialName")]
+        [JsonPropertyName("materialName")]
         public required string MaterialName { get; init; }
 
-        [JsonProperty(PropertyName = "householdPackagingWasteTonnage")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
+        [JsonPropertyName("householdPackagingWasteTonnage")]
         public decimal HouseholdPackagingWasteTonnage { get; init; }
 
-        [JsonProperty(PropertyName = "publicBinTonnage")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal ReportedPublicBinTonnage { get; init; }
+        [JsonPropertyName("publicBinTonnage")]
+        public decimal PublicBinTonnage { get; init; }
 
-        [JsonProperty(PropertyName = "totalTonnage")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal TotalReportedTonnage { get; init; }
+        [JsonPropertyName("totalTonnage")]
+        public decimal TotalTonnage { get; init; }
 
-        [JsonProperty(PropertyName = "householdDrinksContainers", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal? HouseholdDrinksContainers { get; set; }
+        [JsonPropertyName("householdDrinksContainersTonnageGlass")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public decimal? HouseholdDrinksContainersTonnageGlass { get; set; }
 
-        [JsonProperty(PropertyName = "pricePerTonne")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal PriceperTonne { get; init; }
+        [JsonPropertyName("pricePerTonne")]
+        public required string PricePerTonne { get; init; }
 
-        [JsonProperty(PropertyName = "producerTotalCostWithoutBadDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal ProducerTotalCostWithoutBadDebtProvision { get; init; }
+        [JsonPropertyName("producerTotalCostWithoutBadDebtProvision")]
+        public required string ProducerTotalCostWithoutBadDebtProvision { get; init; }
 
-        [JsonProperty(PropertyName = "badDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal BadDebtProvision { get; init; }
+        [JsonPropertyName("badDebtProvision")]
+        public required string BadDebtProvision { get; init; }
 
-        [JsonProperty(PropertyName = "producerTotalCostWithBadDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal ProducerTotalCostwithBadDebtProvision { get; init; }
+        [JsonPropertyName("producerTotalCostWithBadDebtProvision")]
+        public required string ProducerTotalCostwithBadDebtProvision { get; init; }
 
-        [JsonProperty(PropertyName = "englandWithBadDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal EnglandWithBadDebtProvision { get; init; }
+        [JsonPropertyName("englandWithBadDebtProvision")]
+        public required string EnglandWithBadDebtProvision { get; init; }
 
-        [JsonProperty(PropertyName = "walesWithBadDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal WalesWithBadDebtProvision { get; init; }
+        [JsonPropertyName("walesWithBadDebtProvision")]
+        public required string WalesWithBadDebtProvision { get; init; }
 
-        [JsonProperty(PropertyName = "scotlandWithBadDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal ScotlandWithBadDebtProvision { get; init; }
+        [JsonPropertyName("scotlandWithBadDebtProvision")]
+        public required string ScotlandWithBadDebtProvision { get; init; }
 
-        [JsonProperty(PropertyName = "northernIrelandWithBadDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
-        public decimal NorthernIrelandWithBadDebtProvision { get; init; }
+        [JsonPropertyName("northernIrelandWithBadDebtProvision")]
+        public required string NorthernIrelandWithBadDebtProvision { get; init; }
     }
 }
