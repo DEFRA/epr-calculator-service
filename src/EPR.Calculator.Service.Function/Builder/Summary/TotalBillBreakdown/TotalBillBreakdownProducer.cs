@@ -32,13 +32,16 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
         {
             foreach (var fee in result.ProducerDisposalFees)
             {
-                fee.TotalProducerBillWithoutBadDebtProvision = GetTotalProducerBillWithoutBadDebtProvision(fee);
-                fee.BadDebtProvisionForTotalProducerBill = GetBadDebtProvisionForTotalProducerBill(fee);
-                fee.TotalProducerBillWithBadDebtProvision = GetTotalProducerBillWithBadDebtProvision(fee);
-                fee.EnglandTotalWithBadDebtProvisionTotalBill = GetEnglandTotalWithBadDebtProvision(fee);
-                fee.WalesTotalWithBadDebtProvisionTotalBill = GetWalesTotalWithBadDebtProvision(fee);
-                fee.ScotlandTotalWithBadDebtProvisionTotalBill = GetScotlandTotalWithBadDebtProvision(fee);
-                fee.NorthernIrelandTotalWithBadDebtProvisionTotalBill = GetNorthernIrelandTotalWithBadDebtProvision(fee);
+                fee.TotalProducerBillBreakdownSection = new CalcResultSummaryBadDebtProvision()
+                {
+                    TotalProducerFeeWithoutBadDebtProvision = GetTotalProducerBillWithoutBadDebtProvision(fee),
+                    BadDebtProvision = GetBadDebtProvisionForTotalProducerBill(fee),
+                    TotalProducerFeeWithBadDebtProvision = GetTotalProducerBillWithBadDebtProvision(fee),
+                    EnglandTotalWithBadDebtProvision = GetEnglandTotalWithBadDebtProvision(fee),
+                    WalesTotalWithBadDebtProvision = GetWalesTotalWithBadDebtProvision(fee),
+                    ScotlandTotalWithBadDebtProvision = GetScotlandTotalWithBadDebtProvision(fee),
+                    NorthernIrelandTotalWithBadDebtProvision = GetNorthernIrelandTotalWithBadDebtProvision(fee)
+                };
             }
         }
 
@@ -48,7 +51,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
                    fee.TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision +
                    fee.TotalProducerFeeWithoutBadDebtFor2bComms +
                    fee.TwoCTotalProducerFeeForCommsCostsWithoutBadDebt +
-                   fee.Total3SAOperatingCostwoBadDebtprovision +
+                   fee.SchemeAdministratorOperatingCostsSection.TotalProducerFeeWithoutBadDebtProvision +
                    fee.LaDataPrepCostsTotalWithoutBadDebtProvisionSection4 +
                    fee.TotalProducerFeeWithoutBadDebtProvisionSection5;
         }
@@ -59,7 +62,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
                    fee.BadDebtProvisionFor2A +
                    fee.BadDebtProvisionFor2bComms +
                    fee.TwoCBadDebtProvision +
-                   fee.BadDebtProvisionFor3 +
+                   fee.SchemeAdministratorOperatingCostsSection.BadDebtProvision +
                    fee.LaDataPrepCostsBadDebtProvisionSection4 +
                    fee.BadDebtProvisionSection5;
         }
@@ -70,7 +73,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
                    fee.TotalProducerFeeforCommsCostsbyMaterialwithBadDebtprovision +
                    fee.TotalProducerFeeWithBadDebtFor2bComms +
                    fee.TwoCTotalProducerFeeForCommsCostsWithBadDebt +
-                   fee.Total3SAOperatingCostswithBadDebtprovision +
+                   fee.SchemeAdministratorOperatingCostsSection.TotalProducerFeeWithBadDebtProvision +
                    fee.LaDataPrepCostsTotalWithBadDebtProvisionSection4 +
                    fee.TotalProducerFeeWithBadDebtProvisionSection5;
         }
@@ -81,7 +84,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
                    fee.EnglandTotalWithBadDebtProvision2A +
                    fee.EnglandTotalWithBadDebtFor2bComms +
                    fee.TwoCEnglandTotalWithBadDebt +
-                   fee.EnglandTotalWithBadDebtProvision3 +
+                   fee.SchemeAdministratorOperatingCostsSection.EnglandTotalWithBadDebtProvision +
                    fee.LaDataPrepCostsEnglandTotalWithBadDebtProvisionSection4 +
                    fee.EnglandTotalWithBadDebtProvisionSection5;
         }
@@ -92,7 +95,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
                    fee.WalesTotalWithBadDebtProvision2A +
                    fee.WalesTotalWithBadDebtFor2bComms +
                    fee.TwoCWalesTotalWithBadDebt +
-                   fee.WalesTotalWithBadDebtProvision3 +
+                   fee.SchemeAdministratorOperatingCostsSection.WalesTotalWithBadDebtProvision +
                    fee.LaDataPrepCostsWalesTotalWithBadDebtProvisionSection4 +
                    fee.WalesTotalWithBadDebtProvisionSection5;
         }
@@ -103,7 +106,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
                    fee.ScotlandTotalWithBadDebtProvision2A +
                    fee.ScotlandTotalWithBadDebtFor2bComms +
                    fee.TwoCScotlandTotalWithBadDebt +
-                   fee.ScotlandTotalWithBadDebtProvision3 +
+                   fee.SchemeAdministratorOperatingCostsSection.ScotlandTotalWithBadDebtProvision +
                    fee.LaDataPrepCostsScotlandTotalWithBadDebtProvisionSection4 +
                    fee.ScotlandTotalWithBadDebtProvisionSection5;
         }
@@ -114,7 +117,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
                    fee.NorthernIrelandTotalWithBadDebtProvision2A +
                    fee.NorthernIrelandTotalWithBadDebtFor2bComms +
                    fee.TwoCNorthernIrelandTotalWithBadDebt +
-                   fee.NorthernIrelandTotalWithBadDebtProvision3 +
+                   fee.SchemeAdministratorOperatingCostsSection.NorthernIrelandTotalWithBadDebtProvision +
                    fee.LaDataPrepCostsNorthernIrelandTotalWithBadDebtProvisionSection4 +
                    fee.NorthernIrelandTotalWithBadDebtProvisionSection5;
         }

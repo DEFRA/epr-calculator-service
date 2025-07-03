@@ -46,6 +46,22 @@ namespace EPR.Calculator.Service.Function.Models
 
         public decimal NorthernIrelandTotalComms { get; set; }
 
+        public CalcResultSummaryBadDebtProvision LocalAuthorityDisposalCostsSectionOne { get; set; }
+
+        public CalcResultSummaryBadDebtProvision CommunicationCostsSectionTwoA { get; set; }
+
+        public CalcResultSummaryBadDebtProvision CommunicationCostsSectionTwoB { get; set; }
+
+        public CalcResultSummaryBadDebtProvision CommunicationCostsSectionTwoC { get; set; }
+
+        public CalcResultSummaryBadDebtProvision SchemeAdministratorOperatingCostsSection { get; set; }
+
+        public CalcResultSummaryBadDebtProvision LocalAuthorityDataPreparationCosts { get; set; }
+
+        public CalcResultSummaryBadDebtProvision OneOffSchemeAdministrationSetupCosts { get; set; }
+
+        public CalcResultSummaryBadDebtProvision TotalProducerBillBreakdownSection { get; set; }
+
         //Section-(1) & (2a) Start
         public decimal TotalProducerFeeforLADisposalCostswoBadDebtprovision { get; set; }
 
@@ -93,19 +109,19 @@ namespace EPR.Calculator.Service.Function.Models
         // End Section Total bill (1 + 2a + 2b + 2c)
 
         //Section-3
-        public decimal Total3SAOperatingCostwoBadDebtprovision { get; set; }
+        //public decimal Total3SAOperatingCostwoBadDebtprovision { get; set; }
 
-        public decimal BadDebtProvisionFor3 { get; set; }
+        //public decimal BadDebtProvisionFor3 { get; set; }
 
-        public decimal Total3SAOperatingCostswithBadDebtprovision { get; set; }
+        //public decimal Total3SAOperatingCostswithBadDebtprovision { get; set; }
 
-        public decimal EnglandTotalWithBadDebtProvision3 { get; set; }
+        //public decimal EnglandTotalWithBadDebtProvision3 { get; set; }
 
-        public decimal WalesTotalWithBadDebtProvision3 { get; set; }
+        //public decimal WalesTotalWithBadDebtProvision3 { get; set; }
 
-        public decimal ScotlandTotalWithBadDebtProvision3 { get; set; }
+        //public decimal ScotlandTotalWithBadDebtProvision3 { get; set; }
 
-        public decimal NorthernIrelandTotalWithBadDebtProvision3 { get; set; }
+        //public decimal NorthernIrelandTotalWithBadDebtProvision3 { get; set; }
         //End Section-3
 
         // Section-4 LA data prep costs

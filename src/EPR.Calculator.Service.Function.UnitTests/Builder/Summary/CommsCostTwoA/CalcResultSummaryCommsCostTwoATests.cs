@@ -261,7 +261,7 @@
             decimal expectedCost1 = 534.2400m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostwithBadDebtProvision(this.producers[0], this.material, this.calcResult, this.scaledupProducers);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostWithBadDebtProvision(this.producers[0], this.material, this.calcResult, this.scaledupProducers);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);

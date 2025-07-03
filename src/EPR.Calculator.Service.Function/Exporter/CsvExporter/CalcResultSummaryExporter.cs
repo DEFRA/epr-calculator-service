@@ -1,13 +1,13 @@
 ﻿namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
     using EPR.Calculator.API.Utils;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Models;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
 
     public class CalcResultSummaryExporter : ICalcResultSummaryExporter
     {
@@ -56,10 +56,10 @@
             csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerTotalOnePlus2A2B2CWithBadDeptProvision, DecimalPlaces.Two, null, true));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, DecimalPlaces.Eight, null, false, true));
 
-            AddTotal3SA(csvContent, producer);
+            AddSchemeAdministratorOperatingCostsSection(csvContent, producer);
 
             // LA data prep costs section 4
-            AddLaDataPrepCosts(csvContent, producer);
+            AddLocalAuthorityDataPreparationCosts(csvContent, producer);
 
             AddSection5(csvContent, producer);
 
@@ -108,26 +108,26 @@
             csvContent.Append(CsvSanitiser.SanitiseData(producer.SuggestedInvoiceAmount, DecimalPlaces.Two, null, true));
         }
 
-        public void AddLaDataPrepCosts(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
+        public void AddLocalAuthorityDataPreparationCosts(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
         {
-            csvContent.Append(CsvSanitiser.SanitiseData(producer.LaDataPrepCostsTotalWithoutBadDebtProvisionSection4, DecimalPlaces.Two, null, true));
-            csvContent.Append(CsvSanitiser.SanitiseData(producer.LaDataPrepCostsBadDebtProvisionSection4, DecimalPlaces.Two, null, true));
-            csvContent.Append(CsvSanitiser.SanitiseData(producer.LaDataPrepCostsTotalWithBadDebtProvisionSection4, DecimalPlaces.Two, null, true));
-            csvContent.Append(CsvSanitiser.SanitiseData(producer.LaDataPrepCostsEnglandTotalWithBadDebtProvisionSection4, DecimalPlaces.Two, null, true));
-            csvContent.Append(CsvSanitiser.SanitiseData(producer.LaDataPrepCostsWalesTotalWithBadDebtProvisionSection4, DecimalPlaces.Two, null, true));
-            csvContent.Append(CsvSanitiser.SanitiseData(producer.LaDataPrepCostsScotlandTotalWithBadDebtProvisionSection4, DecimalPlaces.Two, null, true));
-            csvContent.Append(CsvSanitiser.SanitiseData(producer.LaDataPrepCostsNorthernIrelandTotalWithBadDebtProvisionSection4, DecimalPlaces.Two, null, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.LocalAuthorityDataPreparationCosts.TotalProducerFeeWithoutBadDebtProvision, DecimalPlaces.Two, null, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.LocalAuthorityDataPreparationCosts.BadDebtProvision, DecimalPlaces.Two, null, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.LocalAuthorityDataPreparationCosts.TotalProducerFeeWithBadDebtProvision, DecimalPlaces.Two, null, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.LocalAuthorityDataPreparationCosts.EnglandTotalWithBadDebtProvision, DecimalPlaces.Two, null, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.LocalAuthorityDataPreparationCosts.WalesTotalWithBadDebtProvision, DecimalPlaces.Two, null, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.LocalAuthorityDataPreparationCosts.ScotlandTotalWithBadDebtProvision, DecimalPlaces.Two, null, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.LocalAuthorityDataPreparationCosts.NorthernIrelandTotalWithBadDebtProvision, DecimalPlaces.Two, null, true));
         }
 
-        public void AddTotal3SA(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
+        public void AddSchemeAdministratorOperatingCostsSection(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
         {
-            csvContent.Append(CsvSanitiser.SanitiseData(producer.Total3SAOperatingCostwoBadDebtprovision, DecimalPlaces.Two, null, true));
-            csvContent.Append(CsvSanitiser.SanitiseData(producer.BadDebtProvisionFor3, DecimalPlaces.Two, null, true));
-            csvContent.Append(CsvSanitiser.SanitiseData(producer.Total3SAOperatingCostswithBadDebtprovision, DecimalPlaces.Two, null, true));
-            csvContent.Append(CsvSanitiser.SanitiseData(producer.EnglandTotalWithBadDebtProvision3, DecimalPlaces.Two, null, true));
-            csvContent.Append(CsvSanitiser.SanitiseData(producer.WalesTotalWithBadDebtProvision3, DecimalPlaces.Two, null, true));
-            csvContent.Append(CsvSanitiser.SanitiseData(producer.ScotlandTotalWithBadDebtProvision3, DecimalPlaces.Two, null, true));
-            csvContent.Append(CsvSanitiser.SanitiseData(producer.NorthernIrelandTotalWithBadDebtProvision3, DecimalPlaces.Two, null, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.SchemeAdministratorOperatingCostsSection.TotalProducerFeeWithoutBadDebtProvision, DecimalPlaces.Two, null, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.SchemeAdministratorOperatingCostsSection.BadDebtProvision, DecimalPlaces.Two, null, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.SchemeAdministratorOperatingCostsSection.TotalProducerFeeWithBadDebtProvision, DecimalPlaces.Two, null, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.SchemeAdministratorOperatingCostsSection.EnglandTotalWithBadDebtProvision, DecimalPlaces.Two, null, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.SchemeAdministratorOperatingCostsSection.WalesTotalWithBadDebtProvision, DecimalPlaces.Two, null, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.SchemeAdministratorOperatingCostsSection.ScotlandTotalWithBadDebtProvision, DecimalPlaces.Two, null, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.SchemeAdministratorOperatingCostsSection.NorthernIrelandTotalWithBadDebtProvision, DecimalPlaces.Two, null, true));
         }
 
         public void AddTwoC(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)

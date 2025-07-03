@@ -1,11 +1,10 @@
-﻿using EPR.Calculator.Service.Function.Builder.Summary.Common;
+﻿using System.Collections.Generic;
+using System.Linq;
+using EPR.Calculator.Service.Function.Builder.Summary.Common;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Models;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-[assembly: InternalsVisibleTo("EPR.Calculator.Service.Function.UnitTests")]
+
 namespace EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts
 {
     public static class LaDataPrepCostsProducer
@@ -42,35 +41,20 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts
 
             foreach (var fee in result.ProducerDisposalFees)
             {
-                fee.LaDataPrepCostsTotalWithoutBadDebtProvisionSection4 = GetTotalWithoutBadDebtProvision(result, fee);
-
-                fee.LaDataPrepCostsBadDebtProvisionSection4 = GetBadDebtProvision(calcResult, fee);
-
-                fee.LaDataPrepCostsTotalWithBadDebtProvisionSection4 = GetTotalWithBadDebtProvision(fee);
-
-                fee.LaDataPrepCostsEnglandTotalWithBadDebtProvisionSection4 =
-                    GetCountryTotalWithBadDebtProvision(calcResult,
-                        result.LaDataPrepCostsTitleSection4,
-                        fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.England);
-
-                fee.LaDataPrepCostsWalesTotalWithBadDebtProvisionSection4 =
-                    GetCountryTotalWithBadDebtProvision(calcResult,
-                        result.LaDataPrepCostsTitleSection4,
-                        fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.Wales);
-
-                fee.LaDataPrepCostsScotlandTotalWithBadDebtProvisionSection4 =
-                    GetCountryTotalWithBadDebtProvision(calcResult,
-                        result.LaDataPrepCostsTitleSection4,
-                        fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.Scotland);
-
-                fee.LaDataPrepCostsNorthernIrelandTotalWithBadDebtProvisionSection4 =
-                    GetCountryTotalWithBadDebtProvision(calcResult,
-                        result.LaDataPrepCostsTitleSection4,
-                        fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.NorthernIreland);
+                fee.LocalAuthorityDataPreparationCosts = new CalcResultSummaryBadDebtProvision()
+                {
+                    TotalProducerFeeWithoutBadDebtProvision = GetTotalWithoutBadDebtProvision(result, fee),
+                    BadDebtProvision = GetBadDebtProvision(calcResult, fee),
+                    TotalProducerFeeWithBadDebtProvision = GetTotalWithBadDebtProvision(fee),
+                    EnglandTotalWithBadDebtProvision = GetCountryTotalWithBadDebtProvision(calcResult, result.LaDataPrepCostsTitleSection4, fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.England),
+                    WalesTotalWithBadDebtProvision = GetCountryTotalWithBadDebtProvision(calcResult, result.LaDataPrepCostsTitleSection4, fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.Wales),
+                    ScotlandTotalWithBadDebtProvision = GetCountryTotalWithBadDebtProvision(calcResult, result.LaDataPrepCostsTitleSection4, fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.Scotland),
+                    NorthernIrelandTotalWithBadDebtProvision = GetCountryTotalWithBadDebtProvision(calcResult, result.LaDataPrepCostsTitleSection4, fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.NorthernIreland)
+                };
             }
         }
 
-        internal static decimal GetLaDataPrepCostsWithoutBadDebtProvision(CalcResult calcResult)
+        public static decimal GetLaDataPrepCostsWithoutBadDebtProvision(CalcResult calcResult)
         {
             var dataPrepCharge = calcResult.CalcResultParameterOtherCost.Details.FirstOrDefault(
                 cost => cost.Name == OnePlus4ApportionmentColumnHeaders.LADataPrepCharge);
