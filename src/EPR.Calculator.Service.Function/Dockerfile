@@ -5,6 +5,10 @@ COPY EPR.Calculator.Service.Function/. ./EPR.Calculator.Service.Function/.
 COPY EPR.Calculator.Service.Data/. ./EPR.Calculator.Service.Data/.
 COPY stylecop.json ./
 
+#Nuget
+COPY nuget.config ./nuget.config
+RUN dotnet restore EPR.Calculator.Service.Function/*.csproj --configfile ./nuget.config
+
 # Publish 
 RUN dotnet publish EPR.Calculator.Service.Function/*.csproj --output /home/site/wwwroot
 
