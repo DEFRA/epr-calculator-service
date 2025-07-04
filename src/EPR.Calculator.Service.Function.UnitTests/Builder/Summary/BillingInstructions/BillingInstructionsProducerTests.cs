@@ -453,16 +453,16 @@
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0];
 
             // Assert
-            Assert.AreEqual("-", fee.CurrentYearInvoiceTotalToDate);
-            Assert.AreEqual("-", fee.TonnageChangeSinceLastInvoice);
-            Assert.AreEqual("-", fee.LiabilityDifference);
-            Assert.AreEqual("-", fee.MaterialThresholdBreached);
-            Assert.AreEqual("-", fee.TonnageThresholdBreached);
-            Assert.AreEqual("-", fee.PercentageLiabilityDifference);
-            Assert.AreEqual("-", fee.MaterialPercentageThresholdBreached);
-            Assert.AreEqual("-", fee.TonnagePercentageThresholdBreached);
-            Assert.AreEqual("-", fee.SuggestedBillingInstruction);
-            Assert.AreEqual("-", fee.SuggestedInvoiceAmount);
+            Assert.AreEqual("-", fee.BillingInstructionSection.CurrentYearInvoiceTotalToDate);
+            Assert.AreEqual("-", fee.BillingInstructionSection.TonnageChangeSinceLastInvoice);
+            Assert.AreEqual("-", fee.BillingInstructionSection.LiabilityDifference);
+            Assert.AreEqual("-", fee.BillingInstructionSection.MaterialThresholdBreached);
+            Assert.AreEqual("-", fee.BillingInstructionSection.TonnageThresholdBreached);
+            Assert.AreEqual("-", fee.BillingInstructionSection.PercentageLiabilityDifference);
+            Assert.AreEqual("-", fee.BillingInstructionSection.MaterialPercentageThresholdBreached);
+            Assert.AreEqual("-", fee.BillingInstructionSection.TonnagePercentageThresholdBreached);
+            Assert.AreEqual("-", fee.BillingInstructionSection.SuggestedBillingInstruction);
+            Assert.AreEqual("-", fee.BillingInstructionSection.SuggestedInvoiceAmount);
         }
 
         /// <summary>
@@ -595,47 +595,53 @@
                         ScotlandTotalWithBadDebtProvision = 648,
                         NorthernIrelandTotalWithBadDebtProvision = 468
                     },
-                    BadDebtProvisionSection5 = 8.5m,
+                    OneOffSchemeAdministrationSetupCosts = new CalcResultSummaryBadDebtProvision
+                    {
+                        TotalProducerFeeWithoutBadDebtProvision = 109,
+                        BadDebtProvision = 8.5m,
+                        TotalProducerFeeWithBadDebtProvision = 49.32m,
+                        EnglandTotalWithBadDebtProvision = 562,
+                        WalesTotalWithBadDebtProvision = 254,
+                        ScotlandTotalWithBadDebtProvision = 845,
+                        NorthernIrelandTotalWithBadDebtProvision = 365
+                    },
+                    BillingInstructionSection = new CalcResultSummaryBillingInstruction
+                    {
+                        CurrentYearInvoiceTotalToDate = "1250.89m",
+                        TonnageChangeSinceLastInvoice = string.Empty,
+                        LiabilityDifference = "580.73m",
+                        MaterialThresholdBreached = string.Empty,
+                        TonnageThresholdBreached = string.Empty,
+                        PercentageLiabilityDifference = string.Empty,
+                        MaterialPercentageThresholdBreached = string.Empty,
+                        TonnagePercentageThresholdBreached = string.Empty,
+                        SuggestedBillingInstruction = string.Empty,
+                        SuggestedInvoiceAmount = "4039"
+                    },
                     TotalProducerFeeforLADisposalCostswoBadDebtprovision = 106.23m,
                     TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision = 207.45m,
                     TotalProducerFeeWithoutBadDebtFor2bComms = 302.56m,
                     TwoCTotalProducerFeeForCommsCostsWithoutBadDebt = 206.63m,
-                    TotalProducerFeeWithoutBadDebtProvisionSection5 = 109,
                     EnglandTotalWithBadDebtProvision = 1403,
                     EnglandTotalWithBadDebtProvision2A = 1563,
                     EnglandTotalWithBadDebtFor2bComms = 521,
                     TwoCEnglandTotalWithBadDebt = 695,
-                    EnglandTotalWithBadDebtProvisionSection5 = 562,
                     WalesTotalWithBadDebtProvision = 1203,
                     WalesTotalWithBadDebtProvision2A = 1154,
                     WalesTotalWithBadDebtFor2bComms = 632,
                     TwoCWalesTotalWithBadDebt = 452,
-                    WalesTotalWithBadDebtProvisionSection5 = 254,
                     ScotlandTotalWithBadDebtProvision = 752,
                     ScotlandTotalWithBadDebtProvision2A = 632,
                     ScotlandTotalWithBadDebtFor2bComms = 541,
                     TwoCScotlandTotalWithBadDebt = 448,
-                    ScotlandTotalWithBadDebtProvisionSection5 = 845,
                     NorthernIrelandTotalWithBadDebtProvision = 832,
                     NorthernIrelandTotalWithBadDebtProvision2A = 842,
                     NorthernIrelandTotalWithBadDebtFor2bComms = 746,
                     TwoCNorthernIrelandTotalWithBadDebt = 335,
-                    NorthernIrelandTotalWithBadDebtProvisionSection5 = 365,
                     TotalProducerFeeforLADisposalCostswithBadDebtprovision = 105,
                     TotalProducerFeeforCommsCostsbyMaterialwithBadDebtprovision = 204,
                     TotalProducerFeeWithBadDebtFor2bComms = 98,
-                    TwoCTotalProducerFeeForCommsCostsWithBadDebt = 23.54m,
-                    TotalProducerFeeWithBadDebtProvisionSection5 = 49.32m,
-                    CurrentYearInvoiceTotalToDate = "1250.89m",
-                    TonnageChangeSinceLastInvoice = string.Empty,
-                    LiabilityDifference = "580.73m",
-                    MaterialThresholdBreached = string.Empty,
-                    TonnageThresholdBreached = string.Empty,
-                    PercentageLiabilityDifference = string.Empty,
-                    MaterialPercentageThresholdBreached = string.Empty,
-                    TonnagePercentageThresholdBreached = string.Empty,
-                    SuggestedBillingInstruction = string.Empty,
-                    SuggestedInvoiceAmount = "4039"
+                    TwoCTotalProducerFeeForCommsCostsWithBadDebt = 23.54m
                 },
             };
         }

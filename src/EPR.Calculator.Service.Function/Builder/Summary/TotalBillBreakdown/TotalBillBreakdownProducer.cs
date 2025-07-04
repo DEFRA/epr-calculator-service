@@ -53,7 +53,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
                    fee.TwoCTotalProducerFeeForCommsCostsWithoutBadDebt +
                    fee.SchemeAdministratorOperatingCostsSection.TotalProducerFeeWithoutBadDebtProvision +
                    fee.LocalAuthorityDataPreparationCosts.TotalProducerFeeWithoutBadDebtProvision +
-                   fee.TotalProducerFeeWithoutBadDebtProvisionSection5;
+                   fee.OneOffSchemeAdministrationSetupCosts.TotalProducerFeeWithoutBadDebtProvision;
         }
 
         private static decimal GetBadDebtProvisionForTotalProducerBill(CalcResultSummaryProducerDisposalFees fee)
@@ -64,7 +64,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
                    fee.TwoCBadDebtProvision +
                    fee.SchemeAdministratorOperatingCostsSection.BadDebtProvision +
                    fee.LocalAuthorityDataPreparationCosts.BadDebtProvision +
-                   fee.BadDebtProvisionSection5;
+                   fee.OneOffSchemeAdministrationSetupCosts.BadDebtProvision;
         }
 
         private static decimal GetTotalProducerBillWithBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
@@ -75,7 +75,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
                    fee.TwoCTotalProducerFeeForCommsCostsWithBadDebt +
                    fee.SchemeAdministratorOperatingCostsSection.TotalProducerFeeWithBadDebtProvision +
                    fee.LocalAuthorityDataPreparationCosts.TotalProducerFeeWithBadDebtProvision +
-                   fee.TotalProducerFeeWithBadDebtProvisionSection5;
+                   fee.OneOffSchemeAdministrationSetupCosts.TotalProducerFeeWithBadDebtProvision;
         }
 
         private static decimal GetEnglandTotalWithBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
@@ -86,7 +86,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
                    fee.TwoCEnglandTotalWithBadDebt +
                    fee.SchemeAdministratorOperatingCostsSection.EnglandTotalWithBadDebtProvision +
                    fee.LocalAuthorityDataPreparationCosts.EnglandTotalWithBadDebtProvision +
-                   fee.EnglandTotalWithBadDebtProvisionSection5;
+                   fee.OneOffSchemeAdministrationSetupCosts.EnglandTotalWithBadDebtProvision;
         }
 
         private static decimal GetWalesTotalWithBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
@@ -97,7 +97,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
                    fee.TwoCWalesTotalWithBadDebt +
                    fee.SchemeAdministratorOperatingCostsSection.WalesTotalWithBadDebtProvision +
                    fee.LocalAuthorityDataPreparationCosts.WalesTotalWithBadDebtProvision +
-                   fee.WalesTotalWithBadDebtProvisionSection5;
+                   fee.OneOffSchemeAdministrationSetupCosts.WalesTotalWithBadDebtProvision;
         }
 
         private static decimal GetScotlandTotalWithBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
@@ -108,7 +108,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
                    fee.TwoCScotlandTotalWithBadDebt +
                    fee.SchemeAdministratorOperatingCostsSection.ScotlandTotalWithBadDebtProvision +
                    fee.LocalAuthorityDataPreparationCosts.ScotlandTotalWithBadDebtProvision +
-                   fee.ScotlandTotalWithBadDebtProvisionSection5;
+                   fee.OneOffSchemeAdministrationSetupCosts.ScotlandTotalWithBadDebtProvision;
         }
 
         private static decimal GetNorthernIrelandTotalWithBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
@@ -119,7 +119,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
                    fee.TwoCNorthernIrelandTotalWithBadDebt +
                    fee.SchemeAdministratorOperatingCostsSection.NorthernIrelandTotalWithBadDebtProvision +
                    fee.LocalAuthorityDataPreparationCosts.NorthernIrelandTotalWithBadDebtProvision +
-                   fee.NorthernIrelandTotalWithBadDebtProvisionSection5;
+                   fee.OneOffSchemeAdministrationSetupCosts.NorthernIrelandTotalWithBadDebtProvision;
         }
     }
 }

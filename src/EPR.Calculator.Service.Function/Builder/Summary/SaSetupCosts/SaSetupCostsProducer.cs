@@ -32,7 +32,7 @@
             foreach (var item in summary.ProducerDisposalFees)
             {
                 var totalProducerFeeWithoutBadDebtProvision = GetTotalProducerFeeWithoutBadDebtProvision(summary, item);
-                var badDebtProvision = GetBadDebtProvision(calcResult, item);
+                var badDebtProvision = GetBadDebtProvision(calcResult, totalProducerFeeWithoutBadDebtProvision);
 
                 item.OneOffSchemeAdministrationSetupCosts = new CalcResultSummaryBadDebtProvision
                 {
@@ -47,9 +47,9 @@
             }
         }
 
-        private static decimal GetBadDebtProvision(CalcResult calcResult, CalcResultSummaryProducerDisposalFees item)
+        private static decimal GetBadDebtProvision(CalcResult calcResult, decimal totalProducerFeeWithoutBadDebtProvision)
         {
-            return (item.TotalProducerFeeWithoutBadDebtProvisionSection5 * SaSetupCostsSummary.GetSetUpBadDebtProvision(calcResult)) / 100;
+            return (totalProducerFeeWithoutBadDebtProvision * SaSetupCostsSummary.GetSetUpBadDebtProvision(calcResult)) / 100;
         }
 
         private static decimal GetTotalProducerFeeWithoutBadDebtProvision(CalcResultSummary summary, CalcResultSummaryProducerDisposalFees item)
