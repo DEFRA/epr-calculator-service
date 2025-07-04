@@ -108,38 +108,6 @@ namespace EPR.Calculator.Service.Function.Models
         public decimal ProducerOverallPercentageOfCostsForOnePlus2A2B2C { get; set; }
         // End Section Total bill (1 + 2a + 2b + 2c)
 
-        //Section-3
-        //public decimal Total3SAOperatingCostwoBadDebtprovision { get; set; }
-
-        //public decimal BadDebtProvisionFor3 { get; set; }
-
-        //public decimal Total3SAOperatingCostswithBadDebtprovision { get; set; }
-
-        //public decimal EnglandTotalWithBadDebtProvision3 { get; set; }
-
-        //public decimal WalesTotalWithBadDebtProvision3 { get; set; }
-
-        //public decimal ScotlandTotalWithBadDebtProvision3 { get; set; }
-
-        //public decimal NorthernIrelandTotalWithBadDebtProvision3 { get; set; }
-        //End Section-3
-
-        // Section-4 LA data prep costs
-        public decimal LaDataPrepCostsTotalWithoutBadDebtProvisionSection4 { get; set; }
-
-        public decimal LaDataPrepCostsBadDebtProvisionSection4 { get; set; }
-
-        public decimal LaDataPrepCostsTotalWithBadDebtProvisionSection4 { get; set; }
-
-        public decimal LaDataPrepCostsEnglandTotalWithBadDebtProvisionSection4 { get; set; }
-
-        public decimal LaDataPrepCostsWalesTotalWithBadDebtProvisionSection4 { get; set; }
-
-        public decimal LaDataPrepCostsScotlandTotalWithBadDebtProvisionSection4 { get; set; }
-
-        public decimal LaDataPrepCostsNorthernIrelandTotalWithBadDebtProvisionSection4 { get; set; }
-        // End Section-4 LA data prep costs
-
         // Section-5 SA setup costs
         public decimal TotalProducerFeeWithoutBadDebtProvisionSection5 { get; set; }
 

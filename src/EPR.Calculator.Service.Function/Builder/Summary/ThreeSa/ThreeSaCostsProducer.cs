@@ -27,7 +27,7 @@
         public static void GetProducerSetUpCostsSection3(CalcResult calcResult, CalcResultSummary summary)
         {
             summary.SaOperatingCostsWoTitleSection3 = ThreeSaCostsSummary.GetThreeSaCostsWithoutBadDebtProvision(calcResult);
-            summary.BadDebtProvisionTitleSection3 = (summary.SaOperatingCostsWoTitleSection3 * ThreeSaCostsSummary.GetSetUpBadDebtProvision(calcResult)) / 100;
+            summary.BadDebtProvisionTitleSection3 = (summary.SaOperatingCostsWoTitleSection3 * calcResult.CalcResultParameterOtherCost.BadDebtValue) / 100;
             summary.SaOperatingCostsWithTitleSection3 = summary.BadDebtProvisionTitleSection3 + summary.SaOperatingCostsWoTitleSection3;
 
             foreach (var item in summary.ProducerDisposalFees)
@@ -50,7 +50,7 @@
 
         private static decimal GetBadDebtProvisionSection3(CalcResult calcResult, decimal totalProducerFeeWithoutBadDebtProvision)
         {
-            return (totalProducerFeeWithoutBadDebtProvision * ThreeSaCostsSummary.GetSetUpBadDebtProvision(calcResult)) / 100;
+            return (totalProducerFeeWithoutBadDebtProvision * calcResult.CalcResultParameterOtherCost.BadDebtValue) / 100;
         }
 
         private static decimal GetTotalProducerFeeWithoutBadDebtProvisionSection3(CalcResultSummary summary, CalcResultSummaryProducerDisposalFees item)

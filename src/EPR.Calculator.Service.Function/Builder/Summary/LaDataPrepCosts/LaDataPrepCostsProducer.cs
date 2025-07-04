@@ -41,11 +41,14 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts
 
             foreach (var fee in result.ProducerDisposalFees)
             {
+                var totalProducerFeeWithoutBadDebtProvision = GetTotalWithoutBadDebtProvision(result, fee);
+                var badDebtProvision = GetBadDebtProvision(calcResult, fee);
+
                 fee.LocalAuthorityDataPreparationCosts = new CalcResultSummaryBadDebtProvision()
                 {
-                    TotalProducerFeeWithoutBadDebtProvision = GetTotalWithoutBadDebtProvision(result, fee),
-                    BadDebtProvision = GetBadDebtProvision(calcResult, fee),
-                    TotalProducerFeeWithBadDebtProvision = GetTotalWithBadDebtProvision(fee),
+                    TotalProducerFeeWithoutBadDebtProvision = totalProducerFeeWithoutBadDebtProvision,
+                    BadDebtProvision = badDebtProvision,
+                    TotalProducerFeeWithBadDebtProvision = totalProducerFeeWithoutBadDebtProvision + badDebtProvision,
                     EnglandTotalWithBadDebtProvision = GetCountryTotalWithBadDebtProvision(calcResult, result.LaDataPrepCostsTitleSection4, fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.England),
                     WalesTotalWithBadDebtProvision = GetCountryTotalWithBadDebtProvision(calcResult, result.LaDataPrepCostsTitleSection4, fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.Wales),
                     ScotlandTotalWithBadDebtProvision = GetCountryTotalWithBadDebtProvision(calcResult, result.LaDataPrepCostsTitleSection4, fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.Scotland),
@@ -74,7 +77,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts
 
         private static decimal GetBadDebtProvision(CalcResult calcResult, CalcResultSummaryProducerDisposalFees fee)
         {
-            return (fee.LaDataPrepCostsTotalWithoutBadDebtProvisionSection4 *
+            return (fee.LocalAuthorityDataPreparationCosts.TotalProducerFeeWithoutBadDebtProvision *
                     calcResult.CalcResultParameterOtherCost.BadDebtValue) / 100;
         }
 
@@ -86,12 +89,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts
         private static decimal GetTotalWithoutBadDebtProvision(CalcResultSummary result, CalcResultSummaryProducerDisposalFees fee)
         {
             return (fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C * result.LaDataPrepCostsTitleSection4) / 100;
-        }
-
-        private static decimal GetTotalWithBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
-        {
-            return fee.LaDataPrepCostsTotalWithoutBadDebtProvisionSection4 +
-                   fee.LaDataPrepCostsBadDebtProvisionSection4;
         }
 
         public static decimal GetCountryTotalWithBadDebtProvision(CalcResult calcResult,
