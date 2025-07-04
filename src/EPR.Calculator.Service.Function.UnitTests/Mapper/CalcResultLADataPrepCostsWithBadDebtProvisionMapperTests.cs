@@ -19,13 +19,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             // Arrange  
             var input = new CalcResultSummaryProducerDisposalFees
             {
-                LaDataPrepCostsTotalWithoutBadDebtProvisionSection4 = 100m,
-                LaDataPrepCostsBadDebtProvisionSection4 = 10.06m,
-                LaDataPrepCostsTotalWithBadDebtProvisionSection4 = 110m,
-                LaDataPrepCostsEnglandTotalWithBadDebtProvisionSection4 = 50m,
-                LaDataPrepCostsWalesTotalWithBadDebtProvisionSection4 = 30m,
-                LaDataPrepCostsScotlandTotalWithBadDebtProvisionSection4 = 20m,
-                LaDataPrepCostsNorthernIrelandTotalWithBadDebtProvisionSection4 = 10m,
+                LocalAuthorityDataPreparationCosts = new CalcResultSummaryBadDebtProvision
+                {
+                    TotalProducerFeeWithoutBadDebtProvision = 100m,
+                    BadDebtProvision = 10.06m,
+                    TotalProducerFeeWithBadDebtProvision = 110m,
+                    EnglandTotalWithBadDebtProvision = 50m,
+                    WalesTotalWithBadDebtProvision = 30m,
+                    ScotlandTotalWithBadDebtProvision = 20m,
+                    NorthernIrelandTotalWithBadDebtProvision = 10m
+                },
                 ProducerId = "Producer123",
                 ProducerName = "Test Producer",
                 SubsidiaryId = "Subsidiary456",

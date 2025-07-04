@@ -65,18 +65,28 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CalcResultSummary = new CalcResultSummary()
                 {
                     ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>() {  new ()
-                            {
-                            ProducerCommsFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>() { },
-                            ProducerDisposalFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>() { },
-                            ProducerId = "1",
-                            ProducerName = "Test",
-                            TotalProducerDisposalFeeWithBadDebtProvision = 100,
-                            TotalProducerCommsFeeWithBadDebtProvision = 100,
-                            SubsidiaryId = "1",
-                            Level= CommonConstants.LevelOne.ToString(),
-                            SuggestedInvoiceAmount = "10",
-                            MaterialThresholdBreached = "-",
-                            SuggestedBillingInstruction = "Initial"
+                    {
+                        ProducerCommsFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>() { },
+                        ProducerDisposalFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>() { },
+                        ProducerId = "1",
+                        ProducerName = "Test",
+                        TotalProducerDisposalFeeWithBadDebtProvision = 100,
+                        TotalProducerCommsFeeWithBadDebtProvision = 100,
+                        SubsidiaryId = "1",
+                        Level= CommonConstants.LevelOne.ToString(),
+                        BillingInstructionSection = new CalcResultSummaryBillingInstruction
+                        {
+                            CurrentYearInvoiceTotalToDate = "1000",
+                            TonnageChangeSinceLastInvoice = "Tonnage Changed",
+                            LiabilityDifference = "-200",
+                            MaterialThresholdBreached = "-ve",
+                            TonnageThresholdBreached = "-ve",
+                            PercentageLiabilityDifference = "10.05",
+                            MaterialPercentageThresholdBreached = "-ve",
+                            TonnagePercentageThresholdBreached = "-ve",
+                            SuggestedBillingInstruction = "INITIAL",
+                            SuggestedInvoiceAmount = "10"
+                        }
                     },
 
                  }
@@ -134,7 +144,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CalcResultSummary = new CalcResultSummary()
                 {
                     ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>() {  new ()
-                            {
+                        {
                             ProducerCommsFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>() { },
                             ProducerDisposalFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>() { },
                             ProducerId = "1",
@@ -143,10 +153,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                             TotalProducerCommsFeeWithBadDebtProvision = 100,
                             SubsidiaryId = "1",
                             Level= CommonConstants.LevelTwo.ToString(),
-                            SuggestedInvoiceAmount = "10",
-                    },
-
-                 }
+                            BillingInstructionSection = new CalcResultSummaryBillingInstruction
+                            {
+                                CurrentYearInvoiceTotalToDate = "1000",
+                                TonnageChangeSinceLastInvoice = "Tonnage Changed",
+                                LiabilityDifference = "-200",
+                                MaterialThresholdBreached = "-ve",
+                                TonnageThresholdBreached = "-ve",
+                                PercentageLiabilityDifference = "10.05",
+                                MaterialPercentageThresholdBreached = "-ve",
+                                TonnagePercentageThresholdBreached = "-ve",
+                                SuggestedBillingInstruction = "INITIAL",
+                                SuggestedInvoiceAmount = "10"
+                            }
+                        }
+                    }
                 }
             };
 

@@ -10,13 +10,13 @@ namespace EPR.Calculator.Service.Function.Mapper
         {
             return new FeeForSASetUpCostsWithBadDebtProvision_5
             {
-                TotalProducerOneOffFeeForSASetUpCostsWithoutBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.TotalProducerFeeWithoutBadDebtProvisionSection5),
-                BadDebtProvisionFor5 = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.BadDebtProvisionSection5),
-                TotalProducerOneOffFeeForSASetUpCostsWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.TotalProducerFeeWithBadDebtProvisionSection5),
-                EnglandTotalForSASetUpCostsWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.EnglandTotalWithBadDebtProvisionSection5),
-                WalesTotalForSASetUpCostsWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.WalesTotalWithBadDebtProvisionSection5),
-                ScotlandTotalForSASetUpCostsWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.ScotlandTotalWithBadDebtProvisionSection5),
-                NorthernIrelandTotalForSASetUpCostsWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.NorthernIrelandTotalWithBadDebtProvisionSection5),
+                TotalProducerOneOffFeeForSASetUpCostsWithoutBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.OneOffSchemeAdministrationSetupCosts!.TotalProducerFeeWithoutBadDebtProvision),
+                BadDebtProvisionFor5 = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.OneOffSchemeAdministrationSetupCosts.BadDebtProvision),
+                TotalProducerOneOffFeeForSASetUpCostsWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.OneOffSchemeAdministrationSetupCosts.TotalProducerFeeWithBadDebtProvision),
+                EnglandTotalForSASetUpCostsWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.OneOffSchemeAdministrationSetupCosts.EnglandTotalWithBadDebtProvision),
+                WalesTotalForSASetUpCostsWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.OneOffSchemeAdministrationSetupCosts.WalesTotalWithBadDebtProvision),
+                ScotlandTotalForSASetUpCostsWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.OneOffSchemeAdministrationSetupCosts.ScotlandTotalWithBadDebtProvision),
+                NorthernIrelandTotalForSASetUpCostsWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.OneOffSchemeAdministrationSetupCosts.NorthernIrelandTotalWithBadDebtProvision),
             };
         }
     }

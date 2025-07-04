@@ -46,6 +46,25 @@ namespace EPR.Calculator.Service.Function.Models
 
         public decimal NorthernIrelandTotalComms { get; set; }
 
+        public CalcResultSummaryBadDebtProvision LocalAuthorityDisposalCostsSectionOne { get; set; }
+
+        public CalcResultSummaryBadDebtProvision CommunicationCostsSectionTwoA { get; set; }
+
+        public CalcResultSummaryBadDebtProvision CommunicationCostsSectionTwoB { get; set; }
+
+        public CalcResultSummaryBadDebtProvision CommunicationCostsSectionTwoC { get; set; }
+
+        public CalcResultSummaryBadDebtProvision SchemeAdministratorOperatingCostsSection { get; set; }
+
+        public CalcResultSummaryBadDebtProvision LocalAuthorityDataPreparationCosts { get; set; }
+
+        public CalcResultSummaryBadDebtProvision OneOffSchemeAdministrationSetupCosts { get; set; }
+
+        public CalcResultSummaryBadDebtProvision TotalProducerBillBreakdownSection { get; set; }
+
+        public CalcResultSummaryBillingInstruction BillingInstructionSection { get; set; }
+
+
         //Section-(1) & (2a) Start
         public decimal TotalProducerFeeforLADisposalCostswoBadDebtprovision { get; set; }
 
@@ -92,54 +111,6 @@ namespace EPR.Calculator.Service.Function.Models
         public decimal ProducerOverallPercentageOfCostsForOnePlus2A2B2C { get; set; }
         // End Section Total bill (1 + 2a + 2b + 2c)
 
-        //Section-3
-        public decimal Total3SAOperatingCostwoBadDebtprovision { get; set; }
-
-        public decimal BadDebtProvisionFor3 { get; set; }
-
-        public decimal Total3SAOperatingCostswithBadDebtprovision { get; set; }
-
-        public decimal EnglandTotalWithBadDebtProvision3 { get; set; }
-
-        public decimal WalesTotalWithBadDebtProvision3 { get; set; }
-
-        public decimal ScotlandTotalWithBadDebtProvision3 { get; set; }
-
-        public decimal NorthernIrelandTotalWithBadDebtProvision3 { get; set; }
-        //End Section-3
-
-        // Section-4 LA data prep costs
-        public decimal LaDataPrepCostsTotalWithoutBadDebtProvisionSection4 { get; set; }
-
-        public decimal LaDataPrepCostsBadDebtProvisionSection4 { get; set; }
-
-        public decimal LaDataPrepCostsTotalWithBadDebtProvisionSection4 { get; set; }
-
-        public decimal LaDataPrepCostsEnglandTotalWithBadDebtProvisionSection4 { get; set; }
-
-        public decimal LaDataPrepCostsWalesTotalWithBadDebtProvisionSection4 { get; set; }
-
-        public decimal LaDataPrepCostsScotlandTotalWithBadDebtProvisionSection4 { get; set; }
-
-        public decimal LaDataPrepCostsNorthernIrelandTotalWithBadDebtProvisionSection4 { get; set; }
-        // End Section-4 LA data prep costs
-
-        // Section-5 SA setup costs
-        public decimal TotalProducerFeeWithoutBadDebtProvisionSection5 { get; set; }
-
-        public decimal BadDebtProvisionSection5 { get; set; }
-
-        public decimal TotalProducerFeeWithBadDebtProvisionSection5 { get; set; }
-
-        public decimal EnglandTotalWithBadDebtProvisionSection5 { get; set; }
-
-        public decimal WalesTotalWithBadDebtProvisionSection5 { get; set; }
-
-        public decimal ScotlandTotalWithBadDebtProvisionSection5 { get; set; }
-
-        public decimal NorthernIrelandTotalWithBadDebtProvisionSection5 { get; set; }
-        // End Section-5 SA setup costs
-
         public Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> ProducerDisposalFeesByMaterial { get; set; }
 
         public Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>? ProducerCommsFeesByMaterial { get; set; }
@@ -158,48 +129,9 @@ namespace EPR.Calculator.Service.Function.Models
 
         public decimal NorthernIrelandTotalWithBadDebtFor2bComms { get; set; }
 
-        // Section-TotalBill
-        public decimal TotalProducerBillWithoutBadDebtProvision { get; set; }
-
-        public decimal BadDebtProvisionForTotalProducerBill { get; set; }
-
-        public decimal TotalProducerBillWithBadDebtProvision { get; set; }
-
-        public decimal EnglandTotalWithBadDebtProvisionTotalBill { get; set; }
-
-        public decimal WalesTotalWithBadDebtProvisionTotalBill { get; set; }
-
-        public decimal ScotlandTotalWithBadDebtProvisionTotalBill { get; set; }
-
-        public decimal NorthernIrelandTotalWithBadDebtProvisionTotalBill { get; set; }
-
         public string TonnageChangeCount { get; set; }
 
         public string TonnageChangeAdvice { get; set; }
-
-        // End Section-TotalBill
-
-        // Section - Billing Instructions
-        public string? CurrentYearInvoiceTotalToDate { get; set; }
-
-        public string? TonnageChangeSinceLastInvoice { get; set; }
-
-        public string? LiabilityDifference { get; set; }
-
-        public string? MaterialThresholdBreached { get; set; }
-
-        public string? TonnageThresholdBreached { get; set; }
-
-        public string? PercentageLiabilityDifference { get; set; }
-
-        public string? MaterialPercentageThresholdBreached { get; set; }
-
-        public string? TonnagePercentageThresholdBreached { get; set; }
-
-        public string? SuggestedBillingInstruction { get; set; }
-
-        public string? SuggestedInvoiceAmount { get; set; }
-        // End Section - Billing Instructions
 
         public bool isOverallTotalRow { get; set; } = false;
         public int ProducerIdInt { get; set; }
