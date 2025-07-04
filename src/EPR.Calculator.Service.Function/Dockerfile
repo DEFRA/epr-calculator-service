@@ -1,13 +1,12 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS installer-env
 
+#Nuget
+COPY NuGet.Config ./
+
 COPY EPR.Calculator.Service.Common/. ./EPR.Calculator.Service.Common/.
 COPY EPR.Calculator.Service.Function/. ./EPR.Calculator.Service.Function/.
 COPY EPR.Calculator.Service.Data/. ./EPR.Calculator.Service.Data/.
 COPY stylecop.json ./
-
-#Nuget
-#COPY src/nuget.config ./nuget.config
-#RUN dotnet restore EPR.Calculator.Service.Function/*.csproj --configfile ./nuget.config
 
 # Publish 
 RUN dotnet publish EPR.Calculator.Service.Function/*.csproj --output /home/site/wwwroot
