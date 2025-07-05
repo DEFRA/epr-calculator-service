@@ -74,7 +74,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var expectedUri = new Uri("https://example.com/test.txt");
 
             var responseMock = new Mock<Response<BlobContentInfo>>();
-            this.MockBlobClient.Setup(x => x.UploadAsync(It.IsAny<BinaryData>()))
+            this.MockBlobClient.Setup(x => x.UploadAsync(It.IsAny<BinaryData>(), true, default))
                           .ReturnsAsync(responseMock.Object);
             this.MockBlobClient.Setup(x => x.Uri).Returns(expectedUri);
 
@@ -83,11 +83,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 (FileName: fileName, 
                 Content: content, 
                 RunName: runName,
-                ContainerName: containerName));
+                ContainerName: containerName,
+                Overwrite: true));
 
             // Assert
             Assert.AreEqual(result, expectedUri.ToString());
-            this.MockBlobClient.Verify(x => x.UploadAsync(It.IsAny<BinaryData>()), Times.Once);
+            this.MockBlobClient.Verify(x => x.UploadAsync(It.IsAny<BinaryData>(), true, default), Times.Once);
         }
 
         [TestMethod]
@@ -107,11 +108,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 (FileName: fileName, 
                 Content: content,
                 RunName: runName,
-                ContainerName: containerName));
+                ContainerName: containerName,
+                Overwrite: true));
 
             // Assert
             Assert.AreEqual(result, string.Empty);
-            this.MockBlobClient.Verify(x => x.UploadAsync(It.IsAny<BinaryData>()), Times.Once);
+            this.MockBlobClient.Verify(x => x.UploadAsync(It.IsAny<BinaryData>(), true, default), Times.Once);
         }
     }
 }

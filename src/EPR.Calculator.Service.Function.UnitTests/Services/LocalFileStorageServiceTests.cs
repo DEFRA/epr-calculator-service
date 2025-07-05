@@ -31,7 +31,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 (FileName: fileName,
                 Content: content,
                 RunName: runName,
-                ContainerName: containerName));
+                ContainerName: containerName,
+                Overwrite: false));
 
             // Assert
             Assert.IsNotNull(result);
