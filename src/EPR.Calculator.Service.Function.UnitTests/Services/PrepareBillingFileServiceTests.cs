@@ -116,8 +116,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Name = calculatorName,
                     Financial_Year = calcFinancialYear,
                     CreatedBy = "user",
-                    CreatedAt = DateTime.Now
-                });
+                    CreatedAt = DateTime.Now,
+                    IsBillingFileGenerating = true
+            });
 
             // Add an accepted billing instruction
             _context.Add(new ProducerResultFileSuggestedBillingInstruction
