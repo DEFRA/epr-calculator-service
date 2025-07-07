@@ -755,6 +755,8 @@
                     NorthernIrelandTotalWithBadDebtFor2bComms = 299.39426423361965m,
                     ProducerDisposalFeesByMaterial = GetProducerDisposalFeesByMaterial(),
                     ProducerCommsFeesByMaterial = GetProducerCommsFeesByMaterial(),
+                    TonnageChangeCount = "0",
+                    TonnageChangeAdvice = ""
                 },
             };
         }
