@@ -743,6 +743,8 @@
                     NorthernIrelandTotalWithBadDebtProvisionTotalBill = 1031.0928789640386m,
                     ProducerDisposalFeesByMaterial = GetProducerDisposalFeesByMaterial(),
                     ProducerCommsFeesByMaterial = GetProducerCommsFeesByMaterial(),
+                    TonnageChangeCount = "0",
+                    TonnageChangeAdvice = ""
                 },
             };
         }

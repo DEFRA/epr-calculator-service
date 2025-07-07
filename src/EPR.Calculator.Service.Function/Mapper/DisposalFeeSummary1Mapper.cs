@@ -1,4 +1,5 @@
-﻿using EPR.Calculator.Service.Common.Utils;
+﻿using System.Collections.Generic;
+using EPR.Calculator.Service.Common.Utils;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
 
@@ -8,6 +9,8 @@ namespace EPR.Calculator.Service.Function.Mapper
     {
         public DisposalFeeSummary1 Map(CalcResultSummaryProducerDisposalFees summary)
         {
+            var tonnageByLevel = GetTonnageByLevel().TryGetValue(summary.Level!, out var values);
+
             return new DisposalFeeSummary1
             {
                 TotalProducerDisposalFeeWithoutBadDebtProvision = CurrencyConverter.ConvertToCurrency(summary.TotalProducerDisposalFee),
@@ -17,8 +20,17 @@ namespace EPR.Calculator.Service.Function.Mapper
                 WalesTotal = CurrencyConverter.ConvertToCurrency(summary.WalesTotal),
                 ScotlandTotal = CurrencyConverter.ConvertToCurrency(summary.ScotlandTotal),
                 NorthernIrelandTotal = CurrencyConverter.ConvertToCurrency(summary.NorthernIrelandTotal),
-                TonnageChangeCount = summary.TonnageChangeCount,
-                TonnageChangeAdvice = summary.TonnageChangeAdvice,
+                TonnageChangeCount = values.Count,
+                TonnageChangeAdvice = values.Advice
+            };
+        }
+
+        private static Dictionary<string, (string Count, string Advice)> GetTonnageByLevel()
+        {
+            return new Dictionary<string, (string Count, string Advice)>
+            {
+                { "1", ("0", string.Empty) },
+                { "2", ("-", "-") },
             };
         }
     }
