@@ -136,7 +136,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResul
                     TradingName = producer.TradingName,
                     Level = string.IsNullOrWhiteSpace(producer.Level) ? null : int.Parse(producer.Level),
                     ScaledUpTonnages = producer.IsProducerScaledup,
-                    ProducerDisposalFeesWithBadDebtProvision1 = this.producerDisposalFeesWithBadDebtProvision1JsonMapper.Map(producer.ProducerDisposalFeesByMaterial, materials, producer.Level),
+                    ProducerDisposalFeesWithBadDebtProvision1 = this.producerDisposalFeesWithBadDebtProvision1JsonMapper.Map(producer.ProducerDisposalFeesByMaterial, materials, producer.Level!),
                     FeesForCommsCostsWithBadDebtProvision2a = this.commsCostByMaterial2AJsonMapper.Map(producer.ProducerCommsFeesByMaterial!, materials),
                     FeeForSAOperatingCostsWithBadDebtProvision_3 = this.sAOperatingCostsWithBadDebtProvisionMapper.Map(producer),
                     FeeForLADataPrepCostsWithBadDebtProvision_4 = this.laDataPrepCostsWithBadDebtProvision4Mapper.Map(producer),
