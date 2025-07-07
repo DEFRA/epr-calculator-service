@@ -17,11 +17,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EPR.Calculator.Service.Func
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EPR.Calculator.Service.Function.UnitTests", "EPR.Calculator.Service.Function.UnitTests\EPR.Calculator.Service.Function.UnitTests.csproj", "{97DC57A2-9650-454D-AE31-CB38C676E1AD}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{14E6EB88-EF50-4E0B-BD6D-C2D58B12F599}"
-	ProjectSection(SolutionItems) = preProject
-		nuget.config = nuget.config
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
