@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using EPR.Calculator.Service.Common.Utils;
+using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
 
@@ -29,8 +30,8 @@ namespace EPR.Calculator.Service.Function.Mapper
         {
             return new Dictionary<string, (string Count, string Advice)>
             {
-                { "1", ("0", string.Empty) },
-                { "2", ("-", "-") },
+                { CommonConstants.LevelOne.ToString(), (CommonConstants.DefaultMinValue.ToString(), string.Empty) },
+                { CommonConstants.LevelTwo.ToString(), (CommonConstants.Hyphen.ToString(), CommonConstants.Hyphen.ToString()) },
             };
         }
     }
