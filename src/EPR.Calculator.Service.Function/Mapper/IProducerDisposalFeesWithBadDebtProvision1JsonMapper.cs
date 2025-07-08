@@ -8,6 +8,7 @@ namespace EPR.Calculator.Service.Function.Mapper
     {
         ProducerDisposalFeesWithBadDebtProvision1 Map(
             Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> producerDisposalFeesByMaterial,
-            List<MaterialDetail> materials);
+            List<MaterialDetail> materials,
+            string level);
     }
 }
