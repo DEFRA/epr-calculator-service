@@ -34,7 +34,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var result = _testClass?.Map(producerDisposalFeesByMaterial, materials);
+            var result = _testClass?.Map(producerDisposalFeesByMaterial, materials, "1");
 
             // Assert
             Assert.IsNotNull(result);
@@ -54,7 +54,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var result = _testClass?.Map(producerDisposalFeesByMaterial, materials);
+            var result = _testClass?.Map(producerDisposalFeesByMaterial, materials, "1");
 
             // Assert
             Assert.IsNotNull(result);
@@ -90,7 +90,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             };
 
             // Act
-            var result = mapper.Map(producerDisposalFeesByMaterial, materials);
+            var result = mapper.Map(producerDisposalFeesByMaterial, materials, "1");
             var json = JsonSerializer.Serialize(result);
 
             // Assert
