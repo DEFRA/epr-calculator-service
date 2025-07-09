@@ -19,8 +19,8 @@ namespace EPR.Calculator.Service.Function.Mapper
                 BadDebProvisionFor3 = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.SchemeAdministratorOperatingCostsSection.BadDebtProvision),
                 TotalProducerFeeForSAOperatingCosts_1_2a_2b_2c_WithoutBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.SchemeAdministratorOperatingCostsSection.TotalProducerFeeWithoutBadDebtProvision),
                 EnglandTotalForSAOperatingCostsWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.SchemeAdministratorOperatingCostsSection.EnglandTotalWithBadDebtProvision),
-                ScotlandTotalForSAOperatingCostsWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.SchemeAdministratorOperatingCostsSection.WalesTotalWithBadDebtProvision),
-                WalesTotalForSAOperatingCostsWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.SchemeAdministratorOperatingCostsSection.ScotlandTotalWithBadDebtProvision),
+                WalesTotalForSAOperatingCostsWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.SchemeAdministratorOperatingCostsSection.WalesTotalWithBadDebtProvision),
+                ScotlandTotalForSAOperatingCostsWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.SchemeAdministratorOperatingCostsSection.ScotlandTotalWithBadDebtProvision),
                 NorthernIrelandTotalForSAOperatingCostsWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.SchemeAdministratorOperatingCostsSection.NorthernIrelandTotalWithBadDebtProvision)
             };
         }

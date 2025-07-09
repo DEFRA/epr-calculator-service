@@ -605,6 +605,16 @@
                         ScotlandTotalWithBadDebtProvision = 845,
                         NorthernIrelandTotalWithBadDebtProvision = 365
                     },
+                    TotalProducerBillBreakdownSection = new CalcResultSummaryBadDebtProvision
+                    {
+                        TotalProducerFeeWithoutBadDebtProvision = 9897.32808192842m,
+                        BadDebtProvision = 593.8396849157051m,
+                        TotalProducerFeeWithBadDebtProvision = 10491.167766844124m,
+                        EnglandTotalWithBadDebtProvision = 5442.448434925617m,
+                        WalesTotalWithBadDebtProvision = 1452.6428880194774m,
+                        ScotlandTotalWithBadDebtProvision = 2564.98356493499m,
+                        NorthernIrelandTotalWithBadDebtProvision = 1031.0928789640386m,
+                    },
                     BillingInstructionSection = new CalcResultSummaryBillingInstruction
                     {
                         CurrentYearInvoiceTotalToDate = "1250.89m",

@@ -746,6 +746,19 @@
                         ScotlandTotalWithBadDebtProvision = 2564.98356493499m,
                         NorthernIrelandTotalWithBadDebtProvision = 1031.0928789640386m,
                     },
+                    BillingInstructionSection = new CalcResultSummaryBillingInstruction
+                    {
+                        CurrentYearInvoiceTotalToDate = "1250.89m",
+                        TonnageChangeSinceLastInvoice = string.Empty,
+                        LiabilityDifference = "580.73m",
+                        MaterialThresholdBreached = string.Empty,
+                        TonnageThresholdBreached = string.Empty,
+                        PercentageLiabilityDifference = string.Empty,
+                        MaterialPercentageThresholdBreached = string.Empty,
+                        TonnagePercentageThresholdBreached = string.Empty,
+                        SuggestedBillingInstruction = string.Empty,
+                        SuggestedInvoiceAmount = "4039"
+                    },
                     TotalProducerFeeWithoutBadDebtFor2bComms = 2844.0556305055156m,
                     BadDebtProvisionFor2bComms = 170.64333783033092m,
                     TotalProducerFeeWithBadDebtFor2bComms = 3014.6989683358465m,

@@ -64,7 +64,6 @@ namespace EPR.Calculator.Service.Function.Models
 
         public CalcResultSummaryBillingInstruction BillingInstructionSection { get; set; }
 
-
         //Section-(1) & (2a) Start
         public decimal TotalProducerFeeforLADisposalCostswoBadDebtprovision { get; set; }
 

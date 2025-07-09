@@ -200,41 +200,54 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
             var producerForTotalRow = GetProducerDetailsForTotalRow(producersAndSubsidiaries[0].ProducerId, isOverAllTotalRow);
             const int overallTotalId = 0;
+
+            var producerName = string.Empty;
+            var tradingName = string.Empty;
+
+            if (producerForTotalRow != null)
+            {
+                producerName = producerForTotalRow.OrganisationName;
+                tradingName = producerForTotalRow.TradingName;
+            }
+
             var totalRow = new CalcResultSummaryProducerDisposalFees
             {
                 ProducerIdInt = isOverAllTotalRow ? overallTotalId : producersAndSubsidiaries[0].ProducerId,
                 ProducerId = isOverAllTotalRow ? string.Empty : producersAndSubsidiaries[0].ProducerId.ToString(),
-                ProducerName = producerForTotalRow == null ? string.Empty : producerForTotalRow.OrganisationName,
+                ProducerName = producerName!,
                 SubsidiaryId = string.Empty,
-                TradingName = producerForTotalRow == null ? string.Empty : producerForTotalRow.TradingName,
+                TradingName = tradingName,
                 Level = isOverAllTotalRow ? string.Empty : CommonConstants.LevelOne.ToString(),
                 IsProducerScaledup = GetScaledupProducerStatusTotalRow(producersAndSubsidiaries[0], ScaledupProducers, isOverAllTotalRow),
                 ProducerDisposalFeesByMaterial = materialCosts,
                 ProducerCommsFeesByMaterial = communicationCosts,
 
+                // Disposal fee summary
+                TotalProducerDisposalFee = CalcResultSummaryUtil.GetTotalProducerDisposalFee(materialCosts),
+                BadDebtProvision = CalcResultSummaryUtil.GetTotalBadDebtProvision(materialCosts),
+                TotalProducerDisposalFeeWithBadDebtProvision = CalcResultSummaryUtil.GetTotalProducerDisposalFeeWithBadDebtProvision(materialCosts),
+                EnglandTotal = CalcResultSummaryUtil.GetEnglandTotal(materialCosts),
+                WalesTotal = CalcResultSummaryUtil.GetWalesTotal(materialCosts),
+                ScotlandTotal = CalcResultSummaryUtil.GetScotlandTotal(materialCosts),
+                NorthernIrelandTotal = CalcResultSummaryUtil.GetNorthernIrelandTotal(materialCosts),
+
+                // For Comms Start
+                TotalProducerCommsFee = CalcResultSummaryUtil.GetTotalProducerCommsFee(communicationCosts),
+                BadDebtProvisionComms = CalcResultSummaryUtil.GetCommsTotalBadDebtProvision(communicationCosts),
+                TotalProducerCommsFeeWithBadDebtProvision = CalcResultSummaryUtil.GetTotalProducerCommsFeeWithBadDebtProvision(communicationCosts),
+                EnglandTotalComms = CalcResultSummaryUtil.GetEnglandCommsTotal(communicationCosts),
+                WalesTotalComms = CalcResultSummaryUtil.GetWalesCommsTotal(communicationCosts),
+                ScotlandTotalComms = CalcResultSummaryUtil.GetScotlandCommsTotal(communicationCosts),
+                NorthernIrelandTotalComms = CalcResultSummaryUtil.GetNorthernIrelandCommsTotal(communicationCosts),
+
+                // Section 1
                 LocalAuthorityDisposalCostsSectionOne = GetLocalAuthorityDisposalCostsSectionOne(materialCosts),
 
+                // Section 2a
                 CommunicationCostsSectionTwoA = GetCommunicationCostsSectionTwoA(communicationCosts),
 
+                // Section 2b
                 CommunicationCostsSectionTwoB = GetCommunicationCostsSectionTwoB(calcResult, producersAndSubsidiaries, totalPackagingTonnage),
-
-                // Section-(1) & (2a)
-                TotalProducerFeeforLADisposalCostswoBadDebtprovision = CalcResultSummaryUtil.GetTotalProducerDisposalFee(materialCosts),
-                BadDebtProvisionFor1 = CalcResultSummaryUtil.GetTotalBadDebtProvision(materialCosts),
-                TotalProducerFeeforLADisposalCostswithBadDebtprovision = CalcResultSummaryUtil.GetTotalProducerDisposalFeeWithBadDebtProvision(materialCosts),
-                EnglandTotalWithBadDebtProvision = CalcResultSummaryUtil.GetEnglandTotal(materialCosts),
-                WalesTotalWithBadDebtProvision = CalcResultSummaryUtil.GetWalesTotal(materialCosts),
-                ScotlandTotalWithBadDebtProvision = CalcResultSummaryUtil.GetScotlandTotal(materialCosts),
-                NorthernIrelandTotalWithBadDebtProvision = CalcResultSummaryUtil.GetNorthernIrelandTotal(materialCosts),
-
-                TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision = CalcResultSummaryUtil.GetTotalProducerCommsFee(communicationCosts),
-                BadDebtProvisionFor2A = CalcResultSummaryUtil.GetCommsTotalBadDebtProvision(communicationCosts),
-                TotalProducerFeeforCommsCostsbyMaterialwithBadDebtprovision = CalcResultSummaryUtil.GetTotalProducerCommsFeeWithBadDebtProvision(communicationCosts),
-                EnglandTotalWithBadDebtProvision2A = CalcResultSummaryUtil.GetEnglandCommsTotal(communicationCosts),
-                WalesTotalWithBadDebtProvision2A = CalcResultSummaryUtil.GetWalesCommsTotal(communicationCosts),
-                ScotlandTotalWithBadDebtProvision2A = CalcResultSummaryUtil.GetScotlandCommsTotal(communicationCosts),
-                NorthernIrelandTotalWithBadDebtProvision2A = CalcResultSummaryUtil.GetNorthernIrelandCommsTotal(communicationCosts),
-
 
                 // Section-3
                 // Percentage of Producer Reported Tonnage vs All Producers

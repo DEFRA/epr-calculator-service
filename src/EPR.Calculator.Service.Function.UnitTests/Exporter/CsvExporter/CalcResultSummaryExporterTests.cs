@@ -4,6 +4,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter;
     using EPR.Calculator.Service.Function.Models;
+    using EPR.Calculator.Service.Function.UnitTests.Builder;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System.Text;
 
@@ -109,24 +110,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         public void CanCallAddNewRow()
         {
             var csvContent = new StringBuilder();
-            var producer = new CalcResultSummaryProducerDisposalFees
-            {
-                ProducerId = "ProducerId1",
-                ProducerName = "ProducerName1",
-                SubsidiaryId = "SubsidaryId1",
-                Level = "1",
-                IsProducerScaledup = "No",
-                ProducerDisposalFeesByMaterial = [],
-                ProducerCommsFeesByMaterial = []
-            };
-            var materialDetail = "AL";
-            var producerCommsFees = new CalcResultSummaryProducerCommsFeesCostByMaterial();
-            var calcResultSummaryProDis = new CalcResultSummaryProducerDisposalFeesByMaterial();
-            producer.ProducerDisposalFeesByMaterial.Add(materialDetail, calcResultSummaryProDis);
-            producer.ProducerCommsFeesByMaterial.Add(materialDetail, producerCommsFees);
-            _testClass.AddNewRow(csvContent, producer);
+            var producer = TestDataHelper.GetProducerDisposalFees();
+            _testClass.AddNewRow(csvContent, producer[0]);
             var results = csvContent.ToString().Split(",");
-            Assert.AreEqual(118, results.Length);
+            Assert.AreEqual(302, results.Length);
         }
 
         [TestMethod]
@@ -134,18 +121,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         {
             var resultSummary = new CalcResultSummary();
             var csvContent = new StringBuilder();
-            var producer = new CalcResultSummaryProducerDisposalFees
-            {
-                ProducerId = "ProducerId1",
-                ProducerName = "ProducerName1",
-                SubsidiaryId = "SubsidaryId1",
-                Level = "1",
-                IsProducerScaledup = "No",
-                ProducerDisposalFeesByMaterial = [],
-                ProducerCommsFeesByMaterial = []
-            };
 
-            resultSummary.ProducerDisposalFees = [producer];
+            resultSummary.ProducerDisposalFees = TestDataHelper.GetProducerDisposalFees();
 
             _testClass.Export(resultSummary, csvContent);
 

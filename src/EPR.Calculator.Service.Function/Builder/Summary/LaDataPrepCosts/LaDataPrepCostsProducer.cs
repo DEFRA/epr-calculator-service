@@ -36,13 +36,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts
         public static void SetValues(CalcResult calcResult, CalcResultSummary result)
         {
             result.LaDataPrepCostsTitleSection4 = GetLaDataPrepCostsWithoutBadDebtProvision(calcResult);
-            result.LaDataPrepCostsBadDebtProvisionTitleSection4 = GetBadDebtProvision(calcResult);
+            result.LaDataPrepCostsBadDebtProvisionTitleSection4 = GetLaDataPrepCostsBadDebtProvision(calcResult);
             result.LaDataPrepCostsWithBadDebtProvisionTitleSection4 = GetLaDataPrepCostsWithBadDebtProvision(calcResult);
 
             foreach (var fee in result.ProducerDisposalFees)
             {
                 var totalProducerFeeWithoutBadDebtProvision = GetTotalWithoutBadDebtProvision(result, fee);
-                var badDebtProvision = GetBadDebtProvision(calcResult, fee);
+                var badDebtProvision = GetBadDebtProvision(calcResult, totalProducerFeeWithoutBadDebtProvision);
 
                 fee.LocalAuthorityDataPreparationCosts = new CalcResultSummaryBadDebtProvision()
                 {
@@ -70,20 +70,20 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts
             return 0;
         }
 
-        private static decimal GetBadDebtProvision(CalcResult calcResult)
+        private static decimal GetLaDataPrepCostsBadDebtProvision(CalcResult calcResult)
         {
             return GetLaDataPrepCostsWithoutBadDebtProvision(calcResult) * calcResult.CalcResultParameterOtherCost.BadDebtValue / 100;
         }
 
-        private static decimal GetBadDebtProvision(CalcResult calcResult, CalcResultSummaryProducerDisposalFees fee)
+        private static decimal GetBadDebtProvision(CalcResult calcResult, decimal totalProducerFeeWithoutBadDebtProvision)
         {
-            return (fee.LocalAuthorityDataPreparationCosts.TotalProducerFeeWithoutBadDebtProvision *
+            return (totalProducerFeeWithoutBadDebtProvision *
                     calcResult.CalcResultParameterOtherCost.BadDebtValue) / 100;
         }
 
         private static decimal GetLaDataPrepCostsWithBadDebtProvision(CalcResult calcResult)
         {
-            return GetLaDataPrepCostsWithoutBadDebtProvision(calcResult) + GetBadDebtProvision(calcResult);
+            return GetLaDataPrepCostsWithoutBadDebtProvision(calcResult) + GetLaDataPrepCostsBadDebtProvision(calcResult);
         }
 
         private static decimal GetTotalWithoutBadDebtProvision(CalcResultSummary result, CalcResultSummaryProducerDisposalFees fee)
