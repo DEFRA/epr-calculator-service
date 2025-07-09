@@ -15,6 +15,7 @@
                 CalcResultDetail = GetCalcResultDetail(),
                 CalcResultLapcapData = GetCalcResultLapcapData(),
                 CalcResultLateReportingTonnageData = GetCalcResultLateReportingTonnage(),
+                CalcResultLaDisposalCostData = GetCalcResultLaDisposalCostData()
             };
         }
 
