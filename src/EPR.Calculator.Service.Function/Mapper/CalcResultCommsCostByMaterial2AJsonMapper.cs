@@ -1,9 +1,10 @@
-﻿using EPR.Calculator.Service.Common.Utils;
+﻿using System.Collections.Generic;
+using System.Linq;
+using EPR.Calculator.Service.Common.Utils;
 using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace EPR.Calculator.Service.Function.Mapper
 {
@@ -35,7 +36,7 @@ namespace EPR.Calculator.Service.Function.Mapper
                     HouseholdPackagingWasteTonnage = item.Value.HouseholdPackagingWasteTonnage,
                     PublicBinTonnage = item.Value.ReportedPublicBinTonnage,
                     TotalTonnage = item.Value.TotalReportedTonnage,
-                    PricePerTonne = CurrencyConverter.ConvertToCurrency(item.Value.PriceperTonne),
+                    PricePerTonne = CurrencyConverter.ConvertToCurrency(item.Value.PriceperTonne, (int)DecimalPlaces.Four),
                     ProducerTotalCostWithoutBadDebtProvision = CurrencyConverter.ConvertToCurrency(item.Value.ProducerTotalCostWithoutBadDebtProvision),
                     BadDebtProvision = CurrencyConverter.ConvertToCurrency(item.Value.BadDebtProvision),
                     ProducerTotalCostwithBadDebtProvision = CurrencyConverter.ConvertToCurrency(item.Value.ProducerTotalCostwithBadDebtProvision),

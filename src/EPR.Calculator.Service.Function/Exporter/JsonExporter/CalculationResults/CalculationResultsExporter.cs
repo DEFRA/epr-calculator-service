@@ -124,8 +124,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResul
         {
             var results = new List<CalcSummaryProducerCalculationResults>();
 
-            var filteredProducers = calcResultSummary.ProducerDisposalFees.Where(producer => int.TryParse(producer.ProducerId, out int parseId) && acceptedProducerIds.Contains(parseId)
-            && !producer.isTotalRow && !string.IsNullOrWhiteSpace(producer.Level));
+            var filteredProducers = calcResultSummary.ProducerDisposalFees.Where(producer => acceptedProducerIds.Contains(producer.ProducerIdInt) && !string.IsNullOrWhiteSpace(producer.Level));
 
             foreach (var producer in filteredProducers)
             {
@@ -137,7 +136,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResul
                     TradingName = producer.TradingName,
                     Level = string.IsNullOrWhiteSpace(producer.Level) ? null : int.Parse(producer.Level),
                     ScaledUpTonnages = producer.IsProducerScaledup,
-                    ProducerDisposalFeesWithBadDebtProvision1 = this.producerDisposalFeesWithBadDebtProvision1JsonMapper.Map(producer.ProducerDisposalFeesByMaterial, materials),
+                    ProducerDisposalFeesWithBadDebtProvision1 = this.producerDisposalFeesWithBadDebtProvision1JsonMapper.Map(producer.ProducerDisposalFeesByMaterial, materials, producer.Level!),
                     FeesForCommsCostsWithBadDebtProvision2a = this.commsCostByMaterial2AJsonMapper.Map(producer.ProducerCommsFeesByMaterial!, materials),
                     FeeForSAOperatingCostsWithBadDebtProvision_3 = this.sAOperatingCostsWithBadDebtProvisionMapper.Map(producer),
                     FeeForLADataPrepCostsWithBadDebtProvision_4 = this.laDataPrepCostsWithBadDebtProvision4Mapper.Map(producer),

@@ -1,32 +1,42 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.Converter
 {
-    public class DecimalPrecisionConverter : JsonConverter
+    public class DecimalPrecisionConverter : JsonConverter<decimal>
     {
         private readonly int _precision;
 
-        public DecimalPrecisionConverter(int precision)
-        {
-            _precision = precision;
-        }
+        public DecimalPrecisionConverter(int precision) => _precision = precision;
 
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            var rounded = Math.Round((decimal)value, _precision);
-            writer.WriteValue(rounded);
-        }
+        public override decimal Read(
+            ref Utf8JsonReader reader,
+            Type typeToConvert,
+            JsonSerializerOptions options)
+            => Convert.ToDecimal(reader.GetString());
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override void Write(Utf8JsonWriter writer, decimal value, JsonSerializerOptions options)
         {
-            return Convert.ToDecimal(reader.Value);
+            if (value == 0)
+            {
+                writer.WriteNumberValue(0);
+            }
+            else
+            {
+                writer.WriteRawValue(((decimal)value).ToString(
+                    $"N{_precision}",
+                    new NumberFormatInfo
+                    {
+                        // Don't use a comma in the number, or JSON will interpret it as the end of the line.
+                        NumberGroupSeparator = string.Empty,
+                    }));
+            }
         }
-
-        public override bool CanConvert(Type objectType) => objectType == typeof(decimal);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using EPR.Calculator.Service.Common.Utils;
+using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
@@ -80,8 +81,9 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             calcResultScaledupProducersExporterCsv.Export(acceptedProducers, csvContent);
 
             var acceptedCalcResultSummary = GetAcceptedProducersCalcResults(results.CalcResultSummary, acceptedProducerIds);
+            
             calcResultSummaryExporterCsv.Export(acceptedCalcResultSummary, csvContent);
-
+            csvContent = ResetTotals(csvContent.ToString());
             return csvContent.ToString();
         }
 
@@ -175,6 +177,13 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
                 }
             });
             return acceptedProducers;
+        }
+
+
+        private StringBuilder ResetTotals(string sb)
+        {
+            var exceptTotals = sb.Substring(0, sb.LastIndexOf(CommonConstants.Totals) + (CommonConstants.Totals.Length+2));
+            return new StringBuilder().Append(exceptTotals);
         }
        
     }

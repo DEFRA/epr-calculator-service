@@ -17,7 +17,8 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.Lapcap
         /// </summary>
         private static readonly IEnumerable<string> SeperatedRecords = [
             CalcResultLapcapDataBuilder.Total,
-            CalcResultLapcapDataBuilder.CountryApportionment];
+            CalcResultLapcapDataBuilder.CountryApportionment,
+            "Material"];
 
         /// <inheritdoc/>
         public object Export(CalcResultLapcapData data)
@@ -29,8 +30,8 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.Lapcap
         private readonly record struct CalcResultLapcapDataToSerialise(
             string Name,
             IEnumerable<CalcResultLapcapDataDetailsToSerialise> CalcResultLapcapDataDetails,
-            CalcResultLapcapDataDetailsToSerialiseWithoutName CalcResultLapcapDataTotal,
-            CalcResultLapcapDataDetailsToSerialiseWithoutName OneCountryApportionmentPercentages)
+            CalcResultLapcapDataDetailsToSerialiseTotal CalcResultLapcapDataTotal,
+            CalcResultLapcapDataDetailsToSerialiseApportionment OneCountryApportionmentPercentages)
         {
             public CalcResultLapcapDataToSerialise(CalcResultLapcapData data)
                 : this(
@@ -42,11 +43,11 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.Lapcap
                         .Select(details => new CalcResultLapcapDataDetailsToSerialise(details)),
                       
                       // The total record.
-                      new CalcResultLapcapDataDetailsToSerialiseWithoutName(data.CalcResultLapcapDataDetails
+                      new CalcResultLapcapDataDetailsToSerialiseTotal(data.CalcResultLapcapDataDetails
                         .Single(record => record.Name == CalcResultLapcapDataBuilder.Total)),
 
                       // The country apportionment record.
-                      new CalcResultLapcapDataDetailsToSerialiseWithoutName(data.CalcResultLapcapDataDetails
+                      new CalcResultLapcapDataDetailsToSerialiseApportionment(data.CalcResultLapcapDataDetails
                         .Single(record => record.Name == CalcResultLapcapDataBuilder.CountryApportionment)))
             {
             }
@@ -57,10 +58,10 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.Lapcap
         /// </summary>
         private readonly record struct CalcResultLapcapDataDetailsToSerialise(
             string MaterialName,
-            string EnglandDisposalCost,
-            string WalesDisposalCost,
-            string ScotlandDisposalCost,
-            string NorthernIrelandDisposalCost,
+            string EnglandLaDisposalCost,
+            string WalesLaDisposalCost,
+            string ScotlandLaDisposalCost,
+            string NorthernIrelandLaDisposalCost,
             string OneLaDisposalCostTotal)
         {
             public CalcResultLapcapDataDetailsToSerialise(CalcResultLapcapDataDetails data)
@@ -76,16 +77,37 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.Lapcap
 
         /// <summary>
         /// Holds the lapcap data in a structure that will be serialised to the expected JSON layout.
-        /// Excludes the name field - used for total and country apportment records.
+        /// Excludes the name field - used for total record.
         /// </summary>
-        private readonly record struct CalcResultLapcapDataDetailsToSerialiseWithoutName(
-            string EnglandDisposalCost,
-            string WalesDisposalCost,
-            string ScotlandDisposalCost,
-            string NorthernIrelandDisposalCost,
-            string OneLaDisposalCostTotal)
+        private readonly record struct CalcResultLapcapDataDetailsToSerialiseTotal(
+            string TotalEnglandLaDisposalCost,
+            string TotalWalesLaDisposalCost,
+            string TotalScotlandLaDisposalCost,
+            string TotalNorthernIrelandLaDisposalCost,
+            string TotalLaDisposalCost)
         {
-            public CalcResultLapcapDataDetailsToSerialiseWithoutName(CalcResultLapcapDataDetails data)
+            public CalcResultLapcapDataDetailsToSerialiseTotal(CalcResultLapcapDataDetails data)
+                : this(data.EnglandDisposalCost,
+                      data.WalesDisposalCost,
+                      data.ScotlandDisposalCost,
+                      data.NorthernIrelandDisposalCost,
+                      data.TotalDisposalCost)
+            {
+            }
+        }
+
+        /// <summary>
+        /// Holds the lapcap data in a structure that will be serialised to the expected JSON layout.
+        /// Excludes the name field - used for country apportment record.
+        /// </summary>
+        private readonly record struct CalcResultLapcapDataDetailsToSerialiseApportionment(
+            string EnglandApportionment,
+            string WalesApportionment,
+            string ScotlandApportionment,
+            string NorthernIrelandApportionment,
+            string TotalApportionment)
+        {
+            public CalcResultLapcapDataDetailsToSerialiseApportionment(CalcResultLapcapDataDetails data)
                 : this(data.EnglandDisposalCost,
                       data.WalesDisposalCost,
                       data.ScotlandDisposalCost,
