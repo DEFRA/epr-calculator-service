@@ -23,34 +23,19 @@
     /// </summary>
     public class PrepareCalcService : IPrepareCalcService
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage(
-            "Major Code Smell",
-            "S107:Methods should not have too many parameters",
-            Justification = "To be refactored later.")]
-        public PrepareCalcService(
-            IDbContextFactory<ApplicationDBContext> context,
-            ICalcResultBuilder builder,
-            ICalcResultsExporter<CalcResult> exporter,
-            IStorageService storageService,
-            CalculatorRunValidator validationRules,
-            ICommandTimeoutService commandTimeoutService,
-            ICalculatorTelemetryLogger telemetryLogger,
-            IBillingInstructionService billingInstructionService,
-            ICalcBillingJsonExporter<CalcResult> jsonExporter,
-            IConfigurationService configService,
-            IBillingFileExporter<CalcResult> billingFileExporter)
+        public PrepareCalcService(PrepareCalcServiceDependencies deps)
         {
-            this.Context = context.CreateDbContext();
-            this.Builder = builder;
-            this.Exporter = exporter;
-            this.storageService = storageService;
-            this.validatior = validationRules;
-            this.commandTimeoutService = commandTimeoutService;
-            this.telemetryLogger = telemetryLogger;
-            this.billingInstructionService = billingInstructionService;
-            this.ConfigService = configService;
-            this.JsonExporter = jsonExporter;
-            this.BillingFileExporter = billingFileExporter;
+            this.Context = deps.Context;
+            this.Builder = deps.Builder;
+            this.Exporter = deps.Exporter;
+            this.storageService = deps.StorageService;
+            this.validatior = deps.ValidationRules;
+            this.commandTimeoutService = deps.CommandTimeoutService;
+            this.telemetryLogger = deps.TelemetryLogger;
+            this.billingInstructionService = deps.BillingInstructionService;
+            this.ConfigService = deps.ConfigService;
+            this.JsonExporter = deps.JsonExporter;
+            this.BillingFileExporter = deps.BillingFileExporter;
         }
 
         public const string ContainerNameMissingError = "Container name is missing in configuration.";

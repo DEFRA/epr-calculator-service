@@ -11,17 +11,19 @@
     {
         public ProducerDisposalFeesWithBadDebtProvision1 Map(
             Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> producerDisposalFeesByMaterial,
-            List<MaterialDetail> materials)
+            List<MaterialDetail> materials,
+            string level)
         {
             return new ProducerDisposalFeesWithBadDebtProvision1
             {
-                MaterialBreakdown = GetMaterialBreakdown(producerDisposalFeesByMaterial, materials),
+                MaterialBreakdown = GetMaterialBreakdown(producerDisposalFeesByMaterial, materials, level),
             };
         }
 
         private static IEnumerable<ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown> GetMaterialBreakdown(
             Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> producerDisposalFeesByMaterial,
-            List<MaterialDetail> materials)
+            List<MaterialDetail> materials,
+            string level)
         {
             var materialBreakdown = new List<ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown>();
 
@@ -32,13 +34,13 @@
                 var breakdown = new ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown
                 {
                     MaterialName = material.Name,
-                    PreviousInvoicedTonnage = producerTonnage.Value.PreviousInvoicedTonnage,
+                    PreviousInvoicedTonnage = GetPreviousInvoicedTonnage(level),
                     HouseholdPackagingWasteTonnage = producerTonnage.Value.HouseholdPackagingWasteTonnage,
                     PublicBinTonnage = producerTonnage.Value.PublicBinTonnage,
                     TotalTonnage = producerTonnage.Value.TotalReportedTonnage,
                     SelfManagedConsumerWasteTonnage = producerTonnage.Value.ManagedConsumerWasteTonnage,
                     NetTonnage = producerTonnage.Value.NetReportedTonnage,
-                    TonnageChange = producerTonnage.Value.TonnageChange,
+                    TonnageChange = GetPreviousInvoicedTonnage(level),
                     PricePerTonne = CurrencyConverter.ConvertToCurrency(producerTonnage.Value.PricePerTonne, 4),
                     ProducerDisposalFeeWithoutBadDebtProvision = CurrencyConverter.ConvertToCurrency(producerTonnage.Value.ProducerDisposalFee),
                     BadDebtProvision = CurrencyConverter.ConvertToCurrency(producerTonnage.Value.BadDebtProvision),
@@ -57,6 +59,13 @@
             }
 
             return materialBreakdown;
+        }
+
+        private static string GetPreviousInvoicedTonnage(string level)
+        {
+            return level == CommonConstants.LevelOne.ToString()
+                ? CommonConstants.DefaultMinValue.ToString()
+                : CommonConstants.Hyphen;
         }
     }
 }

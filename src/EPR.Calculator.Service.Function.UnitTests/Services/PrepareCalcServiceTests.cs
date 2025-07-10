@@ -44,6 +44,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         private Mock<IConfigurationService> _configService;
         private Mock<IBillingFileExporter<CalcResult>> _billingFileExporter;
 
+        private PrepareCalcServiceDependencies _prepareCalcServiceDependencies;
+
         public PrepareCalcServiceTests()
         {
             this._dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
@@ -105,17 +107,23 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this._jsonExporter = new Mock<ICalcBillingJsonExporter<CalcResult>>();
             this._configService = new Mock<IConfigurationService>();
             this._billingFileExporter = new Mock<IBillingFileExporter<CalcResult>>();
-            this._testClass = new PrepareCalcService(this._dbContextFactory.Object,
-                this._builder.Object,
-                this._exporter.Object,
-                this._storageService.Object,
-                this._validationRules,
-                this._commandTimeoutService.Object,
-                this._telemetryLogger.Object,
-                this._billingInstructionService.Object,
-                this._jsonExporter.Object,
-                this._configService.Object,
-                this._billingFileExporter.Object);
+
+            this._prepareCalcServiceDependencies = new PrepareCalcServiceDependencies
+            {
+                Context = this._context,
+                Builder = this._builder.Object,
+                Exporter = this._exporter.Object,
+                StorageService = this._storageService.Object,
+                ValidationRules = new Mock<CalculatorRunValidator>().Object,
+                CommandTimeoutService = this._commandTimeoutService.Object,
+                TelemetryLogger = new Mock<ICalculatorTelemetryLogger>().Object,
+                BillingInstructionService = this._billingInstructionService.Object,
+                JsonExporter = this._jsonExporter.Object,
+                ConfigService = this._configService.Object,
+                BillingFileExporter = this._billingFileExporter.Object
+            };
+
+            this._testClass = new PrepareCalcService(this._prepareCalcServiceDependencies);
         }
 
         [TestCleanup]
@@ -135,17 +143,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public void CanConstruct()
         {
             // Act
-            var instance = new PrepareCalcService(this._dbContextFactory.Object,
-                this._builder.Object,
-                this._exporter.Object,
-                this._storageService.Object,
-                this._validationRules,
-                this._commandTimeoutService.Object,
-                this._telemetryLogger.Object,
-                this._billingInstructionService.Object,
-                this._jsonExporter.Object,
-                this._configService.Object,
-                this._billingFileExporter.Object);
+            var instance = new PrepareCalcService(this._prepareCalcServiceDependencies);
 
             // Assert
             Assert.IsNotNull(instance);

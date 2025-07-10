@@ -194,6 +194,21 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcResultLaDisposalCostDataExporter, CalcResultLaDisposalCostDataExporter>();
             services.AddTransient<ICalcResultCommsCostOnePlusFourApportionmentExporter, CalcResultCommsCostOnePlusFourApportionmentExporter>();
             services.AddTransient<IBillingFileExporter<CalcResult>, BillingFileExporter>();
+
+            services.AddScoped<PrepareCalcServiceDependencies>(provider => new PrepareCalcServiceDependencies
+            {
+                Context = provider.GetRequiredService<ApplicationDBContext>(),
+                Builder = provider.GetRequiredService<ICalcResultBuilder>(),
+                Exporter = provider.GetRequiredService<ICalcResultsExporter<CalcResult>>(),
+                StorageService = provider.GetRequiredService<IStorageService>(),
+                ValidationRules = provider.GetRequiredService<CalculatorRunValidator>(),
+                CommandTimeoutService = provider.GetRequiredService<ICommandTimeoutService>(),
+                TelemetryLogger = provider.GetRequiredService<ICalculatorTelemetryLogger>(),
+                BillingInstructionService = provider.GetRequiredService<IBillingInstructionService>(),
+                JsonExporter = provider.GetRequiredService<ICalcBillingJsonExporter<CalcResult>>(),
+                ConfigService = provider.GetRequiredService<IConfigurationService>(),
+                BillingFileExporter = provider.GetRequiredService<IBillingFileExporter<CalcResult>>()
+            });
 #if !DEBUG
 
             SetupBlobStorage(services);
