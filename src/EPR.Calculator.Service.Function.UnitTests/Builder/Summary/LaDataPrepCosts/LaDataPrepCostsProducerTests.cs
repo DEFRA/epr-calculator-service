@@ -272,6 +272,7 @@
                                 ScotlandTotalWithBadDebtProvision = 20,
                                 NorthernIrelandTotalWithBadDebtProvision = 20
                             },
+                            BillingInstructionSection = new CalcResultSummaryBillingInstruction()
                         },
                     },
                     TotalFeeforLADisposalCostswithBadDebtprovision1 = 100,

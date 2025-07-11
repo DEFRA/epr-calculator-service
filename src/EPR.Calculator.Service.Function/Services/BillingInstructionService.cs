@@ -39,26 +39,28 @@ namespace EPR.Calculator.Service.Function.Services
 
                 foreach (var producer in producers)
                 {
+                    var billingInstructionSection = producer.BillingInstructionSection;
+
                     var isProducerIdParseSuccessful = int.TryParse(producer.ProducerId, out var producerId);
-                    var isSuggestedInvoiceAmountParseSuccessful = decimal.TryParse(producer.BillingInstructionSection.SuggestedInvoiceAmount, out var suggestedInvoiceAmount);
+                    var isSuggestedInvoiceAmountParseSuccessful = decimal.TryParse(billingInstructionSection.SuggestedInvoiceAmount, out var suggestedInvoiceAmount);
 
                     if (isProducerIdParseSuccessful && isSuggestedInvoiceAmountParseSuccessful)
                     {
-                        var billingInstructionSection = producer.BillingInstructionSection;
+                        
 
                         var billingInstruction = new ProducerResultFileSuggestedBillingInstruction
                         {
                             CalculatorRunId = calcResult.CalcResultDetail.RunId,
                             ProducerId = producerId,
-                            TotalProducerBillWithBadDebt = producer.TotalProducerBillBreakdownSection.TotalProducerFeeWithBadDebtProvision,
-                            CurrentYearInvoiceTotalToDate = IsDefaultValue(billingInstructionSection.CurrentYearInvoiceTotalToDate!) ? null: TypeConverterUtil.ConvertTo<decimal>(billingInstructionSection.CurrentYearInvoiceTotalToDate!),
-                            TonnageChangeSinceLastInvoice = IsDefaultValue(billingInstructionSection.TonnageChangeSinceLastInvoice!)? null: TypeConverterUtil.ConvertTo<string>(billingInstructionSection.TonnageChangeSinceLastInvoice!),
-                            AmountLiabilityDifferenceCalcVsPrev = IsDefaultValue(billingInstructionSection.LiabilityDifference!) ? null : TypeConverterUtil.ConvertTo<decimal>(billingInstructionSection.LiabilityDifference!) ,
-                            MaterialPoundThresholdBreached = IsDefaultValue(billingInstructionSection.MaterialThresholdBreached!) ? null : TypeConverterUtil.ConvertTo<string>(billingInstructionSection.MaterialThresholdBreached!),
-                            TonnagePoundThresholdBreached = IsDefaultValue(billingInstructionSection.TonnageThresholdBreached!) ? null : TypeConverterUtil.ConvertTo<string>(billingInstructionSection.TonnageThresholdBreached!),
-                            PercentageLiabilityDifferenceCalcVsPrev = IsDefaultValue(billingInstructionSection.PercentageLiabilityDifference!) ? null : TypeConverterUtil.ConvertTo<decimal>(billingInstructionSection.PercentageLiabilityDifference!) ,
-                            MaterialPercentageThresholdBreached = IsDefaultValue(billingInstructionSection.MaterialPercentageThresholdBreached!) ? null : TypeConverterUtil.ConvertTo<string>(billingInstructionSection.MaterialPercentageThresholdBreached!),
-                            TonnagePercentageThresholdBreached = IsDefaultValue(billingInstructionSection.TonnagePercentageThresholdBreached!) ? null : TypeConverterUtil.ConvertTo<string>(billingInstructionSection.TonnagePercentageThresholdBreached!),
+                            TotalProducerBillWithBadDebt = producer.TotalProducerBillBreakdownSection!.TotalProducerFeeWithBadDebtProvision,
+                            CurrentYearInvoiceTotalToDate = GetValue(billingInstructionSection.CurrentYearInvoiceTotalToDate!),
+                            TonnageChangeSinceLastInvoice = GetStringValue(billingInstructionSection.TonnageChangeSinceLastInvoice!),
+                            AmountLiabilityDifferenceCalcVsPrev = GetValue(billingInstructionSection.LiabilityDifference!),
+                            MaterialPoundThresholdBreached = GetStringValue(billingInstructionSection.MaterialThresholdBreached!),
+                            TonnagePoundThresholdBreached = GetStringValue(billingInstructionSection.TonnageThresholdBreached!),
+                            PercentageLiabilityDifferenceCalcVsPrev = GetValue(billingInstructionSection.PercentageLiabilityDifference!),
+                            MaterialPercentageThresholdBreached = GetStringValue(billingInstructionSection.MaterialPercentageThresholdBreached!),
+                            TonnagePercentageThresholdBreached = GetStringValue(billingInstructionSection.TonnagePercentageThresholdBreached!),
                             SuggestedBillingInstruction = billingInstructionSection.SuggestedBillingInstruction!,
                             SuggestedInvoiceAmount = suggestedInvoiceAmount
                         };
@@ -111,6 +113,20 @@ namespace EPR.Calculator.Service.Function.Services
         private bool IsDefaultValue(string value)
         {
             return (string.IsNullOrEmpty(value) || value == CommonConstants.Hyphen);
-        }       
+        }
+
+        private decimal? GetValue(string value)
+        {
+            return IsDefaultValue(value)
+                ? null
+                : TypeConverterUtil.ConvertTo<decimal>(value);
+        }
+
+        private string? GetStringValue(string value)
+        {
+            return IsDefaultValue(value)
+                ? null
+                : TypeConverterUtil.ConvertTo<string>(value);
+        }
     }
 }

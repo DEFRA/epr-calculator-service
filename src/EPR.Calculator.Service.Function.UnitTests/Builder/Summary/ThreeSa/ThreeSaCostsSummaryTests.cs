@@ -236,7 +236,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                             TotalProducerDisposalFeeWithBadDebtProvision = 100,
                             TotalProducerCommsFeeWithBadDebtProvision = 100,
                             SubsidiaryId = "1",
-
+                            BillingInstructionSection = new CalcResultSummaryBillingInstruction(),
                         }
                     }
                 },

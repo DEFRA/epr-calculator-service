@@ -313,6 +313,7 @@
                             TotalProducerCommsFeeWithBadDebtProvision = 100,
                             SubsidiaryId = "1",
                             ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 1,
+                            BillingInstructionSection = new CalcResultSummaryBillingInstruction(),
                         },
                     },
                 },

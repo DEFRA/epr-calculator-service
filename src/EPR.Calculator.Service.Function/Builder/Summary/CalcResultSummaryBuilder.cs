@@ -253,6 +253,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 // Percentage of Producer Reported Tonnage vs All Producers
                 PercentageofProducerReportedTonnagevsAllProducers = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducersTotal(producersAndSubsidiaries, totalPackagingTonnage),
 
+                BillingInstructionSection = new CalcResultSummaryBillingInstruction(),
+
                 isTotalRow = true,
                 isOverallTotalRow = isOverAllTotalRow,
             };
@@ -410,6 +412,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 IsProducerScaledup = CalcResultSummaryUtil.IsProducerScaledup(producer, ScaledupProducers)
                     ? CommonConstants.ScaledupProducersYes
                     : CommonConstants.ScaledupProducersNo,
+                BillingInstructionSection = new CalcResultSummaryBillingInstruction(),
             };
 
             foreach (var material in materials)

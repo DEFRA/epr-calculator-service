@@ -46,23 +46,23 @@ namespace EPR.Calculator.Service.Function.Models
 
         public decimal NorthernIrelandTotalComms { get; set; }
 
-        public CalcResultSummaryBadDebtProvision LocalAuthorityDisposalCostsSectionOne { get; set; }
+        public CalcResultSummaryBadDebtProvision? LocalAuthorityDisposalCostsSectionOne { get; set; }
 
-        public CalcResultSummaryBadDebtProvision CommunicationCostsSectionTwoA { get; set; }
+        public CalcResultSummaryBadDebtProvision? CommunicationCostsSectionTwoA { get; set; }
 
-        public CalcResultSummaryBadDebtProvision CommunicationCostsSectionTwoB { get; set; }
+        public CalcResultSummaryBadDebtProvision? CommunicationCostsSectionTwoB { get; set; }
 
-        public CalcResultSummaryBadDebtProvision CommunicationCostsSectionTwoC { get; set; }
+        public CalcResultSummaryBadDebtProvision? CommunicationCostsSectionTwoC { get; set; }
 
-        public CalcResultSummaryBadDebtProvision SchemeAdministratorOperatingCostsSection { get; set; }
+        public CalcResultSummaryBadDebtProvision? SchemeAdministratorOperatingCostsSection { get; set; }
 
-        public CalcResultSummaryBadDebtProvision LocalAuthorityDataPreparationCosts { get; set; }
+        public CalcResultSummaryBadDebtProvision? LocalAuthorityDataPreparationCosts { get; set; }
 
-        public CalcResultSummaryBadDebtProvision OneOffSchemeAdministrationSetupCosts { get; set; }
+        public CalcResultSummaryBadDebtProvision? OneOffSchemeAdministrationSetupCosts { get; set; }
 
-        public CalcResultSummaryBadDebtProvision TotalProducerBillBreakdownSection { get; set; }
+        public CalcResultSummaryBadDebtProvision? TotalProducerBillBreakdownSection { get; set; }
 
-        public CalcResultSummaryBillingInstruction BillingInstructionSection { get; set; }
+        public required CalcResultSummaryBillingInstruction BillingInstructionSection { get; set; }
 
         //Section-(1) & (2a) Start
         public decimal TotalProducerFeeforLADisposalCostswoBadDebtprovision { get; set; }

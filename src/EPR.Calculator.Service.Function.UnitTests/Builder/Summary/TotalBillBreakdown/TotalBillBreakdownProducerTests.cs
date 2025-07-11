@@ -601,6 +601,7 @@
                         ScotlandTotalWithBadDebtProvision = 845,
                         NorthernIrelandTotalWithBadDebtProvision = 365
                     },
+                    BillingInstructionSection = new CalcResultSummaryBillingInstruction(),
                     TotalProducerFeeforLADisposalCostswoBadDebtprovision = 106.23m,
                     TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision = 207.45m,
                     TotalProducerFeeWithoutBadDebtFor2bComms = 302.56m,

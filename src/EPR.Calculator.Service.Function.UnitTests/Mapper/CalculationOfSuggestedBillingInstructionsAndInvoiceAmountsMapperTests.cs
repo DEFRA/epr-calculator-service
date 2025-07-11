@@ -84,6 +84,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
                 ProducerId = "Producer123",
                 ProducerName = "Producer Name",
                 SubsidiaryId = "Subsidiary456",
+                BillingInstructionSection = new CalcResultSummaryBillingInstruction()
             };
 
             // Act  
