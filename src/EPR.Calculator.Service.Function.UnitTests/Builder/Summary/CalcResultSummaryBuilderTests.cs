@@ -238,6 +238,7 @@
                             TotalProducerDisposalFeeWithBadDebtProvision = 100,
                             TotalProducerCommsFeeWithBadDebtProvision = 100,
                             SubsidiaryId = "1",
+                            BillingInstructionSection = new CalcResultSummaryBillingInstruction()
                             },
                     },
                 },
@@ -869,7 +870,7 @@
             ProducerDetail producer = context.ProducerDetail.FirstOrDefault()!;
             IEnumerable<ProducerDetail> producersAndSubsidiaries = context.ProducerDetail;
             List<CalcResultSummaryProducerDisposalFees> producerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> {
-                    new CalcResultSummaryProducerDisposalFees { ProducerId = "1", ProducerName="Org1", SubsidiaryId = "" }
+                    new CalcResultSummaryProducerDisposalFees { ProducerId = "1", ProducerName="Org1", SubsidiaryId = "", BillingInstructionSection = new CalcResultSummaryBillingInstruction() }
                 };
 
             CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation> {
@@ -890,7 +891,7 @@
             ProducerDetail producer = context.ProducerDetail.FirstOrDefault()!;
             IEnumerable<ProducerDetail> producersAndSubsidiaries = context.ProducerDetail;
             List<CalcResultSummaryProducerDisposalFees> producerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> {
-                    new CalcResultSummaryProducerDisposalFees { ProducerId = "2", ProducerName="Org1", SubsidiaryId = "" }
+                    new CalcResultSummaryProducerDisposalFees { ProducerId = "2", ProducerName="Org1", SubsidiaryId = "", BillingInstructionSection = new CalcResultSummaryBillingInstruction() }
                 };
 
             CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation> {

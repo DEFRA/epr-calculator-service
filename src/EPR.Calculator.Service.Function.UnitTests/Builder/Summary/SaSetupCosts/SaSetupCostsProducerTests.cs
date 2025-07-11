@@ -301,6 +301,7 @@
                             TotalProducerCommsFeeWithBadDebtProvision =100,
                             SubsidiaryId ="1",
                             ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 1,
+                            BillingInstructionSection = new CalcResultSummaryBillingInstruction()
                         },
                     },
                 },
@@ -410,9 +411,9 @@
             Assert.AreEqual(100, _calcResult.CalcResultSummary.SaSetupCostsTitleSection5);
             Assert.AreEqual(6, _calcResult.CalcResultSummary.SaSetupCostsBadDebtProvisionTitleSection5);
             Assert.AreEqual(106, _calcResult.CalcResultSummary.SaSetupCostsWithBadDebtProvisionTitleSection5);
-            Assert.AreEqual(1, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].TotalProducerFeeWithoutBadDebtProvisionSection5);
-            Assert.AreEqual(0.06m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BadDebtProvisionSection5);
-            Assert.AreEqual(1.06m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].TotalProducerFeeWithBadDebtProvisionSection5);
+            Assert.AreEqual(1, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].OneOffSchemeAdministrationSetupCosts!.TotalProducerFeeWithoutBadDebtProvision);
+            Assert.AreEqual(0.06m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].OneOffSchemeAdministrationSetupCosts!.BadDebtProvision);
+            Assert.AreEqual(1.06m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].OneOffSchemeAdministrationSetupCosts!.TotalProducerFeeWithBadDebtProvision);
 
         }
 
@@ -422,7 +423,7 @@
         {
             SaSetupCostsProducer.GetProducerSetUpCosts(_calcResult, _calcResult.CalcResultSummary);
             // Act
-            var result = SaSetupCostsProducer.GetCountryTotalWithBadDebtProvision(_calcResult, _calcResult.CalcResultSummary.SaSetupCostsTitleSection5, SaSetupCostsSummary.GetSetUpBadDebtProvision(_calcResult), _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.England);
+            var result = SaSetupCostsProducer.GetCountryTotalWithBadDebtProvision(_calcResult, _calcResult.CalcResultSummary.SaSetupCostsTitleSection5, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.England);
 
             // Assert
             Assert.AreEqual(0.15m, Math.Round(result, 2));
@@ -434,7 +435,7 @@
             SaSetupCostsProducer.GetProducerSetUpCosts(_calcResult, _calcResult.CalcResultSummary);
 
             // Act
-            var result = SaSetupCostsProducer.GetCountryTotalWithBadDebtProvision(_calcResult, _calcResult.CalcResultSummary.SaSetupCostsTitleSection5, SaSetupCostsSummary.GetSetUpBadDebtProvision(_calcResult), _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.Scotland);
+            var result = SaSetupCostsProducer.GetCountryTotalWithBadDebtProvision(_calcResult, _calcResult.CalcResultSummary.SaSetupCostsTitleSection5, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.Scotland);
 
             // Assert
             Assert.AreEqual(0.01m, Math.Round(result, 2));
@@ -447,7 +448,7 @@
             SaSetupCostsProducer.GetProducerSetUpCosts(_calcResult, _calcResult.CalcResultSummary);
 
             // Act
-            var result = SaSetupCostsProducer.GetCountryTotalWithBadDebtProvision(_calcResult, _calcResult.CalcResultSummary.SaSetupCostsTitleSection5, SaSetupCostsSummary.GetSetUpBadDebtProvision(_calcResult), _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.Wales);
+            var result = SaSetupCostsProducer.GetCountryTotalWithBadDebtProvision(_calcResult, _calcResult.CalcResultSummary.SaSetupCostsTitleSection5, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.Wales);
 
             // Assert
             Assert.AreEqual(0.21m, Math.Round(result, 2));

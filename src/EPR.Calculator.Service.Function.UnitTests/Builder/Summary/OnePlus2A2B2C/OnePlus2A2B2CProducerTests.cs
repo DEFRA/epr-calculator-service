@@ -245,6 +245,7 @@
                             TotalProducerFeeforCommsCostsbyMaterialwithBadDebtprovision = 10,
                             TotalProducerFeeWithBadDebtFor2bComms = 10,
                             TwoCTotalProducerFeeForCommsCostsWithBadDebt = 10,
+                            BillingInstructionSection = new CalcResultSummaryBillingInstruction()
                         },
                     },
                     TotalFeeforLADisposalCostswithBadDebtprovision1 = 100,

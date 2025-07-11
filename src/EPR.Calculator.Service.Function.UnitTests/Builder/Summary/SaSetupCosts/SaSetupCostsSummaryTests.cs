@@ -206,17 +206,19 @@
                 CalcResultParameterCommunicationCost = Fixture.Create<CalcResultParameterCommunicationCost>(),
                 CalcResultSummary = new CalcResultSummary
                 {
-                    ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>() { new()
-                {
-                     ProducerCommsFeesByMaterial =  new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>(){ },
-                      ProducerDisposalFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>(){ },
-                       ProducerId ="1",
-                        ProducerName ="Test",
-                     TotalProducerDisposalFeeWithBadDebtProvision =100,
-                     TotalProducerCommsFeeWithBadDebtProvision =100,
-                      SubsidiaryId ="1",
-
-                } }
+                    ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>() {
+                        new()
+                        {
+                            ProducerCommsFeesByMaterial =  new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>(){ },
+                            ProducerDisposalFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>(){ },
+                            ProducerId ="1",
+                            ProducerName ="Test",
+                            TotalProducerDisposalFeeWithBadDebtProvision =100,
+                            TotalProducerCommsFeeWithBadDebtProvision =100,
+                            SubsidiaryId ="1",
+                            BillingInstructionSection = new CalcResultSummaryBillingInstruction()
+                        }
+                    }
                 },
                 CalcResultCommsCostReportDetail = new CalcResultCommsCost()
                 {

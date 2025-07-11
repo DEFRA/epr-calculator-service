@@ -11,18 +11,20 @@ namespace EPR.Calculator.Service.Function.Mapper
     {
         public CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts Map(CalcResultSummaryProducerDisposalFees fees)
         {
+            var billingInstruction = fees.BillingInstructionSection;
+
             return new CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts
             {
-                CurrentYearInvoicedTotalToDate = GetFormattedCurrencyValue(fees.CurrentYearInvoiceTotalToDate!),
-                TonnageChangeSinceLastInvoice = fees.TonnageChangeSinceLastInvoice ?? string.Empty,
-                LiabilityDifferenceCalcVsPrev = GetFormattedCurrencyValue(fees.LiabilityDifference!),
-                MaterialThresholdBreached = fees.MaterialThresholdBreached ?? string.Empty,
-                TonnageThresholdBreached = fees.TonnageThresholdBreached ?? string.Empty,
-                PercentageLiabilityDifferenceCalcVsPrev = GetPercentageLiabilityDifference(fees.PercentageLiabilityDifference!),
-                MaterialPercentageThresholdBreached = fees.MaterialPercentageThresholdBreached ?? string.Empty,
-                TonnagePercentageThresholdBreached = fees.TonnagePercentageThresholdBreached ?? string.Empty,
-                SuggestedBillingInstruction = fees.SuggestedBillingInstruction ?? string.Empty,
-                SuggestedInvoiceAmount = GetFormattedCurrencyValue(fees.SuggestedInvoiceAmount!)
+                CurrentYearInvoicedTotalToDate =  GetFormattedCurrencyValue(billingInstruction?.CurrentYearInvoiceTotalToDate!),
+                TonnageChangeSinceLastInvoice = billingInstruction?.TonnageChangeSinceLastInvoice ?? string.Empty,
+                LiabilityDifferenceCalcVsPrev = GetFormattedCurrencyValue(billingInstruction?.LiabilityDifference!),
+                MaterialThresholdBreached = billingInstruction?.MaterialThresholdBreached ?? string.Empty,
+                TonnageThresholdBreached = billingInstruction?.TonnageThresholdBreached ?? string.Empty,
+                PercentageLiabilityDifferenceCalcVsPrev = GetPercentageLiabilityDifference(billingInstruction?.PercentageLiabilityDifference!),
+                MaterialPercentageThresholdBreached = billingInstruction?.MaterialPercentageThresholdBreached ?? string.Empty,
+                TonnagePercentageThresholdBreached = billingInstruction?.TonnagePercentageThresholdBreached ?? string.Empty,
+                SuggestedBillingInstruction = billingInstruction?.SuggestedBillingInstruction ?? string.Empty,
+                SuggestedInvoiceAmount = GetFormattedCurrencyValue(billingInstruction?.SuggestedInvoiceAmount!)
             };
         }
 
