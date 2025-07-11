@@ -32,7 +32,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
     {
         private readonly ApplicationDBContext context;
 
-        public static IEnumerable<CalcResultScaledupProducer>? ScaledupProducers { get; set; }
+        public static IEnumerable<CalcResultScaledupProducer> ScaledupProducers { get; set; } = [];
 
         public static IEnumerable<ScaledupOrganisation> ParentOrganisations { get; set; } = [];
 
@@ -49,7 +49,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             var materialsFromDb = await this.context.Material.ToListAsync();
             var materials = Mappers.MaterialMapper.Map(materialsFromDb);
 
-            ScaledupProducers = calcResult.CalcResultScaledupProducers.ScaledupProducers;
+            ScaledupProducers = calcResult.CalcResultScaledupProducers.ScaledupProducers ?? [];
 
             var runProducerMaterialDetails = await (from pd in this.context.ProducerDetail
                                                     join prm in this.context.ProducerReportedMaterial on pd.Id equals prm.ProducerDetailId
@@ -196,7 +196,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             IEnumerable<TotalPackagingTonnagePerRun> totalPackagingTonnage)
         {
             var materialCosts = GetMaterialCosts(producersAndSubsidiaries, producerDisposalFees, materials, calcResult, isOverAllTotalRow);
-            var communicationCosts = GetCommunicationCosts(producersAndSubsidiaries, producerDisposalFees, materials, calcResult, isOverAllTotalRow);
+            var communicationCosts = GetCommunicationCosts(producersAndSubsidiaries, materials, calcResult);
 
             var producerForTotalRow = GetProducerDetailsForTotalRow(producersAndSubsidiaries[0].ProducerId, isOverAllTotalRow);
             const int overallTotalId = 0;
@@ -306,10 +306,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
         private Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> GetCommunicationCosts(
             IEnumerable<ProducerDetail> producersAndSubsidiaries,
-            IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
             IEnumerable<MaterialDetail> materials,
-            CalcResult calcResult,
-            bool isOverAllTotalRow)
+            CalcResult calcResult)
         {
             var communicationCosts = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>();
 
