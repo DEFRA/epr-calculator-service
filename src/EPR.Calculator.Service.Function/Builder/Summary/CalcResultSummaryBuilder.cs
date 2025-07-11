@@ -196,7 +196,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             IEnumerable<TotalPackagingTonnagePerRun> totalPackagingTonnage)
         {
             var materialCosts = GetMaterialCosts(producersAndSubsidiaries, producerDisposalFees, materials, calcResult, isOverAllTotalRow);
-            var communicationCosts = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>();
+            var communicationCosts = GetCommunicationCosts(producersAndSubsidiaries, producerDisposalFees, materials, calcResult, isOverAllTotalRow);
 
             var producerForTotalRow = GetProducerDetailsForTotalRow(producersAndSubsidiaries[0].ProducerId, isOverAllTotalRow);
             const int overallTotalId = 0;
