@@ -5,6 +5,12 @@
     public interface IStorageService
     {
         Task<string> UploadFileContentAsync(
-            (string FileName, string Content, string RunName, string ContainerName) args);
+            (string FileName,
+             string Content,
+             string RunName,
+             string ContainerName,
+             bool Overwrite
+            )
+            args);
     }
 }

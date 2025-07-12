@@ -45,6 +45,17 @@ namespace EPR.Calculator.Service.Function.Services
                 return false;
             }
 
+            if(!calculatorRun.IsBillingFileGenerating.GetValueOrDefault())
+            {
+                telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = calculatorRunId,
+                    RunName = runName,
+                    Message = PrepareBillingFileConstants.IsBillingFileGeneratingNotSet,
+                });
+                return false;
+            }
+
             var acceptedProducerIds = await applicationDBContext.ProducerResultFileSuggestedBillingInstruction
             .Where(x => x.CalculatorRunId == calculatorRunId
                     &&

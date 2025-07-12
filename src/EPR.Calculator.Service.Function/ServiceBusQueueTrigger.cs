@@ -82,8 +82,7 @@ namespace EPR.Calculator.Service.Function
                     this.telemetryLogger.LogInformation(new TrackMessage { Message = "After Billing File Map" });
                     processStatus = await this.prepareBillingFileService.PrepareBillingFileAsync(billingFileMessage.Id, runName!, billingFileMessage.ApprovedBy);
                 }
-                
-                if (resultMessageType is CreateResultFileMessage resultmessage)
+                else if (resultMessageType is CreateResultFileMessage resultmessage)
                 {
                     var calculatorRunParameter = this.calculatorRunParameterMapper.Map(resultmessage);
                     this.telemetryLogger.LogInformation(new TrackMessage { Message = $"Process is going start with message type: {calculatorRunParameter.MessageType}" });

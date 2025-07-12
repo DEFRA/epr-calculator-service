@@ -3,6 +3,7 @@
     using System;
     using System.Threading;
     using System.Threading.Tasks;
+    using Azure.Storage.Blobs.Models;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.API.Exporter;
@@ -38,6 +39,10 @@
         }
 
         public const string ContainerNameMissingError = "Container name is missing in configuration.";
+
+        private const bool OverwriteJsonFile = true;
+
+        private const bool OverwriteCsvFile = false;
 
         private readonly ICalculatorTelemetryLogger telemetryLogger;
 
@@ -148,7 +153,8 @@
                     (FileName: fileName,
                     Content: exportedResults,
                     RunName: runName,
-                    ContainerName: containerName));
+                    ContainerName: containerName,
+                    Overwrite: OverwriteCsvFile));
 
                 this.telemetryLogger.LogInformation(new TrackMessage
                 {
@@ -285,7 +291,8 @@
                  FileName: billingFileCsvName,
                  Content: exportedResults,
                  RunName: runName,
-                 ContainerName: ConfigService.BillingFileCSVBlobContainerName));
+                 ContainerName: ConfigService.BillingFileCSVBlobContainerName,
+                 Overwrite: OverwriteCsvFile));
 
             this.telemetryLogger.LogInformation(new TrackMessage
             {
@@ -307,7 +314,8 @@
                 FileName: billingFileJsonName,
                 Content: jsonResponse,
                 RunName: runName,
-                ContainerName: ConfigService.BillingFileJsonBlobContainerName));
+                ContainerName: ConfigService.BillingFileJsonBlobContainerName,
+                Overwrite: OverwriteJsonFile));
 
             this.telemetryLogger.LogInformation(new TrackMessage
             {
