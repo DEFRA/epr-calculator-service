@@ -15,6 +15,7 @@
                 CalcResultDetail = GetCalcResultDetail(),
                 CalcResultLapcapData = GetCalcResultLapcapData(),
                 CalcResultLateReportingTonnageData = GetCalcResultLateReportingTonnage(),
+                CalcResultSummary = GetCalcResultSummary()
             };
         }
 
@@ -649,9 +650,28 @@
         {
             return new CalcResultSummary
             {
+                TotalFeeforLADisposalCostswoBadDebtprovision1 = 4423.39438M,
                 BadDebtProvisionFor1 = 6021.3677166M,
+                TotalFeeforLADisposalCostswithBadDebtprovision1 = 4688.7980428M,
+                TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A = 1290.778M,
                 BadDebtProvisionFor2A = 2098.887360M,
+                TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A = 1368.22468M,
+                SaOperatingCostsWoTitleSection3 = 3077.2243678810364M,
                 BadDebtProvisionTitleSection3 = 3900.000000M,
+                SaOperatingCostsWithTitleSection3 = 3261.8578299538985M,
+                LaDataPrepCostsTitleSection4 = 1727.9798373485821M,
+                LaDataPrepCostsBadDebtProvisionTitleSection4 = 103.67879024091492M,
+                LaDataPrepCostsWithBadDebtProvisionTitleSection4 = 1831.658627589497M,
+                SaSetupCostsTitleSection5 = 17500.00M,
+                SaSetupCostsBadDebtProvisionTitleSection5 = 1050.00M,
+                SaSetupCostsWithBadDebtProvisionTitleSection5 = 18550.00M,
+                TwoCCommsCostsByCountryWithoutBadDebtProvision = 1339.100071422903M,
+                TwoCBadDebtProvision = 80.34600428537418M,
+                TwoCCommsCostsByCountryWithBadDebtProvision = 1419.446075708277M,
+                CommsCostHeaderWithoutBadDebtFor2bTitle = 1339.100071422903M,
+                CommsCostHeaderWithBadDebtFor2bTitle = 1419.446075708277M,
+                CommsCostHeaderBadDebtProvisionFor2bTitle = 80.34600428537418M,
+                TotalOnePlus2A2B2CFeeWithBadDebtProvision = 10230.2550766M,
                 ProducerDisposalFees = GetProducerDisposalFees(),
             };
         }
@@ -682,20 +702,26 @@
                     WalesTotalComms = 181.2690740598454m,
                     ScotlandTotalComms = 332.8499847265775m,
                     NorthernIrelandTotalComms = 135.88043969809883m,
-                    TotalProducerFeeforLADisposalCostswoBadDebtprovision = 4423.39438m,
-                    BadDebtProvisionFor1 = 265.4036628m,
-                    TotalProducerFeeforLADisposalCostswithBadDebtprovision = 4688.7980428m,
-                    EnglandTotalWithBadDebtProvision = 2534.2359097426884m,
-                    WalesTotalWithBadDebtProvision = 571.2417008090152m,
-                    ScotlandTotalWithBadDebtProvision = 1137.8673076088023m,
-                    NorthernIrelandTotalWithBadDebtProvision = 445.4531246394942m,
-                    TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision = 1290.778m,
-                    BadDebtProvisionFor2A = 77.44668m,
-                    TotalProducerFeeforCommsCostsbyMaterialwithBadDebtprovision = 1368.22468m,
-                    EnglandTotalWithBadDebtProvision2A = 718.2251815154783m,
-                    WalesTotalWithBadDebtProvision2A = 181.2690740598454m,
-                    ScotlandTotalWithBadDebtProvision2A = 332.8499847265775m,
-                    NorthernIrelandTotalWithBadDebtProvision2A = 135.88043969809883m,
+                    LocalAuthorityDisposalCostsSectionOne = new CalcResultSummaryBadDebtProvision
+                    {
+                        TotalProducerFeeWithoutBadDebtProvision = 4423.39438m,
+                        BadDebtProvision = 265.4036628m,
+                        TotalProducerFeeWithBadDebtProvision = 4688.7980428m,
+                        EnglandTotalWithBadDebtProvision = 2534.2359097426884m,
+                        WalesTotalWithBadDebtProvision = 571.2417008090152m,
+                        ScotlandTotalWithBadDebtProvision = 1137.8673076088023m,
+                        NorthernIrelandTotalWithBadDebtProvision = 445.4531246394942m
+                    },
+                    CommunicationCostsSectionTwoA = new CalcResultSummaryBadDebtProvision
+                    {
+                        TotalProducerFeeWithoutBadDebtProvision = 1290.778m,
+                        BadDebtProvision = 77.44668m,
+                        TotalProducerFeeWithBadDebtProvision = 1368.22468m,
+                        EnglandTotalWithBadDebtProvision = 718.2251815154783m,
+                        WalesTotalWithBadDebtProvision = 181.2690740598454m,
+                        ScotlandTotalWithBadDebtProvision = 332.8499847265775m,
+                        NorthernIrelandTotalWithBadDebtProvision = 135.88043969809883m
+                    },
                     TwoCTotalProducerFeeForCommsCostsWithoutBadDebt = 1339.100071422903m,
                     TwoCBadDebtProvision = 80.34600428537418m,
                     TwoCTotalProducerFeeForCommsCostsWithBadDebt = 1419.446075708277m,
@@ -706,41 +732,69 @@
                     PercentageofProducerReportedTonnagevsAllProducers = 5.6741528450123m,
                     ProducerTotalOnePlus2A2B2CWithBadDeptProvision = 10491.167766844124m,
                     ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 4.7341913352015945m,
-                    Total3SAOperatingCostwoBadDebtprovision = 3077.2243678810364m,
-                    BadDebtProvisionFor3 = 184.6334620728622m,
-                    Total3SAOperatingCostswithBadDebtprovision = 3261.8578299538985m,
-                    EnglandTotalWithBadDebtProvision3 = 1712.2541832180282m,
-                    WalesTotalWithBadDebtProvision3 = 432.1468228710047m,
-                    ScotlandTotalWithBadDebtProvision3 = 793.5168432560496m,
-                    NorthernIrelandTotalWithBadDebtProvision3 = 323.93998060881614m,
-                    LaDataPrepCostsTotalWithoutBadDebtProvisionSection4 = 1727.9798373485821m,
-                    LaDataPrepCostsBadDebtProvisionSection4 = 103.67879024091492m,
-                    LaDataPrepCostsTotalWithBadDebtProvisionSection4 = 1831.658627589497m,
-                    LaDataPrepCostsEnglandTotalWithBadDebtProvisionSection4 = 802.9188504501905m,
-                    LaDataPrepCostsWalesTotalWithBadDebtProvisionSection4 = 351.2769970719583m,
-                    LaDataPrepCostsScotlandTotalWithBadDebtProvisionSection4 = 451.6418533782321m,
-                    LaDataPrepCostsNorthernIrelandTotalWithBadDebtProvisionSection4 = 225.82092668911605m,
-                    TotalProducerFeeWithoutBadDebtProvisionSection5 = 2970.7050628390007m,
-                    BadDebtProvisionSection5 = 178.24230377034004m,
-                    TotalProducerFeeWithBadDebtProvisionSection5 = 3148.947366609341m,
-                    EnglandTotalWithBadDebtProvisionSection5 = 1652.983846106635m,
-                    WalesTotalWithBadDebtProvisionSection5 = 417.1878943870084m,
-                    ScotlandTotalWithBadDebtProvisionSection5 = 766.0489525279556m,
-                    NorthernIrelandTotalWithBadDebtProvisionSection5 = 312.72667358774174m,
-                    TotalProducerFeeWithoutBadDebtFor2bComms = 2844.0556305055156m,
-                    BadDebtProvisionFor2bComms = 170.64333783033092m,
-                    TotalProducerFeeWithBadDebtFor2bComms = 3014.6989683358465m,
-                    EnglandTotalWithBadDebtFor2bComms = 1582.5125400804336m,
-                    WalesTotalWithBadDebtFor2bComms = 399.4020123649648m,
-                    ScotlandTotalWithBadDebtFor2bComms = 733.3901516568284m,
-                    NorthernIrelandTotalWithBadDebtFor2bComms = 299.39426423361965m,
-                    TotalProducerBillWithoutBadDebtProvision = 9897.32808192842m,
-                    BadDebtProvisionForTotalProducerBill = 593.8396849157051m,
-                    TotalProducerBillWithBadDebtProvision = 10491.167766844124m,
-                    EnglandTotalWithBadDebtProvisionTotalBill = 5442.448434925617m,
-                    WalesTotalWithBadDebtProvisionTotalBill = 1452.6428880194774m,
-                    ScotlandTotalWithBadDebtProvisionTotalBill = 2564.98356493499m,
-                    NorthernIrelandTotalWithBadDebtProvisionTotalBill = 1031.0928789640386m,
+                    SchemeAdministratorOperatingCostsSection = new CalcResultSummaryBadDebtProvision
+                    {
+                        TotalProducerFeeWithoutBadDebtProvision = 3077.2243678810364m,
+                        BadDebtProvision = 184.6334620728622m,
+                        TotalProducerFeeWithBadDebtProvision = 3261.8578299538985m,
+                        EnglandTotalWithBadDebtProvision = 1712.2541832180282m,
+                        WalesTotalWithBadDebtProvision = 432.1468228710047m,
+                        ScotlandTotalWithBadDebtProvision = 793.5168432560496m,
+                        NorthernIrelandTotalWithBadDebtProvision = 323.93998060881614m
+                    },
+                    LocalAuthorityDataPreparationCosts = new CalcResultSummaryBadDebtProvision
+                    {
+                        TotalProducerFeeWithoutBadDebtProvision = 1727.9798373485821m,
+                        BadDebtProvision = 103.67879024091492m,
+                        TotalProducerFeeWithBadDebtProvision = 1831.658627589497m,
+                        EnglandTotalWithBadDebtProvision = 802.9188504501905m,
+                        WalesTotalWithBadDebtProvision = 351.2769970719583m,
+                        ScotlandTotalWithBadDebtProvision = 451.6418533782321m,
+                        NorthernIrelandTotalWithBadDebtProvision = 225.82092668911605m
+                    },
+                    OneOffSchemeAdministrationSetupCosts = new CalcResultSummaryBadDebtProvision
+                    {
+                        TotalProducerFeeWithoutBadDebtProvision = 2970.7050628390007m,
+                        BadDebtProvision = 178.24230377034004m,
+                        TotalProducerFeeWithBadDebtProvision = 3148.947366609341m,
+                        EnglandTotalWithBadDebtProvision = 1652.983846106635m,
+                        WalesTotalWithBadDebtProvision = 417.1878943870084m,
+                        ScotlandTotalWithBadDebtProvision = 766.0489525279556m,
+                        NorthernIrelandTotalWithBadDebtProvision = 312.72667358774174m
+                    },
+                    TotalProducerBillBreakdownSection = new CalcResultSummaryBadDebtProvision
+                    {
+                        TotalProducerFeeWithoutBadDebtProvision = 9897.32808192842m,
+                        BadDebtProvision = 593.8396849157051m,
+                        TotalProducerFeeWithBadDebtProvision = 10491.167766844124m,
+                        EnglandTotalWithBadDebtProvision = 5442.448434925617m,
+                        WalesTotalWithBadDebtProvision = 1452.6428880194774m,
+                        ScotlandTotalWithBadDebtProvision = 2564.98356493499m,
+                        NorthernIrelandTotalWithBadDebtProvision = 1031.0928789640386m
+                    },
+                    BillingInstructionSection = new CalcResultSummaryBillingInstruction
+                    {
+                        CurrentYearInvoiceTotalToDate = "1250.89",
+                        TonnageChangeSinceLastInvoice = string.Empty,
+                        LiabilityDifference = "580.73",
+                        MaterialThresholdBreached = string.Empty,
+                        TonnageThresholdBreached = string.Empty,
+                        PercentageLiabilityDifference = string.Empty,
+                        MaterialPercentageThresholdBreached = string.Empty,
+                        TonnagePercentageThresholdBreached = string.Empty,
+                        SuggestedBillingInstruction = string.Empty,
+                        SuggestedInvoiceAmount = "4039"
+                    },
+                    CommunicationCostsSectionTwoB = new CalcResultSummaryBadDebtProvision
+                    {
+                        TotalProducerFeeWithoutBadDebtProvision = 2844.0556305055156m,
+                        BadDebtProvision = 170.64333783033092m,
+                        TotalProducerFeeWithBadDebtProvision = 3014.6989683358465m,
+                        EnglandTotalWithBadDebtProvision = 1582.5125400804336m,
+                        WalesTotalWithBadDebtProvision = 399.4020123649648m,
+                        ScotlandTotalWithBadDebtProvision = 733.3901516568284m,
+                        NorthernIrelandTotalWithBadDebtProvision = 299.39426423361965m
+                    },
                     ProducerDisposalFeesByMaterial = GetProducerDisposalFeesByMaterial(),
                     ProducerCommsFeesByMaterial = GetProducerCommsFeesByMaterial(),
                     TonnageChangeCount = "0",
