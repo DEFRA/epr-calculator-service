@@ -44,7 +44,8 @@
             ArgumentException.ThrowIfNullOrWhiteSpace(runName);
             var truncatedRunName = string.Join(string.Empty, runName.Take(MaxRunNameLength));
             var filePart = isDraftBillingFile ? "Billing" : "Results";
-            var name = $"{runId}-{truncatedRunName}_{filePart} File_{timeStamp:yyyyMMdd}";
+            var timeOrDatePart = isDraftBillingFile ? $"{timeStamp:yyyyMMddHHmm}" : $"{timeStamp:yyyyMMdd}";
+            var name = $"{runId}-{truncatedRunName}_{filePart} File_{timeOrDatePart}";
             Value = Path.ChangeExtension(name, CsvFileExtension);
         }
 
