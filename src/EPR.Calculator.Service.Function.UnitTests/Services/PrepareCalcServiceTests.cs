@@ -158,13 +158,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var runName = fixture.Create<string>();
 
             this._storageService.Setup(x => x.UploadFileContentAsync(
-                It.IsAny<(string, string, string, string)>()))
+                It.IsAny<(string, string, string, string, bool)>()))
                 .ReturnsAsync("expected result");
             // Act
             var result = await this._testClass.PrepareCalcResults(resultsRequestDto, runName, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(true, result);
+
+            _storageService.Verify(x => x.UploadFileContentAsync(
+                It.Is<(string, string, string, string, bool)>(y => y.Item5 == false)), Times.Once);
         }
 
         [TestMethod]
@@ -254,7 +257,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this._jsonExporter.Setup(t => t.Export(It.IsAny<CalcResult>(), It.IsAny<List<int>>())).Returns(fixture.Create<string>());
             this._billingFileExporter.Setup(t => t.Export(It.IsAny<CalcResult>(), It.IsAny<List<int>>())).Returns(fixture.Create<string>());
             this._storageService.Setup(x => x.UploadFileContentAsync(
-               It.IsAny<(string, string, string, string)>()))
+               It.IsAny<(string, string, string, string, bool)>()))
                .ReturnsAsync("fileName");
 
             var calcResultsRequestDto = new CalcResultsRequestDto
@@ -279,8 +282,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.IsNotNull(billingFileMetaData);
 
             billingFileMetaData.BillingFileCreatedBy = "Test User 234";
-            Assert.AreEqual($"1-TestRun_Billing File_{DateTime.Today:yyyyMMdd}.csv", billingFileMetaData.BillingCsvFileName);
+            var fileNamePart = $"1-TestRun_Billing File_{DateTime.Today:yyyyMMdd}";
+            Assert.IsTrue(billingFileMetaData.BillingCsvFileName?.StartsWith(fileNamePart));
             Assert.AreEqual("1billing.json", billingFileMetaData.BillingJsonFileName);
+
+            _storageService.Verify(x => x.UploadFileContentAsync(
+                It.Is<(string, string, string, string, bool)>(y => y.Item1 != null)), Times.Exactly(2));
+
+            _storageService.Verify(x => x.UploadFileContentAsync(
+                It.Is<(string, string, string, string, bool)>(y => y.Item5 == false)), Times.Once);
+
+            _storageService.Verify(x => x.UploadFileContentAsync(
+                It.Is<(string, string, string, string, bool)>(y => y.Item5 == true)), Times.Once);
 
         }
 
