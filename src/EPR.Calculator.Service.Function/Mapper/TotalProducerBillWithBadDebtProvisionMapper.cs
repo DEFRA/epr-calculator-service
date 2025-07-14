@@ -7,7 +7,7 @@ namespace EPR.Calculator.Service.Function.Mapper
     {
         public TotalProducerBillWithBadDebtProvision Map(CalcResultSummaryProducerDisposalFees calcResultSummaryProducerDisposalFees)
         {
-            var costs = calcResultSummaryProducerDisposalFees.TotalProducerBillBreakdownSection;
+            var costs = calcResultSummaryProducerDisposalFees.TotalProducerBillBreakdownCosts;
             return new TotalProducerBillWithBadDebtProvision
             {
                 TotalProducerBillWithoutBadDebtProvision = CurrencyConverter.ConvertToCurrency(costs.TotalProducerFeeWithoutBadDebtProvision),

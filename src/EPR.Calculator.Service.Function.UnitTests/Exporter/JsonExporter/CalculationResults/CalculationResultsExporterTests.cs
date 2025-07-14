@@ -281,13 +281,13 @@
             var producer = data.ProducerDisposalFees.SingleOrDefault(t => !string.IsNullOrEmpty(t.Level));
             Assert.IsNotNull(producer);
             Assert.IsNotNull(threeSACosts);
-            AssertAreEqual(producer.SchemeAdministratorOperatingCostsSection.NorthernIrelandTotalWithBadDebtProvision, threeSACosts["NorthernIrelandTotalForSAOperatingCostsWithBadDebtProvision"]!);
-            AssertAreEqual(producer.SchemeAdministratorOperatingCostsSection.ScotlandTotalWithBadDebtProvision, threeSACosts["ScotlandTotalForSAOperatingCostsWithBadDebtProvision"]!);
-            AssertAreEqual(producer.SchemeAdministratorOperatingCostsSection.WalesTotalWithBadDebtProvision, threeSACosts["WalesTotalForSAOperatingCostsWithBadDebtProvision"]!);
-            AssertAreEqual(producer.SchemeAdministratorOperatingCostsSection.EnglandTotalWithBadDebtProvision, threeSACosts["EnglandTotalForSAOperatingCostsWithBadDebtProvision"]!);
-            AssertAreEqual(producer.SchemeAdministratorOperatingCostsSection.TotalProducerFeeWithBadDebtProvision, threeSACosts["TotalProducerFeeForSAOperatingCosts_1_2a_2b_2c_WithBadDebtProvision"]!);
-            AssertAreEqual(producer.SchemeAdministratorOperatingCostsSection.TotalProducerFeeWithoutBadDebtProvision, threeSACosts["TotalProducerFeeForSAOperatingCosts_1_2a_2b_2c_WithoutBadDebtProvision"]!);
-            AssertAreEqual(producer.SchemeAdministratorOperatingCostsSection.BadDebtProvision, threeSACosts["BadDebProvisionFor3"]!);
+            AssertAreEqual(producer.SchemeAdministratorOperatingCosts.NorthernIrelandTotalWithBadDebtProvision, threeSACosts["NorthernIrelandTotalForSAOperatingCostsWithBadDebtProvision"]!);
+            AssertAreEqual(producer.SchemeAdministratorOperatingCosts.ScotlandTotalWithBadDebtProvision, threeSACosts["ScotlandTotalForSAOperatingCostsWithBadDebtProvision"]!);
+            AssertAreEqual(producer.SchemeAdministratorOperatingCosts.WalesTotalWithBadDebtProvision, threeSACosts["WalesTotalForSAOperatingCostsWithBadDebtProvision"]!);
+            AssertAreEqual(producer.SchemeAdministratorOperatingCosts.EnglandTotalWithBadDebtProvision, threeSACosts["EnglandTotalForSAOperatingCostsWithBadDebtProvision"]!);
+            AssertAreEqual(producer.SchemeAdministratorOperatingCosts.TotalProducerFeeWithBadDebtProvision, threeSACosts["TotalProducerFeeForSAOperatingCosts_1_2a_2b_2c_WithBadDebtProvision"]!);
+            AssertAreEqual(producer.SchemeAdministratorOperatingCosts.TotalProducerFeeWithoutBadDebtProvision, threeSACosts["TotalProducerFeeForSAOperatingCosts_1_2a_2b_2c_WithoutBadDebtProvision"]!);
+            AssertAreEqual(producer.SchemeAdministratorOperatingCosts.BadDebtProvision, threeSACosts["BadDebProvisionFor3"]!);
         }
 
         /// <summary>

@@ -13,7 +13,7 @@ namespace EPR.Calculator.Service.Function.Mapper
     {
         public CalcResultSAOperatingCostsWithBadDebtProvision Map(CalcResultSummaryProducerDisposalFees calcResultSummaryProducerDisposalFees)
         {
-            var costs = calcResultSummaryProducerDisposalFees.SchemeAdministratorOperatingCostsSection;
+            var costs = calcResultSummaryProducerDisposalFees.SchemeAdministratorOperatingCosts;
             return new CalcResultSAOperatingCostsWithBadDebtProvision
             {
                 TotalProducerFeeForSAOperatingCosts_1_2a_2b_2c_WithoutBadDebtProvision = CurrencyConverter.ConvertToCurrency(costs.TotalProducerFeeWithoutBadDebtProvision),

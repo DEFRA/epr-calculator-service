@@ -127,11 +127,11 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
         {
             if (fee.IsProducerScaledup == CommonConstants.Totals)
             {
-                return fee.TotalProducerBillBreakdownSection.TotalProducerFeeWithBadDebtProvision.ToString();
+                return fee.TotalProducerBillBreakdownCosts.TotalProducerFeeWithBadDebtProvision.ToString();
             }
 
             return fee.Level == CommonConstants.LevelOne.ToString()
-                ? fee.TotalProducerBillBreakdownSection.TotalProducerFeeWithBadDebtProvision.ToString()
+                ? fee.TotalProducerBillBreakdownCosts.TotalProducerFeeWithBadDebtProvision.ToString()
                 : CommonConstants.Hyphen;
         }
     }

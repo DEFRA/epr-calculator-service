@@ -59,7 +59,7 @@
             csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerTotalOnePlus2A2B2CWithBadDeptProvision, DecimalPlaces.Two, null, true));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, DecimalPlaces.Eight, null, false, true));
 
-            AddSectionContent(csvContent, producer.SchemeAdministratorOperatingCostsSection);
+            AddSectionContent(csvContent, producer.SchemeAdministratorOperatingCosts);
 
             // Local authority data preparation costs section 4
             AddSectionContent(csvContent, producer.LocalAuthorityDataPreparationCosts);
@@ -68,7 +68,7 @@
             AddSectionContent(csvContent, producer.OneOffSchemeAdministrationSetupCosts);
 
             // Total producer bill breakdown section
-            AddSectionContent(csvContent, producer.TotalProducerBillBreakdownSection);
+            AddSectionContent(csvContent, producer.TotalProducerBillBreakdownCosts);
 
             // Billing instructions section
             AddBillingInstructionsSection(csvContent, producer);

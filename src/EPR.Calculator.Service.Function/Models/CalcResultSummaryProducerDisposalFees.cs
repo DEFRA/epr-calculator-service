@@ -46,21 +46,21 @@ namespace EPR.Calculator.Service.Function.Models
 
         public decimal NorthernIrelandTotalComms { get; set; }
 
-        public CalcResultSummaryBadDebtProvision LocalAuthorityDisposalCostsSectionOne { get; set; }
+        public CalcResultSummaryBadDebtProvision? LocalAuthorityDisposalCostsSectionOne { get; set; }
 
-        public CalcResultSummaryBadDebtProvision CommunicationCostsSectionTwoA { get; set; }
+        public CalcResultSummaryBadDebtProvision? CommunicationCostsSectionTwoA { get; set; }
 
         public CalcResultSummaryBadDebtProvision? CommunicationCostsSectionTwoB { get; set; }
 
         public CalcResultSummaryBadDebtProvision? CommunicationCostsSectionTwoC { get; set; }
 
-        public CalcResultSummaryBadDebtProvision? SchemeAdministratorOperatingCostsSection { get; set; }
+        public CalcResultSummaryBadDebtProvision? SchemeAdministratorOperatingCosts { get; set; }
 
         public CalcResultSummaryBadDebtProvision? LocalAuthorityDataPreparationCosts { get; set; }
 
         public CalcResultSummaryBadDebtProvision? OneOffSchemeAdministrationSetupCosts { get; set; }
 
-        public CalcResultSummaryBadDebtProvision? TotalProducerBillBreakdownSection { get; set; }
+        public CalcResultSummaryBadDebtProvision? TotalProducerBillBreakdownCosts { get; set; }
 
         public decimal TwoCTotalProducerFeeForCommsCostsWithoutBadDebt { get; set; }
         public decimal TwoCBadDebtProvision { get; set; }

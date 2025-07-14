@@ -732,7 +732,7 @@
                     PercentageofProducerReportedTonnagevsAllProducers = 5.6741528450123m,
                     ProducerTotalOnePlus2A2B2CWithBadDeptProvision = 10491.167766844124m,
                     ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 4.7341913352015945m,
-                    SchemeAdministratorOperatingCostsSection = new CalcResultSummaryBadDebtProvision
+                    SchemeAdministratorOperatingCosts = new CalcResultSummaryBadDebtProvision
                     {
                         TotalProducerFeeWithoutBadDebtProvision = 3077.2243678810364m,
                         BadDebtProvision = 184.6334620728622m,
@@ -762,7 +762,7 @@
                         ScotlandTotalWithBadDebtProvision = 766.0489525279556m,
                         NorthernIrelandTotalWithBadDebtProvision = 312.72667358774174m
                     },
-                    TotalProducerBillBreakdownSection = new CalcResultSummaryBadDebtProvision
+                    TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision
                     {
                         TotalProducerFeeWithoutBadDebtProvision = 9897.32808192842m,
                         BadDebtProvision = 593.8396849157051m,

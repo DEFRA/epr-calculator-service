@@ -35,7 +35,7 @@
                 var totalProducerFeeWithoutBadDebtProvision = GetTotalProducerFeeWithoutBadDebtProvision(summary, item);
                 var badDebtProvision = GetBadDebtProvision(calcResult, totalProducerFeeWithoutBadDebtProvision);
 
-                item.SchemeAdministratorOperatingCostsSection = new CalcResultSummaryBadDebtProvision()
+                item.SchemeAdministratorOperatingCosts = new CalcResultSummaryBadDebtProvision()
                 {
                     TotalProducerFeeWithoutBadDebtProvision = totalProducerFeeWithoutBadDebtProvision,
                     BadDebtProvision = badDebtProvision,
