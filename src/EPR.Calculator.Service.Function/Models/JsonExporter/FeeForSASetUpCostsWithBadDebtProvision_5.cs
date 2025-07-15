@@ -1,30 +1,30 @@
 ﻿using EPR.Calculator.Service.Function.Converter;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
     public class FeeForSASetUpCostsWithBadDebtProvision_5
     {
-        [JsonProperty(PropertyName = "totalProducerOneOffFeeForSASetUpCostsWithoutBadDebtProvision")]
+        [JsonPropertyName("totalProducerOneOffFeeForSASetUpCostsWithoutBadDebtProvision")]
         public string? TotalProducerOneOffFeeForSASetUpCostsWithoutBadDebtProvision { get; set; }
 
-        [JsonProperty(PropertyName = "badDebtProvisionFor5")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 2)]
+        [JsonPropertyName("badDebtProvisionFor5")]
+        [JsonConverter(typeof(DecimalPrecision2Converter))]
         public string? BadDebtProvisionFor5 { get; set; }
 
-        [JsonProperty(PropertyName = "totalProducerOneOffFeeForSASetUpCostsWithBadDebtProvision")]
+        [JsonPropertyName("totalProducerOneOffFeeForSASetUpCostsWithBadDebtProvision")]
         public string? TotalProducerOneOffFeeForSASetUpCostsWithBadDebtProvision { get; set; }
 
-        [JsonProperty(PropertyName = "englandTotalForSASetUpCostsWithBadDebtProvision")]
+        [JsonPropertyName("englandTotalForSASetUpCostsWithBadDebtProvision")]
         public string? EnglandTotalForSASetUpCostsWithBadDebtProvision { get; set; }
 
-        [JsonProperty(PropertyName = "walesTotalForSASetUpCostsWithBadDebtProvision")]
+        [JsonPropertyName("walesTotalForSASetUpCostsWithBadDebtProvision")]
         public string? WalesTotalForSASetUpCostsWithBadDebtProvision { get; set; }
 
-        [JsonProperty(PropertyName = "scotlandTotalForSASetUpCostsWithBadDebtProvision")]
+        [JsonPropertyName("scotlandTotalForSASetUpCostsWithBadDebtProvision")]
         public string? ScotlandTotalForSASetUpCostsWithBadDebtProvision { get; set; }
 
-        [JsonProperty(PropertyName = "northernIrelandTotalForSASetUpCostsWithBadDebtProvision")]
+        [JsonPropertyName("northernIrelandTotalForSASetUpCostsWithBadDebtProvision")]
         public string? NorthernIrelandTotalForSASetUpCostsWithBadDebtProvision { get; set; }
     }
 }

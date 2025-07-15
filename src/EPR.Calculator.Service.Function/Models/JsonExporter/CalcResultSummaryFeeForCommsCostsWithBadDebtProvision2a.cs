@@ -1,32 +1,32 @@
 ﻿using EPR.Calculator.Service.Function.Converter;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
     public class CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2a
     {
-        [JsonProperty(PropertyName = "totalProducerFeeForCommsCostsWithoutBadDebtProvision")]
+        [JsonPropertyName("totalProducerFeeForCommsCostsWithoutBadDebtProvision")]
         public string? TotalProducerFeeForCommsCostsWithoutBadDebtProvision { get; set; }
 
-        [JsonProperty(PropertyName = "badDebProvisionFor2a")]
+        [JsonPropertyName("badDebProvisionFor2a")]
         public string? BadDebtProvisionFor2a { get; set; }
 
-        [JsonProperty(PropertyName = "totalProducerFeeForCommsCostsWithBadDebtProvision")]
+        [JsonPropertyName("totalProducerFeeForCommsCostsWithBadDebtProvision")]
         public string? TotalProducerFeeForCommsCostsWithBadDebtProvision { get; set; }
 
-        [JsonProperty(PropertyName = "englandTotalWithBadDebtProvision")]
+        [JsonPropertyName("englandTotalWithBadDebtProvision")]
         public string? EnglandTotalWithBadDebtProvision { get; set; }
 
-        [JsonProperty(PropertyName = "walesTotalWithBadDebtProvision")]
+        [JsonPropertyName("walesTotalWithBadDebtProvision")]
         public string? WalesTotalWithBadDebtProvision { get; set; }
 
-        [JsonProperty(PropertyName = "scotlandTotalWithBadDebtProvision")]
+        [JsonPropertyName("scotlandTotalWithBadDebtProvision")]
         public string? ScotlandTotalWithBadDebtProvision { get; set; }
 
-        [JsonProperty(PropertyName = "northernIrelandTotalWithBadDebtProvision")]
+        [JsonPropertyName("northernIrelandTotalWithBadDebtProvision")]
         public string? NorthernIrelandTotalWithBadDebtProvision { get; set; }
 
-        [JsonProperty(PropertyName = "percentageOfProducerTonnageVsAllProducers")]
+        [JsonPropertyName("percentageOfProducerTonnageVsAllProducers")]
         public string? PercentageOfProducerTonnageVsAllProducers { get; set; }
     }
 }

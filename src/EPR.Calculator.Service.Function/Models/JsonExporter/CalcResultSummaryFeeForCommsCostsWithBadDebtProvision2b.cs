@@ -1,29 +1,29 @@
 ﻿using EPR.Calculator.Service.Function.Converter;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
     public class CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2b
     {
-        [JsonProperty(PropertyName = "totalProducerFeeForCommsCostsUKWideWithoutBadDebtProvision")]
+        [JsonPropertyName("totalProducerFeeForCommsCostsUKWideWithoutBadDebtProvision")]
         public string? TotalProducerFeeForCommsCostsUKWideWithoutBadDebtProvision { get; set; }
 
-        [JsonProperty(PropertyName = "badDebProvisionFor2b")]
+        [JsonPropertyName("badDebProvisionFor2b")]
         public string? BadDebtProvisionFor2b { get; set; }
 
-        [JsonProperty(PropertyName = "totalProducerFeeForCommsCostsUKWideWithBadDebtProvision")]
+        [JsonPropertyName("totalProducerFeeForCommsCostsUKWideWithBadDebtProvision")]
         public string? TotalProducerFeeForCommsCostsUKWideWithBadDebtProvision { get; set; }
 
-        [JsonProperty(PropertyName = "englandTotalWithBadDebtProvision")]
+        [JsonPropertyName("englandTotalWithBadDebtProvision")]
         public string? EnglandTotalWithBadDebtProvision { get; set; }
 
-        [JsonProperty(PropertyName = "walesTotalWithBadDebtProvision")]
+        [JsonPropertyName("walesTotalWithBadDebtProvision")]
         public string? WalesTotalWithBadDebtProvision { get; set; }
 
-        [JsonProperty(PropertyName = "scotlandTotalWithBadDebtProvision")]
+        [JsonPropertyName("scotlandTotalWithBadDebtProvision")]
         public string? ScotlandTotalWithBadDebtProvision { get; set; }
 
-        [JsonProperty(PropertyName = "northernIrelandTotalWithBadDebtProvision")]
+        [JsonPropertyName("northernIrelandTotalWithBadDebtProvision")]
         public string? NorthernIrelandTotalWithBadDebtProvision { get; set; }
     }
 }

@@ -1,88 +1,84 @@
 ﻿using EPR.Calculator.Service.Function.Converter;
-using Newtonsoft.Json;
-using System;
+using System.Text.Json.Serialization;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
     public class CalcResultLaDisposalCostDataJson
     {
-        [JsonProperty(PropertyName = "name")]
+        [JsonPropertyName("name")]
         public required string Name { get; set; }
 
-        [JsonProperty(PropertyName = "calcResultLaDisposalCostDataDetails")]
+        [JsonPropertyName("calcResultLaDisposalCostDataDetails")]
         public required IEnumerable<CalcResultLaDisposalCostDetails> CalcResultLaDisposalCostDetails { get; set; }
 
-        [JsonProperty(PropertyName = "calcResultLaDisposalCostDataDetailsTotal")]
+        [JsonPropertyName("calcResultLaDisposalCostDataDetailsTotal")]
         public required CalcResultLaDisposalCostDataDetailsTotal CalcResultLaDisposalCostDataDetailsTotal { get; set; }
     }
 
     public class CalcResultLaDisposalCostDetails : BaseLaDisposalcostAnd2ACommsData
     {
-        [JsonProperty(PropertyName = "materialName")]
+        [JsonPropertyName("materialName")]
         public required string MaterialName { get; init; }
 
-        [JsonProperty(PropertyName = "englandLaDisposalCost")]
+        [JsonPropertyName("englandLaDisposalCost")]
         public required string EnglandLaDisposalCost { get; init; }
 
-        [JsonProperty(PropertyName = "walesLaDisposalCost")]
+        [JsonPropertyName("walesLaDisposalCost")]
         public required string WalesLaDisposalCost { get; init; }
 
-        [JsonProperty(PropertyName = "scotlandLaDisposalCost")]
+        [JsonPropertyName("scotlandLaDisposalCost")]
         public required string ScotlandLaDisposalCost { get; init; }
 
-        [JsonProperty(PropertyName = "northernIrelandLaDisposalCost")]
+        [JsonPropertyName("northernIrelandLaDisposalCost")]
         public required string NorthernIrelandLaDisposalCost { get; init; }
 
-        [JsonProperty(PropertyName = "totalLaDisposalCost")]
+        [JsonPropertyName("totalLaDisposalCost")]
         public required string TotalLaDisposalCost { get; init; }
 
-        [JsonProperty(PropertyName = "disposalCostPricePerTonne")]
+        [JsonPropertyName("disposalCostPricePerTonne")]
         public required string? DisposalCostPricePerTonne { get; init; }
 
     }
 
     public class CalcResultLaDisposalCostDataDetailsTotal
     {
-        [JsonProperty(PropertyName = "total")]
+        [JsonPropertyName("total")]
         public required string Total { get; init; }
 
-        [JsonProperty(PropertyName = "englandLaDisposalCostTotal")]
+        [JsonPropertyName("englandLaDisposalCostTotal")]
         public required string EnglandLaDisposalCostTotal { get; init; }
 
-        [JsonProperty(PropertyName = "walesLaDisposalCostTotal")]
+        [JsonPropertyName("walesLaDisposalCostTotal")]
         public required string WalesLaDisposalCostTotal { get; init; }
 
-        [JsonProperty(PropertyName = "scotlandLaDisposalCostTotal")]
+        [JsonPropertyName("scotlandLaDisposalCostTotal")]
         public required string ScotlandLaDisposalCostTotal { get; init; }
 
-        [JsonProperty(PropertyName = "northernIrelandLaDisposalCostTotal")]
+        [JsonPropertyName("northernIrelandLaDisposalCostTotal")]
         public required string NorthernIrelandLaDisposalCostTotal { get; init; }
 
-        [JsonProperty(PropertyName = "totalLaDisposalCostTotal")]
+        [JsonPropertyName("totalLaDisposalCostTotal")]
         public required string TotalLaDisposalCostTotal { get; init; }
 
-        [JsonProperty(PropertyName = "producerHouseholdPackagingWasteTonnageTotal")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
+        [JsonPropertyName("producerHouseholdPackagingWasteTonnageTotal")]
+        [JsonConverter(typeof(DecimalPrecision3Converter))]
         public required decimal ProducerHouseholdPackagingWasteTonnageTotal { get; init; }
 
-        [JsonProperty(PropertyName = "publicBinTonnage")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
+        [JsonPropertyName("publicBinTonnage")]
+        [JsonConverter(typeof(DecimalPrecision3Converter))]
         public required decimal PublicBinTonnage { get; init; }
 
-        [JsonProperty(PropertyName = "householdDrinksContainersTonnageTotal")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
+        [JsonPropertyName("householdDrinksContainersTonnageTotal")]
+        [JsonConverter(typeof(DecimalPrecision3Converter))]
         public required decimal HouseholdDrinksContainersTonnageTotal { get; init; }
 
-        [JsonProperty(PropertyName = "lateReportingTonnageTotal")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
+        [JsonPropertyName("lateReportingTonnageTotal")]
+        [JsonConverter(typeof(DecimalPrecision3Converter))]
         public required decimal LateReportingTonnageTotal { get; init; }
 
-        [JsonProperty(PropertyName = "totalTonnageTotal")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
+        [JsonPropertyName("totalTonnageTotal")]
+        [JsonConverter(typeof(DecimalPrecision3Converter))]
         public required decimal? TotalTonnageTotal { get; init; }
 
     }

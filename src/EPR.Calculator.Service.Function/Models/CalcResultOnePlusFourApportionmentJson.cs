@@ -1,20 +1,19 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Text.Json.Serialization;
 
 namespace EPR.Calculator.Service.Function.Models
 {    
     public class CalcResultOnePlusFourApportionmentJson
     {
-        [JsonProperty(PropertyName = "oneFeeForLADisposalCosts")]
+        [JsonPropertyName("oneFeeForLADisposalCosts")]
         public CalcResultOnePlusFourApportionmentDetailJson OneFeeForLADisposalCosts { get; set; } = new CalcResultOnePlusFourApportionmentDetailJson();
 
-        [JsonProperty(PropertyName = "fourLADataPrepCharge")]
+        [JsonPropertyName("fourLADataPrepCharge")]
         public CalcResultOnePlusFourApportionmentDetailJson FourLADataPrepCharge { get; set; } = new CalcResultOnePlusFourApportionmentDetailJson();
 
-        [JsonProperty(PropertyName = "totalOfonePlusFour")]
+        [JsonPropertyName("totalOfonePlusFour")]
         public CalcResultOnePlusFourApportionmentDetailJson TotalOfonePlusFour { get; set; } = new CalcResultOnePlusFourApportionmentDetailJson();
 
-        [JsonProperty(PropertyName = "onePlusFourApportionmentPercentages")]
+        [JsonPropertyName("onePlusFourApportionmentPercentages")]
         public CalcResultOnePlusFourApportionmentDetailJson OnePlusFourApportionmentPercentages { get; set; } = new CalcResultOnePlusFourApportionmentDetailJson();
     }
 }

@@ -1,68 +1,68 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
     public class CalcSummaryProducerCalculationResults
     {
 
-        [JsonProperty("producerID")]
+        [JsonPropertyName("producerID")]
         public required string ProducerID { get; set; }
 
-        [JsonProperty("subsidiaryID")]
+        [JsonPropertyName("subsidiaryID")]
         public required string SubsidiaryID { get; set; }
 
-        [JsonProperty("producerName")]
+        [JsonPropertyName("producerName")]
         public required string ProducerName { get; set; }
 
-        [JsonProperty("tradingName")]
+        [JsonPropertyName("tradingName")]
         public string? TradingName { get; set; }
 
-        [JsonProperty("level")]
+        [JsonPropertyName("level")]
         public int? Level { get; set; }
 
-        [JsonProperty("scaledUpTonnages")]
+        [JsonPropertyName("scaledUpTonnages")]
         public required string ScaledUpTonnages { get; set; }
 
-        [JsonProperty("producerDisposalFeesWithBadDebtProvision1")]
+        [JsonPropertyName("producerDisposalFeesWithBadDebtProvision1")]
         public required ProducerDisposalFeesWithBadDebtProvision1 ProducerDisposalFeesWithBadDebtProvision1 { get; set; }
 
-        [JsonProperty("disposalFeeSummary1")]
+        [JsonPropertyName("disposalFeeSummary1")]
         public required DisposalFeeSummary1 DisposalFeeSummary1 { get; set; }
 
-        [JsonProperty("feesForCommsCostsWithBadDebtProvision2a")]
+        [JsonPropertyName("feesForCommsCostsWithBadDebtProvision2a")]
         public required CalcResultCommsCostByMaterial2AJson FeesForCommsCostsWithBadDebtProvision2a { get; set; }
 
-        [JsonProperty("commsCostsByMaterialFeesSummary2a")]
+        [JsonPropertyName("commsCostsByMaterialFeesSummary2a")]
         public required CalcResultSummaryCommsCostsByMaterialFeesSummary2a? CommsCostsByMaterialFeesSummary2a { get; set; }
 
-        [JsonProperty("feeForLADisposalCosts1")]
+        [JsonPropertyName("feeForLADisposalCosts1")]
         public required CalculationResultsProducerCalculationResultsFeeForLADisposalCosts1 FeeForLADisposalCosts1 { get; set; }
 
-        [JsonProperty("feeForCommsCostsWithBadDebtProvision_2a")]
+        [JsonPropertyName("feeForCommsCostsWithBadDebtProvision_2a")]
         public required CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2a FeeForCommsCostsWithBadDebtProvision_2a { get; set; }
 
-        [JsonProperty("feeForCommsCostsWithBadDebtProvision_2b")]
+        [JsonPropertyName("feeForCommsCostsWithBadDebtProvision_2b")]
         public required CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2b FeeForCommsCostsWithBadDebtProvision_2b { get; set; }
 
-        [JsonProperty("feeForCommsCostsWithBadDebtProvision_2c")]
+        [JsonPropertyName("feeForCommsCostsWithBadDebtProvision_2c")]
         public required CalcResultsCommsCostsWithBadDebtProvision2c FeeForCommsCostsWithBadDebtProvision_2c { get; set; }
 
-        [JsonProperty("totalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2c")]
+        [JsonPropertyName("totalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2c")]
         public required TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2c TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2c { get; set; }
 
-        [JsonProperty("feeForSAOperatingCostsWithBadDebtProvision_3")]
+        [JsonPropertyName("feeForSAOperatingCostsWithBadDebtProvision_3")]
         public required CalcResultSAOperatingCostsWithBadDebtProvision FeeForSAOperatingCostsWithBadDebtProvision_3 { get; set; }
 
-        [JsonProperty("feeForSAOperatingCostsWithBadDebtProvision_4")]
+        [JsonPropertyName("feeForSAOperatingCostsWithBadDebtProvision_4")]
         public required FeeForLADataPrepCostsWithBadDebtProvision_4 FeeForLADataPrepCostsWithBadDebtProvision_4 { get; set; }
 
-        [JsonProperty("feeForSASetUpCostsWithBadDebtProvision_5")]
+        [JsonPropertyName("feeForSASetUpCostsWithBadDebtProvision_5")]
         public required FeeForSASetUpCostsWithBadDebtProvision_5 FeeForSASetUpCostsWithBadDebtProvision_5 { get; set; }
 
-        [JsonProperty("totalProducerBillWithBadDebtProvision")]
+        [JsonPropertyName("totalProducerBillWithBadDebtProvision")]
         public required TotalProducerBillWithBadDebtProvision TotalProducerBillWithBadDebtProvision { get; set; }
 
-        [JsonProperty("calculationOfSuggestedBillingInstructionsAndInvoiceAmounts")]
+        [JsonPropertyName("calculationOfSuggestedBillingInstructionsAndInvoiceAmounts")]
         public required CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts { get; set; }
     }
 }
