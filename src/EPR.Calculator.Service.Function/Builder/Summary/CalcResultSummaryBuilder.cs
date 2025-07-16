@@ -32,7 +32,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
     {
         private readonly ApplicationDBContext context;
 
-        public static IEnumerable<CalcResultScaledupProducer>? ScaledupProducers { get; set; }
+        public static IEnumerable<CalcResultScaledupProducer> ScaledupProducers { get; set; } = [];
 
         public static IEnumerable<ScaledupOrganisation> ParentOrganisations { get; set; } = [];
 
@@ -49,7 +49,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             var materialsFromDb = await this.context.Material.ToListAsync();
             var materials = Mappers.MaterialMapper.Map(materialsFromDb);
 
-            ScaledupProducers = calcResult.CalcResultScaledupProducers.ScaledupProducers;
+            ScaledupProducers = calcResult.CalcResultScaledupProducers.ScaledupProducers ?? [];
 
             var runProducerMaterialDetails = await (from pd in this.context.ProducerDetail
                                                     join prm in this.context.ProducerReportedMaterial on pd.Id equals prm.ProducerDetailId
@@ -201,24 +201,15 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             var producerForTotalRow = GetProducerDetailsForTotalRow(producersAndSubsidiaries[0].ProducerId, isOverAllTotalRow);
             const int overallTotalId = 0;
 
-            var producerName = string.Empty;
-            var tradingName = string.Empty;
-
-            if (producerForTotalRow != null)
-            {
-                producerName = producerForTotalRow.OrganisationName;
-                tradingName = producerForTotalRow.TradingName;
-            }
-
             var localAuthorityDisposalCostsSectionOne = GetLocalAuthorityDisposalCostsSectionOne(materialCosts);
 
             var totalRow = new CalcResultSummaryProducerDisposalFees
             {
                 ProducerIdInt = isOverAllTotalRow ? overallTotalId : producersAndSubsidiaries[0].ProducerId,
                 ProducerId = isOverAllTotalRow ? string.Empty : producersAndSubsidiaries[0].ProducerId.ToString(),
-                ProducerName = producerName!,
+                ProducerName = producerForTotalRow?.OrganisationName ?? string.Empty,
                 SubsidiaryId = string.Empty,
-                TradingName = tradingName,
+                TradingName = producerForTotalRow?.TradingName ?? string.Empty,
                 Level = isOverAllTotalRow ? string.Empty : CommonConstants.LevelOne.ToString(),
                 IsProducerScaledup = GetScaledupProducerStatusTotalRow(producersAndSubsidiaries[0], ScaledupProducers, isOverAllTotalRow),
                 ProducerDisposalFeesByMaterial = materialCosts,
