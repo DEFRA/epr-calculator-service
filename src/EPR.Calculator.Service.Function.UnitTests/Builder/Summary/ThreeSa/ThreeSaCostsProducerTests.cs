@@ -432,14 +432,15 @@
                 Assert.AreEqual(106, _calcResult.CalcResultSummary.SaOperatingCostsWithTitleSection3);
                 Assert.AreEqual(1,
                     _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0]
-                        .SchemeAdministratorOperatingCosts.TotalProducerFeeWithoutBadDebtProvision);
+                        .Total3SAOperatingCostwoBadDebtprovision);
                 Assert.AreEqual(0.06m,
-                    _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].SchemeAdministratorOperatingCosts.BadDebtProvision);
+                    _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BadDebtProvisionFor3);
                 Assert.AreEqual(1.06m,
                     _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0]
-                        .SchemeAdministratorOperatingCosts.TotalProducerFeeWithBadDebtProvision);
+                        .Total3SAOperatingCostswithBadDebtprovision);
             }
         }
+
 
         [TestMethod]
         public void CanCallGetSaSetupCostsEnglandOverallTotalWithBadDebtProvision()
@@ -450,6 +451,7 @@
                 // Act
                 var result = ThreeSaCostsProducer.GetCountryTotalWithBadDebtProvision(_calcResult,
                     _calcResult.CalcResultSummary.SaOperatingCostsWoTitleSection3,
+                    ThreeSaCostsSummary.GetSetUpBadDebtProvision(_calcResult),
                     _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0]
                         .ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.England);
 
@@ -468,6 +470,7 @@
                 // Act
                 var result = ThreeSaCostsProducer.GetCountryTotalWithBadDebtProvision(_calcResult,
                     _calcResult.CalcResultSummary.SaOperatingCostsWoTitleSection3,
+                    ThreeSaCostsSummary.GetSetUpBadDebtProvision(_calcResult),
                     _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0]
                         .ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.Scotland);
 
@@ -475,6 +478,7 @@
                 Assert.AreEqual(0.01m, Math.Round(result, 2));
             }
         }
+
 
         [TestMethod]
         public void CanCallGetSaSetupCostsWalesOverallTotalWithBadDebtProvision()
@@ -486,6 +490,7 @@
                 // Act
                 var result = ThreeSaCostsProducer.GetCountryTotalWithBadDebtProvision(_calcResult,
                     _calcResult.CalcResultSummary.SaOperatingCostsWoTitleSection3,
+                    ThreeSaCostsSummary.GetSetUpBadDebtProvision(_calcResult),
                     _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0]
                         .ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.Wales);
 
@@ -493,6 +498,7 @@
                 Assert.AreEqual(0.21m, Math.Round(result, 2));
             }
         }
+
 
         private void CreateMaterials()
         {

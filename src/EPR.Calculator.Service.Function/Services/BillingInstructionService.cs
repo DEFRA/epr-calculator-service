@@ -32,17 +32,15 @@ namespace EPR.Calculator.Service.Function.Services
         {
             try
             {
-                var startTime = DateTime.UtcNow;
+                var startTime = DateTime.UtcNow;                
                 var billingInstructions = new List<ProducerResultFileSuggestedBillingInstruction>();
 
                 var producers = calcResult.CalcResultSummary.ProducerDisposalFees.Where(producer => producer.Level == CommonConstants.LevelOne.ToString());
 
                 foreach (var producer in producers)
                 {
-                    var billingInstructionSection = producer.BillingInstructionSection;
-
                     var isProducerIdParseSuccessful = int.TryParse(producer.ProducerId, out var producerId);
-                    var isSuggestedInvoiceAmountParseSuccessful = decimal.TryParse(billingInstructionSection.SuggestedInvoiceAmount, out var suggestedInvoiceAmount);
+                    var isSuggestedInvoiceAmountParseSuccessful = decimal.TryParse(producer.SuggestedInvoiceAmount, out var suggestedInvoiceAmount);
 
                     if (isProducerIdParseSuccessful && isSuggestedInvoiceAmountParseSuccessful)
                     {
@@ -50,16 +48,16 @@ namespace EPR.Calculator.Service.Function.Services
                         {
                             CalculatorRunId = calcResult.CalcResultDetail.RunId,
                             ProducerId = producerId,
-                            TotalProducerBillWithBadDebt = producer.TotalProducerBillBreakdownCosts!.TotalProducerFeeWithBadDebtProvision,
-                            CurrentYearInvoiceTotalToDate = GetValue(billingInstructionSection.CurrentYearInvoiceTotalToDate!),
-                            TonnageChangeSinceLastInvoice = GetStringValue(billingInstructionSection.TonnageChangeSinceLastInvoice!),
-                            AmountLiabilityDifferenceCalcVsPrev = GetValue(billingInstructionSection.LiabilityDifference!),
-                            MaterialPoundThresholdBreached = GetStringValue(billingInstructionSection.MaterialThresholdBreached!),
-                            TonnagePoundThresholdBreached = GetStringValue(billingInstructionSection.TonnageThresholdBreached!),
-                            PercentageLiabilityDifferenceCalcVsPrev = GetValue(billingInstructionSection.PercentageLiabilityDifference!),
-                            MaterialPercentageThresholdBreached = GetStringValue(billingInstructionSection.MaterialPercentageThresholdBreached!),
-                            TonnagePercentageThresholdBreached = GetStringValue(billingInstructionSection.TonnagePercentageThresholdBreached!),
-                            SuggestedBillingInstruction = billingInstructionSection.SuggestedBillingInstruction!,
+                            TotalProducerBillWithBadDebt = producer.TotalProducerBillWithBadDebtProvision,
+                            CurrentYearInvoiceTotalToDate = GetValue(producer.CurrentYearInvoiceTotalToDate!),
+                            TonnageChangeSinceLastInvoice = GetStringValue(producer.TonnageChangeSinceLastInvoice!),
+                            AmountLiabilityDifferenceCalcVsPrev = GetValue(producer.LiabilityDifference!),
+                            MaterialPoundThresholdBreached = GetStringValue(producer.MaterialThresholdBreached!),
+                            TonnagePoundThresholdBreached = GetStringValue(producer.TonnageThresholdBreached!),
+                            PercentageLiabilityDifferenceCalcVsPrev = GetValue(producer.PercentageLiabilityDifference!),
+                            MaterialPercentageThresholdBreached = GetStringValue(producer.MaterialPercentageThresholdBreached!),
+                            TonnagePercentageThresholdBreached = GetStringValue(producer.TonnagePercentageThresholdBreached!),
+                            SuggestedBillingInstruction = producer.SuggestedBillingInstruction!,
                             SuggestedInvoiceAmount = suggestedInvoiceAmount
                         };
 
@@ -91,10 +89,10 @@ namespace EPR.Calculator.Service.Function.Services
                     Message = $"Inserting records {billingInstructions.Count} into billing instructions table for {calcResult.CalcResultDetail.RunId} completed in {timeDiff.TotalSeconds} seconds",
                 });
 
-                return true;
-
+                return true;     
+               
             }
-            catch (Exception exception)
+            catch(Exception exception)
             {
                 this.telemetryLogger.LogError(new ErrorMessage
                 {

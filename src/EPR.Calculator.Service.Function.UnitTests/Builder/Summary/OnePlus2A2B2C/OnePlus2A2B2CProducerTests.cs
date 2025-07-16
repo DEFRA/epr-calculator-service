@@ -30,7 +30,246 @@
             CreateMaterials();
             CreateProducerDetail();
 
-            _calcResult = TestDataHelper.GetCalcResult();
+            _calcResult = new CalcResult
+            {
+                CalcResultScaledupProducers = new CalcResultScaledupProducers(),
+                CalcResultLateReportingTonnageData = Fixture.Create<CalcResultLateReportingTonnage>(),
+                CalcResultParameterOtherCost = new CalcResultParameterOtherCost
+                {
+                    BadDebtProvision = new KeyValuePair<string, string>("key1", "6%"),
+                    BadDebtValue = 6m,
+                    Details =
+                    [
+                        new CalcResultParameterOtherCostDetail
+                        {
+                            Name = "4 LA Data Prep Charge",
+                            OrderId = 1,
+                            England = "£40.00",
+                            EnglandValue = 40,
+                            Wales = "£30.00",
+                            WalesValue = 30,
+                            Scotland = "£20.00",
+                            ScotlandValue = 20,
+                            NorthernIreland = "£10.00",
+                            NorthernIrelandValue = 10,
+                            Total = "£100.00",
+                            TotalValue = 100,
+                        }
+                    ],
+                    Materiality =
+                    [
+                        new CalcResultMateriality
+                        {
+                            Amount = "Amount £s",
+                            AmountValue = 0,
+                            Percentage = "%",
+                            PercentageValue = 0,
+                            SevenMateriality = "7 Materiality",
+                        }
+                    ],
+                    Name = "Parameters - Other",
+                    SaOperatingCost =
+                    [
+                        new CalcResultParameterOtherCostDetail
+                        {
+                            Name = string.Empty,
+                            OrderId = 0,
+                            England = "England",
+                            EnglandValue = 0,
+                            Wales = "Wales",
+                            WalesValue = 0,
+                            Scotland = "Scotland",
+                            ScotlandValue = 0,
+                            NorthernIreland = "Northern Ireland",
+                            NorthernIrelandValue = 0,
+                            Total = "Total",
+                            TotalValue = 0,
+                        }
+                    ],
+                    SchemeSetupCost =
+                    {
+                        Name = "5 Scheme set up cost Yearly Cost",
+                        OrderId = 1,
+                        England = "£40.00",
+                        EnglandValue = 40,
+                        Wales = "£30.00",
+                        WalesValue = 30,
+                        Scotland = "£20.00",
+                        ScotlandValue = 20,
+                        NorthernIreland = "£10.00",
+                        NorthernIrelandValue = 10,
+                        Total = "£100.00",
+                        TotalValue = 100,
+                    },
+                },
+                CalcResultDetail = new CalcResultDetail() { },
+                CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData()
+                {
+                    Name = Fixture.Create<string>(),
+                    CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>()
+                    {
+                        new CalcResultLaDisposalCostDataDetail()
+                        {
+                            DisposalCostPricePerTonne = "20",
+                            England = "EnglandTest",
+                            Wales = "WalesTest",
+                            Name = "ScotlandTest",
+                            Scotland = "ScotlandTest",
+                            NorthernIreland = "NorthernIrelandTest",
+                            Material = "Material1",
+                            ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
+                            ReportedPublicBinTonnage = Fixture.Create<string>(),
+                            Total = Fixture.Create<string>(),
+                        },
+                        new CalcResultLaDisposalCostDataDetail()
+                        {
+                            DisposalCostPricePerTonne = "20",
+                            England = "EnglandTest",
+                            Wales = "WalesTest",
+                            Name = "Material1",
+                            Scotland = "ScotlandTest",
+                            NorthernIreland = "NorthernIrelandTest",
+                            ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
+                            ReportedPublicBinTonnage = Fixture.Create<string>(),
+                            Total = Fixture.Create<string>(),
+                        },
+                        new CalcResultLaDisposalCostDataDetail()
+                        {
+                            DisposalCostPricePerTonne = "10",
+                            England = "EnglandTest",
+                            Wales = "WalesTest",
+                            Name = "Material2",
+                            Scotland = "ScotlandTest",
+                            NorthernIreland = "NorthernIrelandTest",
+                            ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
+                            ReportedPublicBinTonnage = Fixture.Create<string>(),
+                            Total = Fixture.Create<string>(),
+                        },
+                    },
+                },
+                CalcResultLapcapData = new CalcResultLapcapData()
+                {
+                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>()
+                    {
+                    },
+                },
+                CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment()
+                {
+                    Name = Fixture.Create<string>(),
+                    CalcResultOnePlusFourApportionmentDetails =
+                    [
+                        new()
+                        {
+                            EnglandDisposalTotal = "80",
+                            NorthernIrelandDisposalTotal = "70",
+                            ScotlandDisposalTotal = "30",
+                            WalesDisposalTotal = "20",
+                            AllTotal = 0.1M,
+                            EnglandTotal = 0.10M,
+                            NorthernIrelandTotal = 0.15M,
+                            ScotlandTotal = 0.15M,
+                            WalesTotal = 020M,
+                            Name = "1 + 4 Apportionment %s",
+                        },
+                        new()
+                        {
+                            EnglandDisposalTotal = "80",
+                            NorthernIrelandDisposalTotal = "70",
+                            ScotlandDisposalTotal = "30",
+                            WalesDisposalTotal = "20",
+                            AllTotal = 0.1M,
+                            EnglandTotal = 0.10M,
+                            NorthernIrelandTotal = 0.15M,
+                            ScotlandTotal = 0.15M,
+                            WalesTotal = 020M,
+                            Name = "Test",
+                        },
+                        new()
+                        {
+                            EnglandDisposalTotal = "80",
+                            NorthernIrelandDisposalTotal = "70",
+                            ScotlandDisposalTotal = "30",
+                            WalesDisposalTotal = "20",
+                            AllTotal = 0.1M,
+                            EnglandTotal = 0.10M,
+                            NorthernIrelandTotal = 0.15M,
+                            ScotlandTotal = 0.15M,
+                            WalesTotal = 020M,
+                            Name = "Test",
+                        },
+                        new()
+                        {
+                            EnglandDisposalTotal = "80",
+                            NorthernIrelandDisposalTotal = "70",
+                            ScotlandDisposalTotal = "30",
+                            WalesDisposalTotal = "20",
+                            AllTotal = 0.1M,
+                            EnglandTotal = 14.53M,
+                            NorthernIrelandTotal = 0.15M,
+                            ScotlandTotal = 0.15M,
+                            WalesTotal = 020M,
+                            Name = "Test",
+                        },
+                        new()
+                        {
+                            EnglandDisposalTotal = "80",
+                            NorthernIrelandDisposalTotal = "70",
+                            ScotlandDisposalTotal = "30",
+                            WalesDisposalTotal = "20",
+                            AllTotal = 0.1M,
+                            EnglandTotal = 14.53M,
+                            NorthernIrelandTotal = 0.15M,
+                            ScotlandTotal = 0.15M,
+                            WalesTotal = 020M,
+                            Name = "Test",
+                        },
+                    ],
+                },
+                CalcResultParameterCommunicationCost = Fixture.Create<CalcResultParameterCommunicationCost>(),
+                CalcResultSummary = new CalcResultSummary
+                {
+                    ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>()
+                    {
+                        new()
+                        {
+                            ProducerCommsFeesByMaterial =
+                                new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>() { },
+                            ProducerDisposalFeesByMaterial =
+                                new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>() { },
+                            ProducerId = "1",
+                            ProducerName = "Test",
+                            TotalProducerDisposalFeeWithBadDebtProvision = 100,
+                            TotalProducerCommsFeeWithBadDebtProvision = 100,
+                            SubsidiaryId = "1",
+                            TotalProducerFeeforLADisposalCostswithBadDebtprovision = 10,
+                            TotalProducerFeeforCommsCostsbyMaterialwithBadDebtprovision = 10,
+                            TotalProducerFeeWithBadDebtFor2bComms = 10,
+                            TwoCTotalProducerFeeForCommsCostsWithBadDebt = 10,
+                        },
+                    },
+                    TotalFeeforLADisposalCostswithBadDebtprovision1 = 100,
+                    TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A = 100,
+                    CommsCostHeaderWithBadDebtFor2bTitle = 100,
+                    TwoCCommsCostsByCountryWithBadDebtProvision = 100,
+                },
+                CalcResultCommsCostReportDetail = new CalcResultCommsCost()
+                {
+                    CalcResultCommsCostCommsCostByMaterial =
+                    [
+                        new()
+                        {
+                            CommsCostByMaterialPricePerTonne = "0.42",
+                            Name = "Aluminium",
+
+                        },
+                        new()
+                        {
+                            CommsCostByMaterialPricePerTonne = "0.3",
+                            Name = "Glass",
+                        }
+                    ],
+                },
+            };
         }
 
         private Fixture Fixture { get; init; }
@@ -83,9 +322,9 @@
             OnePlus2A2B2CProducer.SetValues(_calcResult.CalcResultSummary);
 
             // Assert
-            Assert.AreEqual(8895.914874216554m, _calcResult.CalcResultSummary.TotalOnePlus2A2B2CFeeWithBadDebtProvision);
-            Assert.AreEqual(10491.1677668441235m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerTotalOnePlus2A2B2CWithBadDeptProvision);
-            Assert.AreEqual(117.93242083791927397189538682m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C);
+            Assert.AreEqual(400, _calcResult.CalcResultSummary.TotalOnePlus2A2B2CFeeWithBadDebtProvision);
+            Assert.AreEqual(40, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerTotalOnePlus2A2B2CWithBadDeptProvision);
+            Assert.AreEqual(10.0m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C);
         }
 
         private void CreateMaterials()
