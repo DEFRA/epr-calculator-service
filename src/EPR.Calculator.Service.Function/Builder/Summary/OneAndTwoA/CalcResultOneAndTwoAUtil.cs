@@ -15,7 +15,7 @@
 
         public static decimal GetTotalBadDebtprovision1(IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees)
         {
-            return GetTotalFee(producerDisposalFees, fee => fee.LocalAuthorityDisposalCostsSectionOne.BadDebtProvision);
+            return GetTotalFee(producerDisposalFees, fee => fee.BadDebtProvisionFor1);
         }
 
         public static decimal GetTotalDisposalCostswithBadDebtprovision1(IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees)
@@ -30,7 +30,7 @@
 
         public static decimal GetTotalBadDebtprovision2A(IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees)
         {
-            return GetTotalFee(producerDisposalFees, fee => fee.CommunicationCostsSectionTwoA.BadDebtProvision);
+            return GetTotalFee(producerDisposalFees, fee => fee.BadDebtProvisionFor2A);
         }
 
         public static decimal GetTotalCommsCostswithBadDebtprovision2A(IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees)

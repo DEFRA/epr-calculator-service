@@ -9,7 +9,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using EPR.Calculator.Service.Function.Interface;
     using EPR.Calculator.Service.Function.Models;
     using EPR.Calculator.Service.Function.Services;
-    using EPR.Calculator.Service.Function.UnitTests.Builder;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
 
@@ -33,7 +32,57 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             // Arrange
             var fixture = new Fixture();
-            var calcResult = TestDataHelper.GetCalcResult();
+            var calcResult = new CalcResult
+            {
+                CalcResultScaledupProducers = new CalcResultScaledupProducers(),
+                CalcResultDetail = new CalcResultDetail
+                {
+                    RunId = 4,
+                    RunDate = DateTime.Now,
+                    RunName = "RunName",
+                },
+                CalcResultLapcapData = new CalcResultLapcapData
+                {
+                    Name = string.Empty,
+                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>(),
+                },
+                CalcResultParameterOtherCost = new()
+                {
+                    BadDebtProvision = new KeyValuePair<string, string>(),
+                    Name = string.Empty,
+                    Details = new List<CalcResultParameterOtherCostDetail>(),
+                    Materiality = new List<CalcResultMateriality>(),
+                    SaOperatingCost = new List<CalcResultParameterOtherCostDetail>(),
+                    SchemeSetupCost = new CalcResultParameterOtherCostDetail(),
+                },
+                CalcResultLateReportingTonnageData = new()
+                {
+                    Name = string.Empty,
+                    CalcResultLateReportingTonnageDetails = new List<CalcResultLateReportingTonnageDetail>(),
+                    MaterialHeading = string.Empty,
+                    TonnageHeading = string.Empty,
+                },
+                CalcResultSummary = new CalcResultSummary()
+                {
+                    ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>() {  new ()
+                            {
+                            ProducerCommsFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>() { },
+                            ProducerDisposalFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>() { },
+                            ProducerId = "1",
+                            ProducerName = "Test",
+                            TotalProducerDisposalFeeWithBadDebtProvision = 100,
+                            TotalProducerCommsFeeWithBadDebtProvision = 100,
+                            SubsidiaryId = "1",
+                            Level= CommonConstants.LevelOne.ToString(),
+                            SuggestedInvoiceAmount = "10",
+                            MaterialThresholdBreached = "-",
+                            SuggestedBillingInstruction = "Initial"
+                    },
+
+                 }
+                }
+            };
+
 
             _telemetryLogger.Setup(mock => mock.LogInformation(It.IsAny<TrackMessage>())).Verifiable();
             _telemetryLogger.Setup(mock => mock.LogError(It.IsAny<ErrorMessage>())).Verifiable();
@@ -84,10 +133,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 },
                 CalcResultSummary = new CalcResultSummary()
                 {
-                    ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>()
-                    {
-                        new ()
-                        {
+                    ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>() {  new ()
+                            {
                             ProducerCommsFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>() { },
                             ProducerDisposalFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>() { },
                             ProducerId = "1",
@@ -96,21 +143,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                             TotalProducerCommsFeeWithBadDebtProvision = 100,
                             SubsidiaryId = "1",
                             Level= CommonConstants.LevelTwo.ToString(),
-                            BillingInstructionSection = new CalcResultSummaryBillingInstruction
-                            {
-                                CurrentYearInvoiceTotalToDate = "1000",
-                                TonnageChangeSinceLastInvoice = "Tonnage Changed",
-                                LiabilityDifference = "-200",
-                                MaterialThresholdBreached = "-ve",
-                                TonnageThresholdBreached = "-ve",
-                                PercentageLiabilityDifference = "10.05",
-                                MaterialPercentageThresholdBreached = "-ve",
-                                TonnagePercentageThresholdBreached = "-ve",
-                                SuggestedBillingInstruction = "INITIAL",
-                                SuggestedInvoiceAmount = "500"
-                            }
-                        }
-                    }
+                            SuggestedInvoiceAmount = "10",
+                    },
+
+                 }
                 }
             };
 
