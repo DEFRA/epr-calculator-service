@@ -271,23 +271,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
             var producerForTotalRow = GetProducerDetailsForTotalRow(producersAndSubsidiaries[0].ProducerId, isOverAllTotalRow);
             const int overallTotalId = 0;
-
-            var producerName = string.Empty;
-            var tradingName = string.Empty;
-
-            if (producerForTotalRow != null)
-            {
-                producerName = producerForTotalRow.OrganisationName;
-                tradingName = producerForTotalRow.TradingName;
-            }
-
             var totalRow = new CalcResultSummaryProducerDisposalFees
             {
                 ProducerIdInt = isOverAllTotalRow ? overallTotalId : producersAndSubsidiaries[0].ProducerId,
                 ProducerId = isOverAllTotalRow ? string.Empty : producersAndSubsidiaries[0].ProducerId.ToString(),
-                ProducerName = producerName!,
+                ProducerName = producerForTotalRow?.OrganisationName ?? string.Empty,
                 SubsidiaryId = string.Empty,
-                TradingName = tradingName,
+                TradingName = producerForTotalRow?.TradingName ?? string.Empty,
                 Level = isOverAllTotalRow ? string.Empty : CommonConstants.LevelOne.ToString(),
                 IsProducerScaledup = GetScaledupProducerStatusTotalRow(producersAndSubsidiaries[0], ScaledupProducers, isOverAllTotalRow),
                 ProducerDisposalFeesByMaterial = materialCostSummary,
