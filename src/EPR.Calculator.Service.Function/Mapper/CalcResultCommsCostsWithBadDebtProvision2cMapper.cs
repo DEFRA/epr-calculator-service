@@ -14,7 +14,7 @@ namespace EPR.Calculator.Service.Function.Mapper
                 EnglandTotalWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.TwoCEnglandTotalWithBadDebt),
                 NorthernIrelandTotalWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.TwoCNorthernIrelandTotalWithBadDebt),
                 ScotlandTotalWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.TwoCScotlandTotalWithBadDebt),               
-                BadDebProvisionFor2c = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.TwoCBadDebtProvision),
+                BadDebtProvisionFor2c = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.TwoCBadDebtProvision),
                 WalesTotalWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.TwoCWalesTotalWithBadDebt),
                 TotalProducerFeeForCommsCostsByCountryWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.TwoCTotalProducerFeeForCommsCostsWithBadDebt)
             };

@@ -48,12 +48,12 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         public required CalcResultsCommsCostsWithBadDebtProvision2c FeeForCommsCostsWithBadDebtProvision_2c { get; set; }
 
         [JsonPropertyName("totalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2c")]
-        public required TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2c TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2c { get; set; }
+        public required TotalProducerFeeWithBadDebtProvisionFor2con_1_2a_2b_2c TotalProducerFeeWithBadDebtProvisionFor2con_1_2a_2b_2c { get; set; }
 
         [JsonPropertyName("feeForSAOperatingCostsWithBadDebtProvision_3")]
         public required CalcResultSAOperatingCostsWithBadDebtProvision FeeForSAOperatingCostsWithBadDebtProvision_3 { get; set; }
 
-        [JsonPropertyName("feeForSAOperatingCostsWithBadDebtProvision_4")]
+        [JsonPropertyName("feeForLADataPrepCostsWithBadDebtProvision_4")]
         public required FeeForLADataPrepCostsWithBadDebtProvision_4 FeeForLADataPrepCostsWithBadDebtProvision_4 { get; set; }
 
         [JsonPropertyName("feeForSASetUpCostsWithBadDebtProvision_5")]

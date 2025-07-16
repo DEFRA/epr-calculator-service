@@ -744,7 +744,17 @@
                     ProducerDisposalFeesByMaterial = GetProducerDisposalFeesByMaterial(),
                     ProducerCommsFeesByMaterial = GetProducerCommsFeesByMaterial(),
                     TonnageChangeCount = "0",
-                    TonnageChangeAdvice = ""
+                    TonnageChangeAdvice = "",
+                    CurrentYearInvoiceTotalToDate = "-",
+                    TonnageChangeSinceLastInvoice = "-",
+                    LiabilityDifference = "-",
+                    MaterialThresholdBreached = "-",
+                    TonnageThresholdBreached = "-",
+                    PercentageLiabilityDifference = "-",
+                    MaterialPercentageThresholdBreached = "-",
+                    TonnagePercentageThresholdBreached = "-",
+                    SuggestedBillingInstruction = "INITIAL",
+                    SuggestedInvoiceAmount = "£12,472.14",
                 },
             };
         }

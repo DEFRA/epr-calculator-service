@@ -9,7 +9,6 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         public required string TotalProducerDisposalFeeWithoutBadDebtProvision { get; set; }
 
         [JsonPropertyName("badDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecision2Converter))]
         public required string BadDebtProvision { get; set; }
 
         [JsonPropertyName("totalProducerDisposalFeeWithBadDebtProvision")]
