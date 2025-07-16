@@ -38,16 +38,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             // Arrange  
             var fees = new CalcResultSummaryProducerDisposalFees
             {
-                CurrentYearInvoiceTotalToDate = "1000",
-                TonnageChangeSinceLastInvoice = "Tonnage Changed",
-                LiabilityDifference = "-200",
-                MaterialThresholdBreached = "-ve",
-                TonnageThresholdBreached = "-ve",
-                PercentageLiabilityDifference = "10.05",
-                MaterialPercentageThresholdBreached = "-ve",
-                TonnagePercentageThresholdBreached = "-ve",
-                SuggestedBillingInstruction = "INITIAL",
-                SuggestedInvoiceAmount = "500",
+                BillingInstructionSection = new CalcResultSummaryBillingInstruction
+                {
+                    CurrentYearInvoiceTotalToDate = "1000",
+                    TonnageChangeSinceLastInvoice = "Tonnage Changed",
+                    LiabilityDifference = "-200",
+                    MaterialThresholdBreached = "-ve",
+                    TonnageThresholdBreached = "-ve",
+                    PercentageLiabilityDifference = "10.05",
+                    MaterialPercentageThresholdBreached = "-ve",
+                    TonnagePercentageThresholdBreached = "-ve",
+                    SuggestedBillingInstruction = "INITIAL",
+                    SuggestedInvoiceAmount = "500"
+                },
                 ProducerId = "Producer123",
                 ProducerName = "Producer Name",
                 SubsidiaryId = "Subsidiary456",
@@ -81,6 +84,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
                 ProducerId = "Producer123",
                 ProducerName = "Producer Name",
                 SubsidiaryId = "Subsidiary456",
+                BillingInstructionSection = new CalcResultSummaryBillingInstruction
+                {
+                    CurrentYearInvoiceTotalToDate = null,
+                    TonnageChangeSinceLastInvoice = null,
+                    LiabilityDifference = null,
+                    MaterialThresholdBreached = null,
+                    TonnageThresholdBreached = null,
+                    PercentageLiabilityDifference = null,
+                    MaterialPercentageThresholdBreached = null,
+                    TonnagePercentageThresholdBreached = null,
+                    SuggestedBillingInstruction = null,
+                    SuggestedInvoiceAmount = null
+                }
             };
 
             // Act  
@@ -106,16 +122,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             // Arrange  
             var fees = new CalcResultSummaryProducerDisposalFees
             {
-                CurrentYearInvoiceTotalToDate = "-",
-                TonnageChangeSinceLastInvoice = "-",
-                LiabilityDifference = "-",
-                MaterialThresholdBreached = "-",
-                TonnageThresholdBreached = "-",
-                PercentageLiabilityDifference = "-",
-                MaterialPercentageThresholdBreached = "-",
-                TonnagePercentageThresholdBreached = "-",
-                SuggestedBillingInstruction = "INITIAL",
-                SuggestedInvoiceAmount = "500",
+                BillingInstructionSection = new CalcResultSummaryBillingInstruction
+                {
+                    CurrentYearInvoiceTotalToDate = "-",
+                    TonnageChangeSinceLastInvoice = "-",
+                    LiabilityDifference = "-",
+                    MaterialThresholdBreached = "-",
+                    TonnageThresholdBreached = "-",
+                    PercentageLiabilityDifference = "-",
+                    MaterialPercentageThresholdBreached = "-",
+                    TonnagePercentageThresholdBreached = "-",
+                    SuggestedBillingInstruction = "INITIAL",
+                    SuggestedInvoiceAmount = "500"
+                },
                 ProducerId = "Producer123",
                 ProducerName = "Producer Name",
                 SubsidiaryId = "Subsidiary456",
