@@ -49,14 +49,14 @@ namespace EPR.Calculator.Service.Function.Services
                             CalculatorRunId = calcResult.CalcResultDetail.RunId,
                             ProducerId = producerId,
                             TotalProducerBillWithBadDebt = producer.TotalProducerBillWithBadDebtProvision,
-                            CurrentYearInvoiceTotalToDate = IsDefaultValue(producer.CurrentYearInvoiceTotalToDate) ? null: TypeConverterUtil.ConvertTo<decimal>(producer.CurrentYearInvoiceTotalToDate),
-                            TonnageChangeSinceLastInvoice = IsDefaultValue(producer.TonnageChangeSinceLastInvoice)? null: TypeConverterUtil.ConvertTo<string>(producer.TonnageChangeSinceLastInvoice),
-                            AmountLiabilityDifferenceCalcVsPrev = IsDefaultValue(producer.LiabilityDifference) ? null : TypeConverterUtil.ConvertTo<decimal>(producer.LiabilityDifference) ,
-                            MaterialPoundThresholdBreached = IsDefaultValue(producer.MaterialThresholdBreached) ? null : TypeConverterUtil.ConvertTo<string>(producer.MaterialThresholdBreached),
-                            TonnagePoundThresholdBreached = IsDefaultValue(producer.TonnageThresholdBreached) ? null : TypeConverterUtil.ConvertTo<string>(producer.TonnageThresholdBreached),
-                            PercentageLiabilityDifferenceCalcVsPrev = IsDefaultValue(producer.PercentageLiabilityDifference) ? null : TypeConverterUtil.ConvertTo<decimal>(producer.PercentageLiabilityDifference) ,
-                            MaterialPercentageThresholdBreached = IsDefaultValue(producer.MaterialPercentageThresholdBreached) ? null : TypeConverterUtil.ConvertTo<string>(producer.MaterialPercentageThresholdBreached),
-                            TonnagePercentageThresholdBreached = IsDefaultValue(producer.TonnagePercentageThresholdBreached) ? null : TypeConverterUtil.ConvertTo<string>(producer.TonnagePercentageThresholdBreached),
+                            CurrentYearInvoiceTotalToDate = GetValue(producer.CurrentYearInvoiceTotalToDate),
+                            TonnageChangeSinceLastInvoice = GetStringValue(producer.TonnageChangeSinceLastInvoice),
+                            AmountLiabilityDifferenceCalcVsPrev = GetValue(producer.LiabilityDifference),
+                            MaterialPoundThresholdBreached = GetStringValue(producer.MaterialThresholdBreached),
+                            TonnagePoundThresholdBreached = GetStringValue(producer.TonnageThresholdBreached),
+                            PercentageLiabilityDifferenceCalcVsPrev = GetValue(producer.PercentageLiabilityDifference),
+                            MaterialPercentageThresholdBreached = GetStringValue(producer.MaterialPercentageThresholdBreached),
+                            TonnagePercentageThresholdBreached = GetStringValue(producer.TonnagePercentageThresholdBreached),
                             SuggestedBillingInstruction = producer.SuggestedBillingInstruction,
                             SuggestedInvoiceAmount = suggestedInvoiceAmount
                         };
@@ -109,6 +109,20 @@ namespace EPR.Calculator.Service.Function.Services
         private bool IsDefaultValue(string value)
         {
             return (string.IsNullOrEmpty(value) || value == CommonConstants.Hyphen);
-        }       
+        }
+
+        private decimal? GetValue(string value)
+        {
+            return IsDefaultValue(value)
+                ? null
+                : TypeConverterUtil.ConvertTo<decimal>(value);
+        }
+
+        private string? GetStringValue(string value)
+        {
+            return IsDefaultValue(value)
+                ? null
+                : TypeConverterUtil.ConvertTo<string>(value);
+        }
     }
 }
