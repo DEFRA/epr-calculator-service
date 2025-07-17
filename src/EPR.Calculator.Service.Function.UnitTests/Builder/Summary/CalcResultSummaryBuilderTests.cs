@@ -309,6 +309,25 @@
             var firstProducer = result.ProducerDisposalFees.FirstOrDefault();
             Assert.IsNotNull(firstProducer);
             Assert.AreEqual("Producer1", firstProducer.ProducerName);
+            Assert.AreEqual(0, CalcResultSummaryBuilder.ScaledupProducers.Count());
+        }
+
+        [TestMethod]
+        public void Construct_ShouldSetScaledupProducers()
+        {
+            // Assign
+            var requestDto = new CalcResultsRequestDto { RunId = 1 };
+            var calcResult = this.calcResult;
+            calcResult.CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers();
+            
+            // Act
+            var results = this.calcResultsService.Construct(requestDto, calcResult);
+            results.Wait();
+            var result = results.Result;
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(1, CalcResultSummaryBuilder.ScaledupProducers.Count());
         }
 
         [TestMethod]
