@@ -32,94 +32,91 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
         {
             foreach (var fee in result.ProducerDisposalFees)
             {
-                fee.TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision()
-                {
-                    TotalProducerFeeWithoutBadDebtProvision = GetTotalProducerBillWithoutBadDebtProvision(fee),
-                    BadDebtProvision = GetBadDebtProvisionForTotalProducerBill(fee),
-                    TotalProducerFeeWithBadDebtProvision = GetTotalProducerBillWithBadDebtProvision(fee),
-                    EnglandTotalWithBadDebtProvision = GetEnglandTotalWithBadDebtProvision(fee),
-                    WalesTotalWithBadDebtProvision = GetWalesTotalWithBadDebtProvision(fee),
-                    ScotlandTotalWithBadDebtProvision = GetScotlandTotalWithBadDebtProvision(fee),
-                    NorthernIrelandTotalWithBadDebtProvision = GetNorthernIrelandTotalWithBadDebtProvision(fee)
-                };
+                fee.TotalProducerBillWithoutBadDebtProvision = GetTotalProducerBillWithoutBadDebtProvision(fee);
+                fee.BadDebtProvisionForTotalProducerBill = GetBadDebtProvisionForTotalProducerBill(fee);
+                fee.TotalProducerBillWithBadDebtProvision = GetTotalProducerBillWithBadDebtProvision(fee);
+                fee.EnglandTotalWithBadDebtProvisionTotalBill = GetEnglandTotalWithBadDebtProvision(fee);
+                fee.WalesTotalWithBadDebtProvisionTotalBill = GetWalesTotalWithBadDebtProvision(fee);
+                fee.ScotlandTotalWithBadDebtProvisionTotalBill = GetScotlandTotalWithBadDebtProvision(fee);
+                fee.NorthernIrelandTotalWithBadDebtProvisionTotalBill = GetNorthernIrelandTotalWithBadDebtProvision(fee);
             }
         }
 
         private static decimal GetTotalProducerBillWithoutBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
         {
-            return fee.LocalAuthorityDisposalCostsSectionOne.TotalProducerFeeWithoutBadDebtProvision +
-                   fee.CommunicationCostsSectionTwoA.TotalProducerFeeWithoutBadDebtProvision +
-                   fee.CommunicationCostsSectionTwoB.TotalProducerFeeWithoutBadDebtProvision +
+            return fee.TotalProducerFeeforLADisposalCostswoBadDebtprovision +
+                   fee.TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision +
+                   fee.TotalProducerFeeWithoutBadDebtFor2bComms +
                    fee.TwoCTotalProducerFeeForCommsCostsWithoutBadDebt +
-                   fee.SchemeAdministratorOperatingCosts.TotalProducerFeeWithoutBadDebtProvision +
-                   fee.LocalAuthorityDataPreparationCosts.TotalProducerFeeWithoutBadDebtProvision +
-                   fee.OneOffSchemeAdministrationSetupCosts.TotalProducerFeeWithoutBadDebtProvision;
+                   fee.Total3SAOperatingCostwoBadDebtprovision +
+                   fee.LaDataPrepCostsTotalWithoutBadDebtProvisionSection4 +
+                   fee.TotalProducerFeeWithoutBadDebtProvisionSection5;
         }
 
         private static decimal GetBadDebtProvisionForTotalProducerBill(CalcResultSummaryProducerDisposalFees fee)
         {
-            return fee.LocalAuthorityDisposalCostsSectionOne.BadDebtProvision +
-                   fee.CommunicationCostsSectionTwoA.BadDebtProvision +
-                   fee.CommunicationCostsSectionTwoB.BadDebtProvision +
+            return fee.BadDebtProvisionFor1 +
+                   fee.BadDebtProvisionFor2A +
+                   fee.BadDebtProvisionFor2bComms +
                    fee.TwoCBadDebtProvision +
-                   fee.SchemeAdministratorOperatingCosts.BadDebtProvision +
-                   fee.LocalAuthorityDataPreparationCosts.BadDebtProvision +
-                   fee.OneOffSchemeAdministrationSetupCosts.BadDebtProvision;
+                   fee.BadDebtProvisionFor3 +
+                   fee.LaDataPrepCostsBadDebtProvisionSection4 +
+                   fee.BadDebtProvisionSection5;
         }
 
         private static decimal GetTotalProducerBillWithBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
         {
-            return fee.LocalAuthorityDisposalCostsSectionOne.TotalProducerFeeWithBadDebtProvision +
-                   fee.CommunicationCostsSectionTwoA.TotalProducerFeeWithBadDebtProvision +
-                   fee.CommunicationCostsSectionTwoB.TotalProducerFeeWithBadDebtProvision +
+            return fee.TotalProducerFeeforLADisposalCostswithBadDebtprovision +
+                   fee.TotalProducerFeeforCommsCostsbyMaterialwithBadDebtprovision +
+                   fee.TotalProducerFeeWithBadDebtFor2bComms +
                    fee.TwoCTotalProducerFeeForCommsCostsWithBadDebt +
-                   fee.SchemeAdministratorOperatingCosts.TotalProducerFeeWithBadDebtProvision +
-                   fee.LocalAuthorityDataPreparationCosts.TotalProducerFeeWithBadDebtProvision +
-                   fee.OneOffSchemeAdministrationSetupCosts.TotalProducerFeeWithBadDebtProvision;
+                   fee.Total3SAOperatingCostswithBadDebtprovision +
+                   fee.LaDataPrepCostsTotalWithBadDebtProvisionSection4 +
+                   fee.TotalProducerFeeWithBadDebtProvisionSection5;
         }
 
         private static decimal GetEnglandTotalWithBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
         {
-            return fee.LocalAuthorityDisposalCostsSectionOne.EnglandTotalWithBadDebtProvision +
-                   fee.CommunicationCostsSectionTwoA.EnglandTotalWithBadDebtProvision +
-                   fee.CommunicationCostsSectionTwoB.EnglandTotalWithBadDebtProvision +
+            return fee.EnglandTotalWithBadDebtProvision +
+                   fee.EnglandTotalWithBadDebtProvision2A +
+                   fee.EnglandTotalWithBadDebtFor2bComms +
                    fee.TwoCEnglandTotalWithBadDebt +
-                   fee.SchemeAdministratorOperatingCosts.EnglandTotalWithBadDebtProvision +
-                   fee.LocalAuthorityDataPreparationCosts.EnglandTotalWithBadDebtProvision +
-                   fee.OneOffSchemeAdministrationSetupCosts.EnglandTotalWithBadDebtProvision;
+                   fee.EnglandTotalWithBadDebtProvision3 +
+                   fee.LaDataPrepCostsEnglandTotalWithBadDebtProvisionSection4 +
+                   fee.EnglandTotalWithBadDebtProvisionSection5;
         }
 
         private static decimal GetWalesTotalWithBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
         {
-            return fee.LocalAuthorityDisposalCostsSectionOne.WalesTotalWithBadDebtProvision +
-                   fee.CommunicationCostsSectionTwoA.WalesTotalWithBadDebtProvision +
-                   fee.CommunicationCostsSectionTwoB.WalesTotalWithBadDebtProvision +
+            return fee.WalesTotalWithBadDebtProvision +
+                   fee.WalesTotalWithBadDebtProvision2A +
+                   fee.WalesTotalWithBadDebtFor2bComms +
                    fee.TwoCWalesTotalWithBadDebt +
-                   fee.SchemeAdministratorOperatingCosts.WalesTotalWithBadDebtProvision +
-                   fee.LocalAuthorityDataPreparationCosts.WalesTotalWithBadDebtProvision +
-                   fee.OneOffSchemeAdministrationSetupCosts.WalesTotalWithBadDebtProvision;
+                   fee.WalesTotalWithBadDebtProvision3 +
+                   fee.LaDataPrepCostsWalesTotalWithBadDebtProvisionSection4 +
+                   fee.WalesTotalWithBadDebtProvisionSection5;
         }
 
         private static decimal GetScotlandTotalWithBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
         {
-            return fee.LocalAuthorityDisposalCostsSectionOne.ScotlandTotalWithBadDebtProvision +
-                   fee.CommunicationCostsSectionTwoA.ScotlandTotalWithBadDebtProvision +
-                   fee.CommunicationCostsSectionTwoB.ScotlandTotalWithBadDebtProvision +
+            return fee.ScotlandTotalWithBadDebtProvision +
+                   fee.ScotlandTotalWithBadDebtProvision2A +
+                   fee.ScotlandTotalWithBadDebtFor2bComms +
                    fee.TwoCScotlandTotalWithBadDebt +
-                   fee.SchemeAdministratorOperatingCosts.ScotlandTotalWithBadDebtProvision +
-                   fee.LocalAuthorityDataPreparationCosts.ScotlandTotalWithBadDebtProvision +
-                   fee.OneOffSchemeAdministrationSetupCosts.ScotlandTotalWithBadDebtProvision;
+                   fee.ScotlandTotalWithBadDebtProvision3 +
+                   fee.LaDataPrepCostsScotlandTotalWithBadDebtProvisionSection4 +
+                   fee.ScotlandTotalWithBadDebtProvisionSection5;
         }
 
         private static decimal GetNorthernIrelandTotalWithBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
         {
-            return fee.LocalAuthorityDisposalCostsSectionOne.NorthernIrelandTotalWithBadDebtProvision +
-                   fee.CommunicationCostsSectionTwoA.NorthernIrelandTotalWithBadDebtProvision +
-                   fee.CommunicationCostsSectionTwoB.NorthernIrelandTotalWithBadDebtProvision +
+            return fee.NorthernIrelandTotalWithBadDebtProvision +
+                   fee.NorthernIrelandTotalWithBadDebtProvision2A +
+                   fee.NorthernIrelandTotalWithBadDebtFor2bComms +
                    fee.TwoCNorthernIrelandTotalWithBadDebt +
-                   fee.SchemeAdministratorOperatingCosts.NorthernIrelandTotalWithBadDebtProvision +
-                   fee.LocalAuthorityDataPreparationCosts.NorthernIrelandTotalWithBadDebtProvision +
-                   fee.OneOffSchemeAdministrationSetupCosts.NorthernIrelandTotalWithBadDebtProvision;
+                   fee.NorthernIrelandTotalWithBadDebtProvision3 +
+                   fee.LaDataPrepCostsNorthernIrelandTotalWithBadDebtProvisionSection4 +
+                   fee.NorthernIrelandTotalWithBadDebtProvisionSection5;
         }
     }
 }

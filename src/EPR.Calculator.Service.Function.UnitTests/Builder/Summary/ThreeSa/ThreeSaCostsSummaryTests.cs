@@ -303,5 +303,31 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                 Assert.AreEqual(100, result);
             }
         }
+
+        [TestMethod]
+        public void CanCallGetBadDebtProvision()
+        {
+            // Act
+            if (_calcResult != null)
+            {
+                var result = ThreeSaCostsSummary.GetSetUpBadDebtProvision(_calcResult);
+
+                // Assert
+                Assert.AreEqual(6, result);
+            }
+        }
+
+        [TestMethod]
+        public void CanCallGetSaSetupCostsWithBadDebtProvision()
+        {
+            // Act
+            if (_calcResult != null)
+            {
+                var result = ThreeSaCostsSummary.GetThreeSaCostsWithBadDebtProvision(_calcResult);
+
+                // Assert
+                Assert.AreEqual(106, result);
+            }
+        }
     }
 }
