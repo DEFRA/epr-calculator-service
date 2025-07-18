@@ -23,5 +23,6 @@ namespace EPR.Calculator.Service.Function.Models
         public required ICalcBillingJsonExporter<CalcResult> JsonExporter { get; init; }
         public required IConfigurationService ConfigService { get; init; }
         public required IBillingFileExporter<CalcResult> BillingFileExporter { get; init; }
+        public required IProducerInvoiceNetTonnageService ProducerInvoiceNetTonnageService { get; init; }
     }
 }

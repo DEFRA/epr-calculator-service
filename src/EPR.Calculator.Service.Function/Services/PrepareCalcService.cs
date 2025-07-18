@@ -36,6 +36,7 @@
             this.ConfigService = deps.ConfigService;
             this.JsonExporter = deps.JsonExporter;
             this.BillingFileExporter = deps.BillingFileExporter;
+            this.producerInvoiceNetTonnageService = deps.ProducerInvoiceNetTonnageService;
         }
 
         public const string ContainerNameMissingError = "Container name is missing in configuration.";
@@ -65,6 +66,8 @@
         private IConfigurationService ConfigService { get; init; }
 
         private IBillingFileExporter<CalcResult> BillingFileExporter { get; init; }
+
+        private IProducerInvoiceNetTonnageService producerInvoiceNetTonnageService { get; init; }
 
         public async Task<bool> PrepareCalcResults(
             [FromBody] CalcResultsRequestDto resultsRequestDto,
@@ -119,6 +122,21 @@
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
                     Message = "Create billing instructions end...",
+                });
+
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = resultsRequestDto.RunId,
+                    RunName = runName,
+                    Message = "Create provider invoice tonnage started started...",
+                });
+
+                await this.producerInvoiceNetTonnageService.CreateProducerInvoiceNetTonnage(results);
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = resultsRequestDto.RunId,
+                    RunName = runName,
+                    Message = "Create producer invocice net tonnage end...",
                 });
 
                 this.telemetryLogger.LogInformation(new TrackMessage

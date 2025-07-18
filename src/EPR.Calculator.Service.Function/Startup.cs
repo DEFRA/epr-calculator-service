@@ -194,6 +194,8 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcResultLaDisposalCostDataExporter, CalcResultLaDisposalCostDataExporter>();
             services.AddTransient<ICalcResultCommsCostOnePlusFourApportionmentExporter, CalcResultCommsCostOnePlusFourApportionmentExporter>();
             services.AddTransient<IBillingFileExporter<CalcResult>, BillingFileExporter>();
+            services.AddTransient<IProducerInvoiceNetTonnageService, ProducerInvoiceNetTonnageService>();
+            services.AddTransient<IDbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage>, DbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage>>();
 
             services.AddScoped<PrepareCalcServiceDependencies>(provider => new PrepareCalcServiceDependencies
             {
@@ -207,7 +209,8 @@ namespace EPR.Calculator.Service.Function
                 BillingInstructionService = provider.GetRequiredService<IBillingInstructionService>(),
                 JsonExporter = provider.GetRequiredService<ICalcBillingJsonExporter<CalcResult>>(),
                 ConfigService = provider.GetRequiredService<IConfigurationService>(),
-                BillingFileExporter = provider.GetRequiredService<IBillingFileExporter<CalcResult>>()
+                BillingFileExporter = provider.GetRequiredService<IBillingFileExporter<CalcResult>>(),
+                ProducerInvoiceNetTonnageService = provider.GetRequiredService<IProducerInvoiceNetTonnageService>()
             });
 #if !DEBUG
 
