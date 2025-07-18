@@ -86,7 +86,7 @@ namespace EPR.Calculator.Service.Function.Models
 
         public string TonnageChangeAdvice { get; set; }
 
-        public CalcResultSummaryBillingInstruction? BillingInstructionSection { get; set; }
+        public CalcResultSummaryBillingInstruction BillingInstructionSection { get; set; }
 
         public bool isOverallTotalRow { get; set; } = false;
         public int ProducerIdInt { get; set; }
