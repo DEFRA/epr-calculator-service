@@ -39,16 +39,19 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
         {
             foreach (var fee in result.ProducerDisposalFees)
             {
-                fee.CurrentYearInvoiceTotalToDate = GetCurrentYearInvoicedTotalToDate(fee);
-                fee.TonnageChangeSinceLastInvoice = GetTonnageChangeSinceLastInvoice(fee);
-                fee.LiabilityDifference = GetLiabilityDifference(fee);
-                fee.MaterialThresholdBreached = GetMaterialThresholdBreached(fee);
-                fee.TonnageThresholdBreached = GetTonnageThresholdBreached(fee);
-                fee.PercentageLiabilityDifference = GetPercentageLiabilityDifference(fee);
-                fee.MaterialPercentageThresholdBreached = GetMaterialPercentageThresholdBreached(fee);
-                fee.TonnagePercentageThresholdBreached = GetTonnagePercentagThresholdBreached(fee);
-                fee.SuggestedBillingInstruction = GetSuggestedBillingInstruction(fee);
-                fee.SuggestedInvoiceAmount = GetSuggestedInvoiceAmount(fee);
+                fee.BillingInstructionSection = new CalcResultSummaryBillingInstruction
+                {
+                    CurrentYearInvoiceTotalToDate = GetCurrentYearInvoicedTotalToDate(fee),
+                    TonnageChangeSinceLastInvoice = GetTonnageChangeSinceLastInvoice(fee),
+                    LiabilityDifference = GetLiabilityDifference(fee),
+                    MaterialThresholdBreached = GetMaterialThresholdBreached(fee),
+                    TonnageThresholdBreached = GetTonnageThresholdBreached(fee),
+                    PercentageLiabilityDifference = GetPercentageLiabilityDifference(fee),
+                    MaterialPercentageThresholdBreached = GetMaterialPercentageThresholdBreached(fee),
+                    TonnagePercentageThresholdBreached = GetTonnagePercentagThresholdBreached(fee),
+                    SuggestedBillingInstruction = GetSuggestedBillingInstruction(fee),
+                    SuggestedInvoiceAmount = GetSuggestedInvoiceAmount(fee)
+                };
             }
         }
 
@@ -124,11 +127,11 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
         {
             if (fee.IsProducerScaledup == CommonConstants.Totals)
             {
-                return fee.TotalProducerBillWithBadDebtProvision.ToString();
+                return fee.TotalProducerBillBreakdownCosts.TotalProducerFeeWithBadDebtProvision.ToString();
             }
 
             return fee.Level == CommonConstants.LevelOne.ToString()
-                ? fee.TotalProducerBillWithBadDebtProvision.ToString()
+                ? fee.TotalProducerBillBreakdownCosts.TotalProducerFeeWithBadDebtProvision.ToString()
                 : CommonConstants.Hyphen;
         }
     }

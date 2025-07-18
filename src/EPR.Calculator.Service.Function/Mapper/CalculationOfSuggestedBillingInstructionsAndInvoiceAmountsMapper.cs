@@ -11,18 +11,19 @@ namespace EPR.Calculator.Service.Function.Mapper
     {
         public CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts Map(CalcResultSummaryProducerDisposalFees fees)
         {
+            var costs = fees.BillingInstructionSection;
             return new CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts
             {
-                CurrentYearInvoicedTotalToDate = GetFormattedCurrencyValue(fees.CurrentYearInvoiceTotalToDate!),
-                TonnageChangeSinceLastInvoice = fees.TonnageChangeSinceLastInvoice ?? string.Empty,
-                LiabilityDifferenceCalcVsPrev = GetFormattedCurrencyValue(fees.LiabilityDifference!),
-                MaterialThresholdBreached = fees.MaterialThresholdBreached ?? string.Empty,
-                TonnageThresholdBreached = fees.TonnageThresholdBreached ?? string.Empty,
-                PercentageLiabilityDifferenceCalcVsPrev = GetPercentageLiabilityDifference(fees.PercentageLiabilityDifference!),
-                MaterialPercentageThresholdBreached = fees.MaterialPercentageThresholdBreached ?? string.Empty,
-                TonnagePercentageThresholdBreached = fees.TonnagePercentageThresholdBreached ?? string.Empty,
-                SuggestedBillingInstruction = fees.SuggestedBillingInstruction ?? string.Empty,
-                SuggestedInvoiceAmount = GetFormattedCurrencyValue(fees.SuggestedInvoiceAmount!)
+                CurrentYearInvoicedTotalToDate = GetFormattedCurrencyValue(costs.CurrentYearInvoiceTotalToDate!),
+                TonnageChangeSinceLastInvoice = costs.TonnageChangeSinceLastInvoice ?? string.Empty,
+                LiabilityDifferenceCalcVsPrev = GetFormattedCurrencyValue(costs.LiabilityDifference!),
+                MaterialThresholdBreached = costs.MaterialThresholdBreached ?? string.Empty,
+                TonnageThresholdBreached = costs.TonnageThresholdBreached ?? string.Empty,
+                PercentageLiabilityDifferenceCalcVsPrev = GetPercentageLiabilityDifference(costs.PercentageLiabilityDifference!),
+                MaterialPercentageThresholdBreached = costs.MaterialPercentageThresholdBreached ?? string.Empty,
+                TonnagePercentageThresholdBreached = costs.TonnagePercentageThresholdBreached ?? string.Empty,
+                SuggestedBillingInstruction = costs.SuggestedBillingInstruction ?? string.Empty,
+                SuggestedInvoiceAmount = GetFormattedCurrencyValue(costs.SuggestedInvoiceAmount!)
             };
         }
 
