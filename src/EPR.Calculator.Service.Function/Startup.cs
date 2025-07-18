@@ -162,7 +162,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcResultLADataPrepCostsWithBadDebtProvision4Mapper, CalcResultLADataPrepCostsWithBadDebtProvision4Mapper>();
             services.AddTransient<IFeeForCommsCostsWithBadDebtProvision2aMapper, FeeForCommsCostsWithBadDebtProvision2aMapper>();
             services.AddTransient<IFeeForCommsCostsWithBadDebtProvision2bMapper, FeeForCommsCostsWithBadDebtProvision2bMapper>();
-            services.AddTransient<ITotalProducerFeeWithBadDebtProvisionFor2Con_1_2a_2b_2cMapper, TotalProducerFeeWithBadDebtProvisionFor2con_1_2a_2b_2cMapper>();
+            services.AddTransient<ITotalProducerFeeWithBadDebtProvisionFor2Con12A2B2CMapper, TotalProducerFeeWithBadDebtProvisionFor2con_1_2a_2b_2cMapper>();
             services.AddTransient<IFeeForSASetUpCostsWithBadDebtProvision_5Mapper, FeeForSASetUpCostsWithBadDebtProvision_5Mapper>();
             services.AddTransient<ICalcResultCommsCostsWithBadDebtProvision2cMapper, CalcResultCommsCostsWithBadDebtProvision2cMapper>();
             services.AddTransient<ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsExporter, CalculationOfSuggestedBillingInstructionsAndInvoiceAmountsExporter>();

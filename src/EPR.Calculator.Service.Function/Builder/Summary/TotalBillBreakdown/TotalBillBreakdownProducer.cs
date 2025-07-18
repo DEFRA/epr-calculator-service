@@ -47,13 +47,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
 
         private static decimal GetTotalProducerBillWithoutBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
         {
-            return fee.LocalAuthorityDisposalCostsSectionOne.TotalProducerFeeWithoutBadDebtProvision +
-                   fee.CommunicationCostsSectionTwoA.TotalProducerFeeWithoutBadDebtProvision +
-                   fee.CommunicationCostsSectionTwoB.TotalProducerFeeWithoutBadDebtProvision +
+            return fee.LocalAuthorityDisposalCostsSectionOne!.TotalProducerFeeWithoutBadDebtProvision +
+                   fee.CommunicationCostsSectionTwoA!.TotalProducerFeeWithoutBadDebtProvision +
+                   fee.CommunicationCostsSectionTwoB!.TotalProducerFeeWithoutBadDebtProvision +
                    fee.TwoCTotalProducerFeeForCommsCostsWithoutBadDebt +
-                   fee.SchemeAdministratorOperatingCosts.TotalProducerFeeWithoutBadDebtProvision +
-                   fee.LocalAuthorityDataPreparationCosts.TotalProducerFeeWithoutBadDebtProvision +
-                   fee.OneOffSchemeAdministrationSetupCosts.TotalProducerFeeWithoutBadDebtProvision;
+                   fee.SchemeAdministratorOperatingCosts!.TotalProducerFeeWithoutBadDebtProvision +
+                   fee.LocalAuthorityDataPreparationCosts!.TotalProducerFeeWithoutBadDebtProvision +
+                   fee.OneOffSchemeAdministrationSetupCosts!.TotalProducerFeeWithoutBadDebtProvision;
         }
 
         private static decimal GetBadDebtProvisionForTotalProducerBill(CalcResultSummaryProducerDisposalFees fee)

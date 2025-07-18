@@ -78,15 +78,15 @@ namespace EPR.Calculator.Service.Function.Models
         public decimal ProducerOverallPercentageOfCostsForOnePlus2A2B2C { get; set; }
         // End Section Total bill (1 + 2a + 2b + 2c)
 
-        public Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> ProducerDisposalFeesByMaterial { get; set; }
+        public Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>? ProducerDisposalFeesByMaterial { get; set; }
 
         public Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>? ProducerCommsFeesByMaterial { get; set; }
 
-        public string TonnageChangeCount { get; set; }
+        public string? TonnageChangeCount { get; set; }
 
-        public string TonnageChangeAdvice { get; set; }
+        public string? TonnageChangeAdvice { get; set; }
 
-        public CalcResultSummaryBillingInstruction BillingInstructionSection { get; set; }
+        public CalcResultSummaryBillingInstruction? BillingInstructionSection { get; set; }
 
         public bool isOverallTotalRow { get; set; } = false;
         public int ProducerIdInt { get; set; }

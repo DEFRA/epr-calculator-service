@@ -2,7 +2,7 @@
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
-    public class TotalProducerFeeWithBadDebtProvisionFor2Con_1_2a_2b_2c
+    public class TotalProducerFeeWithBadDebtProvisionFor2Con12A2B2CMapper
     {
         [JsonPropertyName("totalFeeWithBadDebtProvision")]
         public required string TotalFeeWithBadDebtProvision { get; set; }
