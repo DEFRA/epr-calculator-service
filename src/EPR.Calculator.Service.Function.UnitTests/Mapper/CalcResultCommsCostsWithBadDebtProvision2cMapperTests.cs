@@ -47,7 +47,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             Assert.AreEqual(CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.TwoCScotlandTotalWithBadDebt), result.ScotlandTotalWithBadDebtProvision);
             Assert.AreEqual(CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.TwoCNorthernIrelandTotalWithBadDebt), result.NorthernIrelandTotalWithBadDebtProvision);
             Assert.AreEqual(CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.TwoCTotalProducerFeeForCommsCostsWithBadDebt), result.TotalProducerFeeForCommsCostsByCountryWithBadDebtProvision);
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.TwoCBadDebtProvision), result.BadDebProvisionFor2c);
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.TwoCBadDebtProvision), result.BadDebtProvisionFor2c);
             Assert.AreEqual(CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.TwoCTotalProducerFeeForCommsCostsWithoutBadDebt), result.TotalProducerFeeForCommsCostsByCountryWithoutBadDebtProvision);
         }
     }

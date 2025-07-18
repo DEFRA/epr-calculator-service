@@ -26,7 +26,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         }
 
         [TestMethod]
-        public void CanSetAndGetBadDebProvisionFor2b()
+        public void CanSetAndGetBadDebtProvisionFor2b()
         {
             var fixture = new Fixture();
             var testValue = fixture.Create<decimal>();

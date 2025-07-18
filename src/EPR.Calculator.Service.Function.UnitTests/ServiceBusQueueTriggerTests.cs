@@ -4,14 +4,13 @@
 
 namespace EPR.Calculator.Service.Function.UnitTests
 {
+    using System.Text.Json;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Interface;
     using EPR.Calculator.Service.Function.Services;
     using Moq;
-    using Newtonsoft.Json;
-    using NuGet.Frameworks;
 
     /// <summary>
     /// Unit Test class for service bus queue trigger.

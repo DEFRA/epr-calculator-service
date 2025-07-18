@@ -10,7 +10,7 @@
         {
             return new CalcResult
             {
-                CalcResultScaledupProducers = new CalcResultScaledupProducers(),
+                CalcResultScaledupProducers = GetScaledupProducers(),
                 CalcResultParameterOtherCost = GetCalcResultParameterOtherCost(),
                 CalcResultDetail = GetCalcResultDetail(),
                 CalcResultLapcapData = GetCalcResultLapcapData(),

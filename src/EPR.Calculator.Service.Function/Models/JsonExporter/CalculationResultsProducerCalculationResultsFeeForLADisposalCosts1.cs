@@ -1,29 +1,29 @@
 ﻿using EPR.Calculator.Service.Function.Converter;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
     public class CalculationResultsProducerCalculationResultsFeeForLADisposalCosts1
     {
-        [JsonProperty(PropertyName = "totalProducerFeeForLADisposalCostsWithoutBadDebtProvision")]
+        [JsonPropertyName("totalProducerFeeForLADisposalCostsWithoutBadDebtProvision")]
         public required string TotalProducerFeeForLADisposalCostsWithoutBadDebtProvision { get; set; }
 
-        [JsonProperty(PropertyName = "badDebtProvisionForLADisposalCosts")]
+        [JsonPropertyName("badDebtProvisionForLADisposalCosts")]
         public required string BadDebtProvisionForLADisposalCosts { get; set; }
 
-        [JsonProperty(PropertyName = "totalProducerFeeForLADisposalCostsWithBadDebtProvision")]
+        [JsonPropertyName("totalProducerFeeForLADisposalCostsWithBadDebtProvision")]
         public required string TotalProducerFeeForLADisposalCostsWithBadDebtProvision { get; set; }
 
-        [JsonProperty(PropertyName = "englandTotalForLADisposalCostsWithBadDebtProvision")]
+        [JsonPropertyName("englandTotalForLADisposalCostsWithBadDebtProvision")]
         public required string EnglandTotalForLADisposalCostsWithBadDebtProvision { get; set; }
 
-        [JsonProperty(PropertyName = "walesTotalForLADisposalCostsWithBadDebtProvision")]
+        [JsonPropertyName("walesTotalForLADisposalCostsWithBadDebtProvision")]
         public required string WalesTotalForLADisposalCostsWithBadDebtProvision { get; set; }
 
-        [JsonProperty(PropertyName = "scotlandTotalForLADisposalCostsWithBadDebtProvision")]
+        [JsonPropertyName("scotlandTotalForLADisposalCostsWithBadDebtProvision")]
         public required string ScotlandTotalForLADisposalCostsWithBadDebtProvision { get; set; }
 
-        [JsonProperty(PropertyName = "northernIrelandTotalForLADisposalCostsWithBadDebtProvision")]
+        [JsonPropertyName("northernIrelandTotalForLADisposalCostsWithBadDebtProvision")]
         public required string NorthernIrelandTotalForLADisposalCostsWithBadDebtProvision { get; set; }
     }
 }

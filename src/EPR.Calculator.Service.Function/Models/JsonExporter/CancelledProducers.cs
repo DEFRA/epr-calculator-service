@@ -1,41 +1,41 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
     public record CancelledProducers
     {
-        [JsonProperty(PropertyName = "name")]
+        [JsonPropertyName("name")]
         public string? Name { get; init; }
 
-        [JsonProperty(PropertyName = "cancelledProducerTonnageInvoice")]
+        [JsonPropertyName("cancelledProducerTonnageInvoice")]
         public IEnumerable<CancelledProducerTonnageInvoice>? CancelledProducerTonnageInvoice { get; init; }
     }
 
     public record CancelledProducerTonnageInvoice
     {
-        [JsonProperty(PropertyName = "producerId")]
+        [JsonPropertyName("producerId")]
         public int? ProducerId { get; init; }
 
-        [JsonProperty(PropertyName = "subsidiaryId")]
+        [JsonPropertyName("subsidiaryId")]
         public string? SubsidiaryId { get; init; }
 
-        [JsonProperty(PropertyName = "producerName")]
+        [JsonPropertyName("producerName")]
         public string? ProducerName { get; init; }
 
-        [JsonProperty(PropertyName = "tradingName")]
+        [JsonPropertyName("tradingName")]
         public string? TradingName { get; init; }
 
-        [JsonProperty(PropertyName = "lastProducerTonnages")]
+        [JsonPropertyName("lastProducerTonnages")]
         public required IEnumerable<LastProducerTonnages> LastProducerTonnages { get; init; }
     }
 
     public record LastProducerTonnages
     {
-        [JsonProperty(PropertyName = "materialName")]
+        [JsonPropertyName("materialName")]
         public string? MaterialName { get; init; }
 
-        [JsonProperty(PropertyName = "lastTonnage")]
+        [JsonPropertyName("lastTonnage")]
         public decimal LastTonnage { get; init; }
     }
 }

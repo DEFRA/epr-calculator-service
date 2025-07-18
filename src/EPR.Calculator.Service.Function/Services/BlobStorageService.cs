@@ -3,12 +3,9 @@
     using System;
     using System.Configuration;
     using System.Threading.Tasks;
-    using Azure.Storage;
     using Azure.Storage.Blobs;
     using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Function.Interface;
-    using Microsoft.Extensions.Logging;
-    using Newtonsoft.Json.Linq;
 
     /// <summary>
     /// Service for handling blob storage operations.

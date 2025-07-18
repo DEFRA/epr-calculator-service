@@ -1,35 +1,29 @@
 ﻿using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Converter;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
     public class CalcResultCommsCostJson
     {
-        [JsonProperty(CommonConstants.OnePlusFourCommsCostApportionmentPercentages)]
+        [JsonPropertyName(CommonConstants.OnePlusFourCommsCostApportionmentPercentages)]
         public required OnePlusFourCommsCostApportionmentPercentages OnePlusFourCommsCostApportionmentPercentages { get; set; }
     }    
 
     public class OnePlusFourCommsCostApportionmentPercentages
     {
-        [JsonProperty(CommonConstants.England)]
+        [JsonPropertyName("england")]
         public string? England { get; set; }
 
-        [JsonProperty(CommonConstants.Wales)]
+        [JsonPropertyName("wales")]
         public string? Wales { get; set; }
 
-        [JsonProperty(CommonConstants.Scotland)]
+        [JsonPropertyName("scotland")]
         public string? Scotland { get; set; }
 
-        [JsonProperty(CommonConstants.NorthernIreland)]
+        [JsonPropertyName("northernIreland")]
         public string? NorthernIreland { get; set; }
 
-        [JsonProperty(CommonConstants.Total)]
+        [JsonPropertyName("total")]
         public string? Total { get; set; }
     }
 }

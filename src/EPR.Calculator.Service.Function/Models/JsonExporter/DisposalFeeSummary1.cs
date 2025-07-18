@@ -1,36 +1,35 @@
 ﻿using EPR.Calculator.Service.Function.Converter;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
     public class DisposalFeeSummary1
     {
-        [JsonProperty(PropertyName = "totalProducerDisposalFeeWithoutBadDebtProvision")]
+        [JsonPropertyName("totalProducerDisposalFeeWithoutBadDebtProvision")]
         public required string TotalProducerDisposalFeeWithoutBadDebtProvision { get; set; }
 
-        [JsonProperty(PropertyName = "badDebtProvision")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 2)]
+        [JsonPropertyName("badDebtProvision")]
         public required string BadDebtProvision { get; set; }
 
-        [JsonProperty(PropertyName = "totalProducerDisposalFeeWithBadDebtProvision")]
+        [JsonPropertyName("totalProducerDisposalFeeWithBadDebtProvision")]
         public required string TotalProducerDisposalFeeWithBadDebtProvision { get; set; }
 
-        [JsonProperty(PropertyName = "englandTotal")]
+        [JsonPropertyName("englandTotal")]
         public required string EnglandTotal { get; set; }
 
-        [JsonProperty(PropertyName = "walesTotal")]
+        [JsonPropertyName("walesTotal")]
         public required string WalesTotal { get; set; }
 
-        [JsonProperty(PropertyName = "scotlandTotal")]
+        [JsonPropertyName("scotlandTotal")]
         public required string ScotlandTotal { get; set; }
 
-        [JsonProperty(PropertyName = "northernIrelandTotal")]
+        [JsonPropertyName("northernIrelandTotal")]
         public required string NorthernIrelandTotal { get; set; }
 
-        [JsonProperty(PropertyName = "tonnageChangeCount")]
+        [JsonPropertyName("tonnageChangeCount")]
         public required string TonnageChangeCount { get; set; }
 
-        [JsonProperty(PropertyName = "tonnageChangeAdvice")]
+        [JsonPropertyName("tonnageChangeAdvice")]
         public required string TonnageChangeAdvice { get; set; }
     }
 }

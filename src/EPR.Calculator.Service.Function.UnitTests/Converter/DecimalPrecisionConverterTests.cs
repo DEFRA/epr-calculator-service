@@ -1,12 +1,9 @@
 namespace EPR.Calculator.Service.Function.UnitTests.Converter
 {
-    using System;
     using System.Text;
     using System.Text.Json;
-    using AutoFixture;
     using EPR.Calculator.Service.Function.Converter;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Newtonsoft.Json;
 
     [TestClass]
     public class DecimalPrecisionConverterTests

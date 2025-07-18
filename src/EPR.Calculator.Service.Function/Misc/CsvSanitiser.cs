@@ -2,9 +2,9 @@
 {
     using System;
     using System.Globalization;
+    using System.Text.Json;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Enums;
-    using Newtonsoft.Json;
 
     public static class CsvSanitiser
     {
@@ -20,7 +20,7 @@
             // If the value is a string, use it directly; otherwise, serialize the object to JSON.
             var stringToSanitise = value is string
                 ? value.ToString()
-                : JsonConvert.SerializeObject(value);
+                : JsonSerializer.Serialize(value);
 
             // Remove newline, carriage returns, and commas, then trim
             stringToSanitise = stringToSanitise?.Replace(Environment.NewLine, string.Empty)

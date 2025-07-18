@@ -1,28 +1,22 @@
-﻿using EPR.Calculator.Service.Function.Converter;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace EPR.Calculator.Service.Function.Models
 {
     public record CalcResultOnePlusFourApportionmentDetailJson
     {
-        [JsonProperty(PropertyName = "england")]        
+        [JsonPropertyName("england")]        
         public string England { get; set; } = string.Empty;
 
-        [JsonProperty(PropertyName = "wales")]
+        [JsonPropertyName("wales")]
         public string Wales { get; set; } = string.Empty;
 
-        [JsonProperty(PropertyName = "scotland")]
+        [JsonPropertyName("scotland")]
         public string Scotland { get; set; } = string.Empty;
 
-        [JsonProperty(PropertyName = "northernIreland")]
+        [JsonPropertyName("northernIreland")]
         public string NorthernIreland { get; set; } = string.Empty;
 
-        [JsonProperty(PropertyName = "total")]
+        [JsonPropertyName("total")]
         public string Total { get; set; } = string.Empty;
     }
 }

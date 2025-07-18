@@ -1,46 +1,41 @@
-﻿using EPR.Calculator.Service.Function.Converter;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {   
     public class CalcResult2ACommsDataByMaterial
     {
-        [JsonProperty(PropertyName = "name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; } = "2a Comms Costs - by Material";
 
-        [JsonProperty(PropertyName = "calcResult2aCommsDataDetails")]
+        [JsonPropertyName("calcResult2aCommsDataDetails")]
         public required IEnumerable<CalcResult2ACommsDataDetails> CalcResult2aCommsDataDetails {  get; set; }
 
-        [JsonProperty(PropertyName = "calcResult2aCommsDataDetailsTotal")]
+        [JsonPropertyName("calcResult2aCommsDataDetailsTotal")]
         public required CalcResult2ACommsDataDetailsTotal CalcResult2aCommsDataDetailsTotal { get; set; }
     }
 
     public class CalcResult2ACommsDataDetails : BaseLaDisposalcostAnd2ACommsData
     {
-        [JsonProperty(PropertyName = "materialName")]
+        [JsonPropertyName("materialName")]
         public required string MaterialName { get; init; }
 
-        [JsonProperty(PropertyName = "englandCommsCost")]
+        [JsonPropertyName("englandCommsCost")]
         public required string EnglandCommsCost { get; init; }
 
-        [JsonProperty(PropertyName = "walesCommsCost")]
+        [JsonPropertyName("walesCommsCost")]
         public required string WalesCommsCost { get; init; }
 
-        [JsonProperty(PropertyName = "scotlandCommsCost")]
+        [JsonPropertyName("scotlandCommsCost")]
         public required string ScotlandCommsCost { get; init; }
 
-        [JsonProperty(PropertyName = "northernIrelandCommsCost")]
+        [JsonPropertyName("northernIrelandCommsCost")]
         public required string NorthernIrelandCommsCost { get; init; }
 
-        [JsonProperty(PropertyName = "totalCommsCost")]
+        [JsonPropertyName("totalCommsCost")]
         public required string TotalCommsCost { get; init; }
 
-        [JsonProperty(PropertyName = "commsCostByMaterialPricePerTonne")]
+        [JsonPropertyName("commsCostByMaterialPricePerTonne")]
         public required string CommsCostByMaterialPricePerTonne { get; init; }
 
     }

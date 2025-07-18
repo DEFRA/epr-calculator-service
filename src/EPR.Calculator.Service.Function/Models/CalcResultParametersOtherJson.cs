@@ -1,70 +1,70 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResultParametersOtherJson
     {
-        [JsonProperty(PropertyName = "threeSAOperatingCost")]
+        [JsonPropertyName("threeSAOperatingCost")]
         public CountryAmountJson ThreeSAOperatingCost { get; set; } = new CountryAmountJson();
 
-        [JsonProperty(PropertyName = "fourDataPreparationCharge")]
+        [JsonPropertyName("fourDataPreparationCharge")]
         public CountryAmountJson FourDataPreparationCharge { get; set; } = new CountryAmountJson();
 
-        [JsonProperty(PropertyName = "fourCountryApportionmentPercentages")]
+        [JsonPropertyName("fourCountryApportionmentPercentages")]
         public CountryAmountJson FourCountryApportionmentPercentages { get; set; } = new CountryAmountJson();
 
-        [JsonProperty(PropertyName = "fiveSchemeSetupCost")]
+        [JsonPropertyName("fiveSchemeSetupCost")]
         public CountryAmountJson FiveSchemeSetupCost { get; set; } = new CountryAmountJson();
 
-        [JsonProperty(PropertyName = "sixBadDebtProvision")]
+        [JsonPropertyName("sixBadDebtProvision")]
         public PercentageJson SixBadDebtProvision { get; set; } = new PercentageJson();
 
-        [JsonProperty(PropertyName = "sevenMateriality")]
+        [JsonPropertyName("sevenMateriality")]
         public ChangeJson SevenMateriality { get; set; } = new ChangeJson();
 
-        [JsonProperty(PropertyName = "eightTonnageChange")]
+        [JsonPropertyName("eightTonnageChange")]
         public ChangeJson EightTonnageChange { get; set; } = new ChangeJson();
     }
 
     public class CountryAmountJson
     {
-        [JsonProperty(PropertyName = "england")]
+        [JsonPropertyName("england")]
         public string England { get; set; } = string.Empty;
 
-        [JsonProperty(PropertyName = "wales")]
+        [JsonPropertyName("wales")]
         public string Wales { get; set; } = string.Empty;
 
-        [JsonProperty(PropertyName = "scotland")]
+        [JsonPropertyName("scotland")]
         public string Scotland { get; set; } = string.Empty;
 
-        [JsonProperty(PropertyName = "northernIreland")]
+        [JsonPropertyName("northernIreland")]
         public string NorthernIreland { get; set; } = string.Empty;
 
-        [JsonProperty(PropertyName = "total")]
+        [JsonPropertyName("total")]
         public string Total { get; set; } = string.Empty;
     }
 
     public class PercentageJson
     {
-        [JsonProperty(PropertyName = "percentage")]
+        [JsonPropertyName("percentage")]
         public string Percentage { get; set; } = string.Empty;
     }
 
     public class ChangeJson
     {
-        [JsonProperty(PropertyName = "increase")]
+        [JsonPropertyName("increase")]
         public ChangeDetailJson Increase { get; set; } = new ChangeDetailJson();
 
-        [JsonProperty(PropertyName = "decrease")]
+        [JsonPropertyName("decrease")]
         public ChangeDetailJson Decrease { get; set; } = new ChangeDetailJson();
     }
 
     public class ChangeDetailJson
     {
-        [JsonProperty(PropertyName = "amount")]
+        [JsonPropertyName("amount")]
         public string Amount { get; set; } = string.Empty;
 
-        [JsonProperty(PropertyName = "percentage")]
+        [JsonPropertyName("percentage")]
         public string Percentage { get; set; } = string.Empty;
     }
 }
