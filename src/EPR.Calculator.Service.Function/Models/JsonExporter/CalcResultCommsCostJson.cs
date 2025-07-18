@@ -11,19 +11,19 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
     public class OnePlusFourCommsCostApportionmentPercentages
     {
-        [JsonPropertyName(CommonConstants.England)]
+        [JsonPropertyName("england")]
         public string? England { get; set; }
 
-        [JsonPropertyName(CommonConstants.Wales)]
+        [JsonPropertyName("wales")]
         public string? Wales { get; set; }
 
-        [JsonPropertyName(CommonConstants.Scotland)]
+        [JsonPropertyName("scotland")]
         public string? Scotland { get; set; }
 
-        [JsonPropertyName(CommonConstants.NorthernIreland)]
+        [JsonPropertyName("northernIreland")]
         public string? NorthernIreland { get; set; }
 
-        [JsonPropertyName(CommonConstants.Total)]
+        [JsonPropertyName("total")]
         public string? Total { get; set; }
     }
 }
