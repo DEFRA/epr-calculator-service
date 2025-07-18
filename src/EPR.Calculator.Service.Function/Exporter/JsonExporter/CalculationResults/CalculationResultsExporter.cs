@@ -21,7 +21,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResul
         private readonly ICalcResultLADataPrepCostsWithBadDebtProvision4Mapper laDataPrepCostsWithBadDebtProvision4Mapper;
         private readonly IFeeForCommsCostsWithBadDebtProvision2aMapper feeForCommsCostsWithBadDebtProvision2aMapper;
         private readonly IFeeForCommsCostsWithBadDebtProvision2bMapper feeForCommsCostsWithBadDebtProvision2bMapper;
-        private readonly ITotalProducerFeeWithBadDebtProvisionFor2con_1_2a_2b_2cMapper totalProducerFeeWithBadDebtProvisionFor2con_1_2a_2b_2cMapper;
+        private readonly ITotalProducerFeeWithBadDebtProvisionFor2Con_1_2a_2b_2cMapper totalProducerFeeWithBadDebtProvisionFor2con_1_2a_2b_2cMapper;
         private readonly IFeeForSASetUpCostsWithBadDebtProvision_5Mapper feeForSASetUpCostsWithBadDebtProvision_5Mapper;
         private readonly ICalcResultCommsCostsWithBadDebtProvision2cMapper calcResultCommsCostsWithBadDebtProvision2CMapper;
         private readonly ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper;
@@ -39,7 +39,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResul
             ICalcResultLADataPrepCostsWithBadDebtProvision4Mapper laDataPrepCostsWithBadDebtProvision4Mapper,
             IFeeForCommsCostsWithBadDebtProvision2aMapper feeForCommsCostsWithBadDebtProvision2aMapper,
             IFeeForCommsCostsWithBadDebtProvision2bMapper feeForCommsCostsWithBadDebtProvision2bMapper,
-            ITotalProducerFeeWithBadDebtProvisionFor2con_1_2a_2b_2cMapper totalProducerFeeWithBadDebtProvisionFor2con_1_2a_2b_2cMapper,
+            ITotalProducerFeeWithBadDebtProvisionFor2Con_1_2a_2b_2cMapper totalProducerFeeWithBadDebtProvisionFor2con_1_2a_2b_2cMapper,
             IFeeForSASetUpCostsWithBadDebtProvision_5Mapper feeForSASetUpCostsWithBadDebtProvision_5Mapper,
             ICalcResultCommsCostsWithBadDebtProvision2cMapper calcResultCommsCostsWithBadDebtProvision2CMapper,
             ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper,
