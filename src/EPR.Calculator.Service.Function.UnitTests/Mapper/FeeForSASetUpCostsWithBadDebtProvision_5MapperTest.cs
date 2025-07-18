@@ -29,13 +29,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.TotalProducerFeeWithoutBadDebtProvisionSection5), result.TotalProducerOneOffFeeForSASetUpCostsWithoutBadDebtProvision);
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.BadDebtProvisionSection5), result.BadDebtProvisionFor5);
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.TotalProducerFeeWithBadDebtProvisionSection5), result.TotalProducerOneOffFeeForSASetUpCostsWithBadDebtProvision);
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.EnglandTotalWithBadDebtProvisionSection5), result.EnglandTotalForSASetUpCostsWithBadDebtProvision);
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.WalesTotalWithBadDebtProvisionSection5), result.WalesTotalForSASetUpCostsWithBadDebtProvision);
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.ScotlandTotalWithBadDebtProvisionSection5), result.ScotlandTotalForSASetUpCostsWithBadDebtProvision);
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.NorthernIrelandTotalWithBadDebtProvisionSection5), result.NorthernIrelandTotalForSASetUpCostsWithBadDebtProvision);
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.OneOffSchemeAdministrationSetupCosts.TotalProducerFeeWithoutBadDebtProvision), result.TotalProducerOneOffFeeForSASetUpCostsWithoutBadDebtProvision);
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.OneOffSchemeAdministrationSetupCosts.BadDebtProvision), result.BadDebtProvisionFor5);
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.OneOffSchemeAdministrationSetupCosts.TotalProducerFeeWithBadDebtProvision), result.TotalProducerOneOffFeeForSASetUpCostsWithBadDebtProvision);
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.OneOffSchemeAdministrationSetupCosts.EnglandTotalWithBadDebtProvision), result.EnglandTotalForSASetUpCostsWithBadDebtProvision);
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.OneOffSchemeAdministrationSetupCosts.WalesTotalWithBadDebtProvision), result.WalesTotalForSASetUpCostsWithBadDebtProvision);
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.OneOffSchemeAdministrationSetupCosts.ScotlandTotalWithBadDebtProvision), result.ScotlandTotalForSASetUpCostsWithBadDebtProvision);
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.OneOffSchemeAdministrationSetupCosts.NorthernIrelandTotalWithBadDebtProvision), result.NorthernIrelandTotalForSASetUpCostsWithBadDebtProvision);
         }
     }
 }

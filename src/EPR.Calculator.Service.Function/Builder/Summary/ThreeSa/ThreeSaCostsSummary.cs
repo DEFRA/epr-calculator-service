@@ -24,21 +24,5 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.ThreeSA
         {
             return calcResult.CalcResultParameterOtherCost.SaOperatingCost.OrderByDescending(t => t.OrderId).First().TotalValue;
         }
-
-        public static decimal GetBadDebtProvisionSection3(CalcResult calcResult)
-        {
-            return GetThreeSaCostsWithoutBadDebtProvision(calcResult) * calcResult.CalcResultParameterOtherCost.BadDebtValue / 100;
-        }
-
-        public static decimal GetThreeSaCostsWithBadDebtProvision(CalcResult calcResult)
-        {
-            return GetThreeSaCostsWithoutBadDebtProvision(calcResult) + GetBadDebtProvisionSection3(calcResult);
-        }
-
-
-        public static decimal GetSetUpBadDebtProvision(CalcResult calcResult)
-        {
-            return calcResult.CalcResultParameterOtherCost.BadDebtValue;
-        }
     }
 }

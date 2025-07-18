@@ -42,9 +42,9 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C
 
         private static decimal GetTotalWithBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
         {
-            return fee.TotalProducerFeeforLADisposalCostswithBadDebtprovision +
-                   fee.TotalProducerFeeforCommsCostsbyMaterialwithBadDebtprovision +
-                   fee.TotalProducerFeeWithBadDebtFor2bComms +
+            return fee.LocalAuthorityDisposalCostsSectionOne.TotalProducerFeeWithBadDebtProvision +
+                   fee.CommunicationCostsSectionTwoA.TotalProducerFeeWithBadDebtProvision +
+                   fee.CommunicationCostsSectionTwoB.TotalProducerFeeWithBadDebtProvision +
                    fee.TwoCTotalProducerFeeForCommsCostsWithBadDebt;
         }
 

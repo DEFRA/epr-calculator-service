@@ -31,30 +31,36 @@
 
             foreach (var item in summary.ProducerDisposalFees)
             {
-                item.TotalProducerFeeWithoutBadDebtProvisionSection5 = GetTotalProducerFeeWithoutBadDebtProvisionSection5(summary, item);
-                item.BadDebtProvisionSection5 = GetBadDebtProvisionSection5(calcResult, item);
-                item.TotalProducerFeeWithBadDebtProvisionSection5 = item.TotalProducerFeeWithoutBadDebtProvisionSection5 + item.BadDebtProvisionSection5;
-                item.EnglandTotalWithBadDebtProvisionSection5 = GetCountryTotalWithBadDebtProvision(calcResult, summary.SaSetupCostsTitleSection5, SaSetupCostsSummary.GetSetUpBadDebtProvision(calcResult), item.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.England);
-                item.WalesTotalWithBadDebtProvisionSection5 = GetCountryTotalWithBadDebtProvision(calcResult, summary.SaSetupCostsTitleSection5, SaSetupCostsSummary.GetSetUpBadDebtProvision(calcResult), item.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.Wales);
-                item.ScotlandTotalWithBadDebtProvisionSection5 = GetCountryTotalWithBadDebtProvision(calcResult, summary.SaSetupCostsTitleSection5, SaSetupCostsSummary.GetSetUpBadDebtProvision(calcResult), item.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.Scotland);
-                item.NorthernIrelandTotalWithBadDebtProvisionSection5 = GetCountryTotalWithBadDebtProvision(calcResult, summary.SaSetupCostsTitleSection5, SaSetupCostsSummary.GetSetUpBadDebtProvision(calcResult), item.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.NorthernIreland);
+                var totalProducerFeeWithoutBadDebtProvision = GetTotalProducerFeeWithoutBadDebtProvision(summary, item);
+                var badDebtProvision = GetBadDebtProvision(calcResult, totalProducerFeeWithoutBadDebtProvision);
+
+                item.OneOffSchemeAdministrationSetupCosts = new CalcResultSummaryBadDebtProvision
+                {
+                    TotalProducerFeeWithoutBadDebtProvision = totalProducerFeeWithoutBadDebtProvision,
+                    BadDebtProvision = badDebtProvision,
+                    TotalProducerFeeWithBadDebtProvision = totalProducerFeeWithoutBadDebtProvision + badDebtProvision,
+                    EnglandTotalWithBadDebtProvision = GetCountryTotalWithBadDebtProvision(calcResult, summary.SaSetupCostsTitleSection5, item.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.England),
+                    WalesTotalWithBadDebtProvision = GetCountryTotalWithBadDebtProvision(calcResult, summary.SaSetupCostsTitleSection5, item.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.Wales),
+                    ScotlandTotalWithBadDebtProvision = GetCountryTotalWithBadDebtProvision(calcResult, summary.SaSetupCostsTitleSection5, item.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.Scotland),
+                    NorthernIrelandTotalWithBadDebtProvision = GetCountryTotalWithBadDebtProvision(calcResult, summary.SaSetupCostsTitleSection5, item.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.NorthernIreland)
+                };
             }
         }
 
-        private static decimal GetBadDebtProvisionSection5(CalcResult calcResult, CalcResultSummaryProducerDisposalFees item)
+        private static decimal GetBadDebtProvision(CalcResult calcResult, decimal totalProducerFeeWithoutBadDebtProvision)
         {
-            return (item.TotalProducerFeeWithoutBadDebtProvisionSection5 * SaSetupCostsSummary.GetSetUpBadDebtProvision(calcResult)) / 100;
+            return (totalProducerFeeWithoutBadDebtProvision * SaSetupCostsSummary.GetSetUpBadDebtProvision(calcResult)) / 100;
         }
 
-        private static decimal GetTotalProducerFeeWithoutBadDebtProvisionSection5(CalcResultSummary summary, CalcResultSummaryProducerDisposalFees item)
+        private static decimal GetTotalProducerFeeWithoutBadDebtProvision(CalcResultSummary summary, CalcResultSummaryProducerDisposalFees item)
         {
             return (item.ProducerOverallPercentageOfCostsForOnePlus2A2B2C * summary.SaSetupCostsTitleSection5) / 100;
         }
 
-        public static decimal GetCountryTotalWithBadDebtProvision(CalcResult calcResult, decimal oneOffFeeSetupCostsWithoutBadDebtProvision, decimal badDebtProvisionSection5Setup, decimal ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries country)
+        public static decimal GetCountryTotalWithBadDebtProvision(CalcResult calcResult, decimal oneOffFeeSetupCostsWithoutBadDebtProvision, decimal ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries country)
         {
             var countryTotal = (CalcResultSummaryUtil.GetCountryOnePlusFourApportionment(calcResult, country)) / 100;
-            return oneOffFeeSetupCostsWithoutBadDebtProvision * (1 + (badDebtProvisionSection5Setup / 100)) * (ProducerOverallPercentageOfCostsForOnePlus2A2B2C / 100) * countryTotal;
+            return oneOffFeeSetupCostsWithoutBadDebtProvision * (1 + (calcResult.CalcResultParameterOtherCost.BadDebtValue / 100)) * (ProducerOverallPercentageOfCostsForOnePlus2A2B2C / 100) * countryTotal;
         }
 
     }
