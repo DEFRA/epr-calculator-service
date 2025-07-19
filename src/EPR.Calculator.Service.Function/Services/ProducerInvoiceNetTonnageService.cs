@@ -2,6 +2,7 @@
 using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Interface;
+using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
 using System;
 using System.Collections.Generic;
@@ -19,14 +20,17 @@ namespace EPR.Calculator.Service.Function.Services
 
         private readonly IMaterialService materialService;
 
-
+        private readonly IProducerInvoiceTonnageMapper producerInvoiceTonnageMapper;
 
         public ProducerInvoiceNetTonnageService(IDbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage> producerInvoiceMaterialChunker,
-            ICalculatorTelemetryLogger telemetryLogger, IMaterialService materialService)
+            ICalculatorTelemetryLogger telemetryLogger, 
+            IMaterialService materialService,
+            IProducerInvoiceTonnageMapper producerInvoiceTonnageMapper)
         {
             this.producerInvoiceMaterialChunker = producerInvoiceMaterialChunker;
             this.materialService = materialService;
             this.telemetryLogger = telemetryLogger;
+            this.producerInvoiceTonnageMapper = producerInvoiceTonnageMapper;
         }
 
 
@@ -48,14 +52,14 @@ namespace EPR.Calculator.Service.Function.Services
                         CalcResultSummaryProducerDisposalFeesByMaterial calcResultSummaryProducerDisposalFeesByMaterial = new CalcResultSummaryProducerDisposalFeesByMaterial();
 
                         var t = producer.ProducerDisposalFeesByMaterial.TryGetValue(material.Code, out calcResultSummaryProducerDisposalFeesByMaterial);
-                        var producerInvoicedMaterialNetTonnage = new ProducerInvoicedMaterialNetTonnage
+                        var producerInvoicedMaterialNetTonnage = this.producerInvoiceTonnageMapper.Map(new ProducerInvoiceTonnage
                         {
-                            CalculatorRunId = calcResult.CalcResultDetail.RunId,
+                            RunId = calcResult.CalcResultDetail.RunId,
                             ProducerId = producer.ProducerIdInt,
-                            InvoicedNetTonnage = calcResultSummaryProducerDisposalFeesByMaterial?.NetReportedTonnage,
+                            NetTonnage = calcResultSummaryProducerDisposalFeesByMaterial?.NetReportedTonnage,
                             MaterialId = material.Id
 
-                        };
+                        });
                         producerInvoiceNetTonnage.Add(producerInvoicedMaterialNetTonnage);
 
                     }

@@ -1,0 +1,122 @@
+namespace EPR.Calculator.Service.Function.UnitTests.Services
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using AutoFixture;
+    using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.Service.Common.Logging;
+    using EPR.Calculator.Service.Common.UnitTests.Utils;
+    using EPR.Calculator.Service.Function.Interface;
+    using EPR.Calculator.Service.Function.Mapper;
+    using EPR.Calculator.Service.Function.Models;
+    using EPR.Calculator.Service.Function.Services;
+    using EPR.Calculator.Service.Function.UnitTests.Builder;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Moq;
+
+    [TestClass]
+    public class ProducerInvoiceNetTonnageServiceTests
+    {
+        private ProducerInvoiceNetTonnageService testClass;
+        private Mock<IDbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage>> producerInvoiceMaterialChunker;
+        private Mock<ICalculatorTelemetryLogger> telemetryLogger;
+        private Mock<IMaterialService> materialService;
+        private Mock<IProducerInvoiceTonnageMapper> producerInvoiceMapper;
+
+        [TestInitialize]
+        public void SetUp()
+        {
+            producerInvoiceMaterialChunker = new Mock<IDbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage>>();
+            telemetryLogger = new Mock<ICalculatorTelemetryLogger>();
+            materialService = new Mock<IMaterialService>();
+            producerInvoiceMapper = new Mock<IProducerInvoiceTonnageMapper>();
+            testClass = new ProducerInvoiceNetTonnageService(producerInvoiceMaterialChunker.Object, telemetryLogger.Object, materialService.Object, producerInvoiceMapper.Object);
+        }
+
+        [TestMethod]
+        public void CanConstruct()
+        {
+            // Act
+            var instance = new ProducerInvoiceNetTonnageService(producerInvoiceMaterialChunker.Object, telemetryLogger.Object, materialService.Object, producerInvoiceMapper.Object);
+
+            // Assert
+            Assert.IsNotNull(instance);
+        }
+
+
+        [TestMethod]
+        public async Task CanCallCreateProducerInvoiceNetTonnage1()
+        {
+            // Arrange
+            var fixture = new Fixture();
+            var calcResult = TestDataHelper.GetCalcResult();
+
+            telemetryLogger.Setup(mock => mock.LogInformation(It.IsAny<TrackMessage>())).Verifiable();
+            telemetryLogger.Setup(mock => mock.LogError(It.IsAny<ErrorMessage>())).Verifiable();
+
+            materialService.Setup(m => m.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials());
+
+            // Act
+            
+            var result = await testClass.CreateProducerInvoiceNetTonnage(calcResult);
+
+            // Assert
+            telemetryLogger.Verify(mock => mock.LogInformation(It.IsAny<TrackMessage>()));
+
+            Assert.IsTrue(result);
+        }        
+
+        [TestMethod]
+        public async Task CanCallCreateProducerInvoiceTonnageWithNoProducers()
+        {
+            // Arrange
+            var fixture = new Fixture();
+            var calcResult = new CalcResult
+            {
+                CalcResultScaledupProducers = new CalcResultScaledupProducers(),
+                CalcResultDetail = new CalcResultDetail
+                {
+                    RunId = 4,
+                    RunDate = DateTime.Now,
+                    RunName = "RunName",
+                },
+                CalcResultLapcapData = new CalcResultLapcapData
+                {
+                    Name = string.Empty,
+                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>(),
+                },
+                CalcResultParameterOtherCost = new()
+                {
+                    BadDebtProvision = new KeyValuePair<string, string>(),
+                    Name = string.Empty,
+                    Details = new List<CalcResultParameterOtherCostDetail>(),
+                    Materiality = new List<CalcResultMateriality>(),
+                    SaOperatingCost = new List<CalcResultParameterOtherCostDetail>(),
+                    SchemeSetupCost = new CalcResultParameterOtherCostDetail(),
+                },
+                CalcResultLateReportingTonnageData = new()
+                {
+                    Name = string.Empty,
+                    CalcResultLateReportingTonnageDetails = new List<CalcResultLateReportingTonnageDetail>(),
+                    MaterialHeading = string.Empty,
+                    TonnageHeading = string.Empty,
+                },
+                CalcResultSummary = new() { ProducerDisposalFees = null }
+            };
+
+            materialService.Setup(mock => mock.GetMaterials()).ReturnsAsync(fixture.Create<List<MaterialDetail>>());
+            telemetryLogger.Setup(mock => mock.LogInformation(It.IsAny<TrackMessage>())).Verifiable();
+            telemetryLogger.Setup(mock => mock.LogError(It.IsAny<ErrorMessage>())).Verifiable();
+
+            // Act
+            var result = await testClass.CreateProducerInvoiceNetTonnage(calcResult);
+
+            // Assert
+            telemetryLogger.Verify(mock => mock.LogError(It.IsAny<ErrorMessage>()));
+
+            Assert.IsFalse(result);
+        }
+
+    }
+}

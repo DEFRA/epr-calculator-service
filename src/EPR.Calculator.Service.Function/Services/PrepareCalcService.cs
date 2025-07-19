@@ -32,11 +32,10 @@
             this.validatior = deps.ValidationRules;
             this.commandTimeoutService = deps.CommandTimeoutService;
             this.telemetryLogger = deps.TelemetryLogger;
-            this.billingInstructionService = deps.BillingInstructionService;
             this.ConfigService = deps.ConfigService;
             this.JsonExporter = deps.JsonExporter;
             this.BillingFileExporter = deps.BillingFileExporter;
-            this.producerInvoiceNetTonnageService = deps.ProducerInvoiceNetTonnageService;
+            this.producerDataInsertService = deps.producerDataInsertService;
         }
 
         public const string ContainerNameMissingError = "Container name is missing in configuration.";
@@ -68,6 +67,7 @@
         private IBillingFileExporter<CalcResult> BillingFileExporter { get; init; }
 
         private IProducerInvoiceNetTonnageService producerInvoiceNetTonnageService { get; init; }
+        private IPrepareProducerDataInsertService producerDataInsertService { get; init; }
 
         public async Task<bool> PrepareCalcResults(
             [FromBody] CalcResultsRequestDto resultsRequestDto,
@@ -113,31 +113,16 @@
                 {
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
-                    Message = "Create billing instructions started...",
+                    Message = "Create producer data insert service started...",
                 });
 
-                await this.billingInstructionService.CreateBillingInstructions(results);
+                await this.producerDataInsertService.InsertProducerDataToDatabase(results);
                 this.telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
-                    Message = "Create billing instructions end...",
-                });
-
-                this.telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = resultsRequestDto.RunId,
-                    RunName = runName,
-                    Message = "Create provider invoice tonnage started started...",
-                });
-
-                await this.producerInvoiceNetTonnageService.CreateProducerInvoiceNetTonnage(results);
-                this.telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = resultsRequestDto.RunId,
-                    RunName = runName,
-                    Message = "Create producer invocice net tonnage end...",
-                });
+                    Message = "Create producer data insert service end...",
+                });                
 
                 this.telemetryLogger.LogInformation(new TrackMessage
                 {

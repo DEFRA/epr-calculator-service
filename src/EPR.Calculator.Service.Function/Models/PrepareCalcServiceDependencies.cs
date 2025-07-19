@@ -19,10 +19,9 @@ namespace EPR.Calculator.Service.Function.Models
         public required CalculatorRunValidator ValidationRules { get; init; }
         public required ICommandTimeoutService CommandTimeoutService { get; init; }
         public required ICalculatorTelemetryLogger TelemetryLogger { get; init; }
-        public required IBillingInstructionService BillingInstructionService { get; init; }
         public required ICalcBillingJsonExporter<CalcResult> JsonExporter { get; init; }
         public required IConfigurationService ConfigService { get; init; }
         public required IBillingFileExporter<CalcResult> BillingFileExporter { get; init; }
-        public required IProducerInvoiceNetTonnageService ProducerInvoiceNetTonnageService { get; init; }
+        public required IPrepareProducerDataInsertService producerDataInsertService { get; init; }
     }
 }
