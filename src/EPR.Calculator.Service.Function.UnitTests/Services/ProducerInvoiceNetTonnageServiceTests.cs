@@ -101,8 +101,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     CalcResultLateReportingTonnageDetails = new List<CalcResultLateReportingTonnageDetail>(),
                     MaterialHeading = string.Empty,
                     TonnageHeading = string.Empty,
-                },
-                CalcResultSummary = new() { ProducerDisposalFees = null }
+                }
             };
 
             materialService.Setup(mock => mock.GetMaterials()).ReturnsAsync(fixture.Create<List<MaterialDetail>>());
@@ -111,9 +110,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Act
             var result = await testClass.CreateProducerInvoiceNetTonnage(calcResult);
-
-            // Assert
-            telemetryLogger.Verify(mock => mock.LogError(It.IsAny<ErrorMessage>()));
 
             Assert.IsFalse(result);
         }

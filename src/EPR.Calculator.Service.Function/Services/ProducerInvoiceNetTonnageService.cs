@@ -49,9 +49,7 @@ namespace EPR.Calculator.Service.Function.Services
                 {
                     foreach (var material in materials)
                     {
-                        CalcResultSummaryProducerDisposalFeesByMaterial calcResultSummaryProducerDisposalFeesByMaterial = new CalcResultSummaryProducerDisposalFeesByMaterial();
-
-                        var t = producer.ProducerDisposalFeesByMaterial.TryGetValue(material.Code, out calcResultSummaryProducerDisposalFeesByMaterial);
+                        producer.ProducerDisposalFeesByMaterial.TryGetValue(material.Code, out var calcResultSummaryProducerDisposalFeesByMaterial);
                         var producerInvoicedMaterialNetTonnage = this.producerInvoiceTonnageMapper.Map(new ProducerInvoiceTonnage
                         {
                             RunId = calcResult.CalcResultDetail.RunId,

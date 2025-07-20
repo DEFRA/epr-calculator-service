@@ -65,8 +65,6 @@
         private IConfigurationService ConfigService { get; init; }
 
         private IBillingFileExporter<CalcResult> BillingFileExporter { get; init; }
-
-        private IProducerInvoiceNetTonnageService producerInvoiceNetTonnageService { get; init; }
         private IPrepareProducerDataInsertService producerDataInsertService { get; init; }
 
         public async Task<bool> PrepareCalcResults(
