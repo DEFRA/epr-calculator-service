@@ -18,14 +18,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     [TestClass]
     public class ProducerInvoiceNetTonnageServiceTests
     {
-        private ProducerInvoiceNetTonnageService testClass;
-        private Mock<IDbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage>> producerInvoiceMaterialChunker;
-        private Mock<ICalculatorTelemetryLogger> telemetryLogger;
-        private Mock<IMaterialService> materialService;
-        private Mock<IProducerInvoiceTonnageMapper> producerInvoiceMapper;
-
-        [TestInitialize]
-        public void SetUp()
+     
+        public ProducerInvoiceNetTonnageServiceTests()
         {
             producerInvoiceMaterialChunker = new Mock<IDbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage>>();
             telemetryLogger = new Mock<ICalculatorTelemetryLogger>();
@@ -33,6 +27,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             producerInvoiceMapper = new Mock<IProducerInvoiceTonnageMapper>();
             testClass = new ProducerInvoiceNetTonnageService(producerInvoiceMaterialChunker.Object, telemetryLogger.Object, materialService.Object, producerInvoiceMapper.Object);
         }
+
+        private ProducerInvoiceNetTonnageService testClass { get; init; }
+        private Mock<IDbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage>> producerInvoiceMaterialChunker { get; init; }
+        private Mock<ICalculatorTelemetryLogger> telemetryLogger { get; init; }
+        private Mock<IMaterialService> materialService { get; init; }
+        private Mock<IProducerInvoiceTonnageMapper> producerInvoiceMapper { get; init; }
 
         [TestMethod]
         public void CanConstruct()

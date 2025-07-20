@@ -9,12 +9,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
     [TestClass]
     public class ProducerInvoiceTonnageMapperTests
     {
-        private ProducerInvoiceTonnageMapper _testClass;
+        public required ProducerInvoiceTonnageMapper testClass { get; set; }
 
         [TestInitialize]
         public void SetUp()
         {
-            _testClass = new ProducerInvoiceTonnageMapper();
+            testClass = new ProducerInvoiceTonnageMapper();
         }
 
         [TestMethod]
@@ -25,7 +25,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             var producerInvoiceTonnage = fixture.Create<ProducerInvoiceTonnage>();
 
             // Act
-            var result = _testClass.Map(producerInvoiceTonnage);
+            var result = testClass.Map(producerInvoiceTonnage);
 
             // Assert
             Assert.AreEqual(producerInvoiceTonnage.RunId, result.CalculatorRunId);
