@@ -70,7 +70,7 @@ namespace EPR.Calculator.Service.Function.Services
                 
                 producerInvoiceNetTonnage.AddRange(invoiceTonnages);                
 
-                if (producerInvoiceNetTonnage is null  || producerInvoiceNetTonnage.Count <= 0)
+                if (producerInvoiceNetTonnage.Count == 0)
                 {
                     this.telemetryLogger.LogInformation(new TrackMessage
                     {
