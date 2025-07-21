@@ -70,7 +70,7 @@ namespace EPR.Calculator.Service.Function.Services
                 
                 producerInvoiceNetTonnage.AddRange(invoiceTonnages);                
 
-                if (producerInvoiceNetTonnage.Count <= 0)
+                if (producerInvoiceNetTonnage is null  || producerInvoiceNetTonnage.Count <= 0)
                 {
                     this.telemetryLogger.LogInformation(new TrackMessage
                     {
@@ -80,11 +80,9 @@ namespace EPR.Calculator.Service.Function.Services
                     });
                     return false;
                 }
-
-                if(producerInvoiceNetTonnage.Count > 0)
-                { 
-                    await this.producerInvoiceMaterialChunker.InsertRecords(producerInvoiceNetTonnage);                    
-                }
+                
+                await this.producerInvoiceMaterialChunker.InsertRecords(producerInvoiceNetTonnage);                    
+               
 
                 var endTime = DateTime.UtcNow;
                 var timeDiff = startTime - endTime;
