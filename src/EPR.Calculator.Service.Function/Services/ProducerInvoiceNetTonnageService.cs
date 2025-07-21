@@ -1,4 +1,5 @@
-﻿using EPR.Calculator.API.Data.DataModels;
+﻿using Azure.Analytics.Synapse.Artifacts.Models;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Interface;
@@ -68,10 +69,27 @@ namespace EPR.Calculator.Service.Function.Services
                     }).Where(x => x != null)
                 );
                 
-                producerInvoiceNetTonnage.AddRange(invoiceTonnages);                
+                producerInvoiceNetTonnage.AddRange(invoiceTonnages);
 
-                if (producerInvoiceNetTonnage.Count == 0)
+                if (producerInvoiceNetTonnage.Count > 0)
                 {
+
+                    await this.producerInvoiceMaterialChunker.InsertRecords(producerInvoiceNetTonnage);
+
+
+                    var endTime = DateTime.UtcNow;
+                    var timeDiff = startTime - endTime;
+                    this.telemetryLogger.LogInformation(new TrackMessage
+                    {
+                        RunId = calcResult.CalcResultDetail.RunId,
+                        RunName = calcResult.CalcResultDetail.RunName,
+                        Message = $"Inserting records {producerInvoiceNetTonnage.Count} into producer invoice net tonnage table for {calcResult.CalcResultDetail.RunId} completed in {timeDiff.TotalSeconds} seconds",
+                    });
+
+                }
+                else
+                {
+
                     this.telemetryLogger.LogInformation(new TrackMessage
                     {
                         RunId = calcResult.CalcResultDetail.RunId,
@@ -80,19 +98,6 @@ namespace EPR.Calculator.Service.Function.Services
                     });
                     return false;
                 }
-                
-                await this.producerInvoiceMaterialChunker.InsertRecords(producerInvoiceNetTonnage);                    
-               
-
-                var endTime = DateTime.UtcNow;
-                var timeDiff = startTime - endTime;
-                this.telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = calcResult.CalcResultDetail.RunId,
-                    RunName = calcResult.CalcResultDetail.RunName,
-                    Message = $"Inserting records {producerInvoiceNetTonnage.Count} into producer invoice net tonnage table for {calcResult.CalcResultDetail.RunId} completed in {timeDiff.TotalSeconds} seconds",
-                });
-
                 return true;
             }
             catch (Exception exception)
