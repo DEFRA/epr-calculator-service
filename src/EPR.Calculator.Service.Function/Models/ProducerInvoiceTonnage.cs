@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.Models
 {
-    public class ProducerInvoiceTonnage
+    public record ProducerInvoiceTonnage
     {
-        public int RunId {  get; set; }
-        public int ProducerId { get; set; }
-        public int MaterialId { get; set; }
-        public decimal? NetTonnage { get; set; }
+        public int RunId {  get; init; }
+        public int ProducerId { get; init; }
+        public int MaterialId { get; init; }
+        public decimal? NetTonnage { get; init; }
     }
 }
