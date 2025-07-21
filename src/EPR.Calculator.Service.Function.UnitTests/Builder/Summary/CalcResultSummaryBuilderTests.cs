@@ -415,10 +415,10 @@
 
             var totalRow = result.ProducerDisposalFees.LastOrDefault();
             Assert.IsNotNull(totalRow);
-            totalRow.BadDebtProvisionFor1 = 100m;
+            totalRow.LocalAuthorityDisposalCostsSectionOne.BadDebtProvision = 100m;
             totalRow.Level = "Totals";
 
-            var totalFee = CalcResultOneAndTwoAUtil.GetTotalFee(result.ProducerDisposalFees.ToList(), fee => fee.BadDebtProvisionFor1);
+            var totalFee = CalcResultOneAndTwoAUtil.GetTotalFee(result.ProducerDisposalFees.ToList(), fee => fee.LocalAuthorityDisposalCostsSectionOne.BadDebtProvision);
 
             Assert.AreEqual(100m, totalFee);
         }
@@ -474,10 +474,10 @@
 
             var totalRow = result.ProducerDisposalFees.LastOrDefault();
             Assert.IsNotNull(totalRow);
-            totalRow.BadDebtProvisionFor2A = 400m;
+            totalRow.CommunicationCostsSectionTwoA.BadDebtProvision = 400m;
             totalRow.Level = "Totals";
 
-            var totalFee = CalcResultOneAndTwoAUtil.GetTotalFee(result.ProducerDisposalFees.ToList(), fee => fee.BadDebtProvisionFor2A);
+            var totalFee = CalcResultOneAndTwoAUtil.GetTotalFee(result.ProducerDisposalFees.ToList(), fee => fee.CommunicationCostsSectionTwoA.BadDebtProvision);
 
             Assert.AreEqual(400m, totalFee);
         }
@@ -512,10 +512,10 @@
 
             var totalRow = result.ProducerDisposalFees.LastOrDefault();
             Assert.IsNotNull(totalRow);
-            totalRow.BadDebtProvisionFor1 = 0m;
+            totalRow.LocalAuthorityDisposalCostsSectionOne.BadDebtProvision = 0m;
             totalRow.Level = "Totals";
 
-            var totalFee = CalcResultOneAndTwoAUtil.GetTotalFee(result.ProducerDisposalFees.ToList(), fee => fee.BadDebtProvisionFor1);
+            var totalFee = CalcResultOneAndTwoAUtil.GetTotalFee(result.ProducerDisposalFees.ToList(), fee => fee.LocalAuthorityDisposalCostsSectionOne.BadDebtProvision);
 
             Assert.AreEqual(0m, totalFee);
         }

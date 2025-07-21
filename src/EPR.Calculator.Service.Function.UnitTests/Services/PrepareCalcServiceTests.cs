@@ -44,6 +44,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         private Mock<IConfigurationService> _configService;
         private Mock<IBillingFileExporter<CalcResult>> _billingFileExporter;
 
+        private PrepareCalcServiceDependencies _prepareCalcServiceDependencies;
+
         public PrepareCalcServiceTests()
         {
             this._dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
@@ -105,17 +107,23 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this._jsonExporter = new Mock<ICalcBillingJsonExporter<CalcResult>>();
             this._configService = new Mock<IConfigurationService>();
             this._billingFileExporter = new Mock<IBillingFileExporter<CalcResult>>();
-            this._testClass = new PrepareCalcService(this._dbContextFactory.Object,
-                this._builder.Object,
-                this._exporter.Object,
-                this._storageService.Object,
-                this._validationRules,
-                this._commandTimeoutService.Object,
-                this._telemetryLogger.Object,
-                this._billingInstructionService.Object,
-                this._jsonExporter.Object,
-                this._configService.Object,
-                this._billingFileExporter.Object);
+
+            this._prepareCalcServiceDependencies = new PrepareCalcServiceDependencies
+            {
+                Context = this._context,
+                Builder = this._builder.Object,
+                Exporter = this._exporter.Object,
+                StorageService = this._storageService.Object,
+                ValidationRules = new Mock<CalculatorRunValidator>().Object,
+                CommandTimeoutService = this._commandTimeoutService.Object,
+                TelemetryLogger = new Mock<ICalculatorTelemetryLogger>().Object,
+                BillingInstructionService = this._billingInstructionService.Object,
+                JsonExporter = this._jsonExporter.Object,
+                ConfigService = this._configService.Object,
+                BillingFileExporter = this._billingFileExporter.Object
+            };
+
+            this._testClass = new PrepareCalcService(this._prepareCalcServiceDependencies);
         }
 
         [TestCleanup]
@@ -135,17 +143,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public void CanConstruct()
         {
             // Act
-            var instance = new PrepareCalcService(this._dbContextFactory.Object,
-                this._builder.Object,
-                this._exporter.Object,
-                this._storageService.Object,
-                this._validationRules,
-                this._commandTimeoutService.Object,
-                this._telemetryLogger.Object,
-                this._billingInstructionService.Object,
-                this._jsonExporter.Object,
-                this._configService.Object,
-                this._billingFileExporter.Object);
+            var instance = new PrepareCalcService(this._prepareCalcServiceDependencies);
 
             // Assert
             Assert.IsNotNull(instance);
@@ -160,13 +158,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var runName = fixture.Create<string>();
 
             this._storageService.Setup(x => x.UploadFileContentAsync(
-                It.IsAny<(string, string, string, string)>()))
+                It.IsAny<(string, string, string, string, bool)>()))
                 .ReturnsAsync("expected result");
             // Act
             var result = await this._testClass.PrepareCalcResults(resultsRequestDto, runName, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(true, result);
+
+            _storageService.Verify(x => x.UploadFileContentAsync(
+                It.Is<(string, string, string, string, bool)>(y => y.Item5 == false)), Times.Once);
         }
 
         [TestMethod]
@@ -256,7 +257,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this._jsonExporter.Setup(t => t.Export(It.IsAny<CalcResult>(), It.IsAny<List<int>>())).Returns(fixture.Create<string>());
             this._billingFileExporter.Setup(t => t.Export(It.IsAny<CalcResult>(), It.IsAny<List<int>>())).Returns(fixture.Create<string>());
             this._storageService.Setup(x => x.UploadFileContentAsync(
-               It.IsAny<(string, string, string, string)>()))
+               It.IsAny<(string, string, string, string, bool)>()))
                .ReturnsAsync("fileName");
 
             var calcResultsRequestDto = new CalcResultsRequestDto
@@ -281,8 +282,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.IsNotNull(billingFileMetaData);
 
             billingFileMetaData.BillingFileCreatedBy = "Test User 234";
-            Assert.AreEqual($"1-TestRun_Billing File_{DateTime.Today:yyyyMMdd}.csv", billingFileMetaData.BillingCsvFileName);
+            var fileNamePart = $"1-TestRun_Billing File_{DateTime.Today:yyyyMMdd}";
+            Assert.IsTrue(billingFileMetaData.BillingCsvFileName?.StartsWith(fileNamePart));
             Assert.AreEqual("1billing.json", billingFileMetaData.BillingJsonFileName);
+
+            _storageService.Verify(x => x.UploadFileContentAsync(
+                It.Is<(string, string, string, string, bool)>(y => y.Item1 != null)), Times.Exactly(2));
+
+            _storageService.Verify(x => x.UploadFileContentAsync(
+                It.Is<(string, string, string, string, bool)>(y => y.Item5 == false)), Times.Once);
+
+            _storageService.Verify(x => x.UploadFileContentAsync(
+                It.Is<(string, string, string, string, bool)>(y => y.Item5 == true)), Times.Once);
 
         }
 
