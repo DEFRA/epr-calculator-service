@@ -1,14 +1,13 @@
-﻿using EPR.Calculator.Service.Function.Converter;
-using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
-    public class TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2c
+    public class TotalProducerFeeWithBadDebtProvisionFor2Con12A2B2CMapper
     {
-        [JsonProperty(PropertyName = "totalFeeWithBadDebtProvision")]
+        [JsonPropertyName("totalFeeWithBadDebtProvision")]
         public required string TotalFeeWithBadDebtProvision { get; set; }
 
-        [JsonProperty(PropertyName = "producerPercentageOfOverallProducerCost")]
+        [JsonPropertyName("producerPercentageOfOverallProducerCost")]
         public required string ProducerPercentageOfOverallProducerCost { get; set; }
     }
 }
