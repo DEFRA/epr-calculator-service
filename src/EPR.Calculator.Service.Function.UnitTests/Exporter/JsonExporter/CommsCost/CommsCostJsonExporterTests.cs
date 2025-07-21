@@ -3,12 +3,6 @@ using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
 using Moq;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsCost
 {

@@ -45,18 +45,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
             var result = _testClass?.Export(commsCostByMaterial) ?? null;
             var json = JsonSerializer.Serialize(result);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
-                ["CalcResult2aCommsDataDetails"];
+                ["calcResult2aCommsDataDetails"];
 
             var expected = commsCostByMaterial.First();
             var actual = roundTrippedData![0]!;
 
             Assert.IsNotNull(result);
             Assert.IsNotNull(actual);
-            Assert.AreEqual(expected.ProducerReportedHouseholdPackagingWasteTonnageValue, actual?["ProducerHouseholdPackagingWasteTonnage"]?.GetValue<decimal>());
-            Assert.AreEqual(expected.ReportedPublicBinTonnageValue, actual?["PublicBinTonnage"]?.GetValue<decimal>());
-            Assert.AreEqual(expected.ProducerReportedTotalTonnage, actual?["TotalTonnage"]?.GetValue<decimal>());
-            Assert.AreEqual(expected.HouseholdDrinksContainersValue, actual?["HouseholdDrinksContainersTonnage"]?.GetValue<decimal>());
-            Assert.AreEqual(expected.LateReportingTonnageValue, actual?["LateReportingTonnage"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.ProducerReportedHouseholdPackagingWasteTonnageValue, actual?["producerHouseholdPackagingWasteTonnage"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.ReportedPublicBinTonnageValue, actual?["publicBinTonnage"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.ProducerReportedTotalTonnage, actual?["totalTonnage"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.HouseholdDrinksContainersValue, actual?["householdDrinksContainersTonnage"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.LateReportingTonnageValue, actual?["lateReportingTonnage"]?.GetValue<decimal>());
         }
 
 
@@ -68,18 +68,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
             var result = _testClass?.Export(commsCostByMaterial) ?? null;
             var json = JsonSerializer.Serialize(result);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
-                ["CalcResult2aCommsDataDetailsTotal"];
+                ["calcResult2aCommsDataDetailsTotal"];
 
             var expected = commsCostByMaterial.Single(t => t.Name == CommonConstants.Total);
             var actual = roundTrippedData!;
 
             Assert.IsNotNull(result);
             Assert.IsNotNull(actual);
-            Assert.AreEqual(expected.ProducerReportedHouseholdPackagingWasteTonnageValue, actual?["ProducerHouseholdPackagingWasteTonnageTotal"]?.GetValue<decimal>());
-            Assert.AreEqual(expected.ReportedPublicBinTonnageValue, actual?["PublicBinTonnage"]?.GetValue<decimal>());
-            Assert.AreEqual(expected.ProducerReportedTotalTonnage, actual?["TotalTonnageTotal"]?.GetValue<decimal>());
-            Assert.AreEqual(expected.HouseholdDrinksContainersValue, actual?["HouseholdDrinksContainersTonnageTotal"]?.GetValue<decimal>());
-            Assert.AreEqual(expected.LateReportingTonnageValue, actual?["LateReportingTonnageTotal"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.ProducerReportedHouseholdPackagingWasteTonnageValue, actual?["producerHouseholdPackagingWasteTonnageTotal"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.ReportedPublicBinTonnageValue, actual?["publicBinTonnage"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.ProducerReportedTotalTonnage, actual?["totalTonnageTotal"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.HouseholdDrinksContainersValue, actual?["householdDrinksContainersTonnageTotal"]?.GetValue<decimal>());
+            Assert.AreEqual(expected.LateReportingTonnageValue, actual?["lateReportingTonnageTotal"]?.GetValue<decimal>());
         }
 
         private static List<CalcResultCommsCostCommsCostByMaterial> GetCommsCostMaterialData()
