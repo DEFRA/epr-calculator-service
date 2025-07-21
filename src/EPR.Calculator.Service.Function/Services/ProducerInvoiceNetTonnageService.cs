@@ -53,7 +53,7 @@ namespace EPR.Calculator.Service.Function.Services
                     {
                         var disposalFees = producer.ProducerDisposalFeesByMaterial;
 
-                        if (disposalFees.TryGetValue(material.Code, out var feeSummary))
+                        if (disposalFees is not null && disposalFees.TryGetValue(material.Code, out var feeSummary))
                         {
                             return producerInvoiceTonnageMapper.Map(new ProducerInvoiceTonnage
                             {
@@ -70,11 +70,7 @@ namespace EPR.Calculator.Service.Function.Services
                 
                 producerInvoiceNetTonnage.AddRange(invoiceTonnages);                
 
-                if (producerInvoiceNetTonnage.Count > 0)
-                {
-                    await this.producerInvoiceMaterialChunker.InsertRecords(producerInvoiceNetTonnage);
-                }
-                else
+                if (producerInvoiceNetTonnage.Count <= 0)
                 {
                     this.telemetryLogger.LogInformation(new TrackMessage
                     {
@@ -83,6 +79,10 @@ namespace EPR.Calculator.Service.Function.Services
                         Message = $"No producer invoice net tonnage to insert into table for {calcResult.CalcResultDetail.RunId}",
                     });
                     return false;
+                }
+                else
+                {
+                    await this.producerInvoiceMaterialChunker.InsertRecords(producerInvoiceNetTonnage);                    
                 }
 
                 var endTime = DateTime.UtcNow;
