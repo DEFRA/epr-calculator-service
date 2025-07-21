@@ -8,14 +8,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
     using static EPR.Calculator.Service.Common.UnitTests.Utils.JsonNodeComparer;
 
     [TestClass]
-    public class TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapperTests
+    public class TotalProducerFeeWithBadDebtProvisionFor2con_1_2a_2b_2cMapperTests
     {
-        private TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper? _testClass;
+        private TotalProducerFeeWithBadDebtProvisionFor2con_1_2a_2b_2cMapper? _testClass;
 
         [TestInitialize]
         public void SetUp()
         {
-            _testClass = new TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper();
+            _testClass = new TotalProducerFeeWithBadDebtProvisionFor2con_1_2a_2b_2cMapper();
         }
 
         [TestMethod]

@@ -309,6 +309,25 @@
             var firstProducer = result.ProducerDisposalFees.FirstOrDefault();
             Assert.IsNotNull(firstProducer);
             Assert.AreEqual("Producer1", firstProducer.ProducerName);
+            Assert.AreEqual(0, CalcResultSummaryBuilder.ScaledupProducers.Count());
+        }
+
+        [TestMethod]
+        public void Construct_ShouldSetScaledupProducers()
+        {
+            // Assign
+            var requestDto = new CalcResultsRequestDto { RunId = 1 };
+            var calcResult = this.calcResult;
+            calcResult.CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers();
+            
+            // Act
+            var results = this.calcResultsService.Construct(requestDto, calcResult);
+            results.Wait();
+            var result = results.Result;
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(1, CalcResultSummaryBuilder.ScaledupProducers.Count());
         }
 
         [TestMethod]
@@ -415,10 +434,10 @@
 
             var totalRow = result.ProducerDisposalFees.LastOrDefault();
             Assert.IsNotNull(totalRow);
-            totalRow.LocalAuthorityDisposalCostsSectionOne.BadDebtProvision = 100m;
+            totalRow.LocalAuthorityDisposalCostsSectionOne!.BadDebtProvision = 100m;
             totalRow.Level = "Totals";
 
-            var totalFee = CalcResultOneAndTwoAUtil.GetTotalFee(result.ProducerDisposalFees.ToList(), fee => fee.LocalAuthorityDisposalCostsSectionOne.BadDebtProvision);
+            var totalFee = CalcResultOneAndTwoAUtil.GetTotalFee(result.ProducerDisposalFees.ToList(), fee => fee.LocalAuthorityDisposalCostsSectionOne!.BadDebtProvision);
 
             Assert.AreEqual(100m, totalFee);
         }
@@ -474,10 +493,10 @@
 
             var totalRow = result.ProducerDisposalFees.LastOrDefault();
             Assert.IsNotNull(totalRow);
-            totalRow.CommunicationCostsSectionTwoA.BadDebtProvision = 400m;
+            totalRow.CommunicationCostsSectionTwoA!.BadDebtProvision = 400m;
             totalRow.Level = "Totals";
 
-            var totalFee = CalcResultOneAndTwoAUtil.GetTotalFee(result.ProducerDisposalFees.ToList(), fee => fee.CommunicationCostsSectionTwoA.BadDebtProvision);
+            var totalFee = CalcResultOneAndTwoAUtil.GetTotalFee(result.ProducerDisposalFees.ToList(), fee => fee.CommunicationCostsSectionTwoA!.BadDebtProvision);
 
             Assert.AreEqual(400m, totalFee);
         }
@@ -512,10 +531,10 @@
 
             var totalRow = result.ProducerDisposalFees.LastOrDefault();
             Assert.IsNotNull(totalRow);
-            totalRow.LocalAuthorityDisposalCostsSectionOne.BadDebtProvision = 0m;
+            totalRow.LocalAuthorityDisposalCostsSectionOne!.BadDebtProvision = 0m;
             totalRow.Level = "Totals";
 
-            var totalFee = CalcResultOneAndTwoAUtil.GetTotalFee(result.ProducerDisposalFees.ToList(), fee => fee.LocalAuthorityDisposalCostsSectionOne.BadDebtProvision);
+            var totalFee = CalcResultOneAndTwoAUtil.GetTotalFee(result.ProducerDisposalFees.ToList(), fee => fee.LocalAuthorityDisposalCostsSectionOne!.BadDebtProvision);
 
             Assert.AreEqual(0m, totalFee);
         }

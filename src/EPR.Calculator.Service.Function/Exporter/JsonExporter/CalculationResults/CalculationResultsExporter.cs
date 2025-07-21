@@ -21,7 +21,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResul
         private readonly ICalcResultLADataPrepCostsWithBadDebtProvision4Mapper laDataPrepCostsWithBadDebtProvision4Mapper;
         private readonly IFeeForCommsCostsWithBadDebtProvision2aMapper feeForCommsCostsWithBadDebtProvision2aMapper;
         private readonly IFeeForCommsCostsWithBadDebtProvision2bMapper feeForCommsCostsWithBadDebtProvision2bMapper;
-        private readonly ITotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper totalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper;
+        private readonly ITotalProducerFeeWithBadDebtProvisionFor2Con12A2B2CMapper totalProducerFeeWithBadDebtProvisionFor2con_1_2a_2b_2cMapper;
         private readonly IFeeForSASetUpCostsWithBadDebtProvision_5Mapper feeForSASetUpCostsWithBadDebtProvision_5Mapper;
         private readonly ICalcResultCommsCostsWithBadDebtProvision2cMapper calcResultCommsCostsWithBadDebtProvision2CMapper;
         private readonly ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper;
@@ -39,7 +39,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResul
             ICalcResultLADataPrepCostsWithBadDebtProvision4Mapper laDataPrepCostsWithBadDebtProvision4Mapper,
             IFeeForCommsCostsWithBadDebtProvision2aMapper feeForCommsCostsWithBadDebtProvision2aMapper,
             IFeeForCommsCostsWithBadDebtProvision2bMapper feeForCommsCostsWithBadDebtProvision2bMapper,
-            ITotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper totalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper,
+            ITotalProducerFeeWithBadDebtProvisionFor2Con12A2B2CMapper totalProducerFeeWithBadDebtProvisionFor2con_1_2a_2b_2cMapper,
             IFeeForSASetUpCostsWithBadDebtProvision_5Mapper feeForSASetUpCostsWithBadDebtProvision_5Mapper,
             ICalcResultCommsCostsWithBadDebtProvision2cMapper calcResultCommsCostsWithBadDebtProvision2CMapper,
             ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper,
@@ -56,7 +56,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResul
             this.laDataPrepCostsWithBadDebtProvision4Mapper = laDataPrepCostsWithBadDebtProvision4Mapper;
             this.feeForCommsCostsWithBadDebtProvision2aMapper = feeForCommsCostsWithBadDebtProvision2aMapper;
             this.feeForCommsCostsWithBadDebtProvision2bMapper = feeForCommsCostsWithBadDebtProvision2bMapper;
-            this.totalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper = totalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper;
+            this.totalProducerFeeWithBadDebtProvisionFor2con_1_2a_2b_2cMapper = totalProducerFeeWithBadDebtProvisionFor2con_1_2a_2b_2cMapper;
             this.feeForSASetUpCostsWithBadDebtProvision_5Mapper = feeForSASetUpCostsWithBadDebtProvision_5Mapper;
             this.calcResultCommsCostsWithBadDebtProvision2CMapper = calcResultCommsCostsWithBadDebtProvision2CMapper;
             this.calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper = calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper;
@@ -143,7 +143,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResul
                     FeeForCommsCostsWithBadDebtProvision_2a = this.feeForCommsCostsWithBadDebtProvision2aMapper.Map(producer),
                     FeeForCommsCostsWithBadDebtProvision_2b = this.feeForCommsCostsWithBadDebtProvision2bMapper.Map(producer),
                     CommsCostsByMaterialFeesSummary2a = this.commsCostsByMaterialFeesSummary2AMapper.Map(producer),
-                    TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2c = this.totalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper.Map(producer),
+                    TotalProducerFeeWithBadDebtProvisionFor2con_1_2a_2b_2c = this.totalProducerFeeWithBadDebtProvisionFor2con_1_2a_2b_2cMapper.Map(producer),
                     FeeForSASetUpCostsWithBadDebtProvision_5 = this.feeForSASetUpCostsWithBadDebtProvision_5Mapper.Map(producer),
                     FeeForCommsCostsWithBadDebtProvision_2c = this.calcResultCommsCostsWithBadDebtProvision2CMapper.Map(producer),
                     CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts = this.calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper.Map(producer),

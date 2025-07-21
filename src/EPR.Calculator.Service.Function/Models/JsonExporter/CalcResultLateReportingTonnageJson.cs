@@ -1,34 +1,30 @@
 ﻿using EPR.Calculator.Service.Function.Converter;
-using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
     public class CalcResultLateReportingTonnageJson
     {
-        [JsonProperty(PropertyName = "name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
 
-        [JsonProperty(PropertyName = "calcResultLateReportingTonnageDetails")]
+        [JsonPropertyName("calcResultLateReportingTonnageDetails")]
         public List<CalcResultLateReportingTonnageDetailsJson> calcResultLateReportingTonnageDetails { get; set; }
 
-        [JsonProperty(PropertyName = "calcResultLateReportingTonnageTotal")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
+        [JsonPropertyName("calcResultLateReportingTonnageTotal")]
+        [JsonConverter(typeof(DecimalPrecision3Converter))]
         public decimal CalcResultLateReportingTonnageTotal { get; set; }
     }
 
     public class CalcResultLateReportingTonnageDetailsJson
     {
-        [JsonProperty(PropertyName = "materialName")]
+        [JsonPropertyName("materialName")]
         public string MaterialName { get; set; }
 
 
-        [JsonProperty(PropertyName = "totalLateReportingTonnage")]
-        [JsonConverter(typeof(DecimalPrecisionConverter), 3)]
+        [JsonPropertyName("totalLateReportingTonnage")]
+        [JsonConverter(typeof(DecimalPrecision3Converter))]
         public decimal TotalLateReportingTonnage { get; set; }
     }
 }

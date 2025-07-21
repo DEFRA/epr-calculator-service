@@ -1,55 +1,50 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
     public record CalcResult2ACommsDataDetailsTotal
     {
-        [JsonProperty(PropertyName = "total")]
+        [JsonPropertyName("total")]
 
         public required string Total { get; init; }
 
-        [JsonProperty(PropertyName = "englandCommsCostTotal")]
+        [JsonPropertyName("englandCommsCostTotal")]
 
         public required string EnglandCommsCostTotal { get; init; }
 
-        [JsonProperty(PropertyName = "walesCommsCostTotal")]
+        [JsonPropertyName("walesCommsCostTotal")]
 
         public required string WalesCommsCostTotal { get; init; }
 
-        [JsonProperty(PropertyName = "scotlandCommsCostTotal")]
+        [JsonPropertyName("scotlandCommsCostTotal")]
 
         public required string ScotlandCommsCostTotal { get; init; }
 
-        [JsonProperty(PropertyName = "northernIrelandCommsCostTotal")]
+        [JsonPropertyName("northernIrelandCommsCostTotal")]
 
         public required string NorthernIrelandCommsCostTotal { get; init; }
 
-        [JsonProperty(PropertyName = "totalCommsCostTotal")]
+        [JsonPropertyName("totalCommsCostTotal")]
 
         public required string TotalCommsCostTotal { get; init; }
 
-        [JsonProperty(PropertyName = "producerHouseholdPackagingWasteTonnageTotal")]
+        [JsonPropertyName("producerHouseholdPackagingWasteTonnageTotal")]
 
         public required decimal ProducerHouseholdPackagingWasteTonnageTotal { get; init; }
 
-        [JsonProperty(PropertyName = "publicBinTonnage")]
+        [JsonPropertyName("publicBinTonnage")]
 
         public required decimal PublicBinTonnage { get; init; }
 
-        [JsonProperty(PropertyName = "householdDrinksContainersTonnageTotal")]
+        [JsonPropertyName("householdDrinksContainersTonnageTotal")]
 
         public required decimal HouseholdDrinksContainersTonnageTotal { get; init; }
 
-        [JsonProperty(PropertyName = "lateReportingTonnageTotal")]
+        [JsonPropertyName("lateReportingTonnageTotal")]
 
         public required decimal LateReportingTonnageTotal { get; init; }
 
-        [JsonProperty(PropertyName = "totalTonnageTotal")]
+        [JsonPropertyName("totalTonnageTotal")]
 
         public required decimal TotalTonnageTotal { get; init; }
 
