@@ -115,5 +115,23 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.IsFalse(result);
         }
 
+        [TestMethod]
+        public async Task CannotCallCreateProducerInvoiceTonnageWithNullCalcResult()
+        {
+            // Arrange
+            var fixture = new Fixture();
+            var calcResult = fixture.Create<CalcResult>();
+
+            telemetryLogger.Setup(mock => mock.LogInformation(It.IsAny<TrackMessage>())).Verifiable();
+            materialService.Setup(mock => mock.GetMaterials()).Throws<Exception>();
+
+            // Act
+            var result = await testClass.CreateProducerInvoiceNetTonnage(calcResult);
+
+            // Assert
+            telemetryLogger.Verify(mock => mock.LogError(It.IsAny<ErrorMessage>()));
+
+            Assert.IsFalse(result);
+        }
     }
 }
