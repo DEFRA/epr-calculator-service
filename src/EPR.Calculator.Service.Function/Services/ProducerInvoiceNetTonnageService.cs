@@ -80,8 +80,9 @@ namespace EPR.Calculator.Service.Function.Services
                     });
                     return false;
                 }
-                else
-                {
+
+                if(producerInvoiceNetTonnage.Count > 0)
+                { 
                     await this.producerInvoiceMaterialChunker.InsertRecords(producerInvoiceNetTonnage);                    
                 }
 
