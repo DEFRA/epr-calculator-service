@@ -56,6 +56,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             telemetryLogger.Setup(mock => mock.LogError(It.IsAny<ErrorMessage>())).Verifiable();
 
             materialService.Setup(m => m.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials());
+            producerInvoiceMapper.Setup(m => m.Map(It.IsAny<ProducerInvoiceTonnage>())).Returns(fixture.Create<ProducerInvoicedMaterialNetTonnage>());
 
             // Act
             

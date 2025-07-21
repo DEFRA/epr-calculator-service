@@ -7,6 +7,7 @@ using EPR.Calculator.Service.Function.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -45,23 +46,29 @@ namespace EPR.Calculator.Service.Function.Services
 
                 var materials = await this.materialService.GetMaterials();
 
-                foreach (var producer in producers)
-                {
-                    foreach (var material in materials)
+                var runId = calcResult.CalcResultDetail.RunId;
+
+                var invoiceTonnages = producers.SelectMany(producer =>
+                    materials.Select(material =>
                     {
-                        producer.ProducerDisposalFeesByMaterial.TryGetValue(material.Code, out var calcResultSummaryProducerDisposalFeesByMaterial);
-                        var producerInvoicedMaterialNetTonnage = this.producerInvoiceTonnageMapper.Map(new ProducerInvoiceTonnage
+                        var disposalFees = producer.ProducerDisposalFeesByMaterial;
+
+                        if (disposalFees.TryGetValue(material.Code, out var feeSummary))
                         {
-                            RunId = calcResult.CalcResultDetail.RunId,
-                            ProducerId = producer.ProducerIdInt,
-                            NetTonnage = calcResultSummaryProducerDisposalFeesByMaterial?.NetReportedTonnage,
-                            MaterialId = material.Id
+                            return producerInvoiceTonnageMapper.Map(new ProducerInvoiceTonnage
+                            {
+                                RunId = runId,
+                                ProducerId = producer.ProducerIdInt,
+                                NetTonnage = feeSummary.NetReportedTonnage,
+                                MaterialId = material.Id
+                            });
+                        }
 
-                        });
-                        producerInvoiceNetTonnage.Add(producerInvoicedMaterialNetTonnage);
-
-                    }
-                }
+                        return new ProducerInvoicedMaterialNetTonnage();
+                    }).Where(x => x != null)
+                );
+                
+                producerInvoiceNetTonnage.AddRange(invoiceTonnages);                
 
                 if (producerInvoiceNetTonnage.Count > 0)
                 {
