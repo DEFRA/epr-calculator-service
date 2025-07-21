@@ -25,7 +25,7 @@ namespace EPR.Calculator.Service.Function.Services
         private readonly IProducerInvoiceTonnageMapper producerInvoiceTonnageMapper;
 
         public ProducerInvoiceNetTonnageService(IDbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage> producerInvoiceMaterialChunker,
-            ICalculatorTelemetryLogger telemetryLogger, 
+            ICalculatorTelemetryLogger telemetryLogger,
             IMaterialService materialService,
             IProducerInvoiceTonnageMapper producerInvoiceTonnageMapper)
         {
@@ -68,14 +68,12 @@ namespace EPR.Calculator.Service.Function.Services
                         return new ProducerInvoicedMaterialNetTonnage();
                     }).Where(x => x != null)
                 );
-                
+
                 producerInvoiceNetTonnage.AddRange(invoiceTonnages);
 
-                if (producerInvoiceNetTonnage.Count > 0)
+                if (producerInvoiceNetTonnage.Any(t => t.CalculatorRunId > 0))
                 {
-
                     await this.producerInvoiceMaterialChunker.InsertRecords(producerInvoiceNetTonnage);
-
 
                     var endTime = DateTime.UtcNow;
                     var timeDiff = startTime - endTime;
