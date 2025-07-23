@@ -1,7 +1,7 @@
-﻿namespace EPR.Calculator.Service.Common.UnitTests
-{
-    using EPR.Calculator.Service.Common.Utils;
+﻿using EPR.Calculator.Service.Common.Utils;
 
+namespace EPR.Calculator.Service.Common.UnitTests.Utils
+{
     /// <summary>
     /// Unit tests for the <see cref="Util"/> class.
     /// </summary>
@@ -65,6 +65,34 @@
         {
             var result = Util.GetCalendarYearFromFinancialYear(financialYear);
             Assert.AreEqual((CalendarYear)expectedCalendarYear, result);
+        }
+
+        [TestMethod]
+        [DataRow("2024")]
+        [DataRow("24-25")]
+        [DataRow("2024-2025")]
+        [DataRow("abcd-efgh")]
+        public void GetCalendarYearFromFinancialYearNew_InvalidFormat_ShouldThrowArgumentException(string financialYear)
+        {
+            var exception = Assert.ThrowsException<ArgumentException>(() => new FinancialYear(financialYear));
+            Assert.AreEqual("The year must be in the format yyyy-yy.", exception.Message);
+        }
+
+        [TestMethod]
+        [DataRow("")]
+        [DataRow(" ")]
+        public void GetCalendarYearFromFinancialYearNew_EmptyString_ShouldThrowArgumentException(string financialYear)
+        {
+            var exception = Assert.ThrowsException<ArgumentException>(() => new FinancialYear(financialYear));
+            Assert.AreEqual("The year must be in the format yyyy-yy.", exception.Message);
+        }
+
+        [TestMethod]
+        public void GetCalendarYearFromFinancialYearNew_NullString_ShouldThrowArgumentException()
+        {
+            FinancialYear fy = default;
+            var exception = Assert.ThrowsException<ArgumentException>(() => Util.GetCalendarYearFromFinancialYearNew(fy));
+            Assert.AreEqual("Financial year cannot be null or empty (Parameter 'value')", exception.Message);
         }
     }
 }
