@@ -162,7 +162,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcResultLADataPrepCostsWithBadDebtProvision4Mapper, CalcResultLADataPrepCostsWithBadDebtProvision4Mapper>();
             services.AddTransient<IFeeForCommsCostsWithBadDebtProvision2aMapper, FeeForCommsCostsWithBadDebtProvision2aMapper>();
             services.AddTransient<IFeeForCommsCostsWithBadDebtProvision2bMapper, FeeForCommsCostsWithBadDebtProvision2bMapper>();
-            services.AddTransient<ITotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper, TotalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2cMapper>();
+            services.AddTransient<ITotalProducerFeeWithBadDebtProvisionFor2Con12A2B2CMapper, TotalProducerFeeWithBadDebtProvisionFor2con_1_2a_2b_2cMapper>();
             services.AddTransient<IFeeForSASetUpCostsWithBadDebtProvision_5Mapper, FeeForSASetUpCostsWithBadDebtProvision_5Mapper>();
             services.AddTransient<ICalcResultCommsCostsWithBadDebtProvision2cMapper, CalcResultCommsCostsWithBadDebtProvision2cMapper>();
             services.AddTransient<ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsExporter, CalculationOfSuggestedBillingInstructionsAndInvoiceAmountsExporter>();
@@ -194,6 +194,10 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcResultLaDisposalCostDataExporter, CalcResultLaDisposalCostDataExporter>();
             services.AddTransient<ICalcResultCommsCostOnePlusFourApportionmentExporter, CalcResultCommsCostOnePlusFourApportionmentExporter>();
             services.AddTransient<IBillingFileExporter<CalcResult>, BillingFileExporter>();
+            services.AddTransient<IProducerInvoiceNetTonnageService, ProducerInvoiceNetTonnageService>();
+            services.AddTransient<IDbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage>, DbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage>>();
+            services.AddTransient<IProducerInvoiceTonnageMapper, ProducerInvoiceTonnageMapper>();
+            services.AddTransient<IPrepareProducerDataInsertService, PrepareProducerDataInsertService>();
 
             services.AddScoped<PrepareCalcServiceDependencies>(provider => new PrepareCalcServiceDependencies
             {
@@ -204,10 +208,10 @@ namespace EPR.Calculator.Service.Function
                 ValidationRules = provider.GetRequiredService<CalculatorRunValidator>(),
                 CommandTimeoutService = provider.GetRequiredService<ICommandTimeoutService>(),
                 TelemetryLogger = provider.GetRequiredService<ICalculatorTelemetryLogger>(),
-                BillingInstructionService = provider.GetRequiredService<IBillingInstructionService>(),
                 JsonExporter = provider.GetRequiredService<ICalcBillingJsonExporter<CalcResult>>(),
                 ConfigService = provider.GetRequiredService<IConfigurationService>(),
-                BillingFileExporter = provider.GetRequiredService<IBillingFileExporter<CalcResult>>()
+                BillingFileExporter = provider.GetRequiredService<IBillingFileExporter<CalcResult>>(),
+                producerDataInsertService = provider.GetRequiredService<IPrepareProducerDataInsertService>(),
             });
 #if !DEBUG
 

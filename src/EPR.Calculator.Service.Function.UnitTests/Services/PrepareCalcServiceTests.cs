@@ -39,10 +39,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         private CalculatorRunValidator _validationRules;
         private Mock<ICommandTimeoutService> _commandTimeoutService;
         private Mock<ICalculatorTelemetryLogger> _telemetryLogger;
-        private Mock<IBillingInstructionService> _billingInstructionService;
         private Mock<ICalcBillingJsonExporter<CalcResult>> _jsonExporter;
         private Mock<IConfigurationService> _configService;
         private Mock<IBillingFileExporter<CalcResult>> _billingFileExporter;
+        private Mock<IPrepareProducerDataInsertService> _prepareProducerDataInsertService;
 
         private PrepareCalcServiceDependencies _prepareCalcServiceDependencies;
 
@@ -103,10 +103,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this._storageService = new Mock<IStorageService>();
             this._validationRules = fixture.Create<CalculatorRunValidator>();
             this._commandTimeoutService = new Mock<ICommandTimeoutService>();
-            this._billingInstructionService = new Mock<IBillingInstructionService>();
             this._jsonExporter = new Mock<ICalcBillingJsonExporter<CalcResult>>();
             this._configService = new Mock<IConfigurationService>();
             this._billingFileExporter = new Mock<IBillingFileExporter<CalcResult>>();
+            this._prepareProducerDataInsertService = new Mock<IPrepareProducerDataInsertService>();
 
             this._prepareCalcServiceDependencies = new PrepareCalcServiceDependencies
             {
@@ -117,10 +117,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 ValidationRules = new Mock<CalculatorRunValidator>().Object,
                 CommandTimeoutService = this._commandTimeoutService.Object,
                 TelemetryLogger = new Mock<ICalculatorTelemetryLogger>().Object,
-                BillingInstructionService = this._billingInstructionService.Object,
                 JsonExporter = this._jsonExporter.Object,
                 ConfigService = this._configService.Object,
-                BillingFileExporter = this._billingFileExporter.Object
+                BillingFileExporter = this._billingFileExporter.Object,
+                producerDataInsertService = this._prepareProducerDataInsertService.Object,
+
             };
 
             this._testClass = new PrepareCalcService(this._prepareCalcServiceDependencies);
