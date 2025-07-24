@@ -180,6 +180,13 @@
                     calculatorRunParameter,
                     this.configuration.OrgDataPipelineName);
 
+            this.telemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = calculatorRunParameter.Id,
+                RunName = runName,
+                Message = $"OrgPipelineConfiguration: {JsonSerializer.Serialize(orgPipelineConfiguration)}"
+            });
+
             var isOrgSuccessful = await this.azureSynapseRunner.Process(orgPipelineConfiguration);
             this.LogInformation(calculatorRunParameter.Id, runName, $"RunPipelines - Org status: {isOrgSuccessful}");
             if (!isOrgSuccessful)
@@ -190,6 +197,13 @@
             var pomPipelineConfiguration = this.GetAzureSynapseConfiguration(
                 calculatorRunParameter,
                 this.configuration.PomDataPipelineName);
+
+            this.telemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = calculatorRunParameter.Id,
+                RunName = runName,
+                Message = $"PomPipelineConfiguration: {JsonSerializer.Serialize(pomPipelineConfiguration)}"
+            });
 
             var isPomSuccessful = await this.azureSynapseRunner.Process(pomPipelineConfiguration);
             this.LogInformation(calculatorRunParameter.Id, runName, $"RunPipelines - POM status: {isPomSuccessful}");
