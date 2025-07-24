@@ -71,7 +71,7 @@ namespace EPR.Calculator.Service.Function.Services
 
                 producerInvoiceNetTonnage.AddRange(invoiceTonnages);
 
-                if (producerInvoiceNetTonnage.Any(t => t.CalculatorRunId > 0))
+                if (producerInvoiceNetTonnage.Exists(t => t.CalculatorRunId > 0))
                 {
                     await this.producerInvoiceMaterialChunker.InsertRecords(producerInvoiceNetTonnage);
 
