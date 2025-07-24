@@ -1,11 +1,5 @@
 ﻿namespace EPR.Calculator.Service.Function.Services
 {
-    using System;
-    using System.Net.Http;
-    using System.Text;
-    using System.Text.Json;
-    using System.Threading;
-    using System.Threading.Tasks;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
     using EPR.Calculator.Service.Common.Logging;
@@ -13,6 +7,13 @@
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Interface;
+    using System;
+    using System.Net.Http;
+    using System.Text;
+    using System.Text.Json;
+    using System.Text.RegularExpressions;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Implementing calculator run service methods.
@@ -104,6 +105,7 @@
             string pipelineName)
         {
             var financialYear = args.FinancialYear;
+            var isOrganisationPipeline = this.IsOrganisationPipeline(pipelineName);
 
             return new AzureSynapseRunnerParameters
             {
@@ -112,8 +114,14 @@
                 MaxCheckCount = this.configuration.MaxCheckCount,
                 PipelineName = pipelineName,
                 CalculatorRunId = args.Id,
-                CalendarYear = Util.GetCalendarYearFromFinancialYear(financialYear),
+                CalendarYear = isOrganisationPipeline ? Util.GetCalendarYearFromFinancialYearNew(financialYear) : Util.GetCalendarYearFromFinancialYear(financialYear),
             };
+        }
+
+        public bool IsOrganisationPipeline(string pipelineName)
+        {
+            // Returns true if 'org' appears anywhere in the pipeline name, case-insensitive.
+            return pipelineName.IndexOf("org", StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         /// <inheritdoc/>

@@ -632,6 +632,91 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.AreEqual(expectedJson, result.ReadAsStringAsync().Result);
         }
 
+        [TestMethod]
+        [DataRow("org-data-pipeline", true)]
+        [DataRow("ORG_DATA_PIPELINE", true)]
+        [DataRow("organization", true)]
+        [DataRow("pom-data-pipeline", false)]
+        [DataRow("porg-data-pipeline", true)]
+        [DataRow("dataorg", true)]
+        [DataRow("data-org", true)]
+        [DataRow("dataorgy", true)]
+        [DataRow("data", false)]
+        public void IsOrganisationPipeline_ShouldMatchExpected(string pipelineName, bool expected)
+        {
+            var service = this.CalculatorRunService;
+            var result = service.IsOrganisationPipeline(pipelineName);
+            Assert.AreEqual(expected, result);
+        }
+
+        [TestMethod]
+        public void GetAzureSynapseConfiguration_ShouldUseCorrectCalendarYearMethod_ForOrgPipeline()
+        {
+            // Arrange
+            var service = this.CalculatorRunService;
+            var financialYear = new FinancialYear("2025-26");
+            var args = new CalculatorRunParameter
+            {
+                Id = 1,
+                FinancialYear = financialYear,
+                User = "user",
+                MessageType = "Result"
+            };
+            var orgPipelineName = "org-data-pipeline";
+            var configMock = new Mock<IConfigurationService>();
+            configMock.SetupGet(c => c.PipelineUrl).Returns("http://test.com");
+            configMock.SetupGet(c => c.CheckInterval).Returns(1);
+            configMock.SetupGet(c => c.MaxCheckCount).Returns(1);
+
+            var testService = new CalculatorRunService(
+                this.AzureSynapseRunner.Object,
+                this.MockLogger.Object,
+                this.TransposeService.Object,
+                configMock.Object,
+                this.PrepareCalcService.Object,
+                this.StatusService.Object);
+
+            // Act
+            var result = testService.GetAzureSynapseConfiguration(args, orgPipelineName);
+
+            // Assert
+            Assert.AreEqual((CalendarYear)"2025", result.CalendarYear);
+        }
+
+        [TestMethod]
+        public void GetAzureSynapseConfiguration_ShouldUseCorrectCalendarYearMethod_ForNonOrgPipeline()
+        {
+            // Arrange
+            var service = this.CalculatorRunService;
+            var financialYear = new FinancialYear("2025-26");
+            var args = new CalculatorRunParameter
+            {
+                Id = 1,
+                FinancialYear = financialYear,
+                User = "user",
+                MessageType = "Result"
+            };
+            var pomPipelineName = "pom-data-pipeline";
+            var configMock = new Mock<IConfigurationService>();
+            configMock.SetupGet(c => c.PipelineUrl).Returns("http://test.com");
+            configMock.SetupGet(c => c.CheckInterval).Returns(1);
+            configMock.SetupGet(c => c.MaxCheckCount).Returns(1);
+
+            var testService = new CalculatorRunService(
+                this.AzureSynapseRunner.Object,
+                this.MockLogger.Object,
+                this.TransposeService.Object,
+                configMock.Object,
+                this.PrepareCalcService.Object,
+                this.StatusService.Object);
+
+            // Act
+            var result = testService.GetAzureSynapseConfiguration(args, pomPipelineName);
+
+            // Assert
+            Assert.AreEqual((CalendarYear)"2024", result.CalendarYear);
+        }
+
         /// <summary>
         /// A message handler that delays the response in order to test timeouts.
         /// </summary>
