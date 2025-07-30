@@ -60,8 +60,6 @@
 
         private ICommandTimeoutService commandTimeoutService { get; init; }
 
-        private IBillingInstructionService billingInstructionService { get; init; }
-
         private IConfigurationService ConfigService { get; init; }
 
         private IBillingFileExporter<CalcResult> BillingFileExporter { get; init; }
