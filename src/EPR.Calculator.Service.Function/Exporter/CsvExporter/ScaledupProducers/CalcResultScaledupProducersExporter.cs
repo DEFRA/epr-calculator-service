@@ -21,7 +21,7 @@
             PrepareScaledupProducersHeader(producers, csvContent);
 
             // Add data
-            if (producers.ScaledupProducers == null || !producers.ScaledupProducers.Any())
+            if (!producers.ScaledupProducers.IsNullOrEmpty())
             {
                 AppendScaledupProducers(producers, csvContent);
             }

@@ -1,46 +1,46 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
     public class JsonBillingFileExporter
     {
-        [JsonProperty(PropertyName = "calcResultDetail")]
+        [JsonPropertyName("calcResultDetail")]
         public CalcResultDetailJson? CalcResultDetail { get; set; }
 
-        [JsonProperty(PropertyName = "calcResultLapcapData")]
+        [JsonPropertyName("calcResultLapcapData")]
         public object? CalcResultLapcapData { get; set; }
 
-        [JsonProperty(PropertyName = "calcResultLateReportingTonnageData")]
+        [JsonPropertyName("calcResultLateReportingTonnageData")]
         public CalcResultLateReportingTonnageJson? CalcResultLateReportingTonnageData { get; set; }
 
-        [JsonProperty(PropertyName = "parametersOther")]
+        [JsonPropertyName("parametersOther")]
         public CalcResultParametersOtherJson? ParametersOther { get; set; }
 
-        [JsonProperty(PropertyName = "onePlusFourApportionment")]
+        [JsonPropertyName("onePlusFourApportionment")]
         public CalcResultOnePlusFourApportionmentJson? OnePlusFourApportionment { get; set; }
 
-        [JsonProperty(PropertyName = "parametersCommsCost")]
+        [JsonPropertyName("parametersCommsCost")]
         public CalcResultCommsCostJson? ParametersCommsCost { get; set; }
 
-        [JsonProperty(PropertyName = "calcResult2aCommsDataByMaterial")]
+        [JsonPropertyName("calcResult2aCommsDataByMaterial")]
         public CalcResult2ACommsDataByMaterial? CalcResult2aCommsDataByMaterial { get; set; }
 
-        [JsonProperty(PropertyName = "calcResult2bCommsDataByUkWide")]
+        [JsonPropertyName("calcResult2bCommsDataByUkWide")]
         public object? CalcResult2bCommsDataByUkWide { get; set; }
 
-        [JsonProperty(PropertyName = "calcResult2cCommsDataByCountry")]
+        [JsonPropertyName("calcResult2cCommsDataByCountry")]
         public object? CalcResult2cCommsDataByCountry { get; set; }
 
-        [JsonProperty(PropertyName = "calcResultLaDisposalCostData")]
+        [JsonPropertyName("calcResultLaDisposalCostData")]
         public CalcResultLaDisposalCostDataJson? CalcResultLaDisposalCostData { get; set; }
 
-        [JsonProperty(PropertyName = "cancelledProducers")]
+        [JsonPropertyName("cancelledProducers")]
         public CancelledProducers? CancelledProducers { get; set; }
 
-        [JsonProperty(PropertyName = "scaleUpProducers")]
+        [JsonPropertyName("scaleUpProducers")]
         public CalcResultScaledupProducersJson? ScaleUpProducers { get; set; }
 
-        [JsonProperty(PropertyName = "calculationResults")]
+        [JsonPropertyName("calculationResults")]
         public object? CalculationResults { get; set; }
     }
 }

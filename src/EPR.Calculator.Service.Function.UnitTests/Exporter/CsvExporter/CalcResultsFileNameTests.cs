@@ -42,8 +42,20 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         [TestMethod]
         public void CanCreateBillingCsvFileName()
         {
-            var billingFileCsvName = new CalcResultsAndBillingFileName(10223, "RunName", new DateTime(2025, 10, 1), true);
-            Assert.AreEqual("10223-RunName_Billing File_20251001.csv", billingFileCsvName);
+            var billingFileCsvName = new CalcResultsAndBillingFileName(10223, "RunName", new DateTime(2025, 10, 1, 9, 25, 0), true);
+            Assert.AreEqual("10223-RunName_Billing File_202510010925.csv", billingFileCsvName);
+        }
+
+        /// <summary>
+        /// Check that an exception is thrown when trying to construct the file name,
+        /// but a blank run name is used.
+        /// </summary>
+        /// <param name="value"></param>
+        [TestMethod]
+        public void CanCreateResultsCsvFileName()
+        {
+            var resultsFileCsvName = new CalcResultsAndBillingFileName(10223, "RunName", new DateTime(2025, 10, 1, 9, 25, 0), false);
+            Assert.AreEqual("10223-RunName_Results File_20251001.csv", resultsFileCsvName);
         }
 
         /// <summary>

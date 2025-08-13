@@ -34,19 +34,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         }
 
         [TestMethod]
-        public void CanSetAndGetBadDebProvisionFor2a()
+        public void CanSetAndGetBadDebtProvisionFor2a()
         {
             // Arrange
             var fixture = new Fixture();
 
             var testValue = fixture.Create<decimal>();
-            var badDebProvisionFor2a = CurrencyConverter.ConvertToCurrency(testValue);
+            var badDebtProvisionFor2a = CurrencyConverter.ConvertToCurrency(testValue);
 
             // Act
-            _testClass.BadDebtProvisionFor2a = badDebProvisionFor2a;
+            _testClass.BadDebtProvisionFor2a = badDebtProvisionFor2a;
 
             // Assert
-            Assert.AreEqual(badDebProvisionFor2a, _testClass.BadDebtProvisionFor2a);
+            Assert.AreEqual(badDebtProvisionFor2a, _testClass.BadDebtProvisionFor2a);
         }
 
         [TestMethod]

@@ -3,12 +3,9 @@
     using System;
     using System.Configuration;
     using System.Threading.Tasks;
-    using Azure.Storage;
     using Azure.Storage.Blobs;
     using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Function.Interface;
-    using Microsoft.Extensions.Logging;
-    using Newtonsoft.Json.Linq;
 
     /// <summary>
     /// Service for handling blob storage operations.
@@ -40,7 +37,7 @@
 
         /// <inheritdoc/>
         public async Task<string> UploadFileContentAsync(
-            (string FileName, string Content, string RunName, string ContainerName) args)
+            (string FileName, string Content, string RunName, string ContainerName, bool Overwrite) args)
         {
             int? runId = int.TryParse(args.FileName.Split('-')[0], out var id) ? id : (int?)null;
             try
@@ -57,7 +54,7 @@
 
                 var blobClient = blobContainerClient.GetBlobClient(args.FileName);
                 var binaryData = BinaryData.FromString(args.Content);
-                await blobClient.UploadAsync(binaryData);
+                await blobClient.UploadAsync(binaryData, args.Overwrite);
                 this.telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = runId,
