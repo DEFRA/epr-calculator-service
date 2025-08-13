@@ -25,6 +25,7 @@
 		</PackageReference>
 		<PackageReference Include="EPR.Calculator.API.Data" Version="1.0.12-rc.1020477" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.7" />
+		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.7.1" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
 		<PackageReference Include="Moq" Version="4.20.72" />
 		<PackageReference Include="Moq.EntityFrameworkCore" Version="8.0.1.7" />
