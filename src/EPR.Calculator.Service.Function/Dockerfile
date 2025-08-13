@@ -36,7 +36,7 @@ RUN dotnet tool install dotnet-ef --version 6.* --tool-path "/root/.dotnet/tools
 ENV PATH="${PATH}:/root/.dotnet/tools"
  
 COPY EPR.Calculator.Service.Function/. ./EPR.Calculator.Service.Function/.
-COPY  EPR.Calculator.Service.Common/. ./EPR.Calculator.Service.Common/.
+COPY EPR.Calculator.Service.Common/. ./EPR.Calculator.Service.Common/.
  
 # Install Gulp CLI globally and project dependencies
 WORKDIR "/src/EPR.Calculator.Service"
