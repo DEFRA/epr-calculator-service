@@ -15,7 +15,7 @@ USER root
 WORKDIR /src
 COPY EPR.Calculator.Service.Common/. ./EPR.Calculator.Service.Common/.
 COPY EPR.Calculator.Service.Function/. ./EPR.Calculator.Service.Function/.
-COPY EPR.Calculator.Service.Data/. ./EPR.Calculator.Service.Data/.
+COPY ["NuGet.Config",""]
 
 # Use Build Argument to insert PAT into Nuget file
 ARG PAT=localhost
@@ -39,7 +39,7 @@ COPY EPR.Calculator.Service.Function/. ./EPR.Calculator.Service.Function/.
 COPY  EPR.Calculator.Service.Common/. ./ EPR.Calculator.Service.Common/.
  
 # Install Gulp CLI globally and project dependencies
-WORKDIR "/src/EPR.Calculator.Service.Function"
+WORKDIR "/src/EPR.Calculator.Service"
 RUN npm install --ignore-scripts -g gulp-cli && npm install --ignore-scripts
  
 # Run Gulp build task
