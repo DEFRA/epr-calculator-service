@@ -23,7 +23,6 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="EPR.Calculator.API.Data" Version="1.0.14" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.7" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
 		<PackageReference Include="Moq" Version="4.20.72" />
@@ -40,7 +39,7 @@
 		<ProjectReference Include="..\EPR.Calculator.Service.Common.UnitTests\EPR.Calculator.Service.Common.UnitTests.csproj" />
 		<ProjectReference Include="..\EPR.Calculator.Service.Common\EPR.Calculator.Service.Common.csproj" />
 		<ProjectReference Include="..\EPR.Calculator.Service.Function\EPR.Calculator.Service.Function.csproj" />
-		<ProjectReference Include="..\EPR.Calculator.Service.Data\EPR.Calculator.Service.Data.csproj" />
+		<!-- <ProjectReference Include="..\EPR.Calculator.API.Data\EPR.Calculator.API.Data.csproj" /> -->
 	</ItemGroup>
 
 	<ItemGroup>
