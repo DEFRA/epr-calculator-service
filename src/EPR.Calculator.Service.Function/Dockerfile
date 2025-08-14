@@ -1,44 +1,28 @@
-FROM defradigital/dotnetcore-development:dotnet8.0 AS base
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS installer-env
 
-USER root
-ARG PORT=8080
-ENV ASPNETCORE_URLS=http://*:${PORT}
-EXPOSE ${PORT}
+# Copy everything
+COPY NuGet.Config ./ 
 
-RUN apk update && apk --no-cache add icu-libs
-ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=0
-
-FROM defradigital/dotnetcore-development:dotnet8.0 AS build
-USER root
-
-# Install dotnet-ef tool
-RUN dotnet tool install dotnet-ef --version 6.* --tool-path "/root/.dotnet/tools"
-
-# Add the tools folder to PATH
-ENV PATH="${PATH}:/root/.dotnet/tools"
-
-WORKDIR /src
-COPY ["EPR.Calculator.Service.Function/EPR.Calculator.Service.Function.csproj", "EPR.Calculator.Service.Function/"]
-COPY ["EPR.Calculator.Service.Common/EPR.Calculator.Service.Common.csproj", "EPR.Calculator.Service.Common/"]
-COPY ["EPR.Calculator.Service.Data/EPR.Calculator.Service.Data.csproj", "EPR.Calculator.Service.Data/"]
-RUN dotnet restore "EPR.Payment.Service/EPR.Payment.Service.csproj"
-
-COPY EPR.Calculator.Service.Function/. ./EPR.Calculator.Service.Function/.
 COPY EPR.Calculator.Service.Common/. ./EPR.Calculator.Service.Common/.
 COPY EPR.Calculator.Service.Data/. ./EPR.Calculator.Service.Data/.
+COPY EPR.Calculator.Service.Function/. ./EPR.Calculator.Service.Function/.
+COPY stylecop.json ./
 
-WORKDIR "/src/EPR.Calculator.Service.Function"
-RUN dotnet build "EPR.Calculator.Service.Function.csproj" -c Release /p:AzureBuild=true -o /app/build
+# Publish 
+RUN dotnet publish EPR.Calculator.Service.Function/*.csproj --output /home/site/wwwroot
 
-FROM build AS publish
-RUN dotnet publish "EPR.Calculator.Service.Function.csproj" -c Release /p:AzureBuild=false -o /app/publish
+# Use the Azure Functions image as the final image
+FROM mcr.microsoft.com/azure-functions/dotnet:4-dotnet8
 
-FROM base AS final
+# Create a non-root user and set permissions
+RUN groupadd -r dotnet && \
+    useradd -r -g dotnet dotnet && \
+    chown -R dotnet /home
 
-# Switch to the non-root user
+# Switch to the non-root user for the final image
 USER dotnet
 
-WORKDIR /app
-COPY --from=publish /app/publish .
-USER dotnet
-ENTRYPOINT ["dotnet", "EPR.Payment.Service.dll"]
+ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
+    AzureFunctionsJobHost__Logging__Console__IsEnabled=true
+
+COPY --from=installer-env ["/home/site/wwwroot", "/home/site/wwwroot"]
