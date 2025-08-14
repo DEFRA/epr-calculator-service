@@ -34,13 +34,13 @@ variables:
   - name: testProjectFolder
     value: 'EPR.Calculator.Service.Common.UnitTests' 
   - name: DataFolder
-    value: EPR.Calculator.API.Data
+    value: 'EPR.Calculator.Service.Data'
   - name: sonarQubeProjectKey
     value: epr-calculator-service
   - name: sonarQubeProjectName
     value: epr-calculator-service
   - name: runNugetTasks
-    value: false
+    value: true
   - name: dotnetVersion
     value: dotnetVersion8
 
