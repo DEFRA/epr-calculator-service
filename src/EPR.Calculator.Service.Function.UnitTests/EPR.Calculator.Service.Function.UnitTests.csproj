@@ -51,9 +51,4 @@
 		<Folder Include="Properties\" />
 	</ItemGroup>
 
-</Project>// ...existing code...
-<!-- Remove this line -->
-<PackageReference Include="EPR.Calculator.API.Data" Version="1.0.14" />
-<!-- Add this line instead -->
-<ProjectReference Include="..\EPR.Calculator.API.Data\EPR.Calculator.API.Data.csproj" />
-// ...existing code...
+</Project>
