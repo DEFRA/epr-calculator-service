@@ -3,6 +3,10 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS installer-env
 # Set working directory
 WORKDIR /src
 
+# Install Azure Artifacts Credential Provider
+RUN dotnet tool install -g Microsoft.Azure.ArtifactsCredentialProvider
+ENV PATH="${PATH}:/root/.dotnet/tools"
+
 # Copy solution files
 COPY NuGet.Config ./
 COPY stylecop.json ./
