@@ -4,8 +4,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS installer-env
 WORKDIR /src
 
 # Install Azure Artifacts Credential Provider
-RUN dotnet tool install -g Microsoft.Azure.ArtifactsCredentialProvider
-ENV PATH="${PATH}:/root/.dotnet/tools"
+RUN curl -sSL https://aka.ms/install-artifacts-credprovider.sh | bash
 
 # Copy solution files
 COPY NuGet.Config ./
