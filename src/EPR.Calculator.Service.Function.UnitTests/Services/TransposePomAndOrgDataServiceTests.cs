@@ -1,5 +1,6 @@
 ﻿namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
+    using System;
     using AutoFixture;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
@@ -648,6 +649,30 @@
             Assert.IsTrue(this._context.CalculatorRuns
                 .Single(run => run.Id == runId)
                 .CalculatorRunClassificationId == (int)RunClassification.ERROR);
+        }
+
+        /// <summary>
+        /// Test method to test getting organisations based on submission period
+        /// </summary>
+        [TestMethod]
+        public void GetOrganisationDetailsBySubmissionPeriodShouldReturnOrgs()
+        {
+            var organisationDetailsList = new List<OrganisationDetails>()
+            {
+                new OrganisationDetails{ OrganisationName = "Test1", OrganisationId = 1, SubmissionPeriod = "2025-P2",
+                    SubmissionPeriodDescription ="January to June 2025", SubsidaryId = null, TradingName = "Test1" },
+                new OrganisationDetails{ OrganisationName = "Test2", OrganisationId = 2, SubmissionPeriod = "2025-P2",
+                    SubmissionPeriodDescription ="January to June 2025", SubsidaryId = "4", TradingName = "Test2" }
+
+            };
+
+            var submissondetails = new List<SubmissionDetails>() { new SubmissionDetails { SubmissionPeriod = "2025-P2", SubmissionPeriodDesc = "January to June 2025" } };
+
+
+            var result = this.TestClass.GetOrganisationDetailsBySubmissionPeriod(organisationDetailsList, submissondetails);
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result.Count, organisationDetailsList.Count);
+
         }
 
         protected static IEnumerable<CalculatorRunOrganisationDataMaster> GetCalculatorRunOrganisationDataMaster()

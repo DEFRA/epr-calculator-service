@@ -24,7 +24,7 @@
         private readonly ICalculatorTelemetryLogger telemetryLogger;
 
         private const string PeriodSeparator = "-P";
-        private int yearLength = DateTime.UtcNow.Year.ToString().Length;
+        private readonly int yearLength = DateTime.UtcNow.Year.ToString().Length;
 
         public class OrganisationDetails
         {
@@ -297,7 +297,7 @@
             return true;
         }
 
-        private static List<OrganisationDetails> GetOrganisationDetailsBySubmissionPeriod(
+        internal List<OrganisationDetails> GetOrganisationDetailsBySubmissionPeriod(
             IEnumerable<OrganisationDetails> organisationsList,
             IEnumerable<SubmissionDetails> submissionPeriodDetails)
         {
