@@ -98,7 +98,7 @@
 
             var result = this.TestClass.GetLatestOrganisationName(1, orgSubDetails, orgDetails);
 
-            Assert.IsNull(result);
+            Assert.AreEqual(result, string.Empty);
         }
 
         [TestMethod]
