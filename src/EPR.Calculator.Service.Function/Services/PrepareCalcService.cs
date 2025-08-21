@@ -172,6 +172,7 @@
                 if (!string.IsNullOrEmpty(blobUri))
                 {
                     await SaveCsvFileMetadataAsync(results.CalcResultDetail.RunId, fileName.ToString(), blobUri);
+                    // To fix the operation cancelled issue while updating the context
                     calculatorRun = await this.Context.CalculatorRuns.SingleOrDefaultAsync(
                             run => run.Id == resultsRequestDto.RunId,
                             cancellationToken);
