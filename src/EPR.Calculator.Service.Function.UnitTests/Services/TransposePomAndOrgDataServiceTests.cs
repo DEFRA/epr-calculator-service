@@ -224,7 +224,7 @@
                 },
             };
 
-            var result = this.TestClass.GetLatestSubsidaryName(4,"Sub1", orgSubDetails, orgDetails);
+            var result = this.TestClass.GetLatestSubsidaryName(4, "Sub1", orgSubDetails, orgDetails);
 
             Assert.IsNotNull(result);
             Assert.AreEqual("Test1", result);
@@ -453,7 +453,6 @@
             mockProducerReportedMaterialService.Verify(x => x.InsertRecords(It.IsAny<IEnumerable<ProducerReportedMaterial>>()), Times.AtLeastOnce());
         }
 
-        [TestMethod]
         public async Task Transpose_Should_Return_Correct_ProducerReportedMaterial()
         {
             var expectedResult = new ProducerReportedMaterial
@@ -632,7 +631,7 @@
             Assert.IsNotNull(producerDetail);
             Assert.AreEqual(expectedResult.ProducerId, producerDetail.ProducerId);
             Assert.AreEqual(expectedResult.ProducerName, producerDetail.ProducerName);
-        }   
+        }
 
         [TestMethod]
         public void Transpose_Should_Return_Latest_Organisation_Name()
