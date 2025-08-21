@@ -185,11 +185,11 @@
                 var organisationDataMaster = await this.context.CalculatorRunOrganisationDataMaster
                     .SingleAsync(x => x.Id == calculatorRun.CalculatorRunOrganisationDataMasterId, cancellationToken);
                
-                var SubmissionPeriodDetails = (from s in calculatorRunPomDataDetails
+                var SubmissionPeriodOriginalDetails = (from s in calculatorRunPomDataDetails
                                                where s.CalculatorRunPomDataMasterId == calculatorRun.CalculatorRunPomDataMasterId
                                                select new                                                {
-                                                   SubmissionPeriod = GetUpdatedSubmissionPeriod(s.SubmissionPeriod??string.Empty),
-                                                   SubmissionPeriodDesc = GetUpdatedSubmissionDesc(s.SubmissionPeriodDesc??string.Empty),
+                                                   SubmissionPeriod = s.SubmissionPeriod,
+                                                   SubmissionPeriodDesc = s.SubmissionPeriodDesc,
                                                }
                                         ).Distinct()
                                         .Select(x => new SubmissionDetails
@@ -198,7 +198,17 @@
                                             SubmissionPeriodDesc = x.SubmissionPeriodDesc,
                                         })
                                         .ToList();
-                
+
+                var SubmissionPeriodDetails = new List<SubmissionDetails>();
+
+                foreach (var sub in SubmissionPeriodOriginalDetails)
+                {
+                    SubmissionPeriodDetails.Add(new SubmissionDetails
+                    {
+                        SubmissionPeriod = GetUpdatedSubmissionPeriod(sub.SubmissionPeriod ?? string.Empty),
+                        SubmissionPeriodDesc = GetUpdatedSubmissionDesc(sub.SubmissionPeriodDesc ?? string.Empty)
+                    });
+                }                
 
                 var OrganisationsList = GetAllOrganisationsBasedonRunId(calculatorRunOrgDataDetails);
 
