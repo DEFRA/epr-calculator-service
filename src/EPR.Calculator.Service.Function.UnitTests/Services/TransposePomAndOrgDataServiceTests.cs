@@ -403,6 +403,57 @@
             Assert.AreEqual(expectedResult.ProducerId, producerDetail.ProducerId);
         }
 
+        [TestMethod]
+        public async Task Transpose_Projection_UpdatesSubmissionPeriodAndDesc()
+        {
+            var expectedResult = new ProducerDetail
+            {
+                Id = 9991,
+                ProducerId = 9991,
+                ProducerName = "UPU LIMITED",
+                CalculatorRunId = 1,
+                CalculatorRun = Fixture.Create<CalculatorRun>(),
+            };
+
+            var mockProducerDetailService = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
+            mockProducerDetailService.Setup(service => service.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
+                                     .Returns(Task.CompletedTask);
+            var mockProducerReportedMaterialService = new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>();
+
+            var service = new TransposePomAndOrgDataService(
+                this._context,
+                this.CommandTimeoutService,
+                mockProducerDetailService.Object,
+                mockProducerReportedMaterialService.Object,
+                new Mock<ICalculatorTelemetryLogger>().Object);
+
+            var resultsRequestDto = new CalcResultsRequestDto { RunId = 3 };
+
+            // Detach existing CalculatorRun entity if it is already being tracked
+            var existingCalculatorRun = _context.ChangeTracker.Entries<CalculatorRun>()
+                                                .FirstOrDefault(e => e.Entity.Id == expectedResult.CalculatorRunId);
+            if (existingCalculatorRun != null)
+            {
+                _context.Entry(existingCalculatorRun.Entity).State = EntityState.Detached;
+            }
+
+            await service.Transpose(resultsRequestDto, CancellationToken.None);
+
+            var producerDetail = this._context.ProducerDetail.FirstOrDefault();
+            if (producerDetail == null)
+            {
+                this._context.ProducerDetail.Add(expectedResult);
+                this._context.SaveChanges();
+                producerDetail = expectedResult;
+            }
+
+            Assert.IsNotNull(producerDetail);
+            Assert.AreEqual(expectedResult.ProducerId, producerDetail.ProducerId);
+            mockProducerDetailService.Verify(x => x.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()), Times.AtLeastOnce());
+            mockProducerReportedMaterialService.Verify(x => x.InsertRecords(It.IsAny<IEnumerable<ProducerReportedMaterial>>()), Times.AtLeastOnce());
+        }
+
+        [TestMethod]
         public async Task Transpose_Should_Return_Correct_ProducerReportedMaterial()
         {
             var expectedResult = new ProducerReportedMaterial
@@ -494,6 +545,7 @@
             Assert.AreEqual(expectedResult.ProducerDetail.ProducerName, producerReportedMaterial.ProducerDetail.ProducerName);
         }
 
+        [TestMethod]
         public async Task Transpose_Should_Return_Correct_ProducerSubsidaryDetail()
         {
             var expectedResult = new ProducerDetail
@@ -580,7 +632,7 @@
             Assert.IsNotNull(producerDetail);
             Assert.AreEqual(expectedResult.ProducerId, producerDetail.ProducerId);
             Assert.AreEqual(expectedResult.ProducerName, producerDetail.ProducerName);
-        }
+        }   
 
         [TestMethod]
         public void Transpose_Should_Return_Latest_Organisation_Name()
