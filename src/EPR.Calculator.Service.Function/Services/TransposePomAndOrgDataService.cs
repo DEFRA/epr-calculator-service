@@ -338,7 +338,7 @@
 
         public string? GetLatestOrganisationName(int orgId, List<OrganisationDetails> organisationsBySubmissionPeriod, IEnumerable<OrganisationDetails> organisationsList)
         {
-            if (organisationsBySubmissionPeriod is null || organisationsBySubmissionPeriod.Count == 0) return string.Empty;
+            if (organisationsBySubmissionPeriod.Count == 0) return string.Empty;
 
             var organisations = organisationsBySubmissionPeriod.Where(t => t.OrganisationId == orgId && t.SubsidaryId == null).OrderByDescending(t => t.SubmissionPeriod?.Replace(PeriodSeparator, string.Empty)).ToList();
 
@@ -348,7 +348,7 @@
 
         public string? GetLatestSubsidaryName(int orgId, string? subsidaryId, List<OrganisationDetails> organisationsBySubmissionPeriod, IEnumerable<OrganisationDetails> organisationsList)
         {
-            if (organisationsBySubmissionPeriod is null || organisationsBySubmissionPeriod.Count == 0) return string.Empty;
+            if (organisationsBySubmissionPeriod.Count == 0) return string.Empty;
             var subsidaries = organisationsBySubmissionPeriod.Where(t => t.OrganisationId == orgId && t.SubsidaryId == subsidaryId).OrderByDescending(t => t.SubmissionPeriod?.Replace(PeriodSeparator, string.Empty)).ToList();
             var subsidaryName = subsidaries?.FirstOrDefault(t => t.OrganisationId == orgId && t.SubsidaryId == subsidaryId)?.OrganisationName;
             return string.IsNullOrWhiteSpace(subsidaryName) ? organisationsList.FirstOrDefault(t => t.OrganisationId == orgId && t.SubsidaryId == subsidaryId)?.OrganisationName : subsidaryName;
