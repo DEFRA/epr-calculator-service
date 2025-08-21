@@ -184,13 +184,14 @@
             {
                 var organisationDataMaster = await this.context.CalculatorRunOrganisationDataMaster
                     .SingleAsync(x => x.Id == calculatorRun.CalculatorRunOrganisationDataMasterId, cancellationToken);
-               
+
                 var SubmissionPeriodOriginalDetails = (from s in calculatorRunPomDataDetails
-                                               where s.CalculatorRunPomDataMasterId == calculatorRun.CalculatorRunPomDataMasterId
-                                               select new                                                {
-                                                   SubmissionPeriod = s.SubmissionPeriod,
-                                                   SubmissionPeriodDesc = s.SubmissionPeriodDesc,
-                                               }
+                                                       where s.CalculatorRunPomDataMasterId == calculatorRun.CalculatorRunPomDataMasterId
+                                                       select new
+                                                       {
+                                                           SubmissionPeriod = s.SubmissionPeriod,
+                                                           SubmissionPeriodDesc = s.SubmissionPeriodDesc,
+                                                       }
                                         ).Distinct()
                                         .Select(x => new SubmissionDetails
                                         {
@@ -199,16 +200,7 @@
                                         })
                                         .ToList();
 
-                var SubmissionPeriodDetails = new List<SubmissionDetails>();
-
-                foreach (var sub in SubmissionPeriodOriginalDetails)
-                {
-                    SubmissionPeriodDetails.Add(new SubmissionDetails
-                    {
-                        SubmissionPeriod = GetUpdatedSubmissionPeriod(sub.SubmissionPeriod ?? string.Empty),
-                        SubmissionPeriodDesc = GetUpdatedSubmissionDesc(sub.SubmissionPeriodDesc ?? string.Empty)
-                    });
-                }                
+                var SubmissionPeriodDetails = GetUpdateSubmissionPeriodDetails(SubmissionPeriodOriginalDetails);
 
                 var OrganisationsList = GetAllOrganisationsBasedonRunId(calculatorRunOrgDataDetails);
 
@@ -305,6 +297,21 @@
             }
 
             return true;
+        }
+
+        private List<SubmissionDetails> GetUpdateSubmissionPeriodDetails(List<SubmissionDetails> SubmissionPeriodOriginalDetails)
+        {
+            List<SubmissionDetails> SubmissionPeriodDetails = new List<SubmissionDetails>();
+
+            foreach (var sub in SubmissionPeriodOriginalDetails)
+            {
+                SubmissionPeriodDetails.Add(new SubmissionDetails
+                {
+                    SubmissionPeriod = GetUpdatedSubmissionPeriod(sub.SubmissionPeriod ?? string.Empty),
+                    SubmissionPeriodDesc = GetUpdatedSubmissionDesc(sub.SubmissionPeriodDesc ?? string.Empty)
+                });
+            }
+            return SubmissionPeriodDetails;
         }
 
         internal List<OrganisationDetails> GetOrganisationDetailsBySubmissionPeriod(
