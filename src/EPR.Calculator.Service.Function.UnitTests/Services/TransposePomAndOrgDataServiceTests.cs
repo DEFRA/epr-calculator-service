@@ -813,6 +813,20 @@
 
         }
 
+        [TestMethod]
+        public void GetUpdatedSubmissionDescShouldReturnEmpty()
+        {
+            var result = this.TestClass.GetUpdatedSubmissionDesc("");
+            Assert.AreEqual(string.Empty, result);
+        }
+
+        [TestMethod]
+        public void GetUpdatedSubmissionPeriodShouldReturnEmpty()
+        {
+            var result = this.TestClass.GetUpdatedSubmissionPeriod("");
+            Assert.AreEqual(string.Empty, result);
+        }       
+
         protected static IEnumerable<CalculatorRunOrganisationDataMaster> GetCalculatorRunOrganisationDataMaster()
         {
             var list = new List<CalculatorRunOrganisationDataMaster>

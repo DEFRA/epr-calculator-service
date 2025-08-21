@@ -364,7 +364,7 @@
             return string.IsNullOrWhiteSpace(subsidaryName) ? organisationsList.FirstOrDefault(t => t.OrganisationId == orgId && t.SubsidaryId == subsidaryId)?.OrganisationName : subsidaryName;
         }
 
-        private string GetUpdatedSubmissionDesc(string submissionDesc)
+        public string GetUpdatedSubmissionDesc(string submissionDesc)
         {
             if (string.IsNullOrEmpty(submissionDesc)) return string.Empty;
             var year = submissionDesc.Trim().Substring(submissionDesc.Length - yearLength);
@@ -372,7 +372,7 @@
             return $"{submissionDescWithOutYear}{int.Parse(year) + 1}";
         }
 
-        private string GetUpdatedSubmissionPeriod(string submissionDesc)
+        public string GetUpdatedSubmissionPeriod(string submissionDesc)
         {
             if(string.IsNullOrEmpty(submissionDesc)) return string.Empty;
             var year = submissionDesc.Trim().Substring(0, yearLength);
