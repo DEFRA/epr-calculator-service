@@ -412,7 +412,7 @@
                 ProducerId = 9991,
                 ProducerName = "UPU LIMITED",
                 CalculatorRunId = 1,
-                CalculatorRun = Fixture.Create<CalculatorRun>(),
+                CalculatorRun = null,
             };
 
             var mockProducerDetailService = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
