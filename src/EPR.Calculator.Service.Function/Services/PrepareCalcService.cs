@@ -172,7 +172,10 @@
                 if (!string.IsNullOrEmpty(blobUri))
                 {
                     await SaveCsvFileMetadataAsync(results.CalcResultDetail.RunId, fileName.ToString(), blobUri);
-                    calculatorRun.CalculatorRunClassificationId = (int)RunClassification.UNCLASSIFIED;
+                    calculatorRun = await this.Context.CalculatorRuns.SingleOrDefaultAsync(
+                            run => run.Id == resultsRequestDto.RunId,
+                            cancellationToken);
+                    calculatorRun!.CalculatorRunClassificationId = (int)RunClassification.UNCLASSIFIED;
                     this.Context.CalculatorRuns.Update(calculatorRun);
                     await this.Context.SaveChangesAsync(cancellationToken);
                     var timeDiff = startTime - DateTime.Now;
