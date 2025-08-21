@@ -144,6 +144,93 @@
         }
 
         [TestMethod]
+        public void GetLatestOrganisationNameShouldReturnFirstOrganisationName()
+        {
+            var orgDetails = new List<OrganisationDetails>
+            {
+                new OrganisationDetails
+                {
+                    OrganisationId = 4,
+                    OrganisationName = "Test1",
+                    SubmissionPeriodDescription = "January to June 2023",
+                },
+                new OrganisationDetails
+                {
+                    OrganisationId = 4,
+                    OrganisationName = "Test2",
+                    SubmissionPeriodDescription = "July to December 2023",
+                },
+            };
+
+            var orgSubDetails = new List<OrganisationDetails>
+            {
+                new OrganisationDetails
+                {
+                    OrganisationId = 1,
+                    OrganisationName = "Test1",
+                    SubmissionPeriodDescription = "January to June 2023",
+                },
+                new OrganisationDetails
+                {
+                    OrganisationId = 1,
+                    OrganisationName = "Test2",
+                    SubmissionPeriodDescription = "July to December 2023",
+                },
+            };
+
+            var result = this.TestClass.GetLatestOrganisationName(4, orgSubDetails, orgDetails);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual("Test1", result);
+        }
+
+
+        [TestMethod]
+        public void GetLatestSubsidaryNameShouldReturnFirstSubsidaryName()
+        {
+            var orgDetails = new List<OrganisationDetails>
+            {
+                new OrganisationDetails
+                {
+                    OrganisationId = 4,
+                    OrganisationName = "Test1",
+                    SubmissionPeriodDescription = "January to June 2023",
+                    SubsidaryId = "Sub1"
+                },
+                new OrganisationDetails
+                {
+                    OrganisationId = 4,
+                    OrganisationName = "Test2",
+                    SubmissionPeriodDescription = "July to December 2023",
+                    SubsidaryId= "Sub2"
+                },
+            };
+
+            var orgSubDetails = new List<OrganisationDetails>
+            {
+                new OrganisationDetails
+                {
+                    OrganisationId = 1,
+                    OrganisationName = "Test1",
+                    SubmissionPeriodDescription = "January to June 2023",
+                    SubsidaryId = "Sub3"
+                },
+                new OrganisationDetails
+                {
+                    OrganisationId = 1,
+                    OrganisationName = "Test2",
+                    SubmissionPeriodDescription = "July to December 2023",
+                    SubsidaryId = "Sub3"
+                },
+            };
+
+            var result = this.TestClass.GetLatestSubsidaryName(4,"Sub1", orgSubDetails, orgDetails);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual("Test1", result);
+        }
+
+        [TestMethod]
         public void GetLatestOrganisationName_Should_Return_OrganisationName()
         {
             // Arrange
