@@ -40,6 +40,12 @@ namespace EPR.Calculator.Service.Function.Services
         {
             try
             {
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = calcResult.CalcResultDetail.RunId,
+                    RunName = calcResult.CalcResultDetail.RunName,
+                    Message = $"CreateProducerInvoiceNetTonnage started ... {calcResult.CalcResultDetail.RunId}",
+                });
                 var producerInvoiceNetTonnage = new List<ProducerInvoicedMaterialNetTonnage>();
                 var startTime = DateTime.UtcNow;
 
@@ -48,6 +54,13 @@ namespace EPR.Calculator.Service.Function.Services
                 var materials = await this.materialService.GetMaterials();
 
                 var runId = calcResult.CalcResultDetail.RunId;
+
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = calcResult.CalcResultDetail.RunId,
+                    RunName = calcResult.CalcResultDetail.RunName,
+                    Message = $"CreateProducerInvoiceNetTonnage invoiceTonnages started ... {calcResult.CalcResultDetail.RunId}",
+                });
 
                 var invoiceTonnages = producers.SelectMany(producer =>
                     materials.Select(material =>
@@ -69,11 +82,18 @@ namespace EPR.Calculator.Service.Function.Services
                     }).Where(x => x != null)
                 );
 
+                this.telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = calcResult.CalcResultDetail.RunId,
+                    RunName = calcResult.CalcResultDetail.RunName,
+                    Message = $"CreateProducerInvoiceNetTonnage invoiceTonnages completed ... {calcResult.CalcResultDetail.RunId}",
+                });
+
                 producerInvoiceNetTonnage.AddRange(invoiceTonnages);
 
                 if (producerInvoiceNetTonnage.Exists(t => t.CalculatorRunId > 0))
                 {
-                    await this.producerInvoiceMaterialChunker.InsertRecords(producerInvoiceNetTonnage);
+                    await this.producerInvoiceMaterialChunker.InsertRecords(producerInvoiceNetTonnage, calcResult.CalcResultDetail.RunId);
 
                     var endTime = DateTime.UtcNow;
                     var timeDiff = startTime - endTime;

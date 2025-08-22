@@ -369,7 +369,7 @@
             };
 
             var mockProducerDetailService = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
-            mockProducerDetailService.Setup(service => service.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
+            mockProducerDetailService.Setup(service => service.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>(),1))
                                      .Returns(Task.CompletedTask);
 
             var service = new TransposePomAndOrgDataService(
@@ -416,7 +416,7 @@
             };
 
             var mockProducerDetailService = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
-            mockProducerDetailService.Setup(service => service.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
+            mockProducerDetailService.Setup(service => service.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>(), 1))
                                      .Returns(Task.CompletedTask);
             var mockProducerReportedMaterialService = new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>();
 
@@ -449,8 +449,8 @@
 
             Assert.IsNotNull(producerDetail);
             Assert.AreEqual(expectedResult.ProducerId, producerDetail.ProducerId);
-            mockProducerDetailService.Verify(x => x.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()), Times.AtLeastOnce());
-            mockProducerReportedMaterialService.Verify(x => x.InsertRecords(It.IsAny<IEnumerable<ProducerReportedMaterial>>()), Times.AtLeastOnce());
+            mockProducerDetailService.Verify(x => x.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>(), 3), Times.AtLeastOnce());
+            mockProducerReportedMaterialService.Verify(x => x.InsertRecords(It.IsAny<IEnumerable<ProducerReportedMaterial>>(), 3), Times.AtLeastOnce());
         }
 
         public async Task Transpose_Should_Return_Correct_ProducerReportedMaterial()
@@ -730,7 +730,7 @@
             var runName = this.Fixture.Create<string>();
             var mockCalculatorRunsTable = new Mock<DbSet<CalculatorRun>>();
             var mockCalculatorRun = this.Fixture.Create<CalculatorRun>();
-            this.Chunker.Setup(c => c.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
+            this.Chunker.Setup(c => c.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>(), 1))
                 .Throws<OperationCanceledException>();
 
             // Act

@@ -72,10 +72,9 @@
         private DbSet<TRecord> Table { get; set; }
 
         /// <inheritdoc/>
-        public async Task InsertRecords(IEnumerable<TRecord> records)
+        public async Task InsertRecords(IEnumerable<TRecord> records, int? runId = null)
         {
-            Console.WriteLine($"Loading {typeof(TRecord).Name} records in chunks of {this.ChunkSize}.");
-            this.TelemetryClient.TrackTrace($"Loading {typeof(TRecord).Name} records in chunks of {this.ChunkSize}.");
+            this.TelemetryClient.TrackTrace($"Loading {typeof(TRecord).Name} records in chunks of {this.ChunkSize} RunId: {runId}");
             var chunkContents = new List<TRecord>();
             var recordCount = 1;
             var chunkCount = 1;
@@ -86,25 +85,25 @@
             totalTimer.Start();
             chunkTimer.Start();
 
+            this.TelemetryClient.TrackTrace($"AddChunk started RunId: {runId}");
             foreach (var record in records)
             {
                 chunkContents.Add(record);
                 if (chunkContents.Count >= this.ChunkSize)
                 {
-                    await this.SaveChunk(chunkCount, chunkTimer, chunkContents);
+                    await this.SaveChunk(chunkCount, chunkTimer, chunkContents);                    
                     chunkContents.Clear();
                     chunkCount++;
                 }
-
                 recordCount++;
                 currentChunkRecordCount++;
             }
-
+            this.TelemetryClient.TrackTrace($"AddChunk completed RunId: {runId}");
             await this.SaveChunk(chunkCount, chunkTimer, chunkContents);
-
+            this.TelemetryClient.TrackTrace($"SaveChunk completed RunId: {runId}");
             totalTimer.Stop();
-            Console.WriteLine($"Total time taken to insert chunks: {totalTimer.Elapsed}");
-            this.TelemetryClient.TrackTrace($"Total time taken to insert chunks: {totalTimer.Elapsed}");
+            
+            this.TelemetryClient.TrackTrace($"Total time taken to insert chunks: {totalTimer.Elapsed} RunId: {runId}");
         }
 
         private async Task SaveChunk(int chunkCount, Stopwatch chunkTimer, IEnumerable<TRecord> chunkBuffer)
@@ -113,7 +112,6 @@
             await this.Context.SaveChangesAsync();
 
             chunkTimer.Stop();
-            Console.WriteLine($"Time to insert chunk {chunkCount}: {chunkTimer.Elapsed}");
             this.TelemetryClient.TrackTrace($"Time to insert chunk {chunkCount}: {chunkTimer.Elapsed}");
             chunkTimer.Restart();
         }
