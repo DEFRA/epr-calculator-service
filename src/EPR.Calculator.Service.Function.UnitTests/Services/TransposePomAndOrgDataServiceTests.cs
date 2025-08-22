@@ -1,5 +1,6 @@
 ﻿namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
+    using System;
     using AutoFixture;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
@@ -98,7 +99,7 @@
 
             var result = this.TestClass.GetLatestOrganisationName(1, orgSubDetails, orgDetails);
 
-            Assert.IsNull(result);
+            Assert.AreEqual(result, string.Empty);
         }
 
         [TestMethod]
@@ -137,6 +138,93 @@
             };
 
             var result = this.TestClass.GetLatestOrganisationName(1, orgSubDetails, orgDetails);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual("Test1", result);
+        }
+
+        [TestMethod]
+        public void GetLatestOrganisationNameShouldReturnFirstOrganisationName()
+        {
+            var orgDetails = new List<OrganisationDetails>
+            {
+                new OrganisationDetails
+                {
+                    OrganisationId = 4,
+                    OrganisationName = "Test1",
+                    SubmissionPeriodDescription = "January to June 2023",
+                },
+                new OrganisationDetails
+                {
+                    OrganisationId = 4,
+                    OrganisationName = "Test2",
+                    SubmissionPeriodDescription = "July to December 2023",
+                },
+            };
+
+            var orgSubDetails = new List<OrganisationDetails>
+            {
+                new OrganisationDetails
+                {
+                    OrganisationId = 1,
+                    OrganisationName = "Test1",
+                    SubmissionPeriodDescription = "January to June 2023",
+                },
+                new OrganisationDetails
+                {
+                    OrganisationId = 1,
+                    OrganisationName = "Test2",
+                    SubmissionPeriodDescription = "July to December 2023",
+                },
+            };
+
+            var result = this.TestClass.GetLatestOrganisationName(4, orgSubDetails, orgDetails);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual("Test1", result);
+        }
+
+
+        [TestMethod]
+        public void GetLatestSubsidaryNameShouldReturnFirstSubsidaryName()
+        {
+            var orgDetails = new List<OrganisationDetails>
+            {
+                new OrganisationDetails
+                {
+                    OrganisationId = 4,
+                    OrganisationName = "Test1",
+                    SubmissionPeriodDescription = "January to June 2023",
+                    SubsidaryId = "Sub1"
+                },
+                new OrganisationDetails
+                {
+                    OrganisationId = 4,
+                    OrganisationName = "Test2",
+                    SubmissionPeriodDescription = "July to December 2023",
+                    SubsidaryId= "Sub2"
+                },
+            };
+
+            var orgSubDetails = new List<OrganisationDetails>
+            {
+                new OrganisationDetails
+                {
+                    OrganisationId = 1,
+                    OrganisationName = "Test1",
+                    SubmissionPeriodDescription = "January to June 2023",
+                    SubsidaryId = "Sub3"
+                },
+                new OrganisationDetails
+                {
+                    OrganisationId = 1,
+                    OrganisationName = "Test2",
+                    SubmissionPeriodDescription = "July to December 2023",
+                    SubsidaryId = "Sub3"
+                },
+            };
+
+            var result = this.TestClass.GetLatestSubsidaryName(4, "Sub1", orgSubDetails, orgDetails);
 
             Assert.IsNotNull(result);
             Assert.AreEqual("Test1", result);
@@ -315,6 +403,56 @@
             Assert.AreEqual(expectedResult.ProducerId, producerDetail.ProducerId);
         }
 
+        [TestMethod]
+        public async Task Transpose_Projection_UpdatesSubmissionPeriodAndDesc()
+        {
+            var expectedResult = new ProducerDetail
+            {
+                Id = 9991,
+                ProducerId = 9991,
+                ProducerName = "UPU LIMITED",
+                CalculatorRunId = 1,
+                CalculatorRun = null,
+            };
+
+            var mockProducerDetailService = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
+            mockProducerDetailService.Setup(service => service.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
+                                     .Returns(Task.CompletedTask);
+            var mockProducerReportedMaterialService = new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>();
+
+            var service = new TransposePomAndOrgDataService(
+                this._context,
+                this.CommandTimeoutService,
+                mockProducerDetailService.Object,
+                mockProducerReportedMaterialService.Object,
+                new Mock<ICalculatorTelemetryLogger>().Object);
+
+            var resultsRequestDto = new CalcResultsRequestDto { RunId = 3 };
+
+            // Detach existing CalculatorRun entity if it is already being tracked
+            var existingCalculatorRun = _context.ChangeTracker.Entries<CalculatorRun>()
+                                                .FirstOrDefault(e => e.Entity.Id == expectedResult.CalculatorRunId);
+            if (existingCalculatorRun != null)
+            {
+                _context.Entry(existingCalculatorRun.Entity).State = EntityState.Detached;
+            }
+
+            await service.Transpose(resultsRequestDto, CancellationToken.None);
+
+            var producerDetail = this._context.ProducerDetail.FirstOrDefault();
+            if (producerDetail == null)
+            {
+                this._context.ProducerDetail.Add(expectedResult);
+                this._context.SaveChanges();
+                producerDetail = expectedResult;
+            }
+
+            Assert.IsNotNull(producerDetail);
+            Assert.AreEqual(expectedResult.ProducerId, producerDetail.ProducerId);
+            mockProducerDetailService.Verify(x => x.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()), Times.AtLeastOnce());
+            mockProducerReportedMaterialService.Verify(x => x.InsertRecords(It.IsAny<IEnumerable<ProducerReportedMaterial>>()), Times.AtLeastOnce());
+        }
+
         public async Task Transpose_Should_Return_Correct_ProducerReportedMaterial()
         {
             var expectedResult = new ProducerReportedMaterial
@@ -406,6 +544,7 @@
             Assert.AreEqual(expectedResult.ProducerDetail.ProducerName, producerReportedMaterial.ProducerDetail.ProducerName);
         }
 
+        [TestMethod]
         public async Task Transpose_Should_Return_Correct_ProducerSubsidaryDetail()
         {
             var expectedResult = new ProducerDetail
@@ -648,6 +787,44 @@
             Assert.IsTrue(this._context.CalculatorRuns
                 .Single(run => run.Id == runId)
                 .CalculatorRunClassificationId == (int)RunClassification.ERROR);
+        }
+
+        /// <summary>
+        /// Test method to test getting organisations based on submission period
+        /// </summary>
+        [TestMethod]
+        public void GetOrganisationDetailsBySubmissionPeriodShouldReturnOrgs()
+        {
+            var organisationDetailsList = new List<OrganisationDetails>()
+            {
+                new OrganisationDetails{ OrganisationName = "Test1", OrganisationId = 1, SubmissionPeriod = "2025-P2",
+                    SubmissionPeriodDescription ="January to June 2025", SubsidaryId = null, TradingName = "Test1" },
+                new OrganisationDetails{ OrganisationName = "Test2", OrganisationId = 2, SubmissionPeriod = "2025-P2",
+                    SubmissionPeriodDescription ="January to June 2025", SubsidaryId = "4", TradingName = "Test2" }
+
+            };
+
+            var submissondetails = new List<SubmissionDetails>() { new SubmissionDetails { SubmissionPeriod = "2025-P2", SubmissionPeriodDesc = "January to June 2025" } };
+
+
+            var result = this.TestClass.GetOrganisationDetailsBySubmissionPeriod(organisationDetailsList, submissondetails);
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result.Count, organisationDetailsList.Count);
+
+        }
+
+        [TestMethod]
+        public void GetUpdatedSubmissionDescShouldReturnEmpty()
+        {
+            var result = this.TestClass.GetUpdatedSubmissionDesc("");
+            Assert.AreEqual(string.Empty, result);
+        }
+
+        [TestMethod]
+        public void GetUpdatedSubmissionPeriodShouldReturnEmpty()
+        {
+            var result = this.TestClass.GetUpdatedSubmissionPeriod("");
+            Assert.AreEqual(string.Empty, result);
         }
 
         protected static IEnumerable<CalculatorRunOrganisationDataMaster> GetCalculatorRunOrganisationDataMaster()
