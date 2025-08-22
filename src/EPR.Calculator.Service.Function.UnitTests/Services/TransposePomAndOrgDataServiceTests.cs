@@ -281,7 +281,7 @@
             };
 
             var mockProducerDetailService = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
-            mockProducerDetailService.Setup(service => service.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
+            mockProducerDetailService.Setup(service => service.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>(),1))
                                      .Returns(Task.CompletedTask);
 
             var service = new TransposePomAndOrgDataService(
@@ -591,7 +591,7 @@
             var runName = this.Fixture.Create<string>();
             var mockCalculatorRunsTable = new Mock<DbSet<CalculatorRun>>();
             var mockCalculatorRun = this.Fixture.Create<CalculatorRun>();
-            this.Chunker.Setup(c => c.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
+            this.Chunker.Setup(c => c.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>(), 1))
                 .Throws<OperationCanceledException>();
 
             // Act

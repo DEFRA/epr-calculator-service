@@ -16,6 +16,6 @@
         /// </summary>
         /// <param name="records">The collection of records to insert.</param>
         /// <returns>A <see cref="Task"/>.</returns>
-        Task InsertRecords(IEnumerable<TRecord> records);
+        Task InsertRecords(IEnumerable<TRecord> records, int? runId = null);
     }
 }

@@ -282,7 +282,7 @@
                     }
                 }
 
-                await this.ProducerDetailChunker.InsertRecords(newProducerDetails);
+                await this.ProducerDetailChunker.InsertRecords(newProducerDetails, resultsRequestDto.RunId);
                 await this.ProducerReportedMaterialChunker.InsertRecords(newProducerReportedMaterials);
             }
 
