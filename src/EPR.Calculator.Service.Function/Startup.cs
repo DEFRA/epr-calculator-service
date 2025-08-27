@@ -198,6 +198,8 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<IDbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage>, DbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage>>();
             services.AddTransient<IProducerInvoiceTonnageMapper, ProducerInvoiceTonnageMapper>();
             services.AddTransient<IPrepareProducerDataInsertService, PrepareProducerDataInsertService>();
+            services.AddTransient<IPreviousInvoicedTonnageService, PreviousInvoicedTonnageService>();
+
 
             services.AddScoped<PrepareCalcServiceDependencies>(provider => new PrepareCalcServiceDependencies
             {
