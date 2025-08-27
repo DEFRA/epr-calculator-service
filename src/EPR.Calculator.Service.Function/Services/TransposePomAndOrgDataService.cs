@@ -13,7 +13,6 @@
     using EPR.Calculator.Service.Function.Interface;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
-    using System.Linq.Expressions;
 
     /// <summary>
     /// Service for transposing POM and organization data.
@@ -24,7 +23,6 @@
         private readonly ICalculatorTelemetryLogger telemetryLogger;
 
         private const string PeriodSeparator = "-P";
-        private readonly int yearLength = DateTime.UtcNow.Year.ToString().Length;
 
         public class OrganisationDetails
         {
@@ -158,7 +156,7 @@
             }
 
             return false;
-        }        
+        }
 
         public async Task<bool> Transpose(CalcResultsRequestDto resultsRequestDto, CancellationToken cancellationToken)
         {
@@ -185,22 +183,14 @@
                 var organisationDataMaster = await this.context.CalculatorRunOrganisationDataMaster
                     .SingleAsync(x => x.Id == calculatorRun.CalculatorRunOrganisationDataMasterId, cancellationToken);
 
-                var SubmissionPeriodOriginalDetails = (from s in calculatorRunPomDataDetails
-                                                       where s.CalculatorRunPomDataMasterId == calculatorRun.CalculatorRunPomDataMasterId
-                                                       select new
-                                                       {
-                                                           SubmissionPeriod = s.SubmissionPeriod,
-                                                           SubmissionPeriodDesc = s.SubmissionPeriodDesc,
-                                                       }
-                                        ).Distinct()
-                                        .Select(x => new SubmissionDetails
-                                        {
-                                            SubmissionPeriod = x.SubmissionPeriod,
-                                            SubmissionPeriodDesc = x.SubmissionPeriodDesc,
-                                        })
-                                        .ToList();
-
-                var SubmissionPeriodDetails = GetUpdateSubmissionPeriodDetails(SubmissionPeriodOriginalDetails);
+                var SubmissionPeriodDetails = (from s in calculatorRunPomDataDetails
+                                               where s.CalculatorRunPomDataMasterId == calculatorRun.CalculatorRunPomDataMasterId
+                                               select new SubmissionDetails
+                                               {
+                                                   SubmissionPeriod = s.SubmissionPeriod,
+                                                   SubmissionPeriodDesc = s.SubmissionPeriodDesc,
+                                               }
+                                        ).Distinct().ToList();
 
                 var OrganisationsList = GetAllOrganisationsBasedonRunId(calculatorRunOrgDataDetails);
 
@@ -299,22 +289,7 @@
             return true;
         }
 
-        private List<SubmissionDetails> GetUpdateSubmissionPeriodDetails(List<SubmissionDetails> SubmissionPeriodOriginalDetails)
-        {
-            List<SubmissionDetails> SubmissionPeriodDetails = new List<SubmissionDetails>();
-
-            foreach (var sub in SubmissionPeriodOriginalDetails)
-            {
-                SubmissionPeriodDetails.Add(new SubmissionDetails
-                {
-                    SubmissionPeriod = GetUpdatedSubmissionPeriod(sub.SubmissionPeriod ?? string.Empty),
-                    SubmissionPeriodDesc = GetUpdatedSubmissionDesc(sub.SubmissionPeriodDesc ?? string.Empty)
-                });
-            }
-            return SubmissionPeriodDetails;
-        }
-
-        internal List<OrganisationDetails> GetOrganisationDetailsBySubmissionPeriod(
+        private static List<OrganisationDetails> GetOrganisationDetailsBySubmissionPeriod(
             IEnumerable<OrganisationDetails> organisationsList,
             IEnumerable<SubmissionDetails> submissionPeriodDetails)
         {
@@ -355,7 +330,7 @@
 
         public string? GetLatestOrganisationName(int orgId, List<OrganisationDetails> organisationsBySubmissionPeriod, IEnumerable<OrganisationDetails> organisationsList)
         {
-            if (organisationsBySubmissionPeriod.Count == 0) return string.Empty;
+            if (organisationsBySubmissionPeriod is null) return string.Empty;
 
             var organisations = organisationsBySubmissionPeriod.Where(t => t.OrganisationId == orgId && t.SubsidaryId == null).OrderByDescending(t => t.SubmissionPeriod?.Replace(PeriodSeparator, string.Empty)).ToList();
 
@@ -365,26 +340,10 @@
 
         public string? GetLatestSubsidaryName(int orgId, string? subsidaryId, List<OrganisationDetails> organisationsBySubmissionPeriod, IEnumerable<OrganisationDetails> organisationsList)
         {
-            if (organisationsBySubmissionPeriod.Count == 0) return string.Empty;
+            if (organisationsBySubmissionPeriod is null) return string.Empty;
             var subsidaries = organisationsBySubmissionPeriod.Where(t => t.OrganisationId == orgId && t.SubsidaryId == subsidaryId).OrderByDescending(t => t.SubmissionPeriod?.Replace(PeriodSeparator, string.Empty)).ToList();
             var subsidaryName = subsidaries?.FirstOrDefault(t => t.OrganisationId == orgId && t.SubsidaryId == subsidaryId)?.OrganisationName;
             return string.IsNullOrWhiteSpace(subsidaryName) ? organisationsList.FirstOrDefault(t => t.OrganisationId == orgId && t.SubsidaryId == subsidaryId)?.OrganisationName : subsidaryName;
-        }
-
-        public string GetUpdatedSubmissionDesc(string submissionDesc)
-        {
-            if (string.IsNullOrEmpty(submissionDesc)) return string.Empty;
-            var year = submissionDesc.Trim().Substring(submissionDesc.Length - yearLength);
-            var submissionDescWithOutYear = submissionDesc.Trim().Substring(0, submissionDesc.Length - yearLength);
-            return $"{submissionDescWithOutYear}{int.Parse(year) + 1}";
-        }
-
-        public string GetUpdatedSubmissionPeriod(string submissionDesc)
-        {
-            if(string.IsNullOrEmpty(submissionDesc)) return string.Empty;
-            var year = submissionDesc.Trim().Substring(0, yearLength);
-            var submissionPeriodWithOutYear = submissionDesc.Trim().Substring(yearLength);
-            return $"{int.Parse(year) + 1}{submissionPeriodWithOutYear}";
         }
     }
 }
