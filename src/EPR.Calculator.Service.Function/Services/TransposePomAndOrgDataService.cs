@@ -315,18 +315,11 @@
 
         public string? GetLatestproducerName(int orgId, string? subsidaryId, IEnumerable<OrganisationDetails> organisationsList)
         {
-            OrganisationDetails? org = new OrganisationDetails() { OrganisationName = string.Empty};
 
-            if (subsidaryId is null)
-            {
-                org = organisationsList.FirstOrDefault(t => t.OrganisationId == orgId && t.SubsidaryId == null);
-            }
-            else
-            {
-                org = organisationsList.FirstOrDefault(t => t.OrganisationId == orgId && t.SubsidaryId == subsidaryId);
-            }
-           
-            var subsidaryName = org?.OrganisationName;
+            var organisation = subsidaryId is null ? organisationsList.FirstOrDefault(t => t.OrganisationId == orgId && t.SubsidaryId == null) :
+                organisationsList.FirstOrDefault(t => t.OrganisationId == orgId && t.SubsidaryId == subsidaryId);
+
+            var subsidaryName = organisation?.OrganisationName;
             return subsidaryName;
         }
     }
