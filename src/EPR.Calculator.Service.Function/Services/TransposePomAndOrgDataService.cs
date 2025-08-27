@@ -151,6 +151,11 @@
             return false;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Critical Code Smell",
+            "S3776:Cognitive Complexity of methods should not be too high",
+            Justification = "Temporaraly suppress - will refactor later.")]
+
         public async Task<bool> Transpose(CalcResultsRequestDto resultsRequestDto, CancellationToken cancellationToken)
         {
             this.context.ChangeTracker.AutoDetectChangesEnabled = false;
@@ -214,7 +219,7 @@
 
                         // Proceed further only if the organisation is not null and organisation id not null
                         // TO DO: We have to record if the organisation name is null in a separate table post Dec 2024
-                        if (IsOrganisationExists(producer))
+                        if (producer != null && producer.OrganisationId != null)
                         {
                             var producerDetail = new ProducerDetail
                             {
@@ -274,12 +279,7 @@
         private static bool IsPackagingTypeAndPackagingMaterialWeightExists(string? packagingType, double? totalPackagingMaterialWeight)
         {
             return packagingType != null && totalPackagingMaterialWeight != null;
-        }
-
-        private static bool IsOrganisationExists(CalculatorRunOrganisationDataDetail? producer)
-        {
-            return producer != null && producer.OrganisationId != null;
-        }
+        }       
 
         private static bool IsRunPomDataDetailsExistsForSubsidaryId(List<CalculatorRunPomDataDetail> runPomDataDetailsForSubsidaryId)
         {
