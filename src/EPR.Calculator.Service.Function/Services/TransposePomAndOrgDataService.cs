@@ -171,10 +171,10 @@
                 .OrderBy(x => x.SubmissionPeriodDesc)
                 .ToListAsync(cancellationToken);
 
-            if (calculatorRun.CalculatorRunPomDataMasterId != null)
+            if (IsCalculatorRunPOMMasterIdExists(calculatorRun))
             {
                 var organisationDataMaster = await this.context.CalculatorRunOrganisationDataMaster
-                    .SingleAsync(x => x.Id == calculatorRun.CalculatorRunOrganisationDataMasterId, cancellationToken);               
+                    .SingleAsync(x => x.Id == calculatorRun.CalculatorRunOrganisationDataMasterId, cancellationToken);
 
                 var OrganisationsList = GetAllOrganisationsBasedonRunId(calculatorRunOrgDataDetails);
 
@@ -205,7 +205,7 @@
 
                     // Proceed further only if there is any pom data based on the pom data master id and organisation id
                     // TO DO: We have to record if there is no pom data in a separate table post Dec 2024
-                    if (runPomDataDetailsForSubsidaryId.Count > 0)
+                    if (IsRunPomDataDetailsExistsForSubsidaryId(runPomDataDetailsForSubsidaryId))
                     {
                         var organisations = organisationDataDetails.Where(odd => odd.OrganisationName == organisation.OrganisationName && odd.SubsidaryId == organisation.SubsidaryId).OrderByDescending(odd => odd.SubmissionPeriodDesc);
 
@@ -214,7 +214,7 @@
 
                         // Proceed further only if the organisation is not null and organisation id not null
                         // TO DO: We have to record if the organisation name is null in a separate table post Dec 2024
-                        if (producer != null && producer.OrganisationId != null)
+                        if (IsOrganisationExists(producer))
                         {
                             var producerDetail = new ProducerDetail
                             {
@@ -269,7 +269,22 @@
             }
 
             return true;
-        }       
+        }
+
+        private static bool IsOrganisationExists(CalculatorRunOrganisationDataDetail? producer)
+        {
+            return producer != null && producer.OrganisationId != null;
+        }
+
+        private static bool IsRunPomDataDetailsExistsForSubsidaryId(List<CalculatorRunPomDataDetail> runPomDataDetailsForSubsidaryId)
+        {
+            return runPomDataDetailsForSubsidaryId.Count > 0;
+        }
+
+        private static bool IsCalculatorRunPOMMasterIdExists(CalculatorRun calculatorRun)
+        {
+            return calculatorRun.CalculatorRunPomDataMasterId != null;
+        }
 
         public IEnumerable<OrganisationDetails> GetAllOrganisationsBasedonRunId(
             IEnumerable<CalculatorRunOrganisationDataDetail> calculatorRunOrganisationDataDetails)
