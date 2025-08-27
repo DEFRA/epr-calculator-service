@@ -167,7 +167,7 @@
             var organisationsList = this.Fixture.CreateMany<OrganisationDetails>().ToList();
 
             // Act
-            var result = this.TestClass.GetLatestSubsidaryName(orgId, subsidaryId,organisationsList);
+            var result = this.TestClass.GetLatestproducerName(orgId, subsidaryId,organisationsList);
 
             // Assert
             Assert.IsNull(result);

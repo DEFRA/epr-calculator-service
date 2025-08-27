@@ -222,7 +222,7 @@
                                 ProducerId = producer.OrganisationId.Value,
                                 TradingName = organisation.TradingName,
                                 SubsidiaryId = producer.SubsidaryId,
-                                ProducerName = string.IsNullOrWhiteSpace(producer.SubsidaryId) ? GetLatestOrganisationName(producer.OrganisationId.Value, OrganisationsList) : GetLatestSubsidaryName(producer.OrganisationId.Value, producer.SubsidaryId, OrganisationsList),
+                                ProducerName = GetLatestproducerName(producer.OrganisationId.Value, producer.SubsidaryId, OrganisationsList),
                                 CalculatorRun = calculatorRun,
                             };
 
@@ -241,7 +241,7 @@
 
                                     // Proceed further only if the packaging type and packaging material weight is not null
                                     // TO DO: We have to record if the packaging type or packaging material weight is null in a separate table post Dec 2024
-                                    if (packagingType != null && totalPackagingMaterialWeight != null)
+                                    if (IsPackagingTypeAndPackagingMaterialWeightExists(packagingType, totalPackagingMaterialWeight))
                                     {
                                         var producerReportedMaterial = new ProducerReportedMaterial
                                         {
@@ -269,6 +269,11 @@
             }
 
             return true;
+        }
+
+        private static bool IsPackagingTypeAndPackagingMaterialWeightExists(string? packagingType, double? totalPackagingMaterialWeight)
+        {
+            return packagingType != null && totalPackagingMaterialWeight != null;
         }
 
         private static bool IsOrganisationExists(CalculatorRunOrganisationDataDetail? producer)
@@ -308,11 +313,20 @@
             return orgName;
         }
 
-        public string? GetLatestSubsidaryName(int orgId, string? subsidaryId, IEnumerable<OrganisationDetails> organisationsList)
+        public string? GetLatestproducerName(int orgId, string? subsidaryId, IEnumerable<OrganisationDetails> organisationsList)
         {
+            OrganisationDetails? org = new OrganisationDetails() { OrganisationName = string.Empty};
 
-            var subsidary = organisationsList.FirstOrDefault(t => t.OrganisationId == orgId && t.SubsidaryId == subsidaryId);
-            var subsidaryName = subsidary?.OrganisationName;
+            if (subsidaryId is null)
+            {
+                org = organisationsList.FirstOrDefault(t => t.OrganisationId == orgId && t.SubsidaryId == null);
+            }
+            else
+            {
+                org = organisationsList.FirstOrDefault(t => t.OrganisationId == orgId && t.SubsidaryId == subsidaryId);
+            }
+           
+            var subsidaryName = org?.OrganisationName;
             return subsidaryName;
         }
     }
