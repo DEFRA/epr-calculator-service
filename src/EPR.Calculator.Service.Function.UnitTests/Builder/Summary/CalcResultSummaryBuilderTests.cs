@@ -648,6 +648,47 @@
         }
 
         [TestMethod]
+        public void GetCalcResultSummary_CanAddTotalRow()
+        {
+            var sut = new CalcResultSummaryBuilder(this.context);
+            CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation> {
+                new() { OrganisationId = 1, OrganisationName = "Org1" }
+            };
+
+            var orderedProducerDetails = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, this.context.ProducerDetail.ToList()).ToList();
+            var runProducerMaterialDetails = CalcResultSummaryBuilder.GetProducerRunMaterialDetails(
+                orderedProducerDetails,
+                this.context.ProducerReportedMaterial.ToList(),
+                1);
+
+            var materials = Mappers.MaterialMapper.Map(this.context.Material.ToList());
+
+            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, 1);
+
+            orderedProducerDetails.Add(new ProducerDetail
+            {
+                ProducerId = 1
+            });
+
+            var result = sut.GetCalcResultSummary(orderedProducerDetails, materials, this.calcResult, totalPackagingTonnage);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(145, result.ColumnHeaders.Count());
+
+            var producerDisposalFees = result.ProducerDisposalFees;
+            Assert.IsNotNull(producerDisposalFees);
+
+            var totals = producerDisposalFees.First(t => t.IsProducerScaledup == "Totals");
+
+            var producer = producerDisposalFees.First(t => t.Level == "1");
+            Assert.IsNotNull(producer);
+
+            Assert.AreEqual(string.Empty, totals?.ProducerName);
+            Assert.IsNotNull(producer.ProducerName);
+            Assert.AreEqual("Org1", producer.ProducerName);
+        }
+
+        [TestMethod]
         public void GetTonnages_ShouldCalculateCorrectlyForGlass()
         {
             List<CalculatorRunPomDataDetail> pomData = new List<CalculatorRunPomDataDetail>();

@@ -168,7 +168,6 @@
                     Message = "Csv File saving started...",
                 });
 
-                var startTime = DateTime.Now;
                 if (!string.IsNullOrEmpty(blobUri))
                 {
                     await SaveCsvFileMetadataAsync(results.CalcResultDetail.RunId, fileName.ToString(), blobUri);
