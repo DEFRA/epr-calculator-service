@@ -1,4 +1,6 @@
-﻿namespace EPR.Calculator.Service.Function.Builder.CommsCost
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace EPR.Calculator.Service.Function.Builder.CommsCost
 {
     using System;
     using System.Collections.Generic;
@@ -13,6 +15,7 @@
     using Microsoft.ApplicationInsights;
     using Microsoft.EntityFrameworkCore;
 
+    [ExcludeFromCodeCoverage]
     public class CalcResultCommsCostBuilder(ApplicationDBContext context, TelemetryClient telemetryClient)
         : ICalcResultCommsCostBuilder
     {

@@ -313,13 +313,41 @@
         }
 
         [TestMethod]
+        public void Construct_NullScaledUpProdcuers_ShouldSetScaledupProducersToEmptyCollection()
+        {
+            // Assign
+            var requestDto = new CalcResultsRequestDto { RunId = 1 };
+            var calcResult = this.calcResult;
+            calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers
+            {
+                ColumnHeaders = new List<CalcResultScaledupProducerHeader>(),
+                MaterialBreakdownHeaders = new List<CalcResultScaledupProducerHeader>(),
+                TitleHeader = new CalcResultScaledupProducerHeader()
+                {
+                    Name = "Scaled-up Producers",
+                    ColumnIndex = 1,
+                },
+                ScaledupProducers = null
+            };
+
+            // Act
+            var results = this.calcResultsService.Construct(requestDto, calcResult);
+            results.Wait();
+            var result = results.Result;
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(0, CalcResultSummaryBuilder.ScaledupProducers.Count());
+        }
+
+        [TestMethod]
         public void Construct_ShouldSetScaledupProducers()
         {
             // Assign
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
             var calcResult = this.calcResult;
             calcResult.CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers();
-            
+
             // Act
             var results = this.calcResultsService.Construct(requestDto, calcResult);
             results.Wait();
