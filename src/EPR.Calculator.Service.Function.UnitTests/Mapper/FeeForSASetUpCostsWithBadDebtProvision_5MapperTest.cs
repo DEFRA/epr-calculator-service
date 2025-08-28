@@ -9,12 +9,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
     [TestClass]
     public class FeeForSASetUpCostsWithBadDebtProvision_5MapperTests
     {
-        private FeeForSASetUpCostsWithBadDebtProvision_5Mapper? _testClass;
+        private FeeForSaSetUpCostsWithBadDebtProvision5Mapper? _testClass;
 
         [TestInitialize]
         public void SetUp()
         {
-            _testClass = new FeeForSASetUpCostsWithBadDebtProvision_5Mapper();
+            _testClass = new FeeForSaSetUpCostsWithBadDebtProvision5Mapper();
         }
 
         [TestMethod]

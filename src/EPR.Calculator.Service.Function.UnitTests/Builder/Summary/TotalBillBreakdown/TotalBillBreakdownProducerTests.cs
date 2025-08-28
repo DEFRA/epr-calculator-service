@@ -32,22 +32,7 @@
         /// </summary>
         private readonly CalcResult _calcResult;
 
-        /// <summary>
-        /// Defines the _materialCostSummary
-        /// </summary>
-        private readonly Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial> _materialCostSummary;
-
-        /// <summary>
-        /// Defines the _commsCostSummary
-        /// </summary>
-        private readonly Dictionary<MaterialDetail, CalcResultSummaryProducerCommsFeesCostByMaterial> _commsCostSummary;
-
         private readonly int columnIndex = 285;
-
-        /// <summary>
-        /// Gets the Fixture
-        /// </summary>
-        private Fixture Fixture { get; init; } = new Fixture();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TotalBillBreakdownProducerTests"/> class.
@@ -454,13 +439,13 @@
             TotalBillBreakdownProducer.SetValues(_calcResult.CalcResultSummary);
 
             // Assert
-            Assert.AreEqual(17673.2373499970378m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].TotalProducerBillBreakdownCosts.TotalProducerFeeWithoutBadDebtProvision);
-            Assert.AreEqual(1060.39424099982226m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].TotalProducerBillBreakdownCosts.BadDebtProvision);
-            Assert.AreEqual(18733.6315909968600m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].TotalProducerBillBreakdownCosts.TotalProducerFeeWithBadDebtProvision);
-            Assert.AreEqual(9610.6053147004709m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].TotalProducerBillBreakdownCosts.EnglandTotalWithBadDebtProvision);
-            Assert.AreEqual(2653.2546023494487m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].TotalProducerBillBreakdownCosts.WalesTotalWithBadDebtProvision);
-            Assert.AreEqual(4576.19121409722784m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].TotalProducerBillBreakdownCosts.ScotlandTotalWithBadDebtProvision);
-            Assert.AreEqual(1893.58045984971257m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].TotalProducerBillBreakdownCosts.NorthernIrelandTotalWithBadDebtProvision);
+            Assert.AreEqual(17673.2373499970378m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].TotalProducerBillBreakdownCosts!.TotalProducerFeeWithoutBadDebtProvision);
+            Assert.AreEqual(1060.39424099982226m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].TotalProducerBillBreakdownCosts!.BadDebtProvision);
+            Assert.AreEqual(18733.6315909968600m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].TotalProducerBillBreakdownCosts!.TotalProducerFeeWithBadDebtProvision);
+            Assert.AreEqual(9610.6053147004709m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].TotalProducerBillBreakdownCosts!.EnglandTotalWithBadDebtProvision);
+            Assert.AreEqual(2653.2546023494487m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].TotalProducerBillBreakdownCosts!.WalesTotalWithBadDebtProvision);
+            Assert.AreEqual(4576.19121409722784m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].TotalProducerBillBreakdownCosts!.ScotlandTotalWithBadDebtProvision);
+            Assert.AreEqual(1893.58045984971257m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].TotalProducerBillBreakdownCosts!.NorthernIrelandTotalWithBadDebtProvision);
         }
 
         /// <summary>

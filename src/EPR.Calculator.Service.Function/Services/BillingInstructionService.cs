@@ -18,14 +18,14 @@ namespace EPR.Calculator.Service.Function.Services
     {
         private IDbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction> billingInstructionChunker { get; init; }
 
-        private readonly ICalculatorTelemetryLogger telemetryLogger;
+        private readonly ICalculatorTelemetryLogger _telemetryLogger;
 
         public BillingInstructionService(
             IDbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction> billingInstructionChunker,
             ICalculatorTelemetryLogger telemetryLogger)
         {
             this.billingInstructionChunker = billingInstructionChunker;
-            this.telemetryLogger = telemetryLogger;
+            this._telemetryLogger = telemetryLogger;
         }
 
         public async Task<bool> CreateBillingInstructions(CalcResult calcResult)
@@ -42,7 +42,7 @@ namespace EPR.Calculator.Service.Function.Services
                     var billingInstructionSection = producer.BillingInstructionSection;
 
                     var isProducerIdParseSuccessful = int.TryParse(producer.ProducerId, out var producerId);
-                    var isSuggestedInvoiceAmountParseSuccessful = decimal.TryParse(billingInstructionSection.SuggestedInvoiceAmount, out var suggestedInvoiceAmount);
+                    var isSuggestedInvoiceAmountParseSuccessful = decimal.TryParse(billingInstructionSection?.SuggestedInvoiceAmount, out var suggestedInvoiceAmount);
 
                     if (isProducerIdParseSuccessful && isSuggestedInvoiceAmountParseSuccessful)
                     {
@@ -51,15 +51,15 @@ namespace EPR.Calculator.Service.Function.Services
                             CalculatorRunId = calcResult.CalcResultDetail.RunId,
                             ProducerId = producerId,
                             TotalProducerBillWithBadDebt = producer.TotalProducerBillBreakdownCosts!.TotalProducerFeeWithBadDebtProvision,
-                            CurrentYearInvoiceTotalToDate = GetValue(billingInstructionSection.CurrentYearInvoiceTotalToDate!),
-                            TonnageChangeSinceLastInvoice = GetStringValue(billingInstructionSection.TonnageChangeSinceLastInvoice!),
-                            AmountLiabilityDifferenceCalcVsPrev = GetValue(billingInstructionSection.LiabilityDifference!),
-                            MaterialPoundThresholdBreached = GetStringValue(billingInstructionSection.MaterialThresholdBreached!),
-                            TonnagePoundThresholdBreached = GetStringValue(billingInstructionSection.TonnageThresholdBreached!),
-                            PercentageLiabilityDifferenceCalcVsPrev = GetValue(billingInstructionSection.PercentageLiabilityDifference!),
-                            MaterialPercentageThresholdBreached = GetStringValue(billingInstructionSection.MaterialPercentageThresholdBreached!),
-                            TonnagePercentageThresholdBreached = GetStringValue(billingInstructionSection.TonnagePercentageThresholdBreached!),
-                            SuggestedBillingInstruction = billingInstructionSection.SuggestedBillingInstruction!,
+                            CurrentYearInvoiceTotalToDate = GetValue(billingInstructionSection?.CurrentYearInvoiceTotalToDate!),
+                            TonnageChangeSinceLastInvoice = GetStringValue(billingInstructionSection?.TonnageChangeSinceLastInvoice!),
+                            AmountLiabilityDifferenceCalcVsPrev = GetValue(billingInstructionSection?.LiabilityDifference!),
+                            MaterialPoundThresholdBreached = GetStringValue(billingInstructionSection?.MaterialThresholdBreached!),
+                            TonnagePoundThresholdBreached = GetStringValue(billingInstructionSection?.TonnageThresholdBreached!),
+                            PercentageLiabilityDifferenceCalcVsPrev = GetValue(billingInstructionSection?.PercentageLiabilityDifference!),
+                            MaterialPercentageThresholdBreached = GetStringValue(billingInstructionSection?.MaterialPercentageThresholdBreached!),
+                            TonnagePercentageThresholdBreached = GetStringValue(billingInstructionSection?.TonnagePercentageThresholdBreached!),
+                            SuggestedBillingInstruction = billingInstructionSection?.SuggestedBillingInstruction!,
                             SuggestedInvoiceAmount = suggestedInvoiceAmount
                         };
 
@@ -73,7 +73,7 @@ namespace EPR.Calculator.Service.Function.Services
                 }
                 else
                 {
-                    this.telemetryLogger.LogInformation(new TrackMessage
+                    this._telemetryLogger.LogInformation(new TrackMessage
                     {
                         RunId = calcResult.CalcResultDetail.RunId,
                         RunName = calcResult.CalcResultDetail.RunName,
@@ -84,7 +84,7 @@ namespace EPR.Calculator.Service.Function.Services
 
                 var endTime = DateTime.UtcNow;
                 var timeDiff = startTime - endTime;
-                this.telemetryLogger.LogInformation(new TrackMessage
+                this._telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = calcResult.CalcResultDetail.RunId,
                     RunName = calcResult.CalcResultDetail.RunName,
@@ -96,7 +96,7 @@ namespace EPR.Calculator.Service.Function.Services
             }
             catch (Exception exception)
             {
-                this.telemetryLogger.LogError(new ErrorMessage
+                this._telemetryLogger.LogError(new ErrorMessage
                 {
                     RunId = calcResult.CalcResultDetail.RunId,
                     RunName = calcResult.CalcResultDetail.RunName,
@@ -108,16 +108,16 @@ namespace EPR.Calculator.Service.Function.Services
             }
         }
 
-        private bool IsDefaultValue(string value)
+        private bool IsDefaultValue(string? value)
         {
             return (string.IsNullOrEmpty(value) || value == CommonConstants.Hyphen);
         }
 
-        private decimal? GetValue(string value)
+        private decimal? GetValue(string? value)
         {
             return IsDefaultValue(value)
                 ? null
-                : TypeConverterUtil.ConvertTo<decimal>(value);
+                : TypeConverterUtil.ConvertTo<decimal>(value!);
         }
 
         private string? GetStringValue(string value)

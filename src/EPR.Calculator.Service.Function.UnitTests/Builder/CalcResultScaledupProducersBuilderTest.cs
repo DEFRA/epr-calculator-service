@@ -214,7 +214,7 @@
             var result = await this.builder.Construct(requestDto);
 
             // Assert
-            Assert.AreEqual(3, result.ScaledupProducers.Count());
+            Assert.AreEqual(3, result.ScaledupProducers!.Count());
         }
 
         /// <summary>
@@ -234,7 +234,7 @@
             var result = await this.builder.Construct(requestDto);
 
             // Assert
-            var actualNumberScaledUpProducer = result.ScaledupProducers.Where(t => !t.IsTotalRow);
+            var actualNumberScaledUpProducer = result.ScaledupProducers!.Where(t => !t.IsTotalRow);
             Assert.AreEqual(2, actualNumberScaledUpProducer.Count());
         }
 
@@ -254,7 +254,7 @@
             var result = await this.builder.Construct(requestDto);
 
             // Assert
-            Assert.AreEqual(0, result.ScaledupProducers.Count());
+            Assert.AreEqual(0, result.ScaledupProducers?.Count());
         }
 
         [TestMethod]

@@ -9,7 +9,7 @@ namespace EPR.Calculator.Service.Function.Misc
 {
     public static class TypeConverterUtil
     {
-        public static T? ConvertTo<T>(object value)
+        public static T? ConvertTo<T>(object? value)
         {
             var targetType = typeof(T);
 
@@ -22,7 +22,7 @@ namespace EPR.Calculator.Service.Function.Misc
 
             if (value is T variable) return variable;
 
-            if (targetType.IsAssignableFrom(value.GetType()))
+            if (targetType.IsInstanceOfType(value))
                 return (T)value;
 
             try

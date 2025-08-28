@@ -12,12 +12,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
     [TestClass]
     public class CommsCostsByMaterialFeesSummary2aMapperTests
     {
-        private CommsCostsByMaterialFeesSummary2aMapper _testClass;
+        private CommsCostsByMaterialFeesSummary2AMapper _testClass = null!;
 
         [TestInitialize]
         public void SetUp()
         {
-            _testClass = new CommsCostsByMaterialFeesSummary2aMapper();
+            _testClass = new CommsCostsByMaterialFeesSummary2AMapper();
         }
 
         [TestMethod]

@@ -6,7 +6,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     [TestClass]
     public class MessageTypeServiceTests
     {
-        private MessageTypeService _service;
+        private MessageTypeService _service = null!;
 
         [TestInitialize]
         public void Setup()

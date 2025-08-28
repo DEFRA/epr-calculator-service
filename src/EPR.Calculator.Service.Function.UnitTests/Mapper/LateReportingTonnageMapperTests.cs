@@ -9,7 +9,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
     [TestClass]
     public class LateReportingTonnageMapperTests
     {
-        private LateReportingTonnageMapper _testClass;
+        private LateReportingTonnageMapper _testClass = null!;
 
         [TestInitialize]
         public void SetUp()

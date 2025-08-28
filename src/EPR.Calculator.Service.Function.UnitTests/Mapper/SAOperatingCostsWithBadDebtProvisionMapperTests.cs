@@ -10,7 +10,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
     [TestClass]
     public class SAOperatingCostsWithBadDebtProvisionMapperTests
     {
-        private SAOperatingCostsWithBadDebtProvisionMapper _testClass;
+        private SAOperatingCostsWithBadDebtProvisionMapper _testClass = null!;
 
         [TestInitialize]
         public void SetUp()

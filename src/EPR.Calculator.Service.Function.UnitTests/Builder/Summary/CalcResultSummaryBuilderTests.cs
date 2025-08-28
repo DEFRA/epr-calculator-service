@@ -968,7 +968,7 @@
             var result = calcResultsService.GetProducerDetailsForTotalRow(producerId, isOverAllTotalRow);
 
             // Assert
-            Assert.AreEqual("Org1", result.OrganisationName);
+            Assert.AreEqual("Org1", result!.OrganisationName);
         }
 
         [TestMethod]
@@ -986,7 +986,7 @@
             var result = calcResultsService.GetProducerDetailsForTotalRow(producerId, isOverAllTotalRow);
 
             // Assert
-            Assert.IsNull(result.OrganisationName);
+            Assert.IsNull(result!.OrganisationName);
         }
 
         [TestMethod]
@@ -1004,7 +1004,7 @@
             var result = calcResultsService.GetProducerDetailsForTotalRow(producerId, isOverAllTotalRow);
 
             // Assert
-            Assert.AreEqual("GF Trading Name 1", result.TradingName);
+            Assert.AreEqual("GF Trading Name 1", result!.TradingName);
         }
 
         private static void SeedDatabase(ApplicationDBContext context)
@@ -1042,11 +1042,11 @@
 
         private class TestResult
         {
-            public string Level { get; set; }
+            public string Level { get; set; } = null!;
 
-            public string TonnageChangeCount { get; set; }
+            public string TonnageChangeCount { get; set; } = null!;
 
-            public string TonnageChangeAdvice { get; set; }
+            public string TonnageChangeAdvice { get; set; } = null!;
         }
     }
 }

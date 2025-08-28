@@ -28,7 +28,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
         {
             // Arrange
             var fixture = new Fixture();
-            string value = null;
+            string? value = null;
 
             // Act
             var result = TypeConverterUtil.ConvertTo<decimal>(value);

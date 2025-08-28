@@ -201,8 +201,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             var producerForTotalRow = GetProducerDetailsForTotalRow(producersAndSubsidiaries[0].ProducerId, isOverAllTotalRow);
             const int overallTotalId = 0;
 
-            var localAuthorityDisposalCostsSectionOne = GetLocalAuthorityDisposalCostsSectionOne(materialCosts);
-
             var totalRow = new CalcResultSummaryProducerDisposalFees
             {
                 ProducerIdInt = isOverAllTotalRow ? overallTotalId : producersAndSubsidiaries[0].ProducerId,
@@ -412,8 +410,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         {
             var allProducerDetails = allResults.Select(x => x.ProducerDetail).Distinct();
             var filteredProducers = allProducerDetails.Where(t => !ScaledupProducers.
-                Any(i => i.ProducerId == t.ProducerId)).ToList();
-            var scaledUpProducerDetails = allProducerDetails.Where(t => ScaledupProducers.
                 Any(i => i.ProducerId == t.ProducerId)).ToList();
             var allProducerReportedMaterials = allResults.Select(x => x.ProducerReportedMaterial);
 
