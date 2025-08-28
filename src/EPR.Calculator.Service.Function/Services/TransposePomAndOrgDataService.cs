@@ -39,13 +39,6 @@
             public string? SubsidaryId { get; set; }
         }
 
-        internal class SubmissionDetails
-        {
-            public string? SubmissionPeriod { get; set; }
-
-            public string? SubmissionPeriodDesc { get; set; }
-        }
-
         public TransposePomAndOrgDataService(
             ApplicationDBContext context,
             ICommandTimeoutService commandTimeoutService,
@@ -158,6 +151,11 @@
             return false;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Critical Code Smell",
+            "S3776:Cognitive Complexity of methods should not be too high",
+            Justification = "Temporaraly suppress - will refactor later.")]
+
         public async Task<bool> Transpose(CalcResultsRequestDto resultsRequestDto, CancellationToken cancellationToken)
         {
             this.context.ChangeTracker.AutoDetectChangesEnabled = false;
@@ -178,23 +176,12 @@
                 .OrderBy(x => x.SubmissionPeriodDesc)
                 .ToListAsync(cancellationToken);
 
-            if (calculatorRun.CalculatorRunPomDataMasterId != null)
+            if (IsCalculatorRunPOMMasterIdExists(calculatorRun))
             {
                 var organisationDataMaster = await this.context.CalculatorRunOrganisationDataMaster
                     .SingleAsync(x => x.Id == calculatorRun.CalculatorRunOrganisationDataMasterId, cancellationToken);
 
-                var SubmissionPeriodDetails = (from s in calculatorRunPomDataDetails
-                                               where s.CalculatorRunPomDataMasterId == calculatorRun.CalculatorRunPomDataMasterId
-                                               select new SubmissionDetails
-                                               {
-                                                   SubmissionPeriod = s.SubmissionPeriod,
-                                                   SubmissionPeriodDesc = s.SubmissionPeriodDesc,
-                                               }
-                                        ).Distinct().ToList();
-
                 var OrganisationsList = GetAllOrganisationsBasedonRunId(calculatorRunOrgDataDetails);
-
-                var OrganisationsBySubmissionPeriod = GetOrganisationDetailsBySubmissionPeriod(OrganisationsList, SubmissionPeriodDetails).ToList();
 
                 var organisationDataDetails = calculatorRunOrgDataDetails
                     .Where(odd => odd.CalculatorRunOrganisationDataMasterId == organisationDataMaster.Id && odd.OrganisationName != null && odd.OrganisationName != "")
@@ -223,7 +210,7 @@
 
                     // Proceed further only if there is any pom data based on the pom data master id and organisation id
                     // TO DO: We have to record if there is no pom data in a separate table post Dec 2024
-                    if (runPomDataDetailsForSubsidaryId.Count > 0)
+                    if (IsRunPomDataDetailsExistsForSubsidaryId(runPomDataDetailsForSubsidaryId))
                     {
                         var organisations = organisationDataDetails.Where(odd => odd.OrganisationName == organisation.OrganisationName && odd.SubsidaryId == organisation.SubsidaryId).OrderByDescending(odd => odd.SubmissionPeriodDesc);
 
@@ -240,7 +227,7 @@
                                 ProducerId = producer.OrganisationId.Value,
                                 TradingName = organisation.TradingName,
                                 SubsidiaryId = producer.SubsidaryId,
-                                ProducerName = string.IsNullOrWhiteSpace(producer.SubsidaryId) ? GetLatestOrganisationName(producer.OrganisationId.Value, OrganisationsBySubmissionPeriod, OrganisationsList) : GetLatestSubsidaryName(producer.OrganisationId.Value, producer.SubsidaryId, OrganisationsBySubmissionPeriod, OrganisationsList),
+                                ProducerName = GetLatestproducerName(producer.OrganisationId.Value, producer.SubsidaryId, OrganisationsList),
                                 CalculatorRun = calculatorRun,
                             };
 
@@ -259,7 +246,7 @@
 
                                     // Proceed further only if the packaging type and packaging material weight is not null
                                     // TO DO: We have to record if the packaging type or packaging material weight is null in a separate table post Dec 2024
-                                    if (packagingType != null && totalPackagingMaterialWeight != null)
+                                    if (IsPackagingTypeAndPackagingMaterialWeightExists(packagingType, totalPackagingMaterialWeight))
                                     {
                                         var producerReportedMaterial = new ProducerReportedMaterial
                                         {
@@ -289,28 +276,19 @@
             return true;
         }
 
-        private static List<OrganisationDetails> GetOrganisationDetailsBySubmissionPeriod(
-            IEnumerable<OrganisationDetails> organisationsList,
-            IEnumerable<SubmissionDetails> submissionPeriodDetails)
+        private static bool IsPackagingTypeAndPackagingMaterialWeightExists(string? packagingType, double? totalPackagingMaterialWeight)
         {
-            var list = new List<OrganisationDetails>();
-            foreach (var org in organisationsList)
-            {
-                if (submissionPeriodDetails.Any(x => x.SubmissionPeriodDesc == org.SubmissionPeriodDescription))
-                {
-                    var sub = submissionPeriodDetails.First(x => x.SubmissionPeriodDesc == org.SubmissionPeriodDescription);
-                    list.Add(new OrganisationDetails
-                    {
-                        OrganisationId = org.OrganisationId,
-                        OrganisationName = org.OrganisationName,
-                        TradingName = org.TradingName,
-                        SubmissionPeriodDescription = org.SubmissionPeriodDescription,
-                        SubmissionPeriod = sub.SubmissionPeriod,
-                        SubsidaryId = org.SubsidaryId,
-                    });
-                }
-            }
-            return list;
+            return packagingType != null && totalPackagingMaterialWeight != null;
+        }       
+
+        private static bool IsRunPomDataDetailsExistsForSubsidaryId(List<CalculatorRunPomDataDetail> runPomDataDetailsForSubsidaryId)
+        {
+            return runPomDataDetailsForSubsidaryId.Count > 0;
+        }
+
+        private static bool IsCalculatorRunPOMMasterIdExists(CalculatorRun calculatorRun)
+        {
+            return calculatorRun.CalculatorRunPomDataMasterId != null;
         }
 
         public IEnumerable<OrganisationDetails> GetAllOrganisationsBasedonRunId(
@@ -328,22 +306,21 @@
                     }).Distinct();
         }
 
-        public string? GetLatestOrganisationName(int orgId, List<OrganisationDetails> organisationsBySubmissionPeriod, IEnumerable<OrganisationDetails> organisationsList)
+        public string? GetLatestOrganisationName(int orgId, IEnumerable<OrganisationDetails> organisationsList)
         {
-            if (organisationsBySubmissionPeriod is null) return string.Empty;
-
-            var organisations = organisationsBySubmissionPeriod.Where(t => t.OrganisationId == orgId && t.SubsidaryId == null).OrderByDescending(t => t.SubmissionPeriod?.Replace(PeriodSeparator, string.Empty)).ToList();
-
-            var orgName = organisations?.FirstOrDefault(t => t.OrganisationId == orgId)?.OrganisationName;
-            return string.IsNullOrWhiteSpace(orgName) ? organisationsList.FirstOrDefault(t => t.OrganisationId == orgId)?.OrganisationName : orgName;
+            var organisation = organisationsList.FirstOrDefault(t => t.OrganisationId == orgId && t.SubsidaryId == null);
+            var orgName = organisation?.OrganisationName;
+            return orgName;
         }
 
-        public string? GetLatestSubsidaryName(int orgId, string? subsidaryId, List<OrganisationDetails> organisationsBySubmissionPeriod, IEnumerable<OrganisationDetails> organisationsList)
+        public string? GetLatestproducerName(int orgId, string? subsidaryId, IEnumerable<OrganisationDetails> organisationsList)
         {
-            if (organisationsBySubmissionPeriod is null) return string.Empty;
-            var subsidaries = organisationsBySubmissionPeriod.Where(t => t.OrganisationId == orgId && t.SubsidaryId == subsidaryId).OrderByDescending(t => t.SubmissionPeriod?.Replace(PeriodSeparator, string.Empty)).ToList();
-            var subsidaryName = subsidaries?.FirstOrDefault(t => t.OrganisationId == orgId && t.SubsidaryId == subsidaryId)?.OrganisationName;
-            return string.IsNullOrWhiteSpace(subsidaryName) ? organisationsList.FirstOrDefault(t => t.OrganisationId == orgId && t.SubsidaryId == subsidaryId)?.OrganisationName : subsidaryName;
+
+            var organisation = subsidaryId is null ? organisationsList.FirstOrDefault(t => t.OrganisationId == orgId && t.SubsidaryId == null) :
+                organisationsList.FirstOrDefault(t => t.OrganisationId == orgId && t.SubsidaryId == subsidaryId);
+
+            var subsidaryName = organisation?.OrganisationName;
+            return subsidaryName;
         }
     }
 }
