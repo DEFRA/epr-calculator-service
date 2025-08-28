@@ -22,8 +22,6 @@
         private readonly ApplicationDBContext context;
         private readonly ICalculatorTelemetryLogger telemetryLogger;
 
-        private const string PeriodSeparator = "-P";
-
         public class OrganisationDetails
         {
             public int? OrganisationId { get; set; }
