@@ -10,6 +10,8 @@ namespace EPR.Calculator.Service.Function.Mapper
     {
         public DisposalFeeSummary1 Map(CalcResultSummaryProducerDisposalFees summary)
         {
+            var tonnageByLevel = GetTonnageByLevel().TryGetValue(summary.Level!, out var values);
+
             return new DisposalFeeSummary1
             {
                 TotalProducerDisposalFeeWithoutBadDebtProvision = CurrencyConverter.ConvertToCurrency(summary.TotalProducerDisposalFee),
