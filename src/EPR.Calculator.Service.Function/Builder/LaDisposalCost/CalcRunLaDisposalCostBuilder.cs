@@ -30,7 +30,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
 
             public decimal Tonnage { get; set; }
 
-            public required ProducerDetail ProducerDetail { get; set; }
+            public required ProducerDetail? ProducerDetail { get; set; }
         }
 
         public CalcRunLaDisposalCostBuilder(ApplicationDBContext context)

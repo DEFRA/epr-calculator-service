@@ -16,7 +16,7 @@ namespace EPR.Calculator.Service.Function.Misc
             if(value == null || value == DBNull.Value)
             {
                 if (targetType.IsValueType)
-                    return (T)Activator.CreateInstance(targetType);
+                    return (T?)Activator.CreateInstance(targetType);
                 return default;
             }
 
@@ -34,7 +34,7 @@ namespace EPR.Calculator.Service.Function.Misc
                 var converter =  TypeDescriptor.GetConverter(targetType);
                 if (converter != null && converter.CanConvertFrom(value.GetType()))
                 {
-                    return (T)converter.ConvertFrom(value);
+                    return (T?)converter.ConvertFrom(value);
                 }
 
                 return default(T);

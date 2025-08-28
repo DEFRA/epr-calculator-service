@@ -96,7 +96,7 @@
             list.Add(header);
 
             telemetryClient.TrackTrace("Filtering producer reported materials...");
-            producerReportedMaterials = producerReportedMaterials.Where(t => !calcResult.CalcResultScaledupProducers.ScaledupProducers.
+            producerReportedMaterials = producerReportedMaterials.Where(t => calcResult.CalcResultScaledupProducers.ScaledupProducers != null && !calcResult.CalcResultScaledupProducers.ScaledupProducers.
                 Any(i => i.ProducerId == t.ProducerDetail?.ProducerId)).ToList();
 
             telemetryClient.TrackTrace("Getting scaled up producer reported on...");

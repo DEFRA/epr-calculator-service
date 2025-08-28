@@ -95,7 +95,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public void DeserializeMessage_NullOrEmpty_ThrowsJsonException()
         {
             // Act
-            _service.DeserializeMessage(null);
+            _service.DeserializeMessage(null!);
         }
 
         [TestMethod]
