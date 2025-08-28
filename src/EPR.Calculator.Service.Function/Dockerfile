@@ -1,6 +1,5 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS installer-env
 
-WORKDIR /src
 #Nuget
 COPY NuGet.Config ./
 
