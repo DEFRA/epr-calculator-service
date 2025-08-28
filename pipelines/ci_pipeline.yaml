@@ -50,7 +50,7 @@ resources:
     - repository: CommonTemplates
       name: RWD-CPR-EPR4P-ADO/epr-webapps-code-deploy-templates
       type: git
-      ref: main
+      ref: temp/remove-sq-checks-to-test-Nuget-feeds
 
 extends:
   template: epr-build-pipeline.yaml@CommonTemplates
