@@ -5,12 +5,13 @@ ENV VSS_NUGET_ACCESSTOKEN=$PAT
 
 WORKDIR /src
 #Nuget
-COPY NuGet.Config ./
+# COPY NuGet.Config ./
 
-# COPY EPR.Calculator.Service.Common/. ./EPR.Calculator.Service.Common/.
-COPY EPR.Calculator.Service.Function/. ./EPR.Calculator.Service.Function/.
-COPY EPR.Calculator.Service.Data/. ./EPR.Calculator.Service.Data/.
-COPY stylecop.json ./
+# # COPY EPR.Calculator.Service.Common/. ./EPR.Calculator.Service.Common/.
+# COPY EPR.Calculator.Service.Function/. ./EPR.Calculator.Service.Function/.
+# COPY EPR.Calculator.Service.Data/. ./EPR.Calculator.Service.Data/.
+# COPY stylecop.json ./
+COPY . .
 
 RUN dotnet restore  EPR.Calculator.Service.Function/EPR.Calculator.Service.Function.csproj --configfile NuGet.Config
 # Publish 
