@@ -32,7 +32,7 @@
             _dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-                .EnableSensitiveDataLogging()
+                .EnableSensitiveDataLogging() // Enable logging for unit test's dbcontext issues only
             .Options;
 
             this._context = new ApplicationDBContext(this._dbContextOptions);
