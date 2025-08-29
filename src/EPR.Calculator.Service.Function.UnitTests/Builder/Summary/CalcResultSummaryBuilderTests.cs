@@ -319,7 +319,7 @@
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
             var calcResult = this.calcResult;
             calcResult.CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers();
-            
+
             // Act
             var results = this.calcResultsService.Construct(requestDto, calcResult);
             results.Wait();
@@ -629,7 +629,19 @@
 
             var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, 1);
 
-            var result = new CalcResultSummaryBuilder(this.context).GetCalcResultSummary(orderedProducerDetails, materials, this.calcResult, totalPackagingTonnage);
+            var producerInvoicedMaterialNetTonnage = new List<ProducerInvoicedMaterialNetTonnage>
+            {
+                new ProducerInvoicedMaterialNetTonnage
+                {
+                    CalculatorRunId = 101,
+                    InvoicedNetTonnage = 20,
+                    MaterialId = 77,
+                    ProducerId = 10007,
+                    Id = 22
+                }
+            };
+
+            var result = new CalcResultSummaryBuilder(this.context).GetCalcResultSummary(orderedProducerDetails, materials, this.calcResult, totalPackagingTonnage, producerInvoicedMaterialNetTonnage);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(145, result.ColumnHeaders.Count());
@@ -649,19 +661,19 @@
 
         [TestMethod]
         public void GetTonnages_ShouldCalculateCorrectlyForGlass()
-        {
-            List<CalculatorRunPomDataDetail> pomData = new List<CalculatorRunPomDataDetail>();
-            List<MaterialDetail> materials = new List<MaterialDetail>();
-
-            var glassMaterial = new MaterialDetail
             {
-                Code = MaterialCodes.Glass,
-                Name = "Glass",
-                Description = "Glass material description",
-            };
-            materials.Add(glassMaterial);
+                List<CalculatorRunPomDataDetail> pomData = new List<CalculatorRunPomDataDetail>();
+                List<MaterialDetail> materials = new List<MaterialDetail>();
 
-            var glassPomData = new List<CalculatorRunPomDataDetail>
+                var glassMaterial = new MaterialDetail
+                {
+                    Code = MaterialCodes.Glass,
+                    Name = "Glass",
+                    Description = "Glass material description",
+                };
+                materials.Add(glassMaterial);
+
+                var glassPomData = new List<CalculatorRunPomDataDetail>
             {
                 new CalculatorRunPomDataDetail
                 {
@@ -683,113 +695,113 @@
                 },
             };
 
-            pomData.AddRange(glassPomData);
+                pomData.AddRange(glassPomData);
 
-            // Act
-            var result = CalcResultScaledupProducersBuilder.GetTonnages(pomData, materials, "2024-P1", 1);
+                // Act
+                var result = CalcResultScaledupProducersBuilder.GetTonnages(pomData, materials, "2024-P1", 1);
 
-            // Assert
-            Assert.IsTrue(result.ContainsKey(MaterialCodes.Glass));
-            var glassTonnage = result[MaterialCodes.Glass];
+                // Assert
+                Assert.IsTrue(result.ContainsKey(MaterialCodes.Glass));
+                var glassTonnage = result[MaterialCodes.Glass];
 
-            Assert.AreEqual(0.1m, glassTonnage.ReportedHouseholdPackagingWasteTonnage);
-            Assert.AreEqual(0, glassTonnage.ReportedPublicBinTonnage);
-            Assert.AreEqual(0.03m, glassTonnage.HouseholdDrinksContainersTonnageGlass);
-            Assert.AreEqual(0.13m, glassTonnage.TotalReportedTonnage);
-            Assert.AreEqual(0.13m, glassTonnage.NetReportedTonnage);
-            Assert.AreEqual(0.1m, glassTonnage.ScaledupReportedHouseholdPackagingWasteTonnage);
-            Assert.AreEqual(0, glassTonnage.ScaledupReportedPublicBinTonnage);
-            Assert.AreEqual(0.03m, glassTonnage.ScaledupHouseholdDrinksContainersTonnageGlass);
-            Assert.AreEqual(0.13m, glassTonnage.ScaledupTotalReportedTonnage);
-            Assert.AreEqual(0.13m, glassTonnage.ScaledupNetReportedTonnage);
-        }
+                Assert.AreEqual(0.1m, glassTonnage.ReportedHouseholdPackagingWasteTonnage);
+                Assert.AreEqual(0, glassTonnage.ReportedPublicBinTonnage);
+                Assert.AreEqual(0.03m, glassTonnage.HouseholdDrinksContainersTonnageGlass);
+                Assert.AreEqual(0.13m, glassTonnage.TotalReportedTonnage);
+                Assert.AreEqual(0.13m, glassTonnage.NetReportedTonnage);
+                Assert.AreEqual(0.1m, glassTonnage.ScaledupReportedHouseholdPackagingWasteTonnage);
+                Assert.AreEqual(0, glassTonnage.ScaledupReportedPublicBinTonnage);
+                Assert.AreEqual(0.03m, glassTonnage.ScaledupHouseholdDrinksContainersTonnageGlass);
+                Assert.AreEqual(0.13m, glassTonnage.ScaledupTotalReportedTonnage);
+                Assert.AreEqual(0.13m, glassTonnage.ScaledupNetReportedTonnage);
+            }
 
-        [TestMethod]
-        public void GetCalcResultSummary_ScaledUpProducerShouldReturnCorrectValue()
-        {
+            [TestMethod]
+            public void GetCalcResultSummary_ScaledUpProducerShouldReturnCorrectValue()
+            {
 
-            var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-            this.calcResult.CalcResultScaledupProducers.ScaledupProducers = GetScaledUpProducers();
-            var results = this.calcResultsService.Construct(calcResultsRequestDto, this.calcResult);
+                var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
+                this.calcResult.CalcResultScaledupProducers.ScaledupProducers = GetScaledUpProducers();
+                var results = this.calcResultsService.Construct(calcResultsRequestDto, this.calcResult);
 
-            var orderedProducerDetails = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, this.context.ProducerDetail.ToList());
-            var runProducerMaterialDetails = CalcResultSummaryBuilder.GetProducerRunMaterialDetails(
-                orderedProducerDetails,
-                this.context.ProducerReportedMaterial.ToList(),
-                1);
+                var orderedProducerDetails = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, this.context.ProducerDetail.ToList());
+                var runProducerMaterialDetails = CalcResultSummaryBuilder.GetProducerRunMaterialDetails(
+                    orderedProducerDetails,
+                    this.context.ProducerReportedMaterial.ToList(),
+                    1);
 
-            var materials = Mappers.MaterialMapper.Map(this.context.Material.ToList());
+                var materials = Mappers.MaterialMapper.Map(this.context.Material.ToList());
 
-            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, 1);
-            var scaledUpProducer = totalPackagingTonnage.First(t => t.ProducerId == 4);
+                var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, 1);
+                var scaledUpProducer = totalPackagingTonnage.First(t => t.ProducerId == 4);
 
-            Assert.AreEqual(3, totalPackagingTonnage.Count());
-            Assert.IsNotNull(scaledUpProducer.ProducerId);
-            Assert.AreEqual(100, scaledUpProducer.TotalPackagingTonnage);
-        }
+                Assert.AreEqual(3, totalPackagingTonnage.Count());
+                Assert.IsNotNull(scaledUpProducer.ProducerId);
+                Assert.AreEqual(100, scaledUpProducer.TotalPackagingTonnage);
+            }
 
-        [TestMethod]
-        public void GetScaledupProducerStatusTotalRow_IsOverAllTotalRow_ReturnsTotals()
-        {
-            // Arrange
-            var producer = new ProducerDetail();
-            var scaledupProducers = new List<CalcResultScaledupProducer>();
-            bool isOverAllTotalRow = true;
+            [TestMethod]
+            public void GetScaledupProducerStatusTotalRow_IsOverAllTotalRow_ReturnsTotals()
+            {
+                // Arrange
+                var producer = new ProducerDetail();
+                var scaledupProducers = new List<CalcResultScaledupProducer>();
+                bool isOverAllTotalRow = true;
 
-            // Act
-            var result = CalcResultSummaryBuilder.GetScaledupProducerStatusTotalRow(producer, scaledupProducers, isOverAllTotalRow);
+                // Act
+                var result = CalcResultSummaryBuilder.GetScaledupProducerStatusTotalRow(producer, scaledupProducers, isOverAllTotalRow);
 
-            // Assert
-            Assert.AreEqual(CommonConstants.Totals, result);
-        }
+                // Assert
+                Assert.AreEqual(CommonConstants.Totals, result);
+            }
 
-        [TestMethod]
-        public void GetScaledupProducerStatusTotalRow_ProducerScaledup_ReturnsScaledupProducersYes()
-        {
-            // Arrange
-            var producer = new ProducerDetail();
-            var scaledupProducers = new List<CalcResultScaledupProducer> { new CalcResultScaledupProducer { ProducerId = producer.Id } };
-            bool isOverAllTotalRow = false;
+            [TestMethod]
+            public void GetScaledupProducerStatusTotalRow_ProducerScaledup_ReturnsScaledupProducersYes()
+            {
+                // Arrange
+                var producer = new ProducerDetail();
+                var scaledupProducers = new List<CalcResultScaledupProducer> { new CalcResultScaledupProducer { ProducerId = producer.Id } };
+                bool isOverAllTotalRow = false;
 
-            // Act
-            var result = CalcResultSummaryBuilder.GetScaledupProducerStatusTotalRow(producer, scaledupProducers, isOverAllTotalRow);
+                // Act
+                var result = CalcResultSummaryBuilder.GetScaledupProducerStatusTotalRow(producer, scaledupProducers, isOverAllTotalRow);
 
-            // Assert
-            Assert.AreEqual(CommonConstants.ScaledupProducersYes, result);
-        }
+                // Assert
+                Assert.AreEqual(CommonConstants.ScaledupProducersYes, result);
+            }
 
-        [TestMethod]
-        public void GetScaledupProducerStatusTotalRow_ProducerNotScaledup_ReturnsScaledupProducersNo()
-        {
-            // Arrange
-            var producer = new ProducerDetail();
-            var scaledupProducers = new List<CalcResultScaledupProducer>();
-            bool isOverAllTotalRow = false;
+            [TestMethod]
+            public void GetScaledupProducerStatusTotalRow_ProducerNotScaledup_ReturnsScaledupProducersNo()
+            {
+                // Arrange
+                var producer = new ProducerDetail();
+                var scaledupProducers = new List<CalcResultScaledupProducer>();
+                bool isOverAllTotalRow = false;
 
-            // Act
-            var result = CalcResultSummaryBuilder.GetScaledupProducerStatusTotalRow(producer, scaledupProducers, isOverAllTotalRow);
+                // Act
+                var result = CalcResultSummaryBuilder.GetScaledupProducerStatusTotalRow(producer, scaledupProducers, isOverAllTotalRow);
 
-            // Assert
-            Assert.AreEqual(CommonConstants.ScaledupProducersNo, result);
-        }
+                // Assert
+                Assert.AreEqual(CommonConstants.ScaledupProducersNo, result);
+            }
 
-        [TestMethod]
-        public void GetPreviousInvoicedTonnage_Level1()
-        {
-            var result = CalcResultSummaryBuilder.GetPreviousInvoicedTonnage("1");
-            Assert.AreEqual("0", result);
-        }
+            [TestMethod]
+            public void GetPreviousInvoicedTonnage_Level1()
+            {
+                var result = CalcResultSummaryBuilder.GetTonnageChange("1");
+                Assert.AreEqual("0", result);
+            }
 
-        [TestMethod]
-        public void GetPreviousInvoicedTonnage_Level2()
-        {
-            var result = CalcResultSummaryBuilder.GetPreviousInvoicedTonnage("2");
-            Assert.AreEqual("-", result);
-        }
+            [TestMethod]
+            public void GetPreviousInvoicedTonnage_Level2()
+            {
+                var result = CalcResultSummaryBuilder.GetTonnageChange("2");
+                Assert.AreEqual("-", result);
+            }
 
-        public static List<CalcResultScaledupProducer> GetScaledUpProducers()
-        {
-            var test = new List<CalcResultScaledupProducer>
+            public static List<CalcResultScaledupProducer> GetScaledUpProducers()
+            {
+                var test = new List<CalcResultScaledupProducer>
             {
                 new CalcResultScaledupProducer()
                 {
@@ -817,207 +829,207 @@
                 },
             };
 
-            return test;
-        }
-
-        [TestMethod]
-        public void GetTonnage_Level1_AssignsValuesCorrectly()
-        {
-            var result = new TestResult { Level = "1" };
-            if (CalcResultSummaryBuilder.GetTonnageByLevel().TryGetValue(result.Level, out var values))
-            {
-                result.TonnageChangeCount = values.Count;
-                result.TonnageChangeAdvice = values.Advice;
+                return test;
             }
 
-            Assert.AreEqual("0", result.TonnageChangeCount);
-            Assert.AreEqual(string.Empty, result.TonnageChangeAdvice);
-        }
-
-        [TestMethod]
-        public void GetTonnage_Level2_AssignsValuesCorrectly()
-        {
-            var result = new TestResult { Level = "2" };
-            if (CalcResultSummaryBuilder.GetTonnageByLevel().TryGetValue(result.Level, out var values))
+            [TestMethod]
+            public void GetTonnage_Level1_AssignsValuesCorrectly()
             {
-                result.TonnageChangeCount = values.Count;
-                result.TonnageChangeAdvice = values.Advice;
+                var result = new TestResult { Level = "1" };
+                if (CalcResultSummaryBuilder.GetTonnageByLevel().TryGetValue(result.Level, out var values))
+                {
+                    result.TonnageChangeCount = values.Count;
+                    result.TonnageChangeAdvice = values.Advice;
+                }
+
+                Assert.AreEqual("0", result.TonnageChangeCount);
+                Assert.AreEqual(string.Empty, result.TonnageChangeAdvice);
             }
 
-            Assert.AreEqual("-", result.TonnageChangeCount);
-            Assert.AreEqual("-", result.TonnageChangeAdvice);
-        }
-
-        [TestMethod]
-        public void GetTonnage_LevelDoesNotExist_DoesNotAssignValues()
-        {
-            var result = new TestResult { Level = "999" };
-            var found = CalcResultSummaryBuilder.GetTonnageByLevel().TryGetValue(result.Level, out var values);
-            if (found)
+            [TestMethod]
+            public void GetTonnage_Level2_AssignsValuesCorrectly()
             {
-                result.TonnageChangeCount = values.Count;
-                result.TonnageChangeAdvice = values.Advice;
+                var result = new TestResult { Level = "2" };
+                if (CalcResultSummaryBuilder.GetTonnageByLevel().TryGetValue(result.Level, out var values))
+                {
+                    result.TonnageChangeCount = values.Count;
+                    result.TonnageChangeAdvice = values.Advice;
+                }
+
+                Assert.AreEqual("-", result.TonnageChangeCount);
+                Assert.AreEqual("-", result.TonnageChangeAdvice);
             }
 
-            Assert.IsFalse(found);
-            Assert.IsNull(result.TonnageChangeCount);
-            Assert.IsNull(result.TonnageChangeAdvice);
-        }
+            [TestMethod]
+            public void GetTonnage_LevelDoesNotExist_DoesNotAssignValues()
+            {
+                var result = new TestResult { Level = "999" };
+                var found = CalcResultSummaryBuilder.GetTonnageByLevel().TryGetValue(result.Level, out var values);
+                if (found)
+                {
+                    result.TonnageChangeCount = values.Count;
+                    result.TonnageChangeAdvice = values.Advice;
+                }
 
-        [TestMethod]
-        public void CanAddTotalRow_ParentProducerNotFound_ReturnsFalse()
-        {
-            // Arrange
-            ProducerDetail producer = context.ProducerDetail.FirstOrDefault()!;
-            IEnumerable<ProducerDetail> producersAndSubsidiaries = context.ProducerDetail;
-            List<CalcResultSummaryProducerDisposalFees> producerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>();
+                Assert.IsFalse(found);
+                Assert.IsNull(result.TonnageChangeCount);
+                Assert.IsNull(result.TonnageChangeAdvice);
+            }
 
-            CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation>(); 
+            [TestMethod]
+            public void CanAddTotalRow_ParentProducerNotFound_ReturnsFalse()
+            {
+                // Arrange
+                ProducerDetail producer = context.ProducerDetail.FirstOrDefault()!;
+                IEnumerable<ProducerDetail> producersAndSubsidiaries = context.ProducerDetail;
+                List<CalcResultSummaryProducerDisposalFees> producerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>();
 
-            // Act
-            var result = calcResultsService.CanAddTotalRow(producer, producersAndSubsidiaries, producerDisposalFees);
+                CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation>();
 
-            // Assert
-            Assert.IsFalse(result);
-        }
+                // Act
+                var result = calcResultsService.CanAddTotalRow(producer, producersAndSubsidiaries, producerDisposalFees);
 
-        [TestMethod]
-        public void CanAddTotalRow_ProducerDisposalFeeExists_ReturnsFalse()
-        {
-            // Arrange
-            ProducerDetail producer = context.ProducerDetail.FirstOrDefault()!;
-            IEnumerable<ProducerDetail> producersAndSubsidiaries = context.ProducerDetail;
-            List<CalcResultSummaryProducerDisposalFees> producerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> {
+                // Assert
+                Assert.IsFalse(result);
+            }
+
+            [TestMethod]
+            public void CanAddTotalRow_ProducerDisposalFeeExists_ReturnsFalse()
+            {
+                // Arrange
+                ProducerDetail producer = context.ProducerDetail.FirstOrDefault()!;
+                IEnumerable<ProducerDetail> producersAndSubsidiaries = context.ProducerDetail;
+                List<CalcResultSummaryProducerDisposalFees> producerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> {
                     new CalcResultSummaryProducerDisposalFees { ProducerId = "1", ProducerName="Org1", SubsidiaryId = "" }
                 };
 
-            CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation> {
+                CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation> {
                     new ScaledupOrganisation { OrganisationId = 1, OrganisationName = "Org1" }
                 };
 
-            // Act
-            var result = calcResultsService.CanAddTotalRow(producer, producersAndSubsidiaries, producerDisposalFees);
+                // Act
+                var result = calcResultsService.CanAddTotalRow(producer, producersAndSubsidiaries, producerDisposalFees);
 
-            // Assert
-            Assert.IsFalse(result);
-        }
+                // Assert
+                Assert.IsFalse(result);
+            }
 
-        [TestMethod]
-        public void CanAddTotalRow_ValidConditions_ReturnsTrue()
-        {
-            // Arrange
-            ProducerDetail producer = context.ProducerDetail.FirstOrDefault()!;
-            IEnumerable<ProducerDetail> producersAndSubsidiaries = context.ProducerDetail;
-            List<CalcResultSummaryProducerDisposalFees> producerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> {
+            [TestMethod]
+            public void CanAddTotalRow_ValidConditions_ReturnsTrue()
+            {
+                // Arrange
+                ProducerDetail producer = context.ProducerDetail.FirstOrDefault()!;
+                IEnumerable<ProducerDetail> producersAndSubsidiaries = context.ProducerDetail;
+                List<CalcResultSummaryProducerDisposalFees> producerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> {
                     new CalcResultSummaryProducerDisposalFees { ProducerId = "2", ProducerName="Org1", SubsidiaryId = "" }
                 };
 
-            CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation> {
+                CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation> {
                     new ScaledupOrganisation { OrganisationId = 1, OrganisationName = "Org1" }
                 };
 
-            // Act
-            var result = calcResultsService.CanAddTotalRow(producer, producersAndSubsidiaries, producerDisposalFees);
+                // Act
+                var result = calcResultsService.CanAddTotalRow(producer, producersAndSubsidiaries, producerDisposalFees);
 
-            // Assert
-            Assert.IsTrue(result);
-        }
+                // Assert
+                Assert.IsTrue(result);
+            }
 
-        [TestMethod]
-        public void GetProducerDetailsForTotalRow_IsOverallTotalRow_ReturnsNullObject()
-        {
-            // Arrange
-            int producerId = 1;
-            bool isOverAllTotalRow = true;
+            [TestMethod]
+            public void GetProducerDetailsForTotalRow_IsOverallTotalRow_ReturnsNullObject()
+            {
+                // Arrange
+                int producerId = 1;
+                bool isOverAllTotalRow = true;
 
-            // Act
-            var result = calcResultsService.GetProducerDetailsForTotalRow(producerId, isOverAllTotalRow);
+                // Act
+                var result = calcResultsService.GetProducerDetailsForTotalRow(producerId, isOverAllTotalRow);
 
-            // Assert
-            Assert.IsNull(result);
-        }
+                // Assert
+                Assert.IsNull(result);
+            }
 
-        [TestMethod]
-        public void GetProducerDetailsForTotalRow_ParentProducerNotFound_ReturnsNullObject()
-        {
-            // Arrange
-            int producerId = 1;
-            bool isOverAllTotalRow = false;
+            [TestMethod]
+            public void GetProducerDetailsForTotalRow_ParentProducerNotFound_ReturnsNullObject()
+            {
+                // Arrange
+                int producerId = 1;
+                bool isOverAllTotalRow = false;
 
-            CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation>();
+                CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation>();
 
-            // Act
-            var result = calcResultsService.GetProducerDetailsForTotalRow(producerId, isOverAllTotalRow);
+                // Act
+                var result = calcResultsService.GetProducerDetailsForTotalRow(producerId, isOverAllTotalRow);
 
-            // Assert
-            Assert.IsNull(result);
-        }
+                // Assert
+                Assert.IsNull(result);
+            }
 
-        [TestMethod]
-        public void GetProducerDetailsForTotalRow_ParentProducerFoundWithName_ReturnsOrganisationName()
-        {
-            // Arrange
-            int producerId = 1;
-            bool isOverAllTotalRow = false;
+            [TestMethod]
+            public void GetProducerDetailsForTotalRow_ParentProducerFoundWithName_ReturnsOrganisationName()
+            {
+                // Arrange
+                int producerId = 1;
+                bool isOverAllTotalRow = false;
 
-            CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation> {
+                CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation> {
                     new ScaledupOrganisation { OrganisationId = 1, OrganisationName = "Org1" }
                 };
 
-            // Act
-            var result = calcResultsService.GetProducerDetailsForTotalRow(producerId, isOverAllTotalRow);
+                // Act
+                var result = calcResultsService.GetProducerDetailsForTotalRow(producerId, isOverAllTotalRow);
 
-            // Assert
-            Assert.AreEqual("Org1", result.OrganisationName);
-        }
+                // Assert
+                Assert.AreEqual("Org1", result.OrganisationName);
+            }
 
-        [TestMethod]
-        public void GetProducerDetailsForTotalRow_ParentProducerFoundWithoutName_ReturnsNullString()
-        {
-            // Arrange
-            int producerId = 1;
-            bool isOverAllTotalRow = false;
+            [TestMethod]
+            public void GetProducerDetailsForTotalRow_ParentProducerFoundWithoutName_ReturnsNullString()
+            {
+                // Arrange
+                int producerId = 1;
+                bool isOverAllTotalRow = false;
 
-            CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation> {
+                CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation> {
                     new ScaledupOrganisation { OrganisationId = 1, OrganisationName = null }
                 };
 
-            // Act
-            var result = calcResultsService.GetProducerDetailsForTotalRow(producerId, isOverAllTotalRow);
+                // Act
+                var result = calcResultsService.GetProducerDetailsForTotalRow(producerId, isOverAllTotalRow);
 
-            // Assert
-            Assert.IsNull(result.OrganisationName);
-        }
+                // Assert
+                Assert.IsNull(result.OrganisationName);
+            }
 
-        [TestMethod]
-        public void GetProducerDetailsForTotalRow_ParentProducerFoundWithTradingName_ReturnsTradingName()
-        {
-            // Arrange
-            int producerId = 1;
-            bool isOverAllTotalRow = false;
+            [TestMethod]
+            public void GetProducerDetailsForTotalRow_ParentProducerFoundWithTradingName_ReturnsTradingName()
+            {
+                // Arrange
+                int producerId = 1;
+                bool isOverAllTotalRow = false;
 
-            CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation> {
+                CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation> {
                     new ScaledupOrganisation { OrganisationId = 1, OrganisationName = "Good Fruit", TradingName = "GF Trading Name 1" }
                 };
 
-            // Act
-            var result = calcResultsService.GetProducerDetailsForTotalRow(producerId, isOverAllTotalRow);
+                // Act
+                var result = calcResultsService.GetProducerDetailsForTotalRow(producerId, isOverAllTotalRow);
 
-            // Assert
-            Assert.AreEqual("GF Trading Name 1", result.TradingName);
-        }
+                // Assert
+                Assert.AreEqual("GF Trading Name 1", result.TradingName);
+            }
 
-        private static void SeedDatabase(ApplicationDBContext context)
-        {
-            context.Material.AddRange(new List<Material>
+            private static void SeedDatabase(ApplicationDBContext context)
+            {
+                context.Material.AddRange(new List<Material>
             {
                 new() { Id = 1, Name = "Material1", Code = "123" },
                 new() { Id = 2, Name = "Material2", Code = MaterialCodes.Glass },
             });
 
-            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
+                var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
 
-            context.ProducerDetail.AddRange(new List<ProducerDetail>
+                context.ProducerDetail.AddRange(new List<ProducerDetail>
             {
                 new() { Id = 1, ProducerName = "Producer1", ProducerId = 1, CalculatorRunId = 1, CalculatorRun = new CalculatorRun { Financial_Year = calculatorRunFinancialYear, Name = "Test1" } },
                 new() { Id = 2, ProducerName = "Producer2", ProducerId = 2, CalculatorRunId = 2, CalculatorRun = new CalculatorRun { Financial_Year = calculatorRunFinancialYear, Name = "Test2" } },
@@ -1026,7 +1038,7 @@
                 new() { Id = 5, ProducerName = "Producer5", ProducerId = 5, CalculatorRunId = 1 },
             });
 
-            context.ProducerReportedMaterial.AddRange(new List<ProducerReportedMaterial>
+                context.ProducerReportedMaterial.AddRange(new List<ProducerReportedMaterial>
             {
                 new() { Id = 1, MaterialId = 1, PackagingType = "HH", PackagingTonnage = 400m, ProducerDetailId = 1 },
                 new() { Id = 2, MaterialId = 2, PackagingType = "HH", PackagingTonnage = 400m, ProducerDetailId = 2 },
@@ -1037,8 +1049,8 @@
                 new() { Id = 7, MaterialId = 2, PackagingType = "HH", PackagingTonnage = 300m, ProducerDetailId = 4 },
                 new() { Id = 8, MaterialId = 1, PackagingType = "HH", PackagingTonnage = 300m, ProducerDetailId = 5 },
             });
-            context.SaveChanges();
-        }
+                context.SaveChanges();
+            }
 
         private class TestResult
         {
