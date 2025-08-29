@@ -1,7 +1,7 @@
-ARG PAT
-ENV VSS_NUGET_ACCESSTOKEN=$PAT
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS installer-env
 
+ARG PAT
+ENV VSS_NUGET_ACCESSTOKEN=$PAT
 #Nuget
 COPY NuGet.Config ./
 
