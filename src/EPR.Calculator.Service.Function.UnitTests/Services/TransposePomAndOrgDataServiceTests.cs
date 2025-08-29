@@ -96,7 +96,7 @@
             var orgDetails = new List<OrganisationDetails>();
             var orgSubDetails = new List<OrganisationDetails>();
 
-            var result = this.TestClass.GetLatestOrganisationName(1, orgSubDetails, orgDetails);
+            var result = this.TestClass.GetLatestOrganisationName(1,orgDetails);
 
             Assert.IsNull(result);
         }
@@ -136,7 +136,7 @@
                 },
             };
 
-            var result = this.TestClass.GetLatestOrganisationName(1, orgSubDetails, orgDetails);
+            var result = this.TestClass.GetLatestOrganisationName(1, orgDetails);
 
             Assert.IsNotNull(result);
             Assert.AreEqual("Test1", result);
@@ -151,7 +151,7 @@
             var organisationsList = this.Fixture.CreateMany<OrganisationDetails>().ToList();
 
             // Act
-            var result = this.TestClass.GetLatestOrganisationName(orgId, organisationsBySubmissionPeriod, organisationsList);
+            var result = this.TestClass.GetLatestOrganisationName(orgId, organisationsList);
 
             // Assert
             Assert.IsNull(result);
@@ -167,7 +167,7 @@
             var organisationsList = this.Fixture.CreateMany<OrganisationDetails>().ToList();
 
             // Act
-            var result = this.TestClass.GetLatestSubsidaryName(orgId, subsidaryId, organisationsBySubmissionPeriod, organisationsList);
+            var result = this.TestClass.GetLatestproducerName(orgId, subsidaryId,organisationsList);
 
             // Assert
             Assert.IsNull(result);
@@ -516,38 +516,20 @@
                 {
                     OrganisationId = 1,
                     OrganisationName = "Test1",
-                    SubsidaryId = "sub1",
+                    SubsidaryId = null,
                     SubmissionPeriodDesc = "January to June 2023",
                 },
                 new CalculatorRunOrganisationDataDetail
                 {
-                    OrganisationId = 2,
+                    OrganisationId = 1,
                     OrganisationName = "Test2",
-                    SubsidaryId = "sub2",
+                    SubsidaryId = null,
                     SubmissionPeriodDesc = "January to June 2023",
                 },
             };
             var orgDetails = service.GetAllOrganisationsBasedonRunId(organisationDetails);
 
-            var orgSubDetails = new List<OrganisationDetails>()
-            {
-                new OrganisationDetails()
-                {
-                     OrganisationId = 1,
-                     OrganisationName = "Test1",
-                     SubsidaryId = "sub1",
-                     SubmissionPeriodDescription = "January to June 2023",
-                },
-                new OrganisationDetails()
-                {
-                     OrganisationId = 2,
-                     OrganisationName = "Test2",
-                     SubsidaryId = "sub2",
-                     SubmissionPeriodDescription = "January to June 2024",
-                },
-            };
-
-            var output = service.GetLatestOrganisationName(1, orgSubDetails, orgDetails);
+            var output = service.GetLatestOrganisationName(1, orgDetails);
             Assert.IsNotNull(output);
             Assert.AreEqual("Test1", output);
         }
