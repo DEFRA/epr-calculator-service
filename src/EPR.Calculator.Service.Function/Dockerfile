@@ -11,6 +11,8 @@ COPY ["NuGet.Config",""]
 ARG PAT=localhost
 RUN sed -i "s|</configuration>|<packageSourceCredentials><defra-epr-common><add key=\"Username\" value=\"PAT\" /><add key=\"ClearTextPassword\" value=\"${PAT}\" /></defra-epr-common></packageSourceCredentials></configuration>|" NuGet.Config
 
+RUN echo "Listing nuget file"
+RUN cat NuGet.Config
 # COPY EPR.Calculator.Service.Common/. ./EPR.Calculator.Service.Common/.
 # Restore the project
 RUN dotnet restore EPR.Calculator.Service.Function/*.csproj --configfile "./NuGet.Config"
