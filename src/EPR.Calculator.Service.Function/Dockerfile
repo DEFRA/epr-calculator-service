@@ -5,6 +5,13 @@ COPY EPR.Calculator.Service.Function/. ./EPR.Calculator.Service.Function/.
 COPY EPR.Calculator.Service.Data/. ./EPR.Calculator.Service.Data/.
 COPY stylecop.json ./
 
+# Nuget
+COPY ["NuGet.Config",""]
+ 
+# Use Build Argument to insert PAT into Nuget file
+ARG PAT=localhost
+RUN sed -i "s|</configuration>|<packageSourceCredentials><defra-epr-common><add key=\"Username\" value=\"PAT\" /><add key=\"ClearTextPassword\" value=\"${PAT}\" /></defra-epr-common></packageSourceCredentials></configuration>|" NuGet.Config
+
 # Publish 
 RUN dotnet publish EPR.Calculator.Service.Function/*.csproj --output /home/site/wwwroot
 
