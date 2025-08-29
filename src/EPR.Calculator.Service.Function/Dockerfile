@@ -2,15 +2,17 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS installer-env
 
 ARG PAT
 ENV VSS_NUGET_ACCESSTOKEN=$PAT
+
+WORKDIR /src
 #Nuget
-COPY NuGet.Config ./
+COPY src/NuGet.Config ./
 
 # COPY EPR.Calculator.Service.Common/. ./EPR.Calculator.Service.Common/.
-COPY EPR.Calculator.Service.Function/. ./EPR.Calculator.Service.Function/.
-COPY EPR.Calculator.Service.Data/. ./EPR.Calculator.Service.Data/.
-COPY stylecop.json ./
+COPY src/EPR.Calculator.Service.Function/. ./EPR.Calculator.Service.Function/.
+COPY src/EPR.Calculator.Service.Data/. ./EPR.Calculator.Service.Data/.
+COPY src/stylecop.json ./
 
-RUN dotnet restore  EPR.Calculator.Service.Function/EPR.Calculator.Service.Function.csproj 
+RUN dotnet restore  EPR.Calculator.Service.Function/EPR.Calculator.Service.Function.csproj --configfile NuGet.config
 # Publish 
 RUN dotnet publish EPR.Calculator.Service.Function/*.csproj --output /home/site/wwwroot
 
