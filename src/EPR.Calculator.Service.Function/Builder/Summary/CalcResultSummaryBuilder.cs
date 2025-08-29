@@ -424,7 +424,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                              on calc.Id equals p.CalculatorRunId
                          join t in context.ProducerInvoicedMaterialNetTonnage
                              on new { calc.Id, p.ProducerId } equals new { Id = t.CalculatorRunId, t.ProducerId }
-                         where new int[] { 7, 12, 13, 14 }.Contains(calc.CalculatorRunClassificationId)
+                         where new int[] 
+                         { 
+                             RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
+                             RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
+                             RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
+                             RunClassificationStatusIds.FINALRUNCOMPLETEDID 
+                         }.Contains(calc.CalculatorRunClassificationId)
                          select new { calc, p, t })
                         .AsEnumerable()
                         .GroupBy(x => x.p.ProducerId)
