@@ -15,9 +15,11 @@ RUN echo "Listing first ls command"
 RUN ls -1
 RUN echo "Listing second ls command"
 RUN ls -alh /src
+RUN echo "trying to view contents of nuget.config file"
+RUN cat NuGet.Config
 
 
-RUN dotnet restore  EPR.Calculator.Service.Function/EPR.Calculator.Service.Function.csproj --configfile NuGet.Config
+# RUN dotnet restore  EPR.Calculator.Service.Function/EPR.Calculator.Service.Function.csproj --configfile NuGet.Config
 # Publish 
 # RUN dotnet publish EPR.Calculator.Service.Function/*.csproj --output /home/site/wwwroot
 
