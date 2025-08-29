@@ -1,10 +1,11 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS installer-env
 
-WORKDIR /src
+# WORKDIR /src
 COPY EPR.Calculator.Service.Common/. ./EPR.Calculator.Service.Common/.
 COPY EPR.Calculator.Service.Function/. ./EPR.Calculator.Service.Function/.
 COPY EPR.Calculator.Service.Data/. ./EPR.Calculator.Service.Data/.
 COPY stylecop.json ./
+
 #Nuget
 COPY ["NuGet.Config",""]
  
@@ -12,11 +13,12 @@ COPY ["NuGet.Config",""]
 ARG PAT=localhost
 RUN sed -i "s|</configuration>|<packageSourceCredentials><defra-epr-common><add key=\"Username\" value=\"PAT\" /><add key=\"ClearTextPassword\" value=\"${PAT}\" /></defra-epr-common></packageSourceCredentials></configuration>|" NuGet.Config
 
-RUN echo "Listing nuget file"
-RUN cat NuGet.Config
-# COPY EPR.Calculator.Service.Common/. ./EPR.Calculator.Service.Common/.
+# RUN echo "Listing nuget file"
+# RUN cat NuGet.Config
+
 # Restore the project
-RUN dotnet restore EPR.Calculator.Service.Function/*.csproj --configfile "./NuGet.Config"
+# RUN dotnet restore EPR.Calculator.Service.Function/*.csproj --configfile "./NuGet.Config"
+
 # Publish 
 RUN dotnet publish EPR.Calculator.Service.Function/*.csproj --output /home/site/wwwroot
 
