@@ -233,12 +233,40 @@
         public void CanCallSetValues()
         {
             // Act
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary);
+            var producerInvoicedMaterialNetTonnage = new List<ProducerInvoicedDto>
+            {
+                new ProducerInvoicedDto
+                {
+                    InvoicedTonnage =
+                        new ProducerInvoicedMaterialNetTonnage
+                        {
+                            CalculatorRunId = 101,
+                            InvoicedNetTonnage = 20,
+                            MaterialId = 77,
+                            ProducerId = 1,
+                            Id = 22
+                        },
+                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction
+                        {
+                            ProducerId = 1,
+                            Id = 22,
+                            CurrentYearInvoicedTotalAfterThisRun = 20.00m
+                        },
+                     CalculatorRun = new CalculatorRun
+                        {
+                             Name="Test",
+                             Financial_Year = new CalculatorRunFinancialYear { Name="2025-26" },
+                             Id = 22
+                        },
+                }
+            };
+
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, producerInvoicedMaterialNetTonnage);
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection;
 
             // Assert
-            Assert.AreEqual("-", fee.CurrentYearInvoiceTotalToDate);
-            Assert.AreEqual("-", fee.TonnageChangeSinceLastInvoice);
+            Assert.AreEqual("20.00", fee.CurrentYearInvoiceTotalToDate);
+            Assert.AreEqual(null, fee.TonnageChangeSinceLastInvoice);
             Assert.AreEqual("-", fee.LiabilityDifference);
             Assert.AreEqual("-", fee.MaterialThresholdBreached);
             Assert.AreEqual("-", fee.TonnageThresholdBreached);

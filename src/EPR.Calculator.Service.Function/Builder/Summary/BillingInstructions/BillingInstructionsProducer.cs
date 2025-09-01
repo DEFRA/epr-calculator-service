@@ -1,4 +1,5 @@
-﻿using EPR.Calculator.Service.Function.Constants;
+﻿using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
 using System;
 using System.Collections.Generic;
@@ -35,14 +36,19 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
             ];
         }
 
-        public static void SetValues(CalcResultSummary result)
+        public static void SetValues(CalcResultSummary result, IEnumerable<ProducerInvoicedDto> ProducerInvoicedMaterialNetTonnage)
         {
             foreach (var fee in result.ProducerDisposalFees)
             {
+                var currentYearInvoicedTotalTonnage = ProducerInvoicedMaterialNetTonnage
+                                                    .Where(x => x.InvoicedTonnage.ProducerId.ToString() == fee.ProducerId)
+                                                    .Select(y => y.InvoiceInstruction.CurrentYearInvoicedTotalAfterThisRun)
+                                                    .FirstOrDefault();
+
                 fee.BillingInstructionSection = new CalcResultSummaryBillingInstruction
                 {
-                    CurrentYearInvoiceTotalToDate = GetCurrentYearInvoicedTotalToDate(fee),
-                    TonnageChangeSinceLastInvoice = GetTonnageChangeSinceLastInvoice(fee),
+                    CurrentYearInvoiceTotalToDate = fee.Level == "1" ? currentYearInvoicedTotalTonnage.ToString() : null,
+                    TonnageChangeSinceLastInvoice = fee.TonnageChangeAdvice == "CHANGE" ? "Tonnage Changed" : null,
                     LiabilityDifference = GetLiabilityDifference(fee),
                     MaterialThresholdBreached = GetMaterialThresholdBreached(fee),
                     TonnageThresholdBreached = GetTonnageThresholdBreached(fee),
