@@ -96,7 +96,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             IEnumerable<MaterialDetail> materials,
             CalcResult calcResult,
             IEnumerable<TotalPackagingTonnagePerRun> TotalPackagingTonnage,
-            IEnumerable<ProducerInvoicedMaterialNetTonnage> ProducerInvoicedMaterialNetTonnage)
+            IEnumerable<ProducerInvoicedDto> ProducerInvoicedMaterialNetTonnage)
         {
             var result = new CalcResultSummary();
             if (orderedProducerDetails.Any())
@@ -197,7 +197,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
             bool isOverAllTotalRow,
             IEnumerable<TotalPackagingTonnagePerRun> totalPackagingTonnage,
-            IEnumerable<ProducerInvoicedMaterialNetTonnage> ProducerInvoicedMaterialNetTonnage)
+            IEnumerable<ProducerInvoicedDto> ProducerInvoicedMaterialNetTonnage)
         {
             var materialCosts = GetMaterialCosts(producersAndSubsidiaries, producerDisposalFees, materials, calcResult, isOverAllTotalRow, ProducerInvoicedMaterialNetTonnage);
             var communicationCosts = GetCommunicationCosts(producersAndSubsidiaries, materials, calcResult);
@@ -266,7 +266,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             IEnumerable<MaterialDetail> materials,
             CalcResult calcResult,
             IEnumerable<TotalPackagingTonnagePerRun> TotalPackagingTonnage,
-            IEnumerable<ProducerInvoicedMaterialNetTonnage> ProducerInvoicedMaterialNetTonnage)
+            IEnumerable<ProducerInvoicedDto> ProducerInvoicedMaterialNetTonnage)
         {
             var materialCostSummary = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>();
             var commsCostSummary = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>();
@@ -291,8 +291,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 var publicBinTonnage = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.PublicBin, ScaledupProducers);
 
                 previousInvoicedNetTonnage = ProducerInvoicedMaterialNetTonnage
-                                                    .Where(x => x.MaterialId == material.Id && x.ProducerId == result.ProducerIdInt)
-                                                    .Select(y => y.InvoicedNetTonnage)
+                                                    .Where(x => x.InvoicedTonnage.MaterialId == material.Id && x.InvoicedTonnage.ProducerId == result.ProducerIdInt)
+                                                    .Select(x => x.InvoicedTonnage.InvoicedNetTonnage)
                                                     .FirstOrDefault();
 
                 var calcResultSummaryProducerDisposalFeesByMaterial = new CalcResultSummaryProducerDisposalFeesByMaterial
@@ -309,11 +309,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     EnglandWithBadDebtProvision = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, producerAndSubsidiaries, material, calcResult, Countries.England, ScaledupProducers),
                     WalesWithBadDebtProvision = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, producerAndSubsidiaries, material, calcResult, Countries.Wales, ScaledupProducers),
                     ScotlandWithBadDebtProvision = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, producerAndSubsidiaries, material, calcResult, Countries.Scotland, ScaledupProducers),
-                    NorthernIrelandWithBadDebtProvision = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, producerAndSubsidiaries, material, calcResult, Countries.NorthernIreland, ScaledupProducers),                    
-                    PreviousInvoicedTonnage =
-                        result.Level == CommonConstants.LevelOne.ToString() && previousInvoicedNetTonnage.HasValue
-                        ? previousInvoicedNetTonnage.Value
-                        : null
+                    NorthernIrelandWithBadDebtProvision = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, producerAndSubsidiaries, material, calcResult, Countries.NorthernIreland, ScaledupProducers),
+                    PreviousInvoicedTonnage = previousInvoicedNetTonnage.HasValue ? previousInvoicedNetTonnage.Value : null,
                 };
 
                 calcResultSummaryProducerDisposalFeesByMaterial.TonnageChange =
@@ -420,7 +417,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             return result;
         }
 
-        private IEnumerable<ProducerInvoicedMaterialNetTonnage> GetPreviousInvoicedTonnage(string financialYear)
+        private IEnumerable<ProducerInvoicedDto> GetPreviousInvoicedTonnage(string financialYear)
         {
             var previousInvoicedNetTonnage =
                         (from calc in context.CalculatorRuns
@@ -438,8 +435,18 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                          select new { calc, p, t })
                         .AsEnumerable()
                         .GroupBy(x => new { x.p.ProducerId, x.t.MaterialId })
-                        .Select(g => g.OrderByDescending(x => x.calc.Id).First().t)
-                        .OrderBy(x => x.Id).ThenBy(x => x.ProducerId)
+                        .Select(g =>
+                        {
+                            var latest = g.OrderByDescending(x => x.calc.Id).First();
+                            return new ProducerInvoicedDto
+                            {
+                                InvoicedTonnage = latest.t,
+                                CalculatorRun = latest.calc,
+                                InvoiceInstruction = latest.p
+                            };
+                        })
+                        .OrderBy(x => x.InvoicedTonnage.Id)
+                        .ThenBy(x => x.InvoicedTonnage.ProducerId)
                         .ToList();
 
 
@@ -548,7 +555,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             IEnumerable<MaterialDetail> materials,
             CalcResult calcResult,
             bool isOverAllTotalRow,
-            IEnumerable<ProducerInvoicedMaterialNetTonnage> ProducerInvoicedMaterialNetTonnage)
+            IEnumerable<ProducerInvoicedDto> ProducerInvoicedMaterialNetTonnage)
         {
             var materialCosts = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>();
 
@@ -558,8 +565,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 var householdPackagingWasteTonnage = CalcResultSummaryUtil.GetTonnageTotal(producersAndSubsidiaries, material, PackagingTypes.Household, ScaledupProducers);
                 var publicBinTonnage = CalcResultSummaryUtil.GetTonnageTotal(producersAndSubsidiaries, material, PackagingTypes.PublicBin, ScaledupProducers);
                 previousInvoicedNetTonnage = ProducerInvoicedMaterialNetTonnage
-                                                   .Where(x => x.MaterialId == material.Id && x.ProducerId == producersAndSubsidiaries.FirstOrDefault().ProducerId)
-                                                   .Select(y => y.InvoicedNetTonnage)
+                                                   .Where(x => x.InvoicedTonnage.MaterialId == material.Id && x.InvoicedTonnage.ProducerId == producersAndSubsidiaries.FirstOrDefault().ProducerId)
+                                                   .Select(x => x.InvoicedTonnage.InvoicedNetTonnage)
                                                    .FirstOrDefault();
                 materialCosts.Add(material.Code, new CalcResultSummaryProducerDisposalFeesByMaterial
                 {
