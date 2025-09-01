@@ -310,11 +310,18 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     EnglandWithBadDebtProvision = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, producerAndSubsidiaries, material, calcResult, Countries.England, ScaledupProducers),
                     WalesWithBadDebtProvision = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, producerAndSubsidiaries, material, calcResult, Countries.Wales, ScaledupProducers),
                     ScotlandWithBadDebtProvision = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, producerAndSubsidiaries, material, calcResult, Countries.Scotland, ScaledupProducers),
-                    NorthernIrelandWithBadDebtProvision = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, producerAndSubsidiaries, material, calcResult, Countries.NorthernIreland, ScaledupProducers),
-                    TonnageChange = GetTonnageChange(result.Level),
-                    PreviousInvoicedTonnage = result.Level == "1" && previousInvoicedNetTonnage.HasValue ? previousInvoicedNetTonnage.Value : null,
+                    NorthernIrelandWithBadDebtProvision = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, producerAndSubsidiaries, material, calcResult, Countries.NorthernIreland, ScaledupProducers),                    
+                    PreviousInvoicedTonnage =
+                        result.Level == CommonConstants.LevelOne.ToString() && previousInvoicedNetTonnage.HasValue
+                        ? previousInvoicedNetTonnage.Value
+                        : null
                 };
 
+                calcResultSummaryProducerDisposalFeesByMaterial.TonnageChange =
+                    TonnageChangeUtil.ComputePerMaterialChange(
+                        result.Level,
+                        calcResultSummaryProducerDisposalFeesByMaterial.NetReportedTonnage,
+                        calcResultSummaryProducerDisposalFeesByMaterial.PreviousInvoicedTonnage);
 
                 materialCostSummary.Add(material.Code, calcResultSummaryProducerDisposalFeesByMaterial);
 
@@ -401,11 +408,9 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 NorthernIrelandTotalWithBadDebtProvision = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsNorthernIrelandWithBadDebt(calcResult, producer, TotalPackagingTonnage)
             };
 
-            if (GetTonnageByLevel().TryGetValue(result.Level, out var values))
-            {
-                result.TonnageChangeCount = values.Count;
-                result.TonnageChangeAdvice = values.Advice;
-            }
+            var (countStr, advice) = TonnageChangeUtil.ComputeCountAndAdvice(result.Level, materialCostSummary);
+            result.TonnageChangeCount = countStr;
+            result.TonnageChangeAdvice = advice;
 
             // Section-3
             // Percentage of Producer Reported Tonnage vs All Producers
@@ -541,21 +546,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 : CommonConstants.ScaledupProducersNo;
         }
 
-        internal static string GetTonnageChange(string level)
-        {
-            var levelOne = (int)CalcResultSummaryLevelIndex.One;
-            return level == levelOne.ToString() ? "0" : "-";
-        }
-
-        internal static Dictionary<string, (string Count, string Advice)> GetTonnageByLevel()
-        {
-            return new Dictionary<string, (string Count, string Advice)>
-            {
-                { "1", ("0", string.Empty) },
-                { "2", ("-", "-") },
-            };
-        }
-
         private Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> GetMaterialCosts(
             IEnumerable<ProducerDetail> producersAndSubsidiaries,
             IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
@@ -587,6 +577,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     ScotlandWithBadDebtProvision = MaterialCostsUtil.GetCountryDisposalFeeWithBadDebtProvision(producerDisposalFees, producersAndSubsidiaries, ScaledupProducers, material, calcResult, Countries.Scotland, isOverAllTotalRow),
                     NorthernIrelandWithBadDebtProvision = MaterialCostsUtil.GetCountryDisposalFeeWithBadDebtProvision(producerDisposalFees, producersAndSubsidiaries, ScaledupProducers, material, calcResult, Countries.NorthernIreland, isOverAllTotalRow),
                     PreviousInvoicedTonnage = MaterialCostsUtil.GetPreviousInvoicedTonnage(producerDisposalFees, producersAndSubsidiaries, ScaledupProducers, material, isOverAllTotalRow, previousInvoicedNetTonnage),
+                    TonnageChange = isOverAllTotalRow ? TonnageChangeUtil.GetOverallChangeTotal(producerDisposalFees, material.Code) : null
                 });
 
                 if (material.Code == MaterialCodes.Glass && materialCosts.TryGetValue(material.Code, out var materialCost))
