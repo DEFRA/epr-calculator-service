@@ -34,7 +34,7 @@
                 var breakdown = new ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown
                 {
                     MaterialName = material.Name,
-                    PreviousInvoicedTonnage = GetPreviousInvoicedTonnage(level),
+                    PreviousInvoicedTonnage = producerTonnage.Value.PreviousInvoicedTonnage.ToString(),
                     HouseholdPackagingWasteTonnage = producerTonnage.Value.HouseholdPackagingWasteTonnage,
                     PublicBinTonnage = producerTonnage.Value.PublicBinTonnage,
                     TotalTonnage = producerTonnage.Value.TotalReportedTonnage,
