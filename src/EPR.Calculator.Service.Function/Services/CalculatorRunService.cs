@@ -225,7 +225,7 @@
                 }
 
                 isSuccess = await this.prepareCalcService.PrepareCalcResults(
-                    new CalcResultsRequestDto { RunId = calculatorRunParameter.Id },
+                    new CalcResultsRequestDto { RunId = calculatorRunParameter.Id, FinancialYear = calculatorRunParameter.FinancialYear.ToString() },
                     runName,
                     new CancellationTokenSource(this.configuration.PrepareCalcResultsTimeout).Token);
 
