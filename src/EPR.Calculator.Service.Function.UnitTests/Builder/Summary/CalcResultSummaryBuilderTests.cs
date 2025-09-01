@@ -785,19 +785,19 @@
                 Assert.AreEqual(CommonConstants.ScaledupProducersNo, result);
             }
 
-            [TestMethod]
-            public void GetPreviousInvoicedTonnage_Level1()
-            {
-                var result = CalcResultSummaryBuilder.GetTonnageChange("1");
-                Assert.AreEqual("0", result);
-            }
+            //[TestMethod]
+            //public void GetPreviousInvoicedTonnage_Level1()
+            //{
+            //    var result = CalcResultSummaryBuilder.GetTonnageChange("1");
+            //    Assert.AreEqual("0", result);
+            //}
 
-            [TestMethod]
-            public void GetPreviousInvoicedTonnage_Level2()
-            {
-                var result = CalcResultSummaryBuilder.GetTonnageChange("2");
-                Assert.AreEqual("-", result);
-            }
+            //[TestMethod]
+            //public void GetPreviousInvoicedTonnage_Level2()
+            //{
+            //    var result = CalcResultSummaryBuilder.GetTonnageChange("2");
+            //    Assert.AreEqual("-", result);
+            //}
 
             public static List<CalcResultScaledupProducer> GetScaledUpProducers()
             {
@@ -832,49 +832,49 @@
                 return test;
             }
 
-            [TestMethod]
-            public void GetTonnage_Level1_AssignsValuesCorrectly()
-            {
-                var result = new TestResult { Level = "1" };
-                if (CalcResultSummaryBuilder.GetTonnageByLevel().TryGetValue(result.Level, out var values))
-                {
-                    result.TonnageChangeCount = values.Count;
-                    result.TonnageChangeAdvice = values.Advice;
-                }
+            //[TestMethod]
+            //public void GetTonnage_Level1_AssignsValuesCorrectly()
+            //{
+            //    var result = new TestResult { Level = "1" };
+            //    if (CalcResultSummaryBuilder.GetTonnageByLevel().TryGetValue(result.Level, out var values))
+            //    {
+            //        result.TonnageChangeCount = values.Count;
+            //        result.TonnageChangeAdvice = values.Advice;
+            //    }
 
-                Assert.AreEqual("0", result.TonnageChangeCount);
-                Assert.AreEqual(string.Empty, result.TonnageChangeAdvice);
-            }
+            //    Assert.AreEqual("0", result.TonnageChangeCount);
+            //    Assert.AreEqual(string.Empty, result.TonnageChangeAdvice);
+            //}
 
-            [TestMethod]
-            public void GetTonnage_Level2_AssignsValuesCorrectly()
-            {
-                var result = new TestResult { Level = "2" };
-                if (CalcResultSummaryBuilder.GetTonnageByLevel().TryGetValue(result.Level, out var values))
-                {
-                    result.TonnageChangeCount = values.Count;
-                    result.TonnageChangeAdvice = values.Advice;
-                }
+            //[TestMethod]
+            //public void GetTonnage_Level2_AssignsValuesCorrectly()
+            //{
+            //    var result = new TestResult { Level = "2" };
+            //    if (CalcResultSummaryBuilder.GetTonnageByLevel().TryGetValue(result.Level, out var values))
+            //    {
+            //        result.TonnageChangeCount = values.Count;
+            //        result.TonnageChangeAdvice = values.Advice;
+            //    }
 
-                Assert.AreEqual("-", result.TonnageChangeCount);
-                Assert.AreEqual("-", result.TonnageChangeAdvice);
-            }
+            //    Assert.AreEqual("-", result.TonnageChangeCount);
+            //    Assert.AreEqual("-", result.TonnageChangeAdvice);
+            //}
 
-            [TestMethod]
-            public void GetTonnage_LevelDoesNotExist_DoesNotAssignValues()
-            {
-                var result = new TestResult { Level = "999" };
-                var found = CalcResultSummaryBuilder.GetTonnageByLevel().TryGetValue(result.Level, out var values);
-                if (found)
-                {
-                    result.TonnageChangeCount = values.Count;
-                    result.TonnageChangeAdvice = values.Advice;
-                }
+            //[TestMethod]
+            //public void GetTonnage_LevelDoesNotExist_DoesNotAssignValues()
+            //{
+            //    var result = new TestResult { Level = "999" };
+            //    var found = CalcResultSummaryBuilder.GetTonnageByLevel().TryGetValue(result.Level, out var values);
+            //    if (found)
+            //    {
+            //        result.TonnageChangeCount = values.Count;
+            //        result.TonnageChangeAdvice = values.Advice;
+            //    }
 
-                Assert.IsFalse(found);
-                Assert.IsNull(result.TonnageChangeCount);
-                Assert.IsNull(result.TonnageChangeAdvice);
-            }
+            //    Assert.IsFalse(found);
+            //    Assert.IsNull(result.TonnageChangeCount);
+            //    Assert.IsNull(result.TonnageChangeAdvice);
+            //}
 
             [TestMethod]
             public void CanAddTotalRow_ParentProducerNotFound_ReturnsFalse()

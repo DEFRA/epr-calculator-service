@@ -823,7 +823,7 @@
                         ScotlandWithBadDebtProvision = 156.28m,
                         NorthernIrelandWithBadDebtProvision = 61.18m,
                         PreviousInvoicedTonnage = 0,
-                        TonnageChange = "0"
+                        TonnageChange = 0
                     }
                 },
                 {
@@ -842,7 +842,7 @@
                         ScotlandWithBadDebtProvision = 374.40m,
                         NorthernIrelandWithBadDebtProvision = 146.57m,
                         PreviousInvoicedTonnage = 0,
-                        TonnageChange = "0"
+                        TonnageChange = 0
                     }
                 },
                 {
@@ -862,7 +862,7 @@
                         NorthernIrelandWithBadDebtProvision = 227,
                         HouseholdDrinksContainersTonnage = 220,
                         PreviousInvoicedTonnage = 0,
-                        TonnageChange = "0"
+                        TonnageChange = 0
                     }
                 },
                 {
@@ -881,7 +881,7 @@
                         ScotlandWithBadDebtProvision = 11.21m,
                         NorthernIrelandWithBadDebtProvision = 4.39m,
                         PreviousInvoicedTonnage = 0,
-                        TonnageChange = "0"
+                        TonnageChange = 0
                     }
                 },
                 {
@@ -900,7 +900,7 @@
                         ScotlandWithBadDebtProvision = 2.44m,
                         NorthernIrelandWithBadDebtProvision = 0.96m,
                         PreviousInvoicedTonnage = 0,
-                        TonnageChange = "0"
+                        TonnageChange = 0
                     }
                 },
                 {
@@ -919,7 +919,7 @@
                         ScotlandWithBadDebtProvision = 0.00m,
                         NorthernIrelandWithBadDebtProvision = 0.00m,
                         PreviousInvoicedTonnage = 0,
-                        TonnageChange = "0"
+                        TonnageChange = 0
                     }
                 },
                 {
@@ -938,7 +938,7 @@
                         ScotlandWithBadDebtProvision = 208.36m,
                         NorthernIrelandWithBadDebtProvision = 81.57m,
                         PreviousInvoicedTonnage = 0,
-                        TonnageChange = "0"
+                        TonnageChange = 0
                     }
                 },
                 {
@@ -957,7 +957,7 @@
                         ScotlandWithBadDebtProvision = 13.68m,
                         NorthernIrelandWithBadDebtProvision = 5.36m,
                         PreviousInvoicedTonnage = 0,
-                        TonnageChange = "0"
+                        TonnageChange = 0
                     }
                 },
             };
