@@ -64,7 +64,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             var orderedProducerDetails = GetOrderedListOfProducersAssociatedRunId(
                 runId, producerDetails);
 
-            var producerInvoicedMaterialNetTonnage = GetPreviousInvoicedTonnage();
+            var producerInvoicedMaterialNetTonnage = GetPreviousInvoicedTonnage(resultsRequestDto.FinancialYear);
 
             // Household + PublicBin + HDC
             var totalPackagingTonnage = GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, runId);
@@ -415,7 +415,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             return result;
         }
 
-        private IEnumerable<ProducerInvoicedMaterialNetTonnage> GetPreviousInvoicedTonnage()
+        private IEnumerable<ProducerInvoicedMaterialNetTonnage> GetPreviousInvoicedTonnage(string financialYear)
         {
             var previousInvoicedNetTonnage =
                         (from calc in context.CalculatorRuns
@@ -429,7 +429,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                              RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
                              RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
                              RunClassificationStatusIds.FINALRUNCOMPLETEDID
-                         }.Contains(calc.CalculatorRunClassificationId)
+                         }.Contains(calc.CalculatorRunClassificationId) && calc.FinancialYearId == financialYear
                          select new { calc, p, t })
                         .AsEnumerable()
                         .GroupBy(x => new { x.p.ProducerId, x.t.MaterialId })
