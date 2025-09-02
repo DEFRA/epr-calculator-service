@@ -210,7 +210,7 @@
                     // TO DO: We have to record if there is no pom data in a separate table post Dec 2024
                     if (IsRunPomDataDetailsExistsForSubsidaryId(runPomDataDetailsForSubsidaryId))
                     {
-                        var organisations = organisationDataDetails.Where(odd => odd.OrganisationName == organisation.OrganisationName && odd.SubsidaryId == organisation.SubsidaryId).OrderByDescending(odd => odd.SubmissionPeriodDesc);
+                        var organisations = organisationDataDetails.Where(odd => odd.OrganisationId == organisation.OrganisationId && odd.OrganisationName == organisation.OrganisationName && odd.SubsidaryId == organisation.SubsidaryId).OrderByDescending(odd => odd.SubmissionPeriodDesc);
 
                         // Get the producer based on the latest submission period
                         var producer = organisations.FirstOrDefault();
