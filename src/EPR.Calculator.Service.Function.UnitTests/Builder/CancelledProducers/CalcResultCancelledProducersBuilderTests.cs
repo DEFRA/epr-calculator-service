@@ -37,8 +37,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
 
             // Check main headers
             Assert.AreEqual(CommonConstants.ProducerId, headerRow.ProducerId_Header);
-            Assert.AreEqual(CommonConstants.SubsidiaryId, headerRow.SubsidiaryId_Header);
-            Assert.AreEqual(CommonConstants.ProducerOrSubsidiaryName, headerRow.ProducerOrSubsidiaryName_Header);
+            Assert.AreEqual(CommonConstants.ProducerOrSubsidiaryName, headerRow.ProducerName_Header);
             Assert.AreEqual(CommonConstants.TradingName, headerRow.TradingName_Header);
 
             // Check LastTonnage headers
@@ -56,7 +55,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             // Check LatestInvoice headers
             Assert.IsNotNull(headerRow.LatestInvoice);
             Assert.AreEqual(CommonConstants.LatestInvoice, headerRow.LatestInvoice.LatestInvoice_Header);
-            Assert.AreEqual(CommonConstants.LastInvoicedTotal, headerRow.LatestInvoice.LastInvoicedTotal_Header);
+            Assert.AreEqual(CommonConstants.CurrentYearInvoicedTotalToDate, headerRow.LatestInvoice.CurrentYearInvoicedTotalToDate_Header);
             Assert.AreEqual(CommonConstants.RunNumber, headerRow.LatestInvoice.RunNumber_Header);
             Assert.AreEqual(CommonConstants.RunName, headerRow.LatestInvoice.RunName_Header);
             Assert.AreEqual(CommonConstants.BillingInstructionId, headerRow.LatestInvoice.BillingInstructionId_Header);

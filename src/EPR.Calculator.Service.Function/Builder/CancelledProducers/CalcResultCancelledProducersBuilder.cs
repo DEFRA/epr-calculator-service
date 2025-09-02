@@ -20,8 +20,7 @@ public async Task<CalcResultCancelledProducersResponse> Construct(CalcResultsReq
                 var topHeader = new CalcResultCancelledProducersDto
                 {
                     ProducerId_Header = CommonConstants.ProducerId,
-                    SubsidiaryId_Header = CommonConstants.SubsidiaryId,
-                    ProducerOrSubsidiaryName_Header = CommonConstants.ProducerOrSubsidiaryName,
+                    ProducerName_Header = CommonConstants.ProducerName,
                     TradingName_Header = CommonConstants.TradingName,
                     LastTonnage = new LastTonnage
                     {
@@ -38,7 +37,7 @@ public async Task<CalcResultCancelledProducersResponse> Construct(CalcResultsReq
                     LatestInvoice = new LatestInvoice
                     {
                         LatestInvoice_Header = CommonConstants.LatestInvoice,
-                        LastInvoicedTotal_Header = CommonConstants.LastInvoicedTotal,
+                        CurrentYearInvoicedTotalToDate_Header = CommonConstants.CurrentYearInvoicedTotalToDate,
                         RunNumber_Header = CommonConstants.RunNumber,
                         RunName_Header = CommonConstants.RunName,
                         BillingInstructionId_Header = CommonConstants.BillingInstructionId
