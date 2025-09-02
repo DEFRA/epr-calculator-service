@@ -319,7 +319,6 @@
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
             var calcResult = this.calcResult;
             calcResult.CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers();
-
             // Act
             var results = this.calcResultsService.Construct(requestDto, calcResult);
             results.Wait();
@@ -629,32 +628,7 @@
 
             var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, 1);
 
-            var producerInvoicedMaterialNetTonnage = new List<ProducerInvoicedDto>
-            {
-                new ProducerInvoicedDto
-                {
-                    InvoicedTonnage =
-                        new ProducerInvoicedMaterialNetTonnage
-                        {
-                            CalculatorRunId = 101,
-                            InvoicedNetTonnage = 20,
-                            MaterialId = 77,
-                            ProducerId = 10007,
-                            Id = 22
-                        },
-                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction
-                        {
-                            ProducerId = 10007,
-                            Id = 22
-                        },
-                     CalculatorRun = new CalculatorRun
-                        {
-                             Name="Test",
-                             Financial_Year = new CalculatorRunFinancialYear { Name="2025-26" },
-                             Id = 22
-                        },
-                }
-            };
+            var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnage("2025-26");
 
             var result = new CalcResultSummaryBuilder(this.context).GetCalcResultSummary(orderedProducerDetails, materials, this.calcResult, totalPackagingTonnage, producerInvoicedMaterialNetTonnage);
 
