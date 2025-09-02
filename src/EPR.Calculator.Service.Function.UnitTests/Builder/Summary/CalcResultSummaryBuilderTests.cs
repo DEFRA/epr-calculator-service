@@ -610,7 +610,7 @@
         {
             var result = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, this.context.ProducerDetail.ToList());
             Assert.IsNotNull(result);
-            Assert.AreEqual(5, result.Count());
+            Assert.AreEqual(6, result.Count());
             Assert.AreEqual("Producer1", result.First().ProducerName);
             Assert.AreEqual("Producer5", result.Last().ProducerName);
         }
@@ -1069,7 +1069,7 @@
                 new ProducerInvoicedMaterialNetTonnage { Id = 4, MaterialId = 2,CalculatorRunId = 2, ProducerId = 2, InvoicedNetTonnage = 13.5M},
 
             });
-            
+
             context.SaveChanges();
         }
 

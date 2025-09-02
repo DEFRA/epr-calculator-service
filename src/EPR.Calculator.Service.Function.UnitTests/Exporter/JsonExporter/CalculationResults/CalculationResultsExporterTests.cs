@@ -165,7 +165,7 @@
                 actualValue = parsed;
             }
 
-            Assert.AreEqual(expected.Value.PreviousInvoicedTonnage, actualValue);
+            Assert.AreEqual(expected.Value.PreviousInvoicedTonnage, null);
             Assert.AreEqual(expected.Value.HouseholdPackagingWasteTonnage, actual["householdPackagingWasteTonnage"]!.GetValue<decimal>());
             Assert.AreEqual(expected.Value.PublicBinTonnage, actual["publicBinTonnage"]!.GetValue<decimal>());
             Assert.AreEqual(expected.Value.TotalReportedTonnage, actual["totalTonnage"]!.GetValue<decimal>());

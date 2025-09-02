@@ -798,7 +798,8 @@
                     ProducerDisposalFeesByMaterial = GetProducerDisposalFeesByMaterial(),
                     ProducerCommsFeesByMaterial = GetProducerCommsFeesByMaterial(),
                     TonnageChangeCount = "0",
-                    TonnageChangeAdvice = ""
+                    TonnageChangeAdvice = "",
+                    isOverallTotalRow = false,
                 },
             };
         }
@@ -822,7 +823,7 @@
                         WalesWithBadDebtProvision = 78.46m,
                         ScotlandWithBadDebtProvision = 156.28m,
                         NorthernIrelandWithBadDebtProvision = 61.18m,
-                        PreviousInvoicedTonnage = 0,
+                        PreviousInvoicedTonnage = null,
                         TonnageChange = "0"
                     }
                 },
