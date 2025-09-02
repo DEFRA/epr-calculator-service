@@ -9,8 +9,8 @@ namespace EPR.Calculator.Service.Function.Models
 {
     public class ProducerInvoicedDto
     {
-        public ProducerInvoicedMaterialNetTonnage InvoicedTonnage { get; set; }
-        public CalculatorRun CalculatorRun { get; set; }
-        public ProducerDesignatedRunInvoiceInstruction InvoiceInstruction { get; set; }
+        public ProducerInvoicedMaterialNetTonnage? InvoicedTonnage { get; set; }
+        public CalculatorRun? CalculatorRun { get; set; }
+        public ProducerDesignatedRunInvoiceInstruction? InvoiceInstruction { get; set; }
     }
 }

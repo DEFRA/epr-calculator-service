@@ -284,15 +284,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     ? CommonConstants.ScaledupProducersYes
                     : CommonConstants.ScaledupProducersNo,
             };
-            decimal? previousInvoicedNetTonnage = null;
             foreach (var material in materials)
             {
                 var householdPackagingWasteTonnage = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.Household, ScaledupProducers);
                 var publicBinTonnage = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.PublicBin, ScaledupProducers);
-
-                previousInvoicedNetTonnage = ProducerInvoicedMaterialNetTonnage
-                                                    .Where(x => x.InvoicedTonnage.MaterialId == material.Id && x.InvoicedTonnage.ProducerId == result.ProducerIdInt)
-                                                    .Select(x => x.InvoicedTonnage.InvoicedNetTonnage)
+                var previousInvoicedNetTonnage = ProducerInvoicedMaterialNetTonnage
+                                                    .Where(x => x.InvoicedTonnage?.MaterialId == material.Id && x.InvoicedTonnage.ProducerId == result.ProducerIdInt)
+                                                    .Select(x => x.InvoicedTonnage?.InvoicedNetTonnage)
                                                     .FirstOrDefault();
 
                 var calcResultSummaryProducerDisposalFeesByMaterial = new CalcResultSummaryProducerDisposalFeesByMaterial
@@ -415,7 +413,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             return result;
         }
 
-        private IEnumerable<ProducerInvoicedDto> GetPreviousInvoicedTonnage(string financialYear)
+        public IEnumerable<ProducerInvoicedDto> GetPreviousInvoicedTonnage(string financialYear)
         {
             var previousInvoicedNetTonnage =
                         (from calc in context.CalculatorRuns
@@ -443,8 +441,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                                 InvoiceInstruction = latest.p
                             };
                         })
-                        .OrderBy(x => x.InvoicedTonnage.Id)
-                        .ThenBy(x => x.InvoicedTonnage.ProducerId)
+                        .OrderBy(x => x.InvoicedTonnage?.Id)
+                        .ThenBy(x => x.InvoicedTonnage?.ProducerId)
                         .ToList();
 
 
@@ -572,14 +570,14 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         {
             var materialCosts = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>();
 
-            decimal? previousInvoicedNetTonnage = null;
             foreach (var material in materials)
             {
                 var householdPackagingWasteTonnage = CalcResultSummaryUtil.GetTonnageTotal(producersAndSubsidiaries, material, PackagingTypes.Household, ScaledupProducers);
                 var publicBinTonnage = CalcResultSummaryUtil.GetTonnageTotal(producersAndSubsidiaries, material, PackagingTypes.PublicBin, ScaledupProducers);
-                previousInvoicedNetTonnage = ProducerInvoicedMaterialNetTonnage
-                                                   .Where(x => x.InvoicedTonnage.MaterialId == material.Id && x.InvoicedTonnage.ProducerId == producersAndSubsidiaries.FirstOrDefault().ProducerId)
-                                                   .Select(x => x.InvoicedTonnage.InvoicedNetTonnage)
+                var previousInvoicedNetTonnage = ProducerInvoicedMaterialNetTonnage
+                                                   .Where(x => x.InvoicedTonnage?.MaterialId == material.Id 
+                                                            && x.InvoicedTonnage?.ProducerId == producersAndSubsidiaries.FirstOrDefault()?.ProducerId)
+                                                   .Select(x => x.InvoicedTonnage?.InvoicedNetTonnage)
                                                    .FirstOrDefault();
                 materialCosts.Add(material.Code, new CalcResultSummaryProducerDisposalFeesByMaterial
                 {
