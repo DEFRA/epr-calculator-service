@@ -799,7 +799,134 @@
                     ProducerCommsFeesByMaterial = GetProducerCommsFeesByMaterial(),
                     TonnageChangeCount = "0",
                     TonnageChangeAdvice = "",
-                    isOverallTotalRow = false,
+                },
+            };
+        }
+
+        public static List<CalcResultSummaryProducerDisposalFees> GetProducerDisposalFeesForOverAllTotal()
+        {
+            return new List<CalcResultSummaryProducerDisposalFees>()
+            {
+                new CalcResultSummaryProducerDisposalFees()
+                {
+                    ProducerId = "1",
+                    ProducerIdInt = 1,
+                    SubsidiaryId = string.Empty,
+                    ProducerName = "Allied Packaging",
+                    Level = "1",
+                    isTotalRow = false,
+                    TotalProducerDisposalFee = 4423.39438m,
+                    BadDebtProvision = 265.4036628m,
+                    TotalProducerDisposalFeeWithBadDebtProvision = 4688.7980428m,
+                    EnglandTotal = 2534.2359097426884m,
+                    WalesTotal = 571.2417008090152m,
+                    ScotlandTotal = 1137.8673076088023m,
+                    NorthernIrelandTotal = 445.4531246394942m,
+                    TotalProducerCommsFee = 1290.778m,
+                    BadDebtProvisionComms = 77.44668m,
+                    TotalProducerCommsFeeWithBadDebtProvision = 1368.22468m,
+                    EnglandTotalComms = 718.2251815154783m,
+                    WalesTotalComms = 181.2690740598454m,
+                    ScotlandTotalComms = 332.8499847265775m,
+                    NorthernIrelandTotalComms = 135.88043969809883m,
+                    LocalAuthorityDisposalCostsSectionOne = new CalcResultSummaryBadDebtProvision
+                    {
+                        TotalProducerFeeWithoutBadDebtProvision = 4423.39438m,
+                        BadDebtProvision = 265.4036628m,
+                        TotalProducerFeeWithBadDebtProvision = 4688.7980428m,
+                        EnglandTotalWithBadDebtProvision = 2534.2359097426884m,
+                        WalesTotalWithBadDebtProvision = 571.2417008090152m,
+                        ScotlandTotalWithBadDebtProvision = 1137.8673076088023m,
+                        NorthernIrelandTotalWithBadDebtProvision = 445.4531246394942m
+                    },
+                    CommunicationCostsSectionTwoA = new CalcResultSummaryBadDebtProvision
+                    {
+                        TotalProducerFeeWithoutBadDebtProvision = 1290.778m,
+                        BadDebtProvision = 77.44668m,
+                        TotalProducerFeeWithBadDebtProvision = 1368.22468m,
+                        EnglandTotalWithBadDebtProvision = 718.2251815154783m,
+                        WalesTotalWithBadDebtProvision = 181.2690740598454m,
+                        ScotlandTotalWithBadDebtProvision = 332.8499847265775m,
+                        NorthernIrelandTotalWithBadDebtProvision = 135.88043969809883m
+                    },
+                    TwoCTotalProducerFeeForCommsCostsWithoutBadDebt = 1339.100071422903m,
+                    TwoCBadDebtProvision = 80.34600428537418m,
+                    TwoCTotalProducerFeeForCommsCostsWithBadDebt = 1419.446075708277m,
+                    TwoCEnglandTotalWithBadDebt = 607.4748035870169m,
+                    TwoCWalesTotalWithBadDebt = 300.7301007856519m,
+                    TwoCScotlandTotalWithBadDebt = 360.87612094278234m,
+                    TwoCNorthernIrelandTotalWithBadDebt = 150.36505039282596m,
+                    PercentageofProducerReportedTonnagevsAllProducers = 5.6741528450123m,
+                    ProducerTotalOnePlus2A2B2CWithBadDeptProvision = 10491.167766844124m,
+                    ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 4.7341913352015945m,
+                    SchemeAdministratorOperatingCosts = new CalcResultSummaryBadDebtProvision
+                    {
+                        TotalProducerFeeWithoutBadDebtProvision = 3077.2243678810364m,
+                        BadDebtProvision = 184.6334620728622m,
+                        TotalProducerFeeWithBadDebtProvision = 3261.8578299538985m,
+                        EnglandTotalWithBadDebtProvision = 1712.2541832180282m,
+                        WalesTotalWithBadDebtProvision = 432.1468228710047m,
+                        ScotlandTotalWithBadDebtProvision = 793.5168432560496m,
+                        NorthernIrelandTotalWithBadDebtProvision = 323.93998060881614m
+                    },
+                    LocalAuthorityDataPreparationCosts = new CalcResultSummaryBadDebtProvision
+                    {
+                        TotalProducerFeeWithoutBadDebtProvision = 1727.9798373485821m,
+                        BadDebtProvision = 103.67879024091492m,
+                        TotalProducerFeeWithBadDebtProvision = 1831.658627589497m,
+                        EnglandTotalWithBadDebtProvision = 802.9188504501905m,
+                        WalesTotalWithBadDebtProvision = 351.2769970719583m,
+                        ScotlandTotalWithBadDebtProvision = 451.6418533782321m,
+                        NorthernIrelandTotalWithBadDebtProvision = 225.82092668911605m
+                    },
+                    OneOffSchemeAdministrationSetupCosts = new CalcResultSummaryBadDebtProvision
+                    {
+                        TotalProducerFeeWithoutBadDebtProvision = 2970.7050628390007m,
+                        BadDebtProvision = 178.24230377034004m,
+                        TotalProducerFeeWithBadDebtProvision = 3148.947366609341m,
+                        EnglandTotalWithBadDebtProvision = 1652.983846106635m,
+                        WalesTotalWithBadDebtProvision = 417.1878943870084m,
+                        ScotlandTotalWithBadDebtProvision = 766.0489525279556m,
+                        NorthernIrelandTotalWithBadDebtProvision = 312.72667358774174m
+                    },
+                    TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision
+                    {
+                        TotalProducerFeeWithoutBadDebtProvision = 9897.32808192842m,
+                        BadDebtProvision = 593.8396849157051m,
+                        TotalProducerFeeWithBadDebtProvision = 10491.167766844124m,
+                        EnglandTotalWithBadDebtProvision = 5442.448434925617m,
+                        WalesTotalWithBadDebtProvision = 1452.6428880194774m,
+                        ScotlandTotalWithBadDebtProvision = 2564.98356493499m,
+                        NorthernIrelandTotalWithBadDebtProvision = 1031.0928789640386m
+                    },
+                    BillingInstructionSection = new CalcResultSummaryBillingInstruction
+                    {
+                        CurrentYearInvoiceTotalToDate = "1250.89",
+                        TonnageChangeSinceLastInvoice = string.Empty,
+                        LiabilityDifference = "580.73",
+                        MaterialThresholdBreached = string.Empty,
+                        TonnageThresholdBreached = string.Empty,
+                        PercentageLiabilityDifference = string.Empty,
+                        MaterialPercentageThresholdBreached = string.Empty,
+                        TonnagePercentageThresholdBreached = string.Empty,
+                        SuggestedBillingInstruction = string.Empty,
+                        SuggestedInvoiceAmount = "4039"
+                    },
+                    CommunicationCostsSectionTwoB = new CalcResultSummaryBadDebtProvision
+                    {
+                        TotalProducerFeeWithoutBadDebtProvision = 2844.0556305055156m,
+                        BadDebtProvision = 170.64333783033092m,
+                        TotalProducerFeeWithBadDebtProvision = 3014.6989683358465m,
+                        EnglandTotalWithBadDebtProvision = 1582.5125400804336m,
+                        WalesTotalWithBadDebtProvision = 399.4020123649648m,
+                        ScotlandTotalWithBadDebtProvision = 733.3901516568284m,
+                        NorthernIrelandTotalWithBadDebtProvision = 299.39426423361965m
+                    },
+                    ProducerDisposalFeesByMaterial = GetProducerDisposalFeesByMaterial(),
+                    ProducerCommsFeesByMaterial = GetProducerCommsFeesByMaterial(),
+                    TonnageChangeCount = "0",
+                    TonnageChangeAdvice = "",
+                    isOverallTotalRow = true,
                 },
             };
         }
