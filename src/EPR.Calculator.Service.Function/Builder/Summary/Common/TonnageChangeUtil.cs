@@ -32,24 +32,48 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
             string materialCode)
         {
-            var level1 = producerDisposalFees
-                .Where(r => r.Level == CommonConstants.LevelOne.ToString());
+            if (producerDisposalFees == null || string.IsNullOrWhiteSpace(materialCode))
+            {
+                return 0m;
+            }
 
-            return level1.Sum(r => r.ProducerDisposalFeesByMaterial[materialCode].TonnageChange ?? 0m);
+            var level1 = producerDisposalFees
+                .Where(r => r != null && r.Level == CommonConstants.LevelOne.ToString());
+
+            decimal total = 0m;
+
+            foreach (var row in level1)
+            {
+                var byMat = row.ProducerDisposalFeesByMaterial;
+
+                if (byMat != null &&
+                    byMat.TryGetValue(materialCode, out var mat) &&
+                    mat?.TonnageChange != null)
+                {
+                    total += mat.TonnageChange.Value;
+                }
+                // else: contribute 0 to the sum
+            }
+
+            return total;
         }
 
-        public static (string Count, string Advice) ComputeCountAndAdvice(
+        public static (string? Count, string? Advice) ComputeCountAndAdvice(
             string level,
             IDictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> byMaterial)
         {
             if (level != CommonConstants.LevelOne.ToString())
+            {                
                 return (null, null);
+            }
 
-            int count = byMaterial.Values
-                .Count(m => m.TonnageChange.HasValue && m.TonnageChange.Value != 0m);
+            int count = byMaterial?.Values
+                .Count(m => m?.TonnageChange.HasValue == true && m.TonnageChange.Value != 0m) ?? 0;
 
-            return (count.ToString(CultureInfo.InvariantCulture),
-                    count > 0 ? "CHANGE" : string.Empty);
+            return (
+                count.ToString(CultureInfo.InvariantCulture),
+                count > 0 ? "CHANGE" : string.Empty
+            );
         }
     }
 }
