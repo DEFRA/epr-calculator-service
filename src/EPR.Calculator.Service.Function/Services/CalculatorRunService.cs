@@ -208,6 +208,7 @@
                 calculatorRunParameter.User,
                 new CancellationTokenSource(this.configuration.RpdStatusTimeout).Token);
 
+            
             this.LogInformation(calculatorRunParameter.Id, runName, $"UpdateStatusAndPrepareResult - Status UpdateRpdStatus: {statusUpdateResponse}");
 
             if (statusUpdateResponse == RunClassification.RUNNING)
