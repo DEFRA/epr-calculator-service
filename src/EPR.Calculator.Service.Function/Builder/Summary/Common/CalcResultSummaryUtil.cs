@@ -192,7 +192,7 @@
           MaterialDetail material)
         {
             var levelOneRows = producerDisposalFees.Where(fee => fee.Level == CommonConstants.LevelOne.ToString());
-            return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial[material.Code].PreviousInvoicedTonnage);
+            return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial?[material.Code].PreviousInvoicedTonnage);
         }
 
         public static decimal GetPricePerTonne(

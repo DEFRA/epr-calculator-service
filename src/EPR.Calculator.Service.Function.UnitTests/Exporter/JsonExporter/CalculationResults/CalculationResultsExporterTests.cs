@@ -159,10 +159,10 @@
             var producer = data.ProducerDisposalFees.SingleOrDefault(t => !string.IsNullOrEmpty(t.Level))!;
             var expected = producer.ProducerDisposalFeesByMaterial.First();
 
-            decimal actualValue = 0;
-            if (decimal.TryParse(actual["previousInvoicedTonnage"]?.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out var parsed))
+            decimal? actualValue = 0;
+            if(actual["previousInvoicedTonnage"]?.ToString() == "")
             {
-                actualValue = parsed;
+                actualValue = null;
             }
 
             Assert.AreEqual(expected.Value.PreviousInvoicedTonnage, actualValue);

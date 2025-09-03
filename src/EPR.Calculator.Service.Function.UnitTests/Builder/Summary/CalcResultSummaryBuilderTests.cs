@@ -305,7 +305,7 @@
 
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.ProducerDisposalFees);
-            Assert.AreEqual(4, result.ProducerDisposalFees.Count());
+            Assert.AreEqual(5, result.ProducerDisposalFees.Count());
             var firstProducer = result.ProducerDisposalFees.FirstOrDefault();
             Assert.IsNotNull(firstProducer);
             Assert.AreEqual("Producer1", firstProducer.ProducerName);
@@ -319,7 +319,6 @@
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
             var calcResult = this.calcResult;
             calcResult.CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers();
-
             // Act
             var results = this.calcResultsService.Construct(requestDto, calcResult);
             results.Wait();
@@ -393,7 +392,7 @@
             var result = results.Result;
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(4, result.ProducerDisposalFees.Count());
+            Assert.AreEqual(5, result.ProducerDisposalFees.Count());
             Assert.IsFalse(result.ProducerDisposalFees.Any(fee => fee.ProducerName.Contains("Total")));
         }
 
@@ -407,7 +406,7 @@
             results.Wait();
             var result = results.Result;
             Assert.IsNotNull(result);
-            Assert.AreEqual(4, result.ProducerDisposalFees.Count());
+            Assert.AreEqual(5, result.ProducerDisposalFees.Count());
         }
 
         [TestMethod]
@@ -553,7 +552,7 @@
 
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.ProducerDisposalFees);
-            Assert.AreEqual(4, result.ProducerDisposalFees.Count());
+            Assert.AreEqual(5, result.ProducerDisposalFees.Count());
             var producerTotalPercentage = result.ProducerDisposalFees.First().PercentageofProducerReportedTonnagevsAllProducers;
             Assert.IsNotNull(producerTotalPercentage);
             Assert.AreEqual(40, producerTotalPercentage);
@@ -574,7 +573,7 @@
             var isColumnHeaderExists = result.ProducerDisposalFeesHeaders!.Select(dict => dict.ColumnIndex == 233 || dict.ColumnIndex == 234 || dict.ColumnIndex == 215).ToList();
             Assert.IsTrue(isColumnHeaderExists.Contains(true));
             Assert.IsNotNull(result.ProducerDisposalFees);
-            Assert.AreEqual(4, result.ProducerDisposalFees.Count());
+            Assert.AreEqual(5, result.ProducerDisposalFees.Count());
         }
 
         [TestMethod]
@@ -611,9 +610,25 @@
         {
             var result = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, this.context.ProducerDetail.ToList());
             Assert.IsNotNull(result);
-            Assert.AreEqual(3, result.Count());
+            Assert.AreEqual(4, result.Count());
             Assert.AreEqual("Producer1", result.First().ProducerName);
-            Assert.AreEqual("Producer5", result.Last().ProducerName);
+            Assert.AreEqual("Subsidiary1", result.Last().ProducerName);
+        }
+
+        [TestMethod]
+        public void GetPreviousInvoicedTonnage_ReturnsCorrectResults()
+        {
+            // Arrange
+            var financialYear = "2024-25";
+
+            // Act
+            var result = calcResultsService.GetPreviousInvoicedTonnage(financialYear);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(12.5M, result.First().InvoicedTonnage?.InvoicedNetTonnage);
+            Assert.AreEqual(3, result.First().InvoicedTonnage?.Id); // latest CalculatorRun Id
+            Assert.AreEqual(1, result.First().InvoicedTonnage?.ProducerId);
         }
 
         [TestMethod]
@@ -629,32 +644,7 @@
 
             var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, 1);
 
-            var producerInvoicedMaterialNetTonnage = new List<ProducerInvoicedDto>
-            {
-                new ProducerInvoicedDto
-                {
-                    InvoicedTonnage =
-                        new ProducerInvoicedMaterialNetTonnage
-                        {
-                            CalculatorRunId = 101,
-                            InvoicedNetTonnage = 20,
-                            MaterialId = 77,
-                            ProducerId = 10007,
-                            Id = 22
-                        },
-                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction
-                        {
-                            ProducerId = 10007,
-                            Id = 22
-                        },
-                     CalculatorRun = new CalculatorRun
-                        {
-                             Name="Test",
-                             Financial_Year = new CalculatorRunFinancialYear { Name="2025-26" },
-                             Id = 22
-                        },
-                }
-            };
+            var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnage("2024-25");
 
             var result = new CalcResultSummaryBuilder(this.context).GetCalcResultSummary(orderedProducerDetails, materials, this.calcResult, totalPackagingTonnage, producerInvoicedMaterialNetTonnage);
 
@@ -673,6 +663,115 @@
             Assert.IsNotNull(producer.ProducerName);
             Assert.AreEqual("Producer1", producer.ProducerName);
         }
+
+        [TestMethod]
+        public void GetCalcResultSummary_WritesProducerTotalRow_WhenParentWithSubsidiary()
+        {
+            // Arrange
+            // Grab an existing parent producer from your seeded context
+            var producerParent = this.context.ProducerDetail
+                .Where(p => p.CalculatorRunId == 1)
+                .OrderBy(p => p.ProducerId)
+                .First();
+
+            // 1) Add a subsidiary row for the *same* ProducerId (so Count() > 1)
+            var subsidiary = new ProducerDetail
+            {
+                CalculatorRunId = 1,
+                ProducerId = producerParent.ProducerId,
+                SubsidiaryId = "SUB-001",
+                ProducerName = "Subsidiary A",
+                TradingName = "SubA",
+            };
+            this.context.ProducerDetail.Add(subsidiary);
+
+            // If your GetTotalPackagingTonnagePerRun logic requires at least one POM row for the subsidiary,
+            // add a minimal ProducerReportedMaterial row (adjust IDs/material as your seed data expects).
+            var firstMaterial = this.context.Material.First();
+            this.context.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            {
+                ProducerDetailId = subsidiary.Id, // EF will fill after SaveChanges; if needed set then Save and set again
+                MaterialId = firstMaterial.Id,
+                PackagingType = "Household",
+                PackagingTonnage = 0m
+            });
+
+            this.context.SaveChanges();
+
+            // Now that the subsidiary has an Id, ensure the POM points to it (if your EF setup needs it)
+            var pom = this.context.ProducerReportedMaterial
+                .OrderByDescending(x => x.Id)
+                .First();
+            pom.ProducerDetailId = subsidiary.Id;
+            this.context.SaveChanges();
+
+            // 2) Mark this producer as a "parent organisation" so CanAddTotalRow() can proceed
+            CalcResultSummaryBuilder.ParentOrganisations = new[]
+                {
+                new ScaledupOrganisation
+                {
+                    OrganisationId   = producerParent.ProducerId,
+                    OrganisationName = "Parent Org",
+                    TradingName      = "Parent Trading"
+                }
+            };
+
+            // Prepare the usual inputs the same way you already do
+            var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(
+                1, this.context.ProducerDetail.ToList());
+
+            var runProducerMaterialDetails = CalcResultSummaryBuilder.GetProducerRunMaterialDetails(
+                ordered, this.context.ProducerReportedMaterial.ToList(), 1);
+
+            var materials = Mappers.MaterialMapper.Map(this.context.Material.ToList());
+            var totalsTonn = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(
+                runProducerMaterialDetails, materials, 1);
+
+            // build a ProducerInvoicedDto list (NOT a list of ProducerInvoicedMaterialNetTonnage)
+            var prevInvoiced = new List<ProducerInvoicedDto>
+            {
+                new ProducerInvoicedDto
+                {
+                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage
+                    {
+                        CalculatorRunId    = 101,
+                        ProducerId         = producerParent.ProducerId,
+                        MaterialId         = firstMaterial.Id,
+                        InvoicedNetTonnage = 12m,
+                    },
+                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction
+                    {
+                        ProducerId = producerParent.ProducerId,
+                        // set whatever fields your code reads in CanAddTotalRow or elsewhere
+                    },
+                    CalculatorRun = new CalculatorRun
+                    {
+                        Id              = 101,
+                        Name            = "Test",
+                        Financial_Year  = new CalculatorRunFinancialYear { Name = "2025-26" }
+                    }
+                }
+            };
+
+            // Act
+            var sut = new CalcResultSummaryBuilder(this.context);
+            var result = sut.GetCalcResultSummary(ordered, materials, this.calcResult, totalsTonn, prevInvoiced);
+
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.IsNotNull(result.ProducerDisposalFees);
+
+            // There should now be a producer-level "total" row inserted for the parent
+            var hasProducerTotalRow = result.ProducerDisposalFees.Any(r =>
+                r.isTotalRow &&
+                !r.isOverallTotalRow &&                       // not the grand total row
+                r.ProducerIdInt == producerParent.ProducerId  // total for this producer
+            );
+
+            Assert.IsTrue(hasProducerTotalRow, "Expected a producer total row for the parent producer.");
+        }
+
 
         [TestMethod]
         public void GetTonnages_ShouldCalculateCorrectlyForGlass()
@@ -750,7 +849,7 @@
             var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, 1);
             var scaledUpProducer = totalPackagingTonnage.First(t => t.ProducerId == 4);
 
-            Assert.AreEqual(3, totalPackagingTonnage.Count());
+            Assert.AreEqual(2, totalPackagingTonnage.Count());
             Assert.IsNotNull(scaledUpProducer.ProducerId);
             Assert.AreEqual(100, scaledUpProducer.TotalPackagingTonnage);
         }
@@ -988,11 +1087,49 @@
 
             context.ProducerDetail.AddRange(new List<ProducerDetail>
             {
-                new() { Id = 1, ProducerName = "Producer1", ProducerId = 1, CalculatorRunId = 1, CalculatorRun = new CalculatorRun { Financial_Year = calculatorRunFinancialYear, Name = "Test1" } },
-                new() { Id = 2, ProducerName = "Producer2", ProducerId = 2, CalculatorRunId = 2, CalculatorRun = new CalculatorRun { Financial_Year = calculatorRunFinancialYear, Name = "Test2" } },
-                new() { Id = 3, ProducerName = "Producer3", ProducerId = 3, CalculatorRunId = 3, CalculatorRun = new CalculatorRun { Financial_Year = calculatorRunFinancialYear, Name = "Test3" } },
-                new() { Id = 4, ProducerName = "Producer4", ProducerId = 4, CalculatorRunId = 1 },
-                new() { Id = 5, ProducerName = "Producer5", ProducerId = 5, CalculatorRunId = 1 },
+                new()
+                {
+                    Id = 1, ProducerName = "Producer1", ProducerId = 1, CalculatorRunId = 1,
+                    CalculatorRun = new CalculatorRun
+                    {
+                        Id = 1,
+                        Financial_Year = calculatorRunFinancialYear,
+                        FinancialYearId = "2024-25",
+                        Name = "CalculatorRunTest1",
+                        CalculatorRunClassificationId=7,
+                        CalculatorRunOrganisationDataMasterId = 1
+                    }
+                },
+
+                new()
+                {
+                    Id = 2, ProducerName = "Producer2", ProducerId = 2, CalculatorRunId = 2,
+                        CalculatorRun = new CalculatorRun
+                        {
+                            Id = 2,
+                            Financial_Year = calculatorRunFinancialYear,
+                            FinancialYearId = "2024-25",
+                            Name = "CalculatorRunTest2",
+                            CalculatorRunClassificationId=7,
+                            CalculatorRunOrganisationDataMasterId = 1
+                        }
+                },
+
+                new()
+                {
+                    Id = 3, ProducerName = "Producer3", ProducerId = 3, CalculatorRunId = 3,
+                        CalculatorRun = new CalculatorRun
+                        {
+                            Id = 3,
+                            Financial_Year = calculatorRunFinancialYear,
+                            FinancialYearId = "2024-25",
+                            Name = "CalculatorRunTest3",
+                            CalculatorRunClassificationId=7
+                        }
+                },
+                new() { Id = 4, ProducerName = "Producer4", ProducerId = 4, CalculatorRunId = 1 , SubsidiaryId=null },
+                new() { Id = 5, ProducerName = "Producer5", ProducerId = 4, CalculatorRunId = 1 , SubsidiaryId="A123" },
+                new() { Id = 6, ProducerName = "Subsidiary1", ProducerId = 4, CalculatorRunId = 1 , SubsidiaryId="A456"},
             });
 
             context.ProducerReportedMaterial.AddRange(new List<ProducerReportedMaterial>
@@ -1006,6 +1143,28 @@
                 new() { Id = 7, MaterialId = 2, PackagingType = "HH", PackagingTonnage = 300m, ProducerDetailId = 4 },
                 new() { Id = 8, MaterialId = 1, PackagingType = "HH", PackagingTonnage = 300m, ProducerDetailId = 5 },
             });
+            context.ProducerDesignatedRunInvoiceInstruction.AddRange(new List<ProducerDesignatedRunInvoiceInstruction>
+            {
+                new ProducerDesignatedRunInvoiceInstruction { Id = 1,CalculatorRunId = 1, ProducerId = 1},
+                new ProducerDesignatedRunInvoiceInstruction { Id = 2,CalculatorRunId = 2, ProducerId = 2},
+                new ProducerDesignatedRunInvoiceInstruction { Id = 3,CalculatorRunId = 2, ProducerId = 2},
+            });
+            context.ProducerInvoicedMaterialNetTonnage.AddRange(new List<ProducerInvoicedMaterialNetTonnage>
+            {
+                new ProducerInvoicedMaterialNetTonnage { Id = 3, MaterialId = 1,CalculatorRunId = 1, ProducerId = 1, InvoicedNetTonnage = 12.5M},
+                new ProducerInvoicedMaterialNetTonnage { Id = 4, MaterialId = 2,CalculatorRunId = 2, ProducerId = 2, InvoicedNetTonnage = 13.5M},
+                new ProducerInvoicedMaterialNetTonnage { Id = 5, MaterialId = 2,CalculatorRunId = 2, ProducerId = 2, InvoicedNetTonnage = 13.5M},
+            });
+            context.CalculatorRunOrganisationDataMaster.AddRange(new List<CalculatorRunOrganisationDataMaster>
+            {
+                new CalculatorRunOrganisationDataMaster {Id = 1,CalendarYear = "2025-26", CreatedAt= DateTime.Now, CreatedBy = "TestUser" , EffectiveFrom = DateTime.Now}
+            });
+
+            context.CalculatorRunOrganisationDataDetails.AddRange(new List<CalculatorRunOrganisationDataDetail>
+            { 
+                new CalculatorRunOrganisationDataDetail {Id = 2, CalculatorRunOrganisationDataMasterId = 1, OrganisationId = 4, OrganisationName="ORG1",SubmissionPeriodDesc = "Test", SubsidaryId = null},
+            });
+
             context.SaveChanges();
         }
 
