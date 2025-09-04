@@ -144,11 +144,11 @@
             {
                 if (!producer.isOverallTotalRow && (producer.Level != "1" || disposalFee.Value.PreviousInvoicedTonnage == null))
                 {
-                    csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.Hyphen, DecimalPlaces.Zero, DecimalFormats.F2));
+                    csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.Hyphen));
                 }
                 else
                 {
-                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.PreviousInvoicedTonnage, DecimalPlaces.Zero, DecimalFormats.F2));
+                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.PreviousInvoicedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 }
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.HouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
 
