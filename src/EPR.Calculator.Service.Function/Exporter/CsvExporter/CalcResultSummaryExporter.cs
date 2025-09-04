@@ -80,7 +80,7 @@
         public void AddBillingInstructionsSection(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
         {
             csvContent.Append(CsvSanitiser.SanitiseData(CurrencyConverter.FormattedCurrencyValue(producer.BillingInstructionSection!.CurrentYearInvoiceTotalToDate), DecimalPlaces.Two, null, true));
-            csvContent.Append(CsvSanitiser.SanitiseData(producer.BillingInstructionSection.TonnageChangeSinceLastInvoice));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.BillingInstructionSection.TonnageChangeSinceLastInvoice ?? CommonConstants.Hyphen));
             csvContent.Append(CsvSanitiser.SanitiseData(CurrencyConverter.FormattedCurrencyValue(producer.BillingInstructionSection.LiabilityDifference), DecimalPlaces.Two, null, true));
             csvContent.Append(CsvSanitiser.SanitiseData("\u200E" + producer.BillingInstructionSection.MaterialThresholdBreached)); // prefixed with LRM character as the values(+ve and -ve) are parsed as formula in csv
             csvContent.Append(CsvSanitiser.SanitiseData("\u200E" + producer.BillingInstructionSection.TonnageThresholdBreached)); // prefixed with LRM character added as values(+ve and -ve) are parsed as formula in csv
@@ -145,11 +145,11 @@
             {
                 if (!producer.isOverallTotalRow && (producer.Level != "1" || disposalFee.Value.PreviousInvoicedTonnage == null))
                 {
-                    csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.Hyphen, DecimalPlaces.Zero, DecimalFormats.F2));
+                    csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.Hyphen));
                 }
                 else
                 {
-                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.PreviousInvoicedTonnage, DecimalPlaces.Zero, DecimalFormats.F2));
+                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.PreviousInvoicedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 }
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.HouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
 
