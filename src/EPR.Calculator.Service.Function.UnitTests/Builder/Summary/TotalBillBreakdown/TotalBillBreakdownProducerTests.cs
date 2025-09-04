@@ -449,6 +449,41 @@
         }
 
         /// <summary>
+        /// The CanCallSetValues
+        /// </summary>
+        [TestMethod]
+        public void CanCallSetValues_NullValues()
+        {
+            // Arrange
+            var data = _calcResult.CalcResultSummary;
+            data.ProducerDisposalFees.ToList()[0].LocalAuthorityDisposalCostsSectionOne = null;
+            data.ProducerDisposalFees.ToList()[0].CommunicationCostsSectionTwoA = null;
+            data.ProducerDisposalFees.ToList()[0].CommunicationCostsSectionTwoB = null;
+            data.ProducerDisposalFees.ToList()[0].TwoCTotalProducerFeeForCommsCostsWithoutBadDebt = 0;
+            data.ProducerDisposalFees.ToList()[0].TwoCBadDebtProvision = 0;
+            data.ProducerDisposalFees.ToList()[0].TwoCTotalProducerFeeForCommsCostsWithBadDebt = 0;
+            data.ProducerDisposalFees.ToList()[0].TwoCEnglandTotalWithBadDebt = 0;
+            data.ProducerDisposalFees.ToList()[0].TwoCWalesTotalWithBadDebt = 0;
+            data.ProducerDisposalFees.ToList()[0].TwoCScotlandTotalWithBadDebt = 0;
+            data.ProducerDisposalFees.ToList()[0].TwoCNorthernIrelandTotalWithBadDebt = 0;
+            data.ProducerDisposalFees.ToList()[0].SchemeAdministratorOperatingCosts = null;
+            data.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts = null;
+            data.ProducerDisposalFees.ToList()[0].OneOffSchemeAdministrationSetupCosts = null;
+
+            // Act
+            TotalBillBreakdownProducer.SetValues(data);
+
+            // Assert
+            Assert.AreEqual(0, data.ProducerDisposalFees.ToList()[0].TotalProducerBillBreakdownCosts!.TotalProducerFeeWithoutBadDebtProvision);
+            Assert.AreEqual(0, data.ProducerDisposalFees.ToList()[0].TotalProducerBillBreakdownCosts!.BadDebtProvision);
+            Assert.AreEqual(0, data.ProducerDisposalFees.ToList()[0].TotalProducerBillBreakdownCosts!.TotalProducerFeeWithBadDebtProvision);
+            Assert.AreEqual(0, data.ProducerDisposalFees.ToList()[0].TotalProducerBillBreakdownCosts!.EnglandTotalWithBadDebtProvision);
+            Assert.AreEqual(0, data.ProducerDisposalFees.ToList()[0].TotalProducerBillBreakdownCosts!.WalesTotalWithBadDebtProvision);
+            Assert.AreEqual(0, data.ProducerDisposalFees.ToList()[0].TotalProducerBillBreakdownCosts!.ScotlandTotalWithBadDebtProvision);
+            Assert.AreEqual(0, data.ProducerDisposalFees.ToList()[0].TotalProducerBillBreakdownCosts!.NorthernIrelandTotalWithBadDebtProvision);
+        }
+
+        /// <summary>
         /// The CreateMaterials
         /// </summary>
         private void CreateMaterials()
