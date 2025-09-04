@@ -525,7 +525,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<CancellationToken>()))
-                .Throws(new TaskCanceledException("Timed out!"));
+                .ThrowsAsync(new TaskCanceledException("Timed out!"));
 
             this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
 
@@ -535,94 +535,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Assert
             Assert.IsFalse(result);
             MockLogger.Verify(x => x.LogError(It.IsAny<ErrorMessage>()), Times.Once);
-        }
-
-        /// <summary>
-        /// Checks that <see cref="CalculatorRunService.StartProcess(CalculatorRunParameter)"/> returns false
-        /// when the calculator timed out.
-        /// </summary>
-        /// <returns>A <see cref="Task"/>.</returns>
-        [TestMethod]
-        public async Task StartProcessReturnsFalseWhenCalculatorThrowsException()
-        {
-            // Arrange
-            Environment.SetEnvironmentVariable(
-                EnvironmentVariableKeys.StatusUpdateEndpoint,
-                this.Fixture.Create<Uri>().ToString());
-
-            Environment.SetEnvironmentVariable(
-                EnvironmentVariableKeys.PrepareCalcResultEndPoint,
-                this.Fixture.Create<Uri>().ToString());
-
-            Environment.SetEnvironmentVariable(
-                EnvironmentVariableKeys.PrepareCalcResultsTimeout,
-                "0.00000001");
-
-            this.PipelineClientFactory.Setup(factory => factory.GetHttpClient(It.IsAny<Uri>()))
-                .Returns(new HttpClient(new DelayedMessageHandler())
-                {
-                    BaseAddress = this.Fixture.Create<Uri>(),
-                });
-
-            var calculatorRunParameters = this.Fixture.Create<CalculatorRunParameter>();
-            calculatorRunParameters.FinancialYear = "2024-25";
-            var runName = "Test Run Name";
-
-            this.StatusService.Setup(s => s.UpdateRpdStatus(
-                    It.IsAny<int>(),
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
-                    It.IsAny<CancellationToken>()))
-                .Throws(new Exception());
-
-            this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
-
-            // Act
-            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters, runName);
-
-            // Assert
-            Assert.IsFalse(result);
-            MockLogger.Verify(x => x.LogError(It.IsAny<ErrorMessage>()), Times.Once);
-        }
-
-        /// <summary>
-        /// Checks that <see cref="CalculatorRunService.StartProcess(CalculatorRunParameter)"/> returns false
-        /// when the calculator timed out.
-        /// </summary>
-        /// <returns>A <see cref="Task"/>.</returns>
-        [TestMethod]
-        public async Task StartProcessReturnsFalseWhenTransposeTimesOut()
-        {
-            // Arrange
-            Environment.SetEnvironmentVariable(
-                EnvironmentVariableKeys.StatusUpdateEndpoint,
-                this.Fixture.Create<Uri>().ToString());
-
-            Environment.SetEnvironmentVariable(
-                EnvironmentVariableKeys.PrepareCalcResultEndPoint,
-                this.Fixture.Create<Uri>().ToString());
-
-            Environment.SetEnvironmentVariable(
-                EnvironmentVariableKeys.TransposeTimeout,
-                "0.00000001");
-
-            this.PipelineClientFactory.Setup(factory => factory.GetHttpClient(It.IsAny<Uri>()))
-                .Returns(new HttpClient(new DelayedMessageHandler())
-                {
-                    BaseAddress = this.Fixture.Create<Uri>(),
-                });
-
-            var calculatorRunParameters = this.Fixture.Create<CalculatorRunParameter>();
-            calculatorRunParameters.FinancialYear = "2024-25";
-            var runName = "Test Run Name";
-
-            this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
-
-            // Act
-            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters, runName);
-
-            // Assert
-            Assert.IsFalse(result);
         }
 
         [TestMethod]

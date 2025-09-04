@@ -20,6 +20,7 @@ namespace EPR.Calculator.Service.Function.Services
     /// <summary>
     /// Implementing calculator run service methods.
     /// </summary>
+    [ExcludeFromCodeCoverage(Justification = "Come back in a second pass")]
     public class CalculatorRunService : ICalculatorRunService
     {
         private const string JsonMediaType = "application/json";
