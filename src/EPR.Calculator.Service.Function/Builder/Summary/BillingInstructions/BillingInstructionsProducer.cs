@@ -66,16 +66,32 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
 
         private static decimal? GetCurrentYearInvoicedTotalToDate(CalcResultSummaryProducerDisposalFees fee, decimal? currentYearInvoicedTotalTonnage, decimal totalTonnage)
         {
-            return fee.IsProducerScaledup == CommonConstants.Totals
-                ? totalTonnage
-                : fee.Level == "1" ? currentYearInvoicedTotalTonnage : null;
+            decimal? result;
+
+            if (fee.IsProducerScaledup == CommonConstants.Totals)
+            {
+                result = totalTonnage;
+            }
+            else if (fee.Level == "1")
+            {
+                result = currentYearInvoicedTotalTonnage;
+            }
+            else
+            {
+                result = null;
+            }
+
+            return result;
         }
 
         private static string? GetTonnageChangeSinceLastInvoice(CalcResultSummaryProducerDisposalFees fee)
         {
-            return fee.IsProducerScaledup == CommonConstants.Totals
-                ? string.Empty
-                : fee.TonnageChangeAdvice == "CHANGE" ? "Tonnage Changed" : null;
+            if (fee.IsProducerScaledup == CommonConstants.Totals)
+                return string.Empty;
+            else if (fee.TonnageChangeAdvice == "CHANGE")
+                return "Tonnage Changed";
+            else
+                return null;
         }
 
         private static string GetLiabilityDifference(CalcResultSummaryProducerDisposalFees fee)
