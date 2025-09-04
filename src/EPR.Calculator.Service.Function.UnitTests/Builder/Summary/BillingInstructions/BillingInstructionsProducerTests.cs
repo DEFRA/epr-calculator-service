@@ -265,7 +265,7 @@
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection;
 
             // Assert
-            Assert.AreEqual("20.00", fee.CurrentYearInvoiceTotalToDate);
+            Assert.AreEqual(20.00m, fee!.CurrentYearInvoiceTotalToDate);
             Assert.AreEqual(null, fee.TonnageChangeSinceLastInvoice);
             Assert.AreEqual("-", fee.LiabilityDifference);
             Assert.AreEqual("-", fee.MaterialThresholdBreached);

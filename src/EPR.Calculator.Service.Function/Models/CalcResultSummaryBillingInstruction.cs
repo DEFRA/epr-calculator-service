@@ -2,7 +2,7 @@
 {
     public class CalcResultSummaryBillingInstruction
     {
-        public string? CurrentYearInvoiceTotalToDate { get; set; }
+        public decimal? CurrentYearInvoiceTotalToDate { get; set; }
 
         public string? TonnageChangeSinceLastInvoice { get; set; }
 

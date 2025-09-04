@@ -42,8 +42,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
             foreach (var fee in result.ProducerDisposalFees)
             {
                 var currentYearInvoicedTotalTonnage = ProducerInvoicedMaterialNetTonnage
-                                                    .Where(x => x.InvoicedTonnage.ProducerId.ToString() == fee.ProducerId)
-                                                    .Select(y => y.InvoiceInstruction.CurrentYearInvoicedTotalAfterThisRun)
+                                                    .Where(x => x.InvoicedTonnage!.ProducerId.ToString() == fee.ProducerId)
+                                                    .Select(y => y.InvoiceInstruction!.CurrentYearInvoicedTotalAfterThisRun)
                                                     .FirstOrDefault() ?? 0;
 
                 totalTonnage += currentYearInvoicedTotalTonnage;
@@ -64,11 +64,11 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
             }
         }
 
-        private static string? GetCurrentYearInvoicedTotalToDate(CalcResultSummaryProducerDisposalFees fee, decimal? currentYearInvoicedTotalTonnage, decimal totalTonnage)
+        private static decimal? GetCurrentYearInvoicedTotalToDate(CalcResultSummaryProducerDisposalFees fee, decimal? currentYearInvoicedTotalTonnage, decimal totalTonnage)
         {
             return fee.IsProducerScaledup == CommonConstants.Totals
-                ? totalTonnage.ToString()
-                : fee.Level == "1" ? currentYearInvoicedTotalTonnage.ToString() : null;
+                ? totalTonnage
+                : fee.Level == "1" ? currentYearInvoicedTotalTonnage : null;
         }
 
         private static string? GetTonnageChangeSinceLastInvoice(CalcResultSummaryProducerDisposalFees fee)
