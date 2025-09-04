@@ -1,4 +1,6 @@
-﻿namespace EPR.Calculator.Service.Function.Services
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace EPR.Calculator.Service.Function.Services
 {
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
@@ -61,6 +63,7 @@
         /// <param name="pipelineSucceeded">Indicates whether the pipeline succeeded.</param>
         /// <param name="user">Requested by user.</param>
         /// <returns>The JSON content for the status update.</returns>
+        [ExcludeFromCodeCoverage]
         public static StringContent GetStatusUpdateMessage(int calculatorRunId, bool pipelineSucceeded, string user)
         {
             var statusUpdate = new

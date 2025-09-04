@@ -9,6 +9,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
     [TestClass]
     public class TypeConverterUtilTests
     {
+        private class TestClass
+        {
+
+        }
+
         [TestMethod]
         public void CanCallConvertToDecimal()
         {
@@ -21,6 +26,20 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
 
             // Assert
             Assert.AreEqual(10.6m, result);
+        }
+
+        [TestMethod]
+        public void NotValueType_NotNull_CantConvert()
+        {
+            // Arrange
+            var fixture = new Fixture();
+            var value = "10.6";
+
+            // Act
+            var result = TypeConverterUtil.ConvertTo<TestClass>(value);
+
+            // Assert
+            Assert.IsNull(result);
         }
 
         [TestMethod]
