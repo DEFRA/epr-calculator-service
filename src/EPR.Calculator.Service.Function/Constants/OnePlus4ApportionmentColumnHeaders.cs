@@ -1,6 +1,6 @@
 ﻿namespace EPR.Calculator.Service.Function.Constants
 {
-    public class OnePlus4ApportionmentColumnHeaders
+    public static class OnePlus4ApportionmentColumnHeaders
     {
         public const string LADisposalCost = "1 Fee for LA Disposal Costs";
         public const string LADataPrepCharge = "4 LA Data Prep Charge";

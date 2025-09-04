@@ -67,7 +67,7 @@
 
         public async Task<bool> PrepareCalcResults(
             [FromBody] CalcResultsRequestDto resultsRequestDto,
-            string runName,
+            string? runName,
             CancellationToken cancellationToken)
         {
             this.commandTimeoutService.SetCommandTimeout(this.Context.Database);
@@ -151,7 +151,7 @@
                 var blobUri = await this.storageService.UploadFileContentAsync(
                     (FileName: fileName,
                     Content: exportedResults,
-                    RunName: runName,
+                    RunName: runName ?? string.Empty,
                     ContainerName: containerName,
                     Overwrite: OverwriteCsvFile));
 
@@ -168,7 +168,6 @@
                     Message = "Csv File saving started...",
                 });
 
-                var startTime = DateTime.Now;
                 if (!string.IsNullOrEmpty(blobUri))
                 {
                     await SaveCsvFileMetadataAsync(results.CalcResultDetail.RunId, fileName.ToString(), blobUri);
@@ -179,7 +178,6 @@
                     calculatorRun!.CalculatorRunClassificationId = (int)RunClassification.UNCLASSIFIED;
                     this.Context.CalculatorRuns.Update(calculatorRun);
                     await this.Context.SaveChangesAsync(cancellationToken);
-                    var timeDiff = startTime - DateTime.Now;
                     return true;
                 }
 

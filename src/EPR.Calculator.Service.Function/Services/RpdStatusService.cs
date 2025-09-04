@@ -54,7 +54,7 @@
         /// <inheritdoc/>
         public async Task<RunClassification> UpdateRpdStatus(
             int runId,
-            string runName,
+            string? runName,
             string updatedBy,
             CancellationToken timeout)
         {

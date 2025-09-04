@@ -14,8 +14,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
     [TestClass]
     public class CalcResultLaDisposalCostDataExporterTests
     {
-        private CalcResultLaDisposalCostDataExporter _testClass;
-        private Mock<ICalcResultLaDisposalCostDataMapper> _mapper;
+        private CalcResultLaDisposalCostDataExporter _testClass = null!;
+        private Mock<ICalcResultLaDisposalCostDataMapper> _mapper = null!;
 
         [TestInitialize]
         public void SetUp()

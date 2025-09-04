@@ -15,15 +15,15 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResul
     public class CalculationResultsExporter : ICalculationResultsExporter
     {
         private readonly IProducerDisposalFeesWithBadDebtProvision1JsonMapper producerDisposalFeesWithBadDebtProvision1JsonMapper;
-        private readonly ICommsCostsByMaterialFeesSummary2aMapper commsCostsByMaterialFeesSummary2AMapper;
+        private readonly ICommsCostsByMaterialFeesSummary2AMapper commsCostsByMaterialFeesSummary2AMapper;
         private readonly ICalcResultCommsCostByMaterial2AJsonMapper commsCostByMaterial2AJsonMapper;
         private readonly ISAOperatingCostsWithBadDebtProvisionMapper sAOperatingCostsWithBadDebtProvisionMapper;
         private readonly ICalcResultLADataPrepCostsWithBadDebtProvision4Mapper laDataPrepCostsWithBadDebtProvision4Mapper;
-        private readonly IFeeForCommsCostsWithBadDebtProvision2aMapper feeForCommsCostsWithBadDebtProvision2aMapper;
-        private readonly IFeeForCommsCostsWithBadDebtProvision2bMapper feeForCommsCostsWithBadDebtProvision2bMapper;
+        private readonly IFeeForCommsCostsWithBadDebtProvision2AMapper feeForCommsCostsWithBadDebtProvision2aMapper;
+        private readonly IFeeForCommsCostsWithBadDebtProvision2BMapper feeForCommsCostsWithBadDebtProvision2bMapper;
         private readonly ITotalProducerFeeWithBadDebtProvisionFor2Con12A2B2CMapper totalProducerFeeWithBadDebtProvisionFor2con_1_2a_2b_2cMapper;
-        private readonly IFeeForSASetUpCostsWithBadDebtProvision_5Mapper feeForSASetUpCostsWithBadDebtProvision_5Mapper;
-        private readonly ICalcResultCommsCostsWithBadDebtProvision2cMapper calcResultCommsCostsWithBadDebtProvision2CMapper;
+        private readonly IFeeForSaSetUpCostsWithBadDebtProvision5Mapper feeForSASetUpCostsWithBadDebtProvision_5Mapper;
+        private readonly ICalcResultCommsCostsWithBadDebtProvision2CMapper calcResultCommsCostsWithBadDebtProvision2CMapper;
         private readonly ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper;
         private readonly ITotalProducerBillWithBadDebtProvisionMapper totalProducerBillWithBadDebtProvisionMapper;
         private readonly ICalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper calculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper;
@@ -33,15 +33,15 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResul
         [SuppressMessage("Constructor has 8 parameters, which is greater than the 7 authorized.", "S107", Justification = "This is suppressed for now and will be refactored later")]
         public CalculationResultsExporter(
             IProducerDisposalFeesWithBadDebtProvision1JsonMapper producerDisposalFeesWithBadDebtProvision1JsonMapper,
-            ICommsCostsByMaterialFeesSummary2aMapper commsCostsByMaterialFeesSummary2AMapper,
+            ICommsCostsByMaterialFeesSummary2AMapper commsCostsByMaterialFeesSummary2AMapper,
             ICalcResultCommsCostByMaterial2AJsonMapper commsCostByMaterial2AJsonMapper,
             ISAOperatingCostsWithBadDebtProvisionMapper sAOperatingCostsWithBadDebtProvisionMapper,
             ICalcResultLADataPrepCostsWithBadDebtProvision4Mapper laDataPrepCostsWithBadDebtProvision4Mapper,
-            IFeeForCommsCostsWithBadDebtProvision2aMapper feeForCommsCostsWithBadDebtProvision2aMapper,
-            IFeeForCommsCostsWithBadDebtProvision2bMapper feeForCommsCostsWithBadDebtProvision2bMapper,
+            IFeeForCommsCostsWithBadDebtProvision2AMapper feeForCommsCostsWithBadDebtProvision2aMapper,
+            IFeeForCommsCostsWithBadDebtProvision2BMapper feeForCommsCostsWithBadDebtProvision2bMapper,
             ITotalProducerFeeWithBadDebtProvisionFor2Con12A2B2CMapper totalProducerFeeWithBadDebtProvisionFor2con_1_2a_2b_2cMapper,
-            IFeeForSASetUpCostsWithBadDebtProvision_5Mapper feeForSASetUpCostsWithBadDebtProvision_5Mapper,
-            ICalcResultCommsCostsWithBadDebtProvision2cMapper calcResultCommsCostsWithBadDebtProvision2CMapper,
+            IFeeForSaSetUpCostsWithBadDebtProvision5Mapper feeForSASetUpCostsWithBadDebtProvision_5Mapper,
+            ICalcResultCommsCostsWithBadDebtProvision2CMapper calcResultCommsCostsWithBadDebtProvision2CMapper,
             ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper calculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper,
             ITotalProducerBillWithBadDebtProvisionMapper totalProducerBillWithBadDebtProvisionMapper,
             ICalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper calculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper,

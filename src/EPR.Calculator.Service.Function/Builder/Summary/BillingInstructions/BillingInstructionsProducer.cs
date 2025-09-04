@@ -123,15 +123,15 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
                 : CommonConstants.Hyphen;
         }
 
-        private static string GetSuggestedInvoiceAmount(CalcResultSummaryProducerDisposalFees fee)
+        private static string? GetSuggestedInvoiceAmount(CalcResultSummaryProducerDisposalFees fee)
         {
             if (fee.IsProducerScaledup == CommonConstants.Totals)
             {
-                return fee.TotalProducerBillBreakdownCosts.TotalProducerFeeWithBadDebtProvision.ToString();
+                return fee.TotalProducerBillBreakdownCosts?.TotalProducerFeeWithBadDebtProvision.ToString();
             }
 
             return fee.Level == CommonConstants.LevelOne.ToString()
-                ? fee.TotalProducerBillBreakdownCosts.TotalProducerFeeWithBadDebtProvision.ToString()
+                ? fee.TotalProducerBillBreakdownCosts?.TotalProducerFeeWithBadDebtProvision.ToString()
                 : CommonConstants.Hyphen;
         }
     }

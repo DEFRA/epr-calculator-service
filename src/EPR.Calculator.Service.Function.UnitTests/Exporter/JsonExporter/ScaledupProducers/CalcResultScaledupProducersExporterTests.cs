@@ -10,8 +10,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.Scaled
     [TestClass]
     public class CalcResultScaledupProducersExporterTests
     {
-        private CalcResultScaledupProducersJsonExporter _testClass;
-        private Mock<ICalcResultScaledupProducersJsonMapper> _testMapper;
+        private CalcResultScaledupProducersJsonExporter _testClass = null!;
+        private Mock<ICalcResultScaledupProducersJsonMapper> _testMapper = null!;
 
         [TestInitialize]
         public void Setup()

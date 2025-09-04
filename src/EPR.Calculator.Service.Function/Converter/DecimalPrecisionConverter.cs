@@ -29,7 +29,7 @@ namespace EPR.Calculator.Service.Function.Converter
             }
             else
             {
-                writer.WriteRawValue(((decimal)value).ToString(
+                writer.WriteRawValue(value.ToString(
                     $"N{_precision}",
                     new NumberFormatInfo
                     {

@@ -13,8 +13,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     [TestClass]
     public class CalcCountryApportionmentServiceTests
     {
-        private CalcCountryApportionmentService _testClass;
-        private ApplicationDBContext _context;
+        private CalcCountryApportionmentService _testClass = null!;
+        private ApplicationDBContext _context = null!;
 
         [TestInitialize]
         public void SetUp()
