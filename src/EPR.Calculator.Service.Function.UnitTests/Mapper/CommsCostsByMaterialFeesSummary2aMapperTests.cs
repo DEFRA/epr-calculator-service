@@ -1,8 +1,5 @@
 namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 {
-    using System;
-    using System.Text.Json;
-    using System.Text.Json.Nodes;
     using AutoFixture;
     using EPR.Calculator.Service.Common.Utils;
     using EPR.Calculator.Service.Function.Mapper;
@@ -37,6 +34,30 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             Assert.AreEqual(result.WalesTotalWithBadDebtProvision, CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees?.CommunicationCostsSectionTwoA?.WalesTotalWithBadDebtProvision ?? 0));
             Assert.AreEqual(result.ScotlandTotalWithBadDebtProvision, CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees?.CommunicationCostsSectionTwoA?.ScotlandTotalWithBadDebtProvision ?? 0));
             Assert.AreEqual(result.NorthernIrelandTotalWithBadDebtProvision, CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees?.CommunicationCostsSectionTwoA?.NorthernIrelandTotalWithBadDebtProvision ?? 0));
+        }
+
+        [TestMethod]
+        public void CanCallMap_NullValues()
+        {
+            // Arrange
+            var calcResultSummaryProducerDisposalFees = new CalcResultSummaryProducerDisposalFees
+            {
+                CommunicationCostsSectionTwoA = null,
+                ProducerId = null!,
+                SubsidiaryId = null!,
+                ProducerName = null!
+            };
+
+            // Act
+            var result = _testClass.Map(calcResultSummaryProducerDisposalFees);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result.TotalBadDebtProvision, CurrencyConverter.ConvertToCurrency(0));
+            Assert.AreEqual(result.EnglandTotalWithBadDebtProvision, CurrencyConverter.ConvertToCurrency(0));
+            Assert.AreEqual(result.WalesTotalWithBadDebtProvision, CurrencyConverter.ConvertToCurrency(0));
+            Assert.AreEqual(result.ScotlandTotalWithBadDebtProvision, CurrencyConverter.ConvertToCurrency(0));
+            Assert.AreEqual(result.NorthernIrelandTotalWithBadDebtProvision, CurrencyConverter.ConvertToCurrency(0));
         }
     }
 }

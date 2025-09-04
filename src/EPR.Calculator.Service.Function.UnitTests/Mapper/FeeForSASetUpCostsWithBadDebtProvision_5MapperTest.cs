@@ -37,5 +37,31 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             Assert.AreEqual(CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees?.OneOffSchemeAdministrationSetupCosts?.ScotlandTotalWithBadDebtProvision ?? 0), result.ScotlandTotalForSASetUpCostsWithBadDebtProvision);
             Assert.AreEqual(CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees?.OneOffSchemeAdministrationSetupCosts?.NorthernIrelandTotalWithBadDebtProvision ?? 0), result.NorthernIrelandTotalForSASetUpCostsWithBadDebtProvision);
         }
+
+        [TestMethod]
+        public void CanCallMap_NullValues()
+        {
+            // Arrange
+            var calcResultSummaryProducerDisposalFees = new CalcResultSummaryProducerDisposalFees
+            {
+                OneOffSchemeAdministrationSetupCosts = null,
+                ProducerId = null!,
+                SubsidiaryId = null!,
+                ProducerName = null!
+            };
+
+            // Act
+            var result = _testClass?.Map(calcResultSummaryProducerDisposalFees);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(0), result.TotalProducerOneOffFeeForSASetUpCostsWithoutBadDebtProvision);
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(0), result.BadDebtProvisionFor5);
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(0), result.TotalProducerOneOffFeeForSASetUpCostsWithBadDebtProvision);
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(0), result.EnglandTotalForSASetUpCostsWithBadDebtProvision);
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(0), result.WalesTotalForSASetUpCostsWithBadDebtProvision);
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(0), result.ScotlandTotalForSASetUpCostsWithBadDebtProvision);
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(0), result.NorthernIrelandTotalForSASetUpCostsWithBadDebtProvision);
+        }
     }
 }

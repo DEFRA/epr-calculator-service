@@ -568,6 +568,44 @@
         }
 
         [TestMethod]
+        public void GetTotalFee_ShouldReturnZero_WhenProducerDisposalFeesNull()
+        {
+            var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
+            var results = this.calcResultsService.Construct(calcResultsRequestDto, this.calcResult);
+            results.Wait();
+            var result = results.Result;
+            Assert.IsNotNull(result);
+
+            var totalRow = result.ProducerDisposalFees.LastOrDefault();
+            Assert.IsNotNull(totalRow);
+            totalRow.LocalAuthorityDisposalCostsSectionOne!.BadDebtProvision = 0m;
+            totalRow.Level = "Totals";
+
+            var totalFee = CalcResultOneAndTwoAUtil.GetTotalFee(null, fee => fee.LocalAuthorityDisposalCostsSectionOne!.BadDebtProvision);
+
+            Assert.AreEqual(0m, totalFee);
+        }
+
+        [TestMethod]
+        public void GetTotalFee_ShouldReturnZero_WhenProducerDisposalFeesIsEmpty()
+        {
+            var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
+            var results = this.calcResultsService.Construct(calcResultsRequestDto, this.calcResult);
+            results.Wait();
+            var result = results.Result;
+            Assert.IsNotNull(result);
+
+            var totalRow = result.ProducerDisposalFees.LastOrDefault();
+            Assert.IsNotNull(totalRow);
+            totalRow.LocalAuthorityDisposalCostsSectionOne!.BadDebtProvision = 0m;
+            totalRow.Level = "Totals";
+
+            var totalFee = CalcResultOneAndTwoAUtil.GetTotalFee([], fee => fee.LocalAuthorityDisposalCostsSectionOne!.BadDebtProvision);
+
+            Assert.AreEqual(0m, totalFee);
+        }
+
+        [TestMethod]
         public void ProducerTotalPercentageVsTotal_ShouldReturnCorrectValue()
         {
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
