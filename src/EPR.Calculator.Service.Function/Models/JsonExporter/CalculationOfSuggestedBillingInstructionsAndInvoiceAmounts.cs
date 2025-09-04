@@ -11,7 +11,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         public required string TonnageChangeSinceLastInvoice { get; init; }
 
         [JsonPropertyName("liabilityDifferenceCalcVsPrev")]
-        public required string LiabilityDifferenceCalcVsPrev { get; init; }
+        public required decimal? LiabilityDifferenceCalcVsPrev { get; init; }
 
         [JsonPropertyName("material£ThresholdBreached")]
         public required string MaterialThresholdBreached { get; init; }

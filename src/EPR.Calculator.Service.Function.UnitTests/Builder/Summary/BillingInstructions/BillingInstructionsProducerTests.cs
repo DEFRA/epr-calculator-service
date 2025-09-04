@@ -1,9 +1,13 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstructions
+﻿using System.Globalization;
+
+namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstructions
 {
     using AutoFixture;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.Service.Function.Builder.ParametersOther;
     using EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions;
+    using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -229,6 +233,7 @@
         /// <summary>
         /// The CanCallSetValues
         /// </summary>
+
         [TestMethod]
         public void CanCallSetValues()
         {
@@ -237,37 +242,42 @@
             {
                 new ProducerInvoicedDto
                 {
-                    InvoicedTonnage =
-                        new ProducerInvoicedMaterialNetTonnage
-                        {
-                            CalculatorRunId = 101,
-                            InvoicedNetTonnage = 20,
-                            MaterialId = 77,
-                            ProducerId = 1,
-                            Id = 22
-                        },
+                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage
+                    {
+                        CalculatorRunId = 101,
+                        InvoicedNetTonnage = 20,
+                        MaterialId = 77,
+                        ProducerId = 1,
+                        Id = 22
+                    },
                     InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction
-                        {
-                            ProducerId = 1,
-                            Id = 22,
-                            CurrentYearInvoicedTotalAfterThisRun = 20.00m
-                        },
-                     CalculatorRun = new CalculatorRun
-                        {
-                             Name="Test",
-                             Financial_Year = new CalculatorRunFinancialYear { Name="2025-26" },
-                             Id = 22
-                        },
+                    {
+                        ProducerId = 1,
+                        Id = 22,
+                        CurrentYearInvoicedTotalAfterThisRun = 20.00m
+                    },
+                    CalculatorRun = new CalculatorRun
+                    {
+                        Name = "Test",
+                        Financial_Year = new CalculatorRunFinancialYear { Name = "2025-26" },
+                        Id = 22
+                    }
                 }
             };
 
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, producerInvoicedMaterialNetTonnage);
+            var defaultParams = new List<DefaultParamResultsClass>();
+
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, producerInvoicedMaterialNetTonnage, defaultParams);
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection;
+
+
+            var calcTotal = _calcResult.CalcResultSummary!.ProducerDisposalFees!.First().TotalProducerBillBreakdownCosts!.TotalProducerFeeWithBadDebtProvision;
+            var expectedLiabilityDiff = (Math.Round(calcTotal, 2) - Math.Round(20.00m, 2));
 
             // Assert
             Assert.AreEqual(20.00m, fee!.CurrentYearInvoiceTotalToDate);
             Assert.AreEqual(null, fee.TonnageChangeSinceLastInvoice);
-            Assert.AreEqual("-", fee.LiabilityDifference);
+            Assert.AreEqual(expectedLiabilityDiff, fee.LiabilityDifference);
             Assert.AreEqual("-", fee.MaterialThresholdBreached);
             Assert.AreEqual("-", fee.TonnageThresholdBreached);
             Assert.AreEqual("-", fee.PercentageLiabilityDifference);
@@ -275,6 +285,704 @@
             Assert.AreEqual("-", fee.TonnagePercentageThresholdBreached);
             Assert.AreEqual("INITIAL", fee.SuggestedBillingInstruction);
             Assert.AreEqual("10491.167766844124", fee.SuggestedInvoiceAmount);
+        }
+
+        [TestMethod]
+        public void CalculateLiabilityDifference_Level1_ComputesRoundedDifference()
+        {
+            var summary = new CalcResultSummary
+            {
+                ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
+                                        {
+                                            new()
+                                            {
+                                                ProducerId = "101",
+                                                ProducerIdInt = 101,
+                                                Level = "1",
+                                                SubsidiaryId = "1000",
+                                                ProducerName = "P1",
+                                                TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision
+                                                {
+                                                    TotalProducerFeeWithBadDebtProvision = 120.004m
+                                                }
+                                            }
+                                        }
+            };
+
+            var invoiced = new List<ProducerInvoicedDto>
+                            {
+                                new()
+                                {
+                                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 101 },
+                                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction
+                                    {
+                                        ProducerId = 101,
+                                        CurrentYearInvoicedTotalAfterThisRun = 20.003m
+                                    }
+                                }
+                            };
+
+            BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
+
+            var fee = summary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
+            var expected = Math.Round(120.004m, 2) - Math.Round(20.003m, 2); 
+            Assert.AreEqual(expected, fee.LiabilityDifference);
+        }
+
+        [TestMethod]
+        public void CalculateLiabilityDifference_LevelNot1_ReturnsNull()
+        {
+            var summary = new CalcResultSummary
+            {
+                ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
+                                        {
+                                            new()
+                                            {
+                                                ProducerId = "301",
+                                                ProducerIdInt = 301,
+                                                Level = "2",
+                                                SubsidiaryId = "3000",
+                                                ProducerName = "P3",
+                                                TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision
+                                                {
+                                                    TotalProducerFeeWithBadDebtProvision = 50m
+                                                }
+                                            }
+                                        }
+            };
+
+            var invoiced = new List<ProducerInvoicedDto>
+                            {
+                                new()
+                                {
+                                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 301 },
+                                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction
+                                    {
+                                        ProducerId = 301,
+                                        CurrentYearInvoicedTotalAfterThisRun = 10m
+                                    }
+                                }
+                            };
+
+            BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
+            Assert.IsNull(summary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!.LiabilityDifference);
+        }
+
+        [TestMethod]
+        public void GetLiabilityDifference_NonTotalsRow_PassesThroughCalculatedValue()
+        {
+            var summary = new CalcResultSummary
+            {
+                ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
+                                        {
+                                            new()
+                                            {
+                                                ProducerId = "11",
+                                                ProducerIdInt = 11,
+                                                Level = "1",
+                                                SubsidiaryId = "S-11",
+                                                ProducerName = "P11",
+                                                TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { TotalProducerFeeWithBadDebtProvision = 20m }
+                                            }
+                                        }
+            };
+
+            var invoiced = new List<ProducerInvoicedDto>
+                                {
+                                    new()
+                                    {
+                                        InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 11 },
+                                        InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction
+                                        {
+                                            ProducerId = 11,
+                                            CurrentYearInvoicedTotalAfterThisRun = 5m
+                                        }
+                                    }
+                                };
+
+            BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
+
+            Assert.AreEqual(15m, summary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!.LiabilityDifference);
+        }
+
+        [TestMethod]
+        public void GetLiabilityDifference_TotalsRowWithNonZeroRunningTotal_ReturnsSum()
+        {
+            var a = new CalcResultSummaryProducerDisposalFees
+            {
+                ProducerId = "1",
+                ProducerIdInt = 1,
+                Level = "1",
+                SubsidiaryId = "S-1",
+                ProducerName = "P1",
+                TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { TotalProducerFeeWithBadDebtProvision = 50m }
+            }; 
+
+            var b = new CalcResultSummaryProducerDisposalFees
+            {
+                ProducerId = "2",
+                ProducerIdInt = 2,
+                Level = "1",
+                SubsidiaryId = "S-2",
+                ProducerName = "P2",
+                TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { TotalProducerFeeWithBadDebtProvision = 70m }
+            }; 
+
+            var total = new CalcResultSummaryProducerDisposalFees
+            {
+                ProducerId = string.Empty,
+                ProducerIdInt = 0,
+                Level = string.Empty,
+                IsProducerScaledup = CommonConstants.Totals,
+                ProducerName = "Totals",
+                SubsidiaryId = string.Empty
+            };
+
+            var summary = new CalcResultSummary { ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { a, b, total } };
+
+            var invoiced = new List<ProducerInvoicedDto>
+                            {
+                                new()
+                                {
+                                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 1 },
+                                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 1, CurrentYearInvoicedTotalAfterThisRun = 20m }
+                                },
+                                new()
+                                {
+                                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 2 },
+                                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 2, CurrentYearInvoicedTotalAfterThisRun = 80m }
+                                }
+                            };
+
+            BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
+
+            var fees = summary.ProducerDisposalFees.ToList();
+            var totalsRow = fees[2].BillingInstructionSection!;
+            var d1 = Math.Round(50m, 2) - Math.Round(20m, 2);
+            var d2 = Math.Round(70m, 2) - Math.Round(80m, 2);
+            Assert.AreEqual(d1 + d2, totalsRow.LiabilityDifference);
+        }
+
+        [TestMethod]
+        public void GetLiabilityDifference_TotalsRowWithZeroRunningTotal_ReturnsNull()
+        {
+            var a = new CalcResultSummaryProducerDisposalFees
+            {
+                ProducerId = "1",
+                ProducerIdInt = 1,
+                Level = "1",
+                SubsidiaryId = "S-1",
+                ProducerName = "P1",
+                TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { TotalProducerFeeWithBadDebtProvision = 50m }
+            }; 
+
+            var b = new CalcResultSummaryProducerDisposalFees
+            {
+                ProducerId = "2",
+                ProducerIdInt = 2,
+                Level = "1",
+                SubsidiaryId = "S-2",
+                ProducerName = "P2",
+                TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { TotalProducerFeeWithBadDebtProvision = 20m }
+            }; 
+
+            var total = new CalcResultSummaryProducerDisposalFees
+            {
+                ProducerId = string.Empty,
+                ProducerIdInt = 0,
+                Level = string.Empty,
+                IsProducerScaledup = CommonConstants.Totals,
+                ProducerName = "Totals",
+                SubsidiaryId = string.Empty
+            };
+
+            var summary = new CalcResultSummary { ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { a, b, total } };
+
+            var invoiced = new List<ProducerInvoicedDto>
+                            {
+                                new()
+                                {
+                                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 1 },
+                                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 1, CurrentYearInvoicedTotalAfterThisRun = 20m }
+                                },
+                                new()
+                                {
+                                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 2 },
+                                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 2, CurrentYearInvoicedTotalAfterThisRun = 50m }
+                                }
+                            };
+
+            BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
+
+            var totalsRow = summary.ProducerDisposalFees.ToList()[2].BillingInstructionSection!;
+            Assert.IsNull(totalsRow.LiabilityDifference);
+        }
+
+
+        [TestMethod]
+        public void GetMaterialThresholdBreached_TotalsRow_ReturnsEmpty()
+        {
+            var total = new CalcResultSummaryProducerDisposalFees
+            {
+                ProducerId = string.Empty,
+                ProducerIdInt = 0,
+                Level = string.Empty,
+                IsProducerScaledup = CommonConstants.Totals,
+                ProducerName = "Totals",
+                SubsidiaryId = string.Empty
+            };
+
+            var summary = new CalcResultSummary { ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { total } };
+
+            BillingInstructionsProducer.SetValues(summary, new List<ProducerInvoicedDto>(), new List<DefaultParamResultsClass>());
+
+            Assert.AreEqual(string.Empty, summary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!.MaterialThresholdBreached);
+        }
+
+        [TestMethod]
+        public void GetMaterialThresholdBreached_NonLevel1_ReturnsHyphen()
+        {
+            var fee = new CalcResultSummaryProducerDisposalFees
+            {
+                ProducerId = "1",
+                ProducerIdInt = 1,
+                Level = "2",
+                SubsidiaryId = "S-1",
+                ProducerName = "P1",
+                TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { TotalProducerFeeWithBadDebtProvision = 100m }
+            };
+            var summary = new CalcResultSummary { ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
+
+            var invoiced = new List<ProducerInvoicedDto>
+                            {
+                                new()
+                                {
+                                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 1 },
+                                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 1, CurrentYearInvoicedTotalAfterThisRun = 90m }
+                                }
+                            };
+
+            BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
+
+            Assert.AreEqual("-", fee.BillingInstructionSection!.MaterialThresholdBreached);
+        }
+
+        [TestMethod]
+        public void GetMaterialThresholdBreached_NoLiabilityDifference_ReturnsHyphen()
+        {
+            var fee = new CalcResultSummaryProducerDisposalFees
+            {
+                ProducerId = "1",
+                ProducerIdInt = 1,
+                Level = "1",
+                SubsidiaryId = "S-1",
+                ProducerName = "P1"
+            };
+            var summary = new CalcResultSummary { ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
+
+            BillingInstructionsProducer.SetValues(
+                summary,
+                new List<ProducerInvoicedDto>
+                {
+                new()
+                {
+                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 1 },
+                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 1, CurrentYearInvoicedTotalAfterThisRun = 90m }
+                }
+                    },
+                    new List<DefaultParamResultsClass>
+                    {
+                new()
+                {
+                    ParameterUniqueReference = "MATT-AI",
+                    ParameterValue = 50m,
+                    ParameterCategory = "Amount Increase",
+                    ParameterType = "Materiality threshold"
+                },
+                new()
+                {
+                    ParameterUniqueReference = "MATT-AD",
+                    ParameterValue = -50m,
+                    ParameterCategory = "Amount Decrease",
+                    ParameterType = "Materiality threshold"
+                }
+                    });
+
+            Assert.AreEqual("-", fee.BillingInstructionSection!.MaterialThresholdBreached);
+        }
+
+        [TestMethod]
+        public void GetMaterialThresholdBreached_ParamsMissing_ReturnsHyphen()
+        {
+            var fee = new CalcResultSummaryProducerDisposalFees
+            {
+                ProducerId = "1",
+                ProducerIdInt = 1,
+                Level = "1",
+                SubsidiaryId = "S-1",
+                ProducerName = "P1",
+                TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { TotalProducerFeeWithBadDebtProvision = 200m }
+            };
+            var summary = new CalcResultSummary { ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
+
+            var invoiced = new List<ProducerInvoicedDto>
+                            {
+                                new()
+                                {
+                                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 1 },
+                                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 1, CurrentYearInvoicedTotalAfterThisRun = 100m }
+                                }
+                            };
+
+            BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>()); 
+            Assert.AreEqual("-", fee.BillingInstructionSection!.MaterialThresholdBreached);
+        }
+
+        [TestMethod]
+        public void GetMaterialThresholdBreached_DiffGreaterOrEqual_AI_ReturnsPosVe()
+        {
+            var fee = new CalcResultSummaryProducerDisposalFees
+            {
+                ProducerId = "1",
+                ProducerIdInt = 1,
+                Level = "1",
+                SubsidiaryId = "S-1",
+                ProducerName = "P1",
+                TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { TotalProducerFeeWithBadDebtProvision = 150m }
+            };
+            var summary = new CalcResultSummary { ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
+
+            var invoiced = new List<ProducerInvoicedDto>
+                            {
+                                new()
+                                {
+                                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 1 },
+                                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 1, CurrentYearInvoicedTotalAfterThisRun = 100m }
+                                }
+                            };
+
+                                    var dp = new List<DefaultParamResultsClass>
+                            {
+                                new()
+                                {
+                                    ParameterUniqueReference = "MATT-AI",
+                                    ParameterValue = 50m,
+                                    ParameterCategory = "Amount Increase",
+                                    ParameterType = "Materiality threshold"
+                                },
+                                new()
+                                {
+                                    ParameterUniqueReference = "MATT-AD",
+                                    ParameterValue = -50m,
+                                    ParameterCategory = "Amount Decrease",
+                                    ParameterType = "Materiality threshold"
+                                }
+                            };
+
+            BillingInstructionsProducer.SetValues(summary, invoiced, dp);
+            Assert.AreEqual("+ve", fee.BillingInstructionSection!.MaterialThresholdBreached);
+        }
+
+        [TestMethod]
+        public void GetMaterialThresholdBreached_DiffLessOrEqual_AD_ReturnsNegVe()
+        {
+            var fee = new CalcResultSummaryProducerDisposalFees
+            {
+                ProducerId = "1",
+                ProducerIdInt = 1,
+                Level = "1",
+                SubsidiaryId = "S-1",
+                ProducerName = "P1",
+                TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { TotalProducerFeeWithBadDebtProvision = 40m }
+            };
+            var summary = new CalcResultSummary { ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
+
+            var invoiced = new List<ProducerInvoicedDto>
+                                {
+                                    new()
+                                    {
+                                        InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 1 },
+                                        InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 1, CurrentYearInvoicedTotalAfterThisRun = 100m }
+                                    }
+                                };
+
+                                        var dp = new List<DefaultParamResultsClass>
+                                {
+                                    new()
+                                    {
+                                        ParameterUniqueReference = "MATT-AI",
+                                        ParameterValue = 50m,
+                                        ParameterCategory = "Amount Increase",
+                                        ParameterType = "Materiality threshold"
+                                    },
+                                    new()
+                                    {
+                                        ParameterUniqueReference = "MATT-AD",
+                                        ParameterValue = -50m,
+                                        ParameterCategory = "Amount Decrease",
+                                        ParameterType = "Materiality threshold"
+                                    }
+                                };
+
+            BillingInstructionsProducer.SetValues(summary, invoiced, dp);
+            Assert.AreEqual("-ve", fee.BillingInstructionSection!.MaterialThresholdBreached);
+        }
+
+        [TestMethod]
+        public void GetMaterialThresholdBreached_DiffBetweenThresholds_ReturnsHyphen()
+        {
+            var fee = new CalcResultSummaryProducerDisposalFees
+            {
+                ProducerId = "1",
+                ProducerIdInt = 1,
+                Level = "1",
+                SubsidiaryId = "S-1",
+                ProducerName = "P1",
+                TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { TotalProducerFeeWithBadDebtProvision = 115m }
+            };
+            var summary = new CalcResultSummary { ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
+
+            var invoiced = new List<ProducerInvoicedDto>
+                                    {
+                                        new()
+                                        {
+                                            InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 1 },
+                                            InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 1, CurrentYearInvoicedTotalAfterThisRun = 100m }
+                                        }
+                                    };
+
+                                            var dp = new List<DefaultParamResultsClass>
+                                    {
+                                        new()
+                                        {
+                                            ParameterUniqueReference = "MATT-AI",
+                                            ParameterValue = 50m,
+                                            ParameterCategory = "Amount Increase",
+                                            ParameterType = "Materiality threshold"
+                                        },
+                                        new()
+                                        {
+                                            ParameterUniqueReference = "MATT-AD",
+                                            ParameterValue = -50m,
+                                            ParameterType = "Materiality threshold",
+                                            ParameterCategory = "Amount Decrease"
+                                        }
+                                    };
+
+            BillingInstructionsProducer.SetValues(summary, invoiced, dp);
+            Assert.AreEqual("-", fee.BillingInstructionSection!.MaterialThresholdBreached);
+        }
+
+        [TestMethod]
+        public void GetTonnageThresholdBreached_NoChange_ReturnsHyphen()
+        {
+            var fee = new CalcResultSummaryProducerDisposalFees
+            {
+                ProducerId = "1",
+                ProducerIdInt = 1,
+                Level = "1",
+                SubsidiaryId = "S-1",
+                ProducerName = "P1",
+                TonnageChangeAdvice = "NOCHANGE",
+                TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { TotalProducerFeeWithBadDebtProvision = 200m }
+            };
+            var summary = new CalcResultSummary { ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
+
+            var invoiced = new List<ProducerInvoicedDto>
+                                {
+                                    new()
+                                    {
+                                        InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 1 },
+                                        InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 1, CurrentYearInvoicedTotalAfterThisRun = 100m }
+                                    }
+                                };
+
+            var dp = new List<DefaultParamResultsClass>
+                        {
+                            new()
+                            {
+                                ParameterUniqueReference = "TONT-AI",
+                                ParameterValue = 50m,
+                                ParameterCategory = "Amount Increase",
+                                ParameterType = "Tonnage change threshold"
+                            },
+                            new()
+                            {
+                                ParameterUniqueReference = "TONT-AD",
+                                ParameterValue = -50m,
+                                ParameterCategory = "Amount Decrease",
+                                ParameterType = "Tonnage change threshold"
+                            }
+                        };
+
+            BillingInstructionsProducer.SetValues(summary, invoiced, dp);
+            Assert.AreEqual("-", fee.BillingInstructionSection!.TonnageThresholdBreached);
+        }
+
+        [TestMethod]
+        public void GetTonnageThresholdBreached_Change_ParamsMissing_ReturnsHyphen()
+        {
+            var fee = new CalcResultSummaryProducerDisposalFees
+            {
+                ProducerId = "1",
+                ProducerIdInt = 1,
+                Level = "1",
+                SubsidiaryId = "S-1",
+                ProducerName = "P1",
+                TonnageChangeAdvice = "CHANGE",
+                TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { TotalProducerFeeWithBadDebtProvision = 200m }
+            };
+            var summary = new CalcResultSummary { ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
+
+            var invoiced = new List<ProducerInvoicedDto>
+                            {
+                                new()
+                                {
+                                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 1 },
+                                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 1, CurrentYearInvoicedTotalAfterThisRun = 100m }
+                                }
+                            };
+
+            BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
+            Assert.AreEqual("-", fee.BillingInstructionSection!.TonnageThresholdBreached);
+        }
+
+        [TestMethod]
+        public void GetTonnageThresholdBreached_Change_DiffGreaterOrEqual_AI_ReturnsPosVe()
+        {
+            var fee = new CalcResultSummaryProducerDisposalFees
+            {
+                ProducerId = "1",
+                ProducerIdInt = 1,
+                Level = "1",
+                SubsidiaryId = "S-1",
+                ProducerName = "P1",
+                TonnageChangeAdvice = "CHANGE",
+                TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { TotalProducerFeeWithBadDebtProvision = 160m }
+            };
+            var summary = new CalcResultSummary { ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
+
+            var invoiced = new List<ProducerInvoicedDto>
+                            {
+                                new()
+                                {
+                                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 1 },
+                                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 1, CurrentYearInvoicedTotalAfterThisRun = 100m }
+                                }
+                            };
+
+                             var dp = new List<DefaultParamResultsClass>
+                            {
+                                new()
+                                {
+                                    ParameterUniqueReference = "TONT-AI",
+                                    ParameterValue = 50m,
+                                    ParameterCategory = "Amount Increase",
+                                    ParameterType = "Tonnage change threshold"
+                                },
+                                new()
+                                {
+                                    ParameterUniqueReference = "TONT-AD",
+                                    ParameterValue = -50m,
+                                    ParameterCategory = "Amount Decrease",
+                                    ParameterType = "Tonnage change threshold"
+                                }
+                            };
+
+            BillingInstructionsProducer.SetValues(summary, invoiced, dp);
+            Assert.AreEqual("+ve", fee.BillingInstructionSection!.TonnageThresholdBreached);
+        }
+
+        [TestMethod]
+        public void GetTonnageThresholdBreached_Change_DiffLessOrEqual_AD_ReturnsNegVe()
+        {
+            var fee = new CalcResultSummaryProducerDisposalFees
+            {
+                ProducerId = "1",
+                ProducerIdInt = 1,
+                Level = "1",
+                SubsidiaryId = "S-1",
+                ProducerName = "P1",
+                TonnageChangeAdvice = "CHANGE",
+                TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { TotalProducerFeeWithBadDebtProvision = 40m }
+            };
+            var summary = new CalcResultSummary { ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
+
+            var invoiced = new List<ProducerInvoicedDto>
+                            {
+                                new()
+                                {
+                                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 1 },
+                                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 1, CurrentYearInvoicedTotalAfterThisRun = 100m }
+                                }
+                            };
+
+                                    var dp = new List<DefaultParamResultsClass>
+                            {
+                                new()
+                                {
+                                    ParameterUniqueReference = "TONT-AI",
+                                    ParameterValue = 50m,
+                                    ParameterCategory = "Amount Increase",
+                                    ParameterType = "Tonnage change threshold"
+                                },
+                                new()
+                                {
+                                    ParameterUniqueReference = "TONT-AD",
+                                    ParameterValue = -50m,
+                                    ParameterCategory = "Amount Decrease",
+                                    ParameterType = "Tonnage change threshold"
+                                }
+                            };
+
+            BillingInstructionsProducer.SetValues(summary, invoiced, dp);
+            Assert.AreEqual("-ve", fee.BillingInstructionSection!.TonnageThresholdBreached);
+        }
+
+        [TestMethod]
+        public void GetTonnageThresholdBreached_Change_DiffBetweenThresholds_ReturnsHyphen()
+        {
+            var fee = new CalcResultSummaryProducerDisposalFees
+            {
+                ProducerId = "1",
+                ProducerIdInt = 1,
+                Level = "1",
+                SubsidiaryId = "S-1",
+                ProducerName = "P1",
+                TonnageChangeAdvice = "CHANGE",
+                TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { TotalProducerFeeWithBadDebtProvision = 110m }
+            };
+            var summary = new CalcResultSummary { ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
+
+            var invoiced = new List<ProducerInvoicedDto>
+                            {
+                                new()
+                                {
+                                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 1 },
+                                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 1, CurrentYearInvoicedTotalAfterThisRun = 100m }
+                                }
+                            };
+
+                                    var dp = new List<DefaultParamResultsClass>
+                            {
+                                new()
+                                {
+                                    ParameterUniqueReference = "TONT-AI",
+                                    ParameterValue = 50m,
+                                    ParameterCategory = "Amount Increase",
+                                    ParameterType = "Tonnage change threshold"
+                                },
+                                new()
+                                {
+                                    ParameterUniqueReference = "TONT-AD",
+                                    ParameterValue = -50m,
+                                    ParameterCategory = "Amount Decrease",
+                                    ParameterType = "Tonnage change threshold"
+                                }
+                            };
+
+            BillingInstructionsProducer.SetValues(summary, invoiced, dp);
+            Assert.AreEqual("-", fee.BillingInstructionSection!.TonnageThresholdBreached);
         }
 
         /// <summary>
