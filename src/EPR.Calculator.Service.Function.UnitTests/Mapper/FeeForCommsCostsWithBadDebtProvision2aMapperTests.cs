@@ -58,14 +58,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 
             //Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(result.TotalProducerFeeForCommsCostsWithoutBadDebtProvision, CurrencyConverter.ConvertToCurrency(0));
-            Assert.AreEqual(result.BadDebtProvisionFor2a, CurrencyConverter.ConvertToCurrency(0));
-            Assert.AreEqual(result.TotalProducerFeeForCommsCostsWithBadDebtProvision, CurrencyConverter.ConvertToCurrency(0));
-            Assert.AreEqual(result.EnglandTotalWithBadDebtProvision, CurrencyConverter.ConvertToCurrency(0));
-            Assert.AreEqual(result.WalesTotalWithBadDebtProvision, CurrencyConverter.ConvertToCurrency(0));
-            Assert.AreEqual(result.ScotlandTotalWithBadDebtProvision, CurrencyConverter.ConvertToCurrency(0));
-            Assert.AreEqual(result.NorthernIrelandTotalWithBadDebtProvision, CurrencyConverter.ConvertToCurrency(0));
-            Assert.AreEqual(result.PercentageOfProducerTonnageVsAllProducers, "0%");
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(0), result.TotalProducerFeeForCommsCostsWithoutBadDebtProvision);
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(0), result.BadDebtProvisionFor2a);
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(0), result.TotalProducerFeeForCommsCostsWithBadDebtProvision);
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(0), result.EnglandTotalWithBadDebtProvision);
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(0), result.WalesTotalWithBadDebtProvision);
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(0), result.ScotlandTotalWithBadDebtProvision);
+            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(0), result.NorthernIrelandTotalWithBadDebtProvision);
+            Assert.AreEqual("0%", result.PercentageOfProducerTonnageVsAllProducers);
         }
     }
 }
