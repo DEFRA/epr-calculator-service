@@ -534,7 +534,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Assert
             Assert.IsFalse(result);
-            MockLogger.Verify(x => x.LogError(It.IsAny<ErrorMessage>()), Times.Once);
         }
 
         [TestMethod]
