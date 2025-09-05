@@ -252,12 +252,7 @@
                             Id = 22,
                             CurrentYearInvoicedTotalAfterThisRun = 20.00m
                         },
-                     CalculatorRun = new CalculatorRun
-                        {
-                             Name="Test",
-                             Financial_Year = new CalculatorRunFinancialYear { Name="2025-26" },
-                             Id = 22
-                        },
+                     CalculatorRunId = 101
                 }
             };
 
