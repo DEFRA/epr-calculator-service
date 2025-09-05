@@ -744,12 +744,7 @@
                         ProducerId = producerParent.ProducerId,
                         // set whatever fields your code reads in CanAddTotalRow or elsewhere
                     },
-                    CalculatorRun = new CalculatorRun
-                    {
-                        Id              = 101,
-                        Name            = "Test",
-                        Financial_Year  = new CalculatorRunFinancialYear { Name = "2025-26" }
-                    }
+                    CalculatorRunId = 101
                 }
             };
 
