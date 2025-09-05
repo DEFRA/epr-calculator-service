@@ -776,7 +776,7 @@
                     {
                         CurrentYearInvoiceTotalToDate = 1250.89m,
                         TonnageChangeSinceLastInvoice = "Tonnage Changed",
-                        LiabilityDifference = "580.73",
+                        LiabilityDifference = 580.73m,
                         MaterialThresholdBreached = string.Empty,
                         TonnageThresholdBreached = string.Empty,
                         PercentageLiabilityDifference = string.Empty,
@@ -903,7 +903,7 @@
                     {
                         CurrentYearInvoiceTotalToDate = null,
                         TonnageChangeSinceLastInvoice = null,
-                        LiabilityDifference = "580.73",
+                        LiabilityDifference = 580.73m,
                         MaterialThresholdBreached = string.Empty,
                         TonnageThresholdBreached = string.Empty,
                         PercentageLiabilityDifference = string.Empty,

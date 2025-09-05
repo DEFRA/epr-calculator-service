@@ -16,7 +16,7 @@ namespace EPR.Calculator.Service.Function.Mapper
             {
                 CurrentYearInvoicedTotalToDate = costs!.CurrentYearInvoiceTotalToDate!,
                 TonnageChangeSinceLastInvoice = costs.TonnageChangeSinceLastInvoice ?? string.Empty,
-                LiabilityDifferenceCalcVsPrev = GetFormattedCurrencyValue(costs.LiabilityDifference!),
+                LiabilityDifferenceCalcVsPrev = costs.LiabilityDifference,
                 MaterialThresholdBreached = costs.MaterialThresholdBreached ?? string.Empty,
                 TonnageThresholdBreached = costs.TonnageThresholdBreached ?? string.Empty,
                 PercentageLiabilityDifferenceCalcVsPrev = GetPercentageLiabilityDifference(costs.PercentageLiabilityDifference!),

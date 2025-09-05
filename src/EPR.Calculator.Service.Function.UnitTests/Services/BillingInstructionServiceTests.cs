@@ -100,7 +100,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                             {
                                 CurrentYearInvoiceTotalToDate = 1000m,
                                 TonnageChangeSinceLastInvoice = "Tonnage Changed",
-                                LiabilityDifference = "-200",
+                                LiabilityDifference = -200,
                                 MaterialThresholdBreached = "-ve",
                                 TonnageThresholdBreached = "-ve",
                                 PercentageLiabilityDifference = "10.05",

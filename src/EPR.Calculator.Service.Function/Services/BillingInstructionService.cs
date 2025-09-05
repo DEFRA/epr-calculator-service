@@ -53,7 +53,7 @@ namespace EPR.Calculator.Service.Function.Services
                             TotalProducerBillWithBadDebt = producer.TotalProducerBillBreakdownCosts!.TotalProducerFeeWithBadDebtProvision,
                             CurrentYearInvoiceTotalToDate = billingInstructionSection.CurrentYearInvoiceTotalToDate,
                             TonnageChangeSinceLastInvoice = GetStringValue(billingInstructionSection.TonnageChangeSinceLastInvoice!),
-                            AmountLiabilityDifferenceCalcVsPrev = GetValue(billingInstructionSection.LiabilityDifference!),
+                            AmountLiabilityDifferenceCalcVsPrev = billingInstructionSection.LiabilityDifference!,
                             MaterialPoundThresholdBreached = GetStringValue(billingInstructionSection.MaterialThresholdBreached!),
                             TonnagePoundThresholdBreached = GetStringValue(billingInstructionSection.TonnageThresholdBreached!),
                             PercentageLiabilityDifferenceCalcVsPrev = GetValue(billingInstructionSection.PercentageLiabilityDifference!),
