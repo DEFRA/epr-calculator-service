@@ -65,7 +65,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             var orderedProducerDetails = GetOrderedListOfProducersAssociatedRunId(
                 runId, producerDetails);
 
-            var producerInvoicedMaterialNetTonnage = GetPreviousInvoicedTonnage(resultsRequestDto.FinancialYear);
+            var producerInvoicedMaterialNetTonnage = GetPreviousInvoicedTonnageFromDb(resultsRequestDto.FinancialYear);
 
 
             var defaultParams = await (from run in this.context.CalculatorRuns.AsNoTracking()
@@ -447,7 +447,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             return result;
         }
 
-        public IEnumerable<ProducerInvoicedDto> GetPreviousInvoicedTonnage(string financialYear)
+        public IEnumerable<ProducerInvoicedDto> GetPreviousInvoicedTonnageFromDb(string financialYear)
         {
             var previousInvoicedNetTonnage =
                         (from calc in context.CalculatorRuns
@@ -471,12 +471,12 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                             return new ProducerInvoicedDto
                             {
                                 InvoicedTonnage = latest.t,
-                                CalculatorRun = latest.calc,
+                                CalculatorRunId = latest.calc.Id,
                                 InvoiceInstruction = latest.p
                             };
                         })
-                        .OrderBy(x => x.InvoicedTonnage?.Id)
-                        .ThenBy(x => x.InvoicedTonnage?.ProducerId)
+                        .OrderBy(x => x.InvoicedTonnage?.ProducerId)
+                        .ThenBy(x => x.InvoicedTonnage?.MaterialId)
                         .ToList();
 
 
