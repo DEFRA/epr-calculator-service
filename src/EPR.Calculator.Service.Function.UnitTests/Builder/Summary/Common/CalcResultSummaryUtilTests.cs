@@ -611,6 +611,22 @@
         }
 
         [TestMethod]
+        public void CanGetProducerDisposalFeeWithBadDebtProvisionProducerTotalZero()
+        {
+            // Arrange
+            var producers = TestDataHelper.GetProducers();
+            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
+
+            this.calcResult.CalcResultParameterOtherCost.BadDebtProvision = new KeyValuePair<string, string>("6 Bad Debt Provision", "-%");
+            // Act
+            var result = CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvisionProducerTotal(producers, material, this.calcResult, scaledupProducers);
+
+            // Assert
+            Assert.AreEqual(0, result);
+        }
+
+        [TestMethod]
         public void CanGetProducerDisposalFeeWithBadDebtProvisionOverallTotal()
         {
             // Arrange
@@ -638,6 +654,22 @@
 
             // Assert
             Assert.AreEqual(374.8295162135948480m, result);
+        }
+
+        [TestMethod]
+        public void CanGetDefaultBadDebtProvision()
+        {
+            // Arrange
+            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
+            var producerAndSubsidiaries = TestDataHelper.GetProducers();
+            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
+
+            // Act
+            var result = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, producerAndSubsidiaries, material, this.calcResult, (Countries)(-1), scaledupProducers);
+
+            // Assert
+            Assert.AreEqual(0, result);
         }
 
         [TestMethod]
@@ -1048,6 +1080,16 @@
 
             // Assert
             Assert.AreEqual(0.15m, result);
+        }
+
+        [TestMethod]
+        public void CanGetDefaultOnePlusFourApportionment()
+        {
+            // Act
+            var result = CalcResultSummaryUtil.GetCountryOnePlusFourApportionment(this.calcResult, (Countries)(-1));
+
+            // Assert
+            Assert.AreEqual(0, result);
         }
 
         [TestMethod]
