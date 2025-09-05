@@ -32,6 +32,6 @@
 
         public decimal? PreviousInvoicedTonnage { get; set; }
 
-        public string TonnageChange { get; set; }
+        public decimal? TonnageChange { get; set; }
     }
 }

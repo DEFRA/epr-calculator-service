@@ -79,7 +79,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
                         ManagedConsumerWasteTonnage = 5.11111m,
                         NetReportedTonnage = 6.22222m,
                         PreviousInvoicedTonnage = 0,
-                        TonnageChange = "0",
+                        TonnageChange = 0,
                     }
                 }
             };
