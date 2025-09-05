@@ -1,4 +1,5 @@
-﻿using EPR.Calculator.Service.Function.Constants;
+﻿using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
 using System;
 using System.Collections.Generic;
@@ -35,13 +36,21 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
             ];
         }
 
-        public static void SetValues(CalcResultSummary result)
+        public static void SetValues(CalcResultSummary result, IEnumerable<ProducerInvoicedDto> ProducerInvoicedMaterialNetTonnage)
         {
+            decimal totalTonnage = 0;
             foreach (var fee in result.ProducerDisposalFees)
             {
+                var currentYearInvoicedTotalTonnage = ProducerInvoicedMaterialNetTonnage
+                                                    .Where(x => x.InvoicedTonnage!.ProducerId.ToString() == fee.ProducerId)
+                                                    .Select(y => y.InvoiceInstruction!.CurrentYearInvoicedTotalAfterThisRun)
+                                                    .FirstOrDefault() ?? 0;
+
+                totalTonnage += currentYearInvoicedTotalTonnage;
+
                 fee.BillingInstructionSection = new CalcResultSummaryBillingInstruction
                 {
-                    CurrentYearInvoiceTotalToDate = GetCurrentYearInvoicedTotalToDate(fee),
+                    CurrentYearInvoiceTotalToDate = GetCurrentYearInvoicedTotalToDate(fee, currentYearInvoicedTotalTonnage, totalTonnage),
                     TonnageChangeSinceLastInvoice = GetTonnageChangeSinceLastInvoice(fee),
                     LiabilityDifference = GetLiabilityDifference(fee),
                     MaterialThresholdBreached = GetMaterialThresholdBreached(fee),
@@ -55,18 +64,34 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
             }
         }
 
-        private static string GetCurrentYearInvoicedTotalToDate(CalcResultSummaryProducerDisposalFees fee)
+        private static decimal? GetCurrentYearInvoicedTotalToDate(CalcResultSummaryProducerDisposalFees fee, decimal? currentYearInvoicedTotalTonnage, decimal totalTonnage)
         {
-            return fee.IsProducerScaledup == CommonConstants.Totals
-                ? CommonConstants.ZeroCurrency
-                : CommonConstants.Hyphen;
+            decimal? result;
+
+            if (fee.IsProducerScaledup == CommonConstants.Totals)
+            {
+                result = totalTonnage;
+            }
+            else if (fee.Level == "1")
+            {
+                result = currentYearInvoicedTotalTonnage;
+            }
+            else
+            {
+                result = null;
+            }
+
+            return result;
         }
 
-        private static string GetTonnageChangeSinceLastInvoice(CalcResultSummaryProducerDisposalFees fee)
+        private static string? GetTonnageChangeSinceLastInvoice(CalcResultSummaryProducerDisposalFees fee)
         {
-            return fee.IsProducerScaledup == CommonConstants.Totals
-                ? string.Empty
-                : CommonConstants.Hyphen;
+            if (fee.IsProducerScaledup == CommonConstants.Totals)
+                return string.Empty;
+            else if (fee.TonnageChangeAdvice == "CHANGE")
+                return "Tonnage Changed";
+            else
+                return null;
         }
 
         private static string GetLiabilityDifference(CalcResultSummaryProducerDisposalFees fee)

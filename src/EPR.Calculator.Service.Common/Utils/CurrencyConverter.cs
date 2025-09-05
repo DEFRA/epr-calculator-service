@@ -47,5 +47,17 @@ namespace EPR.Calculator.Service.Common.Utils
             culture.NumberFormat.CurrencyGroupSeparator = string.Empty;
             return decimalValue.ToString($"C{precision}", culture);
         }
+
+        /// <summary>
+        /// Converts a decimal input to GBP currency format (e.g., £12.3456) if valid.
+        /// Returns an '-' if input is null.
+        /// </summary>
+        public static string FormattedCurrencyValue(decimal? value)
+        {
+            if (value == null)
+                return "-";
+
+            return ConvertToCurrency(value.Value);
+        }
     }
 }
