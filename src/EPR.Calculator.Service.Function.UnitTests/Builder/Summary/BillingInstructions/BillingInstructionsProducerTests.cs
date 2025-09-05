@@ -251,17 +251,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
                         Id = 22
                     },
                     InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction
-                    {
-                        ProducerId = 1,
-                        Id = 22,
-                        CurrentYearInvoicedTotalAfterThisRun = 20.00m
-                    },
-                    CalculatorRun = new CalculatorRun
-                    {
-                        Name = "Test",
-                        Financial_Year = new CalculatorRunFinancialYear { Name = "2025-26" },
-                        Id = 22
-                    }
+                        {
+                            ProducerId = 1,
+                            Id = 22,
+                            CurrentYearInvoicedTotalAfterThisRun = 20.00m
+                        },
+                     CalculatorRunId = 101
                 }
             };
 
