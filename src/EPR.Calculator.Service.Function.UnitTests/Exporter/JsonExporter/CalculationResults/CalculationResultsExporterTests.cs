@@ -160,7 +160,7 @@
             var expected = producer.ProducerDisposalFeesByMaterial.First();
 
             decimal? actualValue = 0;
-            if(actual["previousInvoicedTonnage"]?.ToString() == "")
+            if(actual["previousInvoicedTonnage"]?.ToString() == "-")
             {
                 actualValue = null;
             }

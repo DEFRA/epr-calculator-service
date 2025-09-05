@@ -622,7 +622,7 @@
             var financialYear = "2024-25";
 
             // Act
-            var result = calcResultsService.GetPreviousInvoicedTonnage(financialYear);
+            var result = calcResultsService.GetPreviousInvoicedTonnageFromDb(financialYear);
 
             // Assert
             Assert.IsNotNull(result);
@@ -644,7 +644,7 @@
 
             var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, 1);
 
-            var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnage("2024-25");
+            var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb("2024-25");
 
             var result = new CalcResultSummaryBuilder(this.context).GetCalcResultSummary(orderedProducerDetails, materials, this.calcResult, totalPackagingTonnage, producerInvoicedMaterialNetTonnage);
 
