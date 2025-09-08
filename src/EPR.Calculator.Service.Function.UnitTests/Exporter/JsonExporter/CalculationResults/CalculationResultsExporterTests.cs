@@ -171,7 +171,13 @@
             Assert.AreEqual(expected.Value.TotalReportedTonnage, actual["totalTonnage"]!.GetValue<decimal>());
             Assert.AreEqual(expected.Value.ManagedConsumerWasteTonnage, actual["selfManagedConsumerWasteTonnage"]!.GetValue<decimal>());
             Assert.AreEqual(expected.Value.NetReportedTonnage, actual["netTonnage"]!.GetValue<decimal>());
-            Assert.AreEqual(expected.Value.TonnageChange, actual["tonnageChange"]!.ToString());
+
+            var actualPrev = ReadNullableDecimal(actual, "previousInvoicedTonnage");
+            Assert.AreEqual(expected.Value.PreviousInvoicedTonnage, actualPrev);
+
+            var actualChange = ReadNullableDecimal(actual, "tonnageChange");
+            Assert.AreEqual(expected.Value.TonnageChange, actualChange);
+
             Assert.AreEqual(CurrencyConverter.ConvertToCurrency(expected.Value.PricePerTonne, 4), actual["pricePerTonne"]!.GetValue<string>());
             Assert.AreEqual(CurrencyConverter.ConvertToCurrency(expected.Value.ProducerDisposalFee), actual["producerDisposalFeeWithoutBadDebtProvision"]!.GetValue<string>());
             Assert.AreEqual(CurrencyConverter.ConvertToCurrency(expected.Value.BadDebtProvision), actual["badDebtProvision"]!.GetValue<string>());
@@ -651,6 +657,21 @@
 
             // Main Fields
             AssertAreEqual(producer.ProducerId, calculationResult["producerID"]);
-        }        
+        }
+
+        private static decimal? ReadNullableDecimal(JsonNode obj, string prop)
+        {
+            var n = obj[prop];
+            if (n is null) return null;
+
+            // exporter may emit numbers or strings ("-" for null)
+            var s = n.ToString();
+            if (string.Equals(s, "-", StringComparison.Ordinal)) return null;
+
+            return decimal.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out var d)
+                ? d
+                : null;
+        }
+
     }
 }
