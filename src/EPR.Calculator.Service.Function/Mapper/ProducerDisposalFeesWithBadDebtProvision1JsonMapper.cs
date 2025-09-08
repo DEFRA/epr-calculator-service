@@ -40,7 +40,7 @@
                     TotalTonnage = producerTonnage.Value.TotalReportedTonnage,
                     SelfManagedConsumerWasteTonnage = producerTonnage.Value.ManagedConsumerWasteTonnage,
                     NetTonnage = producerTonnage.Value.NetReportedTonnage,
-                    TonnageChange = GetPreviousInvoicedTonnage(level),
+                    TonnageChange = level == "1" ? (producerTonnage.Value.TonnageChange?.ToString() ?? CommonConstants.Hyphen) : CommonConstants.Hyphen,
                     PricePerTonne = CurrencyConverter.ConvertToCurrency(producerTonnage.Value.PricePerTonne, 4),
                     ProducerDisposalFeeWithoutBadDebtProvision = CurrencyConverter.ConvertToCurrency(producerTonnage.Value.ProducerDisposalFee),
                     BadDebtProvision = CurrencyConverter.ConvertToCurrency(producerTonnage.Value.BadDebtProvision),
@@ -59,13 +59,6 @@
             }
 
             return materialBreakdown;
-        }
-
-        private static string GetPreviousInvoicedTonnage(string level)
-        {
-            return level == CommonConstants.LevelOne.ToString()
-                ? CommonConstants.DefaultMinValue.ToString()
-                : CommonConstants.Hyphen;
         }
     }
 }
