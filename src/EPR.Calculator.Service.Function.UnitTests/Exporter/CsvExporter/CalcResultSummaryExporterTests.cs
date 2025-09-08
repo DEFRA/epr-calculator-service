@@ -135,6 +135,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             // Assert
             Assert.AreEqual(302, results.Length);
         }
+        public void CanCallAddNewRow_TonnageValueNull()
+        {
+            // Arrange
+            var csvContent = new StringBuilder();
+            var producer = TestDataHelper.GetProducerDisposalFeesTonnageValueNull()[0];
+
+            // Act
+            _testClass.AddNewRow(csvContent, producer);
+            var results = csvContent.ToString().Split(",");
+
+            // Assert
+            Assert.AreEqual(302, results.Length);
+        }
 
         [TestMethod]
         public void CanCallExport()
