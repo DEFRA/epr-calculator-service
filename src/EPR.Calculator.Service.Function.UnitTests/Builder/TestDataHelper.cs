@@ -1034,7 +1034,7 @@
                         LiabilityDifference = 580.73m,
                         MaterialThresholdBreached = string.Empty,
                         TonnageThresholdBreached = string.Empty,
-                        PercentageLiabilityDifference = string.Empty,
+                        PercentageLiabilityDifference = null,
                         MaterialPercentageThresholdBreached = string.Empty,
                         TonnagePercentageThresholdBreached = string.Empty,
                         SuggestedBillingInstruction = string.Empty,
