@@ -56,7 +56,7 @@ namespace EPR.Calculator.Service.Function.Services
                             AmountLiabilityDifferenceCalcVsPrev = billingInstructionSection.LiabilityDifference!,
                             MaterialPoundThresholdBreached = GetStringValue(billingInstructionSection.MaterialThresholdBreached!),
                             TonnagePoundThresholdBreached = GetStringValue(billingInstructionSection.TonnageThresholdBreached!),
-                            PercentageLiabilityDifferenceCalcVsPrev = GetValue(billingInstructionSection.PercentageLiabilityDifference!),
+                            PercentageLiabilityDifferenceCalcVsPrev = billingInstructionSection.PercentageLiabilityDifference!,
                             MaterialPercentageThresholdBreached = GetStringValue(billingInstructionSection.MaterialPercentageThresholdBreached!),
                             TonnagePercentageThresholdBreached = GetStringValue(billingInstructionSection.TonnagePercentageThresholdBreached!),
                             SuggestedBillingInstruction = billingInstructionSection.SuggestedBillingInstruction!,

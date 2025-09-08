@@ -67,5 +67,9 @@
         public const string RunName = "Run Name";
         public const string BillingInstructionId = "Billing Instruction ID";
         public const string TwoACommsCostsbyMaterial = "2a Comms Costs - by Material";
+
+        public const string TonnageChanged = "Tonnage Changed";
+        public const string Positive = "+ve";
+        public const string Negative = "-ve";
     }
 }
