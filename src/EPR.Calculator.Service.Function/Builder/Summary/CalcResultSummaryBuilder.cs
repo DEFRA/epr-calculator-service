@@ -66,21 +66,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 runId, producerDetails);
 
             var producerInvoicedMaterialNetTonnage = GetPreviousInvoicedTonnageFromDb(resultsRequestDto.FinancialYear);
-
-
-            var defaultParams = await (from run in this.context.CalculatorRuns.AsNoTracking()
-                                       join defaultMaster in this.context.DefaultParameterSettings.AsNoTracking() on run.DefaultParameterSettingMasterId equals defaultMaster.Id
-                                       join defaultDetail in this.context.DefaultParameterSettingDetail.AsNoTracking() on defaultMaster.Id equals defaultDetail.DefaultParameterSettingMasterId
-                                       join defaultTemplate in this.context.DefaultParameterTemplateMasterList.AsNoTracking() on defaultDetail.ParameterUniqueReferenceId equals defaultTemplate.ParameterUniqueReferenceId
-                                       where run.Id == resultsRequestDto.RunId
-                                       select new DefaultParamResultsClass
-                                       {
-                                           ParameterValue = defaultDetail.ParameterValue,
-                                           ParameterCategory = defaultTemplate.ParameterCategory,
-                                           ParameterType = defaultTemplate.ParameterType,
-                                           ParameterUniqueReference = defaultDetail.ParameterUniqueReferenceId
-                                       }).ToListAsync();
-
+            
+            var defaultParams = await GetDefaultParamsAsync(resultsRequestDto.RunId);
 
             // Household + PublicBin + HDC
             var totalPackagingTonnage = GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, runId);
@@ -107,6 +94,23 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
             return result;
         }
+
+        private Task<List<DefaultParamResultsClass>> GetDefaultParamsAsync(int runId)
+        {
+            return (from run in this.context.CalculatorRuns.AsNoTracking()
+                join defaultMaster in this.context.DefaultParameterSettings.AsNoTracking() on run.DefaultParameterSettingMasterId equals defaultMaster.Id
+                join defaultDetail in this.context.DefaultParameterSettingDetail.AsNoTracking() on defaultMaster.Id equals defaultDetail.DefaultParameterSettingMasterId
+                join defaultTemplate in this.context.DefaultParameterTemplateMasterList.AsNoTracking() on defaultDetail.ParameterUniqueReferenceId equals defaultTemplate.ParameterUniqueReferenceId
+                where run.Id == runId
+                    select new DefaultParamResultsClass
+                {
+                    ParameterValue = defaultDetail.ParameterValue,
+                    ParameterCategory = defaultTemplate.ParameterCategory,
+                    ParameterType = defaultTemplate.ParameterType,
+                    ParameterUniqueReference = defaultDetail.ParameterUniqueReferenceId
+                }).ToListAsync();
+        }
+
 
         public CalcResultSummary GetCalcResultSummary(IEnumerable<ProducerDetail> orderedProducerDetails,
             IEnumerable<MaterialDetail> materials,
