@@ -334,20 +334,24 @@
             var billingFileMetadata = new CalculatorRunBillingFileMetadata
             {
                 BillingCsvFileName = billingFileCsvName.ToString(),
-                BillingFileCreatedBy = resultsRequestDto.ApprovedBy,
+                BillingFileCreatedBy = resultsRequestDto.ApprovedBy?? "SystemUser",
                 CalculatorRunId = resultsRequestDto.RunId,
                 BillingFileCreatedDate = DateTime.UtcNow,
                 BillingJsonFileName = billingFileJsonName.ToString(),
             };
 
-            this.Context.CalculatorRunBillingFileMetadata.Add(billingFileMetadata);
+            try
+            {
+                this.Context.CalculatorRunBillingFileMetadata.Add(billingFileMetadata);
 
-            var csvFileMetaData = new CalculatorRunCsvFileMetadata
-            { BlobUri = csvBlobUri, CalculatorRunId = resultsRequestDto.RunId, FileName = billingFileCsvName };
+                var csvFileMetaData = new CalculatorRunCsvFileMetadata
+                { BlobUri = csvBlobUri, CalculatorRunId = resultsRequestDto.RunId, FileName = billingFileCsvName };
 
-            this.Context.CalculatorRunCsvFileMetadata.Add(csvFileMetaData);
+                this.Context.CalculatorRunCsvFileMetadata.Add(csvFileMetaData);
 
-            await this.Context.SaveChangesAsync();
+                await this.Context.SaveChangesAsync();
+            }
+            catch (Exception ex) { }
 
             this.telemetryLogger.LogInformation(new TrackMessage
             {

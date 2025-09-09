@@ -50,7 +50,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             };
             dto.LatestInvoice = new LatestInvoice
             {
-                LastInvoicedTotalValue = 200.75m
+                CurrentYearInvoicedTotalToDateValue = 200.75m
             };
 
             // Assert  
@@ -59,7 +59,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             Assert.IsNotNull(dto.LastTonnage);
             Assert.AreEqual(100.5m, dto.LastTonnage.AluminiumValue);
             Assert.IsNotNull(dto.LatestInvoice);
-            Assert.AreEqual(200.75m, dto.LatestInvoice.LastInvoicedTotalValue);
+            Assert.AreEqual(200.75m, dto.LatestInvoice.CurrentYearInvoicedTotalToDateValue);
         }
     }
 }

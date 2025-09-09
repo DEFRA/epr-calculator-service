@@ -12,5 +12,7 @@ namespace EPR.Calculator.Service.Function.Models
         public ProducerInvoicedMaterialNetTonnage? InvoicedTonnage { get; set; }
         public CalculatorRun? CalculatorRun { get; set; }
         public ProducerDesignatedRunInvoiceInstruction? InvoiceInstruction { get; set; }
+        public ProducerDetail? ProducerDetail { get; set; }
+        public ProducerResultFileSuggestedBillingInstruction? ResultFileSuggestedBillingInstruction { get; set; }
     }
 }

@@ -27,8 +27,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Cancell
                     new CalcResultCancelledProducersDto
                     {
                         ProducerId_Header = CommonConstants.ProducerId,
-                        SubsidiaryId_Header = CommonConstants.SubsidiaryId,
-                        ProducerOrSubsidiaryName_Header = CommonConstants.ProducerOrSubsidiaryName,
+                        ProducerName_Header = CommonConstants.ProducerOrSubsidiaryName,
                         TradingName_Header = CommonConstants.TradingName,
                         LastTonnage = new LastTonnage
                         {
@@ -45,7 +44,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Cancell
                         LatestInvoice = new LatestInvoice
                         {
                             LatestInvoice_Header = CommonConstants.LatestInvoice,
-                            LastInvoicedTotal_Header = CommonConstants.LastInvoicedTotal,
+                            CurrentYearInvoicedTotalToDate_Header = CommonConstants.LastInvoicedTotal,
                             RunNumber_Header = CommonConstants.RunNumber,
                             RunName_Header = CommonConstants.RunName,
                             BillingInstructionId_Header = CommonConstants.BillingInstructionId,

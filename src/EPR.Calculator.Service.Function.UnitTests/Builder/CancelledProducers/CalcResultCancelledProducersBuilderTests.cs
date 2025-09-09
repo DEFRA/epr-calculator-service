@@ -1,22 +1,47 @@
-﻿using EPR.Calculator.Service.Function.Builder.CancelledProducers;
-using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Dtos;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using AutoFixture;
+    using EPR.Calculator.API.Data;
+    using EPR.Calculator.Service.Function.Builder.CancelledProducers;
+    using EPR.Calculator.Service.Function.Builder.CommsCost;
+    using EPR.Calculator.Service.Function.Constants;
+    using EPR.Calculator.Service.Function.Dtos;
+    using EPR.Calculator.Service.Function.Models;
+    using EPR.Calculator.Service.Function.Services;
+    using Microsoft.ApplicationInsights.Extensibility;
+    using Microsoft.ApplicationInsights;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Moq;
+    using Microsoft.EntityFrameworkCore.Diagnostics;
+
     [TestClass]
     public class CalcResultCancelledProducersBuilderTests
     {
-        private CalcResultCancelledProducersBuilder _builder;
+        private CalcResultCancelledProducersBuilder builder;
+        private readonly ApplicationDBContext dbContext;
+        private Mock<IDbContextFactory<ApplicationDBContext>> dbContextFactory;
+
+        private IMaterialService materialService;
 
         public CalcResultCancelledProducersBuilderTests()
         {
-            _builder = new CalcResultCancelledProducersBuilder();
+            
+            var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
+                .UseInMemoryDatabase(databaseName: "PayCal")
+                .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
+                .Options;
+            this.dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
+            this.dbContext = new ApplicationDBContext(dbContextOptions);
+            this.dbContext.Database.EnsureCreated();
+            this.dbContextFactory.Setup(factory => factory.CreateDbContext()).Returns(this.dbContext);
+            this.builder = new CalcResultCancelledProducersBuilder(
+                this.dbContext, new MaterialService(this.dbContextFactory.Object));
         }
 
         [TestMethod]
@@ -26,7 +51,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             var requestDto = new CalcResultsRequestDto();
 
             // Act
-            var result = await _builder.Construct(requestDto);
+            var result = await builder.Construct(requestDto, "2025-26");
 
             // Assert
             Assert.IsNotNull(result);
@@ -59,6 +84,115 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             Assert.AreEqual(CommonConstants.RunNumber, headerRow.LatestInvoice.RunNumber_Header);
             Assert.AreEqual(CommonConstants.RunName, headerRow.LatestInvoice.RunName_Header);
             Assert.AreEqual(CommonConstants.BillingInstructionId, headerRow.LatestInvoice.BillingInstructionId_Header);
+        }
+
+        [TestMethod]
+        public void CanConstruct()
+        {
+            // Act
+            var instance = new CalcResultCancelledProducersBuilder(this.dbContext, materialService);
+
+            // Assert
+            Assert.IsNotNull(instance);
+        }
+       
+
+        [TestMethod]
+        public async Task CanCallConstruct()
+        {
+            // Arrange
+            var fixture = new Fixture();
+            var resultsRequestDto = fixture.Create<CalcResultsRequestDto>();
+            var financialYear = fixture.Create<string>();
+
+            // Act
+            var result = await builder.Construct(resultsRequestDto, financialYear);
+
+
+
+            Assert.Fail("Create or modify test");
+        }
+
+        [TestMethod]
+        public async Task CannotCallConstructWithNullResultsRequestDto()
+        {
+            // Arrange
+            var fixture = new Fixture();
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => builder.Construct(default(CalcResultsRequestDto), fixture.Create<string>()));
+        }
+
+        [DataTestMethod]
+        [DataRow(null)]
+        [DataRow("")]
+        [DataRow("   ")]
+        public async Task CannotCallConstructWithInvalidFinancialYear(string value)
+        {
+            // Arrange
+            var fixture = new Fixture();
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => builder.Construct(fixture.Create<CalcResultsRequestDto>(), value));
+        }
+
+        [TestMethod]
+        public void CanCallGetLatestProducerDetailsForThisFinancialYear()
+        {
+            // Arrange
+            var fixture = new Fixture();
+            var financialYear = fixture.Create<string>();
+
+            // Act
+            var result = builder.GetLatestProducerDetailsForThisFinancialYear(financialYear);
+
+            // Assert
+            Assert.Fail("Create or modify test");
+        }
+
+        [DataTestMethod]
+        [DataRow(null)]
+        [DataRow("")]
+        [DataRow("   ")]
+        public void CannotCallGetLatestProducerDetailsForThisFinancialYearWithInvalidFinancialYear(string value)
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => builder.GetLatestProducerDetailsForThisFinancialYear(value));
+        }
+
+        [TestMethod]
+        public void CanCallGetProducers()
+        {
+            // Arrange
+            var fixture = new Fixture();
+            var runId = fixture.Create<int>();
+
+            // Act
+            var result = builder.GetProducers(runId);
+
+            // Assert
+            Assert.Fail("Create or modify test");
+        }
+
+        [TestMethod]
+        public void CanCallGetCancelledProducers()
+        {
+            // Arrange
+            var fixture = new Fixture();
+            var financialYear = fixture.Create<string>();
+            var runId = fixture.Create<int>();
+
+            // Act
+            var result = builder.GetCancelledProducers(financialYear, runId);
+
+            // Assert
+            Assert.Fail("Create or modify test");
+        }
+
+        [DataTestMethod]
+        [DataRow(null)]
+        [DataRow("")]
+        [DataRow("   ")]
+        public void CannotCallGetCancelledProducersWithInvalidFinancialYear(string value)
+        {
+            // Arrange
+            var fixture = new Fixture();
+            Assert.ThrowsException<ArgumentNullException>(() => builder.GetCancelledProducers(value, fixture.Create<int>()));
         }
     }
 }

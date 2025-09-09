@@ -52,7 +52,7 @@ namespace EPR.Calculator.Service.Function.Models
         public string? RunName_Header { get; set; }
         public string? BillingInstructionId_Header { get; set; }
 
-        public decimal? LastInvoicedTotalValue { get; set; }
+        public decimal? CurrentYearInvoicedTotalToDateValue { get; set; }
         public string? RunNumberValue { get; set; }
         public string? RunNameValue { get; set; }
         public string? BillingInstructionIdValue { get; set; }
