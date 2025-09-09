@@ -158,7 +158,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 TotalBillBreakdownProducer.SetValues(result);
 
                 // Billing instructions section
-                BillingInstructionsProducer.SetValues(result);
+                BillingInstructionsProducer.SetValues(result, ProducerInvoicedMaterialNetTonnage);
             }
 
             // Set headers with calculated column index

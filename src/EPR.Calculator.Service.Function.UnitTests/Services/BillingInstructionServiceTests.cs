@@ -98,7 +98,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                             Level= CommonConstants.LevelTwo.ToString(),
                             BillingInstructionSection = new CalcResultSummaryBillingInstruction
                             {
-                                CurrentYearInvoiceTotalToDate = "1000",
+                                CurrentYearInvoiceTotalToDate = 1000m,
                                 TonnageChangeSinceLastInvoice = "Tonnage Changed",
                                 LiabilityDifference = "-200",
                                 MaterialThresholdBreached = "-ve",

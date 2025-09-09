@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Text;
     using EPR.Calculator.API.Utils;
+    using EPR.Calculator.Service.Common.Utils;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Models;
@@ -78,8 +79,8 @@
 
         public void AddBillingInstructionsSection(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
         {
-            csvContent.Append(CsvSanitiser.SanitiseData(producer.BillingInstructionSection.CurrentYearInvoiceTotalToDate, DecimalPlaces.Two, null, true));
-            csvContent.Append(CsvSanitiser.SanitiseData(producer.BillingInstructionSection.TonnageChangeSinceLastInvoice));
+            csvContent.Append(CsvSanitiser.SanitiseData(CurrencyConverter.FormattedCurrencyValue(producer.BillingInstructionSection!.CurrentYearInvoiceTotalToDate), DecimalPlaces.Two, null, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.BillingInstructionSection.TonnageChangeSinceLastInvoice ?? CommonConstants.Hyphen));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.BillingInstructionSection.LiabilityDifference, DecimalPlaces.Two, null, true));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.BillingInstructionSection.MaterialThresholdBreached));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.BillingInstructionSection.TonnageThresholdBreached));

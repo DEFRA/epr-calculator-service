@@ -774,8 +774,8 @@
                     },
                     BillingInstructionSection = new CalcResultSummaryBillingInstruction
                     {
-                        CurrentYearInvoiceTotalToDate = "1250.89",
-                        TonnageChangeSinceLastInvoice = string.Empty,
+                        CurrentYearInvoiceTotalToDate = 1250.89m,
+                        TonnageChangeSinceLastInvoice = "Tonnage Changed",
                         LiabilityDifference = "580.73",
                         MaterialThresholdBreached = string.Empty,
                         TonnageThresholdBreached = string.Empty,
@@ -901,8 +901,8 @@
                     },
                     BillingInstructionSection = new CalcResultSummaryBillingInstruction
                     {
-                        CurrentYearInvoiceTotalToDate = "1250.89",
-                        TonnageChangeSinceLastInvoice = string.Empty,
+                        CurrentYearInvoiceTotalToDate = null,
+                        TonnageChangeSinceLastInvoice = null,
                         LiabilityDifference = "580.73",
                         MaterialThresholdBreached = string.Empty,
                         TonnageThresholdBreached = string.Empty,
@@ -1029,7 +1029,7 @@
                     },
                     BillingInstructionSection = new CalcResultSummaryBillingInstruction
                     {
-                        CurrentYearInvoiceTotalToDate = "1250.89",
+                        CurrentYearInvoiceTotalToDate = 1250.89m,
                         TonnageChangeSinceLastInvoice = string.Empty,
                         LiabilityDifference = "580.73",
                         MaterialThresholdBreached = string.Empty,
