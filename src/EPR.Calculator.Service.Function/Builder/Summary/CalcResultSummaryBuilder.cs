@@ -39,7 +39,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         public CalcResultSummaryBuilder(ApplicationDBContext context)
         {
             this.context = context;
-            //ScaledupProducers = new List<CalcResultScaledupProducer>();
         }
 
         public async Task<CalcResultSummary> Construct(CalcResultsRequestDto resultsRequestDto, CalcResult calcResult)
@@ -411,7 +410,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         {
             var allProducerDetails = allResults.Select(x => x.ProducerDetail).Distinct();
             var filteredProducers = allProducerDetails.Where(t => scaledupProducers.All(i => i.ProducerId != t.ProducerId)).ToList();
-            var scaledUpProducerDetails = allProducerDetails.Where(t => scaledupProducers.Any(i => i.ProducerId == t.ProducerId)).ToList();
             var allProducerReportedMaterials = allResults.Select(x => x.ProducerReportedMaterial);
 
             var result =
