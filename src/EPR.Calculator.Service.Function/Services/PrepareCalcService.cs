@@ -118,7 +118,7 @@
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
                     Message = "Create producer data insert service end...",
-                });                
+                });
 
                 this.telemetryLogger.LogInformation(new TrackMessage
                 {
@@ -334,24 +334,20 @@
             var billingFileMetadata = new CalculatorRunBillingFileMetadata
             {
                 BillingCsvFileName = billingFileCsvName.ToString(),
-                BillingFileCreatedBy = resultsRequestDto.ApprovedBy?? "SystemUser",
+                BillingFileCreatedBy = resultsRequestDto.ApprovedBy,
                 CalculatorRunId = resultsRequestDto.RunId,
                 BillingFileCreatedDate = DateTime.UtcNow,
                 BillingJsonFileName = billingFileJsonName.ToString(),
             };
 
-            try
-            {
-                this.Context.CalculatorRunBillingFileMetadata.Add(billingFileMetadata);
+            this.Context.CalculatorRunBillingFileMetadata.Add(billingFileMetadata);
 
-                var csvFileMetaData = new CalculatorRunCsvFileMetadata
-                { BlobUri = csvBlobUri, CalculatorRunId = resultsRequestDto.RunId, FileName = billingFileCsvName };
+            var csvFileMetaData = new CalculatorRunCsvFileMetadata
+            { BlobUri = csvBlobUri, CalculatorRunId = resultsRequestDto.RunId, FileName = billingFileCsvName };
 
-                this.Context.CalculatorRunCsvFileMetadata.Add(csvFileMetaData);
+            this.Context.CalculatorRunCsvFileMetadata.Add(csvFileMetaData);
 
-                await this.Context.SaveChangesAsync();
-            }
-            catch (Exception ex) { }
+            await this.Context.SaveChangesAsync();
 
             this.telemetryLogger.LogInformation(new TrackMessage
             {
