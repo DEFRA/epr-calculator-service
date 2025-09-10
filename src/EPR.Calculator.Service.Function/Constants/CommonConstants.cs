@@ -70,5 +70,11 @@
         public const string BillingInstructionId = "Billing Instruction ID";
         public const string TwoACommsCostsbyMaterial = "2a Comms Costs - by Material";
         public const string CurrentYearInvoicedTotalToDate = "Current Year Invoiced Total To Date";
+
+        public const string Accepted = "Accepted";
+        public const string Rejected = "Rejected";
+        public const string Cancel = "Cancel";
+
+
     }
 }

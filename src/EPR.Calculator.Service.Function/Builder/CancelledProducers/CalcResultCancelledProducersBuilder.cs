@@ -23,7 +23,7 @@
         public CalcResultCancelledProducersBuilder(ApplicationDBContext context, IMaterialService materialService)
         {
             this.context = context;
-            this.materialService = materialService;    
+            this.materialService = materialService;
             this.materials = new List<MaterialDetail>();
         }
 
@@ -62,10 +62,14 @@
                     },
                 };
 
+                var producers = new List<CalcResultCancelledProducersDto>();
+                producers.Add(topHeader);
+                producers.AddRange(GetCancelledProducers(financialYear, resultsRequestDto.RunId));
+
                 var response = new CalcResultCancelledProducersResponse
                 {
                     TitleHeader = CommonConstants.CancelledProducers,
-                    CancelledProducers = GetCancelledProducers(financialYear, resultsRequestDto.RunId)
+                    CancelledProducers = producers
                 };
 
 
@@ -75,44 +79,44 @@
 
         public IEnumerable<ProducerInvoicedDto> GetLatestProducerDetailsForThisFinancialYear(string financialYear)
         {
-                var previousInvoicedNetTonnage =
-                            (from calc in context.CalculatorRuns
-                             join p in context.ProducerDesignatedRunInvoiceInstruction
-                                 on calc.Id equals p.CalculatorRunId                             
-                                 join pd in context.ProducerDetail 
-                                 on p.ProducerId equals pd.ProducerId
-                                 join pbs in context.ProducerResultFileSuggestedBillingInstruction
-                                 on p.ProducerId equals pbs.ProducerId
-                                 join t in context.ProducerInvoicedMaterialNetTonnage 
-                             on new { calc.Id, p.ProducerId } equals new { Id = t.CalculatorRunId, t.ProducerId } 
-                             where new int[]
-                             {
+            var previousInvoicedNetTonnage =
+                        (from calc in context.CalculatorRuns
+                         join p in context.ProducerDesignatedRunInvoiceInstruction
+                             on calc.Id equals p.CalculatorRunId
+                         join pd in context.ProducerDetail
+                             on new { calc.Id, p.ProducerId } equals new { Id = pd.CalculatorRunId, pd.ProducerId }
+                         join pbs in context.ProducerResultFileSuggestedBillingInstruction
+                             on p.ProducerId equals pbs.ProducerId
+                         join t in context.ProducerInvoicedMaterialNetTonnage
+                         on new { calc.Id, p.ProducerId } equals new { Id = t.CalculatorRunId, t.ProducerId }
+                         where new int[]
+                         {
                              RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
                              RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
                              RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
                              RunClassificationStatusIds.FINALRUNCOMPLETEDID
-                             }.Contains(calc.CalculatorRunClassificationId) && calc.FinancialYearId == financialYear                             
-                             select new { calc, p, t, pd, pbs })
-                            .AsEnumerable()
-                            .GroupBy(x => new { x.p.ProducerId, x.t.MaterialId })
-                            .Select(g =>
+                         }.Contains(calc.CalculatorRunClassificationId) && calc.FinancialYearId == financialYear
+                         select new { calc, p, pd, pbs, t })
+                        .AsEnumerable()
+                        .GroupBy(x => new { x.p.ProducerId, x.t.MaterialId })
+                        .Select(g =>
+                        {
+                            var latest = g.OrderByDescending(x => x.calc.Id).First();
+                            return new ProducerInvoicedDto
                             {
-                                var latest = g.OrderByDescending(x => x.calc.Id).First();
-                                return new ProducerInvoicedDto
-                                {
-                                    InvoicedTonnage = latest.t,
-                                    CalculatorRun = latest.calc,
-                                    InvoiceInstruction = latest.p,
-                                    ProducerDetail = latest.pd,
-                                    ResultFileSuggestedBillingInstruction = latest.pbs,
+                                InvoicedTonnage = latest.t,
+                                CalculatorRun = latest.calc,
+                                InvoiceInstruction = latest.p,
+                                ProducerDetail = latest.pd,
+                                ResultFileSuggestedBillingInstruction = latest.pbs,
 
-                                };
-                            })
-                            .OrderBy(x => x.InvoicedTonnage?.Id)
-                            .ThenBy(x => x.InvoicedTonnage?.ProducerId)
-                            .ToList();
+                            };
+                        })
+                        .OrderBy(x => x.InvoicedTonnage?.Id)
+                        .ThenBy(x => x.InvoicedTonnage?.ProducerId)
+                        .ToList();
 
-                return previousInvoicedNetTonnage;            
+            return previousInvoicedNetTonnage;
         }
 
         public IEnumerable<ProducerDetailDto> GetProducers(int runId)
@@ -122,6 +126,8 @@
                  {
                      ProducerId = t.ProducerId,
                      ProducerName = t.ProducerName,
+                     CalculatorRunId = runId,
+                     TradingName = t.TradingName,
                  }
                  ).ToList();
         }
@@ -129,46 +135,45 @@
 
         public IEnumerable<CalcResultCancelledProducersDto> GetCancelledProducers(string financialYear, int runId)
         {
-            var previousProducers = GetLatestProducerDetailsForThisFinancialYear(financialYear);
-            var producersForThisRun = GetProducers(runId);
+            var producersForPreviousRuns = GetLatestProducerDetailsForThisFinancialYear(financialYear);
+            var producersForCurrentRun = GetProducers(runId);
 
-            var missingProducers = previousProducers.Where(t => !producersForThisRun.Any(k => k.ProducerId == t.InvoicedTonnage?.ProducerId));
+            var missingProducersInCurrentRun = producersForPreviousRuns.Where(t => !producersForCurrentRun.Any(k => k.ProducerId == t.InvoicedTonnage?.ProducerId));
+          
+            var acceptedCancelledProducersForPreviousRuns = GetAcceptedCancelledProducers(financialYear).ToList();
 
-            var missingProducersWithData = previousProducers.Where(g => missingProducers.Any(f => f.InvoicedTonnage?.ProducerId == g.InvoicedTonnage?.ProducerId)).ToList();
-            var acceptedCancelledProducers = GetAcceptedCancelledProducers(financialYear).ToList();
+            var filteredProducersWithOutAccepetedProduecersData = missingProducersInCurrentRun.Where(k => !acceptedCancelledProducersForPreviousRuns.Contains(k.InvoicedTonnage.ProducerId)).ToList();
 
-            var filteredProducersWithOutAccepetedProduecersData = missingProducersWithData.Where(k => !acceptedCancelledProducers.Contains(k.InvoicedTonnage.ProducerId)).ToList();
+            var disinctMissingProducers = filteredProducersWithOutAccepetedProduecersData.DistinctBy(t => t.InvoicedTonnage?.ProducerId).Select(t => t.InvoicedTonnage?.ProducerId).ToList();
 
-            var disinctMissingProducers = filteredProducersWithOutAccepetedProduecersData.DistinctBy(t =>  t.InvoicedTonnage?.ProducerId).Select(t => t.InvoicedTonnage?.ProducerId).ToList();
-           
 
             var calcResultCancelledProducers = new List<CalcResultCancelledProducersDto>();
 
-            foreach (var prods  in disinctMissingProducers)
+            foreach (var prods in disinctMissingProducers)
             {
                 calcResultCancelledProducers.Add(new CalcResultCancelledProducersDto()
                 {
                     ProducerIdValue = prods.ToString(),
-                    ProducerOrSubsidiaryNameValue = missingProducersWithData.Where(t => t.ProducerDetail?.ProducerId == (int)prods).Select(t => t.ProducerDetail?.ProducerName).FirstOrDefault(),
-                     TradingNameValue = missingProducersWithData.Where(t => t.ProducerDetail?.ProducerId == (int)prods).Select(t => t.ProducerDetail?.TradingName).FirstOrDefault(),
+                    ProducerOrSubsidiaryNameValue = filteredProducersWithOutAccepetedProduecersData.Where(t => t.ProducerDetail?.ProducerId == (int)prods).Select(t => t.ProducerDetail?.ProducerName).FirstOrDefault(),
+                    TradingNameValue = filteredProducersWithOutAccepetedProduecersData.Where(t => t.ProducerDetail?.ProducerId == (int)prods).Select(t => t.ProducerDetail?.TradingName).FirstOrDefault(),
 
                     LastTonnage = new LastTonnage()
                     {
-                        AluminiumValue = GetInvoicedTonnageForMaterials(missingProducersWithData, GetMaterialId(MaterialNames.Aluminium), (int)prods),
-                        FibreCompositeValue = GetInvoicedTonnageForMaterials(missingProducersWithData, GetMaterialId(MaterialNames.FibreComposite), (int)prods),
-                        GlassValue = GetInvoicedTonnageForMaterials(missingProducersWithData, GetMaterialId(MaterialNames.Glass), (int)prods),
-                        PaperOrCardValue = GetInvoicedTonnageForMaterials(missingProducersWithData, GetMaterialId(MaterialNames.PaperOrCard), (int)prods),
-                        PlasticValue = GetInvoicedTonnageForMaterials(missingProducersWithData, GetMaterialId(MaterialNames.Plastic), (int)prods),
-                        WoodValue = GetInvoicedTonnageForMaterials(missingProducersWithData, GetMaterialId(MaterialNames.Wood), (int)prods),
-                        SteelValue = GetInvoicedTonnageForMaterials(missingProducersWithData, GetMaterialId(MaterialNames.Steel), (int)prods),
-                        OtherMaterialsValue = GetInvoicedTonnageForMaterials(missingProducersWithData, GetMaterialId(MaterialNames.OtherMaterials), (int)prods)
+                        AluminiumValue = GetInvoicedTonnageForMaterials(filteredProducersWithOutAccepetedProduecersData, GetMaterialId(MaterialNames.Aluminium), (int)prods),
+                        FibreCompositeValue = GetInvoicedTonnageForMaterials(filteredProducersWithOutAccepetedProduecersData, GetMaterialId(MaterialNames.FibreComposite), (int)prods),
+                        GlassValue = GetInvoicedTonnageForMaterials(filteredProducersWithOutAccepetedProduecersData, GetMaterialId(MaterialNames.Glass), (int)prods),
+                        PaperOrCardValue = GetInvoicedTonnageForMaterials(filteredProducersWithOutAccepetedProduecersData, GetMaterialId(MaterialNames.PaperOrCard), (int)prods),
+                        PlasticValue = GetInvoicedTonnageForMaterials(filteredProducersWithOutAccepetedProduecersData, GetMaterialId(MaterialNames.Plastic), (int)prods),
+                        WoodValue = GetInvoicedTonnageForMaterials(filteredProducersWithOutAccepetedProduecersData, GetMaterialId(MaterialNames.Wood), (int)prods),
+                        SteelValue = GetInvoicedTonnageForMaterials(filteredProducersWithOutAccepetedProduecersData, GetMaterialId(MaterialNames.Steel), (int)prods),
+                        OtherMaterialsValue = GetInvoicedTonnageForMaterials(filteredProducersWithOutAccepetedProduecersData, GetMaterialId(MaterialNames.OtherMaterials), (int)prods)
                     },
                     LatestInvoice = new LatestInvoice
                     {
-                        BillingInstructionIdValue = missingProducersWithData.Where(t => t.InvoiceInstruction?.ProducerId == (int)prods).Select(t => t.InvoiceInstruction?.BillingInstructionId).FirstOrDefault(),
-                        RunNameValue = missingProducersWithData.Where(t => t.InvoiceInstruction?.ProducerId == (int)prods).Select(t => t.CalculatorRun?.Name).FirstOrDefault(),
-                        RunNumberValue = missingProducersWithData.Where(t => t.InvoiceInstruction?.ProducerId == (int)prods).Select(t => t.CalculatorRun?.Id).FirstOrDefault().ToString(),
-                        CurrentYearInvoicedTotalToDateValue = missingProducersWithData.Where(t => t.InvoiceInstruction?.ProducerId == (int)prods).Select(t => t.InvoiceInstruction?.CurrentYearInvoicedTotalAfterThisRun).FirstOrDefault(),
+                        BillingInstructionIdValue = filteredProducersWithOutAccepetedProduecersData.Where(t => t.InvoiceInstruction?.ProducerId == (int)prods).Select(t => t.InvoiceInstruction?.BillingInstructionId).FirstOrDefault(),
+                        RunNameValue = filteredProducersWithOutAccepetedProduecersData.Where(t => t.InvoiceInstruction?.ProducerId == (int)prods).Select(t => t.CalculatorRun?.Name).FirstOrDefault(),
+                        RunNumberValue = filteredProducersWithOutAccepetedProduecersData.Where(t => t.InvoiceInstruction?.ProducerId == (int)prods).Select(t => t.CalculatorRun?.Id).FirstOrDefault().ToString(),
+                        CurrentYearInvoicedTotalToDateValue = filteredProducersWithOutAccepetedProduecersData.Where(t => t.InvoiceInstruction?.ProducerId == (int)prods).Select(t => t.InvoiceInstruction?.CurrentYearInvoicedTotalAfterThisRun).FirstOrDefault(),
                     }
                 });
             }
@@ -178,7 +183,7 @@
 
         private static decimal? GetInvoicedTonnageForMaterials(List<ProducerInvoicedDto> cancelledProducersWithData, int materialId, int producerId)
         {
-            return cancelledProducersWithData.Where(t => t.InvoicedTonnage?.MaterialId ==materialId && t.InvoicedTonnage.ProducerId == producerId).Select(k => k.InvoicedTonnage?.InvoicedNetTonnage).FirstOrDefault();
+            return cancelledProducersWithData.Where(t => t.InvoicedTonnage?.MaterialId == materialId && t.InvoicedTonnage.ProducerId == producerId).Select(k => k.InvoicedTonnage?.InvoicedNetTonnage).FirstOrDefault();
         }
 
         private int GetMaterialId(string materialName)
@@ -190,23 +195,23 @@
             return 0;
         }
 
-       
+
         private IEnumerable<int> GetAcceptedCancelledProducers(string financialYear)
         {
-            var test = (from calc in context.CalculatorRuns
-                       join p in context.ProducerResultFileSuggestedBillingInstruction
-                       on calc.Id equals p.CalculatorRunId
-                       where (calc.FinancialYearId == financialYear && p.BillingInstructionAcceptReject == "Accepted"
-                       && p.SuggestedBillingInstruction =="CANCEL")
-                        && new int[]
-                              {
+            var cancelledAcceptedProducers = (from calc in context.CalculatorRuns
+                                              join p in context.ProducerResultFileSuggestedBillingInstruction
+                                              on calc.Id equals p.CalculatorRunId
+                                              where (calc.FinancialYearId == financialYear && p.BillingInstructionAcceptReject.ToLowerInvariant() == CommonConstants.Accepted.ToLowerInvariant()
+                                              && p.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant())
+                                               && new int[]
+                                                     {
                              RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
                              RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
                              RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
                              RunClassificationStatusIds.FINALRUNCOMPLETEDID
-                              }.Contains(calc.CalculatorRunClassificationId)
-                        select p.ProducerId).AsEnumerable();
-            return test;
+                                                     }.Contains(calc.CalculatorRunClassificationId)
+                                              select p.ProducerId).AsEnumerable();
+            return cancelledAcceptedProducers;
         }
     }
 }
