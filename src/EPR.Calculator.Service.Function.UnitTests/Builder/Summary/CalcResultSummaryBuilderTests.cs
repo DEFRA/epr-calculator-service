@@ -1177,6 +1177,42 @@ namespace EPR.Calculator.Service.Function.UnitTests
             Assert.IsFalse(result);
         }
 
+        [TestMethod]
+        public void GetProducerRow_MarksProducerAsNotScaledUp_WhenNoMatch()
+        {
+            var producer = context.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
+            var materials = Mappers.MaterialMapper.Map(context.Material.ToList());
+
+            calcResultsService.ScaledupProducers = new List<CalcResultScaledupProducer>();
+
+            var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
+            var row = calcResultsService.GetProducerRow(
+                new List<CalcResultSummaryProducerDisposalFees>(),
+                ordered.Where(pd => pd.ProducerId == producer.ProducerId).ToList(),
+                producer,
+                materials,
+                this.calcResult,
+                new List<TotalPackagingTonnagePerRun>());
+
+            Assert.AreEqual(CommonConstants.ScaledupProducersNo, row.IsProducerScaledup);
+        }
+
+        [TestMethod]
+        public void CanAddTotalRow_NoParentPomButHasSubsidiary_ReturnsTrue()
+        {
+            var parent = context.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
+            var subOnly = new List<ProducerDetail> {
+                new ProducerDetail { ProducerId = parent.ProducerId, CalculatorRunId = parent.CalculatorRunId, SubsidiaryId = "S1", ProducerName = "Sub1" }
+            };
+
+            calcResultsService.ParentOrganisations = new List<ScaledupOrganisation> {
+                new ScaledupOrganisation { OrganisationId = parent.ProducerId, OrganisationName = "Org1" }
+            };
+
+            var canAdd = calcResultsService.CanAddTotalRow(parent, subOnly, new List<CalcResultSummaryProducerDisposalFees>());
+            Assert.IsTrue(canAdd);
+        }
+
         private static void SeedDatabase(ApplicationDBContext context)
         {
             context.Material.AddRange(new List<Material>
