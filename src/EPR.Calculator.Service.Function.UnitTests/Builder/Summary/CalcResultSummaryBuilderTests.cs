@@ -1013,6 +1013,94 @@
             Assert.AreEqual("GF Trading Name 1", result.TradingName);
         }
 
+        [TestMethod]
+        public void Construct_HandlesNullScaledupProducers_UsesEmptyList()
+        {
+            // Arrange
+            var requestDto = new CalcResultsRequestDto { RunId = 1 };
+            var calcResult = this.calcResult;
+            calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers
+            {
+                ScaledupProducers = null
+            };
+
+            // Act
+            var task = this.calcResultsService.Construct(requestDto, calcResult);
+            task.Wait();
+            var result = task.Result;
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.ProducerDisposalFees?.Any() ?? false);
+        }
+
+        [TestMethod]
+        public void GetCalcResultSummary_AddsProducerTotalRow_AndProducerRow()
+        {
+            // Arrange
+            var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, this.context.ProducerDetail.ToList());
+            var materials = Mappers.MaterialMapper.Map(this.context.Material.ToList());
+            var runDetails = CalcResultSummaryBuilder.GetProducerRunMaterialDetails(ordered, this.context.ProducerReportedMaterial.ToList(), 1);
+
+            this.calcResultsService.ScaledupProducers = new List<CalcResultScaledupProducer>();
+
+            var totalPackaging = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(
+                runDetails, materials, 1, this.calcResultsService.ScaledupProducers.ToList());
+
+            this.calcResultsService.ParentOrganisations = new List<ScaledupOrganisation>
+            {
+                new ScaledupOrganisation { OrganisationId = ordered.First().ProducerId, OrganisationName = "Org1" }
+            };
+
+            // Act
+            var summary = this.calcResultsService.GetCalcResultSummary(ordered, materials, this.calcResult, totalPackaging);
+
+            // Assert
+            Assert.IsNotNull(summary);
+            Assert.IsTrue(summary.ProducerDisposalFees.Any());
+            Assert.IsTrue(summary.ProducerDisposalFees.Any(r => r.isTotalRow)); 
+            Assert.IsTrue(summary.ProducerDisposalFees.Any(r => !r.isTotalRow));
+        }
+
+        [TestMethod]
+        public async Task GetCalcResultSummary_AddsTotalRow_WhenProducerHasSubsidiary()
+        {
+            var parent = context.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
+            var sub = new ProducerDetail
+            {
+                ProducerName = parent.ProducerName + " and subsidiary",
+                ProducerId = parent.ProducerId,
+                CalculatorRunId = parent.CalculatorRunId,
+                SubsidiaryId = "S1"
+            };
+            context.ProducerDetail.Add(sub);
+            context.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            {
+                ProducerDetail = sub,
+                MaterialId = 1,
+                PackagingType = "HH",
+                PackagingTonnage = 10m
+            });
+            context.SaveChanges();
+
+            calcResultsService.ParentOrganisations = new List<ScaledupOrganisation>
+            {
+                new ScaledupOrganisation { OrganisationId = parent.ProducerId, OrganisationName = "Org1" }
+            };
+
+            var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
+            var materials = Mappers.MaterialMapper.Map(context.Material.ToList());
+            var runDetails = CalcResultSummaryBuilder.GetProducerRunMaterialDetails(ordered, context.ProducerReportedMaterial.ToList(), 1);
+            var totalPackaging = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(
+                runDetails, materials, 1, calcResultsService.ScaledupProducers?.ToList() ?? new List<CalcResultScaledupProducer>());
+
+            var summary = calcResultsService.GetCalcResultSummary(ordered, materials, calcResult, totalPackaging);
+
+            Assert.IsTrue(summary.ProducerDisposalFees.Any(r => r.isTotalRow));
+        }
+
+
+
         private static void SeedDatabase(ApplicationDBContext context)
         {
             context.Material.AddRange(new List<Material>
