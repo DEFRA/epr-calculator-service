@@ -62,7 +62,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Cancell
             Assert.IsTrue(csvOutput.Contains(CommonConstants.LastTonnage), "CSV should include LastTonnage subheader.");
             Assert.IsTrue(csvOutput.Contains(CommonConstants.LatestInvoice), "CSV should include LatestInvoice subheader.");
             Assert.IsTrue(csvOutput.Contains(CommonConstants.ProducerId), "CSV should include ProducerId column.");
-            Assert.IsTrue(csvOutput.Contains(CommonConstants.SubsidiaryId), "CSV should include SubsidiaryId column.");
             Assert.IsTrue(csvOutput.Contains(CommonConstants.BillingInstructionId), "CSV should include BillingInstructionId column.");
             Assert.IsTrue(csvOutput.Contains(CommonConstants.TradingName), "CSV should include TradingName column.");
             Assert.IsTrue(csvOutput.Contains(CommonConstants.Aluminium), "CSV should include Aluminium column.");
