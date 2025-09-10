@@ -319,7 +319,7 @@
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
             var calcResult = this.calcResult;
             calcResult.CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers();
-            
+
             // Act
             var results = this.calcResultsService.Construct(requestDto, calcResult);
             results.Wait();
@@ -878,7 +878,7 @@
             IEnumerable<ProducerDetail> producersAndSubsidiaries = context.ProducerDetail;
             List<CalcResultSummaryProducerDisposalFees> producerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>();
 
-            calcResultsService.ParentOrganisations = new List<ScaledupOrganisation>(); 
+            calcResultsService.ParentOrganisations = new List<ScaledupOrganisation>();
 
             // Act
             var result = calcResultsService.CanAddTotalRow(producer, producersAndSubsidiaries, producerDisposalFees);
@@ -1058,12 +1058,12 @@
             // Assert
             Assert.IsNotNull(summary);
             Assert.IsTrue(summary.ProducerDisposalFees.Any());
-            Assert.IsTrue(summary.ProducerDisposalFees.Any(r => r.isTotalRow)); 
+            Assert.IsTrue(summary.ProducerDisposalFees.Any(r => r.isTotalRow));
             Assert.IsTrue(summary.ProducerDisposalFees.Any(r => !r.isTotalRow));
         }
 
         [TestMethod]
-        public async Task GetCalcResultSummary_AddsTotalRow_WhenProducerHasSubsidiary()
+        public void GetCalcResultSummary_AddsTotalRow_WhenProducerHasSubsidiary()
         {
             var parent = context.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
             var sub = new ProducerDetail
