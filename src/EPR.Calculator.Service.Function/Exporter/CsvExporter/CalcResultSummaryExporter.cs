@@ -82,8 +82,8 @@
             csvContent.Append(CsvSanitiser.SanitiseData(CurrencyConverter.FormattedCurrencyValue(producer.BillingInstructionSection!.CurrentYearInvoiceTotalToDate), DecimalPlaces.Two, null, true));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.BillingInstructionSection.TonnageChangeSinceLastInvoice ?? CommonConstants.Hyphen));
             csvContent.Append(CsvSanitiser.SanitiseData(CurrencyConverter.FormattedCurrencyValue(producer.BillingInstructionSection.LiabilityDifference), DecimalPlaces.Two, null, true));
-            csvContent.Append(CsvSanitiser.SanitiseData("\u200E" + producer.BillingInstructionSection.MaterialThresholdBreached)); // prefixed with LRM character as the values(+ve and -ve) are parsed as formula in csv
-            csvContent.Append(CsvSanitiser.SanitiseData("\u200E" + producer.BillingInstructionSection.TonnageThresholdBreached)); // prefixed with LRM character added as values(+ve and -ve) are parsed as formula in csv
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.BillingInstructionSection.MaterialThresholdBreached, appendLrmCharacterToPreventRenderedAsFormula: true)); // prefixed with LRM character as the values(+ve and -ve) are parsed as formula in csv
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.BillingInstructionSection.TonnageThresholdBreached, appendLrmCharacterToPreventRenderedAsFormula: true)); // prefixed with LRM character added as values(+ve and -ve) are parsed as formula in csv
             csvContent.Append(CsvSanitiser.SanitiseData(producer.BillingInstructionSection.PercentageLiabilityDifference, DecimalPlaces.Two, null, false, true));
             csvContent.Append(CsvSanitiser.SanitiseData("\u200E" + producer.BillingInstructionSection.MaterialPercentageThresholdBreached));
             csvContent.Append(CsvSanitiser.SanitiseData("\u200E" + producer.BillingInstructionSection.TonnagePercentageThresholdBreached));
