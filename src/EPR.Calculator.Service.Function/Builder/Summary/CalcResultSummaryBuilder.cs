@@ -64,7 +64,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 runId, producerDetails);
 
             // Household + PublicBin + HDC
-            var totalPackagingTonnage = GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, runId, ScaledupProducers?.ToList() ?? []);
+            var totalPackagingTonnage = GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, runId, ScaledupProducers.ToList());
 
             // Get parent organisations
             ParentOrganisations = await (from run in this.context.CalculatorRuns
