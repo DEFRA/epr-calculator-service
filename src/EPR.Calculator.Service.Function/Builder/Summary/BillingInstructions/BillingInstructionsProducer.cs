@@ -65,7 +65,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
 
                 var liabilityDifferenceCalculated = CalculateLiabilityDifference(fee, currentYearInvoicedTotalTonnage);
                 if (liabilityDifferenceCalculated.HasValue) liabilityDifferenceRunningTotal += liabilityDifferenceCalculated.Value;
-
                 var currentYearInvoiceTotalToDate = GetCurrentYearInvoicedTotalToDate(fee, currentYearInvoicedTotalTonnage, totalTonnage);
                 var tonnageChangeSinceLastInvoice = GetTonnageChangeSinceLastInvoice(fee);
                 var liabilityDifference = GetLiabilityDifference(fee, liabilityDifferenceCalculated, liabilityDifferenceRunningTotal);
@@ -144,7 +143,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
 
         private static string GetMaterialThresholdBreached(CalcResultSummaryProducerDisposalFees fee, decimal? currentInvoicedTotalToDate, decimal? liabilityDifferenceCalculated, decimal? param_MATT_AI, decimal? param_MATT_AD)
         {
-
             if (fee.IsProducerScaledup == CommonConstants.Totals) return String.Empty;
             if (fee.Level != CommonConstants.LevelOne.ToString()) return CommonConstants.Hyphen;
             if (!currentInvoicedTotalToDate.HasValue) return CommonConstants.Hyphen;
