@@ -35,15 +35,12 @@ namespace EPR.Calculator.Service.Function.Mapper
             return $"{Math.Round((decimal)percentageLiabilityDifference, (int)DecimalPlaces.Two).ToString()}%";
         }
 
-        private string GetFormattedCurrencyValue(string value)
+        private string GetFormattedCurrencyValue(decimal? value)
         {
             if (value == null)
-                return string.Empty;
-
-            if (value == CommonConstants.Hyphen)
                 return CommonConstants.Hyphen;
 
-            return CurrencyConverter.ConvertToCurrency(value);
+            return CurrencyConverter.ConvertToCurrency(value.ToString()!);
         }
     }
 }

@@ -80,5 +80,8 @@
         public const string MaterialPercentageDecrease = "MATT-PD";
         public const string TonnagePercentageIncrease = "TONT-PI";
         public const string TonnagePercentageDecrease = "TONT-PD";
+
+        public const string Delta = "DELTA";
+        public const string Rebill = "REBILL";
     }
 }

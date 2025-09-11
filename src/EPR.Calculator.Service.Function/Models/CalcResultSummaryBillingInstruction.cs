@@ -20,6 +20,6 @@
 
         public string? SuggestedBillingInstruction { get; set; }
 
-        public string? SuggestedInvoiceAmount { get; set; }
+        public decimal? SuggestedInvoiceAmount { get; set; }
     }
 }

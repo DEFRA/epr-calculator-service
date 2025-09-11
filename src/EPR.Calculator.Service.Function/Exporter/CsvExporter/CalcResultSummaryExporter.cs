@@ -88,7 +88,7 @@
             csvContent.Append(CsvSanitiser.SanitiseData(producer.BillingInstructionSection.MaterialPercentageThresholdBreached, appendLrmCharacterToPreventRenderedAsFormula: true));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.BillingInstructionSection.TonnagePercentageThresholdBreached, appendLrmCharacterToPreventRenderedAsFormula: true));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.BillingInstructionSection.SuggestedBillingInstruction));
-            csvContent.Append(CsvSanitiser.SanitiseData(producer.BillingInstructionSection.SuggestedInvoiceAmount, DecimalPlaces.Two, null, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(CurrencyConverter.FormattedCurrencyValue(producer.BillingInstructionSection.SuggestedInvoiceAmount), DecimalPlaces.Two, null, true));
         }
 
         public void AddTwoC(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
