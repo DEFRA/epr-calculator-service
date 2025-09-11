@@ -14,9 +14,9 @@ namespace EPR.Calculator.Service.Function.Mapper
             var costs = fees.BillingInstructionSection;
             return new CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts
             {
-                CurrentYearInvoicedTotalToDate = GetFormattedCurrencyValue(costs.CurrentYearInvoiceTotalToDate!),
+                CurrentYearInvoicedTotalToDate = costs!.CurrentYearInvoiceTotalToDate!,
                 TonnageChangeSinceLastInvoice = costs.TonnageChangeSinceLastInvoice ?? string.Empty,
-                LiabilityDifferenceCalcVsPrev = GetFormattedCurrencyValue(costs.LiabilityDifference!),
+                LiabilityDifferenceCalcVsPrev = costs.LiabilityDifference,
                 MaterialThresholdBreached = costs.MaterialThresholdBreached ?? string.Empty,
                 TonnageThresholdBreached = costs.TonnageThresholdBreached ?? string.Empty,
                 PercentageLiabilityDifferenceCalcVsPrev = GetPercentageLiabilityDifference(costs.PercentageLiabilityDifference!),

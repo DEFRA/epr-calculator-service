@@ -80,7 +80,8 @@ namespace EPR.Calculator.Service.Function.Services
                     RunId = calculatorRunId,
                     AcceptedProducerIds = acceptedProducerIds,
                     IsBillingFile = true,
-                    ApprovedBy = approvedBy
+                    ApprovedBy = approvedBy,
+                    FinancialYear = calculatorRun.FinancialYearId
                 },
                 runName,
                 CancellationToken.None);
