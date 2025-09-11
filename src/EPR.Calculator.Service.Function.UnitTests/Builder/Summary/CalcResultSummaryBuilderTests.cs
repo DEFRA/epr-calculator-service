@@ -1145,6 +1145,13 @@
                 new() { Id = 7, MaterialId = 2, PackagingType = "HH", PackagingTonnage = 300m, ProducerDetailId = 4 },
                 new() { Id = 8, MaterialId = 1, PackagingType = "HH", PackagingTonnage = 300m, ProducerDetailId = 5 },
             });
+            context.ProducerResultFileSuggestedBillingInstruction.AddRange(new List<ProducerResultFileSuggestedBillingInstruction>
+            {
+                new ProducerResultFileSuggestedBillingInstruction { Id = 1, CalculatorRunId = 1, ProducerId = 1, SuggestedBillingInstruction="INITIAL", BillingInstructionAcceptReject="Accepted"},
+                new ProducerResultFileSuggestedBillingInstruction { Id = 2, CalculatorRunId = 2, ProducerId = 2, SuggestedBillingInstruction="INITIAL", BillingInstructionAcceptReject="Accepted"},
+                new ProducerResultFileSuggestedBillingInstruction { Id = 3, CalculatorRunId = 3, ProducerId = 3, SuggestedBillingInstruction="INITIAL", BillingInstructionAcceptReject="Accepted"},
+            });
+
             context.ProducerDesignatedRunInvoiceInstruction.AddRange(new List<ProducerDesignatedRunInvoiceInstruction>
             {
                 new ProducerDesignatedRunInvoiceInstruction { Id = 1,CalculatorRunId = 1, ProducerId = 1},

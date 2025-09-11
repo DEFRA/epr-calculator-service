@@ -455,8 +455,11 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         {
             var previousInvoicedNetTonnage =
                         (from calc in context.CalculatorRuns
+                         join b in context.ProducerResultFileSuggestedBillingInstruction
+                            on calc.Id equals b.CalculatorRunId
                          join p in context.ProducerDesignatedRunInvoiceInstruction
-                             on calc.Id equals p.CalculatorRunId
+                             on new { b.CalculatorRunId, b.ProducerId }
+                                                              equals new { p.CalculatorRunId, p.ProducerId }
                          join t in context.ProducerInvoicedMaterialNetTonnage
                              on new { calc.Id, p.ProducerId } equals new { Id = t.CalculatorRunId, t.ProducerId }
                          where new int[]
@@ -465,7 +468,9 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                              RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
                              RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
                              RunClassificationStatusIds.FINALRUNCOMPLETEDID
-                         }.Contains(calc.CalculatorRunClassificationId) && calc.FinancialYearId == financialYear
+                         }.Contains(calc.CalculatorRunClassificationId) 
+                         && calc.FinancialYearId == financialYear
+                         && b.BillingInstructionAcceptReject == PrepareBillingFileConstants.BillingInstructionAccepted
                          select new { calc, p, t })
                         .AsEnumerable()
                         .GroupBy(x => new { x.p.ProducerId, x.t.MaterialId })
