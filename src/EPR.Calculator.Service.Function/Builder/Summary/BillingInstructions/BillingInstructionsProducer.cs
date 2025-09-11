@@ -45,14 +45,14 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
 
             var dpList = defaultParams as IList<DefaultParamResultsClass> ?? defaultParams.ToList();
 
-            decimal? param_MATT_AI = dpList.FirstOrDefault(p => p.ParameterUniqueReference == "MATT-AI")?.ParameterValue;
-            decimal? param_MATT_AD = dpList.FirstOrDefault(p => p.ParameterUniqueReference == "MATT-AD")?.ParameterValue;
-            decimal? param_TONT_AI = dpList.FirstOrDefault(p => p.ParameterUniqueReference == "TONT-AI")?.ParameterValue;
-            decimal? param_TONT_AD = dpList.FirstOrDefault(p => p.ParameterUniqueReference == "TONT-AD")?.ParameterValue;
-            decimal? param_MATT_PI = dpList.FirstOrDefault(p => p.ParameterUniqueReference == "MATT-PI")?.ParameterValue;
-            decimal? param_MATT_PD = dpList.FirstOrDefault(p => p.ParameterUniqueReference == "MATT-PD")?.ParameterValue;
-            decimal? param_TONT_PI = dpList.FirstOrDefault(p => p.ParameterUniqueReference == "TONT-PI")?.ParameterValue;
-            decimal? param_TONT_PD = dpList.FirstOrDefault(p => p.ParameterUniqueReference == "TONT-PD")?.ParameterValue;
+            decimal? param_MATT_AI = dpList.FirstOrDefault(p => p.ParameterUniqueReference == CommonConstants.MaterialAmountIncrease)?.ParameterValue;
+            decimal? param_MATT_AD = dpList.FirstOrDefault(p => p.ParameterUniqueReference == CommonConstants.MaterialAmountDecrease)?.ParameterValue;
+            decimal? param_TONT_AI = dpList.FirstOrDefault(p => p.ParameterUniqueReference == CommonConstants.TonnageAmountIncrease)?.ParameterValue;
+            decimal? param_TONT_AD = dpList.FirstOrDefault(p => p.ParameterUniqueReference == CommonConstants.TonnageAmountDecrease)?.ParameterValue;
+            decimal? param_MATT_PI = dpList.FirstOrDefault(p => p.ParameterUniqueReference == CommonConstants.MaterialPercentageIncrease)?.ParameterValue;
+            decimal? param_MATT_PD = dpList.FirstOrDefault(p => p.ParameterUniqueReference == CommonConstants.MaterialPercentageDecrease)?.ParameterValue;
+            decimal? param_TONT_PI = dpList.FirstOrDefault(p => p.ParameterUniqueReference == CommonConstants.TonnagePercentageIncrease)?.ParameterValue;
+            decimal? param_TONT_PD = dpList.FirstOrDefault(p => p.ParameterUniqueReference == CommonConstants.TonnagePercentageDecrease)?.ParameterValue;
 
             foreach (var fee in result.ProducerDisposalFees)
             {

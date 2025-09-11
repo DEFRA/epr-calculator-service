@@ -71,5 +71,14 @@
         public const string TonnageChanged = "Tonnage Changed";
         public const string Positive = "+ve";
         public const string Negative = "-ve";
+
+        public const string MaterialAmountIncrease = "MATT-AI";
+        public const string MaterialAmountDecrease = "MATT-AD";
+        public const string TonnageAmountIncrease = "TONT-AI";
+        public const string TonnageAmountDecrease = "TONT-AD";
+        public const string MaterialPercentageIncrease = "MATT-PI";
+        public const string MaterialPercentageDecrease = "MATT-PD";
+        public const string TonnagePercentageIncrease = "TONT-PI";
+        public const string TonnagePercentageDecrease = "TONT-PD";
     }
 }
