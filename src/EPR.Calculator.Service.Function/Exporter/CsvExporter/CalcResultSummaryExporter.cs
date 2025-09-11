@@ -85,8 +85,8 @@
             csvContent.Append(CsvSanitiser.SanitiseData(producer.BillingInstructionSection.MaterialThresholdBreached, appendLrmCharacterToPreventRenderedAsFormula: true)); // prefixed with LRM character as the values(+ve and -ve) are parsed as formula in csv
             csvContent.Append(CsvSanitiser.SanitiseData(producer.BillingInstructionSection.TonnageThresholdBreached, appendLrmCharacterToPreventRenderedAsFormula: true)); // prefixed with LRM character added as values(+ve and -ve) are parsed as formula in csv
             csvContent.Append(CsvSanitiser.SanitiseData(producer.BillingInstructionSection.PercentageLiabilityDifference, DecimalPlaces.Two, null, false, true));
-            csvContent.Append(CsvSanitiser.SanitiseData("\u200E" + producer.BillingInstructionSection.MaterialPercentageThresholdBreached));
-            csvContent.Append(CsvSanitiser.SanitiseData("\u200E" + producer.BillingInstructionSection.TonnagePercentageThresholdBreached));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.BillingInstructionSection.MaterialPercentageThresholdBreached, appendLrmCharacterToPreventRenderedAsFormula: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.BillingInstructionSection.TonnagePercentageThresholdBreached, appendLrmCharacterToPreventRenderedAsFormula: true));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.BillingInstructionSection.SuggestedBillingInstruction));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.BillingInstructionSection.SuggestedInvoiceAmount, DecimalPlaces.Two, null, true));
         }
