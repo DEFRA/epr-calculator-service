@@ -14,7 +14,7 @@ namespace EPR.Calculator.Service.Function.Models
 
         public decimal SuggestedInvoiceAmount { get; set; }
 
-        public DateTime InstructionConfirmedDate { get; set; }
+        public DateTime? InstructionConfirmedDate { get; set; }
 
         public string InstructionConfirmedBy { get; set; }
 
