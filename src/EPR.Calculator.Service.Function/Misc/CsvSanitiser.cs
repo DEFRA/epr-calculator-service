@@ -8,7 +8,7 @@
 
     public static class CsvSanitiser
     {
-        public static string SanitiseData<T>(T value, bool csvDelimiterRequired = true)
+        public static string SanitiseData<T>(T value, bool csvDelimiterRequired = true, bool appendLrmCharacterToPreventRenderedAsFormula = false)
         {
             if (value == null)
             {
@@ -27,6 +27,11 @@
                                    .Replace(CommonConstants.TabSpace, string.Empty)
                                    .Replace(CommonConstants.CsvFileDelimiter, string.Empty)
                                    .Trim() ?? string.Empty;
+
+            if (appendLrmCharacterToPreventRenderedAsFormula && stringToSanitise.Length > 0)
+            {
+                stringToSanitise = "\u200E" + stringToSanitise;
+            }
 
             // Apply the speech marks to handle the comma in the text and currency values
             stringToSanitise = $"{CommonConstants.DoubleQuote}{stringToSanitise}{CommonConstants.DoubleQuote}";

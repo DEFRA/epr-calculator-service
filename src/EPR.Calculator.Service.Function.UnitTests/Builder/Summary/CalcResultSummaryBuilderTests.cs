@@ -4,6 +4,7 @@
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Common;
+    using EPR.Calculator.Service.Function.Builder.ParametersOther;
     using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
     using EPR.Calculator.Service.Function.Builder.Summary;
     using EPR.Calculator.Service.Function.Builder.Summary.OneAndTwoA;
@@ -646,7 +647,10 @@
 
             var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb("2024-25");
 
-            var result = new CalcResultSummaryBuilder(this.context).GetCalcResultSummary(orderedProducerDetails, materials, this.calcResult, totalPackagingTonnage, producerInvoicedMaterialNetTonnage);
+            var defaultParams = new List<DefaultParamResultsClass>();
+
+
+            var result = new CalcResultSummaryBuilder(this.context).GetCalcResultSummary(orderedProducerDetails, materials, this.calcResult, totalPackagingTonnage, producerInvoicedMaterialNetTonnage, defaultParams);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(145, result.ColumnHeaders.Count());
@@ -749,8 +753,11 @@
             };
 
             // Act
+
+            var defaultParams = new List<DefaultParamResultsClass>();
+
             var sut = new CalcResultSummaryBuilder(this.context);
-            var result = sut.GetCalcResultSummary(ordered, materials, this.calcResult, totalsTonn, prevInvoiced);
+            var result = sut.GetCalcResultSummary(ordered, materials, this.calcResult, totalsTonn, prevInvoiced, defaultParams);
 
 
             // Assert

@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using EPR.Calculator.Service.Function.Builder.ParametersOther;
 
 [assembly: InternalsVisibleTo("EPR.Calculator.Service.Function.UnitTests")]
 namespace EPR.Calculator.Service.Function.Builder.Summary
@@ -65,6 +66,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 runId, producerDetails);
 
             var producerInvoicedMaterialNetTonnage = GetPreviousInvoicedTonnageFromDb(resultsRequestDto.FinancialYear);
+            
+            var defaultParams = await GetDefaultParamsAsync(resultsRequestDto.RunId);
 
             // Household + PublicBin + HDC
             var totalPackagingTonnage = GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, runId);
@@ -86,17 +89,35 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 materials,
                 calcResult,
                 totalPackagingTonnage,
-                producerInvoicedMaterialNetTonnage);
+                producerInvoicedMaterialNetTonnage,
+                defaultParams);
 
             return result;
         }
 
-        public CalcResultSummary GetCalcResultSummary(
-            IEnumerable<ProducerDetail> orderedProducerDetails,
+        private Task<List<DefaultParamResultsClass>> GetDefaultParamsAsync(int runId)
+        {
+            return (from run in this.context.CalculatorRuns.AsNoTracking()
+                join defaultMaster in this.context.DefaultParameterSettings.AsNoTracking() on run.DefaultParameterSettingMasterId equals defaultMaster.Id
+                join defaultDetail in this.context.DefaultParameterSettingDetail.AsNoTracking() on defaultMaster.Id equals defaultDetail.DefaultParameterSettingMasterId
+                join defaultTemplate in this.context.DefaultParameterTemplateMasterList.AsNoTracking() on defaultDetail.ParameterUniqueReferenceId equals defaultTemplate.ParameterUniqueReferenceId
+                where run.Id == runId
+                    select new DefaultParamResultsClass
+                {
+                    ParameterValue = defaultDetail.ParameterValue,
+                    ParameterCategory = defaultTemplate.ParameterCategory,
+                    ParameterType = defaultTemplate.ParameterType,
+                    ParameterUniqueReference = defaultDetail.ParameterUniqueReferenceId
+                }).ToListAsync();
+        }
+
+
+        public CalcResultSummary GetCalcResultSummary(IEnumerable<ProducerDetail> orderedProducerDetails,
             IEnumerable<MaterialDetail> materials,
             CalcResult calcResult,
             IEnumerable<TotalPackagingTonnagePerRun> TotalPackagingTonnage,
-            IEnumerable<ProducerInvoicedDto> ProducerInvoicedMaterialNetTonnage)
+            IEnumerable<ProducerInvoicedDto> ProducerInvoicedMaterialNetTonnage,
+            IEnumerable<DefaultParamResultsClass> defaultParams)
         {
             var result = new CalcResultSummary();
             if (orderedProducerDetails.Any())
@@ -158,7 +179,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 TotalBillBreakdownProducer.SetValues(result);
 
                 // Billing instructions section
-                BillingInstructionsProducer.SetValues(result, ProducerInvoicedMaterialNetTonnage);
+                BillingInstructionsProducer.SetValues(result, ProducerInvoicedMaterialNetTonnage, defaultParams);
             }
 
             // Set headers with calculated column index
