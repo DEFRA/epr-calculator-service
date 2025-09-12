@@ -58,13 +58,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Cancell
                           LastTonnage = new LastTonnage
                           {
                                AluminiumValue = null,
-                                FibreCompositeValue = null,
-                                 OtherMaterialsValue = null,
-                                  GlassValue = null,
-                                  PaperOrCardValue = null,
-                                   SteelValue = null,
-                                    PlasticValue = null,
-                                     WoodValue = null,
+                               FibreCompositeValue = null,
+                               OtherMaterialsValue = null,
+                               GlassValue = null,
+                               PaperOrCardValue = null,
+                               SteelValue = null,
+                               PlasticValue = null,
+                               WoodValue = null,
                           },
                            LatestInvoice = new LatestInvoice
                            {
