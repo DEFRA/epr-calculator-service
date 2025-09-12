@@ -33,14 +33,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
     {
         private readonly ApplicationDBContext context;
 
-        public static IEnumerable<CalcResultScaledupProducer> ScaledupProducers { get; set; } = [];
+        public IEnumerable<CalcResultScaledupProducer> ScaledupProducers { get; set; } = [];
 
-        public static IEnumerable<ScaledupOrganisation> ParentOrganisations { get; set; } = [];
+        public IEnumerable<ScaledupOrganisation> ParentOrganisations { get; set; } = [];
 
         public CalcResultSummaryBuilder(ApplicationDBContext context)
         {
             this.context = context;
-            ScaledupProducers = new List<CalcResultScaledupProducer>();
         }
 
         public async Task<CalcResultSummary> Construct(CalcResultsRequestDto resultsRequestDto, CalcResult calcResult)
@@ -70,7 +69,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             var defaultParams = await GetDefaultParamsAsync(resultsRequestDto.RunId);
 
             // Household + PublicBin + HDC
-            var totalPackagingTonnage = GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, runId);
+            var totalPackagingTonnage = GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, runId, ScaledupProducers.ToList());
 
             // Get parent organisations
             ParentOrganisations = await (from run in this.context.CalculatorRuns
@@ -455,8 +454,11 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         {
             var previousInvoicedNetTonnage =
                         (from calc in context.CalculatorRuns
+                         join b in context.ProducerResultFileSuggestedBillingInstruction
+                            on calc.Id equals b.CalculatorRunId
                          join p in context.ProducerDesignatedRunInvoiceInstruction
-                             on calc.Id equals p.CalculatorRunId
+                             on new { b.CalculatorRunId, b.ProducerId }
+                                                              equals new { p.CalculatorRunId, p.ProducerId }
                          join t in context.ProducerInvoicedMaterialNetTonnage
                              on new { calc.Id, p.ProducerId } equals new { Id = t.CalculatorRunId, t.ProducerId }
                          where new int[]
@@ -465,7 +467,9 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                              RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
                              RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
                              RunClassificationStatusIds.FINALRUNCOMPLETEDID
-                         }.Contains(calc.CalculatorRunClassificationId) && calc.FinancialYearId == financialYear
+                         }.Contains(calc.CalculatorRunClassificationId) 
+                         && calc.FinancialYearId == financialYear
+                         && b.BillingInstructionAcceptReject == PrepareBillingFileConstants.BillingInstructionAccepted
                          select new { calc, p, t })
                         .AsEnumerable()
                         .GroupBy(x => new { x.p.ProducerId, x.t.MaterialId })
@@ -489,14 +493,10 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
         public static IEnumerable<TotalPackagingTonnagePerRun> GetTotalPackagingTonnagePerRun(
             IEnumerable<CalcResultsProducerAndReportMaterialDetail> allResults,
-            IEnumerable<MaterialDetail> materials,
-            int runId)
+            IEnumerable<MaterialDetail> materials, int runId, IEnumerable<CalcResultScaledupProducer> scaledupProducers)
         {
             var allProducerDetails = allResults.Select(x => x.ProducerDetail).Distinct();
-            var filteredProducers = allProducerDetails.Where(t => !ScaledupProducers.
-                Any(i => i.ProducerId == t.ProducerId)).ToList();
-            var scaledUpProducerDetails = allProducerDetails.Where(t => ScaledupProducers.
-                Any(i => i.ProducerId == t.ProducerId)).ToList();
+            var filteredProducers = allProducerDetails.Where(t => scaledupProducers.All(i => i.ProducerId != t.ProducerId)).ToList();
             var allProducerReportedMaterials = allResults.Select(x => x.ProducerReportedMaterial);
 
             var result =
@@ -517,13 +517,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                      TotalPackagingTonnage = g.Sum(x => x.m.PackagingTonnage),
                  }).ToList();
 
-            var distinctSProducers = ScaledupProducers.Where(t => !t.IsTotalRow).Where(t => !t.IsSubtotalRow).Select(t => new { t.ProducerId, t.SubsidiaryId }).Distinct();
+            var distinctSProducers = scaledupProducers.Where(t => !t.IsTotalRow).Where(t => !t.IsSubtotalRow).Select(t => new { t.ProducerId, t.SubsidiaryId }).Distinct();
 
             foreach (var item in distinctSProducers)
             {
                 decimal total = 0;
 
-                var sProducers = ScaledupProducers.Where(t => t.ProducerId == item.ProducerId && t.SubsidiaryId == item.SubsidiaryId);
+                var sProducers = scaledupProducers.Where(t => t.ProducerId == item.ProducerId && t.SubsidiaryId == item.SubsidiaryId);
                 foreach (var scaledupProducer in sProducers)
                 {
                     total += scaledupProducer.ScaledupProducerTonnageByMaterial.Sum(x => x.Value.ScaledupTotalReportedTonnage);
