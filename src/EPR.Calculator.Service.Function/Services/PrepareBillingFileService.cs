@@ -85,7 +85,7 @@ namespace EPR.Calculator.Service.Function.Services
 
         private static async Task<List<int>> GetAcceptedProducerIdsAsync(int calculatorRunId, ApplicationDBContext applicationDBContext)
         {
-            return await applicationDBContext.ProducerResultFileSuggestedBillingInstruction
+            return await applicationDBContext.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
             .Where(x => x.CalculatorRunId == calculatorRunId
                     &&
                     x.BillingInstructionAcceptReject == PrepareBillingFileConstants.BillingInstructionAccepted
