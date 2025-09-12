@@ -18,7 +18,7 @@
 
         public string? TonnagePercentageThresholdBreached { get; set; }
 
-        public string SuggestedBillingInstruction { get; set; }
+        public required string SuggestedBillingInstruction { get; set; } = string.Empty;
 
         public decimal? SuggestedInvoiceAmount { get; set; }
     }

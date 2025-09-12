@@ -113,9 +113,9 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
                     context.SaveChanges();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
