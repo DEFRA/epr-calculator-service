@@ -53,52 +53,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         public void TearDown()
         {
             this.dbContext?.Database.EnsureDeleted();
-        }
-
-        [TestMethod]
-        public async Task Construct_ShouldReturnResponseWithCorrectHeaders()
-        {
-            this.SeedDatabaseForInitialRun(dbContext);
-
-            // Arrange
-            var requestDto = new CalcResultsRequestDto() { RunId = 2 };
-            this.materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
-
-            // Act
-            var result = await builder.Construct(requestDto, "2025-26");
-
-            // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(CommonConstants.CancelledProducers, result.TitleHeader);
-
-            var headerRow = result.CancelledProducers.FirstOrDefault();
-            Assert.IsNotNull(headerRow);
-
-            // Check main headers
-            Assert.AreEqual(CommonConstants.ProducerId, headerRow.ProducerId_Header);
-            Assert.AreEqual(CommonConstants.ProducerName, headerRow.ProducerName_Header);
-            Assert.AreEqual(CommonConstants.TradingName, headerRow.TradingName_Header);
-
-            // Check LastTonnage headers
-            Assert.IsNotNull(headerRow.LastTonnage);
-            Assert.AreEqual(CommonConstants.LastTonnage, headerRow.LastTonnage.LastTonnage_Header);
-            Assert.AreEqual(CommonConstants.Aluminium, headerRow.LastTonnage.Aluminium_Header);
-            Assert.AreEqual(CommonConstants.FibreComposite, headerRow.LastTonnage.FibreComposite_Header);
-            Assert.AreEqual(CommonConstants.Glass, headerRow.LastTonnage.Glass_Header);
-            Assert.AreEqual(CommonConstants.PaperOrCard, headerRow.LastTonnage.PaperOrCard_Header);
-            Assert.AreEqual(CommonConstants.Plastic, headerRow.LastTonnage.Plastic_Header);
-            Assert.AreEqual(CommonConstants.Steel, headerRow.LastTonnage.Steel_Header);
-            Assert.AreEqual(CommonConstants.Wood, headerRow.LastTonnage.Wood_Header);
-            Assert.AreEqual(CommonConstants.OtherMaterials, headerRow.LastTonnage.OtherMaterials_Header);
-
-            // Check LatestInvoice headers
-            Assert.IsNotNull(headerRow.LatestInvoice);
-            Assert.AreEqual(CommonConstants.LatestInvoice, headerRow.LatestInvoice.LatestInvoice_Header);
-            Assert.AreEqual(CommonConstants.CurrentYearInvoicedTotalToDate, headerRow.LatestInvoice.CurrentYearInvoicedTotalToDate_Header);
-            Assert.AreEqual(CommonConstants.RunNumber, headerRow.LatestInvoice.RunNumber_Header);
-            Assert.AreEqual(CommonConstants.RunName, headerRow.LatestInvoice.RunName_Header);
-            Assert.AreEqual(CommonConstants.BillingInstructionId, headerRow.LatestInvoice.BillingInstructionId_Header);
-        }
+        }        
 
         [TestMethod]
         public async Task CanConstruct()

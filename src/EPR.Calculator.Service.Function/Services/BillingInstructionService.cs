@@ -72,8 +72,8 @@ namespace EPR.Calculator.Service.Function.Services
                     var billingInstruction = new ProducerResultFileSuggestedBillingInstruction
                     {
                         CalculatorRunId = calcResult.CalcResultDetail.RunId,
-                        ProducerId = int.Parse(cancelledProducer.ProducerIdValue),
-                        TotalProducerBillWithBadDebt =0,
+                        ProducerId =  cancelledProducer.ProducerIdValue is null ? 0: int.Parse(cancelledProducer.ProducerIdValue),
+                        TotalProducerBillWithBadDebt =null,
                         CurrentYearInvoiceTotalToDate = cancelledProducer.LatestInvoice?.CurrentYearInvoicedTotalToDateValue,
                         TonnageChangeSinceLastInvoice = null,
                         AmountLiabilityDifferenceCalcVsPrev = null,
@@ -83,7 +83,7 @@ namespace EPR.Calculator.Service.Function.Services
                         MaterialPercentageThresholdBreached = null,
                         TonnagePercentageThresholdBreached = null,
                         SuggestedBillingInstruction = "CANCEL",
-                        SuggestedInvoiceAmount = 0
+                        SuggestedInvoiceAmount = null
                     };
                     billingInstructions.Add(billingInstruction);
                 }
