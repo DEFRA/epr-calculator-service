@@ -31,9 +31,9 @@
             allResults.First().ProducerReportedMaterial.MaterialId = testMaterialId;
             materialDetails.First().Id = testMaterialId;
 
-            CalcResultSummaryBuilder.ScaledupProducers = Fixture.Create<List<CalcResultScaledupProducer>>();
+            var scaledupProducers = Fixture.Create<List<CalcResultScaledupProducer>>();
 
-            var TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, producers.First().CalculatorRunId);
+            var TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, producers.First().CalculatorRunId, scaledupProducers);
             // Act
             var result = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducersTotal(producers, TotalPackagingTonnage);
 
@@ -63,7 +63,8 @@
             allResults.First().ProducerDetail.CalculatorRunId = testCalculatorRunId;
             allResults.First().ProducerReportedMaterial.PackagingType = "HH";
 
-            var TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId);
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
+            var TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId, scaledupProducers);
 
             // Act
             var result = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducersTotal(producers, TotalPackagingTonnage);
@@ -81,7 +82,8 @@
             var testSubsidaryId = Fixture.Create<string>();
             var materialDetails = Fixture.Create<List<MaterialDetail>>();
             var testMaterialId = Fixture.Create<int>();
-            CalcResultSummaryBuilder.ScaledupProducers = Fixture.Create<List<CalcResultScaledupProducer>>();
+           
+            //CalcResultSummaryBuilder.ScaledupProducers = Fixture.Create<List<CalcResultScaledupProducer>>();
 
             var producer = Fixture.Create<ProducerDetail>();
             var allResults = GenerateAllResults(testProducerId, testCalculatorRunId, testSubsidaryId);
@@ -92,8 +94,8 @@
             allResults.First().ProducerReportedMaterial.MaterialId = testMaterialId;
             materialDetails.First().Id = testMaterialId;
 
-
-            var TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId);
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
+            var TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId, scaledupProducers);
 
             // Act
             var result = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducers(
@@ -122,7 +124,8 @@
             allResults.First().ProducerDetail.CalculatorRunId = testCalculatorRunId;
             allResults.First().ProducerReportedMaterial.PackagingType = "PB";
 
-            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId);
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
+            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId, scaledupProducers);
 
             // Act
             var result = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducersTotal(producers, totalPackagingTonnage);
@@ -151,9 +154,11 @@
             producer.ProducerId = testProducerId;
             producer.SubsidiaryId = testSubsidaryId;
             producer.CalculatorRunId = testCalculatorRunId;
-            CalcResultSummaryBuilder.ScaledupProducers = Fixture.Create<List<CalcResultScaledupProducer>>();
 
-            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId);
+            //CalcResultSummaryBuilder.ScaledupProducers = Fixture.Create<List<CalcResultScaledupProducer>>();
+
+            var scaledupProducers = new List<CalcResultScaledupProducer>();
+            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId, scaledupProducers);
 
             // Act
             var result = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducers(
