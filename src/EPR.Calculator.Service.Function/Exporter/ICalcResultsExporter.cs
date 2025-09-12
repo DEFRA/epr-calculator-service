@@ -2,6 +2,6 @@
 {
     public interface ICalcResultsExporter<T>
     {
-        string Export(T results);
+        public string Export(T results, bool isBillingFile);
     }
 }

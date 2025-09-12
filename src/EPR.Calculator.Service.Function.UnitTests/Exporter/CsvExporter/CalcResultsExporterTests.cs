@@ -15,6 +15,7 @@
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.RejectedProducers;
 
     [TestClass]
     public class CalcResultsExporterTests
@@ -31,6 +32,7 @@
             MockParameterOtherCostExporter = new();
             MockCalcResultSummaryExporter = new();
             MockCalcResultCancelledProducersExporter = new();
+            MockCalcResultRejectedProducersExporter = new();
             MockCommsCostExporter = new();
             TestClass = new CalcResultsExporter(
                 MockLateReportingExporter.Object,
@@ -42,7 +44,8 @@
                 MockParameterOtherCostExporter.Object,
                 MockCommsCostExporter.Object,
                 MockCalcResultSummaryExporter.Object,
-                MockCalcResultCancelledProducersExporter.Object);
+                MockCalcResultCancelledProducersExporter.Object,
+                MockCalcResultRejectedProducersExporter.Object);
         }
 
         private Mock<ICalcResultDetailExporter> mockResultDetailexporter = new();
@@ -66,7 +69,9 @@
 
         private Mock<ICalcResultSummaryExporter> MockCalcResultSummaryExporter { get; init; }
 
-        private Mock<ICalcResultCancelledProducersExporter> MockCalcResultCancelledProducersExporter { get; init; } 
+        private Mock<ICalcResultCancelledProducersExporter> MockCalcResultCancelledProducersExporter { get; init; }
+
+        private Mock<ICalcResultRejectedProducersExporter> MockCalcResultRejectedProducersExporter { get; init; }
 
         private Mock<ICommsCostExporter> MockCommsCostExporter { get; init; }
 

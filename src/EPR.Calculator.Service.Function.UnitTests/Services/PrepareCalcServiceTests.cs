@@ -98,7 +98,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this._builder = new Mock<ICalcResultBuilder>();
             this._builder.Setup(b => b.Build(It.IsAny<CalcResultsRequestDto>())).ReturnsAsync(calcResult);
             this._exporter = new Mock<ICalcResultsExporter<CalcResult>>();
-            this._exporter.Setup(x => x.Export(It.IsAny<CalcResult>())).Returns("Some value");
+            this._exporter.Setup(x => x.Export(It.IsAny<CalcResult>(), It.IsAny<bool>())).Returns("Some value");
             this._transposePomAndOrgDataService = new Mock<ITransposePomAndOrgDataService>();
             this._storageService = new Mock<IStorageService>();
             this._validationRules = fixture.Create<CalculatorRunValidator>();
@@ -193,7 +193,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Arrange
             var fixture = new Fixture();
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-            this._exporter.Setup(x => x.Export(It.IsAny<CalcResult>())).Throws(new Exception("Custom exception message"));
+            this._exporter.Setup(x => x.Export(It.IsAny<CalcResult>(), It.IsAny<bool>())).Throws(new Exception("Custom exception message"));
             var runName = fixture.Create<string>();
 
             // Act
@@ -209,7 +209,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Arrange
             var fixture = new Fixture();
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-            this._exporter.Setup(x => x.Export(It.IsAny<CalcResult>())).Throws(new OperationCanceledException("Operation canceled exception message"));
+            this._exporter.Setup(x => x.Export(It.IsAny<CalcResult>(), It.IsAny<bool>())).Throws(new OperationCanceledException("Operation canceled exception message"));
             var runName = fixture.Create<string>();
 
             // Act

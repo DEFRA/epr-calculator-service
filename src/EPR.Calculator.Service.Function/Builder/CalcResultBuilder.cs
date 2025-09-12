@@ -114,9 +114,12 @@ namespace EPR.Calculator.Service.Function.Builder
             result.CalcResultScaledupProducers = await this.calcResultScaledupProducersBuilder.Construct(resultsRequestDto);
             this._telemetryClient.TrackTrace("calcResultScaledupProducersBuilder end...");
 
-            this._telemetryClient.TrackTrace("CalcResultRejectedProducersBuilder started...");
-            result.CalcResultRejectedProducers = await this.calcResultRejectedProducersBuilder.Construct(resultsRequestDto);
-            this._telemetryClient.TrackTrace("CalcResultRejectedProducersBuilder end...");
+            if (resultsRequestDto.IsBillingFile)
+            {
+                this._telemetryClient.TrackTrace("CalcResultRejectedProducersBuilder started...");
+                result.CalcResultRejectedProducers = await this.calcResultRejectedProducersBuilder.Construct(resultsRequestDto);
+                this._telemetryClient.TrackTrace("CalcResultRejectedProducersBuilder end...");
+            }
 
             this._telemetryClient.TrackTrace("laDisposalCostBuilder started...");
             result.CalcResultLaDisposalCostData = await this.laDisposalCostBuilder.Construct(resultsRequestDto, result);
@@ -128,7 +131,6 @@ namespace EPR.Calculator.Service.Function.Builder
             result.CalcResultLaDisposalCostData = await this.laDisposalCostBuilder.Construct(resultsRequestDto, result);
             result.CalcResultSummary = await this.summaryBuilder.Construct(resultsRequestDto, result);
             this._telemetryClient.TrackTrace("summaryBuilder end...");
-
 
             return result;
         }
