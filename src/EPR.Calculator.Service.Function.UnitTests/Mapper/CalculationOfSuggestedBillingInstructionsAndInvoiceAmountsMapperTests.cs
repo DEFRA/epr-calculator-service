@@ -46,7 +46,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
                     LiabilityDifference = -200,
                     MaterialThresholdBreached = "-ve",
                     TonnageThresholdBreached = "-ve",
-                    PercentageLiabilityDifference = "10.05",
+                    PercentageLiabilityDifference = 10.05m,
                     MaterialPercentageThresholdBreached = "-ve",
                     TonnagePercentageThresholdBreached = "-ve",
                     SuggestedBillingInstruction = "INITIAL",
@@ -110,7 +110,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             Assert.AreEqual(null, result.LiabilityDifferenceCalcVsPrev);
             Assert.AreEqual(string.Empty, result.MaterialThresholdBreached);
             Assert.AreEqual(string.Empty, result.TonnageThresholdBreached);
-            Assert.AreEqual(string.Empty, result.PercentageLiabilityDifferenceCalcVsPrev);
+            Assert.AreEqual("-", result.PercentageLiabilityDifferenceCalcVsPrev);
             Assert.AreEqual(string.Empty, result.MaterialPercentageThresholdBreached);
             Assert.AreEqual(string.Empty, result.TonnagePercentageThresholdBreached);
             Assert.AreEqual(string.Empty, result.SuggestedBillingInstruction);
@@ -130,7 +130,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
                     LiabilityDifference = null,
                     MaterialThresholdBreached = "-",
                     TonnageThresholdBreached = "-",
-                    PercentageLiabilityDifference = "-",
+                    PercentageLiabilityDifference = null,
                     MaterialPercentageThresholdBreached = "-",
                     TonnagePercentageThresholdBreached = "-",
                     SuggestedBillingInstruction = "INITIAL",

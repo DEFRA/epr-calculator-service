@@ -19,7 +19,7 @@ namespace EPR.Calculator.Service.Function.Mapper
                 LiabilityDifferenceCalcVsPrev = costs.LiabilityDifference,
                 MaterialThresholdBreached = costs.MaterialThresholdBreached ?? string.Empty,
                 TonnageThresholdBreached = costs.TonnageThresholdBreached ?? string.Empty,
-                PercentageLiabilityDifferenceCalcVsPrev = GetPercentageLiabilityDifference(costs.PercentageLiabilityDifference!),
+                PercentageLiabilityDifferenceCalcVsPrev = GetPercentageLiabilityDifference(costs.PercentageLiabilityDifference)!,
                 MaterialPercentageThresholdBreached = costs.MaterialPercentageThresholdBreached ?? string.Empty,
                 TonnagePercentageThresholdBreached = costs.TonnagePercentageThresholdBreached ?? string.Empty,
                 SuggestedBillingInstruction = costs.SuggestedBillingInstruction ?? string.Empty,
@@ -27,20 +27,12 @@ namespace EPR.Calculator.Service.Function.Mapper
             };
         }
 
-        private string GetPercentageLiabilityDifference(string percentageLiabilityDifference)
+        private string? GetPercentageLiabilityDifference(decimal? percentageLiabilityDifference)
         {
             if (percentageLiabilityDifference == null)
-                return string.Empty;
-
-            if (percentageLiabilityDifference == CommonConstants.Hyphen)
                 return CommonConstants.Hyphen;
 
-            var isConversionSuccessful = decimal.TryParse(percentageLiabilityDifference, out decimal value);
-
-            if (!isConversionSuccessful)
-                return string.Empty;
-
-            return $"{Math.Round(value, (int)DecimalPlaces.Two).ToString()}%";
+            return $"{Math.Round((decimal)percentageLiabilityDifference, (int)DecimalPlaces.Two).ToString()}%";
         }
 
         private string GetFormattedCurrencyValue(string value)
