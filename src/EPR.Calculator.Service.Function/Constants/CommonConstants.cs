@@ -44,8 +44,10 @@
         
         public const string ProducerId = "Producer ID";
         public const string SubsidiaryId = "Subsidiary ID";
-        public const string ProducerOrSubsidiaryName = "Producer / Subsidiary Name";
+        public const string ProducerOrSubsidiaryName = "Producer Name";
         public const string TradingName = "Trading Name";
+        public const string ProducerName = "Producer Name";
+
 
         public const string LastTonnage = "Last Tonnage";
         public const int LastTonnageSubHeaderIndex = 4;
@@ -67,5 +69,12 @@
         public const string RunName = "Run Name";
         public const string BillingInstructionId = "Billing Instruction ID";
         public const string TwoACommsCostsbyMaterial = "2a Comms Costs - by Material";
+        public const string CurrentYearInvoicedTotalToDate = "Current Year Invoiced Total To Date";
+
+        public const string Accepted = "Accepted";
+        public const string Rejected = "Rejected";
+        public const string Cancel = "Cancel";
+
+
     }
 }

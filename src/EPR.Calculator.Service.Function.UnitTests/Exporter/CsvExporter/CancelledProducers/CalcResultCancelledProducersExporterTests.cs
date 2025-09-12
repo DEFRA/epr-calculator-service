@@ -27,8 +27,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Cancell
                     new CalcResultCancelledProducersDto
                     {
                         ProducerId_Header = CommonConstants.ProducerId,
-                        SubsidiaryId_Header = CommonConstants.SubsidiaryId,
-                        ProducerOrSubsidiaryName_Header = CommonConstants.ProducerOrSubsidiaryName,
+                        ProducerName_Header = CommonConstants.ProducerOrSubsidiaryName,
                         TradingName_Header = CommonConstants.TradingName,
                         LastTonnage = new LastTonnage
                         {
@@ -45,11 +44,37 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Cancell
                         LatestInvoice = new LatestInvoice
                         {
                             LatestInvoice_Header = CommonConstants.LatestInvoice,
-                            LastInvoicedTotal_Header = CommonConstants.LastInvoicedTotal,
+                            CurrentYearInvoicedTotalToDate_Header = CommonConstants.LastInvoicedTotal,
                             RunNumber_Header = CommonConstants.RunNumber,
                             RunName_Header = CommonConstants.RunName,
                             BillingInstructionId_Header = CommonConstants.BillingInstructionId,
                         }
+                    },
+                    new CalcResultCancelledProducersDto
+                    {
+                         ProducerIdValue = "1",
+                         TradingNameValue = "TestTrading",
+                         ProducerOrSubsidiaryNameValue = "Test Producer",
+                          LastTonnage = new LastTonnage
+                          {
+                               AluminiumValue = null,
+                                FibreCompositeValue = null,
+                                 OtherMaterialsValue = null,
+                                  GlassValue = null,
+                                  PaperOrCardValue = null,
+                                   SteelValue = null,
+                                    PlasticValue = null,
+                                     WoodValue = null,
+                          },
+                           LatestInvoice = new LatestInvoice
+                           {
+                                BillingInstructionIdValue = "1_1",
+                                CurrentYearInvoicedTotalToDateValue = 100,
+                                RunNameValue = "Run1",
+                                RunNumberValue = "1",
+                           }
+                          
+                          
                     }
                 }
             };
@@ -63,7 +88,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Cancell
             Assert.IsTrue(csvOutput.Contains(CommonConstants.LastTonnage), "CSV should include LastTonnage subheader.");
             Assert.IsTrue(csvOutput.Contains(CommonConstants.LatestInvoice), "CSV should include LatestInvoice subheader.");
             Assert.IsTrue(csvOutput.Contains(CommonConstants.ProducerId), "CSV should include ProducerId column.");
-            Assert.IsTrue(csvOutput.Contains(CommonConstants.SubsidiaryId), "CSV should include SubsidiaryId column.");
             Assert.IsTrue(csvOutput.Contains(CommonConstants.BillingInstructionId), "CSV should include BillingInstructionId column.");
             Assert.IsTrue(csvOutput.Contains(CommonConstants.TradingName), "CSV should include TradingName column.");
             Assert.IsTrue(csvOutput.Contains(CommonConstants.Aluminium), "CSV should include Aluminium column.");
@@ -78,6 +102,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Cancell
             Assert.IsTrue(csvOutput.Contains(CommonConstants.RunNumber), "CSV should include RunNumber column.");
             Assert.IsTrue(csvOutput.Contains(CommonConstants.RunName), "CSV should include RunName column.");
             Assert.IsTrue(csvOutput.Contains(CommonConstants.BillingInstructionId), "CSV should include BillingInstructionId column.");
+            Assert.IsTrue(csvOutput.Contains("Run1"));
+            Assert.IsTrue(csvOutput.Contains("1"));
+            Assert.IsTrue(csvOutput.Contains("1_1"));
+            Assert.IsTrue(csvOutput.Contains("100"));
+
         }
 
         [TestMethod]

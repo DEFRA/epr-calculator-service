@@ -177,6 +177,65 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             Assert.IsFalse(result);
         }
-       
+
+        [TestMethod]
+        public async Task CanCallCreateBillingInstructionsWithCancelledProducers()
+        {
+            // Arrange
+            var fixture = new Fixture();
+            var calcResult = new CalcResult
+            {
+                CalcResultScaledupProducers = new CalcResultScaledupProducers(),
+                
+                CalcResultDetail = new CalcResultDetail
+                {
+                    RunId = 4,
+                    RunDate = DateTime.Now,
+                    RunName = "RunName",
+                },
+                CalcResultLapcapData = new CalcResultLapcapData
+                {
+                    Name = string.Empty,
+                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>(),
+                },
+                CalcResultParameterOtherCost = new()
+                {
+                    BadDebtProvision = new KeyValuePair<string, string>(),
+                    Name = string.Empty,
+                    Details = new List<CalcResultParameterOtherCostDetail>(),
+                    Materiality = new List<CalcResultMateriality>(),
+                    SaOperatingCost = new List<CalcResultParameterOtherCostDetail>(),
+                    SchemeSetupCost = new CalcResultParameterOtherCostDetail(),
+                },
+                CalcResultLateReportingTonnageData = new()
+                {
+                    Name = string.Empty,
+                    CalcResultLateReportingTonnageDetails = new List<CalcResultLateReportingTonnageDetail>(),
+                    MaterialHeading = string.Empty,
+                    TonnageHeading = string.Empty,
+                },
+                CalcResultSummary = new() { ProducerDisposalFees = fixture.Create<List<CalcResultSummaryProducerDisposalFees>>() } ,
+                 CalcResultCancelledProducers = new CalcResultCancelledProducersResponse()
+                 {
+                     TitleHeader = CommonConstants.CancelledProducers,
+                     CancelledProducers = new List<CalcResultCancelledProducersDto>()
+                       { new CalcResultCancelledProducersDto() { LastTonnage = null,  ProducerIdValue = "1", TradingNameValue ="Test",
+                           LatestInvoice = new LatestInvoice(){ BillingInstructionIdValue="1_1", RunNameValue ="RunName" , RunNumberValue="4" },                            
+                       }
+                 }
+                 }
+            };
+
+
+            _telemetryLogger.Setup(mock => mock.LogInformation(It.IsAny<TrackMessage>())).Verifiable();
+            _telemetryLogger.Setup(mock => mock.LogError(It.IsAny<ErrorMessage>())).Verifiable();
+
+            // Act
+            var result = await _testClass.CreateBillingInstructions(calcResult);
+           
+
+            Assert.IsTrue(result);
+        }
+
     }
 }

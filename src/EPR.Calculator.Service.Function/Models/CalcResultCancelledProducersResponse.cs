@@ -11,8 +11,7 @@ namespace EPR.Calculator.Service.Function.Models
     public class CalcResultCancelledProducersDto
     {
         public string? ProducerId_Header { get; set; }
-        public string? SubsidiaryId_Header { get; set; }
-        public string? ProducerOrSubsidiaryName_Header { get; set; }
+        public string? ProducerName_Header { get; set; }
         public string? TradingName_Header { get; set; }
 
         public string? ProducerIdValue { get; set; }
@@ -48,12 +47,12 @@ namespace EPR.Calculator.Service.Function.Models
     public class LatestInvoice
     {
         public string? LatestInvoice_Header { get; set; }
-        public string? LastInvoicedTotal_Header { get; set; }
+        public string? CurrentYearInvoicedTotalToDate_Header { get; set; }
         public string? RunNumber_Header { get; set; }
         public string? RunName_Header { get; set; }
         public string? BillingInstructionId_Header { get; set; }
 
-        public decimal? LastInvoicedTotalValue { get; set; }
+        public decimal? CurrentYearInvoicedTotalToDateValue { get; set; }
         public string? RunNumberValue { get; set; }
         public string? RunNameValue { get; set; }
         public string? BillingInstructionIdValue { get; set; }
