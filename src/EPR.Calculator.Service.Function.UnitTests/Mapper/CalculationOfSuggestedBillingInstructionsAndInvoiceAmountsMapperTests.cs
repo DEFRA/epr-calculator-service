@@ -50,7 +50,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
                     MaterialPercentageThresholdBreached = "-ve",
                     TonnagePercentageThresholdBreached = "-ve",
                     SuggestedBillingInstruction = "INITIAL",
-                    SuggestedInvoiceAmount = "500"
+                    SuggestedInvoiceAmount = 500m
                 },
                 ProducerId = "Producer123",
                 ProducerName = "Producer Name",
@@ -114,7 +114,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             Assert.AreEqual(string.Empty, result.MaterialPercentageThresholdBreached);
             Assert.AreEqual(string.Empty, result.TonnagePercentageThresholdBreached);
             Assert.AreEqual(string.Empty, result.SuggestedBillingInstruction);
-            Assert.AreEqual(string.Empty, result.SuggestedInvoiceAmount);
+            Assert.AreEqual(CommonConstants.Hyphen, result.SuggestedInvoiceAmount);
         }
 
         [TestMethod]
@@ -134,7 +134,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
                     MaterialPercentageThresholdBreached = "-",
                     TonnagePercentageThresholdBreached = "-",
                     SuggestedBillingInstruction = "INITIAL",
-                    SuggestedInvoiceAmount = "500"
+                    SuggestedInvoiceAmount = 500m
                 },
                 ProducerId = "Producer123",
                 ProducerName = "Producer Name",
