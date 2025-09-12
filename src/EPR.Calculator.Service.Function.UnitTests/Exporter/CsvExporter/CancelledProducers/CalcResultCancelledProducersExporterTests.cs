@@ -49,6 +49,32 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Cancell
                             RunName_Header = CommonConstants.RunName,
                             BillingInstructionId_Header = CommonConstants.BillingInstructionId,
                         }
+                    },
+                    new CalcResultCancelledProducersDto
+                    {
+                         ProducerIdValue = "1",
+                         TradingNameValue = "TestTrading",
+                         ProducerOrSubsidiaryNameValue = "Test Producer",
+                          LastTonnage = new LastTonnage
+                          {
+                               AluminiumValue = null,
+                                FibreCompositeValue = null,
+                                 OtherMaterialsValue = null,
+                                  GlassValue = null,
+                                  PaperOrCardValue = null,
+                                   SteelValue = null,
+                                    PlasticValue = null,
+                                     WoodValue = null,
+                          },
+                           LatestInvoice = new LatestInvoice
+                           {
+                                BillingInstructionIdValue = "1_1",
+                                CurrentYearInvoicedTotalToDateValue = 100,
+                                RunNameValue = "Run1",
+                                RunNumberValue = "1",
+                           }
+                          
+                          
                     }
                 }
             };
@@ -76,6 +102,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Cancell
             Assert.IsTrue(csvOutput.Contains(CommonConstants.RunNumber), "CSV should include RunNumber column.");
             Assert.IsTrue(csvOutput.Contains(CommonConstants.RunName), "CSV should include RunName column.");
             Assert.IsTrue(csvOutput.Contains(CommonConstants.BillingInstructionId), "CSV should include BillingInstructionId column.");
+            Assert.IsTrue(csvOutput.Contains("Run1"));
+            Assert.IsTrue(csvOutput.Contains("1"));
+            Assert.IsTrue(csvOutput.Contains("1_1"));
+            Assert.IsTrue(csvOutput.Contains("100"));
+
         }
 
         [TestMethod]

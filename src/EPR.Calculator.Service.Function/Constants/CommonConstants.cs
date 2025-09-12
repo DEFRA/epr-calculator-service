@@ -44,7 +44,7 @@
         
         public const string ProducerId = "Producer ID";
         public const string SubsidiaryId = "Subsidiary ID";
-        public const string ProducerOrSubsidiaryName = "Producer / Subsidiary Name";
+        public const string ProducerOrSubsidiaryName = "Producer Name";
         public const string TradingName = "Trading Name";
         public const string ProducerName = "Producer Name";
 
