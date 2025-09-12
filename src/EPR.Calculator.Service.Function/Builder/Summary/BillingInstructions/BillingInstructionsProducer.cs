@@ -96,26 +96,19 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
 
         public static void UpdateProductPrice(ApplicationDBContext context, CalcResultSummaryBillingInstruction fee, int runId, int ProducerId)
         {
-            try
+            var producer = context.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(p => p.ProducerId == ProducerId && p.CalculatorRunId == runId);
+            if (producer != null)
             {
-                var producer = context.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(p => p.ProducerId == ProducerId && p.CalculatorRunId == runId);
-                if (producer != null)
-                {
-                    producer.CurrentYearInvoiceTotalToDate = fee.CurrentYearInvoiceTotalToDate;
-                    producer.TonnageChangeSinceLastInvoice = fee.TonnageChangeSinceLastInvoice;
-                    producer.AmountLiabilityDifferenceCalcVsPrev = fee.LiabilityDifference;
-                    producer.MaterialPoundThresholdBreached = fee.MaterialThresholdBreached;
-                    producer.TonnagePoundThresholdBreached = fee.TonnageThresholdBreached;
-                    producer.PercentageLiabilityDifferenceCalcVsPrev = fee.PercentageLiabilityDifference;
-                    producer.TonnagePercentageThresholdBreached = fee.TonnagePercentageThresholdBreached;
-                    producer.SuggestedBillingInstruction = fee.SuggestedBillingInstruction;
-                    producer.SuggestedInvoiceAmount = fee.SuggestedInvoiceAmount ?? 0m;
-                    context.SaveChanges();
-                }
-            }
-            catch (Exception)
-            {
-                throw;
+                producer.CurrentYearInvoiceTotalToDate = fee.CurrentYearInvoiceTotalToDate;
+                producer.TonnageChangeSinceLastInvoice = fee.TonnageChangeSinceLastInvoice;
+                producer.AmountLiabilityDifferenceCalcVsPrev = fee.LiabilityDifference;
+                producer.MaterialPoundThresholdBreached = fee.MaterialThresholdBreached;
+                producer.TonnagePoundThresholdBreached = fee.TonnageThresholdBreached;
+                producer.PercentageLiabilityDifferenceCalcVsPrev = fee.PercentageLiabilityDifference;
+                producer.TonnagePercentageThresholdBreached = fee.TonnagePercentageThresholdBreached;
+                producer.SuggestedBillingInstruction = fee.SuggestedBillingInstruction;
+                producer.SuggestedInvoiceAmount = fee.SuggestedInvoiceAmount ?? 0m;
+                context.SaveChanges();
             }
         }
 
