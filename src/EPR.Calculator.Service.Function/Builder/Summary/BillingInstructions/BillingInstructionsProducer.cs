@@ -113,10 +113,10 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
                     context.SaveChanges();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
-            }            
+                throw ex;
+            }
         }
 
         private static decimal? GetCurrentYearInvoicedTotalToDate(CalcResultSummaryProducerDisposalFees fee, decimal? currentYearInvoicedTotalTonnage, decimal totalTonnage)
@@ -253,7 +253,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
             if (fee.IsProducerScaledup == CommonConstants.Totals) return String.Empty;
             if (fee.Level != CommonConstants.LevelOne.ToString()) return CommonConstants.Hyphen;
 
-             if (!currentYearInvoiceTotalToDate.HasValue) return CommonConstants.Initial;
+            if (!currentYearInvoiceTotalToDate.HasValue) return CommonConstants.Initial;
 
             if (liabilityDifference > 0 &&
                 (materialThresholdBreached == CommonConstants.Hyphen || tonnageThresholdBreached == CommonConstants.Hyphen || materialPercentageThresholdBreached == CommonConstants.Hyphen || tonnagePercentageThresholdBreached == CommonConstants.Hyphen))
