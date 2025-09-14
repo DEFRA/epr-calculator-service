@@ -127,7 +127,7 @@
                     Message = "Exporter started...",
                 });
 
-                var exportedResults = this.Exporter.Export(results, resultsRequestDto.IsBillingFile);
+                var exportedResults = this.Exporter.Export(results);
                 this.telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = resultsRequestDto.RunId,

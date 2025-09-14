@@ -27,7 +27,6 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         private readonly ICalcResultLaDisposalCostExporter laDisposalCostExporter;
         private readonly ICommsCostExporter commsCostExporter;
         private readonly ICalcResultCancelledProducersExporter calcResultCancelledProducersExporter;
-        private readonly ICalcResultRejectedProducersExporter calcResultRejectedProducersExporter;
 
         // Suppress SonarQube warning for constructor parameter count  
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
@@ -41,8 +40,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             ICalcResultParameterOtherCostExporter parameterOtherCosts,
             ICommsCostExporter commsCostExporter,
             ICalcResultSummaryExporter calcResultSummaryExporter,
-            ICalcResultCancelledProducersExporter calcResultCancelledProducersExporter,
-            ICalcResultRejectedProducersExporter calcResultRejectedProducersExporter)
+            ICalcResultCancelledProducersExporter calcResultCancelledProducersExporter)
         {
             this.resultDetailexporter = resultDetailexporter;
             this.onePlusFourApportionmentExporter = onePlusFourApportionmentExporter;
@@ -54,10 +52,9 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             this.laDisposalCostExporter = laDisposalCostExporter;
             this.commsCostExporter = commsCostExporter;
             this.calcResultCancelledProducersExporter = calcResultCancelledProducersExporter;
-            this.calcResultRejectedProducersExporter = calcResultRejectedProducersExporter;
         }
 
-        public string Export(CalcResult results, bool isBillingFile = false)
+        public string Export(CalcResult results)
         {
             if (results == null)
             {
@@ -84,11 +81,6 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             calcResultScaledupProducersExporter.Export(results.CalcResultScaledupProducers, csvContent);
 
             calcResultSummaryExporter.Export(results.CalcResultSummary, csvContent);
-
-            if (isBillingFile)
-            {
-                calcResultRejectedProducersExporter.Export(results.CalcResultRejectedProducers, csvContent);
-            }
 
             return csvContent.ToString();
         }
