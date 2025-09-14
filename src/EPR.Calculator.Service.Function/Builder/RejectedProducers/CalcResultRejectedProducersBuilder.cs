@@ -1,4 +1,5 @@
 ﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Dtos;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +24,7 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                                 join bi in this.context.ProducerResultFileSuggestedBillingInstruction
                                     on new { pd.CalculatorRunId, pd.ProducerId } equals new { bi.CalculatorRunId, bi.ProducerId }
                                 where bi.CalculatorRunId == resultsRequestDto.RunId
-                                      && bi.BillingInstructionAcceptReject == "Rejected"
+                                      && bi.BillingInstructionAcceptReject == CommonConstants.Rejected
                                       && bi.ReasonForRejection != null
                                 select new CalcResultRejectedProducer
                                 {

@@ -1,6 +1,6 @@
 ﻿namespace EPR.Calculator.Service.Function.Constants
 {
-    public class CalcResultRejectedProducersHeader
+    public static class CalcResultRejectedProducersHeader
     {
         public static readonly string ProducerId = "Producer ID";
         public static readonly string ProducerName = "Producer";
