@@ -138,6 +138,73 @@
         }
 
         [TestMethod]
+        public void Export_ShouldHandleLastInvoiceNull()
+        {
+            // Arrange  
+            var exporter = new CalcResultCancelledProducersExporter();
+            var cancelledProducersResponse = new CalcResultCancelledProducersResponse
+            {
+                TitleHeader = CommonConstants.CancelledProducers,
+                CancelledProducers = new List<CalcResultCancelledProducersDto>
+                {
+                    new CalcResultCancelledProducersDto
+                    {
+                        ProducerId_Header = CommonConstants.ProducerId,
+                        ProducerName_Header = CommonConstants.ProducerOrSubsidiaryName,
+                        TradingName_Header = CommonConstants.TradingName,
+                        LastTonnage = new LastTonnage
+                        {
+                            LastTonnage_Header=CommonConstants.LastTonnage,
+                            Aluminium_Header = CommonConstants.Aluminium,
+                                FibreComposite_Header = CommonConstants.FibreComposite,
+                                Glass_Header = CommonConstants.Glass,
+                                PaperOrCard_Header = CommonConstants.PaperOrCard,
+                                Plastic_Header = CommonConstants.Plastic,
+                                Steel_Header = CommonConstants.Steel,
+                                Wood_Header = CommonConstants.Wood,
+                                OtherMaterials_Header = CommonConstants.OtherMaterials,
+                        },
+                        LatestInvoice = new LatestInvoice
+                        {
+                            LatestInvoice_Header = CommonConstants.LatestInvoice,
+                            CurrentYearInvoicedTotalToDate_Header = CommonConstants.LastInvoicedTotal,
+                            RunNumber_Header = CommonConstants.RunNumber,
+                            RunName_Header = CommonConstants.RunName,
+                            BillingInstructionId_Header = CommonConstants.BillingInstructionId,
+                        }
+                    },
+                    new CalcResultCancelledProducersDto
+                    {
+                         ProducerIdValue = "1",
+                         TradingNameValue = "TestTrading",
+                         ProducerOrSubsidiaryNameValue = "Test Producer",
+                           LatestInvoice = new LatestInvoice
+                           {
+                                BillingInstructionIdValue = "1_1",
+                                CurrentYearInvoicedTotalToDateValue = 100,
+                                RunNameValue = "Run1",
+                                RunNumberValue = "1",
+                           }
+
+
+                    }
+                }
+            };
+            var csvContent = new StringBuilder();
+
+            // Act  
+            exporter.Export(cancelledProducersResponse, csvContent);
+
+            // Assert  
+            var result = csvContent.ToString();
+            Assert.IsTrue(result.Contains("Cancelled Producers"));
+            Assert.IsTrue(result.Contains("Last Tonnage"));
+            Assert.IsTrue(result.Contains("Latest Invoice"));
+            Assert.IsTrue(result.Contains(",,,,,")); // Check for empty values         
+
+        }
+
+        [TestMethod]
         public void Export_ShouldHandleEmptyCancelledProducers()
         {
             // Arrange  
