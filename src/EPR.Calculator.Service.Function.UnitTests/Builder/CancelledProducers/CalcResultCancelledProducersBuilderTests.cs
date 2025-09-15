@@ -130,6 +130,30 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             Assert.AreEqual(expected?.ProducerId.ToString(), cancelledProducer.ProducerIdValue);
         }
 
+        [TestMethod]
+        public async Task CancelledProducersWithNoMaterials()
+        {
+            this.SeedDatabaseForInitialRunCompleted(dbContext);
+
+            // Arrange
+            var requestDto = new CalcResultsRequestDto() { RunId = 3 };
+
+            var expected = dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject ==
+            CommonConstants.Rejected && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant()
+            && t.CalculatorRunId == 2);
+          
+
+            // Act
+            var result = await builder.Construct(requestDto, "2025-26");
+
+            // Assert
+            Assert.IsNotNull(result);
+            var cancelledProducer = result.CancelledProducers.LastOrDefault();
+            Assert.IsNotNull(cancelledProducer);
+            Assert.AreEqual(expected?.ProducerId.ToString(), cancelledProducer.ProducerIdValue);
+            Assert.IsNull(cancelledProducer.LastTonnage?.AluminiumValue);
+        }
+
         private void SeedDatabaseForInitialRun(ApplicationDBContext context)
         {
             var financialYear = new CalculatorRunFinancialYear { Name = "2025-26" };
