@@ -1,14 +1,17 @@
-﻿using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
-using EPR.Calculator.Service.Function.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.CancelledProducers
+﻿namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.CancelledProducers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using AutoFixture;
+    using EPR.Calculator.Service.Function.Constants;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
+    using EPR.Calculator.Service.Function.Models;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
     [TestClass]
     public class CalcResultCancelledProducersExporterTests
     {
@@ -73,8 +76,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Cancell
                                 RunNameValue = "Run1",
                                 RunNumberValue = "1",
                            }
-                          
-                          
+
+
                     }
                 }
             };
@@ -106,6 +109,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Cancell
             Assert.IsTrue(csvOutput.Contains("1"));
             Assert.IsTrue(csvOutput.Contains("1_1"));
             Assert.IsTrue(csvOutput.Contains("100"));
+            Assert.IsTrue(csvOutput.Contains(",,,,,"));
 
         }
 
@@ -130,7 +134,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Cancell
             Assert.IsTrue(result.Contains("Last Tonnage"));
             Assert.IsTrue(result.Contains("Latest Invoice"));
             Assert.IsTrue(result.Contains(",,,,,")); // Check for empty values         
-        
+
         }
 
         [TestMethod]
