@@ -114,7 +114,7 @@
                
             var acceptedCancelledProducersForPreviousRuns = GetAcceptedCancelledProducers(financialYear).ToList();
 
-            var filteredProducersWithOutAccepetedProduecersData = missingProducersInCurrentRun.Where(t => !acceptedCancelledProducersForPreviousRuns.Any(k=>k == t.InvoicedTonnage?.ProducerId)).ToList();
+            var filteredProducersWithOutAccepetedProduecersData = missingProducersInCurrentRun.Where(t => !acceptedCancelledProducersForPreviousRuns.Exists(k=>k == t.InvoicedTonnage?.ProducerId)).ToList();
 
             var disinctMissingProducers = filteredProducersWithOutAccepetedProduecersData.DistinctBy(t => t.InvoicedTonnage?.ProducerId).Select(t => t.InvoicedTonnage?.ProducerId).ToList();
 
