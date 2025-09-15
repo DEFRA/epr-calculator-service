@@ -21,8 +21,8 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
 
         public async Task<IEnumerable<CalcResultRejectedProducer>> Construct(CalcResultsRequestDto resultsRequestDto)
         {
-            var result = await (from pd in this.context.ProducerDetail
-                                join bi in this.context.ProducerResultFileSuggestedBillingInstruction
+            var result = await (from pd in this.context.ProducerDetail.AsNoTracking()
+                                join bi in this.context.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
                                     on new { pd.CalculatorRunId, pd.ProducerId } equals new { bi.CalculatorRunId, bi.ProducerId }
                                 where bi.CalculatorRunId == resultsRequestDto.RunId
                                       && bi.BillingInstructionAcceptReject == CommonConstants.Rejected
@@ -38,7 +38,6 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                                     InstructionConfirmedBy = bi.LastModifiedAcceptRejectBy!,
                                     ReasonForRejection = bi.ReasonForRejection!
                                 })
-                                .AsNoTracking()
                                 .Distinct()
                                 .ToListAsync();
 
