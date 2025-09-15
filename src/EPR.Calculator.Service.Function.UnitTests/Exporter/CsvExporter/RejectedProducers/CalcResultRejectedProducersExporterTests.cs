@@ -33,13 +33,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Rejecte
 
             // Assert
             var lines = csvContent.ToString().Split(Environment.NewLine, StringSplitOptions.None);
-            Assert.IsTrue(lines[3].Contains("1"));
-            Assert.IsTrue(lines[3].Contains("Producer A"));
-            Assert.IsTrue(lines[3].Contains("Trade A"));
-            Assert.IsTrue(lines[3].Contains("Bill A"));
-            Assert.IsTrue(lines[3].Contains("123.45"));
-            Assert.IsTrue(lines[3].Contains("2024"));
-            Assert.IsTrue(lines[3].Contains("User A"));
+            Assert.IsTrue(lines[5].Contains("1"));
+            Assert.IsTrue(lines[5].Contains("Producer A"));
+            Assert.IsTrue(lines[5].Contains("Trade A"));
+            Assert.IsTrue(lines[5].Contains("Bill A"));
+            Assert.IsTrue(lines[5].Contains("123.45"));
+            Assert.IsTrue(lines[5].Contains("2024"));
+            Assert.IsTrue(lines[5].Contains("User A"));
         }
 
         [TestMethod]
