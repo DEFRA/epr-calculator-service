@@ -82,7 +82,7 @@ namespace EPR.Calculator.Service.Function.Services
                         PercentageLiabilityDifferenceCalcVsPrev = null,
                         MaterialPercentageThresholdBreached = null,
                         TonnagePercentageThresholdBreached = null,
-                        SuggestedBillingInstruction = "CANCEL",
+                        SuggestedBillingInstruction = CommonConstants.Cancel,
                         SuggestedInvoiceAmount = null
                     };
                     billingInstructions.Add(billingInstruction);
