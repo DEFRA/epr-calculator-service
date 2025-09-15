@@ -14,15 +14,15 @@ namespace EPR.Calculator.Service.Function.Mapper
             var costs = fees.BillingInstructionSection;
             return new CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts
             {
-                CurrentYearInvoicedTotalToDate = costs!.CurrentYearInvoiceTotalToDate!,
-                TonnageChangeSinceLastInvoice = costs.TonnageChangeSinceLastInvoice ?? string.Empty,
-                LiabilityDifferenceCalcVsPrev = costs.LiabilityDifference,
-                MaterialThresholdBreached = costs.MaterialThresholdBreached ?? string.Empty,
-                TonnageThresholdBreached = costs.TonnageThresholdBreached ?? string.Empty,
+                CurrentYearInvoicedTotalToDate = GetFormattedCurrencyValue(costs!.CurrentYearInvoiceTotalToDate),
+                TonnageChangeSinceLastInvoice = costs.TonnageChangeSinceLastInvoice ?? CommonConstants.Hyphen,
+                LiabilityDifferenceCalcVsPrev = GetFormattedCurrencyValue(costs.LiabilityDifference),
+                MaterialThresholdBreached = costs.MaterialThresholdBreached ?? CommonConstants.Hyphen,
+                TonnageThresholdBreached = costs.TonnageThresholdBreached ?? CommonConstants.Hyphen,
                 PercentageLiabilityDifferenceCalcVsPrev = GetPercentageLiabilityDifference(costs.PercentageLiabilityDifference)!,
-                MaterialPercentageThresholdBreached = costs.MaterialPercentageThresholdBreached ?? string.Empty,
-                TonnagePercentageThresholdBreached = costs.TonnagePercentageThresholdBreached ?? string.Empty,
-                SuggestedBillingInstruction = costs.SuggestedBillingInstruction ?? string.Empty,
+                MaterialPercentageThresholdBreached = costs.MaterialPercentageThresholdBreached ?? CommonConstants.Hyphen,
+                TonnagePercentageThresholdBreached = costs.TonnagePercentageThresholdBreached ?? CommonConstants.Hyphen,
+                SuggestedBillingInstruction = costs.SuggestedBillingInstruction ?? CommonConstants.Hyphen,
                 SuggestedInvoiceAmount = GetFormattedCurrencyValue(costs.SuggestedInvoiceAmount!)
             };
         }
