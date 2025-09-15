@@ -33,13 +33,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Rejecte
 
             // Assert
             var lines = csvContent.ToString().Split(Environment.NewLine, StringSplitOptions.None);
-            Assert.IsTrue(lines[3].Contains("1")); // ProducerId
-            Assert.IsTrue(lines[3].Contains("Producer A")); // ProducerName
-            Assert.IsTrue(lines[3].Contains("Trade A")); // TradingName
-            Assert.IsTrue(lines[3].Contains("Bill A")); // SuggestedBillingInstruction
-            Assert.IsTrue(lines[3].Contains("123.45")); // SuggestedInvoiceAmount
-            Assert.IsTrue(lines[3].Contains("2024")); // InstructionConfirmedDate
-            Assert.IsTrue(lines[3].Contains("User A")); // InstructionConfirmedBy
+            Assert.IsTrue(lines[3].Contains("1"));
+            Assert.IsTrue(lines[3].Contains("Producer A"));
+            Assert.IsTrue(lines[3].Contains("Trade A"));
+            Assert.IsTrue(lines[3].Contains("Bill A"));
+            Assert.IsTrue(lines[3].Contains("123.45"));
+            Assert.IsTrue(lines[3].Contains("2024"));
+            Assert.IsTrue(lines[3].Contains("User A"));
         }
 
         [TestMethod]
@@ -79,8 +79,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Rejecte
 
             // Assert
             var lines = csvContent.ToString().Split(Environment.NewLine, StringSplitOptions.None);
-            Assert.IsTrue(lines[3].Contains("Producer A"));
-            Assert.IsTrue(lines[4].Contains("Producer B"));
+            Assert.IsTrue(lines[2].Contains("Rejected Report"));
+            Assert.IsTrue(lines[5].Contains("Producer A"));
+            Assert.IsTrue(lines[6].Contains("Producer B"));
         }
     }
 }

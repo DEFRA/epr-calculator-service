@@ -23,6 +23,9 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.RejectedProducers
 
         private static void WriteHeader(StringBuilder csvContent)
         {
+            csvContent.Append(CsvSanitiser.SanitiseData(CalcResultRejectedProducersHeader.RejectedReport));
+            csvContent.AppendLine();
+            csvContent.AppendLine();
             csvContent.Append(CsvSanitiser.SanitiseData(CalcResultRejectedProducersHeader.ProducerId));
             csvContent.Append(CsvSanitiser.SanitiseData(CalcResultRejectedProducersHeader.ProducerName));
             csvContent.Append(CsvSanitiser.SanitiseData(CalcResultRejectedProducersHeader.TradingName));

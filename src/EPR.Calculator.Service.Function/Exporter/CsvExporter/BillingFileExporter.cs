@@ -88,9 +88,10 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             
             calcResultSummaryExporterCsv.Export(acceptedCalcResultSummary, csvContent);
 
+            csvContent = ResetTotals(csvContent.ToString());
+
             calcResultRejectedProducersExporterCsv.Export(results.CalcResultRejectedProducers, csvContent);
 
-            csvContent = ResetTotals(csvContent.ToString());
             return csvContent.ToString();
         }
 

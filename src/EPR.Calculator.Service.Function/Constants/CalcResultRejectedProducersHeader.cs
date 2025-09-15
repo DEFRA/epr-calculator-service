@@ -2,6 +2,7 @@
 {
     public static class CalcResultRejectedProducersHeader
     {
+        public static readonly string RejectedReport = "Rejected Report";
         public static readonly string ProducerId = "Producer ID";
         public static readonly string ProducerName = "Producer";
         public static readonly string TradingName = "Trading Name";
