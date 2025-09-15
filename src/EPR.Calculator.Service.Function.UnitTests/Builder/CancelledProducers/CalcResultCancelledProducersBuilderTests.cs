@@ -75,7 +75,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             Assert.IsNotNull(result);
             var cancelledProducer = result.CancelledProducers.LastOrDefault();
             Assert.IsNotNull(cancelledProducer);
-            Assert.AreEqual("2", cancelledProducer.ProducerIdValue);
+            Assert.AreEqual(2, cancelledProducer.ProducerId);
             Assert.AreEqual("Test2", cancelledProducer.ProducerOrSubsidiaryNameValue);
             Assert.AreEqual(expected?.BillingInstructionId, cancelledProducer?.LatestInvoice?.BillingInstructionIdValue);
             Assert.AreEqual(expected?.CalculatorRunId.ToString(), cancelledProducer?.LatestInvoice?.RunNumberValue);
@@ -127,8 +127,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             Assert.IsNotNull(result);
             var cancelledProducer = result.CancelledProducers.LastOrDefault();
             Assert.IsNotNull(cancelledProducer);
-            Assert.AreNotEqual(expected?.ProducerId.ToString(), cancelledProducer.ProducerIdValue);
-            Assert.AreEqual("4", cancelledProducer.ProducerIdValue);
+            Assert.AreNotEqual(expected?.ProducerId, cancelledProducer.ProducerId);
         }
 
         [TestMethod]
@@ -152,7 +151,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             Assert.IsNotNull(result);
             var cancelledProducer = result.CancelledProducers.LastOrDefault();
             Assert.IsNotNull(cancelledProducer);
-            Assert.AreEqual(expected?.ProducerId.ToString(), cancelledProducer.ProducerIdValue);
+            Assert.AreEqual(expected?.ProducerId, cancelledProducer.ProducerId);
         }
 
         [TestMethod]
@@ -175,7 +174,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             Assert.IsNotNull(result);
             var cancelledProducer = result.CancelledProducers.LastOrDefault();
             Assert.IsNotNull(cancelledProducer);
-            Assert.AreEqual(expected?.ProducerId.ToString(), cancelledProducer.ProducerIdValue);
+            Assert.AreEqual(expected?.ProducerId, cancelledProducer.ProducerId);
             Assert.IsNull(cancelledProducer.LastTonnage?.AluminiumValue);
         }
 

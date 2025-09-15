@@ -55,7 +55,7 @@
                     },
                     new CalcResultCancelledProducersDto
                     {
-                         ProducerIdValue = "1",
+                         ProducerId = 1,
                          TradingNameValue = "TestTrading",
                          ProducerOrSubsidiaryNameValue = "Test Producer",
                           LastTonnage = new LastTonnage
@@ -175,7 +175,7 @@
                     },
                     new CalcResultCancelledProducersDto
                     {
-                         ProducerIdValue = "1",
+                         ProducerId = 1,
                          TradingNameValue = "TestTrading",
                          ProducerOrSubsidiaryNameValue = "Test Producer",
                            LatestInvoice = new LatestInvoice

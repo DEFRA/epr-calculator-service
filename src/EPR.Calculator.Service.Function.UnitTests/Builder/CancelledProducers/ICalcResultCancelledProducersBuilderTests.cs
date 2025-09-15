@@ -39,7 +39,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                 {
                     new CalcResultCancelledProducersDto
                     {
-                        ProducerIdValue = "P123",
+                        ProducerId = 123,
                         TradingNameValue = "ABC Ltd",
                         LastTonnage = new LastTonnage
                         {
@@ -64,7 +64,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             Assert.IsNotNull(result);
             Assert.AreEqual("Cancelled Producers", result.TitleHeader);
             var producer = AssertSingle(result.CancelledProducers);
-            Assert.AreEqual("P123", producer.ProducerIdValue);
+            Assert.AreEqual(123, producer.ProducerId);
             Assert.AreEqual(123.45M, producer.LastTonnage?.AluminiumValue);
             Assert.AreEqual(999.99M, producer.LatestInvoice?.CurrentYearInvoicedTotalToDateValue);
         }

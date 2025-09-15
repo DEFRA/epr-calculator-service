@@ -72,7 +72,7 @@ namespace EPR.Calculator.Service.Function.Services
                     var billingInstruction = new ProducerResultFileSuggestedBillingInstruction
                     {
                         CalculatorRunId = calcResult.CalcResultDetail.RunId,
-                        ProducerId =  cancelledProducer.ProducerIdValue is null ? 0: int.Parse(cancelledProducer.ProducerIdValue),
+                        ProducerId =  cancelledProducer.ProducerId,
                         TotalProducerBillWithBadDebt =null,
                         CurrentYearInvoiceTotalToDate = cancelledProducer.LatestInvoice?.CurrentYearInvoicedTotalToDateValue,
                         TonnageChangeSinceLastInvoice = null,

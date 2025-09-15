@@ -30,7 +30,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Cancell
                 {
                     new CalcResultCancelledProducersDto
                     {
-                        ProducerIdValue = "PR123",
+                        ProducerId = 123,
                         TradingNameValue = "Acme Ltd",
                         LastTonnage = new LastTonnage
                         {

@@ -219,7 +219,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                  {
                      TitleHeader = CommonConstants.CancelledProducers,
                      CancelledProducers = new List<CalcResultCancelledProducersDto>()
-                       { new CalcResultCancelledProducersDto() { LastTonnage = null,  ProducerIdValue = "1", TradingNameValue ="Test",
+                       { new CalcResultCancelledProducersDto() { LastTonnage = null,  ProducerId = 1, TradingNameValue ="Test",
                            LatestInvoice = new LatestInvoice(){ BillingInstructionIdValue="1_1", RunNameValue ="RunName" , RunNumberValue="4" },                            
                        }
                  }

@@ -127,7 +127,7 @@
 
                 calcResultCancelledProducers.Add(new CalcResultCancelledProducersDto()
                 {
-                    ProducerIdValue = prods.ToString(),
+                    ProducerId =(int)producerId,
                     ProducerOrSubsidiaryNameValue = filteredProducersWithOutAccepetedProduecersData.Where(t => t.ProducerDetail?.ProducerId == producerId).Select(t => t.ProducerDetail?.ProducerName).FirstOrDefault(),
                     TradingNameValue = filteredProducersWithOutAccepetedProduecersData.Where(t => t.ProducerDetail?.ProducerId == producerId).Select(t => t.ProducerDetail?.TradingName).FirstOrDefault(),
 

@@ -13,8 +13,7 @@ namespace EPR.Calculator.Service.Function.Models
         public string? ProducerId_Header { get; set; }
         public string? ProducerName_Header { get; set; }
         public string? TradingName_Header { get; set; }
-
-        public string? ProducerIdValue { get; set; }
+        public int ProducerId { get; set; }
         public string? SubsidiaryIdValue { get; set; }
         public string? ProducerOrSubsidiaryNameValue { get; set; }
         public string? TradingNameValue { get; set; }

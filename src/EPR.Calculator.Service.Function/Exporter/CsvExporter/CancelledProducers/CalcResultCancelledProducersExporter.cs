@@ -41,7 +41,7 @@
         {
             foreach (var CancelledProducer in response.CancelledProducers)
             {
-                csvContent.Append(CsvSanitiser.SanitiseData(CancelledProducer.ProducerIdValue));
+                csvContent.Append(CsvSanitiser.SanitiseData(CancelledProducer.ProducerId));
                 csvContent.Append(CsvSanitiser.SanitiseData(CancelledProducer.ProducerOrSubsidiaryNameValue));
                 csvContent.Append(CsvSanitiser.SanitiseData(CancelledProducer.TradingNameValue)); 
                 csvContent.Append(CsvSanitiser.SanitiseData(CancelledProducer.LastTonnage?.AluminiumValue));
