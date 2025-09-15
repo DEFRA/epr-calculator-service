@@ -79,6 +79,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             Assert.AreEqual("Test2", cancelledProducer.ProducerOrSubsidiaryNameValue);
             Assert.AreEqual(expected?.BillingInstructionId, cancelledProducer?.LatestInvoice?.BillingInstructionIdValue);
             Assert.AreEqual(expected?.CalculatorRunId.ToString(), cancelledProducer?.LatestInvoice?.RunNumberValue);
+            Assert.AreEqual(100, cancelledProducer?.LatestInvoice?.CurrentYearInvoicedTotalToDateValue);
         }
 
 
