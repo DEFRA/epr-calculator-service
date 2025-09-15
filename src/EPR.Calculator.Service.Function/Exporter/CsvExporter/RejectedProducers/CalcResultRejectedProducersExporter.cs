@@ -48,7 +48,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.RejectedProducers
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.SuggestedInvoiceAmount));
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.InstructionConfirmedDate));
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.InstructionConfirmedBy));
-                csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerId));
+                csvContent.Append(CsvSanitiser.SanitiseData(producer.ReasonForRejection));
                 csvContent.AppendLine();
             }
         }
