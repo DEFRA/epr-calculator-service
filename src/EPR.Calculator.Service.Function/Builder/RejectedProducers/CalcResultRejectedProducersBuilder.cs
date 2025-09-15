@@ -37,7 +37,10 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                                     InstructionConfirmedDate = bi.LastModifiedAcceptReject,
                                     InstructionConfirmedBy = bi.LastModifiedAcceptRejectBy!,
                                     ReasonForRejection = bi.ReasonForRejection!
-                                }).Distinct().ToListAsync();
+                                })
+                                .AsNoTracking()
+                                .Distinct()
+                                .ToListAsync();
 
             return result ?? new List<CalcResultRejectedProducer>();
         }
