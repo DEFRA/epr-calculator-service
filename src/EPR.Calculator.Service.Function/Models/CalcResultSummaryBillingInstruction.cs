@@ -12,7 +12,7 @@
 
         public string? TonnageThresholdBreached { get; set; }
 
-        public string? PercentageLiabilityDifference { get; set; }
+        public decimal? PercentageLiabilityDifference { get; set; }
 
         public string? MaterialPercentageThresholdBreached { get; set; }
 
