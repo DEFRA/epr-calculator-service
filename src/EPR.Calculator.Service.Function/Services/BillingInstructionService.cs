@@ -43,9 +43,8 @@ namespace EPR.Calculator.Service.Function.Services
                     var billingInstructionSection = producer.BillingInstructionSection;
 
                     var isProducerIdParseSuccessful = int.TryParse(producer.ProducerId, out var producerId);
-                    var isSuggestedInvoiceAmountParseSuccessful = decimal.TryParse(billingInstructionSection.SuggestedInvoiceAmount, out var suggestedInvoiceAmount);
 
-                    if (isProducerIdParseSuccessful && isSuggestedInvoiceAmountParseSuccessful)
+                    if (isProducerIdParseSuccessful)
                     {
                         var billingInstruction = new ProducerResultFileSuggestedBillingInstruction
                         {
@@ -57,11 +56,11 @@ namespace EPR.Calculator.Service.Function.Services
                             AmountLiabilityDifferenceCalcVsPrev = billingInstructionSection.LiabilityDifference!,
                             MaterialPoundThresholdBreached = GetStringValue(billingInstructionSection.MaterialThresholdBreached!),
                             TonnagePoundThresholdBreached = GetStringValue(billingInstructionSection.TonnageThresholdBreached!),
-                            PercentageLiabilityDifferenceCalcVsPrev = GetValue(billingInstructionSection.PercentageLiabilityDifference!),
+                            PercentageLiabilityDifferenceCalcVsPrev = billingInstructionSection.PercentageLiabilityDifference!,
                             MaterialPercentageThresholdBreached = GetStringValue(billingInstructionSection.MaterialPercentageThresholdBreached!),
                             TonnagePercentageThresholdBreached = GetStringValue(billingInstructionSection.TonnagePercentageThresholdBreached!),
                             SuggestedBillingInstruction = billingInstructionSection.SuggestedBillingInstruction!,
-                            SuggestedInvoiceAmount = suggestedInvoiceAmount
+                            SuggestedInvoiceAmount = billingInstructionSection.SuggestedInvoiceAmount ?? 0m
                         };
 
                         billingInstructions.Add(billingInstruction);

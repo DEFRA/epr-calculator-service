@@ -14,44 +14,33 @@ namespace EPR.Calculator.Service.Function.Mapper
             var costs = fees.BillingInstructionSection;
             return new CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts
             {
-                CurrentYearInvoicedTotalToDate = costs!.CurrentYearInvoiceTotalToDate!,
-                TonnageChangeSinceLastInvoice = costs.TonnageChangeSinceLastInvoice ?? string.Empty,
-                LiabilityDifferenceCalcVsPrev = costs.LiabilityDifference,
-                MaterialThresholdBreached = costs.MaterialThresholdBreached ?? string.Empty,
-                TonnageThresholdBreached = costs.TonnageThresholdBreached ?? string.Empty,
-                PercentageLiabilityDifferenceCalcVsPrev = GetPercentageLiabilityDifference(costs.PercentageLiabilityDifference!),
-                MaterialPercentageThresholdBreached = costs.MaterialPercentageThresholdBreached ?? string.Empty,
-                TonnagePercentageThresholdBreached = costs.TonnagePercentageThresholdBreached ?? string.Empty,
-                SuggestedBillingInstruction = costs.SuggestedBillingInstruction ?? string.Empty,
+                CurrentYearInvoicedTotalToDate = GetFormattedCurrencyValue(costs!.CurrentYearInvoiceTotalToDate),
+                TonnageChangeSinceLastInvoice = costs.TonnageChangeSinceLastInvoice ?? CommonConstants.Hyphen,
+                LiabilityDifferenceCalcVsPrev = GetFormattedCurrencyValue(costs.LiabilityDifference),
+                MaterialThresholdBreached = costs.MaterialThresholdBreached ?? CommonConstants.Hyphen,
+                TonnageThresholdBreached = costs.TonnageThresholdBreached ?? CommonConstants.Hyphen,
+                PercentageLiabilityDifferenceCalcVsPrev = GetPercentageLiabilityDifference(costs.PercentageLiabilityDifference)!,
+                MaterialPercentageThresholdBreached = costs.MaterialPercentageThresholdBreached ?? CommonConstants.Hyphen,
+                TonnagePercentageThresholdBreached = costs.TonnagePercentageThresholdBreached ?? CommonConstants.Hyphen,
+                SuggestedBillingInstruction = costs.SuggestedBillingInstruction ?? CommonConstants.Hyphen,
                 SuggestedInvoiceAmount = GetFormattedCurrencyValue(costs.SuggestedInvoiceAmount!)
             };
         }
 
-        private string GetPercentageLiabilityDifference(string percentageLiabilityDifference)
+        private string? GetPercentageLiabilityDifference(decimal? percentageLiabilityDifference)
         {
             if (percentageLiabilityDifference == null)
-                return string.Empty;
-
-            if (percentageLiabilityDifference == CommonConstants.Hyphen)
                 return CommonConstants.Hyphen;
 
-            var isConversionSuccessful = decimal.TryParse(percentageLiabilityDifference, out decimal value);
-
-            if (!isConversionSuccessful)
-                return string.Empty;
-
-            return $"{Math.Round(value, (int)DecimalPlaces.Two).ToString()}%";
+            return $"{Math.Round((decimal)percentageLiabilityDifference, (int)DecimalPlaces.Two).ToString()}%";
         }
 
-        private string GetFormattedCurrencyValue(string value)
+        private string GetFormattedCurrencyValue(decimal? value)
         {
             if (value == null)
-                return string.Empty;
-
-            if (value == CommonConstants.Hyphen)
                 return CommonConstants.Hyphen;
 
-            return CurrencyConverter.ConvertToCurrency(value);
+            return CurrencyConverter.ConvertToCurrency(value.ToString()!);
         }
     }
 }

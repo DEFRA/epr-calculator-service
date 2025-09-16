@@ -12,14 +12,14 @@
 
         public string? TonnageThresholdBreached { get; set; }
 
-        public string? PercentageLiabilityDifference { get; set; }
+        public decimal? PercentageLiabilityDifference { get; set; }
 
         public string? MaterialPercentageThresholdBreached { get; set; }
 
         public string? TonnagePercentageThresholdBreached { get; set; }
 
-        public string? SuggestedBillingInstruction { get; set; }
+        public required string SuggestedBillingInstruction { get; set; } = string.Empty;
 
-        public string? SuggestedInvoiceAmount { get; set; }
+        public decimal? SuggestedInvoiceAmount { get; set; }
     }
 }
