@@ -2,11 +2,11 @@
 {
     public class CalcResultSummaryBillingInstruction
     {
-        public string? CurrentYearInvoiceTotalToDate { get; set; }
+        public decimal? CurrentYearInvoiceTotalToDate { get; set; }
 
         public string? TonnageChangeSinceLastInvoice { get; set; }
 
-        public string? LiabilityDifference { get; set; }
+        public decimal? LiabilityDifference { get; set; }
 
         public string? MaterialThresholdBreached { get; set; }
 

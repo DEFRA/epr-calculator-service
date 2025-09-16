@@ -208,6 +208,7 @@
                 calculatorRunParameter.User,
                 new CancellationTokenSource(this.configuration.RpdStatusTimeout).Token);
 
+            
             this.LogInformation(calculatorRunParameter.Id, runName, $"UpdateStatusAndPrepareResult - Status UpdateRpdStatus: {statusUpdateResponse}");
 
             if (statusUpdateResponse == RunClassification.RUNNING)
@@ -225,7 +226,7 @@
                 }
 
                 isSuccess = await this.prepareCalcService.PrepareCalcResults(
-                    new CalcResultsRequestDto { RunId = calculatorRunParameter.Id },
+                    new CalcResultsRequestDto { RunId = calculatorRunParameter.Id, FinancialYear = calculatorRunParameter.FinancialYear.ToString() },
                     runName,
                     new CancellationTokenSource(this.configuration.PrepareCalcResultsTimeout).Token);
 
