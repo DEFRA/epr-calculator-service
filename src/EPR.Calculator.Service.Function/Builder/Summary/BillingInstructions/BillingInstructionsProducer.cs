@@ -56,9 +56,9 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
                 var currentYearInvoicedTotalTonnage = ProducerInvoicedMaterialNetTonnage
                                                     .Where(x => x.InvoicedTonnage!.ProducerId.ToString() == fee.ProducerId)
                                                     .Select(y => y.InvoiceInstruction!.CurrentYearInvoicedTotalAfterThisRun)
-                                                    .FirstOrDefault() ?? 0;
+                                                    .FirstOrDefault();
 
-                totalTonnage += currentYearInvoicedTotalTonnage;
+                totalTonnage += currentYearInvoicedTotalTonnage ?? 0;
 
                 var liabilityDifferenceCalculated = CalculateLiabilityDifference(fee, currentYearInvoicedTotalTonnage);
                 if (liabilityDifferenceCalculated.HasValue) liabilityDifferenceRunningTotal += liabilityDifferenceCalculated.Value;
