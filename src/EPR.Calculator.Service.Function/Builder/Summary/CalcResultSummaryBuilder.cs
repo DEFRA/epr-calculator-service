@@ -65,7 +65,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 runId, producerDetails);
 
             var producerInvoicedMaterialNetTonnage = GetPreviousInvoicedTonnageFromDb(resultsRequestDto.FinancialYear);
-            
+
             var defaultParams = await GetDefaultParamsAsync(resultsRequestDto.RunId);
 
             // Household + PublicBin + HDC
@@ -97,17 +97,17 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         private Task<List<DefaultParamResultsClass>> GetDefaultParamsAsync(int runId)
         {
             return (from run in this.context.CalculatorRuns.AsNoTracking()
-                join defaultMaster in this.context.DefaultParameterSettings.AsNoTracking() on run.DefaultParameterSettingMasterId equals defaultMaster.Id
-                join defaultDetail in this.context.DefaultParameterSettingDetail.AsNoTracking() on defaultMaster.Id equals defaultDetail.DefaultParameterSettingMasterId
-                join defaultTemplate in this.context.DefaultParameterTemplateMasterList.AsNoTracking() on defaultDetail.ParameterUniqueReferenceId equals defaultTemplate.ParameterUniqueReferenceId
-                where run.Id == runId
+                    join defaultMaster in this.context.DefaultParameterSettings.AsNoTracking() on run.DefaultParameterSettingMasterId equals defaultMaster.Id
+                    join defaultDetail in this.context.DefaultParameterSettingDetail.AsNoTracking() on defaultMaster.Id equals defaultDetail.DefaultParameterSettingMasterId
+                    join defaultTemplate in this.context.DefaultParameterTemplateMasterList.AsNoTracking() on defaultDetail.ParameterUniqueReferenceId equals defaultTemplate.ParameterUniqueReferenceId
+                    where run.Id == runId
                     select new DefaultParamResultsClass
-                {
-                    ParameterValue = defaultDetail.ParameterValue,
-                    ParameterCategory = defaultTemplate.ParameterCategory,
-                    ParameterType = defaultTemplate.ParameterType,
-                    ParameterUniqueReference = defaultDetail.ParameterUniqueReferenceId
-                }).ToListAsync();
+                    {
+                        ParameterValue = defaultDetail.ParameterValue,
+                        ParameterCategory = defaultTemplate.ParameterCategory,
+                        ParameterType = defaultTemplate.ParameterType,
+                        ParameterUniqueReference = defaultDetail.ParameterUniqueReferenceId
+                    }).ToListAsync();
         }
 
 
@@ -452,41 +452,54 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
         public IEnumerable<ProducerInvoicedDto> GetPreviousInvoicedTonnageFromDb(string financialYear)
         {
-            var previousInvoicedNetTonnage =
-                        (from calc in context.CalculatorRuns
-                         join b in context.ProducerResultFileSuggestedBillingInstruction
-                            on calc.Id equals b.CalculatorRunId
-                         join p in context.ProducerDesignatedRunInvoiceInstruction
-                             on new { b.CalculatorRunId, b.ProducerId }
-                                                              equals new { p.CalculatorRunId, p.ProducerId }
-                         join t in context.ProducerInvoicedMaterialNetTonnage
-                             on new { calc.Id, p.ProducerId } equals new { Id = t.CalculatorRunId, t.ProducerId }
-                         where new int[]
-                         {
-                             RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
-                             RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
-                             RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
-                             RunClassificationStatusIds.FINALRUNCOMPLETEDID
-                         }.Contains(calc.CalculatorRunClassificationId) 
-                         && calc.FinancialYearId == financialYear
-                         && b.BillingInstructionAcceptReject == PrepareBillingFileConstants.BillingInstructionAccepted
-                         select new { calc, p, t })
-                        .AsEnumerable()
-                        .GroupBy(x => new { x.p.ProducerId, x.t.MaterialId })
-                        .Select(g =>
-                        {
-                            var latest = g.OrderByDescending(x => x.calc.Id).First();
-                            return new ProducerInvoicedDto
-                            {
-                                InvoicedTonnage = latest.t,
-                                CalculatorRunId = latest.calc.Id,
-                                InvoiceInstruction = latest.p
-                            };
-                        })
-                        .OrderBy(x => x.InvoicedTonnage?.ProducerId)
-                        .ThenBy(x => x.InvoicedTonnage?.MaterialId)
-                        .ToList();
+            var validClassificationStatuses = new[]
+            {
+                RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
+                RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
+                RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
+                RunClassificationStatusIds.FINALRUNCOMPLETEDID
+            };
 
+            var previousInvoicedNetTonnage =
+                (from calc in context.CalculatorRuns.AsNoTracking()
+                 join b in context.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
+                     on calc.Id equals b.CalculatorRunId
+                 join p in context.ProducerDesignatedRunInvoiceInstruction.AsNoTracking()
+                     on new { b.CalculatorRunId, b.ProducerId }
+                     equals new { p.CalculatorRunId, p.ProducerId }
+                 join t in context.ProducerInvoicedMaterialNetTonnage.AsNoTracking()
+                     on new { calc.Id, p.ProducerId } equals new { Id = t.CalculatorRunId, t.ProducerId }
+                 where validClassificationStatuses.Contains(calc.CalculatorRunClassificationId)
+                       && calc.FinancialYearId == financialYear
+                       && b.BillingInstructionAcceptReject == PrepareBillingFileConstants.BillingInstructionAccepted
+                       && b.SuggestedBillingInstruction != PrepareBillingFileConstants.SuggestedBillingInstructionCancelBill
+                       //not exists clause -- to exclude previous "net tonnage" and "current year invoice total to date" values if cancel bill has been accepted since.
+                       && !(from calc2 in context.CalculatorRuns.AsNoTracking()
+                           join b2 in context.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
+                               on calc2.Id equals b2.CalculatorRunId
+                           where b2.ProducerId == p.ProducerId
+                                 && b2.BillingInstructionAcceptReject == PrepareBillingFileConstants.BillingInstructionAccepted
+                                 && b2.SuggestedBillingInstruction == PrepareBillingFileConstants.SuggestedBillingInstructionCancelBill
+                                 && calc2.FinancialYearId == financialYear
+                                 && validClassificationStatuses.Contains(calc2.CalculatorRunClassificationId)
+                                 && calc2.Id > calc.Id select 1).Any() 
+                 select new { calc, p, t })
+                .AsEnumerable()
+                .GroupBy(x => new { x.p.ProducerId, x.t.MaterialId })
+                .Select(g =>
+                {
+                    var latest = g.OrderByDescending(x => x.calc.Id).First();
+                    return new ProducerInvoicedDto
+                    {
+                        InvoicedTonnage = latest.t,
+                        CalculatorRunId = latest.calc.Id,
+                        InvoiceInstruction = latest.p
+                    };
+                })
+                .OrderBy(x => x.InvoicedTonnage?.ProducerId)
+                .ThenBy(x => x.InvoicedTonnage?.MaterialId)
+                .ToList();
+            
 
             return previousInvoicedNetTonnage;
         }
@@ -598,7 +611,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 var householdPackagingWasteTonnage = CalcResultSummaryUtil.GetTonnageTotal(producersAndSubsidiaries, material, PackagingTypes.Household, ScaledupProducers);
                 var publicBinTonnage = CalcResultSummaryUtil.GetTonnageTotal(producersAndSubsidiaries, material, PackagingTypes.PublicBin, ScaledupProducers);
                 var previousInvoicedNetTonnage = ProducerInvoicedMaterialNetTonnage
-                                                   .Where(x => x.InvoicedTonnage?.MaterialId == material.Id 
+                                                   .Where(x => x.InvoicedTonnage?.MaterialId == material.Id
                                                             && x.InvoicedTonnage?.ProducerId == producersAndSubsidiaries.FirstOrDefault()?.ProducerId)
                                                    .Select(x => x.InvoicedTonnage?.InvoicedNetTonnage)
                                                    .FirstOrDefault();
@@ -632,7 +645,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     WalesWithBadDebtProvision = MaterialCostsUtil.GetCountryDisposalFeeWithBadDebtProvision(producerDisposalFees, producersAndSubsidiaries, ScaledupProducers, material, calcResult, Countries.Wales, isOverAllTotalRow),
                     ScotlandWithBadDebtProvision = MaterialCostsUtil.GetCountryDisposalFeeWithBadDebtProvision(producerDisposalFees, producersAndSubsidiaries, ScaledupProducers, material, calcResult, Countries.Scotland, isOverAllTotalRow),
                     NorthernIrelandWithBadDebtProvision = MaterialCostsUtil.GetCountryDisposalFeeWithBadDebtProvision(producerDisposalFees, producersAndSubsidiaries, ScaledupProducers, material, calcResult, Countries.NorthernIreland, isOverAllTotalRow),
-                    PreviousInvoicedTonnage = MaterialCostsUtil.GetPreviousInvoicedTonnage(producerDisposalFees, producersAndSubsidiaries, ScaledupProducers, material, isOverAllTotalRow, previousInvoicedNetTonnage),                    
+                    PreviousInvoicedTonnage = MaterialCostsUtil.GetPreviousInvoicedTonnage(producerDisposalFees, producersAndSubsidiaries, ScaledupProducers, material, isOverAllTotalRow, previousInvoicedNetTonnage),
                     TonnageChange = tonnageChange
                 });
 

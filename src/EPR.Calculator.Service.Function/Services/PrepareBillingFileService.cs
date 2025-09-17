@@ -90,7 +90,7 @@ namespace EPR.Calculator.Service.Function.Services
             .Where(x => x.CalculatorRunId == calculatorRunId
                     &&
                     x.BillingInstructionAcceptReject == PrepareBillingFileConstants.BillingInstructionAccepted
-                    && x.SuggestedBillingInstruction.Trim().ToLower() != PrepareBillingFileConstants.SuggestedBillingInstruction.Trim().ToLower())
+                    && x.SuggestedBillingInstruction.Trim().ToLower() != PrepareBillingFileConstants.SuggestedBillingInstructionCancelBill.Trim().ToLower())
             .Select(x => x.ProducerId).Distinct()
             .ToListAsync();
         }

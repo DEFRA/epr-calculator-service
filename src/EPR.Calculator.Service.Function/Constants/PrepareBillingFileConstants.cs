@@ -16,6 +16,6 @@ namespace EPR.Calculator.Service.Function.Constants
 
         public const string IsBillingFileGeneratingNotSet = "Is Billing File Generating is not set";
 
-        public const string SuggestedBillingInstruction = "Cancel";
+        public const string SuggestedBillingInstructionCancelBill = "Cancel";
     }
 }
