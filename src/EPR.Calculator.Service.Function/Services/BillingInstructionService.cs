@@ -36,36 +36,58 @@ namespace EPR.Calculator.Service.Function.Services
                 var billingInstructions = new List<ProducerResultFileSuggestedBillingInstruction>();
 
                 var producers = calcResult.CalcResultSummary.ProducerDisposalFees.Where(producer => producer.Level == CommonConstants.LevelOne.ToString());
+                var cancelledProducers = calcResult.CalcResultCancelledProducers;
 
                 foreach (var producer in producers)
                 {
                     var billingInstructionSection = producer.BillingInstructionSection;
 
                     var isProducerIdParseSuccessful = int.TryParse(producer.ProducerId, out var producerId);
-                    var isSuggestedInvoiceAmountParseSuccessful = decimal.TryParse(billingInstructionSection.SuggestedInvoiceAmount, out var suggestedInvoiceAmount);
 
-                    if (isProducerIdParseSuccessful && isSuggestedInvoiceAmountParseSuccessful)
+                    if (isProducerIdParseSuccessful)
                     {
                         var billingInstruction = new ProducerResultFileSuggestedBillingInstruction
                         {
                             CalculatorRunId = calcResult.CalcResultDetail.RunId,
                             ProducerId = producerId,
                             TotalProducerBillWithBadDebt = producer.TotalProducerBillBreakdownCosts!.TotalProducerFeeWithBadDebtProvision,
-                            CurrentYearInvoiceTotalToDate = GetValue(billingInstructionSection.CurrentYearInvoiceTotalToDate!),
+                            CurrentYearInvoiceTotalToDate = billingInstructionSection.CurrentYearInvoiceTotalToDate,
                             TonnageChangeSinceLastInvoice = GetStringValue(billingInstructionSection.TonnageChangeSinceLastInvoice!),
-                            AmountLiabilityDifferenceCalcVsPrev = GetValue(billingInstructionSection.LiabilityDifference!),
+                            AmountLiabilityDifferenceCalcVsPrev = billingInstructionSection.LiabilityDifference!,
                             MaterialPoundThresholdBreached = GetStringValue(billingInstructionSection.MaterialThresholdBreached!),
                             TonnagePoundThresholdBreached = GetStringValue(billingInstructionSection.TonnageThresholdBreached!),
-                            PercentageLiabilityDifferenceCalcVsPrev = GetValue(billingInstructionSection.PercentageLiabilityDifference!),
+                            PercentageLiabilityDifferenceCalcVsPrev = billingInstructionSection.PercentageLiabilityDifference!,
                             MaterialPercentageThresholdBreached = GetStringValue(billingInstructionSection.MaterialPercentageThresholdBreached!),
                             TonnagePercentageThresholdBreached = GetStringValue(billingInstructionSection.TonnagePercentageThresholdBreached!),
                             SuggestedBillingInstruction = billingInstructionSection.SuggestedBillingInstruction!,
-                            SuggestedInvoiceAmount = suggestedInvoiceAmount
+                            SuggestedInvoiceAmount = billingInstructionSection.SuggestedInvoiceAmount ?? 0m
                         };
 
                         billingInstructions.Add(billingInstruction);
                     }
                 }
+                foreach (var cancelledProducer in cancelledProducers.CancelledProducers)
+                {
+                    var billingInstruction = new ProducerResultFileSuggestedBillingInstruction
+                    {
+                        CalculatorRunId = calcResult.CalcResultDetail.RunId,
+                        ProducerId =  cancelledProducer.ProducerId,
+                        TotalProducerBillWithBadDebt =null,
+                        CurrentYearInvoiceTotalToDate = cancelledProducer.LatestInvoice?.CurrentYearInvoicedTotalToDateValue,
+                        TonnageChangeSinceLastInvoice = null,
+                        AmountLiabilityDifferenceCalcVsPrev = null,
+                        MaterialPoundThresholdBreached = null,
+                        TonnagePoundThresholdBreached =null,
+                        PercentageLiabilityDifferenceCalcVsPrev = null,
+                        MaterialPercentageThresholdBreached = null,
+                        TonnagePercentageThresholdBreached = null,
+                        SuggestedBillingInstruction = CommonConstants.Cancel,
+                        SuggestedInvoiceAmount = null
+                    };
+                    billingInstructions.Add(billingInstruction);
+                }
+
+
 
                 if (billingInstructions.Count > 0)
                 {

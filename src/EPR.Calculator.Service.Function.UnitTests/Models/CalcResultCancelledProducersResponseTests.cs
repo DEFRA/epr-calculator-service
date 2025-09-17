@@ -23,7 +23,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
                new CalcResultCancelledProducersDto
                {
                    ProducerId_Header = "Producer ID Header",
-                   ProducerIdValue = "Producer ID Value"
+                   ProducerId= 123
                }
            };
 
@@ -32,7 +32,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             Assert.IsNotNull(response.CancelledProducers);
             Assert.AreEqual(1, response.CancelledProducers.Count());
             Assert.AreEqual("Producer ID Header", response.CancelledProducers.First().ProducerId_Header);
-            Assert.AreEqual("Producer ID Value", response.CancelledProducers.First().ProducerIdValue);
+            Assert.AreEqual(123, response.CancelledProducers.First().ProducerId);
         }
 
         [TestMethod]
@@ -43,23 +43,23 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
 
             // Act  
             dto.ProducerId_Header = "Producer ID Header";
-            dto.ProducerIdValue = "Producer ID Value";
+            dto.ProducerId = 123;
             dto.LastTonnage = new LastTonnage
             {
                 AluminiumValue = 100.5m
             };
             dto.LatestInvoice = new LatestInvoice
             {
-                LastInvoicedTotalValue = 200.75m
+                CurrentYearInvoicedTotalToDateValue = 200.75m
             };
 
             // Assert  
             Assert.AreEqual("Producer ID Header", dto.ProducerId_Header);
-            Assert.AreEqual("Producer ID Value", dto.ProducerIdValue);
+            Assert.AreEqual(123, dto.ProducerId);
             Assert.IsNotNull(dto.LastTonnage);
             Assert.AreEqual(100.5m, dto.LastTonnage.AluminiumValue);
             Assert.IsNotNull(dto.LatestInvoice);
-            Assert.AreEqual(200.75m, dto.LatestInvoice.LastInvoicedTotalValue);
+            Assert.AreEqual(200.75m, dto.LatestInvoice.CurrentYearInvoicedTotalToDateValue);
         }
     }
 }

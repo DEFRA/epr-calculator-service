@@ -136,5 +136,64 @@
             // Assert
             Assert.AreEqual("\"83.46%\"", result);
         }
+
+        [TestMethod]
+        public void ShouldPrefixLrm_WhenFlagTrue_WithDelimiter()
+        {
+            // Arrange
+            var data = "+ve";
+
+            // Act
+            var result = CsvSanitiser.SanitiseData(
+                data,
+                csvDelimiterRequired: true,
+                appendLrmCharacterToPreventRenderedAsFormula: true);
+
+            // Assert
+            Assert.AreEqual("\"\u200E+ve\",", result);
+        }
+
+        [TestMethod]
+        public void ShouldPrefixLrm_WhenFlagTrue_WithoutDelimiter()
+        {
+            // Arrange
+            var data = "-ve";
+
+            // Act
+            var result = CsvSanitiser.SanitiseData(
+                data,
+                csvDelimiterRequired: false,
+                appendLrmCharacterToPreventRenderedAsFormula: true);
+
+            // Assert
+            Assert.AreEqual("\"\u200E-ve\"", result);
+        }
+
+        [TestMethod]
+        public void ShouldNotPrefixLrm_WhenFlagDefaultValueIsFalse()
+        {
+            // Arrange
+            var data = "+ve";
+
+            // Act
+            var result = CsvSanitiser.SanitiseData(data);
+
+            // Assert
+            Assert.AreEqual("\"+ve\",", result);
+        }
+
+        [TestMethod]
+        public void ShouldNotPrefixLrm_WhenValueIsNull_ReturnsDelimiterCharacterOnly()
+        {
+            string? data = null;
+
+            var result = CsvSanitiser.SanitiseData(
+                data,
+                csvDelimiterRequired: true,
+                appendLrmCharacterToPreventRenderedAsFormula: true);
+
+            Assert.AreEqual(",", result);
+        }
+
     }
 }

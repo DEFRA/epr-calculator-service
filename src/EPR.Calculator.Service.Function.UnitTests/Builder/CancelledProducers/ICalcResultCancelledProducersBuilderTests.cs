@@ -3,6 +3,7 @@ using EPR.Calculator.Service.Function.Builder.LateReportingTonnages;
 using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
 using EPR.Calculator.Service.Function.Dtos;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Services;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -38,7 +39,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                 {
                     new CalcResultCancelledProducersDto
                     {
-                        ProducerIdValue = "P123",
+                        ProducerId = 123,
                         TradingNameValue = "ABC Ltd",
                         LastTonnage = new LastTonnage
                         {
@@ -46,26 +47,26 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                         },
                         LatestInvoice = new LatestInvoice
                         {
-                            LastInvoicedTotalValue = 999.99M
+                            CurrentYearInvoicedTotalToDateValue = 999.99M
                         }
                     }
                 }
             };
 
             _builderMock
-                .Setup(b => b.Construct(It.IsAny<CalcResultsRequestDto>()))
+                .Setup(b => b.Construct(It.IsAny<CalcResultsRequestDto>(), It.IsAny<string>()))
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _builderMock.Object.Construct(requestDto);
+            var result = await _builderMock.Object.Construct(requestDto,"2025-26");
 
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual("Cancelled Producers", result.TitleHeader);
             var producer = AssertSingle(result.CancelledProducers);
-            Assert.AreEqual("P123", producer.ProducerIdValue);
+            Assert.AreEqual(123, producer.ProducerId);
             Assert.AreEqual(123.45M, producer.LastTonnage?.AluminiumValue);
-            Assert.AreEqual(999.99M, producer.LatestInvoice?.LastInvoicedTotalValue);
+            Assert.AreEqual(999.99M, producer.LatestInvoice?.CurrentYearInvoicedTotalToDateValue);
         }
         private T AssertSingle<T>(IEnumerable<T> enumerable)
         {

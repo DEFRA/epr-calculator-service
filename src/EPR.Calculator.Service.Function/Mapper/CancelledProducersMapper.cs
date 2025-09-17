@@ -28,15 +28,9 @@ namespace EPR.Calculator.Service.Function.Mapper
 
             foreach (var producer in calcResultCancelledProducersResponse.CancelledProducers)
             {
-                int? producerId = null;
-                if (!string.IsNullOrWhiteSpace(producer.ProducerIdValue) && int.TryParse(producer.ProducerIdValue, out int result))
-                {
-                    producerId = result;
-                }
-
                 cancelledProducerTonnageInvoices.Add(new CancelledProducerTonnageInvoice
                 {
-                    ProducerId = producerId,
+                    ProducerId = producer.ProducerId,
                     SubsidiaryId = producer.SubsidiaryIdValue ?? string.Empty,
                     ProducerName = producer.ProducerOrSubsidiaryNameValue ?? string.Empty,
                     TradingName = producer.TradingNameValue ?? string.Empty,

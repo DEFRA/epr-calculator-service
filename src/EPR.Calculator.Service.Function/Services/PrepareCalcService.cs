@@ -118,7 +118,7 @@
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
                     Message = "Create producer data insert service end...",
-                });                
+                });
 
                 this.telemetryLogger.LogInformation(new TrackMessage
                 {

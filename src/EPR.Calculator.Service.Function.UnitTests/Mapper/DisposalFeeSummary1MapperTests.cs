@@ -27,8 +27,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 
             // Assert  
             Assert.IsNotNull(result);
-            Assert.AreEqual("0", result.TonnageChangeCount);
-            Assert.AreEqual("", result.TonnageChangeAdvice);
+            Assert.AreEqual("-", result.TonnageChangeCount);
+            Assert.AreEqual("-", result.TonnageChangeAdvice);
         }
 
         [TestMethod]
@@ -43,8 +43,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 
             // Assert  
             Assert.IsNotNull(result);
-            Assert.AreEqual("-", result.TonnageChangeCount);
-            Assert.AreEqual("-", result.TonnageChangeAdvice);
+            Assert.AreEqual("0", result.TonnageChangeCount);
+            Assert.AreEqual("", result.TonnageChangeAdvice);
         }
     }
 }
