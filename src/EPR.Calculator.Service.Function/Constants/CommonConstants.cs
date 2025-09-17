@@ -35,6 +35,7 @@
         public const string ParametersOther = "Parameters - Other";
         public const string ZeroCurrency = "£0";
         public const string Initial = "INITIAL";
+        public const string CancelStatus = "CANCEL";
         public const char Comma = ',';
 
         public const string OnePlusFourCommsCostApportionmentPercentages = "onePlusFourCommsCostApportionmentPercentages";
@@ -50,7 +51,7 @@
 
 
         public const string LastTonnage = "Last Tonnage";
-        public const int LastTonnageSubHeaderIndex = 4;
+        public const int LastTonnageSubHeaderIndex = 3;
 
         public const string Aluminium = "Aluminium";
         public const string FibreComposite = "Fibre composite";
@@ -62,7 +63,7 @@
         public const string OtherMaterials = "Other materials";
 
         public const string LatestInvoice = "Latest Invoice";
-        public const int LatestInvoiceSubHeaderIndex = 11;
+        public const int LatestInvoiceSubHeaderIndex = 10;
 
         public const string LastInvoicedTotal = "Last Invoiced Total";
         public const string RunNumber = "Run Number";

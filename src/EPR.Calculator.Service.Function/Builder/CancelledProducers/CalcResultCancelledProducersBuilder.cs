@@ -66,6 +66,7 @@
                              RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
                              RunClassificationStatusIds.FINALRUNCOMPLETEDID
                          }.Contains(calc.CalculatorRunClassificationId) && calc.FinancialYearId == financialYear
+                         && pbs.SuggestedBillingInstruction == CommonConstants.Accepted
                          select new { calc, p, pd, pbs, t })
                         .AsEnumerable()
                         .GroupBy(x => new { x.p.ProducerId, x.t.MaterialId })
