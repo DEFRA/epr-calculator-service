@@ -5,13 +5,13 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
     public record CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts
     {
         [JsonPropertyName("currentYearInvoicedTotalToDate")]
-        public required decimal? CurrentYearInvoicedTotalToDate { get; init; }
+        public required string CurrentYearInvoicedTotalToDate { get; init; }
 
         [JsonPropertyName("tonnageChangeSinceLastInvoice")]
         public required string TonnageChangeSinceLastInvoice { get; init; }
 
         [JsonPropertyName("liabilityDifferenceCalcVsPrev")]
-        public required decimal? LiabilityDifferenceCalcVsPrev { get; init; }
+        public required string LiabilityDifferenceCalcVsPrev { get; init; }
 
         [JsonPropertyName("material£ThresholdBreached")]
         public required string MaterialThresholdBreached { get; init; }
