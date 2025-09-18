@@ -51,12 +51,13 @@
         {
             var previousInvoicedNetTonnage =
                         (from calc in context.CalculatorRuns.AsNoTracking()
+                         join pbs in context.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
+                             on calc.Id equals pbs.CalculatorRunId
                          join p in context.ProducerDesignatedRunInvoiceInstruction.AsNoTracking()
-                             on calc.Id equals p.CalculatorRunId
+                             on new { calc.Id, pbs.ProducerId } equals new { Id = p.CalculatorRunId, p.ProducerId }
                          join pd in context.ProducerDetail.AsNoTracking()
                              on new { calc.Id, p.ProducerId } equals new { Id = pd.CalculatorRunId, pd.ProducerId }
-                         join pbs in context.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
-                             on p.ProducerId equals pbs.ProducerId
+                         
                          join t in context.ProducerInvoicedMaterialNetTonnage.AsNoTracking()
                          on new { calc.Id, p.ProducerId } equals new { Id = t.CalculatorRunId, t.ProducerId }
                          where new int[]
@@ -66,7 +67,7 @@
                              RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
                              RunClassificationStatusIds.FINALRUNCOMPLETEDID
                          }.Contains(calc.CalculatorRunClassificationId) && calc.FinancialYearId == financialYear
-                         && pbs.SuggestedBillingInstruction == CommonConstants.Accepted
+                         && pbs.BillingInstructionAcceptReject == CommonConstants.Accepted
                          select new { calc, p, pd, pbs, t })
                         .AsEnumerable()
                         .GroupBy(x => new { x.p.ProducerId, x.t.MaterialId })
@@ -111,7 +112,7 @@
             var producersForPreviousRuns = GetLatestProducerDetailsForThisFinancialYear(financialYear);
             var producersForCurrentRun = GetProducers(runId);
 
-            var missingProducersInCurrentRun = producersForPreviousRuns.Where(t => !producersForCurrentRun.Any(k => k.ProducerId == t.InvoicedTonnage?.ProducerId));
+            var missingProducersInCurrentRun = producersForPreviousRuns.Where(t => t.ResultFileSuggestedBillingInstruction?.BillingInstructionAcceptReject == CommonConstants.Accepted && !producersForCurrentRun.Any(k => k.ProducerId == t.InvoicedTonnage?.ProducerId) );
                
             var acceptedCancelledProducersForPreviousRuns = GetAcceptedCancelledProducers(financialYear).ToList();
 

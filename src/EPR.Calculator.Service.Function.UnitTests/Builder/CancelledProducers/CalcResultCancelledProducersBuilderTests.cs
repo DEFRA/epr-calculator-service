@@ -155,6 +155,29 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         }
 
         [TestMethod]
+        public async Task CancelledProducersShouldNotGetRejectedInitialProducer()
+        {
+            this.SeedDatabaseForInitialRunCompleted(dbContext);
+
+            // Arrange
+            var requestDto = new CalcResultsRequestDto() { RunId = 3 };
+
+            var expected = dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject ==
+            CommonConstants.Rejected && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant()
+            && t.CalculatorRunId == 2);
+
+            this.materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
+
+            // Act
+            var result = await builder.Construct(requestDto, "2025-26");
+
+            // Assert
+            Assert.IsNotNull(result);
+            var cancelledProducer = result.CancelledProducers.Where(t=>t.ProducerId == 3).FirstOrDefault();
+            Assert.IsNull(cancelledProducer);           
+        }
+
+        [TestMethod]
         public async Task CancelledProducersWithNoMaterials()
         {
             this.SeedDatabaseForInitialRunCompleted(dbContext);
@@ -595,10 +618,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                 {
                     BillingInstructionId = "2_6",
                     CalculatorRunId = 2,
-                    CurrentYearInvoicedTotalAfterThisRun = 100,
+                    CurrentYearInvoicedTotalAfterThisRun = null,
                     Id = 6,
                     ProducerId = 2,
-                    InvoiceAmount = 100,
+                    InvoiceAmount = null,
                     OutstandingBalance = 100,
                 },
             };
@@ -636,7 +659,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                     SuggestedBillingInstruction = "Initial",
                     SuggestedInvoiceAmount = 100,
                     CalculatorRunId = 1,
-                    BillingInstructionAcceptReject = "Accepted"
+                    BillingInstructionAcceptReject = "Rejected"
                 },
               new ProducerResultFileSuggestedBillingInstruction()
                 {
