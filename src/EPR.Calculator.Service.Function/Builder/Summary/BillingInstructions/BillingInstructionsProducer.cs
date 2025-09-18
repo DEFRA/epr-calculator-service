@@ -94,7 +94,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
             }
         }
 
-        public static void UpdateProductPrice(ApplicationDBContext context, CalcResultSummaryBillingInstruction fee, int runId, int ProducerId)
+        private static void UpdateProductPrice(ApplicationDBContext context, CalcResultSummaryBillingInstruction fee, int runId, int ProducerId)
         {
             var producer = context.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(p => p.ProducerId == ProducerId && p.CalculatorRunId == runId);
             if (producer != null)
