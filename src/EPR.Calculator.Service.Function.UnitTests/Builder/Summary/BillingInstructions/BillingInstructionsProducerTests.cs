@@ -1126,7 +1126,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
             Assert.AreEqual(CommonConstants.Delta, fee.SuggestedBillingInstruction);
-        }        
+        }
 
         [TestMethod]
         public void CalculateSuggestedBillingInstruction_Level1_ReturnsRebill()
@@ -1176,6 +1176,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         public void CalculateGetSuggestedInvoiceAmount_Level1_ReturnsTotalProducerFeeWithBadDebtProvision()
         {
             this.producerInvoicedDto.First().InvoiceInstruction!.CurrentYearInvoicedTotalAfterThisRun = 15000m;
+
+            _dbContext.ProducerResultFileSuggestedBillingInstruction.AddRange(new List<ProducerResultFileSuggestedBillingInstruction>
+            {
+                new ProducerResultFileSuggestedBillingInstruction { Id = 1, CalculatorRunId = 101, ProducerId = 1, SuggestedBillingInstruction="INITIAL", BillingInstructionAcceptReject="Accepted"},
+                new ProducerResultFileSuggestedBillingInstruction { Id = 2, CalculatorRunId = 101, ProducerId = 2, SuggestedBillingInstruction="INITIAL", BillingInstructionAcceptReject="Accepted"},
+                new ProducerResultFileSuggestedBillingInstruction { Id = 3, CalculatorRunId = 101, ProducerId = 3, SuggestedBillingInstruction="INITIAL", BillingInstructionAcceptReject="Accepted"},
+            });
+
+            _dbContext.SaveChanges();
 
             BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, new List<DefaultParamResultsClass>(), _dbContext, 101);
 
