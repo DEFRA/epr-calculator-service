@@ -87,7 +87,7 @@
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.Steel));
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.Wood));
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.OtherMaterials));
-            csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.LastInvoicedTotal));
+            csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.CurrentYearInvoicedTotalToDate));
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.RunNumber));
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.RunName));
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.BillingInstructionId));
