@@ -48,6 +48,8 @@
                                ParameterValue = defaultDetail.ParameterValue,
                                ParameterCategory = defaultTemplate.ParameterCategory,
                                ParameterType = defaultTemplate.ParameterType,
+                               ParameterUniqueReference = defaultDetail.ParameterUniqueReferenceId
+                               
                            }).ToListAsync();
 
             var schemeAdminCosts = results.Where(x => x.ParameterType == SchemeAdminOperatingCost);
