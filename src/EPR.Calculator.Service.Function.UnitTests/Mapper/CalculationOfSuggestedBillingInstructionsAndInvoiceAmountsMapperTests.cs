@@ -63,7 +63,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             Assert.IsNotNull(result);
 
             // Assert  
-            Assert.AreEqual(1000.00m, result.CurrentYearInvoicedTotalToDate);
+            Assert.AreEqual("£1000.00", result.CurrentYearInvoicedTotalToDate);
             Assert.AreEqual("Tonnage Changed", result.TonnageChangeSinceLastInvoice);
             Assert.AreEqual(-200.00m, result.LiabilityDifferenceCalcVsPrev);
             Assert.AreEqual("-ve", result.MaterialThresholdBreached);
@@ -105,8 +105,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             Assert.IsNotNull(result);
 
             // Assert  
-            Assert.AreEqual(null, result.CurrentYearInvoicedTotalToDate);
-            Assert.AreEqual(string.Empty, result.TonnageChangeSinceLastInvoice);
+            Assert.AreEqual("-", result.CurrentYearInvoicedTotalToDate);
+            Assert.AreEqual("-", result.TonnageChangeSinceLastInvoice);
             Assert.AreEqual(null, result.LiabilityDifferenceCalcVsPrev);
             Assert.AreEqual(string.Empty, result.MaterialThresholdBreached);
             Assert.AreEqual(string.Empty, result.TonnageThresholdBreached);
@@ -147,7 +147,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             Assert.IsNotNull(result);
 
             // Assert  
-            Assert.AreEqual(null, result.CurrentYearInvoicedTotalToDate);
+            Assert.AreEqual("-", result.CurrentYearInvoicedTotalToDate);
             Assert.AreEqual("-", result.TonnageChangeSinceLastInvoice);
             Assert.AreEqual(null, result.LiabilityDifferenceCalcVsPrev);
             Assert.AreEqual("-", result.MaterialThresholdBreached);
