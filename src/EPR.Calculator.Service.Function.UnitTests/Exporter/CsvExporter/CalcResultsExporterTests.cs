@@ -66,7 +66,7 @@
 
         private Mock<ICalcResultSummaryExporter> MockCalcResultSummaryExporter { get; init; }
 
-        private Mock<ICalcResultCancelledProducersExporter> MockCalcResultCancelledProducersExporter { get; init; } 
+        private Mock<ICalcResultCancelledProducersExporter> MockCalcResultCancelledProducersExporter { get; init; }
 
         private Mock<ICommsCostExporter> MockCommsCostExporter { get; init; }
 

@@ -6,6 +6,7 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.RejectedProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Models;
 using System;
@@ -30,6 +31,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         private readonly ICalcResultLaDisposalCostExporter laDisposalCostExporterCsv;
         private readonly ICommsCostExporter commsCostExporterCsv;
         private readonly ICalcResultCancelledProducersExporter calcResultCancelledProducersExporterCsv;
+        private readonly ICalcResultRejectedProducersExporter calcResultRejectedProducersExporterCsv;
 
         [SuppressMessage("Constructor has 8 parameters, which is greater than the 7 authorized.", "S107", Justification = "This is suppressed for now and will be refactored later")]
         public BillingFileExporter(
@@ -42,7 +44,8 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             ICalcResultParameterOtherCostExporter parameterOtherCosts,
             ICommsCostExporter commsCostExporter,
             ICalcResultSummaryExporter calcResultSummaryExporter,
-            ICalcResultCancelledProducersExporter calcResultCancelledProducersExporter)
+            ICalcResultCancelledProducersExporter calcResultCancelledProducersExporter,
+            ICalcResultRejectedProducersExporter calcResultRejectedProducersExporter)
         {
             this.resultDetailexporterCsv = resultDetailexporter;
             this.onePlusFourApportionmentExporterCsv = onePlusFourApportionmentExporter;
@@ -54,6 +57,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             this.laDisposalCostExporterCsv = laDisposalCostExporter;
             this.commsCostExporterCsv = commsCostExporter;
             this.calcResultCancelledProducersExporterCsv = calcResultCancelledProducersExporter;
+            this.calcResultRejectedProducersExporterCsv = calcResultRejectedProducersExporter;
         }
 
         public string Export(CalcResult results, IEnumerable<int> acceptedProducerIds)
@@ -83,7 +87,11 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             var acceptedCalcResultSummary = GetAcceptedProducersCalcResults(results.CalcResultSummary, acceptedProducerIds);
             
             calcResultSummaryExporterCsv.Export(acceptedCalcResultSummary, csvContent);
+
             csvContent = ResetTotals(csvContent.ToString());
+
+            calcResultRejectedProducersExporterCsv.Export(results.CalcResultRejectedProducers, csvContent);
+
             return csvContent.ToString();
         }
 

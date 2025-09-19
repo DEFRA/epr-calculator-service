@@ -11,6 +11,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.RejectedProducers;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -30,7 +31,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         private Mock<ICommsCostExporter> _commsCostExporter;
         private Mock<ICalcResultSummaryExporter> _calcResultSummaryExporter;
         private Mock<ICalcResultCancelledProducersExporter> _calcResultCancelledProducersExporter;
-
+        private Mock<ICalcResultRejectedProducersExporter> _calcResultRejectedProducersExporter;
 
         public BillingFileExporterTests()
         {
@@ -44,14 +45,37 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             _commsCostExporter = new Mock<ICommsCostExporter>();
             _calcResultSummaryExporter = new Mock<ICalcResultSummaryExporter>();
             _calcResultCancelledProducersExporter = new Mock<ICalcResultCancelledProducersExporter>();
-            testClass = new BillingFileExporter(_lateReportingExporter.Object, _resultDetailexporter.Object, _onePlusFourApportionmentExporter.Object, _laDisposalCostExporter.Object, _calcResultScaledupProducersExporter.Object, _lapcaptDetailExporter.Object, _parameterOtherCosts.Object, _commsCostExporter.Object, _calcResultSummaryExporter.Object, _calcResultCancelledProducersExporter.Object);
+            _calcResultRejectedProducersExporter = new Mock<ICalcResultRejectedProducersExporter>();
+            testClass = new BillingFileExporter(
+                _lateReportingExporter.Object,
+                _resultDetailexporter.Object,
+                _onePlusFourApportionmentExporter.Object,
+                _laDisposalCostExporter.Object,
+                _calcResultScaledupProducersExporter.Object,
+                _lapcaptDetailExporter.Object,
+                _parameterOtherCosts.Object,
+                _commsCostExporter.Object,
+                _calcResultSummaryExporter.Object,
+                _calcResultCancelledProducersExporter.Object,
+                _calcResultRejectedProducersExporter.Object);
         }
 
         [TestMethod]
         public void CanConstruct()
         {
             // Act
-            var instance = new BillingFileExporter(_lateReportingExporter.Object, _resultDetailexporter.Object, _onePlusFourApportionmentExporter.Object, _laDisposalCostExporter.Object, _calcResultScaledupProducersExporter.Object, _lapcaptDetailExporter.Object, _parameterOtherCosts.Object, _commsCostExporter.Object, _calcResultSummaryExporter.Object, _calcResultCancelledProducersExporter.Object);
+            var instance = new BillingFileExporter(
+                _lateReportingExporter.Object,
+                _resultDetailexporter.Object,
+                _onePlusFourApportionmentExporter.Object,
+                _laDisposalCostExporter.Object,
+                _calcResultScaledupProducersExporter.Object,
+                _lapcaptDetailExporter.Object,
+                _parameterOtherCosts.Object,
+                _commsCostExporter.Object,
+                _calcResultSummaryExporter.Object,
+                _calcResultCancelledProducersExporter.Object,
+                _calcResultRejectedProducersExporter.Object);
 
             // Assert
             Assert.IsNotNull(instance);
