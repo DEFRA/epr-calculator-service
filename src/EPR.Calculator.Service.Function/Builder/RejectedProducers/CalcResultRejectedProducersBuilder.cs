@@ -33,7 +33,7 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                                     ProducerName = pd.ProducerName!,
                                     TradingName = pd.TradingName!,
                                     SuggestedBillingInstruction = bi.SuggestedBillingInstruction,
-                                    SuggestedInvoiceAmount = bi.SuggestedInvoiceAmount,
+                                    SuggestedInvoiceAmount = bi.SuggestedInvoiceAmount ?? 0,
                                     InstructionConfirmedDate = bi.LastModifiedAcceptReject,
                                     InstructionConfirmedBy = bi.LastModifiedAcceptRejectBy!,
                                     ReasonForRejection = bi.ReasonForRejection!
