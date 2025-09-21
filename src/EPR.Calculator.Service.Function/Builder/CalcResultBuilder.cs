@@ -107,7 +107,7 @@ namespace EPR.Calculator.Service.Function.Builder
             this._telemetryClient.TrackTrace("lapcapplusFourApportionmentBuilder end...");
 
             this._telemetryClient.TrackTrace("CalcResultCancelledProducersBuilder started...");
-            result.CalcResultCancelledProducers = await this.calcResultCancelledProducersBuilder.Construct(resultsRequestDto);
+            result.CalcResultCancelledProducers = await this.CalcResultCancelledProducersBuilder.Construct(resultsRequestDto, result.CalcResultDetail.FinancialYear);
             this._telemetryClient.TrackTrace("CalcResultCancelledProducersBuilder end...");
 
             this._telemetryClient.TrackTrace("calcResultScaledupProducersBuilder started...");

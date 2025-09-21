@@ -26,7 +26,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             var counter = 1;
             foreach (var item in cancelledProducers.CancelledProducers)
             {
-                item.ProducerIdValue = counter.ToString();
+                item.ProducerId = counter;
                 counter++;
             }
 
@@ -60,8 +60,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
                {
                    new CalcResultCancelledProducersDto
                    {
-                       ProducerIdValue = "123",
-                       SubsidiaryIdValue = "Sub123",
+                       ProducerId = 123,
                        ProducerOrSubsidiaryNameValue = "Producer A",
                        TradingNameValue = "Trading A",
                        LastTonnage = new LastTonnage
@@ -85,7 +84,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 
             var invoice = result.CancelledProducerTonnageInvoice.First();
             Assert.AreEqual(123, invoice.ProducerId);
-            Assert.AreEqual("Sub123", invoice.SubsidiaryId);
             Assert.AreEqual("Producer A", invoice.ProducerName);
             Assert.AreEqual("Trading A", invoice.TradingName);
             Assert.AreEqual(8, invoice.LastProducerTonnages.Count());

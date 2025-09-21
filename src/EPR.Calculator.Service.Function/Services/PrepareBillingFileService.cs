@@ -33,19 +33,19 @@ namespace EPR.Calculator.Service.Function.Services
             // TODO We need validate the Run Classification Id But not part of this ticket
             var calculatorRun = await applicationDBContext.CalculatorRuns
             .SingleOrDefaultAsync(x => x.Id == calculatorRunId);
-            
+
             if (calculatorRun is null)
             {
                 telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = calculatorRunId,
                     RunName = runName,
-                    Message = PrepareBillingFileConstants.CalculatorRunNotFound,                    
+                    Message = PrepareBillingFileConstants.CalculatorRunNotFound,
                 });
                 return false;
             }
 
-            if(!calculatorRun.IsBillingFileGenerating.GetValueOrDefault())
+            if (!calculatorRun.IsBillingFileGenerating.GetValueOrDefault())
             {
                 telemetryLogger.LogInformation(new TrackMessage
                 {
@@ -56,12 +56,7 @@ namespace EPR.Calculator.Service.Function.Services
                 return false;
             }
 
-            var acceptedProducerIds = await applicationDBContext.ProducerResultFileSuggestedBillingInstruction
-            .Where(x => x.CalculatorRunId == calculatorRunId
-                    &&
-                    x.BillingInstructionAcceptReject == PrepareBillingFileConstants.BillingInstructionAccepted)
-            .Select(x => x.ProducerId).Distinct()
-            .ToListAsync();
+            List<int> acceptedProducerIds = await GetAcceptedProducerIdsAsync(calculatorRunId, applicationDBContext);
 
             if (acceptedProducerIds.Count == 0)
             {
@@ -71,7 +66,7 @@ namespace EPR.Calculator.Service.Function.Services
                     RunName = runName,
                     Message = PrepareBillingFileConstants.AcceptedProducerIdsAreNull,
                 });
-                return false;                
+                return false;
             }
 
             var result = await prepareCalcService.PrepareBillingResults(
@@ -86,6 +81,17 @@ namespace EPR.Calculator.Service.Function.Services
                 CancellationToken.None);
 
             return result;
+        }
+
+        private static async Task<List<int>> GetAcceptedProducerIdsAsync(int calculatorRunId, ApplicationDBContext applicationDBContext)
+        {
+            return await applicationDBContext.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
+            .Where(x => x.CalculatorRunId == calculatorRunId
+                    &&
+                    x.BillingInstructionAcceptReject == PrepareBillingFileConstants.BillingInstructionAccepted
+                    && x.SuggestedBillingInstruction.Trim().ToLower() != PrepareBillingFileConstants.SuggestedBillingInstruction.Trim().ToLower())
+            .Select(x => x.ProducerId).Distinct()
+            .ToListAsync();
         }
     }
 }
