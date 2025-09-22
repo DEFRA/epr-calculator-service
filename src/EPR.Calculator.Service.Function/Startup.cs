@@ -127,7 +127,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcResultCommsCostBuilder, CalcResultCommsCostBuilder>();
             services.AddTransient<ICalcResultLateReportingBuilder, CalcResultLateReportingBuilder>();
             services.AddTransient<ICalcRunLaDisposalCostBuilder, CalcRunLaDisposalCostBuilder>();
-            services.AddScoped<ICalcResultScaledupProducersBuilder, CalcResultScaledupProducersBuilder>();
+            services.AddTransient<ICalcResultScaledupProducersBuilder, CalcResultScaledupProducersBuilder>();
             services.AddTransient<ICalcResultRejectedProducersBuilder, CalcResultRejectedProducersBuilder>();
             services.AddTransient<ICalcResultSummaryBuilder, CalcResultSummaryBuilder>();
             services.AddTransient<IBillingInstructionService, BillingInstructionService>();

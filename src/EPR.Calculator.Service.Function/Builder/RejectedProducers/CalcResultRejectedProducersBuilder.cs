@@ -16,7 +16,6 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
         public CalcResultRejectedProducersBuilder(ApplicationDBContext context)
         {
             this.context = context;
-            this.context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         }
 
         public async Task<IEnumerable<CalcResultRejectedProducer>> Construct(CalcResultsRequestDto resultsRequestDto)
