@@ -30,8 +30,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
                 CalculatorRunId = 1,
                 ProducerId = 100,
                 ProducerName = "Producer A",
-                TradingName = "Trade A",
-                SubsidiaryId = "A001"
+                TradingName = "Trade A"
             });
 
             // Seed ProducerResultFileSuggestedBillingInstruction
@@ -95,8 +94,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
                 CalculatorRunId = 2,
                 ProducerId = 200,
                 ProducerName = "Producer B",
-                TradingName = "Trade B",
-                SubsidiaryId = "A001"
+                TradingName = "Trade B"
             });
 
             context.ProducerResultFileSuggestedBillingInstruction.Add(new ProducerResultFileSuggestedBillingInstruction

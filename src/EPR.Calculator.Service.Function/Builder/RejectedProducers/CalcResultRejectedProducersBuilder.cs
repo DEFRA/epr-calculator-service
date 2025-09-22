@@ -25,8 +25,8 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                                     on new { pd.CalculatorRunId, pd.ProducerId } equals new { bi.CalculatorRunId, bi.ProducerId }
                                 where bi.CalculatorRunId == resultsRequestDto.RunId
                                       && bi.BillingInstructionAcceptReject == CommonConstants.Rejected
-                                      && bi.ReasonForRejection != null
-                                      && pd.SubsidiaryId != null
+                                      && bi.ReasonForRejection != null && bi.ReasonForRejection.Trim() != ""
+                                      && pd.SubsidiaryId == null
                                 select new CalcResultRejectedProducer
                                 {
                                     ProducerId = pd.ProducerId,
