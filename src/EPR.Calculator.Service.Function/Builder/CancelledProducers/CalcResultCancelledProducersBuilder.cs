@@ -35,7 +35,7 @@
             return await Task.Run(() =>
             {
                 var producers = new List<CalcResultCancelledProducersDto>();
-                producers.AddRange(GetCancelledProducers(financialYear, resultsRequestDto.RunId));
+                producers.AddRange(GetCancelledProducers(financialYear, resultsRequestDto.RunId, resultsRequestDto.IsBillingFile));
 
                 var response = new CalcResultCancelledProducersResponse
                 {
@@ -107,16 +107,16 @@
         }
 
 
-        public IEnumerable<CalcResultCancelledProducersDto> GetCancelledProducers(string financialYear, int runId)
+        public IEnumerable<CalcResultCancelledProducersDto> GetCancelledProducers(string financialYear, int runId, bool isBilling)
         {
             var producersForPreviousRuns = GetLatestProducerDetailsForThisFinancialYear(financialYear);
             var producersForCurrentRun = GetProducers(runId);
 
             var missingProducersInCurrentRun = producersForPreviousRuns.Where(t => t.ResultFileSuggestedBillingInstruction?.BillingInstructionAcceptReject == CommonConstants.Accepted && !producersForCurrentRun.Any(k => k.ProducerId == t.InvoicedTonnage?.ProducerId) );
                
-            var acceptedCancelledProducersForPreviousRuns = GetAcceptedCancelledProducers(financialYear).ToList();
+            var acceptedCancelledProducersForPreviousRuns = isBilling ? GetAcceptedCancelledProducersForThisRun(runId).ToList() : GetAcceptedCancelledProducers(financialYear).ToList();
 
-            var filteredProducersWithOutAccepetedProduecersData = missingProducersInCurrentRun.Where(t => !acceptedCancelledProducersForPreviousRuns.Exists(k=>k == t.InvoicedTonnage?.ProducerId)).ToList();
+            var filteredProducersWithOutAccepetedProduecersData = isBilling ? missingProducersInCurrentRun.Where(t => acceptedCancelledProducersForPreviousRuns.Exists(k => k == t.InvoicedTonnage?.ProducerId)).ToList() : missingProducersInCurrentRun.Where(t => !acceptedCancelledProducersForPreviousRuns.Exists(k=>k == t.InvoicedTonnage?.ProducerId)).ToList();
 
             var disinctMissingProducers = filteredProducersWithOutAccepetedProduecersData.DistinctBy(t => t.InvoicedTonnage?.ProducerId).Select(t => t.InvoicedTonnage?.ProducerId).ToList();
 
@@ -156,6 +156,7 @@
 
             return calcResultCancelledProducers;
         }
+      
 
         private static decimal? GetInvoicedTonnageForMaterials(List<ProducerInvoicedDto> cancelledProducersWithData, int materialId, int? producerId)
         {
@@ -178,7 +179,7 @@
                                               join p in context.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
                                               on calc.Id equals p.CalculatorRunId
                                               where (calc.FinancialYearId == financialYear && p.BillingInstructionAcceptReject != null && p.BillingInstructionAcceptReject == CommonConstants.Accepted
-                                              && p.SuggestedBillingInstruction == CommonConstants.Cancel)
+                                              && p.SuggestedBillingInstruction == CommonConstants.CancelStatus)
                                                && new int[]
                                                      {
                              RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
@@ -186,6 +187,17 @@
                              RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
                              RunClassificationStatusIds.FINALRUNCOMPLETEDID
                                                      }.Contains(calc.CalculatorRunClassificationId)
+                                              select p.ProducerId).AsEnumerable();
+            return cancelledAcceptedProducers;
+        }
+
+        private IEnumerable<int> GetAcceptedCancelledProducersForThisRun(int runId)
+        {
+            var cancelledAcceptedProducers = (from calc in context.CalculatorRuns.AsNoTracking()
+                                              join p in context.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
+                                              on calc.Id equals p.CalculatorRunId
+                                              where (calc.Id == runId && p.BillingInstructionAcceptReject != null && p.BillingInstructionAcceptReject == CommonConstants.Accepted
+                                              && p.SuggestedBillingInstruction == CommonConstants.CancelStatus)                                               
                                               select p.ProducerId).AsEnumerable();
             return cancelledAcceptedProducers;
         }
