@@ -210,7 +210,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
             }
             else
             {
-                return Math.Round(liabilityDifference.Value / currentYearInvoiceTotalToDate.Value, 2);
+                return Math.Round(liabilityDifference.Value / currentYearInvoiceTotalToDate.Value * 100, 2);
             }
         }
 
