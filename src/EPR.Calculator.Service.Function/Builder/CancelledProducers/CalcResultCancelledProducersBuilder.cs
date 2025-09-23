@@ -193,10 +193,8 @@
 
         private IEnumerable<int> GetAcceptedCancelledProducersForThisRun(int runId)
         {
-            var cancelledAcceptedProducers = (from calc in context.CalculatorRuns.AsNoTracking()
-                                              join p in context.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
-                                              on calc.Id equals p.CalculatorRunId
-                                              where (calc.Id == runId && p.BillingInstructionAcceptReject != null && p.BillingInstructionAcceptReject == CommonConstants.Accepted
+            var cancelledAcceptedProducers = (from p in context.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
+                                              where (p.CalculatorRunId == runId  && p.BillingInstructionAcceptReject == CommonConstants.Accepted
                                               && p.SuggestedBillingInstruction == CommonConstants.CancelStatus)                                               
                                               select p.ProducerId).AsEnumerable();
             return cancelledAcceptedProducers;
