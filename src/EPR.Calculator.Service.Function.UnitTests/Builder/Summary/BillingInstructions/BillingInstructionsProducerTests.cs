@@ -297,7 +297,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
             Assert.AreEqual(expectedLiabilityDiff, fee.LiabilityDifference);
             Assert.AreEqual("-", fee.MaterialThresholdBreached);
             Assert.AreEqual("-", fee.TonnageThresholdBreached);
-            Assert.AreEqual(523.56m, fee.PercentageLiabilityDifference);
+            Assert.AreEqual(52355.85m, fee.PercentageLiabilityDifference);
             Assert.AreEqual("-", fee.MaterialPercentageThresholdBreached);
             Assert.AreEqual("-", fee.TonnagePercentageThresholdBreached);
             Assert.AreEqual(CommonConstants.Delta, fee.SuggestedBillingInstruction);
@@ -1019,7 +1019,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
             BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, new List<DefaultParamResultsClass>(), _dbContext, 101);
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
-            Assert.AreEqual(523.48m, fee.PercentageLiabilityDifference);
+            Assert.AreEqual(52348.00m, fee.PercentageLiabilityDifference);
         }
 
         [TestMethod]
@@ -1045,7 +1045,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         [TestMethod]
         public void CalculateMaterialPercentageThresholdBreached_Level1_ReturnsNegative()
         {
-            this.defaultParam.First().ParameterValue = 550m;
+            this.defaultParam.First().ParameterValue = 55000m;
             this.defaultParam.First().ParameterUniqueReference = "MATT-PD";
 
             BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam, _dbContext, 101);
@@ -1088,7 +1088,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         [TestMethod]
         public void CalculateTonnagePercentageThresholdBreached_Level1_ReturnsNegative()
         {
-            this.defaultParam.First().ParameterValue = 550m;
+            this.defaultParam.First().ParameterValue = 55000m;
             this.defaultParam.First().ParameterUniqueReference = "TONT-PD";
 
             BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam, _dbContext, 101);
