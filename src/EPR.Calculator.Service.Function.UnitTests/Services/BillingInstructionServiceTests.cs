@@ -107,7 +107,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                                 MaterialPercentageThresholdBreached = "-ve",
                                 TonnagePercentageThresholdBreached = "-ve",
                                 SuggestedBillingInstruction = "INITIAL",
-                                SuggestedInvoiceAmount = "500"
+                                SuggestedInvoiceAmount = 500m
                             }
                         }
                     }

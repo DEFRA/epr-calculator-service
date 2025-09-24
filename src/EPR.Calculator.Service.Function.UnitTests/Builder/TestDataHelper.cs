@@ -783,7 +783,7 @@
                         MaterialPercentageThresholdBreached = string.Empty,
                         TonnagePercentageThresholdBreached = string.Empty,
                         SuggestedBillingInstruction = string.Empty,
-                        SuggestedInvoiceAmount = "4039"
+                        SuggestedInvoiceAmount = 4039m
                     },
                     CommunicationCostsSectionTwoB = new CalcResultSummaryBadDebtProvision
                     {
@@ -910,7 +910,7 @@
                         MaterialPercentageThresholdBreached = string.Empty,
                         TonnagePercentageThresholdBreached = string.Empty,
                         SuggestedBillingInstruction = string.Empty,
-                        SuggestedInvoiceAmount = "4039"
+                        SuggestedInvoiceAmount = 4039m
                     },
                     CommunicationCostsSectionTwoB = new CalcResultSummaryBadDebtProvision
                     {
@@ -1038,7 +1038,7 @@
                         MaterialPercentageThresholdBreached = string.Empty,
                         TonnagePercentageThresholdBreached = string.Empty,
                         SuggestedBillingInstruction = string.Empty,
-                        SuggestedInvoiceAmount = "4039"
+                        SuggestedInvoiceAmount = 4039m
                     },
                     CommunicationCostsSectionTwoB = new CalcResultSummaryBadDebtProvision
                     {
