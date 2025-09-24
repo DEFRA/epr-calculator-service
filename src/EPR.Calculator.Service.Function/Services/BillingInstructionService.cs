@@ -36,6 +36,7 @@ namespace EPR.Calculator.Service.Function.Services
                 var billingInstructions = new List<ProducerResultFileSuggestedBillingInstruction>();
 
                 var producers = calcResult.CalcResultSummary.ProducerDisposalFees.Where(producer => producer.Level == CommonConstants.LevelOne.ToString());
+                var cancelledProducers = calcResult.CalcResultCancelledProducers;
 
                 foreach (var producer in producers)
                 {
@@ -65,6 +66,28 @@ namespace EPR.Calculator.Service.Function.Services
                         billingInstructions.Add(billingInstruction);
                     }
                 }
+                foreach (var cancelledProducer in cancelledProducers.CancelledProducers)
+                {
+                    var billingInstruction = new ProducerResultFileSuggestedBillingInstruction
+                    {
+                        CalculatorRunId = calcResult.CalcResultDetail.RunId,
+                        ProducerId =  cancelledProducer.ProducerId,
+                        TotalProducerBillWithBadDebt =null,
+                        CurrentYearInvoiceTotalToDate = cancelledProducer.LatestInvoice?.CurrentYearInvoicedTotalToDateValue,
+                        TonnageChangeSinceLastInvoice = null,
+                        AmountLiabilityDifferenceCalcVsPrev = null,
+                        MaterialPoundThresholdBreached = null,
+                        TonnagePoundThresholdBreached =null,
+                        PercentageLiabilityDifferenceCalcVsPrev = null,
+                        MaterialPercentageThresholdBreached = null,
+                        TonnagePercentageThresholdBreached = null,
+                        SuggestedBillingInstruction = CommonConstants.CancelStatus,
+                        SuggestedInvoiceAmount = null
+                    };
+                    billingInstructions.Add(billingInstruction);
+                }
+
+
 
                 if (billingInstructions.Count > 0)
                 {

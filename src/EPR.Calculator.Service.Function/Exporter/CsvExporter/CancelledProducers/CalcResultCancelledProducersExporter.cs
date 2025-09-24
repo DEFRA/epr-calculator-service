@@ -7,6 +7,7 @@
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Models;
+    using Microsoft.Extensions.Azure;
     using Microsoft.IdentityModel.Tokens;
 
     public class CalcResultCancelledProducersExporter : ICalcResultCancelledProducersExporter
@@ -20,6 +21,7 @@
 
             // Add headers
             PrepareCancelledProducersHeader(calcResultCancelledProducers, csvContent);
+            PrepareCancelledProducersValues(calcResultCancelledProducers, csvContent);
         }
 
         private static void PrepareCancelledProducersHeader(CalcResultCancelledProducersResponse response, StringBuilder csvContent)
@@ -35,6 +37,31 @@
             csvContent.AppendLine();
         }
 
+        private static void PrepareCancelledProducersValues(CalcResultCancelledProducersResponse response, StringBuilder csvContent)
+        {
+            foreach (var CancelledProducer in response.CancelledProducers)
+            {
+                csvContent.Append(CsvSanitiser.SanitiseData(CancelledProducer.ProducerId));
+                csvContent.Append(CsvSanitiser.SanitiseData(CancelledProducer.ProducerOrSubsidiaryNameValue));
+                csvContent.Append(CsvSanitiser.SanitiseData(CancelledProducer.TradingNameValue)); 
+                csvContent.Append(CsvSanitiser.SanitiseData(CancelledProducer.LastTonnage?.AluminiumValue));
+                csvContent.Append(CsvSanitiser.SanitiseData(CancelledProducer.LastTonnage?.FibreCompositeValue));
+                csvContent.Append(CsvSanitiser.SanitiseData(CancelledProducer.LastTonnage?.GlassValue));
+                csvContent.Append(CsvSanitiser.SanitiseData(CancelledProducer.LastTonnage?.PaperOrCardValue));
+                csvContent.Append(CsvSanitiser.SanitiseData(CancelledProducer.LastTonnage?.PlasticValue));
+                csvContent.Append(CsvSanitiser.SanitiseData(CancelledProducer.LastTonnage?.SteelValue));
+                csvContent.Append(CsvSanitiser.SanitiseData(CancelledProducer.LastTonnage?.WoodValue));
+                csvContent.Append(CsvSanitiser.SanitiseData(CancelledProducer.LastTonnage?.OtherMaterialsValue));
+                csvContent.Append(CsvSanitiser.SanitiseData(CancelledProducer.LatestInvoice?.CurrentYearInvoicedTotalToDateValue, DecimalPlaces.Two, null, true));
+                csvContent.Append(CsvSanitiser.SanitiseData(CancelledProducer.LatestInvoice?.RunNumberValue));
+                csvContent.Append(CsvSanitiser.SanitiseData(CancelledProducer.LatestInvoice?.RunNameValue));
+                csvContent.Append(CsvSanitiser.SanitiseData(CancelledProducer.LatestInvoice?.BillingInstructionIdValue));
+                csvContent.AppendLine();
+            }
+
+        }
+
+
         private static void WriteCancelledProducersSecondaryHeaders(StringBuilder csvContent)
         {
             const int maxColumnSize = CommonConstants.SecondaryHeaderMaxColumnSize;
@@ -49,12 +76,7 @@
 
         private static void WriteCancelledProducersColumnHeaders(IEnumerable<CalcResultCancelledProducersDto> producers, StringBuilder csvContent)
         {
-            if (!producers.Any())
-            {
-                return;
-            }
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.ProducerId));
-            csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.SubsidiaryId));
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.ProducerOrSubsidiaryName));
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.TradingName));
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.Aluminium));
@@ -65,7 +87,7 @@
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.Steel));
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.Wood));
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.OtherMaterials));
-            csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.LastInvoicedTotal));
+            csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.CurrentYearInvoicedTotalToDate));
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.RunNumber));
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.RunName));
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.BillingInstructionId));

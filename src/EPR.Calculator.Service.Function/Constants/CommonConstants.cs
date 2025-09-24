@@ -35,6 +35,7 @@
         public const string ParametersOther = "Parameters - Other";
         public const string ZeroCurrency = "£0";
         public const string Initial = "INITIAL";
+        public const string CancelStatus = "CANCEL";
         public const char Comma = ',';
 
         public const string OnePlusFourCommsCostApportionmentPercentages = "onePlusFourCommsCostApportionmentPercentages";
@@ -44,11 +45,13 @@
         
         public const string ProducerId = "Producer ID";
         public const string SubsidiaryId = "Subsidiary ID";
-        public const string ProducerOrSubsidiaryName = "Producer / Subsidiary Name";
+        public const string ProducerOrSubsidiaryName = "Producer Name";
         public const string TradingName = "Trading Name";
+        public const string ProducerName = "Producer Name";
+
 
         public const string LastTonnage = "Last Tonnage";
-        public const int LastTonnageSubHeaderIndex = 4;
+        public const int LastTonnageSubHeaderIndex = 3;
 
         public const string Aluminium = "Aluminium";
         public const string FibreComposite = "Fibre composite";
@@ -60,7 +63,7 @@
         public const string OtherMaterials = "Other materials";
 
         public const string LatestInvoice = "Latest Invoice";
-        public const int LatestInvoiceSubHeaderIndex = 11;
+        public const int LatestInvoiceSubHeaderIndex = 10;
 
         public const string LastInvoicedTotal = "Last Invoiced Total";
         public const string RunNumber = "Run Number";
@@ -83,5 +86,9 @@
 
         public const string Delta = "DELTA";
         public const string Rebill = "REBILL";
+        public const string CurrentYearInvoicedTotalToDate = "Current Year Invoiced Total To Date";
+        public const string Accepted = "Accepted";
+        public const string Rejected = "Rejected";
+        public const string Cancel = "Cancel";
     }
 }
