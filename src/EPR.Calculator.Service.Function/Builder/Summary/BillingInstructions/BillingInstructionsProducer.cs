@@ -233,7 +233,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
             if (fee.Level != CommonConstants.LevelOne.ToString()) return CommonConstants.Hyphen;
 
             if (!currentYearInvoiceTotalToDate.HasValue) return CommonConstants.Hyphen;
-            if (tonnageChangeSinceLastInvoice == CommonConstants.TonnageChanged) return CommonConstants.Hyphen;
+            if (tonnageChangeSinceLastInvoice != CommonConstants.TonnageChanged) return CommonConstants.Hyphen;
 
             if (percentageLiabilityDifference >= param_TONT_PI) return CommonConstants.Positive;
             if (percentageLiabilityDifference <= param_TONT_PD) return CommonConstants.Negative;

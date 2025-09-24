@@ -1076,8 +1076,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         }
 
         [TestMethod]
+        public void CalculateTonnagePercentageThresholdBreached_WhenTonnageChangeIsNull_ReturnsHypen()
+        {
+            this.defaultParam.First().ParameterUniqueReference = "TONT-PI";
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam, _dbContext, 101);
+
+            var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
+            Assert.AreEqual(CommonConstants.Hyphen, fee.TonnagePercentageThresholdBreached);
+        }
+
+        [TestMethod]
         public void CalculateTonnagePercentageThresholdBreached_Level1_ReturnsPositive()
         {
+            _calcResult.CalcResultSummary.ProducerDisposalFees.First().TonnageChangeAdvice = "CHANGE";
             this.defaultParam.First().ParameterUniqueReference = "TONT-PI";
             BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam, _dbContext, 101);
 
@@ -1088,6 +1099,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         [TestMethod]
         public void CalculateTonnagePercentageThresholdBreached_Level1_ReturnsNegative()
         {
+            _calcResult.CalcResultSummary.ProducerDisposalFees.First().TonnageChangeAdvice = "CHANGE";
             this.defaultParam.First().ParameterValue = 55000m;
             this.defaultParam.First().ParameterUniqueReference = "TONT-PD";
 
