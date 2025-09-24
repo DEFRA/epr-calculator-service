@@ -103,7 +103,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                                 LiabilityDifference = -200,
                                 MaterialThresholdBreached = "-ve",
                                 TonnageThresholdBreached = "-ve",
-                                PercentageLiabilityDifference = "10.05",
+                                PercentageLiabilityDifference = 10.05m,
                                 MaterialPercentageThresholdBreached = "-ve",
                                 TonnagePercentageThresholdBreached = "-ve",
                                 SuggestedBillingInstruction = "INITIAL",
