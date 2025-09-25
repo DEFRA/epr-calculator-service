@@ -2,6 +2,7 @@
 using System.Text;
 using EPR.Calculator.API.Utils;
 using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.RejectedProducers
@@ -45,8 +46,8 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.RejectedProducers
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerName));
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.TradingName));
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.SuggestedBillingInstruction));
-                csvContent.Append(CsvSanitiser.SanitiseData(producer.SuggestedInvoiceAmount));
-                csvContent.Append(CsvSanitiser.SanitiseData(producer.InstructionConfirmedDate));
+                csvContent.Append(CsvSanitiser.SanitiseData(producer.SuggestedInvoiceAmount, DecimalPlaces.Two, null, true));
+                csvContent.Append(CsvSanitiser.SanitiseData(producer.InstructionConfirmedDate.ToString()));
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.InstructionConfirmedBy));
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.ReasonForRejection));
                 csvContent.AppendLine();
