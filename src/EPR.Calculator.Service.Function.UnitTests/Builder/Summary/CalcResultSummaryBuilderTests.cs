@@ -1,4 +1,6 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests
+﻿using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs;
+
+namespace EPR.Calculator.Service.Function.UnitTests
 {
     using AutoFixture;
     using EPR.Calculator.API.Data;
@@ -309,7 +311,7 @@
             var firstProducer = result.ProducerDisposalFees.FirstOrDefault();
             Assert.IsNotNull(firstProducer);
             Assert.AreEqual("Producer1", firstProducer.ProducerName);
-            Assert.AreEqual(0, CalcResultSummaryBuilder.ScaledupProducers.Count());
+            Assert.AreEqual(0, calcResultsService.ScaledupProducers.Count());
         }
 
         [TestMethod]
@@ -337,7 +339,7 @@
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(0, CalcResultSummaryBuilder.ScaledupProducers.Count());
+            Assert.AreEqual(0, calcResultsService.ScaledupProducers.Count());
         }
 
         [TestMethod]
@@ -355,7 +357,7 @@
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(1, CalcResultSummaryBuilder.ScaledupProducers.Count());
+            Assert.AreEqual(1, calcResultsService.ScaledupProducers.Count());
         }
 
         [TestMethod]
@@ -693,7 +695,10 @@
 
             var materials = Mappers.MaterialMapper.Map(this.context.Material.ToList());
 
-            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, 1);
+            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails,
+                                                                                                materials,
+                                                                                                1,
+                                                                                                calcResultsService.ScaledupProducers?.ToList() ?? new List<CalcResultScaledupProducer>());
 
             var result = new CalcResultSummaryBuilder(this.context).GetCalcResultSummary(orderedProducerDetails, materials, this.calcResult, totalPackagingTonnage);
 
@@ -717,7 +722,7 @@
         public void GetCalcResultSummary_CanAddTotalRow()
         {
             var sut = new CalcResultSummaryBuilder(this.context);
-            CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation> {
+            calcResultsService.ParentOrganisations = new List<ScaledupOrganisation> {
                 new() { OrganisationId = 1, OrganisationName = "Org1" }
             };
 
@@ -729,7 +734,7 @@
 
             var materials = Mappers.MaterialMapper.Map(this.context.Material.ToList());
 
-            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, 1);
+            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, 1, calcResultsService.ScaledupProducers?.ToList() ?? new List<CalcResultScaledupProducer>());
 
             orderedProducerDetails.Add(new ProducerDetail
             {
@@ -751,7 +756,7 @@
 
             Assert.AreEqual(string.Empty, totals?.ProducerName);
             Assert.IsNotNull(producer.ProducerName);
-            Assert.AreEqual("Org1", producer.ProducerName);
+            Assert.AreEqual("Producer1", producer.ProducerName);
         }
 
         [TestMethod]
@@ -827,7 +832,10 @@
 
             var materials = Mappers.MaterialMapper.Map(this.context.Material.ToList());
 
-            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, 1);
+            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails,
+                                                                                                materials,
+                                                                                                1,
+                                                                                                calcResultsService.ScaledupProducers?.ToList() ?? new List<CalcResultScaledupProducer>());
             var scaledUpProducer = totalPackagingTonnage.First(t => t.ProducerId == 4);
 
             Assert.AreEqual(3, totalPackagingTonnage.Count());
@@ -979,7 +987,7 @@
             IEnumerable<ProducerDetail> producersAndSubsidiaries = context.ProducerDetail;
             List<CalcResultSummaryProducerDisposalFees> producerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>();
 
-            CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation>(); 
+            calcResultsService.ParentOrganisations = new List<ScaledupOrganisation>();
 
             // Act
             var result = calcResultsService.CanAddTotalRow(producer, producersAndSubsidiaries, producerDisposalFees);
@@ -998,7 +1006,7 @@
                     new CalcResultSummaryProducerDisposalFees { ProducerId = "1", ProducerName="Org1", SubsidiaryId = "" }
                 };
 
-            CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation> {
+            calcResultsService.ParentOrganisations = new List<ScaledupOrganisation> {
                     new ScaledupOrganisation { OrganisationId = 1, OrganisationName = "Org1" }
                 };
 
@@ -1019,7 +1027,7 @@
                     new CalcResultSummaryProducerDisposalFees { ProducerId = "2", ProducerName="Org1", SubsidiaryId = "" }
                 };
 
-            CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation> {
+            calcResultsService.ParentOrganisations = new List<ScaledupOrganisation> {
                     new ScaledupOrganisation { OrganisationId = 1, OrganisationName = "Org1" }
                 };
 
@@ -1051,7 +1059,7 @@
             int producerId = 1;
             bool isOverAllTotalRow = false;
 
-            CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation>();
+            calcResultsService.ParentOrganisations = new List<ScaledupOrganisation>();
 
             // Act
             var result = calcResultsService.GetProducerDetailsForTotalRow(producerId, isOverAllTotalRow);
@@ -1067,7 +1075,7 @@
             int producerId = 1;
             bool isOverAllTotalRow = false;
 
-            CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation> {
+            calcResultsService.ParentOrganisations = new List<ScaledupOrganisation> {
                     new ScaledupOrganisation { OrganisationId = 1, OrganisationName = "Org1" }
                 };
 
@@ -1085,7 +1093,7 @@
             int producerId = 1;
             bool isOverAllTotalRow = false;
 
-            CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation> {
+            calcResultsService.ParentOrganisations = new List<ScaledupOrganisation> {
                     new ScaledupOrganisation { OrganisationId = 1, OrganisationName = null }
                 };
 
@@ -1103,7 +1111,7 @@
             int producerId = 1;
             bool isOverAllTotalRow = false;
 
-            CalcResultSummaryBuilder.ParentOrganisations = new List<ScaledupOrganisation> {
+            calcResultsService.ParentOrganisations = new List<ScaledupOrganisation> {
                     new ScaledupOrganisation { OrganisationId = 1, OrganisationName = "Good Fruit", TradingName = "GF Trading Name 1" }
                 };
 
@@ -1112,6 +1120,204 @@
 
             // Assert
             Assert.AreEqual("GF Trading Name 1", result!.TradingName);
+        }
+
+        [TestMethod]
+        public void Construct_HandlesNullScaledupProducers_UsesEmptyList()
+        {
+            // Arrange
+            var requestDto = new CalcResultsRequestDto { RunId = 1 };
+            var calcResult = this.calcResult;
+            calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers
+            {
+                ScaledupProducers = null
+            };
+
+            // Act
+            var task = this.calcResultsService.Construct(requestDto, calcResult);
+            task.Wait();
+            var result = task.Result;
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.ProducerDisposalFees?.Any() ?? false);
+        }
+
+        [TestMethod]
+        public void GetCalcResultSummary_AddsProducerTotalRow_AndProducerRow()
+        {
+            // Arrange
+            var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, this.context.ProducerDetail.ToList());
+            var materials = Mappers.MaterialMapper.Map(this.context.Material.ToList());
+            var runDetails = CalcResultSummaryBuilder.GetProducerRunMaterialDetails(ordered, this.context.ProducerReportedMaterial.ToList(), 1);
+
+            this.calcResultsService.ScaledupProducers = new List<CalcResultScaledupProducer>();
+
+            var totalPackaging = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(
+                runDetails, materials, 1, this.calcResultsService.ScaledupProducers.ToList());
+
+            this.calcResultsService.ParentOrganisations = new List<ScaledupOrganisation>
+            {
+                new ScaledupOrganisation { OrganisationId = ordered.First().ProducerId, OrganisationName = "Org1" }
+            };
+
+            // Act
+            var summary = this.calcResultsService.GetCalcResultSummary(ordered, materials, this.calcResult, totalPackaging);
+
+            // Assert
+            Assert.IsNotNull(summary);
+            Assert.IsTrue(summary.ProducerDisposalFees.Any());
+            Assert.IsTrue(summary.ProducerDisposalFees.Any(r => r.isTotalRow));
+            Assert.IsTrue(summary.ProducerDisposalFees.Any(r => !r.isTotalRow));
+        }
+
+        [TestMethod]
+        public void GetCalcResultSummary_AddsTotalRow_WhenProducerHasSubsidiary()
+        {
+            var parent = context.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
+            var sub = new ProducerDetail
+            {
+                ProducerName = parent.ProducerName + " and subsidiary",
+                ProducerId = parent.ProducerId,
+                CalculatorRunId = parent.CalculatorRunId,
+                SubsidiaryId = "S1"
+            };
+            context.ProducerDetail.Add(sub);
+            context.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            {
+                ProducerDetail = sub,
+                MaterialId = 1,
+                PackagingType = "HH",
+                PackagingTonnage = 10m
+            });
+            context.SaveChanges();
+
+            calcResultsService.ParentOrganisations = new List<ScaledupOrganisation>
+            {
+                new ScaledupOrganisation { OrganisationId = parent.ProducerId, OrganisationName = "Org1" }
+            };
+
+            var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
+            var materials = Mappers.MaterialMapper.Map(context.Material.ToList());
+            var runDetails = CalcResultSummaryBuilder.GetProducerRunMaterialDetails(ordered, context.ProducerReportedMaterial.ToList(), 1);
+            var totalPackaging = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(
+                runDetails, materials, 1, calcResultsService.ScaledupProducers?.ToList() ?? new List<CalcResultScaledupProducer>());
+
+            var summary = calcResultsService.GetCalcResultSummary(ordered, materials, calcResult, totalPackaging);
+
+            Assert.IsTrue(summary.ProducerDisposalFees.Any(r => r.isTotalRow));
+        }
+
+        [TestMethod]
+        public void GetProducerRow_MarksProducerAsScaledUp_WhenMatchExists()
+        {
+
+            var producer = context.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
+
+            var materials = Mappers.MaterialMapper.Map(context.Material.ToList());
+
+            var tonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>();
+         
+            foreach (var m in materials)
+            {
+                tonnageByMaterial[m.Code] = new CalcResultScaledupProducerTonnage
+                {
+                    ReportedHouseholdPackagingWasteTonnage = 0,
+                    ReportedPublicBinTonnage = 0,
+                    ReportedSelfManagedConsumerWasteTonnage = 0,
+                    TotalReportedTonnage = 0,
+                    NetReportedTonnage = 0,
+                    ScaledupReportedHouseholdPackagingWasteTonnage = 0,
+                    ScaledupReportedPublicBinTonnage = 0,
+                    ScaledupReportedSelfManagedConsumerWasteTonnage = 0,
+                    ScaledupTotalReportedTonnage = 0,
+                    ScaledupNetReportedTonnage = 0
+                };
+            }
+
+            calcResultsService.ScaledupProducers = new List<CalcResultScaledupProducer>
+            {
+                new CalcResultScaledupProducer
+                {
+                    ProducerId = producer.ProducerId,
+                    SubsidiaryId = producer.SubsidiaryId,
+                    ScaledupProducerTonnageByMaterial = tonnageByMaterial
+                }
+            };
+
+            var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
+
+            var row = calcResultsService.GetProducerRow(
+                new List<CalcResultSummaryProducerDisposalFees>(),
+                ordered.Where(pd => pd.ProducerId == producer.ProducerId).ToList(),
+                producer,
+                materials,
+                this.calcResult, new List<TotalPackagingTonnagePerRun>());
+                
+
+            Assert.AreEqual(CommonConstants.ScaledupProducersYes, row.IsProducerScaledup);
+        }
+
+        [TestMethod]
+        public void CanAddTotalRow_SingleProducerAndPomDataExists_ReturnsFalse()
+        {
+            var producer = context.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
+
+            var producersAndSubsidiaries = new List<ProducerDetail>
+            {
+                new ProducerDetail
+                {
+                    ProducerId = producer.ProducerId,
+                    CalculatorRunId = producer.CalculatorRunId,
+                    SubsidiaryId = null,
+                    ProducerName = "Parent Org"
+                }
+            };
+
+            calcResultsService.ParentOrganisations = new List<ScaledupOrganisation>
+            {
+                new ScaledupOrganisation { OrganisationId = producer.ProducerId, OrganisationName = "Org1" }
+            };
+
+            var result = calcResultsService.CanAddTotalRow(producer, producersAndSubsidiaries, new List<CalcResultSummaryProducerDisposalFees>());
+
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void GetProducerRow_MarksProducerAsNotScaledUp_WhenNoMatch()
+        {
+            var producer = context.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
+            var materials = Mappers.MaterialMapper.Map(context.Material.ToList());
+
+            calcResultsService.ScaledupProducers = new List<CalcResultScaledupProducer>();
+
+            var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
+            var row = calcResultsService.GetProducerRow(
+                new List<CalcResultSummaryProducerDisposalFees>(),
+                ordered.Where(pd => pd.ProducerId == producer.ProducerId).ToList(),
+                producer,
+                materials,
+                this.calcResult,
+                new List<TotalPackagingTonnagePerRun>());
+
+            Assert.AreEqual(CommonConstants.ScaledupProducersNo, row.IsProducerScaledup);
+        }
+
+        [TestMethod]
+        public void CanAddTotalRow_NoParentPomButHasSubsidiary_ReturnsTrue()
+        {
+            var parent = context.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
+            var subOnly = new List<ProducerDetail> {
+                new ProducerDetail { ProducerId = parent.ProducerId, CalculatorRunId = parent.CalculatorRunId, SubsidiaryId = "S1", ProducerName = "Sub1" }
+            };
+
+            calcResultsService.ParentOrganisations = new List<ScaledupOrganisation> {
+                new ScaledupOrganisation { OrganisationId = parent.ProducerId, OrganisationName = "Org1" }
+            };
+
+            var canAdd = calcResultsService.CanAddTotalRow(parent, subOnly, new List<CalcResultSummaryProducerDisposalFees>());
+            Assert.IsTrue(canAdd);
         }
 
         private static void SeedDatabase(ApplicationDBContext context)

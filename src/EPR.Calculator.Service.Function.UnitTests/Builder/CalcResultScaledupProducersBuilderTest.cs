@@ -195,8 +195,6 @@
             }
         }
 
-
-
         /// <summary>
         /// Tests that the <see cref="ICalcResultScaledupProducersBuilder.Construct(CalcResultsRequestDto)"/>
         /// method returns the correct result when scaled up data is present.

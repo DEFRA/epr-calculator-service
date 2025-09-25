@@ -118,7 +118,7 @@
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
                     Message = "Create producer data insert service end...",
-                });                
+                });
 
                 this.telemetryLogger.LogInformation(new TrackMessage
                 {
@@ -332,7 +332,7 @@
             var billingFileMetadata = new CalculatorRunBillingFileMetadata
             {
                 BillingCsvFileName = billingFileCsvName.ToString(),
-                BillingFileCreatedBy = resultsRequestDto.ApprovedBy,
+                BillingFileCreatedBy = resultsRequestDto.ApprovedBy ?? "System User",
                 CalculatorRunId = resultsRequestDto.RunId,
                 BillingFileCreatedDate = DateTime.UtcNow,
                 BillingJsonFileName = billingFileJsonName.ToString(),
