@@ -16,9 +16,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     [TestClass]
     public class BillingInstructionServiceTests
     {
-        private BillingInstructionService _testClass;
-        private Mock<IDbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction>> _billingInstructionChunker;
-        private Mock<ICalculatorTelemetryLogger> _telemetryLogger;
+        private BillingInstructionService _testClass = null!;
+        private Mock<IDbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction>> _billingInstructionChunker = null!;
+        private Mock<ICalculatorTelemetryLogger> _telemetryLogger = null!;
 
         [TestInitialize]
         public void SetUp()
@@ -162,7 +162,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     MaterialHeading = string.Empty,
                     TonnageHeading = string.Empty,
                 }, 
-                CalcResultSummary  = new() {  ProducerDisposalFees = null }
+                CalcResultSummary  = new() {  ProducerDisposalFees = null! }
             };
 
 

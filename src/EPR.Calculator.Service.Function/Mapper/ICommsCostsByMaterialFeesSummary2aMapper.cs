@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.Mapper
 {
-    public interface ICommsCostsByMaterialFeesSummary2aMapper
+    public interface ICommsCostsByMaterialFeesSummary2AMapper
     {
-        CalcResultSummaryCommsCostsByMaterialFeesSummary2a Map(CalcResultSummaryProducerDisposalFees calcResultSummaryProducerDisposalFees);
+        CalcResultSummaryCommsCostsByMaterialFeesSummary2A Map(CalcResultSummaryProducerDisposalFees calcResultSummaryProducerDisposalFees);
     }
 }

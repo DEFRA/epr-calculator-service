@@ -30,7 +30,9 @@ namespace EPR.Calculator.Service.Function.Services
                 Message = "PrepareBillingFileAsync started",
             });
 
+#pragma warning disable S1135
             // TODO We need validate the Run Classification Id But not part of this ticket
+#pragma warning restore S1135
             var calculatorRun = await applicationDBContext.CalculatorRuns
             .SingleOrDefaultAsync(x => x.Id == calculatorRunId);
 

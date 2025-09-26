@@ -3,8 +3,8 @@ using EPR.Calculator.Service.Function.Models.JsonExporter;
 
 namespace EPR.Calculator.Service.Function.Mapper
 {
-    public interface IFeeForCommsCostsWithBadDebtProvision2aMapper
+    public interface IFeeForCommsCostsWithBadDebtProvision2AMapper
     {
-        CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2a Map(CalcResultSummaryProducerDisposalFees calcResultSummaryProducerDisposalFees);
+        CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2A Map(CalcResultSummaryProducerDisposalFees calcResultSummaryProducerDisposalFees);
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace EPR.Calculator.API.Exporter
 {
-    public interface ICalcResultsExporter<T>
+    public interface ICalcResultsExporter<in T>
     {
         string Export(T results);
     }

@@ -11,8 +11,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
     [TestClass]
     public class OnePlusFourApportionmentJsonExporterTests
     {
-        private OnePlusFourApportionmentJsonExporter _testClass;
-        private Mock<IOnePlusFourApportionmentMapper> _mapper;
+        private OnePlusFourApportionmentJsonExporter _testClass = null!;
+        private Mock<IOnePlusFourApportionmentMapper> _mapper = null!;
 
         [TestInitialize]
         public void SetUp()

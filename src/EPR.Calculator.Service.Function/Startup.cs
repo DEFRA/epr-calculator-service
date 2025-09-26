@@ -86,6 +86,7 @@ namespace EPR.Calculator.Service.Function
             builder.Services.AddSingleton<ICalculatorTelemetryLogger, CalculatorTelemetryLogger>();
         }
 
+#pragma warning disable S1144 // Keeping just in case its required in future
         private static void SetupBlobStorage(IServiceCollection services)
         {
             services.AddSingleton<IStorageService>(provider =>
@@ -101,7 +102,8 @@ namespace EPR.Calculator.Service.Function
                 return new BlobStorageService(new BlobServiceClient(connectionString), configuration, logger);
             });
         }
-
+#pragma warning restore
+        
         /// <summary>
         /// Registers the dependencies for the application.
         /// </summary>
@@ -155,7 +157,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<IPrepareBillingFileService, PrepareBillingFileService>();
             services.AddTransient<ILateReportingTonnageMapper, LateReportingTonnageMapper>();
             services.AddTransient<ILateReportingTonnage, LateReportingTonnage>();
-            services.AddTransient<ICommsCostsByMaterialFeesSummary2aMapper, CommsCostsByMaterialFeesSummary2aMapper>();
+            services.AddTransient<ICommsCostsByMaterialFeesSummary2AMapper, CommsCostsByMaterialFeesSummary2AMapper>();
             services.AddTransient<ICalcCountryApportionmentService, CalcCountryApportionmentService>();
             services.AddTransient<ICalcResultScaledupProducersJsonExporter, CalcResultScaledupProducersJsonExporter>();
             services.AddTransient<ICalcResultScaledupProducersJsonMapper, CalcResultScaledupProducersJsonMapper>();
@@ -164,11 +166,11 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcResultCommsCostByMaterial2AJsonExporter, CalcResultCommsCostByMaterial2AJsonExporter>();
             services.AddTransient<ISAOperatingCostsWithBadDebtProvisionMapper, SAOperatingCostsWithBadDebtProvisionMapper>();
             services.AddTransient<ICalcResultLADataPrepCostsWithBadDebtProvision4Mapper, CalcResultLADataPrepCostsWithBadDebtProvision4Mapper>();
-            services.AddTransient<IFeeForCommsCostsWithBadDebtProvision2aMapper, FeeForCommsCostsWithBadDebtProvision2aMapper>();
-            services.AddTransient<IFeeForCommsCostsWithBadDebtProvision2bMapper, FeeForCommsCostsWithBadDebtProvision2bMapper>();
-            services.AddTransient<ITotalProducerFeeWithBadDebtProvisionFor2Con12A2B2CMapper, TotalProducerFeeWithBadDebtProvisionFor2con_1_2a_2b_2cMapper>();
-            services.AddTransient<IFeeForSASetUpCostsWithBadDebtProvision_5Mapper, FeeForSASetUpCostsWithBadDebtProvision_5Mapper>();
-            services.AddTransient<ICalcResultCommsCostsWithBadDebtProvision2cMapper, CalcResultCommsCostsWithBadDebtProvision2cMapper>();
+            services.AddTransient<IFeeForCommsCostsWithBadDebtProvision2AMapper, FeeForCommsCostsWithBadDebtProvision2AMapper>();
+            services.AddTransient<IFeeForCommsCostsWithBadDebtProvision2BMapper, FeeForCommsCostsWithBadDebtProvision2BMapper>();
+            services.AddTransient<ITotalProducerFeeWithBadDebtProvisionFor2Con12A2B2CMapper, TotalProducerFeeWithBadDebtProvisionFor2Con1And2AAnd2BAnd2CMapper>();
+            services.AddTransient<IFeeForSaSetUpCostsWithBadDebtProvision5Mapper, FeeForSaSetUpCostsWithBadDebtProvision5Mapper>();
+            services.AddTransient<ICalcResultCommsCostsWithBadDebtProvision2CMapper, CalcResultCommsCostsWithBadDebtProvision2CMapper>();
             services.AddTransient<ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsExporter, CalculationOfSuggestedBillingInstructionsAndInvoiceAmountsExporter>();
             services.AddTransient<ICalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper, CalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper>();
             services.AddTransient<IParametersOtherMapper, ParametersOtherMapper>();
@@ -229,7 +231,7 @@ namespace EPR.Calculator.Service.Function
 
         public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
         {
-            var builtConfig = builder.ConfigurationBuilder.Build();
+            builder.ConfigurationBuilder.Build();
 
             builder.ConfigurationBuilder
                .SetBasePath(Environment.CurrentDirectory)

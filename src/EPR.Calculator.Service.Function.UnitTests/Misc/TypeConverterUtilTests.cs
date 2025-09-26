@@ -9,6 +9,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
     [TestClass]
     public class TypeConverterUtilTests
     {
+        private class TestClass
+        {
+
+        }
+
         [TestMethod]
         public void CanCallConvertToDecimal()
         {
@@ -20,7 +25,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
             var result = TypeConverterUtil.ConvertTo<decimal>(value);
 
             // Assert
-            Assert.AreEqual(result,10.6m);
+            Assert.AreEqual(10.6m, result);
+        }
+
+        [TestMethod]
+        public void NotValueType_NotNull_CantConvert()
+        {
+            // Arrange
+            var fixture = new Fixture();
+            var value = "10.6";
+
+            // Act
+            var result = TypeConverterUtil.ConvertTo<TestClass>(value);
+
+            // Assert
+            Assert.IsNull(result);
         }
 
         [TestMethod]
@@ -28,13 +47,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
         {
             // Arrange
             var fixture = new Fixture();
-            string value = null;
+            string? value = null;
 
             // Act
             var result = TypeConverterUtil.ConvertTo<decimal>(value);
 
             // Assert
-            Assert.AreEqual(result, 0);
+            Assert.AreEqual(0, result);
         }
 
         [TestMethod]
@@ -48,7 +67,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
             var result = TypeConverterUtil.ConvertTo<Guid>(value);
 
             // Assert
-            Assert.AreEqual(result, Guid.Parse(value));
+            Assert.AreEqual(Guid.Parse(value), result);
         }
 
         [TestMethod]
@@ -63,7 +82,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
 
 
             // Assert
-            Assert.AreEqual(result, 0);
+            Assert.AreEqual(0, result);
         }
     }
 }

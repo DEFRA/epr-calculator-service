@@ -34,7 +34,9 @@ namespace EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment
             apportionmentDetails.Add(CreateTotalRow(totalLACost, dataPrepCharge, orderId++));
 
             // Calculate apportionment
+#pragma warning disable S1854
             var apportionmentData = CalculateApportionment(apportionmentDetails.First(x => x.OrderId == 3), orderId++);
+#pragma warning restore
             apportionmentDetails.Add(apportionmentData);
 
             return new CalcResultOnePlusFourApportionment { Name = "1 + 4 Apportionment %s", CalcResultOnePlusFourApportionmentDetails = apportionmentDetails };

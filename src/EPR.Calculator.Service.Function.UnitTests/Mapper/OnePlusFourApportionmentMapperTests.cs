@@ -9,7 +9,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
     [TestClass]
     public class OnePlusFourApportionmentMapperTests
     {
-        private OnePlusFourApportionmentMapper _testClass;
+        private OnePlusFourApportionmentMapper _testClass = null!;
 
         [TestInitialize]
         public void SetUp()
