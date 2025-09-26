@@ -62,6 +62,8 @@ namespace EPR.Calculator.Service.Function.Models
                 CancelledProducers = []
             };
 
+        public IEnumerable<CalcResultRejectedProducer> CalcResultRejectedProducers { get; set; } = [];
+
         public CalcResultSummary CalcResultSummary { get; set; } = new();
     }
 }
