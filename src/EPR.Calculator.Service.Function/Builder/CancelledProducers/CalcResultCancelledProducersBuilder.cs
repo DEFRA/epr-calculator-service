@@ -67,7 +67,8 @@
                              RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
                              RunClassificationStatusIds.FINALRUNCOMPLETEDID
                          }.Contains(calc.CalculatorRunClassificationId) && calc.FinancialYearId == financialYear
-                         && pbs.BillingInstructionAcceptReject == CommonConstants.Accepted
+                         && pbs.BillingInstructionAcceptReject == CommonConstants.Accepted 
+                         && pd.SubsidiaryId == null
                          select new { calc, p, pd, pbs, t })
                         .AsEnumerable()
                         .GroupBy(x => new { x.p.ProducerId, x.t.MaterialId })
@@ -95,7 +96,7 @@
 
         public IEnumerable<ProducerDetailDto> GetProducers(int runId)
         {
-            return context.ProducerDetail.AsNoTracking().Where(t => t.CalculatorRunId == runId).
+            return context.ProducerDetail.AsNoTracking().Where(t => t.CalculatorRunId == runId && t.SubsidiaryId == null).
                  Select(t => new ProducerDetailDto()
                  {
                      ProducerId = t.ProducerId,
