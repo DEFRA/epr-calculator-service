@@ -95,7 +95,7 @@
 
         public IEnumerable<ProducerDetailDto> GetProducers(int runId)
         {
-            return context.ProducerDetail.AsNoTracking().Where(t => t.CalculatorRunId == runId).
+            return context.ProducerDetail.AsNoTracking().Where(t => t.CalculatorRunId == runId && t.SubsidiaryId == null).
                  Select(t => new ProducerDetailDto()
                  {
                      ProducerId = t.ProducerId,
