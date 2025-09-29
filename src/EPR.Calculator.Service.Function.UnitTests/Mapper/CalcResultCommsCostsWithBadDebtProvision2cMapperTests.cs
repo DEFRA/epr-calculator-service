@@ -9,12 +9,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
     [TestClass]
     public class CalcResultCommsCostsWithBadDebtProvision2cMapperTests
     {
-        private CalcResultCommsCostsWithBadDebtProvision2cMapper _testClass;
+        private CalcResultCommsCostsWithBadDebtProvision2CMapper _testClass = null!;
 
         [TestInitialize]
         public void SetUp()
         {
-            _testClass = new CalcResultCommsCostsWithBadDebtProvision2cMapper();
+            _testClass = new CalcResultCommsCostsWithBadDebtProvision2CMapper();
         }
 
         [TestMethod]
