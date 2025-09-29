@@ -17,19 +17,18 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail
         private const string LapcapFile = "LAPCAP File";
         private const string ParametersFile = "Parameters File";
         private const string CountryApportionmentFile = "Country Apportionment File";
-        private const string DecimalFormat = "F3";
 
-        public void Export(CalcResultDetail calcResultDetail, StringBuilder csvContent)
+        public void Export(CalcResultDetail calcResultDetail, StringBuilder stringBuilder)
         {
-            AppendCsvLine(csvContent, RunName, calcResultDetail.RunName);
-            AppendCsvLine(csvContent, RunId, calcResultDetail.RunId.ToString());
-            AppendCsvLine(csvContent, RunDate, calcResultDetail.RunDate.ToString(CalculationResults.DateFormat));
-            AppendCsvLine(csvContent, Runby, calcResultDetail.RunBy);
-            AppendCsvLine(csvContent, FinancialYear, calcResultDetail.FinancialYear);
-            AppendRpdFileInfo(csvContent, RPDFileORG, RPDFilePOM, calcResultDetail.RpdFileORG, calcResultDetail.RpdFilePOM);
-            AppendFileInfo(csvContent, LapcapFile, calcResultDetail.LapcapFile);
-            AppendFileInfo(csvContent, ParametersFile, calcResultDetail.ParametersFile);
-            AppendFileInfo(csvContent, CountryApportionmentFile, calcResultDetail.CountryApportionmentFile);
+            AppendCsvLine(stringBuilder, RunName, calcResultDetail.RunName);
+            AppendCsvLine(stringBuilder, RunId, calcResultDetail.RunId.ToString());
+            AppendCsvLine(stringBuilder, RunDate, calcResultDetail.RunDate.ToString(CalculationResults.DateFormat));
+            AppendCsvLine(stringBuilder, Runby, calcResultDetail.RunBy);
+            AppendCsvLine(stringBuilder, FinancialYear, calcResultDetail.FinancialYear);
+            AppendRpdFileInfo(stringBuilder, RPDFileORG, RPDFilePOM, calcResultDetail.RpdFileORG, calcResultDetail.RpdFilePOM);
+            AppendFileInfo(stringBuilder, LapcapFile, calcResultDetail.LapcapFile);
+            AppendFileInfo(stringBuilder, ParametersFile, calcResultDetail.ParametersFile);
+            AppendFileInfo(stringBuilder, CountryApportionmentFile, calcResultDetail.CountryApportionmentFile);
         }
 
         private static void AppendRpdFileInfo(StringBuilder csvContent, string rPDFileORG, string rPDFilePOM, string rpdFileORGValue, string rpdFilePOMValue)

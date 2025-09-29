@@ -1213,7 +1213,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
             Assert.IsNull(fee.SuggestedInvoiceAmount);
-        }
+        }        
 
         /// <summary>
         /// The CreateMaterials

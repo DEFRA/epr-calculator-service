@@ -371,13 +371,13 @@
             Assert.AreEqual(100, _calcResult.CalcResultSummary.LaDataPrepCostsTitleSection4);
             Assert.AreEqual(6, _calcResult.CalcResultSummary.LaDataPrepCostsBadDebtProvisionTitleSection4);
             Assert.AreEqual(106, _calcResult.CalcResultSummary.LaDataPrepCostsWithBadDebtProvisionTitleSection4);
-            Assert.AreEqual(100, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts.TotalProducerFeeWithoutBadDebtProvision);
-            Assert.AreEqual(6, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts.BadDebtProvision);
-            Assert.AreEqual(106, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts.TotalProducerFeeWithBadDebtProvision);
-            Assert.AreEqual(42.40m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts.EnglandTotalWithBadDebtProvision);
-            Assert.AreEqual(31.80m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts.WalesTotalWithBadDebtProvision);
-            Assert.AreEqual(21.20m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts.ScotlandTotalWithBadDebtProvision);
-            Assert.AreEqual(10.60m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts.NorthernIrelandTotalWithBadDebtProvision);
+            Assert.AreEqual(100, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts!.TotalProducerFeeWithoutBadDebtProvision);
+            Assert.AreEqual(6, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts!.BadDebtProvision);
+            Assert.AreEqual(106, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts!.TotalProducerFeeWithBadDebtProvision);
+            Assert.AreEqual(42.40m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts!.EnglandTotalWithBadDebtProvision);
+            Assert.AreEqual(31.80m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts!.WalesTotalWithBadDebtProvision);
+            Assert.AreEqual(21.20m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts!.ScotlandTotalWithBadDebtProvision);
+            Assert.AreEqual(10.60m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts!.NorthernIrelandTotalWithBadDebtProvision);
         }
 
         [TestMethod]
