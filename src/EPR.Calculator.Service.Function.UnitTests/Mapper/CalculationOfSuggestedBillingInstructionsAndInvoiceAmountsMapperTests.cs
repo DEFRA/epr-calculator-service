@@ -1,4 +1,5 @@
 ﻿using AutoFixture;
+using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
 using static EPR.Calculator.Service.Common.UnitTests.Utils.JsonNodeComparer;
@@ -40,9 +41,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             {
                 BillingInstructionSection = new CalcResultSummaryBillingInstruction
                 {
-                    CurrentYearInvoiceTotalToDate = "1000",
+                    CurrentYearInvoiceTotalToDate = 1000m,
                     TonnageChangeSinceLastInvoice = "Tonnage Changed",
-                    LiabilityDifference = "-200",
+                    LiabilityDifference = -200,
                     MaterialThresholdBreached = "-ve",
                     TonnageThresholdBreached = "-ve",
                     PercentageLiabilityDifference = "10.05",
@@ -62,9 +63,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             Assert.IsNotNull(result);
 
             // Assert  
-            AssertAreEqual("£1000.00", result.CurrentYearInvoicedTotalToDate);
+            Assert.AreEqual("£1000.00", result.CurrentYearInvoicedTotalToDate);
             Assert.AreEqual("Tonnage Changed", result.TonnageChangeSinceLastInvoice);
-            Assert.AreEqual("-£200.00", result.LiabilityDifferenceCalcVsPrev);
+            Assert.AreEqual(-200.00m, result.LiabilityDifferenceCalcVsPrev);
             Assert.AreEqual("-ve", result.MaterialThresholdBreached);
             Assert.AreEqual("-ve", result.TonnageThresholdBreached);
             Assert.AreEqual("10.05%", result.PercentageLiabilityDifferenceCalcVsPrev);
@@ -104,9 +105,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             Assert.IsNotNull(result);
 
             // Assert  
-            Assert.AreEqual(string.Empty, result.CurrentYearInvoicedTotalToDate);
-            Assert.AreEqual(string.Empty, result.TonnageChangeSinceLastInvoice);
-            Assert.AreEqual(string.Empty, result.LiabilityDifferenceCalcVsPrev);
+            Assert.AreEqual("-", result.CurrentYearInvoicedTotalToDate);
+            Assert.AreEqual("-", result.TonnageChangeSinceLastInvoice);
+            Assert.AreEqual(null, result.LiabilityDifferenceCalcVsPrev);
             Assert.AreEqual(string.Empty, result.MaterialThresholdBreached);
             Assert.AreEqual(string.Empty, result.TonnageThresholdBreached);
             Assert.AreEqual(string.Empty, result.PercentageLiabilityDifferenceCalcVsPrev);
@@ -124,9 +125,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             {
                 BillingInstructionSection = new CalcResultSummaryBillingInstruction
                 {
-                    CurrentYearInvoiceTotalToDate = "-",
+                    CurrentYearInvoiceTotalToDate = null,
                     TonnageChangeSinceLastInvoice = "-",
-                    LiabilityDifference = "-",
+                    LiabilityDifference = null,
                     MaterialThresholdBreached = "-",
                     TonnageThresholdBreached = "-",
                     PercentageLiabilityDifference = "-",
@@ -148,7 +149,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             // Assert  
             Assert.AreEqual("-", result.CurrentYearInvoicedTotalToDate);
             Assert.AreEqual("-", result.TonnageChangeSinceLastInvoice);
-            Assert.AreEqual("-", result.LiabilityDifferenceCalcVsPrev);
+            Assert.AreEqual(null, result.LiabilityDifferenceCalcVsPrev);
             Assert.AreEqual("-", result.MaterialThresholdBreached);
             Assert.AreEqual("-", result.TonnageThresholdBreached);
             Assert.AreEqual("-", result.PercentageLiabilityDifferenceCalcVsPrev);
