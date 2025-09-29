@@ -51,16 +51,16 @@ namespace EPR.Calculator.Service.Function.Services
                             CalculatorRunId = calcResult.CalcResultDetail.RunId,
                             ProducerId = producerId,
                             TotalProducerBillWithBadDebt = producer.TotalProducerBillBreakdownCosts!.TotalProducerFeeWithBadDebtProvision,
-                            CurrentYearInvoiceTotalToDate = billingInstructionSection.CurrentYearInvoiceTotalToDate,
-                            TonnageChangeSinceLastInvoice = GetStringValue(billingInstructionSection.TonnageChangeSinceLastInvoice!),
-                            AmountLiabilityDifferenceCalcVsPrev = billingInstructionSection.LiabilityDifference!,
-                            MaterialPoundThresholdBreached = GetStringValue(billingInstructionSection.MaterialThresholdBreached!),
-                            TonnagePoundThresholdBreached = GetStringValue(billingInstructionSection.TonnageThresholdBreached!),
-                            PercentageLiabilityDifferenceCalcVsPrev = billingInstructionSection.PercentageLiabilityDifference!,
-                            MaterialPercentageThresholdBreached = GetStringValue(billingInstructionSection.MaterialPercentageThresholdBreached!),
-                            TonnagePercentageThresholdBreached = GetStringValue(billingInstructionSection.TonnagePercentageThresholdBreached!),
-                            SuggestedBillingInstruction = billingInstructionSection.SuggestedBillingInstruction!,
-                            SuggestedInvoiceAmount = billingInstructionSection.SuggestedInvoiceAmount ?? 0m
+                            CurrentYearInvoiceTotalToDate = billingInstructionSection?.CurrentYearInvoiceTotalToDate,
+                            TonnageChangeSinceLastInvoice = GetStringValue(billingInstructionSection?.TonnageChangeSinceLastInvoice!),
+                            AmountLiabilityDifferenceCalcVsPrev = billingInstructionSection?.LiabilityDifference!,
+                            MaterialPoundThresholdBreached = GetStringValue(billingInstructionSection?.MaterialThresholdBreached!),
+                            TonnagePoundThresholdBreached = GetStringValue(billingInstructionSection?.TonnageThresholdBreached!),
+                            PercentageLiabilityDifferenceCalcVsPrev = billingInstructionSection?.PercentageLiabilityDifference!,
+                            MaterialPercentageThresholdBreached = GetStringValue(billingInstructionSection?.MaterialPercentageThresholdBreached!),
+                            TonnagePercentageThresholdBreached = GetStringValue(billingInstructionSection?.TonnagePercentageThresholdBreached!),
+                            SuggestedBillingInstruction = billingInstructionSection?.SuggestedBillingInstruction!,
+                            SuggestedInvoiceAmount = billingInstructionSection?.SuggestedInvoiceAmount ?? 0m
                         };
 
                         billingInstructions.Add(billingInstruction);
