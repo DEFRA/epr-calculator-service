@@ -67,10 +67,10 @@
                 && !p.IsSubtotalRow
                 && !p.IsTotalRow);
 
-            if (scaledupProducerForAllSubmissionPeriods.Any())
+            if (scaledupProducerForAllSubmissionPeriods!.Any())
             {
                 decimal tonnage = 0;
-                foreach (var scaledupProducerTonnageByMaterial in scaledupProducerForAllSubmissionPeriods.Select(x => x.ScaledupProducerTonnageByMaterial))
+                foreach (var scaledupProducerTonnageByMaterial in scaledupProducerForAllSubmissionPeriods!.Select(x => x.ScaledupProducerTonnageByMaterial))
                 {
                     switch (packagingType)
                     {
@@ -184,7 +184,7 @@
             MaterialDetail material)
         {
             var levelOneRows = producerDisposalFees.Where(fee => fee.Level == CommonConstants.LevelOne.ToString());
-            return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial[material.Code].NetReportedTonnage);
+            return levelOneRows.Sum(row => row?.ProducerDisposalFeesByMaterial?[material.Code].NetReportedTonnage) ?? 0;
         }
 
         public static decimal GetPricePerTonne(
@@ -257,7 +257,7 @@
             MaterialDetail material)
         {
             var levelOneRows = producerDisposalFees.Where(fee => fee.Level == CommonConstants.LevelOne.ToString());
-            return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial[material.Code].ProducerDisposalFee);
+            return levelOneRows.Sum(row => row?.ProducerDisposalFeesByMaterial?[material.Code].ProducerDisposalFee) ?? 0;
         }
 
         public static decimal GetBadDebtProvisionOverallTotal(
@@ -265,7 +265,7 @@
             MaterialDetail material)
         {
             var levelOneRows = producerDisposalFees.Where(fee => fee.Level == CommonConstants.LevelOne.ToString());
-            return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial[material.Code].BadDebtProvision);
+            return levelOneRows.Sum(row => row?.ProducerDisposalFeesByMaterial?[material.Code].BadDebtProvision) ?? 0;
         }
 
         public static decimal GetBadDebtProvision(
@@ -347,7 +347,7 @@
             MaterialDetail material)
         {
             var levelOneRows = producerDisposalFees.Where(fee => fee.Level == CommonConstants.LevelOne.ToString());
-            return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial[material.Code].ProducerDisposalFeeWithBadDebtProvision);
+            return levelOneRows.Sum(row => row?.ProducerDisposalFeesByMaterial?[material.Code].ProducerDisposalFeeWithBadDebtProvision) ?? 0;
         }
 
         public static decimal GetCountryBadDebtProvision(
@@ -411,13 +411,13 @@
             switch (country)
             {
                 case Countries.England:
-                    return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial[material.Code].EnglandWithBadDebtProvision);
+                    return levelOneRows.Sum(row => row?.ProducerDisposalFeesByMaterial?[material.Code].EnglandWithBadDebtProvision) ?? 0;
                 case Countries.Wales:
-                    return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial[material.Code].WalesWithBadDebtProvision);
+                    return levelOneRows.Sum(row => row?.ProducerDisposalFeesByMaterial?[material.Code].WalesWithBadDebtProvision) ?? 0;
                 case Countries.Scotland:
-                    return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial[material.Code].ScotlandWithBadDebtProvision);
+                    return levelOneRows.Sum(row => row?.ProducerDisposalFeesByMaterial?[material.Code].ScotlandWithBadDebtProvision) ?? 0;
                 case Countries.NorthernIreland:
-                    return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial[material.Code].NorthernIrelandWithBadDebtProvision);
+                    return levelOneRows.Sum(row => row?.ProducerDisposalFeesByMaterial?[material.Code].NorthernIrelandWithBadDebtProvision) ?? 0;
                 default:
                     return 0m;
             }
