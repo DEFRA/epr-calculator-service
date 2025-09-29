@@ -33,19 +33,19 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         public required CalcResultCommsCostByMaterial2AJson FeesForCommsCostsWithBadDebtProvision2a { get; set; }
 
         [JsonPropertyName("commsCostsByMaterialFeesSummary2a")]
-        public required CalcResultSummaryCommsCostsByMaterialFeesSummary2A? CommsCostsByMaterialFeesSummary2a { get; set; }
+        public required CalcResultSummaryCommsCostsByMaterialFeesSummary2a? CommsCostsByMaterialFeesSummary2a { get; set; }
 
         [JsonPropertyName("feeForLADisposalCosts1")]
         public required CalculationResultsProducerCalculationResultsFeeForLADisposalCosts1 FeeForLADisposalCosts1 { get; set; }
 
         [JsonPropertyName("feeForCommsCostsWithBadDebtProvision_2a")]
-        public required CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2A FeeForCommsCostsWithBadDebtProvision_2a { get; set; }
+        public required CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2a FeeForCommsCostsWithBadDebtProvision_2a { get; set; }
 
         [JsonPropertyName("feeForCommsCostsWithBadDebtProvision_2b")]
-        public required CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2B FeeForCommsCostsWithBadDebtProvision_2b { get; set; }
+        public required CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2b FeeForCommsCostsWithBadDebtProvision_2b { get; set; }
 
         [JsonPropertyName("feeForCommsCostsWithBadDebtProvision_2c")]
-        public required CalcResultsCommsCostsWithBadDebtProvision2C FeeForCommsCostsWithBadDebtProvision_2c { get; set; }
+        public required CalcResultsCommsCostsWithBadDebtProvision2c FeeForCommsCostsWithBadDebtProvision_2c { get; set; }
 
         [JsonPropertyName("totalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2c")]
         public required TotalProducerFeeWithBadDebtProvisionFor2Con12A2B2CMapper TotalProducerFeeWithBadDebtProvisionFor2con_1_2a_2b_2c { get; set; }
@@ -57,7 +57,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         public required FeeForLADataPrepCostsWithBadDebtProvision_4 FeeForLADataPrepCostsWithBadDebtProvision_4 { get; set; }
 
         [JsonPropertyName("feeForSASetUpCostsWithBadDebtProvision_5")]
-        public required FeeForSaSetUpCostsWithBadDebtProvision5 FeeForSASetUpCostsWithBadDebtProvision_5 { get; set; }
+        public required FeeForSASetUpCostsWithBadDebtProvision_5 FeeForSASetUpCostsWithBadDebtProvision_5 { get; set; }
 
         [JsonPropertyName("totalProducerBillWithBadDebtProvision")]
         public required TotalProducerBillWithBadDebtProvision TotalProducerBillWithBadDebtProvision { get; set; }

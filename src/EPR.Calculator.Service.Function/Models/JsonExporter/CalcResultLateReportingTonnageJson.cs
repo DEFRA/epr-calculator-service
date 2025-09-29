@@ -7,10 +7,10 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
     public class CalcResultLateReportingTonnageJson
     {
         [JsonPropertyName("name")]
-        public string Name { get; set; } = null!;
+        public string Name { get; set; }
 
         [JsonPropertyName("calcResultLateReportingTonnageDetails")]
-        public List<CalcResultLateReportingTonnageDetailsJson> calcResultLateReportingTonnageDetails { get; set; } = null!;
+        public List<CalcResultLateReportingTonnageDetailsJson> calcResultLateReportingTonnageDetails { get; set; }
 
         [JsonPropertyName("calcResultLateReportingTonnageTotal")]
         [JsonConverter(typeof(DecimalPrecision3Converter))]
@@ -20,7 +20,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
     public class CalcResultLateReportingTonnageDetailsJson
     {
         [JsonPropertyName("materialName")]
-        public string MaterialName { get; set; } = null!;
+        public string MaterialName { get; set; }
 
 
         [JsonPropertyName("totalLateReportingTonnage")]

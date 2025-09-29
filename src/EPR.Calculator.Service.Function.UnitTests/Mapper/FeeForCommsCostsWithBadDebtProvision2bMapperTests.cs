@@ -10,12 +10,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
     [TestClass]
     public class FeeForCommsCostsWithBadDebtProvision2bMapperTests
     {
-        private FeeForCommsCostsWithBadDebtProvision2BMapper? _testClass;
+        private FeeForCommsCostsWithBadDebtProvision2bMapper? _testClass;
 
         [TestInitialize]
         public void SetUp()
         {
-            _testClass = new FeeForCommsCostsWithBadDebtProvision2BMapper();
+            _testClass = new FeeForCommsCostsWithBadDebtProvision2bMapper();
         }
 
         [TestMethod]
@@ -30,39 +30,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(result.TotalProducerFeeForCommsCostsUKWideWithoutBadDebtProvision, CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees?.CommunicationCostsSectionTwoB?.TotalProducerFeeWithoutBadDebtProvision ?? 0));
-            Assert.AreEqual(result.BadDebtProvisionFor2b, CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees?.CommunicationCostsSectionTwoB?.BadDebtProvision ?? 0));
-            Assert.AreEqual(result.TotalProducerFeeForCommsCostsUKWideWithBadDebtProvision, CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees?.CommunicationCostsSectionTwoB?.TotalProducerFeeWithBadDebtProvision ?? 0));
-            Assert.AreEqual(result.EnglandTotalWithBadDebtProvision, CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees?.CommunicationCostsSectionTwoB?.EnglandTotalWithBadDebtProvision ?? 0));
-            Assert.AreEqual(result.WalesTotalWithBadDebtProvision, CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees?.CommunicationCostsSectionTwoB?.WalesTotalWithBadDebtProvision ?? 0));
-            Assert.AreEqual(result.ScotlandTotalWithBadDebtProvision, CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees?.CommunicationCostsSectionTwoB?.ScotlandTotalWithBadDebtProvision ?? 0));
-            Assert.AreEqual(result.NorthernIrelandTotalWithBadDebtProvision, CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees?.CommunicationCostsSectionTwoB?.NorthernIrelandTotalWithBadDebtProvision ?? 0));
-        }
-
-        [TestMethod]
-        public void CanCallMap_NullValues()
-        {
-            // Arrange
-            var calcResultSummaryProducerDisposalFees = new CalcResultSummaryProducerDisposalFees
-            {
-                CommunicationCostsSectionTwoB = null,
-                ProducerId = null!,
-                SubsidiaryId = null!,
-                ProducerName = null!
-            };
-
-            // Act
-            var result = _testClass?.Map(calcResultSummaryProducerDisposalFees);
-
-            // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(result.TotalProducerFeeForCommsCostsUKWideWithoutBadDebtProvision, CurrencyConverter.ConvertToCurrency(0));
-            Assert.AreEqual(result.BadDebtProvisionFor2b, CurrencyConverter.ConvertToCurrency(0));
-            Assert.AreEqual(result.TotalProducerFeeForCommsCostsUKWideWithBadDebtProvision, CurrencyConverter.ConvertToCurrency(0));
-            Assert.AreEqual(result.EnglandTotalWithBadDebtProvision, CurrencyConverter.ConvertToCurrency(0));
-            Assert.AreEqual(result.WalesTotalWithBadDebtProvision, CurrencyConverter.ConvertToCurrency(0));
-            Assert.AreEqual(result.ScotlandTotalWithBadDebtProvision, CurrencyConverter.ConvertToCurrency(0));
-            Assert.AreEqual(result.NorthernIrelandTotalWithBadDebtProvision, CurrencyConverter.ConvertToCurrency(0));
+            Assert.AreEqual(result.TotalProducerFeeForCommsCostsUKWideWithoutBadDebtProvision, CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.CommunicationCostsSectionTwoB.TotalProducerFeeWithoutBadDebtProvision));
+            Assert.AreEqual(result.BadDebtProvisionFor2b, CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.CommunicationCostsSectionTwoB.BadDebtProvision));
+            Assert.AreEqual(result.TotalProducerFeeForCommsCostsUKWideWithBadDebtProvision, CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.CommunicationCostsSectionTwoB.TotalProducerFeeWithBadDebtProvision));
+            Assert.AreEqual(result.EnglandTotalWithBadDebtProvision, CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.CommunicationCostsSectionTwoB.EnglandTotalWithBadDebtProvision));
+            Assert.AreEqual(result.WalesTotalWithBadDebtProvision, CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.CommunicationCostsSectionTwoB.WalesTotalWithBadDebtProvision));
+            Assert.AreEqual(result.ScotlandTotalWithBadDebtProvision, CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.CommunicationCostsSectionTwoB.ScotlandTotalWithBadDebtProvision));
+            Assert.AreEqual(result.NorthernIrelandTotalWithBadDebtProvision, CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.CommunicationCostsSectionTwoB.NorthernIrelandTotalWithBadDebtProvision));
         }
     }
 }

@@ -8,6 +8,13 @@
 
     public static class TwoCCommsCostUtil
     {
+        #region Constants
+        private const string England = "England";
+        private const string Wales = "Wales";
+        private const string Scotland = "Scotland";
+        private const string NorthernIreland = "NorthernIreland";
+        #endregion
+
         public static void UpdateTwoCTotals(CalcResult calcResult,
             IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees, bool isOverAllTotalRow,
             CalcResultSummaryProducerDisposalFees totalRow, List<ProducerDetail> producersAndSubsidiaries,

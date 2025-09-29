@@ -432,12 +432,12 @@
                 Assert.AreEqual(106, _calcResult.CalcResultSummary.SaOperatingCostsWithTitleSection3);
                 Assert.AreEqual(1,
                     _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0]
-                        .SchemeAdministratorOperatingCosts!.TotalProducerFeeWithoutBadDebtProvision);
+                        .SchemeAdministratorOperatingCosts.TotalProducerFeeWithoutBadDebtProvision);
                 Assert.AreEqual(0.06m,
-                    _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].SchemeAdministratorOperatingCosts!.BadDebtProvision);
+                    _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].SchemeAdministratorOperatingCosts.BadDebtProvision);
                 Assert.AreEqual(1.06m,
                     _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0]
-                        .SchemeAdministratorOperatingCosts!.TotalProducerFeeWithBadDebtProvision);
+                        .SchemeAdministratorOperatingCosts.TotalProducerFeeWithBadDebtProvision);
             }
         }
 

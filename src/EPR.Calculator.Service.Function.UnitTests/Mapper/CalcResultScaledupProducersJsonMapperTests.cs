@@ -10,7 +10,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
     [TestClass]
     public class CalcResultScaledupProducersJsonMapperTests
     {
-        private CalcResultScaledupProducersJsonMapper _testClass = null!;
+        private CalcResultScaledupProducersJsonMapper _testClass;
 
         [TestInitialize]
         public void Setup()

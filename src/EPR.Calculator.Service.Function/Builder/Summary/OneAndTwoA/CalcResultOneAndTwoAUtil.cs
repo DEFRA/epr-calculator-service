@@ -15,7 +15,7 @@
 
         public static decimal GetTotalBadDebtprovision1(IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees)
         {
-            return GetTotalFee(producerDisposalFees, fee => fee.LocalAuthorityDisposalCostsSectionOne?.BadDebtProvision ?? 0);
+            return GetTotalFee(producerDisposalFees, fee => fee.LocalAuthorityDisposalCostsSectionOne.BadDebtProvision);
         }
 
         public static decimal GetTotalDisposalCostswithBadDebtprovision1(IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees)
@@ -30,7 +30,7 @@
 
         public static decimal GetTotalBadDebtprovision2A(IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees)
         {
-            return GetTotalFee(producerDisposalFees, fee => fee.CommunicationCostsSectionTwoA?.BadDebtProvision ?? 0);
+            return GetTotalFee(producerDisposalFees, fee => fee.CommunicationCostsSectionTwoA.BadDebtProvision);
         }
 
         public static decimal GetTotalCommsCostswithBadDebtprovision2A(IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees)
@@ -38,7 +38,7 @@
             return GetTotalFee(producerDisposalFees, fee => fee.TotalProducerCommsFeeWithBadDebtProvision);
         }
 
-        public static decimal GetTotalFee(IEnumerable<CalcResultSummaryProducerDisposalFees>? producerDisposalFees, Func<CalcResultSummaryProducerDisposalFees, decimal> selector)
+        public static decimal GetTotalFee(IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees, Func<CalcResultSummaryProducerDisposalFees, decimal> selector)
         {
             if (producerDisposalFees == null)
             {

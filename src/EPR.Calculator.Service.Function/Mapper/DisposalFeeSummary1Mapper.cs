@@ -10,7 +10,7 @@ namespace EPR.Calculator.Service.Function.Mapper
     {
         public DisposalFeeSummary1 Map(CalcResultSummaryProducerDisposalFees summary)
         {
-            GetTonnageByLevel().TryGetValue(summary.Level!, out var values);
+            var tonnageByLevel = GetTonnageByLevel().TryGetValue(summary.Level!, out var values);
 
             return new DisposalFeeSummary1
             {

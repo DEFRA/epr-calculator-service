@@ -24,15 +24,15 @@
             this.Fixture = new Fixture();
             this.TestClass = new CalculationResultsExporter(
                 new ProducerDisposalFeesWithBadDebtProvision1JsonMapper(),
-                new CommsCostsByMaterialFeesSummary2AMapper(),
+                new CommsCostsByMaterialFeesSummary2aMapper(),
                 new CalcResultCommsCostByMaterial2AJsonMapper(),
                 new SAOperatingCostsWithBadDebtProvisionMapper(),
                 new CalcResultLADataPrepCostsWithBadDebtProvision4Mapper(),
-                new FeeForCommsCostsWithBadDebtProvision2AMapper(),
-                new FeeForCommsCostsWithBadDebtProvision2BMapper(),
-                new TotalProducerFeeWithBadDebtProvisionFor2Con1And2AAnd2BAnd2CMapper(),
-                new FeeForSaSetUpCostsWithBadDebtProvision5Mapper(),
-                new CalcResultCommsCostsWithBadDebtProvision2CMapper(),
+                new FeeForCommsCostsWithBadDebtProvision2aMapper(),
+                new FeeForCommsCostsWithBadDebtProvision2bMapper(),
+                new TotalProducerFeeWithBadDebtProvisionFor2con_1_2a_2b_2cMapper(),
+                new FeeForSASetUpCostsWithBadDebtProvision_5Mapper(),
+                new CalcResultCommsCostsWithBadDebtProvision2cMapper(),
                 new CalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper(),
                 new TotalProducerBillWithBadDebtProvisionMapper(),
                 new CalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper(),
@@ -156,7 +156,7 @@
 
             var actual = roundTrippedData[0]!["producerDisposalFeesWithBadDebtProvision1"]!["materialBreakdown"]![0]!;
             var producer = data.ProducerDisposalFees.SingleOrDefault(t => !string.IsNullOrEmpty(t.Level))!;
-            var expected = producer.ProducerDisposalFeesByMaterial!.First();
+            var expected = producer.ProducerDisposalFeesByMaterial.First();
 
             Assert.AreEqual(expected.Value.PreviousInvoicedTonnage, actual["previousInvoicedTonnage"]!.ToString());
             Assert.AreEqual(expected.Value.HouseholdPackagingWasteTonnage, actual["householdPackagingWasteTonnage"]!.GetValue<decimal>());

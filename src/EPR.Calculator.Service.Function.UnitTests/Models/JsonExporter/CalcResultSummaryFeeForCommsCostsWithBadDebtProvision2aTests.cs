@@ -10,12 +10,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
     [TestClass]
     public class CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2aTests
     {
-        private CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2A _testClass = null!;
+        private CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2a _testClass;
 
         [TestInitialize]
         public void SetUp()
         {
-            _testClass = new CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2A();
+            _testClass = new CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2a();
         }
 
         [TestMethod]

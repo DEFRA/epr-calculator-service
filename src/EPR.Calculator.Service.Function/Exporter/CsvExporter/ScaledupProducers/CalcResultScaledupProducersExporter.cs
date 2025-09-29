@@ -10,23 +10,23 @@
 
     public class CalcResultScaledupProducersExporter : ICalcResultScaledupProducersExporter
     {
-        public void Export(CalcResultScaledupProducers calcResultScaledupProducers, StringBuilder stringBuilder)
+        public void Export(CalcResultScaledupProducers producers, StringBuilder csvContent)
         {
             // Add empty lines
-            stringBuilder.AppendLine();
-            stringBuilder.AppendLine();
+            csvContent.AppendLine();
+            csvContent.AppendLine();
 
             // Add headers
-            PrepareScaledupProducersHeader(calcResultScaledupProducers, stringBuilder);
+            PrepareScaledupProducersHeader(producers, csvContent);
 
             // Add data
-            if (!calcResultScaledupProducers.ScaledupProducers.IsNullOrEmpty())
+            if (!producers.ScaledupProducers.IsNullOrEmpty())
             {
-                AppendScaledupProducers(calcResultScaledupProducers, stringBuilder);
+                AppendScaledupProducers(producers, csvContent);
             }
             else
             {
-                stringBuilder.AppendLine(CsvSanitiser.SanitiseData(CalcResultScaledupProducerHeaders.NoScaledupProducers));
+                csvContent.AppendLine(CsvSanitiser.SanitiseData(CalcResultScaledupProducerHeaders.NoScaledupProducers));
             }
         }
 

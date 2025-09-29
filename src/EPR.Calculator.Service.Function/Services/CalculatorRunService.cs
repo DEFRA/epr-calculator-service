@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace EPR.Calculator.Service.Function.Services
+﻿namespace EPR.Calculator.Service.Function.Services
 {
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
@@ -20,7 +18,6 @@ namespace EPR.Calculator.Service.Function.Services
     /// <summary>
     /// Implementing calculator run service methods.
     /// </summary>
-    [ExcludeFromCodeCoverage(Justification = "Come back in a second pass")]
     public class CalculatorRunService : ICalculatorRunService
     {
         private const string JsonMediaType = "application/json";
@@ -64,7 +61,6 @@ namespace EPR.Calculator.Service.Function.Services
         /// <param name="pipelineSucceeded">Indicates whether the pipeline succeeded.</param>
         /// <param name="user">Requested by user.</param>
         /// <returns>The JSON content for the status update.</returns>
-        [ExcludeFromCodeCoverage]
         public static StringContent GetStatusUpdateMessage(int calculatorRunId, bool pipelineSucceeded, string user)
         {
             var statusUpdate = new
@@ -151,12 +147,24 @@ namespace EPR.Calculator.Service.Function.Services
             }
             catch (TaskCanceledException ex)
             {
-                LogError(calculatorRunParameter.Id,runName,"StartProcess - Task was canceled",ex);
+                this.telemetryLogger.LogError(new ErrorMessage
+                {
+                    RunId = calculatorRunParameter.Id,
+                    RunName = runName,
+                    Message = "StartProcess - Task was canceled",
+                    Exception = ex,
+                });
                 return false;
             }
             catch (Exception ex)
             {
-                LogError(calculatorRunParameter.Id, runName, "StartProcess - An error occurred", ex);
+                this.telemetryLogger.LogError(new ErrorMessage
+                {
+                    RunId = calculatorRunParameter.Id,
+                    RunName = runName,
+                    Message = "StartProcess - An error occurred",
+                    Exception = ex,
+                });
                 return false;
             }
         }
@@ -252,7 +260,7 @@ namespace EPR.Calculator.Service.Function.Services
             });
         }
 
-        private void LogError(int runId, string? runName, string message, Exception ex)
+        private void LogError(int runId, string runName, string message, Exception ex)
         {
             this.telemetryLogger.LogError(new ErrorMessage
             {

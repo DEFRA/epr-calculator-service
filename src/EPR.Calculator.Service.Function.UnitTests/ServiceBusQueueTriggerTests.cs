@@ -232,7 +232,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
-            this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns((CalculatorRunParameter?)null!);
+            this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(default(CalculatorRunParameter?));
 
             // Act
             await this.function.Run(myQueueItem);
@@ -249,7 +249,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public async Task ServiceBusTrigger_SuccessfulProcess_Run()
         {
             // Arrange
-            this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns((CalculatorRunParameter?)null!);
+            this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns((CalculatorRunParameter?)null);
             var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
             var processedParameterData = new CalculatorRunParameter() { FinancialYear = "2024-25", User = "Test user", Id = 678767 , MessageType = MessageTypes.Result };
             var runName = "Test Run Name";

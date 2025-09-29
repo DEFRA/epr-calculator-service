@@ -11,8 +11,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsC
     [TestClass]
     public class CalcResultCommsCostByMaterial2AJsonExporterTests
     {
-        private CalcResultCommsCostByMaterial2AJsonExporter _testClass = null!;
-        private Mock<ICalcResultCommsCostByMaterial2AJsonMapper> _testMapper = null!;
+        private CalcResultCommsCostByMaterial2AJsonExporter _testClass;
+        private Mock<ICalcResultCommsCostByMaterial2AJsonMapper> _testMapper;
 
         [TestInitialize]
         public void Setup()

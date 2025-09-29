@@ -6,7 +6,6 @@
     using EPR.Calculator.Service.Function.Interface;
     using Microsoft.Extensions.Configuration;
 
-#pragma warning disable S1075
     public class LocalDevelopmentConfiguration : IConfigurationService
     {
         public LocalDevelopmentConfiguration(IConfiguration configuration) => this.Configuration = configuration;
@@ -71,5 +70,4 @@
         public int DbLoadingChunkSize
             => this.Configuration.GetValue(EnvironmentVariableKeys.DbLoadingChunkSize, 1000);
     }
-#pragma warning restore S1075
 }

@@ -9,7 +9,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
     [TestClass]
     public class CalcResultLateReportingTonnageDetailsJsonTests
     {
-        private CalcResultLateReportingTonnageDetailsJson _testClass = null!;
+        private CalcResultLateReportingTonnageDetailsJson _testClass;
 
         [TestInitialize]
         public void SetUp()
@@ -51,7 +51,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
     [TestClass]
     public class CalcResultLateReportingTonnageJsonTests
     {
-        private CalcResultLateReportingTonnageJson _testClass = null!;
+        private CalcResultLateReportingTonnageJson _testClass;
 
         [TestInitialize]
         public void SetUp()

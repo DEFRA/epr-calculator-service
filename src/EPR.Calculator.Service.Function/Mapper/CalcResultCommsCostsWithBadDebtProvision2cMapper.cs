@@ -4,11 +4,11 @@ using EPR.Calculator.Service.Function.Models.JsonExporter;
 
 namespace EPR.Calculator.Service.Function.Mapper
 {
-    public class CalcResultCommsCostsWithBadDebtProvision2CMapper : ICalcResultCommsCostsWithBadDebtProvision2CMapper
+    public class CalcResultCommsCostsWithBadDebtProvision2cMapper : ICalcResultCommsCostsWithBadDebtProvision2cMapper
     {
-        public CalcResultsCommsCostsWithBadDebtProvision2C Map(CalcResultSummaryProducerDisposalFees calcResultSummaryProducerDisposalFees)
+        public CalcResultsCommsCostsWithBadDebtProvision2c Map(CalcResultSummaryProducerDisposalFees calcResultSummaryProducerDisposalFees)
         {
-            return new CalcResultsCommsCostsWithBadDebtProvision2C
+            return new CalcResultsCommsCostsWithBadDebtProvision2c
             {
                 TotalProducerFeeForCommsCostsByCountryWithoutBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.TwoCTotalProducerFeeForCommsCostsWithoutBadDebt),
                 EnglandTotalWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(calcResultSummaryProducerDisposalFees.TwoCEnglandTotalWithBadDebt),

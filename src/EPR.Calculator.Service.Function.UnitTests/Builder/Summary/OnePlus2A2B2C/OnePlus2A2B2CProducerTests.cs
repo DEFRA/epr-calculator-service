@@ -88,28 +88,6 @@
             Assert.AreEqual(117.93242083791927397189538682m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C);
         }
 
-        [TestMethod]
-        public void CanCallSetValues_NullLocalAuthority()
-        {
-            // Act
-            var data = _calcResult.CalcResultSummary;
-            data.ProducerDisposalFees.ToList()[0].LocalAuthorityDisposalCostsSectionOne = null;
-            data.ProducerDisposalFees.ToList()[0].CommunicationCostsSectionTwoA = null;
-            data.ProducerDisposalFees.ToList()[0].CommunicationCostsSectionTwoB = null;
-
-            data.TotalFeeforLADisposalCostswithBadDebtprovision1 = 0;
-            data.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A = 0;
-            data.CommsCostHeaderWithBadDebtFor2bTitle = 0;
-            data.TwoCCommsCostsByCountryWithBadDebtProvision = 0;
-
-            OnePlus2A2B2CProducer.SetValues(data);
-
-            // Assert
-            Assert.AreEqual(0, data.TotalOnePlus2A2B2CFeeWithBadDebtProvision);
-            Assert.AreEqual(0, data.ProducerDisposalFees.ToList()[0].ProducerTotalOnePlus2A2B2CWithBadDeptProvision);
-            Assert.AreEqual(0, data.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C);
-        }
-
         private void CreateMaterials()
         {
             var materialDictionary = new Dictionary<string, string>();

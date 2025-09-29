@@ -8,7 +8,7 @@
     /// </summary>
     public class CalculatorTelemetryLogger : ICalculatorTelemetryLogger
     {
-        private readonly ITelemetryClientWrapper _telemetryClient;
+        private readonly ITelemetryClientWrapper telemetryClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CalculatorTelemetryLogger"/> class.
@@ -16,7 +16,7 @@
         /// <param name="telemetryClient">The telemetry client to use for logging.</param>
         public CalculatorTelemetryLogger(ITelemetryClientWrapper telemetryClient)
         {
-            this._telemetryClient = telemetryClient;
+            this.telemetryClient = telemetryClient;
         }
 
         /// <summary>
@@ -41,7 +41,7 @@
                 Message = formattedMessage,
             };
             AddProperties(exceptionTelemetry.Properties, errorMessage.RunId, errorMessage.RunName);
-            this._telemetryClient.TrackException(exceptionTelemetry);
+            this.telemetryClient.TrackException(exceptionTelemetry);
         }
 
         /// <summary>
@@ -51,7 +51,7 @@
         /// <param name="runName">The name of the run.</param>
         /// <param name="message">The message to log.</param>
         /// <returns>A formatted log message string.</returns>
-        internal static string CreateLogMessage(int? runId, string? runName, string? messageType, string message)
+        internal static string CreateLogMessage(int? runId, string? runName, string messageType, string message)
         {
             return $"[{DateTime.Now}] RunId: {runId}, RunName: {runName}, MessageType: {messageType}, Message: {message}";
         }
@@ -84,7 +84,7 @@
                 SeverityLevel = severityLevel,
             };
             AddProperties(traceTelemetry.Properties, logMessage.RunId, logMessage.RunName);
-            this._telemetryClient.TrackTrace(traceTelemetry);
+            this.telemetryClient.TrackTrace(traceTelemetry);
         }
     }
 }

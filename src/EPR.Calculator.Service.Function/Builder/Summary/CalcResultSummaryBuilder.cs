@@ -200,6 +200,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             var producerForTotalRow = GetProducerDetailsForTotalRow(producersAndSubsidiaries[0].ProducerId, isOverAllTotalRow);
             const int overallTotalId = 0;
 
+            var localAuthorityDisposalCostsSectionOne = GetLocalAuthorityDisposalCostsSectionOne(materialCosts);
+
             var totalRow = new CalcResultSummaryProducerDisposalFees
             {
                 ProducerIdInt = isOverAllTotalRow ? overallTotalId : producersAndSubsidiaries[0].ProducerId,
@@ -440,7 +442,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     total += scaledupProducer.ScaledupProducerTonnageByMaterial.Sum(x => x.Value.ScaledupTotalReportedTonnage);
                 }
 
-                result.Add(new TotalPackagingTonnagePerRun() { ProducerId = item.ProducerId, SubsidiaryId = item.SubsidiaryId ?? string.Empty, TotalPackagingTonnage = total });
+                result.Add(new TotalPackagingTonnagePerRun() { ProducerId = item.ProducerId, SubsidiaryId = item.SubsidiaryId, TotalPackagingTonnage = total });
             }
 
             return result;
@@ -457,10 +459,12 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             }
 
             var pomDataExistsForParentProducer = producersAndSubsidiaries.Any(ps => ps.ProducerId == parentProducer.OrganisationId && ps.SubsidiaryId == null);
-            if ((producersAndSubsidiaries.Count() > 1 || !pomDataExistsForParentProducer) && 
-                producerDisposalFees.Find(pdf => pdf.ProducerId == producer.ProducerId.ToString()) == null)
+            if (producersAndSubsidiaries.Count() > 1 || !pomDataExistsForParentProducer)
             {
-                return true;
+                if (producerDisposalFees.Find(pdf => pdf.ProducerId == producer.ProducerId.ToString()) == null)
+                {
+                    return true;
+                }
             }
 
             return false;

@@ -28,7 +28,6 @@
             this.calcCountryApportionmentService = calcCountryApportionmentService;
         }
 
-#pragma warning disable S1854
         public async Task<CalcResultLapcapData> Construct(CalcResultsRequestDto resultsRequestDto)
         {
             var culture = CultureInfo.CreateSpecificCulture("en-GB");
@@ -139,7 +138,6 @@
 
             return new CalcResultLapcapData { Name = LapcapHeader, CalcResultLapcapDataDetails = data };
         }
-#pragma warning restore
 
         internal static decimal CalculateApportionment(decimal countryCost, decimal totalCost)
         {

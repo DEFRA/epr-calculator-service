@@ -6,7 +6,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     [TestClass]
     public class MessageTypeServiceTests
     {
-        private MessageTypeService _service = null!;
+        private MessageTypeService _service;
 
         [TestInitialize]
         public void Setup()
@@ -95,7 +95,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public void DeserializeMessage_NullOrEmpty_ThrowsJsonException()
         {
             // Act
-            _service.DeserializeMessage(null!);
+            _service.DeserializeMessage(null);
         }
 
         [TestMethod]
