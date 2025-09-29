@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
-    public class CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2b
+    public class CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2B
     {
         [JsonPropertyName("totalProducerFeeForCommsCostsUKWideWithoutBadDebtProvision")]
         public string? TotalProducerFeeForCommsCostsUKWideWithoutBadDebtProvision { get; set; }

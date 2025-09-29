@@ -27,7 +27,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C
             result.TotalOnePlus2A2B2CFeeWithBadDebtProvision = GetHeaderTotalFeeWithBadDebtProvision(result);
             foreach (var fee in result.ProducerDisposalFees)
             {
-                fee.ProducerTotalOnePlus2A2B2CWithBadDeptProvision = GetTotalWithBadDebtProvision(fee);
+                fee.ProducerTotalOnePlus2A2B2CWithBadDeptProvision = GetTotalWithBadDebtProvision(fee) ?? 0;
                 fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C = GetOverallProducerPercentage(fee, result.TotalOnePlus2A2B2CFeeWithBadDebtProvision);
             }
         }
@@ -40,11 +40,11 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C
                    result.TwoCCommsCostsByCountryWithBadDebtProvision;
         }
 
-        private static decimal GetTotalWithBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
+        private static decimal? GetTotalWithBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
         {
-            return fee.LocalAuthorityDisposalCostsSectionOne.TotalProducerFeeWithBadDebtProvision +
-                   fee.CommunicationCostsSectionTwoA.TotalProducerFeeWithBadDebtProvision +
-                   fee.CommunicationCostsSectionTwoB.TotalProducerFeeWithBadDebtProvision +
+            return fee.LocalAuthorityDisposalCostsSectionOne?.TotalProducerFeeWithBadDebtProvision +
+                   fee.CommunicationCostsSectionTwoA?.TotalProducerFeeWithBadDebtProvision +
+                   fee.CommunicationCostsSectionTwoB?.TotalProducerFeeWithBadDebtProvision +
                    fee.TwoCTotalProducerFeeForCommsCostsWithBadDebt;
         }
 

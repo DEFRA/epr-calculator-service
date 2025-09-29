@@ -27,7 +27,7 @@ namespace EPR.Calculator.Service.Function.Mapper
             };
         }
 
-        private string GetPercentageLiabilityDifference(string percentageLiabilityDifference)
+        private string GetPercentageLiabilityDifference(string? percentageLiabilityDifference)
         {
             if (percentageLiabilityDifference == null)
                 return string.Empty;
@@ -43,7 +43,7 @@ namespace EPR.Calculator.Service.Function.Mapper
             return $"{Math.Round(value, (int)DecimalPlaces.Two).ToString()}%";
         }
 
-        private string GetFormattedCurrencyValue(string value)
+        private string GetFormattedCurrencyValue(string? value)
         {
             if (value == null)
                 return string.Empty;

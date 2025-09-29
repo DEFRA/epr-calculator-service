@@ -199,7 +199,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
                 : CommonConstants.Hyphen;
         }
 
-        private static string GetSuggestedInvoiceAmount(CalcResultSummaryProducerDisposalFees fee)
+        private static string? GetSuggestedInvoiceAmount(CalcResultSummaryProducerDisposalFees fee)
         {
             if (fee.IsProducerScaledup == CommonConstants.Totals)
             {

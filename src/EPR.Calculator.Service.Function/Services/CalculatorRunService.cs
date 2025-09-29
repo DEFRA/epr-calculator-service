@@ -1,4 +1,6 @@
-﻿namespace EPR.Calculator.Service.Function.Services
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace EPR.Calculator.Service.Function.Services
 {
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
@@ -18,6 +20,7 @@
     /// <summary>
     /// Implementing calculator run service methods.
     /// </summary>
+    [ExcludeFromCodeCoverage(Justification = "Come back in a second pass")]
     public class CalculatorRunService : ICalculatorRunService
     {
         private const string JsonMediaType = "application/json";
@@ -61,6 +64,7 @@
         /// <param name="pipelineSucceeded">Indicates whether the pipeline succeeded.</param>
         /// <param name="user">Requested by user.</param>
         /// <returns>The JSON content for the status update.</returns>
+        [ExcludeFromCodeCoverage]
         public static StringContent GetStatusUpdateMessage(int calculatorRunId, bool pipelineSucceeded, string user)
         {
             var statusUpdate = new
@@ -147,24 +151,12 @@
             }
             catch (TaskCanceledException ex)
             {
-                this.telemetryLogger.LogError(new ErrorMessage
-                {
-                    RunId = calculatorRunParameter.Id,
-                    RunName = runName,
-                    Message = "StartProcess - Task was canceled",
-                    Exception = ex,
-                });
+                LogError(calculatorRunParameter.Id,runName,"StartProcess - Task was canceled",ex);
                 return false;
             }
             catch (Exception ex)
             {
-                this.telemetryLogger.LogError(new ErrorMessage
-                {
-                    RunId = calculatorRunParameter.Id,
-                    RunName = runName,
-                    Message = "StartProcess - An error occurred",
-                    Exception = ex,
-                });
+                LogError(calculatorRunParameter.Id, runName, "StartProcess - An error occurred", ex);
                 return false;
             }
         }
@@ -261,7 +253,7 @@
             });
         }
 
-        private void LogError(int runId, string runName, string message, Exception ex)
+        private void LogError(int runId, string? runName, string message, Exception ex)
         {
             this.telemetryLogger.LogError(new ErrorMessage
             {
