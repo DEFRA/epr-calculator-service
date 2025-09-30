@@ -527,7 +527,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     total += scaledupProducer.ScaledupProducerTonnageByMaterial.Sum(x => x.Value.ScaledupTotalReportedTonnage);
                 }
 
-                result.Add(new TotalPackagingTonnagePerRun() { ProducerId = item.ProducerId, SubsidiaryId = item.SubsidiaryId ?? string.Empty, TotalPackagingTonnage = total });
+                result.Add(new TotalPackagingTonnagePerRun() { ProducerId = item.ProducerId, SubsidiaryId = item.SubsidiaryId, TotalPackagingTonnage = total });
             }
 
             return result;
