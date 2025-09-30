@@ -1,14 +1,13 @@
 namespace EPR.Calculator.Service.Common.UnitTests
 {
-    using System;
     using AutoFixture;
-    using EPR.Calculator.Service.Common;
+    using Common;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
     public class BillingFileMessageTests
     {
-        private BillingFileMessage _testClass;
+        private BillingFileMessage _testClass = null!;
 
         [TestInitialize]
         public void SetUp()

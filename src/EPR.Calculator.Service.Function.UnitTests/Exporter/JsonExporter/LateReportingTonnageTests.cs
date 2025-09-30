@@ -12,8 +12,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
     [TestClass]
     public class LateReportingTonnageTests
     {
-        private LateReportingTonnage _testClass;
-        private Mock<ILateReportingTonnageMapper> _lateReportingMapper;
+        private LateReportingTonnage _testClass = null!;
+        private Mock<ILateReportingTonnageMapper> _lateReportingMapper = null!;
 
         [TestInitialize]
         public void SetUp()

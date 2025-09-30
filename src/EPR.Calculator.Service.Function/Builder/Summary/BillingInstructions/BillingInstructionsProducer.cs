@@ -94,7 +94,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
             }
         }
 
-        public static void UpdateProductPrice(ApplicationDBContext context, CalcResultSummaryBillingInstruction fee, int runId, int ProducerId)
+        private static void UpdateProductPrice(ApplicationDBContext context, CalcResultSummaryBillingInstruction fee, int runId, int ProducerId)
         {
             var producer = context.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(p => p.ProducerId == ProducerId && p.CalculatorRunId == runId);
             if (producer != null)
@@ -210,7 +210,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
             }
             else
             {
-                return Math.Round(liabilityDifference.Value / currentYearInvoiceTotalToDate.Value, 2);
+                return Math.Round(liabilityDifference.Value / currentYearInvoiceTotalToDate.Value * 100, 2);
             }
         }
 
@@ -233,7 +233,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
             if (fee.Level != CommonConstants.LevelOne.ToString()) return CommonConstants.Hyphen;
 
             if (!currentYearInvoiceTotalToDate.HasValue) return CommonConstants.Hyphen;
-            if (tonnageChangeSinceLastInvoice == CommonConstants.TonnageChanged) return CommonConstants.Hyphen;
+            if (tonnageChangeSinceLastInvoice != CommonConstants.TonnageChanged) return CommonConstants.Hyphen;
 
             if (percentageLiabilityDifference >= param_TONT_PI) return CommonConstants.Positive;
             if (percentageLiabilityDifference <= param_TONT_PD) return CommonConstants.Negative;

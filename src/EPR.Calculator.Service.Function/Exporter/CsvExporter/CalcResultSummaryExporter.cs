@@ -244,15 +244,15 @@
             csvContent.AppendLine();
         }
 
-        private void AddSectionContent(StringBuilder csvContent, CalcResultSummaryBadDebtProvision costs)
+        private void AddSectionContent(StringBuilder csvContent, CalcResultSummaryBadDebtProvision? costs)
         {
-            csvContent.Append(CsvSanitiser.SanitiseData(costs.TotalProducerFeeWithoutBadDebtProvision, DecimalPlaces.Two, null, true));
-            csvContent.Append(CsvSanitiser.SanitiseData(costs.BadDebtProvision, DecimalPlaces.Two, null, true));
-            csvContent.Append(CsvSanitiser.SanitiseData(costs.TotalProducerFeeWithBadDebtProvision, DecimalPlaces.Two, null, true));
-            csvContent.Append(CsvSanitiser.SanitiseData(costs.EnglandTotalWithBadDebtProvision, DecimalPlaces.Two, null, true));
-            csvContent.Append(CsvSanitiser.SanitiseData(costs.WalesTotalWithBadDebtProvision, DecimalPlaces.Two, null, true));
-            csvContent.Append(CsvSanitiser.SanitiseData(costs.ScotlandTotalWithBadDebtProvision, DecimalPlaces.Two, null, true));
-            csvContent.Append(CsvSanitiser.SanitiseData(costs.NorthernIrelandTotalWithBadDebtProvision, DecimalPlaces.Two, null, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(costs?.TotalProducerFeeWithoutBadDebtProvision, DecimalPlaces.Two, null, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(costs?.BadDebtProvision, DecimalPlaces.Two, null, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(costs?.TotalProducerFeeWithBadDebtProvision, DecimalPlaces.Two, null, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(costs?.EnglandTotalWithBadDebtProvision, DecimalPlaces.Two, null, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(costs?.WalesTotalWithBadDebtProvision, DecimalPlaces.Two, null, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(costs?.ScotlandTotalWithBadDebtProvision, DecimalPlaces.Two, null, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(costs?.NorthernIrelandTotalWithBadDebtProvision, DecimalPlaces.Two, null, true));
         }
 
         private void AppendCsvValue(StringBuilder csvContent, object? value, bool isOverallTotalRow = false,
@@ -272,6 +272,5 @@
                 csvContent.Append(CsvSanitiser.SanitiseData(value));
             }
         }
-
     }
 }

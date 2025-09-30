@@ -131,6 +131,53 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         }
 
         [TestMethod]
+        public async Task CancelledProducersShouldGetAcceptedProducersForBillingFile()
+        {
+            this.SeedDatabaseForInitialRunCompleted(dbContext);
+
+            // Arrange
+            var requestDto = new CalcResultsRequestDto() { RunId = 3, IsBillingFile = true };
+
+            var expected = dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject == CommonConstants.Accepted && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant() && t.CalculatorRunId == 3);
+
+
+            this.materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
+
+            // Act
+            var result = await builder.Construct(requestDto, "2025-26");
+
+            // Assert
+            Assert.IsNotNull(result);
+            var cancelledProducer = result.CancelledProducers.LastOrDefault();
+            Assert.IsNotNull(cancelledProducer);
+            Assert.AreEqual(expected?.ProducerId, cancelledProducer.ProducerId);
+        }
+
+        [TestMethod]
+        public async Task CancelledProducersShouldNotGetRejectedProducersForBillingFile()
+        {
+            this.SeedDatabaseForInitialRunCompleted(dbContext);
+
+            // Arrange
+            var requestDto = new CalcResultsRequestDto() { RunId = 3, IsBillingFile = true };
+
+            var expected = dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject == CommonConstants.Rejected && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant() && t.CalculatorRunId == 3);
+
+
+            this.materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
+
+            // Act
+            var result = await builder.Construct(requestDto, "2025-26");
+
+            // Assert
+            Assert.IsNotNull(result);
+            var cancelledProducer = result.CancelledProducers.LastOrDefault();
+            Assert.IsNotNull(cancelledProducer);
+            Assert.AreNotEqual(expected?.ProducerId, cancelledProducer.ProducerId);
+        }
+
+
+        [TestMethod]
         public async Task CancelledProducersShouldGetRejectedProducers()
         {
             this.SeedDatabaseForInitialRunCompleted(dbContext);
@@ -152,6 +199,29 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             var cancelledProducer = result.CancelledProducers.LastOrDefault();
             Assert.IsNotNull(cancelledProducer);
             Assert.AreEqual(expected?.ProducerId, cancelledProducer.ProducerId);
+        }
+
+        [TestMethod]
+        public async Task CancelledProducersShouldNotGetRejectedInitialProducer()
+        {
+            this.SeedDatabaseForInitialRunCompleted(dbContext);
+
+            // Arrange
+            var requestDto = new CalcResultsRequestDto() { RunId = 3 };
+
+            var expected = dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject ==
+            CommonConstants.Rejected && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant()
+            && t.CalculatorRunId == 2);
+
+            this.materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
+
+            // Act
+            var result = await builder.Construct(requestDto, "2025-26");
+
+            // Assert
+            Assert.IsNotNull(result);
+            var cancelledProducer = result.CancelledProducers.Where(t=>t.ProducerId == 3).FirstOrDefault();
+            Assert.IsNull(cancelledProducer);           
         }
 
         [TestMethod]
@@ -502,8 +572,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                 new ProducerDetail() { Id =5 , CalculatorRunId = 1, ProducerName="Test4", ProducerId = 4, TradingName = "TN5"},
                  new ProducerDetail() { Id =6 , CalculatorRunId = 2, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
               new ProducerDetail() { Id =3 , CalculatorRunId = 2, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"},
-               new ProducerDetail() { Id =7 , CalculatorRunId = 3, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"},
-                new ProducerDetail() { Id =8 , CalculatorRunId = 3, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
+               new ProducerDetail() { Id =7 , CalculatorRunId = 3, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"}
             };
 
             context.ProducerDetail.AddRange(producerDetails);
@@ -595,10 +664,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                 {
                     BillingInstructionId = "2_6",
                     CalculatorRunId = 2,
-                    CurrentYearInvoicedTotalAfterThisRun = 100,
+                    CurrentYearInvoicedTotalAfterThisRun = null,
                     Id = 6,
                     ProducerId = 2,
-                    InvoiceAmount = 100,
+                    InvoiceAmount = null,
                     OutstandingBalance = 100,
                 },
             };
@@ -636,7 +705,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                     SuggestedBillingInstruction = "Initial",
                     SuggestedInvoiceAmount = 100,
                     CalculatorRunId = 1,
-                    BillingInstructionAcceptReject = "Accepted"
+                    BillingInstructionAcceptReject = "Rejected"
                 },
               new ProducerResultFileSuggestedBillingInstruction()
                 {
@@ -667,15 +736,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                     SuggestedInvoiceAmount = 100,
                     CalculatorRunId = 2,
                     BillingInstructionAcceptReject = "Accepted"
-                }, new ProducerResultFileSuggestedBillingInstruction()
-                {
-                    MaterialPercentageThresholdBreached = "1%",
-                    MaterialPoundThresholdBreached = "1",
-                    ProducerId = 3,
-                    SuggestedBillingInstruction = "CANCEL",
-                    SuggestedInvoiceAmount = 100,
-                    CalculatorRunId = 2,
-                    BillingInstructionAcceptReject = "Accepted"
                 },
                  new ProducerResultFileSuggestedBillingInstruction()
                 {
@@ -685,6 +745,26 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                     SuggestedBillingInstruction = "CANCEL",
                     SuggestedInvoiceAmount = 100,
                     CalculatorRunId = 2,
+                    BillingInstructionAcceptReject = "Rejected"
+                },
+                  new ProducerResultFileSuggestedBillingInstruction()
+                {
+                    MaterialPercentageThresholdBreached = "1%",
+                    MaterialPoundThresholdBreached = "1",
+                    ProducerId = 4,
+                    SuggestedBillingInstruction = "CANCEL",
+                    SuggestedInvoiceAmount = 100,
+                    CalculatorRunId = 3,
+                    BillingInstructionAcceptReject = "Accepted"
+                },
+                   new ProducerResultFileSuggestedBillingInstruction()
+                {
+                    MaterialPercentageThresholdBreached = "1%",
+                    MaterialPoundThresholdBreached = "1",
+                    ProducerId = 2,
+                    SuggestedBillingInstruction = "CANCEL",
+                    SuggestedInvoiceAmount = 100,
+                    CalculatorRunId = 3,
                     BillingInstructionAcceptReject = "Rejected"
                 }
             };

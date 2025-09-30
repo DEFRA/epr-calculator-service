@@ -6,7 +6,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
     [TestClass]
     public class CalcResultCommsCostByMaterial2AJsonMapperTests
     {
-        private CalcResultCommsCostByMaterial2AJsonMapper _testClass;
+        private CalcResultCommsCostByMaterial2AJsonMapper _testClass = null!;
 
         [TestInitialize]
         public void Setup()

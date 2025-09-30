@@ -101,7 +101,7 @@
             Assert.IsTrue(csvOutput.Contains(CommonConstants.Steel), "CSV should include Steel column.");
             Assert.IsTrue(csvOutput.Contains(CommonConstants.Wood), "CSV should include Wood column.");
             Assert.IsTrue(csvOutput.Contains(CommonConstants.OtherMaterials), "CSV should include OtherMaterials column.");
-            Assert.IsTrue(csvOutput.Contains(CommonConstants.LastInvoicedTotal), "CSV should include LastInvoicedTotal column.");
+            Assert.IsTrue(csvOutput.Contains(CommonConstants.CurrentYearInvoicedTotalToDate), "CSV should include CurrentYearInvoicedTotalToDate column.");
             Assert.IsTrue(csvOutput.Contains(CommonConstants.RunNumber), "CSV should include RunNumber column.");
             Assert.IsTrue(csvOutput.Contains(CommonConstants.RunName), "CSV should include RunName column.");
             Assert.IsTrue(csvOutput.Contains(CommonConstants.BillingInstructionId), "CSV should include BillingInstructionId column.");
