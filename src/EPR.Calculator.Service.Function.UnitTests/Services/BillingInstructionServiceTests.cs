@@ -98,16 +98,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                             Level= CommonConstants.LevelTwo.ToString(),
                             BillingInstructionSection = new CalcResultSummaryBillingInstruction
                             {
-                                CurrentYearInvoiceTotalToDate = "1000",
+                                CurrentYearInvoiceTotalToDate = 1000m,
                                 TonnageChangeSinceLastInvoice = "Tonnage Changed",
-                                LiabilityDifference = "-200",
+                                LiabilityDifference = -200,
                                 MaterialThresholdBreached = "-ve",
                                 TonnageThresholdBreached = "-ve",
-                                PercentageLiabilityDifference = "10.05",
+                                PercentageLiabilityDifference = 10.05m,
                                 MaterialPercentageThresholdBreached = "-ve",
                                 TonnagePercentageThresholdBreached = "-ve",
                                 SuggestedBillingInstruction = "INITIAL",
-                                SuggestedInvoiceAmount = "500"
+                                SuggestedInvoiceAmount = 500m
                             }
                         }
                     }

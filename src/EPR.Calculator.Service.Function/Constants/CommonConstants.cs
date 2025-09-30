@@ -71,12 +71,24 @@
         public const string BillingInstructionId = "Billing Instruction ID";
         public const string TwoACommsCostsbyMaterial = "2a Comms Costs - by Material";
 
-        public const string CurrentYearInvoicedTotalToDate = "Current Year Invoiced Total To Date";
+        public const string TonnageChanged = "Tonnage Changed";
+        public const string Positive = "+ve";
+        public const string Negative = "-ve";
 
+        public const string MaterialAmountIncrease = "MATT-AI";
+        public const string MaterialAmountDecrease = "MATT-AD";
+        public const string TonnageAmountIncrease = "TONT-AI";
+        public const string TonnageAmountDecrease = "TONT-AD";
+        public const string MaterialPercentageIncrease = "MATT-PI";
+        public const string MaterialPercentageDecrease = "MATT-PD";
+        public const string TonnagePercentageIncrease = "TONT-PI";
+        public const string TonnagePercentageDecrease = "TONT-PD";
+
+        public const string Delta = "DELTA";
+        public const string Rebill = "REBILL";
+        public const string CurrentYearInvoicedTotalToDate = "Current Year Invoiced Total To Date";
         public const string Accepted = "Accepted";
         public const string Rejected = "Rejected";
         public const string Cancel = "Cancel";
-
-
     }
 }
