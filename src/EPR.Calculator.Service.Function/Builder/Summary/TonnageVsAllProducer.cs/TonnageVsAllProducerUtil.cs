@@ -18,7 +18,7 @@
         public static decimal GetPercentageofProducerReportedTonnagevsAllProducers(ProducerDetail producer, IEnumerable<TotalPackagingTonnagePerRun> totalPackagingTonnage)
         {
             var totalTonnage = totalPackagingTonnage.Sum(x => x.TotalPackagingTonnage);
-            var producerData = totalPackagingTonnage.FirstOrDefault(r => r.ProducerId == producer.ProducerId);
+            var producerData = totalPackagingTonnage.FirstOrDefault(r => r.ProducerId == producer.ProducerId && r.SubsidiaryId == producer.SubsidiaryId);
             var percentageofTonnage = producerData != null && totalTonnage > 0
                 ? producerData.TotalPackagingTonnage / totalTonnage * 100
                 : 0;
