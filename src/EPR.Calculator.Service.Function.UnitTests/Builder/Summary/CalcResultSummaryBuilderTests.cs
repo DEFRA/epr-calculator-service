@@ -1175,7 +1175,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb("2024-25");
             var defaultParams = new List<DefaultParamResultsClass>();
 
-            var summary = calcResultsService.GetCalcResultSummary(ordered, materials, calcResult, totalPackaging, producerInvoicedMaterialNetTonnage, defaultParams);
+            var summary = calcResultsService.GetCalcResultSummary(ordered, materials, calcResult, totalPackaging, producerInvoicedMaterialNetTonnage, defaultParams);           
 
             Assert.IsTrue(summary.ProducerDisposalFees.Any(r => r.isTotalRow));
         }

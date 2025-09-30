@@ -112,7 +112,6 @@
         {
             var producersForPreviousRuns = GetLatestProducerDetailsForThisFinancialYear(financialYear);
             var producersForCurrentRun = GetProducers(runId);
-            var distinctMissingProducerIds = new List<int?>();
             var calcResultCancelledProducers = new List<CalcResultCancelledProducersDto>();
             var filteredMissingProducers = new List<ProducerInvoicedDto>();
 
@@ -135,7 +134,7 @@
             }
 
 
-            distinctMissingProducerIds = filteredMissingProducers.DistinctBy(t => t.InvoicedTonnage?.ProducerId).
+            var distinctMissingProducerIds = filteredMissingProducers.DistinctBy(t => t.InvoicedTonnage?.ProducerId).
             Select(t => t.InvoicedTonnage?.ProducerId).ToList();
 
             foreach (var missingProducerId in distinctMissingProducerIds)

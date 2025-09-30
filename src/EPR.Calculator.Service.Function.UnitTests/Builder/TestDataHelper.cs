@@ -779,11 +779,11 @@
                         LiabilityDifference = 580.73m,
                         MaterialThresholdBreached = string.Empty,
                         TonnageThresholdBreached = string.Empty,
-                        PercentageLiabilityDifference = string.Empty,
+                        PercentageLiabilityDifference = 123.45m,
                         MaterialPercentageThresholdBreached = string.Empty,
                         TonnagePercentageThresholdBreached = string.Empty,
                         SuggestedBillingInstruction = string.Empty,
-                        SuggestedInvoiceAmount = "4039"
+                        SuggestedInvoiceAmount = 4039m
                     },
                     CommunicationCostsSectionTwoB = new CalcResultSummaryBadDebtProvision
                     {
@@ -906,11 +906,11 @@
                         LiabilityDifference = 580.73m,
                         MaterialThresholdBreached = string.Empty,
                         TonnageThresholdBreached = string.Empty,
-                        PercentageLiabilityDifference = string.Empty,
+                        PercentageLiabilityDifference = null,
                         MaterialPercentageThresholdBreached = string.Empty,
                         TonnagePercentageThresholdBreached = string.Empty,
                         SuggestedBillingInstruction = string.Empty,
-                        SuggestedInvoiceAmount = "4039"
+                        SuggestedInvoiceAmount = 4039m
                     },
                     CommunicationCostsSectionTwoB = new CalcResultSummaryBadDebtProvision
                     {
@@ -1034,11 +1034,11 @@
                         LiabilityDifference = 580.73m,
                         MaterialThresholdBreached = string.Empty,
                         TonnageThresholdBreached = string.Empty,
-                        PercentageLiabilityDifference = string.Empty,
+                        PercentageLiabilityDifference = null,
                         MaterialPercentageThresholdBreached = string.Empty,
                         TonnagePercentageThresholdBreached = string.Empty,
                         SuggestedBillingInstruction = string.Empty,
-                        SuggestedInvoiceAmount = "4039"
+                        SuggestedInvoiceAmount = 4039m
                     },
                     CommunicationCostsSectionTwoB = new CalcResultSummaryBadDebtProvision
                     {
