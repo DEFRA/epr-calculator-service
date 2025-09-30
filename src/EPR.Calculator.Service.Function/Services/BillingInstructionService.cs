@@ -135,13 +135,6 @@ namespace EPR.Calculator.Service.Function.Services
             return (string.IsNullOrEmpty(value) || value == CommonConstants.Hyphen);
         }
 
-        private decimal? GetValue(string? value)
-        {
-            return IsDefaultValue(value)
-                ? null
-                : TypeConverterUtil.ConvertTo<decimal>(value!);
-        }
-
         private string? GetStringValue(string value)
         {
             return IsDefaultValue(value)
