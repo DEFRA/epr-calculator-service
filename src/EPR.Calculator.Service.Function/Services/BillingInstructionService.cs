@@ -43,25 +43,24 @@ namespace EPR.Calculator.Service.Function.Services
                     var billingInstructionSection = producer.BillingInstructionSection;
 
                     var isProducerIdParseSuccessful = int.TryParse(producer.ProducerId, out var producerId);
-                    var isSuggestedInvoiceAmountParseSuccessful = decimal.TryParse(billingInstructionSection?.SuggestedInvoiceAmount, out var suggestedInvoiceAmount);
 
-                    if (isProducerIdParseSuccessful && isSuggestedInvoiceAmountParseSuccessful)
+                    if (isProducerIdParseSuccessful)
                     {
                         var billingInstruction = new ProducerResultFileSuggestedBillingInstruction
                         {
                             CalculatorRunId = calcResult.CalcResultDetail.RunId,
                             ProducerId = producerId,
                             TotalProducerBillWithBadDebt = producer.TotalProducerBillBreakdownCosts!.TotalProducerFeeWithBadDebtProvision,
-                            CurrentYearInvoiceTotalToDate = GetValue(billingInstructionSection?.CurrentYearInvoiceTotalToDate!),
+                            CurrentYearInvoiceTotalToDate = billingInstructionSection?.CurrentYearInvoiceTotalToDate,
                             TonnageChangeSinceLastInvoice = GetStringValue(billingInstructionSection?.TonnageChangeSinceLastInvoice!),
-                            AmountLiabilityDifferenceCalcVsPrev = GetValue(billingInstructionSection?.LiabilityDifference!),
+                            AmountLiabilityDifferenceCalcVsPrev = billingInstructionSection?.LiabilityDifference!,
                             MaterialPoundThresholdBreached = GetStringValue(billingInstructionSection?.MaterialThresholdBreached!),
                             TonnagePoundThresholdBreached = GetStringValue(billingInstructionSection?.TonnageThresholdBreached!),
-                            PercentageLiabilityDifferenceCalcVsPrev = GetValue(billingInstructionSection?.PercentageLiabilityDifference!),
+                            PercentageLiabilityDifferenceCalcVsPrev = billingInstructionSection?.PercentageLiabilityDifference!,
                             MaterialPercentageThresholdBreached = GetStringValue(billingInstructionSection?.MaterialPercentageThresholdBreached!),
                             TonnagePercentageThresholdBreached = GetStringValue(billingInstructionSection?.TonnagePercentageThresholdBreached!),
                             SuggestedBillingInstruction = billingInstructionSection?.SuggestedBillingInstruction!,
-                            SuggestedInvoiceAmount = suggestedInvoiceAmount
+                            SuggestedInvoiceAmount = billingInstructionSection?.SuggestedInvoiceAmount ?? 0m
                         };
 
                         billingInstructions.Add(billingInstruction);
@@ -134,13 +133,6 @@ namespace EPR.Calculator.Service.Function.Services
         private bool IsDefaultValue(string? value)
         {
             return (string.IsNullOrEmpty(value) || value == CommonConstants.Hyphen);
-        }
-
-        private decimal? GetValue(string? value)
-        {
-            return IsDefaultValue(value)
-                ? null
-                : TypeConverterUtil.ConvertTo<decimal>(value!);
         }
 
         private string? GetStringValue(string value)

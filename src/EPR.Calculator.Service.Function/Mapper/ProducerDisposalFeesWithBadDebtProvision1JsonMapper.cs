@@ -33,33 +33,25 @@
                 {
                     var material = materials.Single(m => m.Code == producerTonnage.Key);
 
-                    var breakdown = new ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown
-                    {
-                        MaterialName = material.Name,
-                        PreviousInvoicedTonnage = GetPreviousInvoicedTonnage(level),
-                        HouseholdPackagingWasteTonnage = producerTonnage.Value.HouseholdPackagingWasteTonnage,
-                        PublicBinTonnage = producerTonnage.Value.PublicBinTonnage,
-                        TotalTonnage = producerTonnage.Value.TotalReportedTonnage,
-                        SelfManagedConsumerWasteTonnage = producerTonnage.Value.ManagedConsumerWasteTonnage,
-                        NetTonnage = producerTonnage.Value.NetReportedTonnage,
-                        TonnageChange = GetPreviousInvoicedTonnage(level),
-                        PricePerTonne = CurrencyConverter.ConvertToCurrency(producerTonnage.Value.PricePerTonne, 4),
-                        ProducerDisposalFeeWithoutBadDebtProvision =
-                            CurrencyConverter.ConvertToCurrency(producerTonnage.Value.ProducerDisposalFee),
-                        BadDebtProvision = CurrencyConverter.ConvertToCurrency(producerTonnage.Value.BadDebtProvision),
-                        ProducerDisposalFeeWithBadDebtProvision =
-                            CurrencyConverter.ConvertToCurrency(producerTonnage.Value
-                                .ProducerDisposalFeeWithBadDebtProvision),
-                        EnglandWithBadDebtProvision =
-                            CurrencyConverter.ConvertToCurrency(producerTonnage.Value.EnglandWithBadDebtProvision),
-                        WalesWithBadDebtProvision =
-                            CurrencyConverter.ConvertToCurrency(producerTonnage.Value.WalesWithBadDebtProvision),
-                        ScotlandWithBadDebtProvision =
-                            CurrencyConverter.ConvertToCurrency(producerTonnage.Value.ScotlandWithBadDebtProvision),
-                        NorthernIrelandWithBadDebtProvision =
-                            CurrencyConverter.ConvertToCurrency(producerTonnage.Value
-                                .NorthernIrelandWithBadDebtProvision),
-                    };
+                var breakdown = new ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown
+                {
+                    MaterialName = material.Name,
+                    PreviousInvoicedTonnage = level == "1" ? (producerTonnage.Value.PreviousInvoicedTonnage?.ToString() ?? CommonConstants.Hyphen) : CommonConstants.Hyphen,
+                    HouseholdPackagingWasteTonnage = producerTonnage.Value.HouseholdPackagingWasteTonnage,
+                    PublicBinTonnage = producerTonnage.Value.PublicBinTonnage,
+                    TotalTonnage = producerTonnage.Value.TotalReportedTonnage,
+                    SelfManagedConsumerWasteTonnage = producerTonnage.Value.ManagedConsumerWasteTonnage,
+                    NetTonnage = producerTonnage.Value.NetReportedTonnage,
+                    TonnageChange = level == "1" ? (producerTonnage.Value.TonnageChange?.ToString() ?? CommonConstants.Hyphen) : CommonConstants.Hyphen,
+                    PricePerTonne = CurrencyConverter.ConvertToCurrency(producerTonnage.Value.PricePerTonne, 4),
+                    ProducerDisposalFeeWithoutBadDebtProvision = CurrencyConverter.ConvertToCurrency(producerTonnage.Value.ProducerDisposalFee),
+                    BadDebtProvision = CurrencyConverter.ConvertToCurrency(producerTonnage.Value.BadDebtProvision),
+                    ProducerDisposalFeeWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(producerTonnage.Value.ProducerDisposalFeeWithBadDebtProvision),
+                    EnglandWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(producerTonnage.Value.EnglandWithBadDebtProvision),
+                    WalesWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(producerTonnage.Value.WalesWithBadDebtProvision),
+                    ScotlandWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(producerTonnage.Value.ScotlandWithBadDebtProvision),
+                    NorthernIrelandWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(producerTonnage.Value.NorthernIrelandWithBadDebtProvision),
+                };
 
                     if (producerTonnage.Key == MaterialCodes.Glass)
                     {
@@ -72,13 +64,6 @@
             }
 
             return materialBreakdown;
-        }
-
-        private static string GetPreviousInvoicedTonnage(string level)
-        {
-            return level == CommonConstants.LevelOne.ToString()
-                ? CommonConstants.DefaultMinValue.ToString()
-                : CommonConstants.Hyphen;
         }
     }
 }
