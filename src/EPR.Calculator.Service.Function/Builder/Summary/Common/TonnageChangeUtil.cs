@@ -42,12 +42,10 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
             decimal total = 0m;
 
-            foreach (var row in level1)
+            foreach (var row in level1.Select(r => r.ProducerDisposalFeesByMaterial))
             {
-                var byMat = row.ProducerDisposalFeesByMaterial;
-
-                if (byMat != null &&
-                    byMat.TryGetValue(materialCode, out var mat) &&
+                if (row != null &&
+                    row.TryGetValue(materialCode, out var mat) &&
                     mat?.TonnageChange != null)
                 {
                     total += mat.TonnageChange.Value;
