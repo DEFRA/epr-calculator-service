@@ -93,7 +93,7 @@
 
             dbContext.SaveChanges();
 
-            var results = builder.Construct(new CalcResultsRequestDto { RunId = 1 });
+            var results = builder.ConstructAsync(new CalcResultsRequestDto { RunId = 1 });
             results.Wait();
             var otherCost = results.Result;
 

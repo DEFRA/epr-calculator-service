@@ -65,7 +65,7 @@
                 CalcResultLateReportingTonnageData = Fixture.Create<CalcResultLateReportingTonnage>(),
             };
 
-            var resultCalc = Construct(resultsDto, calcResult);
+            var resultCalc = ConstructAsync(resultsDto, calcResult);
             // Assert
             Assert.IsNotNull(calcResult);
             Assert.AreEqual("1 + 4 Apportionment %s", resultCalc.Name);

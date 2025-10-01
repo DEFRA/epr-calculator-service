@@ -29,7 +29,7 @@
         }
 
 #pragma warning disable S1854
-        public async Task<CalcResultLapcapData> Construct(CalcResultsRequestDto resultsRequestDto)
+        public async Task<CalcResultLapcapData> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
         {
             var culture = CultureInfo.CreateSpecificCulture("en-GB");
             culture.NumberFormat.CurrencySymbol = "£";

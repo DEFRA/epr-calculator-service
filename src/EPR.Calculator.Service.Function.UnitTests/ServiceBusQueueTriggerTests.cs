@@ -64,7 +64,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
             this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
-            this.calculatorRunService.Setup(t => t.StartProcess(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).ReturnsAsync(true);
+            this.calculatorRunService.Setup(t => t.PrepareResultsFileAsync(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).ReturnsAsync(true);
             MockResultMessage(myQueueItem);
 
             // Act
@@ -72,7 +72,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             // Assert
             this.calculatorRunService.Verify(
-                p => p.StartProcess(
+                p => p.PrepareResultsFileAsync(
                     It.Is<CalculatorRunParameter>(msg => msg == processedParameterData),
                     It.Is<string>(name => name == runName)),
                 Times.Once);
@@ -213,7 +213,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
 
             // Setup StartProcess to throw an exception
-            this.calculatorRunService.Setup(t => t.StartProcess(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).ThrowsAsync(new Exception("Unhandled exception"));
+            this.calculatorRunService.Setup(t => t.PrepareResultsFileAsync(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).ThrowsAsync(new Exception("Unhandled exception"));
             MockResultMessage(myQueueItem);
 
             // Act
@@ -256,7 +256,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
             this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
-            this.calculatorRunService.Setup(t => t.StartProcess(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).ReturnsAsync(true);
+            this.calculatorRunService.Setup(t => t.PrepareResultsFileAsync(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).ReturnsAsync(true);
             MockResultMessage(myQueueItem);
 
             // Act
@@ -279,7 +279,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
             this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
-            this.calculatorRunService.Setup(t => t.StartProcess(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).Throws<Exception>();
+            this.calculatorRunService.Setup(t => t.PrepareResultsFileAsync(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).Throws<Exception>();
             MockResultMessage(myQueueItem);
 
             // Act

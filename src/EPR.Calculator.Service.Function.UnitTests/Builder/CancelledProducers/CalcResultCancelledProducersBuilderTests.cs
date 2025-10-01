@@ -69,7 +69,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             this.materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
 
             // Act
-            var result = await builder.Construct(requestDto, "2025-26");
+            var result = await builder.ConstructAsync(requestDto, "2025-26");
 
             // Assert
             Assert.IsNotNull(result);
@@ -97,7 +97,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             this.materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
 
             // Act
-            var result = await builder.Construct(requestDto, "2025-26");
+            var result = await builder.ConstructAsync(requestDto, "2025-26");
 
             // Assert
             Assert.IsNotNull(result);
@@ -121,7 +121,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             this.materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
 
             // Act
-            var result = await builder.Construct(requestDto, "2025-26");
+            var result = await builder.ConstructAsync(requestDto, "2025-26");
 
             // Assert
             Assert.IsNotNull(result);
@@ -144,7 +144,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             this.materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
 
             // Act
-            var result = await builder.Construct(requestDto, "2025-26");
+            var result = await builder.ConstructAsync(requestDto, "2025-26");
 
             // Assert
             Assert.IsNotNull(result);
@@ -167,7 +167,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             this.materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
 
             // Act
-            var result = await builder.Construct(requestDto, "2025-26");
+            var result = await builder.ConstructAsync(requestDto, "2025-26");
 
             // Assert
             Assert.IsNotNull(result);
@@ -192,7 +192,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             this.materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
 
             // Act
-            var result = await builder.Construct(requestDto, "2025-26");
+            var result = await builder.ConstructAsync(requestDto, "2025-26");
 
             // Assert
             Assert.IsNotNull(result);
@@ -216,7 +216,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             this.materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
 
             // Act
-            var result = await builder.Construct(requestDto, "2025-26");
+            var result = await builder.ConstructAsync(requestDto, "2025-26");
 
             // Assert
             Assert.IsNotNull(result);
@@ -238,7 +238,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
           
 
             // Act
-            var result = await builder.Construct(requestDto, "2025-26");
+            var result = await builder.ConstructAsync(requestDto, "2025-26");
 
             // Assert
             Assert.IsNotNull(result);

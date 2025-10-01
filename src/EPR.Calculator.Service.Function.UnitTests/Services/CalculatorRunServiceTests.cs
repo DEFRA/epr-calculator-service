@@ -51,7 +51,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 
             this.PrepareCalcService = new Mock<IPrepareCalcService>();
-            this.PrepareCalcService.Setup(s => s.PrepareCalcResults(
+            this.PrepareCalcService.Setup(s => s.PrepareCalcResultsAsync(
                 It.IsAny<CalcResultsRequestDto>(),
                 It.IsAny<string>(),
                 It.IsAny<CancellationToken>()))
@@ -82,7 +82,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 this.PrepareCalcService.Object,
                 this.StatusService.Object);
 
-            this.TransposeService.Setup(t => t.TransposeBeforeCalcResults(
+            this.TransposeService.Setup(t => t.TransposeBeforeResultsFileAsync(
                 It.IsAny<CalcResultsRequestDto>(),
                 It.IsAny<string>(),
                 It.IsAny<CancellationToken>()))
@@ -199,7 +199,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
 
             // Act
-            await this.CalculatorRunService.StartProcess(calculatorRunParameters, runName);
+            await this.CalculatorRunService.PrepareResultsFileAsync(calculatorRunParameters, runName);
 
             // Assert
 
@@ -300,7 +300,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
 
             // Act
-            await this.CalculatorRunService.StartProcess(calculatorRunParameters, runName);
+            await this.CalculatorRunService.PrepareResultsFileAsync(calculatorRunParameters, runName);
 
             // Assert
             this.AzureSynapseRunner.Verify(
@@ -393,7 +393,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
 
             // Act
-            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters, runName);
+            var result = await this.CalculatorRunService.PrepareResultsFileAsync(calculatorRunParameters, runName);
 
             // Assert
             Assert.IsTrue(result);
@@ -473,7 +473,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
 
             // Act
-            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters, runName);
+            var result = await this.CalculatorRunService.PrepareResultsFileAsync(calculatorRunParameters, runName);
 
             // Assert
             Assert.IsFalse(result);
@@ -530,7 +530,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
 
             // Act
-            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters, runName);
+            var result = await this.CalculatorRunService.PrepareResultsFileAsync(calculatorRunParameters, runName);
 
             // Assert
             Assert.IsFalse(result);
@@ -545,11 +545,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var mockHttpClient = new Mock<HttpClient>();
 
             this.PipelineClientFactory.Setup(p => p.GetHttpClient(It.IsAny<Uri>())).Returns(mockHttpClient.Object);
-            this.TransposeService.Setup(t => t.TransposeBeforeCalcResults(It.IsAny<CalcResultsRequestDto>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            this.TransposeService.Setup(t => t.TransposeBeforeResultsFileAsync(It.IsAny<CalcResultsRequestDto>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ThrowsAsync(new TaskCanceledException());
 
             // Act
-            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameter, runName);
+            var result = await this.CalculatorRunService.PrepareResultsFileAsync(calculatorRunParameter, runName);
 
             // Assert
             Assert.IsFalse(result);
@@ -564,11 +564,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var mockHttpClient = new Mock<HttpClient>();
 
             this.PipelineClientFactory.Setup(p => p.GetHttpClient(It.IsAny<Uri>())).Returns(mockHttpClient.Object);
-            this.TransposeService.Setup(t => t.TransposeBeforeCalcResults(It.IsAny<CalcResultsRequestDto>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            this.TransposeService.Setup(t => t.TransposeBeforeResultsFileAsync(It.IsAny<CalcResultsRequestDto>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ThrowsAsync(new Exception("Test Exception"));
 
             // Act
-            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameter, runName);
+            var result = await this.CalculatorRunService.PrepareResultsFileAsync(calculatorRunParameter, runName);
 
             // Assert
             Assert.IsFalse(result);

@@ -33,7 +33,7 @@
             this.calcCountryApportionmentService = calcCountryApportionmentService;
         }
 
-        public async Task<CalcResultParameterOtherCost> Construct(CalcResultsRequestDto resultsRequestDto)
+        public async Task<CalcResultParameterOtherCost> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
         {
             var culture = CultureInfo.CreateSpecificCulture("en-GB");
             culture.NumberFormat.CurrencySymbol = "£";

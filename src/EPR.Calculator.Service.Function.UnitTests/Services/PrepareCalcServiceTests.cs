@@ -96,7 +96,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this._rpdStatusDataValidator = new Mock<IRpdStatusDataValidator>();
             this._wrapper = new Mock<IOrgAndPomWrapper>();
             this._builder = new Mock<ICalcResultBuilder>();
-            this._builder.Setup(b => b.Build(It.IsAny<CalcResultsRequestDto>())).ReturnsAsync(calcResult);
+            this._builder.Setup(b => b.BuildAsync(It.IsAny<CalcResultsRequestDto>())).ReturnsAsync(calcResult);
             this._exporter = new Mock<ICalcResultsExporter<CalcResult>>();
             this._exporter.Setup(x => x.Export(It.IsAny<CalcResult>())).Returns("Some value");
             this._transposePomAndOrgDataService = new Mock<ITransposePomAndOrgDataService>();
@@ -162,7 +162,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 It.IsAny<(string, string, string, string, bool)>()))
                 .ReturnsAsync("expected result");
             // Act
-            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, runName, CancellationToken.None);
+            var result = await this._testClass.PrepareCalcResultsAsync(resultsRequestDto, runName, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(true, result);
@@ -181,7 +181,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var runName = fixture.Create<string>();
 
             // Act
-            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, runName, CancellationToken.None);
+            var result = await this._testClass.PrepareCalcResultsAsync(resultsRequestDto, runName, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(false, result);
@@ -197,7 +197,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var runName = fixture.Create<string>();
 
             // Act
-            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, runName, CancellationToken.None);
+            var result = await this._testClass.PrepareCalcResultsAsync(resultsRequestDto, runName, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(false, result);
@@ -213,7 +213,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var runName = fixture.Create<string>();
 
             // Act
-            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, runName, CancellationToken.None);
+            var result = await this._testClass.PrepareCalcResultsAsync(resultsRequestDto, runName, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(false, result);
@@ -227,7 +227,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var runName = "test";
 
             // Act
-            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, runName, CancellationToken.None);
+            var result = await this._testClass.PrepareCalcResultsAsync(resultsRequestDto, runName, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(false, result);
@@ -241,7 +241,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var runName = "test";
 
             // Act
-            var result = await this._testClass.PrepareCalcResults(resultsRequestDto, runName, CancellationToken.None);
+            var result = await this._testClass.PrepareCalcResultsAsync(resultsRequestDto, runName, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(false, result);
@@ -268,7 +268,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 AcceptedProducerIds = new List<int> { 1, 2 },
                 ApprovedBy = "Test User 234",
             };
-            var billingResult = _testClass.PrepareBillingResults(calcResultsRequestDto, "TestRun", CancellationToken.None);
+            var billingResult = _testClass.PrepareBillingResultsAsync(calcResultsRequestDto, "TestRun", CancellationToken.None);
             billingResult.Wait();
 
             Assert.IsTrue(billingResult.Result);
@@ -276,7 +276,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.IsFalse(calcRun.IsBillingFileGenerating);
 
             this._builder
-                .Verify(b => b.Build(It.Is<CalcResultsRequestDto>(x => x.RunId == 1 && x.IsBillingFile)), Times.Once);
+                .Verify(b => b.BuildAsync(It.Is<CalcResultsRequestDto>(x => x.RunId == 1 && x.IsBillingFile)), Times.Once);
 
             var billingFileMetaData = this._context.CalculatorRunBillingFileMetadata.SingleOrDefault(x => x.CalculatorRunId == 1);
 

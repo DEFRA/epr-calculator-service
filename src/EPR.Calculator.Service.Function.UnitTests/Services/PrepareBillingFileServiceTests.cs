@@ -47,7 +47,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.MockLogger = new Mock<ICalculatorTelemetryLogger>();
 
             this.PrepareCalcService = new Mock<IPrepareCalcService>();
-            this.PrepareCalcService.Setup(s => s.PrepareCalcResults(
+            this.PrepareCalcService.Setup(s => s.PrepareCalcResultsAsync(
                 It.IsAny<CalcResultsRequestDto>(),
                 It.IsAny<string>(),
                 It.IsAny<CancellationToken>()))
@@ -133,7 +133,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Setup PrepareCalcService to return true
             PrepareCalcService
-                .Setup(s => s.PrepareBillingResults(
+                .Setup(s => s.PrepareBillingResultsAsync(
                     It.IsAny<CalcResultsRequestDto>(),
                     It.IsAny<string>(),
                     It.IsAny<CancellationToken>()))
@@ -150,7 +150,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Assert
             Assert.IsTrue(result);
-            PrepareCalcService.Verify(s => s.PrepareBillingResults(
+            PrepareCalcService.Verify(s => s.PrepareBillingResultsAsync(
                 It.Is<CalcResultsRequestDto>(dto =>
                     dto.RunId == calculatorRunId &&
                     dto.AcceptedProducerIds.Contains(acceptedProducerId) &&
@@ -193,7 +193,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Setup PrepareCalcService to return true
             PrepareCalcService
-                .Setup(s => s.PrepareBillingResults(
+                .Setup(s => s.PrepareBillingResultsAsync(
                     It.IsAny<CalcResultsRequestDto>(),
                     It.IsAny<string>(),
                     It.IsAny<CancellationToken>()))
