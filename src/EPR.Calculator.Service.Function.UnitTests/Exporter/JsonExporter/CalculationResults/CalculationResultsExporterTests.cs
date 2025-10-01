@@ -7,6 +7,7 @@
     using EPR.Calculator.Service.Function.Models;
     using EPR.Calculator.Service.Function.UnitTests.Builder;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System.Globalization;
     using System.Text.Json;
     using System.Text.Json.Nodes;
     using System.Text.Json.Serialization;
@@ -24,15 +25,15 @@
             this.Fixture = new Fixture();
             this.TestClass = new CalculationResultsExporter(
                 new ProducerDisposalFeesWithBadDebtProvision1JsonMapper(),
-                new CommsCostsByMaterialFeesSummary2aMapper(),
+                new CommsCostsByMaterialFeesSummary2AMapper(),
                 new CalcResultCommsCostByMaterial2AJsonMapper(),
                 new SAOperatingCostsWithBadDebtProvisionMapper(),
                 new CalcResultLADataPrepCostsWithBadDebtProvision4Mapper(),
-                new FeeForCommsCostsWithBadDebtProvision2aMapper(),
-                new FeeForCommsCostsWithBadDebtProvision2bMapper(),
-                new TotalProducerFeeWithBadDebtProvisionFor2con_1_2a_2b_2cMapper(),
-                new FeeForSASetUpCostsWithBadDebtProvision_5Mapper(),
-                new CalcResultCommsCostsWithBadDebtProvision2cMapper(),
+                new FeeForCommsCostsWithBadDebtProvision2AMapper(),
+                new FeeForCommsCostsWithBadDebtProvision2BMapper(),
+                new TotalProducerFeeWithBadDebtProvisionFor2Con1And2AAnd2BAnd2CMapper(),
+                new FeeForSaSetUpCostsWithBadDebtProvision5Mapper(),
+                new CalcResultCommsCostsWithBadDebtProvision2CMapper(),
                 new CalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper(),
                 new TotalProducerBillWithBadDebtProvisionMapper(),
                 new CalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper(),
@@ -156,15 +157,27 @@
 
             var actual = roundTrippedData[0]!["producerDisposalFeesWithBadDebtProvision1"]!["materialBreakdown"]![0]!;
             var producer = data.ProducerDisposalFees.SingleOrDefault(t => !string.IsNullOrEmpty(t.Level))!;
-            var expected = producer.ProducerDisposalFeesByMaterial.First();
+            var expected = producer.ProducerDisposalFeesByMaterial!.First();
 
-            Assert.AreEqual(expected.Value.PreviousInvoicedTonnage, actual["previousInvoicedTonnage"]!.ToString());
+            decimal? actualValue = 0;
+            if(actual["previousInvoicedTonnage"]?.ToString() == "-")
+            {
+                actualValue = null;
+            }
+
+            Assert.AreEqual(expected.Value.PreviousInvoicedTonnage, actualValue);
             Assert.AreEqual(expected.Value.HouseholdPackagingWasteTonnage, actual["householdPackagingWasteTonnage"]!.GetValue<decimal>());
             Assert.AreEqual(expected.Value.PublicBinTonnage, actual["publicBinTonnage"]!.GetValue<decimal>());
             Assert.AreEqual(expected.Value.TotalReportedTonnage, actual["totalTonnage"]!.GetValue<decimal>());
             Assert.AreEqual(expected.Value.ManagedConsumerWasteTonnage, actual["selfManagedConsumerWasteTonnage"]!.GetValue<decimal>());
             Assert.AreEqual(expected.Value.NetReportedTonnage, actual["netTonnage"]!.GetValue<decimal>());
-            Assert.AreEqual(expected.Value.TonnageChange, actual["tonnageChange"]!.ToString());
+
+            var actualPrev = ReadNullableDecimal(actual, "previousInvoicedTonnage");
+            Assert.AreEqual(expected.Value.PreviousInvoicedTonnage, actualPrev);
+
+            var actualChange = ReadNullableDecimal(actual, "tonnageChange");
+            Assert.AreEqual(expected.Value.TonnageChange, actualChange);
+
             Assert.AreEqual(CurrencyConverter.ConvertToCurrency(expected.Value.PricePerTonne, 4), actual["pricePerTonne"]!.GetValue<string>());
             Assert.AreEqual(CurrencyConverter.ConvertToCurrency(expected.Value.ProducerDisposalFee), actual["producerDisposalFeeWithoutBadDebtProvision"]!.GetValue<string>());
             Assert.AreEqual(CurrencyConverter.ConvertToCurrency(expected.Value.BadDebtProvision), actual["badDebtProvision"]!.GetValue<string>());
@@ -644,6 +657,21 @@
 
             // Main Fields
             AssertAreEqual(producer.ProducerId, calculationResult["producerID"]);
-        }        
+        }
+
+        private static decimal? ReadNullableDecimal(JsonNode obj, string prop)
+        {
+            var n = obj[prop];
+            if (n is null) return null;
+
+            // exporter may emit numbers or strings ("-" for null)
+            var s = n.ToString();
+            if (string.Equals(s, "-", StringComparison.Ordinal)) return null;
+
+            return decimal.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out var d)
+                ? d
+                : null;
+        }
+
     }
 }

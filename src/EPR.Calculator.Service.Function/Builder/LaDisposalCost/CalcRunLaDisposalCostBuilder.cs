@@ -30,7 +30,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
 
             public decimal Tonnage { get; set; }
 
-            public required ProducerDetail ProducerDetail { get; set; }
+            public required ProducerDetail? ProducerDetail { get; set; }
         }
 
         public CalcRunLaDisposalCostBuilder(ApplicationDBContext context)
@@ -39,15 +39,15 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
             this.producerData = new List<ProducerData>();
         }
 
-        public async Task<CalcResultLaDisposalCostData> Construct(CalcResultsRequestDto resultsRequestDto, CalcResult calcResult)
+        public async Task<CalcResultLaDisposalCostData> ConstructAsync(CalcResultsRequestDto resultsRequestDto, CalcResult calcResult)
         {
             var laDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>();
             var orderId = 1;
 
             await this.SetProducerData(resultsRequestDto);
 
-            var scaledUpProducerReportedOn = calcResult.CalcResultScaledupProducers.ScaledupProducers.FirstOrDefault(x => x.IsTotalRow);
-            this.producerData = this.producerData.Where(t => !calcResult.CalcResultScaledupProducers.ScaledupProducers.Any(i => i.ProducerId == t.ProducerDetail.ProducerId)).ToList();
+            var scaledUpProducerReportedOn = calcResult.CalcResultScaledupProducers.ScaledupProducers?.FirstOrDefault(x => x.IsTotalRow);
+            this.producerData = this.producerData.Where(t => calcResult.CalcResultScaledupProducers.ScaledupProducers != null && !calcResult.CalcResultScaledupProducers.ScaledupProducers.Any(i => i.ProducerId == t.ProducerDetail?.ProducerId)).ToList();
 
             var lapcapDetails = calcResult.CalcResultLapcapData.CalcResultLapcapDataDetails
                 .Where(t => t.OrderId != 1 && t.Name != CalcResultLapcapDataBuilder.CountryApportionment).ToList();

@@ -195,10 +195,8 @@
             }
         }
 
-
-
         /// <summary>
-        /// Tests that the <see cref="ICalcResultScaledupProducersBuilder.Construct(CalcResultsRequestDto)"/>
+        /// Tests that the <see cref="ICalcResultScaledupProducersBuilder.ConstructAsync(CalcResultsRequestDto)"/>
         /// method returns the correct result when scaled up data is present.
         /// </summary>
         /// <returns>A <see cref="Task"/>.</returns>
@@ -211,14 +209,14 @@
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
 
             // Act
-            var result = await this.builder.Construct(requestDto);
+            var result = await this.builder.ConstructAsync(requestDto);
 
             // Assert
-            Assert.AreEqual(3, result.ScaledupProducers.Count());
+            Assert.AreEqual(3, result.ScaledupProducers!.Count());
         }
 
         /// <summary>
-        /// Tests that the <see cref="ICalcResultScaledupProducersBuilder.Construct(CalcResultsRequestDto)"/>
+        /// Tests that the <see cref="ICalcResultScaledupProducersBuilder.ConstructAsync(CalcResultsRequestDto)"/>
         /// method returns the correct result when scaled up data is present.
         /// </summary>
         /// <returns>A <see cref="Task"/>.</returns>
@@ -231,15 +229,15 @@
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
 
             // Act
-            var result = await this.builder.Construct(requestDto);
+            var result = await this.builder.ConstructAsync(requestDto);
 
             // Assert
-            var actualNumberScaledUpProducer = result.ScaledupProducers.Where(t => !t.IsTotalRow);
+            var actualNumberScaledUpProducer = result.ScaledupProducers!.Where(t => !t.IsTotalRow);
             Assert.AreEqual(2, actualNumberScaledUpProducer.Count());
         }
 
         /// <summary>
-        /// Tests that the <see cref="ICalcResultScaledupProducersBuilder.Construct(CalcResultsRequestDto)"/>
+        /// Tests that the <see cref="ICalcResultScaledupProducersBuilder.ConstructAsync(CalcResultsRequestDto)"/>
         /// method returns the correct result when scaled up data is not present.
         /// </summary>
         /// <returns>A <see cref="Task"/>.</returns>
@@ -251,10 +249,10 @@
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
 
             // Act
-            var result = await this.builder.Construct(requestDto);
+            var result = await this.builder.ConstructAsync(requestDto);
 
             // Assert
-            Assert.AreEqual(0, result.ScaledupProducers.Count());
+            Assert.AreEqual(0, result.ScaledupProducers?.Count());
         }
 
         [TestMethod]

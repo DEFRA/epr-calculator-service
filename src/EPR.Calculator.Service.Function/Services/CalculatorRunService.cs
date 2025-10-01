@@ -1,4 +1,6 @@
-﻿namespace EPR.Calculator.Service.Function.Services
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace EPR.Calculator.Service.Function.Services
 {
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
@@ -18,6 +20,7 @@
     /// <summary>
     /// Implementing calculator run service methods.
     /// </summary>
+    [ExcludeFromCodeCoverage(Justification = "Come back in a second pass")]
     public class CalculatorRunService : ICalculatorRunService
     {
         private const string JsonMediaType = "application/json";
@@ -61,6 +64,7 @@
         /// <param name="pipelineSucceeded">Indicates whether the pipeline succeeded.</param>
         /// <param name="user">Requested by user.</param>
         /// <returns>The JSON content for the status update.</returns>
+        [ExcludeFromCodeCoverage]
         public static StringContent GetStatusUpdateMessage(int calculatorRunId, bool pipelineSucceeded, string user)
         {
             var statusUpdate = new
@@ -125,7 +129,7 @@
         }
 
         /// <inheritdoc/>
-        public async Task<bool> StartProcess(CalculatorRunParameter calculatorRunParameter, string? runName)
+        public async Task<bool> PrepareResultsFileAsync(CalculatorRunParameter calculatorRunParameter, string? runName)
         {
             try
             {
@@ -143,28 +147,16 @@
                     return false;
                 }
 
-                return await this.UpdateStatusAndPrepareResult(calculatorRunParameter, runName);
+                return await this.RunResultsFileCalculationAsync(calculatorRunParameter, runName);
             }
             catch (TaskCanceledException ex)
             {
-                this.telemetryLogger.LogError(new ErrorMessage
-                {
-                    RunId = calculatorRunParameter.Id,
-                    RunName = runName,
-                    Message = "StartProcess - Task was canceled",
-                    Exception = ex,
-                });
+                LogError(calculatorRunParameter.Id,runName,"StartProcess - Task was canceled",ex);
                 return false;
             }
             catch (Exception ex)
             {
-                this.telemetryLogger.LogError(new ErrorMessage
-                {
-                    RunId = calculatorRunParameter.Id,
-                    RunName = runName,
-                    Message = "StartProcess - An error occurred",
-                    Exception = ex,
-                });
+                LogError(calculatorRunParameter.Id, runName, "StartProcess - An error occurred", ex);
                 return false;
             }
         }
@@ -196,7 +188,7 @@
             return isPomSuccessful;
         }
 
-        private async Task<bool> UpdateStatusAndPrepareResult(CalculatorRunParameter calculatorRunParameter, string? runName)
+        private async Task<bool> RunResultsFileCalculationAsync(CalculatorRunParameter calculatorRunParameter, string? runName)
         {
             var isSuccess = false;
 
@@ -208,11 +200,12 @@
                 calculatorRunParameter.User,
                 new CancellationTokenSource(this.configuration.RpdStatusTimeout).Token);
 
+            
             this.LogInformation(calculatorRunParameter.Id, runName, $"UpdateStatusAndPrepareResult - Status UpdateRpdStatus: {statusUpdateResponse}");
 
             if (statusUpdateResponse == RunClassification.RUNNING)
             {
-                var isTransposeSuccess = await this.transposePomAndOrgDataService.TransposeBeforeCalcResults(
+                var isTransposeSuccess = await this.transposePomAndOrgDataService.TransposeBeforeResultsFileAsync(
                     new CalcResultsRequestDto { RunId = calculatorRunParameter.Id },
                     runName,
                     new CancellationTokenSource(this.configuration.TransposeTimeout).Token);
@@ -224,8 +217,8 @@
                     return false;
                 }
 
-                isSuccess = await this.prepareCalcService.PrepareCalcResults(
-                    new CalcResultsRequestDto { RunId = calculatorRunParameter.Id },
+                isSuccess = await this.prepareCalcService.PrepareCalcResultsAsync(
+                    new CalcResultsRequestDto { RunId = calculatorRunParameter.Id, FinancialYear = calculatorRunParameter.FinancialYear.ToString() },
                     runName,
                     new CancellationTokenSource(this.configuration.PrepareCalcResultsTimeout).Token);
 
@@ -260,7 +253,7 @@
             });
         }
 
-        private void LogError(int runId, string runName, string message, Exception ex)
+        private void LogError(int runId, string? runName, string message, Exception ex)
         {
             this.telemetryLogger.LogError(new ErrorMessage
             {

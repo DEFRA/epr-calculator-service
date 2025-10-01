@@ -32,6 +32,7 @@
             _dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
+                .EnableSensitiveDataLogging() // Enable logging for unit test's dbcontext issues only
             .Options;
 
             this._context = new ApplicationDBContext(this._dbContextOptions);
@@ -185,7 +186,7 @@
             await this._context.SaveChangesAsync();
 
             // Act
-            var result = await this.TestClass.TransposeBeforeCalcResults(resultsRequestDto, runName, cancellationToken);
+            var result = await this.TestClass.TransposeBeforeResultsFileAsync(resultsRequestDto, runName, cancellationToken);
 
             // Assert
             Assert.IsFalse(result);
@@ -214,7 +215,7 @@
                 mockTelemetryLogger.Object);
 
             // Act
-            var result = await service.TransposeBeforeCalcResults(resultsRequestDto, runName, cancellationToken);
+            var result = await service.TransposeBeforeResultsFileAsync(resultsRequestDto, runName, cancellationToken);
 
             // Assert
             Assert.IsFalse(result);
@@ -245,7 +246,7 @@
                 mockTelemetryLogger.Object);
 
             // Act
-            var result = await service.TransposeBeforeCalcResults(resultsRequestDto, runName, cancellationToken);
+            var result = await service.TransposeBeforeResultsFileAsync(resultsRequestDto, runName, cancellationToken);
 
             // Assert
             Assert.IsFalse(result);
@@ -262,7 +263,7 @@
             var cancellationToken = CancellationToken.None;
 
             // Act
-            var result = await this.TestClass.TransposeBeforeCalcResults(resultsRequestDto, runName, cancellationToken);
+            var result = await this.TestClass.TransposeBeforeResultsFileAsync(resultsRequestDto, runName, cancellationToken);
 
             // Assert
             Assert.IsTrue(result);
@@ -315,6 +316,7 @@
             Assert.AreEqual(expectedResult.ProducerId, producerDetail.ProducerId);
         }
 
+        [TestMethod]
         public async Task Transpose_Should_Return_Correct_ProducerReportedMaterial()
         {
             var expectedResult = new ProducerReportedMaterial
@@ -406,6 +408,7 @@
             Assert.AreEqual(expectedResult.ProducerDetail.ProducerName, producerReportedMaterial.ProducerDetail.ProducerName);
         }
 
+        [TestMethod]
         public async Task Transpose_Should_Return_Correct_ProducerSubsidaryDetail()
         {
             var expectedResult = new ProducerDetail
@@ -548,7 +551,7 @@
             var cancellationToken = new CancellationToken(true);
 
             // Act
-            var result = await this.TestClass.TransposeBeforeCalcResults(resultsRequestDto, runName, cancellationToken);
+            var result = await this.TestClass.TransposeBeforeResultsFileAsync(resultsRequestDto, runName, cancellationToken);
 
             // Assert
             Assert.IsFalse(result);
@@ -577,7 +580,7 @@
                 .Throws<OperationCanceledException>();
 
             // Act
-            var result = await this.TestClass.TransposeBeforeCalcResults(
+            var result = await this.TestClass.TransposeBeforeResultsFileAsync(
                 resultsRequestDto,
                 runName,
                 CancellationToken.None);
@@ -612,7 +615,7 @@
             this._context.CalculatorRunPomDataDetails = null!;
 
             // Act
-            var result = await this.TestClass.TransposeBeforeCalcResults(
+            var result = await this.TestClass.TransposeBeforeResultsFileAsync(
                 resultsRequestDto,
                 this.Fixture.Create<string>(),
                 CancellationToken.None);
@@ -764,7 +767,6 @@
             {
                 new ()
                 {
-                    Id = 1,
                     CalendarYear = "2024-25",
                     EffectiveFrom = DateTime.Now,
                     CreatedBy = "Test user",
@@ -772,7 +774,6 @@
                 },
                 new ()
                 {
-                    Id = 2,
                     CalendarYear = "2024-25",
                     EffectiveFrom = DateTime.Now,
                     CreatedBy = "Test user",

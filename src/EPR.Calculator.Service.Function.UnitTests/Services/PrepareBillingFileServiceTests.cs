@@ -47,7 +47,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.MockLogger = new Mock<ICalculatorTelemetryLogger>();
 
             this.PrepareCalcService = new Mock<IPrepareCalcService>();
-            this.PrepareCalcService.Setup(s => s.PrepareCalcResults(
+            this.PrepareCalcService.Setup(s => s.PrepareCalcResultsAsync(
                 It.IsAny<CalcResultsRequestDto>(),
                 It.IsAny<string>(),
                 It.IsAny<CancellationToken>()))
@@ -133,7 +133,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Setup PrepareCalcService to return true
             PrepareCalcService
-                .Setup(s => s.PrepareBillingResults(
+                .Setup(s => s.PrepareBillingResultsAsync(
                     It.IsAny<CalcResultsRequestDto>(),
                     It.IsAny<string>(),
                     It.IsAny<CancellationToken>()))
@@ -150,13 +150,66 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Assert
             Assert.IsTrue(result);
-            PrepareCalcService.Verify(s => s.PrepareBillingResults(
+            PrepareCalcService.Verify(s => s.PrepareBillingResultsAsync(
                 It.Is<CalcResultsRequestDto>(dto =>
                     dto.RunId == calculatorRunId &&
                     dto.AcceptedProducerIds.Contains(acceptedProducerId) &&
                     dto.IsBillingFile),
                 calculatorName,
                 CancellationToken.None), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task PrepareBillingFileAsync_ReturnsTrue_WhenRunAndNoAcceptedBillingInstructionsExist()
+        {
+            // Arrange
+            var calculatorRunId = 122445;
+            var calculatorName = "TestRun";
+            var acceptedProducerId = 999;
+            var calcFinancialYear = new CalculatorRunFinancialYear { Name = "2025" };
+
+            // Add a CalculatorRun to the context
+            _context.CalculatorRuns.Add(new CalculatorRun
+            {
+                Id = calculatorRunId,
+                CalculatorRunClassificationId = 1,
+                Name = calculatorName,
+                Financial_Year = calcFinancialYear,
+                CreatedBy = "user",
+                CreatedAt = DateTime.Now,
+                IsBillingFileGenerating = true
+            });
+
+            // Add an accepted billing instruction
+            _context.Add(new ProducerResultFileSuggestedBillingInstruction
+            {
+                CalculatorRunId = calculatorRunId,
+                ProducerId = acceptedProducerId,
+                BillingInstructionAcceptReject = "Rejected",
+                SuggestedBillingInstruction = "TestInstruction",
+            });
+
+            _context.SaveChanges();
+
+            // Setup PrepareCalcService to return true
+            PrepareCalcService
+                .Setup(s => s.PrepareBillingResultsAsync(
+                    It.IsAny<CalcResultsRequestDto>(),
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(true);
+
+            var service = new PrepareBillingFileService(
+                _context,
+                PrepareCalcService.Object,
+                MockLogger.Object);
+            var approvedBy = "user";
+
+            // Act
+            var result = await service.PrepareBillingFileAsync(calculatorRunId, calculatorName, approvedBy);
+
+            // Assert
+            Assert.AreEqual(false, result);
         }
     }
 

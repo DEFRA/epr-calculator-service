@@ -20,7 +20,7 @@
             this.context = context;
         }
 
-        public async Task<CalcResultLateReportingTonnage> Construct(CalcResultsRequestDto resultsRequestDto)
+        public async Task<CalcResultLateReportingTonnage> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
         {
             var result = await (from run in this.context.CalculatorRuns
                                 join master in this.context.DefaultParameterSettings

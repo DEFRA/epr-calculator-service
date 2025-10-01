@@ -10,7 +10,7 @@
     public class ProducerDisposalFeesWithBadDebtProvision1JsonMapper : IProducerDisposalFeesWithBadDebtProvision1JsonMapper
     {
         public ProducerDisposalFeesWithBadDebtProvision1 Map(
-            Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> producerDisposalFeesByMaterial,
+            Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>? producerDisposalFeesByMaterial,
             List<MaterialDetail> materials,
             string level)
         {
@@ -21,26 +21,28 @@
         }
 
         private static IEnumerable<ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown> GetMaterialBreakdown(
-            Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> producerDisposalFeesByMaterial,
+            Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>? producerDisposalFeesByMaterial,
             List<MaterialDetail> materials,
             string level)
         {
             var materialBreakdown = new List<ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown>();
 
-            foreach (var producerTonnage in producerDisposalFeesByMaterial)
+            if (producerDisposalFeesByMaterial != null)
             {
-                var material = materials.Single(m => m.Code == producerTonnage.Key);
+                foreach (var producerTonnage in producerDisposalFeesByMaterial)
+                {
+                    var material = materials.Single(m => m.Code == producerTonnage.Key);
 
                 var breakdown = new ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown
                 {
                     MaterialName = material.Name,
-                    PreviousInvoicedTonnage = GetPreviousInvoicedTonnage(level),
+                    PreviousInvoicedTonnage = level == "1" ? (producerTonnage.Value.PreviousInvoicedTonnage?.ToString() ?? CommonConstants.Hyphen) : CommonConstants.Hyphen,
                     HouseholdPackagingWasteTonnage = producerTonnage.Value.HouseholdPackagingWasteTonnage,
                     PublicBinTonnage = producerTonnage.Value.PublicBinTonnage,
                     TotalTonnage = producerTonnage.Value.TotalReportedTonnage,
                     SelfManagedConsumerWasteTonnage = producerTonnage.Value.ManagedConsumerWasteTonnage,
                     NetTonnage = producerTonnage.Value.NetReportedTonnage,
-                    TonnageChange = GetPreviousInvoicedTonnage(level),
+                    TonnageChange = level == "1" ? (producerTonnage.Value.TonnageChange?.ToString() ?? CommonConstants.Hyphen) : CommonConstants.Hyphen,
                     PricePerTonne = CurrencyConverter.ConvertToCurrency(producerTonnage.Value.PricePerTonne, 4),
                     ProducerDisposalFeeWithoutBadDebtProvision = CurrencyConverter.ConvertToCurrency(producerTonnage.Value.ProducerDisposalFee),
                     BadDebtProvision = CurrencyConverter.ConvertToCurrency(producerTonnage.Value.BadDebtProvision),
@@ -51,21 +53,17 @@
                     NorthernIrelandWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(producerTonnage.Value.NorthernIrelandWithBadDebtProvision),
                 };
 
-                if (producerTonnage.Key == MaterialCodes.Glass)
-                {
-                    breakdown.HouseholdDrinksContainersTonnageGlass = producerTonnage.Value.HouseholdDrinksContainersTonnage;
+                    if (producerTonnage.Key == MaterialCodes.Glass)
+                    {
+                        breakdown.HouseholdDrinksContainersTonnageGlass =
+                            producerTonnage.Value.HouseholdDrinksContainersTonnage;
+                    }
+
+                    materialBreakdown.Add(breakdown);
                 }
-                materialBreakdown.Add(breakdown);
             }
 
             return materialBreakdown;
-        }
-
-        private static string GetPreviousInvoicedTonnage(string level)
-        {
-            return level == CommonConstants.LevelOne.ToString()
-                ? CommonConstants.DefaultMinValue.ToString()
-                : CommonConstants.Hyphen;
         }
     }
 }

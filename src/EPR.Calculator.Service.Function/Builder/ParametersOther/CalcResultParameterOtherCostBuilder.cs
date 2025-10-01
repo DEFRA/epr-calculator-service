@@ -33,7 +33,7 @@
             this.calcCountryApportionmentService = calcCountryApportionmentService;
         }
 
-        public async Task<CalcResultParameterOtherCost> Construct(CalcResultsRequestDto resultsRequestDto)
+        public async Task<CalcResultParameterOtherCost> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
         {
             var culture = CultureInfo.CreateSpecificCulture("en-GB");
             culture.NumberFormat.CurrencySymbol = "£";
@@ -48,6 +48,8 @@
                                ParameterValue = defaultDetail.ParameterValue,
                                ParameterCategory = defaultTemplate.ParameterCategory,
                                ParameterType = defaultTemplate.ParameterType,
+                               ParameterUniqueReference = defaultDetail.ParameterUniqueReferenceId
+                               
                            }).ToListAsync();
 
             var schemeAdminCosts = results.Where(x => x.ParameterType == SchemeAdminOperatingCost);

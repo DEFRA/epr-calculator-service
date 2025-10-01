@@ -57,9 +57,9 @@
 
         private IDbLoadingChunkerService<ProducerReportedMaterial> ProducerReportedMaterialChunker { get; init; }
 
-        public async Task<bool> TransposeBeforeCalcResults(
+        public async Task<bool> TransposeBeforeResultsFileAsync(
             [FromBody] CalcResultsRequestDto resultsRequestDto,
-            string runName,
+            string? runName,
             CancellationToken cancellationToken)
         {
             var startTime = DateTime.Now;
@@ -83,7 +83,7 @@
                     return false;
                 }
 
-                var isTransposeSuccessful = await this.Transpose(
+                await this.Transpose(
                     resultsRequestDto,
                     cancellationToken);
                 var endTime = DateTime.Now;
@@ -240,7 +240,7 @@
                                 {
                                     var pom = pomData.AsEnumerable();
                                     var packagingType = pom.FirstOrDefault()?.PackagingType;
-                                    var totalPackagingMaterialWeight = pom.Sum(x => x.PackagingMaterialWeight);
+                                    var totalPackagingMaterialWeight = pom.Sum(x => x.PackagingMaterialWeight) ?? 0;
 
                                     // Proceed further only if the packaging type and packaging material weight is not null
                                     // TO DO: We have to record if the packaging type or packaging material weight is null in a separate table post Dec 2024
@@ -251,7 +251,7 @@
                                             MaterialId = material.Id,
                                             Material = material,
                                             ProducerDetail = producerDetail,
-                                            PackagingType = packagingType,
+                                            PackagingType = packagingType!,
                                             PackagingTonnage = Math.Round((decimal)(totalPackagingMaterialWeight) / 1000, 3),
                                         };
 

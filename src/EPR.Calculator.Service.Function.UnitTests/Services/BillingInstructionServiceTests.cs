@@ -16,9 +16,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     [TestClass]
     public class BillingInstructionServiceTests
     {
-        private BillingInstructionService _testClass;
-        private Mock<IDbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction>> _billingInstructionChunker;
-        private Mock<ICalculatorTelemetryLogger> _telemetryLogger;
+        private BillingInstructionService _testClass = null!;
+        private Mock<IDbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction>> _billingInstructionChunker = null!;
+        private Mock<ICalculatorTelemetryLogger> _telemetryLogger = null!;
 
         [TestInitialize]
         public void SetUp()
@@ -98,16 +98,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                             Level= CommonConstants.LevelTwo.ToString(),
                             BillingInstructionSection = new CalcResultSummaryBillingInstruction
                             {
-                                CurrentYearInvoiceTotalToDate = "1000",
+                                CurrentYearInvoiceTotalToDate = 1000m,
                                 TonnageChangeSinceLastInvoice = "Tonnage Changed",
-                                LiabilityDifference = "-200",
+                                LiabilityDifference = -200,
                                 MaterialThresholdBreached = "-ve",
                                 TonnageThresholdBreached = "-ve",
-                                PercentageLiabilityDifference = "10.05",
+                                PercentageLiabilityDifference = 10.05m,
                                 MaterialPercentageThresholdBreached = "-ve",
                                 TonnagePercentageThresholdBreached = "-ve",
                                 SuggestedBillingInstruction = "INITIAL",
-                                SuggestedInvoiceAmount = "500"
+                                SuggestedInvoiceAmount = 500m
                             }
                         }
                     }
@@ -162,7 +162,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     MaterialHeading = string.Empty,
                     TonnageHeading = string.Empty,
                 }, 
-                CalcResultSummary  = new() {  ProducerDisposalFees = null }
+                CalcResultSummary  = new() {  ProducerDisposalFees = null! }
             };
 
 
@@ -177,6 +177,65 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             Assert.IsFalse(result);
         }
-       
+
+        [TestMethod]
+        public async Task CanCallCreateBillingInstructionsWithCancelledProducers()
+        {
+            // Arrange
+            var fixture = new Fixture();
+            var calcResult = new CalcResult
+            {
+                CalcResultScaledupProducers = new CalcResultScaledupProducers(),
+                
+                CalcResultDetail = new CalcResultDetail
+                {
+                    RunId = 4,
+                    RunDate = DateTime.Now,
+                    RunName = "RunName",
+                },
+                CalcResultLapcapData = new CalcResultLapcapData
+                {
+                    Name = string.Empty,
+                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>(),
+                },
+                CalcResultParameterOtherCost = new()
+                {
+                    BadDebtProvision = new KeyValuePair<string, string>(),
+                    Name = string.Empty,
+                    Details = new List<CalcResultParameterOtherCostDetail>(),
+                    Materiality = new List<CalcResultMateriality>(),
+                    SaOperatingCost = new List<CalcResultParameterOtherCostDetail>(),
+                    SchemeSetupCost = new CalcResultParameterOtherCostDetail(),
+                },
+                CalcResultLateReportingTonnageData = new()
+                {
+                    Name = string.Empty,
+                    CalcResultLateReportingTonnageDetails = new List<CalcResultLateReportingTonnageDetail>(),
+                    MaterialHeading = string.Empty,
+                    TonnageHeading = string.Empty,
+                },
+                CalcResultSummary = new() { ProducerDisposalFees = fixture.Create<List<CalcResultSummaryProducerDisposalFees>>() } ,
+                 CalcResultCancelledProducers = new CalcResultCancelledProducersResponse()
+                 {
+                     TitleHeader = CommonConstants.CancelledProducers,
+                     CancelledProducers = new List<CalcResultCancelledProducersDto>()
+                       { new CalcResultCancelledProducersDto() { LastTonnage = null,  ProducerId = 1, TradingNameValue ="Test",
+                           LatestInvoice = new LatestInvoice(){ BillingInstructionIdValue="1_1", RunNameValue ="RunName" , RunNumberValue="4" },                            
+                       }
+                 }
+                 }
+            };
+
+
+            _telemetryLogger.Setup(mock => mock.LogInformation(It.IsAny<TrackMessage>())).Verifiable();
+            _telemetryLogger.Setup(mock => mock.LogError(It.IsAny<ErrorMessage>())).Verifiable();
+
+            // Act
+            var result = await _testClass.CreateBillingInstructions(calcResult);
+           
+
+            Assert.IsTrue(result);
+        }
+
     }
 }

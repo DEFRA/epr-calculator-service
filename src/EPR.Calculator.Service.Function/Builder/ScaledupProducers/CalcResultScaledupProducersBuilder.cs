@@ -140,7 +140,7 @@
         }
 
         /// <inheritdoc/>
-        public async Task<CalcResultScaledupProducers> Construct(CalcResultsRequestDto resultsRequestDto)
+        public async Task<CalcResultScaledupProducers> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
         {
             var runId = resultsRequestDto.RunId;
             var materialsFromDb = await this.context.Material.ToListAsync();

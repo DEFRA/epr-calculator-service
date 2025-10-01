@@ -10,6 +10,7 @@ namespace EPR.Calculator.Service.Function.Builder
     using EPR.Calculator.Service.Function.Builder.LateReportingTonnages;
     using EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment;
     using EPR.Calculator.Service.Function.Builder.ParametersOther;
+    using EPR.Calculator.Service.Function.Builder.RejectedProducers;
     using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
     using EPR.Calculator.Service.Function.Builder.Summary;
     using EPR.Calculator.Service.Function.Dtos;
@@ -27,7 +28,8 @@ namespace EPR.Calculator.Service.Function.Builder
         private readonly ICalcResultLateReportingBuilder lateReportingBuilder;
         private readonly ICalcRunLaDisposalCostBuilder laDisposalCostBuilder;
         private readonly ICalcResultScaledupProducersBuilder calcResultScaledupProducersBuilder;
-        public readonly ICalcResultCancelledProducersBuilder CalcResultCancelledProducersBuilder;
+        public readonly ICalcResultCancelledProducersBuilder calcResultCancelledProducersBuilder;
+        public readonly ICalcResultRejectedProducersBuilder calcResultRejectedProducersBuilder;
         private readonly TelemetryClient _telemetryClient;
 
 
@@ -46,6 +48,7 @@ namespace EPR.Calculator.Service.Function.Builder
             ICalcResultScaledupProducersBuilder calcResultScaledupProducersBuilder,
             ICalcResultSummaryBuilder summaryBuilder,
             ICalcResultCancelledProducersBuilder calcResultCancelledProducersBuilder,
+            ICalcResultRejectedProducersBuilder calcResultRejectedProducersBuilder,
             TelemetryClient telemetryClient)
         {
             this.calcResultDetailBuilder = calcResultDetailBuilder;
@@ -57,11 +60,12 @@ namespace EPR.Calculator.Service.Function.Builder
             this.lapcapplusFourApportionmentBuilder = calcResultOnePlusFourApportionmentBuilder;
             this.calcResultScaledupProducersBuilder = calcResultScaledupProducersBuilder;
             this.summaryBuilder = summaryBuilder;
-            this.CalcResultCancelledProducersBuilder = calcResultCancelledProducersBuilder;
+            this.calcResultCancelledProducersBuilder = calcResultCancelledProducersBuilder;
+            this.calcResultRejectedProducersBuilder = calcResultRejectedProducersBuilder;
             this._telemetryClient = telemetryClient;
         }
 
-        public async Task<CalcResult> Build(CalcResultsRequestDto resultsRequestDto)
+        public async Task<CalcResult> BuildAsync(CalcResultsRequestDto resultsRequestDto)
         {
             var result = new CalcResult
             {
@@ -80,46 +84,53 @@ namespace EPR.Calculator.Service.Function.Builder
                 },
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultCancelledProducers = new CalcResultCancelledProducersResponse(),
+                CalcResultRejectedProducers = new List<CalcResultRejectedProducer>()
             };
             this._telemetryClient.TrackTrace("calcResultDetailBuilder started...");
-            result.CalcResultDetail = await this.calcResultDetailBuilder.Construct(resultsRequestDto);
+            result.CalcResultDetail = await this.calcResultDetailBuilder.ConstructAsync(resultsRequestDto);
             this._telemetryClient.TrackTrace("calcResultDetailBuilder end...");
 
             this._telemetryClient.TrackTrace("lapcapBuilder started...");
-            result.CalcResultLapcapData = await this.lapcapBuilder.Construct(resultsRequestDto);
+            result.CalcResultLapcapData = await this.lapcapBuilder.ConstructAsync(resultsRequestDto);
             this._telemetryClient.TrackTrace("lapcapBuilder end...");
 
             this._telemetryClient.TrackTrace("lateReportingBuilder started...");
-            result.CalcResultLateReportingTonnageData = await this.lateReportingBuilder.Construct(resultsRequestDto);
+            result.CalcResultLateReportingTonnageData = await this.lateReportingBuilder.ConstructAsync(resultsRequestDto);
             this._telemetryClient.TrackTrace("BuilateReportingBuilderlder end...");
 
             this._telemetryClient.TrackTrace("calcResultParameterOtherCostBuilder started...");
-            result.CalcResultParameterOtherCost = await this.calcResultParameterOtherCostBuilder.Construct(resultsRequestDto);
+            result.CalcResultParameterOtherCost = await this.calcResultParameterOtherCostBuilder.ConstructAsync(resultsRequestDto);
             this._telemetryClient.TrackTrace("calcResultParameterOtherCostBuilder end...");
 
             this._telemetryClient.TrackTrace("lapcapplusFourApportionmentBuilder started...");
-            result.CalcResultOnePlusFourApportionment = this.lapcapplusFourApportionmentBuilder.Construct(resultsRequestDto, result);
+            result.CalcResultOnePlusFourApportionment = this.lapcapplusFourApportionmentBuilder.ConstructAsync(resultsRequestDto, result);
             this._telemetryClient.TrackTrace("lapcapplusFourApportionmentBuilder end...");
 
             this._telemetryClient.TrackTrace("CalcResultCancelledProducersBuilder started...");
-            result.CalcResultCancelledProducers = await this.CalcResultCancelledProducersBuilder.Construct(resultsRequestDto);
+            result.CalcResultCancelledProducers = await this.calcResultCancelledProducersBuilder.ConstructAsync(resultsRequestDto, result.CalcResultDetail.FinancialYear);
             this._telemetryClient.TrackTrace("CalcResultCancelledProducersBuilder end...");
 
             this._telemetryClient.TrackTrace("calcResultScaledupProducersBuilder started...");
-            result.CalcResultScaledupProducers = await this.calcResultScaledupProducersBuilder.Construct(resultsRequestDto);
+            result.CalcResultScaledupProducers = await this.calcResultScaledupProducersBuilder.ConstructAsync(resultsRequestDto);
             this._telemetryClient.TrackTrace("calcResultScaledupProducersBuilder end...");
 
+            if (resultsRequestDto.IsBillingFile)
+            {
+                this._telemetryClient.TrackTrace("CalcResultRejectedProducersBuilder started...");
+                result.CalcResultRejectedProducers = await this.calcResultRejectedProducersBuilder.ConstructAsync(resultsRequestDto);
+                this._telemetryClient.TrackTrace("CalcResultRejectedProducersBuilder end...");
+            }
+
             this._telemetryClient.TrackTrace("laDisposalCostBuilder started...");
-            result.CalcResultLaDisposalCostData = await this.laDisposalCostBuilder.Construct(resultsRequestDto, result);
+            result.CalcResultLaDisposalCostData = await this.laDisposalCostBuilder.ConstructAsync(resultsRequestDto, result);
             this._telemetryClient.TrackTrace("laDisposalCostBuilder end...");
 
             this._telemetryClient.TrackTrace("summaryBuilder started...");
-            result.CalcResultCommsCostReportDetail = await this.commsCostReportBuilder.Construct(
+            result.CalcResultCommsCostReportDetail = await this.commsCostReportBuilder.ConstructAsync(
                 resultsRequestDto, result.CalcResultOnePlusFourApportionment, result);
-            result.CalcResultLaDisposalCostData = await this.laDisposalCostBuilder.Construct(resultsRequestDto, result);
-            result.CalcResultSummary = await this.summaryBuilder.Construct(resultsRequestDto, result);
+            result.CalcResultLaDisposalCostData = await this.laDisposalCostBuilder.ConstructAsync(resultsRequestDto, result);
+            result.CalcResultSummary = await this.summaryBuilder.ConstructAsync(resultsRequestDto, result);
             this._telemetryClient.TrackTrace("summaryBuilder end...");
-
 
             return result;
         }

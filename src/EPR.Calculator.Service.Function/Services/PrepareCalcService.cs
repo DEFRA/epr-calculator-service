@@ -65,9 +65,9 @@
         private IBillingFileExporter<CalcResult> BillingFileExporter { get; init; }
         private IPrepareProducerDataInsertService producerDataInsertService { get; init; }
 
-        public async Task<bool> PrepareCalcResults(
+        public async Task<bool> PrepareCalcResultsAsync(
             [FromBody] CalcResultsRequestDto resultsRequestDto,
-            string runName,
+            string? runName,
             CancellationToken cancellationToken)
         {
             this.commandTimeoutService.SetCommandTimeout(this.Context.Database);
@@ -97,7 +97,7 @@
                     Message = "Builder started...",
                 });
 
-                var results = await this.Builder.Build(resultsRequestDto);
+                var results = await this.Builder.BuildAsync(resultsRequestDto);
                 this.telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = resultsRequestDto.RunId,
@@ -118,7 +118,7 @@
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
                     Message = "Create producer data insert service end...",
-                });                
+                });
 
                 this.telemetryLogger.LogInformation(new TrackMessage
                 {
@@ -151,7 +151,7 @@
                 var blobUri = await this.storageService.UploadFileContentAsync(
                     (FileName: fileName,
                     Content: exportedResults,
-                    RunName: runName,
+                    RunName: runName ?? string.Empty,
                     ContainerName: containerName,
                     Overwrite: OverwriteCsvFile));
 
@@ -168,7 +168,6 @@
                     Message = "Csv File saving started...",
                 });
 
-                var startTime = DateTime.Now;
                 if (!string.IsNullOrEmpty(blobUri))
                 {
                     await SaveCsvFileMetadataAsync(results.CalcResultDetail.RunId, fileName.ToString(), blobUri);
@@ -179,7 +178,6 @@
                     calculatorRun!.CalculatorRunClassificationId = (int)RunClassification.UNCLASSIFIED;
                     this.Context.CalculatorRuns.Update(calculatorRun);
                     await this.Context.SaveChangesAsync(cancellationToken);
-                    var timeDiff = startTime - DateTime.Now;
                     return true;
                 }
 
@@ -225,7 +223,7 @@
             return false;
         }
 
-        public async Task<bool> PrepareBillingResults([FromBody] CalcResultsRequestDto resultsRequestDto,
+        public async Task<bool> PrepareBillingResultsAsync([FromBody] CalcResultsRequestDto resultsRequestDto,
             string runName,
             CancellationToken cancellationToken)
         {
@@ -237,7 +235,7 @@
                 Message = "Billing Builder started...",
             });
 
-            var calcResults = await this.Builder.Build(resultsRequestDto);
+            var calcResults = await this.Builder.BuildAsync(resultsRequestDto);
 
             this.telemetryLogger.LogInformation(new TrackMessage
             {
@@ -334,7 +332,7 @@
             var billingFileMetadata = new CalculatorRunBillingFileMetadata
             {
                 BillingCsvFileName = billingFileCsvName.ToString(),
-                BillingFileCreatedBy = resultsRequestDto.ApprovedBy,
+                BillingFileCreatedBy = resultsRequestDto.ApprovedBy ?? "System User",
                 CalculatorRunId = resultsRequestDto.RunId,
                 BillingFileCreatedDate = DateTime.UtcNow,
                 BillingJsonFileName = billingFileJsonName.ToString(),
