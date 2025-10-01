@@ -199,7 +199,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
 
             // Act
-            await this.CalculatorRunService.StartProcess(calculatorRunParameters, runName);
+            await this.CalculatorRunService.PrepareResultsFileAsync(calculatorRunParameters, runName);
 
             // Assert
 
@@ -300,7 +300,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
 
             // Act
-            await this.CalculatorRunService.StartProcess(calculatorRunParameters, runName);
+            await this.CalculatorRunService.PrepareResultsFileAsync(calculatorRunParameters, runName);
 
             // Assert
             this.AzureSynapseRunner.Verify(
@@ -393,7 +393,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
 
             // Act
-            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters, runName);
+            var result = await this.CalculatorRunService.PrepareResultsFileAsync(calculatorRunParameters, runName);
 
             // Assert
             Assert.IsTrue(result);
@@ -473,7 +473,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
 
             // Act
-            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters, runName);
+            var result = await this.CalculatorRunService.PrepareResultsFileAsync(calculatorRunParameters, runName);
 
             // Assert
             Assert.IsFalse(result);
@@ -530,7 +530,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
 
             // Act
-            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameters, runName);
+            var result = await this.CalculatorRunService.PrepareResultsFileAsync(calculatorRunParameters, runName);
 
             // Assert
             Assert.IsFalse(result);
@@ -549,7 +549,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 .ThrowsAsync(new TaskCanceledException());
 
             // Act
-            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameter, runName);
+            var result = await this.CalculatorRunService.PrepareResultsFileAsync(calculatorRunParameter, runName);
 
             // Assert
             Assert.IsFalse(result);
@@ -568,7 +568,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 .ThrowsAsync(new Exception("Test Exception"));
 
             // Act
-            var result = await this.CalculatorRunService.StartProcess(calculatorRunParameter, runName);
+            var result = await this.CalculatorRunService.PrepareResultsFileAsync(calculatorRunParameter, runName);
 
             // Assert
             Assert.IsFalse(result);
