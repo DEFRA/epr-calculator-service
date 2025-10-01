@@ -205,7 +205,7 @@ namespace EPR.Calculator.Service.Function.Services
 
             if (statusUpdateResponse == RunClassification.RUNNING)
             {
-                var isTransposeSuccess = await this.transposePomAndOrgDataService.TransposeBeforeCalcResults(
+                var isTransposeSuccess = await this.transposePomAndOrgDataService.TransposeBeforeResultsFileAsync(
                     new CalcResultsRequestDto { RunId = calculatorRunParameter.Id },
                     runName,
                     new CancellationTokenSource(this.configuration.TransposeTimeout).Token);
@@ -217,7 +217,7 @@ namespace EPR.Calculator.Service.Function.Services
                     return false;
                 }
 
-                isSuccess = await this.prepareCalcService.PrepareCalcResults(
+                isSuccess = await this.prepareCalcService.PrepareCalcResultsAsync(
                     new CalcResultsRequestDto { RunId = calculatorRunParameter.Id, FinancialYear = calculatorRunParameter.FinancialYear.ToString() },
                     runName,
                     new CancellationTokenSource(this.configuration.PrepareCalcResultsTimeout).Token);

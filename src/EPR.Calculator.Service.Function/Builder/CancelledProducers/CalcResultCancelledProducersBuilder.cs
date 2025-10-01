@@ -27,7 +27,7 @@
             this.materials = new List<MaterialDetail>();
         }
 
-        public async Task<CalcResultCancelledProducersResponse> Construct(CalcResultsRequestDto resultsRequestDto, string financialYear)
+        public async Task<CalcResultCancelledProducersResponse> ConstructAsync(CalcResultsRequestDto resultsRequestDto, string financialYear)
         {
 
             this.materials = this.materialService.GetMaterials().Result;

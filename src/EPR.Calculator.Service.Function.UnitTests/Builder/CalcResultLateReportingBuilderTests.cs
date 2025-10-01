@@ -92,7 +92,7 @@
         {
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
 
-            var results = builder.Construct(requestDto);
+            var results = builder.ConstructAsync(requestDto);
             results.Wait();
             var result = results.Result;
 

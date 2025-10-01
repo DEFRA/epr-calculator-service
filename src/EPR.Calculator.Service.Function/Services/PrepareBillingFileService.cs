@@ -71,7 +71,7 @@ namespace EPR.Calculator.Service.Function.Services
                 return false;
             }
 
-            var result = await prepareCalcService.PrepareBillingResults(
+            var result = await prepareCalcService.PrepareBillingResultsAsync(
                 new CalcResultsRequestDto
                 {
                     RunId = calculatorRunId,

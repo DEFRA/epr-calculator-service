@@ -186,7 +186,7 @@
             await this._context.SaveChangesAsync();
 
             // Act
-            var result = await this.TestClass.TransposeBeforeCalcResults(resultsRequestDto, runName, cancellationToken);
+            var result = await this.TestClass.TransposeBeforeResultsFileAsync(resultsRequestDto, runName, cancellationToken);
 
             // Assert
             Assert.IsFalse(result);
@@ -215,7 +215,7 @@
                 mockTelemetryLogger.Object);
 
             // Act
-            var result = await service.TransposeBeforeCalcResults(resultsRequestDto, runName, cancellationToken);
+            var result = await service.TransposeBeforeResultsFileAsync(resultsRequestDto, runName, cancellationToken);
 
             // Assert
             Assert.IsFalse(result);
@@ -246,7 +246,7 @@
                 mockTelemetryLogger.Object);
 
             // Act
-            var result = await service.TransposeBeforeCalcResults(resultsRequestDto, runName, cancellationToken);
+            var result = await service.TransposeBeforeResultsFileAsync(resultsRequestDto, runName, cancellationToken);
 
             // Assert
             Assert.IsFalse(result);
@@ -263,7 +263,7 @@
             var cancellationToken = CancellationToken.None;
 
             // Act
-            var result = await this.TestClass.TransposeBeforeCalcResults(resultsRequestDto, runName, cancellationToken);
+            var result = await this.TestClass.TransposeBeforeResultsFileAsync(resultsRequestDto, runName, cancellationToken);
 
             // Assert
             Assert.IsTrue(result);
@@ -551,7 +551,7 @@
             var cancellationToken = new CancellationToken(true);
 
             // Act
-            var result = await this.TestClass.TransposeBeforeCalcResults(resultsRequestDto, runName, cancellationToken);
+            var result = await this.TestClass.TransposeBeforeResultsFileAsync(resultsRequestDto, runName, cancellationToken);
 
             // Assert
             Assert.IsFalse(result);
@@ -580,7 +580,7 @@
                 .Throws<OperationCanceledException>();
 
             // Act
-            var result = await this.TestClass.TransposeBeforeCalcResults(
+            var result = await this.TestClass.TransposeBeforeResultsFileAsync(
                 resultsRequestDto,
                 runName,
                 CancellationToken.None);
@@ -615,7 +615,7 @@
             this._context.CalculatorRunPomDataDetails = null!;
 
             // Act
-            var result = await this.TestClass.TransposeBeforeCalcResults(
+            var result = await this.TestClass.TransposeBeforeResultsFileAsync(
                 resultsRequestDto,
                 this.Fixture.Create<string>(),
                 CancellationToken.None);

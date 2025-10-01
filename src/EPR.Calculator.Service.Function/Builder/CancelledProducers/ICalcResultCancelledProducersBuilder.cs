@@ -6,6 +6,6 @@ namespace EPR.Calculator.Service.Function.Builder.CancelledProducers
 {
     public interface ICalcResultCancelledProducersBuilder
     {
-        Task<CalcResultCancelledProducersResponse> Construct(CalcResultsRequestDto resultsRequestDto, string financialYear);
+        Task<CalcResultCancelledProducersResponse> ConstructAsync(CalcResultsRequestDto resultsRequestDto, string financialYear);
     }
 }

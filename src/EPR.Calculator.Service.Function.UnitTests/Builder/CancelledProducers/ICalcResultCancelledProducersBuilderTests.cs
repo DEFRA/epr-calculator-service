@@ -54,11 +54,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             };
 
             _builderMock
-                .Setup(b => b.Construct(It.IsAny<CalcResultsRequestDto>(), It.IsAny<string>()))
+                .Setup(b => b.ConstructAsync(It.IsAny<CalcResultsRequestDto>(), It.IsAny<string>()))
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _builderMock.Object.Construct(requestDto,"2025-26");
+            var result = await _builderMock.Object.ConstructAsync(requestDto,"2025-26");
 
             // Assert
             Assert.IsNotNull(result);

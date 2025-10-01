@@ -89,7 +89,7 @@
             dbContext.SaveChanges();
 
             var resultsDto = new CalcResultsRequestDto { RunId = 1 };
-            var results = builder.Construct(resultsDto);
+            var results = builder.ConstructAsync(resultsDto);
 
             results.Wait();
             var lapcapDisposalCostResults = results.Result;
