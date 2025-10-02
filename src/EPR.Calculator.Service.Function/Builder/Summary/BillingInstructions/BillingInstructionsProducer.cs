@@ -254,11 +254,11 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
             if (!currentYearInvoiceTotalToDate.HasValue) return CommonConstants.Initial;
 
             if (liabilityDifference > 0 &&
-                (materialThresholdBreached == CommonConstants.Hyphen || tonnageThresholdBreached == CommonConstants.Hyphen || materialPercentageThresholdBreached == CommonConstants.Hyphen || tonnagePercentageThresholdBreached == CommonConstants.Hyphen))
+                (materialThresholdBreached != CommonConstants.Hyphen || tonnageThresholdBreached != CommonConstants.Hyphen || materialPercentageThresholdBreached != CommonConstants.Hyphen || tonnagePercentageThresholdBreached != CommonConstants.Hyphen))
                 return CommonConstants.Delta;
 
             if (liabilityDifference < 0 &&
-                (materialThresholdBreached == CommonConstants.Hyphen || tonnageThresholdBreached == CommonConstants.Hyphen || materialPercentageThresholdBreached == CommonConstants.Hyphen || tonnagePercentageThresholdBreached == CommonConstants.Hyphen))
+                (materialThresholdBreached != CommonConstants.Hyphen || tonnageThresholdBreached != CommonConstants.Hyphen || materialPercentageThresholdBreached != CommonConstants.Hyphen || tonnagePercentageThresholdBreached != CommonConstants.Hyphen))
                 return CommonConstants.Rebill;
 
             if (liabilityDifference == 0) return CommonConstants.Hyphen;
