@@ -95,8 +95,10 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
                     SuggestedInvoiceAmount = suggestedInvoiceAmount
                 };
 
-                if (fee.Level == CommonConstants.LevelOne.ToString()) 
+                if (fee.Level == CommonConstants.LevelOne.ToString())
+                {
                     UpdateProductPrice(context, fee.BillingInstructionSection, runId, fee.ProducerIdInt);
+                }
             }
         }
 
