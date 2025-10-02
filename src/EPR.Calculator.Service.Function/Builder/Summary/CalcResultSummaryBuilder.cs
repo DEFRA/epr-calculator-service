@@ -42,7 +42,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             this.context = context;
         }
 
-        public async Task<CalcResultSummary> Construct(CalcResultsRequestDto resultsRequestDto, CalcResult calcResult)
+        public async Task<CalcResultSummary> ConstructAsync(CalcResultsRequestDto resultsRequestDto, CalcResult calcResult)
         {
             // Get and map materials from DB
             var runId = resultsRequestDto.RunId;

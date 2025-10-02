@@ -129,7 +129,7 @@ namespace EPR.Calculator.Service.Function.Services
         }
 
         /// <inheritdoc/>
-        public async Task<bool> StartProcess(CalculatorRunParameter calculatorRunParameter, string? runName)
+        public async Task<bool> PrepareResultsFileAsync(CalculatorRunParameter calculatorRunParameter, string? runName)
         {
             try
             {
@@ -147,7 +147,7 @@ namespace EPR.Calculator.Service.Function.Services
                     return false;
                 }
 
-                return await this.UpdateStatusAndPrepareResult(calculatorRunParameter, runName);
+                return await this.RunResultsFileCalculationAsync(calculatorRunParameter, runName);
             }
             catch (TaskCanceledException ex)
             {
@@ -188,7 +188,7 @@ namespace EPR.Calculator.Service.Function.Services
             return isPomSuccessful;
         }
 
-        private async Task<bool> UpdateStatusAndPrepareResult(CalculatorRunParameter calculatorRunParameter, string? runName)
+        private async Task<bool> RunResultsFileCalculationAsync(CalculatorRunParameter calculatorRunParameter, string? runName)
         {
             var isSuccess = false;
 
@@ -205,7 +205,7 @@ namespace EPR.Calculator.Service.Function.Services
 
             if (statusUpdateResponse == RunClassification.RUNNING)
             {
-                var isTransposeSuccess = await this.transposePomAndOrgDataService.TransposeBeforeCalcResults(
+                var isTransposeSuccess = await this.transposePomAndOrgDataService.TransposeBeforeResultsFileAsync(
                     new CalcResultsRequestDto { RunId = calculatorRunParameter.Id },
                     runName,
                     new CancellationTokenSource(this.configuration.TransposeTimeout).Token);
@@ -217,7 +217,7 @@ namespace EPR.Calculator.Service.Function.Services
                     return false;
                 }
 
-                isSuccess = await this.prepareCalcService.PrepareCalcResults(
+                isSuccess = await this.prepareCalcService.PrepareCalcResultsAsync(
                     new CalcResultsRequestDto { RunId = calculatorRunParameter.Id, FinancialYear = calculatorRunParameter.FinancialYear.ToString() },
                     runName,
                     new CancellationTokenSource(this.configuration.PrepareCalcResultsTimeout).Token);

@@ -31,7 +31,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
         public const string EnGb = "en-GB";
         public const string PoundSign = "£";
 
-        public async Task<CalcResultCommsCost> Construct(
+        public async Task<CalcResultCommsCost> ConstructAsync(
             CalcResultsRequestDto resultsRequestDto,
             CalcResultOnePlusFourApportionment apportionment,
             CalcResult calcResult)

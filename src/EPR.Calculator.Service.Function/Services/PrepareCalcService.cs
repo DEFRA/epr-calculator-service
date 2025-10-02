@@ -65,7 +65,7 @@
         private IBillingFileExporter<CalcResult> BillingFileExporter { get; init; }
         private IPrepareProducerDataInsertService producerDataInsertService { get; init; }
 
-        public async Task<bool> PrepareCalcResults(
+        public async Task<bool> PrepareCalcResultsAsync(
             [FromBody] CalcResultsRequestDto resultsRequestDto,
             string? runName,
             CancellationToken cancellationToken)
@@ -97,7 +97,7 @@
                     Message = "Builder started...",
                 });
 
-                var results = await this.Builder.Build(resultsRequestDto);
+                var results = await this.Builder.BuildAsync(resultsRequestDto);
                 this.telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = resultsRequestDto.RunId,
@@ -223,7 +223,7 @@
             return false;
         }
 
-        public async Task<bool> PrepareBillingResults([FromBody] CalcResultsRequestDto resultsRequestDto,
+        public async Task<bool> PrepareBillingResultsAsync([FromBody] CalcResultsRequestDto resultsRequestDto,
             string runName,
             CancellationToken cancellationToken)
         {
@@ -235,7 +235,7 @@
                 Message = "Billing Builder started...",
             });
 
-            var calcResults = await this.Builder.Build(resultsRequestDto);
+            var calcResults = await this.Builder.BuildAsync(resultsRequestDto);
 
             this.telemetryLogger.LogInformation(new TrackMessage
             {

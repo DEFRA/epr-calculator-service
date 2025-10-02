@@ -18,6 +18,6 @@ namespace EPR.Calculator.Service.Function.Interface
         /// <param name="calculatorRunParameter">The parameters required to run the calculator.</param>
         /// <param name="runName">The runName is optional to run the calculator.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains a boolean indicating success or failure.</returns>
-        Task<bool> StartProcess(CalculatorRunParameter calculatorRunParameter, string? runName);
+        Task<bool> PrepareResultsFileAsync(CalculatorRunParameter calculatorRunParameter, string? runName);
     }
 }

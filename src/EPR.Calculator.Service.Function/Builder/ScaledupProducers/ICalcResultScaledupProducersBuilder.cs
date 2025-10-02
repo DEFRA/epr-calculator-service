@@ -6,6 +6,6 @@
 
     public interface ICalcResultScaledupProducersBuilder
     {
-        Task<CalcResultScaledupProducers> Construct(CalcResultsRequestDto resultsRequestDto);
+        Task<CalcResultScaledupProducers> ConstructAsync(CalcResultsRequestDto resultsRequestDto);
     }
 }

@@ -298,7 +298,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
 
-            var results = this.calcResultsService.Construct(requestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(requestDto, this.calcResult);
 
             results.Wait();
             var result = results.Result;
@@ -334,7 +334,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             };
 
             // Act
-            var results = this.calcResultsService.Construct(requestDto, calcResult);
+            var results = this.calcResultsService.ConstructAsync(requestDto, calcResult);
             results.Wait();
             var result = results.Result;
 
@@ -352,7 +352,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             calcResult.CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers();
 
             // Act
-            var results = this.calcResultsService.Construct(requestDto, calcResult);
+            var results = this.calcResultsService.ConstructAsync(requestDto, calcResult);
             results.Wait();
             var result = results.Result;
 
@@ -366,7 +366,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
 
-            var results = this.calcResultsService.Construct(requestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(requestDto, this.calcResult);
 
             results.Wait();
             var result = results.Result;
@@ -379,7 +379,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
 
-            var results = this.calcResultsService.Construct(requestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(requestDto, this.calcResult);
 
             results.Wait();
             var result = results.Result;
@@ -393,7 +393,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
 
-            var results = this.calcResultsService.Construct(requestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(requestDto, this.calcResult);
 
             results.Wait();
             var result = results.Result;
@@ -407,7 +407,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
 
-            var result = this.calcResultsService.Construct(requestDto, this.calcResult);
+            var result = this.calcResultsService.ConstructAsync(requestDto, this.calcResult);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(0, 0);
@@ -418,7 +418,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
 
-            var results = this.calcResultsService.Construct(calcResultsRequestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(calcResultsRequestDto, this.calcResult);
 
             results.Wait();
             var result = results.Result;
@@ -433,7 +433,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
 
-            var results = this.calcResultsService.Construct(calcResultsRequestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(calcResultsRequestDto, this.calcResult);
 
             results.Wait();
             var result = results.Result;
@@ -446,7 +446,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
 
-            var results = this.calcResultsService.Construct(calcResultsRequestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(calcResultsRequestDto, this.calcResult);
             results.Wait();
             var result = results.Result;
             Assert.IsNotNull(result);
@@ -458,7 +458,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void GetTotalBadDebtprovision1_ShouldReturnCorrectValue()
         {
             var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-            var results = this.calcResultsService.Construct(calcResultsRequestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(calcResultsRequestDto, this.calcResult);
             results.Wait();
             var result = results.Result;
             Assert.IsNotNull(result);
@@ -477,7 +477,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void GetTotalDisposalCostswithBadDebtprovision1_ShouldReturnCorrectValue()
         {
             var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-            var results = this.calcResultsService.Construct(calcResultsRequestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(calcResultsRequestDto, this.calcResult);
             results.Wait();
             var result = results.Result;
             Assert.IsNotNull(result);
@@ -496,7 +496,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void GetTotalCommsCostswoBadDebtprovision2A_ShouldReturnCorrectValue()
         {
             var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-            var results = this.calcResultsService.Construct(calcResultsRequestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(calcResultsRequestDto, this.calcResult);
             results.Wait();
             var result = results.Result;
             Assert.IsNotNull(result);
@@ -516,7 +516,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
 
-            var results = this.calcResultsService.Construct(calcResultsRequestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(calcResultsRequestDto, this.calcResult);
 
             results.Wait();
             var result = results.Result;
@@ -536,7 +536,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void GetTotalCommsCostswithBadDebtprovision2A_ShouldReturnCorrectValue()
         {
             var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-            var results = this.calcResultsService.Construct(calcResultsRequestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(calcResultsRequestDto, this.calcResult);
             results.Wait();
             var result = results.Result;
             Assert.IsNotNull(result);
@@ -555,7 +555,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void GetTotalFee_ShouldReturnZero_WhenNoTotalsLevel()
         {
             var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-            var results = this.calcResultsService.Construct(calcResultsRequestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(calcResultsRequestDto, this.calcResult);
             results.Wait();
             var result = results.Result;
             Assert.IsNotNull(result);
@@ -574,7 +574,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void GetTotalFee_ShouldReturnZero_WhenProducerDisposalFeesNull()
         {
             var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-            var results = this.calcResultsService.Construct(calcResultsRequestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(calcResultsRequestDto, this.calcResult);
             results.Wait();
             var result = results.Result;
             Assert.IsNotNull(result);
@@ -593,7 +593,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void GetTotalFee_ShouldReturnZero_WhenProducerDisposalFeesIsEmpty()
         {
             var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-            var results = this.calcResultsService.Construct(calcResultsRequestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(calcResultsRequestDto, this.calcResult);
             results.Wait();
             var result = results.Result;
             Assert.IsNotNull(result);
@@ -612,7 +612,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void ProducerTotalPercentageVsTotal_ShouldReturnCorrectValue()
         {
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
-            var results = this.calcResultsService.Construct(requestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(requestDto, this.calcResult);
             results.Wait();
             var result = results.Result;
 
@@ -632,7 +632,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void CommsCost2bBill_ShouldReturnCorrectValue()
         {
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
-            var results = this.calcResultsService.Construct(requestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(requestDto, this.calcResult);
 
             results.Wait();
             var result = results.Result;
@@ -847,7 +847,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
             this.calcResult.CalcResultScaledupProducers.ScaledupProducers = GetScaledUpProducers();
-            var results = this.calcResultsService.Construct(calcResultsRequestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(calcResultsRequestDto, this.calcResult);
 
             var orderedProducerDetails = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, this.context.ProducerDetail.ToList());
             var runProducerMaterialDetails = CalcResultSummaryBuilder.GetProducerRunMaterialDetails(
@@ -1101,7 +1101,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             };
 
             // Act
-            var task = this.calcResultsService.Construct(requestDto, calcResult);
+            var task = this.calcResultsService.ConstructAsync(requestDto, calcResult);
             task.Wait();
             var result = task.Result;
 

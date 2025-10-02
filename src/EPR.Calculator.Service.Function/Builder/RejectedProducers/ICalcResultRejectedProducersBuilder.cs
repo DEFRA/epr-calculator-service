@@ -7,6 +7,6 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
 {
     public interface ICalcResultRejectedProducersBuilder
     {
-        public Task<IEnumerable<CalcResultRejectedProducer>> Construct(CalcResultsRequestDto resultsRequestDto);
+        public Task<IEnumerable<CalcResultRejectedProducer>> ConstructAsync(CalcResultsRequestDto resultsRequestDto);
     }
 }
