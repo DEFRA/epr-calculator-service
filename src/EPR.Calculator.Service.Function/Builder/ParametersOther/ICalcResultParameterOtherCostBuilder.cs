@@ -6,6 +6,6 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
 {
     public interface ICalcResultParameterOtherCostBuilder
     {
-        Task<CalcResultParameterOtherCost> Construct(CalcResultsRequestDto resultsRequestDto);
+        Task<CalcResultParameterOtherCost> ConstructAsync(CalcResultsRequestDto resultsRequestDto);
     }
 }

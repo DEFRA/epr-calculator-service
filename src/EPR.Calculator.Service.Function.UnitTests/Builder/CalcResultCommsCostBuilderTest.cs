@@ -76,7 +76,7 @@
                     },
                 },
             };
-            var results = this.builder.Construct(resultsRequestDto, apportionment, calcResult);
+            var results = this.builder.ConstructAsync(resultsRequestDto, apportionment, calcResult);
             results.Wait();
             var result = results.Result;
 

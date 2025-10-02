@@ -145,7 +145,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             calcResult.CalcResultScaledupProducers = GetScaledUpProducers();
 
             // Act
-            var results = this.builder.Construct(resultsDto, calcResult);
+            var results = this.builder.ConstructAsync(resultsDto, calcResult);
             results.Wait();
             var lapcapDisposalCostResults = results.Result;
 
@@ -164,7 +164,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             calcResult.CalcResultScaledupProducers = GetScaledUpProducers();
 
             // Act
-            var results = this.builder.Construct(resultsDto, calcResult);
+            var results = this.builder.ConstructAsync(resultsDto, calcResult);
             results.Wait();
             var lapcapDisposalCostResults = results.Result;
 
@@ -222,7 +222,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
 
             // Act
-            var results = this.builder.Construct(resultsDto, calcResult);
+            var results = this.builder.ConstructAsync(resultsDto, calcResult);
             results.Wait();
             var lapcapDisposalCostResults = results.Result;
 
@@ -282,7 +282,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
 
             // Act
-            var results = this.builder.Construct(resultsDto, calcResult);
+            var results = this.builder.ConstructAsync(resultsDto, calcResult);
             results.Wait();
             var lapcapDisposalCostResults = results.Result;
 
@@ -316,7 +316,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
 
             // Act
-            var results = this.builder.Construct(resultsDto, calcResult);
+            var results = this.builder.ConstructAsync(resultsDto, calcResult);
             results.Wait();
             var lapcapDisposalCostResults = results.Result;
 
@@ -349,7 +349,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             calcResult.CalcResultScaledupProducers = GetScaledUpProducers();
 
             // Act
-            var lapcapDisposalCostResults = await this.builder.Construct(resultsDto, calcResult);
+            var lapcapDisposalCostResults = await this.builder.ConstructAsync(resultsDto, calcResult);
 
             // Assert
             var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails?.Single(x => x.Name == CommonConstants.Total);
@@ -394,7 +394,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
 
             // Act
-            var lapcapDisposalCostResults = await this.builder.Construct(resultsDto, calcResult);
+            var lapcapDisposalCostResults = await this.builder.ConstructAsync(resultsDto, calcResult);
 
             // Assert
             var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails?.Single(x => x.Name == MaterialNames.Plastic);
@@ -415,7 +415,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
 
             // Act
-            var lapcapDisposalCostResults = await this.builder.Construct(resultsDto, calcResult);
+            var lapcapDisposalCostResults = await this.builder.ConstructAsync(resultsDto, calcResult);
 
             // Assert
             var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails?.Single(x => x.Name == MaterialNames.Plastic);

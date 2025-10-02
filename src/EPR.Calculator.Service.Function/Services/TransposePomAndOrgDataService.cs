@@ -57,7 +57,7 @@
 
         private IDbLoadingChunkerService<ProducerReportedMaterial> ProducerReportedMaterialChunker { get; init; }
 
-        public async Task<bool> TransposeBeforeCalcResults(
+        public async Task<bool> TransposeBeforeResultsFileAsync(
             [FromBody] CalcResultsRequestDto resultsRequestDto,
             string? runName,
             CancellationToken cancellationToken)

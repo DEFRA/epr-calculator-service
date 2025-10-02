@@ -17,7 +17,7 @@
             this.context = context;
         }
 
-        public async Task<CalcResultDetail> Construct(CalcResultsRequestDto resultsRequestDto)
+        public async Task<CalcResultDetail> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
         {
             var calcResultDetails = await this.context.CalculatorRuns
                 .Include(o => o.CalculatorRunOrganisationDataMaster)

@@ -52,7 +52,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
 
             // Act
-            var result = await builder.Construct(requestDto);
+            var result = await builder.ConstructAsync(requestDto);
 
             // Assert
             var list = new List<CalcResultRejectedProducer>(result);
@@ -76,7 +76,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
             var requestDto = new CalcResultsRequestDto { RunId = 99 };
 
             // Act
-            var result = await builder.Construct(requestDto);
+            var result = await builder.ConstructAsync(requestDto);
 
             // Assert
             Assert.IsNotNull(result);
@@ -127,7 +127,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
             var requestDto = new CalcResultsRequestDto { RunId = 2 };
 
             // Act
-            var result = await builder.Construct(requestDto);
+            var result = await builder.ConstructAsync(requestDto);
 
             // Assert
             var list = new List<CalcResultRejectedProducer>(result);

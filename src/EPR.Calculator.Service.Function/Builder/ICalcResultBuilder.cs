@@ -6,6 +6,6 @@ namespace EPR.Calculator.Service.Function.Builder
 {
     public interface ICalcResultBuilder
     {
-        Task<CalcResult> Build(CalcResultsRequestDto resultsRequestDto);
+        Task<CalcResult> BuildAsync(CalcResultsRequestDto resultsRequestDto);
     }
 }

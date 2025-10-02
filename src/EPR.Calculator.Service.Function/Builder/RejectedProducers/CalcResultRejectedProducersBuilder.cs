@@ -18,7 +18,7 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
             this.context = context;
         }
 
-        public async Task<IEnumerable<CalcResultRejectedProducer>> Construct(CalcResultsRequestDto resultsRequestDto)
+        public async Task<IEnumerable<CalcResultRejectedProducer>> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
         {
             var result = await (from pd in this.context.ProducerDetail.AsNoTracking()
                                 join bi in this.context.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()

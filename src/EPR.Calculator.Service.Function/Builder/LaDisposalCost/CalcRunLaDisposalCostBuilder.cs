@@ -39,7 +39,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
             this.producerData = new List<ProducerData>();
         }
 
-        public async Task<CalcResultLaDisposalCostData> Construct(CalcResultsRequestDto resultsRequestDto, CalcResult calcResult)
+        public async Task<CalcResultLaDisposalCostData> ConstructAsync(CalcResultsRequestDto resultsRequestDto, CalcResult calcResult)
         {
             var laDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>();
             var orderId = 1;

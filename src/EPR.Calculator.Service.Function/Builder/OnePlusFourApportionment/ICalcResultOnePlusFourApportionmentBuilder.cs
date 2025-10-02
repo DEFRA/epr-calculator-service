@@ -5,5 +5,5 @@ namespace EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment;
 
 public interface ICalcResultOnePlusFourApportionmentBuilder
 {
-    CalcResultOnePlusFourApportionment Construct(CalcResultsRequestDto resultsRequestDto, CalcResult calcResult);
+    CalcResultOnePlusFourApportionment ConstructAsync(CalcResultsRequestDto resultsRequestDto, CalcResult calcResult);
 }
