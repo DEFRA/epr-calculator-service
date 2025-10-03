@@ -125,10 +125,11 @@ namespace EPR.Calculator.Service.Function.Builder
             result.CalcResultLaDisposalCostData = await this.laDisposalCostBuilder.ConstructAsync(resultsRequestDto, result);
             this._telemetryClient.TrackTrace("laDisposalCostBuilder end...");
 
+            this._telemetryClient.TrackTrace("commsCostReportBuilder started...");
+            result.CalcResultCommsCostReportDetail = await this.commsCostReportBuilder.ConstructAsync(resultsRequestDto, result.CalcResultOnePlusFourApportionment, result);
+            this._telemetryClient.TrackTrace("commsCostReportBuilder end...");
+
             this._telemetryClient.TrackTrace("summaryBuilder started...");
-            result.CalcResultCommsCostReportDetail = await this.commsCostReportBuilder.ConstructAsync(
-                resultsRequestDto, result.CalcResultOnePlusFourApportionment, result);
-            result.CalcResultLaDisposalCostData = await this.laDisposalCostBuilder.ConstructAsync(resultsRequestDto, result);
             result.CalcResultSummary = await this.summaryBuilder.ConstructAsync(resultsRequestDto, result);
             this._telemetryClient.TrackTrace("summaryBuilder end...");
 
