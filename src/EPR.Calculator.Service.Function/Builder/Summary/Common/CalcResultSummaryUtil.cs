@@ -186,7 +186,7 @@
             var levelOneRows = producerDisposalFees.Where(fee => fee.Level == CommonConstants.LevelOne.ToString());
             return levelOneRows.Sum(row => row?.ProducerDisposalFeesByMaterial?[material.Code].NetReportedTonnage) ?? 0;
         }
-
+     
         public static decimal? GetPreviousInvoicedTonnageOverallTotal(
           IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
           MaterialDetail material)
