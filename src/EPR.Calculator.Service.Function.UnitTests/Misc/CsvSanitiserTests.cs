@@ -195,5 +195,36 @@
             Assert.AreEqual(",", result);
         }
 
+        [TestMethod]
+        public void ShouldNotPrefixLrm_WhenValueIsHyphen_WithDelimiter()
+        {
+            // Arrange
+            var data = "-";
+
+            // Act
+            var result = CsvSanitiser.SanitiseData(
+                data,
+                csvDelimiterRequired: true,
+                appendLrmCharacterToPreventRenderedAsFormula: true);
+
+            // Assert
+            Assert.AreEqual("\"-\",", result);
+        }
+
+        [TestMethod]
+        public void ShouldNotPrefixLrm_WhenValueIsHyphen_WithoutDelimiter()
+        {
+            // Arrange
+            var data = "-";
+
+            // Act
+            var result = CsvSanitiser.SanitiseData(
+                data,
+                csvDelimiterRequired: false,
+                appendLrmCharacterToPreventRenderedAsFormula: true);
+
+            // Assert
+            Assert.AreEqual("\"-\"", result);
+        }
     }
 }
