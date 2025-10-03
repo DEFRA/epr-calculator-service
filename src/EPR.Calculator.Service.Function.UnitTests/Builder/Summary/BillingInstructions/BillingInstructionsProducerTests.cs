@@ -1023,7 +1023,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         }
 
         [TestMethod]
-        public void CalculatePercentageLiabilityDifference_Total_ReturnsHypen()
+        public void CalculatePercentageLiabilityDifference_Total_ReturnsNull()
         {
             _calcResult.CalcResultSummary.ProducerDisposalFees.First().IsProducerScaledup = CommonConstants.Totals;
 
