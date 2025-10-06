@@ -190,18 +190,9 @@ namespace EPR.Calculator.Service.Function.Services
 
         private async Task<bool> RunResultsFileCalculationAsync(CalculatorRunParameter calculatorRunParameter, string? runName)
         {
-            var isSuccess = false;
+            var isSuccess = false;          
 
-            await LogAndUpdateStatus(calculatorRunParameter, runName);
-
-            var statusUpdateResponse = await this.statusService.UpdateRpdStatus(
-                calculatorRunParameter.Id,
-                runName,
-                calculatorRunParameter.User,
-                new CancellationTokenSource(this.configuration.RpdStatusTimeout).Token);
-
-            
-            this.LogInformation(calculatorRunParameter.Id, runName, $"UpdateStatusAndPrepareResult - Status UpdateRpdStatus: {statusUpdateResponse}");
+            var statusUpdateResponse = await LogAndUpdateStatus(calculatorRunParameter, runName);           
 
             if (statusUpdateResponse == RunClassification.RUNNING)
             {
@@ -232,7 +223,7 @@ namespace EPR.Calculator.Service.Function.Services
             return isSuccess;
         }
 
-        private async Task LogAndUpdateStatus(CalculatorRunParameter calculatorRunParameter, string? runName)
+        private async Task<RunClassification> LogAndUpdateStatus(CalculatorRunParameter calculatorRunParameter, string? runName)
         {
             this.LogInformation(calculatorRunParameter.Id, runName, $"UpdateStatusAndPrepareResult - StatusEndPoint: {this.configuration.StatusEndpoint}");
             var statusUpdateResponse = await this.statusService.UpdateRpdStatus(
@@ -241,6 +232,7 @@ namespace EPR.Calculator.Service.Function.Services
                 calculatorRunParameter.User,
                 new CancellationTokenSource(this.configuration.RpdStatusTimeout).Token);
             this.LogInformation(calculatorRunParameter.Id, runName, $"UpdateStatusAndPrepareResult - Status Response: {statusUpdateResponse}");
+            return statusUpdateResponse;
         }
 
         private void LogInformation(int runId, string? runName, string message)

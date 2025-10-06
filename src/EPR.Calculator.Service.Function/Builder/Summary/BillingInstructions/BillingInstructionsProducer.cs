@@ -43,7 +43,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
         {
             decimal totalTonnage = 0;
             decimal liabilityDifferenceRunningTotal = 0m;
-            decimal percentageLiabilityDifferenceTotal = 0m;
             decimal SuggestedInvoiceAmountTotal = 0m;
 
             var dpList = defaultParams as IList<DefaultParamResultsClass> ?? defaultParams.ToList();
@@ -71,8 +70,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
                 var currentYearInvoiceTotalToDate = GetCurrentYearInvoicedTotalToDate(fee, currentYearInvoicedTotalTonnage, totalTonnage);
                 var tonnageChangeSinceLastInvoice = GetTonnageChangeSinceLastInvoice(fee);
                 var liabilityDifference = GetLiabilityDifference(fee, liabilityDifferenceCalculated, liabilityDifferenceRunningTotal);
-                var percentageLiabilityDifference = GetPercentageLiabilityDifference(fee, currentYearInvoiceTotalToDate, liabilityDifference, percentageLiabilityDifferenceTotal);
-                if (percentageLiabilityDifference.HasValue) percentageLiabilityDifferenceTotal += percentageLiabilityDifference.Value;
+                var percentageLiabilityDifference = GetPercentageLiabilityDifference(fee, currentYearInvoiceTotalToDate, liabilityDifference);
                 var materialThresholdBreached = GetMaterialThresholdBreached(fee, currentYearInvoicedTotalTonnage, liabilityDifferenceCalculated, param_MATT_AI, param_MATT_AD);
                 var tonnageThresholdBreached = GetTonnageThresholdBreached(fee, currentYearInvoicedTotalTonnage, liabilityDifferenceCalculated, param_TONT_AI, param_TONT_AD);
                 var materialPercentageThresholdBreached = GetMaterialPercentageThresholdBreached(fee, currentYearInvoiceTotalToDate, percentageLiabilityDifference, param_MATT_PI, param_MATT_PD);
@@ -206,10 +204,10 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
             return CommonConstants.Hyphen;
         }
 
-        private static decimal? GetPercentageLiabilityDifference(CalcResultSummaryProducerDisposalFees fee, decimal? currentYearInvoiceTotalToDate, decimal? liabilityDifference, decimal? percentageLiabilityDifferenceTotal)
+        private static decimal? GetPercentageLiabilityDifference(CalcResultSummaryProducerDisposalFees fee, decimal? currentYearInvoiceTotalToDate, decimal? liabilityDifference)
         {
-            if (fee.IsProducerScaledup == CommonConstants.Totals) return percentageLiabilityDifferenceTotal;
             if (fee.Level != CommonConstants.LevelOne.ToString() ||
+                fee.IsProducerScaledup == CommonConstants.Totals ||
                 !currentYearInvoiceTotalToDate.HasValue ||
                 !liabilityDifference.HasValue ||
                 currentYearInvoiceTotalToDate == 0m)
@@ -254,11 +252,11 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
             if (!currentYearInvoiceTotalToDate.HasValue) return CommonConstants.Initial;
 
             if (liabilityDifference > 0 &&
-                (materialThresholdBreached == CommonConstants.Hyphen || tonnageThresholdBreached == CommonConstants.Hyphen || materialPercentageThresholdBreached == CommonConstants.Hyphen || tonnagePercentageThresholdBreached == CommonConstants.Hyphen))
+                (materialThresholdBreached != CommonConstants.Hyphen || tonnageThresholdBreached != CommonConstants.Hyphen || materialPercentageThresholdBreached != CommonConstants.Hyphen || tonnagePercentageThresholdBreached != CommonConstants.Hyphen))
                 return CommonConstants.Delta;
 
             if (liabilityDifference < 0 &&
-                (materialThresholdBreached == CommonConstants.Hyphen || tonnageThresholdBreached == CommonConstants.Hyphen || materialPercentageThresholdBreached == CommonConstants.Hyphen || tonnagePercentageThresholdBreached == CommonConstants.Hyphen))
+                (materialThresholdBreached != CommonConstants.Hyphen || tonnageThresholdBreached != CommonConstants.Hyphen || materialPercentageThresholdBreached != CommonConstants.Hyphen || tonnagePercentageThresholdBreached != CommonConstants.Hyphen))
                 return CommonConstants.Rebill;
 
             if (liabilityDifference == 0) return CommonConstants.Hyphen;
