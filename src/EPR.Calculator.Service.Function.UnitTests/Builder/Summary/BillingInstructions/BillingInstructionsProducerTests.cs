@@ -1023,6 +1023,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         }
 
         [TestMethod]
+        public void CalculatePercentageLiabilityDifference_Total_ReturnsNull()
+        {
+            _calcResult.CalcResultSummary.ProducerDisposalFees.First().IsProducerScaledup = CommonConstants.Totals;
+
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, new List<DefaultParamResultsClass>(), _dbContext, 101);
+
+            var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
+            Assert.IsNull(fee.PercentageLiabilityDifference);
+        }
+
+        [TestMethod]
         public void CalculateMaterialPercentageThresholdBreached_LevelNot1_ReturnsHypen()
         {
             _calcResult.CalcResultSummary.ProducerDisposalFees.First().Level = "2";
