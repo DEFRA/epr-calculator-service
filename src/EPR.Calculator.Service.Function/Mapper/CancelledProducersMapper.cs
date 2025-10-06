@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
@@ -10,9 +11,13 @@ namespace EPR.Calculator.Service.Function.Mapper
     {
         public CancelledProducers Map(CalcResultCancelledProducersResponse calcResultCancelledProducersResponse)
         {
-            if (calcResultCancelledProducersResponse == null || !calcResultCancelledProducersResponse.CancelledProducers.Any())
+            if (!calcResultCancelledProducersResponse.CancelledProducers.Any())
             {
-                return new CancelledProducers();
+                return new CancelledProducers
+                {
+                    Name = CommonConstants.CancelledProducers,
+                    CancelledProducerTonnageInvoice = Array.Empty<CancelledProducerTonnageInvoice>()
+                };
             }
 
             return new CancelledProducers
@@ -28,13 +33,24 @@ namespace EPR.Calculator.Service.Function.Mapper
 
             foreach (var producer in calcResultCancelledProducersResponse.CancelledProducers)
             {
+                int runNumber = 0;
+                if (!string.IsNullOrWhiteSpace(producer.LatestInvoice?.RunNumberValue))
+                {
+                    _ = int.TryParse(producer.LatestInvoice!.RunNumberValue, out runNumber);
+                }
+
                 cancelledProducerTonnageInvoices.Add(new CancelledProducerTonnageInvoice
                 {
                     ProducerId = producer.ProducerId,
                     SubsidiaryId = producer.SubsidiaryIdValue ?? string.Empty,
                     ProducerName = producer.ProducerOrSubsidiaryNameValue ?? string.Empty,
                     TradingName = producer.TradingNameValue ?? string.Empty,
-                    LastProducerTonnages = GetLastProducerTonnages(producer.LastTonnage!)
+                    LastProducerTonnages = GetLastProducerTonnages(producer.LastTonnage!),
+
+                    RunNumber = runNumber,
+                    RunName = producer.LatestInvoice?.RunNameValue ?? string.Empty,
+                    BillingInstructionID = producer.LatestInvoice?.BillingInstructionIdValue ?? string.Empty,
+                    LastInvoicedTotal = producer.LatestInvoice?.CurrentYearInvoicedTotalToDateValue ?? 0m
                 });
             }
 

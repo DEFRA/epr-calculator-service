@@ -28,7 +28,9 @@
                                    .Replace(CommonConstants.CsvFileDelimiter, string.Empty)
                                    .Trim() ?? string.Empty;
 
-            if (appendLrmCharacterToPreventRenderedAsFormula && stringToSanitise.Length > 0)
+            if (appendLrmCharacterToPreventRenderedAsFormula &&
+                stringToSanitise.Length > 0 &&
+                stringToSanitise != CommonConstants.Hyphen)
             {
                 stringToSanitise = "\u200E" + stringToSanitise;
             }
