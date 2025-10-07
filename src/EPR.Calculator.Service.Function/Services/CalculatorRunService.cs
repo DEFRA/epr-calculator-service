@@ -30,6 +30,8 @@ namespace EPR.Calculator.Service.Function.Services
         private readonly IPrepareCalcService prepareCalcService;
         private readonly IRpdStatusService statusService;
         private readonly ICalculatorTelemetryLogger telemetryLogger;
+        private readonly IOrgAndPomDataMYCPreValidationService midYearChangesService;
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CalculatorRunService"/> class.
@@ -47,7 +49,8 @@ namespace EPR.Calculator.Service.Function.Services
             ITransposePomAndOrgDataService transposePomAndOrgDataService,
             IConfigurationService configuration,
             IPrepareCalcService prepareCalcService,
-            IRpdStatusService statusService)
+            IRpdStatusService statusService,
+            IOrgAndPomDataMYCPreValidationService midYearChangesService)
         {
             this.telemetryLogger = telemetryLogger;
             this.azureSynapseRunner = azureSynapseRunner;
@@ -55,6 +58,8 @@ namespace EPR.Calculator.Service.Function.Services
             this.configuration = configuration;
             this.prepareCalcService = prepareCalcService;
             this.statusService = statusService;
+            this.midYearChangesService = midYearChangesService;
+
         }
 
         /// <summary>
@@ -192,7 +197,14 @@ namespace EPR.Calculator.Service.Function.Services
         {
             var isSuccess = false;          
 
-            var statusUpdateResponse = await LogAndUpdateStatus(calculatorRunParameter, runName);           
+            var statusUpdateResponse = await LogAndUpdateStatus(calculatorRunParameter, runName);
+
+            //TO DO
+            await this.midYearChangesService.OrgAndPomDataMYCPreValidation(
+                                                                calculatorRunParameter.Id,
+                                                                runName,
+                                                                new CancellationTokenSource(this.configuration.RpdStatusTimeout).Token
+                                                                );
 
             if (statusUpdateResponse == RunClassification.RUNNING)
             {

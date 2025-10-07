@@ -74,13 +74,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.PipelineClientFactory.Setup(factory => factory.GetHttpClient(It.IsAny<Uri>()))
                 .Returns(httpClient);
 
+            this.MYCPreValidationService = new Mock<IOrgAndPomDataMYCPreValidationService>();
             this.CalculatorRunService = new CalculatorRunService(
                 this.AzureSynapseRunner.Object,
                 this.MockLogger.Object,
                 this.TransposeService.Object,
                 new Configuration(),
                 this.PrepareCalcService.Object,
-                this.StatusService.Object);
+                this.StatusService.Object,
+                this.MYCPreValidationService.Object);
 
             this.TransposeService.Setup(t => t.TransposeBeforeResultsFileAsync(
                 It.IsAny<CalcResultsRequestDto>(),
@@ -120,6 +122,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         private Mock<ICalculatorTelemetryLogger> TelemetryLogger { get; }
 
         private Mock<IRpdStatusService> StatusService { get; }
+
+        private Mock<IOrgAndPomDataMYCPreValidationService> MYCPreValidationService { get; }
 
         /// <summary>
         /// Checks that the service calls the Azure Synapse runner and passes the correct parameters to it.
@@ -634,7 +638,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 this.TransposeService.Object,
                 configMock.Object,
                 this.PrepareCalcService.Object,
-                this.StatusService.Object);
+                this.StatusService.Object,
+                this.MYCPreValidationService.Object);
 
             // Act
             var result = testService.GetAzureSynapseConfiguration(args, orgPipelineName);
@@ -668,7 +673,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 this.TransposeService.Object,
                 configMock.Object,
                 this.PrepareCalcService.Object,
-                this.StatusService.Object);
+                this.StatusService.Object,
+                this.MYCPreValidationService.Object);
 
             // Act
             var result = testService.GetAzureSynapseConfiguration(args, pomPipelineName);
