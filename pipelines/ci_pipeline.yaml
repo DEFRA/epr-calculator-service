@@ -33,7 +33,7 @@ variables:
   - name: sonarQubeProjectName
     value: epr-calculator-service
   - name: runNugetTasks
-    value: false
+    value: true
   - name: runTests
     value: true
   - name: dotnetVersion
