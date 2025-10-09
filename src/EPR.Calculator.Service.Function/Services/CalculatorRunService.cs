@@ -25,7 +25,7 @@ namespace EPR.Calculator.Service.Function.Services
     {
         private const string JsonMediaType = "application/json";
         private readonly IAzureSynapseRunner azureSynapseRunner;
-        private readonly ITransposePomAndOrgDataService transposePomAndOrgDataService;
+        private readonly ITransposePomAndOrgDataMYCService transposePomAndOrgDataMYCService;
         private readonly IConfigurationService configuration;
         private readonly IPrepareCalcService prepareCalcService;
         private readonly IRpdStatusService statusService;
@@ -39,14 +39,14 @@ namespace EPR.Calculator.Service.Function.Services
         /// <param name="azureSynapseRunner">The Azure Synapse runner.</param>
         /// <param name="telemetryLogger">The logger instance.</param>
         /// <param name="pipelineClientFactory">The pipeline client factory.</param>
-        /// <param name="transposePomAndOrgDataService">The service for transposing POM and organization data.</param>
+        /// <param name="transposePomAndOrgDataMYCService">The service for transposing POM and organization data.</param>
         /// <param name="configuration">The configuration.</param>
         /// <param name="prepareCalcService">The prepare calculator service.</param>
         /// <param name="statusService">The status service.</param>
         public CalculatorRunService(
             IAzureSynapseRunner azureSynapseRunner,
             ICalculatorTelemetryLogger telemetryLogger,
-            ITransposePomAndOrgDataService transposePomAndOrgDataService,
+            ITransposePomAndOrgDataMYCService transposePomAndOrgDataMYCService,
             IConfigurationService configuration,
             IPrepareCalcService prepareCalcService,
             IRpdStatusService statusService,
@@ -54,7 +54,7 @@ namespace EPR.Calculator.Service.Function.Services
         {
             this.telemetryLogger = telemetryLogger;
             this.azureSynapseRunner = azureSynapseRunner;
-            this.transposePomAndOrgDataService = transposePomAndOrgDataService;
+            this.transposePomAndOrgDataMYCService = transposePomAndOrgDataMYCService;
             this.configuration = configuration;
             this.prepareCalcService = prepareCalcService;
             this.statusService = statusService;
@@ -208,7 +208,9 @@ namespace EPR.Calculator.Service.Function.Services
 
             if (statusUpdateResponse == RunClassification.RUNNING)
             {
-                var isTransposeSuccess = await this.transposePomAndOrgDataService.TransposeBeforeResultsFileAsync(
+                // TODO: Remove the old transpose code
+
+                var isTransposeSuccess = await this.transposePomAndOrgDataMYCService.TransposeBeforeResultsFileAsync(
                     new CalcResultsRequestDto { RunId = calculatorRunParameter.Id },
                     runName,
                     new CancellationTokenSource(this.configuration.TransposeTimeout).Token);

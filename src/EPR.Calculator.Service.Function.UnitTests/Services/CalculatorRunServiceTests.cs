@@ -37,7 +37,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.Fixture.Customizations.Add(new FinancialYearCustomisation());
             this.AzureSynapseRunner = new Mock<IAzureSynapseRunner>();
             this.MockLogger = new Mock<ICalculatorTelemetryLogger>();
-            this.TransposeService = new Mock<ITransposePomAndOrgDataService>();
+            this.TransposeService = new Mock<ITransposePomAndOrgDataMYCService>();
             this.RunNameService = new Mock<IRunNameService>();
             this.Configuration = new Mock<IConfigurationService>();
             this.TelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
@@ -111,7 +111,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         private Mock<PipelineClientFactory> PipelineClientFactory { get; }
 
-        private Mock<ITransposePomAndOrgDataService> TransposeService { get; }
+        private Mock<ITransposePomAndOrgDataMYCService> TransposeService { get; }
 
         private Mock<IPrepareCalcService> PrepareCalcService { get; init; }
 
