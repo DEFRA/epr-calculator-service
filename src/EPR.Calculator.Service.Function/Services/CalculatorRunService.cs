@@ -208,7 +208,7 @@ namespace EPR.Calculator.Service.Function.Services
 
             if (statusUpdateResponse == RunClassification.RUNNING)
             {
-                // TODO: Remove the old transpose code
+                // TODO: Remove the old transpose classes and code
 
                 var isTransposeSuccess = await this.transposePomAndOrgDataMYCService.TransposeBeforeResultsFileAsync(
                     new CalcResultsRequestDto { RunId = calculatorRunParameter.Id },

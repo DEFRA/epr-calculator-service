@@ -1,22 +1,36 @@
-﻿using EPR.Calculator.API.Data;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using EPR.Calculator.API.Data.DataModels;
+using System.Collections.Generic;
 
 namespace EPR.Calculator.Service.Function.Services
 {
     public class OrgAndPomDataMYCScenarioService : IOrgAndPomDataMYCScenarioService
     {
-        private readonly ApplicationDBContext context;
+        private readonly IEnumerable<ProducerDetail> producers;
+        private readonly IEnumerable<CalculatorRunPomDataDetail> pomData;
 
         public OrgAndPomDataMYCScenarioService(
-            ApplicationDBContext context)
+            IEnumerable<ProducerDetail> producers,
+            IEnumerable<CalculatorRunPomDataDetail> pomData)
         {
-            this.context = context;
+            this.producers = producers;
+            this.pomData = pomData;
         }
 
-        public Task HandleMYCScenarios(int calculatorRunId, CancellationToken cancellationToken)
+        public IEnumerable<ProducerReportedMaterial> GetProducerReportedMaterials()
         {
-            throw new System.NotImplementedException();
+            var producerReportedMaterials = new List<ProducerReportedMaterial>();
+
+            foreach (var producer in this.producers)
+            {
+                // TODO: Implementation to populate producerReportedMaterials based on the scenarios
+                switch (producer.statusCode)
+                {
+                    case "01":
+                        break;
+                }
+            }
+
+            return producerReportedMaterials;
         }
     }
 }
