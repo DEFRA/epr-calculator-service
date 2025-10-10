@@ -114,7 +114,9 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalculatorRunParameterMapper, CalculatorRunParameterMapper>();
             services.AddTransient<IAzureSynapseRunner, AzureSynapseRunner>();
             services.AddTransient<IPipelineClientFactory, PipelineClientFactory>();
-            services.AddTransient<ITransposePomAndOrgDataService, TransposePomAndOrgDataService>();
+            services.AddTransient<ITransposePomAndOrgDataMYCService, TransposePomAndOrgDataMYCService>();
+            services.AddTransient<IOrgAndPomDataMYCScenarioService, OrgAndPomDataMYCScenarioService>();
+            services.AddTransient<IOrgAndPomDataMYCPreValidationService, OrgAndPomDataMYCPreValidationService>();
             services.AddTransient<IRpdStatusDataValidator, RpdStatusDataValidator>();
             services.AddTransient<IOrgAndPomWrapper, OrgAndPomWrapper>();
             services.AddTransient<ICalcResultBuilder, CalcResultBuilder>();
