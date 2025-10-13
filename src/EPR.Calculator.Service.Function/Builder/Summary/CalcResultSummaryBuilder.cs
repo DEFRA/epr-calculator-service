@@ -179,6 +179,9 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
                 // Billing instructions section
                 BillingInstructionsProducer.SetValues(result, ProducerInvoicedMaterialNetTonnage, defaultParams, this.context, calcResult.CalcResultDetail.RunId);
+
+                UpdateBillingInstructions(calcResult, result);
+
             }
 
             // Set headers with calculated column index
@@ -737,6 +740,30 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 ScotlandTotalWithBadDebtProvision = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsScotlandWithBadDebtTotalsRow(calcResult, producersAndSubsidiaries, totalPackagingTonnage),
                 NorthernIrelandTotalWithBadDebtProvision = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsNorthernIrelandWithBadDebtTotalsRow(calcResult, producersAndSubsidiaries, totalPackagingTonnage)
             };
+        }
+
+        private void UpdateBillingInstructions(CalcResult calcResult, CalcResultSummary result)
+        {
+            foreach (var fee in result.ProducerDisposalFees)
+            {
+                if (fee.Level == CommonConstants.LevelOne.ToString())
+                {
+                    var producer = context.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(p => p.ProducerId == fee.ProducerIdInt && p.CalculatorRunId == calcResult.CalcResultDetail.RunId);
+                    if (producer != null)
+                    {
+                        producer.CurrentYearInvoiceTotalToDate = fee.BillingInstructionSection?.CurrentYearInvoiceTotalToDate;
+                        producer.TonnageChangeSinceLastInvoice = fee.BillingInstructionSection?.TonnageChangeSinceLastInvoice;
+                        producer.AmountLiabilityDifferenceCalcVsPrev = fee.BillingInstructionSection?.LiabilityDifference;
+                        producer.MaterialPoundThresholdBreached = fee.BillingInstructionSection?.MaterialThresholdBreached;
+                        producer.TonnagePoundThresholdBreached = fee.BillingInstructionSection?.TonnageThresholdBreached;
+                        producer.PercentageLiabilityDifferenceCalcVsPrev = fee.BillingInstructionSection?.PercentageLiabilityDifference;
+                        producer.TonnagePercentageThresholdBreached = fee.BillingInstructionSection?.TonnagePercentageThresholdBreached;
+                        producer.SuggestedBillingInstruction = fee.BillingInstructionSection?.SuggestedBillingInstruction!;
+                        producer.SuggestedInvoiceAmount = fee.BillingInstructionSection?.SuggestedInvoiceAmount ?? 0m;
+                    }
+                }
+            }
+            context.SaveChanges();
         }
     }
 }

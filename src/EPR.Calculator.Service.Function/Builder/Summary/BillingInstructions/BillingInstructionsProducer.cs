@@ -92,29 +92,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
                     SuggestedBillingInstruction = suggestedBillingInstruction,
                     SuggestedInvoiceAmount = suggestedInvoiceAmount
                 };
-
-                if (fee.Level == CommonConstants.LevelOne.ToString())
-                {
-                    UpdateProductPrice(context, fee.BillingInstructionSection, runId, fee.ProducerIdInt);
-                }
-            }
-        }
-
-        private static void UpdateProductPrice(ApplicationDBContext context, CalcResultSummaryBillingInstruction fee, int runId, int ProducerId)
-        {
-            var producer = context.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(p => p.ProducerId == ProducerId && p.CalculatorRunId == runId);
-            if (producer != null)
-            {
-                producer.CurrentYearInvoiceTotalToDate = fee.CurrentYearInvoiceTotalToDate;
-                producer.TonnageChangeSinceLastInvoice = fee.TonnageChangeSinceLastInvoice;
-                producer.AmountLiabilityDifferenceCalcVsPrev = fee.LiabilityDifference;
-                producer.MaterialPoundThresholdBreached = fee.MaterialThresholdBreached;
-                producer.TonnagePoundThresholdBreached = fee.TonnageThresholdBreached;
-                producer.PercentageLiabilityDifferenceCalcVsPrev = fee.PercentageLiabilityDifference;
-                producer.TonnagePercentageThresholdBreached = fee.TonnagePercentageThresholdBreached;
-                producer.SuggestedBillingInstruction = fee.SuggestedBillingInstruction;
-                producer.SuggestedInvoiceAmount = fee.SuggestedInvoiceAmount ?? 0m;
-                context.SaveChanges();
             }
         }
 
