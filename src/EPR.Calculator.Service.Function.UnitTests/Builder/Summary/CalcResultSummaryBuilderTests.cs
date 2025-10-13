@@ -1298,6 +1298,43 @@ namespace EPR.Calculator.Service.Function.UnitTests
             Assert.IsTrue(canAdd);
         }
 
+        [TestMethod]
+        public void ConstructAsync_Call_To_UpdateBillingInstructions_Persists_Level1_BillingInstructionSection_ToDb()
+        {
+            // Arrange
+            var requestDto = new CalcResultsRequestDto
+            {
+                RunId = 1,
+                FinancialYear = "2024-25"
+            };
+
+            this.calcResult.CalcResultDetail.RunId = 1;
+
+            // Act
+            var task = this.calcResultsService.ConstructAsync(requestDto, this.calcResult);
+            task.Wait();
+            var summary = task.Result;
+
+            // Assert: 
+            var level1 = summary.ProducerDisposalFees.FirstOrDefault(f => f.Level == CommonConstants.LevelOne.ToString() && f.ProducerIdInt == 1);
+
+            Assert.IsNotNull(level1);
+            Assert.IsNotNull(level1!.BillingInstructionSection);
+
+            var entity = context.ProducerResultFileSuggestedBillingInstruction.Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
+
+            Assert.AreEqual(level1.BillingInstructionSection!.CurrentYearInvoiceTotalToDate, entity.CurrentYearInvoiceTotalToDate);
+            Assert.AreEqual(level1.BillingInstructionSection!.TonnageChangeSinceLastInvoice, entity.TonnageChangeSinceLastInvoice);
+            Assert.AreEqual(level1.BillingInstructionSection!.LiabilityDifference, entity.AmountLiabilityDifferenceCalcVsPrev);
+            Assert.AreEqual(level1.BillingInstructionSection!.MaterialThresholdBreached, entity.MaterialPoundThresholdBreached);
+            Assert.AreEqual(level1.BillingInstructionSection!.TonnageThresholdBreached, entity.TonnagePoundThresholdBreached);
+            Assert.AreEqual(level1.BillingInstructionSection!.PercentageLiabilityDifference, entity.PercentageLiabilityDifferenceCalcVsPrev);
+            Assert.AreEqual(level1.BillingInstructionSection!.TonnagePercentageThresholdBreached, entity.TonnagePercentageThresholdBreached);
+            Assert.AreEqual(level1.BillingInstructionSection!.SuggestedBillingInstruction, entity.SuggestedBillingInstruction);
+            Assert.AreEqual(level1.BillingInstructionSection!.SuggestedInvoiceAmount ?? 0m, entity.SuggestedInvoiceAmount);
+        }
+
+
         private static void SeedDatabase(ApplicationDBContext context)
         {
             context.Material.AddRange(new List<Material>
