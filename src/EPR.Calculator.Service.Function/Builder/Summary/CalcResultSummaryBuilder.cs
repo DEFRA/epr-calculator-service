@@ -92,6 +92,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 defaultParams);
 
             await UpdateBillingInstructions(calcResult, result);
+
             return result;
         }
 
