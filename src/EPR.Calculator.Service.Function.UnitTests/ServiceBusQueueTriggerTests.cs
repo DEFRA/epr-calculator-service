@@ -75,7 +75,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 p => p.PrepareResultsFileAsync(
                     It.Is<CalculatorRunParameter>(msg => msg == processedParameterData),
                     It.Is<string>(name => name == runName)),
-                Times.Once);
+                Times.Once);  
 
             this.telemetryLogger.Verify(
                 x => x.LogInformation(It.Is<TrackMessage>(log =>

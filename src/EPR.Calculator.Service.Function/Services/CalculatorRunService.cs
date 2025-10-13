@@ -167,10 +167,11 @@ namespace EPR.Calculator.Service.Function.Services
             {
                 return true;
             }
+            string orgDataPipeline = GetOrgPipelineName(this.configuration.UseMycPipeline);
 
             var orgPipelineConfiguration = this.GetAzureSynapseConfiguration(
                     calculatorRunParameter,
-                    this.configuration.OrgDataPipelineName);
+                    orgDataPipeline);
 
             var isOrgSuccessful = await this.azureSynapseRunner.Process(orgPipelineConfiguration);
             this.LogInformation(calculatorRunParameter.Id, runName, $"RunPipelines - Org status: {isOrgSuccessful}");
@@ -179,13 +180,25 @@ namespace EPR.Calculator.Service.Function.Services
                 return false;
             }
 
+            var pomDataPipeLine = GetPomPipelineName(this.configuration.UseMycPipeline);
+
             var pomPipelineConfiguration = this.GetAzureSynapseConfiguration(
                 calculatorRunParameter,
-                this.configuration.PomDataPipelineName);
+                pomDataPipeLine);
 
             var isPomSuccessful = await this.azureSynapseRunner.Process(pomPipelineConfiguration);
             this.LogInformation(calculatorRunParameter.Id, runName, $"RunPipelines - POM status: {isPomSuccessful}");
             return isPomSuccessful;
+        }
+
+        private string GetOrgPipelineName(bool useMyc)
+        {
+            return useMyc ? this.configuration.OrgDataPipelineNameMyc : this.configuration.OrgDataPipelineName;
+        }
+
+        private string GetPomPipelineName(bool useMyc)
+        {
+            return useMyc ? this.configuration.PomDataPipelineNameMyc : this.configuration.PomDataPipelineName;
         }
 
         private async Task<bool> RunResultsFileCalculationAsync(CalculatorRunParameter calculatorRunParameter, string? runName)
