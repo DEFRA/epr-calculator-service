@@ -1334,6 +1334,98 @@ namespace EPR.Calculator.Service.Function.UnitTests
             Assert.AreEqual(level1.BillingInstructionSection!.SuggestedInvoiceAmount ?? 0m, entity.SuggestedInvoiceAmount);
         }
 
+        [TestMethod]
+        public async Task UpdateBillingInstructions_NoChanges_When_NoLevel1Fees()
+        {
+            // Arrange: 
+            var calcResult = TestDataHelper.GetCalcResult();
+            calcResult.CalcResultDetail.RunId = 1;
+
+            var summary = TestDataHelper.GetCalcResultSummary();
+            summary.ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
+            {
+                new()
+                {
+                    ProducerId = "1",
+                    ProducerIdInt = 1,
+                    ProducerName = "Producer 1",
+                    SubsidiaryId = "Subsidiary 1",
+                    Level = "2"
+                }
+            };
+
+            var before = context.ProducerResultFileSuggestedBillingInstruction.Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1).SuggestedInvoiceAmount;
+
+            // Act
+            await calcResultsService.UpdateBillingInstructions(calcResult, summary);
+
+            // Assert
+            var after = context.ProducerResultFileSuggestedBillingInstruction.Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1).SuggestedInvoiceAmount;
+            
+            Assert.AreEqual(before, after);
+        }
+
+        [TestMethod]
+        public async Task UpdateBillingInstructions_Level1ButMissingEntity_SkipsUpdate()
+        {
+            var calcResult = TestDataHelper.GetCalcResult();
+            calcResult.CalcResultDetail.RunId = 1;
+
+            var summary = TestDataHelper.GetCalcResultSummary();
+            summary.ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
+            {
+                new()
+                {
+                    ProducerId = "999",
+                    ProducerIdInt = 999,               
+                    ProducerName = "ProducerNotExistsInEntityList",
+                    SubsidiaryId = string.Empty,
+                    Level = CommonConstants.LevelOne.ToString(),
+                    BillingInstructionSection = new CalcResultSummaryBillingInstruction
+                    {
+                        SuggestedBillingInstruction = "INITIAL",
+                        SuggestedInvoiceAmount = 123m
+                    }
+                }
+            };
+
+            await calcResultsService.UpdateBillingInstructions(calcResult, summary);
+
+            var entity = context.ProducerResultFileSuggestedBillingInstruction.Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
+            
+            Assert.AreNotEqual(123m, entity.SuggestedInvoiceAmount);
+        }
+
+        [TestMethod]
+        public async Task UpdateBillingInstructions_NullSuggestedInvoiceAmount_SetsValueAsZero()
+        {
+            var calcResult = TestDataHelper.GetCalcResult();
+            calcResult.CalcResultDetail.RunId = 1;
+
+            var summary = TestDataHelper.GetCalcResultSummary();
+            summary.ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
+            {
+                new()
+                {
+                    ProducerId = "1",
+                    ProducerIdInt = 1,
+                    ProducerName = "Producer 1",
+                    SubsidiaryId = string.Empty,
+                    Level = CommonConstants.LevelOne.ToString(),
+                    BillingInstructionSection = new CalcResultSummaryBillingInstruction
+                    {
+                        SuggestedBillingInstruction = "INITIAL",
+                        SuggestedInvoiceAmount = null
+                    }
+                }
+            };
+
+            await calcResultsService.UpdateBillingInstructions(calcResult, summary);
+
+            var entity = context.ProducerResultFileSuggestedBillingInstruction.Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
+
+            Assert.AreEqual(0m, entity.SuggestedInvoiceAmount);
+        }
 
         private static void SeedDatabase(ApplicationDBContext context)
         {

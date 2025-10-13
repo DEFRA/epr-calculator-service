@@ -92,7 +92,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 defaultParams);
 
             await UpdateBillingInstructions(calcResult, result);
-
+            
             return result;
         }
 
@@ -181,7 +181,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
                 // Billing instructions section
                 BillingInstructionsProducer.SetValues(result, ProducerInvoicedMaterialNetTonnage, defaultParams);
-
             }
 
             // Set headers with calculated column index
@@ -743,7 +742,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             };
         }
 
-        private async Task UpdateBillingInstructions(CalcResult calcResult, CalcResultSummary result)
+        internal async Task UpdateBillingInstructions(CalcResult calcResult, CalcResultSummary result)
         {
             var level1ProducerIds = result.ProducerDisposalFees
                 .Where(f => f.Level == CommonConstants.LevelOne.ToString())
