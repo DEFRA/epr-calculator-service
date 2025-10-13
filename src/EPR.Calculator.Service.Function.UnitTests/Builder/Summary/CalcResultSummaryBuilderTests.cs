@@ -1448,6 +1448,107 @@ namespace EPR.Calculator.Service.Function.UnitTests
             Assert.AreEqual(section.SuggestedInvoiceAmount, entity.SuggestedInvoiceAmount);
         }
 
+        [TestMethod]
+        public async Task UpdateBillingInstructions_Level1WithNullBillingInstructionSection_SetsFieldsToNullOrZero()
+        {
+            // Arrange
+            this.calcResult.CalcResultDetail.RunId = 1;
+
+            var entity = context.ProducerResultFileSuggestedBillingInstruction.Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
+            entity.CurrentYearInvoiceTotalToDate = 999.99m;
+            entity.TonnageChangeSinceLastInvoice = "CHANGE";
+            entity.AmountLiabilityDifferenceCalcVsPrev = 888.88m;
+            entity.MaterialPoundThresholdBreached = "MAT";
+            entity.TonnagePoundThresholdBreached = "TON";
+            entity.PercentageLiabilityDifferenceCalcVsPrev = 77.77m;
+            entity.TonnagePercentageThresholdBreached = "TON%";
+            entity.SuggestedBillingInstruction = "INITIAL";
+            entity.SuggestedInvoiceAmount = 555.55m;
+            await context.SaveChangesAsync();
+
+            var summary = TestDataHelper.GetCalcResultSummary();
+            summary.ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
+            {
+                new()
+                {
+                    ProducerId = "1",
+                    ProducerIdInt = 1,
+                    ProducerName = "Producer 1",
+                    SubsidiaryId = string.Empty,
+                    Level = CommonConstants.LevelOne.ToString(),
+                    BillingInstructionSection = null
+                }
+            };
+
+            // Act
+            await calcResultsService.UpdateBillingInstructions(this.calcResult, summary);
+
+            // Assert
+            var updated = context.ProducerResultFileSuggestedBillingInstruction.Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
+            Assert.IsNull(updated.CurrentYearInvoiceTotalToDate);
+            Assert.IsNull(updated.TonnageChangeSinceLastInvoice);
+            Assert.IsNull(updated.AmountLiabilityDifferenceCalcVsPrev);
+            Assert.IsNull(updated.MaterialPoundThresholdBreached);
+            Assert.IsNull(updated.TonnagePoundThresholdBreached);
+            Assert.IsNull(updated.PercentageLiabilityDifferenceCalcVsPrev);
+            Assert.IsNull(updated.TonnagePercentageThresholdBreached);
+            Assert.IsNull(updated.SuggestedBillingInstruction); 
+            Assert.AreEqual(0m, updated.SuggestedInvoiceAmount); 
+        }
+
+        [TestMethod]
+        public async Task UpdateBillingInstructions_Level1WithNullSuggestedInvoiceAmount_SetsInvoiceAmountToZero()
+        {
+            // Arrange
+            this.calcResult.CalcResultDetail.RunId = 1;
+
+            var entity = context.ProducerResultFileSuggestedBillingInstruction.Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
+            entity.SuggestedInvoiceAmount = 321.45m;
+            await context.SaveChangesAsync();
+
+            var section = new CalcResultSummaryBillingInstruction
+            {
+                CurrentYearInvoiceTotalToDate = 10m,
+                TonnageChangeSinceLastInvoice = "No",
+                LiabilityDifference = 5.5m,
+                MaterialThresholdBreached = "Mat TH",
+                TonnageThresholdBreached = "Ton TH",
+                PercentageLiabilityDifference = 1.23m,
+                TonnagePercentageThresholdBreached = "Ton % TH",
+                SuggestedBillingInstruction = "ISSUE",
+                SuggestedInvoiceAmount = null 
+            };
+
+            var summary = TestDataHelper.GetCalcResultSummary();
+            summary.ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
+            {
+                new()
+                {
+                    ProducerId = "1",
+                    ProducerIdInt = 1,
+                    ProducerName = "Producer 1",
+                    SubsidiaryId = string.Empty,
+                    Level = CommonConstants.LevelOne.ToString(),
+                    BillingInstructionSection = section
+                }
+            };
+
+            // Act
+            await calcResultsService.UpdateBillingInstructions(this.calcResult, summary);
+
+            // Assert
+            var updated = context.ProducerResultFileSuggestedBillingInstruction.Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
+            Assert.AreEqual(section.CurrentYearInvoiceTotalToDate, updated.CurrentYearInvoiceTotalToDate);
+            Assert.AreEqual(section.TonnageChangeSinceLastInvoice, updated.TonnageChangeSinceLastInvoice);
+            Assert.AreEqual(section.LiabilityDifference, updated.AmountLiabilityDifferenceCalcVsPrev);
+            Assert.AreEqual(section.MaterialThresholdBreached, updated.MaterialPoundThresholdBreached);
+            Assert.AreEqual(section.TonnageThresholdBreached, updated.TonnagePoundThresholdBreached);
+            Assert.AreEqual(section.PercentageLiabilityDifference, updated.PercentageLiabilityDifferenceCalcVsPrev);
+            Assert.AreEqual(section.TonnagePercentageThresholdBreached, updated.TonnagePercentageThresholdBreached);
+            Assert.AreEqual(section.SuggestedBillingInstruction, updated.SuggestedBillingInstruction);
+            Assert.AreEqual(0m, updated.SuggestedInvoiceAmount); 
+        }
+
         private static void SeedDatabase(ApplicationDBContext context)
         {
             context.Material.AddRange(new List<Material>
