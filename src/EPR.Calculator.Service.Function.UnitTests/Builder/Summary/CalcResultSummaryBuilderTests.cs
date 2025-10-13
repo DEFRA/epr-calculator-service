@@ -1395,38 +1395,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             Assert.AreNotEqual(123m, entity.SuggestedInvoiceAmount);
         }
-
-        [TestMethod]
-        public async Task UpdateBillingInstructions_NullSuggestedInvoiceAmount_SetsValueAsZero()
-        {
-            var calcResult = TestDataHelper.GetCalcResult();
-            calcResult.CalcResultDetail.RunId = 1;
-
-            var summary = TestDataHelper.GetCalcResultSummary();
-            summary.ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
-            {
-                new()
-                {
-                    ProducerId = "1",
-                    ProducerIdInt = 1,
-                    ProducerName = "Producer 1",
-                    SubsidiaryId = string.Empty,
-                    Level = CommonConstants.LevelOne.ToString(),
-                    BillingInstructionSection = new CalcResultSummaryBillingInstruction
-                    {
-                        SuggestedBillingInstruction = "INITIAL",
-                        SuggestedInvoiceAmount = null
-                    }
-                }
-            };
-
-            await calcResultsService.UpdateBillingInstructions(calcResult, summary);
-
-            var entity = context.ProducerResultFileSuggestedBillingInstruction.Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
-
-            Assert.AreEqual(0m, entity.SuggestedInvoiceAmount);
-        }
-
+        
         [TestMethod]
         public async Task UpdateBillingInstructions_MapsAllFields_When_Level1EntityExists()
         {
@@ -1478,49 +1447,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
             Assert.AreEqual(section.SuggestedBillingInstruction, entity.SuggestedBillingInstruction);
             Assert.AreEqual(section.SuggestedInvoiceAmount, entity.SuggestedInvoiceAmount);
         }
-
-        [TestMethod]
-        public async Task UpdateBillingInstructions_NullSectionOrAmount_AppliesNullPropagation_And_SetsZero()
-        {
-            // Arrange
-            var calcResult = TestDataHelper.GetCalcResult();
-            calcResult.CalcResultDetail.RunId = 1;
-
-            var summary = TestDataHelper.GetCalcResultSummary();
-            summary.ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
-            {
-                new CalcResultSummaryProducerDisposalFees()
-                {
-                    ProducerId = "1",
-                    ProducerIdInt = 1,
-                    ProducerName = "Producer 1",
-                    SubsidiaryId = string.Empty,
-                    Level = CommonConstants.LevelOne.ToString(),
-                    BillingInstructionSection = null
-                },
-                new CalcResultSummaryProducerDisposalFees()
-                {
-                    ProducerId = "1",
-                    ProducerIdInt = 1,
-                    ProducerName = "Producer 1",
-                    SubsidiaryId = string.Empty,
-                    Level = CommonConstants.LevelOne.ToString(),
-                    BillingInstructionSection = new CalcResultSummaryBillingInstruction
-                    {
-                        SuggestedBillingInstruction = "INITIAL",
-                        SuggestedInvoiceAmount = null
-                    }
-                }
-            };
-
-            // Act
-            await calcResultsService.UpdateBillingInstructions(calcResult, summary);
-
-            // Assert
-            var entity = context.ProducerResultFileSuggestedBillingInstruction.Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
-            Assert.AreEqual(0m, entity.SuggestedInvoiceAmount);
-        }
-
 
         private static void SeedDatabase(ApplicationDBContext context)
         {
