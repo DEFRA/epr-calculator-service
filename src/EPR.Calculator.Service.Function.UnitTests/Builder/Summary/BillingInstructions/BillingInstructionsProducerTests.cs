@@ -288,7 +288,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
             this.defaultParam.First().ParameterValue = 55000m;
             this.defaultParam.First().ParameterUniqueReference = "MATT-PD";
 
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, producerInvoicedMaterialNetTonnage, this.defaultParam, _dbContext, 101);
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, producerInvoicedMaterialNetTonnage, this.defaultParam);
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection;
 
 
@@ -343,7 +343,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
                                 }
                             };
 
-            BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>(), _dbContext, 101);
+            BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
 
             var fee = summary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
             var expected = Math.Round(120.004m, 2) - Math.Round(20.003m, 2);
@@ -385,7 +385,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
                                 }
                             };
 
-            BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>(), _dbContext, 101);
+            BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
             Assert.IsNull(summary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!.LiabilityDifference);
         }
 
@@ -421,7 +421,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
                                     }
                                 };
 
-            BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>(), _dbContext, 101);
+            BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
 
             Assert.AreEqual(15m, summary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!.LiabilityDifference);
         }
@@ -475,7 +475,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
                                 }
                             };
 
-            BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>(), _dbContext, 101);
+            BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
 
             var fees = summary.ProducerDisposalFees.ToList();
             var totalsRow = fees[2].BillingInstructionSection!;
@@ -533,7 +533,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
                                 }
                             };
 
-            BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>(), _dbContext, 101);
+            BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
 
             var totalsRow = summary.ProducerDisposalFees.ToList()[2].BillingInstructionSection!;
             Assert.IsNull(totalsRow.LiabilityDifference);
@@ -555,7 +555,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
 
             var summary = new CalcResultSummary { ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { total } };
 
-            BillingInstructionsProducer.SetValues(summary, new List<ProducerInvoicedDto>(), new List<DefaultParamResultsClass>(), _dbContext, 101);
+            BillingInstructionsProducer.SetValues(summary, new List<ProducerInvoicedDto>(), new List<DefaultParamResultsClass>());
 
             Assert.AreEqual(string.Empty, summary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!.MaterialThresholdBreached);
         }
@@ -583,7 +583,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
                                 }
                             };
 
-            BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>(), _dbContext, 101);
+            BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
 
             Assert.AreEqual("-", fee.BillingInstructionSection!.MaterialThresholdBreached);
         }
@@ -627,7 +627,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
                     ParameterCategory = "Amount Decrease",
                     ParameterType = "Materiality threshold"
                 }
-                    }, _dbContext, 101);
+                    });
 
             Assert.AreEqual("-", fee.BillingInstructionSection!.MaterialThresholdBreached);
         }
@@ -655,7 +655,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
                                 }
                             };
 
-            BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>(), _dbContext, 101);
+            BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
             Assert.AreEqual("-", fee.BillingInstructionSection!.MaterialThresholdBreached);
         }
 
@@ -700,7 +700,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
                                 }
                             };
 
-            BillingInstructionsProducer.SetValues(summary, invoiced, dp, _dbContext, 101);
+            BillingInstructionsProducer.SetValues(summary, invoiced, dp);
             Assert.AreEqual("+ve", fee.BillingInstructionSection!.MaterialThresholdBreached);
         }
 
@@ -745,7 +745,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
                                     }
                                 };
 
-            BillingInstructionsProducer.SetValues(summary, invoiced, dp, _dbContext, 101);
+            BillingInstructionsProducer.SetValues(summary, invoiced, dp);
             Assert.AreEqual("-ve", fee.BillingInstructionSection!.MaterialThresholdBreached);
         }
 
@@ -790,7 +790,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
                                         }
                                     };
 
-            BillingInstructionsProducer.SetValues(summary, invoiced, dp, _dbContext, 101);
+            BillingInstructionsProducer.SetValues(summary, invoiced, dp);
             Assert.AreEqual("-", fee.BillingInstructionSection!.MaterialThresholdBreached);
         }
 
@@ -836,7 +836,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
                             }
                         };
 
-            BillingInstructionsProducer.SetValues(summary, invoiced, dp, _dbContext, 101);
+            BillingInstructionsProducer.SetValues(summary, invoiced, dp);
             Assert.AreEqual("-", fee.BillingInstructionSection!.TonnageThresholdBreached);
         }
 
@@ -864,7 +864,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
                                 }
                             };
 
-            BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>(), _dbContext, 101);
+            BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
             Assert.AreEqual("-", fee.BillingInstructionSection!.TonnageThresholdBreached);
         }
 
@@ -910,7 +910,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
                                 }
                             };
 
-            BillingInstructionsProducer.SetValues(summary, invoiced, dp, _dbContext, 101);
+            BillingInstructionsProducer.SetValues(summary, invoiced, dp);
             Assert.AreEqual("+ve", fee.BillingInstructionSection!.TonnageThresholdBreached);
         }
 
@@ -956,7 +956,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
                                 }
                             };
 
-            BillingInstructionsProducer.SetValues(summary, invoiced, dp, _dbContext, 101);
+            BillingInstructionsProducer.SetValues(summary, invoiced, dp);
             Assert.AreEqual("-ve", fee.BillingInstructionSection!.TonnageThresholdBreached);
         }
 
@@ -1002,7 +1002,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
                                 }
                             };
 
-            BillingInstructionsProducer.SetValues(summary, invoiced, dp, _dbContext, 101);
+            BillingInstructionsProducer.SetValues(summary, invoiced, dp);
             Assert.AreEqual("-", fee.BillingInstructionSection!.TonnageThresholdBreached);
         }
 
@@ -1011,7 +1011,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         {
             _calcResult.CalcResultSummary.ProducerDisposalFees.First().Level = "2";
 
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, new List<DefaultParamResultsClass>(), _dbContext, 101);
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, new List<DefaultParamResultsClass>());
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
             Assert.IsNull(fee.PercentageLiabilityDifference);
@@ -1020,7 +1020,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         [TestMethod]
         public void CalculatePercentageLiabilityDifference_Level1_ComputesRoundedDifference()
         {
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, new List<DefaultParamResultsClass>(), _dbContext, 101);
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, new List<DefaultParamResultsClass>());
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
             Assert.AreEqual(52348.00m, fee.PercentageLiabilityDifference);
@@ -1031,7 +1031,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         {
             _calcResult.CalcResultSummary.ProducerDisposalFees.First().IsProducerScaledup = CommonConstants.Totals;
 
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, new List<DefaultParamResultsClass>(), _dbContext, 101);
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, new List<DefaultParamResultsClass>());
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
             Assert.IsNull(fee.PercentageLiabilityDifference);
@@ -1042,7 +1042,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         {
             _calcResult.CalcResultSummary.ProducerDisposalFees.First().Level = "2";
 
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, new List<DefaultParamResultsClass>(), _dbContext, 101);
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, new List<DefaultParamResultsClass>());
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
             Assert.AreEqual(CommonConstants.Hyphen, fee.MaterialPercentageThresholdBreached);
@@ -1051,7 +1051,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         [TestMethod]
         public void CalculateMaterialPercentageThresholdBreached_Level1_ReturnsPositive()
         {
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam, _dbContext, 101);
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam);
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
             Assert.AreEqual(CommonConstants.Positive, fee.MaterialPercentageThresholdBreached);
@@ -1063,7 +1063,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
             this.defaultParam.First().ParameterValue = 55000m;
             this.defaultParam.First().ParameterUniqueReference = "MATT-PD";
 
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam, _dbContext, 101);
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam);
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
             Assert.AreEqual(CommonConstants.Negative, fee.MaterialPercentageThresholdBreached);
@@ -1073,7 +1073,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         public void CalculateMaterialPercentageThresholdBreached_Level1_ReturnsHypen()
         {
             this.defaultParam.First().ParameterUniqueReference = "";
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam, _dbContext, 101);
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam);
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
             Assert.AreEqual(CommonConstants.Hyphen, fee.MaterialPercentageThresholdBreached);
@@ -1084,7 +1084,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         {
             _calcResult.CalcResultSummary.ProducerDisposalFees.First().Level = "2";
 
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, new List<DefaultParamResultsClass>(), _dbContext, 101);
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, new List<DefaultParamResultsClass>());
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
             Assert.AreEqual(CommonConstants.Hyphen, fee.TonnagePercentageThresholdBreached);
@@ -1094,7 +1094,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         public void CalculateTonnagePercentageThresholdBreached_WhenTonnageChangeIsNull_ReturnsHypen()
         {
             this.defaultParam.First().ParameterUniqueReference = "TONT-PI";
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam, _dbContext, 101);
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam);
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
             Assert.AreEqual(CommonConstants.Hyphen, fee.TonnagePercentageThresholdBreached);
@@ -1105,7 +1105,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         {
             _calcResult.CalcResultSummary.ProducerDisposalFees.First().TonnageChangeAdvice = "CHANGE";
             this.defaultParam.First().ParameterUniqueReference = "TONT-PI";
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam, _dbContext, 101);
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam);
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
             Assert.AreEqual(CommonConstants.Positive, fee.TonnagePercentageThresholdBreached);
@@ -1118,7 +1118,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
             this.defaultParam.First().ParameterValue = 55000m;
             this.defaultParam.First().ParameterUniqueReference = "TONT-PD";
 
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam, _dbContext, 101);
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam);
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
             Assert.AreEqual(CommonConstants.Negative, fee.TonnagePercentageThresholdBreached);
@@ -1127,7 +1127,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         [TestMethod]
         public void CalculateTonnagePercentageThresholdBreached_Level1_ReturnsHypen()
         {
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam, _dbContext, 101);
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam);
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
             Assert.AreEqual(CommonConstants.Hyphen, fee.TonnagePercentageThresholdBreached);
@@ -1138,7 +1138,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         {
             _calcResult.CalcResultSummary.ProducerDisposalFees.First().Level = "2";
 
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam, _dbContext, 101);
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam);
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
             Assert.AreEqual(CommonConstants.Hyphen, fee.SuggestedBillingInstruction);
@@ -1152,7 +1152,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
             this.defaultParam.First().ParameterValue = 55000m;
             this.defaultParam.First().ParameterUniqueReference = "MATT-PD";
 
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam, _dbContext, 101);
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam);
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
             Assert.AreEqual(CommonConstants.Delta, fee.SuggestedBillingInstruction);
@@ -1166,7 +1166,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
             this.defaultParam.First().ParameterValue = 55000m;
             this.defaultParam.First().ParameterUniqueReference = "MATT-PD";
 
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam, _dbContext, 101);
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam);
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
             Assert.AreEqual(CommonConstants.Rebill, fee.SuggestedBillingInstruction);
@@ -1177,7 +1177,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         {
             this.producerInvoicedDto.First().InvoiceInstruction!.CurrentYearInvoicedTotalAfterThisRun = 10491.17m;
 
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, new List<DefaultParamResultsClass>(), _dbContext, 101);
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, new List<DefaultParamResultsClass>());
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
             Assert.AreEqual(CommonConstants.Hyphen, fee.SuggestedBillingInstruction);
@@ -1188,7 +1188,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         {
             _calcResult.CalcResultSummary.ProducerDisposalFees.First().Level = "2";
 
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam, _dbContext, 101);
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam);
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
             Assert.IsNull(fee.SuggestedInvoiceAmount);
@@ -1202,7 +1202,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
             this.defaultParam.First().ParameterValue = 55000m;
             this.defaultParam.First().ParameterUniqueReference = "MATT-PD";
 
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam, _dbContext, 101);
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam);
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
             Assert.AreEqual(fee.LiabilityDifference, fee.SuggestedInvoiceAmount);
@@ -1225,7 +1225,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
 
             _dbContext.SaveChanges();
 
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam, _dbContext, 101);
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, this.defaultParam);
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
             Assert.AreEqual(10491.17m, Math.Round(fee.SuggestedInvoiceAmount ?? 0m, 2));
@@ -1236,7 +1236,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         {
             this.producerInvoicedDto.First().InvoiceInstruction!.CurrentYearInvoicedTotalAfterThisRun = 10491.17m;
 
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, new List<DefaultParamResultsClass>(), _dbContext, 101);
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, new List<DefaultParamResultsClass>());
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
             Assert.IsNull(fee.SuggestedInvoiceAmount);
