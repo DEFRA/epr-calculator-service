@@ -68,6 +68,84 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
         }
 
         [TestMethod]
+        public async Task Construct_CancelledProducer_ReturnsRejectedProducers()
+        {
+            // Arrange
+            var context = CreateDbContext();
+
+            //TestDataHelper.SeedDatabaseForInitialRunCompleted(context);
+            TestDataHelper.SeedDatabaseForInitialRun(context);
+
+            // Seed ProducerResultFileSuggestedBillingInstruction
+            context.ProducerResultFileSuggestedBillingInstruction.Add(new ProducerResultFileSuggestedBillingInstruction
+            {
+                CalculatorRunId = 3,
+                ProducerId = 1,
+                SuggestedBillingInstruction = "Instruction A",
+                SuggestedInvoiceAmount = 123.45m,
+                BillingInstructionAcceptReject = "Rejected",
+                ReasonForRejection = "Invalid Data",
+                LastModifiedAcceptReject = new DateTime(2024, 1, 1),
+                LastModifiedAcceptRejectBy = "User A"
+            });
+
+            await context.SaveChangesAsync();
+
+            var builder = new CalcResultRejectedProducersBuilder(context);
+            var requestDto = new CalcResultsRequestDto { RunId = 3, FinancialYear = "2025-26" };
+
+            // Act
+            var result = await builder.ConstructAsync(requestDto);
+
+            // Assert
+            var list = new List<CalcResultRejectedProducer>(result);
+            Assert.AreEqual(1, list.Count);
+            Assert.AreEqual(1, list[0].ProducerId);
+            Assert.AreEqual("Test1", list[0].ProducerName);
+            Assert.AreEqual("TN1", list[0].TradingName);
+            Assert.AreEqual("Instruction A", list[0].SuggestedBillingInstruction);
+            Assert.AreEqual(123.45m, list[0].SuggestedInvoiceAmount);
+            Assert.AreEqual(new DateTime(2024, 1, 1), list[0].InstructionConfirmedDate);
+            Assert.AreEqual("User A", list[0].InstructionConfirmedBy);
+            Assert.AreEqual("Invalid Data", list[0].ReasonForRejection);
+        }
+
+        [TestMethod]
+        public async Task Construct_CancelledProducer_DoesNotReturnAcceptedProducers()
+        {
+            // Arrange
+            var context = CreateDbContext();
+
+            // Setup cancelled producer 
+            TestDataHelper.SeedDatabaseForInitialRun(context);
+
+            // Seed ProducerResultFileSuggestedBillingInstruction
+            context.ProducerResultFileSuggestedBillingInstruction.Add(new ProducerResultFileSuggestedBillingInstruction
+            {
+                CalculatorRunId = 3,
+                ProducerId = 1,
+                SuggestedBillingInstruction = "Instruction A",
+                SuggestedInvoiceAmount = 123.45m,
+                BillingInstructionAcceptReject = "Accepted",
+                ReasonForRejection = "",
+                LastModifiedAcceptReject = new DateTime(2024, 1, 1),
+                LastModifiedAcceptRejectBy = "User A"
+            });
+
+            await context.SaveChangesAsync();
+
+            var builder = new CalcResultRejectedProducersBuilder(context);
+            var requestDto = new CalcResultsRequestDto { RunId = 3, FinancialYear = "2025-26" };
+
+            // Act
+            var result = await builder.ConstructAsync(requestDto);
+
+            // Assert
+            var list = new List<CalcResultRejectedProducer>(result);
+            Assert.AreEqual(0, list.Count);            
+        }
+
+        [TestMethod]
         public async Task Construct_EmptyResult_ReturnsEmptyList()
         {
             // Arrange
