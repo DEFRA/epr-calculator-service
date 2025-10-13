@@ -181,8 +181,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 // Billing instructions section
                 BillingInstructionsProducer.SetValues(result, ProducerInvoicedMaterialNetTonnage, defaultParams);
 
-                UpdateBillingInstructions(calcResult, result);
-
             }
 
             // Set headers with calculated column index
