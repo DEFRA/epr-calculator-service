@@ -274,7 +274,6 @@
         {
             var expectedResult = new ProducerDetail
             {
-                Id = 9991,
                 ProducerId = 9991,
                 ProducerName = "UPU LIMITED",
                 CalculatorRunId = 1,
