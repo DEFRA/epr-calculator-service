@@ -178,7 +178,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 TotalBillBreakdownProducer.SetValues(result);
 
                 // Billing instructions section
-                BillingInstructionsProducer.SetValues(result, ProducerInvoicedMaterialNetTonnage, defaultParams, this.context, calcResult.CalcResultDetail.RunId);
+                BillingInstructionsProducer.SetValues(result, ProducerInvoicedMaterialNetTonnage, defaultParams);
 
                 UpdateBillingInstructions(calcResult, result);
 
