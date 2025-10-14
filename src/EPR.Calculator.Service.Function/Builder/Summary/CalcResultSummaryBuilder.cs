@@ -91,8 +91,11 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 producerInvoicedMaterialNetTonnage,
                 defaultParams);
 
-            await UpdateBillingInstructions(calcResult, result);
-
+            if(resultsRequestDto.IsBillingFile)
+            {
+                await UpdateBillingInstructions(calcResult, result);
+            }
+            
             return result;
         }
 
