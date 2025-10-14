@@ -169,6 +169,8 @@ namespace EPR.Calculator.Service.Function.Services
             }
             string orgDataPipeline = GetOrgPipelineName(this.configuration.UseMycPipeline);
 
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(orgDataPipeline, nameof(orgDataPipeline));
+
             var orgPipelineConfiguration = this.GetAzureSynapseConfiguration(
                     calculatorRunParameter,
                     orgDataPipeline);
@@ -181,6 +183,7 @@ namespace EPR.Calculator.Service.Function.Services
             }
 
             var pomDataPipeLine = GetPomPipelineName(this.configuration.UseMycPipeline);
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(pomDataPipeLine, nameof(pomDataPipeLine));
 
             var pomPipelineConfiguration = this.GetAzureSynapseConfiguration(
                 calculatorRunParameter,
