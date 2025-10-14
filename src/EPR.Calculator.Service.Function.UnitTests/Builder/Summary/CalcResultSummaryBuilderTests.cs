@@ -1175,7 +1175,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb("2024-25");
             var defaultParams = new List<DefaultParamResultsClass>();
 
-            var summary = calcResultsService.GetCalcResultSummary(ordered, materials, calcResult, totalPackaging, producerInvoicedMaterialNetTonnage, defaultParams);           
+            var summary = calcResultsService.GetCalcResultSummary(ordered, materials, calcResult, totalPackaging, producerInvoicedMaterialNetTonnage, defaultParams);
 
             Assert.IsTrue(summary.ProducerDisposalFees.Any(r => r.isTotalRow));
         }
@@ -1189,7 +1189,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var materials = Mappers.MaterialMapper.Map(context.Material.ToList());
 
             var tonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>();
-         
+
             foreach (var m in materials)
             {
                 tonnageByMaterial[m.Code] = new CalcResultScaledupProducerTonnage
@@ -1228,7 +1228,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 materials,
                 this.calcResult, new List<TotalPackagingTonnagePerRun>(),
                 producerInvoicedMaterialNetTonnage);
-                
+
 
             Assert.AreEqual(CommonConstants.ScaledupProducersYes, row.IsProducerScaledup);
         }
@@ -1297,31 +1297,33 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var canAdd = calcResultsService.CanAddTotalRow(parent, subOnly, new List<CalcResultSummaryProducerDisposalFees>());
             Assert.IsTrue(canAdd);
         }
-
+        
         [TestMethod]
-        public void ConstructAsync_Call_To_UpdateBillingInstructions_Persists_Level1_BillingInstructionSection_ToDb()
+        public void ConstructAsync_WhenIsBillingFileTrue_Persists_BillingInstructions_ToDb()
         {
             // Arrange
             var requestDto = new CalcResultsRequestDto
             {
                 RunId = 1,
-                FinancialYear = "2024-25"
+                FinancialYear = "2024-25",
+                IsBillingFile = true
             };
 
             this.calcResult.CalcResultDetail.RunId = 1;
 
             // Act
-            var task = this.calcResultsService.ConstructAsync(requestDto, this.calcResult);
-            task.Wait();
-            var summary = task.Result;
+            var summary = this.calcResultsService.ConstructAsync(requestDto, this.calcResult).Result;
 
-            // Assert: 
-            var level1 = summary.ProducerDisposalFees.FirstOrDefault(f => f.Level == CommonConstants.LevelOne.ToString() && f.ProducerIdInt == 1);
-
+            // Assert (verify Level 1 row exists and has a section)
+            var level1 = summary.ProducerDisposalFees
+                                .FirstOrDefault(f => f.Level == CommonConstants.LevelOne.ToString()
+                                                  && f.ProducerIdInt == 1);
             Assert.IsNotNull(level1);
-            Assert.IsNotNull(level1!.BillingInstructionSection);
+            Assert.IsNotNull(level1!.BillingInstructionSection, "BillingInstructionSection should be populated on Level 1.");
 
-            var entity = context.ProducerResultFileSuggestedBillingInstruction.Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
+            // Assert
+            var entity = context.ProducerResultFileSuggestedBillingInstruction
+                                .Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
 
             Assert.AreEqual(level1.BillingInstructionSection!.CurrentYearInvoiceTotalToDate, entity.CurrentYearInvoiceTotalToDate);
             Assert.AreEqual(level1.BillingInstructionSection!.TonnageChangeSinceLastInvoice, entity.TonnageChangeSinceLastInvoice);
@@ -1332,6 +1334,53 @@ namespace EPR.Calculator.Service.Function.UnitTests
             Assert.AreEqual(level1.BillingInstructionSection!.TonnagePercentageThresholdBreached, entity.TonnagePercentageThresholdBreached);
             Assert.AreEqual(level1.BillingInstructionSection!.SuggestedBillingInstruction, entity.SuggestedBillingInstruction);
             Assert.AreEqual(level1.BillingInstructionSection!.SuggestedInvoiceAmount ?? 0m, entity.SuggestedInvoiceAmount);
+        }
+
+        [TestMethod]
+        public void ConstructAsync_WhenIsBillingFileFalse_DoesNotPersist_Billing_Instructions_ToDb()
+        {
+            // Arrange
+            var requestDto = new CalcResultsRequestDto
+            {
+                RunId = 1,
+                FinancialYear = "2024-25",
+                IsBillingFile = false 
+            };
+
+            this.calcResult.CalcResultDetail.RunId = 1;
+
+            var beforeEntity = context.ProducerResultFileSuggestedBillingInstruction
+                                     .Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
+
+            var before = new
+            {
+                beforeEntity.CurrentYearInvoiceTotalToDate,
+                beforeEntity.TonnageChangeSinceLastInvoice,
+                beforeEntity.AmountLiabilityDifferenceCalcVsPrev,
+                beforeEntity.MaterialPoundThresholdBreached,
+                beforeEntity.TonnagePoundThresholdBreached,
+                beforeEntity.PercentageLiabilityDifferenceCalcVsPrev,
+                beforeEntity.TonnagePercentageThresholdBreached,
+                beforeEntity.SuggestedBillingInstruction,
+                beforeEntity.SuggestedInvoiceAmount
+            };
+
+            // Act
+            var summary = this.calcResultsService.ConstructAsync(requestDto, this.calcResult).Result;
+
+            
+            var afterEntity = context.ProducerResultFileSuggestedBillingInstruction
+                                    .Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
+
+            Assert.AreEqual(before.CurrentYearInvoiceTotalToDate, afterEntity.CurrentYearInvoiceTotalToDate);
+            Assert.AreEqual(before.TonnageChangeSinceLastInvoice, afterEntity.TonnageChangeSinceLastInvoice);
+            Assert.AreEqual(before.AmountLiabilityDifferenceCalcVsPrev, afterEntity.AmountLiabilityDifferenceCalcVsPrev);
+            Assert.AreEqual(before.MaterialPoundThresholdBreached, afterEntity.MaterialPoundThresholdBreached);
+            Assert.AreEqual(before.TonnagePoundThresholdBreached, afterEntity.TonnagePoundThresholdBreached);
+            Assert.AreEqual(before.PercentageLiabilityDifferenceCalcVsPrev, afterEntity.PercentageLiabilityDifferenceCalcVsPrev);
+            Assert.AreEqual(before.TonnagePercentageThresholdBreached, afterEntity.TonnagePercentageThresholdBreached);
+            Assert.AreEqual(before.SuggestedBillingInstruction, afterEntity.SuggestedBillingInstruction);
+            Assert.AreEqual(before.SuggestedInvoiceAmount, afterEntity.SuggestedInvoiceAmount);
         }
 
         [TestMethod]
@@ -1395,7 +1444,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             Assert.AreNotEqual(123m, entity.SuggestedInvoiceAmount);
         }
-        
+
         [TestMethod]
         public async Task UpdateBillingInstructions_MapsAllFields_When_Level1EntityExists()
         {
@@ -1492,8 +1541,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
             Assert.IsNull(updated.TonnagePoundThresholdBreached);
             Assert.IsNull(updated.PercentageLiabilityDifferenceCalcVsPrev);
             Assert.IsNull(updated.TonnagePercentageThresholdBreached);
-            Assert.IsNull(updated.SuggestedBillingInstruction); 
-            Assert.AreEqual(0m, updated.SuggestedInvoiceAmount); 
+            Assert.IsNull(updated.SuggestedBillingInstruction);
+            Assert.AreEqual(0m, updated.SuggestedInvoiceAmount);
         }
 
         [TestMethod]
@@ -1516,7 +1565,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 PercentageLiabilityDifference = 1.23m,
                 TonnagePercentageThresholdBreached = "Ton % TH",
                 SuggestedBillingInstruction = "ISSUE",
-                SuggestedInvoiceAmount = null 
+                SuggestedInvoiceAmount = null
             };
 
             var summary = TestDataHelper.GetCalcResultSummary();
@@ -1546,7 +1595,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             Assert.AreEqual(section.PercentageLiabilityDifference, updated.PercentageLiabilityDifferenceCalcVsPrev);
             Assert.AreEqual(section.TonnagePercentageThresholdBreached, updated.TonnagePercentageThresholdBreached);
             Assert.AreEqual(section.SuggestedBillingInstruction, updated.SuggestedBillingInstruction);
-            Assert.AreEqual(0m, updated.SuggestedInvoiceAmount); 
+            Assert.AreEqual(0m, updated.SuggestedInvoiceAmount);
         }
 
         private static void SeedDatabase(ApplicationDBContext context)
@@ -1642,7 +1691,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             });
 
             context.CalculatorRunOrganisationDataDetails.AddRange(new List<CalculatorRunOrganisationDataDetail>
-            { 
+            {
                 new CalculatorRunOrganisationDataDetail {Id = 2, CalculatorRunOrganisationDataMasterId = 1, OrganisationId = 4, OrganisationName="ORG1",SubmissionPeriodDesc = "Test", SubsidaryId = null},
             });
 
