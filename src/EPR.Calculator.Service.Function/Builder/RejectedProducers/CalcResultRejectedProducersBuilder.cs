@@ -26,7 +26,8 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
             var missingProducersInCurrentRun = producersForPreviousRuns
                 .Where(t => !producersForCurrentRun.Any(k => k.ProducerId == t.InvoicedTonnage?.ProducerId))
                 .DistinctBy(p => p.ProducerDetail?.ProducerId)
-                .Select(p => p.ProducerDetail);            
+                .Select(p => p.ProducerDetail)
+                .ToList();            
             var producerDetails = this.context.ProducerDetail
                 .AsNoTracking()
                 .AsEnumerable()
@@ -34,7 +35,7 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                 .ToList();
 
             //Add cancelled producer in current run
-            if (missingProducersInCurrentRun != null)
+            if (missingProducersInCurrentRun.Count > 0)
             {
                 producerDetails.AddRange(missingProducersInCurrentRun!);
             }
