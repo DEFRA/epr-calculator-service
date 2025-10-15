@@ -21,7 +21,7 @@
         private readonly ApplicationDBContext context;
         private readonly IMaterialService materialService;
         private List<MaterialDetail> materials;
-        private IProducerDetailService producerDetailsService;
+        private readonly IProducerDetailService producerDetailsService;
 
         public CalcResultCancelledProducersBuilder(ApplicationDBContext context,
             IMaterialService materialService,

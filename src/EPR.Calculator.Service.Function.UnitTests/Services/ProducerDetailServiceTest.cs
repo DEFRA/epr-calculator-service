@@ -14,15 +14,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     [TestClass]
     public class ProducerDetailServiceTest
     {
-        private ApplicationDBContext context;
+        private readonly ApplicationDBContext context;
 
-        [TestInitialize]
-        public void TestInitialize()
+        public ProducerDetailServiceTest()
         {
             var options = new DbContextOptionsBuilder<ApplicationDBContext>()
                 .UseInMemoryDatabase(databaseName: "PayCal")
                 .Options;
-            context = new ApplicationDBContext(options);
+            this.context = new ApplicationDBContext(options);
         }
 
         [TestCleanup]

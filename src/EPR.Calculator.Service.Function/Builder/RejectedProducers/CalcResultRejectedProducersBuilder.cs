@@ -14,7 +14,7 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
     public class CalcResultRejectedProducersBuilder : ICalcResultRejectedProducersBuilder
     {
         private readonly ApplicationDBContext context;
-        private IProducerDetailService producerDetailsService;
+        private readonly IProducerDetailService producerDetailsService;
 
         public CalcResultRejectedProducersBuilder(ApplicationDBContext context,
             IProducerDetailService producerDetailsService
