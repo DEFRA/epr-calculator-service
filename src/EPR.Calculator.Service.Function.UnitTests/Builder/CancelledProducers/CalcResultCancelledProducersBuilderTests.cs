@@ -21,6 +21,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
     using Microsoft.EntityFrameworkCore.Diagnostics;
     using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Function.Enums;
+    using EPR.Calculator.Service.Function.Interface;
 
     [TestClass]
     public class CalcResultCancelledProducersBuilderTests
@@ -43,8 +44,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             this.dbContext.Database.EnsureCreated();
             this.dbContextFactory.Setup(factory => factory.CreateDbContext()).Returns(this.dbContext);
             this.materialService = new Mock<IMaterialService>();
+            var producerDetailService = new ProducerDetailService(dbContext);
+
             this.builder = new CalcResultCancelledProducersBuilder(
-                this.dbContext, this.materialService.Object);
+                this.dbContext, 
+                this.materialService.Object,
+                producerDetailService);
         }
 
         private Fixture Fixture { get; init; } = new Fixture();
@@ -142,6 +147,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
 
 
             this.materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
+
+            //this.producerDetailsService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());            
 
             // Act
             var result = await builder.ConstructAsync(requestDto, "2025-26");

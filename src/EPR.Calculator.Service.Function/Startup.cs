@@ -226,6 +226,7 @@ namespace EPR.Calculator.Service.Function
 #elif DEBUG
             services.AddTransient<IStorageService, LocalFileStorageService>();
             services.AddTransient<IConfigurationService, LocalDevelopmentConfiguration>();
+            services.AddTransient<IProducerDetailService, ProducerDetailService>();
 #endif
         }
 

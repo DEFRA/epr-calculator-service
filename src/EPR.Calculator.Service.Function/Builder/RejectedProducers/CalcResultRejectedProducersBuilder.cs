@@ -1,8 +1,9 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Dtos;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,23 +14,28 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
     public class CalcResultRejectedProducersBuilder : ICalcResultRejectedProducersBuilder
     {
         private readonly ApplicationDBContext context;
+        private IProducerDetailService producerDetailsService;
 
-        public CalcResultRejectedProducersBuilder(ApplicationDBContext context)
+        public CalcResultRejectedProducersBuilder(ApplicationDBContext context,
+            IProducerDetailService producerDetailsService
+        )
         {
             this.context = context;
+            this.producerDetailsService = producerDetailsService;
         }
 
         public async Task<IEnumerable<CalcResultRejectedProducer>> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
         {
-            var producersForPreviousRuns = ProducerDetailsHelper.GetLatestProducerDetailsForThisFinancialYear(resultsRequestDto.FinancialYear, context);
-            var producersForCurrentRun = ProducerDetailsHelper.GetProducers(resultsRequestDto.RunId, context);
+            var producersForPreviousRuns = this.producerDetailsService.GetLatestProducerDetailsForThisFinancialYear(resultsRequestDto.FinancialYear);
+            var producersForCurrentRun = this.producerDetailsService.GetProducers(resultsRequestDto.RunId);
             var missingProducersInCurrentRun = producersForPreviousRuns
-                .Where(t => !producersForCurrentRun.Any(k => k.ProducerId == t.InvoicedTonnage?.ProducerId))
+                .Where(t => !producersForCurrentRun.Any(k => k.ProducerId == t.InvoicedTonnage?.ProducerId && t.CalculatorRunId == resultsRequestDto.RunId))
                 .DistinctBy(p => p.ProducerDetail?.ProducerId)
                 .Select(p => p.ProducerDetail)
                 .ToList();            
             var producerDetails = this.context.ProducerDetail
                 .AsNoTracking()
+                .Where(p => p.CalculatorRunId == resultsRequestDto.RunId)
                 .AsEnumerable()
                 .DistinctBy(p => p.ProducerId)
                 .ToList();

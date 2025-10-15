@@ -1,6 +1,7 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,11 +10,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EPR.Calculator.Service.Function.Misc
+namespace EPR.Calculator.Service.Function.Services
 {
-    public static class ProducerDetailsHelper
+    public class ProducerDetailService : IProducerDetailService
     {
-        public static IEnumerable<ProducerInvoicedDto> GetLatestProducerDetailsForThisFinancialYear(string financialYear, ApplicationDBContext context)
+
+        private readonly ApplicationDBContext context;
+
+        public ProducerDetailService(ApplicationDBContext context)
+        {
+            this.context = context;
+        }
+        public IEnumerable<ProducerInvoicedDto> GetLatestProducerDetailsForThisFinancialYear(string financialYear)
         {
             var previousInvoicedNetTonnage =
                         (from calc in context.CalculatorRuns.AsNoTracking()
@@ -60,7 +68,7 @@ namespace EPR.Calculator.Service.Function.Misc
             return previousInvoicedNetTonnage;
         }
 
-        public static IEnumerable<ProducerDetailDto> GetProducers(int runId, ApplicationDBContext context)
+        public IEnumerable<ProducerDetailDto> GetProducers(int runId)
         {
             return context.ProducerDetail.AsNoTracking().Where(t => t.CalculatorRunId == runId && t.SubsidiaryId == null).
                  Select(t => new ProducerDetailDto()

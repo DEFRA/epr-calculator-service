@@ -10,6 +10,7 @@
     using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Dtos;
+    using EPR.Calculator.Service.Function.Interface;
     using EPR.Calculator.Service.Function.Misc;
     using EPR.Calculator.Service.Function.Models;
     using EPR.Calculator.Service.Function.Services;
@@ -20,12 +21,16 @@
         private readonly ApplicationDBContext context;
         private readonly IMaterialService materialService;
         private List<MaterialDetail> materials;
+        private IProducerDetailService producerDetailsService;
 
-        public CalcResultCancelledProducersBuilder(ApplicationDBContext context, IMaterialService materialService)
+        public CalcResultCancelledProducersBuilder(ApplicationDBContext context,
+            IMaterialService materialService,
+            IProducerDetailService producerDetailsService)
         {
             this.context = context;
             this.materialService = materialService;
             this.materials = new List<MaterialDetail>();
+            this.producerDetailsService = producerDetailsService;
         }
 
         public async Task<CalcResultCancelledProducersResponse> ConstructAsync(CalcResultsRequestDto resultsRequestDto, string financialYear)
@@ -48,15 +53,10 @@
             });
         }
 
-        
-
-        
-
-
         public IEnumerable<CalcResultCancelledProducersDto> GetCancelledProducers(string financialYear, int runId, bool isBilling)
         {
-            var producersForPreviousRuns = ProducerDetailsHelper.GetLatestProducerDetailsForThisFinancialYear(financialYear, context);
-            var producersForCurrentRun = ProducerDetailsHelper.GetProducers(runId, context);
+            var producersForPreviousRuns = this.producerDetailsService.GetLatestProducerDetailsForThisFinancialYear(financialYear);
+            var producersForCurrentRun = this.producerDetailsService.GetProducers(runId);
             var calcResultCancelledProducers = new List<CalcResultCancelledProducersDto>();
             var filteredMissingProducers = new List<ProducerInvoicedDto>();
 

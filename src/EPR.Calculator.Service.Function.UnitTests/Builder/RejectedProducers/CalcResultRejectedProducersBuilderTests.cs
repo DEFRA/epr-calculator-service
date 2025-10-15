@@ -2,8 +2,11 @@
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.RejectedProducers;
 using EPR.Calculator.Service.Function.Dtos;
+using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
 {
@@ -47,8 +50,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
             });
 
             await context.SaveChangesAsync();
-
-            var builder = new CalcResultRejectedProducersBuilder(context);
+            
+            var producerDetailsService = new ProducerDetailService(context);
+            var builder = new CalcResultRejectedProducersBuilder(context, producerDetailsService);
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
 
             // Act
@@ -73,7 +77,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
             // Arrange
             var context = CreateDbContext();
 
-            //TestDataHelper.SeedDatabaseForInitialRunCompleted(context);
             TestDataHelper.SeedDatabaseForInitialRun(context);
 
             // Seed ProducerResultFileSuggestedBillingInstruction
@@ -91,7 +94,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
 
             await context.SaveChangesAsync();
 
-            var builder = new CalcResultRejectedProducersBuilder(context);
+            var producerDetailsService = new ProducerDetailService(context);
+            var builder = new CalcResultRejectedProducersBuilder(context, producerDetailsService);
+
             var requestDto = new CalcResultsRequestDto { RunId = 3, FinancialYear = "2025-26" };
 
             // Act
@@ -134,7 +139,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
 
             await context.SaveChangesAsync();
 
-            var builder = new CalcResultRejectedProducersBuilder(context);
+            var producerDetailsService = new ProducerDetailService(context);
+            var builder = new CalcResultRejectedProducersBuilder(context, producerDetailsService);
+
             var requestDto = new CalcResultsRequestDto { RunId = 3, FinancialYear = "2025-26" };
 
             // Act
@@ -150,7 +157,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
         {
             // Arrange
             var context = CreateDbContext();
-            var builder = new CalcResultRejectedProducersBuilder(context);
+            var producerDetailsService = new ProducerDetailService(context);
+            var builder = new CalcResultRejectedProducersBuilder(context, producerDetailsService);
             var requestDto = new CalcResultsRequestDto { RunId = 99 };
 
             // Act
@@ -201,7 +209,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
 
             await context.SaveChangesAsync();
 
-            var builder = new CalcResultRejectedProducersBuilder(context);
+            var producerDetailsService = new ProducerDetailService(context);
+            var builder = new CalcResultRejectedProducersBuilder(context, producerDetailsService);
+
             var requestDto = new CalcResultsRequestDto { RunId = 2 };
 
             // Act
