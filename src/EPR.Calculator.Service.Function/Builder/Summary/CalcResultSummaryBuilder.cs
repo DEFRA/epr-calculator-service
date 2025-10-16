@@ -91,6 +91,11 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 producerInvoicedMaterialNetTonnage,
                 defaultParams);
 
+            if(resultsRequestDto.IsBillingFile)
+            {
+                await UpdateBillingInstructions(calcResult, result);
+            }
+            
             return result;
         }
 
@@ -178,7 +183,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 TotalBillBreakdownProducer.SetValues(result);
 
                 // Billing instructions section
-                BillingInstructionsProducer.SetValues(result, ProducerInvoicedMaterialNetTonnage, defaultParams, this.context, calcResult.CalcResultDetail.RunId);
+                BillingInstructionsProducer.SetValues(result, ProducerInvoicedMaterialNetTonnage, defaultParams);
+
             }
 
             // Set headers with calculated column index
@@ -737,6 +743,39 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 ScotlandTotalWithBadDebtProvision = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsScotlandWithBadDebtTotalsRow(calcResult, producersAndSubsidiaries, totalPackagingTonnage),
                 NorthernIrelandTotalWithBadDebtProvision = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsNorthernIrelandWithBadDebtTotalsRow(calcResult, producersAndSubsidiaries, totalPackagingTonnage)
             };
+        }
+
+         internal async Task UpdateBillingInstructions(CalcResult calcResult, CalcResultSummary result)
+         {
+            var level1ProducerIds = result.ProducerDisposalFees
+                .Where(f => f.Level == CommonConstants.LevelOne.ToString())
+                .Select(f => f.ProducerIdInt)
+                .Distinct()
+                .ToList();
+
+            if (level1ProducerIds.Count == 0) return;
+
+            var entities = await context.ProducerResultFileSuggestedBillingInstruction.Where(p => p.CalculatorRunId == calcResult.CalcResultDetail.RunId &&
+                                                                                            level1ProducerIds.Contains(p.ProducerId))
+                                                                                            .ToDictionaryAsync(p => p.ProducerId);
+            foreach (var fee in result.ProducerDisposalFees)
+            {
+                if (fee.Level == CommonConstants.LevelOne.ToString() &&
+                    entities.TryGetValue(fee.ProducerIdInt, out var producer))
+                {
+                    producer.CurrentYearInvoiceTotalToDate = fee.BillingInstructionSection?.CurrentYearInvoiceTotalToDate;
+                    producer.TonnageChangeSinceLastInvoice = fee.BillingInstructionSection?.TonnageChangeSinceLastInvoice;
+                    producer.AmountLiabilityDifferenceCalcVsPrev = fee.BillingInstructionSection?.LiabilityDifference;
+                    producer.MaterialPoundThresholdBreached = fee.BillingInstructionSection?.MaterialThresholdBreached;
+                    producer.TonnagePoundThresholdBreached = fee.BillingInstructionSection?.TonnageThresholdBreached;
+                    producer.PercentageLiabilityDifferenceCalcVsPrev = fee.BillingInstructionSection?.PercentageLiabilityDifference;
+                    producer.TonnagePercentageThresholdBreached = fee.BillingInstructionSection?.TonnagePercentageThresholdBreached;
+                    producer.SuggestedBillingInstruction = fee.BillingInstructionSection?.SuggestedBillingInstruction!;
+                    producer.SuggestedInvoiceAmount = fee.BillingInstructionSection?.SuggestedInvoiceAmount ?? 0m;
+                }
+            }
+
+            await context.SaveChangesAsync();
         }
     }
 }
