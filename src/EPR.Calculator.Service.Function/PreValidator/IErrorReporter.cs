@@ -99,8 +99,8 @@ namespace EPR.Calculator.Service.Function.PreValidator
                 var response = await handlerCommand.ExecuteAsync(validationCommand);
                 if (response != null && response.IsSuccess)
                 {
-                    runOrganisations = response.RunOrganisations;
-                    runPoms = response.RunPoms;
+                    runOrganisations = response.RunOrganisations; //.Where(x => x.IsValid);
+                    runPoms = response.RunPoms; //.Where(x => x.IsValid);
                     errorReports.AddRange(response.ErrorReports);
                 }
             }
@@ -118,7 +118,28 @@ namespace EPR.Calculator.Service.Function.PreValidator
     {
         public Task<CommandResponse> ExecuteAsync(PreValidationCommand command)
         {
-            throw new NotImplementedException();
+            var uniqueOrgIds = command.RunOrganisations.Select(org => org.OrganisationId).Distinct().ToList();
+
+            var missingPoms = command.RunPoms.Where(p => !uniqueOrgIds.Contains(p.OrganisationId)).ToList();
+
+            var errorReports = missingPoms.Select(pom => new ErrorReport
+            {
+                ProducerId = pom.OrganisationId.GetValueOrDefault(),
+                SubsidaryId = pom.SubsidaryId,
+                CalculatorRunId = command.CalculatorRunId,
+                LeaverCode = "",
+                ErrorTypeId = 1, // Assuming 1 represents "Missing Organisation Data"
+                SubmitterOrgId = ""
+            }).ToList();
+
+            // missingPoms.ForEach(pom => pom.IsValid = false);
+
+            return Task.FromResult(new CommandResponse(true)
+            {
+                RunOrganisations = command.RunOrganisations,
+                RunPoms = command.RunPoms,
+                ErrorReports = errorReports
+            });
         }
     }
 
@@ -126,6 +147,26 @@ namespace EPR.Calculator.Service.Function.PreValidator
     {
         public Task<CommandResponse> ExecuteAsync(PreValidationCommand command)
         {
+
+            // var involventOrganisations = command.RunOrganisations.Where(org => org.ReasonCode == 11 || org.ReasonCode == 12).ToList();
+
+            //var errorReports = involventOrganisations.Select(pom => new ErrorReport
+            //{
+            //    ProducerId = pom.OrganisationId.GetValueOrDefault(),
+            //    SubsidaryId = pom.SubsidaryId,
+            //    CalculatorRunId = command.CalculatorRunId,
+            //    LeaverCode = "",
+            //    ErrorTypeId = 1, // Assuming 1 represents "Missing Organisation Data"
+            //    SubmitterOrgId = ""
+            //}).ToList();
+
+            //return Task.FromResult(new CommandResponse(true)
+            //{
+            //    RunOrganisations = command.RunOrganisations,
+            //    RunPoms = command.RunPoms,
+            //    ErrorReports = errorReports
+            //});
+
             throw new NotImplementedException();
         }
     }
