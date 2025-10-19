@@ -51,21 +51,21 @@ namespace EPR.Calculator.Service.Function.PreValidator
         public IEnumerable<ErrorReport> ErrorReports { set; get; } = [];
     }
 
-    public interface ICommandHandler<TCommand>
+    public interface ICommandHandler<TCommand, TCommandResponse>
     {
-        Task<CommandResponse> ExecuteAsync(TCommand command);
+        Task<TCommandResponse> ExecuteAsync(TCommand command);
     }
 
-    public interface IPreValidationCommandHandlerFactory
+    public interface IPreValidationCommandHandlerFactory<PreValidationCommand, CommandResponse>
     {
-        Queue<ICommandHandler<PreValidationCommand>> Create();
+        Queue<ICommandHandler<PreValidationCommand, CommandResponse>> Create();
     }
 
-    public class PreValidationsCommandHandler : ICommandHandler<PreValidationsCommand>
+    public class PreValidationsCommandHandler : ICommandHandler<PreValidationsCommand, CommandResponse>
     {
-        private readonly IPreValidationCommandHandlerFactory _factory;
+        private readonly IPreValidationCommandHandlerFactory<PreValidationCommand, CommandResponse> _factory;
         private readonly ApplicationDBContext _dbContext;
-        public PreValidationsCommandHandler(IPreValidationCommandHandlerFactory factory, ApplicationDBContext dbContext)
+        public PreValidationsCommandHandler(IPreValidationCommandHandlerFactory<PreValidationCommand, CommandResponse> factory, ApplicationDBContext dbContext)
         {
             _dbContext = dbContext;
             _factory = factory;
@@ -114,7 +114,7 @@ namespace EPR.Calculator.Service.Function.PreValidator
         }
     }
 
-    public class MissingPomAndOrgValidationCommandHandler : ICommandHandler<PreValidationCommand>
+    public class MissingPomAndOrgValidationCommandHandler : ICommandHandler<PreValidationCommand, CommandResponse>
     {
         public Task<CommandResponse> ExecuteAsync(PreValidationCommand command)
         {
@@ -122,7 +122,7 @@ namespace EPR.Calculator.Service.Function.PreValidator
         }
     }
 
-    public class InsolvencyValidationCommandHandler : ICommandHandler<PreValidationCommand>
+    public class InsolvencyValidationCommandHandler : ICommandHandler<PreValidationCommand, CommandResponse>
     {
         public Task<CommandResponse> ExecuteAsync(PreValidationCommand command)
         {
@@ -130,12 +130,11 @@ namespace EPR.Calculator.Service.Function.PreValidator
         }
     }
 
-    public class PreValidationCommandHandlerFactory : IPreValidationCommandHandlerFactory
+    public class PreValidationCommandHandlerFactory : IPreValidationCommandHandlerFactory<PreValidationCommand, CommandResponse>
     {
-        public Queue<ICommandHandler<PreValidationCommand>> Create()
+        public Queue<ICommandHandler<PreValidationCommand, CommandResponse>> Create()
         {
-            var queue = new Queue<ICommandHandler<PreValidationCommand>>();
-
+            var queue = new Queue<ICommandHandler<PreValidationCommand, CommandResponse>>();
             queue.Enqueue(new MissingPomAndOrgValidationCommandHandler());
             queue.Enqueue(new InsolvencyValidationCommandHandler());
             return queue;
