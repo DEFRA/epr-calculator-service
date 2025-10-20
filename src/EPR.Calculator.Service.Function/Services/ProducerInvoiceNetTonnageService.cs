@@ -8,8 +8,7 @@ using EPR.Calculator.Service.Function.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.Services
@@ -17,11 +16,8 @@ namespace EPR.Calculator.Service.Function.Services
     public class ProducerInvoiceNetTonnageService : IProducerInvoiceNetTonnageService
     {
         private IDbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage> producerInvoiceMaterialChunker { get; init; }
-
         private readonly ICalculatorTelemetryLogger telemetryLogger;
-
         private readonly IMaterialService materialService;
-
         private readonly IProducerInvoiceTonnageMapper producerInvoiceTonnageMapper;
 
         public ProducerInvoiceNetTonnageService(IDbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage> producerInvoiceMaterialChunker,
@@ -35,11 +31,11 @@ namespace EPR.Calculator.Service.Function.Services
             this.producerInvoiceTonnageMapper = producerInvoiceTonnageMapper;
         }
 
-
-        public async Task<bool> CreateProducerInvoiceNetTonnage(CalcResult calcResult)
+        public async Task<bool> CreateProducerInvoiceNetTonnage(CalcResult calcResult, CancellationToken cancellationToken)
         {
             try
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 var producerInvoiceNetTonnage = new List<ProducerInvoicedMaterialNetTonnage>();
                 var startTime = DateTime.UtcNow;
 
@@ -47,13 +43,13 @@ namespace EPR.Calculator.Service.Function.Services
 
                 var materials = await this.materialService.GetMaterials();
 
+                cancellationToken.ThrowIfCancellationRequested();
                 var runId = calcResult.CalcResultDetail.RunId;
 
                 var invoiceTonnages = producers.SelectMany(producer =>
                     materials.Select(material =>
                     {
                         var disposalFees = producer.ProducerDisposalFeesByMaterial;
-
                         if (disposalFees is not null && disposalFees.TryGetValue(material.Code, out var feeSummary))
                         {
                             return producerInvoiceTonnageMapper.Map(new ProducerInvoiceTonnage
@@ -64,17 +60,16 @@ namespace EPR.Calculator.Service.Function.Services
                                 MaterialId = material.Id
                             });
                         }
-
                         return new ProducerInvoicedMaterialNetTonnage();
                     }).Where(x => x != null)
                 );
 
                 producerInvoiceNetTonnage.AddRange(invoiceTonnages);
 
+                cancellationToken.ThrowIfCancellationRequested();
                 if (producerInvoiceNetTonnage.Exists(t => t.CalculatorRunId > 0))
                 {
                     await this.producerInvoiceMaterialChunker.InsertRecords(producerInvoiceNetTonnage);
-
                     var endTime = DateTime.UtcNow;
                     var timeDiff = startTime - endTime;
                     this.telemetryLogger.LogInformation(new TrackMessage
@@ -83,11 +78,9 @@ namespace EPR.Calculator.Service.Function.Services
                         RunName = calcResult.CalcResultDetail.RunName,
                         Message = $"Inserting records {producerInvoiceNetTonnage.Count} into producer invoice net tonnage table for {calcResult.CalcResultDetail.RunId} completed in {timeDiff.TotalSeconds} seconds",
                     });
-
                 }
                 else
                 {
-
                     this.telemetryLogger.LogInformation(new TrackMessage
                     {
                         RunId = calcResult.CalcResultDetail.RunId,
@@ -97,6 +90,17 @@ namespace EPR.Calculator.Service.Function.Services
                     return false;
                 }
                 return true;
+            }
+            catch (OperationCanceledException oce)
+            {
+                this.telemetryLogger.LogError(new ErrorMessage
+                {
+                    RunId = calcResult.CalcResultDetail.RunId,
+                    RunName = calcResult.CalcResultDetail.RunName,
+                    Message = "Cancellation requested while populating producer invoice net tonnage",
+                    Exception = oce,
+                });
+                return false;
             }
             catch (Exception exception)
             {
