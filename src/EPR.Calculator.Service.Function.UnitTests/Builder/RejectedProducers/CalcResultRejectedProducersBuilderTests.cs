@@ -1,6 +1,7 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.RejectedProducers;
+using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Dtos;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Models;
@@ -84,8 +85,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
             {
                 CalculatorRunId = 3,
                 ProducerId = 1,
-                SuggestedBillingInstruction = "Instruction A",
-                SuggestedInvoiceAmount = 123.45m,
+                SuggestedBillingInstruction = CommonConstants.CancelStatus,
+                CurrentYearInvoiceTotalToDate = 123.45m,
                 BillingInstructionAcceptReject = "Rejected",
                 ReasonForRejection = "Invalid Data",
                 LastModifiedAcceptReject = new DateTime(2024, 1, 1),
@@ -108,7 +109,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
             Assert.AreEqual(1, list[0].ProducerId);
             Assert.AreEqual("Test1", list[0].ProducerName);
             Assert.AreEqual("TN1", list[0].TradingName);
-            Assert.AreEqual("Instruction A", list[0].SuggestedBillingInstruction);
+            Assert.AreEqual(CommonConstants.CancelStatus, list[0].SuggestedBillingInstruction);
             Assert.AreEqual(123.45m, list[0].SuggestedInvoiceAmount);
             Assert.AreEqual(new DateTime(2024, 1, 1), list[0].InstructionConfirmedDate);
             Assert.AreEqual("User A", list[0].InstructionConfirmedBy);
@@ -129,7 +130,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
             {
                 CalculatorRunId = 3,
                 ProducerId = 1,
-                SuggestedBillingInstruction = "Instruction A",
+                SuggestedBillingInstruction = CommonConstants.CancelStatus,
                 SuggestedInvoiceAmount = 123.45m,
                 BillingInstructionAcceptReject = "Accepted",
                 ReasonForRejection = "",
