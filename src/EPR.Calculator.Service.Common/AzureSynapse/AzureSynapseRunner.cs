@@ -100,14 +100,14 @@
                 var checkInterval = args.CheckInterval;
 
                 this.logger.LogInformation($"CheckInterval: {checkInterval}");
-                this.logger.LogInformation($"Task started at: {DateTime.Now}");
+                this.logger.LogInformation($"Task started at: {DateTime.UtcNow}");
 
                 await Task.Delay(TimeSpan.FromMilliseconds(checkInterval));
-                this.logger.LogInformation($"Task completed at: {DateTime.Now} with CheckInterval {checkInterval} and checkCount is {checkCount}");
+                this.logger.LogInformation($"Task completed at: {DateTime.UtcNow} with CheckInterval {checkInterval} and checkCount is {checkCount}");
             }
             while (checkCount < maxCheckCount);
 
-            this.logger.LogInformation($"Azure Synapse Runner completed at: {DateTime.Now} and checkCount is {checkCount}");
+            this.logger.LogInformation($"Azure Synapse Runner completed at: {DateTime.UtcNow} and checkCount is {checkCount}");
 
             return pipelineStatus == nameof(PipelineStatus.Succeeded);
         }

@@ -58,7 +58,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CalcResultDetail = new CalcResultDetail
                 {
                     RunId = 4,
-                    RunDate = DateTime.Now,
+                    RunDate = DateTime.UtcNow,
                     RunName = "RunName",
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
@@ -138,7 +138,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CalcResultDetail = new CalcResultDetail
                 {
                     RunId = 4,
-                    RunDate = DateTime.Now,
+                    RunDate = DateTime.UtcNow,
                     RunName = "RunName",
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
@@ -190,7 +190,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CalcResultDetail = new CalcResultDetail
                 {
                     RunId = 4,
-                    RunDate = DateTime.Now,
+                    RunDate = DateTime.UtcNow,
                     RunName = "RunName",
                 },
                 CalcResultLapcapData = new CalcResultLapcapData

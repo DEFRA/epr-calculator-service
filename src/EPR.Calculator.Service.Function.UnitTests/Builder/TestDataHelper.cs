@@ -1925,7 +1925,7 @@
                 CalculatorRunClassificationId = 3,
                 Name = "Test Run 1",
                 Financial_Year = calculatorRunFinancialYear,
-                CreatedAt = DateTime.Now,
+                CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test user",
                 CalculatorRunOrganisationDataMasterId = 1,
                 CalculatorRunPomDataMasterId = 1,
@@ -1938,7 +1938,7 @@
                 CalculatorRunClassificationId = 2,
                 Name = "Test Run 2",
                 Financial_Year = calculatorRunFinancialYear,
-                CreatedAt = DateTime.Now,
+                CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test user",
                 CalculatorRunOrganisationDataMasterId = 2,
                 CalculatorRunPomDataMasterId = 2,
@@ -1957,7 +1957,7 @@
                 OrganisationId = 1,
                 SubsidaryId = null,
                 OrganisationName = "Allied Packaging",
-                LoadTimeStamp = DateTime.Now,
+                LoadTimeStamp = DateTime.UtcNow,
                 SubmissionPeriodDesc = "January to June 2023",
                 CalculatorRunOrganisationDataMasterId = GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
                 CalculatorRunOrganisationDataMaster = GetCalculatorRunOrganisationDataMaster().ToList()[0]
@@ -1968,7 +1968,7 @@
                 OrganisationId = 1,
                 SubsidaryId = "901",
                 OrganisationName = "Allied Subsidiary",
-                LoadTimeStamp = DateTime.Now,
+                LoadTimeStamp = DateTime.UtcNow,
                 SubmissionPeriodDesc = "January to June 2023",
                 CalculatorRunOrganisationDataMasterId = GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
                 CalculatorRunOrganisationDataMaster = GetCalculatorRunOrganisationDataMaster().ToList()[0]
@@ -1983,18 +1983,18 @@
             {
                 Id = 1,
                 CalendarYear = "2024",
-                EffectiveFrom = DateTime.Now,
-                EffectiveTo = DateTime.Now,
-                CreatedAt = DateTime.Now,
+                EffectiveFrom = DateTime.UtcNow,
+                EffectiveTo = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test user",
             });
             list.Add(new CalculatorRunOrganisationDataMaster
             {
                 Id = 2,
                 CalendarYear = "2024",
-                EffectiveFrom = DateTime.Now,
-                EffectiveTo = DateTime.Now,
-                CreatedAt = DateTime.Now,
+                EffectiveFrom = DateTime.UtcNow,
+                EffectiveTo = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test user",
             });
             return list;
@@ -2014,7 +2014,7 @@
                 PackagingClass = "O1",
                 PackagingMaterial = "AL",
                 PackagingMaterialWeight = 1000,
-                LoadTimeStamp = DateTime.Now,
+                LoadTimeStamp = DateTime.UtcNow,
                 CalculatorRunPomDataMasterId = 1,
                 SubmissionPeriodDesc = "January to June 2024",
                 CalculatorRunPomDataMaster = GetCalculatorRunPomDataMaster().ToList()[0]
@@ -2030,7 +2030,7 @@
                 PackagingClass = "O1",
                 PackagingMaterial = "AL",
                 PackagingMaterialWeight = 2000,
-                LoadTimeStamp = DateTime.Now,
+                LoadTimeStamp = DateTime.UtcNow,
                 CalculatorRunPomDataMasterId = 1,
                 SubmissionPeriodDesc = "July to December 2024",
                 CalculatorRunPomDataMaster = GetCalculatorRunPomDataMaster().ToList()[0]
@@ -2045,16 +2045,16 @@
             {
                 Id = 1,
                 CalendarYear = "2024",
-                EffectiveFrom = DateTime.Now,
-                CreatedAt = DateTime.Now,
+                EffectiveFrom = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test User",
             });
             list.Add(new CalculatorRunPomDataMaster
             {
                 Id = 2,
                 CalendarYear = "2024",
-                EffectiveFrom = DateTime.Now,
-                CreatedAt = DateTime.Now,
+                EffectiveFrom = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test User",
             });
             return list;
