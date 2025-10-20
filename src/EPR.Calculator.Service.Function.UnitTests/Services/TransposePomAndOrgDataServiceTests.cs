@@ -457,7 +457,6 @@
         {
             var expectedResult = new ProducerDetail
             {
-                Id = 9993,
                 ProducerId = 9994,
                 ProducerName = "Subsid2",
                 CalculatorRunId = 1,
