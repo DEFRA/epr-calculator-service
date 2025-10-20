@@ -85,18 +85,20 @@ namespace EPR.Calculator.Service.Function.PreValidator
                                                                      where run.Id == validationsCommand.CalculatorRunId
                                                                      select pomDetail).ToListAsync();
 
+            //We create an equivalent DTO for both orgs and poms to avoid tracking issues and computed Columns
+
             var commandQueue = _factory.Create();
             var errorReports = new List<ErrorReport>();
             while (commandQueue.Count > 0)
             {
-                var handlerCommand = commandQueue.Dequeue();
+                var handlerCommandHandler = commandQueue.Dequeue();
                 var validationCommand = new PreValidationCommand
                 {
                     CalculatorRunId = validationsCommand.CalculatorRunId,
                     RunOrganisations = runOrganisations,
                     RunPoms = runPoms
                 };
-                var response = await handlerCommand.ExecuteAsync(validationCommand);
+                var response = await handlerCommandHandler.ExecuteAsync(validationCommand);
                 if (response != null && response.IsSuccess)
                 {
                     runOrganisations = response.RunOrganisations; //.Where(x => x.IsValid);
@@ -104,6 +106,11 @@ namespace EPR.Calculator.Service.Function.PreValidator
                     errorReports.AddRange(response.ErrorReports);
                 }
             }
+
+
+            // Another CommandHndler can be added here
+            // Bulk insert error reports
+            //runOrganisations and runPoms update isValid column 
 
             return new CommandResponse(true)
             {
@@ -159,6 +166,8 @@ namespace EPR.Calculator.Service.Function.PreValidator
             //    ErrorTypeId = 1, // Assuming 1 represents "Missing Organisation Data"
             //    SubmitterOrgId = ""
             //}).ToList();
+
+            // command.RunOrganisations.Where(org => org.ReasonCode == 11 || org.ReasonCode == 12).ForEach(org => org.IsValid = false);
 
             //return Task.FromResult(new CommandResponse(true)
             //{
