@@ -223,5 +223,68 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
             Assert.AreEqual(1, list.Count);
             Assert.AreEqual("Some Reason", list[0].ReasonForRejection);
         }
+
+        [TestMethod]
+        public async Task Construct_SortByProducerIdAndRejectedStatus()
+        {
+            // Arrange
+            var context = CreateDbContext();
+
+            context.ProducerDetail.Add(new ProducerDetail
+            {
+                CalculatorRunId = 2,
+                ProducerId = 200,
+                ProducerName = "Producer A",
+                TradingName = "Trade A"
+            });
+
+            context.ProducerDetail.Add(new ProducerDetail
+            {
+                CalculatorRunId = 2,
+                ProducerId = 400,
+                ProducerName = "Producer B",
+                TradingName = "Trade B"
+            });
+
+            context.ProducerResultFileSuggestedBillingInstruction.Add(new ProducerResultFileSuggestedBillingInstruction
+            {
+                CalculatorRunId = 2,
+                ProducerId = 400,
+                SuggestedBillingInstruction = "Instruction B",
+                SuggestedInvoiceAmount = 222.22m,
+                BillingInstructionAcceptReject = "Rejected", 
+                ReasonForRejection = "Invalid",
+                LastModifiedAcceptReject = DateTime.Now,
+                LastModifiedAcceptRejectBy = "User B"
+            });
+
+            context.ProducerResultFileSuggestedBillingInstruction.Add(new ProducerResultFileSuggestedBillingInstruction
+            {
+                CalculatorRunId = 2,
+                ProducerId = 200,
+                SuggestedBillingInstruction = "Instruction B",
+                SuggestedInvoiceAmount = 222.22m,
+                BillingInstructionAcceptReject = "Rejected", 
+                ReasonForRejection = "Some Reason",
+                LastModifiedAcceptReject = DateTime.Now,
+                LastModifiedAcceptRejectBy = "User B"
+            });
+
+            await context.SaveChangesAsync();
+
+            var producerDetailsService = new ProducerDetailService(context);
+            var builder = new CalcResultRejectedProducersBuilder(context, producerDetailsService);
+
+            var requestDto = new CalcResultsRequestDto { RunId = 2 };
+
+            // Act
+            var result = await builder.ConstructAsync(requestDto);
+
+            // Assert
+            var list = new List<CalcResultRejectedProducer>(result);
+            Assert.AreEqual(2, list.Count);
+            Assert.AreEqual(200, list[0].ProducerId);
+            Assert.AreEqual(400, list[1].ProducerId);
+        }
     }
 }
