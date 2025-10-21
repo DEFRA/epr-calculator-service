@@ -110,7 +110,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 CalcResultDetail = new CalcResultDetail
                 {
                     RunId = 1,
-                    RunDate = DateTime.Now,
+                    RunDate = DateTime.UtcNow,
                     RunName = "CalculatorRunName",
                     RunBy = "Test user",
                     FinancialYear = "2024-25",

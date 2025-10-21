@@ -192,7 +192,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
                 SuggestedInvoiceAmount = 222.22m,
                 BillingInstructionAcceptReject = "Accepted", // Should not be included
                 ReasonForRejection = null,
-                LastModifiedAcceptReject = DateTime.Now,
+                LastModifiedAcceptReject = DateTime.UtcNow,
                 LastModifiedAcceptRejectBy = "User B"
             });
 
@@ -204,7 +204,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
                 SuggestedInvoiceAmount = 222.22m,
                 BillingInstructionAcceptReject = "Rejected", // Should be included
                 ReasonForRejection = "Some Reason",
-                LastModifiedAcceptReject = DateTime.Now,
+                LastModifiedAcceptReject = DateTime.UtcNow,
                 LastModifiedAcceptRejectBy = "User B"
             });
 
