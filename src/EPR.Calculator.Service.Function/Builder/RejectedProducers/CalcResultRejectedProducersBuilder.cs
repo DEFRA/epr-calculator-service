@@ -69,7 +69,7 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                           .OrderBy(p => p.ProducerId)
                           .ToList();
 
-            return result ?? new List<CalcResultRejectedProducer>();
+            return result;
         }
 
         private decimal GetSuggestedInvoiceAmount(ProducerResultFileSuggestedBillingInstruction billing)
