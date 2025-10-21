@@ -1,4 +1,5 @@
 ﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Dtos;
 using EPR.Calculator.Service.Function.Interface;
@@ -59,15 +60,27 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                               ProducerName = detail.ProducerName!,
                               TradingName = detail.TradingName!,
                               SuggestedBillingInstruction = billing.SuggestedBillingInstruction,
-                              SuggestedInvoiceAmount = billing.SuggestedInvoiceAmount ?? 0,
+                              SuggestedInvoiceAmount = GetSuggestedInvoiceAmount(billing),
                               InstructionConfirmedDate = billing.LastModifiedAcceptReject,
                               InstructionConfirmedBy = billing.LastModifiedAcceptRejectBy!,
                               ReasonForRejection = billing.ReasonForRejection!
                           })
                           .DistinctBy(p => p.ProducerId)
+                          .OrderBy(p => p.ProducerId)
                           .ToList();
 
             return result ?? new List<CalcResultRejectedProducer>();
+        }
+
+        private decimal GetSuggestedInvoiceAmount(ProducerResultFileSuggestedBillingInstruction billing)
+        {
+            if (billing.SuggestedBillingInstruction == CommonConstants.CancelStatus && 
+            billing.BillingInstructionAcceptReject ==  CommonConstants.Rejected)
+            {
+                return billing.CurrentYearInvoiceTotalToDate ?? 0;
+            }
+
+            return billing.SuggestedInvoiceAmount ?? 0;
         }
     }
 }
