@@ -82,16 +82,5 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
 
             return billing.SuggestedInvoiceAmount ?? 0;
         }
-
-        private decimal GetSuggestedInvoiceAmount(ProducerResultFileSuggestedBillingInstruction billing)
-        {
-            if (billing.SuggestedBillingInstruction == CommonConstants.CancelStatus && 
-            billing.BillingInstructionAcceptReject ==  CommonConstants.Rejected)
-            {
-                return billing.CurrentYearInvoiceTotalToDate ?? 0;
-            }
-
-            return billing.SuggestedInvoiceAmount ?? 0;
-        }
     }
 }
