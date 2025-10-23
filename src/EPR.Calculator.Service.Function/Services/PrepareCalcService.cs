@@ -248,7 +248,7 @@
             var billingFileCsvName = new CalcResultsAndBillingFileName(
                 resultsRequestDto.RunId,
                 runName,
-                DateTime.Now,
+                DateTime.UtcNow,
                 true);
 
             this.telemetryLogger.LogInformation(new TrackMessage

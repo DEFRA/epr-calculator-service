@@ -84,7 +84,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Id = calculatorRunId,
                     CalculatorRunClassificationId = 8,
                     Name = calculatorName,
-                    Financial_Year = new CalculatorRunFinancialYear { Name = "2025" }, CreatedBy = "user", CreatedAt = System.DateTime.Now });
+                    Financial_Year = new CalculatorRunFinancialYear { Name = "2025" }, CreatedBy = "user", CreatedAt = System.DateTime.UtcNow });
             _context.SaveChanges();
             var service = new PrepareBillingFileService(
                 this._context,
@@ -116,7 +116,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Name = calculatorName,
                     Financial_Year = calcFinancialYear,
                     CreatedBy = "user",
-                    CreatedAt = DateTime.Now,
+                    CreatedAt = DateTime.UtcNow,
                     IsBillingFileGenerating = true
             });
 
@@ -176,7 +176,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 Name = calculatorName,
                 Financial_Year = calcFinancialYear,
                 CreatedBy = "user",
-                CreatedAt = DateTime.Now,
+                CreatedAt = DateTime.UtcNow,
                 IsBillingFileGenerating = true
             });
 

@@ -159,6 +159,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ILateReportingTonnage, LateReportingTonnage>();
             services.AddTransient<ICommsCostsByMaterialFeesSummary2AMapper, CommsCostsByMaterialFeesSummary2AMapper>();
             services.AddTransient<ICalcCountryApportionmentService, CalcCountryApportionmentService>();
+            services.AddTransient<IProducerDetailService, ProducerDetailService>();
             services.AddTransient<ICalcResultScaledupProducersJsonExporter, CalcResultScaledupProducersJsonExporter>();
             services.AddTransient<ICalcResultScaledupProducersJsonMapper, CalcResultScaledupProducersJsonMapper>();
             services.AddTransient<ICalcResultCancelledProducersBuilder, CalcResultCancelledProducersBuilder>();

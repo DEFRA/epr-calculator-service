@@ -53,7 +53,7 @@
         /// <returns>A formatted log message string.</returns>
         internal static string CreateLogMessage(int? runId, string? runName, string? messageType, string message)
         {
-            return $"[{DateTime.Now}] RunId: {runId}, RunName: {runName}, MessageType: {messageType}, Message: {message}";
+            return $"[{DateTime.UtcNow}] RunId: {runId}, RunName: {runName}, MessageType: {messageType}, Message: {message}";
         }
 
         /// <summary>
