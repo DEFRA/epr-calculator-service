@@ -66,8 +66,8 @@
                 Id = 2,
                 ProjectionYear = calculatorRunFinancialYear,
                 CreatedBy = "Testuser",
-                CreatedAt = DateTime.Now,
-                EffectiveFrom = DateTime.Now,
+                CreatedAt = DateTime.UtcNow,
+                EffectiveFrom = DateTime.UtcNow,
             };
             var details = GetLapcapDetails(lapcapDataMaster);
             details.ForEach(detail => detail.LapcapDataMaster = lapcapDataMaster);

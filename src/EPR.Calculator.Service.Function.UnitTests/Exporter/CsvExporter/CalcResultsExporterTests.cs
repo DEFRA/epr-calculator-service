@@ -391,7 +391,7 @@
                 CalcResultDetail = new CalcResultDetail
                 {
                     RunId = 1,
-                    RunDate = DateTime.Now,
+                    RunDate = DateTime.UtcNow,
                     RunName = "CalculatorRunName",
                 },
             };

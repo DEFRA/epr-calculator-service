@@ -274,7 +274,6 @@
         {
             var expectedResult = new ProducerDetail
             {
-                Id = 9991,
                 ProducerId = 9991,
                 ProducerName = "UPU LIMITED",
                 CalculatorRunId = 1,
@@ -458,7 +457,6 @@
         {
             var expectedResult = new ProducerDetail
             {
-                Id = 9993,
                 ProducerId = 9994,
                 ProducerName = "Subsid2",
                 CalculatorRunId = 1,
@@ -643,17 +641,17 @@
                 {
                     Id = 1,
                     CalendarYear = "2024-25",
-                    EffectiveFrom = DateTime.Now,
+                    EffectiveFrom = DateTime.UtcNow,
                     CreatedBy = "Test user",
-                    CreatedAt = DateTime.Now,
+                    CreatedAt = DateTime.UtcNow,
                 },
                 new ()
                 {
                     Id = 2,
                     CalendarYear = "2024-25",
-                    EffectiveFrom = DateTime.Now,
+                    EffectiveFrom = DateTime.UtcNow,
                     CreatedBy = "Test user",
-                    CreatedAt = DateTime.Now,
+                    CreatedAt = DateTime.UtcNow,
                 },
             };
             return list;
@@ -670,7 +668,7 @@
                     OrganisationId = 1,
                     OrganisationName = "UPU LIMITED",
                     SubsidaryId = "1",
-                    LoadTimeStamp = DateTime.Now,
+                    LoadTimeStamp = DateTime.UtcNow,
                     CalculatorRunOrganisationDataMasterId = 1,
                     SubmissionPeriodDesc = "January to June 2023",
                 },
@@ -679,7 +677,7 @@
                     Id = 2,
                     OrganisationId = 1,
                     OrganisationName = "Test LIMITED",
-                    LoadTimeStamp = DateTime.Now,
+                    LoadTimeStamp = DateTime.UtcNow,
                     CalculatorRunOrganisationDataMasterId = 1,
                     SubmissionPeriodDesc = "July to December 2023",
                 },
@@ -689,7 +687,7 @@
                     OrganisationId = 2,
                     SubsidaryId = "1",
                     OrganisationName = "Subsid2",
-                    LoadTimeStamp = DateTime.Now,
+                    LoadTimeStamp = DateTime.UtcNow,
                     CalculatorRunOrganisationDataMasterId = 2,
                     SubmissionPeriodDesc = "July to December 2023",
                 },
@@ -768,16 +766,16 @@
                 new ()
                 {
                     CalendarYear = "2024-25",
-                    EffectiveFrom = DateTime.Now,
+                    EffectiveFrom = DateTime.UtcNow,
                     CreatedBy = "Test user",
-                    CreatedAt = DateTime.Now,
+                    CreatedAt = DateTime.UtcNow,
                 },
                 new ()
                 {
                     CalendarYear = "2024-25",
-                    EffectiveFrom = DateTime.Now,
+                    EffectiveFrom = DateTime.UtcNow,
                     CreatedBy = "Test user",
-                    CreatedAt = DateTime.Now,
+                    CreatedAt = DateTime.UtcNow,
                 },
             };
             return list;
@@ -798,7 +796,7 @@
                     PackagingClass = "O1",
                     PackagingMaterial = "PC",
                     PackagingMaterialWeight = 1000,
-                    LoadTimeStamp = DateTime.Now,
+                    LoadTimeStamp = DateTime.UtcNow,
                     CalculatorRunPomDataMasterId = 1,
                     SubmissionPeriodDesc = "July to December 2023",
                 },
@@ -812,7 +810,7 @@
                     PackagingClass = "O1",
                     PackagingMaterial = "PC",
                     PackagingMaterialWeight = 1000,
-                    LoadTimeStamp = DateTime.Now,
+                    LoadTimeStamp = DateTime.UtcNow,
                     CalculatorRunPomDataMasterId = 1,
                     SubmissionPeriodDesc = "July to December 2023",
                 },
@@ -827,7 +825,7 @@
                     PackagingClass = "O1",
                     PackagingMaterial = "PC",
                     PackagingMaterialWeight = 1000,
-                    LoadTimeStamp = DateTime.Now,
+                    LoadTimeStamp = DateTime.UtcNow,
                     CalculatorRunPomDataMasterId = 1,
                     SubmissionPeriodDesc = "January to June 2023",
                 },
@@ -842,7 +840,7 @@
                     PackagingClass = "O1",
                     PackagingMaterial = "PC",
                     PackagingMaterialWeight = 1000,
-                    LoadTimeStamp = DateTime.Now,
+                    LoadTimeStamp = DateTime.UtcNow,
                     CalculatorRunPomDataMasterId = 2,
                     SubmissionPeriodDesc = "January to June 2024",
                 },
