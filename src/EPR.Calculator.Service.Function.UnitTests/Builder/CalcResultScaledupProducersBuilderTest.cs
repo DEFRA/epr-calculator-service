@@ -47,8 +47,8 @@
             {
                 Id = 1,
                 CalendarYear = "2024",
-                EffectiveFrom = DateTime.Now,
-                CreatedAt = DateTime.Now,
+                EffectiveFrom = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test User",
             };
             var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
@@ -58,8 +58,8 @@
             {
                 Id = 11,
                 CalendarYear = "2024",
-                EffectiveFrom = DateTime.Now,
-                CreatedAt = DateTime.Now,
+                EffectiveFrom = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test User",
             };
             this.dbContext.CalculatorRunOrganisationDataMaster.Add(calcRunOrganisationDataMaster);
@@ -80,7 +80,7 @@
                     OrganisationId = 11,
                     SubsidaryId = null,
                     OrganisationName = "Allied Packaging",
-                    LoadTimeStamp = DateTime.Now,
+                    LoadTimeStamp = DateTime.UtcNow,
                     SubmissionPeriodDesc = "January to June 2023",
                     CalculatorRunOrganisationDataMaster = calcRunOrganisationDataMaster
                 });
@@ -88,7 +88,7 @@
             this.dbContext.CalculatorRunPomDataDetails.Add(
                 new CalculatorRunPomDataDetail
                 {
-                    LoadTimeStamp = DateTime.Now,
+                    LoadTimeStamp = DateTime.UtcNow,
                     SubmissionPeriod = "2024-P1",
                     SubmissionPeriodDesc = "desc",
                     CalculatorRunPomDataMaster = calcRunPomDataMaster,
@@ -100,8 +100,8 @@
                 {
                     DaysInSubmissionPeriod = 0,
                     DaysInWholePeriod = 0,
-                    EndDate = DateTime.Now,
-                    StartDate = DateTime.Now,
+                    EndDate = DateTime.UtcNow,
+                    StartDate = DateTime.UtcNow,
                     ScaleupFactor = 1,
                     SubmissionPeriod = "2024-P1",
                     SubmissionPeriodDesc = string.Empty,
@@ -148,7 +148,7 @@
             this.dbContext.CalculatorRunPomDataDetails.Add(
             new CalculatorRunPomDataDetail
             {
-                LoadTimeStamp = DateTime.Now,
+                LoadTimeStamp = DateTime.UtcNow,
                 SubmissionPeriod = "2024-P2",
                 SubmissionPeriodDesc = "desc",
                 CalculatorRunPomDataMaster = this.dbContext.CalculatorRunPomDataMaster.First(),
@@ -160,8 +160,8 @@
             {
                 DaysInSubmissionPeriod = 0,
                 DaysInWholePeriod = 0,
-                EndDate = DateTime.Now,
-                StartDate = DateTime.Now,
+                EndDate = DateTime.UtcNow,
+                StartDate = DateTime.UtcNow,
                 ScaleupFactor = 2.999M,
                 SubmissionPeriod = "2024-P2",
                 SubmissionPeriodDesc = string.Empty,
@@ -471,7 +471,7 @@
             var pomDateDetails = new List<CalculatorRunPomDataDetail>();
             pomDateDetails.Add(new CalculatorRunPomDataDetail
             {
-                LoadTimeStamp = DateTime.Now,
+                LoadTimeStamp = DateTime.UtcNow,
                 SubmissionPeriod = "2024-P2",
                 SubmissionPeriodDesc = "desc",
                 OrganisationId = 11,
@@ -550,7 +550,7 @@
             var allPomDataDetails = new List<CalculatorRunPomDataDetail>();
             allPomDataDetails.Add(new CalculatorRunPomDataDetail
             {
-                LoadTimeStamp = DateTime.Now,
+                LoadTimeStamp = DateTime.UtcNow,
                 SubmissionPeriod = "2024-P1",
                 SubmissionPeriodDesc = "desc",
                 OrganisationId = 10,
@@ -594,7 +594,7 @@
             var allPomDataDetails = new List<CalculatorRunPomDataDetail>();
             allPomDataDetails.Add(new CalculatorRunPomDataDetail
             {
-                LoadTimeStamp = DateTime.Now,
+                LoadTimeStamp = DateTime.UtcNow,
                 SubmissionPeriod = "2024-P1",
                 SubmissionPeriodDesc = "desc",
                 OrganisationId = 10,

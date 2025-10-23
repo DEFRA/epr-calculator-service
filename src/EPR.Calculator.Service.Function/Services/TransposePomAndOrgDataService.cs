@@ -62,7 +62,7 @@
             string? runName,
             CancellationToken cancellationToken)
         {
-            var startTime = DateTime.Now;
+            var startTime = DateTime.UtcNow;
 
             this.CommandTimeoutService.SetCommandTimeout(context.Database);
 
@@ -86,7 +86,7 @@
                 await this.Transpose(
                     resultsRequestDto,
                     cancellationToken);
-                var endTime = DateTime.Now;
+                var endTime = DateTime.UtcNow;
                 var timeDiff = startTime - endTime;
                 this.telemetryLogger.LogInformation(new TrackMessage
                 {

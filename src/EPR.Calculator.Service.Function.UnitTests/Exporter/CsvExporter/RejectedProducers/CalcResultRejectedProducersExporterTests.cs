@@ -22,7 +22,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Rejecte
                     TradingName = "Trade A",
                     SuggestedBillingInstruction = "Bill A",
                     SuggestedInvoiceAmount = 123.45m,
-                    InstructionConfirmedDate = new DateTime(2024, 1, 2),
+                    InstructionConfirmedDate = new DateTime(2024, 1, 2, 14, 30, 0),
                     InstructionConfirmedBy = "User A",
                     ReasonForRejection = "Reason A"
                 }
@@ -40,6 +40,36 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Rejecte
             Assert.IsTrue(lines[5].Contains("123.45"));
             Assert.IsTrue(lines[5].Contains("2024"));
             Assert.IsTrue(lines[5].Contains("User A"));
+            Assert.IsTrue(lines[5].Contains("02/01/2024 14:30:00"));
+        }
+
+        [TestMethod]
+        public void Export_DateIsNull_WritesDataRows()
+        {
+            // Arrange
+            var exporter = new CalcResultRejectedProducersExporter();
+            var csvContent = new StringBuilder();
+            var rejectedProducers = new List<CalcResultRejectedProducer>
+            {
+                new CalcResultRejectedProducer
+                {
+                    ProducerId = 1,
+                    ProducerName = "Producer A",
+                    TradingName = "Trade A",
+                    SuggestedBillingInstruction = "Bill A",
+                    SuggestedInvoiceAmount = 123.45m,
+                    InstructionConfirmedDate = null,
+                    InstructionConfirmedBy = "User A",
+                    ReasonForRejection = "Reason A"
+                }
+            };
+
+            // Act
+            exporter.Export(rejectedProducers, csvContent);
+
+            // Assert
+            var lines = csvContent.ToString().Split(Environment.NewLine, StringSplitOptions.None);
+            Assert.IsFalse(lines[5].Contains("02/01/2024 00:00:00"));
         }
 
         [TestMethod]

@@ -1,5 +1,6 @@
 ﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
+    using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Models;
@@ -1925,7 +1926,7 @@
                 CalculatorRunClassificationId = 3,
                 Name = "Test Run 1",
                 Financial_Year = calculatorRunFinancialYear,
-                CreatedAt = DateTime.Now,
+                CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test user",
                 CalculatorRunOrganisationDataMasterId = 1,
                 CalculatorRunPomDataMasterId = 1,
@@ -1938,7 +1939,7 @@
                 CalculatorRunClassificationId = 2,
                 Name = "Test Run 2",
                 Financial_Year = calculatorRunFinancialYear,
-                CreatedAt = DateTime.Now,
+                CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test user",
                 CalculatorRunOrganisationDataMasterId = 2,
                 CalculatorRunPomDataMasterId = 2,
@@ -1957,7 +1958,7 @@
                 OrganisationId = 1,
                 SubsidaryId = null,
                 OrganisationName = "Allied Packaging",
-                LoadTimeStamp = DateTime.Now,
+                LoadTimeStamp = DateTime.UtcNow,
                 SubmissionPeriodDesc = "January to June 2023",
                 CalculatorRunOrganisationDataMasterId = GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
                 CalculatorRunOrganisationDataMaster = GetCalculatorRunOrganisationDataMaster().ToList()[0]
@@ -1968,7 +1969,7 @@
                 OrganisationId = 1,
                 SubsidaryId = "901",
                 OrganisationName = "Allied Subsidiary",
-                LoadTimeStamp = DateTime.Now,
+                LoadTimeStamp = DateTime.UtcNow,
                 SubmissionPeriodDesc = "January to June 2023",
                 CalculatorRunOrganisationDataMasterId = GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
                 CalculatorRunOrganisationDataMaster = GetCalculatorRunOrganisationDataMaster().ToList()[0]
@@ -1983,18 +1984,18 @@
             {
                 Id = 1,
                 CalendarYear = "2024",
-                EffectiveFrom = DateTime.Now,
-                EffectiveTo = DateTime.Now,
-                CreatedAt = DateTime.Now,
+                EffectiveFrom = DateTime.UtcNow,
+                EffectiveTo = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test user",
             });
             list.Add(new CalculatorRunOrganisationDataMaster
             {
                 Id = 2,
                 CalendarYear = "2024",
-                EffectiveFrom = DateTime.Now,
-                EffectiveTo = DateTime.Now,
-                CreatedAt = DateTime.Now,
+                EffectiveFrom = DateTime.UtcNow,
+                EffectiveTo = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test user",
             });
             return list;
@@ -2014,7 +2015,7 @@
                 PackagingClass = "O1",
                 PackagingMaterial = "AL",
                 PackagingMaterialWeight = 1000,
-                LoadTimeStamp = DateTime.Now,
+                LoadTimeStamp = DateTime.UtcNow,
                 CalculatorRunPomDataMasterId = 1,
                 SubmissionPeriodDesc = "January to June 2024",
                 CalculatorRunPomDataMaster = GetCalculatorRunPomDataMaster().ToList()[0]
@@ -2030,7 +2031,7 @@
                 PackagingClass = "O1",
                 PackagingMaterial = "AL",
                 PackagingMaterialWeight = 2000,
-                LoadTimeStamp = DateTime.Now,
+                LoadTimeStamp = DateTime.UtcNow,
                 CalculatorRunPomDataMasterId = 1,
                 SubmissionPeriodDesc = "July to December 2024",
                 CalculatorRunPomDataMaster = GetCalculatorRunPomDataMaster().ToList()[0]
@@ -2045,19 +2046,324 @@
             {
                 Id = 1,
                 CalendarYear = "2024",
-                EffectiveFrom = DateTime.Now,
-                CreatedAt = DateTime.Now,
+                EffectiveFrom = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test User",
             });
             list.Add(new CalculatorRunPomDataMaster
             {
                 Id = 2,
                 CalendarYear = "2024",
-                EffectiveFrom = DateTime.Now,
-                CreatedAt = DateTime.Now,
+                EffectiveFrom = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test User",
             });
             return list;
         }
+
+        public static void SeedDatabaseForInitialRun(ApplicationDBContext context)
+        {
+            var financialYear = new CalculatorRunFinancialYear { Name = "2025-26" };
+
+            //calculator runs
+            var runs = new List<CalculatorRun>() { new CalculatorRun { Id = 1, Financial_Year = financialYear, FinancialYearId = "2025-26", CalculatorRunClassificationId=7, Name = "CalculatorRunTest1" },
+             new CalculatorRun { Id = 2, Financial_Year = financialYear, FinancialYearId = "2025-26", CalculatorRunClassificationId=2, Name = "CalculatorRunTest2" }};
+            context.CalculatorRuns.AddRange(runs);
+
+
+
+            var producerDetails = new List<ProducerDetail>()
+            {  new ProducerDetail() { Id =1 , CalculatorRunId = 1, ProducerName="Test1", ProducerId = 1, TradingName = "TN1"},
+             new ProducerDetail() { Id =2 , CalculatorRunId = 1, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
+              new ProducerDetail() { Id =3 , CalculatorRunId = 2, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"},
+               new ProducerDetail() { Id =4 , CalculatorRunId = 1, ProducerName="Test3", ProducerId = 3, TradingName = "TN4"},
+            };
+
+            context.ProducerDetail.AddRange(producerDetails);
+
+            var materials = new List<Material>
+        {
+            new Material { Id = 1, Name = "Plastic", Code = MaterialCodes.Plastic },
+            new Material { Id = 2, Name = "Steel", Code = MaterialCodes.Steel },
+            new Material { Id = 3, Name = "Glass", Code = MaterialCodes.Glass },
+        };
+            context.Material.AddRange(materials);
+
+            var producerReportedMaterials = new List<ProducerReportedMaterial>
+        {
+            new ProducerReportedMaterial { Id = 1, ProducerDetailId = 1, MaterialId = 1, PackagingType = PackagingTypes.Household, PackagingTonnage = 100 },
+            new ProducerReportedMaterial { Id = 2, ProducerDetailId = 1, MaterialId = 2, PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 200 },
+            new ProducerReportedMaterial { Id = 3, ProducerDetailId = 1, MaterialId = 3, PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 300 },
+             new ProducerReportedMaterial { Id = 4, ProducerDetailId = 2, MaterialId = 1, PackagingType = PackagingTypes.Household, PackagingTonnage = 100 },
+            new ProducerReportedMaterial { Id = 5, ProducerDetailId = 2, MaterialId = 2, PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 200 },
+            new ProducerReportedMaterial { Id = 6, ProducerDetailId = 2, MaterialId = 3, PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 300 },
+
+        };
+            context.ProducerReportedMaterial.AddRange(producerReportedMaterials);
+
+
+
+            var designatedRunInvoice = new List<ProducerDesignatedRunInvoiceInstruction>()
+            { new ProducerDesignatedRunInvoiceInstruction()
+                {
+                    BillingInstructionId = "1_1",
+                    CalculatorRunId = 1,
+                    CurrentYearInvoicedTotalAfterThisRun = 100,
+                    Id = 1,
+                    ProducerId = 1,
+                    InvoiceAmount = 100,
+                    OutstandingBalance = 100,
+
+                },
+                new ProducerDesignatedRunInvoiceInstruction()
+                {
+                    BillingInstructionId = "1_2",
+                    CalculatorRunId = 1,
+                    CurrentYearInvoicedTotalAfterThisRun = 100,
+                    Id = 2,
+                    ProducerId = 2,
+                    InvoiceAmount = 100,
+                    OutstandingBalance = 100,
+
+                },
+            };
+
+
+            context.ProducerDesignatedRunInvoiceInstruction.AddRange(designatedRunInvoice);
+
+
+            var billingInstructionList = new List<ProducerResultFileSuggestedBillingInstruction>()
+            {  new ProducerResultFileSuggestedBillingInstruction()
+                {
+                    MaterialPercentageThresholdBreached = "1%",
+                    MaterialPoundThresholdBreached = "1",
+                    ProducerId = 1,
+                    SuggestedBillingInstruction = "Initial",
+                    SuggestedInvoiceAmount = 100,
+                    CalculatorRunId = 1,
+                    BillingInstructionAcceptReject = "Accepted"
+                },
+            new ProducerResultFileSuggestedBillingInstruction()
+                {
+                    MaterialPercentageThresholdBreached = "1%",
+                    MaterialPoundThresholdBreached = "1",
+                    ProducerId = 2,
+                    SuggestedBillingInstruction = "Initial",
+                    SuggestedInvoiceAmount = 100,
+                    CalculatorRunId = 1,
+                    BillingInstructionAcceptReject = "Accepted"
+                },
+             new ProducerResultFileSuggestedBillingInstruction()
+                {
+                    MaterialPercentageThresholdBreached = "1%",
+                    MaterialPoundThresholdBreached = "1",
+                    ProducerId = 3,
+                    SuggestedBillingInstruction = "Initial",
+                    SuggestedInvoiceAmount = 100,
+                    CalculatorRunId = 1,
+                    BillingInstructionAcceptReject = "Accepted"
+                }
+            };
+
+
+
+            context.ProducerResultFileSuggestedBillingInstruction.AddRange(billingInstructionList);
+
+            var materialInvoiceTonnage = new List<ProducerInvoicedMaterialNetTonnage>()
+            {
+                 new ProducerInvoicedMaterialNetTonnage()
+                 {
+                      CalculatorRunId =1,
+                      MaterialId= 1,
+                      InvoicedNetTonnage = 100,
+                      ProducerId =1, Id=1
+
+                 },
+                new ProducerInvoicedMaterialNetTonnage()
+                 {
+                      CalculatorRunId =1,
+                      MaterialId= 2,
+                      InvoicedNetTonnage = 100,
+                      ProducerId =1,
+                    Id=2
+
+                 },
+            new ProducerInvoicedMaterialNetTonnage()
+                 {
+                      CalculatorRunId =1,
+                      MaterialId= 1,
+                      InvoicedNetTonnage = 100,
+                      ProducerId =2, Id=3
+
+                 },
+                new ProducerInvoicedMaterialNetTonnage()
+                 {
+                      CalculatorRunId =1,
+                      MaterialId= 2,
+                      InvoicedNetTonnage = 100,
+                      ProducerId =2,
+                    Id=4
+
+                 }};
+
+            context.ProducerInvoicedMaterialNetTonnage.AddRange(materialInvoiceTonnage);
+
+
+
+            context.SaveChanges();
+        }
+
+        public static void SeedDatabaseForUnclassified(ApplicationDBContext context)
+        {
+            var financialYear = new CalculatorRunFinancialYear { Name = "2025-26" };
+
+            //calculator runs
+            var runs = new List<CalculatorRun>() { new CalculatorRun { Id = 1, Financial_Year = financialYear, FinancialYearId = "2025-26", CalculatorRunClassificationId=2, Name = "CalculatorRunTest1" },
+             new CalculatorRun { Id = 2, Financial_Year = financialYear, FinancialYearId = "2025-26", CalculatorRunClassificationId=2, Name = "CalculatorRunTest2" }};
+            context.CalculatorRuns.AddRange(runs);
+
+
+
+            var producerDetails = new List<ProducerDetail>()
+            {  new ProducerDetail() { Id =1 , CalculatorRunId = 1, ProducerName="Test1", ProducerId = 1, TradingName = "TN1"},
+             new ProducerDetail() { Id =2 , CalculatorRunId = 1, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
+              new ProducerDetail() { Id =3 , CalculatorRunId = 2, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"},
+               new ProducerDetail() { Id =4 , CalculatorRunId = 1, ProducerName="Test3", ProducerId = 3, TradingName = "TN4"},
+            };
+
+            context.ProducerDetail.AddRange(producerDetails);
+
+            var materials = new List<Material>
+        {
+            new Material { Id = 1, Name = "Plastic", Code = MaterialCodes.Plastic },
+            new Material { Id = 2, Name = "Steel", Code = MaterialCodes.Steel },
+            new Material { Id = 3, Name = "Glass", Code = MaterialCodes.Glass },
+        };
+            context.Material.AddRange(materials);
+
+            var producerReportedMaterials = new List<ProducerReportedMaterial>
+        {
+            new ProducerReportedMaterial { Id = 1, ProducerDetailId = 1, MaterialId = 1, PackagingType = PackagingTypes.Household, PackagingTonnage = 100 },
+            new ProducerReportedMaterial { Id = 2, ProducerDetailId = 1, MaterialId = 2, PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 200 },
+            new ProducerReportedMaterial { Id = 3, ProducerDetailId = 1, MaterialId = 3, PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 300 },
+             new ProducerReportedMaterial { Id = 4, ProducerDetailId = 2, MaterialId = 1, PackagingType = PackagingTypes.Household, PackagingTonnage = 100 },
+            new ProducerReportedMaterial { Id = 5, ProducerDetailId = 2, MaterialId = 2, PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 200 },
+            new ProducerReportedMaterial { Id = 6, ProducerDetailId = 2, MaterialId = 3, PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 300 },
+
+        };
+            context.ProducerReportedMaterial.AddRange(producerReportedMaterials);
+
+
+
+            var designatedRunInvoice = new List<ProducerDesignatedRunInvoiceInstruction>()
+            { new ProducerDesignatedRunInvoiceInstruction()
+                {
+                    BillingInstructionId = "1_1",
+                    CalculatorRunId = 1,
+                    CurrentYearInvoicedTotalAfterThisRun = 100,
+                    Id = 1,
+                    ProducerId = 1,
+                    InvoiceAmount = 100,
+                    OutstandingBalance = 100,
+
+                },
+                new ProducerDesignatedRunInvoiceInstruction()
+                {
+                    BillingInstructionId = "1_2",
+                    CalculatorRunId = 1,
+                    CurrentYearInvoicedTotalAfterThisRun = 100,
+                    Id = 2,
+                    ProducerId = 2,
+                    InvoiceAmount = 100,
+                    OutstandingBalance = 100,
+
+                },
+            };
+
+
+            context.ProducerDesignatedRunInvoiceInstruction.AddRange(designatedRunInvoice);
+
+
+            var billingInstructionList = new List<ProducerResultFileSuggestedBillingInstruction>()
+            {  new ProducerResultFileSuggestedBillingInstruction()
+                {
+                    MaterialPercentageThresholdBreached = "1%",
+                    MaterialPoundThresholdBreached = "1",
+                    ProducerId = 1,
+                    SuggestedBillingInstruction = "Initial",
+                    SuggestedInvoiceAmount = 100,
+                    CalculatorRunId = 1,
+                    BillingInstructionAcceptReject = "Accepted"
+                },
+            new ProducerResultFileSuggestedBillingInstruction()
+                {
+                    MaterialPercentageThresholdBreached = "1%",
+                    MaterialPoundThresholdBreached = "1",
+                    ProducerId = 2,
+                    SuggestedBillingInstruction = "Initial",
+                    SuggestedInvoiceAmount = 100,
+                    CalculatorRunId = 1,
+                    BillingInstructionAcceptReject = "Accepted"
+                },
+             new ProducerResultFileSuggestedBillingInstruction()
+                {
+                    MaterialPercentageThresholdBreached = "1%",
+                    MaterialPoundThresholdBreached = "1",
+                    ProducerId = 3,
+                    SuggestedBillingInstruction = "Initial",
+                    SuggestedInvoiceAmount = 100,
+                    CalculatorRunId = 1,
+                    BillingInstructionAcceptReject = "Accepted"
+                }
+            };
+
+
+
+            context.ProducerResultFileSuggestedBillingInstruction.AddRange(billingInstructionList);
+
+            var materialInvoiceTonnage = new List<ProducerInvoicedMaterialNetTonnage>()
+            {
+                 new ProducerInvoicedMaterialNetTonnage()
+                 {
+                      CalculatorRunId =1,
+                      MaterialId= 1,
+                      InvoicedNetTonnage = 100,
+                      ProducerId =1, Id=1
+
+                 },
+                new ProducerInvoicedMaterialNetTonnage()
+                 {
+                      CalculatorRunId =1,
+                      MaterialId= 2,
+                      InvoicedNetTonnage = 100,
+                      ProducerId =1,
+                    Id=2
+
+                 },
+            new ProducerInvoicedMaterialNetTonnage()
+                 {
+                      CalculatorRunId =1,
+                      MaterialId= 1,
+                      InvoicedNetTonnage = 100,
+                      ProducerId =2, Id=3
+
+                 },
+                new ProducerInvoicedMaterialNetTonnage()
+                 {
+                      CalculatorRunId =1,
+                      MaterialId= 2,
+                      InvoicedNetTonnage = 100,
+                      ProducerId =2,
+                    Id=4
+
+                 }};
+
+            context.ProducerInvoicedMaterialNetTonnage.AddRange(materialInvoiceTonnage);
+
+
+
+            context.SaveChanges();
+        }
+
     }
 }
