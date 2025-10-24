@@ -5,6 +5,7 @@ namespace EPR.Calculator.Service.Function.Builder
     using EPR.Calculator.Service.Function.Builder.CancelledProducers;
     using EPR.Calculator.Service.Function.Builder.CommsCost;
     using EPR.Calculator.Service.Function.Builder.Detail;
+    using EPR.Calculator.Service.Function.Builder.ErrorReport;
     using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
     using EPR.Calculator.Service.Function.Builder.Lapcap;
     using EPR.Calculator.Service.Function.Builder.LateReportingTonnages;
@@ -30,6 +31,7 @@ namespace EPR.Calculator.Service.Function.Builder
         private readonly ICalcResultScaledupProducersBuilder calcResultScaledupProducersBuilder;
         public readonly ICalcResultCancelledProducersBuilder calcResultCancelledProducersBuilder;
         public readonly ICalcResultRejectedProducersBuilder calcResultRejectedProducersBuilder;
+        public readonly ICalcResultErrorReportBuilder calcResultErrorReportBuilder;
         private readonly TelemetryClient _telemetryClient;
 
 
@@ -49,6 +51,7 @@ namespace EPR.Calculator.Service.Function.Builder
             ICalcResultSummaryBuilder summaryBuilder,
             ICalcResultCancelledProducersBuilder calcResultCancelledProducersBuilder,
             ICalcResultRejectedProducersBuilder calcResultRejectedProducersBuilder,
+            ICalcResultErrorReportBuilder calcResultErrorReportBuilder,
             TelemetryClient telemetryClient)
         {
             this.calcResultDetailBuilder = calcResultDetailBuilder;
@@ -62,6 +65,7 @@ namespace EPR.Calculator.Service.Function.Builder
             this.summaryBuilder = summaryBuilder;
             this.calcResultCancelledProducersBuilder = calcResultCancelledProducersBuilder;
             this.calcResultRejectedProducersBuilder = calcResultRejectedProducersBuilder;
+            this.calcResultErrorReportBuilder = calcResultErrorReportBuilder;
             this._telemetryClient = telemetryClient;
         }
 
@@ -132,6 +136,10 @@ namespace EPR.Calculator.Service.Function.Builder
             this._telemetryClient.TrackTrace("summaryBuilder started...");
             result.CalcResultSummary = await this.summaryBuilder.ConstructAsync(resultsRequestDto, result);
             this._telemetryClient.TrackTrace("summaryBuilder end...");
+
+            this._telemetryClient.TrackTrace("Error report builder started...");
+            result.CalcResultErrorReports = await this.calcResultErrorReportBuilder.ConstructAsync(resultsRequestDto);
+            this._telemetryClient.TrackTrace("Error report builder end...");
 
             return result;
         }
