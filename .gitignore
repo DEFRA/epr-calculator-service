@@ -368,3 +368,5 @@ FodyWeavers.xsd
 # config file
 local.settings.json
 /.vs
+
+.idea
