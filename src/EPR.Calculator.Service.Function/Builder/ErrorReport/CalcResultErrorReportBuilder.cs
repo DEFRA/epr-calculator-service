@@ -32,7 +32,7 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
                     SubsidiaryId = er.SubsidiaryId ?? string.Empty,
                     ProducerName = odd.OrganisationName,
                     TradingName = odd.TradingName ?? string.Empty,
-                    LeaverCode = string.Empty,
+                    LeaverCode = er.LeaverCode ?? string.Empty,
                     ErrorCodeText = et.Name
                 }
             ).AsNoTracking().ToListAsync();
