@@ -1,0 +1,89 @@
+services:
+  asb-backend:
+    depends_on:
+      sqledge:
+        condition: service_healthy
+    pull_policy: always
+    image: mcr.microsoft.com/azure-messaging/servicebus-emulator:latest
+    ports:
+      - "5672:5672"
+      - "5300:5300"
+    volumes:
+      - "./compose/asb.json:/ServiceBus_Emulator/ConfigFiles/Config.json"
+    environment:
+      SQL_WAIT_INTERVAL: 0
+      SQL_SERVER: sqledge
+      MSSQL_SA_PASSWORD: "s4usag3s!"
+      ACCEPT_EULA: "Y"
+
+  asb:
+    depends_on:
+      asb-backend:
+        condition: service_started
+    pull_policy: always
+    image: alpine/curl:latest
+    command: ["tail", "-f", "/dev/null"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://asb-backend:5300/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+  sqledge:
+    pull_policy: always
+    image: mcr.microsoft.com/azure-sql-edge:latest
+    # On some platforms there are compatibility issues with running Azure SQL Edge e.g. M1 Macs with later Docker versions.
+    # If SQL Edge does not work for you, try swapping out with SQL Server image instead
+    # image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "s4usag3s!"
+    healthcheck:
+      interval: 5s
+      retries: 10
+      start_period: 5s
+      test: timeout 1 bash -c 'cat < /dev/null > /dev/tcp/127.0.0.1/1433'
+      timeout: 5s
+
+  migrations:
+    build:
+      context: ../epr-calculator-api/src/EPR.Calculator.API.Data/Scripts
+    depends_on:
+      sqledge:
+        condition: service_healthy
+    environment:
+      SERVER: sqledge
+      PORT: 1433
+      USER: sa
+      PASSWORD: "s4usag3s!"
+      DATABASE: PayCal
+
+  epr-service:
+    build:
+      context: src
+      dockerfile: EPR.Calculator.Service.Function/Dockerfile
+    depends_on:
+      sqledge:
+        condition: service_healthy
+      asb:
+        condition: service_healthy
+    environment:
+      AzureWebJobsStorage: AzureWebJobsStorageConnectionStringValue
+      AzureWebJobsDashboard: AzureWebJobsStorageConnectionStringValue
+      ServiceBusConnectionString: Endpoint=sb://asb-backend;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;
+      ServiceBusQueueName: defra.epr.calculator.run.local
+      PipelineUrl: https://use-wiremock
+      GetOrgDataPipelineName: pip_paycal_get_org_data
+      GetPomDataPipelineName: pip_paycal_get_pom_data
+      MaxCheckCount: 10
+      CheckInterval: 5
+      StatusUpdateEndpoint: http://localhost:5055/v1/internal/rpdStatus
+      FUNCTIONS_WORKER_RUNTIME: dotnet
+      FUNCTIONS_INPROC_NET8_ENABLED: 1
+      Execute_RPD_Pipeline: false
+      PrepareCalcResultEndPoint: http://localhost:5055/v1/internal/prepareCalcResults
+      DbConnectionString: "Data Source=sqledge,1433;User id=sa;Password=s4usag3s!;Initial Catalog=PayCal;TrustServerCertificate=True"
+
