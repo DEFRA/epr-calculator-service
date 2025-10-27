@@ -42,12 +42,14 @@
             ICommandTimeoutService commandTimeoutService,
             IDbLoadingChunkerService<ProducerDetail> producerDetailChunker,
             IDbLoadingChunkerService<ProducerReportedMaterial> producerReportedMaterialChunker,
+            IDbLoadingChunkerService<ErrorReport> errorReportChunker,
             ICalculatorTelemetryLogger telemetryLogger)
         {
             this.context = context;
             this.CommandTimeoutService = commandTimeoutService;
             this.ProducerDetailChunker = producerDetailChunker;
             this.ProducerReportedMaterialChunker = producerReportedMaterialChunker;
+            this.ErrorReportChunker = errorReportChunker;
             this.telemetryLogger = telemetryLogger;
         }
 
@@ -188,12 +190,13 @@
                 errorReportList = unmatchedPomRecords
                                     .Select(pom => new ErrorReport
                                     {
-                                        Id = pom.Id,
+                                        CalculatorRunId = resultsRequestDto.RunId,
                                         ProducerId = pom.OrganisationId.GetValueOrDefault(),
                                         SubsidiaryId = pom.SubsidaryId,
-                                        LeaverCode = null,
+                                        LeaverCode = "POM table not updated with new columns",
                                         ErrorTypeId = (int)ErrorTypes.UNKNOWN,
-                                        CreatedBy = string.Empty,
+                                        CreatedBy = resultsRequestDto.ApprovedBy,
+                                        CreatedAt= DateTime.Now,
                                     }).ToList();
             }
 

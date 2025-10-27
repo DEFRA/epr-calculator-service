@@ -190,14 +190,14 @@ namespace EPR.Calculator.Service.Function.Services
 
         private async Task<bool> RunResultsFileCalculationAsync(CalculatorRunParameter calculatorRunParameter, string? runName)
         {
-            var isSuccess = false;          
+            var isSuccess = false;
 
-            var statusUpdateResponse = await LogAndUpdateStatus(calculatorRunParameter, runName);           
+            var statusUpdateResponse = await LogAndUpdateStatus(calculatorRunParameter, runName);
 
             if (statusUpdateResponse == RunClassification.RUNNING)
             {
                 var isTransposeSuccess = await this.transposePomAndOrgDataService.TransposeBeforeResultsFileAsync(
-                    new CalcResultsRequestDto { RunId = calculatorRunParameter.Id },
+                    new CalcResultsRequestDto { RunId = calculatorRunParameter.Id, ApprovedBy = calculatorRunParameter.User },
                     runName,
                     new CancellationTokenSource(this.configuration.TransposeTimeout).Token);
 
