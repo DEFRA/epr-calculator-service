@@ -8,6 +8,8 @@ namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResultErrorReport
     {
+        public int Id { get; set; }
+
         public int ProducerId { get; set; }
 
         public required string SubsidiaryId { get; set; }

@@ -28,6 +28,7 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
                 where run.Id == resultsRequestDto.RunId
                 select new CalcResultErrorReport
                 {
+                    Id = er.Id,
                     ProducerId = er.ProducerId,
                     SubsidiaryId = er.SubsidiaryId ?? string.Empty,
                     ProducerName = odd.OrganisationName,
@@ -35,7 +36,7 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
                     LeaverCode = er.LeaverCode ?? string.Empty,
                     ErrorCodeText = et.Name
                 }
-            ).AsNoTracking().ToListAsync();
+            ).AsNoTracking().Distinct().ToListAsync();
         }
     }
 }
