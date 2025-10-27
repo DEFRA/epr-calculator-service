@@ -57,6 +57,8 @@
 
         private IDbLoadingChunkerService<ProducerReportedMaterial> ProducerReportedMaterialChunker { get; init; }
 
+        private IDbLoadingChunkerService<ErrorReport> ErrorReportChunker { get; init; }
+
         public async Task<bool> TransposeBeforeResultsFileAsync(
             [FromBody] CalcResultsRequestDto resultsRequestDto,
             string? runName,
@@ -173,6 +175,32 @@
                 .Where(x => x.CalculatorRunOrganisationDataMasterId == calculatorRun.CalculatorRunOrganisationDataMasterId)
                 .OrderBy(x => x.SubmissionPeriodDesc)
                 .ToListAsync(cancellationToken);
+
+            var unmatchedPomRecords = calculatorRunPomDataDetails
+                .Where(pom => !calculatorRunOrgDataDetails
+                .Any(org => org.OrganisationId == pom.OrganisationId))
+                .ToList();
+
+            List<ErrorReport> errorReportList = new();
+
+            if (unmatchedPomRecords.Count > 0)
+            {
+                errorReportList = unmatchedPomRecords
+                                    .Select(pom => new ErrorReport
+                                    {
+                                        Id = pom.Id,
+                                        ProducerId = pom.OrganisationId.GetValueOrDefault(),
+                                        SubsidiaryId = pom.SubsidaryId,
+                                        LeaverCode = null,
+                                        ErrorTypeId = (int)ErrorTypes.UNKNOWN,
+                                        CreatedBy = string.Empty,
+                                    }).ToList();
+            }
+
+            if (errorReportList.Count > 0)
+            {
+                await this.ErrorReportChunker.InsertRecords(errorReportList);
+            }
 
             if (IsCalculatorRunPOMMasterIdExists(calculatorRun))
             {
