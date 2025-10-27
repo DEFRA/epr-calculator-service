@@ -5,6 +5,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
     using EPR.Calculator.Service.Function.Builder.CancelledProducers;
     using EPR.Calculator.Service.Function.Builder.CommsCost;
     using EPR.Calculator.Service.Function.Builder.Detail;
+    using EPR.Calculator.Service.Function.Builder.ErrorReport;
     using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
     using EPR.Calculator.Service.Function.Builder.Lapcap;
     using EPR.Calculator.Service.Function.Builder.LateReportingTonnages;
@@ -36,6 +37,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         private readonly Mock<ICalcResultScaledupProducersBuilder> mockCalcResultScaledupProducersBuilder;
         private readonly Mock<ICalcResultCancelledProducersBuilder> mockCalcResultCancelledProducersBuilder;
         private readonly Mock<ICalcResultRejectedProducersBuilder> mockCalcResultRejectedProducersBuilder;
+        private readonly Mock<ICalcResultErrorReportBuilder> mockCalcResultErrorReportBuilder;
         private TelemetryClient telemetryClient;
 
         public CalcResultBuilderTests()
@@ -52,6 +54,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
             this.mockCalcResultScaledupProducersBuilder = new Mock<ICalcResultScaledupProducersBuilder>();
             this.mockCalcResultCancelledProducersBuilder = new Mock<ICalcResultCancelledProducersBuilder>();
             this.mockCalcResultRejectedProducersBuilder = new Mock<ICalcResultRejectedProducersBuilder>();
+            this.mockCalcResultErrorReportBuilder = new Mock<ICalcResultErrorReportBuilder>();
+
             this.telemetryClient = new TelemetryClient(new TelemetryConfiguration());
 
             this.calcResultBuilder = new CalcResultBuilder(
@@ -66,6 +70,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 this.mockSummaryBuilder.Object,
                 this.mockCalcResultCancelledProducersBuilder.Object,
                 this.mockCalcResultRejectedProducersBuilder.Object,
+                this.mockCalcResultErrorReportBuilder.Object,
                 this.telemetryClient);
         }
 
@@ -87,6 +92,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 this.mockSummaryBuilder.Object,
                 this.mockCalcResultCancelledProducersBuilder.Object,
                 this.mockCalcResultRejectedProducersBuilder.Object,
+                this.mockCalcResultErrorReportBuilder.Object,
                 this.telemetryClient);
 
             // Assert
