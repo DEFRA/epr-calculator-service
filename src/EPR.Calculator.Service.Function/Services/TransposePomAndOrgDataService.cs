@@ -193,7 +193,6 @@
                                         CalculatorRunId = resultsRequestDto.RunId,
                                         ProducerId = pom.OrganisationId.GetValueOrDefault(),
                                         SubsidiaryId = pom.SubsidaryId,
-                                        LeaverCode = "POM table not updated with new columns",
                                         ErrorTypeId = (int)ErrorTypes.UNKNOWN,
                                         CreatedBy = resultsRequestDto.ApprovedBy,
                                         CreatedAt= DateTime.Now,

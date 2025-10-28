@@ -328,7 +328,6 @@
                 CalculatorRunId = 3,
                 ProducerId = 5555,
                 SubsidiaryId = "11",
-                LeaverCode = "POM table not updated with new columns",
                 ErrorTypeId = (int)ErrorTypes.UNKNOWN,
                 CreatedBy = "unit-tester",
                 CreatedAt = DateTime.Now
