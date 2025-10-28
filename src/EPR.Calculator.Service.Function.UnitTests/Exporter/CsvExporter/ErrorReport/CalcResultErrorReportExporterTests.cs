@@ -1,4 +1,5 @@
-﻿using EPR.Calculator.Service.Function.Constants;
+﻿using AutoFixture;
+using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ErrorReport;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.AspNetCore.Mvc.Formatters.Internal;
@@ -38,6 +39,31 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.ErrorRe
         }
 
         [TestMethod]
+        public void Export_ShouldWriteExpectedValuesToCsv()
+        {
+            // Arrange
+            var exporter = new CalcResultErrorReportExporter();
+            var stringBuilder = new StringBuilder();
+
+            var calcResultErrorReport = new List<CalcResultErrorReport>();
+            var fixture = new Fixture();
+            var error = fixture.Create<CalcResultErrorReport>();
+            calcResultErrorReport.Add(error);
+
+            // Act
+            exporter.Export(calcResultErrorReport, stringBuilder);
+            var csvOutput = stringBuilder.ToString();
+
+            // Assert
+            Assert.IsTrue(csvOutput.Contains(error.ProducerId.ToString()));
+            Assert.IsTrue(csvOutput.Contains(error.SubsidiaryId));
+            Assert.IsTrue(csvOutput.Contains(error.ProducerName));
+            Assert.IsTrue(csvOutput.Contains(error.TradingName));
+            Assert.IsTrue(csvOutput.Contains(error.LeaverCode));
+            Assert.IsTrue(csvOutput.Contains(error.ErrorCodeText));
+        }
+
+        [TestMethod]
         public void Export_ShouldHandleEmptyErrorReport()
         {
             // Arrange  
@@ -57,6 +83,35 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.ErrorRe
             Assert.IsTrue(result.Contains("Producer / Subsidiary Name"));
             Assert.IsTrue(result.Contains("Leaver Code"));
             Assert.IsTrue(result.Contains("Error Code Text"));
+        }
+
+        [TestMethod]
+        public void Export_ShouldHandleNullErrorReport()
+        {
+            // Arrange  
+            var exporter = new CalcResultErrorReportExporter();
+            var response = new List<CalcResultErrorReport>()
+            {
+                new CalcResultErrorReport()
+                {
+                    ProducerId = 0,
+                    ErrorCodeText = "test",
+                    LeaverCode = "LeaverCode",
+                    ProducerName = "Name",
+                    SubsidiaryId = "SusbId",
+                    TradingName = "Trading"
+
+
+                }
+            };
+            var csvContent = new StringBuilder();
+
+            // Act  
+            exporter.Export(response, csvContent);
+
+            // Assert  
+            var result = csvContent.ToString();
+            Assert.IsTrue(result.Contains(CommonConstants.Hyphen));
         }
     }
 }

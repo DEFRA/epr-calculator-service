@@ -21,12 +21,13 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ErrorReport
 
             foreach (CalcResultErrorReport report in errorReport)
             {
-                csvContent.Append(CsvSanitiser.SanitiseData(report.ProducerId));
+                csvContent.Append(CsvSanitiser.SanitiseData(report.ProducerId == 0 ? CommonConstants.Hyphen : report.ProducerId.ToString()));
                 csvContent.Append(CsvSanitiser.SanitiseData(report.SubsidiaryId));
                 csvContent.Append(CsvSanitiser.SanitiseData(report.ProducerName));
                 csvContent.Append(CsvSanitiser.SanitiseData(report.TradingName));
                 csvContent.Append(CsvSanitiser.SanitiseData(report.LeaverCode));
                 csvContent.Append(CsvSanitiser.SanitiseData(report.ErrorCodeText));
+                csvContent.AppendLine();
             }
         }
 
@@ -38,6 +39,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ErrorReport
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.TradingName));
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.LeaverCode));
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.ErrorCodeText));
+            csvContent.AppendLine();
         }
     }
 }
