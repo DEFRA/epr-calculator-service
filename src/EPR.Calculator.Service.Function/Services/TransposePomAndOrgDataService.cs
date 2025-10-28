@@ -194,7 +194,7 @@
                                         ProducerId = pom.OrganisationId.GetValueOrDefault(),
                                         SubsidiaryId = pom.SubsidaryId,
                                         ErrorTypeId = (int)ErrorTypes.UNKNOWN,
-                                        CreatedBy = resultsRequestDto.ApprovedBy,
+                                        CreatedBy = resultsRequestDto.CreatedBy,
                                         CreatedAt= DateTime.Now,
                                     }).ToList();
             }
