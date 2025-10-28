@@ -26,6 +26,7 @@
         public TransposePomAndOrgDataServiceTests()
         {
             this.CommandTimeoutService = new Mock<ICommandTimeoutService>().Object;
+            this.ErrorReportService = new Mock<IErrorReportService>().Object;
             this.TelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
             this.Chunker = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
 
@@ -46,11 +47,13 @@
                 this.CommandTimeoutService,
                 this.Chunker.Object,
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
-                new Mock<IDbLoadingChunkerService<ErrorReport>>().Object,
+                this.ErrorReportService,
                 this.TelemetryLogger.Object);
         }
 
         private ICommandTimeoutService CommandTimeoutService { get; init; }
+
+        private IErrorReportService ErrorReportService { get; init; }
 
         public Fixture Fixture { get; init; } = new Fixture();
 
@@ -213,7 +216,7 @@
                 this.CommandTimeoutService,
                 new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
-                new Mock<IDbLoadingChunkerService<ErrorReport>>().Object,
+                this.ErrorReportService,
                 mockTelemetryLogger.Object);
 
             // Act
@@ -245,7 +248,7 @@
                 this.CommandTimeoutService,
                 new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
-                new Mock<IDbLoadingChunkerService<ErrorReport>>().Object,
+                this.ErrorReportService,
                 mockTelemetryLogger.Object);
 
             // Act
@@ -293,7 +296,7 @@
                 this.CommandTimeoutService,
                 mockProducerDetailService.Object,
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
-                mockErrorReportService.Object,
+                this.ErrorReportService,
                 new Mock<ICalculatorTelemetryLogger>().Object);
 
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 3 };
@@ -318,162 +321,6 @@
 
             Assert.IsNotNull(producerDetail);
             Assert.AreEqual(expectedResult.ProducerId, producerDetail.ProducerId);
-        }
-
-        [TestMethod]
-        public async Task Transpose_Should_Insert_ErrorReport_For_Unmatched_PomRecords()
-        {
-            var expectedResult = new ErrorReport
-            {
-                CalculatorRunId = 3,
-                ProducerId = 5555,
-                SubsidiaryId = "11",
-                ErrorTypeId = (int)ErrorTypes.UNKNOWN,
-                CreatedBy = "unit-tester",
-                CreatedAt = DateTime.Now
-            };
-
-            // Mock the chunker that will receive the ErrorReport list
-            var mockErrorReportService = new Mock<IDbLoadingChunkerService<ErrorReport>>();
-            mockErrorReportService
-                .Setup(service => service.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>()))
-                .Returns(Task.CompletedTask);
-
-            var mockProducerDetailService = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
-            mockProducerDetailService.Setup(service => service.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
-                                     .Returns(Task.CompletedTask);
-
-            var mockProducerReportedMaterialService = new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>();
-            mockProducerReportedMaterialService.Setup(service => service.InsertRecords(It.IsAny<IEnumerable<ProducerReportedMaterial>>()))
-                                               .Returns(Task.CompletedTask);
-
-            var mockTelemetry = new Mock<ICalculatorTelemetryLogger>();
-
-            this._context.CalculatorRunPomDataDetails.AddRange(new List<CalculatorRunPomDataDetail>
-            {
-                new ()
-                {
-                    Id = 5,
-                    OrganisationId = 10,
-                    SubsidaryId = "1",
-                    SubmissionPeriod = "2024-P1",
-                    PackagingActivity = null,
-                    PackagingType = "CW",
-                    PackagingClass = "O1",
-                    PackagingMaterial = "PC",
-                    PackagingMaterialWeight = 1000,
-                    LoadTimeStamp = DateTime.UtcNow,
-                    CalculatorRunPomDataMasterId = 2,
-                    SubmissionPeriodDesc = "January to June 2024",
-                },
-            });
-
-            var service = new TransposePomAndOrgDataService(
-                this._context,
-                this.CommandTimeoutService,
-                mockProducerDetailService.Object,
-                mockProducerReportedMaterialService.Object,
-                mockErrorReportService.Object,
-                mockTelemetry.Object);
-
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 3, ApprovedBy = expectedResult.CreatedBy };
-
-            // Detach existing CalculatorRun entity if it is already being tracked (same pattern as your existing test)
-            var existingCalculatorRun = _context.ChangeTracker.Entries<CalculatorRun>()
-                                                .FirstOrDefault(e => e.Entity.Id == expectedResult.CalculatorRunId);
-            if (existingCalculatorRun != null)
-            {
-                _context.Entry(existingCalculatorRun.Entity).State = EntityState.Detached;
-            }
-
-            // Act
-            await service.Transpose(resultsRequestDto, CancellationToken.None);
-
-            var errorReport = this._context.Set<ErrorReport>().FirstOrDefault();
-            if (errorReport == null)
-            {
-                this._context.Set<ErrorReport>().Add(expectedResult);
-                this._context.SaveChanges();
-                errorReport = expectedResult;
-            }
-
-            Assert.IsNotNull(errorReport);
-            Assert.AreEqual(expectedResult.ProducerId, errorReport.ProducerId, "ProducerId should match the expected value.");
-
-            //Verify InsertRecords was invoked on the chunker when unmatched records exist
-            mockErrorReportService.Verify(x => x.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>()), Times.AtLeastOnce);
-        }
-
-        [TestMethod]
-        public async Task Transpose_WhenNoUnmatchedPomRecords_Should_Not_Insert_ErrorReport()
-        {
-            var expectedPom = new CalculatorRunPomDataDetail
-            {
-                Id = 1,
-                LoadTimeStamp = DateTime.UtcNow,
-                SubmissionPeriod= "January to June 2025",
-                CalculatorRunPomDataMasterId = 1,
-                OrganisationId = 300,
-                SubmissionPeriodDesc = "2024-01",
-                SubsidaryId = "30"
-            };
-
-            var expectedOrg = new CalculatorRunOrganisationDataDetail
-            {
-                Id = 1,
-                OrganisationName ="TestOrg",
-                CalculatorRunOrganisationDataMasterId = 1,
-                OrganisationId = 300,
-                SubmissionPeriodDesc = "2024-01"
-            };
-
-            // Detach existing CalculatorRun if tracked
-            var existingCalculatorRun = _context.ChangeTracker.Entries<CalculatorRun>()
-                                                .FirstOrDefault(e => e.Entity.Id == 1);
-            if (existingCalculatorRun != null)
-            {
-                _context.Entry(existingCalculatorRun.Entity).State = EntityState.Detached;
-            }
-
-            // Mock the chunker that will receive the ErrorReport list
-            var mockErrorReportService = new Mock<IDbLoadingChunkerService<ErrorReport>>();
-            mockErrorReportService
-                .Setup(service => service.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>()))
-                .Returns(Task.CompletedTask);
-
-            var mockProducerDetailService = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
-            mockProducerDetailService.Setup(service => service.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
-                                     .Returns(Task.CompletedTask);
-
-            var mockProducerReportedMaterialService = new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>();
-            mockProducerReportedMaterialService.Setup(service => service.InsertRecords(It.IsAny<IEnumerable<ProducerReportedMaterial>>()))
-                                               .Returns(Task.CompletedTask);
-            var mockTelemetry = new Mock<ICalculatorTelemetryLogger>();
-            var service = new TransposePomAndOrgDataService(
-                this._context,
-                this.CommandTimeoutService,
-                mockProducerDetailService.Object,
-                mockProducerReportedMaterialService.Object,
-                mockErrorReportService.Object,
-                mockTelemetry.Object);
-
-            var resultsRequestDto = new CalcResultsRequestDto
-            {
-                RunId = 1,
-                ApprovedBy = "tester"
-            };
-
-            // Act
-            var result = await service.Transpose(resultsRequestDto, CancellationToken.None);
-            Assert.IsTrue(result);
-
-            // Assert: No ErrorReport inserted
-            var errorReport = _context.Set<ErrorReport>().FirstOrDefault();
-            Assert.IsNull(errorReport, "No ErrorReport should be inserted when all POM records match Org records.");
-
-            // Also verify the chunker was never called
-            mockErrorReportService.Verify(x => x.InsertRecords(It.IsAny<List<ErrorReport>>()), Times.Never,
-                "InsertRecords should not be called when there are no unmatched POM records.");
         }
 
         [TestMethod]
@@ -509,7 +356,7 @@
                 this.CommandTimeoutService,
                 new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
-                new Mock<IDbLoadingChunkerService<ErrorReport>>().Object,
+                this.ErrorReportService,
                 new Mock<ICalculatorTelemetryLogger>().Object);
 
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 3 };
@@ -587,7 +434,7 @@
                 this.CommandTimeoutService,
                 new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
-                new Mock<IDbLoadingChunkerService<ErrorReport>>().Object,
+                this.ErrorReportService,
                 new Mock<ICalculatorTelemetryLogger>().Object);
 
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 2 };
@@ -631,7 +478,7 @@
                 this.CommandTimeoutService,
                 new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
-                new Mock<IDbLoadingChunkerService<ErrorReport>>().Object,
+                this.ErrorReportService,
                 new Mock<ICalculatorTelemetryLogger>().Object);
 
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 2 };
@@ -664,9 +511,9 @@
         {
             var mockContext = new Mock<ApplicationDBContext>();
             var mockCommandTimeoutService = new Mock<ICommandTimeoutService>();
+            var mockErrorReportService = new Mock<IErrorReportService>();
             var mockProducerDetailService = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
             var mockProducerReportedMaterialService = new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>();
-            var mockErrorReportService = new Mock<IDbLoadingChunkerService<ErrorReport>>();
             var mockTelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
 
             var service = new TransposePomAndOrgDataService(

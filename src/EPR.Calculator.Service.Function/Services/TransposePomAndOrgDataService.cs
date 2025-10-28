@@ -42,14 +42,14 @@
             ICommandTimeoutService commandTimeoutService,
             IDbLoadingChunkerService<ProducerDetail> producerDetailChunker,
             IDbLoadingChunkerService<ProducerReportedMaterial> producerReportedMaterialChunker,
-            IDbLoadingChunkerService<ErrorReport> errorReportChunker,
+            IErrorReportService errorReportService,
             ICalculatorTelemetryLogger telemetryLogger)
         {
             this.context = context;
             this.CommandTimeoutService = commandTimeoutService;
             this.ProducerDetailChunker = producerDetailChunker;
             this.ProducerReportedMaterialChunker = producerReportedMaterialChunker;
-            this.ErrorReportChunker = errorReportChunker;
+            this.ErrorReportService = errorReportService;
             this.telemetryLogger = telemetryLogger;
         }
 
@@ -59,7 +59,7 @@
 
         private IDbLoadingChunkerService<ProducerReportedMaterial> ProducerReportedMaterialChunker { get; init; }
 
-        private IDbLoadingChunkerService<ErrorReport> ErrorReportChunker { get; init; }
+        private IErrorReportService ErrorReportService { get; init; }
 
         public async Task<bool> TransposeBeforeResultsFileAsync(
             [FromBody] CalcResultsRequestDto resultsRequestDto,
@@ -178,31 +178,12 @@
                 .OrderBy(x => x.SubmissionPeriodDesc)
                 .ToListAsync(cancellationToken);
 
-            var unmatchedPomRecords = calculatorRunPomDataDetails
-                .Where(pom => !calculatorRunOrgDataDetails
-                .Any(org => org.OrganisationId == pom.OrganisationId))
-                .ToList();
-
-            List<ErrorReport> errorReportList = new();
-
-            if (unmatchedPomRecords.Count > 0)
-            {
-                errorReportList = unmatchedPomRecords
-                                    .Select(pom => new ErrorReport
-                                    {
-                                        CalculatorRunId = resultsRequestDto.RunId,
-                                        ProducerId = pom.OrganisationId.GetValueOrDefault(),
-                                        SubsidiaryId = pom.SubsidaryId,
-                                        ErrorTypeId = (int)ErrorTypes.UNKNOWN,
-                                        CreatedBy = resultsRequestDto.CreatedBy,
-                                        CreatedAt= DateTime.Now,
-                                    }).ToList();
-            }
-
-            if (errorReportList.Count > 0)
-            {
-                await this.ErrorReportChunker.InsertRecords(errorReportList);
-            }
+            await ErrorReportService.HandleUnmatchedPomAsync(
+                calculatorRunPomDataDetails,
+                calculatorRunOrgDataDetails,
+                resultsRequestDto.RunId,
+                resultsRequestDto.CreatedBy,
+                cancellationToken);
 
             if (IsCalculatorRunPOMMasterIdExists(calculatorRun))
             {

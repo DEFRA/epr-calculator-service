@@ -208,6 +208,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<IProducerInvoiceTonnageMapper, ProducerInvoiceTonnageMapper>();
             services.AddTransient<IPrepareProducerDataInsertService, PrepareProducerDataInsertService>();
             services.AddTransient<ICalcResultErrorReportBuilder, CalcResultErrorReportBuilder>();
+            services.AddTransient<IErrorReportService, ErrorReportService>();
 
             services.AddScoped<PrepareCalcServiceDependencies>(provider => new PrepareCalcServiceDependencies
             {
