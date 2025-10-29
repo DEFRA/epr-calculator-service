@@ -2,6 +2,6 @@
 {
     public enum ErrorTypes
     {
-        UNKNOWN = 1,
+        MISSINGREGISTRATIONDATA = 1,
     }
 }

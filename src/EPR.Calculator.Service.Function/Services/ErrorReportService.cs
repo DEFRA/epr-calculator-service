@@ -20,31 +20,44 @@ namespace EPR.Calculator.Service.Function.Services
         }
 
         public async Task HandleUnmatchedPomAsync(
-            IEnumerable<CalculatorRunPomDataDetail> pomDetails,
-            IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails,
-            int calculatorRunId,
-            string createdBy,
-            CancellationToken cancellationToken)
+                    IEnumerable<CalculatorRunPomDataDetail> pomDetails,
+                    IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails,
+                    int calculatorRunId,
+                    string createdBy,
+                    CancellationToken cancellationToken)
         {
             if (pomDetails == null) throw new ArgumentNullException(nameof(pomDetails));
             if (orgDetails == null) throw new ArgumentNullException(nameof(orgDetails));
 
-            var orgIds = new HashSet<int?>(
-                orgDetails.Select(o => o.OrganisationId));
+            var orgIds = new HashSet<int>(orgDetails.Select(o => o.OrganisationId).OfType<int>());
 
-            var unmatched = pomDetails
-                .Where(p => !orgIds.Contains(p.OrganisationId))
+            var unmatchedPoms = pomDetails
+                .Where(p =>
+                {
+                    bool producerMissing = !p.OrganisationId.HasValue || !orgIds.Contains(p.OrganisationId.Value);
+                    
+                    bool subsidiaryMissing = !string.IsNullOrWhiteSpace(p.SubsidaryId) &&
+                            orgDetails.Any(o => o.OrganisationId == p.OrganisationId && !string.IsNullOrWhiteSpace(o.SubsidaryId)) &&
+                            !orgDetails.Any(o =>
+                                o.OrganisationId == p.OrganisationId &&
+                                string.Equals(o.SubsidaryId, p.SubsidaryId, StringComparison.OrdinalIgnoreCase)
+                            );
+
+                    return producerMissing || subsidiaryMissing;
+                })
+                .GroupBy(p => new { p.OrganisationId, p.SubsidaryId })
+                .Select(g => g.First())
                 .ToList();
 
-            if (!unmatched.Any()) return;
+            if (!unmatchedPoms.Any()) return;
 
-            var errorReports = unmatched
+            var errorReports = unmatchedPoms
                 .Select(pom => new ErrorReport
                 {
                     CalculatorRunId = calculatorRunId,
                     ProducerId = pom.OrganisationId.GetValueOrDefault(),
                     SubsidiaryId = pom.SubsidaryId,
-                    ErrorTypeId = (int)ErrorTypes.UNKNOWN,
+                    ErrorTypeId = (int)ErrorTypes.MISSINGREGISTRATIONDATA,
                     CreatedBy = createdBy,
                     CreatedAt = DateTime.UtcNow
                 })
