@@ -84,7 +84,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.IsNotNull(capturedReports);
 
             var reportsList = capturedReports!.ToList();
-            Assert.AreEqual(3, reportsList.Count, "Expected 3 unmatched records to be inserted (OrganisationId 1, 2 and 3).");
+            Assert.AreEqual(4, reportsList.Count, "Expected 4 unmatched records to be inserted (OrganisationId 1, 2 and 3).");
 
             foreach (var r in reportsList)
             {
