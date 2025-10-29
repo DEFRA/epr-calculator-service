@@ -30,11 +30,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.ErrorRe
             // Assert
             Assert.IsTrue(csvOutput.Contains(CommonConstants.ErrorReportHeader), "CSV should include title header.");            
             Assert.IsTrue(csvOutput.Contains(CommonConstants.ProducerId), "CSV should include ProducerId column.");
-            Assert.IsTrue(csvOutput.Contains(CommonConstants.SubsidiaryId), "CSV should include BillingInstructionId column.");
-            Assert.IsTrue(csvOutput.Contains(CommonConstants.ProducerOrSubsidiaryName), "CSV should include TradingName column.");
-            Assert.IsTrue(csvOutput.Contains(CommonConstants.TradingName), "CSV should include Aluminium column.");
-            Assert.IsTrue(csvOutput.Contains(CommonConstants.LeaverCode), "CSV should include FibreComposite column.");
-            Assert.IsTrue(csvOutput.Contains(CommonConstants.ErrorCodeText), "CSV should include Glass column.");
+            Assert.IsTrue(csvOutput.Contains(CommonConstants.SubsidiaryId), "CSV should include SubsidiaryId column.");
+            Assert.IsTrue(csvOutput.Contains(CommonConstants.ProducerSubsidaryName), "CSV should include ProducerOrSubsidiaryName column.");
+            Assert.IsTrue(csvOutput.Contains(CommonConstants.TradingName), "CSV should include TradingName column.");
+            Assert.IsTrue(csvOutput.Contains(CommonConstants.LeaverCode), "CSV should include LeaverCode column.");
+            Assert.IsTrue(csvOutput.Contains(CommonConstants.ErrorCodeText), "CSV should include ErrorCodeText column.");
 
         }
 
