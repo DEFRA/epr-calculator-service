@@ -55,14 +55,20 @@ namespace EPR.Calculator.Service.Function.Services
                     .ToList();
 
                 var missingSubs = uniqueSubsInPoms
-                    .Where(sub => !knownSubsForOrg.Contains(sub))
-                    .ToList();
+                                .Where(sub => sub != null && !knownSubsForOrg.Contains(sub!))
+                                .ToList();
 
                 if (missingSubs.Any())
                 {
                     errorReports.Add(CreateOrgLevelError(orgId, calculatorRunId, createdBy));
-                    errorReports.AddRange(CreateSubsidiaryErrors(orgId, uniqueSubsInPoms, calculatorRunId, createdBy));
+                    var safeSubs = uniqueSubsInPoms
+                        .Where(s => !string.IsNullOrWhiteSpace(s))!
+                        .Select(s => s!) 
+                        .ToList();
+
+                    errorReports.AddRange(CreateSubsidiaryErrors(orgId, safeSubs, calculatorRunId, createdBy));
                 }
+
             }
 
             var distinctErrors = errorReports
