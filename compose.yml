@@ -38,6 +38,8 @@ services:
     # image: mcr.microsoft.com/mssql/server:2022-latest
     ports:
       - "1433:1433"
+    volumes:
+    - sqledge-data:/var/opt/mssql
     environment:
       ACCEPT_EULA: "Y"
       MSSQL_SA_PASSWORD: "s4usag3s!"
@@ -47,6 +49,37 @@ services:
       start_period: 5s
       test: timeout 1 bash -c 'cat < /dev/null > /dev/tcp/127.0.0.1/1433'
       timeout: 5s
+
+  azurite:
+    pull_policy: always
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    ports:
+      - "10000:10000"
+      - "10001:10001"
+      - "10002:10002"
+    volumes:
+      - azurite-data:/data
+    command: "azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0 --location /data"
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z 127.0.0.1 10000"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+  azurite-init:
+    pull_policy: always
+    image: mcr.microsoft.com/azure-cli:latest
+    depends_on:
+      azurite:
+        condition: service_healthy
+    entrypoint: >
+      sh -c "
+      az storage container create --name 'paycal' --connection-string 'DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;' &&
+      az storage container create --name 'paycal-billingfilecsv' --connection-string 'DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;' &&
+      az storage container create --name 'paycal-billingfilejson' --connection-string 'DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;' &&
+      echo 'containers created successfully'
+      "
 
   migrations:
     build:
@@ -70,9 +103,12 @@ services:
         condition: service_healthy
       asb:
         condition: service_healthy
+      epr-api:
+        condition: service_healthy
+      azurite:
+        condition: service_healthy
     environment:
-      AzureWebJobsStorage: AzureWebJobsStorageConnectionStringValue
-      AzureWebJobsDashboard: AzureWebJobsStorageConnectionStringValue
+      ASPNETCORE_ENVIRONMENT: Development
       ServiceBusConnectionString: Endpoint=sb://asb-backend;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;
       ServiceBusQueueName: defra.epr.calculator.run.local
       PipelineUrl: https://use-wiremock
@@ -80,10 +116,113 @@ services:
       GetPomDataPipelineName: pip_paycal_get_pom_data
       MaxCheckCount: 10
       CheckInterval: 5
-      StatusUpdateEndpoint: http://localhost:5055/v1/internal/rpdStatus
       FUNCTIONS_WORKER_RUNTIME: dotnet
       FUNCTIONS_INPROC_NET8_ENABLED: 1
       Execute_RPD_Pipeline: false
-      PrepareCalcResultEndPoint: http://localhost:5055/v1/internal/prepareCalcResults
       DbConnectionString: "Data Source=sqledge,1433;User id=sa;Password=s4usag3s!;Initial Catalog=PayCal;TrustServerCertificate=True"
+      BlobConnectionString: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;"
+      StatusUpdateEndpoint: http://epr-api:8080/v1/internal/rpdStatus
+      PrepareCalcResultEndPoint: http://epr-api:8080/v1/internal/prepareCalcResults
+      # https://github.com/dotnet/runtime/issues/103063
+      DOTNET_EnableWriteXorExecute: 0
+      APPINSIGHTS_INSTRUMENTATIONKEY: 00000000-0000-0000-0000-000000000000
+      ResultFileCSVContainerName: "paycal"
+      BillingFileCSVBlobContainerName: "paycal-billingfilecsv"
+      BillingFileJsonBlobContainerName: "paycal-billingfilejson"
+    ports:
+      - "8001:80"
+    healthcheck:
+      test: ["CMD-SHELL", "timeout 2 bash -c '</dev/tcp/localhost/80' || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
 
+  epr-api:
+    build:
+      context: ../epr-calculator-api/src
+      dockerfile: EPR.Calculator.API/Dockerfile
+    depends_on:
+      sqledge:
+        condition: service_healthy
+      asb:
+        condition: service_healthy
+      azurite:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      AzureAd__TenantId: 6f504113-6b64-43f2-ade9-242e05780007
+      AzureAd__ClientId: 28b6c996-1817-4e2b-b04d-8578064d5283
+      ServiceBus__ConnectionString: Endpoint=sb://asb-backend;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;
+      ServiceBus__QueueName: defra.epr.calculator.run.local
+      ConnectionStrings__DefaultConnection: "Data Source=sqledge,1433;User id=sa;Password=s4usag3s!;Initial Catalog=PayCal;TrustServerCertificate=True"
+      BlobStorage__ConnectionString: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;"
+      BlobStorage__ResultFileCSVContainerName: "paycal"
+      BlobStorage__BillingFileCSVContainerName: "paycal-billingfilecsv"
+      BlobStorage__BillingFileJsonContainerName: "paycal-billingfilejson"
+      BlobStorage__BillingFileJsonForFssContainerName: "paycal-billingfilejsonauthorisedforfss"
+    ports:
+      - "8002:8080"
+      - "5055:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/admin/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+  epr-frontend:
+    build:
+      context: ../epr-calculator-frontend/src
+      dockerfile: EPR.Calculator.Frontend/Dockerfile
+    depends_on:
+      sqledge:
+        condition: service_healthy
+      asb:
+        condition: service_healthy
+      epr-api:
+        condition: service_healthy
+      azurite:
+        condition: service_healthy
+    env_file:
+      - ../epr-calculator-frontend/compose/.env
+    environment:
+      ASPNETCORE_URLS: http://+:8080;https://+:8081
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /https/aspnetapp.pfx
+      ASPNETCORE_Kestrel__Certificates__Default__Password: password
+      ASPNETCORE_ENVIRONMENT: Development
+      AzureAd__TenantId: 6f504113-6b64-43f2-ade9-242e05780007
+      AzureAd__ClientId: f94d57e6-b554-4cb6-b26b-fc3fb838eaa0
+      DownstreamApi__Scopes: openid offline_access api://28b6c996-1817-4e2b-b04d-8578064d5283/Read_Scope api://28b6c996-1817-4e2b-b04d-8578064d5283/Write_Scope api://28b6c996-1817-4e2b-b04d-8578064d5283/default
+      FinancialYearListApi: http://epr-api:8080/v1/financialYears
+      DashboardCalculatorRun__DashboardCalculatorRunApi: http://epr-api:8080/v1/calculatorRuns
+      DashboardCalculatorRun__DashboardCalculatorRunApiV2: http://epr-api:8080/v2/calculatorRuns
+      CalculationRunSettings__CalculationRunNameApi: http://epr-api:8080/v1/CheckCalcNameExists
+      CalculationRunSettings__CalculationRunApi: http://epr-api:8080/v1/calculatorRun
+      CalculationRunSettings__DownloadResultApi: http://epr-api:8080/v1/DownloadResult
+      CalculationRunSettings__DownloadCsvBillingApi: http://epr-api:8080/v1/DownloadBillingFile
+      CalculationRunSettings__ClassificationByFinancialYearApi: http://epr-api:8080/v1/ClassificationByFinancialYear
+      CalculationRunSettings__PrepareBillingFileSendToFSS: http://epr-api:8080/v2/prepareBillingFileSendToFSS
+      CalculationRunSettings__CalculationRunApiV2: http://epr-api:8080/v2/calculatorRuns
+      CalculationRunSettings__ProducerBillingInstructionsAcceptApi: http://epr-api:8080/v1/producerBillingInstructionsAccept
+      LapcapSettings__LapcapSettingsApi: http://epr-api:8080/v1/lapcapData
+      BillingFileSettings__BillingFileApi: http://epr-api:8080/v1/GenerateBillingFile
+      ProducerBillingInstructions__ProducerBillingInstructions: http://epr-api:8080/v1/producerBillingInstructions
+      ProducerBillingInstructions__ProducerBillingInstructionsV2: http://epr-api:8080/v2/producerBillingInstructions
+      ParameterSettings__DefaultParameterSettingsApi: http://epr-api:8080/v1/defaultParameterSetting
+      BlobStorage__ConnectionString: DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;
+    ports:
+      - "5294:8080" # taken from launch settings in front end
+      - "7163:8081" # taken from launch settings in front end
+    volumes:
+      - ../epr-calculator-frontend/certs/https:/https:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/admin/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+volumes:
+  azurite-data:
+  sqledge-data:
