@@ -95,8 +95,9 @@ namespace EPR.Calculator.Service.Function.Services
 
                 // Subs that are present in POMs but NOT present under this org in orgDetails
                 var missingSubs = uniqueSubsInPoms
-                    .Where(sub => !knownSubsForOrg.Contains(sub))
+                    .Where(sub => !string.IsNullOrWhiteSpace(sub) && !knownSubsForOrg.Contains(sub))
                     .ToList();
+
 
                 if (missingSubs.Any())
                 {
