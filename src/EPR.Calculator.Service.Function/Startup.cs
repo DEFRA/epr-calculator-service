@@ -220,14 +220,9 @@ namespace EPR.Calculator.Service.Function
                 BillingFileExporter = provider.GetRequiredService<IBillingFileExporter<CalcResult>>(),
                 producerDataInsertService = provider.GetRequiredService<IPrepareProducerDataInsertService>(),
             });
-#if !DEBUG
 
             SetupBlobStorage(services);
             services.AddTransient<IConfigurationService, Configuration>();
-#elif DEBUG
-            services.AddTransient<IStorageService, LocalFileStorageService>();
-            services.AddTransient<IConfigurationService, LocalDevelopmentConfiguration>();
-#endif
         }
 
         public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
