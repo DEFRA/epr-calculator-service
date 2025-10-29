@@ -35,13 +35,12 @@ namespace EPR.Calculator.Service.Function.Services
                 .Where(p =>
                 {
                     bool producerMissing = !p.OrganisationId.HasValue || !orgIds.Contains(p.OrganisationId.Value);
-                    
+
                     bool subsidiaryMissing = !string.IsNullOrWhiteSpace(p.SubsidaryId) &&
-                            orgDetails.Any(o => o.OrganisationId == p.OrganisationId && !string.IsNullOrWhiteSpace(o.SubsidaryId)) &&
-                            !orgDetails.Any(o =>
-                                o.OrganisationId == p.OrganisationId &&
-                                string.Equals(o.SubsidaryId, p.SubsidaryId, StringComparison.OrdinalIgnoreCase)
-                            );
+                        !orgDetails.Any(o =>
+                            o.OrganisationId == p.OrganisationId &&
+                            string.Equals(o.SubsidaryId, p.SubsidaryId, StringComparison.OrdinalIgnoreCase)
+                        );
 
                     return producerMissing || subsidiaryMissing;
                 })

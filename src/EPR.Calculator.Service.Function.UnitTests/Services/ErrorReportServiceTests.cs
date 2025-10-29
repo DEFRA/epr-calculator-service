@@ -84,7 +84,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.IsNotNull(capturedReports);
 
             var reportsList = capturedReports!.ToList();
-            Assert.AreEqual(2, reportsList.Count, "Expected 2 unmatched records to be inserted (OrganisationId 2 and 3).");
+            Assert.AreEqual(3, reportsList.Count, "Expected 3 unmatched records to be inserted (OrganisationId 1, 2 and 3).");
 
             foreach (var r in reportsList)
             {
@@ -94,6 +94,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 Assert.IsTrue(r.CreatedAt >= beforeInvoke && r.CreatedAt <= afterInvoke);
             }
 
+            Assert.IsTrue(reportsList.Any(r => r.ProducerId == 1 && r.SubsidiaryId == "11"));
             Assert.IsTrue(reportsList.Any(r => r.ProducerId == 2 && r.SubsidiaryId == "22"));
             Assert.IsTrue(reportsList.Any(r => r.ProducerId == 3 && r.SubsidiaryId == "33"));
         }
