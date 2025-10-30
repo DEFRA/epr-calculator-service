@@ -29,6 +29,7 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.ErrorReport;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
@@ -207,6 +208,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<IProducerInvoiceTonnageMapper, ProducerInvoiceTonnageMapper>();
             services.AddTransient<IPrepareProducerDataInsertService, PrepareProducerDataInsertService>();
             services.AddTransient<ICalcResultErrorReportBuilder, CalcResultErrorReportBuilder>();
+            services.AddTransient<ICalcResultErrorReportExporter, CalcResultErrorReportExporter>();
 
             services.AddScoped<PrepareCalcServiceDependencies>(provider => new PrepareCalcServiceDependencies
             {
