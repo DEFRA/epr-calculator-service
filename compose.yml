@@ -215,7 +215,7 @@ services:
       - "5294:8080" # taken from launch settings in front end
       - "7163:8081" # taken from launch settings in front end
     volumes:
-      - ../epr-calculator-frontend/certs/https:/https:ro
+      - ../epr-calculator-frontend/compose/certs/https:/https:ro
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/admin/health"]
       interval: 5s
