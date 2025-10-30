@@ -15,6 +15,7 @@
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.ErrorReport;
 
     [TestClass]
     public class CalcResultsExporterTests
@@ -31,6 +32,7 @@
             MockParameterOtherCostExporter = new();
             MockCalcResultSummaryExporter = new();
             MockCalcResultCancelledProducersExporter = new();
+            MockClassReportExporter = new();
             MockCommsCostExporter = new();
             TestClass = new CalcResultsExporter(
                 MockLateReportingExporter.Object,
@@ -42,7 +44,8 @@
                 MockParameterOtherCostExporter.Object,
                 MockCommsCostExporter.Object,
                 MockCalcResultSummaryExporter.Object,
-                MockCalcResultCancelledProducersExporter.Object);
+                MockCalcResultCancelledProducersExporter.Object,
+                MockClassReportExporter.Object);
         }
 
         private Mock<ICalcResultDetailExporter> mockResultDetailexporter = new();
@@ -71,6 +74,8 @@
         private Mock<ICommsCostExporter> MockCommsCostExporter { get; init; }
 
         private CalcResultsExporter TestClass { get; init; }
+
+        private Mock<ICalcResultErrorReportExporter> MockClassReportExporter { get; init; }
 
         [TestMethod]
         public void Export_ShouldReturnCsvContent_WhenAllDataIsPresent()

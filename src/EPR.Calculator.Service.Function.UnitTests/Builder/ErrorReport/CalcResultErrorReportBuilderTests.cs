@@ -1,6 +1,7 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.ErrorReport;
+using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Dtos;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
@@ -40,7 +41,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
             {
                 Id = 1,
                 CalculatorRunId = 1,
-                ProducerId = 123,
+                ProducerId = 1,
                 SubsidiaryId = "SUB-1",
                 ErrorTypeId = 1,
                 CreatedAt = DateTime.UtcNow,
@@ -58,11 +59,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
             // Assert
             Assert.AreEqual(2, result.Count);
             var report = result[0];
-            Assert.AreEqual(123, report.ProducerId);
+            Assert.AreEqual(1, report.ProducerId);
             Assert.AreEqual("SUB-1", report.SubsidiaryId);
             Assert.AreEqual("Allied Packaging", report.ProducerName);
-            Assert.AreEqual(string.Empty, report.TradingName);
-            Assert.AreEqual(string.Empty, report.LeaverCode);
+            Assert.AreEqual(CommonConstants.Hyphen, report.TradingName);
+            Assert.AreEqual(CommonConstants.Hyphen, report.LeaverCode);
             Assert.AreEqual("ErrorName", report.ErrorCodeText);
         }
 
@@ -82,7 +83,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
             {
                 Id = 1,
                 CalculatorRunId = 1,
-                ProducerId = 123,
+                ProducerId = 1,
                 SubsidiaryId = null,
                 ErrorTypeId = 1,
                 CreatedAt = DateTime.UtcNow,
@@ -100,11 +101,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
             // Assert
             Assert.AreEqual(2, result.Count);
             var report = result[0];
-            Assert.AreEqual(123, report.ProducerId);
-            Assert.AreEqual(string.Empty, report.SubsidiaryId);
+            Assert.AreEqual(1, report.ProducerId);
+            Assert.AreEqual(CommonConstants.Hyphen, report.SubsidiaryId);
             Assert.AreEqual("Allied Packaging", report.ProducerName);
-            Assert.AreEqual(string.Empty, report.TradingName);
-            Assert.AreEqual(string.Empty, report.LeaverCode);
+            Assert.AreEqual(CommonConstants.Hyphen, report.TradingName);
+            Assert.AreEqual(CommonConstants.Hyphen, report.LeaverCode);
             Assert.AreEqual("ErrorName", report.ErrorCodeText);
         }
     }

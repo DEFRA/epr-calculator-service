@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using EPR.Calculator.API.Data;
+using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Dtos;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
@@ -24,16 +25,16 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
                 join et in context.ErrorTypes on er.ErrorTypeId equals et.Id
                 join run in context.CalculatorRuns on er.CalculatorRunId equals run.Id
                 join odm in context.CalculatorRunOrganisationDataMaster on run.CalculatorRunOrganisationDataMasterId equals odm.Id
-                join odd in context.CalculatorRunOrganisationDataDetails on odm.Id equals odd.CalculatorRunOrganisationDataMasterId
-                where run.Id == resultsRequestDto.RunId
+                join odd in context.CalculatorRunOrganisationDataDetails on odm.Id equals odd.CalculatorRunOrganisationDataMasterId                
+                where run.Id == resultsRequestDto.RunId && odd.OrganisationId == er.ProducerId
                 select new CalcResultErrorReport
                 {
                     Id = er.Id,
                     ProducerId = er.ProducerId,
-                    SubsidiaryId = er.SubsidiaryId ?? string.Empty,
+                    SubsidiaryId = er.SubsidiaryId ?? CommonConstants.Hyphen,
                     ProducerName = odd.OrganisationName,
-                    TradingName = odd.TradingName ?? string.Empty,
-                    LeaverCode = er.LeaverCode ?? string.Empty,
+                    TradingName = odd.TradingName ?? CommonConstants.Hyphen,
+                    LeaverCode = er.LeaverCode ?? CommonConstants.Hyphen,
                     ErrorCodeText = et.Name
                 }
             ).AsNoTracking().Distinct().ToListAsync();
