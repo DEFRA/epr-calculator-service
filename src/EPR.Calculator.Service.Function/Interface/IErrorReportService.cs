@@ -14,7 +14,7 @@ namespace EPR.Calculator.Service.Function.Interface
         /// Finds POM records that don't have matching organisation records, creates ErrorReport entries,
         /// and inserts them (via the provided chunker/service).
         /// </summary>
-        Task HandleUnmatchedPomAsync(
+        Task<List<(int ProducerId, string? SubsidiaryId)>> HandleUnmatchedPomAsync(
             IEnumerable<CalculatorRunPomDataDetail> pomDetails,
             IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails,
             int calculatorRunId,

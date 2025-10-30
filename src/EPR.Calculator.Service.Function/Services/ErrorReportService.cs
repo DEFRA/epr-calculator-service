@@ -19,12 +19,12 @@ namespace EPR.Calculator.Service.Function.Services
             ErrorReportChunker = errorReportChunker ?? throw new ArgumentNullException(nameof(errorReportChunker));
         }
 
-        public async Task HandleUnmatchedPomAsync(
-                            IEnumerable<CalculatorRunPomDataDetail> pomDetails,
-                            IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails,
-                            int calculatorRunId,
-                            string createdBy,
-                            CancellationToken cancellationToken)
+        public async Task<List<(int ProducerId, string? SubsidiaryId)>> HandleUnmatchedPomAsync(
+                                IEnumerable<CalculatorRunPomDataDetail> pomDetails,
+                                IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails,
+                                int calculatorRunId,
+                                string createdBy,
+                                CancellationToken cancellationToken)
         {
             if (pomDetails == null) throw new ArgumentNullException(nameof(pomDetails));
             if (orgDetails == null) throw new ArgumentNullException(nameof(orgDetails));
@@ -76,8 +76,14 @@ namespace EPR.Calculator.Service.Function.Services
                 .Select(g => g.First())
                 .ToList();
 
-            if (distinctErrors.Any())
-                await this.ErrorReportChunker.InsertRecords(distinctErrors);
+            if (!distinctErrors.Any())
+                return new List<(int, string?)>();
+
+            await this.ErrorReportChunker.InsertRecords(distinctErrors);
+
+            return distinctErrors
+                .Select(e => (e.ProducerId, e.SubsidiaryId))
+                .ToList();
         }
 
         private static Dictionary<int, HashSet<string>> BuildOrgToSubsDictionary(IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails)

@@ -178,12 +178,24 @@
                 .OrderBy(x => x.SubmissionPeriodDesc)
                 .ToListAsync(cancellationToken);
 
-            await ErrorReportService.HandleUnmatchedPomAsync(
+            var unmatchedRecords  = await ErrorReportService.HandleUnmatchedPomAsync(
                 calculatorRunPomDataDetails,
                 calculatorRunOrgDataDetails,
                 resultsRequestDto.RunId,
                 resultsRequestDto.CreatedBy,
                 cancellationToken);
+
+            var unmatchedSet = new HashSet<(int OrgId, string? SubId)>(
+                unmatchedRecords.Select(r => (r.ProducerId, r.SubsidiaryId))
+            );
+
+            calculatorRunPomDataDetails = calculatorRunPomDataDetails
+                                            .Where(p =>
+                                            {
+                                                var orgId = p.OrganisationId.GetValueOrDefault();
+                                                var subId = p.SubsidaryId;
+                                                return !unmatchedSet.Contains((orgId, subId));
+                                            }).ToList();
 
             if (IsCalculatorRunPOMMasterIdExists(calculatorRun))
             {
@@ -191,6 +203,7 @@
                     .SingleAsync(x => x.Id == calculatorRun.CalculatorRunOrganisationDataMasterId, cancellationToken);
 
                 var OrganisationsList = GetAllOrganisationsBasedonRunId(calculatorRunOrgDataDetails);
+
 
                 var organisationDataDetails = calculatorRunOrgDataDetails
                     .Where(odd => odd.CalculatorRunOrganisationDataMasterId == organisationDataMaster.Id && odd.OrganisationName != null && odd.OrganisationName != "")

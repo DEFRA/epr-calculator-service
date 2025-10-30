@@ -268,8 +268,33 @@
             var runName = this.Fixture.Create<string>();
             var cancellationToken = CancellationToken.None;
 
+            var mockErrorReportService = new Mock<IErrorReportService>();
+
+            // Mocking the unmatched output returned by HandleUnmatchedPomAsync
+            var unmatchedRecords = new List<(int ProducerId, string? SubsidiaryId)>
+                                    {
+                                        (2, "1"),
+                                    };
+
+            mockErrorReportService
+                .Setup(s => s.HandleUnmatchedPomAsync(
+                    It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
+                    It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
+                    It.IsAny<int>(),
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(unmatchedRecords);
+
+            var service = new TransposePomAndOrgDataService(
+               this._context,
+               this.CommandTimeoutService,
+               new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
+               new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
+               mockErrorReportService.Object,
+               new Mock<ICalculatorTelemetryLogger>().Object);
+
             // Act
-            var result = await this.TestClass.TransposeBeforeResultsFileAsync(resultsRequestDto, runName, cancellationToken);
+            var result = await service.TransposeBeforeResultsFileAsync(resultsRequestDto, runName, cancellationToken);
 
             // Assert
             Assert.IsTrue(result);
@@ -287,16 +312,33 @@
             };
 
             var mockProducerDetailService = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
-            var mockErrorReportService = new Mock<IDbLoadingChunkerService<ErrorReport>>();
+            // var mockErrorReportService = new Mock<IDbLoadingChunkerService<ErrorReport>>();
             mockProducerDetailService.Setup(service => service.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
                                      .Returns(Task.CompletedTask);
+
+            var mockErrorReportService = new Mock<IErrorReportService>();
+
+            // Mocking the unmatched output returned by HandleUnmatchedPomAsync
+            var unmatchedRecords = new List<(int ProducerId, string? SubsidiaryId)>
+                                    {
+                                        (2, "1"),
+                                    };
+
+            mockErrorReportService
+                .Setup(s => s.HandleUnmatchedPomAsync(
+                    It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
+                    It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
+                    It.IsAny<int>(),
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(unmatchedRecords);
 
             var service = new TransposePomAndOrgDataService(
                 this._context,
                 this.CommandTimeoutService,
                 mockProducerDetailService.Object,
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
-                this.ErrorReportService,
+                mockErrorReportService.Object,
                 new Mock<ICalculatorTelemetryLogger>().Object);
 
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 3 };
@@ -351,12 +393,29 @@
                 },
             };
 
+            var mockErrorReportService = new Mock<IErrorReportService>();
+
+            // Mocking the unmatched output returned by HandleUnmatchedPomAsync
+            var unmatchedRecords = new List<(int ProducerId, string? SubsidiaryId)>
+                                    {
+                                        (2, "1"),
+                                    };
+
+            mockErrorReportService
+                .Setup(s => s.HandleUnmatchedPomAsync(
+                    It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
+                    It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
+                    It.IsAny<int>(),
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(unmatchedRecords);
+
             var service = new TransposePomAndOrgDataService(
                 this._context,
                 this.CommandTimeoutService,
                 new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
-                this.ErrorReportService,
+                mockErrorReportService.Object,
                 new Mock<ICalculatorTelemetryLogger>().Object);
 
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 3 };
@@ -429,12 +488,29 @@
                 CalculatorRun = this.Fixture.Create<CalculatorRun>(),
             };
 
+            var mockErrorReportService = new Mock<IErrorReportService>();
+
+            // Mocking the unmatched output returned by HandleUnmatchedPomAsync
+            var unmatchedRecords = new List<(int ProducerId, string? SubsidiaryId)>
+                                    {
+                                        (2, "1"),
+                                    };
+
+            mockErrorReportService
+                .Setup(s => s.HandleUnmatchedPomAsync(
+                    It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
+                    It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
+                    It.IsAny<int>(),
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(unmatchedRecords);
+
             var service = new TransposePomAndOrgDataService(
                 this._context,
                 this.CommandTimeoutService,
                 new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
-                this.ErrorReportService,
+                mockErrorReportService.Object,
                 new Mock<ICalculatorTelemetryLogger>().Object);
 
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 2 };
@@ -473,12 +549,29 @@
                 CalculatorRun = this.Fixture.Create<CalculatorRun>(),
             };
 
+            var mockErrorReportService = new Mock<IErrorReportService>();
+
+            // Mocking the unmatched output returned by HandleUnmatchedPomAsync
+            var unmatchedRecords = new List<(int ProducerId, string? SubsidiaryId)>
+                                    {
+                                        (2, "1"),
+                                    };
+
+            mockErrorReportService
+                .Setup(s => s.HandleUnmatchedPomAsync(
+                    It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
+                    It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
+                    It.IsAny<int>(),
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(unmatchedRecords);
+
             var service = new TransposePomAndOrgDataService(
                 this._context,
                 this.CommandTimeoutService,
                 new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
-                this.ErrorReportService,
+                mockErrorReportService.Object,
                 new Mock<ICalculatorTelemetryLogger>().Object);
 
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 2 };
@@ -590,8 +683,33 @@
             this.Chunker.Setup(c => c.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
                 .Throws<OperationCanceledException>();
 
+            var mockErrorReportService = new Mock<IErrorReportService>();
+
+            // Mocking the unmatched output returned by HandleUnmatchedPomAsync
+            var unmatchedRecords = new List<(int ProducerId, string? SubsidiaryId)>
+                                    {
+                                        (2, "1"),
+                                    };
+
+            mockErrorReportService
+                .Setup(s => s.HandleUnmatchedPomAsync(
+                    It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
+                    It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
+                    It.IsAny<int>(),
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(unmatchedRecords);
+
+            var service = new TransposePomAndOrgDataService(
+               this._context,
+               this.CommandTimeoutService,
+               this.Chunker.Object,
+               new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
+               mockErrorReportService.Object,
+               this.TelemetryLogger.Object);
+
             // Act
-            var result = await this.TestClass.TransposeBeforeResultsFileAsync(
+            var result = await service.TransposeBeforeResultsFileAsync(
                 resultsRequestDto,
                 runName,
                 CancellationToken.None);
