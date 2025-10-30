@@ -42,12 +42,14 @@
             ICommandTimeoutService commandTimeoutService,
             IDbLoadingChunkerService<ProducerDetail> producerDetailChunker,
             IDbLoadingChunkerService<ProducerReportedMaterial> producerReportedMaterialChunker,
+            IErrorReportService errorReportService,
             ICalculatorTelemetryLogger telemetryLogger)
         {
             this.context = context;
             this.CommandTimeoutService = commandTimeoutService;
             this.ProducerDetailChunker = producerDetailChunker;
             this.ProducerReportedMaterialChunker = producerReportedMaterialChunker;
+            this.ErrorReportService = errorReportService;
             this.telemetryLogger = telemetryLogger;
         }
 
@@ -56,6 +58,8 @@
         private IDbLoadingChunkerService<ProducerDetail> ProducerDetailChunker { get; init; }
 
         private IDbLoadingChunkerService<ProducerReportedMaterial> ProducerReportedMaterialChunker { get; init; }
+
+        private IErrorReportService ErrorReportService { get; init; }
 
         public async Task<bool> TransposeBeforeResultsFileAsync(
             [FromBody] CalcResultsRequestDto resultsRequestDto,
@@ -174,12 +178,32 @@
                 .OrderBy(x => x.SubmissionPeriodDesc)
                 .ToListAsync(cancellationToken);
 
+            var unmatchedRecords  = await ErrorReportService.HandleUnmatchedPomAsync(
+                calculatorRunPomDataDetails,
+                calculatorRunOrgDataDetails,
+                resultsRequestDto.RunId,
+                resultsRequestDto.CreatedBy,
+                cancellationToken);
+
+            var unmatchedSet = new HashSet<(int OrgId, string? SubId)>(
+                unmatchedRecords.Select(r => (r.ProducerId, r.SubsidiaryId))
+            );
+
+            calculatorRunPomDataDetails = calculatorRunPomDataDetails
+                                            .Where(p =>
+                                            {
+                                                var orgId = p.OrganisationId.GetValueOrDefault();
+                                                var subId = p.SubsidaryId;
+                                                return !unmatchedSet.Contains((orgId, subId));
+                                            }).ToList();
+
             if (IsCalculatorRunPOMMasterIdExists(calculatorRun))
             {
                 var organisationDataMaster = await this.context.CalculatorRunOrganisationDataMaster
                     .SingleAsync(x => x.Id == calculatorRun.CalculatorRunOrganisationDataMasterId, cancellationToken);
 
                 var OrganisationsList = GetAllOrganisationsBasedonRunId(calculatorRunOrgDataDetails);
+
 
                 var organisationDataDetails = calculatorRunOrgDataDetails
                     .Where(odd => odd.CalculatorRunOrganisationDataMasterId == organisationDataMaster.Id && odd.OrganisationName != null && odd.OrganisationName != "")

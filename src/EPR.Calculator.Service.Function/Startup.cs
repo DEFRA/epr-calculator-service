@@ -148,6 +148,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<IDbLoadingChunkerService<ProducerDetail>, DbLoadingChunkerService<ProducerDetail>>();
             services.AddTransient<IDbLoadingChunkerService<ProducerReportedMaterial>, DbLoadingChunkerService<ProducerReportedMaterial>>();
             services.AddTransient<IDbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction>, DbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction>>();
+            services.AddTransient<IDbLoadingChunkerService<ErrorReport>, DbLoadingChunkerService<ErrorReport>>();
             services.AddTransient<ICalcResultSummaryExporter, CalcResultSummaryExporter>();
             services.AddTransient<ICalcBillingJsonExporter<CalcResult>, CalcResultsJsonExporter>();
             services.AddTransient<ILateReportingExporter, LateReportingExporter>();
@@ -209,6 +210,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<IPrepareProducerDataInsertService, PrepareProducerDataInsertService>();
             services.AddTransient<ICalcResultErrorReportBuilder, CalcResultErrorReportBuilder>();
             services.AddTransient<ICalcResultErrorReportExporter, CalcResultErrorReportExporter>();
+            services.AddTransient<IErrorReportService, ErrorReportService>();
 
             services.AddScoped<PrepareCalcServiceDependencies>(provider => new PrepareCalcServiceDependencies
             {
