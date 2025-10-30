@@ -193,7 +193,7 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       AzureAd__TenantId: 6f504113-6b64-43f2-ade9-242e05780007
       AzureAd__ClientId: f94d57e6-b554-4cb6-b26b-fc3fb838eaa0
-      DownstreamApi__Scopes: openid offline_access api://28b6c996-1817-4e2b-b04d-8578064d5283/Read_Scope api://28b6c996-1817-4e2b-b04d-8578064d5283/Write_Scope api://28b6c996-1817-4e2b-b04d-8578064d5283/default
+      DownstreamApi__Scopes: api://28b6c996-1817-4e2b-b04d-8578064d5283/default
       FinancialYearListApi: http://epr-api:8080/v1/financialYears
       DashboardCalculatorRun__DashboardCalculatorRunApi: http://epr-api:8080/v1/calculatorRuns
       DashboardCalculatorRun__DashboardCalculatorRunApiV2: http://epr-api:8080/v2/calculatorRuns
