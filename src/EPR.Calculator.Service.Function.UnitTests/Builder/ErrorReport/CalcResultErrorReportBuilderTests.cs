@@ -57,7 +57,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
             var result = (await builder.ConstructAsync(request)).ToList();
 
             // Assert
-            Assert.AreEqual(2, result.Count);
+            Assert.AreEqual(1, result.Count);
             var report = result[0];
             Assert.AreEqual(1, report.ProducerId);
             Assert.AreEqual("SUB-1", report.SubsidiaryId);
@@ -99,7 +99,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
             var result = (await builder.ConstructAsync(request)).ToList();
 
             // Assert
-            Assert.AreEqual(2, result.Count);
+            Assert.AreEqual(1, result.Count);
             var report = result[0];
             Assert.AreEqual(1, report.ProducerId);
             Assert.AreEqual(CommonConstants.Hyphen, report.SubsidiaryId);

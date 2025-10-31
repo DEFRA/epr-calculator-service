@@ -20,24 +20,36 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
 
         public async Task<IEnumerable<CalcResultErrorReport>> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
         {
-            return await (
+            var query =
                 from er in context.ErrorReports
-                join et in context.ErrorTypes on er.ErrorTypeId equals et.Id
                 join run in context.CalculatorRuns on er.CalculatorRunId equals run.Id
-                join odm in context.CalculatorRunOrganisationDataMaster on run.CalculatorRunOrganisationDataMasterId equals odm.Id
-                join odd in context.CalculatorRunOrganisationDataDetails on odm.Id equals odd.CalculatorRunOrganisationDataMasterId                
-                where run.Id == resultsRequestDto.RunId && odd.OrganisationId == er.ProducerId
+                join et in context.ErrorTypes on er.ErrorTypeId equals et.Id
+                join odm in context.CalculatorRunOrganisationDataMaster
+                    on run.CalculatorRunOrganisationDataMasterId equals odm.Id
+                join odd in context.CalculatorRunOrganisationDataDetails
+                    on new { OrgId = (int?)er.ProducerId, MasterId = odm.Id }
+                    equals new { OrgId = odd.OrganisationId, MasterId = odd.CalculatorRunOrganisationDataMasterId }
+                    into oddGroup
+                from oddLeft in oddGroup.DefaultIfEmpty()
+                where run.Id == resultsRequestDto.RunId
                 select new CalcResultErrorReport
                 {
                     Id = er.Id,
                     ProducerId = er.ProducerId,
                     SubsidiaryId = er.SubsidiaryId ?? CommonConstants.Hyphen,
-                    ProducerName = odd.OrganisationName,
-                    TradingName = odd.TradingName ?? CommonConstants.Hyphen,
+                    ProducerName = oddLeft == null ? CommonConstants.Hyphen : (oddLeft.OrganisationName ?? CommonConstants.Hyphen),
+                    TradingName = oddLeft == null ? CommonConstants.Hyphen : (oddLeft.TradingName ?? CommonConstants.Hyphen),
                     LeaverCode = er.LeaverCode ?? CommonConstants.Hyphen,
                     ErrorCodeText = et.Name
-                }
-            ).AsNoTracking().Distinct().ToListAsync();
+                };
+
+            var results = await query
+                .AsNoTracking()
+                .GroupBy(x => x.Id)
+                .Select(g => g.First())
+                .ToListAsync();
+
+            return results;
         }
     }
 }
