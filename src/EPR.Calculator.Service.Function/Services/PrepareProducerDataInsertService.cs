@@ -3,29 +3,28 @@ using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.Services
 {
     public class PrepareProducerDataInsertService : IPrepareProducerDataInsertService
     {
-
         private IBillingInstructionService billingInstructionService { get; init; }
-        private IProducerInvoiceNetTonnageService producerInvoiceNetTonnageService {  get; init; }
+        private IProducerInvoiceNetTonnageService producerInvoiceNetTonnageService { get; init; }
+        private readonly ICalculatorTelemetryLogger telemetryLogger;
+        private readonly IConfigurationService configurationService;
 
-        public PrepareProducerDataInsertService(IBillingInstructionService billingInstructionService, 
+        public PrepareProducerDataInsertService(IBillingInstructionService billingInstructionService,
             IProducerInvoiceNetTonnageService producerInvoiceNetTonnageService,
-            ICalculatorTelemetryLogger telemetryLogger)
+            ICalculatorTelemetryLogger telemetryLogger,
+            IConfigurationService configurationService)
         {
             this.billingInstructionService = billingInstructionService;
             this.producerInvoiceNetTonnageService = producerInvoiceNetTonnageService;
             this.telemetryLogger = telemetryLogger;
-        }      
-
-        private readonly ICalculatorTelemetryLogger telemetryLogger;
+            this.configurationService = configurationService;
+        }
 
         public async Task<bool> InsertProducerDataToDatabase(CalcResult calcResult)
         {
@@ -53,7 +52,8 @@ namespace EPR.Calculator.Service.Function.Services
                     Message = "Create producer Invoice Tonnage start...",
                 });
 
-                var IsProduceInvoiceTonnageInserted = await this.producerInvoiceNetTonnageService.CreateProducerInvoiceNetTonnage(calcResult);
+                using var cts = new CancellationTokenSource(this.configurationService.PrepareCalcResultsTimeout);
+                var IsProduceInvoiceTonnageInserted = await this.producerInvoiceNetTonnageService.CreateProducerInvoiceNetTonnage(calcResult, cts.Token);
 
                 this.telemetryLogger.LogInformation(new TrackMessage
                 {
