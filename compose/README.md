@@ -7,6 +7,7 @@ root
 |- epr-calculator-api
 |- epr-calculator-frontend
 |- epr-calculator-service
+|- epr-calculator-fss-api
 ```
 
 See `epr-calculator-frontend/compose` and copy the .env.example file, obtaining the secret(s) needed from a fellow dev.
@@ -72,4 +73,5 @@ Logs for each service can be viewed via:
 docker compose logs epr-service
 docker compose logs epr-frontend
 docker compose logs epr-api
+docker compose logs epr-fss-api
 ```
