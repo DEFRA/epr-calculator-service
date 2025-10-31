@@ -14,12 +14,12 @@ namespace EPR.Calculator.Service.Function.Models
 
         public required string SubsidiaryId { get; set; }
 
-        public required string ProducerName { get; set; }
+        public required string ProducerName { get; set; } = string.Empty;
 
-        public required string TradingName { get; set; }
+        public required string TradingName { get; set; } = string.Empty;
 
-        public required string LeaverCode { get; set; }
+        public required string LeaverCode { get; set; } = string.Empty;
 
-        public required string ErrorCodeText { get; set; }
+        public required string ErrorCodeText { get; set; } = string.Empty;
     }
 }
