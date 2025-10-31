@@ -258,5 +258,33 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
             // Assert
             Assert.IsInstanceOfType(this.TestClass.InstrumentationKey, typeof(string));
         }
+
+        [TestMethod]
+        public void CanGetOrgDataPipelineMycName()
+        {
+            // Assert
+            Assert.IsInstanceOfType(this.TestClass.OrgDataPipelineNameMyc, typeof(string));
+        }
+
+        [TestMethod]
+        public void CanGetPomDataPipelineMycName()
+        {
+            // Assert
+            Assert.IsInstanceOfType(this.TestClass.PomDataPipelineNameMyc, typeof(string));
+        }
+
+        [TestMethod]
+        public void CanGetUseMycPipeline()
+        {
+            // Arrange
+            var useMycPipleline = this.Fixture.Create<bool>();
+            var rPDPipelineSection = new Mock<IConfigurationSection>();
+            rPDPipelineSection.Setup(v => v.Value).Returns(useMycPipleline.ToString());
+            this.Configuration.Setup(c => c.GetSection(nameof(LocalDevelopmentConfiguration.UseMycPipeline)))
+                .Returns(rPDPipelineSection.Object);
+
+            // Assert
+            Assert.IsInstanceOfType(this.TestClass.UseMycPipeline, typeof(bool));
+        }
     }
 }
