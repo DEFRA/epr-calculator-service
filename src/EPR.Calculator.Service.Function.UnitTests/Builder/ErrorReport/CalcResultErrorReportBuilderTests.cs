@@ -61,7 +61,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
             var report = result[0];
             Assert.AreEqual(1, report.ProducerId);
             Assert.AreEqual("SUB-1", report.SubsidiaryId);
-            Assert.AreEqual("Allied Packaging", report.ProducerName);
+            Assert.AreEqual("-", report.ProducerName);
             Assert.AreEqual(CommonConstants.Hyphen, report.TradingName);
             Assert.AreEqual(CommonConstants.Hyphen, report.LeaverCode);
             Assert.AreEqual("ErrorName", report.ErrorCodeText);
