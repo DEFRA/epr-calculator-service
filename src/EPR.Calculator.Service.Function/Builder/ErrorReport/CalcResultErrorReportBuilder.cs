@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Dtos;
 using EPR.Calculator.Service.Function.Models;
@@ -20,24 +21,82 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
 
         public async Task<IEnumerable<CalcResultErrorReport>> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
         {
-            return await (
-                from er in context.ErrorReports
+            var runId = resultsRequestDto.RunId;
+
+            var baseQuery =
+                from run in context.CalculatorRuns
+                where run.Id == runId
+
+                join er in context.ErrorReports on run.Id equals er.CalculatorRunId
                 join et in context.ErrorTypes on er.ErrorTypeId equals et.Id
-                join run in context.CalculatorRuns on er.CalculatorRunId equals run.Id
-                join odm in context.CalculatorRunOrganisationDataMaster on run.CalculatorRunOrganisationDataMasterId equals odm.Id
-                join odd in context.CalculatorRunOrganisationDataDetails on odm.Id equals odd.CalculatorRunOrganisationDataMasterId                
-                where run.Id == resultsRequestDto.RunId && odd.OrganisationId == er.ProducerId
+                join odm in context.CalculatorRunOrganisationDataMaster
+                    on run.CalculatorRunOrganisationDataMasterId equals odm.Id
+
+                // LEFT JOIN to find a subsidiary-specific detail: match ProdId + SubsId
+                join subOdd in context.CalculatorRunOrganisationDataDetails
+                    on new { OrgId = (int?)er.ProducerId, MasterId = odm.Id, SubsId = er.SubsidiaryId }
+                    equals new { OrgId = subOdd.OrganisationId, MasterId = subOdd.CalculatorRunOrganisationDataMasterId, SubsId = subOdd.SubsidaryId }
+                    into subGroup
+                from subLeft in subGroup.DefaultIfEmpty()
+
+                    // LEFT JOIN to find a producer-level detail (SubsidiaryId null) as fallback
+                join prodOdd in context.CalculatorRunOrganisationDataDetails
+                    on new { OrgId = (int?)er.ProducerId, MasterId = odm.Id, SubsId = (string?)null }
+                    equals new { OrgId = prodOdd.OrganisationId, MasterId = prodOdd.CalculatorRunOrganisationDataMasterId, SubsId = prodOdd.SubsidaryId }
+                    into prodGroup
+                from prodLeft in prodGroup.DefaultIfEmpty()
+
                 select new CalcResultErrorReport
                 {
                     Id = er.Id,
                     ProducerId = er.ProducerId,
                     SubsidiaryId = er.SubsidiaryId ?? CommonConstants.Hyphen,
-                    ProducerName = odd.OrganisationName,
-                    TradingName = odd.TradingName ?? CommonConstants.Hyphen,
+
+                    // prefer subsidiary-specific name, otherwise producer-level name, otherwise hyphen
+                    ProducerName = IsSubsidary(subLeft) ? subLeft.OrganisationName : GetProducerName(prodLeft),
+
+                    TradingName = IsSubsidary(subLeft) ? GetFormatedTradingName(subLeft.TradingName)
+                                    : GetTradingName(prodLeft),
+
                     LeaverCode = er.LeaverCode ?? CommonConstants.Hyphen,
                     ErrorCodeText = et.Name
-                }
-            ).AsNoTracking().Distinct().ToListAsync();
+                };
+
+            var results = await baseQuery
+                .AsNoTracking()
+                .OrderBy(x => x.ProducerId)
+                .ToListAsync();
+
+            return results;
+        }
+
+        private static string GetProducerName(CalculatorRunOrganisationDataDetail prodLeft)
+        {
+            if (prodLeft != null && !string.IsNullOrWhiteSpace(prodLeft.OrganisationName))
+            {
+                return prodLeft.SubsidaryId == null ? CommonConstants.Hyphen : prodLeft.OrganisationName;
+            }
+            return CommonConstants.Hyphen;
+        }
+
+        private static string GetTradingName(CalculatorRunOrganisationDataDetail prodLeft)
+        {
+            if (prodLeft != null && !string.IsNullOrWhiteSpace(prodLeft.OrganisationName))
+            {
+                return (prodLeft.SubsidaryId == null || prodLeft.TradingName is null) ? CommonConstants.Hyphen :
+                    GetFormatedTradingName(prodLeft.TradingName);
+            }
+            return CommonConstants.Hyphen;
+        }
+
+        private static string GetFormatedTradingName(string? tradingName)
+        {
+            return string.IsNullOrEmpty(tradingName) ? CommonConstants.Hyphen : tradingName;
+        }
+
+        private static bool IsSubsidary(CalculatorRunOrganisationDataDetail subLeft)
+        {
+            return (subLeft != null && !string.IsNullOrWhiteSpace(subLeft.OrganisationName));
         }
     }
 }

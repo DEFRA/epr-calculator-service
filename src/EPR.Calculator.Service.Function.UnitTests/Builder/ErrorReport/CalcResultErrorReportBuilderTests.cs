@@ -57,11 +57,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
             var result = (await builder.ConstructAsync(request)).ToList();
 
             // Assert
-            Assert.AreEqual(2, result.Count);
+            Assert.AreEqual(1, result.Count);
             var report = result[0];
             Assert.AreEqual(1, report.ProducerId);
             Assert.AreEqual("SUB-1", report.SubsidiaryId);
-            Assert.AreEqual("Allied Packaging", report.ProducerName);
+            Assert.AreEqual("-", report.ProducerName);
             Assert.AreEqual(CommonConstants.Hyphen, report.TradingName);
             Assert.AreEqual(CommonConstants.Hyphen, report.LeaverCode);
             Assert.AreEqual("ErrorName", report.ErrorCodeText);
@@ -99,7 +99,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
             var result = (await builder.ConstructAsync(request)).ToList();
 
             // Assert
-            Assert.AreEqual(2, result.Count);
+            Assert.AreEqual(1, result.Count);
             var report = result[0];
             Assert.AreEqual(1, report.ProducerId);
             Assert.AreEqual(CommonConstants.Hyphen, report.SubsidiaryId);
@@ -108,5 +108,49 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
             Assert.AreEqual(CommonConstants.Hyphen, report.LeaverCode);
             Assert.AreEqual("ErrorName", report.ErrorCodeText);
         }
+
+        [TestMethod]
+        public async Task ConstructAsync_ReturnsProducerNameMappedErrorReport()
+        {
+            // Arrange
+            await using var context = CreateDbContext();
+
+            context.ErrorTypes.Add(new ErrorType { Id = 1, Name = "ErrorName" });
+
+            context.CalculatorRunOrganisationDataMaster.AddRange(TestDataHelper.GetCalculatorRunOrganisationDataMaster());
+            context.CalculatorRunOrganisationDataDetails.AddRange(TestDataHelper.GetCalculatorRunOrganisationDataDetails());
+            context.CalculatorRuns.AddRange(TestDataHelper.GetCaculatorRuns());
+
+            context.ErrorReports.Add(new EPR.Calculator.API.Data.DataModels.ErrorReport
+            {
+                Id = 1,
+                CalculatorRunId = 1,
+                ProducerId = 2,
+                SubsidiaryId = "SUB-2",
+                ErrorTypeId = 1,
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = "Test user"
+            });
+
+            await context.SaveChangesAsync();
+
+            var builder = new CalcResultErrorReportBuilder(context);
+            var request = new CalcResultsRequestDto { RunId = 1 };
+
+            // Act
+            var result = (await builder.ConstructAsync(request)).ToList();
+
+            // Assert
+            Assert.AreEqual(1, result.Count);
+            var report = result[0];
+            Assert.AreEqual(2, report.ProducerId);
+            Assert.AreEqual("SUB-2", report.SubsidiaryId);
+            Assert.AreEqual(CommonConstants.Hyphen, report.ProducerName);
+            Assert.AreEqual(CommonConstants.Hyphen, report.TradingName);
+            Assert.AreEqual(CommonConstants.Hyphen, report.LeaverCode);
+            Assert.AreEqual("ErrorName", report.ErrorCodeText);
+        }
+
+
     }
 }
