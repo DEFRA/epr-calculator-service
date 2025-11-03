@@ -85,7 +85,7 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
         {
             if (prodLeft != null && !string.IsNullOrWhiteSpace(prodLeft.OrganisationName))
             {
-                return prodLeft.SubsidaryId == null ? CommonConstants.Hyphen : prodLeft.OrganisationName;
+                return (prodLeft.SubsidaryId == null || prodLeft.TradingName is null) ? CommonConstants.Hyphen : prodLeft.TradingName;
             }
             return CommonConstants.Hyphen;
         }
