@@ -65,8 +65,6 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
             var results = await baseQuery
                 .AsNoTracking()
                 .OrderBy(x=>x.ProducerId)
-                .GroupBy(x => x.Id)
-                .Select(g => g.First())
                 .ToListAsync();
 
             return results;
