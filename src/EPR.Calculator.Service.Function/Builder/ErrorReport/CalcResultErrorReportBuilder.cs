@@ -39,7 +39,7 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
                     into subGroup
                 from subLeft in subGroup.DefaultIfEmpty()
 
-                 // LEFT JOIN to find a producer-level detail (SubsidiaryId null) as fallback
+                    // LEFT JOIN to find a producer-level detail (SubsidiaryId null) as fallback
                 join prodOdd in context.CalculatorRunOrganisationDataDetails
                     on new { OrgId = (int?)er.ProducerId, MasterId = odm.Id, SubsId = (string?)null }
                     equals new { OrgId = prodOdd.OrganisationId, MasterId = prodOdd.CalculatorRunOrganisationDataMasterId, SubsId = prodOdd.SubsidaryId }
@@ -53,10 +53,10 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
                     SubsidiaryId = er.SubsidiaryId ?? CommonConstants.Hyphen,
 
                     // prefer subsidiary-specific name, otherwise producer-level name, otherwise hyphen
-                    ProducerName = (subLeft != null && !string.IsNullOrWhiteSpace(subLeft.OrganisationName))
+                    ProducerName = IsSubsidary(subLeft)
                                     ? subLeft.OrganisationName
-                                    : (prodLeft != null && !string.IsNullOrWhiteSpace(prodLeft.OrganisationName))
-                                        ? prodLeft.SubsidaryId == null ? CommonConstants.Hyphen : prodLeft.OrganisationName
+                                    : IsParentProducer(prodLeft)
+                                        ? IsErrorReportParentProducer(prodLeft)
                                         : CommonConstants.Hyphen,
 
                     TradingName = (subLeft != null && !string.IsNullOrWhiteSpace(subLeft.TradingName))
@@ -75,21 +75,22 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
                 .Select(g => g.First())
                 .ToListAsync();
 
-            return results.OrderBy(x=>x.ProducerId);
+            return results.OrderBy(x => x.ProducerId);
         }
 
-        private string? GetOrgOrTradingName(
-                int producerId,
-                string? subsidiaryId,
-                List<CalculatorRunOrganisationDataDetail> orgDetails,
-                bool isTradingName)
+        private static string IsErrorReportParentProducer(CalculatorRunOrganisationDataDetail prodLeft)
         {
-            var detail = orgDetails
-                .FirstOrDefault(x => x.OrganisationId == producerId && x.SubsidaryId == subsidiaryId);
+            return prodLeft.SubsidaryId == null ? CommonConstants.Hyphen : prodLeft.OrganisationName;
+        }
 
-            if (detail == null) return null;
+        private static bool IsParentProducer(CalculatorRunOrganisationDataDetail prodLeft)
+        {
+            return (prodLeft != null && !string.IsNullOrWhiteSpace(prodLeft.OrganisationName));
+        }
 
-            return isTradingName ? detail.TradingName : detail.OrganisationName;
+        private static bool IsSubsidary(CalculatorRunOrganisationDataDetail subLeft)
+        {
+            return (subLeft != null && !string.IsNullOrWhiteSpace(subLeft.OrganisationName));
         }
     }
 }
