@@ -55,7 +55,7 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
                     // prefer subsidiary-specific name, otherwise producer-level name, otherwise hyphen
                     ProducerName = IsSubsidary(subLeft) ? subLeft.OrganisationName : GetProducerName(prodLeft),
 
-                    TradingName = IsSubsidary(subLeft) ? subLeft.TradingName ?? CommonConstants.Hyphen
+                    TradingName = IsSubsidary(subLeft) ? GetFormatedTradingName(subLeft.TradingName)
                                     : GetTradingName(prodLeft),
 
                     LeaverCode = er.LeaverCode ?? CommonConstants.Hyphen,
@@ -83,9 +83,15 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
         {
             if (prodLeft != null && !string.IsNullOrWhiteSpace(prodLeft.OrganisationName))
             {
-                return (prodLeft.SubsidaryId == null || prodLeft.TradingName is null) ? CommonConstants.Hyphen : prodLeft.TradingName;
+                return (prodLeft.SubsidaryId == null || prodLeft.TradingName is null) ? CommonConstants.Hyphen :
+                    GetFormatedTradingName(prodLeft.TradingName);
             }
             return CommonConstants.Hyphen;
+        }
+
+        private static string GetFormatedTradingName(string? tradingName)
+        {
+            return string.IsNullOrEmpty(tradingName) ? CommonConstants.Hyphen : tradingName;
         }
 
         private static bool IsSubsidary(CalculatorRunOrganisationDataDetail subLeft)
