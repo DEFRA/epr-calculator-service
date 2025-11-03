@@ -13,5 +13,7 @@ namespace EPR.Calculator.Service.Function.Dtos
         public bool IsBillingFile { get; set; }
 
         public string ApprovedBy { get; set; } = string.Empty;
+
+        public string CreatedBy { get; set; } = string.Empty;
     }
 }
