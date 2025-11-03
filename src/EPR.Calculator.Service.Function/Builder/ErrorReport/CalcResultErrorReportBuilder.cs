@@ -53,17 +53,10 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
                     SubsidiaryId = er.SubsidiaryId ?? CommonConstants.Hyphen,
 
                     // prefer subsidiary-specific name, otherwise producer-level name, otherwise hyphen
-                    ProducerName = IsSubsidary(subLeft)
-                                    ? subLeft.OrganisationName
-                                    : IsParentProducer(prodLeft)
-                                        ? IsErrorReportParentProducer(prodLeft)
-                                        : CommonConstants.Hyphen,
+                    ProducerName = IsSubsidary(subLeft) ? subLeft.OrganisationName : GetProducerName(prodLeft),
 
-                    TradingName = (subLeft != null && !string.IsNullOrWhiteSpace(subLeft.TradingName))
-                                    ? subLeft.TradingName
-                                    : (prodLeft != null && !string.IsNullOrWhiteSpace(prodLeft.TradingName))
-                                        ? prodLeft.SubsidaryId == null ? CommonConstants.Hyphen : prodLeft.TradingName
-                                        : CommonConstants.Hyphen,
+                    TradingName = IsSubsidary(subLeft) ? subLeft.TradingName ?? CommonConstants.Hyphen
+                                    : GetTradingName(prodLeft),
 
                     LeaverCode = er.LeaverCode ?? CommonConstants.Hyphen,
                     ErrorCodeText = et.Name
@@ -71,21 +64,30 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
 
             var results = await baseQuery
                 .AsNoTracking()
+                .OrderBy(x=>x.ProducerId)
                 .GroupBy(x => x.Id)
                 .Select(g => g.First())
                 .ToListAsync();
 
-            return results.OrderBy(x => x.ProducerId);
+            return results;
         }
 
-        private static string IsErrorReportParentProducer(CalculatorRunOrganisationDataDetail prodLeft)
+        private static string GetProducerName(CalculatorRunOrganisationDataDetail prodLeft)
         {
-            return prodLeft.SubsidaryId == null ? CommonConstants.Hyphen : prodLeft.OrganisationName;
+            if(prodLeft != null && !string.IsNullOrWhiteSpace(prodLeft.OrganisationName))
+            {
+               return prodLeft.SubsidaryId == null ? CommonConstants.Hyphen : prodLeft.OrganisationName;
+            }
+            return CommonConstants.Hyphen;
         }
 
-        private static bool IsParentProducer(CalculatorRunOrganisationDataDetail prodLeft)
+        private static string GetTradingName(CalculatorRunOrganisationDataDetail prodLeft)
         {
-            return (prodLeft != null && !string.IsNullOrWhiteSpace(prodLeft.OrganisationName));
+            if (prodLeft != null && !string.IsNullOrWhiteSpace(prodLeft.OrganisationName))
+            {
+                return prodLeft.SubsidaryId == null ? CommonConstants.Hyphen : prodLeft.OrganisationName;
+            }
+            return CommonConstants.Hyphen;
         }
 
         private static bool IsSubsidary(CalculatorRunOrganisationDataDetail subLeft)
