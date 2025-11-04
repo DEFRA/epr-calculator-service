@@ -32,8 +32,7 @@ services:
 
   sqledge:
     pull_policy: always
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    privileged: true
+    image: mcr.microsoft.com/azure-sql-edge:latest
     # On some platforms there are compatibility issues with running Azure SQL Edge e.g. M1 Macs with later Docker versions.
     # If SQL Edge does not work for you, try swapping out with SQL Server image instead
     # image: mcr.microsoft.com/mssql/server:2022-latest
@@ -44,8 +43,6 @@ services:
     environment:
       ACCEPT_EULA: "Y"
       MSSQL_SA_PASSWORD: "s4usag3s!"
-#    command:
-#      chgrp 10001 /var/opt/mssql
 
     healthcheck:
       interval: 5s
@@ -166,9 +163,6 @@ services:
       BlobStorage__BillingFileCSVContainerName: "paycal-billingfilecsv"
       BlobStorage__BillingFileJsonContainerName: "paycal-billingfilejson"
       BlobStorage__BillingFileJsonForFssContainerName: "paycal-billingfilejsonauthorisedforfss"
-
-
-
     ports:
       - "8002:8080"
       - "5055:8080"
@@ -178,32 +172,6 @@ services:
       timeout: 5s
       retries: 10
       start_period: 5s
-
-  epr-fss-api:
-    build:
-      context: ../epr-calculator-fss-api/src
-      dockerfile: EPR.Calculator.FSS.API/Dockerfile
-    depends_on:
-      sqledge:
-        condition: service_healthy
-      asb:
-        condition: service_healthy
-      azurite:
-        condition: service_healthy
-    environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__DefaultConnection: "Data Source=sqledge,1433;User id=sa;Password=s4usag3s!;Initial Catalog=PayCal;Integrated Security=True;TrustServerCertificate=True"
-      BlobStorage__ConnectionString: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;"
-      BlobStorage__ContainerName: "paycal-billingfilejsonauthorisedforfss"
-    ports:
-      - "6066:8080"
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/admin/health" ]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-      start_period: 5s
-
 
 
   epr-frontend:
