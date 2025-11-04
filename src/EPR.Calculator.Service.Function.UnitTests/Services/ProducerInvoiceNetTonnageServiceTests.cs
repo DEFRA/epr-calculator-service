@@ -2,6 +2,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading;
     using System.Threading.Tasks;
     using AutoFixture;
     using EPR.Calculator.API.Data.DataModels;
@@ -18,7 +19,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     [TestClass]
     public class ProducerInvoiceNetTonnageServiceTests
     {
-     
         public ProducerInvoiceNetTonnageServiceTests()
         {
             producerInvoiceMaterialChunker = new Mock<IDbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage>>();
@@ -44,7 +44,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.IsNotNull(instance);
         }
 
-
         [TestMethod]
         public async Task CanCallCreateProducerInvoiceNetTonnage1()
         {
@@ -60,7 +59,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Act
             
-            var result = await testClass.CreateProducerInvoiceNetTonnage(calcResult);
+            var result = await testClass.CreateProducerInvoiceNetTonnage(calcResult, CancellationToken.None);
 
             // Assert
             telemetryLogger.Verify(mock => mock.LogInformation(It.IsAny<TrackMessage>()));
@@ -110,8 +109,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             telemetryLogger.Setup(mock => mock.LogError(It.IsAny<ErrorMessage>())).Verifiable();
 
             // Act
-            var result = await testClass.CreateProducerInvoiceNetTonnage(calcResult);
+            var result = await testClass.CreateProducerInvoiceNetTonnage(calcResult, CancellationToken.None);
 
+            // Assert
             Assert.IsFalse(result);
         }
 
@@ -126,12 +126,30 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             materialService.Setup(mock => mock.GetMaterials()).Throws<Exception>();
 
             // Act
-            var result = await testClass.CreateProducerInvoiceNetTonnage(calcResult);
+            var result = await testClass.CreateProducerInvoiceNetTonnage(calcResult, CancellationToken.None);
 
             // Assert
             telemetryLogger.Verify(mock => mock.LogError(It.IsAny<ErrorMessage>()));
 
             Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task CreateProducerInvoiceNetTonnage_CancellationRequested_ReturnsFalseAndLogsError()
+        {
+            // Arrange
+            var calcResult = TestDataHelper.GetCalcResult();
+            materialService.Setup(m => m.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials());
+            telemetryLogger.Setup(t => t.LogError(It.Is<ErrorMessage>(e => e.Message == "Cancellation requested while populating producer invoice net tonnage"))).Verifiable();
+            using var cts = new CancellationTokenSource();
+            cts.Cancel();
+
+            // Act
+            var result = await testClass.CreateProducerInvoiceNetTonnage(calcResult, cts.Token);
+
+            // Assert
+            Assert.IsFalse(result);
+            telemetryLogger.Verify(t => t.LogError(It.Is<ErrorMessage>(e => e.Message == "Cancellation requested while populating producer invoice net tonnage")), Times.Once);
         }
     }
 }
