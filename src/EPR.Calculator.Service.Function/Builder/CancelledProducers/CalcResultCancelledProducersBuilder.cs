@@ -56,49 +56,12 @@
 
         public async Task<IEnumerable<CalcResultCancelledProducersDto>> GetCancelledProducers(string financialYear, int runId, bool isBilling)
         {
-            IEnumerable<int> allProducerIds = await (from prfb in context.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
-                                                     join cr in context.CalculatorRuns.AsNoTracking()
-                                                     on prfb.CalculatorRunId equals cr.Id
-                                                     where
-                                                        new int[]
-                                                        {
-                                                            RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
-                                                            RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
-                                                            RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
-                                                            RunClassificationStatusIds.FINALRUNCOMPLETEDID
-                                                        }.Contains(cr.CalculatorRunClassificationId) && cr.FinancialYearId == financialYear
-                                                        && prfb.BillingInstructionAcceptReject == CommonConstants.Accepted
-                                                     select prfb.ProducerId).ToListAsync();
+            IEnumerable<int> allProducerIds = await GetAllProducerIds(financialYear);
 
             var producersForCurrentRun = this.producerDetailsService.GetProducers(runId);
 
             var missingProducersIdsInCurrentRun = allProducerIds.Where(t => !producersForCurrentRun.Any(k => k.ProducerId == t));
-
-            var missingProducersInCurrentRun = (from pd in context.ProducerDetail
-                                                join pds in context.ProducerResultFileSuggestedBillingInstruction on pd.ProducerId equals pds.ProducerId
-                                                join ins in context.ProducerInvoicedMaterialNetTonnage on pd.ProducerId equals ins.ProducerId
-                                                join d in context.ProducerDesignatedRunInvoiceInstruction on pd.ProducerId equals d.ProducerId
-                                                join c in context.CalculatorRuns on pd.CalculatorRunId equals c.Id
-                                                where missingProducersIdsInCurrentRun.Contains(pd.ProducerId)
-                                                && c.FinancialYearId == financialYear
-                                                && new int[]
-                                                {
-                                                RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
-                                                RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
-                                                RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
-                                                RunClassificationStatusIds.FINALRUNCOMPLETEDID
-                                                }.Contains(c.CalculatorRunClassificationId)
-                                                && pds.BillingInstructionAcceptReject == CommonConstants.Accepted
-                                                select new ProducerInvoicedDto()
-                                                {
-                                                    CalculatorRunId = c.Id,
-                                                    CalculatorName = c.Name,
-                                                    InvoicedTonnage = ins,
-                                                    InvoiceInstruction = d,
-                                                    ProducerDetail = pd,
-                                                    ResultFileSuggestedBillingInstruction = pds
-                                                }).Distinct().ToList();
-
+            List<ProducerInvoicedDto> missingProducersInCurrentRun = await GetMissingProducerInvoicedDetails(financialYear, missingProducersIdsInCurrentRun);
 
             // populate cancelled producers
             var calcResultCancelledProducers = new List<CalcResultCancelledProducersDto>();
@@ -156,6 +119,51 @@
             return calcResultCancelledProducers;
         }
 
+        private async Task<IEnumerable<int>> GetAllProducerIds(string financialYear)
+        {
+            return await (from prfb in context.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
+                          join cr in context.CalculatorRuns.AsNoTracking()
+                          on prfb.CalculatorRunId equals cr.Id
+                          where
+                             new int[]
+                             {
+                                                            RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
+                                                            RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
+                                                            RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
+                                                            RunClassificationStatusIds.FINALRUNCOMPLETEDID
+                             }.Contains(cr.CalculatorRunClassificationId) && cr.FinancialYearId == financialYear
+                             && prfb.BillingInstructionAcceptReject == CommonConstants.Accepted
+                          select prfb.ProducerId).ToListAsync();
+        }
+
+        private async Task<List<ProducerInvoicedDto>> GetMissingProducerInvoicedDetails(string financialYear, IEnumerable<int> missingProducersIdsInCurrentRun)
+        {
+            var details = await (from pd in context.ProducerDetail
+                                 join pds in context.ProducerResultFileSuggestedBillingInstruction on pd.ProducerId equals pds.ProducerId
+                                 join ins in context.ProducerInvoicedMaterialNetTonnage on pd.ProducerId equals ins.ProducerId
+                                 join d in context.ProducerDesignatedRunInvoiceInstruction on pd.ProducerId equals d.ProducerId
+                                 join c in context.CalculatorRuns on pd.CalculatorRunId equals c.Id
+                                 where missingProducersIdsInCurrentRun.Contains(pd.ProducerId)
+                                 && c.FinancialYearId == financialYear
+                                 && new int[]
+                                 {
+                                                RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
+                                                RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
+                                                RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
+                                                RunClassificationStatusIds.FINALRUNCOMPLETEDID
+                                 }.Contains(c.CalculatorRunClassificationId)
+                                 && pds.BillingInstructionAcceptReject == CommonConstants.Accepted
+                                 select new ProducerInvoicedDto()
+                                 {
+                                     CalculatorRunId = c.Id,
+                                     CalculatorName = c.Name,
+                                     InvoicedTonnage = ins,
+                                     InvoiceInstruction = d,
+                                     ProducerDetail = pd,
+                                     ResultFileSuggestedBillingInstruction = pds
+                                 }).OrderByDescending(c=>c.CalculatorRunId).ToListAsync();
+            return details.DistinctBy(t => t.InvoicedTonnage?.ProducerId).ToList();
+        }
 
         private static decimal? GetInvoicedTonnageForMaterials(List<ProducerInvoicedDto> cancelledProducersWithData, int materialId, int? producerId)
         {
