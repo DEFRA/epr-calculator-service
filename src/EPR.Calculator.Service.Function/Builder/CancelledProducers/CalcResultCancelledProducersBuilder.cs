@@ -82,7 +82,7 @@
             }
 
 
-            var distinctMissingProducerIds = filteredMissingProducers.DistinctBy(t => t.InvoicedTonnage?.ProducerId).
+            var distinctMissingProducerIds = filteredMissingProducers.OrderByDescending(t => t.CalculatorRunId).DistinctBy(t => t.InvoicedTonnage?.ProducerId).
             Select(t => t.InvoicedTonnage?.ProducerId).ToList();
 
             foreach (var missingProducerId in distinctMissingProducerIds)
@@ -108,10 +108,10 @@
                     },
                     LatestInvoice = new LatestInvoice
                     {
-                        BillingInstructionIdValue = filteredMissingProducers.Where(t => t.InvoiceInstruction?.ProducerId == producerId).Select(t => t.InvoiceInstruction?.BillingInstructionId).FirstOrDefault(),
-                        RunNameValue = filteredMissingProducers.Where(t => t.InvoiceInstruction?.ProducerId == producerId).Select(t => t.CalculatorName).FirstOrDefault(),
-                        RunNumberValue = filteredMissingProducers.Where(t => t.InvoiceInstruction?.ProducerId == producerId).Select(t => t.CalculatorRunId).FirstOrDefault().ToString(),
-                        CurrentYearInvoicedTotalToDateValue = filteredMissingProducers.Where(t => t.InvoiceInstruction?.ProducerId == producerId).Select(t => t.InvoiceInstruction?.CurrentYearInvoicedTotalAfterThisRun).FirstOrDefault(),
+                        BillingInstructionIdValue = filteredMissingProducers.Where(t => t.InvoiceInstruction?.ProducerId == producerId).OrderByDescending(t => t.CalculatorRunId).Select(t => t.InvoiceInstruction?.BillingInstructionId).FirstOrDefault(),
+                        RunNameValue = filteredMissingProducers.Where(t => t.InvoiceInstruction?.ProducerId == producerId).OrderByDescending(t => t.CalculatorRunId).Select(t => t.CalculatorName).FirstOrDefault(),
+                        RunNumberValue = filteredMissingProducers.Where(t => t.InvoiceInstruction?.ProducerId == producerId).OrderByDescending(t => t.CalculatorRunId).Select(t => t.CalculatorRunId).FirstOrDefault().ToString(),
+                        CurrentYearInvoicedTotalToDateValue = filteredMissingProducers.Where(t => t.InvoiceInstruction?.ProducerId == producerId).OrderByDescending(t => t.CalculatorRunId).Select(t => t.InvoiceInstruction?.CurrentYearInvoicedTotalAfterThisRun).FirstOrDefault(),
                     }
                 });
             }
@@ -161,13 +161,19 @@
                                      InvoiceInstruction = d,
                                      ProducerDetail = pd,
                                      ResultFileSuggestedBillingInstruction = pds
-                                 }).OrderByDescending(c=>c.CalculatorRunId).ToListAsync();
-            return details.DistinctBy(t => t.InvoicedTonnage?.ProducerId).ToList();
+                                 }).
+                                 OrderByDescending(c => c.CalculatorRunId)
+                                 .ThenByDescending(c => c.InvoiceInstruction.CalculatorRunId)
+                                 .ThenByDescending(c => c.InvoicedTonnage.CalculatorRunId)
+                                 .ThenBy(c => c.InvoicedTonnage.ProducerId)
+                                 .ThenBy(c => c.InvoicedTonnage.MaterialId)
+                                 .ToListAsync();
+            return details;
         }
 
         private static decimal? GetInvoicedTonnageForMaterials(List<ProducerInvoicedDto> cancelledProducersWithData, int materialId, int? producerId)
         {
-            return cancelledProducersWithData.Where(t => t.InvoicedTonnage?.MaterialId == materialId && t.InvoicedTonnage.ProducerId == producerId).Select(k => k.InvoicedTonnage?.InvoicedNetTonnage).FirstOrDefault();
+            return cancelledProducersWithData.Where(t => t.InvoicedTonnage?.MaterialId == materialId && t.InvoicedTonnage.ProducerId == producerId).OrderByDescending(t => t.CalculatorRunId).Select(k => k.InvoicedTonnage?.InvoicedNetTonnage).FirstOrDefault();
         }
 
         private int GetMaterialId(string materialName)
