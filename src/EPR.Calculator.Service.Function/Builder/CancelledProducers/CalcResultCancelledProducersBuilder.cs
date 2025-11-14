@@ -163,10 +163,10 @@
                                      ResultFileSuggestedBillingInstruction = pds
                                  }).
                                  OrderByDescending(c => c.CalculatorRunId)
-                                 .ThenByDescending(c => c.InvoiceInstruction.CalculatorRunId)
-                                 .ThenByDescending(c => c.InvoicedTonnage.CalculatorRunId)
-                                 .ThenBy(c => c.InvoicedTonnage.ProducerId)
-                                 .ThenBy(c => c.InvoicedTonnage.MaterialId)
+                                 .ThenByDescending(c => c.InvoiceInstruction != null ? c.InvoiceInstruction.CalculatorRunId : 0) // Null check added here
+                                 .ThenByDescending(c => c.InvoicedTonnage != null ? c.InvoicedTonnage.CalculatorRunId : 0)
+                                 .ThenBy(c => c.InvoicedTonnage != null ? c.InvoicedTonnage.ProducerId : 0)
+                                 .ThenBy(c => c.InvoicedTonnage != null ? c.InvoicedTonnage.MaterialId : 0)
                                  .ToListAsync();
             return details;
         }
