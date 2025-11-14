@@ -64,7 +64,7 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
 
             var results = await baseQuery
                 .AsNoTracking()
-                .OrderBy(x=>x.ProducerId)
+                .OrderBy(x => x.ProducerId)
                 .ThenBy(x => x.SubsidiaryId)
                 .ToListAsync();
 
@@ -73,9 +73,9 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
 
         private static string GetProducerName(CalculatorRunOrganisationDataDetail prodLeft)
         {
-            if(prodLeft != null && !string.IsNullOrWhiteSpace(prodLeft.OrganisationName))
+            if (prodLeft != null && !string.IsNullOrWhiteSpace(prodLeft.OrganisationName))
             {
-               return prodLeft.SubsidaryId == null ? CommonConstants.Hyphen : prodLeft.OrganisationName;
+                return prodLeft.SubsidaryId == null ? CommonConstants.Hyphen : prodLeft.OrganisationName;
             }
             return CommonConstants.Hyphen;
         }
