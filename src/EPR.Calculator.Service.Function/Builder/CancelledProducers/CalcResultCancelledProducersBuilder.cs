@@ -61,7 +61,7 @@
             var producersForCurrentRun = this.producerDetailsService.GetProducers(runId);
 
             var missingProducersIdsInCurrentRun = allProducerIds.Where(t => !producersForCurrentRun.Any(k => k.ProducerId == t));
-            List<ProducerInvoicedDto> missingProducersInCurrentRun = await GetMissingProducerInvoicedDetails(financialYear, missingProducersIdsInCurrentRun);
+            var missingProducersInCurrentRun = await this.producerDetailsService.GetLatestProducerDetailsForThisFinancialYear(financialYear, missingProducersIdsInCurrentRun);
 
             // populate cancelled producers
             var calcResultCancelledProducers = new List<CalcResultCancelledProducersDto>();
@@ -137,42 +137,7 @@
                              && prfb.BillingInstructionAcceptReject == CommonConstants.Accepted
                           select prfb.ProducerId).ToListAsync();
         }
-
-        private async Task<List<ProducerInvoicedDto>> GetMissingProducerInvoicedDetails(string financialYear, IEnumerable<int> missingProducersIdsInCurrentRun)
-        {
-            var details = await (from pd in context.ProducerDetail
-                                 join pds in context.ProducerResultFileSuggestedBillingInstruction on pd.ProducerId equals pds.ProducerId
-                                 join ins in context.ProducerInvoicedMaterialNetTonnage on pd.ProducerId equals ins.ProducerId
-                                 join d in context.ProducerDesignatedRunInvoiceInstruction on pd.ProducerId equals d.ProducerId
-                                 join c in context.CalculatorRuns on pd.CalculatorRunId equals c.Id
-                                 where missingProducersIdsInCurrentRun.Contains(pd.ProducerId)
-                                 && c.FinancialYearId == financialYear
-                                 && new int[]
-                                 {
-                                                RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
-                                                RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
-                                                RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
-                                                RunClassificationStatusIds.FINALRUNCOMPLETEDID
-                                 }.Contains(c.CalculatorRunClassificationId)
-                                 && pds.BillingInstructionAcceptReject == CommonConstants.Accepted
-                                 select new ProducerInvoicedDto()
-                                 {
-                                     CalculatorRunId = c.Id,
-                                     CalculatorName = c.Name,
-                                     InvoicedTonnage = ins,
-                                     InvoiceInstruction = d,
-                                     ProducerDetail = pd,
-                                     ResultFileSuggestedBillingInstruction = pds
-                                 }).
-                                 OrderByDescending(c => c.CalculatorRunId)
-                                 .ThenByDescending(c => c.InvoiceInstruction != null ? c.InvoiceInstruction.CalculatorRunId : 0) // Null check added here
-                                 .ThenByDescending(c => c.InvoicedTonnage != null ? c.InvoicedTonnage.CalculatorRunId : 0)
-                                 .ThenBy(c => c.InvoicedTonnage != null ? c.InvoicedTonnage.ProducerId : 0)
-                                 .ThenBy(c => c.InvoicedTonnage != null ? c.InvoicedTonnage.MaterialId : 0)
-                                 .ToListAsync();
-            return details;
-        }
-
+        
         private static decimal? GetInvoicedTonnageForMaterials(List<ProducerInvoicedDto> cancelledProducersWithData, int materialId, int? producerId)
         {
             return cancelledProducersWithData.Where(t => t.InvoicedTonnage?.MaterialId == materialId && t.InvoicedTonnage.ProducerId == producerId).OrderByDescending(t => t.CalculatorRunId).Select(k => k.InvoicedTonnage?.InvoicedNetTonnage).FirstOrDefault();
