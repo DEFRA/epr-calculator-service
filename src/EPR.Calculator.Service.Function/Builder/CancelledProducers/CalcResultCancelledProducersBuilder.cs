@@ -94,7 +94,7 @@
                 calcResultCancelledProducers.Add(new CalcResultCancelledProducersDto()
                 {
                     ProducerId = (int)producerId,
-                    ProducerOrSubsidiaryNameValue = producerDetails.Where(t=>t.ProducerId == producerId)?.FirstOrDefault()?.ProducerName,
+                    ProducerOrSubsidiaryNameValue = producerDetails.FirstOrDefault(t=>t.ProducerId == producerId)?.ProducerName,
                     TradingNameValue = filteredMissingProducers.Where(t => t.ProducerDetail?.ProducerId == producerId).Select(t => t.ProducerDetail?.TradingName).FirstOrDefault(),
 
                     LastTonnage = new LastTonnage()
@@ -223,7 +223,7 @@
                 Select(t => new ProducerDetail { ProducerId= t.OrganisationId.GetValueOrDefault(), ProducerName= t.OrganisationName }).ToListAsync();
         }
 
-        private record ProducerDetail
+        private sealed record ProducerDetail
         {
             public int ProducerId { get; set; }
             public required string ProducerName

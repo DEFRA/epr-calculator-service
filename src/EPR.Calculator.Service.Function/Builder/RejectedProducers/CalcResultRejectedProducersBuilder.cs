@@ -29,12 +29,12 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
 
         public async Task<IEnumerable<CalcResultRejectedProducer>> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
         {
-            IEnumerable<int> allProducerIds = await GetAllProducerIds(resultsRequestDto.FinancialYear);
+            IEnumerable<int> allProducerIds = await GetAllProducerIdsForThisYear(resultsRequestDto.FinancialYear);
 
             var producersForCurrentRun = this.producerDetailsService.GetProducers(resultsRequestDto.RunId);
 
             var missingProducersIdsInCurrentRun = allProducerIds.Where(t => !producersForCurrentRun.Any(k => k.ProducerId == t));
-            var missingProducersInCurrentRun = await GetMissingProducerInvoicedDetails(resultsRequestDto.FinancialYear, missingProducersIdsInCurrentRun);
+            var missingProducersInCurrentRun = await GetMissingProducerInvoicedDetailsForRejectedProducers(resultsRequestDto.FinancialYear, missingProducersIdsInCurrentRun);
 
             var missingProducerDetail = missingProducersInCurrentRun.Where(t => !producersForCurrentRun.Any(k => k.ProducerId == t.InvoicedTonnage?.ProducerId && t.CalculatorRunId == resultsRequestDto.RunId))
                 .DistinctBy(p => p.ProducerDetail?.ProducerId)
@@ -90,9 +90,9 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
             return billing.SuggestedInvoiceAmount ?? 0;
         }
 
-        private async Task<List<ProducerInvoicedDto>> GetMissingProducerInvoicedDetails(string financialYear, IEnumerable<int> missingProducersIdsInCurrentRun)
+        private async Task<List<ProducerInvoicedDto>> GetMissingProducerInvoicedDetailsForRejectedProducers(string financialYear, IEnumerable<int> missingProducersIdsInCurrentRun)
         {
-            var details = await (from pd in context.ProducerDetail
+            var producerdetails = await (from pd in context.ProducerDetail
                                  join pds in context.ProducerResultFileSuggestedBillingInstruction on pd.ProducerId equals pds.ProducerId
                                  join ins in context.ProducerInvoicedMaterialNetTonnage on pd.ProducerId equals ins.ProducerId
                                  join d in context.ProducerDesignatedRunInvoiceInstruction on pd.ProducerId equals d.ProducerId
@@ -122,10 +122,10 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                                  .ThenBy(c => c.InvoicedTonnage != null ? c.InvoicedTonnage.ProducerId : 0)
                                  .ThenBy(c => c.InvoicedTonnage != null ? c.InvoicedTonnage.MaterialId : 0)
                                  .ToListAsync();
-            return details;
+            return producerdetails;
         }
 
-        private async Task<IEnumerable<int>> GetAllProducerIds(string financialYear)
+        private async Task<IEnumerable<int>> GetAllProducerIdsForThisYear(string financialYear)
         {
             return await (from prfb in context.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
                           join cr in context.CalculatorRuns.AsNoTracking()
