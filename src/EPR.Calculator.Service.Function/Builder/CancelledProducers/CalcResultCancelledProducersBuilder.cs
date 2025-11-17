@@ -85,6 +85,8 @@
             var distinctMissingProducerIds = filteredMissingProducers.OrderByDescending(t => t.CalculatorRunId).DistinctBy(t => t.InvoicedTonnage?.ProducerId).
             Select(t => t.InvoicedTonnage?.ProducerId).ToList();
 
+            var producerDetails = await GetProducerDetails(distinctMissingProducerIds);
+
             foreach (var missingProducerId in distinctMissingProducerIds)
             {
                 var producerId = missingProducerId is null ? 0 : missingProducerId;
@@ -92,7 +94,7 @@
                 calcResultCancelledProducers.Add(new CalcResultCancelledProducersDto()
                 {
                     ProducerId = (int)producerId,
-                    ProducerOrSubsidiaryNameValue = filteredMissingProducers.Where(t => t.ProducerDetail?.ProducerId == producerId).Select(t => t.ProducerDetail?.ProducerName).FirstOrDefault(),
+                    ProducerOrSubsidiaryNameValue = producerDetails.Where(t=>t.ProducerId == producerId)?.FirstOrDefault()?.ProducerName,
                     TradingNameValue = filteredMissingProducers.Where(t => t.ProducerDetail?.ProducerId == producerId).Select(t => t.ProducerDetail?.TradingName).FirstOrDefault(),
 
                     LastTonnage = new LastTonnage()
@@ -211,6 +213,23 @@
                                               && p.SuggestedBillingInstruction == CommonConstants.CancelStatus)
                                               select p.ProducerId).AsEnumerable();
             return cancelledAcceptedProducers;
+        }
+
+
+        private async Task<IEnumerable<ProducerDetail>> GetProducerDetails(IEnumerable<int?> producerIds)
+        {
+            return await context.CalculatorRunOrganisationDataDetails.OrderByDescending(t => t.CalculatorRunOrganisationDataMasterId).
+                Where(t => producerIds.Contains(t.OrganisationId.GetValueOrDefault())).
+                Select(t => new ProducerDetail { ProducerId= t.OrganisationId.GetValueOrDefault(), ProducerName= t.OrganisationName }).ToListAsync();
+        }
+
+        private record ProducerDetail
+        {
+            public int ProducerId { get; set; }
+            public required string ProducerName
+            {
+                get; set;
+            }
         }
     }
 }

@@ -2068,6 +2068,30 @@
              new CalculatorRun { Id = 2, Financial_Year = financialYear, FinancialYearId = "2025-26", CalculatorRunClassificationId=2, Name = "CalculatorRunTest2" }};
             context.CalculatorRuns.AddRange(runs);
 
+            context.CalculatorRunOrganisationDataMaster.AddRange(GetCalculatorRunOrganisationDataMaster());
+
+
+            context.CalculatorRunOrganisationDataDetails.Add(new CalculatorRunOrganisationDataDetail
+            {
+                Id = 1,
+                OrganisationId = 1,
+                SubsidaryId = null,
+                OrganisationName = "Test1",
+                LoadTimeStamp = DateTime.UtcNow,
+                SubmissionPeriodDesc = "January to June 2023",
+                CalculatorRunOrganisationDataMasterId = GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
+                TradingName = "TN1"
+            });
+            context.CalculatorRunOrganisationDataDetails.Add(new CalculatorRunOrganisationDataDetail
+            {
+                Id = 2,
+                OrganisationId = 2,
+                SubsidaryId = "null",
+                OrganisationName = "Test2",
+                LoadTimeStamp = DateTime.UtcNow,
+                SubmissionPeriodDesc = "January to June 2023",
+                CalculatorRunOrganisationDataMasterId = GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
+            });
 
 
             var producerDetails = new List<ProducerDetail>()

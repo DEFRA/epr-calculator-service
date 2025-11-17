@@ -50,6 +50,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
                 LastModifiedAcceptRejectBy = "User A"
             });
 
+            context.CalculatorRunOrganisationDataDetails.Add(new CalculatorRunOrganisationDataDetail
+            {
+                Id = 1,
+                OrganisationId = 100,
+                SubsidaryId = null,
+                OrganisationName = "Producer A",
+                LoadTimeStamp = DateTime.UtcNow,
+                SubmissionPeriodDesc = "January to June 2023",
+                CalculatorRunOrganisationDataMasterId = 1,
+                TradingName = "Trade A"
+            });
+
             await context.SaveChangesAsync();
             
             var producerDetailsService = new ProducerDetailService(context);
@@ -92,6 +104,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
                 LastModifiedAcceptReject = new DateTime(2024, 1, 1),
                 LastModifiedAcceptRejectBy = "User A"
             });
+           
 
             await context.SaveChangesAsync();
 
@@ -208,6 +221,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
                 LastModifiedAcceptRejectBy = "User B"
             });
 
+            context.CalculatorRunOrganisationDataDetails.Add(new CalculatorRunOrganisationDataDetail
+            {
+                Id = 1,
+                OrganisationId = 200,
+                SubsidaryId = null,
+                OrganisationName = "Producer A",
+                LoadTimeStamp = DateTime.UtcNow,
+                SubmissionPeriodDesc = "January to June 2023",
+                CalculatorRunOrganisationDataMasterId = 1,
+                TradingName = "Trade A"
+            });
+
             await context.SaveChangesAsync();
 
             var producerDetailsService = new ProducerDetailService(context);
@@ -268,6 +293,31 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
                 ReasonForRejection = "Some Reason",
                 LastModifiedAcceptReject = DateTime.Now,
                 LastModifiedAcceptRejectBy = "User B"
+            });
+
+            context.CalculatorRunOrganisationDataDetails.Add(new CalculatorRunOrganisationDataDetail
+            {
+                Id = 1,
+                OrganisationId = 200,
+                SubsidaryId = null,
+                OrganisationName = "Producer A",
+                LoadTimeStamp = DateTime.UtcNow,
+                SubmissionPeriodDesc = "January to June 2023",
+                CalculatorRunOrganisationDataMasterId = 1,
+                TradingName = "Trade A"
+            });
+
+
+            context.CalculatorRunOrganisationDataDetails.Add(new CalculatorRunOrganisationDataDetail
+            {
+                Id = 2,
+                OrganisationId = 400,
+                SubsidaryId = null,
+                OrganisationName = "Producer B",
+                LoadTimeStamp = DateTime.UtcNow,
+                SubmissionPeriodDesc = "January to June 2023",
+                CalculatorRunOrganisationDataMasterId = 1,
+                TradingName = "Trade B"
             });
 
             await context.SaveChangesAsync();
