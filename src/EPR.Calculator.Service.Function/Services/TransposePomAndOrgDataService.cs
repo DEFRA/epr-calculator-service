@@ -169,12 +169,12 @@
             var calculatorRun = await this.context.CalculatorRuns
                 .Where(x => x.Id == resultsRequestDto.RunId)
                 .SingleAsync(cancellationToken);
-            var calculatorRunPomDataDetails = await this.context.CalculatorRunPomDataDetails
-                .Where(x => x.CalculatorRunPomDataMasterId == calculatorRun.CalculatorRunPomDataMasterId)
-                .OrderBy(x => x.SubmissionPeriodDesc)
-                .ToListAsync(cancellationToken);
             var calculatorRunOrgDataDetails = await this.context.CalculatorRunOrganisationDataDetails
                 .Where(x => x.CalculatorRunOrganisationDataMasterId == calculatorRun.CalculatorRunOrganisationDataMasterId)
+                .OrderBy(x => x.SubmissionPeriodDesc)
+                .ToListAsync(cancellationToken);
+            var calculatorRunPomDataDetails = await this.context.CalculatorRunPomDataDetails
+                .Where(x => x.CalculatorRunPomDataMasterId == calculatorRun.CalculatorRunPomDataMasterId)
                 .OrderBy(x => x.SubmissionPeriodDesc)
                 .ToListAsync(cancellationToken);
 
@@ -217,7 +217,7 @@
                     .SingleAsync(x => x.Id == calculatorRun.CalculatorRunPomDataMasterId, cancellationToken);
 
 
-                foreach (var organisation in organisationDataDetails.Where(t => !string.IsNullOrWhiteSpace(t.OrganisationName)))
+                foreach (var organisation in organisationDataDetails.Where(t => !string.IsNullOrWhiteSpace(t.OrganisationName) && t.ObligationStatus == "Y"))
                 {
                     // Initialise the producerReportedMaterials
                     var producerReportedMaterials = new List<ProducerReportedMaterial>();
