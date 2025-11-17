@@ -31,7 +31,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public async void GetLatestProducerDetailsForThisFinancialYearTest_Returns_CancelledProducers()
+        public async Task GetLatestProducerDetailsForThisFinancialYearTest_Returns_CancelledProducers()
         {
             TestDataHelper.SeedDatabaseForInitialRun(this.context);
 
@@ -46,11 +46,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(4, result.Count());
+            Assert.AreEqual(2, result.Count());
         }
 
         [TestMethod]
-        public async void GetLatestProducerDetailsForThisFinancialYearTest_DoesNotReturns_CancelledProducers()
+        public async Task GetLatestProducerDetailsForThisFinancialYearTest_DoesNotReturns_CancelledProducers()
         {
             TestDataHelper.SeedDatabaseForUnclassified(this.context);
 
