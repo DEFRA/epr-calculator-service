@@ -60,7 +60,8 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                           on billing.ProducerId equals pdd.OrganisationId
                           where billing.CalculatorRunId == resultsRequestDto.RunId
                                && billing.BillingInstructionAcceptReject == CommonConstants.Rejected
-                               && billing.ReasonForRejection != null && billing.ReasonForRejection.Trim() != ""                               
+                               && billing.ReasonForRejection != null && billing.ReasonForRejection.Trim() != ""    
+                               && pdd.SubsidaryId == null
                           select new CalcResultRejectedProducer
                           {
                               ProducerId = pdd.OrganisationId.GetValueOrDefault(),
