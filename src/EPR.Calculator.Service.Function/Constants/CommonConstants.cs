@@ -90,5 +90,10 @@
         public const string Accepted = "Accepted";
         public const string Rejected = "Rejected";
         public const string Cancel = "Cancel";
+
+        public const string ErrorReportHeader = "Error Table";
+        public const string LeaverCode = "Leaver Code";
+        public const string ErrorCodeText = "Error Code Text";
+        public const string ProducerSubsidaryName = "Producer / Subsidiary Name";
     }
 }
