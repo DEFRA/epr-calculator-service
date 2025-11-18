@@ -94,8 +94,8 @@
                 calcResultCancelledProducers.Add(new CalcResultCancelledProducersDto()
                 {
                     ProducerId = (int)producerId,
-                    ProducerOrSubsidiaryNameValue = producerDetails.FirstOrDefault(t=>t.ProducerId == producerId)?.ProducerName,
-                    TradingNameValue = filteredMissingProducers.Where(t => t.ProducerDetail?.ProducerId == producerId).Select(t => t.ProducerDetail?.TradingName).FirstOrDefault(),
+                    ProducerOrSubsidiaryNameValue = producerDetails.FirstOrDefault(t => t.ProducerId == producerId)?.ProducerName,
+                    TradingNameValue = producerDetails.FirstOrDefault(t => t.ProducerId == producerId)?.TradingName,
 
                     LastTonnage = new LastTonnage()
                     {
@@ -184,8 +184,8 @@
         private async Task<IEnumerable<ProducerDetail>> GetProducerDetails(IEnumerable<int?> producerIds)
         {
             return await context.CalculatorRunOrganisationDataDetails.OrderByDescending(t => t.CalculatorRunOrganisationDataMasterId).
-                Where(t => producerIds.Contains(t.OrganisationId.GetValueOrDefault())).
-                Select(t => new ProducerDetail { ProducerId= t.OrganisationId.GetValueOrDefault(), ProducerName= t.OrganisationName }).ToListAsync();
+                Where(t => producerIds.Contains(t.OrganisationId.GetValueOrDefault()) && string.IsNullOrEmpty(t.SubsidaryId)).
+                Select(t => new ProducerDetail { ProducerId= t.OrganisationId.GetValueOrDefault(), ProducerName= t.OrganisationName, TradingName = t.TradingName }).ToListAsync();
         }
 
         private sealed record ProducerDetail
@@ -195,6 +195,8 @@
             {
                 get; set;
             }
+
+            public string? TradingName { get; set; }
         }
     }
 }

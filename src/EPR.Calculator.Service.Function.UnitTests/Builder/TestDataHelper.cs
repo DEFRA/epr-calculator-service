@@ -2086,7 +2086,7 @@
             {
                 Id = 2,
                 OrganisationId = 2,
-                SubsidaryId = "null",
+                SubsidaryId = null,
                 OrganisationName = "Test2",
                 LoadTimeStamp = DateTime.UtcNow,
                 SubmissionPeriodDesc = "January to June 2023",
