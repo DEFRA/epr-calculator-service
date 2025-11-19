@@ -85,7 +85,7 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                     runId = cr.Id,
                     ProducerId = crodd.OrganisationId ?? 0,
                     ProducerName = crodd.OrganisationName,
-                    TradingName = crodd.TradingName,
+                    TradingName = crodd.TradingName ?? "",
 
                     SuggestedBillingInstruction = b.SuggestedBillingInstruction,
                     SuggestedInvoiceAmount = b.SuggestedInvoiceAmount ?? 0m,
@@ -95,7 +95,7 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                 };
 
 
-            var result =await rejectedProducersQuery.AsNoTracking().ToListAsync();
+            var result = await rejectedProducersQuery.AsNoTracking().ToListAsync();
 
             return result;
 
