@@ -217,7 +217,7 @@
                     .SingleAsync(x => x.Id == calculatorRun.CalculatorRunPomDataMasterId, cancellationToken);
 
 
-                foreach (var organisation in organisationDataDetails.Where(t => !string.IsNullOrWhiteSpace(t.OrganisationName) && t.ObligationStatus == "Y"))
+                foreach (var organisation in organisationDataDetails.Where(t => !string.IsNullOrWhiteSpace(t.OrganisationName) && IsObligated(t.ObligationStatus)))
                 {
                     // Initialise the producerReportedMaterials
                     var producerReportedMaterials = new List<ProducerReportedMaterial>();
@@ -293,9 +293,15 @@
 
                 await this.ProducerDetailChunker.InsertRecords(newProducerDetails);
                 await this.ProducerReportedMaterialChunker.InsertRecords(newProducerReportedMaterials);
+
             }
 
             return true;
+
+            static bool IsObligated(string status)
+            {
+                return string.IsNullOrWhiteSpace(status)  || status == ObligationStates.Yes;
+            }
         }
 
         private static bool IsPackagingTypeAndPackagingMaterialWeightExists(string? packagingType, double? totalPackagingMaterialWeight)

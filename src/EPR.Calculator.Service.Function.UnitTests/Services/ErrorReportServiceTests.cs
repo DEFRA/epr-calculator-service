@@ -417,8 +417,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var runId = 300;
             var createdBy = "no error";
 
-            Guid pom1ID = Guid.NewGuid();
-            Guid pom2ID = Guid.NewGuid();
+            Guid pom1SumbitterId = Guid.NewGuid();
+            Guid pom2SubmitterId = Guid.NewGuid();
             var pomDetails = new[]
             {
                 new CalculatorRunPomDataDetail
@@ -428,7 +428,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     SubmissionPeriod = "2023-P2",
                     LoadTimeStamp = DateTime.UtcNow,
                     SubmissionPeriodDesc = "July to December 2023",
-                    SubmitterId = pom1ID,
+                    SubmitterId = pom1SumbitterId,
                 },
                 new CalculatorRunPomDataDetail
                 {
@@ -437,7 +437,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                      SubmissionPeriod = "2023-P2",
                     LoadTimeStamp = DateTime.UtcNow,
                     SubmissionPeriodDesc = "July to December 2023",
-                    SubmitterId = pom1ID
+                    SubmitterId = pom1SumbitterId
 
                 }
             };
@@ -450,7 +450,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     SubsidaryId = "101",
                     OrganisationName = "Test",
                     SubmissionPeriodDesc = "July to December 2023",
-                    SubmitterId=pom1ID,
+                    SubmitterId=pom1SumbitterId,
                 },
                 new CalculatorRunOrganisationDataDetail
                 {
@@ -458,7 +458,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     SubsidaryId = "102",
                     OrganisationName = "Test1",
                     SubmissionPeriodDesc = "July to December 2023",
-                    SubmitterId=pom2ID,
+                    SubmitterId=pom2SubmitterId,
                 }
             };
 

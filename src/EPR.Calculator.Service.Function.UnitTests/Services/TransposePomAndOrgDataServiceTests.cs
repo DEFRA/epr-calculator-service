@@ -92,7 +92,7 @@
             var result = this.TestClass.GetAllOrganisationsBasedonRunId(organisationDetails);
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(3, result.Count());
+            Assert.AreEqual(4, result.Count());
         }
 
         [TestMethod]
@@ -822,6 +822,19 @@
                     CalculatorRunOrganisationDataMasterId = 2,
                     SubmissionPeriodDesc = "July to December 2023",
                 },
+                new ()
+                {
+                    Id = 4,
+                    OrganisationId = 3,
+                    SubsidaryId = "100",
+                    OrganisationName = "Subsid3-1",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    CalculatorRunOrganisationDataMasterId = 1,
+                    SubmissionPeriodDesc = "July to December 2023",
+                    ObligationStatus = "N",
+                    TradingName="Non Obligated Org"
+                },
+
             });
             return list;
         }
@@ -1024,6 +1037,70 @@
                 },
             };
             return list;
+        }
+
+        [TestMethod]
+        public async Task Transpose_Should_Return_ObligatedOrgs()
+        {
+            var expectedResult = new ProducerDetail
+            {
+                ProducerId = 9991,
+                ProducerName = "UPU LIMITED",
+                CalculatorRunId = 1,
+                CalculatorRun = Fixture.Create<CalculatorRun>(),
+            };
+
+            var mockProducerDetailService = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
+            // var mockErrorReportService = new Mock<IDbLoadingChunkerService<ErrorReport>>();
+            IEnumerable<ProducerDetail> resultProducerDetails = null;
+            mockProducerDetailService.Setup(service => service.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
+                                      .Callback<IEnumerable<ProducerDetail>>(arg=> resultProducerDetails = arg)
+                                     .Returns(Task.CompletedTask);
+
+            var mockErrorReportService = new Mock<IErrorReportService>();
+
+            // Mocking the unmatched output returned by HandleUnmatchedPomAsync
+            var unmatchedRecords = new List<(int ProducerId, string? SubsidiaryId)>
+                                    {
+                                        (2, "1"),
+                                    };
+
+            mockErrorReportService
+                .Setup(s => s.HandleUnmatchedPomAsync(
+                    It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
+                    It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
+                    It.IsAny<int>(),
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(unmatchedRecords);
+
+            var dbChunkerService = new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>();
+
+           var service = new TransposePomAndOrgDataService(
+                this._context,
+                this.CommandTimeoutService,
+                mockProducerDetailService.Object,
+                dbChunkerService.Object,
+                mockErrorReportService.Object,
+                new Mock<ICalculatorTelemetryLogger>().Object);
+
+            var resultsRequestDto = new CalcResultsRequestDto { RunId = 3 };
+
+            // Detach existing CalculatorRun entity if it is already being tracked
+            var existingCalculatorRun = _context.ChangeTracker.Entries<CalculatorRun>()
+                                                .FirstOrDefault(e => e.Entity.Id == expectedResult.CalculatorRunId);
+            if (existingCalculatorRun != null)
+            {
+                _context.Entry(existingCalculatorRun.Entity).State = EntityState.Detached;
+            }
+            IEnumerable<ProducerReportedMaterial> resultPRM = null;
+            dbChunkerService.Setup(x => x.InsertRecords(It.IsAny<IEnumerable<ProducerReportedMaterial>>())).Callback<IEnumerable<ProducerReportedMaterial>>(arg => resultPRM = arg).Returns(Task.CompletedTask);
+
+            await service.Transpose(resultsRequestDto, CancellationToken.None);
+            
+            Assert.IsNotNull(resultProducerDetails);
+            Assert.IsFalse(resultProducerDetails.Any(x=>x.SubsidiaryId == "100"));
+            Assert.IsNotNull(resultPRM);
         }
     }
 }
