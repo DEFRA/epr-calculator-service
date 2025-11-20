@@ -69,14 +69,14 @@
 
             if (isBilling)
             {
-                var acceptedCancelledProducersForThisRun = GetAcceptedCancelledProducersForThisRun(runId).ToList();
-                filteredMissingProducers = missingProducersInCurrentRun.Where(t => acceptedCancelledProducersForThisRun.
-                Exists(k => k == t.InvoicedTonnage?.ProducerId)).ToList();
-
+                var acceptedCancelledProducersForThisRun = GetAcceptedCancelledProducersForThisRun(runId).Result.ToList();
+                filteredMissingProducers = missingProducersInCurrentRun
+                    .Where(t => acceptedCancelledProducersForThisRun.Exists(k => k == t.InvoicedTonnage?.ProducerId))
+                    .ToList();
             }
             else
             {
-                var acceptedCancelledProducersForPreviousRuns = GetAcceptedCancelledProducers(financialYear).ToList();
+                var acceptedCancelledProducersForPreviousRuns = GetAcceptedCancelledProducers(financialYear).Result.ToList();
                 filteredMissingProducers = missingProducersInCurrentRun.Where(t => !acceptedCancelledProducersForPreviousRuns
                 .Exists(k => k == t.InvoicedTonnage?.ProducerId)).ToList();
             }
@@ -153,30 +153,36 @@
         }
 
 
-        private IEnumerable<int> GetAcceptedCancelledProducers(string financialYear)
+        private async Task<IEnumerable<int>> GetAcceptedCancelledProducers(string financialYear)
         {
-            var cancelledAcceptedProducers = (from calc in context.CalculatorRuns.AsNoTracking()
-                                              join p in context.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
-                                              on calc.Id equals p.CalculatorRunId
-                                              where (calc.FinancialYearId == financialYear && p.BillingInstructionAcceptReject != null && p.BillingInstructionAcceptReject == CommonConstants.Accepted
-                                                && p.SuggestedBillingInstruction == CommonConstants.CancelStatus)
-                                                && new int[]
-                                                {
-                                                    RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
-                                                    RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
-                                                    RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
-                                                    RunClassificationStatusIds.FINALRUNCOMPLETEDID
-                                                }.Contains(calc.CalculatorRunClassificationId)
-                                              select p.ProducerId).AsEnumerable();
+            var cancelledAcceptedProducers = await (from calc in context.CalculatorRuns.AsNoTracking()
+                                                    join p in context.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
+                                                        on calc.Id equals p.CalculatorRunId
+                                                    where calc.FinancialYearId == financialYear
+                                                        && p.BillingInstructionAcceptReject != null
+                                                        && p.BillingInstructionAcceptReject == CommonConstants.Accepted
+                                                        && p.SuggestedBillingInstruction == CommonConstants.CancelStatus
+                                                        && new int[]
+                                                        {
+                                                            RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
+                                                            RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
+                                                            RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
+                                                            RunClassificationStatusIds.FINALRUNCOMPLETEDID
+                                                        }.Contains(calc.CalculatorRunClassificationId)
+                                                    select p.ProducerId)
+                                                    .ToListAsync();
             return cancelledAcceptedProducers;
         }
 
-        private IEnumerable<int> GetAcceptedCancelledProducersForThisRun(int runId)
+        private async Task<IEnumerable<int>> GetAcceptedCancelledProducersForThisRun(int runId)
         {
-            var cancelledAcceptedProducers = (from p in context.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
-                                              where (p.CalculatorRunId == runId && p.BillingInstructionAcceptReject == CommonConstants.Accepted
-                                              && p.SuggestedBillingInstruction == CommonConstants.CancelStatus)
-                                              select p.ProducerId).AsEnumerable();
+            var cancelledAcceptedProducers = await (from p in context.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
+                                                    where p.CalculatorRunId == runId
+                                                        && p.BillingInstructionAcceptReject == CommonConstants.Accepted
+                                                        && p.SuggestedBillingInstruction == CommonConstants.CancelStatus
+                                                    select p.ProducerId)
+                                                    .ToListAsync();
+
             return cancelledAcceptedProducers;
         }
 
