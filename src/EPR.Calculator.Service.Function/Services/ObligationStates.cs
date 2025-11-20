@@ -4,8 +4,8 @@ namespace EPR.Calculator.Service.Function.Services
 {
     public static class ObligationStates
     {
-        public static string Yes = "Y";
-        public static string No = "N";
-        public static string Error = "E";
+        public const string Yes = "Y";
+        public const string No = "N";
+        public const string Error = "E";
     }
 }

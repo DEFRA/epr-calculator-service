@@ -480,7 +480,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var reportsList = capturedReports!.ToList();
             Assert.AreEqual(1, reportsList.Count, "Expected 1 unmatched records to be inserted (2).");
             var error = reportsList.First();
-            Assert.AreEqual((int)ErrorTypes.MismatchedSubmitterId, error.ErrorTypeId, "Incorrect Error Type" );
+            Assert.AreEqual((int)ErrorTypes.MissingRegistrationData, error.ErrorTypeId, "Incorrect Error Type" );
             Assert.AreEqual(2, error.ProducerId, "Incorrect Producer Id");
         }
     }

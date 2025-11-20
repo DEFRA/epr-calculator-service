@@ -102,7 +102,7 @@ namespace EPR.Calculator.Service.Function.Services
                 CalculatorRunId = calculatorRunId,
                 ProducerId = orgId,
                 SubsidiaryId = null,
-                ErrorTypeId = (int) ErrorTypes.MismatchedSubmitterId,
+                ErrorTypeId = (int) ErrorTypes.MissingRegistrationData,
                 CreatedBy = createdBy,
                 CreatedAt = DateTime.UtcNow
             };
