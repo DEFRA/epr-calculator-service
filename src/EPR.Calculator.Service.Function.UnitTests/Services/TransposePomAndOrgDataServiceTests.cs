@@ -1052,7 +1052,7 @@
 
             var mockProducerDetailService = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
             // var mockErrorReportService = new Mock<IDbLoadingChunkerService<ErrorReport>>();
-            IEnumerable<ProducerDetail> resultProducerDetails = null;
+            IEnumerable<ProducerDetail> resultProducerDetails = new List<ProducerDetail>();
             mockProducerDetailService.Setup(service => service.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
                                       .Callback<IEnumerable<ProducerDetail>>(arg=> resultProducerDetails = arg)
                                      .Returns(Task.CompletedTask);
@@ -1093,7 +1093,7 @@
             {
                 _context.Entry(existingCalculatorRun.Entity).State = EntityState.Detached;
             }
-            IEnumerable<ProducerReportedMaterial> resultPRM = null;
+            IEnumerable<ProducerReportedMaterial> resultPRM = new List<ProducerReportedMaterial>();
             dbChunkerService.Setup(x => x.InsertRecords(It.IsAny<IEnumerable<ProducerReportedMaterial>>())).Callback<IEnumerable<ProducerReportedMaterial>>(arg => resultPRM = arg).Returns(Task.CompletedTask);
 
             await service.Transpose(resultsRequestDto, CancellationToken.None);
