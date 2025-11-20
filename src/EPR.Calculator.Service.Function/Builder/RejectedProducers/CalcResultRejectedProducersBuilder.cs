@@ -17,14 +17,10 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
     public class CalcResultRejectedProducersBuilder : ICalcResultRejectedProducersBuilder
     {
         private readonly ApplicationDBContext context;
-        private readonly IProducerDetailService producerDetailsService;
 
-        public CalcResultRejectedProducersBuilder(ApplicationDBContext context,
-            IProducerDetailService producerDetailsService
-        )
+        public CalcResultRejectedProducersBuilder(ApplicationDBContext context)
         {
             this.context = context;
-            this.producerDetailsService = producerDetailsService;
         }
 
         public async Task<IEnumerable<CalcResultRejectedProducer>> ConstructAsync(CalcResultsRequestDto resultsRequestDto)

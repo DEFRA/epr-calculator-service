@@ -29,8 +29,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
 
         private CalcResultRejectedProducersBuilder CreateBuilder(ApplicationDBContext context)
         {
-            var producerDetailServiceMock = new Mock<IProducerDetailService>();
-            return new CalcResultRejectedProducersBuilder(context, producerDetailServiceMock.Object);
+            return new CalcResultRejectedProducersBuilder(context);
         }
 
         [TestMethod]
