@@ -29,83 +29,76 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
 
         public async Task<IEnumerable<CalcResultRejectedProducer>> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
         {
-            IEnumerable<int> allProducerIds = await GetAllProducerIdsForThisYear(resultsRequestDto.FinancialYear);
+            var billingInstructionsQuery =
+                from prsbi in context.ProducerResultFileSuggestedBillingInstruction
+                join pd in context.ProducerDetail
+                    on new { prsbi.ProducerId, prsbi.CalculatorRunId }
+                    equals new { pd.ProducerId, pd.CalculatorRunId }
+                    into pd_join
+                from pd in pd_join.DefaultIfEmpty()
+                where prsbi.CalculatorRunId == resultsRequestDto.RunId
+                      && prsbi.BillingInstructionAcceptReject == CommonConstants.Rejected
+                      && prsbi.ReasonForRejection != null && prsbi.ReasonForRejection.Trim() != ""
+                      && pd.SubsidiaryId == null
+                select new
+                {
+                    prsbi.ProducerId,
+                    pd.ProducerName,
+                    pd.TradingName,
+                    prsbi.SuggestedBillingInstruction,
+                    prsbi.SuggestedInvoiceAmount,
+                    prsbi.LastModifiedAcceptReject,
+                    prsbi.LastModifiedAcceptRejectBy,
+                    prsbi.ReasonForRejection
+                };
 
-            var producersForCurrentRun = this.producerDetailsService.GetProducers(resultsRequestDto.RunId);
+            var latestOrgDetailsByFinancialYearQuery =
+                from cr in context.CalculatorRuns
+                join crodm in context.CalculatorRunOrganisationDataMaster
+                    on cr.CalculatorRunOrganisationDataMasterId equals crodm.Id
+                join crodd in context.CalculatorRunOrganisationDataDetails
+                    on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
+                join b in billingInstructionsQuery
+                    on crodd.OrganisationId equals b.ProducerId
+                where cr.FinancialYearId == resultsRequestDto.FinancialYear
+                      && crodd.OrganisationName != null
+                group cr by crodd.OrganisationId into g
+                select new
+                {
+                    OrganisationId = g.Key,
+                    LatestRunId = g.Max(x => x.Id)
+                };
 
-            var missingProducersIdsInCurrentRun = allProducerIds.Where(t => !producersForCurrentRun.Any(k => k.ProducerId == t));
-            var missingProducersInCurrentRun = await this.producerDetailsService.GetLatestProducerDetailsForThisFinancialYear(resultsRequestDto.FinancialYear, missingProducersIdsInCurrentRun);
+            var rejectedProducersQuery =
+                from cr in context.CalculatorRuns
+                join crodm in context.CalculatorRunOrganisationDataMaster
+                    on cr.CalculatorRunOrganisationDataMasterId equals crodm.Id
+                join crodd in context.CalculatorRunOrganisationDataDetails
+                    on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
+                join b in billingInstructionsQuery
+                    on crodd.OrganisationId equals b.ProducerId
+                join latest in latestOrgDetailsByFinancialYearQuery
+                    on new { OrgId = crodd.OrganisationId ?? 0, cr.Id }
+                    equals new { OrgId = latest.OrganisationId ?? 0, Id = latest.LatestRunId }
+                select new CalcResultRejectedProducer
+                {
+                    runId = cr.Id,
+                    ProducerId = crodd.OrganisationId ?? 0,
+                    ProducerName = crodd.OrganisationName,
+                    TradingName = crodd.TradingName ?? "",
 
-            var missingProducerDetail = missingProducersInCurrentRun.Where(t => !producersForCurrentRun.Any(k => k.ProducerId == t.InvoicedTonnage?.ProducerId && t.CalculatorRunId == resultsRequestDto.RunId))
-                .DistinctBy(p => p.ProducerDetail?.ProducerId)
-                .Select(p => p.ProducerDetail)
-                .ToList(); 
-            var producerDetails = this.context.ProducerDetail
-                .AsNoTracking()
-                .Where(p => p.CalculatorRunId == resultsRequestDto.RunId)
-                .AsEnumerable()
-                .DistinctBy(p => p.ProducerId)
-                .ToList();
+                    SuggestedBillingInstruction = b.SuggestedBillingInstruction,
+                    SuggestedInvoiceAmount = b.SuggestedInvoiceAmount ?? 0m,
+                    InstructionConfirmedDate = b.LastModifiedAcceptReject,
+                    InstructionConfirmedBy = b.LastModifiedAcceptRejectBy,
+                    ReasonForRejection = b.ReasonForRejection
+                };
 
-            //Add cancelled producer in current run
-            if (missingProducerDetail.Count > 0)
-            {
-                producerDetails.AddRange(missingProducerDetail!);
-            }
 
-            var result = (from detail in producerDetails
-                          join billing in this.context.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
-                          on detail.ProducerId equals billing.ProducerId
-                          join pdd in this.context.CalculatorRunOrganisationDataDetails 
-                          on billing.ProducerId equals pdd.OrganisationId
-                          where billing.CalculatorRunId == resultsRequestDto.RunId
-                               && billing.BillingInstructionAcceptReject == CommonConstants.Rejected
-                               && billing.ReasonForRejection != null && billing.ReasonForRejection.Trim() != ""    
-                               && pdd.SubsidaryId == null
-                          select new CalcResultRejectedProducer
-                          {
-                              ProducerId = pdd.OrganisationId.GetValueOrDefault(),
-                              ProducerName = pdd.OrganisationName!,
-                              TradingName = pdd.TradingName!,
-                              SuggestedBillingInstruction = billing.SuggestedBillingInstruction,
-                              SuggestedInvoiceAmount = GetSuggestedInvoiceAmount(billing),
-                              InstructionConfirmedDate = billing.LastModifiedAcceptReject,
-                              InstructionConfirmedBy = billing.LastModifiedAcceptRejectBy!,
-                              ReasonForRejection = billing.ReasonForRejection!
-                          })
-                          .DistinctBy(p => p.ProducerId)
-                          .OrderBy(p => p.ProducerId)
-                          .ToList();
+            var result = await rejectedProducersQuery.AsNoTracking().ToListAsync();
 
             return result;
-        }
 
-        private decimal GetSuggestedInvoiceAmount(ProducerResultFileSuggestedBillingInstruction billing)
-        {
-            if (billing.SuggestedBillingInstruction == CommonConstants.CancelStatus && 
-            billing.BillingInstructionAcceptReject ==  CommonConstants.Rejected)
-            {
-                return billing.CurrentYearInvoiceTotalToDate ?? 0;
-            }
-
-            return billing.SuggestedInvoiceAmount ?? 0;
-        }       
-
-        private async Task<IEnumerable<int>> GetAllProducerIdsForThisYear(string financialYear)
-        {
-            return await (from prfb in context.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
-                          join cr in context.CalculatorRuns.AsNoTracking()
-                          on prfb.CalculatorRunId equals cr.Id
-                          where
-                             new int[]
-                             {
-                                                            RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
-                                                            RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
-                                                            RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
-                                                            RunClassificationStatusIds.FINALRUNCOMPLETEDID
-                             }.Contains(cr.CalculatorRunClassificationId) && cr.FinancialYearId == financialYear
-                             && prfb.BillingInstructionAcceptReject == CommonConstants.Accepted
-                          select prfb.ProducerId).ToListAsync();
         }
     }
 }

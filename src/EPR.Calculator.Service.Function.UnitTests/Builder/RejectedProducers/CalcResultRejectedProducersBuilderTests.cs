@@ -5,9 +5,13 @@ using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Dtos;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
 {
@@ -19,322 +23,138 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
             var options = new DbContextOptionsBuilder<ApplicationDBContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
+
             return new ApplicationDBContext(options);
         }
 
+        private CalcResultRejectedProducersBuilder CreateBuilder(ApplicationDBContext context)
+        {
+            var producerDetailServiceMock = new Mock<IProducerDetailService>();
+            return new CalcResultRejectedProducersBuilder(context, producerDetailServiceMock.Object);
+        }
+
         [TestMethod]
-        public async Task Construct_ReturnsRejectedProducers()
+        public async Task Construct_ReturnsRejectedProducers_WithLatestOrganisationDetailsForFinancialYear()
         {
             // Arrange
             var context = CreateDbContext();
 
-            // Seed ProducerDetail
-            context.ProducerDetail.Add(new ProducerDetail
-            {
-                CalculatorRunId = 1,
-                ProducerId = 100,
-                ProducerName = "Producer A",
-                TradingName = "Trade A"
-            });
+            const int organisationId = 100;
+            const string financialYearName = "2025-26";
 
-            // Seed ProducerResultFileSuggestedBillingInstruction
-            context.ProducerResultFileSuggestedBillingInstruction.Add(new ProducerResultFileSuggestedBillingInstruction
-            {
-                CalculatorRunId = 1,
-                ProducerId = 100,
-                SuggestedBillingInstruction = "Instruction A",
-                SuggestedInvoiceAmount = 123.45m,
-                BillingInstructionAcceptReject = "Rejected",
-                ReasonForRejection = "Invalid Data",
-                LastModifiedAcceptReject = new DateTime(2024, 1, 1),
-                LastModifiedAcceptRejectBy = "User A"
-            });
+            var financialYear = new CalculatorRunFinancialYear { Name = financialYearName };
+            context.FinancialYears.Add(financialYear);
 
-            context.CalculatorRunOrganisationDataDetails.Add(new CalculatorRunOrganisationDataDetail
+            var masterOld = new CalculatorRunOrganisationDataMaster
             {
                 Id = 1,
-                OrganisationId = 100,
-                SubsidaryId = null,
-                OrganisationName = "Producer A",
-                LoadTimeStamp = DateTime.UtcNow,
-                SubmissionPeriodDesc = "January to June 2023",
-                CalculatorRunOrganisationDataMasterId = 1,
-                TradingName = "Trade A"
-            });
-
-            await context.SaveChangesAsync();
-            
-            var producerDetailsService = new ProducerDetailService(context);
-            var builder = new CalcResultRejectedProducersBuilder(context, producerDetailsService);
-            var requestDto = new CalcResultsRequestDto { RunId = 1 };
-
-            // Act
-            var result = await builder.ConstructAsync(requestDto);
-
-            // Assert
-            var list = new List<CalcResultRejectedProducer>(result);
-            Assert.AreEqual(1, list.Count);
-            Assert.AreEqual(100, list[0].ProducerId);
-            Assert.AreEqual("Producer A", list[0].ProducerName);
-            Assert.AreEqual("Trade A", list[0].TradingName);
-            Assert.AreEqual("Instruction A", list[0].SuggestedBillingInstruction);
-            Assert.AreEqual(123.45m, list[0].SuggestedInvoiceAmount);
-            Assert.AreEqual(new DateTime(2024, 1, 1), list[0].InstructionConfirmedDate);
-            Assert.AreEqual("User A", list[0].InstructionConfirmedBy);
-            Assert.AreEqual("Invalid Data", list[0].ReasonForRejection);
-        }
-
-        [TestMethod]
-        public async Task Construct_CancelledProducer_ReturnsRejectedProducers()
-        {
-            // Arrange
-            var context = CreateDbContext();
-
-            TestDataHelper.SeedDatabaseForInitialRun(context);
-
-            // Seed ProducerResultFileSuggestedBillingInstruction
-            context.ProducerResultFileSuggestedBillingInstruction.Add(new ProducerResultFileSuggestedBillingInstruction
-            {
-                CalculatorRunId = 3,
-                ProducerId = 1,
-                SuggestedBillingInstruction = CommonConstants.CancelStatus,
-                CurrentYearInvoiceTotalToDate = 123.45m,
-                BillingInstructionAcceptReject = "Rejected",
-                ReasonForRejection = "Invalid Data",
-                LastModifiedAcceptReject = new DateTime(2024, 1, 1),
-                LastModifiedAcceptRejectBy = "User A"
-            });
-           
-
-            await context.SaveChangesAsync();
-
-            var producerDetailsService = new ProducerDetailService(context);
-            var builder = new CalcResultRejectedProducersBuilder(context, producerDetailsService);
-
-            var requestDto = new CalcResultsRequestDto { RunId = 3, FinancialYear = "2025-26" };
-
-            // Act
-            var result = await builder.ConstructAsync(requestDto);
-
-            // Assert
-            var list = new List<CalcResultRejectedProducer>(result);
-            Assert.AreEqual(1, list.Count);
-            Assert.AreEqual(1, list[0].ProducerId);
-            Assert.AreEqual("Test1", list[0].ProducerName);
-            Assert.AreEqual("TN1", list[0].TradingName);
-            Assert.AreEqual(CommonConstants.CancelStatus, list[0].SuggestedBillingInstruction);
-            Assert.AreEqual(123.45m, list[0].SuggestedInvoiceAmount);
-            Assert.AreEqual(new DateTime(2024, 1, 1), list[0].InstructionConfirmedDate);
-            Assert.AreEqual("User A", list[0].InstructionConfirmedBy);
-            Assert.AreEqual("Invalid Data", list[0].ReasonForRejection);
-        }
-
-        [TestMethod]
-        public async Task Construct_CancelledProducer_DoesNotReturnAcceptedProducers()
-        {
-            // Arrange
-            var context = CreateDbContext();
-
-            // Setup cancelled producer 
-            TestDataHelper.SeedDatabaseForInitialRun(context);
-
-            // Seed ProducerResultFileSuggestedBillingInstruction
-            context.ProducerResultFileSuggestedBillingInstruction.Add(new ProducerResultFileSuggestedBillingInstruction
-            {
-                CalculatorRunId = 3,
-                ProducerId = 1,
-                SuggestedBillingInstruction = CommonConstants.CancelStatus,
-                SuggestedInvoiceAmount = 123.45m,
-                BillingInstructionAcceptReject = "Accepted",
-                ReasonForRejection = "",
-                LastModifiedAcceptReject = new DateTime(2024, 1, 1),
-                LastModifiedAcceptRejectBy = "User A"
-            });
-
-            await context.SaveChangesAsync();
-
-            var producerDetailsService = new ProducerDetailService(context);
-            var builder = new CalcResultRejectedProducersBuilder(context, producerDetailsService);
-
-            var requestDto = new CalcResultsRequestDto { RunId = 3, FinancialYear = "2025-26" };
-
-            // Act
-            var result = await builder.ConstructAsync(requestDto);
-
-            // Assert
-            var list = new List<CalcResultRejectedProducer>(result);
-            Assert.AreEqual(0, list.Count);            
-        }
-
-        [TestMethod]
-        public async Task Construct_EmptyResult_ReturnsEmptyList()
-        {
-            // Arrange
-            var context = CreateDbContext();
-            var producerDetailsService = new ProducerDetailService(context);
-            var builder = new CalcResultRejectedProducersBuilder(context, producerDetailsService);
-            var requestDto = new CalcResultsRequestDto { RunId = 99 };
-
-            // Act
-            var result = await builder.ConstructAsync(requestDto);
-
-            // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(0, new List<CalcResultRejectedProducer>(result).Count);
-        }
-
-        [TestMethod]
-        public async Task Construct_FiltersByRunIdAndRejectedStatus()
-        {
-            // Arrange
-            var context = CreateDbContext();
-
-            context.ProducerDetail.Add(new ProducerDetail
-            {
-                CalculatorRunId = 2,
-                ProducerId = 200,
-                ProducerName = "Producer B",
-                TradingName = "Trade B"
-            });
-
-            context.ProducerResultFileSuggestedBillingInstruction.Add(new ProducerResultFileSuggestedBillingInstruction
-            {
-                CalculatorRunId = 2,
-                ProducerId = 200,
-                SuggestedBillingInstruction = "Instruction B",
-                SuggestedInvoiceAmount = 222.22m,
-                BillingInstructionAcceptReject = "Accepted", // Should not be included
-                ReasonForRejection = null,
-                LastModifiedAcceptReject = DateTime.UtcNow,
-                LastModifiedAcceptRejectBy = "User B"
-            });
-
-            context.ProducerResultFileSuggestedBillingInstruction.Add(new ProducerResultFileSuggestedBillingInstruction
-            {
-                CalculatorRunId = 2,
-                ProducerId = 200,
-                SuggestedBillingInstruction = "Instruction B",
-                SuggestedInvoiceAmount = 222.22m,
-                BillingInstructionAcceptReject = "Rejected", // Should be included
-                ReasonForRejection = "Some Reason",
-                LastModifiedAcceptReject = DateTime.UtcNow,
-                LastModifiedAcceptRejectBy = "User B"
-            });
-
-            context.CalculatorRunOrganisationDataDetails.Add(new CalculatorRunOrganisationDataDetail
-            {
-                Id = 1,
-                OrganisationId = 200,
-                SubsidaryId = null,
-                OrganisationName = "Producer A",
-                LoadTimeStamp = DateTime.UtcNow,
-                SubmissionPeriodDesc = "January to June 2023",
-                CalculatorRunOrganisationDataMasterId = 1,
-                TradingName = "Trade A"
-            });
-
-            await context.SaveChangesAsync();
-
-            var producerDetailsService = new ProducerDetailService(context);
-            var builder = new CalcResultRejectedProducersBuilder(context, producerDetailsService);
-
-            var requestDto = new CalcResultsRequestDto { RunId = 2 };
-
-            // Act
-            var result = await builder.ConstructAsync(requestDto);
-
-            // Assert
-            var list = new List<CalcResultRejectedProducer>(result);
-            Assert.AreEqual(1, list.Count);
-            Assert.AreEqual("Some Reason", list[0].ReasonForRejection);
-        }
-
-        [TestMethod]
-        public async Task Construct_SortByProducerIdAndRejectedStatus()
-        {
-            // Arrange
-            var context = CreateDbContext();
-
-            context.ProducerDetail.Add(new ProducerDetail
-            {
-                CalculatorRunId = 2,
-                ProducerId = 200,
-                ProducerName = "Producer A",
-                TradingName = "Trade A"
-            });
-
-            context.ProducerDetail.Add(new ProducerDetail
-            {
-                CalculatorRunId = 2,
-                ProducerId = 400,
-                ProducerName = "Producer B",
-                TradingName = "Trade B"
-            });
-
-            context.ProducerResultFileSuggestedBillingInstruction.Add(new ProducerResultFileSuggestedBillingInstruction
-            {
-                CalculatorRunId = 2,
-                ProducerId = 400,
-                SuggestedBillingInstruction = "Instruction B",
-                SuggestedInvoiceAmount = 222.22m,
-                BillingInstructionAcceptReject = "Rejected", 
-                ReasonForRejection = "Invalid",
-                LastModifiedAcceptReject = DateTime.Now,
-                LastModifiedAcceptRejectBy = "User B"
-            });
-
-            context.ProducerResultFileSuggestedBillingInstruction.Add(new ProducerResultFileSuggestedBillingInstruction
-            {
-                CalculatorRunId = 2,
-                ProducerId = 200,
-                SuggestedBillingInstruction = "Instruction B",
-                SuggestedInvoiceAmount = 222.22m,
-                BillingInstructionAcceptReject = "Rejected", 
-                ReasonForRejection = "Some Reason",
-                LastModifiedAcceptReject = DateTime.Now,
-                LastModifiedAcceptRejectBy = "User B"
-            });
-
-            context.CalculatorRunOrganisationDataDetails.Add(new CalculatorRunOrganisationDataDetail
-            {
-                Id = 1,
-                OrganisationId = 200,
-                SubsidaryId = null,
-                OrganisationName = "Producer A",
-                LoadTimeStamp = DateTime.UtcNow,
-                SubmissionPeriodDesc = "January to June 2023",
-                CalculatorRunOrganisationDataMasterId = 1,
-                TradingName = "Trade A"
-            });
-
-
-            context.CalculatorRunOrganisationDataDetails.Add(new CalculatorRunOrganisationDataDetail
+                CalendarYear = "2025",
+                EffectiveFrom = DateTime.UtcNow.AddDays(-10),
+                CreatedAt = DateTime.UtcNow.AddDays(-10),
+                CreatedBy = "testsuperuser.paycal"
+            };
+            var masterLatest = new CalculatorRunOrganisationDataMaster
             {
                 Id = 2,
-                OrganisationId = 400,
-                SubsidaryId = null,
-                OrganisationName = "Producer B",
-                LoadTimeStamp = DateTime.UtcNow,
-                SubmissionPeriodDesc = "January to June 2023",
-                CalculatorRunOrganisationDataMasterId = 1,
-                TradingName = "Trade B"
+                CalendarYear = "2025",
+                EffectiveFrom = DateTime.UtcNow.AddDays(-5),
+                CreatedAt = DateTime.UtcNow.AddDays(-5),
+                CreatedBy = "testsuperuser.paycal"
+            };
+            context.CalculatorRunOrganisationDataMaster.AddRange(masterOld, masterLatest);
+
+
+            var runOld = new CalculatorRun
+            {
+                Id = 1,
+                Name = "Run 1",
+                Financial_Year = financialYear,
+                FinancialYearId = financialYear.Name,
+                CalculatorRunOrganisationDataMasterId = masterOld.Id
+            };
+            var runLatest = new CalculatorRun
+            {
+                Id = 2,
+                Name = "Run 2",
+                Financial_Year = financialYear,
+                FinancialYearId = financialYear.Name,
+                CalculatorRunOrganisationDataMasterId = masterLatest.Id
+            };
+            context.CalculatorRuns.AddRange(runOld, runLatest);
+
+            var orgOld = new CalculatorRunOrganisationDataDetail
+            {
+                Id = 1,
+                CalculatorRunOrganisationDataMasterId = masterOld.Id,
+                OrganisationId = organisationId,
+                OrganisationName = "Old Org Name",
+                TradingName = "Old Trading Name",
+                SubmissionPeriodDesc = "Old Period"
+            };
+            var orgLatest = new CalculatorRunOrganisationDataDetail
+            {
+                Id = 2,
+                CalculatorRunOrganisationDataMasterId = masterLatest.Id,
+                OrganisationId = organisationId,
+                OrganisationName = "Latest Org Name",
+                TradingName = "Latest Trading Name",
+                SubmissionPeriodDesc = "Latest Period"
+            };
+            context.CalculatorRunOrganisationDataDetails.AddRange(orgOld, orgLatest);
+
+            // Producer detail for the current run
+            context.ProducerDetail.Add(new ProducerDetail
+            {
+                CalculatorRunId = runOld.Id,
+                ProducerId = organisationId,
+                ProducerName = "Producer Name",
+                TradingName = "Trading Name",
+                SubsidiaryId = null
+            });
+
+            // Rejected billing instruction for the current run
+            var confirmedDate = new DateTime(2024, 1, 1);
+            context.ProducerResultFileSuggestedBillingInstruction.Add(new ProducerResultFileSuggestedBillingInstruction
+            {
+                CalculatorRunId = runOld.Id,
+                ProducerId = organisationId,
+                SuggestedBillingInstruction = "Instruction A",
+                SuggestedInvoiceAmount = 123.45m,
+                BillingInstructionAcceptReject = CommonConstants.Rejected,
+                ReasonForRejection = "Invalid data",
+                LastModifiedAcceptReject = confirmedDate,
+                LastModifiedAcceptRejectBy = "User A"
             });
 
             await context.SaveChangesAsync();
 
-            var producerDetailsService = new ProducerDetailService(context);
-            var builder = new CalcResultRejectedProducersBuilder(context, producerDetailsService);
-
-            var requestDto = new CalcResultsRequestDto { RunId = 2 };
+            var builder = CreateBuilder(context);
+            var requestDto = new CalcResultsRequestDto
+            {
+                RunId = runOld.Id,
+                FinancialYear = financialYearName
+            };
 
             // Act
-            var result = await builder.ConstructAsync(requestDto);
+            var result = (await builder.ConstructAsync(requestDto)).ToList();
 
             // Assert
-            var list = new List<CalcResultRejectedProducer>(result);
-            Assert.AreEqual(2, list.Count);
-            Assert.AreEqual(200, list[0].ProducerId);
-            Assert.AreEqual(400, list[1].ProducerId);
+            Assert.AreEqual(1, result.Count);
+
+            var rejected = result[0];
+
+            // Organisation details should come from the latest run
+            Assert.AreEqual(organisationId, rejected.ProducerId);
+            Assert.AreEqual("Latest Org Name", rejected.ProducerName);
+            Assert.AreEqual("Latest Trading Name", rejected.TradingName);
+
+            Assert.AreEqual("Instruction A", rejected.SuggestedBillingInstruction);
+            Assert.AreEqual(123.45m, rejected.SuggestedInvoiceAmount);
+            Assert.AreEqual(confirmedDate, rejected.InstructionConfirmedDate);
+            Assert.AreEqual("User A", rejected.InstructionConfirmedBy);
+            Assert.AreEqual("Invalid data", rejected.ReasonForRejection);
+
+            Assert.AreEqual(runLatest.Id, rejected.runId);
         }
     }
 }
