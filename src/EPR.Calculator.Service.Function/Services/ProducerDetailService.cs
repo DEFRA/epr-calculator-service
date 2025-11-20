@@ -29,15 +29,15 @@ namespace EPR.Calculator.Service.Function.Services
                                          join d in context.ProducerDesignatedRunInvoiceInstruction on new { pd.ProducerId, pd.CalculatorRunId } equals new { d.ProducerId, d.CalculatorRunId }
                                          join c in context.CalculatorRuns on pd.CalculatorRunId equals c.Id
                                          where missingProducersIdsInCurrentRun.Contains(pd.ProducerId)
-         && c.FinancialYearId == financialYear
-         && new int[]
-                                         {
-                                        RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
-                                        RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
-                                        RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
-                                        RunClassificationStatusIds.FINALRUNCOMPLETEDID
-                                         }.Contains(c.CalculatorRunClassificationId)
-         && pds.BillingInstructionAcceptReject == CommonConstants.Accepted
+                                            && c.FinancialYearId == financialYear
+                                            && new int[]
+                                            {
+                                                RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
+                                                RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
+                                                RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
+                                                RunClassificationStatusIds.FINALRUNCOMPLETEDID
+                                             }.Contains(c.CalculatorRunClassificationId)
+                                            && pds.BillingInstructionAcceptReject == CommonConstants.Accepted
                                          select new ProducerInvoicedDto()
                                          {
                                              CalculatorRunId = c.Id,
@@ -46,13 +46,14 @@ namespace EPR.Calculator.Service.Function.Services
                                              InvoiceInstruction = d,
                                              ProducerDetail = pd,
                                              ResultFileSuggestedBillingInstruction = pds
-                                         }).
-                                 OrderByDescending(c => c.CalculatorRunId)
-                                 .ThenByDescending(c => c.InvoiceInstruction != null ? c.InvoiceInstruction.CalculatorRunId : 0) // Null check added here
-                                 .ThenByDescending(c => c.InvoicedTonnage != null ? c.InvoicedTonnage.CalculatorRunId : 0)
-                                 .ThenBy(c => c.InvoicedTonnage != null ? c.InvoicedTonnage.ProducerId : 0)
-                                 .ThenBy(c => c.InvoicedTonnage != null ? c.InvoicedTonnage.MaterialId : 0)
-                                 .ToListAsync();
+                                         })
+                                         .AsNoTracking()
+                                         .OrderByDescending(c => c.CalculatorRunId)
+                                         .ThenByDescending(c => c.InvoiceInstruction != null ? c.InvoiceInstruction.CalculatorRunId : 0)
+                                         .ThenByDescending(c => c.InvoicedTonnage != null ? c.InvoicedTonnage.CalculatorRunId : 0)
+                                         .ThenBy(c => c.InvoicedTonnage != null ? c.InvoicedTonnage.ProducerId : 0)
+                                         .ThenBy(c => c.InvoicedTonnage != null ? c.InvoicedTonnage.MaterialId : 0)
+                                         .ToListAsync();
             return producerdetails;
         }
 

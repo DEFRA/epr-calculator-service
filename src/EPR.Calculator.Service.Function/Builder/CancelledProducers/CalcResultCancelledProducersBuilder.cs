@@ -159,14 +159,14 @@
                                               join p in context.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
                                               on calc.Id equals p.CalculatorRunId
                                               where (calc.FinancialYearId == financialYear && p.BillingInstructionAcceptReject != null && p.BillingInstructionAcceptReject == CommonConstants.Accepted
-                                              && p.SuggestedBillingInstruction == CommonConstants.CancelStatus)
-                                               && new int[]
-                                                     {
-                             RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
-                             RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
-                             RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
-                             RunClassificationStatusIds.FINALRUNCOMPLETEDID
-                                                     }.Contains(calc.CalculatorRunClassificationId)
+                                                && p.SuggestedBillingInstruction == CommonConstants.CancelStatus)
+                                                && new int[]
+                                                {
+                                                    RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
+                                                    RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
+                                                    RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
+                                                    RunClassificationStatusIds.FINALRUNCOMPLETEDID
+                                                }.Contains(calc.CalculatorRunClassificationId)
                                               select p.ProducerId).AsEnumerable();
             return cancelledAcceptedProducers;
         }
@@ -183,9 +183,12 @@
 
         private async Task<IEnumerable<ProducerDetail>> GetProducerDetails(IEnumerable<int?> producerIds)
         {
-            return await context.CalculatorRunOrganisationDataDetails.OrderByDescending(t => t.CalculatorRunOrganisationDataMasterId).
-                Where(t => producerIds.Contains(t.OrganisationId.GetValueOrDefault()) && string.IsNullOrEmpty(t.SubsidaryId)).
-                Select(t => new ProducerDetail { ProducerId= t.OrganisationId.GetValueOrDefault(), ProducerName= t.OrganisationName, TradingName = t.TradingName }).ToListAsync();
+            return await context.CalculatorRunOrganisationDataDetails
+                .AsNoTracking()
+                .OrderByDescending(t => t.CalculatorRunOrganisationDataMasterId)
+                .Where(t => producerIds.Contains(t.OrganisationId.GetValueOrDefault()) && string.IsNullOrEmpty(t.SubsidaryId))
+                .Select(t => new ProducerDetail { ProducerId= t.OrganisationId.GetValueOrDefault(), ProducerName= t.OrganisationName, TradingName = t.TradingName })
+                .ToListAsync();
         }
 
         private sealed record ProducerDetail
