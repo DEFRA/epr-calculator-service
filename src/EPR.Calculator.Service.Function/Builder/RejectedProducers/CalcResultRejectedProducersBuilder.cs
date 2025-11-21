@@ -29,20 +29,21 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                 from prsbi in context.ProducerResultFileSuggestedBillingInstruction
                 join pd in context.ProducerDetail
                     on new { prsbi.ProducerId, prsbi.CalculatorRunId }
-                    equals new { pd.ProducerId, pd.CalculatorRunId }
-                    into pd_join
-                from pd in pd_join.DefaultIfEmpty()
+                    equals new { pd.ProducerId, pd.CalculatorRunId } into pdGroup
+                from pd in pdGroup.DefaultIfEmpty()
                 where prsbi.CalculatorRunId == resultsRequestDto.RunId
                       && prsbi.BillingInstructionAcceptReject == CommonConstants.Rejected
-                      && prsbi.ReasonForRejection != null && prsbi.ReasonForRejection.Trim() != ""
+                      && !string.IsNullOrWhiteSpace(prsbi.ReasonForRejection)
                       && pd.SubsidiaryId == null
                 select new
                 {
                     prsbi.ProducerId,
                     pd.ProducerName,
                     pd.TradingName,
+                    prsbi.BillingInstructionAcceptReject,
                     prsbi.SuggestedBillingInstruction,
                     prsbi.SuggestedInvoiceAmount,
+                    prsbi.CurrentYearInvoiceTotalToDate,
                     prsbi.LastModifiedAcceptReject,
                     prsbi.LastModifiedAcceptRejectBy,
                     prsbi.ReasonForRejection
@@ -58,6 +59,7 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                     on crodd.OrganisationId equals b.ProducerId
                 where cr.FinancialYearId == resultsRequestDto.FinancialYear
                       && crodd.OrganisationName != null
+                      && crodd.SubsidaryId == null
                 group cr by crodd.OrganisationId into g
                 select new
                 {
@@ -75,26 +77,26 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                     on crodd.OrganisationId equals b.ProducerId
                 join latest in latestOrgDetailsByFinancialYearQuery
                     on new { OrgId = crodd.OrganisationId ?? 0, cr.Id }
-                    equals new { OrgId = latest.OrganisationId ?? 0, Id = latest.LatestRunId }
+                    equals new { OrgId = latest.OrganisationId ?? 0, Id = latest.LatestRunId } 
+                where crodd.SubsidaryId == null
                 select new CalcResultRejectedProducer
                 {
                     runId = cr.Id,
                     ProducerId = crodd.OrganisationId ?? 0,
                     ProducerName = crodd.OrganisationName,
                     TradingName = crodd.TradingName ?? "",
-
                     SuggestedBillingInstruction = b.SuggestedBillingInstruction,
-                    SuggestedInvoiceAmount = b.SuggestedInvoiceAmount ?? 0m,
+                    SuggestedInvoiceAmount = (b.SuggestedBillingInstruction == CommonConstants.CancelStatus &&
+                                              b.BillingInstructionAcceptReject == CommonConstants.Rejected
+                                             ? (b.CurrentYearInvoiceTotalToDate ?? 0m) : (b.SuggestedInvoiceAmount ?? 0m)),
                     InstructionConfirmedDate = b.LastModifiedAcceptReject,
                     InstructionConfirmedBy = b.LastModifiedAcceptRejectBy,
                     ReasonForRejection = b.ReasonForRejection
                 };
 
-
-            var result = await rejectedProducersQuery.AsNoTracking().ToListAsync();
+            var result = await rejectedProducersQuery.AsNoTracking().Distinct().ToListAsync();
 
             return result;
-
         }
     }
 }
