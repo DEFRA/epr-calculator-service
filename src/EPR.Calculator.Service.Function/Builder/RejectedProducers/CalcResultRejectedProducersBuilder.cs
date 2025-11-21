@@ -29,7 +29,8 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                 from prsbi in context.ProducerResultFileSuggestedBillingInstruction
                 join pd in context.ProducerDetail
                     on new { prsbi.ProducerId, prsbi.CalculatorRunId }
-                    equals new { pd.ProducerId, pd.CalculatorRunId }
+                    equals new { pd.ProducerId, pd.CalculatorRunId } into pdGroup
+                from pd in pdGroup.DefaultIfEmpty()
                 where prsbi.CalculatorRunId == resultsRequestDto.RunId
                       && prsbi.BillingInstructionAcceptReject == CommonConstants.Rejected
                       && !string.IsNullOrWhiteSpace(prsbi.ReasonForRejection)
@@ -76,7 +77,7 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                     on crodd.OrganisationId equals b.ProducerId
                 join latest in latestOrgDetailsByFinancialYearQuery
                     on new { OrgId = crodd.OrganisationId ?? 0, cr.Id }
-                    equals new { OrgId = latest.OrganisationId ?? 0, Id = latest.LatestRunId }
+                    equals new { OrgId = latest.OrganisationId ?? 0, Id = latest.LatestRunId } 
                 where crodd.SubsidaryId == null
                 select new CalcResultRejectedProducer
                 {
