@@ -16,8 +16,9 @@ namespace EPR.Calculator.Service.Function.Models
 
         public DateTime? InstructionConfirmedDate { get; set; }
 
-        public  required string InstructionConfirmedBy { get; set; }
+        public required string InstructionConfirmedBy { get; set; }
 
         public required string ReasonForRejection { get; set; }
+        public int runId { get; set; } = 0;
     }
 }
