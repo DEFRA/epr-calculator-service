@@ -478,7 +478,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.IsNotNull(capturedReports);
 
             var reportsList = capturedReports!.ToList();
-            Assert.AreEqual(1, reportsList.Count, "Expected 1 unmatched records to be inserted (2).");
+            Assert.AreEqual(2, reportsList.Count, "Expected 2 unmatched records to be inserted (2).");
             var error = reportsList.First();
             Assert.AreEqual((int)ErrorTypes.MissingRegistrationData, error.ErrorTypeId, "Incorrect Error Type" );
             Assert.AreEqual(2, error.ProducerId, "Incorrect Producer Id");
