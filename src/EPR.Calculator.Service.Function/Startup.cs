@@ -16,6 +16,7 @@ using EPR.Calculator.Service.Function.Builder;
 using EPR.Calculator.Service.Function.Builder.CancelledProducers;
 using EPR.Calculator.Service.Function.Builder.CommsCost;
 using EPR.Calculator.Service.Function.Builder.Detail;
+using EPR.Calculator.Service.Function.Builder.ErrorReport;
 using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
 using EPR.Calculator.Service.Function.Builder.Lapcap;
 using EPR.Calculator.Service.Function.Builder.LateReportingTonnages;
@@ -28,6 +29,7 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.ErrorReport;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
@@ -146,6 +148,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<IDbLoadingChunkerService<ProducerDetail>, DbLoadingChunkerService<ProducerDetail>>();
             services.AddTransient<IDbLoadingChunkerService<ProducerReportedMaterial>, DbLoadingChunkerService<ProducerReportedMaterial>>();
             services.AddTransient<IDbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction>, DbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction>>();
+            services.AddTransient<IDbLoadingChunkerService<ErrorReport>, DbLoadingChunkerService<ErrorReport>>();
             services.AddTransient<ICalcResultSummaryExporter, CalcResultSummaryExporter>();
             services.AddTransient<ICalcBillingJsonExporter<CalcResult>, CalcResultsJsonExporter>();
             services.AddTransient<ILateReportingExporter, LateReportingExporter>();
@@ -205,6 +208,9 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<IDbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage>, DbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage>>();
             services.AddTransient<IProducerInvoiceTonnageMapper, ProducerInvoiceTonnageMapper>();
             services.AddTransient<IPrepareProducerDataInsertService, PrepareProducerDataInsertService>();
+            services.AddTransient<ICalcResultErrorReportBuilder, CalcResultErrorReportBuilder>();
+            services.AddTransient<ICalcResultErrorReportExporter, CalcResultErrorReportExporter>();
+            services.AddTransient<IErrorReportService, ErrorReportService>();
 
             services.AddScoped<PrepareCalcServiceDependencies>(provider => new PrepareCalcServiceDependencies
             {
