@@ -79,6 +79,5 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.IsNotNull(result);
             Assert.AreEqual(3, result.Count());
         }
-
     }
 }
