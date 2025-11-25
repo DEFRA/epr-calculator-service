@@ -19,6 +19,13 @@
     <PackageReference Include="Microsoft.ApplicationInsights.Web" Version="2.23.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.ServiceBus" Version="5.12.0" />
+    <!-- 
+        Adding Azure.Messaging.ServiceBus so that it can connect to the ASB emulator
+        Previous implicit version being used was 7.16.0, as a dependency of
+        Microsoft.Azure.WebJobs.Extensions.ServiceBus. All packages still require updating
+        however this is the smallest change we can make right now.
+    -->
+    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.18.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.5.0" />
