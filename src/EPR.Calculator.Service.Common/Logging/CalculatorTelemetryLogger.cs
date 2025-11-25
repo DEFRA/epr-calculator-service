@@ -42,9 +42,6 @@
             };
             AddProperties(exceptionTelemetry.Properties, errorMessage.RunId, errorMessage.RunName);
             this._telemetryClient.TrackException(exceptionTelemetry);
-            
-            Console.WriteLine(formattedMessage);
-            Console.WriteLine(errorMessage.Exception.ToString());
         }
 
         /// <summary>
@@ -88,8 +85,6 @@
             };
             AddProperties(traceTelemetry.Properties, logMessage.RunId, logMessage.RunName);
             this._telemetryClient.TrackTrace(traceTelemetry);
-            
-            Console.WriteLine(formattedMessage);
         }
     }
 }

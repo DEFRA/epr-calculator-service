@@ -1961,18 +1961,16 @@
                 LoadTimeStamp = DateTime.UtcNow,
                 SubmissionPeriodDesc = "January to June 2023",
                 CalculatorRunOrganisationDataMasterId = GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
-                CalculatorRunOrganisationDataMaster = GetCalculatorRunOrganisationDataMaster().ToList()[0]
             });
             list.Add(new CalculatorRunOrganisationDataDetail
             {
-                Id = 1,
+                Id = 2,
                 OrganisationId = 1,
                 SubsidaryId = "901",
                 OrganisationName = "Allied Subsidiary",
                 LoadTimeStamp = DateTime.UtcNow,
                 SubmissionPeriodDesc = "January to June 2023",
                 CalculatorRunOrganisationDataMasterId = GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
-                CalculatorRunOrganisationDataMaster = GetCalculatorRunOrganisationDataMaster().ToList()[0]
             });
             return list;
         }

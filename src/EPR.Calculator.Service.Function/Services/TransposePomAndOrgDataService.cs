@@ -42,12 +42,14 @@
             ICommandTimeoutService commandTimeoutService,
             IDbLoadingChunkerService<ProducerDetail> producerDetailChunker,
             IDbLoadingChunkerService<ProducerReportedMaterial> producerReportedMaterialChunker,
+            IErrorReportService errorReportService,
             ICalculatorTelemetryLogger telemetryLogger)
         {
             this.context = context;
             this.CommandTimeoutService = commandTimeoutService;
             this.ProducerDetailChunker = producerDetailChunker;
             this.ProducerReportedMaterialChunker = producerReportedMaterialChunker;
+            this.ErrorReportService = errorReportService;
             this.telemetryLogger = telemetryLogger;
         }
 
@@ -56,6 +58,8 @@
         private IDbLoadingChunkerService<ProducerDetail> ProducerDetailChunker { get; init; }
 
         private IDbLoadingChunkerService<ProducerReportedMaterial> ProducerReportedMaterialChunker { get; init; }
+
+        private IErrorReportService ErrorReportService { get; init; }
 
         public async Task<bool> TransposeBeforeResultsFileAsync(
             [FromBody] CalcResultsRequestDto resultsRequestDto,
@@ -165,14 +169,33 @@
             var calculatorRun = await this.context.CalculatorRuns
                 .Where(x => x.Id == resultsRequestDto.RunId)
                 .SingleAsync(cancellationToken);
-            var calculatorRunPomDataDetails = await this.context.CalculatorRunPomDataDetails
-                .Where(x => x.CalculatorRunPomDataMasterId == calculatorRun.CalculatorRunPomDataMasterId)
-                .OrderBy(x => x.SubmissionPeriodDesc)
-                .ToListAsync(cancellationToken);
             var calculatorRunOrgDataDetails = await this.context.CalculatorRunOrganisationDataDetails
                 .Where(x => x.CalculatorRunOrganisationDataMasterId == calculatorRun.CalculatorRunOrganisationDataMasterId)
                 .OrderBy(x => x.SubmissionPeriodDesc)
                 .ToListAsync(cancellationToken);
+            var calculatorRunPomDataDetails = await this.context.CalculatorRunPomDataDetails
+                .Where(x => x.CalculatorRunPomDataMasterId == calculatorRun.CalculatorRunPomDataMasterId)
+                .OrderBy(x => x.SubmissionPeriodDesc)
+                .ToListAsync(cancellationToken);
+
+            var unmatchedRecords  = await ErrorReportService.HandleUnmatchedPomAsync(
+                calculatorRunPomDataDetails,
+                calculatorRunOrgDataDetails,
+                resultsRequestDto.RunId,
+                resultsRequestDto.CreatedBy,
+                cancellationToken);
+
+            var unmatchedSet = new HashSet<(int OrgId, string? SubId)>(
+                unmatchedRecords.Select(r => (r.ProducerId, r.SubsidiaryId))
+            );
+
+            calculatorRunPomDataDetails = calculatorRunPomDataDetails
+                                            .Where(p =>
+                                            {
+                                                var orgId = p.OrganisationId.GetValueOrDefault();
+                                                var subId = p.SubsidaryId;
+                                                return !unmatchedSet.Contains((orgId, subId));
+                                            }).ToList();
 
             if (IsCalculatorRunPOMMasterIdExists(calculatorRun))
             {
@@ -180,6 +203,7 @@
                     .SingleAsync(x => x.Id == calculatorRun.CalculatorRunOrganisationDataMasterId, cancellationToken);
 
                 var OrganisationsList = GetAllOrganisationsBasedonRunId(calculatorRunOrgDataDetails);
+
 
                 var organisationDataDetails = calculatorRunOrgDataDetails
                     .Where(odd => odd.CalculatorRunOrganisationDataMasterId == organisationDataMaster.Id && odd.OrganisationName != null && odd.OrganisationName != "")
@@ -193,7 +217,7 @@
                     .SingleAsync(x => x.Id == calculatorRun.CalculatorRunPomDataMasterId, cancellationToken);
 
 
-                foreach (var organisation in organisationDataDetails.Where(t => !string.IsNullOrWhiteSpace(t.OrganisationName)))
+                foreach (var organisation in organisationDataDetails.Where(t => !string.IsNullOrWhiteSpace(t.OrganisationName) && IsObligated(t.ObligationStatus)))
                 {
                     // Initialise the producerReportedMaterials
                     var producerReportedMaterials = new List<ProducerReportedMaterial>();
@@ -269,9 +293,15 @@
 
                 await this.ProducerDetailChunker.InsertRecords(newProducerDetails);
                 await this.ProducerReportedMaterialChunker.InsertRecords(newProducerReportedMaterials);
+
             }
 
             return true;
+
+            static bool IsObligated(string status)
+            {
+                return string.IsNullOrWhiteSpace(status)  || status == ObligationStates.Yes;
+            }
         }
 
         private static bool IsPackagingTypeAndPackagingMaterialWeightExists(string? packagingType, double? totalPackagingMaterialWeight)
