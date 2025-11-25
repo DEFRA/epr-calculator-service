@@ -69,14 +69,14 @@
 
             if (isBilling)
             {
-                var acceptedCancelledProducersForThisRun = GetAcceptedCancelledProducersForThisRun(runId).Result.ToList();
+                var acceptedCancelledProducersForThisRun = await GetAcceptedCancelledProducersForThisRun(runId);
                 filteredMissingProducers = missingProducersInCurrentRun
                     .Where(t => acceptedCancelledProducersForThisRun.Exists(k => k == t.InvoicedTonnage?.ProducerId))
                     .ToList();
             }
             else
             {
-                var acceptedCancelledProducersForPreviousRuns = GetAcceptedCancelledProducers(financialYear).Result.ToList();
+                var acceptedCancelledProducersForPreviousRuns = await GetAcceptedCancelledProducers(financialYear);
                 filteredMissingProducers = missingProducersInCurrentRun.Where(t => !acceptedCancelledProducersForPreviousRuns
                 .Exists(k => k == t.InvoicedTonnage?.ProducerId)).ToList();
             }
@@ -153,7 +153,7 @@
         }
 
 
-        private async Task<IEnumerable<int>> GetAcceptedCancelledProducers(string financialYear)
+        private async Task<List<int>> GetAcceptedCancelledProducers(string financialYear)
         {
             var cancelledAcceptedProducers = await (from calc in context.CalculatorRuns.AsNoTracking()
                                                     join p in context.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
@@ -174,7 +174,7 @@
             return cancelledAcceptedProducers;
         }
 
-        private async Task<IEnumerable<int>> GetAcceptedCancelledProducersForThisRun(int runId)
+        private async Task<List<int>> GetAcceptedCancelledProducersForThisRun(int runId)
         {
             var cancelledAcceptedProducers = await (from p in context.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
                                                     where p.CalculatorRunId == runId
