@@ -85,7 +85,13 @@ namespace EPR.Calculator.Service.Function
             });
 
             // Register CustomTelemetryLogger
-            builder.Services.AddSingleton<ICalculatorTelemetryLogger, CalculatorTelemetryLogger>();
+            builder.Services.AddSingleton<ICalculatorTelemetryLogger, CalculatorTelemetryLogger>(sp =>
+            {
+                var fallbackToConsole = Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY") ==
+                                        "00000000-0000-0000-0000-000000000000";
+                
+                return ActivatorUtilities.CreateInstance<CalculatorTelemetryLogger>(sp, fallbackToConsole);
+            });
         }
 
 #pragma warning disable S1144 // Keeping just in case its required in future

@@ -19,7 +19,7 @@
         public CalculatorTelemetryLoggerTests()
         {
             this.mockTelemetryClient = new Mock<ITelemetryClientWrapper>();
-            this.calculatorTelemetryLogger = new CalculatorTelemetryLogger(this.mockTelemetryClient.Object);
+            this.calculatorTelemetryLogger = new CalculatorTelemetryLogger(this.mockTelemetryClient.Object, false);
         }
 
         /// <summary>
