@@ -25,7 +25,7 @@ variables:
   - name: projectFolder
     value: 'EPR.Calculator.Service.Function'
   - name: testProjectFolder
-    value: 'EPR.Calculator.Service.Common.UnitTests' 
+    value: 'EPR.Calculator.Service.Common.UnitTests'
   - name: DataFolder
     value: EPR.Calculator.API.Data
   - name: sonarQubeProjectKey
@@ -38,6 +38,8 @@ variables:
     value: true
   - name: dotnetVersion
     value: dotnetVersion8
+  - name: gitleaksFailOnSecretDetection
+    value: false
 
 resources:
   repositories:
@@ -64,3 +66,4 @@ extends:
     serviceName: $(serviceName)
     dotnetVersion: ${{ variables.dotnetVersion }}
     sonarqubeInstance: ${{ parameters.sonarqubeInstance }}
+    gitleaksFailOnSecretDetection: ${{ variables.gitleaksFailOnSecretDetection }}

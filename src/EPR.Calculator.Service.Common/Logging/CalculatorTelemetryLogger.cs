@@ -9,14 +9,17 @@
     public class CalculatorTelemetryLogger : ICalculatorTelemetryLogger
     {
         private readonly ITelemetryClientWrapper _telemetryClient;
+        private readonly IConsoleWrapper? _consoleWrapper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CalculatorTelemetryLogger"/> class.
         /// </summary>
         /// <param name="telemetryClient">The telemetry client to use for logging.</param>
-        public CalculatorTelemetryLogger(ITelemetryClientWrapper telemetryClient)
+        /// <param name="fallbackToConsole">Will log to the console if enabled.</param>
+        public CalculatorTelemetryLogger(ITelemetryClientWrapper telemetryClient, bool fallbackToConsole)
         {
             this._telemetryClient = telemetryClient;
+            _consoleWrapper = fallbackToConsole ? new ConsoleWrapper() : null;
         }
 
         /// <summary>
@@ -42,6 +45,9 @@
             };
             AddProperties(exceptionTelemetry.Properties, errorMessage.RunId, errorMessage.RunName);
             this._telemetryClient.TrackException(exceptionTelemetry);
+            
+            _consoleWrapper?.WriteLine(formattedMessage);
+            _consoleWrapper?.WriteLine(errorMessage.Exception.ToString());
         }
 
         /// <summary>
@@ -85,6 +91,8 @@
             };
             AddProperties(traceTelemetry.Properties, logMessage.RunId, logMessage.RunName);
             this._telemetryClient.TrackTrace(traceTelemetry);
+            
+            _consoleWrapper?.WriteLine(formattedMessage);
         }
     }
 }

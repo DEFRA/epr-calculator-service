@@ -19,7 +19,7 @@
         public CalculatorTelemetryLoggerTests()
         {
             this.mockTelemetryClient = new Mock<ITelemetryClientWrapper>();
-            this.calculatorTelemetryLogger = new CalculatorTelemetryLogger(this.mockTelemetryClient.Object);
+            this.calculatorTelemetryLogger = new CalculatorTelemetryLogger(this.mockTelemetryClient.Object, fallbackToConsole: false);
         }
 
         /// <summary>
@@ -172,6 +172,35 @@
                 et.Exception.Message.Contains("Test exception") &&
                 et.Message.Contains("This is an error message") &&
                 et.SeverityLevel == SeverityLevel.Error)), Times.Once);
+        }
+
+        [TestMethod]
+        public void LogInformation_WhenFallbackToConsoleEnabled()
+        {
+            calculatorTelemetryLogger = new CalculatorTelemetryLogger(mockTelemetryClient.Object, fallbackToConsole: true);
+            
+            calculatorTelemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = 123,
+                RunName = "TestRun",
+                Message = "This is a trace message",
+            });
+            
+            mockTelemetryClient.Verify(tc => tc.TrackTrace(It.IsAny<TraceTelemetry>()));
+        }
+
+        [TestMethod]
+        public void LogError_WhenFallbackToConsoleEnabled()
+        {
+            calculatorTelemetryLogger = new CalculatorTelemetryLogger(mockTelemetryClient.Object, fallbackToConsole: true);
+
+            calculatorTelemetryLogger.LogError(new ErrorMessage
+            {
+                Exception = new Exception("Test exception"),
+                Message = "Message"
+            });
+            
+            mockTelemetryClient.Verify(tc => tc.TrackException(It.IsAny<ExceptionTelemetry>()));
         }
 
         [TestCleanup]
