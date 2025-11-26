@@ -1051,7 +1051,6 @@
             };
 
             var mockProducerDetailService = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
-            // var mockErrorReportService = new Mock<IDbLoadingChunkerService<ErrorReport>>();
             IEnumerable<ProducerDetail> resultProducerDetails = new List<ProducerDetail>();
             mockProducerDetailService.Setup(service => service.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
                                       .Callback<IEnumerable<ProducerDetail>>(arg=> resultProducerDetails = arg)
@@ -1060,10 +1059,7 @@
             var mockErrorReportService = new Mock<IErrorReportService>();
 
             // Mocking the unmatched output returned by HandleUnmatchedPomAsync
-            var unmatchedRecords = new List<(int ProducerId, string? SubsidiaryId)>
-                                    {
-                                        (2, "1"),
-                                    };
+            var unmatchedRecords = new List<(int ProducerId, string? SubsidiaryId)>();
 
             mockErrorReportService
                 .Setup(s => s.HandleUnmatchedPomAsync(
