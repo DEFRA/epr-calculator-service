@@ -10,7 +10,8 @@ namespace EPR.Calculator.Service.Function.Interface
 {
     public interface IProducerDetailService
     {
-        public IEnumerable<ProducerInvoicedDto> GetLatestProducerDetailsForThisFinancialYear(string financialYear);
+        public Task<IEnumerable<ProducerInvoicedDto>> GetLatestProducerDetailsForThisFinancialYear(string financialYear,
+            IEnumerable<int> missingProducersIdsInCurrentRun);
 
         public IEnumerable<ProducerDetailDto> GetProducers(int runId);
     }

@@ -31,7 +31,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public void GetLatestProducerDetailsForThisFinancialYearTest_Returns_CancelledProducers()
+        public async Task GetLatestProducerDetailsForThisFinancialYearTest_Returns_CancelledProducers()
         {
             TestDataHelper.SeedDatabaseForInitialRun(this.context);
 
@@ -39,24 +39,26 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var requestDto = new CalcResultsRequestDto() { RunId = 1 };
             var producerDetailService = new ProducerDetailService(this.context);
 
+            List<int> producerIds = new List<int> { 1 };
+
             // Act
-            var result = producerDetailService.GetLatestProducerDetailsForThisFinancialYear("2025-26");
+            var result = await producerDetailService.GetLatestProducerDetailsForThisFinancialYear("2025-26", producerIds);
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(4, result.Count());
+            Assert.AreEqual(2, result.Count());
         }
 
         [TestMethod]
-        public void GetLatestProducerDetailsForThisFinancialYearTest_DoesNotReturns_CancelledProducers()
+        public async Task GetLatestProducerDetailsForThisFinancialYearTest_DoesNotReturns_CancelledProducers()
         {
             TestDataHelper.SeedDatabaseForUnclassified(this.context);
 
             // Arrange
             var producerDetailService = new ProducerDetailService(this.context);
-
+            List<int> producerIds = new List<int> { 1 };
             // Act
-            var result = producerDetailService.GetLatestProducerDetailsForThisFinancialYear("2025-26");
+            var result = await producerDetailService.GetLatestProducerDetailsForThisFinancialYear("2025-26", producerIds);
 
             // Assert
             Assert.AreEqual(0, result.Count());
@@ -77,6 +79,5 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.IsNotNull(result);
             Assert.AreEqual(3, result.Count());
         }
-
     }
 }
