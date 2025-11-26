@@ -89,7 +89,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             foreach (var r in reportsList)
             {
                 Assert.AreEqual(runId, r.CalculatorRunId);
-                Assert.AreEqual((int)ErrorTypes.MISSINGREGISTRATIONDATA, r.ErrorTypeId);
+                Assert.AreEqual((int)ErrorTypes.MissingRegistrationData, r.ErrorTypeId);
                 Assert.AreEqual(createdBy, r.CreatedBy);
                 Assert.IsTrue(r.CreatedAt >= beforeInvoke && r.CreatedAt <= afterInvoke);
             }
@@ -255,7 +255,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.AreEqual(100, report.ProducerId);
             Assert.AreEqual("200", report.SubsidiaryId);
             Assert.AreEqual(runId, report.CalculatorRunId);
-            Assert.AreEqual((int)ErrorTypes.MISSINGREGISTRATIONDATA, report.ErrorTypeId);
+            Assert.AreEqual((int)ErrorTypes.MissingRegistrationData, report.ErrorTypeId);
             Assert.AreEqual(createdBy, report.CreatedBy);
             Assert.IsTrue(report.CreatedAt >= beforeInvoke && report.CreatedAt <= afterInvoke, "CreatedAt should be within test time window.");
         }
@@ -349,6 +349,139 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Act
             await _service.HandleUnmatchedPomAsync(pomDetails, orgDetails!, 1, "u", CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task HandleUnmatchedPomAsync_DoesNotInsert_WhenSubmitterIdsMatched()
+        {
+            // Arrange
+            var runId = 300;
+            var createdBy = "no error";
+
+            Guid pom1ID = Guid.NewGuid();
+            Guid pom2ID = Guid.NewGuid();
+            var pomDetails = new[]
+            {
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 1,
+                    SubsidaryId = "101",
+                    SubmissionPeriod = "2023-P2",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    SubmissionPeriodDesc = "July to December 2023",
+                    SubmitterId = pom1ID,
+                },
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 2,
+                    SubsidaryId = "102",
+                     SubmissionPeriod = "2023-P2",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    SubmissionPeriodDesc = "July to December 2023",
+                    SubmitterId = pom2ID
+
+                }
+            };
+
+            var orgDetails = new[]
+            {
+                new CalculatorRunOrganisationDataDetail
+                {
+                    OrganisationId = 1,
+                    SubsidaryId = "101",
+                    OrganisationName = "Test",
+                    SubmissionPeriodDesc = "July to December 2023",
+                    SubmitterId=pom1ID,
+                },
+                new CalculatorRunOrganisationDataDetail
+                {
+                    OrganisationId = 2,
+                    SubsidaryId = "102",
+                    OrganisationName = "Test1",
+                    SubmissionPeriodDesc = "July to December 2023",
+                    SubmitterId=pom2ID,
+                }
+            };
+
+            // Act
+            await _service.HandleUnmatchedPomAsync(pomDetails, orgDetails, runId, createdBy, CancellationToken.None);
+
+            // Assert
+            mockErrorReport.Verify(x => x.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>()), Times.Never);
+        }
+
+        [TestMethod]
+        public async Task HandleUnmatchedPomAsync_Inserts_WhenSubmitterIdsDoNotMatch()
+        {
+            // Arrange
+            var runId = 300;
+            var createdBy = "no error";
+
+            Guid pom1SumbitterId = Guid.NewGuid();
+            Guid pom2SubmitterId = Guid.NewGuid();
+            var pomDetails = new[]
+            {
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 1,
+                    SubsidaryId = "101",
+                    SubmissionPeriod = "2023-P2",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    SubmissionPeriodDesc = "July to December 2023",
+                    SubmitterId = pom1SumbitterId,
+                },
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 2,
+                    SubsidaryId = "102",
+                     SubmissionPeriod = "2023-P2",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    SubmissionPeriodDesc = "July to December 2023",
+                    SubmitterId = pom1SumbitterId
+
+                }
+            };
+
+            var orgDetails = new[]
+            {
+                new CalculatorRunOrganisationDataDetail
+                {
+                    OrganisationId = 1,
+                    SubsidaryId = "101",
+                    OrganisationName = "Test",
+                    SubmissionPeriodDesc = "July to December 2023",
+                    SubmitterId=pom1SumbitterId,
+                },
+                new CalculatorRunOrganisationDataDetail
+                {
+                    OrganisationId = 2,
+                    SubsidaryId = "102",
+                    OrganisationName = "Test1",
+                    SubmissionPeriodDesc = "July to December 2023",
+                    SubmitterId=pom2SubmitterId,
+                }
+            };
+
+            IEnumerable<ErrorReport>? capturedReports = null;
+
+            mockErrorReport
+                .Setup(c => c.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>()))
+                .Returns(Task.CompletedTask)
+                .Callback<IEnumerable<ErrorReport>>(reports => capturedReports = reports);
+
+            // Act
+            await _service.HandleUnmatchedPomAsync(pomDetails, orgDetails, runId, createdBy, CancellationToken.None);
+
+            // Assert
+            mockErrorReport.Verify(x => x.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>()), Times.Once);
+
+            Assert.IsNotNull(capturedReports);
+
+            var reportsList = capturedReports!.ToList();
+            Assert.AreEqual(2, reportsList.Count, "Expected 2 unmatched records to be inserted (2).");
+            var error = reportsList.First();
+            Assert.AreEqual((int)ErrorTypes.MissingRegistrationData, error.ErrorTypeId, "Incorrect Error Type" );
+            Assert.AreEqual(2, error.ProducerId, "Incorrect Producer Id");
         }
     }
 }
