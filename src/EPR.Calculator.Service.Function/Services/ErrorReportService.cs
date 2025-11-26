@@ -33,10 +33,17 @@ namespace EPR.Calculator.Service.Function.Services
             var orgIds = orgDetails.Select(o => (o.OrganisationId, o.SubsidaryId, o.SubmitterId)).ToHashSet();
             var pomIds = pomDetails.Select(p => (p.OrganisationId, p.SubsidaryId, p.SubmitterId)).ToHashSet();
 
-            pomIds.SymmetricExceptWith(orgIds); 
+            var pomIdsMissingFromOrg = pomIds.Except(orgIds); 
 
-            foreach(var m in pomIds) {
-                errorReports.Add(CreateError(m.OrganisationId??0, m.SubsidaryId, calculatorRunId, createdBy));
+            foreach(var m in pomIdsMissingFromOrg) {
+                var orgId = m.OrganisationId??0;
+
+                //To preserve current behaviour of recording org level error for org/subsiduary - under discussion to be removed
+                if(m.SubsidaryId != null && orgIds.Any(o => o.Item1 == orgId) && !errorReports.Any(e => e.ProducerId == orgId && e.SubsidiaryId == null)) {
+                    errorReports.Add(CreateError(orgId, null, calculatorRunId, createdBy));
+                }
+
+                errorReports.Add(CreateError(orgId, m.SubsidaryId, calculatorRunId, createdBy));
             }
 
             if (!errorReports.Any())
