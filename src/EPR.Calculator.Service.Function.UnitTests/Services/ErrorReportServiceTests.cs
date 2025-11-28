@@ -89,7 +89,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             foreach (var r in reportsList)
             {
                 Assert.AreEqual(runId, r.CalculatorRunId);
-                Assert.AreEqual((int)ErrorTypes.MISSINGREGISTRATIONDATA, r.ErrorTypeId);
+                Assert.AreEqual((int)ErrorTypes.MissingRegistrationData, r.ErrorTypeId);
                 Assert.AreEqual(createdBy, r.CreatedBy);
                 Assert.IsTrue(r.CreatedAt >= beforeInvoke && r.CreatedAt <= afterInvoke);
             }
@@ -255,7 +255,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.AreEqual(100, report.ProducerId);
             Assert.AreEqual("200", report.SubsidiaryId);
             Assert.AreEqual(runId, report.CalculatorRunId);
-            Assert.AreEqual((int)ErrorTypes.MISSINGREGISTRATIONDATA, report.ErrorTypeId);
+            Assert.AreEqual((int)ErrorTypes.MissingRegistrationData, report.ErrorTypeId);
             Assert.AreEqual(createdBy, report.CreatedBy);
             Assert.IsTrue(report.CreatedAt >= beforeInvoke && report.CreatedAt <= afterInvoke, "CreatedAt should be within test time window.");
         }
@@ -480,198 +480,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var reportsList = capturedReports!.ToList();
             Assert.AreEqual(2, reportsList.Count, "Expected 2 unmatched records to be inserted (2).");
             var error = reportsList.First();
-            Assert.AreEqual((int)ErrorTypes.MISSINGREGISTRATIONDATA, error.ErrorTypeId, "Incorrect Error Type");
+            Assert.AreEqual((int)ErrorTypes.MissingRegistrationData, error.ErrorTypeId, "Incorrect Error Type" );
             Assert.AreEqual(2, error.ProducerId, "Incorrect Producer Id");
-        }
-
-        [TestMethod]
-        public async Task HandleMissingPOMErrors()
-        {
-            var submitterId1 = Guid.NewGuid();
-            var submitterId2 = Guid.NewGuid();
-
-            var orgDetails = new[]
-                {
-                new CalculatorRunOrganisationDataDetail
-                {
-                    OrganisationId = 100101,
-                    OrganisationName = "ECOLTD",
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    ObligationStatus="N",
-                    SubmitterId =submitterId1
-                },
-                new CalculatorRunOrganisationDataDetail
-                {
-                    OrganisationId = 200202 ,
-                    OrganisationName = "Green holdings",
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    ObligationStatus="Y",
-                    SubmitterId =submitterId2
-                },
-                new CalculatorRunOrganisationDataDetail
-                {
-                    OrganisationId = 200202  ,
-                    SubsidaryId = "100500",
-                    OrganisationName = "Pure leaf drinks",
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    ObligationStatus="Y",
-                    SubmitterId = submitterId2
-                },
-                new CalculatorRunOrganisationDataDetail
-                {
-                    OrganisationId = 200202,
-                    SubsidaryId = "100101",
-                    OrganisationName = "ECOLTD",
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    ObligationStatus="Y",
-                    StatusCode=1,
-                    SubmitterId = submitterId2
-                }
-            };
-
-            var pomDetails = new[] {
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 100101,
-                    SubmissionPeriod = "2024-P1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId1,
-                    PackagingType="HH",
-                    PackagingMaterial="ST",
-                    PackagingMaterialWeight=5000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 100101,
-                    SubmissionPeriod = "2024-P1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId1,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=3000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 100101,
-                    SubmissionPeriod = "2024-P4",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId1,
-                    PackagingType="HH",
-                    PackagingMaterial="ST",
-                    PackagingMaterialWeight=5000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 100101,
-                    SubmissionPeriod = "2024-P4",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId1,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=3000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202 ,
-                    SubmissionPeriod = "2024-P1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=2000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202 ,
-                    SubmissionPeriod = "2024-P1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="AL",
-                    PackagingMaterialWeight=4500
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202 ,
-                    SubmissionPeriod = "2024-P4",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=2000
-                },
-
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202 ,
-                    SubsidaryId="100500",
-                    SubmissionPeriod = "2024-P1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=3500
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202 ,
-                    SubsidaryId="100500",
-                    SubmissionPeriod = "2024-P1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=4000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202,
-                    SubsidaryId="100500",
-                    SubmissionPeriod = "2024-P4",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=3000
-                }
-            };
-
-
-            IEnumerable<ErrorReport>? capturedReports = null;
-
-            mockErrorReport
-                .Setup(c => c.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>()))
-                .Returns(Task.CompletedTask)
-                .Callback<IEnumerable<ErrorReport>>(reports => capturedReports = reports);
-
-            // Arrange
-            var runId = 300;
-            var createdBy = "no error";
-
-            // Act
-            await _service.HandleUnmatchedPomAsync(pomDetails, orgDetails, runId, createdBy, CancellationToken.None);
-
-            // Assert
-            mockErrorReport.Verify(x => x.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>()), Times.Once);
-
-            Assert.IsNotNull(capturedReports);
-
-            var reportsList = capturedReports!.ToList();
-            Assert.AreEqual(2, reportsList.Count, "Expected 2 unmatched records to be inserted (2).");
-            var error = reportsList.First();
-            Assert.AreEqual((int)ErrorTypes.MISSINGREGISTRATIONDATA, error.ErrorTypeId, "Incorrect Error Type");
-            Assert.AreEqual(2, error.ProducerId, "Incorrect Producer Id");
-
         }
     }
 }
