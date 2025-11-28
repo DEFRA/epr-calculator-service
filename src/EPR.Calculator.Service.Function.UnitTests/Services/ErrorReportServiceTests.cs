@@ -29,24 +29,24 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var pomDetails = new[]
             {
-                new CalculatorRunPomDataDetail 
-                { 
+                new CalculatorRunPomDataDetail
+                {
                     OrganisationId = 1,
                     SubsidaryId = "11",
                     SubmissionPeriod = "2023-P2",
                     LoadTimeStamp = DateTime.UtcNow,
                     SubmissionPeriodDesc = "July to December 2023"
                 },
-                new CalculatorRunPomDataDetail 
-                { 
+                new CalculatorRunPomDataDetail
+                {
                     OrganisationId = 2,
                     SubsidaryId = "22",
                     SubmissionPeriod = "2023-P2",
                     LoadTimeStamp = DateTime.UtcNow,
                     SubmissionPeriodDesc = "July to December 2023"
                 },
-                new CalculatorRunPomDataDetail 
-                { 
+                new CalculatorRunPomDataDetail
+                {
                     OrganisationId = 3,
                     SubsidaryId = "33",
                     SubmissionPeriod = "2023-P2",
@@ -57,11 +57,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var orgDetails = new[]
             {
-                new CalculatorRunOrganisationDataDetail 
-                { 
+                new CalculatorRunOrganisationDataDetail
+                {
                     OrganisationId = 1,
                     OrganisationName = "Test",
-                    SubmissionPeriodDesc = "July to December 2023" 
+                    SubmissionPeriodDesc = "July to December 2023"
                 }
             };
 
@@ -108,24 +108,24 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var pomDetails = new[]
             {
-                new CalculatorRunPomDataDetail 
-                { 
+                new CalculatorRunPomDataDetail
+                {
                     OrganisationId = 10,
                     SubsidaryId = "101",
                     SubmissionPeriod = "2023-P2",
                     LoadTimeStamp = DateTime.UtcNow,
                     SubmissionPeriodDesc = "July to December 2023"
                 },
-                new CalculatorRunPomDataDetail 
-                { 
+                new CalculatorRunPomDataDetail
+                {
                     OrganisationId = 10,
                     SubsidaryId = "101",
                     SubmissionPeriod = "2023-P2",
                     LoadTimeStamp = DateTime.UtcNow,
                     SubmissionPeriodDesc = "July to December 2023"
                 },
-                new CalculatorRunPomDataDetail 
-                { 
+                new CalculatorRunPomDataDetail
+                {
                     OrganisationId = 10,
                     SubsidaryId = "102",
                     SubmissionPeriod = "2023-P2",
@@ -163,16 +163,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var pomDetails = new[]
             {
-                new CalculatorRunPomDataDetail 
-                { 
-                    OrganisationId = 1, 
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 1,
                     SubsidaryId = "101",
                     SubmissionPeriod = "2023-P2",
                     LoadTimeStamp = DateTime.UtcNow,
                     SubmissionPeriodDesc = "July to December 2023"
                 },
-                new CalculatorRunPomDataDetail 
-                { 
+                new CalculatorRunPomDataDetail
+                {
                     OrganisationId = 2,
                     SubsidaryId = "102",
                      SubmissionPeriod = "2023-P2",
@@ -183,15 +183,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var orgDetails = new[]
             {
-                new CalculatorRunOrganisationDataDetail 
-                { 
+                new CalculatorRunOrganisationDataDetail
+                {
                     OrganisationId = 1,
                     SubsidaryId = "101",
                     OrganisationName = "Test",
                     SubmissionPeriodDesc = "July to December 2023"
                 },
-                new CalculatorRunOrganisationDataDetail 
-                { 
+                new CalculatorRunOrganisationDataDetail
+                {
                     OrganisationId = 2,
                     SubsidaryId = "102",
                     OrganisationName = "Test1",
@@ -349,6 +349,329 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Act
             await _service.HandleUnmatchedPomAsync(pomDetails, orgDetails!, 1, "u", CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task HandleUnmatchedPomAsync_DoesNotInsert_WhenSubmitterIdsMatched()
+        {
+            // Arrange
+            var runId = 300;
+            var createdBy = "no error";
+
+            Guid pom1ID = Guid.NewGuid();
+            Guid pom2ID = Guid.NewGuid();
+            var pomDetails = new[]
+            {
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 1,
+                    SubsidaryId = "101",
+                    SubmissionPeriod = "2023-P2",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    SubmissionPeriodDesc = "July to December 2023",
+                    SubmitterId = pom1ID,
+                },
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 2,
+                    SubsidaryId = "102",
+                     SubmissionPeriod = "2023-P2",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    SubmissionPeriodDesc = "July to December 2023",
+                    SubmitterId = pom2ID
+
+                }
+            };
+
+            var orgDetails = new[]
+            {
+                new CalculatorRunOrganisationDataDetail
+                {
+                    OrganisationId = 1,
+                    SubsidaryId = "101",
+                    OrganisationName = "Test",
+                    SubmissionPeriodDesc = "July to December 2023",
+                    SubmitterId=pom1ID,
+                },
+                new CalculatorRunOrganisationDataDetail
+                {
+                    OrganisationId = 2,
+                    SubsidaryId = "102",
+                    OrganisationName = "Test1",
+                    SubmissionPeriodDesc = "July to December 2023",
+                    SubmitterId=pom2ID,
+                }
+            };
+
+            // Act
+            await _service.HandleUnmatchedPomAsync(pomDetails, orgDetails, runId, createdBy, CancellationToken.None);
+
+            // Assert
+            mockErrorReport.Verify(x => x.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>()), Times.Never);
+        }
+
+        [TestMethod]
+        public async Task HandleUnmatchedPomAsync_Inserts_WhenSubmitterIdsDoNotMatch()
+        {
+            // Arrange
+            var runId = 300;
+            var createdBy = "no error";
+
+            Guid pom1SumbitterId = Guid.NewGuid();
+            Guid pom2SubmitterId = Guid.NewGuid();
+            var pomDetails = new[]
+            {
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 1,
+                    SubsidaryId = "101",
+                    SubmissionPeriod = "2023-P2",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    SubmissionPeriodDesc = "July to December 2023",
+                    SubmitterId = pom1SumbitterId,
+                },
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 2,
+                    SubsidaryId = "102",
+                     SubmissionPeriod = "2023-P2",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    SubmissionPeriodDesc = "July to December 2023",
+                    SubmitterId = pom1SumbitterId
+
+                }
+            };
+
+            var orgDetails = new[]
+            {
+                new CalculatorRunOrganisationDataDetail
+                {
+                    OrganisationId = 1,
+                    SubsidaryId = "101",
+                    OrganisationName = "Test",
+                    SubmissionPeriodDesc = "July to December 2023",
+                    SubmitterId=pom1SumbitterId,
+                },
+                new CalculatorRunOrganisationDataDetail
+                {
+                    OrganisationId = 2,
+                    SubsidaryId = "102",
+                    OrganisationName = "Test1",
+                    SubmissionPeriodDesc = "July to December 2023",
+                    SubmitterId=pom2SubmitterId,
+                }
+            };
+
+            IEnumerable<ErrorReport>? capturedReports = null;
+
+            mockErrorReport
+                .Setup(c => c.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>()))
+                .Returns(Task.CompletedTask)
+                .Callback<IEnumerable<ErrorReport>>(reports => capturedReports = reports);
+
+            // Act
+            await _service.HandleUnmatchedPomAsync(pomDetails, orgDetails, runId, createdBy, CancellationToken.None);
+
+            // Assert
+            mockErrorReport.Verify(x => x.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>()), Times.Once);
+
+            Assert.IsNotNull(capturedReports);
+
+            var reportsList = capturedReports!.ToList();
+            Assert.AreEqual(2, reportsList.Count, "Expected 2 unmatched records to be inserted (2).");
+            var error = reportsList.First();
+            Assert.AreEqual((int)ErrorTypes.MISSINGREGISTRATIONDATA, error.ErrorTypeId, "Incorrect Error Type");
+            Assert.AreEqual(2, error.ProducerId, "Incorrect Producer Id");
+        }
+
+        [TestMethod]
+        public async Task HandleMissingPOMErrors()
+        {
+            var submitterId1 = Guid.NewGuid();
+            var submitterId2 = Guid.NewGuid();
+
+            var orgDetails = new[]
+                {
+                new CalculatorRunOrganisationDataDetail
+                {
+                    OrganisationId = 100101,
+                    OrganisationName = "ECOLTD",
+                    SubmissionPeriodDesc = "Jan to December 2025",
+                    ObligationStatus="N",
+                    SubmitterId =submitterId1
+                },
+                new CalculatorRunOrganisationDataDetail
+                {
+                    OrganisationId = 200202 ,
+                    OrganisationName = "Green holdings",
+                    SubmissionPeriodDesc = "Jan to December 2025",
+                    ObligationStatus="Y",
+                    SubmitterId =submitterId2
+                },
+                new CalculatorRunOrganisationDataDetail
+                {
+                    OrganisationId = 200202  ,
+                    SubsidaryId = "100500",
+                    OrganisationName = "Pure leaf drinks",
+                    SubmissionPeriodDesc = "Jan to December 2025",
+                    ObligationStatus="Y",
+                    SubmitterId = submitterId2
+                },
+                new CalculatorRunOrganisationDataDetail
+                {
+                    OrganisationId = 200202,
+                    SubsidaryId = "100101",
+                    OrganisationName = "ECOLTD",
+                    SubmissionPeriodDesc = "Jan to December 2025",
+                    ObligationStatus="Y",
+                    StatusCode=1,
+                    SubmitterId = submitterId2
+                }
+            };
+
+            var pomDetails = new[] {
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 100101,
+                    SubmissionPeriod = "2024-P1",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    SubmissionPeriodDesc = "Jan to December 2025",
+                    SubmitterId=submitterId1,
+                    PackagingType="HH",
+                    PackagingMaterial="ST",
+                    PackagingMaterialWeight=5000
+                },
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 100101,
+                    SubmissionPeriod = "2024-P1",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    SubmissionPeriodDesc = "Jan to December 2025",
+                    SubmitterId=submitterId1,
+                    PackagingType="HH",
+                    PackagingMaterial="PL",
+                    PackagingMaterialWeight=3000
+                },
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 100101,
+                    SubmissionPeriod = "2024-P4",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    SubmissionPeriodDesc = "Jan to December 2025",
+                    SubmitterId=submitterId1,
+                    PackagingType="HH",
+                    PackagingMaterial="ST",
+                    PackagingMaterialWeight=5000
+                },
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 100101,
+                    SubmissionPeriod = "2024-P4",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    SubmissionPeriodDesc = "Jan to December 2025",
+                    SubmitterId=submitterId1,
+                    PackagingType="HH",
+                    PackagingMaterial="PL",
+                    PackagingMaterialWeight=3000
+                },
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 200202 ,
+                    SubmissionPeriod = "2024-P1",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    SubmissionPeriodDesc = "Jan to December 2025",
+                    SubmitterId=submitterId2,
+                    PackagingType="HH",
+                    PackagingMaterial="PL",
+                    PackagingMaterialWeight=2000
+                },
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 200202 ,
+                    SubmissionPeriod = "2024-P1",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    SubmissionPeriodDesc = "Jan to December 2025",
+                    SubmitterId=submitterId2,
+                    PackagingType="HH",
+                    PackagingMaterial="AL",
+                    PackagingMaterialWeight=4500
+                },
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 200202 ,
+                    SubmissionPeriod = "2024-P4",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    SubmissionPeriodDesc = "Jan to December 2025",
+                    SubmitterId=submitterId2,
+                    PackagingType="HH",
+                    PackagingMaterial="PL",
+                    PackagingMaterialWeight=2000
+                },
+
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 200202 ,
+                    SubsidaryId="100500",
+                    SubmissionPeriod = "2024-P1",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    SubmissionPeriodDesc = "Jan to December 2025",
+                    SubmitterId=submitterId2,
+                    PackagingType="HH",
+                    PackagingMaterial="PL",
+                    PackagingMaterialWeight=3500
+                },
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 200202 ,
+                    SubsidaryId="100500",
+                    SubmissionPeriod = "2024-P1",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    SubmissionPeriodDesc = "Jan to December 2025",
+                    SubmitterId=submitterId2,
+                    PackagingType="HH",
+                    PackagingMaterial="PL",
+                    PackagingMaterialWeight=4000
+                },
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 200202,
+                    SubsidaryId="100500",
+                    SubmissionPeriod = "2024-P4",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    SubmissionPeriodDesc = "Jan to December 2025",
+                    SubmitterId=submitterId2,
+                    PackagingType="HH",
+                    PackagingMaterial="PL",
+                    PackagingMaterialWeight=3000
+                }
+            };
+
+
+            IEnumerable<ErrorReport>? capturedReports = null;
+
+            mockErrorReport
+                .Setup(c => c.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>()))
+                .Returns(Task.CompletedTask)
+                .Callback<IEnumerable<ErrorReport>>(reports => capturedReports = reports);
+
+            // Arrange
+            var runId = 300;
+            var createdBy = "no error";
+
+            // Act
+            await _service.HandleUnmatchedPomAsync(pomDetails, orgDetails, runId, createdBy, CancellationToken.None);
+
+            // Assert
+            mockErrorReport.Verify(x => x.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>()), Times.Once);
+
+            Assert.IsNotNull(capturedReports);
+
+            var reportsList = capturedReports!.ToList();
+            Assert.AreEqual(2, reportsList.Count, "Expected 2 unmatched records to be inserted (2).");
+            var error = reportsList.First();
+            Assert.AreEqual((int)ErrorTypes.MISSINGREGISTRATIONDATA, error.ErrorTypeId, "Incorrect Error Type");
+            Assert.AreEqual(2, error.ProducerId, "Incorrect Producer Id");
+
         }
     }
 }
