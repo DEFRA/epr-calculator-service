@@ -277,7 +277,7 @@
                                     };
 
             mockErrorReportService
-                .Setup(s => s.HandleUnmatchedPomAsync(
+                .Setup(s => s.HandleMissingRegistrationData(
                     It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
                     It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
                     It.IsAny<int>(),
@@ -325,7 +325,7 @@
                                     };
 
             mockErrorReportService
-                .Setup(s => s.HandleUnmatchedPomAsync(
+                .Setup(s => s.HandleMissingRegistrationData(
                     It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
                     It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
                     It.IsAny<int>(),
@@ -402,7 +402,7 @@
                                     };
 
             mockErrorReportService
-                .Setup(s => s.HandleUnmatchedPomAsync(
+                .Setup(s => s.HandleMissingRegistrationData(
                     It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
                     It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
                     It.IsAny<int>(),
@@ -497,7 +497,7 @@
                                     };
 
             mockErrorReportService
-                .Setup(s => s.HandleUnmatchedPomAsync(
+                .Setup(s => s.HandleMissingRegistrationData(
                     It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
                     It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
                     It.IsAny<int>(),
@@ -558,7 +558,7 @@
                                     };
 
             mockErrorReportService
-                .Setup(s => s.HandleUnmatchedPomAsync(
+                .Setup(s => s.HandleMissingRegistrationData(
                     It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
                     It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
                     It.IsAny<int>(),
@@ -692,7 +692,7 @@
                                     };
 
             mockErrorReportService
-                .Setup(s => s.HandleUnmatchedPomAsync(
+                .Setup(s => s.HandleMissingRegistrationData(
                     It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
                     It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
                     It.IsAny<int>(),
@@ -1062,7 +1062,7 @@
             var unmatchedRecords = new List<(int ProducerId, string? SubsidiaryId)>();
 
             mockErrorReportService
-                .Setup(s => s.HandleUnmatchedPomAsync(
+                .Setup(s => s.HandleMissingRegistrationData(
                     It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
                     It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
                     It.IsAny<int>(),

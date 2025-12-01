@@ -178,7 +178,7 @@
                 .OrderBy(x => x.SubmissionPeriodDesc)
                 .ToListAsync(cancellationToken);
 
-            var unmatchedRecords  = await ErrorReportService.HandleUnmatchedPomAsync(
+            var unmatchedRecords  = await ErrorReportService.HandleMissingRegistrationData(
                 calculatorRunPomDataDetails,
                 calculatorRunOrgDataDetails,
                 resultsRequestDto.RunId,
@@ -217,7 +217,7 @@
                     .SingleAsync(x => x.Id == calculatorRun.CalculatorRunPomDataMasterId, cancellationToken);
 
 
-                foreach (var organisation in organisationDataDetails.Where(t => !string.IsNullOrWhiteSpace(t.OrganisationName) && IsObligated(t.ObligationStatus)))
+                foreach (var organisation in organisationDataDetails.Where(t => !string.IsNullOrWhiteSpace(t.OrganisationName) && ObligationStates.IsObligated(t.ObligationStatus)))
                 {
                     // Initialise the producerReportedMaterials
                     var producerReportedMaterials = new List<ProducerReportedMaterial>();
@@ -298,10 +298,6 @@
 
             return true;
 
-            static bool IsObligated(string status)
-            {
-                return string.IsNullOrWhiteSpace(status)  || status == ObligationStates.Yes;
-            }
         }
 
         private static bool IsPackagingTypeAndPackagingMaterialWeightExists(string? packagingType, double? totalPackagingMaterialWeight)
