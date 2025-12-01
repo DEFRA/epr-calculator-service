@@ -65,7 +65,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public async void GetProducers_Returns_Producers()
+        public async Task GetProducers_Returns_Producers()
         {
             TestDataHelper.SeedDatabaseForUnclassified(this.context);
 
