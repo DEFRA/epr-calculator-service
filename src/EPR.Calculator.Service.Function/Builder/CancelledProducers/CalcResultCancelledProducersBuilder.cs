@@ -58,9 +58,9 @@
         {
             IEnumerable<int> allProducerIds = await GetAllProducerIds(financialYear);
 
-            var producersForCurrentRun = this.producerDetailsService.GetProducers(runId);
+            var producerIdsForCurrentRun = await this.producerDetailsService.GetProducers(runId);
 
-            var missingProducersIdsInCurrentRun = allProducerIds.Where(t => !producersForCurrentRun.Any(k => k.ProducerId == t));
+            var missingProducersIdsInCurrentRun = allProducerIds.Where(t => !producerIdsForCurrentRun.Any(k => k == t));
             var missingProducersInCurrentRun = await this.producerDetailsService.GetLatestProducerDetailsForThisFinancialYear(financialYear, missingProducersIdsInCurrentRun);
 
             // populate cancelled producers
