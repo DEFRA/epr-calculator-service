@@ -4,7 +4,6 @@ using EPR.Calculator.Service.Function.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,12 +18,11 @@ namespace EPR.Calculator.Service.Function.Services
             ErrorReportChunker = errorReportChunker ?? throw new ArgumentNullException(nameof(errorReportChunker));
         }
 
-        public async Task<List<(int ProducerId, string? SubsidiaryId)>> HandleMissingRegistrationData(
+        public List<ErrorReport> HandleMissingRegistrationData(
                                 IEnumerable<CalculatorRunPomDataDetail> pomDetails,
                                 IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails,
                                 int calculatorRunId,
-                                string createdBy,
-                                CancellationToken cancellationToken)
+                                string createdBy)
         {
             if (pomDetails == null) throw new ArgumentNullException(nameof(pomDetails));
             if (orgDetails == null) throw new ArgumentNullException(nameof(orgDetails));
@@ -49,14 +47,7 @@ namespace EPR.Calculator.Service.Function.Services
                 errorReports.Add(CreateError(orgId, m.SubsidaryId, calculatorRunId, createdBy, ErrorTypes.MissingRegistrationData));
             }
 
-            if (!errorReports.Any())
-                return new List<(int, string?)>();
-
-            await this.ErrorReportChunker.InsertRecords(errorReports);
-
-            return errorReports
-                .Select(e => (e.ProducerId, e.SubsidiaryId))
-                .ToList();
+            return errorReports;
         }
 
         private ErrorReport CreateError(int orgId, string? subId, int calculatorRunId, string createdBy, ErrorTypes errorType, string leaverCode = "")
@@ -73,7 +64,7 @@ namespace EPR.Calculator.Service.Function.Services
             };
         }
 
-        public async Task<List<(int ProducerId, string? SubsidiaryId)>> HandleMissingPomData(IEnumerable<CalculatorRunPomDataDetail> pomDetails, IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails, int calculatorRunId, string createdBy, CancellationToken cancellationToken)
+        public List<ErrorReport> HandleMissingPomData(IEnumerable<CalculatorRunPomDataDetail> pomDetails, IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails, int calculatorRunId, string createdBy)
         {
             if (pomDetails == null) throw new ArgumentNullException(nameof(pomDetails));
             if (orgDetails == null) throw new ArgumentNullException(nameof(orgDetails));
@@ -89,22 +80,39 @@ namespace EPR.Calculator.Service.Function.Services
             {
                 string leaverCode = orgDetails.FirstOrDefault(o => o.OrganisationId == pom.OrganisationId &&
                                            o.SubsidaryId == pom.SubsidaryId &&
-                                           o.SubmitterId == pom.SubmitterId)?.StatusCode??string.Empty;
+                                           o.SubmitterId == pom.SubmitterId)?.StatusCode ?? string.Empty;
 
                 if (pomIds.Any(x => x.OrganisationId.ToString() == pom.SubsidaryId) && leaverCode == OrganisationStatusCodes.IndividualJoiningGroup)
                 {
                     errorReports.Add(CreateError(pom.OrganisationId ?? 0, pom.SubsidaryId, calculatorRunId, createdBy, ErrorTypes.MissingPOMData, leaverCode.ToString()));
                 }
             }
+            
+            return errorReports;
+        }
 
-            if (!errorReports.Any())
-                return new List<(int, string?)>();
+        public async Task<HashSet<(int OrgId, string? SubId)>> HandleErrors(
+                                IEnumerable<CalculatorRunPomDataDetail> pomDetails,
+                                IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails,
+                                int calculatorRunId,
+                                string createdBy,
+                                CancellationToken cancellationToken)
+        {
+            var missingRegErrors = HandleMissingRegistrationData(pomDetails,
+                                                orgDetails,
+                                                calculatorRunId,
+                                                createdBy);
 
-            await this.ErrorReportChunker.InsertRecords(errorReports);
 
-            return errorReports
-                .Select(e => (e.ProducerId, e.SubsidiaryId))
-                .ToList();
+            var missingPomErrors = HandleMissingPomData(pomDetails,
+                                                orgDetails,
+                                                calculatorRunId,
+                                                createdBy);
+
+            var allErrors = missingRegErrors.Concat(missingPomErrors);
+            await this.ErrorReportChunker.InsertRecords(allErrors);
+
+             return allErrors.Select(e => (e.ProducerId, e.SubsidiaryId)).ToHashSet();
         }
     }
 }

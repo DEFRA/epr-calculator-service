@@ -178,16 +178,12 @@
                 .OrderBy(x => x.SubmissionPeriodDesc)
                 .ToListAsync(cancellationToken);
 
-            var unmatchedRecords  = await ErrorReportService.HandleMissingRegistrationData(
+            var unmatchedSet = await ErrorReportService.HandleErrors(
                 calculatorRunPomDataDetails,
                 calculatorRunOrgDataDetails,
                 resultsRequestDto.RunId,
                 resultsRequestDto.CreatedBy,
                 cancellationToken);
-
-            var unmatchedSet = new HashSet<(int OrgId, string? SubId)>(
-                unmatchedRecords.Select(r => (r.ProducerId, r.SubsidiaryId))
-            );
 
             calculatorRunPomDataDetails = calculatorRunPomDataDetails
                                             .Where(p =>

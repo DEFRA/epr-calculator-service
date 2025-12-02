@@ -2,7 +2,9 @@
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Services;
+using Microsoft.IdentityModel.Tokens;
 using Moq;
+using System.Collections.Generic;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
@@ -21,7 +23,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public async Task HandleUnmatchedPomAsync_InsertsCorrectErrorReports_WhenUnmatchedExists()
+        public void HandleUnmatchedPomAsync_InsertsCorrectErrorReports_WhenUnmatchedExists()
         {
             // Arrange
             var runId = 123;
@@ -65,33 +67,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 }
             };
 
-            IEnumerable<ErrorReport>? capturedReports = null;
-
-            mockErrorReport
-                .Setup(c => c.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>()))
-                .Returns(Task.CompletedTask)
-                .Callback<IEnumerable<ErrorReport>>(reports => capturedReports = reports);
-
-            var beforeInvoke = DateTime.UtcNow.AddSeconds(-1);
-
             // Act
-            await _service.HandleMissingRegistrationData(pomDetails, orgDetails, runId, createdBy, CancellationToken.None);
+            IEnumerable<ErrorReport> reportsList = _service.HandleMissingRegistrationData(pomDetails, orgDetails, runId, createdBy);
 
-            var afterInvoke = DateTime.UtcNow.AddSeconds(1);
 
-            // Assert
-            mockErrorReport.Verify(x => x.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>()), Times.Once);
-            Assert.IsNotNull(capturedReports);
-
-            var reportsList = capturedReports!.ToList();
-            Assert.AreEqual(4, reportsList.Count, "Expected 4 unmatched records to be inserted (OrganisationId 1, 2 and 3).");
+            Assert.AreEqual(4, reportsList.Count(), "Expected 4 unmatched records to be inserted (OrganisationId 1, 2 and 3).");
 
             foreach (var r in reportsList)
             {
                 Assert.AreEqual(runId, r.CalculatorRunId);
                 Assert.AreEqual((int)ErrorTypes.MissingRegistrationData, r.ErrorTypeId);
                 Assert.AreEqual(createdBy, r.CreatedBy);
-                Assert.IsTrue(r.CreatedAt >= beforeInvoke && r.CreatedAt <= afterInvoke);
             }
 
             Assert.IsTrue(reportsList.Any(r => r.ProducerId == 1 && r.SubsidiaryId == "11"));
@@ -100,7 +86,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public async Task HandleUnmatchedPomAsync_DeduplicatesMultiplePomsForSameOrgSub()
+        public void HandleUnmatchedPomAsync_DeduplicatesMultiplePomsForSameOrgSub()
         {
             // Arrange
             var runId = 200;
@@ -136,26 +122,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var orgDetails = Array.Empty<CalculatorRunOrganisationDataDetail>();
 
-            IEnumerable<ErrorReport>? capturedReports = null;
-
-            mockErrorReport
-                .Setup(c => c.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>()))
-                .Returns(Task.CompletedTask)
-                .Callback<IEnumerable<ErrorReport>>(reports => capturedReports = reports);
-
             // Act
-            await _service.HandleMissingRegistrationData(pomDetails, orgDetails, runId, createdBy, CancellationToken.None);
+            IEnumerable <ErrorReport> reportsList = _service.HandleMissingRegistrationData(pomDetails, orgDetails, runId, createdBy);
 
             // Assert
-            var reportsList = capturedReports!.ToList();
-            Assert.AreEqual(2, reportsList.Count, "Expected 1 error per unique Org+Sub combination.");
-
+            Assert.AreEqual(2, reportsList.Count(), "Expected 1 error per unique Org+Sub combination.");
             Assert.IsTrue(reportsList.Any(r => r.ProducerId == 10 && r.SubsidiaryId == "101"));
             Assert.IsTrue(reportsList.Any(r => r.ProducerId == 10 && r.SubsidiaryId == "102"));
         }
 
         [TestMethod]
-        public async Task HandleUnmatchedPomAsync_DoesNotInsert_WhenAllMatched()
+        public void HandleUnmatchedPomAsync_DoesNotInsert_WhenAllMatched()
         {
             // Arrange
             var runId = 300;
@@ -200,14 +177,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             };
 
             // Act
-            await _service.HandleMissingRegistrationData(pomDetails, orgDetails, runId, createdBy, CancellationToken.None);
+            IEnumerable<ErrorReport> reportsList = _service.HandleMissingRegistrationData(pomDetails, orgDetails, runId, createdBy);
 
             // Assert
-            mockErrorReport.Verify(x => x.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>()), Times.Never);
+            Assert.AreEqual(0, reportsList.Count(), "Expected no unmatched records to be inserted.");
         }
 
         [TestMethod]
-        public async Task HandleUnmatchedPomAsync_DeduplicatesMultiplePomsForSameOrgSub_Issue3()
+        public void HandleUnmatchedPomAsync_DeduplicatesMultiplePomsForSameOrgSub_Issue3()
         {
             // Arrange
             var runId = 400;
@@ -228,28 +205,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Org table is empty → all POMs are unmatched
             var orgDetails = Array.Empty<CalculatorRunOrganisationDataDetail>();
 
-            IEnumerable<ErrorReport>? capturedReports = null;
-
-            mockErrorReport
-                .Setup(c => c.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>()))
-                .Returns(Task.CompletedTask)
-                .Callback<IEnumerable<ErrorReport>>(reports => capturedReports = reports);
-
-            var beforeInvoke = DateTime.UtcNow.AddSeconds(-1);
-
             // Act
-            await _service.HandleMissingRegistrationData(pomDetails, orgDetails, runId, createdBy, CancellationToken.None);
-
-            var afterInvoke = DateTime.UtcNow.AddSeconds(1);
+            IEnumerable<ErrorReport> reportsList = _service.HandleMissingRegistrationData(pomDetails, orgDetails, runId, createdBy);
 
             // Assert
-            mockErrorReport.Verify(x => x.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>()), Times.Once);
-            Assert.IsNotNull(capturedReports);
-
-            var reportsList = capturedReports!.ToList();
-
             // Should insert ONLY 1 error for the unique Org/Sub combination
-            Assert.AreEqual(1, reportsList.Count, "Expected only 1 error for the unique Org/Sub combination.");
+            Assert.AreEqual(1, reportsList.Count(), "Expected only 1 error for the unique Org/Sub combination.");
 
             var report = reportsList.First();
             Assert.AreEqual(100, report.ProducerId);
@@ -257,11 +218,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.AreEqual(runId, report.CalculatorRunId);
             Assert.AreEqual((int)ErrorTypes.MissingRegistrationData, report.ErrorTypeId);
             Assert.AreEqual(createdBy, report.CreatedBy);
-            Assert.IsTrue(report.CreatedAt >= beforeInvoke && report.CreatedAt <= afterInvoke, "CreatedAt should be within test time window.");
         }
 
         [TestMethod]
-        public async Task HandleUnmatchedPomAsync_DoesNotInsert_WhenNoUnmatched()
+        public void HandleUnmatchedPomAsync_DoesNotInsert_WhenNoUnmatched()
         {
             // Arrange
             var runId = 500;
@@ -306,16 +266,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             };
 
             // Act
-            await _service.HandleMissingRegistrationData(pomDetails, orgDetails, runId, createdBy, CancellationToken.None);
+            IEnumerable<ErrorReport> reportsList = _service.HandleMissingRegistrationData(pomDetails, orgDetails, runId, createdBy);
 
             // Assert
-            // Verify that InsertRecords was never called
-            mockErrorReport.Verify(x => x.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>()), Times.Never);
+            Assert.AreEqual(0, reportsList.Count(), "Expected no unmatched records to be inserted.");
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public async Task HandleUnmatchedPomAsync_Throws_WhenPomDetailsNull()
+        public void HandleUnmatchedPomAsync_Throws_WhenPomDetailsNull()
         {
             // Arrange
             IEnumerable<CalculatorRunPomDataDetail>? pomDetails = null;
@@ -328,12 +287,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             };
 
             // Act
-            await _service.HandleMissingRegistrationData(pomDetails!, orgDetails, 1, "u", CancellationToken.None);
+            _service.HandleMissingRegistrationData(pomDetails!, orgDetails, 1, "u");
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public async Task HandleUnmatchedPomAsync_Throws_WhenOrgDetailsNull()
+        public void HandleUnmatchedPomAsync_Throws_WhenOrgDetailsNull()
         {
             // Arrange
             var pomDetails = new[] { new CalculatorRunPomDataDetail
@@ -348,11 +307,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             IEnumerable<CalculatorRunOrganisationDataDetail>? orgDetails = null;
 
             // Act
-            await _service.HandleMissingRegistrationData(pomDetails, orgDetails!, 1, "u", CancellationToken.None);
+            _service.HandleMissingRegistrationData(pomDetails, orgDetails!, 1, "u");
         }
 
         [TestMethod]
-        public async Task HandleUnmatchedPomAsync_DoesNotInsert_WhenSubmitterIdsMatched()
+        public void HandleUnmatchedPomAsync_DoesNotInsert_WhenSubmitterIdsMatched()
         {
             // Arrange
             var runId = 300;
@@ -404,14 +363,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             };
 
             // Act
-            await _service.HandleMissingRegistrationData(pomDetails, orgDetails, runId, createdBy, CancellationToken.None);
+            IEnumerable<ErrorReport> reportsList = _service.HandleMissingRegistrationData(pomDetails, orgDetails, runId, createdBy);
 
             // Assert
-            mockErrorReport.Verify(x => x.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>()), Times.Never);
+            Assert.AreEqual(0, reportsList.Count(), "Expected no unmatched records to be inserted.");
         }
 
         [TestMethod]
-        public async Task HandleUnmatchedPomAsync_Inserts_WhenSubmitterIdsDoNotMatch()
+        public void HandleUnmatchedPomAsync_Inserts_WhenSubmitterIdsDoNotMatch()
         {
             // Arrange
             var runId = 300;
@@ -462,21 +421,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 }
             };
 
-            IEnumerable<ErrorReport>? capturedReports = null;
-
-            mockErrorReport
-                .Setup(c => c.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>()))
-                .Returns(Task.CompletedTask)
-                .Callback<IEnumerable<ErrorReport>>(reports => capturedReports = reports);
-
             // Act
-            await _service.HandleMissingRegistrationData(pomDetails, orgDetails, runId, createdBy, CancellationToken.None);
+            IEnumerable<ErrorReport> capturedReports =  _service.HandleMissingRegistrationData(pomDetails, orgDetails, runId, createdBy);
 
             // Assert
-            mockErrorReport.Verify(x => x.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>()), Times.Once);
-
-            Assert.IsNotNull(capturedReports);
-
             var reportsList = capturedReports!.ToList();
             Assert.AreEqual(2, reportsList.Count, "Expected 2 unmatched records to be inserted (2).");
             var error = reportsList.First();
@@ -485,7 +433,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public async Task HandleMissingPOMErrors_WherePreviousPOMsExists()
+        public void HandleMissingPOMErrors_WherePreviousPOMsExists()
         {
             var submitterId1 = Guid.NewGuid();
             var submitterId2 = Guid.NewGuid();
@@ -645,27 +593,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 }
             };
 
-            IEnumerable<ErrorReport>? capturedReports = null;
-
-            mockErrorReport
-                .Setup(c => c.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>()))
-                .Returns(Task.CompletedTask)
-                .Callback<IEnumerable<ErrorReport>>(reports => capturedReports = reports);
-
             // Arrange
             var runId = 300;
             var createdBy = "no error";
 
             // Act
-            await _service.HandleMissingPomData(pomDetails, orgDetails, runId, createdBy, CancellationToken.None);
-
+            IEnumerable<ErrorReport> reportsList = _service.HandleMissingPomData(pomDetails, orgDetails, runId, createdBy);
+           
             // Assert
-            mockErrorReport.Verify(x => x.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>()), Times.Once);
-
-            Assert.IsNotNull(capturedReports);
-
-            var reportsList = capturedReports!.ToList();
-            Assert.AreEqual(1, reportsList.Count, "Expected 1 unmatched records to be inserted.");
+            Assert.AreEqual(1, reportsList.Count(), "Expected 1 unmatched records to be inserted.");
             var error = reportsList.First();
             Assert.AreEqual((int)ErrorTypes.MissingPOMData, error.ErrorTypeId, "Incorrect Error Type");
             Assert.AreEqual(200202, error.ProducerId, "Incorrect Producer Id");
@@ -789,24 +725,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 }
             };
 
-            IEnumerable<ErrorReport>? capturedReports = null;
-
-            mockErrorReport
-                .Setup(c => c.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>()))
-                .Returns(Task.CompletedTask)
-                .Callback<IEnumerable<ErrorReport>>(reports => capturedReports = reports);
-
             // Arrange
             var runId = 300;
             var createdBy = "no error";
 
             // Act
-            await _service.HandleMissingPomData(pomDetails, orgDetails, runId, createdBy, CancellationToken.None);
+            IEnumerable<ErrorReport> capturedReports = _service.HandleMissingPomData(pomDetails, orgDetails, runId, createdBy);
 
             // Assert
-            mockErrorReport.Verify(x => x.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>()), Times.Never);
-
-            Assert.IsNull(capturedReports);
+            Assert.IsTrue(capturedReports.IsNullOrEmpty());
         }
 
         [TestMethod]
@@ -969,25 +896,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 }
             };
 
-
-            IEnumerable<ErrorReport>? capturedReports = null;
-
-            mockErrorReport
-                .Setup(c => c.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>()))
-                .Returns(Task.CompletedTask)
-                .Callback<IEnumerable<ErrorReport>>(reports => capturedReports = reports);
-
             // Arrange
             var runId = 300;
             var createdBy = "no error";
 
             // Act
-            await _service.HandleMissingPomData(pomDetails, orgDetails, runId, createdBy, CancellationToken.None);
+            IEnumerable<ErrorReport> capturedReports = _service.HandleMissingPomData(pomDetails, orgDetails, runId, createdBy);
 
             // Assert
-            mockErrorReport.Verify(x => x.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>()), Times.Never);
-
-            Assert.IsNull(capturedReports);
+            Assert.IsTrue(capturedReports.IsNullOrEmpty());
         }
     }
 }
