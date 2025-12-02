@@ -606,10 +606,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.AreEqual((int)ErrorTypes.MissingPOMData, error.ErrorTypeId, "Incorrect Error Type");
             Assert.AreEqual(200202, error.ProducerId, "Incorrect Producer Id");
             Assert.AreEqual("100101", error.SubsidiaryId, "Incorrect Subsidiary Id");
+            Assert.AreEqual("01", error.LeaverCode, "Incorrect Leaver Code");
         }
 
         [TestMethod]
-        public async Task HandleMissingPOMErrors_WhereNoPreviousPOMsExists()
+        public void HandleMissingPOMErrors_WhereNoPreviousPOMsExists()
         {
             var submitterId1 = Guid.NewGuid();
             var submitterId2 = Guid.NewGuid();
@@ -737,7 +738,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public async Task HandleMissingPOMErrors_WhereNoStatusCodesExists()
+        public void HandleMissingPOMErrors_WhereNoStatusCodesExists()
         {
             var submitterId1 = Guid.NewGuid();
             var submitterId2 = Guid.NewGuid();
@@ -905,6 +906,203 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Assert
             Assert.IsTrue(capturedReports.IsNullOrEmpty());
+        }
+
+        [TestMethod]
+        public async Task HandleErrors_ForMissingRegAndMissingPoms()
+        {
+            var submitterId1 = Guid.NewGuid();
+            var submitterId2 = Guid.NewGuid();
+
+            var orgDetails = new[]
+                {
+                new CalculatorRunOrganisationDataDetail
+                {
+                    OrganisationId = 100101,
+                    OrganisationName = "ECOLTD",
+                    SubmissionPeriodDesc = "Jan to December 2025",
+                    ObligationStatus="N",
+                    SubmitterId =submitterId1
+                },
+                new CalculatorRunOrganisationDataDetail
+                {
+                    OrganisationId = 200202 ,
+                    OrganisationName = "Green holdings",
+                    SubmissionPeriodDesc = "Jan to December 2025",
+                    ObligationStatus="Y",
+                    SubmitterId =submitterId2
+                },
+                new CalculatorRunOrganisationDataDetail
+                {
+                    OrganisationId = 200202  ,
+                    SubsidaryId = "100500",
+                    OrganisationName = "Pure leaf drinks",
+                    SubmissionPeriodDesc = "Jan to December 2025",
+                    ObligationStatus="Y",
+                    SubmitterId = submitterId2
+                },
+                new CalculatorRunOrganisationDataDetail
+                {
+                    OrganisationId = 200202,
+                    SubsidaryId = "100101",
+                    OrganisationName = "ECOLTD",
+                    SubmissionPeriodDesc = "Jan to December 2025",
+                    ObligationStatus="Y",
+                    StatusCode="01",
+                    SubmitterId = submitterId2
+                }
+            };
+
+            var pomDetails = new[] {
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 100101,
+                    SubmissionPeriod = "2024-P1",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    SubmissionPeriodDesc = "Jan to December 2025",
+                    SubmitterId=submitterId1,
+                    PackagingType="HH",
+                    PackagingMaterial="ST",
+                    PackagingMaterialWeight=5000
+                },
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 100101,
+                    SubmissionPeriod = "2024-P1",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    SubmissionPeriodDesc = "Jan to December 2025",
+                    SubmitterId=submitterId1,
+                    PackagingType="HH",
+                    PackagingMaterial="PL",
+                    PackagingMaterialWeight=3000
+                },
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 100101,
+                    SubmissionPeriod = "2024-P4",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    SubmissionPeriodDesc = "Jan to December 2025",
+                    SubmitterId=submitterId1,
+                    PackagingType="HH",
+                    PackagingMaterial="ST",
+                    PackagingMaterialWeight=5000
+                },
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 100101,
+                    SubmissionPeriod = "2024-P4",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    SubmissionPeriodDesc = "Jan to December 2025",
+                    SubmitterId=submitterId1,
+                    PackagingType="HH",
+                    PackagingMaterial="PL",
+                    PackagingMaterialWeight=3000
+                },
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 200202 ,
+                    SubmissionPeriod = "2024-P1",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    SubmissionPeriodDesc = "Jan to December 2025",
+                    SubmitterId=submitterId2,
+                    PackagingType="HH",
+                    PackagingMaterial="PL",
+                    PackagingMaterialWeight=2000
+                },
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 200202 ,
+                    SubmissionPeriod = "2024-P1",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    SubmissionPeriodDesc = "Jan to December 2025",
+                    SubmitterId=submitterId2,
+                    PackagingType="HH",
+                    PackagingMaterial="AL",
+                    PackagingMaterialWeight=4500
+                },
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 200202,
+                    SubmissionPeriod = "2024-P4",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    SubmissionPeriodDesc = "Jan to December 2025",
+                    SubmitterId=submitterId2,
+                    PackagingType="HH",
+                    PackagingMaterial="PL",
+                    PackagingMaterialWeight=2000
+                },
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 200202,
+                    SubsidaryId="100500",
+                    SubmissionPeriod = "2024-P1",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    SubmissionPeriodDesc = "Jan to December 2025",
+                    SubmitterId=submitterId2,
+                    PackagingType="HH",
+                    PackagingMaterial="PL",
+                    PackagingMaterialWeight=3500
+                },
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 200202,
+                    SubsidaryId="100500",
+                    SubmissionPeriod = "2024-P1",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    SubmissionPeriodDesc = "Jan to December 2025",
+                    SubmitterId=submitterId2,
+                    PackagingType="HH",
+                    PackagingMaterial="PL",
+                    PackagingMaterialWeight=4000
+                },
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 200202,
+                    SubsidaryId="100500",
+                    SubmissionPeriod = "2024-P4",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    SubmissionPeriodDesc = "Jan to December 2025",
+                    SubmitterId=submitterId2,
+                    PackagingType="HH",
+                    PackagingMaterial="PL",
+                    PackagingMaterialWeight=3000
+                },
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 100200,
+                    SubmissionPeriod = "2024-P1",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    SubmissionPeriodDesc = "Jan to December 2025",
+                    SubmitterId=submitterId1,
+                    PackagingType="HH",
+                    PackagingMaterial="ST",
+                    PackagingMaterialWeight=5000
+                }
+            };
+
+            // Arrange
+            var runId = 300;
+            var createdBy = "no error";
+
+            IEnumerable<ErrorReport> errorReports = Enumerable.Empty<ErrorReport>();
+            mockErrorReport.Setup(m => m.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>())).Callback<IEnumerable<ErrorReport>>(arg => errorReports = arg).Returns(Task.CompletedTask);
+
+            // Act
+            var reportsList = await _service.HandleErrors(pomDetails, orgDetails, runId, createdBy, CancellationToken.None);
+
+            // Assert
+            Assert.AreEqual(2, errorReports.Count(), "Expected 2 errors to be inserted.");
+            var regError = errorReports.First();
+
+            Assert.AreEqual((int)ErrorTypes.MissingRegistrationData, regError.ErrorTypeId, "Incorrect Error Type");
+            Assert.AreEqual(100200, regError.ProducerId, "Incorrect Producer Id");
+            Assert.AreEqual(null, regError.SubsidiaryId, "Incorrect Subsidiary Id");
+
+            var pomError = errorReports.Last();
+            Assert.AreEqual((int)ErrorTypes.MissingPOMData, pomError.ErrorTypeId, "Incorrect Error Type");
+            Assert.AreEqual(200202, pomError.ProducerId, "Incorrect Producer Id");
+            Assert.AreEqual("100101", pomError.SubsidiaryId, "Incorrect Subsidiary Id");
+            Assert.AreEqual("01", pomError.LeaverCode);
         }
     }
 }
