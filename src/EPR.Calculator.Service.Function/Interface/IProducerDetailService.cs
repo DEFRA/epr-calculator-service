@@ -13,6 +13,6 @@ namespace EPR.Calculator.Service.Function.Interface
         public Task<IEnumerable<ProducerInvoicedDto>> GetLatestProducerDetailsForThisFinancialYear(string financialYear,
             IEnumerable<int> missingProducersIdsInCurrentRun);
 
-        public IEnumerable<ProducerDetailDto> GetProducers(int runId);
+        public Task<IEnumerable<int>> GetProducers(int runId);
     }
 }
