@@ -65,7 +65,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public void GetProducers_Returns_Producers()
+        public async Task GetProducers_Returns_Producers()
         {
             TestDataHelper.SeedDatabaseForUnclassified(this.context);
 
@@ -73,7 +73,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var producerDetailService = new ProducerDetailService(this.context);
 
             // Act
-            var result = producerDetailService.GetProducers(1);
+            var result = await producerDetailService.GetProducers(1);
 
             // Assert
             Assert.IsNotNull(result);

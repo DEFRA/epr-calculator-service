@@ -57,17 +57,10 @@ namespace EPR.Calculator.Service.Function.Services
             return producerdetails;
         }
 
-        public IEnumerable<ProducerDetailDto> GetProducers(int runId)
+        public async Task<IEnumerable<int>> GetProducers(int runId)
         {
-            return context.ProducerDetail.AsNoTracking().Where(t => t.CalculatorRunId == runId && t.SubsidiaryId == null).
-                 Select(t => new ProducerDetailDto()
-                 {
-                     ProducerId = t.ProducerId,
-                     ProducerName = t.ProducerName,
-                     CalculatorRunId = runId,
-                     TradingName = t.TradingName,
-                 }
-                 ).ToList();
+            return await context.ProducerDetail.AsNoTracking().Where(t => t.CalculatorRunId == runId).
+                  Select(t => t.ProducerId).Distinct().ToListAsync();
         }
     }
 }
