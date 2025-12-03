@@ -270,19 +270,15 @@
 
             var mockErrorReportService = new Mock<IErrorReportService>();
 
-            // Mocking the unmatched output returned by HandleUnmatchedPomAsync
-            var unmatchedRecords = new List<(int ProducerId, string? SubsidiaryId)>
-                                    {
-                                        (2, "1"),
-                                    };
-            var errorReport = new List<ErrorReport>();
+            var errorReport = new HashSet<(int, string?)>();
             mockErrorReportService
-                .Setup(s => s.HandleMissingRegistrationData(
+                .Setup(s => s.HandleErrors(
                     It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
                     It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
                     It.IsAny<int>(),
-                    It.IsAny<string>()))
-                .Returns(errorReport);
+                    It.IsAny<string>(),
+                    CancellationToken.None))
+                .ReturnsAsync(errorReport);
 
             var service = new TransposePomAndOrgDataService(
                this._context,
@@ -311,18 +307,15 @@
             };
 
             var mockProducerDetailService = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
-            // var mockErrorReportService = new Mock<IDbLoadingChunkerService<ErrorReport>>();
             mockProducerDetailService.Setup(service => service.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
                                      .Returns(Task.CompletedTask);
 
             var mockErrorReportService = new Mock<IErrorReportService>();
 
-            // Mocking the unmatched output returned by HandleUnmatchedPomAsync
             var unmatchedRecords = new HashSet<(int ProducerId, string? SubsidiaryId)>
                                     {
                                         (2, "1"),
                                     };
-
             mockErrorReportService
                 .Setup(s => s.HandleErrors(
                     It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
@@ -394,12 +387,10 @@
 
             var mockErrorReportService = new Mock<IErrorReportService>();
 
-            // Mocking the unmatched output returned by HandleUnmatchedPomAsync
             var unmatchedRecords = new HashSet<(int ProducerId, string? SubsidiaryId)>
                                     {
                                         (2, "1"),
                                     };
-
             mockErrorReportService
                 .Setup(s => s.HandleErrors(
                     It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
@@ -489,7 +480,6 @@
 
             var mockErrorReportService = new Mock<IErrorReportService>();
 
-            // Mocking the unmatched output returned by HandleUnmatchedPomAsync
             var unmatchedRecords = new HashSet<(int ProducerId, string? SubsidiaryId)>
                                     {
                                         (2, "1"),
@@ -550,7 +540,6 @@
 
             var mockErrorReportService = new Mock<IErrorReportService>();
 
-            // Mocking the unmatched output returned by HandleUnmatchedPomAsync
             var unmatchedRecords = new HashSet<(int ProducerId, string? SubsidiaryId)>
                                     {
                                         (2, "1"),
@@ -684,7 +673,6 @@
 
             var mockErrorReportService = new Mock<IErrorReportService>();
 
-            // Mocking the unmatched output returned by HandleUnmatchedPomAsync
             var unmatchedRecords = new HashSet<(int ProducerId, string? SubsidiaryId)>
                                     {
                                         (2, "1"),
@@ -1057,7 +1045,6 @@
 
             var mockErrorReportService = new Mock<IErrorReportService>();
 
-            // Mocking the unmatched output returned by HandleUnmatchedPomAsync
             var unmatchedRecords = new HashSet<(int ProducerId, string? SubsidiaryId)>();
 
             mockErrorReportService

@@ -103,7 +103,6 @@ namespace EPR.Calculator.Service.Function.Services
                                                 calculatorRunId,
                                                 createdBy);
 
-
             var missingPomErrors = HandleMissingPomData(pomDetails,
                                                 orgDetails,
                                                 calculatorRunId,

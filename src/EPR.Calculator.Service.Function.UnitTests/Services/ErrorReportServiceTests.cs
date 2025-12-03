@@ -4,7 +4,6 @@ using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.IdentityModel.Tokens;
 using Moq;
-using System.Collections.Generic;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
@@ -123,7 +122,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var orgDetails = Array.Empty<CalculatorRunOrganisationDataDetail>();
 
             // Act
-            IEnumerable <ErrorReport> reportsList = _service.HandleMissingRegistrationData(pomDetails, orgDetails, runId, createdBy);
+            IEnumerable<ErrorReport> reportsList = _service.HandleMissingRegistrationData(pomDetails, orgDetails, runId, createdBy);
 
             // Assert
             Assert.AreEqual(2, reportsList.Count(), "Expected 1 error per unique Org+Sub combination.");
@@ -319,47 +318,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             Guid pom1ID = Guid.NewGuid();
             Guid pom2ID = Guid.NewGuid();
-            var pomDetails = new[]
-            {
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 1,
-                    SubsidaryId = "101",
-                    SubmissionPeriod = "2023-P2",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "July to December 2023",
-                    SubmitterId = pom1ID,
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 2,
-                    SubsidaryId = "102",
-                     SubmissionPeriod = "2023-P2",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "July to December 2023",
-                    SubmitterId = pom2ID
+            var pomDetails = new[] {
+                CreatePomData(1, "2023-P2", pom1ID, "", "", 0, submissionPeriodDesc:"July to December 2023",subsidiaryId:"101"),
+                CreatePomData(2, "2023-P2", pom2ID, "", "", 0, submissionPeriodDesc:"July to December 2023",subsidiaryId:"102")
+             };
 
-                }
-            };
-
-            var orgDetails = new[]
-            {
-                new CalculatorRunOrganisationDataDetail
-                {
-                    OrganisationId = 1,
-                    SubsidaryId = "101",
-                    OrganisationName = "Test",
-                    SubmissionPeriodDesc = "July to December 2023",
-                    SubmitterId=pom1ID,
-                },
-                new CalculatorRunOrganisationDataDetail
-                {
-                    OrganisationId = 2,
-                    SubsidaryId = "102",
-                    OrganisationName = "Test1",
-                    SubmissionPeriodDesc = "July to December 2023",
-                    SubmitterId=pom2ID,
-                }
+            var orgDetails = new[] {
+                CreateOrganisationData(1,"101","Test",pom1ID, submissionPeriodDesc:"July to December 2023"),
+                CreateOrganisationData(2,"102","Test1",pom2ID, submissionPeriodDesc:"July to December 2023")
             };
 
             // Act
@@ -378,57 +344,25 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             Guid pom1SumbitterId = Guid.NewGuid();
             Guid pom2SubmitterId = Guid.NewGuid();
-            var pomDetails = new[]
-            {
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 1,
-                    SubsidaryId = "101",
-                    SubmissionPeriod = "2023-P2",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "July to December 2023",
-                    SubmitterId = pom1SumbitterId,
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 2,
-                    SubsidaryId = "102",
-                     SubmissionPeriod = "2023-P2",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "July to December 2023",
-                    SubmitterId = pom1SumbitterId
 
-                }
+            var pomDetails = new[] {
+                CreatePomData(1, "2023-P2", pom1SumbitterId, "", "", 0, submissionPeriodDesc:"July to December 2023",subsidiaryId:"101"),
+                CreatePomData(2, "2023-P2", pom1SumbitterId, "", "", 0, submissionPeriodDesc:"July to December 2023",subsidiaryId:"102")
             };
 
-            var orgDetails = new[]
-            {
-                new CalculatorRunOrganisationDataDetail
-                {
-                    OrganisationId = 1,
-                    SubsidaryId = "101",
-                    OrganisationName = "Test",
-                    SubmissionPeriodDesc = "July to December 2023",
-                    SubmitterId=pom1SumbitterId,
-                },
-                new CalculatorRunOrganisationDataDetail
-                {
-                    OrganisationId = 2,
-                    SubsidaryId = "102",
-                    OrganisationName = "Test1",
-                    SubmissionPeriodDesc = "July to December 2023",
-                    SubmitterId=pom2SubmitterId,
-                }
+            var orgDetails = new[] {
+                CreateOrganisationData(1,"101","Test",pom1SumbitterId, submissionPeriodDesc:"July to December 2023"),
+                CreateOrganisationData(2,"102","Test1",pom2SubmitterId, submissionPeriodDesc:"July to December 2023")
             };
 
             // Act
-            IEnumerable<ErrorReport> capturedReports =  _service.HandleMissingRegistrationData(pomDetails, orgDetails, runId, createdBy);
+            IEnumerable<ErrorReport> capturedReports = _service.HandleMissingRegistrationData(pomDetails, orgDetails, runId, createdBy);
 
             // Assert
             var reportsList = capturedReports!.ToList();
             Assert.AreEqual(2, reportsList.Count, "Expected 2 unmatched records to be inserted (2).");
             var error = reportsList.First();
-            Assert.AreEqual((int)ErrorTypes.MissingRegistrationData, error.ErrorTypeId, "Incorrect Error Type" );
+            Assert.AreEqual((int)ErrorTypes.MissingRegistrationData, error.ErrorTypeId, "Incorrect Error Type");
             Assert.AreEqual(2, error.ProducerId, "Incorrect Producer Id");
         }
 
@@ -438,168 +372,33 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var submitterId1 = Guid.NewGuid();
             var submitterId2 = Guid.NewGuid();
 
-            var orgDetails = new[]
-                {
-                new CalculatorRunOrganisationDataDetail
-                {
-                    OrganisationId = 100101,
-                    OrganisationName = "ECOLTD",
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    ObligationStatus="N",
-                    SubmitterId =submitterId1
-                },
-                new CalculatorRunOrganisationDataDetail
-                {
-                    OrganisationId = 200202 ,
-                    OrganisationName = "Green holdings",
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    ObligationStatus="Y",
-                    SubmitterId =submitterId2
-                },
-                new CalculatorRunOrganisationDataDetail
-                {
-                    OrganisationId = 200202  ,
-                    SubsidaryId = "100500",
-                    OrganisationName = "Pure leaf drinks",
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    ObligationStatus="Y",
-                    SubmitterId = submitterId2
-                },
-                new CalculatorRunOrganisationDataDetail
-                {
-                    OrganisationId = 200202,
-                    SubsidaryId = "100101",
-                    OrganisationName = "ECOLTD",
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    ObligationStatus="Y",
-                    StatusCode="01",
-                    SubmitterId = submitterId2
-                }
+            var orgDetails = new[] {
+                CreateOrganisationData(100101,null,"ECOLTD",submitterId1, "N"),
+                CreateOrganisationData(200202,null,"Green holdings",submitterId2, "Y"),
+                CreateOrganisationData(200202,"100500","Pure leaf drinks",submitterId2, "Y"),
+                CreateOrganisationData(200202,"100101","ECOLTD",submitterId2, "Y", "01")
             };
 
             var pomDetails = new[] {
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 100101,
-                    SubmissionPeriod = "2024-P1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId1,
-                    PackagingType="HH",
-                    PackagingMaterial="ST",
-                    PackagingMaterialWeight=5000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 100101,
-                    SubmissionPeriod = "2024-P1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId1,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=3000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 100101,
-                    SubmissionPeriod = "2024-P4",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId1,
-                    PackagingType="HH",
-                    PackagingMaterial="ST",
-                    PackagingMaterialWeight=5000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 100101,
-                    SubmissionPeriod = "2024-P4",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId1,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=3000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202 ,
-                    SubmissionPeriod = "2024-P1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=2000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202 ,
-                    SubmissionPeriod = "2024-P1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="AL",
-                    PackagingMaterialWeight=4500
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202,
-                    SubmissionPeriod = "2024-P4",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=2000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202,
-                    SubsidaryId="100500",
-                    SubmissionPeriod = "2024-P1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=3500
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202,
-                    SubsidaryId="100500",
-                    SubmissionPeriod = "2024-P1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=4000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202,
-                    SubsidaryId="100500",
-                    SubmissionPeriod = "2024-P4",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=3000
-                }
+                CreatePomData(100101, "2024-P1",submitterId1,"HH","ST",5000),
+                CreatePomData(100101, "2024-P1",submitterId1,"HH","PL",3000),
+                CreatePomData(100101, "2024-P4",submitterId1,"HH","ST",5000),
+                CreatePomData(100101, "2024-P4",submitterId1,"HH","PL",3000),
+                CreatePomData(200202, "2024-P1",submitterId2,"HH","PL",2000),
+                CreatePomData(200202, "2024-P1",submitterId2,"HH","AL",4500),
+                CreatePomData(200202, "2024-P4",submitterId2,"HH","PL",2000),
+                CreatePomData(200202, "2024-P1",submitterId2,"HH","PL",3500,subsidiaryId:"100500"),
+                CreatePomData(200202, "2024-P1",submitterId2,"HH","PL",4000,subsidiaryId:"100500"),
+                CreatePomData(200202, "2024-P4",submitterId2,"HH","PL",3000,subsidiaryId:"100500") 
             };
-
+              
             // Arrange
             var runId = 300;
             var createdBy = "no error";
 
             // Act
             IEnumerable<ErrorReport> reportsList = _service.HandleMissingPomData(pomDetails, orgDetails, runId, createdBy);
-           
+
             // Assert
             Assert.AreEqual(1, reportsList.Count(), "Expected 1 unmatched records to be inserted.");
             var error = reportsList.First();
@@ -615,115 +414,20 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var submitterId1 = Guid.NewGuid();
             var submitterId2 = Guid.NewGuid();
 
-            var orgDetails = new[]
-                {
-                new CalculatorRunOrganisationDataDetail
-                {
-                    OrganisationId = 100101,
-                    OrganisationName = "ECOLTD",
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    ObligationStatus="N",
-                    SubmitterId =submitterId1
-                },
-                new CalculatorRunOrganisationDataDetail
-                {
-                    OrganisationId = 200202 ,
-                    OrganisationName = "Green holdings",
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    ObligationStatus="Y",
-                    SubmitterId =submitterId2
-                },
-                new CalculatorRunOrganisationDataDetail
-                {
-                    OrganisationId = 200202  ,
-                    SubsidaryId = "100500",
-                    OrganisationName = "Pure leaf drinks",
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    ObligationStatus="Y",
-                    SubmitterId = submitterId2
-                },
-                new CalculatorRunOrganisationDataDetail
-                {
-                    OrganisationId = 200202,
-                    SubsidaryId = "100101",
-                    OrganisationName = "ECOLTD",
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    ObligationStatus="Y",
-                    StatusCode="01",
-                    SubmitterId = submitterId2
-                }
+            var orgDetails = new[] {
+                CreateOrganisationData(100101,null,"ECOLTD",submitterId1, "N"),
+                CreateOrganisationData(200202,null,"Green holdings",submitterId2, "Y"),
+                CreateOrganisationData(200202,"100500","Pure leaf drinks",submitterId2, "Y"),
+                CreateOrganisationData(200202,"100101","ECOLTD",submitterId2, "Y", "01")
             };
 
             var pomDetails = new[] {
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202 ,
-                    SubmissionPeriod = "2024-P1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=2000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202 ,
-                    SubmissionPeriod = "2024-P1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="AL",
-                    PackagingMaterialWeight=4500
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202,
-                    SubmissionPeriod = "2024-P4",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=2000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202,
-                    SubsidaryId="100500",
-                    SubmissionPeriod = "2024-P1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=3500
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202,
-                    SubsidaryId="100500",
-                    SubmissionPeriod = "2024-P1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=4000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202,
-                    SubsidaryId="100500",
-                    SubmissionPeriod = "2024-P4",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=3000
-                }
+                CreatePomData(200202, "2024-P1",submitterId2,"HH","PL",2000),
+                CreatePomData(200202, "2024-P1",submitterId2,"HH","AL",4500),
+                CreatePomData(200202, "2024-P4",submitterId2,"HH","PL",2000),
+                CreatePomData(200202, "2024-P1",submitterId2,"HH","PL",3500,subsidiaryId:"100500"),
+                CreatePomData(200202, "2024-P1",submitterId2,"HH","PL",4000,subsidiaryId:"100500"),
+                CreatePomData(200202, "2024-P4",submitterId2,"HH","PL",3000,subsidiaryId:"100500")
             };
 
             // Arrange
@@ -743,158 +447,24 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var submitterId1 = Guid.NewGuid();
             var submitterId2 = Guid.NewGuid();
 
-            var orgDetails = new[]
-                {
-                new CalculatorRunOrganisationDataDetail
-                {
-                    OrganisationId = 100101,
-                    OrganisationName = "ECOLTD",
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    ObligationStatus="N",
-                    SubmitterId =submitterId1
-                },
-                new CalculatorRunOrganisationDataDetail
-                {
-                    OrganisationId = 200202 ,
-                    OrganisationName = "Green holdings",
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    ObligationStatus="Y",
-                    SubmitterId =submitterId2
-                },
-                new CalculatorRunOrganisationDataDetail
-                {
-                    OrganisationId = 200202  ,
-                    SubsidaryId = "100500",
-                    OrganisationName = "Pure leaf drinks",
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    ObligationStatus="Y",
-                    SubmitterId = submitterId2
-                },
-                new CalculatorRunOrganisationDataDetail
-                {
-                    OrganisationId = 200202,
-                    SubsidaryId = "100101",
-                    OrganisationName = "ECOLTD",
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    ObligationStatus="Y",
-                    SubmitterId = submitterId2
-                }
+            var orgDetails = new[] {
+                CreateOrganisationData(100101,null,"ECOLTD",submitterId1, "N"),
+                CreateOrganisationData(200202,null,"Green holdings",submitterId2, "Y"),
+                CreateOrganisationData(200202,"100500","Pure leaf drinks",submitterId2, "Y"),
+                CreateOrganisationData(200202,"100101","ECOLTD",submitterId2, "Y")
             };
 
             var pomDetails = new[] {
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 100101,
-                    SubmissionPeriod = "2024-P1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId1,
-                    PackagingType="HH",
-                    PackagingMaterial="ST",
-                    PackagingMaterialWeight=5000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 100101,
-                    SubmissionPeriod = "2024-P1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId1,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=3000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 100101,
-                    SubmissionPeriod = "2024-P4",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId1,
-                    PackagingType="HH",
-                    PackagingMaterial="ST",
-                    PackagingMaterialWeight=5000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 100101,
-                    SubmissionPeriod = "2024-P4",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId1,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=3000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202 ,
-                    SubmissionPeriod = "2024-P1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=2000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202 ,
-                    SubmissionPeriod = "2024-P1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="AL",
-                    PackagingMaterialWeight=4500
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202,
-                    SubmissionPeriod = "2024-P4",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=2000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202,
-                    SubsidaryId="100500",
-                    SubmissionPeriod = "2024-P1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=3500
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202,
-                    SubsidaryId="100500",
-                    SubmissionPeriod = "2024-P1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=4000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202,
-                    SubsidaryId="100500",
-                    SubmissionPeriod = "2024-P4",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=3000
-                }
+                CreatePomData(100101,"2024-P1",submitterId1,"HH","PL",3000),
+                CreatePomData(100101,"2024-P1",submitterId1,"HH","ST",5000),
+                CreatePomData(100101,"2024-P4",submitterId1,"HH","ST",5000),
+                CreatePomData(100101,"2024-P4",submitterId1,"HH","PL",3000),
+                CreatePomData(200202,"2024-P1",submitterId2,"HH","PL",2000),
+                CreatePomData(200202,"2024-P1",submitterId2,"HH","AL",4500),
+                CreatePomData(200202,"2024-P4",submitterId2,"HH","PL",2000),
+                CreatePomData(200202,"2024-P1",submitterId2,"HH","PL",3500,subsidiaryId:"100500"),
+                CreatePomData(200202,"2024-P1",submitterId2,"HH","PL",4000,subsidiaryId:"100500"),
+                CreatePomData(200202,"2024-P4",submitterId2,"HH","PL",3000,subsidiaryId:"100500")
             };
 
             // Arrange
@@ -908,6 +478,22 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.IsTrue(capturedReports.IsNullOrEmpty());
         }
 
+        private static CalculatorRunPomDataDetail CreatePomData(int orgId, string submissionPeriod, Guid submitterId, string packagingType, string packagingMaterial, int packagingMaterialWeight, string submissionPeriodDesc = "Jan to December 2025", string? subsidiaryId = null)
+        {
+            return new CalculatorRunPomDataDetail
+            {
+                OrganisationId = orgId,
+                SubmissionPeriod = submissionPeriod,
+                LoadTimeStamp = DateTime.UtcNow,
+                SubmissionPeriodDesc = submissionPeriodDesc,
+                SubmitterId = submitterId,
+                PackagingType = packagingType,
+                PackagingMaterial = packagingMaterial,
+                PackagingMaterialWeight = packagingMaterialWeight,
+                SubsidaryId = subsidiaryId
+            };
+        }
+
         [TestMethod]
         public async Task HandleErrors_ForMissingRegAndMissingPoms()
         {
@@ -916,168 +502,24 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var orgDetails = new[]
                 {
-                new CalculatorRunOrganisationDataDetail
-                {
-                    OrganisationId = 100101,
-                    OrganisationName = "ECOLTD",
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    ObligationStatus="N",
-                    SubmitterId =submitterId1
-                },
-                new CalculatorRunOrganisationDataDetail
-                {
-                    OrganisationId = 200202 ,
-                    OrganisationName = "Green holdings",
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    ObligationStatus="Y",
-                    SubmitterId =submitterId2
-                },
-                new CalculatorRunOrganisationDataDetail
-                {
-                    OrganisationId = 200202  ,
-                    SubsidaryId = "100500",
-                    OrganisationName = "Pure leaf drinks",
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    ObligationStatus="Y",
-                    SubmitterId = submitterId2
-                },
-                new CalculatorRunOrganisationDataDetail
-                {
-                    OrganisationId = 200202,
-                    SubsidaryId = "100101",
-                    OrganisationName = "ECOLTD",
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    ObligationStatus="Y",
-                    StatusCode="01",
-                    SubmitterId = submitterId2
-                }
+                CreateOrganisationData(100101,null,"ECOLTD",submitterId1, "N"),
+                CreateOrganisationData(200202,null,"Green holdings",submitterId2, "Y"),
+                CreateOrganisationData(200202,"100500","Pure leaf drinks",submitterId2, "Y"),
+                CreateOrganisationData(200202,"100101","ECOLTD",submitterId2, "Y", "01")
             };
 
             var pomDetails = new[] {
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 100101,
-                    SubmissionPeriod = "2024-P1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId1,
-                    PackagingType="HH",
-                    PackagingMaterial="ST",
-                    PackagingMaterialWeight=5000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 100101,
-                    SubmissionPeriod = "2024-P1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId1,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=3000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 100101,
-                    SubmissionPeriod = "2024-P4",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId1,
-                    PackagingType="HH",
-                    PackagingMaterial="ST",
-                    PackagingMaterialWeight=5000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 100101,
-                    SubmissionPeriod = "2024-P4",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId1,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=3000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202 ,
-                    SubmissionPeriod = "2024-P1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=2000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202 ,
-                    SubmissionPeriod = "2024-P1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="AL",
-                    PackagingMaterialWeight=4500
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202,
-                    SubmissionPeriod = "2024-P4",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=2000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202,
-                    SubsidaryId="100500",
-                    SubmissionPeriod = "2024-P1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=3500
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202,
-                    SubsidaryId="100500",
-                    SubmissionPeriod = "2024-P1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=4000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 200202,
-                    SubsidaryId="100500",
-                    SubmissionPeriod = "2024-P4",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId2,
-                    PackagingType="HH",
-                    PackagingMaterial="PL",
-                    PackagingMaterialWeight=3000
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    OrganisationId = 100200,
-                    SubmissionPeriod = "2024-P1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "Jan to December 2025",
-                    SubmitterId=submitterId1,
-                    PackagingType="HH",
-                    PackagingMaterial="ST",
-                    PackagingMaterialWeight=5000
-                }
+                CreatePomData(100101, "2024-P1",submitterId1,"HH","ST",5000),
+                CreatePomData(100101, "2024-P1",submitterId1,"HH","PL",3000),
+                CreatePomData(100101, "2024-P4",submitterId1,"HH","ST",5000),
+                CreatePomData(100101, "2024-P4",submitterId1,"HH","PL",3000),
+                CreatePomData(200202, "2024-P1",submitterId2,"HH","PL",2000),
+                CreatePomData(200202, "2024-P1",submitterId2,"HH","AL",4500),
+                CreatePomData(200202, "2024-P4",submitterId2,"HH","PL",2000),
+                CreatePomData(200202, "2024-P1",submitterId2,"HH","PL",3500,subsidiaryId:"100500"),
+                CreatePomData(200202, "2024-P1",submitterId2,"HH","PL",4000,subsidiaryId:"100500"),
+                CreatePomData(200202, "2024-P4",submitterId2,"HH","PL",3000,subsidiaryId:"100500"),
+                CreatePomData(100200, "2024-P1",submitterId1,"HH","ST",5000)
             };
 
             // Arrange
@@ -1103,6 +545,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.AreEqual(200202, pomError.ProducerId, "Incorrect Producer Id");
             Assert.AreEqual("100101", pomError.SubsidiaryId, "Incorrect Subsidiary Id");
             Assert.AreEqual("01", pomError.LeaverCode);
+        }
+        private CalculatorRunOrganisationDataDetail CreateOrganisationData(int orgId, string? subId, string orgName, Guid submitterId, string obligationStatus = "Y", string statusCode = "", string submissionPeriodDesc = "Jan to December 2025")
+        {
+            return new CalculatorRunOrganisationDataDetail
+            {
+                OrganisationId = orgId,
+                SubsidaryId = subId,
+                OrganisationName = orgName,
+                SubmissionPeriodDesc = submissionPeriodDesc,
+                ObligationStatus = obligationStatus,
+                StatusCode = statusCode,
+                SubmitterId = submitterId
+            };
         }
     }
 }
