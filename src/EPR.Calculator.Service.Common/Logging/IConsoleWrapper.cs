@@ -4,12 +4,12 @@ namespace EPR.Calculator.Service.Common.Logging
 {
     public interface IConsoleWrapper
     {
-        void WriteLine(string? message);
+        void WriteLine(string message);
     }
     
     [ExcludeFromCodeCoverage]
     public class ConsoleWrapper : IConsoleWrapper
     {
-        public void WriteLine(string? message) => Console.WriteLine(message);
+        public void WriteLine(string message) => Console.WriteLine(message);
     }
 }
