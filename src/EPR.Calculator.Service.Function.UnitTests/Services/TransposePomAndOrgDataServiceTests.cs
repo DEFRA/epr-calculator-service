@@ -611,15 +611,13 @@
                 {
                     OrganisationId = 1,
                     OrganisationName = "Test1",
-                    SubsidaryId = null,
-                    SubmissionPeriodDesc = "January to June 2023",
+                    SubsidiaryId = null
                 },
                 new CalculatorRunOrganisationDataDetail
                 {
                     OrganisationId = 1,
                     OrganisationName = "Test2",
-                    SubsidaryId = null,
-                    SubmissionPeriodDesc = "January to June 2023",
+                    SubsidiaryId = null
                 },
             };
             var orgDetails = service.GetAllOrganisationsBasedonRunId(organisationDetails);
@@ -785,10 +783,9 @@
                     Id = 1,
                     OrganisationId = 1,
                     OrganisationName = "UPU LIMITED",
-                    SubsidaryId = "1",
+                    SubsidiaryId = "1",
                     LoadTimeStamp = DateTime.UtcNow,
-                    CalculatorRunOrganisationDataMasterId = 1,
-                    SubmissionPeriodDesc = "January to June 2023",
+                    CalculatorRunOrganisationDataMasterId = 1
                 },
                 new ()
                 {
@@ -796,28 +793,25 @@
                     OrganisationId = 1,
                     OrganisationName = "Test LIMITED",
                     LoadTimeStamp = DateTime.UtcNow,
-                    CalculatorRunOrganisationDataMasterId = 1,
-                    SubmissionPeriodDesc = "July to December 2023",
+                    CalculatorRunOrganisationDataMasterId = 1
                 },
                 new ()
                 {
                     Id = 3,
                     OrganisationId = 2,
-                    SubsidaryId = "1",
+                    SubsidiaryId = "1",
                     OrganisationName = "Subsid2",
                     LoadTimeStamp = DateTime.UtcNow,
-                    CalculatorRunOrganisationDataMasterId = 2,
-                    SubmissionPeriodDesc = "July to December 2023",
+                    CalculatorRunOrganisationDataMasterId = 2
                 },
                 new ()
                 {
                     Id = 4,
                     OrganisationId = 3,
-                    SubsidaryId = "100",
+                    SubsidiaryId = "100",
                     OrganisationName = "Subsid3-1",
                     LoadTimeStamp = DateTime.UtcNow,
                     CalculatorRunOrganisationDataMasterId = 1,
-                    SubmissionPeriodDesc = "July to December 2023",
                     ObligationStatus = "N",
                     TradingName="Non Obligated Org"
                 },
@@ -920,7 +914,7 @@
                 {
                     Id = 1,
                     OrganisationId = 1,
-                    SubsidaryId = "1",
+                    SubsidiaryId = "1",
                     SubmissionPeriod = "2023-P2",
                     PackagingActivity = null,
                     PackagingType = "CW",
@@ -949,7 +943,7 @@
                 {
                     Id = 3,
                     OrganisationId = 1,
-                    SubsidaryId = "1",
+                    SubsidiaryId = "1",
                     SubmissionPeriod = "2023-P1",
                     PackagingActivity = null,
                     PackagingType = "CW",
@@ -964,7 +958,7 @@
                 {
                     Id = 4,
                     OrganisationId = 2,
-                    SubsidaryId = "1",
+                    SubsidiaryId = "1",
                     SubmissionPeriod = "2024-P1",
                     PackagingActivity = null,
                     PackagingType = "CW",

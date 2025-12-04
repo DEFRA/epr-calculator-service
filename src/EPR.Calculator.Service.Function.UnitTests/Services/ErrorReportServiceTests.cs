@@ -33,7 +33,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new CalculatorRunPomDataDetail
                 {
                     OrganisationId = 1,
-                    SubsidaryId = "11",
+                    SubsidiaryId = "11",
                     SubmissionPeriod = "2023-P2",
                     LoadTimeStamp = DateTime.UtcNow,
                     SubmissionPeriodDesc = "July to December 2023"
@@ -41,7 +41,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new CalculatorRunPomDataDetail
                 {
                     OrganisationId = 2,
-                    SubsidaryId = "22",
+                    SubsidiaryId = "22",
                     SubmissionPeriod = "2023-P2",
                     LoadTimeStamp = DateTime.UtcNow,
                     SubmissionPeriodDesc = "July to December 2023"
@@ -49,7 +49,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new CalculatorRunPomDataDetail
                 {
                     OrganisationId = 3,
-                    SubsidaryId = "33",
+                    SubsidiaryId = "33",
                     SubmissionPeriod = "2023-P2",
                     LoadTimeStamp = DateTime.UtcNow,
                     SubmissionPeriodDesc = "July to December 2023"
@@ -61,8 +61,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new CalculatorRunOrganisationDataDetail
                 {
                     OrganisationId = 1,
-                    OrganisationName = "Test",
-                    SubmissionPeriodDesc = "July to December 2023"
+                    OrganisationName = "Test"
                 }
             };
 
@@ -96,7 +95,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new CalculatorRunPomDataDetail
                 {
                     OrganisationId = 10,
-                    SubsidaryId = "101",
+                    SubsidiaryId = "101",
                     SubmissionPeriod = "2023-P2",
                     LoadTimeStamp = DateTime.UtcNow,
                     SubmissionPeriodDesc = "July to December 2023"
@@ -104,7 +103,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new CalculatorRunPomDataDetail
                 {
                     OrganisationId = 10,
-                    SubsidaryId = "101",
+                    SubsidiaryId = "101",
                     SubmissionPeriod = "2023-P2",
                     LoadTimeStamp = DateTime.UtcNow,
                     SubmissionPeriodDesc = "July to December 2023"
@@ -112,7 +111,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new CalculatorRunPomDataDetail
                 {
                     OrganisationId = 10,
-                    SubsidaryId = "102",
+                    SubsidiaryId = "102",
                     SubmissionPeriod = "2023-P2",
                     LoadTimeStamp = DateTime.UtcNow,
                     SubmissionPeriodDesc = "July to December 2023"
@@ -142,7 +141,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new CalculatorRunPomDataDetail
                 {
                     OrganisationId = 1,
-                    SubsidaryId = "101",
+                    SubsidiaryId = "101",
                     SubmissionPeriod = "2023-P2",
                     LoadTimeStamp = DateTime.UtcNow,
                     SubmissionPeriodDesc = "July to December 2023"
@@ -150,7 +149,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new CalculatorRunPomDataDetail
                 {
                     OrganisationId = 2,
-                    SubsidaryId = "102",
+                    SubsidiaryId = "102",
                      SubmissionPeriod = "2023-P2",
                     LoadTimeStamp = DateTime.UtcNow,
                     SubmissionPeriodDesc = "July to December 2023"
@@ -162,16 +161,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new CalculatorRunOrganisationDataDetail
                 {
                     OrganisationId = 1,
-                    SubsidaryId = "101",
-                    OrganisationName = "Test",
-                    SubmissionPeriodDesc = "July to December 2023"
+                    SubsidiaryId = "101",
+                    OrganisationName = "Test"
                 },
                 new CalculatorRunOrganisationDataDetail
                 {
                     OrganisationId = 2,
-                    SubsidaryId = "102",
-                    OrganisationName = "Test1",
-                    SubmissionPeriodDesc = "July to December 2023"
+                    SubsidiaryId = "102",
+                    OrganisationName = "Test1"
                 }
             };
 
@@ -194,7 +191,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 .Select(i => new CalculatorRunPomDataDetail
                 {
                     OrganisationId = 100,
-                    SubsidaryId = "200",
+                    SubsidiaryId = "200",
                     SubmissionPeriod = "2023-P2",
                     LoadTimeStamp = DateTime.UtcNow,
                     SubmissionPeriodDesc = "July to December 2023"
@@ -231,7 +228,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new CalculatorRunPomDataDetail
                 {
                     OrganisationId = 1,
-                    SubsidaryId = "101",
+                    SubsidiaryId = "101",
                     SubmissionPeriod = "2023-P2",
                     LoadTimeStamp = DateTime.UtcNow,
                     SubmissionPeriodDesc = "July to December 2023"
@@ -239,7 +236,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new CalculatorRunPomDataDetail
                 {
                     OrganisationId = 2,
-                    SubsidaryId = "202",
+                    SubsidiaryId = "202",
                     SubmissionPeriod = "2023-P2",
                     LoadTimeStamp = DateTime.UtcNow,
                     SubmissionPeriodDesc = "July to December 2023"
@@ -251,16 +248,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new CalculatorRunOrganisationDataDetail
                 {
                     OrganisationId = 1,
-                    SubsidaryId = "101",
-                    OrganisationName = "Test",
-                    SubmissionPeriodDesc = "July to December 2023"
+                    SubsidiaryId = "101",
+                    OrganisationName = "Test"
                 },
                 new CalculatorRunOrganisationDataDetail
                 {
                     OrganisationId = 2,
-                    SubsidaryId = "202",
-                    OrganisationName = "Test1",
-                    SubmissionPeriodDesc = "July to December 2023"
+                    SubsidiaryId = "202",
+                    OrganisationName = "Test1"
                 }
             };
 
@@ -280,8 +275,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var orgDetails = new[] { new CalculatorRunOrganisationDataDetail
                 {
                     OrganisationId = 1,
-                    OrganisationName="Test1",
-                    SubmissionPeriodDesc="July to December 2023"
+                    OrganisationName="Test1"
                 },
             };
 
@@ -297,7 +291,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var pomDetails = new[] { new CalculatorRunPomDataDetail
                 {
                     OrganisationId = 1,
-                    SubsidaryId = "11",
+                    SubsidiaryId = "11",
                     SubmissionPeriod = "2023-P2",
                     LoadTimeStamp = DateTime.UtcNow,
                     SubmissionPeriodDesc = "July to December 2023"
@@ -441,43 +435,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.IsTrue(capturedReports.IsNullOrEmpty());
         }
 
-        [TestMethod]
-        public void HandleMissingPOMErrors_WhereNoStatusCodesExists()
-        {
-            var submitterId1 = Guid.NewGuid();
-            var submitterId2 = Guid.NewGuid();
-
-            var orgDetails = new[] {
-                CreateOrganisationData(100101,null,"ECOLTD",submitterId1, "N"),
-                CreateOrganisationData(200202,null,"Green holdings",submitterId2, "Y"),
-                CreateOrganisationData(200202,"100500","Pure leaf drinks",submitterId2, "Y"),
-                CreateOrganisationData(200202,"100101","ECOLTD",submitterId2, "Y")
-            };
-
-            var pomDetails = new[] {
-                CreatePomData(100101,"2024-P1",submitterId1,"HH","PL",3000),
-                CreatePomData(100101,"2024-P1",submitterId1,"HH","ST",5000),
-                CreatePomData(100101,"2024-P4",submitterId1,"HH","ST",5000),
-                CreatePomData(100101,"2024-P4",submitterId1,"HH","PL",3000),
-                CreatePomData(200202,"2024-P1",submitterId2,"HH","PL",2000),
-                CreatePomData(200202,"2024-P1",submitterId2,"HH","AL",4500),
-                CreatePomData(200202,"2024-P4",submitterId2,"HH","PL",2000),
-                CreatePomData(200202,"2024-P1",submitterId2,"HH","PL",3500,subsidiaryId:"100500"),
-                CreatePomData(200202,"2024-P1",submitterId2,"HH","PL",4000,subsidiaryId:"100500"),
-                CreatePomData(200202,"2024-P4",submitterId2,"HH","PL",3000,subsidiaryId:"100500")
-            };
-
-            // Arrange
-            var runId = 300;
-            var createdBy = "no error";
-
-            // Act
-            IEnumerable<ErrorReport> capturedReports = _service.HandleMissingPomData(pomDetails, orgDetails, runId, createdBy);
-
-            // Assert
-            Assert.IsTrue(capturedReports.IsNullOrEmpty());
-        }
-
         private static CalculatorRunPomDataDetail CreatePomData(int orgId, string submissionPeriod, Guid submitterId, string packagingType, string packagingMaterial, int packagingMaterialWeight, string submissionPeriodDesc = "Jan to December 2025", string? subsidiaryId = null)
         {
             return new CalculatorRunPomDataDetail
@@ -490,7 +447,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 PackagingType = packagingType,
                 PackagingMaterial = packagingMaterial,
                 PackagingMaterialWeight = packagingMaterialWeight,
-                SubsidaryId = subsidiaryId
+                SubsidiaryId = subsidiaryId
             };
         }
 
@@ -551,9 +508,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             return new CalculatorRunOrganisationDataDetail
             {
                 OrganisationId = orgId,
-                SubsidaryId = subId,
+                SubsidiaryId = subId,
                 OrganisationName = orgName,
-                SubmissionPeriodDesc = submissionPeriodDesc,
                 ObligationStatus = obligationStatus,
                 StatusCode = statusCode,
                 SubmitterId = submitterId

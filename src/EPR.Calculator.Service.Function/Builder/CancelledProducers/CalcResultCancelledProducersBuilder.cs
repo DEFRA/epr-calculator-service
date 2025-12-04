@@ -192,8 +192,8 @@
             return await context.CalculatorRunOrganisationDataDetails
                 .AsNoTracking()
                 .OrderByDescending(t => t.CalculatorRunOrganisationDataMasterId)
-                .Where(t => producerIds.Contains(t.OrganisationId.GetValueOrDefault()) && string.IsNullOrEmpty(t.SubsidaryId))
-                .Select(t => new ProducerDetail { ProducerId= t.OrganisationId.GetValueOrDefault(), ProducerName= t.OrganisationName, TradingName = t.TradingName })
+                .Where(t => producerIds.Contains(t.OrganisationId) && string.IsNullOrEmpty(t.SubsidiaryId))
+                .Select(t => new ProducerDetail { ProducerId= t.OrganisationId, ProducerName= t.OrganisationName, TradingName = t.TradingName })
                 .ToListAsync();
         }
 

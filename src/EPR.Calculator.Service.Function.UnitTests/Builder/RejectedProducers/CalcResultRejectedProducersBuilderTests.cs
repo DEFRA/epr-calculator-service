@@ -87,8 +87,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
                 CalculatorRunOrganisationDataMasterId = masterOld.Id,
                 OrganisationId = organisationId,
                 OrganisationName = "Old Org Name",
-                TradingName = "Old Trading Name",
-                SubmissionPeriodDesc = "Old Period"
+                TradingName = "Old Trading Name"
             };
             var orgLatest = new CalculatorRunOrganisationDataDetail
             {
@@ -96,8 +95,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
                 CalculatorRunOrganisationDataMasterId = masterLatest.Id,
                 OrganisationId = organisationId,
                 OrganisationName = "Latest Org Name",
-                TradingName = "Latest Trading Name",
-                SubmissionPeriodDesc = "Latest Period"
+                TradingName = "Latest Trading Name"
             };
             context.CalculatorRunOrganisationDataDetails.AddRange(orgOld, orgLatest);
 

@@ -75,10 +75,10 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             ParentOrganisations = await (from run in this.context.CalculatorRuns
                                          join crodm in this.context.CalculatorRunOrganisationDataMaster on run.CalculatorRunOrganisationDataMasterId equals crodm.Id
                                          join crodd in this.context.CalculatorRunOrganisationDataDetails on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
-                                         where run.Id == runId && crodd.SubsidaryId == null
+                                         where run.Id == runId && crodd.SubsidiaryId == null
                                          select new ScaledupOrganisation
                                          {
-                                             OrganisationId = crodd.OrganisationId ?? 0,
+                                             OrganisationId = crodd.OrganisationId,
                                              OrganisationName = crodd.OrganisationName,
                                              TradingName = crodd.TradingName,
                                          }).Distinct().ToListAsync();
