@@ -368,9 +368,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var orgDetails = new[] {
                 CreateOrganisationData(100101,null,"ECOLTD",submitterId1, "N"),
-                CreateOrganisationData(200202,null,"Green holdings",submitterId2, "Y"),
-                CreateOrganisationData(200202,"100500","Pure leaf drinks",submitterId2, "Y"),
-                CreateOrganisationData(200202,"100101","ECOLTD",submitterId2, "Y", "01")
+                CreateOrganisationData(200202,null,"Green holdings",submitterId2, "O"),
+                CreateOrganisationData(200202,"100500","Pure leaf drinks",submitterId2, "O"),
+                CreateOrganisationData(200202,"100101","ECOLTD",submitterId2, "O", "01")
             };
 
             var pomDetails = new[] {
@@ -410,9 +410,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var orgDetails = new[] {
                 CreateOrganisationData(100101,null,"ECOLTD",submitterId1, "N"),
-                CreateOrganisationData(200202,null,"Green holdings",submitterId2, "Y"),
-                CreateOrganisationData(200202,"100500","Pure leaf drinks",submitterId2, "Y"),
-                CreateOrganisationData(200202,"100101","ECOLTD",submitterId2, "Y", "01")
+                CreateOrganisationData(200202,null,"Green holdings",submitterId2, "O"),
+                CreateOrganisationData(200202,"100500","Pure leaf drinks",submitterId2, "O"),
+                CreateOrganisationData(200202,"100101","ECOLTD",submitterId2, "O", "01")
             };
 
             var pomDetails = new[] {
@@ -460,9 +460,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var orgDetails = new[]
                 {
                 CreateOrganisationData(100101,null,"ECOLTD",submitterId1, "N"),
-                CreateOrganisationData(200202,null,"Green holdings",submitterId2, "Y"),
-                CreateOrganisationData(200202,"100500","Pure leaf drinks",submitterId2, "Y"),
-                CreateOrganisationData(200202,"100101","ECOLTD",submitterId2, "Y", "01")
+                CreateOrganisationData(200202,null,"Green holdings",submitterId2, "O"),
+                CreateOrganisationData(200202,"100500","Pure leaf drinks",submitterId2, "O"),
+                CreateOrganisationData(200202,"100101","ECOLTD",submitterId2, "O", "01")
             };
 
             var pomDetails = new[] {
@@ -503,7 +503,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.AreEqual("100101", pomError.SubsidiaryId, "Incorrect Subsidiary Id");
             Assert.AreEqual("01", pomError.LeaverCode);
         }
-        private CalculatorRunOrganisationDataDetail CreateOrganisationData(int orgId, string? subId, string orgName, Guid submitterId, string obligationStatus = "Y", string statusCode = "", string submissionPeriodDesc = "Jan to December 2025")
+        private CalculatorRunOrganisationDataDetail CreateOrganisationData(int orgId, string? subId, string orgName, Guid submitterId, string obligationStatus = "O", string statusCode = "", string submissionPeriodDesc = "Jan to December 2025")
         {
             return new CalculatorRunOrganisationDataDetail
             {

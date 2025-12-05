@@ -32,19 +32,19 @@ namespace EPR.Calculator.Service.Function.Services
             var orgIds = orgDetails.Select(o => (o.OrganisationId, o.SubsidiaryId, o.SubmitterId)).ToHashSet();
             var pomIds = pomDetails.Select(p => (p.OrganisationId ?? 0, p.SubsidiaryId, p.SubmitterId)).ToHashSet();
 
-            var pomIdsMissingFromOrg = pomIds.Except(orgIds);
+            var pomIdsMissingFromReg = pomIds.Except(orgIds);
 
-            foreach (var m in pomIdsMissingFromOrg)
+            foreach (var reg in pomIdsMissingFromReg)
             {
-                var orgId = m.Item1;
+                var orgId = reg.Item1;
 
                 //To preserve current behaviour of recording org level error for org/subsiduary - under discussion to be removed
-                if (m.SubsidiaryId != null && orgIds.Any(o => o.Item1 == orgId) && !errorReports.Any(e => e.ProducerId == orgId && e.SubsidiaryId == null))
+                if (reg.SubsidiaryId != null && orgIds.Any(o => o.Item1 == orgId) && !errorReports.Any(e => e.ProducerId == orgId && e.SubsidiaryId == null))
                 {
                     errorReports.Add(CreateError(orgId, null, calculatorRunId, createdBy, ErrorTypes.MissingRegistrationData));
                 }
 
-                errorReports.Add(CreateError(orgId, m.SubsidiaryId, calculatorRunId, createdBy, ErrorTypes.MissingRegistrationData));
+                errorReports.Add(CreateError(orgId, reg.SubsidiaryId, calculatorRunId, createdBy, ErrorTypes.MissingRegistrationData));
             }
 
             return errorReports;
@@ -67,18 +67,18 @@ namespace EPR.Calculator.Service.Function.Services
             var pomIds = pomDetails.Select(p => (p.OrganisationId ?? 0, p.SubsidiaryId, p.SubmitterId)).ToHashSet();
             var producerIds = pomIds.Select(p => ProducerId(p.SubsidiaryId, p.Item1));
 
-            var missingPoms = obligatedOrgIds.Except(pomIds).ToList();
+            var regsWithMissingPoms = obligatedOrgIds.Except(pomIds).ToList();
 
-            foreach (var pom in missingPoms)
+            foreach (var reg in regsWithMissingPoms)
             {
-                var orgId = pom.Item1;
+                var orgId = reg.Item1;
                 string leaverCode = orgDetails.FirstOrDefault(o => o.OrganisationId == orgId &&
-                                           o.SubsidiaryId == pom.SubsidiaryId &&
-                                           o.SubmitterId == pom.SubmitterId)?.StatusCode ?? string.Empty;
+                                           o.SubsidiaryId == reg.SubsidiaryId &&
+                                           o.SubmitterId == reg.SubmitterId)?.StatusCode ?? string.Empty;
 
-                if (producerIds.Any(p => p == ProducerId(pom.SubsidiaryId, orgId)))
+                if (producerIds.Any(p => p == ProducerId(reg.SubsidiaryId, orgId)))
                 {
-                    errorReports.Add(CreateError(orgId, pom.SubsidiaryId, calculatorRunId, createdBy, ErrorTypes.MissingPOMData, leaverCode.ToString()));
+                    errorReports.Add(CreateError(orgId, reg.SubsidiaryId, calculatorRunId, createdBy, ErrorTypes.MissingPOMData, leaverCode.ToString()));
                 }
             }
             
