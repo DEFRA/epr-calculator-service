@@ -2,7 +2,6 @@
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ErrorReport;
 using EPR.Calculator.Service.Function.Models;
-using Microsoft.AspNetCore.Mvc.Formatters.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
