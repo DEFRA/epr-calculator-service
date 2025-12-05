@@ -80,7 +80,7 @@
                         .Where(pom => pom.OrganisationId == item.ProducerId && pom.SubmissionPeriod == item.SubmissionPeriodCode)
                         .ToList()
                     : allOrganisationPomDetails
-                        .Where(pom => pom.OrganisationId == item.ProducerId && pom.SubsidaryId == item.SubsidiaryId && pom.SubmissionPeriod == item.SubmissionPeriodCode)
+                        .Where(pom => pom.OrganisationId == item.ProducerId && pom.SubsidiaryId == item.SubsidiaryId && pom.SubmissionPeriod == item.SubmissionPeriodCode)
                         .ToList();
 
                 item.ScaledupProducerTonnageByMaterial = GetTonnages(pomData, materials, item.SubmissionPeriodCode!, item.ScaleupFactor!);
@@ -226,7 +226,7 @@
                                             select crpdd.OrganisationId.GetValueOrDefault()).Distinct().ToListAsync() ?? [];
 
             var filteredCrodds = this.context.CalculatorRunOrganisationDataDetails.AsNoTracking()
-                                 .Where(x => scaleupOrganisationIds.Contains(x.OrganisationId ?? 0) && x.SubsidaryId == null);
+                                 .Where(x => scaleupOrganisationIds.Contains(x.OrganisationId) && x.SubsidiaryId == null);
 
             var scaledupOrganisations = await (from run in this.context.CalculatorRuns.AsNoTracking()
                                                join crodm in this.context.CalculatorRunOrganisationDataMaster.AsNoTracking() on run.CalculatorRunOrganisationDataMasterId equals crodm.Id
@@ -234,7 +234,7 @@
                                             where run.Id == runId 
                                             select new ScaledupOrganisation
                                             {
-                                                OrganisationId = crodd.OrganisationId ?? 0,
+                                                OrganisationId = crodd.OrganisationId,
                                                 OrganisationName = crodd.OrganisationName,
                                                 TradingName = crodd.TradingName,
                                             }).AsNoTracking().Distinct().ToListAsync();

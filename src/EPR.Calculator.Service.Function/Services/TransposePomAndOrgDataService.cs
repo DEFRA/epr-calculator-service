@@ -171,29 +171,23 @@
                 .SingleAsync(cancellationToken);
             var calculatorRunOrgDataDetails = await this.context.CalculatorRunOrganisationDataDetails
                 .Where(x => x.CalculatorRunOrganisationDataMasterId == calculatorRun.CalculatorRunOrganisationDataMasterId)
-                .OrderBy(x => x.SubmissionPeriodDesc)
                 .ToListAsync(cancellationToken);
             var calculatorRunPomDataDetails = await this.context.CalculatorRunPomDataDetails
                 .Where(x => x.CalculatorRunPomDataMasterId == calculatorRun.CalculatorRunPomDataMasterId)
-                .OrderBy(x => x.SubmissionPeriodDesc)
                 .ToListAsync(cancellationToken);
 
-            var unmatchedRecords  = await ErrorReportService.HandleUnmatchedPomAsync(
+            var unmatchedSet = await ErrorReportService.HandleErrors(
                 calculatorRunPomDataDetails,
                 calculatorRunOrgDataDetails,
                 resultsRequestDto.RunId,
                 resultsRequestDto.CreatedBy,
                 cancellationToken);
 
-            var unmatchedSet = new HashSet<(int OrgId, string? SubId)>(
-                unmatchedRecords.Select(r => (r.ProducerId, r.SubsidiaryId))
-            );
-
             calculatorRunPomDataDetails = calculatorRunPomDataDetails
                                             .Where(p =>
                                             {
                                                 var orgId = p.OrganisationId.GetValueOrDefault();
-                                                var subId = p.SubsidaryId;
+                                                var subId = p.SubsidiaryId;
                                                 return !unmatchedSet.Contains((orgId, subId));
                                             }).ToList();
 
@@ -208,7 +202,7 @@
                 var organisationDataDetails = calculatorRunOrgDataDetails
                     .Where(odd => odd.CalculatorRunOrganisationDataMasterId == organisationDataMaster.Id && odd.OrganisationName != null && odd.OrganisationName != "")
                     .OrderBy(odd => odd.OrganisationName)
-                    .GroupBy(odd => new { odd.OrganisationId, odd.SubsidaryId })
+                    .GroupBy(odd => new { odd.OrganisationId, odd.SubsidiaryId })
                     .Select(odd => odd.First())
                     .ToList();
 
@@ -217,7 +211,7 @@
                     .SingleAsync(x => x.Id == calculatorRun.CalculatorRunPomDataMasterId, cancellationToken);
 
 
-                foreach (var organisation in organisationDataDetails.Where(t => !string.IsNullOrWhiteSpace(t.OrganisationName) && IsObligated(t.ObligationStatus)))
+                foreach (var organisation in organisationDataDetails.Where(t => !string.IsNullOrWhiteSpace(t.OrganisationName) && ObligationStates.IsObligated(t.ObligationStatus)))
                 {
                     // Initialise the producerReportedMaterials
                     var producerReportedMaterials = new List<ProducerReportedMaterial>();
@@ -227,29 +221,29 @@
                         (
                             pdd => pdd.CalculatorRunPomDataMasterId == pomDataMaster.Id &&
                             pdd.OrganisationId == organisation.OrganisationId &&
-                            pdd.SubsidaryId == organisation.SubsidaryId
+                            pdd.SubsidiaryId == organisation.SubsidiaryId 
                         ).ToList();
 
                     // Proceed further only if there is any pom data based on the pom data master id and organisation id
                     // TO DO: We have to record if there is no pom data in a separate table post Dec 2024
                     if (IsRunPomDataDetailsExistsForSubsidaryId(runPomDataDetailsForSubsidaryId))
                     {
-                        var organisations = organisationDataDetails.Where(odd => odd.OrganisationName == organisation.OrganisationName && odd.SubsidaryId == organisation.SubsidaryId).OrderByDescending(odd => odd.SubmissionPeriodDesc);
+                        var organisations = organisationDataDetails.Where(odd => odd.OrganisationName == organisation.OrganisationName && odd.SubsidiaryId == organisation.SubsidiaryId);
 
                         // Get the producer based on the latest submission period
                         var producer = organisations.FirstOrDefault();
 
                         // Proceed further only if the organisation is not null and organisation id not null
                         // TO DO: We have to record if the organisation name is null in a separate table post Dec 2024
-                        if (producer != null && producer.OrganisationId != null)
+                        if (producer != null)
                         {
                             var producerDetail = new ProducerDetail
                             {
                                 CalculatorRunId = resultsRequestDto.RunId,
-                                ProducerId = producer.OrganisationId.Value,
+                                ProducerId = producer.OrganisationId,
                                 TradingName = organisation.TradingName,
-                                SubsidiaryId = producer.SubsidaryId,
-                                ProducerName = GetLatestproducerName(producer.OrganisationId.Value, producer.SubsidaryId, OrganisationsList),
+                                SubsidiaryId = producer.SubsidiaryId,
+                                ProducerName = GetLatestproducerName(producer.OrganisationId, producer.SubsidiaryId, OrganisationsList),
                                 CalculatorRun = calculatorRun,
                             };
 
@@ -298,10 +292,6 @@
 
             return true;
 
-            static bool IsObligated(string status)
-            {
-                return string.IsNullOrWhiteSpace(status)  || status == ObligationStates.Yes;
-            }
         }
 
         private static bool IsPackagingTypeAndPackagingMaterialWeightExists(string? packagingType, double? totalPackagingMaterialWeight)
@@ -329,8 +319,7 @@
                         OrganisationId = org.OrganisationId,
                         OrganisationName = org.OrganisationName,
                         TradingName = org.TradingName,
-                        SubmissionPeriodDescription = org.SubmissionPeriodDesc,
-                        SubsidaryId = org.SubsidaryId,
+                        SubsidaryId = org.SubsidiaryId,
                     }).Distinct();
         }
 

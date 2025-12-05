@@ -78,10 +78,9 @@
                 {
                     Id = 1,
                     OrganisationId = 11,
-                    SubsidaryId = null,
+                    SubsidiaryId = null,
                     OrganisationName = "Allied Packaging",
                     LoadTimeStamp = DateTime.UtcNow,
-                    SubmissionPeriodDesc = "January to June 2023",
                     CalculatorRunOrganisationDataMaster = calcRunOrganisationDataMaster
                 });
 

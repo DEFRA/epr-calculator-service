@@ -34,15 +34,15 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
 
                 // LEFT JOIN to find a subsidiary-specific detail: match ProdId + SubsId
                 join subOdd in context.CalculatorRunOrganisationDataDetails
-                    on new { OrgId = (int?)er.ProducerId, MasterId = odm.Id, SubsId = er.SubsidiaryId }
-                    equals new { OrgId = subOdd.OrganisationId, MasterId = subOdd.CalculatorRunOrganisationDataMasterId, SubsId = subOdd.SubsidaryId }
+                    on new { OrgId = (int)er.ProducerId, MasterId = odm.Id, SubsId = er.SubsidiaryId }
+                    equals new { OrgId = subOdd.OrganisationId, MasterId = subOdd.CalculatorRunOrganisationDataMasterId, SubsId = subOdd.SubsidiaryId }
                     into subGroup
                 from subLeft in subGroup.DefaultIfEmpty()
 
                     // LEFT JOIN to find a producer-level detail (SubsidiaryId null) as fallback
                 join prodOdd in context.CalculatorRunOrganisationDataDetails
-                    on new { OrgId = (int?)er.ProducerId, MasterId = odm.Id, SubsId = (string?)null }
-                    equals new { OrgId = prodOdd.OrganisationId, MasterId = prodOdd.CalculatorRunOrganisationDataMasterId, SubsId = prodOdd.SubsidaryId }
+                    on new { OrgId = (int)er.ProducerId, MasterId = odm.Id, SubsId = (string?)null }
+                    equals new { OrgId = prodOdd.OrganisationId, MasterId = prodOdd.CalculatorRunOrganisationDataMasterId, SubsId = prodOdd.SubsidiaryId }
                     into prodGroup
                 from prodLeft in prodGroup.DefaultIfEmpty()
 
@@ -75,7 +75,7 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
         {
             if(prodLeft != null && !string.IsNullOrWhiteSpace(prodLeft.OrganisationName))
             {
-               return prodLeft.SubsidaryId == null ? CommonConstants.Hyphen : prodLeft.OrganisationName;
+               return prodLeft.SubsidiaryId == null ? CommonConstants.Hyphen : prodLeft.OrganisationName;
             }
             return CommonConstants.Hyphen;
         }
@@ -84,7 +84,7 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
         {
             if (prodLeft != null && !string.IsNullOrWhiteSpace(prodLeft.OrganisationName))
             {
-                return (prodLeft.SubsidaryId == null || prodLeft.TradingName is null) ? CommonConstants.Hyphen :
+                return (prodLeft.SubsidiaryId == null || prodLeft.TradingName is null) ? CommonConstants.Hyphen :
                     GetFormatedTradingName(prodLeft.TradingName);
             }
             return CommonConstants.Hyphen;

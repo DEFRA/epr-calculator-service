@@ -59,7 +59,7 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                     on crodd.OrganisationId equals b.ProducerId
                 where cr.FinancialYearId == resultsRequestDto.FinancialYear
                       && crodd.OrganisationName != null
-                      && crodd.SubsidaryId == null
+                      && crodd.SubsidiaryId == null
                 group cr by crodd.OrganisationId into g
                 select new
                 {
@@ -76,13 +76,13 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                 join b in billingInstructionsQuery
                     on crodd.OrganisationId equals b.ProducerId
                 join latest in latestOrgDetailsByFinancialYearQuery
-                    on new { OrgId = crodd.OrganisationId ?? 0, cr.Id }
-                    equals new { OrgId = latest.OrganisationId ?? 0, Id = latest.LatestRunId } 
-                where crodd.SubsidaryId == null
+                    on new { OrgId = crodd.OrganisationId, cr.Id }
+                    equals new { OrgId = latest.OrganisationId, Id = latest.LatestRunId } 
+                where crodd.SubsidiaryId == null
                 select new CalcResultRejectedProducer
                 {
                     runId = cr.Id,
-                    ProducerId = crodd.OrganisationId ?? 0,
+                    ProducerId = crodd.OrganisationId,
                     ProducerName = crodd.OrganisationName,
                     TradingName = crodd.TradingName ?? "",
                     SuggestedBillingInstruction = b.SuggestedBillingInstruction,

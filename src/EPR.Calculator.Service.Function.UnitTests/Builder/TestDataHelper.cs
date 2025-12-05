@@ -1956,20 +1956,18 @@
             {
                 Id = 1,
                 OrganisationId = 1,
-                SubsidaryId = null,
+                SubsidiaryId = null,
                 OrganisationName = "Allied Packaging",
                 LoadTimeStamp = DateTime.UtcNow,
-                SubmissionPeriodDesc = "January to June 2023",
                 CalculatorRunOrganisationDataMasterId = GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
             });
             list.Add(new CalculatorRunOrganisationDataDetail
             {
                 Id = 2,
                 OrganisationId = 1,
-                SubsidaryId = "901",
+                SubsidiaryId = "901",
                 OrganisationName = "Allied Subsidiary",
                 LoadTimeStamp = DateTime.UtcNow,
-                SubmissionPeriodDesc = "January to June 2023",
                 CalculatorRunOrganisationDataMasterId = GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
             });
             return list;
@@ -2006,7 +2004,7 @@
             {
                 Id = 1,
                 OrganisationId = 1,
-                SubsidaryId = null,
+                SubsidiaryId = null,
                 SubmissionPeriod = "2024-P2",
                 PackagingActivity = null,
                 PackagingType = "HH",
@@ -2022,7 +2020,7 @@
             {
                 Id = 1,
                 OrganisationId = 1,
-                SubsidaryId = null,
+                SubsidiaryId = null,
                 SubmissionPeriod = "2024-P4",
                 PackagingActivity = null,
                 PackagingType = "HH",
@@ -2075,10 +2073,9 @@
             {
                 Id = 1,
                 OrganisationId = 1,
-                SubsidaryId = null,
+                SubsidiaryId = null,
                 OrganisationName = "Test1",
                 LoadTimeStamp = DateTime.UtcNow,
-                SubmissionPeriodDesc = "January to June 2023",
                 CalculatorRunOrganisationDataMasterId = GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
                 TradingName = "TN1"
             });
@@ -2086,10 +2083,9 @@
             {
                 Id = 2,
                 OrganisationId = 2,
-                SubsidaryId = null,
+                SubsidiaryId = null,
                 OrganisationName = "Test2",
                 LoadTimeStamp = DateTime.UtcNow,
-                SubmissionPeriodDesc = "January to June 2023",
                 CalculatorRunOrganisationDataMasterId = GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
             });
 

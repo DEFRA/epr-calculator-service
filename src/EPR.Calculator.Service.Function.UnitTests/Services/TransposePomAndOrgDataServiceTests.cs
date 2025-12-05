@@ -270,20 +270,15 @@
 
             var mockErrorReportService = new Mock<IErrorReportService>();
 
-            // Mocking the unmatched output returned by HandleUnmatchedPomAsync
-            var unmatchedRecords = new List<(int ProducerId, string? SubsidiaryId)>
-                                    {
-                                        (2, "1"),
-                                    };
-
+            var errorReport = new HashSet<(int, string?)>();
             mockErrorReportService
-                .Setup(s => s.HandleUnmatchedPomAsync(
+                .Setup(s => s.HandleErrors(
                     It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
                     It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
                     It.IsAny<int>(),
                     It.IsAny<string>(),
-                    It.IsAny<CancellationToken>()))
-                .ReturnsAsync(unmatchedRecords);
+                    CancellationToken.None))
+                .ReturnsAsync(errorReport);
 
             var service = new TransposePomAndOrgDataService(
                this._context,
@@ -312,20 +307,17 @@
             };
 
             var mockProducerDetailService = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
-            // var mockErrorReportService = new Mock<IDbLoadingChunkerService<ErrorReport>>();
             mockProducerDetailService.Setup(service => service.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
                                      .Returns(Task.CompletedTask);
 
             var mockErrorReportService = new Mock<IErrorReportService>();
 
-            // Mocking the unmatched output returned by HandleUnmatchedPomAsync
-            var unmatchedRecords = new List<(int ProducerId, string? SubsidiaryId)>
+            var unmatchedRecords = new HashSet<(int ProducerId, string? SubsidiaryId)>
                                     {
                                         (2, "1"),
                                     };
-
             mockErrorReportService
-                .Setup(s => s.HandleUnmatchedPomAsync(
+                .Setup(s => s.HandleErrors(
                     It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
                     It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
                     It.IsAny<int>(),
@@ -395,14 +387,12 @@
 
             var mockErrorReportService = new Mock<IErrorReportService>();
 
-            // Mocking the unmatched output returned by HandleUnmatchedPomAsync
-            var unmatchedRecords = new List<(int ProducerId, string? SubsidiaryId)>
+            var unmatchedRecords = new HashSet<(int ProducerId, string? SubsidiaryId)>
                                     {
                                         (2, "1"),
                                     };
-
             mockErrorReportService
-                .Setup(s => s.HandleUnmatchedPomAsync(
+                .Setup(s => s.HandleErrors(
                     It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
                     It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
                     It.IsAny<int>(),
@@ -490,14 +480,13 @@
 
             var mockErrorReportService = new Mock<IErrorReportService>();
 
-            // Mocking the unmatched output returned by HandleUnmatchedPomAsync
-            var unmatchedRecords = new List<(int ProducerId, string? SubsidiaryId)>
+            var unmatchedRecords = new HashSet<(int ProducerId, string? SubsidiaryId)>
                                     {
                                         (2, "1"),
                                     };
 
             mockErrorReportService
-                .Setup(s => s.HandleUnmatchedPomAsync(
+                .Setup(s => s.HandleErrors(
                     It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
                     It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
                     It.IsAny<int>(),
@@ -551,14 +540,13 @@
 
             var mockErrorReportService = new Mock<IErrorReportService>();
 
-            // Mocking the unmatched output returned by HandleUnmatchedPomAsync
-            var unmatchedRecords = new List<(int ProducerId, string? SubsidiaryId)>
+            var unmatchedRecords = new HashSet<(int ProducerId, string? SubsidiaryId)>
                                     {
                                         (2, "1"),
                                     };
 
             mockErrorReportService
-                .Setup(s => s.HandleUnmatchedPomAsync(
+                .Setup(s => s.HandleErrors(
                     It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
                     It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
                     It.IsAny<int>(),
@@ -623,15 +611,13 @@
                 {
                     OrganisationId = 1,
                     OrganisationName = "Test1",
-                    SubsidaryId = null,
-                    SubmissionPeriodDesc = "January to June 2023",
+                    SubsidiaryId = null
                 },
                 new CalculatorRunOrganisationDataDetail
                 {
                     OrganisationId = 1,
                     OrganisationName = "Test2",
-                    SubsidaryId = null,
-                    SubmissionPeriodDesc = "January to June 2023",
+                    SubsidiaryId = null
                 },
             };
             var orgDetails = service.GetAllOrganisationsBasedonRunId(organisationDetails);
@@ -685,14 +671,13 @@
 
             var mockErrorReportService = new Mock<IErrorReportService>();
 
-            // Mocking the unmatched output returned by HandleUnmatchedPomAsync
-            var unmatchedRecords = new List<(int ProducerId, string? SubsidiaryId)>
+            var unmatchedRecords = new HashSet<(int ProducerId, string? SubsidiaryId)>
                                     {
                                         (2, "1"),
                                     };
 
             mockErrorReportService
-                .Setup(s => s.HandleUnmatchedPomAsync(
+                .Setup(s => s.HandleErrors(
                     It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
                     It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
                     It.IsAny<int>(),
@@ -798,10 +783,9 @@
                     Id = 1,
                     OrganisationId = 1,
                     OrganisationName = "UPU LIMITED",
-                    SubsidaryId = "1",
+                    SubsidiaryId = "1",
                     LoadTimeStamp = DateTime.UtcNow,
-                    CalculatorRunOrganisationDataMasterId = 1,
-                    SubmissionPeriodDesc = "January to June 2023",
+                    CalculatorRunOrganisationDataMasterId = 1
                 },
                 new ()
                 {
@@ -809,28 +793,25 @@
                     OrganisationId = 1,
                     OrganisationName = "Test LIMITED",
                     LoadTimeStamp = DateTime.UtcNow,
-                    CalculatorRunOrganisationDataMasterId = 1,
-                    SubmissionPeriodDesc = "July to December 2023",
+                    CalculatorRunOrganisationDataMasterId = 1
                 },
                 new ()
                 {
                     Id = 3,
                     OrganisationId = 2,
-                    SubsidaryId = "1",
+                    SubsidiaryId = "1",
                     OrganisationName = "Subsid2",
                     LoadTimeStamp = DateTime.UtcNow,
-                    CalculatorRunOrganisationDataMasterId = 2,
-                    SubmissionPeriodDesc = "July to December 2023",
+                    CalculatorRunOrganisationDataMasterId = 2
                 },
                 new ()
                 {
                     Id = 4,
                     OrganisationId = 3,
-                    SubsidaryId = "100",
+                    SubsidiaryId = "100",
                     OrganisationName = "Subsid3-1",
                     LoadTimeStamp = DateTime.UtcNow,
                     CalculatorRunOrganisationDataMasterId = 1,
-                    SubmissionPeriodDesc = "July to December 2023",
                     ObligationStatus = "N",
                     TradingName="Non Obligated Org"
                 },
@@ -933,7 +914,7 @@
                 {
                     Id = 1,
                     OrganisationId = 1,
-                    SubsidaryId = "1",
+                    SubsidiaryId = "1",
                     SubmissionPeriod = "2023-P2",
                     PackagingActivity = null,
                     PackagingType = "CW",
@@ -962,7 +943,7 @@
                 {
                     Id = 3,
                     OrganisationId = 1,
-                    SubsidaryId = "1",
+                    SubsidiaryId = "1",
                     SubmissionPeriod = "2023-P1",
                     PackagingActivity = null,
                     PackagingType = "CW",
@@ -977,7 +958,7 @@
                 {
                     Id = 4,
                     OrganisationId = 2,
-                    SubsidaryId = "1",
+                    SubsidiaryId = "1",
                     SubmissionPeriod = "2024-P1",
                     PackagingActivity = null,
                     PackagingType = "CW",
@@ -1058,11 +1039,10 @@
 
             var mockErrorReportService = new Mock<IErrorReportService>();
 
-            // Mocking the unmatched output returned by HandleUnmatchedPomAsync
-            var unmatchedRecords = new List<(int ProducerId, string? SubsidiaryId)>();
+            var unmatchedRecords = new HashSet<(int ProducerId, string? SubsidiaryId)>();
 
             mockErrorReportService
-                .Setup(s => s.HandleUnmatchedPomAsync(
+                .Setup(s => s.HandleErrors(
                     It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
                     It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
                     It.IsAny<int>(),

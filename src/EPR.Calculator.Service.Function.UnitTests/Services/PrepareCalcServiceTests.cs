@@ -343,27 +343,24 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Id = 1,
                     OrganisationId = 1,
                     OrganisationName = "UPU LIMITED",
-                    SubsidaryId ="1",
+                    SubsidiaryId ="1",
                     LoadTimeStamp = DateTime.UtcNow,
-                    CalculatorRunOrganisationDataMasterId = 1,
-                    SubmissionPeriodDesc = "January to June 2023",
+                    CalculatorRunOrganisationDataMasterId = 1
                 },
                 new() {
                     Id = 2,
                     OrganisationId = 1,
                     OrganisationName = "Test LIMITED",
                     LoadTimeStamp = DateTime.UtcNow,
-                    CalculatorRunOrganisationDataMasterId = 1,
-                    SubmissionPeriodDesc = "July to December 2023",
+                    CalculatorRunOrganisationDataMasterId = 1
                 },
                 new() {
                     Id = 3,
                     OrganisationId = 2,
-                    SubsidaryId = "1",
+                    SubsidiaryId = "1",
                     OrganisationName = "Subsid2",
                     LoadTimeStamp = DateTime.UtcNow,
-                    CalculatorRunOrganisationDataMasterId = 2,
-                    SubmissionPeriodDesc = "July to December 2023",
+                    CalculatorRunOrganisationDataMasterId = 2
                 },
             });
             return list;
@@ -454,7 +451,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new() {
                     Id = 1,
                     OrganisationId = 1,
-                    SubsidaryId = "1",
+                    SubsidiaryId = "1",
                     SubmissionPeriod = "2023-P2",
                     PackagingActivity = null,
                     PackagingType = "CW",
@@ -481,7 +478,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new() {
                     Id = 3,
                     OrganisationId = 1,
-                    SubsidaryId = "1",
+                    SubsidiaryId = "1",
                     SubmissionPeriod = "2023-P1",
                     PackagingActivity = null,
                     PackagingType = "CW",
@@ -495,7 +492,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new() {
                     Id = 4,
                     OrganisationId = 2,
-                    SubsidaryId = "1",
+                    SubsidiaryId = "1",
                     SubmissionPeriod = "2024-P1",
                     PackagingActivity = null,
                     PackagingType = "CW",
