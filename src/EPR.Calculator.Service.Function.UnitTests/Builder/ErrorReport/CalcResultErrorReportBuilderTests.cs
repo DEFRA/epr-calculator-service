@@ -91,32 +91,32 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
             Assert.AreEqual(4, result.Count);
             var report = result[0];
             Assert.AreEqual(1, report.ProducerId);
-            Assert.AreEqual("-", report.SubsidiaryId);
+            Assert.AreEqual(CommonConstants.Hyphen, report.SubsidiaryId);
             Assert.AreEqual("Allied Packaging", report.ProducerName);
-            Assert.AreEqual(CommonConstants.Hyphen, report.TradingName);
+            Assert.AreEqual("Allied Trading", report.TradingName);
             Assert.AreEqual(CommonConstants.Hyphen, report.LeaverCode);
             Assert.AreEqual(ErrorCodes.Empty, report.ErrorCodeText);
 
             var report1 = result[1];
             Assert.AreEqual(1, report1.ProducerId);
             Assert.AreEqual("Sub 1", report1.SubsidiaryId);
-            Assert.AreEqual("-", report1.ProducerName);
+            Assert.AreEqual(CommonConstants.Hyphen, report1.ProducerName);
             Assert.AreEqual(CommonConstants.Hyphen, report1.TradingName);
             Assert.AreEqual(CommonConstants.Hyphen, report1.LeaverCode);
             Assert.AreEqual(ErrorCodes.MissingRegistrationData, report1.ErrorCodeText);
 
             var report2 = result[2];
             Assert.AreEqual(2, report2.ProducerId);
-            Assert.AreEqual("-", report2.SubsidiaryId);
-            Assert.AreEqual("Allied 2", report2.ProducerName);
-            Assert.AreEqual("Allied 2 Trading", report2.TradingName);
+            Assert.AreEqual(CommonConstants.Hyphen, report2.SubsidiaryId);
+            Assert.AreEqual(CommonConstants.Hyphen, report2.ProducerName);
+            Assert.AreEqual(CommonConstants.Hyphen, report2.TradingName);
             Assert.AreEqual(CommonConstants.Hyphen, report2.LeaverCode);
             Assert.AreEqual(ErrorCodes.Empty, report2.ErrorCodeText);
 
             var report3 = result[3];
             Assert.AreEqual(2, report3.ProducerId);
             Assert.AreEqual("Sub 2", report3.SubsidiaryId);
-            Assert.AreEqual("Allied 2 sub", report3.ProducerName);
+            Assert.AreEqual(CommonConstants.Hyphen, report3.ProducerName);
             Assert.AreEqual(CommonConstants.Hyphen, report3.TradingName);
             Assert.AreEqual(CommonConstants.Hyphen, report3.LeaverCode);
             Assert.AreEqual(synapseError, report3.ErrorCodeText);
@@ -157,7 +157,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
             Assert.AreEqual(1, report.ProducerId);
             Assert.AreEqual(CommonConstants.Hyphen, report.SubsidiaryId);
             Assert.AreEqual("Allied Packaging", report.ProducerName);
-            Assert.AreEqual(CommonConstants.Hyphen, report.TradingName);
+            Assert.AreEqual("Allied Trading", report.TradingName);
             Assert.AreEqual(CommonConstants.Hyphen, report.LeaverCode);
             Assert.AreEqual(ErrorCodes.MissingRegistrationData, report.ErrorCodeText);
         }

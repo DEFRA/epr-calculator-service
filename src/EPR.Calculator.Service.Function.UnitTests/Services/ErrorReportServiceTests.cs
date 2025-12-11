@@ -69,7 +69,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             IEnumerable<ErrorReport> reportsList = _service.HandleMissingRegistrationData(pomDetails, orgDetails, runId, createdBy);
 
 
-            Assert.AreEqual(3, reportsList.Count(), "Expected 3 unmatched records to be inserted.");
+            Assert.AreEqual(3, reportsList.Count(), "Expected 3 unmatched records to be returned.");
 
             foreach (var r in reportsList)
             {
@@ -176,7 +176,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             IEnumerable<ErrorReport> reportsList = _service.HandleMissingRegistrationData(pomDetails, orgDetails, runId, createdBy);
 
             // Assert
-            Assert.AreEqual(0, reportsList.Count(), "Expected no unmatched records to be inserted.");
+            Assert.AreEqual(0, reportsList.Count(), "Expected no unmatched records to be returned.");
         }
 
         [TestMethod]
@@ -263,7 +263,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             IEnumerable<ErrorReport> reportsList = _service.HandleMissingRegistrationData(pomDetails, orgDetails, runId, createdBy);
 
             // Assert
-            Assert.AreEqual(0, reportsList.Count(), "Expected no unmatched records to be inserted.");
+            Assert.AreEqual(0, reportsList.Count(), "Expected no unmatched records to be returned.");
         }
 
         [TestMethod]
@@ -326,7 +326,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             IEnumerable<ErrorReport> reportsList = _service.HandleMissingRegistrationData(pomDetails, orgDetails, runId, createdBy);
 
             // Assert
-            Assert.AreEqual(0, reportsList.Count(), "Expected no unmatched records to be inserted.");
+            Assert.AreEqual(0, reportsList.Count(), "Expected no unmatched records to be returned.");
         }
 
         [TestMethod]
@@ -354,7 +354,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Assert
             var reportsList = capturedReports!.ToList();
-            Assert.AreEqual(1, reportsList.Count, "Expected 1 unmatched records to be inserted.");
+            Assert.AreEqual(1, reportsList.Count, "Expected 1 unmatched records to be returned.");
             var error = reportsList.First();
             Assert.AreEqual(ErrorCodes.MissingRegistrationData, error.ErrorCode, "Incorrect Error Type");
             Assert.AreEqual(2, error.ProducerId, "Incorrect Producer Id");
@@ -383,9 +383,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CreatePomData(200202, "2024-P4",submitterId2,"HH","PL",2000),
                 CreatePomData(200202, "2024-P1",submitterId2,"HH","PL",3500,subsidiaryId:"100500"),
                 CreatePomData(200202, "2024-P1",submitterId2,"HH","PL",4000,subsidiaryId:"100500"),
-                CreatePomData(200202, "2024-P4",submitterId2,"HH","PL",3000,subsidiaryId:"100500") 
+                CreatePomData(200202, "2024-P4",submitterId2,"HH","PL",3000,subsidiaryId:"100500")
             };
-              
+
             // Arrange
             var runId = 300;
             var createdBy = "no error";
@@ -394,7 +394,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             IEnumerable<ErrorReport> reportsList = _service.HandleMissingPomData(pomDetails, orgDetails, runId, createdBy);
 
             // Assert
-            Assert.AreEqual(1, reportsList.Count(), "Expected 1 unmatched records to be inserted.");
+            Assert.AreEqual(1, reportsList.Count(), "Expected 1 unmatched records to be returned.");
             var error = reportsList.First();
             Assert.AreEqual(ErrorCodes.MissingPOMData, error.ErrorCode, "Incorrect Error Code");
             Assert.AreEqual(200202, error.ProducerId, "Incorrect Producer Id");
@@ -436,13 +436,66 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
+        public void HandleObligatedErrors_ErrorsExistInRegData()
+        {
+            var submitterId1 = Guid.NewGuid();
+            var submitterId2 = Guid.NewGuid();
+            var error1 = "Some error";
+            var error2 = "Some other error";
+
+            var orgDetails = new[] {
+                CreateOrganisationData(100101,null,"ECOLTD",submitterId1, "E", errorCode: error1),
+                CreateOrganisationData(200202,null,"Green holdings",submitterId2, "O"),
+                CreateOrganisationData(200202,"100500","Pure leaf drinks",submitterId2, "E", errorCode: error2),
+                CreateOrganisationData(200202,"100101","ECOLTD",submitterId2, "E", errorCode: null)
+            };
+
+            // Arrange
+            var runId = 300;
+            var createdBy = "no error";
+
+            // Act
+            IEnumerable<ErrorReport> reportsList = _service.HandleObligatedErrors(orgDetails, runId, createdBy);
+
+            // Assert
+            Assert.AreEqual(3, reportsList.Count(), "Expected 3 unmatched records to be returned.");
+            Assert.IsTrue(reportsList.Any(p => p.ProducerId == 100101 && p.SubsidiaryId == null && p.ErrorCode == error1));
+            Assert.IsTrue(reportsList.Any(p => p.ProducerId == 200202 && p.SubsidiaryId == "100500" && p.ErrorCode == error2));
+            Assert.IsTrue(reportsList.Any(p => p.ProducerId == 200202 && p.SubsidiaryId == "100101" && p.ErrorCode == ErrorCodes.Empty));
+        }
+
+        public void HandleObligatedErrors_NoErrorsExistInRegData()
+        {
+            var submitterId1 = Guid.NewGuid();
+            var submitterId2 = Guid.NewGuid();
+
+            var orgDetails = new[]
+            {
+                CreateOrganisationData(100101,null,"ECOLTD",submitterId1, "N"),
+                CreateOrganisationData(200202,null,"Green holdings",submitterId2, "O"),
+                CreateOrganisationData(200202,"100500","Pure leaf drinks",submitterId2, "O"),
+                CreateOrganisationData(200202,"100101","ECOLTD",submitterId2, "O", "01")
+            };
+
+            // Arrange
+            var runId = 300;
+            var createdBy = "no error";
+
+            // Act
+            IEnumerable<ErrorReport> reportsList = _service.HandleObligatedErrors(orgDetails, runId, createdBy);
+
+            // Assert
+            Assert.AreEqual(0, reportsList.Count(), "Expected 0 unmatched records to be returned.");
+        }
+
+        [TestMethod]
         public async Task HandleErrors_ForMissingRegAndMissingPoms()
         {
             var submitterId1 = Guid.NewGuid();
             var submitterId2 = Guid.NewGuid();
 
             var orgDetails = new[]
-                {
+            {
                 CreateOrganisationData(100101,null,"ECOLTD",submitterId1, "N"),
                 CreateOrganisationData(200202,null,"Green holdings",submitterId2, "O"),
                 CreateOrganisationData(200202,"100500","Pure leaf drinks",submitterId2, "O"),
@@ -496,7 +549,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             };
         }
 
-        private CalculatorRunOrganisationDataDetail CreateOrganisationData(int orgId, string? subId, string orgName, Guid submitterId, string obligationStatus = "O", string statusCode = "", string submissionPeriodDesc = "Jan to December 2025")
+        private CalculatorRunOrganisationDataDetail CreateOrganisationData(int orgId, string? subId, string orgName, Guid submitterId, string obligationStatus = "O", string statusCode = "", string submissionPeriodDesc = "Jan to December 2025", string? errorCode = null)
         {
             return new CalculatorRunOrganisationDataDetail
             {
@@ -505,7 +558,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 OrganisationName = orgName,
                 ObligationStatus = obligationStatus,
                 StatusCode = statusCode,
-                SubmitterId = submitterId
+                SubmitterId = submitterId,
+                ErrorCode = errorCode
             };
         }
     }

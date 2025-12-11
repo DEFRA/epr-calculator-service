@@ -1958,6 +1958,7 @@
                 OrganisationId = 1,
                 SubsidiaryId = null,
                 OrganisationName = "Allied Packaging",
+                TradingName = "Allied Trading",
                 LoadTimeStamp = DateTime.UtcNow,
                 CalculatorRunOrganisationDataMasterId = GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
             });
@@ -1975,8 +1976,8 @@
                 Id = 3,
                 OrganisationId = 2,
                 SubsidiaryId = null,
-                OrganisationName = "Allied 2",
-                TradingName = "Allied 2 Trading",
+                OrganisationName = "",
+                TradingName = "",
                 LoadTimeStamp = DateTime.UtcNow,
                 CalculatorRunOrganisationDataMasterId = TestDataHelper.GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
             });
@@ -1985,7 +1986,7 @@
                 Id = 4,
                 OrganisationId = 2,
                 SubsidiaryId = "Sub 2",
-                OrganisationName = "Allied 2 sub",
+                OrganisationName = "",
                 LoadTimeStamp = DateTime.UtcNow,
                 CalculatorRunOrganisationDataMasterId = TestDataHelper.GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
             });
