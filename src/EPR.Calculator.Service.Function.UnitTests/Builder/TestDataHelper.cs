@@ -1970,6 +1970,26 @@
                 LoadTimeStamp = DateTime.UtcNow,
                 CalculatorRunOrganisationDataMasterId = GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
             });
+            list.Add(new CalculatorRunOrganisationDataDetail
+            {
+                Id = 3,
+                OrganisationId = 2,
+                SubsidiaryId = null,
+                OrganisationName = "Allied 2",
+                TradingName = "Allied 2 Trading",
+                LoadTimeStamp = DateTime.UtcNow,
+                CalculatorRunOrganisationDataMasterId = TestDataHelper.GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
+            });
+            list.Add(new CalculatorRunOrganisationDataDetail
+            {
+                Id = 4,
+                OrganisationId = 2,
+                SubsidiaryId = "Sub 2",
+                OrganisationName = "Allied 2 sub",
+                LoadTimeStamp = DateTime.UtcNow,
+                CalculatorRunOrganisationDataMasterId = TestDataHelper.GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
+            });
+            
             return list;
         }
 

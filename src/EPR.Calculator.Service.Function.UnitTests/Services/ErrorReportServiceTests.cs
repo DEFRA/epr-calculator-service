@@ -22,7 +22,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public void HandleUnmatchedPomAsync_InsertsCorrectErrorReports_WhenUnmatchedExists()
+        public void HandleMissingRegistrationData_InsertsCorrectErrorReports_WhenUnmatchedExists()
         {
             // Arrange
             var runId = 123;
@@ -69,12 +69,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             IEnumerable<ErrorReport> reportsList = _service.HandleMissingRegistrationData(pomDetails, orgDetails, runId, createdBy);
 
 
-            Assert.AreEqual(4, reportsList.Count(), "Expected 4 unmatched records to be inserted (OrganisationId 1, 2 and 3).");
+            Assert.AreEqual(3, reportsList.Count(), "Expected 3 unmatched records to be inserted.");
 
             foreach (var r in reportsList)
             {
                 Assert.AreEqual(runId, r.CalculatorRunId);
-                Assert.AreEqual((int)ErrorTypes.MissingRegistrationData, r.ErrorTypeId);
+                Assert.AreEqual(ErrorCodes.MissingRegistrationData, r.ErrorCode);
                 Assert.AreEqual(createdBy, r.CreatedBy);
             }
 
@@ -84,7 +84,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public void HandleUnmatchedPomAsync_DeduplicatesMultiplePomsForSameOrgSub()
+        public void HandleMissingRegistrationData_DeduplicatesMultiplePomsForSameOrgSub()
         {
             // Arrange
             var runId = 200;
@@ -130,7 +130,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public void HandleUnmatchedPomAsync_DoesNotInsert_WhenAllMatched()
+        public void HandleMissingRegistrationData_DoesNotInsert_WhenAllMatched()
         {
             // Arrange
             var runId = 300;
@@ -180,7 +180,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public void HandleUnmatchedPomAsync_DeduplicatesMultiplePomsForSameOrgSub_Issue3()
+        public void HandleMissingRegistrationData_DeduplicatesMultiplePomsForSameOrgSub_Issue3()
         {
             // Arrange
             var runId = 400;
@@ -212,12 +212,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.AreEqual(100, report.ProducerId);
             Assert.AreEqual("200", report.SubsidiaryId);
             Assert.AreEqual(runId, report.CalculatorRunId);
-            Assert.AreEqual((int)ErrorTypes.MissingRegistrationData, report.ErrorTypeId);
+            Assert.AreEqual(ErrorCodes.MissingRegistrationData, report.ErrorCode);
             Assert.AreEqual(createdBy, report.CreatedBy);
         }
 
         [TestMethod]
-        public void HandleUnmatchedPomAsync_DoesNotInsert_WhenNoUnmatched()
+        public void HandleMissingRegistrationData_DoesNotInsert_WhenNoUnmatched()
         {
             // Arrange
             var runId = 500;
@@ -268,7 +268,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void HandleUnmatchedPomAsync_Throws_WhenPomDetailsNull()
+        public void HandleMissingRegistrationData_Throws_WhenPomDetailsNull()
         {
             // Arrange
             IEnumerable<CalculatorRunPomDataDetail>? pomDetails = null;
@@ -285,7 +285,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void HandleUnmatchedPomAsync_Throws_WhenOrgDetailsNull()
+        public void HandleMissingRegistrationData_Throws_WhenOrgDetailsNull()
         {
             // Arrange
             var pomDetails = new[] { new CalculatorRunPomDataDetail
@@ -304,7 +304,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public void HandleUnmatchedPomAsync_DoesNotInsert_WhenSubmitterIdsMatched()
+        public void HandleMissingRegistrationData_DoesNotInsert_WhenSubmitterIdsMatched()
         {
             // Arrange
             var runId = 300;
@@ -330,7 +330,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public void HandleUnmatchedPomAsync_Inserts_WhenSubmitterIdsDoNotMatch()
+        public void HandleMissingRegistrationData_Inserts_WhenSubmitterIdsDoNotMatch()
         {
             // Arrange
             var runId = 300;
@@ -354,9 +354,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Assert
             var reportsList = capturedReports!.ToList();
-            Assert.AreEqual(2, reportsList.Count, "Expected 2 unmatched records to be inserted (2).");
+            Assert.AreEqual(1, reportsList.Count, "Expected 1 unmatched records to be inserted.");
             var error = reportsList.First();
-            Assert.AreEqual((int)ErrorTypes.MissingRegistrationData, error.ErrorTypeId, "Incorrect Error Type");
+            Assert.AreEqual(ErrorCodes.MissingRegistrationData, error.ErrorCode, "Incorrect Error Type");
             Assert.AreEqual(2, error.ProducerId, "Incorrect Producer Id");
         }
 
@@ -396,7 +396,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Assert
             Assert.AreEqual(1, reportsList.Count(), "Expected 1 unmatched records to be inserted.");
             var error = reportsList.First();
-            Assert.AreEqual((int)ErrorTypes.MissingPOMData, error.ErrorTypeId, "Incorrect Error Type");
+            Assert.AreEqual(ErrorCodes.MissingPOMData, error.ErrorCode, "Incorrect Error Code");
             Assert.AreEqual(200202, error.ProducerId, "Incorrect Producer Id");
             Assert.AreEqual("100101", error.SubsidiaryId, "Incorrect Subsidiary Id");
             Assert.AreEqual("01", error.LeaverCode, "Incorrect Leaver Code");
@@ -433,22 +433,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Assert
             Assert.IsTrue(capturedReports.IsNullOrEmpty());
-        }
-
-        private static CalculatorRunPomDataDetail CreatePomData(int orgId, string submissionPeriod, Guid submitterId, string packagingType, string packagingMaterial, int packagingMaterialWeight, string submissionPeriodDesc = "Jan to December 2025", string? subsidiaryId = null)
-        {
-            return new CalculatorRunPomDataDetail
-            {
-                OrganisationId = orgId,
-                SubmissionPeriod = submissionPeriod,
-                LoadTimeStamp = DateTime.UtcNow,
-                SubmissionPeriodDesc = submissionPeriodDesc,
-                SubmitterId = submitterId,
-                PackagingType = packagingType,
-                PackagingMaterial = packagingMaterial,
-                PackagingMaterialWeight = packagingMaterialWeight,
-                SubsidiaryId = subsidiaryId
-            };
         }
 
         [TestMethod]
@@ -489,20 +473,29 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Act
             var reportsList = await _service.HandleErrors(pomDetails, orgDetails, runId, createdBy, CancellationToken.None);
 
-            // Assert
-            Assert.AreEqual(2, errorReports.Count(), "Expected 2 errors to be inserted.");
-            var regError = errorReports.First();
-
-            Assert.AreEqual((int)ErrorTypes.MissingRegistrationData, regError.ErrorTypeId, "Incorrect Error Type");
-            Assert.AreEqual(100200, regError.ProducerId, "Incorrect Producer Id");
-            Assert.AreEqual(null, regError.SubsidiaryId, "Incorrect Subsidiary Id");
-
-            var pomError = errorReports.Last();
-            Assert.AreEqual((int)ErrorTypes.MissingPOMData, pomError.ErrorTypeId, "Incorrect Error Type");
-            Assert.AreEqual(200202, pomError.ProducerId, "Incorrect Producer Id");
-            Assert.AreEqual("100101", pomError.SubsidiaryId, "Incorrect Subsidiary Id");
-            Assert.AreEqual("01", pomError.LeaverCode);
+            Assert.AreEqual(4, errorReports.Count(), "Expected 4 unmatched records to be inserted.");
+            Assert.IsTrue(errorReports.Any(p => p.ProducerId == 100200 && p.SubsidiaryId == null && p.ErrorCode == ErrorCodes.Empty));
+            Assert.IsTrue(errorReports.Any(p => p.ProducerId == 100200 && p.SubsidiaryId == null && p.ErrorCode == ErrorCodes.MissingRegistrationData));
+            Assert.IsTrue(errorReports.Any(p => p.ProducerId == 200202 && p.SubsidiaryId == null && p.ErrorCode == ErrorCodes.Empty));
+            Assert.IsTrue(errorReports.Any(p => p.ProducerId == 200202 && p.SubsidiaryId == "100101" && p.ErrorCode == ErrorCodes.MissingPOMData && p.LeaverCode == "01"));
         }
+
+        private static CalculatorRunPomDataDetail CreatePomData(int orgId, string submissionPeriod, Guid submitterId, string packagingType, string packagingMaterial, int packagingMaterialWeight, string submissionPeriodDesc = "Jan to December 2025", string? subsidiaryId = null)
+        {
+            return new CalculatorRunPomDataDetail
+            {
+                OrganisationId = orgId,
+                SubmissionPeriod = submissionPeriod,
+                LoadTimeStamp = DateTime.UtcNow,
+                SubmissionPeriodDesc = submissionPeriodDesc,
+                SubmitterId = submitterId,
+                PackagingType = packagingType,
+                PackagingMaterial = packagingMaterial,
+                PackagingMaterialWeight = packagingMaterialWeight,
+                SubsidiaryId = subsidiaryId
+            };
+        }
+
         private CalculatorRunOrganisationDataDetail CreateOrganisationData(int orgId, string? subId, string orgName, Guid submitterId, string obligationStatus = "O", string statusCode = "", string submissionPeriodDesc = "Jan to December 2025")
         {
             return new CalculatorRunOrganisationDataDetail

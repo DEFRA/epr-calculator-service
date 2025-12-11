@@ -36,15 +36,7 @@ namespace EPR.Calculator.Service.Function.Services
 
             foreach (var reg in pomIdsMissingFromReg)
             {
-                var orgId = reg.Item1;
-
-                //To preserve current behaviour of recording org level error for org/subsiduary - under discussion to be removed
-                if (reg.SubsidiaryId != null && orgIds.Any(o => o.Item1 == orgId) && !errorReports.Any(e => e.ProducerId == orgId && e.SubsidiaryId == null))
-                {
-                    errorReports.Add(CreateError(orgId, null, calculatorRunId, createdBy, ErrorTypes.MissingRegistrationData));
-                }
-
-                errorReports.Add(CreateError(orgId, reg.SubsidiaryId, calculatorRunId, createdBy, ErrorTypes.MissingRegistrationData));
+                errorReports.Add(CreateError(reg.Item1, reg.SubsidiaryId, calculatorRunId, createdBy, ErrorCodes.MissingRegistrationData));
             }
 
             return errorReports;
@@ -76,13 +68,25 @@ namespace EPR.Calculator.Service.Function.Services
                                            o.SubsidiaryId == reg.SubsidiaryId &&
                                            o.SubmitterId == reg.SubmitterId)?.StatusCode ?? string.Empty;
 
+                // Check whether this reg 'should have pom' by seeing if they have previously submitted under a different entity
                 if (producerIds.Any(p => p == ProducerId(reg.SubsidiaryId, orgId)))
                 {
-                    errorReports.Add(CreateError(orgId, reg.SubsidiaryId, calculatorRunId, createdBy, ErrorTypes.MissingPOMData, leaverCode.ToString()));
+                    errorReports.Add(CreateError(orgId, reg.SubsidiaryId, calculatorRunId, createdBy, ErrorCodes.MissingPOMData, leaverCode.ToString()));
                 }
             }
-            
+
             return errorReports;
+        }
+
+        public List<ErrorReport> HandleObligatedErrors(IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails, int calculatorRunId, string createdBy)
+        {
+            if (orgDetails == null) throw new ArgumentNullException(nameof(orgDetails));
+
+            var obligatedErrors = orgDetails
+                                    .Where(x => x.ObligationStatus == ObligationStates.Error)
+                                    .Select(x => CreateError(x.OrganisationId, x.SubsidiaryId, calculatorRunId, createdBy, x.ErrorCode ?? string.Empty));
+
+            return obligatedErrors.ToList();
         }
 
         public async Task<HashSet<(int OrgId, string? SubId)>> HandleErrors(
@@ -92,23 +96,31 @@ namespace EPR.Calculator.Service.Function.Services
                                 string createdBy,
                                 CancellationToken cancellationToken)
         {
+            var obligatedErrors = HandleObligatedErrors(orgDetails, calculatorRunId, createdBy);
             var missingRegErrors = HandleMissingRegistrationData(pomDetails, orgDetails, calculatorRunId, createdBy);
             var missingPomErrors = HandleMissingPomData(pomDetails, orgDetails, calculatorRunId, createdBy);
 
-            var allErrors = missingRegErrors.Concat(missingPomErrors);
+            var calcErrors = obligatedErrors.Concat(missingRegErrors).Concat(missingPomErrors);
+
+            var holdingRegErrors = calcErrors
+                                    .GroupBy(x => x.ProducerId)
+                                    .Select(x => CreateError(x.Key, null, calculatorRunId, createdBy, ErrorCodes.Empty));
+
+            var allErrors = calcErrors.Concat(holdingRegErrors);
+
             await this.ErrorReportChunker.InsertRecords(allErrors);
 
-             return allErrors.Select(e => (e.ProducerId, e.SubsidiaryId)).ToHashSet();
+            return allErrors.Select(e => (e.ProducerId, e.SubsidiaryId)).ToHashSet();
         }
 
-        private ErrorReport CreateError(int orgId, string? subId, int calculatorRunId, string createdBy, ErrorTypes errorType, string leaverCode = "")
+        private ErrorReport CreateError(int orgId, string? subId, int calculatorRunId, string createdBy, string errorCode, string leaverCode = "")
         {
             return new ErrorReport
             {
                 CalculatorRunId = calculatorRunId,
                 ProducerId = orgId,
                 SubsidiaryId = subId,
-                ErrorTypeId = (int)errorType,
+                ErrorCode = errorCode,
                 CreatedBy = createdBy,
                 CreatedAt = DateTime.UtcNow,
                 LeaverCode = leaverCode

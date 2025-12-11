@@ -3,6 +3,7 @@ using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.ErrorReport;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Dtos;
+using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -29,24 +30,55 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
         public async Task ConstructAsync_ReturnsMappedErrorReport()
         {
             // Arrange
+            var synapseError = "Conflicting Obligations(blanks)";
             await using var context = CreateDbContext();
-
-            context.ErrorTypes.Add(new ErrorType { Id = 1, Name = "ErrorName" });
 
             context.CalculatorRunOrganisationDataMaster.AddRange(TestDataHelper.GetCalculatorRunOrganisationDataMaster());
             context.CalculatorRunOrganisationDataDetails.AddRange(TestDataHelper.GetCalculatorRunOrganisationDataDetails());
             context.CalculatorRuns.AddRange(TestDataHelper.GetCaculatorRuns());
 
-            context.ErrorReports.Add(new EPR.Calculator.API.Data.DataModels.ErrorReport
-            {
-                Id = 1,
-                CalculatorRunId = 1,
-                ProducerId = 1,
-                SubsidiaryId = "SUB-1",
-                ErrorTypeId = 1,
-                CreatedAt = DateTime.UtcNow,
-                CreatedBy = "Test user"
-            });
+            context.ErrorReports.AddRange(
+                new EPR.Calculator.API.Data.DataModels.ErrorReport
+                {
+                    Id = 1,
+                    CalculatorRunId = 1,
+                    ProducerId = 2,
+                    SubsidiaryId = "Sub 2",
+                    ErrorCode = synapseError,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = "Test user"
+                },
+                new EPR.Calculator.API.Data.DataModels.ErrorReport
+                {
+                    Id = 2,
+                    CalculatorRunId = 1,
+                    ProducerId = 1,
+                    SubsidiaryId = "Sub 1",
+                    ErrorCode = ErrorCodes.MissingRegistrationData,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = "Test user"
+                },
+                new EPR.Calculator.API.Data.DataModels.ErrorReport
+                {
+                    Id = 3,
+                    CalculatorRunId = 1,
+                    ProducerId = 1,
+                    SubsidiaryId = null,
+                    ErrorCode = ErrorCodes.Empty,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = "Test user"
+                },
+                new EPR.Calculator.API.Data.DataModels.ErrorReport
+                {
+                    Id = 4,
+                    CalculatorRunId = 1,
+                    ProducerId = 2,
+                    SubsidiaryId = null,
+                    ErrorCode = ErrorCodes.Empty,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = "Test user"
+                }
+            );
 
             await context.SaveChangesAsync();
 
@@ -56,15 +88,38 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
             // Act
             var result = (await builder.ConstructAsync(request)).ToList();
 
-            // Assert
-            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(4, result.Count);
             var report = result[0];
             Assert.AreEqual(1, report.ProducerId);
-            Assert.AreEqual("SUB-1", report.SubsidiaryId);
-            Assert.AreEqual("-", report.ProducerName);
+            Assert.AreEqual("-", report.SubsidiaryId);
+            Assert.AreEqual("Allied Packaging", report.ProducerName);
             Assert.AreEqual(CommonConstants.Hyphen, report.TradingName);
             Assert.AreEqual(CommonConstants.Hyphen, report.LeaverCode);
-            Assert.AreEqual("ErrorName", report.ErrorCodeText);
+            Assert.AreEqual(ErrorCodes.Empty, report.ErrorCodeText);
+
+            var report1 = result[1];
+            Assert.AreEqual(1, report1.ProducerId);
+            Assert.AreEqual("Sub 1", report1.SubsidiaryId);
+            Assert.AreEqual("-", report1.ProducerName);
+            Assert.AreEqual(CommonConstants.Hyphen, report1.TradingName);
+            Assert.AreEqual(CommonConstants.Hyphen, report1.LeaverCode);
+            Assert.AreEqual(ErrorCodes.MissingRegistrationData, report1.ErrorCodeText);
+
+            var report2 = result[2];
+            Assert.AreEqual(2, report2.ProducerId);
+            Assert.AreEqual("-", report2.SubsidiaryId);
+            Assert.AreEqual("Allied 2", report2.ProducerName);
+            Assert.AreEqual("Allied 2 Trading", report2.TradingName);
+            Assert.AreEqual(CommonConstants.Hyphen, report2.LeaverCode);
+            Assert.AreEqual(ErrorCodes.Empty, report2.ErrorCodeText);
+
+            var report3 = result[3];
+            Assert.AreEqual(2, report3.ProducerId);
+            Assert.AreEqual("Sub 2", report3.SubsidiaryId);
+            Assert.AreEqual("Allied 2 sub", report3.ProducerName);
+            Assert.AreEqual(CommonConstants.Hyphen, report3.TradingName);
+            Assert.AreEqual(CommonConstants.Hyphen, report3.LeaverCode);
+            Assert.AreEqual(synapseError, report3.ErrorCodeText);
         }
 
         [TestMethod]
@@ -72,8 +127,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
         {
             // Arrange
             await using var context = CreateDbContext();
-
-            context.ErrorTypes.Add(new ErrorType { Id = 1, Name = "ErrorName" });
 
             context.CalculatorRunOrganisationDataMaster.AddRange(TestDataHelper.GetCalculatorRunOrganisationDataMaster());
             context.CalculatorRunOrganisationDataDetails.AddRange(TestDataHelper.GetCalculatorRunOrganisationDataDetails());
@@ -85,7 +138,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
                 CalculatorRunId = 1,
                 ProducerId = 1,
                 SubsidiaryId = null,
-                ErrorTypeId = 1,
+                ErrorCode = ErrorCodes.MissingRegistrationData,
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test user"
             });
@@ -106,7 +159,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
             Assert.AreEqual("Allied Packaging", report.ProducerName);
             Assert.AreEqual(CommonConstants.Hyphen, report.TradingName);
             Assert.AreEqual(CommonConstants.Hyphen, report.LeaverCode);
-            Assert.AreEqual("ErrorName", report.ErrorCodeText);
+            Assert.AreEqual(ErrorCodes.MissingRegistrationData, report.ErrorCodeText);
         }
 
         [TestMethod]
@@ -114,8 +167,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
         {
             // Arrange
             await using var context = CreateDbContext();
-
-            context.ErrorTypes.Add(new ErrorType { Id = 1, Name = "ErrorName" });
 
             context.CalculatorRunOrganisationDataMaster.AddRange(TestDataHelper.GetCalculatorRunOrganisationDataMaster());
             context.CalculatorRunOrganisationDataDetails.AddRange(TestDataHelper.GetCalculatorRunOrganisationDataDetails());
@@ -127,7 +178,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
                 CalculatorRunId = 1,
                 ProducerId = 2,
                 SubsidiaryId = "SUB-2",
-                ErrorTypeId = 1,
+                ErrorCode = ErrorCodes.MissingRegistrationData,
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test user"
             });
@@ -148,7 +199,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
             Assert.AreEqual(CommonConstants.Hyphen, report.ProducerName);
             Assert.AreEqual(CommonConstants.Hyphen, report.TradingName);
             Assert.AreEqual(CommonConstants.Hyphen, report.LeaverCode);
-            Assert.AreEqual("ErrorName", report.ErrorCodeText);
+            Assert.AreEqual(ErrorCodes.MissingRegistrationData, report.ErrorCodeText);
         }
 
 
