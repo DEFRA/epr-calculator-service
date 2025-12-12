@@ -28,7 +28,6 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
                 where run.Id == runId
 
                 join er in context.ErrorReports on run.Id equals er.CalculatorRunId
-                join et in context.ErrorTypes on er.ErrorTypeId equals et.Id
                 join odm in context.CalculatorRunOrganisationDataMaster
                     on run.CalculatorRunOrganisationDataMasterId equals odm.Id
 
@@ -59,12 +58,13 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
                                     : GetTradingName(prodLeft),
 
                     LeaverCode = er.LeaverCode ?? CommonConstants.Hyphen,
-                    ErrorCodeText = et.Name
+                    ErrorCodeText = er.ErrorCode
                 };
 
             var results = await baseQuery
                 .AsNoTracking()
-                .OrderBy(x=>x.ProducerId)
+                .OrderBy(x => x.ProducerId)
+                .ThenBy(x => x.ErrorCodeText)
                 .ThenBy(x => x.SubsidiaryId)
                 .ToListAsync();
 

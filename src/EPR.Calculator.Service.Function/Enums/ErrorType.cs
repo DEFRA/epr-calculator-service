@@ -1,17 +1,10 @@
 ﻿namespace EPR.Calculator.Service.Function.Enums
 {
-    public enum ErrorTypes
+    public static class ErrorCodes
     {
-        MissingRegistrationData = 1,
-        ConflictingObligationsLeaverCodes = 2,
-        ConflictingObligationsBlank = 3,
-        NoLongerTrading = 4,
-        NotObligated = 5,
-        ComplianceSchemeLeaver = 6,
-        ComplianceSchemetoDirectProducer = 7,
-        InvalidLeaverCode = 8,
-        DateInputIssue = 9,
-        InvalidOrganisationID = 10,
-        MissingPOMData = 11
+        public const string MissingRegistrationData = "Missing Registration Data";
+        public const string MissingPOMData = "Missing POM data";
+        public const string Empty = "";
+        
     }
 }
