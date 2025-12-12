@@ -18,54 +18,100 @@ namespace EPR.Calculator.Service.Function.Services
             ErrorReportChunker = errorReportChunker ?? throw new ArgumentNullException(nameof(errorReportChunker));
         }
 
-        public async Task<List<(int ProducerId, string? SubsidiaryId)>> HandleUnmatchedPomAsync(
+        public List<ErrorReport> HandleMissingRegistrationData(
                                 IEnumerable<CalculatorRunPomDataDetail> pomDetails,
                                 IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails,
                                 int calculatorRunId,
-                                string createdBy,
-                                CancellationToken cancellationToken)
+                                string createdBy)
         {
             if (pomDetails == null) throw new ArgumentNullException(nameof(pomDetails));
             if (orgDetails == null) throw new ArgumentNullException(nameof(orgDetails));
 
             var errorReports = new List<ErrorReport>();
 
-            var orgIds = orgDetails.Select(o => (o.OrganisationId, o.SubsidaryId, o.SubmitterId)).ToHashSet();
-            var pomIds = pomDetails.Select(p => (p.OrganisationId, p.SubsidaryId, p.SubmitterId)).ToHashSet();
+            var orgIds = orgDetails.Select(o => (o.OrganisationId, o.SubsidiaryId, o.SubmitterId)).ToHashSet();
+            var pomIds = pomDetails.Select(p => (p.OrganisationId ?? 0, p.SubsidiaryId, p.SubmitterId)).ToHashSet();
 
-            var pomIdsMissingFromOrg = pomIds.Except(orgIds); 
+            var pomIdsMissingFromReg = pomIds.Except(orgIds);
 
-            foreach(var m in pomIdsMissingFromOrg) {
-                var orgId = m.OrganisationId??0;
+            foreach (var reg in pomIdsMissingFromReg)
+            {
+                var orgId = reg.Item1;
 
                 //To preserve current behaviour of recording org level error for org/subsiduary - under discussion to be removed
-                if(m.SubsidaryId != null && orgIds.Any(o => o.Item1 == orgId) && !errorReports.Any(e => e.ProducerId == orgId && e.SubsidiaryId == null)) {
-                    errorReports.Add(CreateError(orgId, null, calculatorRunId, createdBy));
+                if (reg.SubsidiaryId != null && orgIds.Any(o => o.Item1 == orgId) && !errorReports.Any(e => e.ProducerId == orgId && e.SubsidiaryId == null))
+                {
+                    errorReports.Add(CreateError(orgId, null, calculatorRunId, createdBy, ErrorTypes.MissingRegistrationData));
                 }
 
-                errorReports.Add(CreateError(orgId, m.SubsidaryId, calculatorRunId, createdBy));
+                errorReports.Add(CreateError(orgId, reg.SubsidiaryId, calculatorRunId, createdBy, ErrorTypes.MissingRegistrationData));
             }
 
-            if (!errorReports.Any())
-                return new List<(int, string?)>();
-
-            await this.ErrorReportChunker.InsertRecords(errorReports);
-
-            return errorReports
-                .Select(e => (e.ProducerId, e.SubsidiaryId))
-                .ToList();
+            return errorReports;
         }
 
-        private ErrorReport CreateError(int orgId, string? subId, int calculatorRunId, string createdBy)
+        public List<ErrorReport> HandleMissingPomData(IEnumerable<CalculatorRunPomDataDetail> pomDetails, IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails, int calculatorRunId, string createdBy)
+        {
+            if (pomDetails == null) throw new ArgumentNullException(nameof(pomDetails));
+            if (orgDetails == null) throw new ArgumentNullException(nameof(orgDetails));
+
+            string ProducerId(string? subsidiaryId, int? organisationId)
+            {
+                var orgId = organisationId ?? 0;
+                return subsidiaryId ?? orgId.ToString();
+            }
+
+            var errorReports = new List<ErrorReport>();
+
+            var obligatedOrgIds = orgDetails.Where(x => ObligationStates.IsObligated(x.ObligationStatus)).Select(o => (o.OrganisationId, o.SubsidiaryId, o.SubmitterId)).ToHashSet();
+            var pomIds = pomDetails.Select(p => (p.OrganisationId ?? 0, p.SubsidiaryId, p.SubmitterId)).ToHashSet();
+            var producerIds = pomIds.Select(p => ProducerId(p.SubsidiaryId, p.Item1));
+
+            var regsWithMissingPoms = obligatedOrgIds.Except(pomIds).ToList();
+
+            foreach (var reg in regsWithMissingPoms)
+            {
+                var orgId = reg.Item1;
+                string leaverCode = orgDetails.FirstOrDefault(o => o.OrganisationId == orgId &&
+                                           o.SubsidiaryId == reg.SubsidiaryId &&
+                                           o.SubmitterId == reg.SubmitterId)?.StatusCode ?? string.Empty;
+
+                if (producerIds.Any(p => p == ProducerId(reg.SubsidiaryId, orgId)))
+                {
+                    errorReports.Add(CreateError(orgId, reg.SubsidiaryId, calculatorRunId, createdBy, ErrorTypes.MissingPOMData, leaverCode.ToString()));
+                }
+            }
+            
+            return errorReports;
+        }
+
+        public async Task<HashSet<(int OrgId, string? SubId)>> HandleErrors(
+                                IEnumerable<CalculatorRunPomDataDetail> pomDetails,
+                                IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails,
+                                int calculatorRunId,
+                                string createdBy,
+                                CancellationToken cancellationToken)
+        {
+            var missingRegErrors = HandleMissingRegistrationData(pomDetails, orgDetails, calculatorRunId, createdBy);
+            var missingPomErrors = HandleMissingPomData(pomDetails, orgDetails, calculatorRunId, createdBy);
+
+            var allErrors = missingRegErrors.Concat(missingPomErrors);
+            await this.ErrorReportChunker.InsertRecords(allErrors);
+
+             return allErrors.Select(e => (e.ProducerId, e.SubsidiaryId)).ToHashSet();
+        }
+
+        private ErrorReport CreateError(int orgId, string? subId, int calculatorRunId, string createdBy, ErrorTypes errorType, string leaverCode = "")
         {
             return new ErrorReport
             {
                 CalculatorRunId = calculatorRunId,
                 ProducerId = orgId,
                 SubsidiaryId = subId,
-                ErrorTypeId = (int) ErrorTypes.MissingRegistrationData,
+                ErrorTypeId = (int)errorType,
                 CreatedBy = createdBy,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                LeaverCode = leaverCode
             };
         }
     }

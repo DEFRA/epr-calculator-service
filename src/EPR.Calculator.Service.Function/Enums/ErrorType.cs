@@ -11,6 +11,7 @@
         ComplianceSchemetoDirectProducer = 7,
         InvalidLeaverCode = 8,
         DateInputIssue = 9,
-        InvalidOrganisationID = 10
+        InvalidOrganisationID = 10,
+        MissingPOMData = 11
     }
 }
