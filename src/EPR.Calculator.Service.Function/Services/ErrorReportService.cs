@@ -39,7 +39,7 @@ namespace EPR.Calculator.Service.Function.Services
                 var orgId = reg.Item1;
 
                 //To preserve current behaviour of recording org level error for org/subsiduary - under discussion to be removed
-                if (reg.SubsidiaryId != null && orgIds.Any(o => o.Item1 == orgId) && !errorReports.Any(e => e.ProducerId == orgId && e.SubsidiaryId == null))
+                if (reg.SubsidiaryId != null && orgIds.Any(o => o.Item1 == orgId) && !errorReports.Exists(e => e.ProducerId == orgId && e.SubsidiaryId == null))
                 {
                     errorReports.Add(CreateError(orgId, null, calculatorRunId, createdBy, ErrorTypes.MissingRegistrationData));
                 }
