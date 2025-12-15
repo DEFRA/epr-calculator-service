@@ -678,6 +678,408 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         /// <summary>
+        /// Verifies that the service calls the Azure Synapse runner and passes the correct parameters to it,
+        /// ensuring both the org and pom pipelines are processed successfully.
+        /// </summary>
+        /// <param name="pipelineNameKey">The key for the pipeline name environment variable.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        [TestMethod]
+        [DataRow(EnvironmentVariableKeys.OrgDataPipelineNameMyc)]
+        [DataRow(EnvironmentVariableKeys.PomDataPipelineNameMyc)]
+        public async Task StartProcessCallsAzureSynapseRunnerSuccessfullyWithUseMYC(string pipelineNameKey)
+        {
+            // Arrange
+            var id = this.Fixture.Create<int>();
+            var user = this.Fixture.Create<string>();
+            var runName = "Test Run Name";
+
+            var checkInterval = 5;
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.CheckInterval,
+                checkInterval.ToString());
+
+            var UseMycPipeline = true;
+            Environment.SetEnvironmentVariable(
+              EnvironmentVariableKeys.UseMycPipeline,
+              UseMycPipeline.ToString());
+
+            var maxCheckCount = 10;
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.MaxCheckCount,
+                maxCheckCount.ToString());
+
+            var pipelineUrl = this.Fixture.Create<Uri>();
+            Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PipelineUrl, pipelineUrl.ToString());
+
+            var orgPipelineName = "test";
+            Environment.SetEnvironmentVariable(EnvironmentVariableKeys.OrgDataPipelineNameMyc, orgPipelineName);
+
+            var pomPipelineName = "pomtest";
+            Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PomDataPipelineNameMyc, pomPipelineName);
+
+            var runRPDPipeline = true;
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.ExecuteRPDPipeline,
+                runRPDPipeline.ToString());
+
+            var statusUpdateEndpoint = this.Fixture.Create<Uri>();
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.StatusUpdateEndpoint,
+                statusUpdateEndpoint.ToString());
+
+            var calculatorRunParameters = new CalculatorRunParameter
+            {
+                Id = id,
+                FinancialYear = this.FinancialYear,
+                User = user,
+                MessageType = MessageTypes.Result
+            };
+
+            // The values that the service is expected to pass to the pipeline runner.
+            var expectedOrgParameters = new AzureSynapseRunnerParameters
+            {
+                CalculatorRunId = id,
+                CheckInterval = checkInterval,
+                CalendarYear = this.CalendarYear,
+                MaxCheckCount = maxCheckCount,
+                PipelineUrl = pipelineUrl,
+                PipelineName = orgPipelineName,
+            };
+
+            var expectedPomParameters = new AzureSynapseRunnerParameters
+            {
+                CalculatorRunId = id,
+                CheckInterval = checkInterval,
+                CalendarYear = this.CalendarYear,
+                MaxCheckCount = maxCheckCount,
+                PipelineUrl = pipelineUrl,
+                PipelineName = pomPipelineName,
+            };
+
+            // Mock the AzureSynapseRunner to return true for both pipelines
+            this.AzureSynapseRunner.Setup(t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
+                p.PipelineName == orgPipelineName))).ReturnsAsync(true);
+
+            this.AzureSynapseRunner.Setup(t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
+                p.PipelineName == pomPipelineName))).ReturnsAsync(true);
+
+            this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
+
+            // Act
+            var result = await this.CalculatorRunService.PrepareResultsFileAsync(calculatorRunParameters, runName);
+
+            // Assert
+            Assert.IsTrue(result);
+
+            // Verify that the org pipeline was called once
+            this.AzureSynapseRunner.Verify(
+                t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
+                p.PipelineName == orgPipelineName)), Times.Once);
+
+            // Verify that the pom pipeline was called once
+            this.AzureSynapseRunner.Verify(
+                t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
+                p.PipelineName == pomPipelineName)), Times.Once);
+        }
+
+
+        /// <summary>
+        /// Verifies that the service calls the Azure Synapse runner and passes the correct parameters to it,
+        /// ensuring both the org and pom pipelines are processed successfully.
+        /// </summary>
+        /// <param name="pipelineNameKey">The key for the pipeline name environment variable.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        [TestMethod]
+        [DataRow(EnvironmentVariableKeys.OrgDataPipelineName)]
+        [DataRow(EnvironmentVariableKeys.PomDataPipelineName)]
+        public async Task StartProcessCallsAzureSynapseRunnerSuccessfullyWithOuUseMYC(string pipelineNameKey)
+        {
+            // Arrange
+            var id = this.Fixture.Create<int>();
+            var user = this.Fixture.Create<string>();
+            var runName = "Test Run Name";
+
+            var checkInterval = 5;
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.CheckInterval,
+                checkInterval.ToString());
+
+            var UseMycPipeline = false;
+            Environment.SetEnvironmentVariable(
+              EnvironmentVariableKeys.UseMycPipeline,
+              UseMycPipeline.ToString());
+
+            var maxCheckCount = 10;
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.MaxCheckCount,
+                maxCheckCount.ToString());
+
+            var pipelineUrl = this.Fixture.Create<Uri>();
+            Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PipelineUrl, pipelineUrl.ToString());
+
+            var orgPipelineName = "test";
+            Environment.SetEnvironmentVariable(EnvironmentVariableKeys.OrgDataPipelineName, orgPipelineName);
+
+            var pomPipelineName = "pomtest";
+            Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PomDataPipelineName, pomPipelineName);
+
+            var runRPDPipeline = true;
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.ExecuteRPDPipeline,
+                runRPDPipeline.ToString());
+
+            var statusUpdateEndpoint = this.Fixture.Create<Uri>();
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.StatusUpdateEndpoint,
+                statusUpdateEndpoint.ToString());
+
+            var calculatorRunParameters = new CalculatorRunParameter
+            {
+                Id = id,
+                FinancialYear = this.FinancialYear,
+                User = user,
+                MessageType = MessageTypes.Result
+            };
+
+            // The values that the service is expected to pass to the pipeline runner.
+            var expectedOrgParameters = new AzureSynapseRunnerParameters
+            {
+                CalculatorRunId = id,
+                CheckInterval = checkInterval,
+                CalendarYear = this.CalendarYear,
+                MaxCheckCount = maxCheckCount,
+                PipelineUrl = pipelineUrl,
+                PipelineName = orgPipelineName,
+            };
+
+            var expectedPomParameters = new AzureSynapseRunnerParameters
+            {
+                CalculatorRunId = id,
+                CheckInterval = checkInterval,
+                CalendarYear = this.CalendarYear,
+                MaxCheckCount = maxCheckCount,
+                PipelineUrl = pipelineUrl,
+                PipelineName = pomPipelineName,
+            };
+
+            // Mock the AzureSynapseRunner to return true for both pipelines
+            this.AzureSynapseRunner.Setup(t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
+                p.PipelineName == orgPipelineName))).ReturnsAsync(true);
+
+            this.AzureSynapseRunner.Setup(t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
+                p.PipelineName == pomPipelineName))).ReturnsAsync(true);
+
+            this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
+
+            // Act
+            var result = await this.CalculatorRunService.PrepareResultsFileAsync(calculatorRunParameters, runName);
+
+            // Assert
+            Assert.IsTrue(result);
+
+            // Verify that the org pipeline was called once
+            this.AzureSynapseRunner.Verify(
+                t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
+                p.PipelineName == orgPipelineName)), Times.Once);
+
+            // Verify that the pom pipeline was called once
+            this.AzureSynapseRunner.Verify(
+                t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
+                p.PipelineName == pomPipelineName)), Times.Once);
+        }
+
+        /// <summary>
+        /// Verifies that the service calls the Azure Synapse runner and passes the correct parameters to it,
+        /// ensuring both the org and pom pipelines are processed successfully.
+        /// </summary>
+        /// <param name="pipelineNameKey">The key for the pipeline name environment variable.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        [TestMethod]
+        [DataRow(EnvironmentVariableKeys.OrgDataPipelineName)]
+        public async Task StartProcessCallsAzureSynapseRunnerSuccessfullyWithUseMYCNoPipelineNames(string pipelineNameKey)
+        {
+            // Arrange
+            var id = this.Fixture.Create<int>();
+            var user = this.Fixture.Create<string>();
+            var runName = "Test Run Name";
+
+            var checkInterval = 5;
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.CheckInterval,
+                checkInterval.ToString());
+
+            var UseMycPipeline = false;
+            Environment.SetEnvironmentVariable(
+              EnvironmentVariableKeys.UseMycPipeline,
+              UseMycPipeline.ToString());
+
+            var maxCheckCount = 10;
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.MaxCheckCount,
+                maxCheckCount.ToString());
+
+            var pipelineUrl = this.Fixture.Create<Uri>();
+            Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PipelineUrl, pipelineUrl.ToString());
+
+            var orgPipelineName = "test";
+            Environment.SetEnvironmentVariable(EnvironmentVariableKeys.OrgDataPipelineName, string.Empty);
+
+            var pomPipelineName = "pomtest";
+            Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PomDataPipelineName, string.Empty);
+
+            var runRPDPipeline = true;
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.ExecuteRPDPipeline,
+                runRPDPipeline.ToString());
+
+            var statusUpdateEndpoint = this.Fixture.Create<Uri>();
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.StatusUpdateEndpoint,
+                statusUpdateEndpoint.ToString());
+
+            var calculatorRunParameters = new CalculatorRunParameter
+            {
+                Id = id,
+                FinancialYear = this.FinancialYear,
+                User = user,
+                MessageType = MessageTypes.Result
+            };
+
+            // The values that the service is expected to pass to the pipeline runner.
+            var expectedOrgParameters = new AzureSynapseRunnerParameters
+            {
+                CalculatorRunId = id,
+                CheckInterval = checkInterval,
+                CalendarYear = this.CalendarYear,
+                MaxCheckCount = maxCheckCount,
+                PipelineUrl = pipelineUrl,
+                PipelineName = orgPipelineName,
+            };
+
+            var expectedPomParameters = new AzureSynapseRunnerParameters
+            {
+                CalculatorRunId = id,
+                CheckInterval = checkInterval,
+                CalendarYear = this.CalendarYear,
+                MaxCheckCount = maxCheckCount,
+                PipelineUrl = pipelineUrl,
+                PipelineName = pomPipelineName,
+            };
+
+            // Mock the AzureSynapseRunner to return true for both pipelines
+            this.AzureSynapseRunner.Setup(t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
+                p.PipelineName == orgPipelineName))).ReturnsAsync(true);
+
+            this.AzureSynapseRunner.Setup(t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
+                p.PipelineName == pomPipelineName))).ReturnsAsync(true);
+
+            this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
+
+            // Act
+            var result = await this.CalculatorRunService.PrepareResultsFileAsync(calculatorRunParameters, runName);
+
+            Assert.IsFalse(result);
+
+            this.MockLogger.Verify(l => l.LogError(It.Is<ErrorMessage>(ex => ex.Exception.Message.Contains("orgDataPipeline"))));
+        }
+
+        /// <summary>
+        /// Verifies that the service calls the Azure Synapse runner and passes the correct parameters to it,
+        /// ensuring both the org and pom pipelines are processed successfully.
+        /// </summary>
+        /// <param name="pipelineNameKey">The key for the pipeline name environment variable.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        [TestMethod]        
+        [DataRow(EnvironmentVariableKeys.PomDataPipelineName)]
+        public async Task StartProcessCallsAzureSynapseRunnerSuccessfullyWithUseMYCNoPomPipelineName(string pipelineNameKey)
+        {
+            // Arrange
+            var id = this.Fixture.Create<int>();
+            var user = this.Fixture.Create<string>();
+            var runName = "Test Run Name";
+
+            var checkInterval = 5;
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.CheckInterval,
+                checkInterval.ToString());
+
+            var UseMycPipeline = false;
+            Environment.SetEnvironmentVariable(
+              EnvironmentVariableKeys.UseMycPipeline,
+              UseMycPipeline.ToString());
+
+            var maxCheckCount = 10;
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.MaxCheckCount,
+                maxCheckCount.ToString());
+
+            var pipelineUrl = this.Fixture.Create<Uri>();
+            Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PipelineUrl, pipelineUrl.ToString());
+
+            var orgPipelineName = "test";
+            Environment.SetEnvironmentVariable(EnvironmentVariableKeys.OrgDataPipelineName, orgPipelineName);
+
+            var pomPipelineName = "pomtest";
+            Environment.SetEnvironmentVariable(EnvironmentVariableKeys.PomDataPipelineName, string.Empty);
+
+            var runRPDPipeline = true;
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.ExecuteRPDPipeline,
+                runRPDPipeline.ToString());
+
+            var statusUpdateEndpoint = this.Fixture.Create<Uri>();
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.StatusUpdateEndpoint,
+                statusUpdateEndpoint.ToString());
+
+            var calculatorRunParameters = new CalculatorRunParameter
+            {
+                Id = id,
+                FinancialYear = this.FinancialYear,
+                User = user,
+                MessageType = MessageTypes.Result
+            };
+
+            // The values that the service is expected to pass to the pipeline runner.
+            var expectedOrgParameters = new AzureSynapseRunnerParameters
+            {
+                CalculatorRunId = id,
+                CheckInterval = checkInterval,
+                CalendarYear = this.CalendarYear,
+                MaxCheckCount = maxCheckCount,
+                PipelineUrl = pipelineUrl,
+                PipelineName = orgPipelineName,
+            };
+
+            var expectedPomParameters = new AzureSynapseRunnerParameters
+            {
+                CalculatorRunId = id,
+                CheckInterval = checkInterval,
+                CalendarYear = this.CalendarYear,
+                MaxCheckCount = maxCheckCount,
+                PipelineUrl = pipelineUrl,
+                PipelineName = pomPipelineName,
+            };
+
+            // Mock the AzureSynapseRunner to return true for both pipelines
+            this.AzureSynapseRunner.Setup(t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
+                p.PipelineName == orgPipelineName))).ReturnsAsync(true);
+
+            this.AzureSynapseRunner.Setup(t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
+                p.PipelineName == pomPipelineName))).ReturnsAsync(true);
+
+            this.RunNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
+
+            // Act
+            var result = await this.CalculatorRunService.PrepareResultsFileAsync(calculatorRunParameters, runName);
+
+            Assert.IsFalse(result);
+
+            this.MockLogger.Verify(l => l.LogError(It.Is<ErrorMessage>(ex => ex.Exception.Message.Contains("pomDataPipeLine"))));
+        }
+
+
+        /// <summary>
         /// A message handler that delays the response in order to test timeouts.
         /// </summary>
         private class DelayedMessageHandler : HttpMessageHandler
