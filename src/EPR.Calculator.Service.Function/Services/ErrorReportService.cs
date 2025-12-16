@@ -36,15 +36,7 @@ namespace EPR.Calculator.Service.Function.Services
 
             foreach (var reg in pomIdsMissingFromReg)
             {
-                var orgId = reg.Item1;
-
-                //To preserve current behaviour of recording org level error for org/subsiduary - under discussion to be removed
-                if (reg.SubsidiaryId != null && orgIds.Any(o => o.Item1 == orgId) && !errorReports.Exists(e => e.ProducerId == orgId && e.SubsidiaryId == null))
-                {
-                    errorReports.Add(CreateError(orgId, null, calculatorRunId, createdBy, ErrorTypes.MissingRegistrationData));
-                }
-
-                errorReports.Add(CreateError(orgId, reg.SubsidiaryId, calculatorRunId, createdBy, ErrorTypes.MissingRegistrationData));
+                errorReports.Add(CreateError(reg.Item1, reg.SubsidiaryId, calculatorRunId, createdBy, ErrorCodes.MissingRegistrationData));
             }
 
             return errorReports;
