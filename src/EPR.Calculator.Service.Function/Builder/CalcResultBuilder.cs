@@ -29,6 +29,7 @@ namespace EPR.Calculator.Service.Function.Builder
         private readonly ICalcResultLateReportingBuilder lateReportingBuilder;
         private readonly ICalcRunLaDisposalCostBuilder laDisposalCostBuilder;
         private readonly ICalcResultScaledupProducersBuilder calcResultScaledupProducersBuilder;
+        private readonly ICalcResultPartialObligationBuilder calcResultPartialObligationBuilder;
         public readonly ICalcResultCancelledProducersBuilder calcResultCancelledProducersBuilder;
         public readonly ICalcResultRejectedProducersBuilder calcResultRejectedProducersBuilder;
         public readonly ICalcResultErrorReportBuilder calcResultErrorReportBuilder;
@@ -48,6 +49,7 @@ namespace EPR.Calculator.Service.Function.Builder
             ICalcResultLateReportingBuilder lateReportingBuilder,
             ICalcRunLaDisposalCostBuilder calcRunLaDisposalCostBuilder,
             ICalcResultScaledupProducersBuilder calcResultScaledupProducersBuilder,
+            ICalcResultPartialObligationBuilder calcResultPartialObligationBuilder,
             ICalcResultSummaryBuilder summaryBuilder,
             ICalcResultCancelledProducersBuilder calcResultCancelledProducersBuilder,
             ICalcResultRejectedProducersBuilder calcResultRejectedProducersBuilder,
@@ -62,6 +64,7 @@ namespace EPR.Calculator.Service.Function.Builder
             this.laDisposalCostBuilder = calcRunLaDisposalCostBuilder;
             this.lapcapplusFourApportionmentBuilder = calcResultOnePlusFourApportionmentBuilder;
             this.calcResultScaledupProducersBuilder = calcResultScaledupProducersBuilder;
+            this.calcResultPartialObligationBuilder = calcResultPartialObligationBuilder;
             this.summaryBuilder = summaryBuilder;
             this.calcResultCancelledProducersBuilder = calcResultCancelledProducersBuilder;
             this.calcResultRejectedProducersBuilder = calcResultRejectedProducersBuilder;
@@ -86,6 +89,7 @@ namespace EPR.Calculator.Service.Function.Builder
                 {
                     Name = string.Empty,
                 },
+                CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultCancelledProducers = new CalcResultCancelledProducersResponse(),
                 CalcResultRejectedProducers = new List<CalcResultRejectedProducer>()
@@ -117,6 +121,10 @@ namespace EPR.Calculator.Service.Function.Builder
             this._telemetryClient.TrackTrace("calcResultScaledupProducersBuilder started...");
             result.CalcResultScaledupProducers = await this.calcResultScaledupProducersBuilder.ConstructAsync(resultsRequestDto);
             this._telemetryClient.TrackTrace("calcResultScaledupProducersBuilder end...");
+
+            this._telemetryClient.TrackTrace("calcResultPartialObligationBuilder started...");
+            result.CalcResultPartialObligations = await this.calcResultPartialObligationBuilder.ConstructAsync(resultsRequestDto);
+            this._telemetryClient.TrackTrace("calcResultPartialObligationBuilder end...");
 
             if (resultsRequestDto.IsBillingFile)
             {

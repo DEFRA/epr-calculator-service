@@ -60,6 +60,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
             //Improve null scenarios
             //Leaver date?
             //Get year from org data instead (add column)?
+            //Date format different to file? DateOnly?
             var result = await (from run in this.context.CalculatorRuns.AsNoTracking()
                                 join crodm in this.context.CalculatorRunOrganisationDataMaster.AsNoTracking() on run.CalculatorRunOrganisationDataMasterId equals crodm.Id
                                 join crodd in this.context.CalculatorRunOrganisationDataDetails.AsNoTracking() on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId

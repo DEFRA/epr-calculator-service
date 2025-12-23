@@ -63,6 +63,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var calcResult = new CalcResult
             {
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
+                CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultDetail = new CalcResultDetail
                 {
                     RunId = 4,
