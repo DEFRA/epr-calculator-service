@@ -110,13 +110,13 @@
                 switch (packagingType)
                 {
                     case PackagingTypes.Household:
-                        return maybePartialObligation!.PartialObligationTonnageByMaterial[material.Code].PartialReportedHouseholdPackagingWasteTonnage;
+                        return maybePartialObligation!.PartialObligationTonnageByMaterial.GetValueOrDefault(material.Code)?.PartialReportedHouseholdPackagingWasteTonnage ?? 0;
                     case PackagingTypes.PublicBin:
-                        return maybePartialObligation!.PartialObligationTonnageByMaterial[material.Code].PartialReportedPublicBinTonnage;
+                        return maybePartialObligation!.PartialObligationTonnageByMaterial.GetValueOrDefault(material.Code)?.PartialReportedPublicBinTonnage ?? 0;
                     case PackagingTypes.ConsumerWaste:
-                        return maybePartialObligation!.PartialObligationTonnageByMaterial[material.Code].PartialReportedSelfManagedConsumerWasteTonnage;
+                        return maybePartialObligation!.PartialObligationTonnageByMaterial.GetValueOrDefault(material.Code)?.PartialReportedSelfManagedConsumerWasteTonnage ?? 0;
                     case PackagingTypes.HouseholdDrinksContainers:
-                        return maybePartialObligation!.PartialObligationTonnageByMaterial[material.Code].PartialHouseholdDrinksContainersTonnageGlass;
+                        return maybePartialObligation!.PartialObligationTonnageByMaterial.GetValueOrDefault(material.Code)?.PartialHouseholdDrinksContainersTonnageGlass ?? 0;
                     default:
                         return 0;
                 }
