@@ -104,6 +104,7 @@ namespace EPR.Calculator.Service.Function.Services
 
             var holdingRegErrors = calcErrors
                                     .GroupBy(x => x.ProducerId)
+                                    .Where(x => !x.Any(y => string.IsNullOrEmpty(y.SubsidiaryId)))
                                     .Select(x => CreateError(x.Key, null, calculatorRunId, createdBy, ErrorCodes.Empty));
 
             var allErrors = calcErrors.Concat(holdingRegErrors);

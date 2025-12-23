@@ -526,8 +526,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Act
             var reportsList = await _service.HandleErrors(pomDetails, orgDetails, runId, createdBy, CancellationToken.None);
 
-            Assert.AreEqual(4, errorReports.Count(), "Expected 4 unmatched records to be inserted.");
-            Assert.IsTrue(errorReports.Any(p => p.ProducerId == 100200 && p.SubsidiaryId == null && p.ErrorCode == ErrorCodes.Empty));
+            Assert.AreEqual(3, errorReports.Count(), "Expected 3 unmatched records to be inserted.");
             Assert.IsTrue(errorReports.Any(p => p.ProducerId == 100200 && p.SubsidiaryId == null && p.ErrorCode == ErrorCodes.MissingRegistrationData));
             Assert.IsTrue(errorReports.Any(p => p.ProducerId == 200202 && p.SubsidiaryId == null && p.ErrorCode == ErrorCodes.Empty));
             Assert.IsTrue(errorReports.Any(p => p.ProducerId == 200202 && p.SubsidiaryId == "100101" && p.ErrorCode == ErrorCodes.MissingPOMData && p.LeaverCode == "01"));
