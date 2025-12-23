@@ -1,4 +1,4 @@
-﻿namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
+﻿namespace EPR.Calculator.Service.Function.Builder.PartialObligations
 {
     using System.Threading.Tasks;
     using EPR.Calculator.Service.Function.Dtos;
