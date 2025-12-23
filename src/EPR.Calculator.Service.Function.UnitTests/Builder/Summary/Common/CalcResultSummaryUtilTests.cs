@@ -184,7 +184,7 @@
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
-            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.Household, scaledupProducers, partialObligations!);
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.Household, scaledupProducers!, partialObligations);
 
             // Assert
             Assert.AreEqual(1000.00m, result);
@@ -201,7 +201,7 @@
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
-            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.Household, scaledupProducers, partialObligations!);
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.Household, scaledupProducers!, partialObligations);
 
             // Assert
             Assert.AreEqual(200.00m, result);
@@ -234,7 +234,7 @@
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
-            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.PublicBin, scaledupProducers, partialObligations!);
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.PublicBin, scaledupProducers!, partialObligations);
 
             // Assert
             Assert.AreEqual(40, result);
@@ -267,7 +267,7 @@
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
-            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.ConsumerWaste, scaledupProducers, partialObligations!);
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.ConsumerWaste, scaledupProducers!, partialObligations);
 
             // Assert
             Assert.AreEqual(120.00m, result);
@@ -300,7 +300,7 @@
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
-            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.HouseholdDrinksContainers, scaledupProducers, partialObligations!);
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.HouseholdDrinksContainers, scaledupProducers!, partialObligations!);
 
             // Assert
             Assert.AreEqual(140m, result);
@@ -333,7 +333,7 @@
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
-            var result = CalcResultSummaryUtil.GetTonnage(producer, material, "Default", scaledupProducers, partialObligations!);
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, "Default", scaledupProducers!, partialObligations);
 
             // Assert
             Assert.AreEqual(0.00m, result);
@@ -367,7 +367,7 @@
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
-            var result = CalcResultSummaryUtil.GetTonnage(producer, material, "Invalid packaging type", scaledupProducers, partialObligations!);
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, "Invalid packaging type", scaledupProducers!, partialObligations);
 
             // Assert
             Assert.AreEqual(0, result);
@@ -1268,7 +1268,7 @@
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
-            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.PublicBin, scaledupProducers, partialObligations!);
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.PublicBin, scaledupProducers!, partialObligations);
 
             // Assert
             Assert.AreEqual(20.00m, result);
