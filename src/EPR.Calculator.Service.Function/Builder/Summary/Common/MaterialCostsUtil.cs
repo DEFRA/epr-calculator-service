@@ -11,18 +11,20 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
             IEnumerable<ProducerDetail> producersAndSubsidiaries,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
+            IEnumerable<CalcResultPartialObligation> partialObligations,
             MaterialDetail material,
             bool isOverAllTotalRow)
         {
             return isOverAllTotalRow
                 ? CalcResultSummaryUtil.GetNetReportedTonnageOverallTotal(producerDisposalFees, material)
-                : CalcResultSummaryUtil.GetNetReportedTonnageTotal(producersAndSubsidiaries, material, scaledUpProducers);
+                : CalcResultSummaryUtil.GetNetReportedTonnageTotal(producersAndSubsidiaries, material, scaledUpProducers, partialObligations);
         }
 
         public static decimal? GetPreviousInvoicedTonnage(
             IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
             IEnumerable<ProducerDetail> producersAndSubsidiaries,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
+            IEnumerable<CalcResultPartialObligation> partialObligations,
             MaterialDetail material,
             bool isOverAllTotalRow,
             decimal? previousInvoicedNetTonnage)
@@ -36,45 +38,49 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
             IEnumerable<ProducerDetail> producersAndSubsidiaries,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
+            IEnumerable<CalcResultPartialObligation> partialObligations,
             MaterialDetail material,
             CalcResult calcResult,
             bool isOverAllTotalRow)
         {
             return isOverAllTotalRow
                 ? CalcResultSummaryUtil.GetProducerDisposalFeeOverallTotal(producerDisposalFees, material)
-                : CalcResultSummaryUtil.GetProducerDisposalFeeProducerTotal(producersAndSubsidiaries, material, calcResult, scaledUpProducers);
+                : CalcResultSummaryUtil.GetProducerDisposalFeeProducerTotal(producersAndSubsidiaries, material, calcResult, scaledUpProducers, partialObligations);
         }
 
         public static decimal GetBadDebtProvision(
             IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
             IEnumerable<ProducerDetail> producersAndSubsidiaries,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
+            IEnumerable<CalcResultPartialObligation> partialObligations,
             MaterialDetail material,
             CalcResult calcResult,
             bool isOverAllTotalRow)
         {
             return isOverAllTotalRow
                 ? CalcResultSummaryUtil.GetBadDebtProvisionOverallTotal(producerDisposalFees, material)
-                : CalcResultSummaryUtil.GetBadDebtProvisionProducerTotal(producersAndSubsidiaries, material, calcResult, scaledUpProducers);
+                : CalcResultSummaryUtil.GetBadDebtProvisionProducerTotal(producersAndSubsidiaries, material, calcResult, scaledUpProducers, partialObligations);
         }
 
         public static decimal GetProducerDisposalFeeWithBadDebtProvision(
             IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
             IEnumerable<ProducerDetail> producersAndSubsidiaries,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
+            IEnumerable<CalcResultPartialObligation> partialObligations,
             MaterialDetail material,
             CalcResult calcResult,
             bool isOverAllTotalRow)
         {
             return isOverAllTotalRow
                 ? CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvisionOverallTotal(producerDisposalFees, material)
-                : CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvisionProducerTotal(producersAndSubsidiaries, material, calcResult, scaledUpProducers);
+                : CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvisionProducerTotal(producersAndSubsidiaries, material, calcResult, scaledUpProducers, partialObligations);
         }
 
         public static decimal GetCountryDisposalFeeWithBadDebtProvision(
             IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
             IEnumerable<ProducerDetail> producersAndSubsidiaries,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
+            IEnumerable<CalcResultPartialObligation> partialObligations,
             MaterialDetail material,
             CalcResult calcResult,
             Countries country,
@@ -82,7 +88,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
         {
             return isOverAllTotalRow
                 ? CalcResultSummaryUtil.GetCountryBadDebtProvisionOverallTotal(producerDisposalFees, material, country)
-                : CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producersAndSubsidiaries, material, calcResult, country, scaledUpProducers);
+                : CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producersAndSubsidiaries, material, calcResult, country, scaledUpProducers, partialObligations);
         }
     }
 }

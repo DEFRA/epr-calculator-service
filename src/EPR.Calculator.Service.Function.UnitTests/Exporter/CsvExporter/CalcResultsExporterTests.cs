@@ -346,6 +346,7 @@
                     },
                     ScaledupProducers = GetCalcResultScaledupProducerList(),
                 },
+                CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultSummary = new CalcResultSummary
                 {
                     ResultSummaryHeader = new CalcResultSummaryHeader
