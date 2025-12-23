@@ -28,7 +28,7 @@ namespace EPR.Calculator.Service.Common.Utils
         private static void ResetObjectValue(object resetObject, PropertyInfo property)
         {
             if (!property.CanWrite || (resetObject is IEnumerable)) return;
-            else if (property.Name == "IsProducerScaledup" && property.GetValue(resetObject)?.ToString() == "Totals") return;
+            else if (property.Name == "LeaverDate" && property.GetValue(resetObject)?.ToString() == "Totals") return;
             else if (property.Name == "IsTotalRow" || property.Name == "isOverallTotalRow") return;         
 
             Type? propType = property.PropertyType;

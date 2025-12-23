@@ -35,7 +35,9 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
         public IEnumerable<CalcResultScaledupProducer> ScaledupProducers { get; set; } = [];
 
-        public IEnumerable<ScaledupOrganisation> ParentOrganisations { get; set; } = [];
+        public IEnumerable<Organisation> Organisations { get; set; } = [];
+
+        public IEnumerable<Organisation> ParentOrganisations { get; set; } = [];
 
         public CalcResultSummaryBuilder(ApplicationDBContext context)
         {
@@ -71,17 +73,23 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             // Household + PublicBin + HDC
             var totalPackagingTonnage = GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, runId, ScaledupProducers.ToList());
 
-            // Get parent organisations
-            ParentOrganisations = await (from run in this.context.CalculatorRuns
+            // Get organisations
+            Organisations = await (from run in this.context.CalculatorRuns
                                          join crodm in this.context.CalculatorRunOrganisationDataMaster on run.CalculatorRunOrganisationDataMasterId equals crodm.Id
                                          join crodd in this.context.CalculatorRunOrganisationDataDetails on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
-                                         where run.Id == runId && crodd.SubsidiaryId == null
-                                         select new ScaledupOrganisation
+                                         where run.Id == runId
+                                         select new Organisation
                                          {
                                              OrganisationId = crodd.OrganisationId,
+                                             SubsidiaryId = crodd.SubsidiaryId,
                                              OrganisationName = crodd.OrganisationName,
                                              TradingName = crodd.TradingName,
+                                             StatusCode = crodd.StatusCode,
+                                             JoinerDate = crodd.JoinerDate,
+                                             LeaverDate = crodd.LeaverDate
                                          }).Distinct().ToListAsync();
+
+            ParentOrganisations = Organisations.Where(o => o.SubsidiaryId == null);
 
             var result = GetCalcResultSummary(
                 orderedProducerDetails,
@@ -250,7 +258,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 SubsidiaryId = string.Empty,
                 TradingName = producerForTotalRow?.TradingName ?? string.Empty,
                 Level = isOverAllTotalRow ? string.Empty : CommonConstants.LevelOne.ToString(),
-                IsProducerScaledup = GetScaledupProducerStatusTotalRow(producersAndSubsidiaries[0], ScaledupProducers, isOverAllTotalRow),
+                IsProducerScaledup = CalcResultSummaryUtil.IsProducerScaledup(producersAndSubsidiaries[0], ScaledupProducers)
+                                    ? CommonConstants.Yes
+                                    : CommonConstants.No,
+                IsPartialObligation = CommonConstants.No,
+                StatusCode = producerForTotalRow?.StatusCode,
+                JoinerDate = producerForTotalRow?.JoinerDate,
+                LeaverDate = isOverAllTotalRow ? CommonConstants.Totals : producerForTotalRow?.LeaverDate,
                 ProducerDisposalFeesByMaterial = materialCosts,
 
                 // Disposal fee summary
@@ -311,6 +325,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             var commsCostSummary = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>();
             var level = CalcResultSummaryUtil.GetLevelIndex(producerDisposalFeesLookup, producer);
 
+            var orgData = Organisations.FirstOrDefault(o => o.OrganisationId == producer.ProducerId && o.SubsidiaryId == producer.SubsidiaryId);
+
             var result = new CalcResultSummaryProducerDisposalFees
             {
                 ProducerIdInt = producer.ProducerId,
@@ -320,8 +336,12 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 TradingName = producer.TradingName ?? string.Empty,
                 Level = level.ToString(),
                 IsProducerScaledup = CalcResultSummaryUtil.IsProducerScaledup(producer, ScaledupProducers)
-                    ? CommonConstants.ScaledupProducersYes
-                    : CommonConstants.ScaledupProducersNo,
+                    ? CommonConstants.Yes
+                    : CommonConstants.No,
+                IsPartialObligation = CommonConstants.No,
+                StatusCode = orgData?.StatusCode,
+                JoinerDate = orgData?.JoinerDate,
+                LeaverDate = orgData?.LeaverDate
             };
             foreach (var material in materials)
             {
@@ -572,7 +592,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             return false;
         }
 
-        public ScaledupOrganisation? GetProducerDetailsForTotalRow(int producerId, bool isOverAllTotalRow)
+        public Organisation? GetProducerDetailsForTotalRow(int producerId, bool isOverAllTotalRow)
         {
             if (isOverAllTotalRow)
             {
@@ -581,21 +601,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
             var parentProducer = ParentOrganisations.FirstOrDefault(po => po.OrganisationId == producerId);
             return parentProducer;
-        }
-
-        internal static string GetScaledupProducerStatusTotalRow(
-            ProducerDetail producer,
-            IEnumerable<CalcResultScaledupProducer> scaledupProducers,
-            bool isOverAllTotalRow)
-        {
-            if (isOverAllTotalRow)
-            {
-                return CommonConstants.Totals;
-            }
-
-            return CalcResultSummaryUtil.IsProducerScaledup(producer, scaledupProducers)
-                ? CommonConstants.ScaledupProducersYes
-                : CommonConstants.ScaledupProducersNo;
         }
 
         private Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> GetMaterialCosts(

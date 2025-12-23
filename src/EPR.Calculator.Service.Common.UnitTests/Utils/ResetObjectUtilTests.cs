@@ -22,7 +22,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.Utils
                 IsTested = true,
                 childTest = new ChildTestClass() { IsChild = true },
                 Humidity = fixture.Create<double>(),
-                IsProducerScaledup = "Totals",
+                LeaverDate = "Totals",
                 isOverallTotalRow = true,
                 Numbers = new List<int>() { 1, 2, 3 },
                 CurrentDateTime = DateTime.UtcNow
@@ -37,7 +37,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.Utils
             Assert.AreEqual(0, j.Temperature);
             Assert.AreEqual(0, j.Fruits);
             Assert.AreEqual(0, j.Humidity);
-            Assert.AreEqual("Totals", j.IsProducerScaledup);
+            Assert.AreEqual("Totals", j.LeaverDate);
             Assert.IsTrue(j.IsTotalRow);
             Assert.IsTrue(j.isOverallTotalRow);
             Assert.IsFalse(j.IsTested);
@@ -61,7 +61,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.Utils
 
         public required ChildTestClass childTest { get; set; }
 
-        public required string IsProducerScaledup { get; set; }
+        public required string LeaverDate { get; set; }
 
         public required List<int> Numbers { get; set; }
 

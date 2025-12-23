@@ -14,7 +14,15 @@ namespace EPR.Calculator.Service.Function.Models
 
         public string? Level { get; set; }
 
+        public string? StatusCode { get; set; }
+
         public string IsProducerScaledup { get; set; } = "No";
+
+        public string IsPartialObligation { get; set; } = "No";
+
+        public string? JoinerDate { get; set; }
+        
+        public string? LeaverDate { get; set; }
 
         public bool isTotalRow { get; set; } = false;
 
