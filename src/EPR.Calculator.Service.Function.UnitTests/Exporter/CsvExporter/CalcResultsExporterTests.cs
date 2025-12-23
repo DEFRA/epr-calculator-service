@@ -11,6 +11,7 @@
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
@@ -28,6 +29,7 @@
             MockOnePlusFourExporter = new();
             MockLaDisposalCostDataExporter = new();
             MockScaledupProducersExporter = new();
+            MockPartialObligationsExporter = new();
             MockLapcaptDetailExporter = new();
             MockParameterOtherCostExporter = new();
             MockCalcResultSummaryExporter = new();
@@ -40,6 +42,7 @@
                 MockOnePlusFourExporter.Object,
                 MockLaDisposalCostDataExporter.Object,
                 MockScaledupProducersExporter.Object,
+                MockPartialObligationsExporter.Object,
                 MockLapcaptDetailExporter.Object,
                 MockParameterOtherCostExporter.Object,
                 MockCommsCostExporter.Object,
@@ -62,6 +65,8 @@
         private Mock<ICalcResultLaDisposalCostExporter> MockLaDisposalCostDataExporter { get; init; }
 
         private Mock<ICalcResultScaledupProducersExporter> MockScaledupProducersExporter { get; init; }
+
+        private Mock<ICalcResultPartialObligationsExporter> MockPartialObligationsExporter { get; init; }
 
         private Mock<ILapcaptDetailExporter> MockLapcaptDetailExporter { get; init; }
 
@@ -97,6 +102,7 @@
             MockCommsCostExporter.Verify(x => x.Export(It.IsAny<CalcResultCommsCost>(), It.IsAny<StringBuilder>()));
             MockOnePlusFourExporter.Verify(x => x.Export(It.IsAny<CalcResultOnePlusFourApportionment>(), It.IsAny<StringBuilder>()));
             MockScaledupProducersExporter.Verify(x => x.Export(It.IsAny<CalcResultScaledupProducers>(), It.IsAny<StringBuilder>()));
+            MockPartialObligationsExporter.Verify(x => x.Export(It.IsAny<CalcResultPartialObligations>(), It.IsAny<StringBuilder>()));
             MockParameterOtherCostExporter.Verify(x => x.Export(It.IsAny<CalcResultParameterOtherCost>(), It.IsAny<StringBuilder>()));
         }
 

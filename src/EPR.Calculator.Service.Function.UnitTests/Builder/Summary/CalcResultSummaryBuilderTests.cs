@@ -7,6 +7,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
     using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Function.Builder.ParametersOther;
+    using EPR.Calculator.Service.Function.Builder;
     using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
     using EPR.Calculator.Service.Function.Builder.Summary;
     using EPR.Calculator.Service.Function.Builder.Summary.OneAndTwoA;
