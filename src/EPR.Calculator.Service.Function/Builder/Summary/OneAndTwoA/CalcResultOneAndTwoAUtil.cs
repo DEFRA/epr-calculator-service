@@ -46,7 +46,7 @@
             }
 
             var totalFee = producerDisposalFees
-                .FirstOrDefault(t => t.IsProducerScaledup == CommonConstants.Totals);
+                .FirstOrDefault(t => t.LeaverDate == CommonConstants.Totals);
 
             if (totalFee is null)
             {

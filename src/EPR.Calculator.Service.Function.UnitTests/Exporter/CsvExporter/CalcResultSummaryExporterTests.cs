@@ -118,7 +118,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var results = csvContent.ToString().Split(",");
 
             // Assert
-            Assert.AreEqual(302, results.Length);
+            Assert.AreEqual(306, results.Length);
         }
 
         [TestMethod]
@@ -133,7 +133,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var results = csvContent.ToString().Split(",");
 
             // Assert
-            Assert.AreEqual(302, results.Length);
+            Assert.AreEqual(306, results.Length);
         }
 
         [TestMethod]
@@ -148,7 +148,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var results = csvContent.ToString().Split(",");
 
             // Assert
-            Assert.AreEqual(302, results.Length);
+            Assert.AreEqual(306, results.Length);
         }
 
         [TestMethod]

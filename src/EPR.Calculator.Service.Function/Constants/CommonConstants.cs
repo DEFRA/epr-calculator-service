@@ -30,8 +30,8 @@
         public const string TabSpace = "\t";
         public const string DoubleQuote = "\"";
         public const string Hyphen = "-";
-        public const string ScaledupProducersYes = "Yes";
-        public const string ScaledupProducersNo = "No";
+        public const string Yes = "Yes";
+        public const string No = "No";
         public const string ParametersOther = "Parameters - Other";
         public const string ZeroCurrency = "£0";
         public const string Initial = "INITIAL";

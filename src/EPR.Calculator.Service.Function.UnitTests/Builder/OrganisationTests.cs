@@ -6,19 +6,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ScaledupProducers
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     /// <summary>
-    /// Unit tests for the <see cref="ScaledupOrganisation"/> class.
+    /// Unit tests for the <see cref="Organisation"/> class.
     /// </summary>
     [TestClass]
-    public class ScaledupOrganisationTests
+    public class OrganisationTests
     {
-        private readonly ScaledupOrganisation scaledupOrganisation;
+        private readonly Organisation scaledupOrganisation;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ScaledupOrganisationTests"/> class.
+        /// Initializes a new instance of the <see cref="OrganisationTests"/> class.
         /// </summary>
-        public ScaledupOrganisationTests()
+        public OrganisationTests()
         {
-            this.scaledupOrganisation = new ScaledupOrganisation();
+            this.scaledupOrganisation = new Organisation();
         }
 
         [TestMethod]

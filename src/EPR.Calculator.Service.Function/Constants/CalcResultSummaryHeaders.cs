@@ -24,6 +24,10 @@ namespace EPR.Calculator.Service.Function.Constants
         public static readonly string TradingName = "Trading Name";
         public static readonly string Level = "Level";
         public static readonly string ScaledupTonnages = "Scaled-up tonnages?";
+        public static readonly string PartialCalculation = "Partial Calculation?";
+        public static readonly string StatusCode = "Registration Status Code";
+        public static readonly string JoinersDate = "Joiners Date";
+        public static readonly string LeaversDate = "Leavers Date";
 
         public static readonly string PreviousInvoicedTonnage = "Previous Invoiced Tonnage";
         public static readonly string TonnageChange = "Tonnage Change";

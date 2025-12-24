@@ -345,14 +345,14 @@
                 }
             ]);
 
-            var scaledupOrganisations = new List<ScaledupOrganisation>();
+            var scaledupOrganisations = new List<Organisation>();
             scaledupOrganisations.AddRange([
-                new ScaledupOrganisation
+                new Organisation
                 {
                     OrganisationId = 1,
                     OrganisationName = "Allied Packaging",
                 },
-                new ScaledupOrganisation
+                new Organisation
                 {
                     OrganisationId = 2,
                     OrganisationName = "Beeline Materials",
