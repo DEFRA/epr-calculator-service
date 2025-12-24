@@ -83,7 +83,10 @@ namespace EPR.Calculator.Service.Function.Services
             if (orgDetails == null) throw new ArgumentNullException(nameof(orgDetails));
 
             var obligatedErrors = orgDetails
-                                    .Where(x => x.ObligationStatus == ObligationStates.Error)
+                                    .Where(x =>
+                                        (x.ObligationStatus == ObligationStates.Error) ||
+                                        (x.ObligationStatus == ObligationStates.Obligated && !string.IsNullOrEmpty(x.ErrorCode))
+                                    )
                                     .Select(x => CreateError(x.OrganisationId, x.SubsidiaryId, calculatorRunId, createdBy, x.ErrorCode ?? string.Empty));
 
             return obligatedErrors.ToList();
