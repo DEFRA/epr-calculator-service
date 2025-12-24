@@ -32,6 +32,7 @@
                 CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
                 CalcResultLateReportingTonnageData = this.GetCalcResultLateReportingTonnage(),
                 CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers(),
+                CalcResultPartialObligations = new CalcResultPartialObligations()
             };
 
             // Set up consistent data
@@ -96,7 +97,8 @@
 
             var materails = TestDataHelper.GetMaterials();
             var scaledup = new List<CalcResultScaledupProducer>();
-            this.TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(_allResults, materails, 1, scaledup);
+            var partialObligations = new List<CalcResultPartialObligation>();
+            this.TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(_allResults, materails, 1, scaledup, partialObligations);
         }
 
         [TestCleanup]

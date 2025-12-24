@@ -12,6 +12,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
     using EPR.Calculator.Service.Function.Models;
 
     public class CalcResultsExporter : ICalcResultsExporter<CalcResult>
@@ -23,6 +24,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         private readonly ICalcResultParameterOtherCostExporter parameterOtherCosts;
         private readonly ILateReportingExporter lateReportingExporter;
         private readonly ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter;
+        private readonly ICalcResultPartialObligationsExporter calcResultPartialObligationsExporter;
         private readonly ICalcResultLaDisposalCostExporter laDisposalCostExporter;
         private readonly ICommsCostExporter commsCostExporter;
         private readonly ICalcResultCancelledProducersExporter calcResultCancelledProducersExporter;
@@ -36,6 +38,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             IOnePlusFourApportionmentExporter onePlusFourApportionmentExporter,
             ICalcResultLaDisposalCostExporter laDisposalCostExporter,
             ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter,
+            ICalcResultPartialObligationsExporter calcResultPartialObligationsExporter,
             ILapcaptDetailExporter lapcaptDetailExporter,
             ICalcResultParameterOtherCostExporter parameterOtherCosts,
             ICommsCostExporter commsCostExporter,
@@ -47,6 +50,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             this.onePlusFourApportionmentExporter = onePlusFourApportionmentExporter;
             this.lateReportingExporter = lateReportingExporter;
             this.calcResultScaledupProducersExporter = calcResultScaledupProducersExporter;
+            this.calcResultPartialObligationsExporter = calcResultPartialObligationsExporter;
             this.lapcaptDetailExporter = lapcaptDetailExporter;
             this.parameterOtherCosts = parameterOtherCosts;
             this.calcResultSummaryExporter = calcResultSummaryExporter;
@@ -81,6 +85,8 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             calcResultCancelledProducersExporter.Export(results.CalcResultCancelledProducers, csvContent);
 
             calcResultScaledupProducersExporter.Export(results.CalcResultScaledupProducers, csvContent);
+
+            calcResultPartialObligationsExporter.Export(results.CalcResultPartialObligations, csvContent);
 
             calcResultSummaryExporter.Export(results.CalcResultSummary, csvContent);
 

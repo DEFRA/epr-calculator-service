@@ -13,6 +13,7 @@
         private readonly MaterialDetail material;
         private readonly CalcResult calcResult;
         private readonly IEnumerable<CalcResultScaledupProducer> scaledupProducers;
+        private readonly IEnumerable<CalcResultPartialObligation> partialObligations;
 
         private Fixture Fixture { get; init; } = new Fixture();
 
@@ -21,10 +22,12 @@
             this.material = GetMaterial();
             this.producers = GetProducers();
             this.scaledupProducers = new List<CalcResultScaledupProducer>();
+            this.partialObligations = new List<CalcResultPartialObligation>();
 
             this.calcResult = new CalcResult
             {
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
+                CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultParameterOtherCost = TestDataHelper.GetCalcResultParameterOtherCost(),
                 CalcResultDetail = TestDataHelper.GetCalcResultDetail(),
                 CalcResultLaDisposalCostData = TestDataHelper.GetCalcResultLaDisposalCostData(),
@@ -71,7 +74,7 @@
             decimal expectedCost1 = 0m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetEnglandWithBadDebtProvisionForCommsTotal(this.producers, this.material, this.calcResult, this.scaledupProducers);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetEnglandWithBadDebtProvisionForCommsTotal(this.producers, this.material, this.calcResult, this.scaledupProducers, this.partialObligations);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -84,7 +87,7 @@
             decimal expectedCost1 = 1139.71200m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetEnglandWithBadDebtProvisionForCommsTotal(this.producers, this.material, this.calcResult, this.scaledupProducers);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetEnglandWithBadDebtProvisionForCommsTotal(this.producers, this.material, this.calcResult, this.scaledupProducers, this.partialObligations);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -97,7 +100,7 @@
             decimal expectedCost1 = 284.92800m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetWalesWithBadDebtProvisionForCommsTotal(this.producers, this.material, this.calcResult, this.scaledupProducers);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetWalesWithBadDebtProvisionForCommsTotal(this.producers, this.material, this.calcResult, this.scaledupProducers, this.partialObligations);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -110,7 +113,7 @@
             decimal expectedCost1 = 427.39200m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetScotlandWithBadDebtProvisionForCommsTotal(this.producers, this.material, this.calcResult, this.scaledupProducers);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetScotlandWithBadDebtProvisionForCommsTotal(this.producers, this.material, this.calcResult, this.scaledupProducers, this.partialObligations);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -123,7 +126,7 @@
             decimal expectedCost1 = 997.24800m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetNorthernIrelandWithBadDebtProvisionForCommsTotal(this.producers, this.material, this.calcResult, this.scaledupProducers);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetNorthernIrelandWithBadDebtProvisionForCommsTotal(this.producers, this.material, this.calcResult, this.scaledupProducers, this.partialObligations);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -136,7 +139,7 @@
             decimal expectedCost1 = 1344.00m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostWithoutBadDebtProvisionTotal(this.producers, this.material, this.calcResult, this.scaledupProducers);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostWithoutBadDebtProvisionTotal(this.producers, this.material, this.calcResult, this.scaledupProducers, this.partialObligations);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -149,7 +152,7 @@
             decimal expectedCost1 = 80.64m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetBadDebtProvisionForCommsCostTotal(this.producers, this.material, this.calcResult, this.scaledupProducers);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetBadDebtProvisionForCommsCostTotal(this.producers, this.material, this.calcResult, this.scaledupProducers, this.partialObligations);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -162,7 +165,7 @@
             decimal expectedCost1 = 427.392m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetEnglandWithBadDebtProvisionForComms(this.producers[0], this.material, this.calcResult, this.scaledupProducers);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetEnglandWithBadDebtProvisionForComms(this.producers[0], this.material, this.calcResult, this.scaledupProducers, this.partialObligations);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -175,7 +178,7 @@
             decimal expectedCost1 = 106.848m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetWalesWithBadDebtProvisionForComms(this.producers[0], this.material, this.calcResult, this.scaledupProducers);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetWalesWithBadDebtProvisionForComms(this.producers[0], this.material, this.calcResult, this.scaledupProducers, this.partialObligations);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -188,7 +191,7 @@
             decimal expectedCost1 = 160.272m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetScotlandWithBadDebtProvisionForComms(this.producers[0], this.material, this.calcResult, this.scaledupProducers);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetScotlandWithBadDebtProvisionForComms(this.producers[0], this.material, this.calcResult, this.scaledupProducers, this.partialObligations);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -201,7 +204,7 @@
             decimal expectedCost1 = 373.96800m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetNorthernIrelandWithBadDebtProvisionForComms(this.producers[0], this.material, this.calcResult, this.scaledupProducers);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetNorthernIrelandWithBadDebtProvisionForComms(this.producers[0], this.material, this.calcResult, this.scaledupProducers, this.partialObligations);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -261,7 +264,7 @@
             decimal expectedCost1 = 534.2400m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostwithBadDebtProvision(this.producers[0], this.material, this.calcResult, this.scaledupProducers);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostwithBadDebtProvision(this.producers[0], this.material, this.calcResult, this.scaledupProducers, this.partialObligations);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -274,7 +277,7 @@
             decimal expectedCost1 = 504.00m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostWithoutBadDebtProvision(this.producers[0], this.material, this.calcResult, this.scaledupProducers);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostWithoutBadDebtProvision(this.producers[0], this.material, this.calcResult, this.scaledupProducers, this.partialObligations);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -287,7 +290,7 @@
             decimal expectedCost1 = 1424.6400m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostwithBadDebtProvisionTotal(this.producers, this.material, this.calcResult, this.scaledupProducers);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostwithBadDebtProvisionTotal(this.producers, this.material, this.calcResult, this.scaledupProducers, this.partialObligations);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -301,7 +304,7 @@
             var material = GetHDCMaterial();
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetTotalReportedTonnageTotal(this.producers, material, this.scaledupProducers);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetTotalReportedTonnageTotal(this.producers, material, this.scaledupProducers, this.partialObligations);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -314,7 +317,7 @@
             decimal expectedCost1 = 3200;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetTotalReportedTonnageTotal(this.producers, this.material, this.scaledupProducers);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetTotalReportedTonnageTotal(this.producers, this.material, this.scaledupProducers, this.partialObligations);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);

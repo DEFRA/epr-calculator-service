@@ -19,6 +19,7 @@
             var calcResult = new CalcResult
             {
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
+                CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
                     Name = "LAPCAP Data",
