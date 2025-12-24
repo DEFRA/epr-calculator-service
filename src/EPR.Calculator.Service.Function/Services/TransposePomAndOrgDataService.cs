@@ -188,7 +188,12 @@
                                             {
                                                 var orgId = p.OrganisationId.GetValueOrDefault();
                                                 var subId = p.SubsidiaryId;
-                                                return !unmatchedSet.Contains((orgId, subId));
+                                                return
+                                                    !unmatchedSet.Contains((orgId, subId)) ||
+                                                    calculatorRunOrgDataDetails.Exists(x =>
+                                                        x.OrganisationId == orgId &&
+                                                        x.SubsidiaryId == subId &&
+                                                        ObligationStates.IsObligated(x.ObligationStatus));
                                             }).ToList();
 
             if (IsCalculatorRunPOMMasterIdExists(calculatorRun))
