@@ -17,11 +17,14 @@
     public class CalcResultPartialObligationBuilderTest
     {
         private readonly ApplicationDBContext dbContext;
-        private readonly int runId = 1;
+        private readonly int runId = 2;
         private CalcResultPartialObligationBuilder builder;
 
         private void PrepareData()
         {
+            var year = new CalculatorRunFinancialYear { Name = "2024-25" };
+
+            //Run 1
             var calcRunOrganisationDataMaster = new CalculatorRunOrganisationDataMaster
             {
                 Id = 11,
@@ -34,8 +37,8 @@
 
             this.dbContext.CalculatorRuns.Add(new CalculatorRun
             {
-                Id = runId,
-                Financial_Year = new CalculatorRunFinancialYear { Name = "2024-25" },
+                Id = 1,
+                Financial_Year = year,
                 Name = "Name",
                 CalculatorRunOrganisationDataMaster = calcRunOrganisationDataMaster
             });
@@ -69,7 +72,7 @@
             var producerDetail = new ProducerDetail
             {
                 Id = 1,
-                CalculatorRunId = this.runId,
+                CalculatorRunId = 1,
                 ProducerId = 11,
                 SubsidiaryId = null,
                 ProducerName = "Allied Packaging",
@@ -79,7 +82,7 @@
             var producerDetail2 = new ProducerDetail
             {
                 Id = 2,
-                CalculatorRunId = this.runId,
+                CalculatorRunId = 1,
                 ProducerId = 22,
                 SubsidiaryId = null,
                 ProducerName = "Partial Packaging",
@@ -115,6 +118,100 @@
                 Material = alm,
                 PackagingTonnage = 20,
                 ProducerDetail = producerDetail2,
+            });
+
+            //Run 2
+            var calcRunOrganisationDataMaster2 = new CalculatorRunOrganisationDataMaster
+            {
+                Id = 22,
+                CalendarYear = "2024",
+                EffectiveFrom = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = "Test User",
+            };
+            this.dbContext.CalculatorRunOrganisationDataMaster.Add(calcRunOrganisationDataMaster2);
+
+            this.dbContext.CalculatorRuns.Add(new CalculatorRun
+            {
+                Id = this.runId,
+                Financial_Year = year,
+                Name = "Name",
+                CalculatorRunOrganisationDataMaster = calcRunOrganisationDataMaster2
+            });
+
+            this.dbContext.CalculatorRunOrganisationDataDetails.Add(
+                new CalculatorRunOrganisationDataDetail
+                {
+                    Id = 3,
+                    OrganisationId = 11,
+                    SubsidiaryId = null,
+                    OrganisationName = "Allied Packaging",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    CalculatorRunOrganisationDataMaster = calcRunOrganisationDataMaster2,
+                    ObligationStatus = ObligationStates.Obligated
+                });
+
+            this.dbContext.CalculatorRunOrganisationDataDetails.Add(
+                new CalculatorRunOrganisationDataDetail
+                {
+                    Id = 4,
+                    OrganisationId = 22,
+                    SubsidiaryId = null,
+                    OrganisationName = "Partial packaging",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    CalculatorRunOrganisationDataMaster = calcRunOrganisationDataMaster2,
+                    ObligationStatus = ObligationStates.Obligated,
+                    DaysObligated = 183,
+                    JoinerDate = "15/07/2024"
+                });
+
+            var producerDetail3 = new ProducerDetail
+            {
+                Id = 3,
+                CalculatorRunId = this.runId,
+                ProducerId = 11,
+                SubsidiaryId = null,
+                ProducerName = "Allied Packaging",
+            };
+            this.dbContext.ProducerDetail.Add(producerDetail3);
+
+            var producerDetail4 = new ProducerDetail
+            {
+                Id = 4,
+                CalculatorRunId = this.runId,
+                ProducerId = 22,
+                SubsidiaryId = null,
+                ProducerName = "Partial Packaging",
+            };
+            this.dbContext.ProducerDetail.Add(producerDetail4);
+
+            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            {
+                Id = 5,
+                PackagingType = "HH",
+                ProducerDetail = producerDetail3,
+            });
+            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            {
+                Id = 6,
+                PackagingType = "HDC",
+                ProducerDetail = producerDetail3,
+            });
+            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            {
+                Id = 7,
+                PackagingType = "HH",
+                Material = alm,
+                PackagingTonnage = 100,
+                ProducerDetail = producerDetail4,
+            });
+            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            {
+                Id = 8,
+                PackagingType = "CW",
+                Material = alm,
+                PackagingTonnage = 20,
+                ProducerDetail = producerDetail4,
             });
 
             this.dbContext.Material.AddRange(
