@@ -56,16 +56,11 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
 
         public async Task<List<CalcResultPartialObligation>> GetPartialObligations(int runId, List<MaterialDetail> materials)
         {
-            //Need to consider indexes vs post filter
-            //Improve null scenarios
-            //Leaver date?
-            //Get year from org data instead (add column)?
-            //Date format different to file? DateOnly?
             var result = await (from run in this.context.CalculatorRuns.AsNoTracking()
                                 join crodm in this.context.CalculatorRunOrganisationDataMaster.AsNoTracking() on run.CalculatorRunOrganisationDataMasterId equals crodm.Id
                                 join crodd in this.context.CalculatorRunOrganisationDataDetails.AsNoTracking() on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
                                 join pd in this.context.ProducerDetail.Include(x => x.ProducerReportedMaterials) on crodd.OrganisationId equals pd.ProducerId
-                                where run.Id == runId && crodd.ObligationStatus == ObligationStates.Obligated && crodd.DaysObligated != null && crodd.SubsidiaryId == pd.SubsidiaryId
+                                where run.Id == runId && crodd.ObligationStatus == ObligationStates.Obligated && crodd.DaysObligated != null && crodd.SubsidiaryId == pd.SubsidiaryId && pd.CalculatorRunId == runId
                                 let daysInYear = DateTime.IsLeapYear(int.Parse(crodm.CalendarYear)) ? 366 : 365
                                 let partialAmount = crodd.DaysObligated != null ? (decimal)crodd.DaysObligated! / daysInYear : 1
                                 select new CalcResultPartialObligation
@@ -86,7 +81,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
             return result ?? new List<CalcResultPartialObligation>();
         }
 
-        public Dictionary<string, CalcResultPartialObligationTonnage> GetPartialObligationTonnages(IEnumerable<MaterialDetail> materials, List<ProducerReportedMaterial> producerReportedMaterials, decimal partialAmount)
+        public static Dictionary<string, CalcResultPartialObligationTonnage> GetPartialObligationTonnages(IEnumerable<MaterialDetail> materials, List<ProducerReportedMaterial> producerReportedMaterials, decimal partialAmount)
         {
             var mats = from l in materials
                        join r in producerReportedMaterials on l.Id equals r.MaterialId into mat
@@ -95,9 +90,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
             return mats.ToDictionary(m => m.Code, m => GetPartialObligationTonnage(m.Code, m.mat.ToList(), partialAmount));
         }
 
-        public CalcResultPartialObligationTonnage GetPartialObligationTonnage(string material, List<ProducerReportedMaterial> reportedForMaterial, decimal partialAmount){
-            // Are these all converted from kg to tonne already?
-            // Do we need the sum? or reportedMaterial for type is already summed? i.e. 1 HH AL
+        public static CalcResultPartialObligationTonnage GetPartialObligationTonnage(string material, List<ProducerReportedMaterial> reportedForMaterial, decimal partialAmount){
             var tonnage = new CalcResultPartialObligationTonnage();
 
             tonnage.ReportedHouseholdPackagingWasteTonnage = reportedForMaterial.FirstOrDefault(p => p.PackagingType == PackagingTypes.Household)?.PackagingTonnage ?? 0;
