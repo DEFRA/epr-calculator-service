@@ -8,6 +8,7 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.RejectedProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
 using EPR.Calculator.Service.Function.Models;
 using System;
 using System.Collections;
@@ -28,6 +29,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         private readonly ICalcResultParameterOtherCostExporter parameterOtherCostsCsv;
         private readonly ILateReportingExporter lateReportingExporterCsv;
         private readonly ICalcResultScaledupProducersExporter calcResultScaledupProducersExporterCsv;
+        private readonly ICalcResultPartialObligationsExporter calcResultPartialObligationsExporterCsv;
         private readonly ICalcResultLaDisposalCostExporter laDisposalCostExporterCsv;
         private readonly ICommsCostExporter commsCostExporterCsv;
         private readonly ICalcResultCancelledProducersExporter calcResultCancelledProducersExporterCsv;
@@ -40,6 +42,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             IOnePlusFourApportionmentExporter onePlusFourApportionmentExporter,
             ICalcResultLaDisposalCostExporter laDisposalCostExporter,
             ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter,
+            ICalcResultPartialObligationsExporter calcResultPartialObligationsExporter,
             ILapcaptDetailExporter lapcaptDetailExporter,
             ICalcResultParameterOtherCostExporter parameterOtherCosts,
             ICommsCostExporter commsCostExporter,
@@ -51,6 +54,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             this.onePlusFourApportionmentExporterCsv = onePlusFourApportionmentExporter;
             this.lateReportingExporterCsv = lateReportingExporter;
             this.calcResultScaledupProducersExporterCsv = calcResultScaledupProducersExporter;
+            this.calcResultPartialObligationsExporterCsv = calcResultPartialObligationsExporter;
             this.lapcaptDetailExporterCsv = lapcaptDetailExporter;
             this.parameterOtherCostsCsv = parameterOtherCosts;
             this.calcResultSummaryExporterCsv = calcResultSummaryExporter;
@@ -84,8 +88,10 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
                 acceptedProducerIds);
             calcResultScaledupProducersExporterCsv.Export(acceptedProducers, csvContent);
 
+            calcResultPartialObligationsExporterCsv.Export(GetPartialObligationsForExport(results.CalcResultPartialObligations, acceptedProducerIds), csvContent);
+
             var acceptedCalcResultSummary = GetAcceptedProducersCalcResults(results.CalcResultSummary, acceptedProducerIds);
-            
+
             calcResultSummaryExporterCsv.Export(acceptedCalcResultSummary, csvContent);
 
             csvContent = ResetTotals(csvContent.ToString());
@@ -136,7 +142,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         {
             var acceptedProducerFees = producerDisposalFees.Where(
                 x => acceptedProducerIds.Contains(x.ProducerIdInt)
-                || x.ProducerIdInt == 0).ToList();            
+                || x.ProducerIdInt == 0).ToList();
 
             acceptedProducerFees.ForEach(x =>
             {
@@ -180,19 +186,35 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
                 if (x.IsTotalRow)
                 {
                     x.ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>();
-                    
+
                     ResetObjectUtil.ResetObject(x);
                 }
             });
             return acceptedProducers;
         }
 
+        public CalcResultPartialObligations GetPartialObligationsForExport(
+            CalcResultPartialObligations producers,
+            IEnumerable<int> acceptedProducerIds)
+        {
+            var acceptedProducers = producers.PartialObligations?.Where(
+                x => acceptedProducerIds.Contains(x.ProducerId) || x.ProducerId == 0
+            ).ToList() ?? new List<CalcResultPartialObligation>();
+
+            return new CalcResultPartialObligations
+            {
+                ColumnHeaders = producers.ColumnHeaders,
+                MaterialBreakdownHeaders = producers.MaterialBreakdownHeaders,
+                PartialObligations = acceptedProducers,
+                TitleHeader = producers.TitleHeader,
+            };
+        }
 
         private StringBuilder ResetTotals(string sb)
         {
-            var exceptTotals = sb.Substring(0, sb.LastIndexOf(CommonConstants.Totals) + (CommonConstants.Totals.Length+2));
+            var exceptTotals = sb.Substring(0, sb.LastIndexOf(CommonConstants.Totals) + (CommonConstants.Totals.Length + 2));
             return new StringBuilder().Append(exceptTotals);
         }
-       
+
     }
 }
