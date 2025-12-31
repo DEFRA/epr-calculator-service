@@ -511,7 +511,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             IEnumerable<ErrorReport> reportsList = _service.HandleObligatedWarnings(orgDetails, runId, createdBy);
 
             // Assert
-            Assert.AreEqual(2, reportsList.Count(), "Expected 3 unmatched records to be returned.");
+            Assert.AreEqual(2, reportsList.Count(), "Expected 2 unmatched records to be returned.");
             Assert.IsTrue(reportsList.Any(p => p.ProducerId == 100101 && p.SubsidiaryId == null && p.ErrorCode == error1));
             Assert.IsTrue(reportsList.Any(p => p.ProducerId == 200202 && p.SubsidiaryId == "100500" && p.ErrorCode == error2));
         }
