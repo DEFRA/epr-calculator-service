@@ -1,4 +1,5 @@
-﻿using EPR.Calculator.API.Data.DataModels;
+﻿using System.Collections.ObjectModel;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Services;
@@ -264,6 +265,84 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Assert
             Assert.AreEqual(0, reportsList.Count(), "Expected no unmatched records to be returned.");
+        }
+
+        [TestMethod]
+        public void HandleMissingRegistrationData_WhenMissing_ErrorAllInOrganisation()
+        {
+            // Arrange
+            var runId = 500;
+            var createdBy = "no unmatched test";
+            var timestamp = DateTime.UtcNow;
+
+            var pomDetails = new[]
+            {
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 1,
+                    SubsidiaryId = null,
+                    SubmissionPeriod = "2023-P2",
+                    LoadTimeStamp = timestamp,
+                    SubmissionPeriodDesc = "July to December 2023"
+                },
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 1,
+                    SubsidiaryId = "101",
+                    SubmissionPeriod = "2023-P2",
+                    LoadTimeStamp = timestamp,
+                    SubmissionPeriodDesc = "July to December 2023"
+                },
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 1,
+                    SubsidiaryId = "202",
+                    SubmissionPeriod = "2023-P2",
+                    LoadTimeStamp = timestamp,
+                    SubmissionPeriodDesc = "July to December 2023"
+                },
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 2,
+                    SubsidiaryId = "303",
+                    SubmissionPeriod = "2023-P2",
+                    LoadTimeStamp = timestamp,
+                    SubmissionPeriodDesc = "July to December 2023"
+                }
+            };
+
+            var orgDetails = new[]
+            {
+                new CalculatorRunOrganisationDataDetail
+                {
+                    OrganisationId = 1,
+                    SubsidiaryId = "101",
+                    OrganisationName = "Test"
+                },
+                new CalculatorRunOrganisationDataDetail
+                {
+                    OrganisationId = 2,
+                    SubsidiaryId = "303",
+                    OrganisationName = "Test1"
+                }
+            };
+
+            // Act
+            IEnumerable<ErrorReport> reportsList = _service.HandleMissingRegistrationData(pomDetails, orgDetails, runId, createdBy);
+
+            // Assert
+            Assert.AreEqual(3, reportsList.Count(), "Expected 3 error messages as Org 1 SubsidiaryId 202 is missing Reg data - so errors applies to all in Org 1");
+            CollectionAssert.AreEquivalent(new[]
+                {
+                    (ProducerId: 1, SubsidiaryId: null , ErrorCode: ErrorCodes.MissingRegistrationData, leaverCode: ""),
+                    (ProducerId: 1, SubsidiaryId: "101", ErrorCode: ErrorCodes.MissingRegistrationData, leaverCode: ""),
+                    (ProducerId: 1, SubsidiaryId: "202", ErrorCode: ErrorCodes.MissingRegistrationData, leaverCode: "")
+                },
+                reportsList
+                    .Select(r => (r.ProducerId, r.SubsidiaryId, r.ErrorCode, r.LeaverCode))
+                    .ToList()
+            );
+
         }
 
         [TestMethod]
