@@ -446,7 +446,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var orgDetails = new[] {
                 CreateOrganisationData(100101,null,"ECOLTD",submitterId1, "E", errorCode: error1),
                 CreateOrganisationData(200202,null,"Green holdings",submitterId2, "O"),
-                CreateOrganisationData(200202,"100500","Pure leaf drinks",submitterId2, "E", errorCode: error2),
+                CreateOrganisationData(200202,"100500","Pure leaf drinks",submitterId2, "E", errorCode: error2, statusCode: "some status code"),
                 CreateOrganisationData(200202,"100101","ECOLTD",submitterId2, "E", errorCode: null)
             };
 
@@ -459,9 +459,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Assert
             Assert.AreEqual(3, reportsList.Count(), "Expected 3 unmatched records to be returned.");
-            Assert.IsTrue(reportsList.Any(p => p.ProducerId == 100101 && p.SubsidiaryId == null && p.ErrorCode == error1));
-            Assert.IsTrue(reportsList.Any(p => p.ProducerId == 200202 && p.SubsidiaryId == "100500" && p.ErrorCode == error2));
-            Assert.IsTrue(reportsList.Any(p => p.ProducerId == 200202 && p.SubsidiaryId == "100101" && p.ErrorCode == ErrorCodes.Empty));
+            Assert.IsTrue(reportsList.Any(p => p.ProducerId == 100101 && p.SubsidiaryId == null && p.ErrorCode == error1 && p.LeaverCode == ""));
+            Assert.IsTrue(reportsList.Any(p => p.ProducerId == 200202 && p.SubsidiaryId == "100500" && p.ErrorCode == error2 && p.LeaverCode == "some status code"));
+            Assert.IsTrue(reportsList.Any(p => p.ProducerId == 200202 && p.SubsidiaryId == "100101" && p.ErrorCode == ErrorCodes.Empty && p.LeaverCode == ""));
         }
 
         public void HandleObligatedErrors_NoErrorsExistInRegData()
