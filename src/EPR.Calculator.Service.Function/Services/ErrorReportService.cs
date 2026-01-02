@@ -24,22 +24,19 @@ namespace EPR.Calculator.Service.Function.Services
                                 int calculatorRunId,
                                 string createdBy)
         {
-            if (pomDetails == null) throw new ArgumentNullException(nameof(pomDetails));
-            if (orgDetails == null) throw new ArgumentNullException(nameof(orgDetails));
+            return pomDetails
+                .DistinctBy(x => (x.OrganisationId, x.SubsidiaryId, x.SubmitterId))
+                .GroupBy(x => x.OrganisationId)
+                .SelectMany(group =>
+                {
+                    var reg = orgDetails.Where(p => p.OrganisationId == group.Key);
+                    var missing = group.Any(o => !reg.Any(p => p.SubsidiaryId == o.SubsidiaryId && p.SubmitterId == o.SubmitterId));
 
-            var errorReports = new List<ErrorReport>();
-
-            var orgIds = orgDetails.Select(o => (o.OrganisationId, o.SubsidiaryId, o.SubmitterId)).ToHashSet();
-            var pomIds = pomDetails.Select(p => (p.OrganisationId ?? 0, p.SubsidiaryId, p.SubmitterId)).ToHashSet();
-
-            var pomIdsMissingFromReg = pomIds.Except(orgIds);
-
-            foreach (var reg in pomIdsMissingFromReg)
-            {
-                errorReports.Add(CreateError(reg.Item1, reg.SubsidiaryId, calculatorRunId, createdBy, ErrorCodes.MissingRegistrationData, leaverCode: null));
-            }
-
-            return errorReports;
+                    return missing
+                        ? group.Select(x => CreateError(x.OrganisationId ?? 0, x.SubsidiaryId, calculatorRunId, createdBy, ErrorCodes.MissingRegistrationData, leaverCode: null))
+                        : Enumerable.Empty<ErrorReport>();
+                })
+                .ToList();
         }
 
         public List<ErrorReport> HandleMissingPomData(IEnumerable<CalculatorRunPomDataDetail> pomDetails, IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails, int calculatorRunId, string createdBy)
