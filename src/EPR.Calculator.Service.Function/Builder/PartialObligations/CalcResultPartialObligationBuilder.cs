@@ -29,13 +29,13 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
             this.context = context;
         }
 
-        public async Task<CalcResultPartialObligations> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
+        public async Task<CalcResultPartialObligations> ConstructAsync(CalcResultsRequestDto resultsRequestDto, IEnumerable<CalcResultScaledupProducer> scaledupProducers)
         {
             var runId = resultsRequestDto.RunId;
             var materialsFromDb = await this.context.Material.ToListAsync();
             var materials = MaterialMapper.Map(materialsFromDb);
 
-            var partialObligationsForRun = await GetPartialObligations(runId, materials);
+            var partialObligationsForRun = await GetPartialObligations(runId, materials, scaledupProducers);
 
             return new CalcResultPartialObligations
             {
@@ -54,7 +54,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
             };
         }
 
-        public async Task<List<CalcResultPartialObligation>> GetPartialObligations(int runId, List<MaterialDetail> materials)
+        public async Task<List<CalcResultPartialObligation>> GetPartialObligations(int runId, List<MaterialDetail> materials, IEnumerable<CalcResultScaledupProducer> scaledupProducers)
         {
             var result = await (from run in this.context.CalculatorRuns.AsNoTracking()
                                 join crodm in this.context.CalculatorRunOrganisationDataMaster.AsNoTracking() on run.CalculatorRunOrganisationDataMasterId equals crodm.Id
@@ -66,40 +66,50 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
                                 select new CalcResultPartialObligation
                                 {
                                     ProducerId = pd.ProducerId,
-                                    SubsidiaryId = pd.SubsidiaryId!,
-                                    ProducerName = pd.ProducerName!,
-                                    TradingName = pd.TradingName!,
+                                    SubsidiaryId = pd.SubsidiaryId,
+                                    ProducerName = pd.ProducerName,
+                                    TradingName = pd.TradingName,
                                     Level = pd.SubsidiaryId != null ? CommonConstants.LevelTwo.ToString() : CommonConstants.LevelOne.ToString(),
                                     SubmissionYear = crodm.CalendarYear,
                                     DaysInSubmissionYear = daysInYear,
                                     JoiningDate = crodd.JoinerDate, 
                                     DaysObligated = crodd.DaysObligated,
                                     ObligatedPercentage = (partialAmount * 100).ToString("F2") + "%", 
-                                    PartialObligationTonnageByMaterial = GetPartialObligationTonnages(materials, pd.ProducerReportedMaterials.ToList(), partialAmount)
+                                    PartialObligationTonnageByMaterial = GetPartialObligationTonnages(pd.ProducerId, pd.SubsidiaryId, materials, pd.ProducerReportedMaterials.ToList(), partialAmount, scaledupProducers)
                                 }).ToListAsync();
 
             return result ?? new List<CalcResultPartialObligation>();
         }
 
-        public static Dictionary<string, CalcResultPartialObligationTonnage> GetPartialObligationTonnages(IEnumerable<MaterialDetail> materials, List<ProducerReportedMaterial> producerReportedMaterials, decimal partialAmount)
+        public static Dictionary<string, CalcResultPartialObligationTonnage> GetPartialObligationTonnages(int producerId, string? subsidiaryId, IEnumerable<MaterialDetail> materials, List<ProducerReportedMaterial> producerReportedMaterials, decimal partialAmount, IEnumerable<CalcResultScaledupProducer> scaledupProducers)
         {
             var mats = from l in materials
                        join r in producerReportedMaterials on l.Id equals r.MaterialId into mat
                        select new { l.Code, mat };
-
-            return mats.ToDictionary(m => m.Code, m => GetPartialObligationTonnage(m.Code, m.mat.ToList(), partialAmount));
+            
+            return mats.ToDictionary(
+                m => m.Code, 
+                m => {
+                    var maybeScaledUpProducerTonnage = scaledupProducers.FirstOrDefault(s => s.ProducerId == producerId && s.SubsidiaryId == subsidiaryId && !s.IsSubtotalRow && !s.IsTotalRow)?.ScaledupProducerTonnageByMaterial;
+                    var maybeScaledUpTonnageForMat = maybeScaledUpProducerTonnage != null && maybeScaledUpProducerTonnage!.TryGetValue(m.Code, out var value) ? value : null;
+                    return GetPartialObligationTonnage(m.Code, m.mat.ToList(), partialAmount, maybeScaledUpTonnageForMat);
+                }
+            );
         }
 
-        public static CalcResultPartialObligationTonnage GetPartialObligationTonnage(string material, List<ProducerReportedMaterial> reportedForMaterial, decimal partialAmount){
+        public static CalcResultPartialObligationTonnage GetPartialObligationTonnage(string material, List<ProducerReportedMaterial> reportedForMaterial, decimal partialAmount, CalcResultScaledupProducerTonnage? maybeScaledUpTonnageForMaterial){
+            decimal GetReportedTonnage(string packagingType) {
+                return reportedForMaterial.FirstOrDefault(p => p.PackagingType == packagingType)?.PackagingTonnage ?? 0;
+            }
             var tonnage = new CalcResultPartialObligationTonnage();
 
-            tonnage.ReportedHouseholdPackagingWasteTonnage = reportedForMaterial.FirstOrDefault(p => p.PackagingType == PackagingTypes.Household)?.PackagingTonnage ?? 0;
-            tonnage.ReportedPublicBinTonnage = reportedForMaterial.FirstOrDefault(p => p.PackagingType == PackagingTypes.PublicBin)?.PackagingTonnage ?? 0;
-            tonnage.ReportedSelfManagedConsumerWasteTonnage = reportedForMaterial.FirstOrDefault(p => p.PackagingType == PackagingTypes.ConsumerWaste)?.PackagingTonnage ?? 0;
+            tonnage.ReportedHouseholdPackagingWasteTonnage = GetReportedTonnage(PackagingTypes.Household);
+            tonnage.ReportedPublicBinTonnage = GetReportedTonnage(PackagingTypes.PublicBin);
+            tonnage.ReportedSelfManagedConsumerWasteTonnage = GetReportedTonnage(PackagingTypes.ConsumerWaste);
 
             if (material == MaterialCodes.Glass)
             {
-                tonnage.HouseholdDrinksContainersTonnageGlass = reportedForMaterial.FirstOrDefault(p => p.PackagingType == PackagingTypes.HouseholdDrinksContainers)?.PackagingTonnage ?? 0;
+                tonnage.HouseholdDrinksContainersTonnageGlass = GetReportedTonnage(PackagingTypes.HouseholdDrinksContainers);
                 tonnage.TotalReportedTonnage = tonnage.ReportedHouseholdPackagingWasteTonnage + tonnage.ReportedPublicBinTonnage + tonnage.HouseholdDrinksContainersTonnageGlass;
             }
             else
@@ -109,15 +119,24 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
 
             tonnage.NetReportedTonnage = tonnage.TotalReportedTonnage - tonnage.ReportedSelfManagedConsumerWasteTonnage;
             
-            tonnage.PartialReportedHouseholdPackagingWasteTonnage = Math.Round(tonnage.ReportedHouseholdPackagingWasteTonnage * partialAmount, 3);
-            tonnage.PartialReportedPublicBinTonnage = Math.Round(tonnage.ReportedPublicBinTonnage * partialAmount, 3);
+            var maybeScaledUpReportedHouseholdPackagingWasteTonnage = maybeScaledUpTonnageForMaterial != null ? maybeScaledUpTonnageForMaterial!.ScaledupReportedHouseholdPackagingWasteTonnage : tonnage.ReportedHouseholdPackagingWasteTonnage;
+            var maybeScaledUpReportedPublicBinTonnage = maybeScaledUpTonnageForMaterial != null ? maybeScaledUpTonnageForMaterial!.ScaledupReportedPublicBinTonnage : tonnage.ReportedPublicBinTonnage;
+            var maybeScaledUpSelfManagedConsumerWasteTonnage = maybeScaledUpTonnageForMaterial != null ? maybeScaledUpTonnageForMaterial!.ScaledupReportedSelfManagedConsumerWasteTonnage : tonnage.ReportedSelfManagedConsumerWasteTonnage;
+            var maybeScaledUpNetReportedTonnage = maybeScaledUpTonnageForMaterial != null ? maybeScaledUpTonnageForMaterial!.ScaledupNetReportedTonnage : tonnage.NetReportedTonnage;
+            var maybeScaledUpTotalReportedTonnage = maybeScaledUpTonnageForMaterial != null ? maybeScaledUpTonnageForMaterial!.ScaledupTotalReportedTonnage : tonnage.TotalReportedTonnage;
+
+            tonnage.PartialReportedHouseholdPackagingWasteTonnage = Math.Round(maybeScaledUpReportedHouseholdPackagingWasteTonnage * partialAmount, 3);
+            tonnage.PartialReportedPublicBinTonnage = Math.Round(maybeScaledUpReportedPublicBinTonnage * partialAmount, 3);
+            tonnage.PartialReportedSelfManagedConsumerWasteTonnage = Math.Round(maybeScaledUpSelfManagedConsumerWasteTonnage * partialAmount, 3);
+            
             if (material == MaterialCodes.Glass)
             {
-                tonnage.PartialHouseholdDrinksContainersTonnageGlass = tonnage.HouseholdDrinksContainersTonnageGlass * partialAmount;
+                var maybeScaledUpHouseholdDrinksContainersTonnageGlass = maybeScaledUpTonnageForMaterial != null ? maybeScaledUpTonnageForMaterial!.ScaledupHouseholdDrinksContainersTonnageGlass : tonnage.HouseholdDrinksContainersTonnageGlass;
+                tonnage.PartialHouseholdDrinksContainersTonnageGlass = maybeScaledUpHouseholdDrinksContainersTonnageGlass * partialAmount;
             }
-            tonnage.PartialTotalReportedTonnage = Math.Round(tonnage.TotalReportedTonnage * partialAmount, 3);
-            tonnage.PartialReportedSelfManagedConsumerWasteTonnage = Math.Round(tonnage.ReportedSelfManagedConsumerWasteTonnage * partialAmount, 3);
-            tonnage.PartialNetReportedTonnage = Math.Round(tonnage.NetReportedTonnage * partialAmount, 3);
+            
+            tonnage.PartialTotalReportedTonnage = Math.Round(maybeScaledUpTotalReportedTonnage * partialAmount, 3);
+            tonnage.PartialNetReportedTonnage = Math.Round(maybeScaledUpNetReportedTonnage * partialAmount, 3);
 
             return tonnage;
         }
