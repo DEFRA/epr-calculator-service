@@ -258,7 +258,7 @@
             var requestDto = new CalcResultsRequestDto { RunId = 1 };
 
             // Act
-            var result = await this.builder.ConstructAsync(requestDto);
+            var result = await this.builder.ConstructAsync(requestDto, new List<CalcResultScaledupProducer>());
 
             // Assert
             Assert.AreEqual(1, result.PartialObligations!.Count());
@@ -286,6 +286,86 @@
                 mat.Value.PartialReportedSelfManagedConsumerWasteTonnage == 10 &&
                 mat.Value.PartialNetReportedTonnage == 40 &&
                 mat.Value.PartialTotalReportedTonnage == 50
+            ));
+            Assert.IsTrue(parOrgMats.Any(mat =>
+                mat.Key == MaterialCodes.Glass &&
+                mat.Value.ReportedHouseholdPackagingWasteTonnage == 0 &&
+                mat.Value.ReportedPublicBinTonnage == 0 &&
+                mat.Value.ReportedSelfManagedConsumerWasteTonnage == 0 &&
+                mat.Value.HouseholdDrinksContainersTonnageGlass == 0 &&
+                mat.Value.NetReportedTonnage == 0 &&
+                mat.Value.TotalReportedTonnage == 0 &&
+                mat.Value.PartialReportedHouseholdPackagingWasteTonnage == 0 &&
+                mat.Value.PartialReportedPublicBinTonnage == 0 &&
+                mat.Value.PartialReportedSelfManagedConsumerWasteTonnage == 0 &&
+                mat.Value.PartialNetReportedTonnage == 0 &&
+                mat.Value.PartialTotalReportedTonnage == 0 &&
+                mat.Value.PartialHouseholdDrinksContainersTonnageGlass == 0 
+            ));
+
+        }
+
+        [TestMethod]
+        public async Task Construct_WhenPartialObligationsExists_WithScaledUpTonnage()
+        {
+            // Arrange
+            this.PrepareData();
+            var requestDto = new CalcResultsRequestDto { RunId = 1 };
+
+            var scaledUpProducers = new List<CalcResultScaledupProducer>() {
+                new CalcResultScaledupProducer() {
+                    ProducerId = 22, 
+                    SubsidiaryId = null,
+                    ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>{
+                        { 
+                            MaterialCodes.Aluminium, 
+                            new CalcResultScaledupProducerTonnage()
+                            {
+                                ReportedHouseholdPackagingWasteTonnage = 100,
+                                ReportedPublicBinTonnage = 0,
+                                ReportedSelfManagedConsumerWasteTonnage = 20,
+                                NetReportedTonnage = 80,
+                                TotalReportedTonnage = 100,
+                                ScaledupReportedHouseholdPackagingWasteTonnage = 300,
+                                ScaledupReportedPublicBinTonnage = 0,
+                                ScaledupReportedSelfManagedConsumerWasteTonnage = 60,
+                                ScaledupNetReportedTonnage = 240,
+                                ScaledupTotalReportedTonnage = 300
+                            }
+                        }
+                    }
+                }
+            };
+
+            // Act
+            var result = await this.builder.ConstructAsync(requestDto, scaledUpProducers);
+
+            // Assert
+            Assert.AreEqual(1, result.PartialObligations!.Count());
+            var parOrg = result.PartialObligations!.First();
+            Assert.IsTrue(parOrg.ProducerId == 22);
+            Assert.IsTrue(parOrg.SubsidiaryId == null);
+            Assert.IsTrue(parOrg.ProducerName == "Partial Packaging");
+            Assert.IsTrue(parOrg.Level == CommonConstants.LevelOne.ToString());
+            Assert.IsTrue(parOrg.JoiningDate == "15/07/2024");
+            Assert.IsTrue(parOrg.DaysObligated == 183);
+            Assert.IsTrue(parOrg.DaysInSubmissionYear == 366);
+            Assert.IsTrue(parOrg.ObligatedPercentage == "50.00%");
+
+            var parOrgMats = parOrg.PartialObligationTonnageByMaterial!;
+            Assert.AreEqual(8, parOrgMats.Count());
+            Assert.IsTrue(parOrgMats.Any(mat =>
+                mat.Key == MaterialCodes.Aluminium &&
+                mat.Value.ReportedHouseholdPackagingWasteTonnage == 100 &&
+                mat.Value.ReportedPublicBinTonnage == 0 &&
+                mat.Value.ReportedSelfManagedConsumerWasteTonnage == 20 &&
+                mat.Value.NetReportedTonnage == 80 &&
+                mat.Value.TotalReportedTonnage == 100 &&
+                mat.Value.PartialReportedHouseholdPackagingWasteTonnage == 150 &&
+                mat.Value.PartialReportedPublicBinTonnage == 0 &&
+                mat.Value.PartialReportedSelfManagedConsumerWasteTonnage == 30 &&
+                mat.Value.PartialNetReportedTonnage == 120 &&
+                mat.Value.PartialTotalReportedTonnage == 150
             ));
             Assert.IsTrue(parOrgMats.Any(mat =>
                 mat.Key == MaterialCodes.Glass &&
