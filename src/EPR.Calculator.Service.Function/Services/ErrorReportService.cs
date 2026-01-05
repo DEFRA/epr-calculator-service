@@ -47,35 +47,17 @@ namespace EPR.Calculator.Service.Function.Services
             if (pomDetails == null) throw new ArgumentNullException(nameof(pomDetails));
             if (orgDetails == null) throw new ArgumentNullException(nameof(orgDetails));
 
-            string ProducerId(string? subsidiaryId, int? organisationId)
-            {
-                var orgId = organisationId ?? 0;
-                return subsidiaryId ?? orgId.ToString();
-            }
+            var distinctPoms = pomDetails.DistinctBy(x => (x.OrganisationId, x.SubsidiaryId, x.SubmitterId));
 
-            var errorReports = new List<ErrorReport>();
-
-            var obligatedOrgIds = orgDetails.Where(x => ObligationStates.IsObligated(x.ObligationStatus)).Select(o => (o.OrganisationId, o.SubsidiaryId, o.SubmitterId)).ToHashSet();
-            var pomIds = pomDetails.Select(p => (p.OrganisationId ?? 0, p.SubsidiaryId, p.SubmitterId)).ToHashSet();
-            var producerIds = pomIds.Select(p => ProducerId(p.SubsidiaryId, p.Item1));
-
-            var regsWithMissingPoms = obligatedOrgIds.Except(pomIds).ToList();
-
-            foreach (var reg in regsWithMissingPoms)
-            {
-                var orgId = reg.Item1;
-                string? leaverCode = orgDetails.FirstOrDefault(o => o.OrganisationId == orgId &&
-                                           o.SubsidiaryId == reg.SubsidiaryId &&
-                                           o.SubmitterId == reg.SubmitterId)?.StatusCode;
-
-                // Check whether this reg 'should have pom' by seeing if they have previously submitted under a different entity
-                if (producerIds.Any(p => p == ProducerId(reg.SubsidiaryId, orgId)))
-                {
-                    errorReports.Add(CreateError(orgId, reg.SubsidiaryId, calculatorRunId, createdBy, ErrorCodes.MissingPOMData, leaverCode));
-                }
-            }
-
-            return errorReports;
+            return orgDetails
+                .Where(o => ObligationStates.IsObligated(o.ObligationStatus))
+                .Where(o => !distinctPoms.Any(p => p.OrganisationId == o.OrganisationId && p.SubsidiaryId == o.SubsidiaryId && p.SubmitterId == o.SubmitterId))
+                .SelectMany(reg =>
+                    // Check whether this reg 'should have pom' by seeing if they have previously submitted under a different entity
+                    distinctPoms.Any(p => (reg.SubsidiaryId ?? reg.OrganisationId.ToString()) == (p.SubsidiaryId ?? p.OrganisationId?.ToString()))
+                        ? new [] { CreateError(reg.OrganisationId, reg.SubsidiaryId, calculatorRunId, createdBy, ErrorCodes.MissingPOMData, reg.StatusCode) }
+                        : Array.Empty<ErrorReport>()
+                ).ToList();
         }
 
         public List<ErrorReport> HandleObligatedErrors(IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails, int calculatorRunId, string createdBy)
