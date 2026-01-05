@@ -23,20 +23,20 @@
     {
         public const int ResultSummaryHeaderColumnIndex = 1;
         public const int NotesHeaderColumnIndex = 1;
-        public const int ProducerDisposalFeesHeaderColumnIndex = 7;
-        public const int CommsCostHeaderColumnIndex = 137;
-        public const int MaterialsBreakdownHeaderInitialColumnIndex = 7;
-        public const int MaterialsBreakdownHeaderIncrementalColumnIndex = 15;
+        public const int ProducerDisposalFeesHeaderColumnIndex = 11;
+        public const int CommsCostHeaderColumnIndex = 141;
+        public const int MaterialsBreakdownHeaderInitialColumnIndex = 11;
+        public const int MaterialsBreakdownHeaderIncrementalColumnIndex = 19;
 
-        public const int DisposalFeeSummaryColumnIndex = 128;
-        public const int MaterialsBreakdownHeaderCommsInitialColumnIndex = 137;
-        public const int MaterialsBreakdownHeaderCommsIncrementalColumnIndex = 11;
+        public const int DisposalFeeSummaryColumnIndex = 132;
+        public const int MaterialsBreakdownHeaderCommsInitialColumnIndex = 141;
+        public const int MaterialsBreakdownHeaderCommsIncrementalColumnIndex = 15;
 
         // Section-(1) & (2a)
-        public const int DisposalFeeCommsCostsHeaderInitialColumnIndex = 233;
+        public const int DisposalFeeCommsCostsHeaderInitialColumnIndex = 237;
 
         // Section-(2b)
-        private const int CommsCost2bColumnIndex = 248;
+        private const int CommsCost2bColumnIndex = 252;
         public const int decimalRoundUp = 2;
 
         public static int GetLevelIndex(
@@ -56,11 +56,7 @@
             return scaledupProducer != null;
         }
 
-        public static decimal GetTonnage(
-            ProducerDetail producer,
-            MaterialDetail material,
-            string packagingType,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
+        public static decimal? GetScaledUpTonnage(ProducerDetail producer, MaterialDetail material, string packagingType, IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
             var scaledupProducerForAllSubmissionPeriods = scaledUpProducers.Where(p => p.ProducerId == producer.ProducerId
                 && p.SubsidiaryId == producer.SubsidiaryId
@@ -75,16 +71,16 @@
                     switch (packagingType)
                     {
                         case PackagingTypes.Household:
-                            tonnage += scaledupProducerTonnageByMaterial[material.Code].ScaledupReportedHouseholdPackagingWasteTonnage;
+                            tonnage += scaledupProducerTonnageByMaterial.GetValueOrDefault(material.Code)?.ScaledupReportedHouseholdPackagingWasteTonnage ?? 0;
                             break;
                         case PackagingTypes.PublicBin:
-                            tonnage += scaledupProducerTonnageByMaterial[material.Code].ScaledupReportedPublicBinTonnage;
+                            tonnage += scaledupProducerTonnageByMaterial.GetValueOrDefault(material.Code)?.ScaledupReportedPublicBinTonnage ?? 0;
                             break;
                         case PackagingTypes.ConsumerWaste:
-                            tonnage += scaledupProducerTonnageByMaterial[material.Code].ScaledupReportedSelfManagedConsumerWasteTonnage;
+                            tonnage += scaledupProducerTonnageByMaterial.GetValueOrDefault(material.Code)?.ScaledupReportedSelfManagedConsumerWasteTonnage ?? 0;
                             break;
                         case PackagingTypes.HouseholdDrinksContainers:
-                            tonnage += scaledupProducerTonnageByMaterial[material.Code].ScaledupHouseholdDrinksContainersTonnageGlass;
+                            tonnage += scaledupProducerTonnageByMaterial.GetValueOrDefault(material.Code)?.ScaledupHouseholdDrinksContainersTonnageGlass ?? 0;
                             break;
                         default:
                             tonnage += 0;
@@ -93,6 +89,20 @@
                 }
 
                 return tonnage;
+            }
+            return null;
+        }
+
+        public static decimal GetTonnage(
+            ProducerDetail producer,
+            MaterialDetail material,
+            string packagingType,
+            IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
+        {
+            var maybeScaledUpTonnage = GetScaledUpTonnage(producer, material, packagingType, scaledUpProducers);
+
+            if (maybeScaledUpTonnage != null) {
+                return (decimal)maybeScaledUpTonnage!;
             }
 
             var reportedMaterials = producer.ProducerReportedMaterials
@@ -718,7 +728,11 @@
                 new () { Name = CalcResultSummaryHeaders.ProducerOrSubsidiaryName },
                 new () { Name = CalcResultSummaryHeaders.TradingName },
                 new () { Name = CalcResultSummaryHeaders.Level },
-                new () { Name = CalcResultSummaryHeaders.ScaledupTonnages }
+                new () { Name = CalcResultSummaryHeaders.ScaledupTonnages },
+                new () { Name = CalcResultSummaryHeaders.PartialCalculation },
+                new () { Name = CalcResultSummaryHeaders.StatusCode },
+                new () { Name = CalcResultSummaryHeaders.JoinersDate },
+                new () { Name = CalcResultSummaryHeaders.LeaversDate }
             ]);
 
             foreach (var material in materials)

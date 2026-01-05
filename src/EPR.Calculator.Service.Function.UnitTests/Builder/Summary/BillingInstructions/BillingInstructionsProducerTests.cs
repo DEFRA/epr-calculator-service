@@ -454,7 +454,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
                 ProducerId = string.Empty,
                 ProducerIdInt = 0,
                 Level = string.Empty,
-                IsProducerScaledup = CommonConstants.Totals,
+                LeaverDate = CommonConstants.Totals,
                 ProducerName = "Totals",
                 SubsidiaryId = string.Empty
             };
@@ -512,7 +512,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
                 ProducerId = string.Empty,
                 ProducerIdInt = 0,
                 Level = string.Empty,
-                IsProducerScaledup = CommonConstants.Totals,
+                LeaverDate = CommonConstants.Totals,
                 ProducerName = "Totals",
                 SubsidiaryId = string.Empty
             };
@@ -548,7 +548,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
                 ProducerId = string.Empty,
                 ProducerIdInt = 0,
                 Level = string.Empty,
-                IsProducerScaledup = CommonConstants.Totals,
+                LeaverDate = CommonConstants.Totals,
                 ProducerName = "Totals",
                 SubsidiaryId = string.Empty
             };
@@ -1029,7 +1029,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         [TestMethod]
         public void CalculatePercentageLiabilityDifference_Total_ReturnsNull()
         {
-            _calcResult.CalcResultSummary.ProducerDisposalFees.First().IsProducerScaledup = CommonConstants.Totals;
+            _calcResult.CalcResultSummary.ProducerDisposalFees.First().LeaverDate = CommonConstants.Totals;
 
             BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, this.producerInvoicedDto, new List<DefaultParamResultsClass>());
 

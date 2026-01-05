@@ -87,7 +87,7 @@
             }
         }
 
-        public static void AddExtraRows(List<CalcResultScaledupProducer> runProducerMaterialDetails, IEnumerable<ScaledupOrganisation> scaledupOrganisations)
+        public static void AddExtraRows(List<CalcResultScaledupProducer> runProducerMaterialDetails, IEnumerable<Organisation> scaledupOrganisations)
         {
             var level2Rows = runProducerMaterialDetails
                 .Where(x => string.IsNullOrEmpty(x.SubsidiaryId))
@@ -216,7 +216,7 @@
             return result ?? new List<CalcResultScaledupProducer>();
         }
 
-        public async Task<IEnumerable<ScaledupOrganisation>> GetScaledUpOrganisationsAsync(int runId)
+        public async Task<IEnumerable<Organisation>> GetScaledUpOrganisationsAsync(int runId)
         {
             var scaleupOrganisationIds = await (from run in this.context.CalculatorRuns
                                             join crpdm in this.context.CalculatorRunPomDataMaster on run.CalculatorRunPomDataMasterId equals crpdm.Id
@@ -232,7 +232,7 @@
                                                join crodm in this.context.CalculatorRunOrganisationDataMaster.AsNoTracking() on run.CalculatorRunOrganisationDataMasterId equals crodm.Id
                                             join crodd in filteredCrodds on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
                                             where run.Id == runId 
-                                            select new ScaledupOrganisation
+                                            select new Organisation
                                             {
                                                 OrganisationId = crodd.OrganisationId,
                                                 OrganisationName = crodd.OrganisationName,
