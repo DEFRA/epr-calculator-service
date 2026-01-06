@@ -119,11 +119,11 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
 
             tonnage.NetReportedTonnage = tonnage.TotalReportedTonnage - tonnage.ReportedSelfManagedConsumerWasteTonnage;
             
-            var maybeScaledUpReportedHouseholdPackagingWasteTonnage = maybeScaledUpTonnageForMaterial != null ? maybeScaledUpTonnageForMaterial!.ScaledupReportedHouseholdPackagingWasteTonnage : tonnage.ReportedHouseholdPackagingWasteTonnage;
-            var maybeScaledUpReportedPublicBinTonnage = maybeScaledUpTonnageForMaterial != null ? maybeScaledUpTonnageForMaterial!.ScaledupReportedPublicBinTonnage : tonnage.ReportedPublicBinTonnage;
-            var maybeScaledUpSelfManagedConsumerWasteTonnage = maybeScaledUpTonnageForMaterial != null ? maybeScaledUpTonnageForMaterial!.ScaledupReportedSelfManagedConsumerWasteTonnage : tonnage.ReportedSelfManagedConsumerWasteTonnage;
-            var maybeScaledUpNetReportedTonnage = maybeScaledUpTonnageForMaterial != null ? maybeScaledUpTonnageForMaterial!.ScaledupNetReportedTonnage : tonnage.NetReportedTonnage;
-            var maybeScaledUpTotalReportedTonnage = maybeScaledUpTonnageForMaterial != null ? maybeScaledUpTonnageForMaterial!.ScaledupTotalReportedTonnage : tonnage.TotalReportedTonnage;
+            var maybeScaledUpReportedHouseholdPackagingWasteTonnage = maybeScaledUpTonnageForMaterial?.ScaledupReportedHouseholdPackagingWasteTonnage ?? tonnage.ReportedHouseholdPackagingWasteTonnage;
+            var maybeScaledUpReportedPublicBinTonnage = maybeScaledUpTonnageForMaterial?.ScaledupReportedPublicBinTonnage ?? tonnage.ReportedPublicBinTonnage;
+            var maybeScaledUpSelfManagedConsumerWasteTonnage = maybeScaledUpTonnageForMaterial?.ScaledupReportedSelfManagedConsumerWasteTonnage ?? tonnage.ReportedSelfManagedConsumerWasteTonnage;
+            var maybeScaledUpNetReportedTonnage = maybeScaledUpTonnageForMaterial?.ScaledupNetReportedTonnage ?? tonnage.NetReportedTonnage;
+            var maybeScaledUpTotalReportedTonnage = maybeScaledUpTonnageForMaterial?.ScaledupTotalReportedTonnage ?? tonnage.TotalReportedTonnage;
 
             tonnage.PartialReportedHouseholdPackagingWasteTonnage = Math.Round(maybeScaledUpReportedHouseholdPackagingWasteTonnage * partialAmount, 3);
             tonnage.PartialReportedPublicBinTonnage = Math.Round(maybeScaledUpReportedPublicBinTonnage * partialAmount, 3);
@@ -131,7 +131,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
             
             if (material == MaterialCodes.Glass)
             {
-                var maybeScaledUpHouseholdDrinksContainersTonnageGlass = maybeScaledUpTonnageForMaterial != null ? maybeScaledUpTonnageForMaterial!.ScaledupHouseholdDrinksContainersTonnageGlass : tonnage.HouseholdDrinksContainersTonnageGlass;
+                var maybeScaledUpHouseholdDrinksContainersTonnageGlass = maybeScaledUpTonnageForMaterial?.ScaledupHouseholdDrinksContainersTonnageGlass ?? tonnage.HouseholdDrinksContainersTonnageGlass;
                 tonnage.PartialHouseholdDrinksContainersTonnageGlass = maybeScaledUpHouseholdDrinksContainersTonnageGlass * partialAmount;
             }
             
