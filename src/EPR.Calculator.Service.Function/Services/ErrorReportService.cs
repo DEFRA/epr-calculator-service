@@ -24,22 +24,19 @@ namespace EPR.Calculator.Service.Function.Services
                                 int calculatorRunId,
                                 string createdBy)
         {
-            if (pomDetails == null) throw new ArgumentNullException(nameof(pomDetails));
-            if (orgDetails == null) throw new ArgumentNullException(nameof(orgDetails));
+            return pomDetails
+                .DistinctBy(x => (x.OrganisationId, x.SubsidiaryId, x.SubmitterId))
+                .GroupBy(x => x.OrganisationId)
+                .SelectMany(group =>
+                {
+                    var reg = orgDetails.Where(p => p.OrganisationId == group.Key);
+                    var missing = group.Any(o => !reg.Any(p => p.SubsidiaryId == o.SubsidiaryId && p.SubmitterId == o.SubmitterId));
 
-            var errorReports = new List<ErrorReport>();
-
-            var orgIds = orgDetails.Select(o => (o.OrganisationId, o.SubsidiaryId, o.SubmitterId)).ToHashSet();
-            var pomIds = pomDetails.Select(p => (p.OrganisationId ?? 0, p.SubsidiaryId, p.SubmitterId)).ToHashSet();
-
-            var pomIdsMissingFromReg = pomIds.Except(orgIds);
-
-            foreach (var reg in pomIdsMissingFromReg)
-            {
-                errorReports.Add(CreateError(reg.Item1, reg.SubsidiaryId, calculatorRunId, createdBy, ErrorCodes.MissingRegistrationData, leaverCode: null));
-            }
-
-            return errorReports;
+                    return missing
+                        ? group.Select(x => CreateError(x.OrganisationId ?? 0, x.SubsidiaryId, calculatorRunId, createdBy, ErrorCodes.MissingRegistrationData, leaverCode: null))
+                        : Enumerable.Empty<ErrorReport>();
+                })
+                .ToList();
         }
 
         public List<ErrorReport> HandleMissingPomData(IEnumerable<CalculatorRunPomDataDetail> pomDetails, IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails, int calculatorRunId, string createdBy)
@@ -64,11 +61,20 @@ namespace EPR.Calculator.Service.Function.Services
         {
             if (orgDetails == null) throw new ArgumentNullException(nameof(orgDetails));
 
-            var obligatedErrors = orgDetails
-                                    .Where(x => x.ObligationStatus == ObligationStates.Error)
-                                    .Select(x => CreateError(x.OrganisationId, x.SubsidiaryId, calculatorRunId, createdBy, x.ErrorCode, leaverCode: x.StatusCode));
+            return orgDetails
+                    .Where(x => (x.ObligationStatus == ObligationStates.Error))
+                    .Select(x => CreateError(x.OrganisationId, x.SubsidiaryId, calculatorRunId, createdBy, x.ErrorCode ?? string.Empty, leaverCode: x.StatusCode))
+                    .ToList();
+        }
 
-            return obligatedErrors.ToList();
+        public List<ErrorReport> HandleObligatedWarnings(IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails, int calculatorRunId, string createdBy)
+        {
+            if (orgDetails == null) throw new ArgumentNullException(nameof(orgDetails));
+
+            return orgDetails
+                    .Where(x => x.ObligationStatus == ObligationStates.Obligated && !string.IsNullOrEmpty(x.ErrorCode))
+                    .Select(x => CreateError(x.OrganisationId, x.SubsidiaryId, calculatorRunId, createdBy, x.ErrorCode ?? string.Empty, leaverCode: x.StatusCode))
+                    .ToList();
         }
 
         public async Task<HashSet<(int OrgId, string? SubId)>> HandleErrors(
@@ -79,10 +85,11 @@ namespace EPR.Calculator.Service.Function.Services
                                 CancellationToken cancellationToken)
         {
             var obligatedErrors = HandleObligatedErrors(orgDetails, calculatorRunId, createdBy);
+            var obligatedWarnings = HandleObligatedWarnings(orgDetails, calculatorRunId, createdBy);
             var missingRegErrors = HandleMissingRegistrationData(pomDetails, orgDetails, calculatorRunId, createdBy);
             var missingPomErrors = HandleMissingPomData(pomDetails, orgDetails, calculatorRunId, createdBy);
 
-            var calcErrors = obligatedErrors.Concat(missingRegErrors).Concat(missingPomErrors);
+            var calcErrors = obligatedErrors.Concat(missingRegErrors).Concat(obligatedWarnings).Concat(missingPomErrors);
 
             var holdingRegErrors = calcErrors
                                     .GroupBy(x => x.ProducerId)
@@ -93,7 +100,10 @@ namespace EPR.Calculator.Service.Function.Services
 
             await this.ErrorReportChunker.InsertRecords(allErrors);
 
-            return allErrors.Select(e => (e.ProducerId, e.SubsidiaryId)).ToHashSet();
+            return allErrors
+                    .Where(e => !obligatedWarnings.Contains(e)) // Filter out warnings so they are kept in calculator results.
+                    .Select(e => (e.ProducerId, e.SubsidiaryId))
+                    .ToHashSet();
         }
 
         private ErrorReport CreateError(int orgId, string? subId, int calculatorRunId, string createdBy, string? errorCode, string? leaverCode)

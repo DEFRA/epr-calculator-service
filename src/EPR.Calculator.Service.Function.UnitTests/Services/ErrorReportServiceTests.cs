@@ -1,4 +1,5 @@
-﻿using EPR.Calculator.API.Data.DataModels;
+﻿using System.Collections.ObjectModel;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Services;
@@ -267,6 +268,84 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
+        public void HandleMissingRegistrationData_WhenMissing_ErrorAllInOrganisation()
+        {
+            // Arrange
+            var runId = 500;
+            var createdBy = "no unmatched test";
+            var timestamp = DateTime.UtcNow;
+
+            var pomDetails = new[]
+            {
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 1,
+                    SubsidiaryId = null,
+                    SubmissionPeriod = "2023-P2",
+                    LoadTimeStamp = timestamp,
+                    SubmissionPeriodDesc = "July to December 2023"
+                },
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 1,
+                    SubsidiaryId = "101",
+                    SubmissionPeriod = "2023-P2",
+                    LoadTimeStamp = timestamp,
+                    SubmissionPeriodDesc = "July to December 2023"
+                },
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 1,
+                    SubsidiaryId = "202",
+                    SubmissionPeriod = "2023-P2",
+                    LoadTimeStamp = timestamp,
+                    SubmissionPeriodDesc = "July to December 2023"
+                },
+                new CalculatorRunPomDataDetail
+                {
+                    OrganisationId = 2,
+                    SubsidiaryId = "303",
+                    SubmissionPeriod = "2023-P2",
+                    LoadTimeStamp = timestamp,
+                    SubmissionPeriodDesc = "July to December 2023"
+                }
+            };
+
+            var orgDetails = new[]
+            {
+                new CalculatorRunOrganisationDataDetail
+                {
+                    OrganisationId = 1,
+                    SubsidiaryId = "101",
+                    OrganisationName = "Test"
+                },
+                new CalculatorRunOrganisationDataDetail
+                {
+                    OrganisationId = 2,
+                    SubsidiaryId = "303",
+                    OrganisationName = "Test1"
+                }
+            };
+
+            // Act
+            IEnumerable<ErrorReport> reportsList = _service.HandleMissingRegistrationData(pomDetails, orgDetails, runId, createdBy);
+
+            // Assert
+            Assert.AreEqual(3, reportsList.Count(), "Expected 3 error messages as Org 1 SubsidiaryId 202 is missing Reg data - so errors applies to all in Org 1");
+            CollectionAssert.AreEquivalent(new[]
+                {
+                    (ProducerId: 1, SubsidiaryId: null , ErrorCode: ErrorCodes.MissingRegistrationData, leaverCode: ""),
+                    (ProducerId: 1, SubsidiaryId: "101", ErrorCode: ErrorCodes.MissingRegistrationData, leaverCode: ""),
+                    (ProducerId: 1, SubsidiaryId: "202", ErrorCode: ErrorCodes.MissingRegistrationData, leaverCode: "")
+                },
+                reportsList
+                    .Select(r => (r.ProducerId, r.SubsidiaryId, r.ErrorCode, r.LeaverCode))
+                    .ToList()
+            );
+
+        }
+
+        [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void HandleMissingRegistrationData_Throws_WhenPomDetailsNull()
         {
@@ -440,8 +519,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             var submitterId1 = Guid.NewGuid();
             var submitterId2 = Guid.NewGuid();
-            var error1 = "Some error";
-            var error2 = "Some other error";
+            var error1 = "Some warning";
+            var error2 = "Some other warning";
 
             var orgDetails = new[] {
                 CreateOrganisationData(100101,null,"ECOLTD",submitterId1, "E", errorCode: error1),
@@ -489,17 +568,47 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
+        public void HandleWarningsdErrors_WarningsExistInRegData()
+        {
+            var submitterId1 = Guid.NewGuid();
+            var submitterId2 = Guid.NewGuid();
+            var error1 = "Some error";
+            var error2 = "Some other error";
+
+            var orgDetails = new[] {
+                CreateOrganisationData(100101,null,"ECOLTD",submitterId1, "O", errorCode: error1, statusCode: "some status code"),
+                CreateOrganisationData(200202,null,"Green holdings",submitterId2, "O"),
+                CreateOrganisationData(200202,"100500","Pure leaf drinks",submitterId2, "O", errorCode: error2),
+                CreateOrganisationData(200202,"100101","ECOLTD",submitterId2, "O", errorCode: null)
+            };
+
+            // Arrange
+            var runId = 300;
+            var createdBy = "no error";
+
+            // Act
+            IEnumerable<ErrorReport> reportsList = _service.HandleObligatedWarnings(orgDetails, runId, createdBy);
+
+            // Assert
+            Assert.AreEqual(2, reportsList.Count(), "Expected 3 unmatched records to be returned.");
+            Assert.IsTrue(reportsList.Any(p => p.ProducerId == 100101 && p.SubsidiaryId == null && p.ErrorCode == error1 && p.LeaverCode == "some status code"));
+            Assert.IsTrue(reportsList.Any(p => p.ProducerId == 200202 && p.SubsidiaryId == "100500" && p.ErrorCode == error2 && p.LeaverCode == ""));;
+        }
+
+        [TestMethod]
         public async Task HandleErrors_ForMissingRegAndMissingPoms()
         {
             var submitterId1 = Guid.NewGuid();
             var submitterId2 = Guid.NewGuid();
+            var submitterId3 = Guid.NewGuid();
 
             var orgDetails = new[]
             {
                 CreateOrganisationData(100101,null,"ECOLTD",submitterId1, "N"),
                 CreateOrganisationData(200202,null,"Green holdings",submitterId2, "O"),
                 CreateOrganisationData(200202,"100500","Pure leaf drinks",submitterId2, "O"),
-                CreateOrganisationData(200202,"100101","ECOLTD",submitterId2, "O", "01")
+                CreateOrganisationData(200202,"100101","ECOLTD",submitterId2, "O", "01"),
+                CreateOrganisationData(300303,null,"ECOLTD",submitterId3, "O", "01", errorCode: "some warning")
             };
 
             var pomDetails = new[] {
@@ -513,7 +622,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CreatePomData(200202, "2024-P1",submitterId2,"HH","PL",3500,subsidiaryId:"100500"),
                 CreatePomData(200202, "2024-P1",submitterId2,"HH","PL",4000,subsidiaryId:"100500"),
                 CreatePomData(200202, "2024-P4",submitterId2,"HH","PL",3000,subsidiaryId:"100500"),
-                CreatePomData(100200, "2024-P1",submitterId1,"HH","ST",5000)
+                CreatePomData(100200, "2024-P1",submitterId1,"HH","ST",5000),
             };
 
             // Arrange
@@ -526,10 +635,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Act
             var reportsList = await _service.HandleErrors(pomDetails, orgDetails, runId, createdBy, CancellationToken.None);
 
-            Assert.AreEqual(3, errorReports.Count(), "Expected 3 unmatched records to be inserted.");
+            Assert.AreEqual(4, errorReports.Count(), "Expected 4 unmatched records to be inserted.");
             Assert.IsTrue(errorReports.Any(p => p.ProducerId == 100200 && p.SubsidiaryId == null && p.ErrorCode == ErrorCodes.MissingRegistrationData));
             Assert.IsTrue(errorReports.Any(p => p.ProducerId == 200202 && p.SubsidiaryId == null && p.ErrorCode == ErrorCodes.Empty));
             Assert.IsTrue(errorReports.Any(p => p.ProducerId == 200202 && p.SubsidiaryId == "100101" && p.ErrorCode == ErrorCodes.MissingPOMData && p.LeaverCode == "01"));
+            Assert.IsTrue(errorReports.Any(p => p.ProducerId == 300303 && p.SubsidiaryId == null && p.ErrorCode == "some warning"));
+
+            Assert.AreEqual(3, reportsList.Count(), "Expected 3 errors. Warnings should not be included.");
+            Assert.IsTrue(reportsList.Any(p => p.OrgId == 100200 && p.SubId == null));
+            Assert.IsTrue(reportsList.Any(p => p.OrgId == 200202 && p.SubId == null));
+            Assert.IsTrue(reportsList.Any(p => p.OrgId == 200202 && p.SubId == "100101"));
         }
 
         private static CalculatorRunPomDataDetail CreatePomData(int orgId, string submissionPeriod, Guid submitterId, string packagingType, string packagingMaterial, int packagingMaterialWeight, string submissionPeriodDesc = "Jan to December 2025", string? subsidiaryId = null)
