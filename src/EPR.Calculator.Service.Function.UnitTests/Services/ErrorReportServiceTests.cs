@@ -596,7 +596,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public async Task HandleErrors_ForMissingRegAndMissingPoms()
+        public async Task HandleErrors_AllTypes()
         {
             var submitterId1 = Guid.NewGuid();
             var submitterId2 = Guid.NewGuid();
@@ -608,7 +608,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CreateOrganisationData(200202,null,"Green holdings",submitterId2, "O"),
                 CreateOrganisationData(200202,"100500","Pure leaf drinks",submitterId2, "O"),
                 CreateOrganisationData(200202,"100101","ECOLTD",submitterId2, "O", "01"),
-                CreateOrganisationData(300303,null,"ECOLTD",submitterId3, "O", "01", errorCode: "some warning")
+                CreateOrganisationData(300303,null,"ECOLTD",submitterId3, "O", "01", errorCode: "some warning"),
+                CreateOrganisationData(400404,"404","Tea and cakes",submitterId3, "E", "01", errorCode: "some synapse error")
             };
 
             var pomDetails = new[] {
@@ -635,16 +636,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Act
             var reportsList = await _service.HandleErrors(pomDetails, orgDetails, runId, createdBy, CancellationToken.None);
 
-            Assert.AreEqual(4, errorReports.Count(), "Expected 4 unmatched records to be inserted.");
+            Assert.AreEqual(6, errorReports.Count(), "Expected 6 unmatched records to be inserted.");
             Assert.IsTrue(errorReports.Any(p => p.ProducerId == 100200 && p.SubsidiaryId == null && p.ErrorCode == ErrorCodes.MissingRegistrationData));
             Assert.IsTrue(errorReports.Any(p => p.ProducerId == 200202 && p.SubsidiaryId == null && p.ErrorCode == ErrorCodes.Empty));
             Assert.IsTrue(errorReports.Any(p => p.ProducerId == 200202 && p.SubsidiaryId == "100101" && p.ErrorCode == ErrorCodes.MissingPOMData && p.LeaverCode == "01"));
             Assert.IsTrue(errorReports.Any(p => p.ProducerId == 300303 && p.SubsidiaryId == null && p.ErrorCode == "some warning"));
+            Assert.IsTrue(errorReports.Any(p => p.ProducerId == 400404 && p.SubsidiaryId == null && p.ErrorCode == ErrorCodes.Empty));
+            Assert.IsTrue(errorReports.Any(p => p.ProducerId == 400404 && p.SubsidiaryId == "404" && p.ErrorCode == "some synapse error"));
 
-            Assert.AreEqual(3, reportsList.Count(), "Expected 3 errors. Warnings should not be included.");
+            Assert.AreEqual(3, reportsList.Count(), "Expected 3 errors. Warnings and empty error parents should not be included.");
             Assert.IsTrue(reportsList.Any(p => p.OrgId == 100200 && p.SubId == null));
-            Assert.IsTrue(reportsList.Any(p => p.OrgId == 200202 && p.SubId == null));
             Assert.IsTrue(reportsList.Any(p => p.OrgId == 200202 && p.SubId == "100101"));
+            Assert.IsTrue(reportsList.Any(p => p.OrgId == 400404 && p.SubId == "404"));
         }
 
         private static CalculatorRunPomDataDetail CreatePomData(int orgId, string submissionPeriod, Guid submitterId, string packagingType, string packagingMaterial, int packagingMaterialWeight, string submissionPeriodDesc = "Jan to December 2025", string? subsidiaryId = null)

@@ -97,10 +97,9 @@ namespace EPR.Calculator.Service.Function.Services
                                     .Select(x => CreateError(x.Key, null, calculatorRunId, createdBy, ErrorCodes.Empty, leaverCode: null));
 
             var allErrors = calcErrors.Concat(holdingRegErrors);
-
             await this.ErrorReportChunker.InsertRecords(allErrors);
 
-            return allErrors
+            return calcErrors
                     .Where(e => !obligatedWarnings.Contains(e)) // Filter out warnings so they are kept in calculator results.
                     .Select(e => (e.ProducerId, e.SubsidiaryId))
                     .ToHashSet();
