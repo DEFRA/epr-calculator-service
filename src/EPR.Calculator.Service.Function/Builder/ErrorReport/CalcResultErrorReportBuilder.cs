@@ -61,12 +61,15 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
                     ErrorCodeText = er.ErrorCode
                 };
 
-            var results = await baseQuery
+            var results = baseQuery
                 .AsNoTracking()
+                .AsEnumerable()
+                .GroupBy(x => new { x.ProducerId, x.SubsidiaryId, x.ErrorCodeText })
+                .Select(g => g.First())
                 .OrderBy(x => x.ProducerId)
                 .ThenBy(x => x.ErrorCodeText)
                 .ThenBy(x => x.SubsidiaryId)
-                .ToListAsync();
+                .ToList();
 
             return results;
         }
