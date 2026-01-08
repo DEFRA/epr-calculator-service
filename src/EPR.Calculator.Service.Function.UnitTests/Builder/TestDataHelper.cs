@@ -14,6 +14,7 @@
             return new CalcResult
             {
                 CalcResultScaledupProducers = GetScaledupProducers(),
+                CalcResultPartialObligations = GetPartialObligations(),
                 CalcResultParameterOtherCost = GetCalcResultParameterOtherCost(),
                 CalcResultDetail = GetCalcResultDetail(),
                 CalcResultLapcapData = GetCalcResultLapcapData(),
@@ -1406,6 +1407,71 @@
                                     ScaledupReportedSelfManagedConsumerWasteTonnage = 120,
                                     ScaledupHouseholdDrinksContainersTonnageGlass = 140,
                                     ScaledupNetReportedTonnage = 360,
+                                }
+                            },
+                        },
+                    },
+                },
+            };
+        }
+        public static CalcResultPartialObligations GetPartialObligations()
+        {
+            return new CalcResultPartialObligations
+            {
+                ColumnHeaders = new List<CalcResultPartialObligationHeader>(),
+                MaterialBreakdownHeaders = new List<CalcResultPartialObligationHeader>(),
+                TitleHeader = new CalcResultPartialObligationHeader()
+                {
+                    Name = "Partial Obligation Calculation",
+                    ColumnIndex = 1,
+                },
+                PartialObligations = new List<CalcResultPartialObligation>()
+                {
+                    new CalcResultPartialObligation
+                    {
+                        ProducerId = 1,
+                        ProducerName = "Producer Name",
+                        DaysObligated = 183,
+                        DaysInSubmissionYear = 366,
+                        Level = "1",
+                        JoiningDate = "15/07/2024",
+                        ObligatedPercentage = "50.00%",
+                        SubmissionYear = "2024",
+                        SubsidiaryId = null,
+                        PartialObligationTonnageByMaterial = new Dictionary<string, CalcResultPartialObligationTonnage>
+                        {
+                            {
+                                "AL",
+                                new CalcResultPartialObligationTonnage
+                                {
+                                    ReportedHouseholdPackagingWasteTonnage = 100,
+                                    ReportedPublicBinTonnage = 20,
+                                    TotalReportedTonnage = 120,
+                                    ReportedSelfManagedConsumerWasteTonnage = 60,
+                                    NetReportedTonnage = 180,
+                                    PartialReportedHouseholdPackagingWasteTonnage = 50,
+                                    PartialReportedPublicBinTonnage = 10,
+                                    PartialTotalReportedTonnage = 60,
+                                    PartialReportedSelfManagedConsumerWasteTonnage = 30,
+                                    PartialNetReportedTonnage = 90,
+                                }
+                            },
+                            {
+                                "GL",
+                                new CalcResultPartialObligationTonnage
+                                {
+                                    ReportedHouseholdPackagingWasteTonnage = 100,
+                                    ReportedPublicBinTonnage = 20,
+                                    TotalReportedTonnage = 120,
+                                    ReportedSelfManagedConsumerWasteTonnage = 60,
+                                    HouseholdDrinksContainersTonnageGlass = 70,
+                                    NetReportedTonnage = 180,
+                                    PartialReportedHouseholdPackagingWasteTonnage = 50,
+                                    PartialReportedPublicBinTonnage = 10,
+                                    PartialTotalReportedTonnage = 60,
+                                    PartialReportedSelfManagedConsumerWasteTonnage = 30,
+                                    PartialHouseholdDrinksContainersTonnageGlass = 35,
+                                    PartialNetReportedTonnage = 90,
                                 }
                             },
                         },

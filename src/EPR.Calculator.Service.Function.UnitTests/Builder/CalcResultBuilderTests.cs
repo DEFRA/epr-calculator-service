@@ -13,6 +13,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
     using EPR.Calculator.Service.Function.Builder.ParametersOther;
     using EPR.Calculator.Service.Function.Builder.RejectedProducers;
     using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
+    using EPR.Calculator.Service.Function.Builder.PartialObligations;
     using EPR.Calculator.Service.Function.Builder.Summary;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Models;
@@ -35,6 +36,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         private readonly Mock<ICalcResultParameterOtherCostBuilder> mockCalcResultParameterOtherCostBuilder;
         private readonly Mock<ICalcResultOnePlusFourApportionmentBuilder> mockOnePlusFourApportionmentBuilder;
         private readonly Mock<ICalcResultScaledupProducersBuilder> mockCalcResultScaledupProducersBuilder;
+        private readonly Mock<ICalcResultPartialObligationBuilder> mockCalcResultPartialObligationBuilder;
         private readonly Mock<ICalcResultCancelledProducersBuilder> mockCalcResultCancelledProducersBuilder;
         private readonly Mock<ICalcResultRejectedProducersBuilder> mockCalcResultRejectedProducersBuilder;
         private readonly Mock<ICalcResultErrorReportBuilder> mockCalcResultErrorReportBuilder;
@@ -52,6 +54,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             this.mockCalcResultParameterOtherCostBuilder = new Mock<ICalcResultParameterOtherCostBuilder>();
             this.mockOnePlusFourApportionmentBuilder = new Mock<ICalcResultOnePlusFourApportionmentBuilder>();
             this.mockCalcResultScaledupProducersBuilder = new Mock<ICalcResultScaledupProducersBuilder>();
+            this.mockCalcResultPartialObligationBuilder = new Mock<ICalcResultPartialObligationBuilder>();
             this.mockCalcResultCancelledProducersBuilder = new Mock<ICalcResultCancelledProducersBuilder>();
             this.mockCalcResultRejectedProducersBuilder = new Mock<ICalcResultRejectedProducersBuilder>();
             this.mockCalcResultErrorReportBuilder = new Mock<ICalcResultErrorReportBuilder>();
@@ -67,6 +70,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 this.mockLateReportingBuilder.Object,
                 this.mockCalcRunLaDisposalCostBuilder.Object,
                 this.mockCalcResultScaledupProducersBuilder.Object,
+                this.mockCalcResultPartialObligationBuilder.Object,
                 this.mockSummaryBuilder.Object,
                 this.mockCalcResultCancelledProducersBuilder.Object,
                 this.mockCalcResultRejectedProducersBuilder.Object,
@@ -89,6 +93,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 this.mockLateReportingBuilder.Object,
                 this.mockCalcRunLaDisposalCostBuilder.Object,
                 this.mockCalcResultScaledupProducersBuilder.Object,
+                this.mockCalcResultPartialObligationBuilder.Object,
                 this.mockSummaryBuilder.Object,
                 this.mockCalcResultCancelledProducersBuilder.Object,
                 this.mockCalcResultRejectedProducersBuilder.Object,

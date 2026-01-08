@@ -1,4 +1,4 @@
-﻿namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
+﻿namespace EPR.Calculator.Service.Function.Builder
 {
     public class Organisation
     {
