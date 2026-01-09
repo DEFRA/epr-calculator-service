@@ -115,6 +115,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var mockCalcResultCommsCost = new Mock<CalcResultCommsCost>();
             var mockCalcResultLateReportingTonnage = this.Fixture.Create<CalcResultLateReportingTonnage>();
             var mockCalcResultLaDisposalCostData = new Mock<CalcResultLaDisposalCostData>();
+            var mockCalcResultScaledUpProducersData = new Mock<CalcResultScaledupProducers>();
+            var mockCalcResultPartialObligationsData = new Mock<CalcResultPartialObligations>();
             var mockCalcResultSummary = new Mock<CalcResultSummary>();
 
             this.mockCalcResultDetailBuilder.Setup(m => m.ConstructAsync(resultsRequestDto)).ReturnsAsync(mockResultDetail.Object);
@@ -130,6 +132,10 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 .ReturnsAsync(mockCalcResultLateReportingTonnage);
             this.mockCalcRunLaDisposalCostBuilder.Setup(m => m.ConstructAsync(resultsRequestDto, It.IsAny<CalcResult>()))
                 .ReturnsAsync(mockCalcResultLaDisposalCostData.Object);
+            this.mockCalcResultScaledupProducersBuilder.Setup(m => m.ConstructAsync(resultsRequestDto))
+                .ReturnsAsync(mockCalcResultScaledUpProducersData.Object);
+            this.mockCalcResultPartialObligationBuilder.Setup(m => m.ConstructAsync(resultsRequestDto, mockCalcResultScaledUpProducersData.Object.ScaledupProducers ?? new List<CalcResultScaledupProducer>()))
+                .ReturnsAsync(mockCalcResultPartialObligationsData.Object);
             this.mockSummaryBuilder.Setup(x => x.ConstructAsync(resultsRequestDto, It.IsAny<CalcResult>()))
                 .ReturnsAsync(mockCalcResultSummary.Object);
 
@@ -145,6 +151,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
             Assert.AreEqual(mockCalcResultCommsCost.Object, result.CalcResultCommsCostReportDetail);
             Assert.AreEqual(mockCalcResultLateReportingTonnage, result.CalcResultLateReportingTonnageData);
             Assert.AreEqual(mockCalcResultLaDisposalCostData.Object, result.CalcResultLaDisposalCostData);
+            Assert.AreEqual(mockCalcResultScaledUpProducersData.Object, result.CalcResultScaledupProducers);
+            Assert.AreEqual(mockCalcResultPartialObligationsData.Object, result.CalcResultPartialObligations);
             Assert.AreEqual(mockCalcResultSummary.Object, result.CalcResultSummary);
 
             this.mockCalcRunLaDisposalCostBuilder.Verify(m => m.ConstructAsync(resultsRequestDto, It.IsAny<CalcResult>()), Times.Once);

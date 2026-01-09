@@ -121,6 +121,7 @@ namespace EPR.Calculator.Service.Function.Builder
 
             this._telemetryClient.TrackTrace("calcResultScaledupProducersBuilder started...");
             var scaledupProducersResult = await this.calcResultScaledupProducersBuilder.ConstructAsync(resultsRequestDto);
+            result.CalcResultScaledupProducers = scaledupProducersResult;
             this._telemetryClient.TrackTrace("calcResultScaledupProducersBuilder end...");
 
             this._telemetryClient.TrackTrace("calcResultPartialObligationBuilder started...");
