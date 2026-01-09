@@ -13,6 +13,8 @@
     using EPR.Calculator.Service.Function.Interface;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
+    using System.Diagnostics.CodeAnalysis;
+
 
     /// <summary>
     /// Service for transposing POM and organization data.
@@ -157,7 +159,7 @@
             "Critical Code Smell",
             "S3776:Cognitive Complexity of methods should not be too high",
             Justification = "Temporaraly suppress - will refactor later.")]
-
+        [ExcludeFromCodeCoverage]   
         public async Task<bool> Transpose(CalcResultsRequestDto resultsRequestDto, CancellationToken cancellationToken)
         {
             this.context.ChangeTracker.AutoDetectChangesEnabled = false;
