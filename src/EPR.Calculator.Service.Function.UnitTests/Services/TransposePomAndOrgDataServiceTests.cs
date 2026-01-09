@@ -17,6 +17,10 @@
     [TestClass]
     public class TransposePomAndOrgDataServiceTests
     {
+
+        private readonly Guid SubmitterId1 = new Guid();
+        private readonly Guid SubmitterId2 = new Guid();
+
         private readonly ApplicationDBContext _context;
 
         private Mock<IDbContextFactory<ApplicationDBContext>> ContextFactory { get; init; }
@@ -92,7 +96,7 @@
             var result = this.TestClass.GetAllOrganisationsBasedonRunId(organisationDetails);
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(4, result.Count());
+            Assert.AreEqual(5, result.Count());
         }
 
         [TestMethod]
@@ -773,47 +777,65 @@
             return list;
         }
 
-        protected static IEnumerable<CalculatorRunOrganisationDataDetail> GetCalculatorRunOrganisationDataDetails()
+        protected IEnumerable<CalculatorRunOrganisationDataDetail> GetCalculatorRunOrganisationDataDetails()
         {
             var list = new List<CalculatorRunOrganisationDataDetail>();
             list.AddRange(new List<CalculatorRunOrganisationDataDetail>()
             {
-                new ()
+                new () //Added first to ensure the 2nd obligated instance gets picked up
                 {
                     Id = 1,
                     OrganisationId = 1,
                     OrganisationName = "UPU LIMITED",
                     SubsidiaryId = "1",
                     LoadTimeStamp = DateTime.UtcNow,
-                    CalculatorRunOrganisationDataMasterId = 1
+                    CalculatorRunOrganisationDataMasterId = 1,
+                    ObligationStatus = ObligationStates.NotObligated,
+                    SubmitterId = SubmitterId2
                 },
                 new ()
                 {
                     Id = 2,
                     OrganisationId = 1,
-                    OrganisationName = "Test LIMITED",
+                    OrganisationName = "UPU LIMITED",
+                    SubsidiaryId = "1",
                     LoadTimeStamp = DateTime.UtcNow,
-                    CalculatorRunOrganisationDataMasterId = 1
+                    CalculatorRunOrganisationDataMasterId = 1,
+                    ObligationStatus = ObligationStates.Obligated,
+                    SubmitterId = SubmitterId1
                 },
                 new ()
                 {
                     Id = 3,
-                    OrganisationId = 2,
-                    SubsidiaryId = "1",
-                    OrganisationName = "Subsid2",
+                    OrganisationId = 1,
+                    OrganisationName = "Test LIMITED",
                     LoadTimeStamp = DateTime.UtcNow,
-                    CalculatorRunOrganisationDataMasterId = 2
+                    CalculatorRunOrganisationDataMasterId = 1,
+                    ObligationStatus = ObligationStates.Obligated,
+                    SubmitterId = SubmitterId1
                 },
                 new ()
                 {
                     Id = 4,
+                    OrganisationId = 2,
+                    SubsidiaryId = "1",
+                    OrganisationName = "Subsid2",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    CalculatorRunOrganisationDataMasterId = 2,
+                    ObligationStatus = ObligationStates.Obligated,
+                    SubmitterId = SubmitterId1
+                },
+                new ()
+                {
+                    Id = 5,
                     OrganisationId = 3,
                     SubsidiaryId = "100",
                     OrganisationName = "Subsid3-1",
                     LoadTimeStamp = DateTime.UtcNow,
                     CalculatorRunOrganisationDataMasterId = 1,
-                    ObligationStatus = "N",
-                    TradingName="Non Obligated Org"
+                    ObligationStatus = ObligationStates.NotObligated,
+                    TradingName="Non Obligated Org",
+                    SubmitterId = SubmitterId1
                 },
 
             });
@@ -906,7 +928,7 @@
             return list;
         }
 
-        protected static IEnumerable<CalculatorRunPomDataDetail> GetCalculatorRunPomDataDetails()
+        protected IEnumerable<CalculatorRunPomDataDetail> GetCalculatorRunPomDataDetails()
         {
             var list = new List<CalculatorRunPomDataDetail>
             {
@@ -924,6 +946,7 @@
                     LoadTimeStamp = DateTime.UtcNow,
                     CalculatorRunPomDataMasterId = 1,
                     SubmissionPeriodDesc = "July to December 2023",
+                    SubmitterId = SubmitterId1
                 },
                 new ()
                 {
@@ -938,6 +961,7 @@
                     LoadTimeStamp = DateTime.UtcNow,
                     CalculatorRunPomDataMasterId = 1,
                     SubmissionPeriodDesc = "July to December 2023",
+                    SubmitterId = SubmitterId1
                 },
                 new ()
                 {
@@ -953,6 +977,7 @@
                     LoadTimeStamp = DateTime.UtcNow,
                     CalculatorRunPomDataMasterId = 1,
                     SubmissionPeriodDesc = "January to June 2023",
+                    SubmitterId = SubmitterId1
                 },
                 new ()
                 {
@@ -968,6 +993,7 @@
                     LoadTimeStamp = DateTime.UtcNow,
                     CalculatorRunPomDataMasterId = 1,
                     SubmissionPeriodDesc = "January to June 2024",
+                    SubmitterId = SubmitterId1
                 },
             };
             return list;
@@ -1075,6 +1101,7 @@
             await service.Transpose(resultsRequestDto, CancellationToken.None);
             
             Assert.IsNotNull(resultProducerDetails);
+            Assert.AreEqual(2, resultProducerDetails.Count());
             Assert.IsFalse(resultProducerDetails.Any(x=>x.SubsidiaryId == "100"));
             Assert.IsNotNull(resultPRM);
         }
