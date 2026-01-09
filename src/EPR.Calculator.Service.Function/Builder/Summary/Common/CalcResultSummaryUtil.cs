@@ -131,16 +131,17 @@
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
         {
+
+            var maybePartialScaledUpTonnage = GetPartialTonnage(producer, material, packagingType, partialObligations);
+
+            if (maybePartialScaledUpTonnage != null) {
+                return (decimal)maybePartialScaledUpTonnage!;
+            }   
+            
             var maybeScaledUpTonnage = GetScaledUpTonnage(producer, material, packagingType, scaledUpProducers);
 
             if (maybeScaledUpTonnage != null) {
                 return (decimal)maybeScaledUpTonnage!;
-            }
-
-            var maybePartialTonnage = GetPartialTonnage(producer, material, packagingType, partialObligations);
-
-            if (maybePartialTonnage != null) {
-                return (decimal)maybePartialTonnage!;
             }
 
             var reportedMaterials = producer.ProducerReportedMaterials

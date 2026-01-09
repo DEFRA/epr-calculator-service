@@ -208,6 +208,22 @@
         }
 
         [TestMethod]
+        public void CanGetHouseholdTonnageForScaledUpPartialObligation()
+        {
+            // Arrange
+            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
+            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var partialObligations = TestDataHelper.GetPartialObligations().PartialObligations;
+
+            // Act
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.Household, scaledupProducers!, partialObligations!);
+
+            // Assert
+            Assert.AreEqual(50.00m, result);
+        }
+        
+         [TestMethod]
         public void CanGetHouseholdTonnageForPartialObligation()
         {
             // Arrange
