@@ -7,6 +7,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
     using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Function.Builder.ParametersOther;
+    using EPR.Calculator.Service.Function.Builder;
     using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
     using EPR.Calculator.Service.Function.Builder.Summary;
     using EPR.Calculator.Service.Function.Builder.Summary.OneAndTwoA;
@@ -25,6 +26,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         private readonly CalcResultSummaryBuilder calcResultsService;
         private readonly CalcResult calcResult;
         private readonly CalcResultScaledupProducers scaledupProducers;
+        private readonly CalcResultPartialObligations partialObligations;
 
         private Fixture Fixture { get; init; } = new Fixture();
 
@@ -36,6 +38,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             this.context = new ApplicationDBContext(this.dbContextOptions);
             this.calcResultsService = new CalcResultSummaryBuilder(this.context);
             this.scaledupProducers = TestDataHelper.GetScaledupProducers();
+            this.partialObligations = TestDataHelper.GetPartialObligations();
             this.calcResult = new CalcResult
             {
                 CalcResultParameterOtherCost = new CalcResultParameterOtherCost
@@ -279,6 +282,13 @@ namespace EPR.Calculator.Service.Function.UnitTests
                     ColumnHeaders = null,
                     ScaledupProducers = new List<CalcResultScaledupProducer>(),
                 },
+                CalcResultPartialObligations = new CalcResultPartialObligations() 
+                {
+                    TitleHeader = null,
+                    MaterialBreakdownHeaders = null,
+                    ColumnHeaders = null,
+                    PartialObligations = new List<CalcResultPartialObligation>(),
+                }
             };
 
             // Seed database
@@ -312,6 +322,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             Assert.IsNotNull(firstProducer);
             Assert.AreEqual("Producer1", firstProducer.ProducerName);
             Assert.AreEqual(0, calcResultsService.ScaledupProducers.Count());
+            Assert.AreEqual(0, calcResultsService.PartialObligations.Count());
         }
 
         [TestMethod]
@@ -343,6 +354,34 @@ namespace EPR.Calculator.Service.Function.UnitTests
         }
 
         [TestMethod]
+        public void Construct_NullPartialObligations_ShouldSetPartialOblgiationsToEmptyCollection()
+        {
+            // Assign
+            var requestDto = new CalcResultsRequestDto { RunId = 1 };
+            var calcResult = this.calcResult;
+            calcResult.CalcResultPartialObligations = new CalcResultPartialObligations
+            {
+                ColumnHeaders = new List<CalcResultPartialObligationHeader>(),
+                MaterialBreakdownHeaders = new List<CalcResultPartialObligationHeader>(),
+                TitleHeader = new CalcResultPartialObligationHeader()
+                {
+                    Name = "Partial Obligations",
+                    ColumnIndex = 1,
+                },
+                PartialObligations = null
+            };
+
+            // Act
+            var results = this.calcResultsService.ConstructAsync(requestDto, calcResult);
+            results.Wait();
+            var result = results.Result;
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(0, calcResultsService.PartialObligations.Count());
+        }
+
+        [TestMethod]
         public void Construct_ShouldSetScaledupProducers()
         {
             // Assign
@@ -359,6 +398,25 @@ namespace EPR.Calculator.Service.Function.UnitTests
             Assert.IsNotNull(result);
             Assert.AreEqual(1, calcResultsService.ScaledupProducers.Count());
         }
+
+        [TestMethod]
+        public void Construct_ShouldSetPartialObligations()
+        {
+            // Assign
+            var requestDto = new CalcResultsRequestDto { RunId = 1 };
+            var calcResult = this.calcResult;
+            calcResult.CalcResultPartialObligations = TestDataHelper.GetPartialObligations();
+
+            // Act
+            var results = this.calcResultsService.ConstructAsync(requestDto, calcResult);
+            results.Wait();
+            var result = results.Result;
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(1, calcResultsService.PartialObligations.Count());
+        }
+
 
         [TestMethod]
         public void Construct_ShouldMapMaterialBreakdownHeaders()
@@ -714,7 +772,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails,
                                                                                                 materials,
                                                                                                 1,
-                                                                                                calcResultsService.ScaledupProducers?.ToList() ?? new List<CalcResultScaledupProducer>());
+                                                                                                calcResultsService.ScaledupProducers?.ToList() ?? new List<CalcResultScaledupProducer>(),
+                                                                                                calcResultsService.PartialObligations?.ToList() ?? new List<CalcResultPartialObligation>());
 
             var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb("2024-25");
 
@@ -755,7 +814,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             var materials = Mappers.MaterialMapper.Map(this.context.Material.ToList());
 
-            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, 1, calcResultsService.ScaledupProducers?.ToList() ?? new List<CalcResultScaledupProducer>());
+            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, 1, calcResultsService.ScaledupProducers?.ToList() ?? new List<CalcResultScaledupProducer>(), calcResultsService.PartialObligations?.ToList() ?? new List<CalcResultPartialObligation>());
 
             orderedProducerDetails.Add(new ProducerDetail
             {
@@ -859,7 +918,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails,
                                                                                                 materials,
                                                                                                 1,
-                                                                                                calcResultsService.ScaledupProducers?.ToList() ?? new List<CalcResultScaledupProducer>());
+                                                                                                calcResultsService.ScaledupProducers?.ToList() ?? new List<CalcResultScaledupProducer>(),
+                                                                                                calcResultsService.PartialObligations?.ToList() ?? new List<CalcResultPartialObligation>());
             var scaledUpProducer = totalPackagingTonnage.First(t => t.ProducerId == 4);
 
             Assert.AreEqual(2, totalPackagingTonnage.Count());
@@ -891,6 +951,66 @@ namespace EPR.Calculator.Service.Function.UnitTests
                             ScaledupTotalReportedTonnage = 100,
                             ScaledupReportedSelfManagedConsumerWasteTonnage = 0,
                             ScaledupNetReportedTonnage = 0,
+                        }
+                    },
+                },
+                },
+            };
+
+            return test;
+        }
+
+        [TestMethod]
+        public void GetCalcResultSummary_PartialObligationShouldReturnCorrectValue()
+        {
+            var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
+            this.calcResult.CalcResultPartialObligations.PartialObligations = GetPartialObligations();
+            var results = this.calcResultsService.ConstructAsync(calcResultsRequestDto, this.calcResult);
+
+            var orderedProducerDetails = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, this.context.ProducerDetail.ToList());
+            var runProducerMaterialDetails = CalcResultSummaryBuilder.GetProducerRunMaterialDetails(
+                orderedProducerDetails,
+                this.context.ProducerReportedMaterial.ToList(),
+                1);
+
+            var materials = Mappers.MaterialMapper.Map(this.context.Material.ToList());
+
+            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails,
+                                                                                                materials,
+                                                                                                1,
+                                                                                                calcResultsService.ScaledupProducers?.ToList() ?? new List<CalcResultScaledupProducer>(),
+                                                                                                calcResultsService.PartialObligations?.ToList() ?? new List<CalcResultPartialObligation>());
+            var partialObligation = totalPackagingTonnage.First(t => t.ProducerId == 4);
+
+            Assert.AreEqual(2, totalPackagingTonnage.Count());
+            Assert.IsNotNull(partialObligation.ProducerId);
+            Assert.AreEqual(25, partialObligation.TotalPackagingTonnage);
+        }
+
+        public static List<CalcResultPartialObligation> GetPartialObligations()
+        {
+            var test = new List<CalcResultPartialObligation>
+            {
+                new CalcResultPartialObligation()
+                {
+                    ProducerId = 4,
+                    ProducerName = "Test",
+                    PartialObligationTonnageByMaterial = new Dictionary<string, CalcResultPartialObligationTonnage>
+                {
+                    {
+                        "1",
+                        new CalcResultPartialObligationTonnage
+                        {
+                            ReportedHouseholdPackagingWasteTonnage = 0,
+                            ReportedPublicBinTonnage = 0,
+                            TotalReportedTonnage = 0,
+                            ReportedSelfManagedConsumerWasteTonnage = 0,
+                            NetReportedTonnage = 0,
+                            PartialReportedHouseholdPackagingWasteTonnage = 0,
+                            PartialReportedPublicBinTonnage = 0,
+                            PartialTotalReportedTonnage = 25,
+                            PartialReportedSelfManagedConsumerWasteTonnage = 0,
+                            PartialNetReportedTonnage = 0,
                         }
                     },
                 },
@@ -1065,6 +1185,27 @@ namespace EPR.Calculator.Service.Function.UnitTests
         }
 
         [TestMethod]
+        public void Construct_HandlesNullPartialObligations_UsesEmptyList()
+        {
+            // Arrange
+            var requestDto = new CalcResultsRequestDto { RunId = 1 };
+            var calcResult = this.calcResult;
+            calcResult.CalcResultPartialObligations = new CalcResultPartialObligations
+            {
+                PartialObligations = null
+            };
+
+            // Act
+            var task = this.calcResultsService.ConstructAsync(requestDto, calcResult);
+            task.Wait();
+            var result = task.Result;
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.ProducerDisposalFees?.Any() ?? false);
+        }
+
+        [TestMethod]
         public void GetCalcResultSummary_AddsProducerTotalRow_AndProducerRow()
         {
             // Arrange
@@ -1075,7 +1216,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             this.calcResultsService.ScaledupProducers = new List<CalcResultScaledupProducer>();
 
             var totalPackaging = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(
-                runDetails, materials, 1, this.calcResultsService.ScaledupProducers.ToList());
+                runDetails, materials, 1, this.calcResultsService.ScaledupProducers.ToList(), this.calcResultsService.PartialObligations.ToList());
 
             this.calcResultsService.ParentOrganisations = new List<Organisation>
             {
@@ -1124,7 +1265,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var materials = Mappers.MaterialMapper.Map(context.Material.ToList());
             var runDetails = CalcResultSummaryBuilder.GetProducerRunMaterialDetails(ordered, context.ProducerReportedMaterial.ToList(), 1);
             var totalPackaging = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(
-                runDetails, materials, 1, calcResultsService.ScaledupProducers?.ToList() ?? new List<CalcResultScaledupProducer>());
+                runDetails, materials, 1, calcResultsService.ScaledupProducers?.ToList() ?? new List<CalcResultScaledupProducer>(),
+                calcResultsService.PartialObligations?.ToList() ?? new List<CalcResultPartialObligation>());
 
             var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb("2024-25");
             var defaultParams = new List<DefaultParamResultsClass>();
@@ -1185,6 +1327,59 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
 
             Assert.AreEqual(CommonConstants.Yes, row.IsProducerScaledup);
+        }
+
+        [TestMethod]
+        public void GetProducerRow_MarksProducerAsPartialObligation_WhenMatchExists()
+        {
+
+            var producer = context.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
+
+            var materials = Mappers.MaterialMapper.Map(context.Material.ToList());
+
+            var tonnageByMaterial = new Dictionary<string, CalcResultPartialObligationTonnage>();
+
+            foreach (var m in materials)
+            {
+                tonnageByMaterial[m.Code] = new CalcResultPartialObligationTonnage
+                {
+                    ReportedHouseholdPackagingWasteTonnage = 0,
+                    ReportedPublicBinTonnage = 0,
+                    ReportedSelfManagedConsumerWasteTonnage = 0,
+                    TotalReportedTonnage = 0,
+                    NetReportedTonnage = 0,
+                    PartialReportedHouseholdPackagingWasteTonnage = 0,
+                    PartialReportedPublicBinTonnage = 0,
+                    PartialReportedSelfManagedConsumerWasteTonnage = 0,
+                    PartialTotalReportedTonnage = 0,
+                    PartialNetReportedTonnage = 0
+                };
+            }
+
+            calcResultsService.PartialObligations = new List<CalcResultPartialObligation>
+            {
+                new CalcResultPartialObligation
+                {
+                    ProducerId = producer.ProducerId,
+                    SubsidiaryId = producer.SubsidiaryId,
+                    PartialObligationTonnageByMaterial = tonnageByMaterial
+                }
+            };
+
+            var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
+
+            var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb("2024-25");
+
+            var row = calcResultsService.GetProducerRow(
+                new List<CalcResultSummaryProducerDisposalFees>(),
+                ordered.Where(pd => pd.ProducerId == producer.ProducerId).ToList(),
+                producer,
+                materials,
+                this.calcResult, new List<TotalPackagingTonnagePerRun>(),
+                producerInvoicedMaterialNetTonnage);
+
+
+            Assert.AreEqual(CommonConstants.Yes, row.IsPartialObligation);
         }
 
         [TestMethod]
@@ -1272,6 +1467,30 @@ namespace EPR.Calculator.Service.Function.UnitTests
             Assert.AreEqual("99", row.StatusCode);
             Assert.AreEqual("01/01/2025", row.JoinerDate);
             Assert.AreEqual("15/07/2025", row.LeaverDate);
+            Assert.AreEqual(CommonConstants.No, row.IsProducerScaledup);
+        }
+
+        [TestMethod]
+        public void GetProducerRow_MarksProducerAsNotPartialObligation_WhenNoMatch()
+        {
+            var producer = context.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
+            var materials = Mappers.MaterialMapper.Map(context.Material.ToList());
+
+            calcResultsService.PartialObligations = new List<CalcResultPartialObligation>();
+
+            var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
+            var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb("2024-25");
+
+            var row = calcResultsService.GetProducerRow(
+                new List<CalcResultSummaryProducerDisposalFees>(),
+                ordered.Where(pd => pd.ProducerId == producer.ProducerId).ToList(),
+                producer,
+                materials,
+                this.calcResult,
+                new List<TotalPackagingTonnagePerRun>(),
+                producerInvoicedMaterialNetTonnage);
+
+            Assert.AreEqual(CommonConstants.No, row.IsPartialObligation);
         }
 
         [TestMethod]

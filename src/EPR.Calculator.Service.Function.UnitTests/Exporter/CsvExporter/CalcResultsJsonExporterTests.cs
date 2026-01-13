@@ -345,7 +345,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                     Name = "LA Disposal Cost Data",
                 },
                 CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers(),
-                CalcResultSummary = TestDataHelper.GetCalcResultSummary()
+                CalcResultSummary = TestDataHelper.GetCalcResultSummary(),
+                CalcResultPartialObligations = new CalcResultPartialObligations(),
             };
         }
 

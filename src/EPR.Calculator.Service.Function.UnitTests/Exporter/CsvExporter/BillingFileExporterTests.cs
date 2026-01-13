@@ -13,6 +13,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.RejectedProducers;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
@@ -26,6 +27,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         private Mock<IOnePlusFourApportionmentExporter> _onePlusFourApportionmentExporter;
         private Mock<ICalcResultLaDisposalCostExporter> _laDisposalCostExporter;
         private Mock<ICalcResultScaledupProducersExporter> _calcResultScaledupProducersExporter;
+        private Mock<ICalcResultPartialObligationsExporter> _calcResultPartialObligationsExporter;
         private Mock<ILapcaptDetailExporter> _lapcaptDetailExporter;
         private Mock<ICalcResultParameterOtherCostExporter> _parameterOtherCosts;
         private Mock<ICommsCostExporter> _commsCostExporter;
@@ -40,6 +42,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             _onePlusFourApportionmentExporter = new Mock<IOnePlusFourApportionmentExporter>();
             _laDisposalCostExporter = new Mock<ICalcResultLaDisposalCostExporter>();
             _calcResultScaledupProducersExporter = new Mock<ICalcResultScaledupProducersExporter>();
+            _calcResultPartialObligationsExporter = new Mock<ICalcResultPartialObligationsExporter>();
             _lapcaptDetailExporter = new Mock<ILapcaptDetailExporter>();
             _parameterOtherCosts = new Mock<ICalcResultParameterOtherCostExporter>();
             _commsCostExporter = new Mock<ICommsCostExporter>();
@@ -52,6 +55,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 _onePlusFourApportionmentExporter.Object,
                 _laDisposalCostExporter.Object,
                 _calcResultScaledupProducersExporter.Object,
+                _calcResultPartialObligationsExporter.Object,
                 _lapcaptDetailExporter.Object,
                 _parameterOtherCosts.Object,
                 _commsCostExporter.Object,
@@ -70,6 +74,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 _onePlusFourApportionmentExporter.Object,
                 _laDisposalCostExporter.Object,
                 _calcResultScaledupProducersExporter.Object,
+                _calcResultPartialObligationsExporter.Object,
                 _lapcaptDetailExporter.Object,
                 _parameterOtherCosts.Object,
                 _commsCostExporter.Object,
@@ -93,6 +98,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             _onePlusFourApportionmentExporter.Setup(mock => mock.Export(It.IsAny<CalcResultOnePlusFourApportionment>(), It.IsAny<StringBuilder>())).Verifiable();
             _lateReportingExporter.Setup(mock => mock.Export(It.IsAny<CalcResultLateReportingTonnage>())).Returns(fixture.Create<string>());
             _calcResultScaledupProducersExporter.Setup(mock => mock.Export(It.IsAny<CalcResultScaledupProducers>(), It.IsAny<StringBuilder>())).Verifiable();
+            _calcResultPartialObligationsExporter.Setup(mock => mock.Export(It.IsAny<CalcResultPartialObligations>(), It.IsAny<StringBuilder>())).Verifiable();
             _lapcaptDetailExporter.Setup(mock => mock.Export(It.IsAny<CalcResultLapcapData>(), It.IsAny<StringBuilder>())).Verifiable();
             _parameterOtherCosts.Setup(mock => mock.Export(It.IsAny<CalcResultParameterOtherCost>(), It.IsAny<StringBuilder>())).Verifiable();
             _calcResultSummaryExporter.Setup(mock => mock.Export(It.IsAny<CalcResultSummary>(), It.IsAny<StringBuilder>())).Verifiable();
@@ -108,6 +114,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             _onePlusFourApportionmentExporter.Verify(mock => mock.Export(It.IsAny<CalcResultOnePlusFourApportionment>(), It.IsAny<StringBuilder>()));
             _lateReportingExporter.Verify(mock => mock.Export(It.IsAny<CalcResultLateReportingTonnage>()));
             _calcResultScaledupProducersExporter.Verify(mock => mock.Export(It.IsAny<CalcResultScaledupProducers>(), It.IsAny<StringBuilder>()));
+            _calcResultPartialObligationsExporter.Verify(mock => mock.Export(It.IsAny<CalcResultPartialObligations>(), It.IsAny<StringBuilder>()));
             _lapcaptDetailExporter.Verify(mock => mock.Export(It.IsAny<CalcResultLapcapData>(), It.IsAny<StringBuilder>()));
             _parameterOtherCosts.Verify(mock => mock.Export(It.IsAny<CalcResultParameterOtherCost>(), It.IsAny<StringBuilder>()));
             _calcResultSummaryExporter.Verify(mock => mock.Export(It.IsAny<CalcResultSummary>(), It.IsAny<StringBuilder>()));
