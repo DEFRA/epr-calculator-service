@@ -4,6 +4,8 @@
     using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Models;
+    using EPR.Calculator.Service.Function.Services;
+
 
     public static class TestDataHelper
     {
@@ -2017,6 +2019,8 @@
 
         public static IEnumerable<CalculatorRunOrganisationDataDetail> GetCalculatorRunOrganisationDataDetails()
         {
+            var submitterId1 = Guid.NewGuid();
+            var submitterId2 = Guid.NewGuid();
             var list = new List<CalculatorRunOrganisationDataDetail>();
             list.Add(new CalculatorRunOrganisationDataDetail
             {
@@ -2026,6 +2030,8 @@
                 OrganisationName = "Allied Packaging",
                 TradingName = "Allied Trading",
                 LoadTimeStamp = DateTime.UtcNow,
+                ObligationStatus= ObligationStates.Obligated,
+                SubmitterId = submitterId1,
                 CalculatorRunOrganisationDataMasterId = GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
             });
             list.Add(new CalculatorRunOrganisationDataDetail
@@ -2055,6 +2061,65 @@
                 OrganisationName = "",
                 LoadTimeStamp = DateTime.UtcNow,
                 CalculatorRunOrganisationDataMasterId = TestDataHelper.GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
+            });
+            list.Add(new CalculatorRunOrganisationDataDetail
+            {
+                Id = 5,
+                OrganisationId = 1,
+                SubsidiaryId = "Sub 1",
+                OrganisationName = "Allied Packaging sub 1",
+                TradingName = "Allied Trading sub 1",
+                LoadTimeStamp = DateTime.UtcNow,
+                ObligationStatus= ObligationStates.Obligated,
+                SubmitterId = submitterId1,
+                CalculatorRunOrganisationDataMasterId = GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
+            });
+            list.Add(new CalculatorRunOrganisationDataDetail
+            {
+                Id = 6,
+                OrganisationId = 1,
+                SubsidiaryId = "Sub 2",
+                OrganisationName = "Allied Packaging sub 2",
+                TradingName = "Allied Trading sub 2",
+                LoadTimeStamp = DateTime.UtcNow,
+                ObligationStatus= ObligationStates.Obligated,
+                SubmitterId = submitterId1,
+                CalculatorRunOrganisationDataMasterId = GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
+            });
+            list.Add(new CalculatorRunOrganisationDataDetail
+            {
+                Id = 7,
+                OrganisationId = 1,
+                SubsidiaryId = null,
+                OrganisationName = "Allied Packaging",
+                TradingName = "Allied Trading - Old Compliance Scheme",
+                LoadTimeStamp = DateTime.UtcNow,
+                ObligationStatus= ObligationStates.NotObligated,
+                CalculatorRunOrganisationDataMasterId = GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
+                SubmitterId = submitterId1
+            });
+            list.Add(new CalculatorRunOrganisationDataDetail
+            {
+                Id = 8,
+                OrganisationId = 1,
+                SubsidiaryId = "Sub 1",
+                OrganisationName = "Allied Packaging sub 1 - Old Compliance Scheme",
+                TradingName = "Allied Trading",
+                ObligationStatus= ObligationStates.NotObligated,
+                LoadTimeStamp = DateTime.UtcNow,
+                CalculatorRunOrganisationDataMasterId = GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
+                SubmitterId = submitterId1
+            });
+            list.Add(new CalculatorRunOrganisationDataDetail
+            {
+                Id = 9,
+                OrganisationId = 1,
+                SubsidiaryId = "Sub 2",
+                OrganisationName = "Allied Packaging sub 2 - Old Compliance Scheme",
+                TradingName = "Allied Trading",
+                ObligationStatus= ObligationStates.NotObligated,
+                LoadTimeStamp = DateTime.UtcNow,
+                CalculatorRunOrganisationDataMasterId = GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
             });
             
             return list;

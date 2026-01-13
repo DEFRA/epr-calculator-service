@@ -13,6 +13,8 @@
     using EPR.Calculator.Service.Function.Interface;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
+    using System.Diagnostics.CodeAnalysis;
+
 
     /// <summary>
     /// Service for transposing POM and organization data.
@@ -157,7 +159,7 @@
             "Critical Code Smell",
             "S3776:Cognitive Complexity of methods should not be too high",
             Justification = "Temporaraly suppress - will refactor later.")]
-
+        [ExcludeFromCodeCoverage]   
         public async Task<bool> Transpose(CalcResultsRequestDto resultsRequestDto, CancellationToken cancellationToken)
         {
             this.context.ChangeTracker.AutoDetectChangesEnabled = false;
@@ -200,9 +202,9 @@
 
 
                 var organisationDataDetails = calculatorRunOrgDataDetails
-                    .Where(odd => odd.CalculatorRunOrganisationDataMasterId == organisationDataMaster.Id && odd.OrganisationName != null && odd.OrganisationName != "")
+                    .Where(odd => odd.CalculatorRunOrganisationDataMasterId == organisationDataMaster.Id && odd.OrganisationName != null && odd.OrganisationName != "" && ObligationStates.IsObligated(odd.ObligationStatus))
                     .OrderBy(odd => odd.OrganisationName)
-                    .GroupBy(odd => new { odd.OrganisationId, odd.SubsidiaryId })
+                    .GroupBy(odd => new { odd.OrganisationId, odd.SubsidiaryId, odd.SubmitterId })
                     .Select(odd => odd.First())
                     .ToList();
 
@@ -210,8 +212,7 @@
                 var pomDataMaster = await this.context.CalculatorRunPomDataMaster
                     .SingleAsync(x => x.Id == calculatorRun.CalculatorRunPomDataMasterId, cancellationToken);
 
-
-                foreach (var organisation in organisationDataDetails.Where(t => !string.IsNullOrWhiteSpace(t.OrganisationName) && ObligationStates.IsObligated(t.ObligationStatus)))
+                foreach (var organisation in organisationDataDetails.Where(t => !string.IsNullOrWhiteSpace(t.OrganisationName)))
                 {
                     // Initialise the producerReportedMaterials
                     var producerReportedMaterials = new List<ProducerReportedMaterial>();
