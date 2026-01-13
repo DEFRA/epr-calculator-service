@@ -31,6 +31,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
         {
             // Arrange
             var synapseError = "Conflicting Obligations(blanks)";
+            var testErrorCode = "Test Error code";
             await using var context = CreateDbContext();
 
             context.CalculatorRunOrganisationDataMaster.AddRange(TestDataHelper.GetCalculatorRunOrganisationDataMaster());
@@ -107,7 +108,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
                     ErrorCode = ErrorCodes.MissingPOMData,
                     CreatedAt = DateTime.UtcNow,
                     CreatedBy = "Test user"
-                }     
+                },
+                new EPR.Calculator.API.Data.DataModels.ErrorReport
+                {
+                    Id = 9,
+                    CalculatorRunId = 1,
+                    ProducerId = 2,
+                    SubsidiaryId = null,
+                    ErrorCode = testErrorCode,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = "Test user"
+                }
             );
 
             await context.SaveChangesAsync();
@@ -118,7 +129,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
             // Act
             var result = (await builder.ConstructAsync(request)).ToList();
 
-            Assert.AreEqual(4, result.Count);
+            Assert.AreEqual(5, result.Count);
             var report = result[0];
             Assert.AreEqual(1, report.ProducerId);
             Assert.AreEqual(CommonConstants.Hyphen, report.SubsidiaryId);
@@ -145,11 +156,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
 
             var report3 = result[3];
             Assert.AreEqual(2, report3.ProducerId);
-            Assert.AreEqual("Sub 2", report3.SubsidiaryId);
+            Assert.AreEqual(CommonConstants.Hyphen, report3.SubsidiaryId);
             Assert.AreEqual(CommonConstants.Hyphen, report3.ProducerName);
             Assert.AreEqual(CommonConstants.Hyphen, report3.TradingName);
             Assert.AreEqual(CommonConstants.Hyphen, report3.LeaverCode);
-            Assert.AreEqual(synapseError, report3.ErrorCodeText);
+            Assert.AreEqual(testErrorCode, report3.ErrorCodeText);
+
+            var report4 = result[4];
+            Assert.AreEqual(2, report4.ProducerId);
+            Assert.AreEqual("Sub 2", report4.SubsidiaryId);
+            Assert.AreEqual(CommonConstants.Hyphen, report4.ProducerName);
+            Assert.AreEqual(CommonConstants.Hyphen, report4.TradingName);
+            Assert.AreEqual(CommonConstants.Hyphen, report4.LeaverCode);
+            Assert.AreEqual(synapseError, report4.ErrorCodeText);
         }
 
         [TestMethod]

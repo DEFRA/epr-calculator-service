@@ -67,8 +67,8 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
                 .GroupBy(x => new { x.ProducerId, x.SubsidiaryId, x.ErrorCodeText })
                 .Select(g => g.First())
                 .OrderBy(x => x.ProducerId)
-                .ThenBy(x => x.ErrorCodeText)
                 .ThenBy(x => x.SubsidiaryId)
+                .ThenBy(x => x.ErrorCodeText)
                 .ToList();
 
             return results;
