@@ -66,7 +66,7 @@
                     CalculatorRunOrganisationDataMaster = calcRunOrganisationDataMaster,
                     ObligationStatus = ObligationStates.Obligated,
                     DaysObligated = 183,
-                    JoinerDate = "15/07/2024"
+                    JoinerDate = "15/07/2025"
                 });
 
             var producerDetail = new ProducerDetail
@@ -162,7 +162,7 @@
                     CalculatorRunOrganisationDataMaster = calcRunOrganisationDataMaster2,
                     ObligationStatus = ObligationStates.Obligated,
                     DaysObligated = 183,
-                    JoinerDate = "15/07/2024"
+                    JoinerDate = "15/07/2025"
                 });
 
             var producerDetail3 = new ProducerDetail
@@ -267,10 +267,11 @@
             Assert.IsTrue(parOrg.SubsidiaryId == null);
             Assert.IsTrue(parOrg.ProducerName == "Partial Packaging");
             Assert.IsTrue(parOrg.Level == CommonConstants.LevelOne.ToString());
-            Assert.IsTrue(parOrg.JoiningDate == "15/07/2024");
+            Assert.IsTrue(parOrg.JoiningDate == "15/07/2025");
             Assert.IsTrue(parOrg.DaysObligated == 183);
-            Assert.IsTrue(parOrg.DaysInSubmissionYear == 366);
-            Assert.IsTrue(parOrg.ObligatedPercentage == "50.00%");
+            Assert.IsTrue(parOrg.DaysInSubmissionYear == 365);
+            Assert.IsTrue(parOrg.ObligatedPercentage == "50.14%");
+
 
             var parOrgMats = parOrg.PartialObligationTonnageByMaterial!;
             Assert.AreEqual(8, parOrgMats.Count());
@@ -281,11 +282,11 @@
                 mat.Value.ReportedSelfManagedConsumerWasteTonnage == 20 &&
                 mat.Value.NetReportedTonnage == 80 &&
                 mat.Value.TotalReportedTonnage == 100 &&
-                mat.Value.PartialReportedHouseholdPackagingWasteTonnage == 50 &&
+                mat.Value.PartialReportedHouseholdPackagingWasteTonnage == 50.137m &&
                 mat.Value.PartialReportedPublicBinTonnage == 0 &&
-                mat.Value.PartialReportedSelfManagedConsumerWasteTonnage == 10 &&
-                mat.Value.PartialNetReportedTonnage == 40 &&
-                mat.Value.PartialTotalReportedTonnage == 50
+                mat.Value.PartialReportedSelfManagedConsumerWasteTonnage == 10.027m &&
+                mat.Value.PartialNetReportedTonnage == 40.110m &&
+                mat.Value.PartialTotalReportedTonnage == 50.137m
             ));
             Assert.IsTrue(parOrgMats.Any(mat =>
                 mat.Key == MaterialCodes.Glass &&
@@ -347,10 +348,10 @@
             Assert.IsTrue(parOrg.SubsidiaryId == null);
             Assert.IsTrue(parOrg.ProducerName == "Partial Packaging");
             Assert.IsTrue(parOrg.Level == CommonConstants.LevelOne.ToString());
-            Assert.IsTrue(parOrg.JoiningDate == "15/07/2024");
+            Assert.IsTrue(parOrg.JoiningDate == "15/07/2025");
             Assert.IsTrue(parOrg.DaysObligated == 183);
-            Assert.IsTrue(parOrg.DaysInSubmissionYear == 366);
-            Assert.IsTrue(parOrg.ObligatedPercentage == "50.00%");
+            Assert.IsTrue(parOrg.DaysInSubmissionYear == 365);
+            Assert.IsTrue(parOrg.ObligatedPercentage == "50.14%");
 
             var parOrgMats = parOrg.PartialObligationTonnageByMaterial!;
             Assert.AreEqual(8, parOrgMats.Count());
@@ -361,11 +362,11 @@
                 mat.Value.ReportedSelfManagedConsumerWasteTonnage == 20 &&
                 mat.Value.NetReportedTonnage == 80 &&
                 mat.Value.TotalReportedTonnage == 100 &&
-                mat.Value.PartialReportedHouseholdPackagingWasteTonnage == 150 &&
+                mat.Value.PartialReportedHouseholdPackagingWasteTonnage == 150.411m &&
                 mat.Value.PartialReportedPublicBinTonnage == 0 &&
-                mat.Value.PartialReportedSelfManagedConsumerWasteTonnage == 30 &&
-                mat.Value.PartialNetReportedTonnage == 120 &&
-                mat.Value.PartialTotalReportedTonnage == 150
+                mat.Value.PartialReportedSelfManagedConsumerWasteTonnage == 30.082m &&
+                mat.Value.PartialNetReportedTonnage == 120.329m &&
+                mat.Value.PartialTotalReportedTonnage == 150.411m
             ));
             Assert.IsTrue(parOrgMats.Any(mat =>
                 mat.Key == MaterialCodes.Glass &&
