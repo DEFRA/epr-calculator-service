@@ -57,6 +57,12 @@
 
         public string InstrumentationKey => Configuration.GetValue("InstrumentationKey", string.Empty);
 
+
+        public string OrgDataPipelineNameMyc => string.Empty;
+
+        public string PomDataPipelineNameMyc => string.Empty;
+        public bool UseMycPipeline => false;
+
         public TimeSpan CommandTimeout
         {
             get
