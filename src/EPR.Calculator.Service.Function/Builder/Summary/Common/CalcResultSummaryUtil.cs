@@ -58,9 +58,10 @@
 
         public static bool IsProducerPartiallyObligated(
             ProducerDetail producer,
-            IEnumerable<CalcResultPartialObligation> partialObligations)
+            IEnumerable<CalcResultPartialObligation> partialObligations,
+            bool isTotalRow)
         {
-            var partialObligation = partialObligations.FirstOrDefault(p => p.ProducerId == producer.ProducerId);
+            var partialObligation = isTotalRow ? partialObligations.FirstOrDefault(p => p.ProducerId == producer.ProducerId) : partialObligations.FirstOrDefault(p => p.ProducerId == producer.ProducerId && p.SubsidiaryId == producer.SubsidiaryId);
             return partialObligation != null;
         }
 
