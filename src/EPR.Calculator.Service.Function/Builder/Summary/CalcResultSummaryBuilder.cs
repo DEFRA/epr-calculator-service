@@ -252,7 +252,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                         CommonConstants.LevelOne.ToString(),
                         materialCosts);
                 isProducerScaledUp = CalcResultSummaryUtil.IsProducerScaledup(producersAndSubsidiaries[0], ScaledupProducers) ? CommonConstants.Yes : CommonConstants.No;
-                isPartialObligation = CalcResultSummaryUtil.IsProducerPartiallyObligated(producersAndSubsidiaries[0], PartialObligations) ? CommonConstants.Yes : CommonConstants.No; 
+                isPartialObligation = CalcResultSummaryUtil.IsProducerPartiallyObligated(producersAndSubsidiaries[0], PartialObligations, isTotalRow: true) ? CommonConstants.Yes : CommonConstants.No; 
             }
 
             var producerForTotalRow = GetProducerDetailsForTotalRow(producersAndSubsidiaries[0].ProducerId, isOverAllTotalRow);
@@ -344,7 +344,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 IsProducerScaledup = CalcResultSummaryUtil.IsProducerScaledup(producer, ScaledupProducers)
                     ? CommonConstants.Yes
                     : CommonConstants.No,
-                IsPartialObligation = CalcResultSummaryUtil.IsProducerPartiallyObligated(producer, PartialObligations)
+                IsPartialObligation = CalcResultSummaryUtil.IsProducerPartiallyObligated(producer, PartialObligations, isTotalRow: false)
                     ? CommonConstants.Yes
                     : CommonConstants.No,
                 StatusCode = orgData?.StatusCode,
