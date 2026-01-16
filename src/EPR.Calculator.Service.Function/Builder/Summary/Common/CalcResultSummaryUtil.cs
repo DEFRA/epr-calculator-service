@@ -26,11 +26,11 @@
         public const int ProducerDisposalFeesHeaderColumnIndex = 11;
         public const int CommsCostHeaderColumnIndex = 141;
         public const int MaterialsBreakdownHeaderInitialColumnIndex = 11;
-        public const int MaterialsBreakdownHeaderIncrementalColumnIndex = 19;
+        public const int MaterialsBreakdownHeaderIncrementalColumnIndex = 15;
 
         public const int DisposalFeeSummaryColumnIndex = 132;
         public const int MaterialsBreakdownHeaderCommsInitialColumnIndex = 141;
-        public const int MaterialsBreakdownHeaderCommsIncrementalColumnIndex = 15;
+        public const int MaterialsBreakdownHeaderCommsIncrementalColumnIndex = 11;
 
         // Section-(1) & (2a)
         public const int DisposalFeeCommsCostsHeaderInitialColumnIndex = 237;

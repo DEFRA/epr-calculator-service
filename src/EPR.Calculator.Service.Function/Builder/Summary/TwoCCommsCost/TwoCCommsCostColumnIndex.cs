@@ -2,5 +2,5 @@
 
 public static class TwoCCommsCostColumnIndex
 {
-    public const int Value = 255;
+    public const int Value = 259;
 }

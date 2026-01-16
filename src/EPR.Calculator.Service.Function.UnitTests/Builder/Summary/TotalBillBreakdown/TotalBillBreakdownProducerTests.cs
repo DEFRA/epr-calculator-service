@@ -32,7 +32,7 @@
         /// </summary>
         private readonly CalcResult _calcResult;
 
-        private readonly int columnIndex = 285;
+        private readonly int columnIndex = 289;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TotalBillBreakdownProducerTests"/> class.

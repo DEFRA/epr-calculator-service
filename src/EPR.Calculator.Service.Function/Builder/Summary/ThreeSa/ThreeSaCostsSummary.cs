@@ -9,7 +9,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.ThreeSA
 {
     public static class ThreeSaCostsSummary
     {
-        public static readonly int ColumnIndex = 264;
+        public static readonly int ColumnIndex = 268;
 
         public static IEnumerable<CalcResultSummaryHeader> GetHeaders()
         {

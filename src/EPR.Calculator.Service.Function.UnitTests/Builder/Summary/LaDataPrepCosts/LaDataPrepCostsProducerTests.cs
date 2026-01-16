@@ -16,7 +16,7 @@
     {
         private readonly ApplicationDBContext _dbContext;
         private readonly CalcResult _calcResult;
-        private readonly int columnIndex = 271;
+        private readonly int columnIndex = 275;
 
         private Fixture Fixture { get; init; } = new Fixture();
 
