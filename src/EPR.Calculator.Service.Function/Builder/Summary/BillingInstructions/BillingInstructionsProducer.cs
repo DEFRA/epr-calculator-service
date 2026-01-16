@@ -14,7 +14,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
 {
     public static class BillingInstructionsProducer
     {
-        public static readonly int ColumnIndex = 292;
+        public static readonly int ColumnIndex = 296;
 
         public static IEnumerable<CalcResultSummaryHeader> GetHeaders()
         {
