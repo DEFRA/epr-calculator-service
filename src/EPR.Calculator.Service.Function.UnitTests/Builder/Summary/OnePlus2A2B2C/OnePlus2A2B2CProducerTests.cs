@@ -14,7 +14,7 @@
     {
         private readonly ApplicationDBContext _dbContext;
         private readonly CalcResult _calcResult;
-        private readonly int columnIndex = 262;
+        private readonly int columnIndex = 266;
 
         public OnePlus2A2B2CProducerTests()
         {

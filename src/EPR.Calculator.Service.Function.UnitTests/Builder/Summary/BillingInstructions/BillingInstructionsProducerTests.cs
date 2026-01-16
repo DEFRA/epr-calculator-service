@@ -201,7 +201,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         {
             // Act
             var result = BillingInstructionsProducer.GetHeaders().ToList();
-            var columnIndex = 292;
+            var columnIndex = 296;
 
             var expectedResult = new List<CalcResultSummaryHeader>();
             expectedResult.AddRange([
@@ -245,7 +245,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
 
             var expectedResult = new List<CalcResultSummaryHeader>();
             expectedResult.AddRange([
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.Title, ColumnIndex = 292 }
+                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.Title, ColumnIndex = 296 }
             ]);
 
             // Assert
