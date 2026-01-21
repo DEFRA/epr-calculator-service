@@ -317,21 +317,45 @@
                 new CalcResultScaledupProducer() {
                     ProducerId = 22, 
                     SubsidiaryId = null,
+                    SubmissionPeriodCode = "2025-P3",
                     ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>{
                         { 
                             MaterialCodes.Aluminium, 
                             new CalcResultScaledupProducerTonnage()
                             {
-                                ReportedHouseholdPackagingWasteTonnage = 100,
+                                ReportedHouseholdPackagingWasteTonnage = 25,
                                 ReportedPublicBinTonnage = 0,
-                                ReportedSelfManagedConsumerWasteTonnage = 20,
-                                NetReportedTonnage = 80,
-                                TotalReportedTonnage = 100,
-                                ScaledupReportedHouseholdPackagingWasteTonnage = 300,
+                                ReportedSelfManagedConsumerWasteTonnage = 10,
+                                NetReportedTonnage = 15,
+                                TotalReportedTonnage = 25,
+                                ScaledupReportedHouseholdPackagingWasteTonnage = 75,
                                 ScaledupReportedPublicBinTonnage = 0,
-                                ScaledupReportedSelfManagedConsumerWasteTonnage = 60,
-                                ScaledupNetReportedTonnage = 240,
-                                ScaledupTotalReportedTonnage = 300
+                                ScaledupReportedSelfManagedConsumerWasteTonnage = 30,
+                                ScaledupNetReportedTonnage = 45,
+                                ScaledupTotalReportedTonnage = 75
+                            }
+                        }
+                    }
+                },
+                new CalcResultScaledupProducer() {
+                    ProducerId = 22, 
+                    SubsidiaryId = null,
+                    SubmissionPeriodCode = "2025-P4",
+                    ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>{
+                        { 
+                            MaterialCodes.Aluminium, 
+                            new CalcResultScaledupProducerTonnage()
+                            {
+                                ReportedHouseholdPackagingWasteTonnage = 75,
+                                ReportedPublicBinTonnage = 0,
+                                ReportedSelfManagedConsumerWasteTonnage = 10,
+                                NetReportedTonnage = 65,
+                                TotalReportedTonnage = 75,
+                                ScaledupReportedHouseholdPackagingWasteTonnage = 225,
+                                ScaledupReportedPublicBinTonnage = 0,
+                                ScaledupReportedSelfManagedConsumerWasteTonnage = 30,
+                                ScaledupNetReportedTonnage = 195,
+                                ScaledupTotalReportedTonnage = 225
                             }
                         }
                     }
