@@ -6,7 +6,6 @@ using Azure.Storage.Blobs;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Exporter;
-using EPR.Calculator.API.Services;
 using EPR.Calculator.API.Validators;
 using EPR.Calculator.API.Wrapper;
 using EPR.Calculator.Service.Common.AzureSynapse;
@@ -91,12 +90,11 @@ namespace EPR.Calculator.Service.Function
             {
                 var fallbackToConsole = Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY") ==
                                         "00000000-0000-0000-0000-000000000000";
-                
+
                 return ActivatorUtilities.CreateInstance<CalculatorTelemetryLogger>(sp, fallbackToConsole);
             });
         }
 
-#pragma warning disable S1144 // Keeping just in case its required in future
         private static void SetupBlobStorage(IServiceCollection services)
         {
             services.AddSingleton<IStorageService>(provider =>
@@ -112,8 +110,7 @@ namespace EPR.Calculator.Service.Function
                 return new BlobStorageService(new BlobServiceClient(connectionString), configuration, logger);
             });
         }
-#pragma warning restore
-        
+
         /// <summary>
         /// Registers the dependencies for the application.
         /// </summary>
@@ -236,14 +233,10 @@ namespace EPR.Calculator.Service.Function
                 BillingFileExporter = provider.GetRequiredService<IBillingFileExporter<CalcResult>>(),
                 producerDataInsertService = provider.GetRequiredService<IPrepareProducerDataInsertService>(),
             });
-#if !DEBUG
 
             SetupBlobStorage(services);
             services.AddTransient<IConfigurationService, Configuration>();
-#elif DEBUG
-            services.AddTransient<IStorageService, LocalFileStorageService>();
-            services.AddTransient<IConfigurationService, LocalDevelopmentConfiguration>();
-#endif
+
         }
 
         public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
