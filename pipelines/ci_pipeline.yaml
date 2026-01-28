@@ -26,8 +26,6 @@ variables:
     value: 'EPR.Calculator.Service.Function'
   - name: testProjectFolder
     value: 'EPR.Calculator.Service.Common.UnitTests'
-  - name: DataFolder
-    value: EPR.Calculator.API.Data
   - name: sonarQubeProjectKey
     value: epr-calculator-service
   - name: sonarQubeProjectName
