@@ -109,7 +109,6 @@ namespace EPR.Calculator.Service.Function.Services
             string pipelineName)
         {
             var financialYear = args.FinancialYear;
-            var isOrganisationPipeline = this.IsOrganisationPipeline(pipelineName);
 
             return new AzureSynapseRunnerParameters
             {
@@ -118,7 +117,7 @@ namespace EPR.Calculator.Service.Function.Services
                 MaxCheckCount = this.configuration.MaxCheckCount,
                 PipelineName = pipelineName,
                 CalculatorRunId = args.Id,
-                CalendarYear = isOrganisationPipeline ? Util.GetCalendarYearFromFinancialYearNew(financialYear) : Util.GetCalendarYearFromFinancialYear(financialYear),
+                RelativeYear = Util.GetRelativeYearFromFinancialYear(financialYear),
             };
         }
 
