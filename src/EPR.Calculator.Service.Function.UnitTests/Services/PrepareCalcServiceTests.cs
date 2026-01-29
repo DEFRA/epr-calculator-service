@@ -319,14 +319,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 new() {
                     Id = 1,
-                    RelativeYear = "2024-25",
+                    RelativeYear = "2024",
                     EffectiveFrom = DateTime.UtcNow,
                     CreatedBy = "Test user",
                     CreatedAt = DateTime.UtcNow,
                 },
                 new() {
                     Id = 2,
-                    RelativeYear = "2024-25",
+                    RelativeYear = "2024",
                     EffectiveFrom = DateTime.UtcNow,
                     CreatedBy = "Test user",
                     CreatedAt = DateTime.UtcNow,
@@ -429,14 +429,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 new() {
                     Id = 1,
-                    RelativeYear = "2024-25",
+                    RelativeYear = "2024",
                     EffectiveFrom = DateTime.UtcNow,
                     CreatedBy = "Test user",
                     CreatedAt = DateTime.UtcNow,
                 },
                 new() {
                     Id = 2,
-                    RelativeYear = "2024-25",
+                    RelativeYear = "2024",
                     EffectiveFrom = DateTime.UtcNow,
                     CreatedBy = "Test user",
                     CreatedAt = DateTime.UtcNow,
