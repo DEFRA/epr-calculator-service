@@ -38,7 +38,7 @@
             this.Validator = validator;
             this.TelemetryLogger = telemetryLogger;
             this.CalculatorRunOrgData = calculatorRunOrgData;
-            this.CalculatorRunPomData = calculatorRunPomData; 
+            this.CalculatorRunPomData = calculatorRunPomData;
         }
 
         private ICalculatorTelemetryLogger TelemetryLogger { get; init; }
@@ -104,15 +104,15 @@
             }
 
             string financialYear = calcRun?.FinancialYearId ?? string.Empty;
-            var calendarYear = Util.GetCalendarYearFromFinancialYear(financialYear);
+            var relativeYear = Util.GetRelativeYearFromFinancialYear(financialYear);
             var createdBy = updatedBy;
             using (var transaction = await this.Context.Database.BeginTransactionAsync(timeout))
             {
                 try
                 {
                     this.TelemetryLogger.LogInformation(new TrackMessage { RunId = runId, RunName = runName, Message = $"Creating run organization and POM for run: {runId}" });
-                    await CalculatorRunOrgData.LoadOrgDataForCalcRun(runId, calendarYear, createdBy, timeout);
-                    await CalculatorRunPomData.LoadPomDataForCalcRun(runId, calendarYear, createdBy, timeout);
+                    await CalculatorRunOrgData.LoadOrgDataForCalcRun(runId, relativeYear, createdBy, timeout);
+                    await CalculatorRunPomData.LoadPomDataForCalcRun(runId, relativeYear, createdBy, timeout);
 
                     calcRun!.CalculatorRunClassificationId = runClassifications.Single(x => x.Status == RunClassification.RUNNING.ToString()).Id;
                     await this.Context.SaveChangesAsync(timeout);

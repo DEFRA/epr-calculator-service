@@ -41,8 +41,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 CreatedBy = "TestUser",
                 CreatedAt = new DateTime(2023, 1, 1),
                 Financial_Year = calculatorRunFinancialYear,
-                CalculatorRunOrganisationDataMaster = new CalculatorRunOrganisationDataMaster { CreatedBy = "", CalendarYear = "2024", EffectiveFrom = new DateTime(2023, 1, 1), CreatedAt = new DateTime(2023, 1, 1) },
-                CalculatorRunPomDataMaster = new CalculatorRunPomDataMaster { CreatedBy = "", CalendarYear = "2024", EffectiveFrom = new DateTime(2023, 1, 1), CreatedAt = new DateTime(2023, 1, 1) },
+                CalculatorRunOrganisationDataMaster = new CalculatorRunOrganisationDataMaster { CreatedBy = "", RelativeYear = "2024", EffectiveFrom = new DateTime(2023, 1, 1), CreatedAt = new DateTime(2023, 1, 1) },
+                CalculatorRunPomDataMaster = new CalculatorRunPomDataMaster { CreatedBy = "", RelativeYear = "2024", EffectiveFrom = new DateTime(2023, 1, 1), CreatedAt = new DateTime(2023, 1, 1) },
                 LapcapDataMaster = new LapcapDataMaster
                 {
                     LapcapFileName = "LapcapFile.csv",

@@ -127,11 +127,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Assert
             var calcRun = await this.Context.CalculatorRuns.SingleAsync(x => x.Id == runId);
-            var expectedCalendarYear = financialYear.AddYears(-1).ToString("yyyy");
+            var expectedRelativeYear = financialYear.ToString("yyyy");
             Assert.IsNotNull(calcRun);
             Assert.AreEqual((int)RunClassification.RUNNING, calcRun.CalculatorRunClassificationId);
-            this.CalculatorRunOrgData.Verify(s => s.LoadOrgDataForCalcRun(runId, expectedCalendarYear, It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
-            this.CalculatorRunPomData.Verify(s => s.LoadPomDataForCalcRun(runId, expectedCalendarYear, It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
+            this.CalculatorRunOrgData.Verify(s => s.LoadOrgDataForCalcRun(runId, expectedRelativeYear, It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
+            this.CalculatorRunPomData.Verify(s => s.LoadPomDataForCalcRun(runId, expectedRelativeYear, It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [TestMethod]

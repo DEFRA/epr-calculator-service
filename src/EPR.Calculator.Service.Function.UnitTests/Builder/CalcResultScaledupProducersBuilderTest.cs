@@ -47,7 +47,7 @@
             var calcRunPomDataMaster = new CalculatorRunPomDataMaster
             {
                 Id = 1,
-                CalendarYear = "2024",
+                RelativeYear = "2024",
                 EffectiveFrom = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test User",
@@ -58,7 +58,7 @@
             var calcRunOrganisationDataMaster = new CalculatorRunOrganisationDataMaster
             {
                 Id = 11,
-                CalendarYear = "2024",
+                RelativeYear = "2024",
                 EffectiveFrom = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test User",

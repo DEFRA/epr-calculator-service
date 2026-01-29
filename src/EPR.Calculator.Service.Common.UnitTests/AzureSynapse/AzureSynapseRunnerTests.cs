@@ -77,7 +77,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
            => new AzureSynapseRunnerParameters
            {
                CalculatorRunId = CalculatorRunId,
-               CalendarYear = this.Fixture.Create<CalendarYear>(),
+               RelativeYear = this.Fixture.Create<CalendarYear>(),
                CheckInterval = CheckInterval,
                MaxCheckCount = MaxCheckCount,
                PipelineUrl = new Uri(TestPipelineUrl),
@@ -139,7 +139,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             var testdat = new AzureSynapseRunnerParameters
             {
                 CalculatorRunId = CalculatorRunId,
-                CalendarYear = this.Fixture.Create<CalendarYear>(),
+                RelativeYear = this.Fixture.Create<CalendarYear>(),
                 CheckInterval = CheckInterval,
                 MaxCheckCount = MaxCheckCount,
                 PipelineUrl = new Uri(TestPipelineUrl),

@@ -2131,7 +2131,7 @@
             list.Add(new CalculatorRunOrganisationDataMaster
             {
                 Id = 1,
-                CalendarYear = "2024",
+                RelativeYear = "2024",
                 EffectiveFrom = DateTime.UtcNow,
                 EffectiveTo = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
@@ -2140,7 +2140,7 @@
             list.Add(new CalculatorRunOrganisationDataMaster
             {
                 Id = 2,
-                CalendarYear = "2024",
+                RelativeYear = "2024",
                 EffectiveFrom = DateTime.UtcNow,
                 EffectiveTo = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
@@ -2193,7 +2193,7 @@
             list.Add(new CalculatorRunPomDataMaster
             {
                 Id = 1,
-                CalendarYear = "2024",
+                RelativeYear = "2024",
                 EffectiveFrom = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test User",
@@ -2201,7 +2201,7 @@
             list.Add(new CalculatorRunPomDataMaster
             {
                 Id = 2,
-                CalendarYear = "2024",
+                RelativeYear = "2024",
                 EffectiveFrom = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test User",

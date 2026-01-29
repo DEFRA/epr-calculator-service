@@ -1898,7 +1898,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             });
             context.CalculatorRunOrganisationDataMaster.AddRange(new List<CalculatorRunOrganisationDataMaster>
             {
-                new CalculatorRunOrganisationDataMaster {Id = 1,CalendarYear = "2025-26", CreatedAt= DateTime.UtcNow, CreatedBy = "TestUser" , EffectiveFrom = DateTime.UtcNow}
+                new CalculatorRunOrganisationDataMaster {Id = 1,RelativeYear = "2025-26", CreatedAt= DateTime.UtcNow, CreatedBy = "TestUser" , EffectiveFrom = DateTime.UtcNow}
             });
 
             context.CalculatorRunOrganisationDataDetails.AddRange(new List<CalculatorRunOrganisationDataDetail>

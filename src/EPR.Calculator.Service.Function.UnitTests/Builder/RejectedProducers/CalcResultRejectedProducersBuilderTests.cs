@@ -47,7 +47,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
             var masterOld = new CalculatorRunOrganisationDataMaster
             {
                 Id = 1,
-                CalendarYear = "2025",
+                RelativeYear = "2025",
                 EffectiveFrom = DateTime.UtcNow.AddDays(-10),
                 CreatedAt = DateTime.UtcNow.AddDays(-10),
                 CreatedBy = "testsuperuser.paycal"
@@ -55,7 +55,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
             var masterLatest = new CalculatorRunOrganisationDataMaster
             {
                 Id = 2,
-                CalendarYear = "2025",
+                RelativeYear = "2025",
                 EffectiveFrom = DateTime.UtcNow.AddDays(-5),
                 CreatedAt = DateTime.UtcNow.AddDays(-5),
                 CreatedBy = "testsuperuser.paycal"

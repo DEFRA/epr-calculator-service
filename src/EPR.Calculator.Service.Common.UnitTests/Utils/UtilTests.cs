@@ -52,21 +52,6 @@ namespace EPR.Calculator.Service.Common.UnitTests.Utils
             Assert.AreEqual("Financial year cannot be null or empty (Parameter 'value')", exception.Message);
         }
 
-        /// <summary>
-        /// Tests that GetCalendarYearFromFinancialYear returns the previous year as a string for a valid financial year string.
-        /// </summary>
-        /// <param name="financialYear">The financial year string to convert.</param>
-        /// <param name="expectedCalendarYear">The expected previous calendar year as a string.</param>
-        [TestMethod]
-        [DataRow("2024-25", "2023")]
-        [DataRow("2023-24", "2022")]
-        [DataRow("2022-23", "2021")]
-        public void GetCalendarYearFromFinancialYear_ValidString_ShouldReturnPreviousYearAsString(string financialYear, string expectedCalendarYear)
-        {
-            var result = Util.GetCalendarYearFromFinancialYear(financialYear);
-            Assert.AreEqual((CalendarYear)expectedCalendarYear, result);
-        }
-
         [TestMethod]
         [DataRow("2024")]
         [DataRow("24-25")]
@@ -88,10 +73,10 @@ namespace EPR.Calculator.Service.Common.UnitTests.Utils
         }
 
         [TestMethod]
-        public void GetCalendarYearFromFinancialYearNew_NullString_ShouldThrowArgumentException()
+        public void GetRelativeYearFromFinancialYear_NullString_ShouldThrowArgumentException()
         {
             FinancialYear fy = default;
-            var exception = Assert.ThrowsException<ArgumentException>(() => Util.GetCalendarYearFromFinancialYearNew(fy));
+            var exception = Assert.ThrowsException<ArgumentException>(() => Util.GetRelativeYearFromFinancialYear(fy));
             Assert.AreEqual("Financial year cannot be null or empty (Parameter 'value')", exception.Message);
         }
     }

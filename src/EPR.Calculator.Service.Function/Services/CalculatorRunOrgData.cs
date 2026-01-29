@@ -8,11 +8,11 @@ namespace EPR.Calculator.Service.Function.Services {
     using Microsoft.Data.SqlClient;
     using Microsoft.EntityFrameworkCore;
 
-    public interface ICalculatorRunOrgData { Task LoadOrgDataForCalcRun(int runId, string calendarYear, string createdBy, CancellationToken cancellationToken); } 
+    public interface ICalculatorRunOrgData { Task LoadOrgDataForCalcRun(int runId, string calendarYear, string createdBy, CancellationToken cancellationToken); }
 
     public class CalculatorRunOrgData : ICalculatorRunOrgData
     {
-        private readonly ApplicationDBContext _context; 
+        private readonly ApplicationDBContext _context;
         public CalculatorRunOrgData(ApplicationDBContext context) { _context = context; }
 
         public async Task LoadOrgDataForCalcRun(int runId, string calendarYear, string createdBy, CancellationToken cancellationToken)
@@ -31,7 +31,7 @@ namespace EPR.Calculator.Service.Function.Services {
 
             var newMaster = new CalculatorRunOrganisationDataMaster
             {
-                CalendarYear = calendarYear,
+                RelativeYear = calendarYear,
                 CreatedAt = now,
                 CreatedBy = createdBy,
                 EffectiveFrom = now
@@ -67,10 +67,10 @@ namespace EPR.Calculator.Service.Function.Services {
                     organisation_id,
                     organisation_name,
                     trading_name,
-                    CASE 
-                        WHEN LTRIM(RTRIM(subsidiary_id)) = '' 
-                        THEN NULL 
-                        ELSE subsidiary_id 
+                    CASE
+                        WHEN LTRIM(RTRIM(subsidiary_id)) = ''
+                        THEN NULL
+                        ELSE subsidiary_id
                     END,
                     obligation_status,
                     submitter_id,
@@ -87,7 +87,7 @@ namespace EPR.Calculator.Service.Function.Services {
 
             calculatorRun.CalculatorRunOrganisationDataMasterId = newMasterId;
 
-            await _context.SaveChangesAsync(cancellationToken);      
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
     }
