@@ -760,7 +760,7 @@
                 new ()
                 {
                     Id = 1,
-                    CalendarYear = "2024-25",
+                    RelativeYear = "2024",
                     EffectiveFrom = DateTime.UtcNow,
                     CreatedBy = "Test user",
                     CreatedAt = DateTime.UtcNow,
@@ -768,7 +768,7 @@
                 new ()
                 {
                     Id = 2,
-                    CalendarYear = "2024-25",
+                    RelativeYear = "2024",
                     EffectiveFrom = DateTime.UtcNow,
                     CreatedBy = "Test user",
                     CreatedAt = DateTime.UtcNow,
@@ -912,14 +912,14 @@
             {
                 new ()
                 {
-                    CalendarYear = "2024-25",
+                    RelativeYear = "2024",
                     EffectiveFrom = DateTime.UtcNow,
                     CreatedBy = "Test user",
                     CreatedAt = DateTime.UtcNow,
                 },
                 new ()
                 {
-                    CalendarYear = "2024-25",
+                    RelativeYear = "2024",
                     EffectiveFrom = DateTime.UtcNow,
                     CreatedBy = "Test user",
                     CreatedAt = DateTime.UtcNow,

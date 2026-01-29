@@ -53,7 +53,7 @@
                 this.PipelineClientFactory,
                 args.PipelineUrl,
                 args.PipelineName,
-                args.CalendarYear);
+                args.RelativeYear);
 
             // If PipelineId null just return false
             if (pipelineRunId == null)

@@ -91,7 +91,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var masterRecords = await this.context.CalculatorRunPomDataMaster.ToListAsync();
             Assert.AreEqual(1, masterRecords.Count);
             var pomMasterRun1 = masterRecords[0];
-            Assert.AreEqual(calendarYear, pomMasterRun1.CalendarYear);
+            Assert.AreEqual(calendarYear, pomMasterRun1.RelativeYear);
             Assert.AreEqual(createdBy, pomMasterRun1.CreatedBy);
             Assert.IsNull(pomMasterRun1.EffectiveTo);
 
@@ -110,8 +110,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.context.CalculatorRuns.Add(run2);
             await this.context.SaveChangesAsync();
 
-            await service.LoadPomDataForCalcRun(runId2, calendarYear, createdBy, cancellationToken); 
-            
+            await service.LoadPomDataForCalcRun(runId2, calendarYear, createdBy, cancellationToken);
+
             var updatedMasterRecords = await this.context.CalculatorRunPomDataMaster.ToListAsync();
             Assert.AreEqual(2, updatedMasterRecords.Count);
             var pomMasterRun2 = updatedMasterRecords[1];
@@ -127,6 +127,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var calculatorRun2 = await this.context.CalculatorRuns.FirstOrDefaultAsync(c => c.Id == runId2);
             Assert.AreEqual(pomMasterRun2.Id, calculatorRun2!.CalculatorRunPomDataMasterId);
-        } 
+        }
     }
 }

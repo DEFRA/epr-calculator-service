@@ -32,7 +32,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             this.TestClass = new AzureSynapseRunnerParameters
             {
                 CalculatorRunId = this.CalculatorRunId,
-                CalendarYear = this.CalendarYear,
+                RelativeYear = this.CalendarYear,
                 CheckInterval = this.CheckInterval,
                 MaxCheckCount = this.MaxCheckCount,
                 PipelineName = this.PipelineName,
@@ -68,7 +68,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             var instance = new AzureSynapseRunnerParameters
             {
                 CalculatorRunId = this.CalculatorRunId,
-                CalendarYear = this.CalendarYear,
+                RelativeYear = this.CalendarYear,
                 CheckInterval = this.CheckInterval,
                 MaxCheckCount = this.MaxCheckCount,
                 PipelineName = this.PipelineName,
@@ -78,7 +78,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             // Assert
             Assert.IsNotNull(instance);
             Assert.AreEqual(this.CalculatorRunId, this.TestClass.CalculatorRunId);
-            Assert.AreEqual(this.CalendarYear, this.TestClass.CalendarYear);
+            Assert.AreEqual(this.CalendarYear, this.TestClass.RelativeYear);
             Assert.AreEqual(this.CheckInterval, this.TestClass.CheckInterval);
             Assert.AreEqual(this.MaxCheckCount, this.TestClass.MaxCheckCount);
             Assert.AreEqual(this.PipelineName, this.TestClass.PipelineName);

@@ -8,12 +8,12 @@ namespace EPR.Calculator.Service.Function.Services {
     using Microsoft.Data.SqlClient;
     using Microsoft.EntityFrameworkCore;
 
-    public interface ICalculatorRunPomData { Task LoadPomDataForCalcRun(int runId, string calendarYear, string createdBy, CancellationToken cancellationToken); } 
+    public interface ICalculatorRunPomData { Task LoadPomDataForCalcRun(int runId, string calendarYear, string createdBy, CancellationToken cancellationToken); }
 
     public class CalculatorRunPomData : ICalculatorRunPomData
     {
-        private readonly ApplicationDBContext _context; 
-        
+        private readonly ApplicationDBContext _context;
+
         public CalculatorRunPomData(ApplicationDBContext context) { _context = context; }
 
         public async Task LoadPomDataForCalcRun(int runId, string calendarYear, string createdBy, CancellationToken cancellationToken)
@@ -31,7 +31,7 @@ namespace EPR.Calculator.Service.Function.Services {
 
             var newMaster = new CalculatorRunPomDataMaster
             {
-                CalendarYear = calendarYear,
+                RelativeYear = calendarYear,
                 CreatedAt = now,
                 CreatedBy = createdBy,
                 EffectiveFrom = now
@@ -47,7 +47,7 @@ namespace EPR.Calculator.Service.Function.Services {
                 $@"
                 INSERT INTO calculator_run_pom_data_detail
                 (
-                    calculator_run_pom_data_master_id, 
+                    calculator_run_pom_data_master_id,
                     load_ts,
                     organisation_id,
                     packaging_activity,
@@ -85,7 +85,7 @@ namespace EPR.Calculator.Service.Function.Services {
 
             calculatorRun.CalculatorRunPomDataMasterId = newMasterId;
 
-            await _context.SaveChangesAsync(cancellationToken);  
+            await _context.SaveChangesAsync(cancellationToken);
         }
     }
 }

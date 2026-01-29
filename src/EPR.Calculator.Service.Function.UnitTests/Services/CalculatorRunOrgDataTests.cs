@@ -86,7 +86,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var masterRecords = await this.context.CalculatorRunOrganisationDataMaster.ToListAsync();
             Assert.AreEqual(1, masterRecords.Count);
             var orgMasterRun1 = masterRecords[0];
-            Assert.AreEqual(calendarYear, orgMasterRun1.CalendarYear);
+            Assert.AreEqual(calendarYear, orgMasterRun1.RelativeYear);
             Assert.AreEqual(createdBy, orgMasterRun1.CreatedBy);
             Assert.IsNull(orgMasterRun1.EffectiveTo);
 
@@ -105,8 +105,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.context.CalculatorRuns.Add(run2);
             await this.context.SaveChangesAsync();
 
-            await service.LoadOrgDataForCalcRun(runId2, calendarYear, createdBy, cancellationToken); 
-            
+            await service.LoadOrgDataForCalcRun(runId2, calendarYear, createdBy, cancellationToken);
+
             var updatedMasterRecords = await this.context.CalculatorRunOrganisationDataMaster.ToListAsync();
             Assert.AreEqual(2, updatedMasterRecords.Count);
             var orgMasterRun2 = updatedMasterRecords[1];
@@ -122,6 +122,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var calculatorRun2 = await this.context.CalculatorRuns.FirstOrDefaultAsync(c => c.Id == runId2);
             Assert.AreEqual(orgMasterRun2.Id, calculatorRun2!.CalculatorRunOrganisationDataMasterId);
-        } 
+        }
     }
 }
