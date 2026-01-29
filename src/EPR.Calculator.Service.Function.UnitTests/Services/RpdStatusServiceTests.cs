@@ -121,7 +121,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.AreEqual((int)RunClassification.RUNNING, calcRun.CalculatorRunClassificationId);
             this.Wrapper.Verify(
                 x => x.ExecuteSqlAsync(
-                It.Is<FormattableString>(s => s.ToString().Contains($"calendarYear = {expectedRelativeYear}")),
+                It.Is<FormattableString>(s => s.ToString().Contains($"relativeyear = {expectedRelativeYear}")),
                 It.IsAny<CancellationToken>()),
                 Times.Exactly(2));
         }

@@ -8,7 +8,7 @@
         public int CalculatorRunId { get; init; }
 
         /// <summary>
-        /// Gets the Calendar Year, in the format yyyy.
+        /// Gets the Relative Year, in the format yyyy.
         /// </summary>
         required public CalendarYear RelativeYear { get; init; }
 
