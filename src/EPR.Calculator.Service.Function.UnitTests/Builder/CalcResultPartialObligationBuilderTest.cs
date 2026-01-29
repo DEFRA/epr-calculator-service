@@ -22,13 +22,13 @@
 
         private void PrepareData()
         {
-            var year = new CalculatorRunFinancialYear { Name = "2024-25" };
+            var year = new CalculatorRunFinancialYear { Name = "2025-26" };
 
             //Run 1
             var calcRunOrganisationDataMaster = new CalculatorRunOrganisationDataMaster
             {
                 Id = 11,
-                CalendarYear = "2024",
+                RelativeYear = "2025",
                 EffectiveFrom = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test User",
@@ -124,7 +124,7 @@
             var calcRunOrganisationDataMaster2 = new CalculatorRunOrganisationDataMaster
             {
                 Id = 22,
-                CalendarYear = "2024",
+                RelativeYear = "2024",
                 EffectiveFrom = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test User",

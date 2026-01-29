@@ -35,24 +35,12 @@
         }
 
         /// <summary>
-        /// Converts a financial year string to the previous calendar year as a string.
+        /// Converts a financial year string to return the first part of financial year as a string.
         /// </summary>
         /// <param name="financialYear">The financial year string to convert, in the format "YYYY-YY".</param>
         /// <returns>The previous calendar year as a string.</returns>
         /// <exception cref="ArgumentException">Thrown when the financial year string is null or empty.</exception>
-        public static CalendarYear GetCalendarYearFromFinancialYear(FinancialYear financialYear)
-        {
-            int year = int.Parse(GetStartYearFromFinancialYear(financialYear.ToString()));
-            return (year - 1).ToString();
-        }
-
-        /// <summary>
-        /// Converts a financial year string to return the current calendar year as a string.
-        /// </summary>
-        /// <param name="financialYear">The financial year string to convert, in the format "YYYY-YY".</param>
-        /// <returns>The previous calendar year as a string.</returns>
-        /// <exception cref="ArgumentException">Thrown when the financial year string is null or empty.</exception>
-        public static CalendarYear GetCalendarYearFromFinancialYearNew(FinancialYear financialYear)
+        public static CalendarYear GetRelativeYearFromFinancialYear(FinancialYear financialYear)
         {
             // Returns the start year of the financial year as the calendar year.
             // For example, "2025-26" returns "2025".
