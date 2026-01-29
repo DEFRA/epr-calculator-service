@@ -21,7 +21,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             fixture.Customizations.Add(new CalendarYearCustomisation());
 
             this.CalculatorRunId = fixture.Create<int>();
-            this.CalendarYear = fixture.Create<CalendarYear>();
+            this.RelativeYear = fixture.Create<CalendarYear>();
             this.CheckInterval = fixture.Create<int>();
             this.MaxCheckCount = fixture.Create<int>();
             this.PipelineName = fixture.Create<string>();
@@ -32,7 +32,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             this.TestClass = new AzureSynapseRunnerParameters
             {
                 CalculatorRunId = this.CalculatorRunId,
-                RelativeYear = this.CalendarYear,
+                RelativeYear = this.RelativeYear,
                 CheckInterval = this.CheckInterval,
                 MaxCheckCount = this.MaxCheckCount,
                 PipelineName = this.PipelineName,
@@ -44,7 +44,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
         private int CalculatorRunId { get; }
 
-        private CalendarYear CalendarYear { get; }
+        private CalendarYear RelativeYear { get; }
 
         private int CheckInterval { get; }
 
@@ -68,7 +68,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             var instance = new AzureSynapseRunnerParameters
             {
                 CalculatorRunId = this.CalculatorRunId,
-                RelativeYear = this.CalendarYear,
+                RelativeYear = this.RelativeYear,
                 CheckInterval = this.CheckInterval,
                 MaxCheckCount = this.MaxCheckCount,
                 PipelineName = this.PipelineName,
@@ -78,7 +78,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             // Assert
             Assert.IsNotNull(instance);
             Assert.AreEqual(this.CalculatorRunId, this.TestClass.CalculatorRunId);
-            Assert.AreEqual(this.CalendarYear, this.TestClass.RelativeYear);
+            Assert.AreEqual(this.RelativeYear, this.TestClass.RelativeYear);
             Assert.AreEqual(this.CheckInterval, this.TestClass.CheckInterval);
             Assert.AreEqual(this.MaxCheckCount, this.TestClass.MaxCheckCount);
             Assert.AreEqual(this.PipelineName, this.TestClass.PipelineName);
