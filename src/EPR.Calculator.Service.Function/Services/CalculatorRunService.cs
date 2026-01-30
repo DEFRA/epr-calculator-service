@@ -121,12 +121,6 @@ namespace EPR.Calculator.Service.Function.Services
             };
         }
 
-        public bool IsOrganisationPipeline(string pipelineName)
-        {
-            // Returns true if 'org' appears anywhere in the pipeline name, case-insensitive.
-            return pipelineName.IndexOf("org", StringComparison.OrdinalIgnoreCase) >= 0;
-        }
-
         /// <inheritdoc/>
         public async Task<bool> PrepareResultsFileAsync(CalculatorRunParameter calculatorRunParameter, string? runName)
         {

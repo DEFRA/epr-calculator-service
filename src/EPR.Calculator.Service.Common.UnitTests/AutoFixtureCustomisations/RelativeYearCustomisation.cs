@@ -4,20 +4,20 @@
     using AutoFixture.Kernel;
 
     /// <summary>
-    /// Customisation that allows AutoFixture to generate calendar years.
+    /// Customisation that allows AutoFixture to generate relative years.
     /// </summary>
-    public class CalendarYearCustomisation : ISpecimenBuilder
+    public class RelativeYearCustomisation : ISpecimenBuilder
     {
         /// <inheritdoc/>
         public object Create(object request, ISpecimenContext context)
         {
-            if (!typeof(CalendarYear).Equals(request))
+            if (!typeof(RelativeYear).Equals(request))
             {
                 return new NoSpecimen();
             }
 
             var year = new Random().Next(0, 99);
-            return new CalendarYear($"20{year:00}");
+            return new RelativeYear($"20{year:00}");
         }
     }
 }
