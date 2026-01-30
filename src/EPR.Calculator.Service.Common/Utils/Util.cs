@@ -40,12 +40,12 @@
         /// <param name="financialYear">The financial year string to convert, in the format "YYYY-YY".</param>
         /// <returns>The Relative year as a string.</returns>
         /// <exception cref="ArgumentException">Thrown when the financial year string is null or empty.</exception>
-        public static CalendarYear GetRelativeYearFromFinancialYear(FinancialYear financialYear)
+        public static RelativeYear GetRelativeYearFromFinancialYear(FinancialYear financialYear)
         {
-            // Returns the start year of the financial year as the calendar year.
+            // Returns the start year of the financial year as the relative year.
             // For example, "2025-26" returns "2025".
             int year = int.Parse(GetStartYearFromFinancialYear(financialYear.ToString()));
-            return new CalendarYear(year.ToString());
+            return new RelativeYear(year.ToString());
         }
 
         public static FormattableString GetFormattedSqlString(string procedureName, int runId, string relativeYear, string createdBy)

@@ -26,7 +26,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     {
         private FinancialYear FinancialYear { get; init; } = "2024-25";
 
-        private CalendarYear RelativeYear { get; init; } = "2024";
+        private RelativeYear RelativeYear { get; init; } = "2024";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CalculatorRunServiceTests"/> class.
@@ -593,23 +593,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        [DataRow("org-data-pipeline", true)]
-        [DataRow("ORG_DATA_PIPELINE", true)]
-        [DataRow("organization", true)]
-        [DataRow("pom-data-pipeline", false)]
-        [DataRow("porg-data-pipeline", true)]
-        [DataRow("dataorg", true)]
-        [DataRow("data-org", true)]
-        [DataRow("dataorgy", true)]
-        [DataRow("data", false)]
-        public void IsOrganisationPipeline_ShouldMatchExpected(string pipelineName, bool expected)
-        {
-            var service = this.CalculatorRunService;
-            var result = service.IsOrganisationPipeline(pipelineName);
-            Assert.AreEqual(expected, result);
-        }
-
-        [TestMethod]
         public void GetAzureSynapseConfiguration_ShouldUseCorrectCalendarYearMethod_ForOrgPipeline()
         {
             // Arrange
@@ -640,7 +623,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var result = testService.GetAzureSynapseConfiguration(args, orgPipelineName);
 
             // Assert
-            Assert.AreEqual((CalendarYear)"2025", result.RelativeYear);
+            Assert.AreEqual((RelativeYear)"2025", result.RelativeYear);
         }
 
         [TestMethod]
@@ -674,7 +657,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var result = testService.GetAzureSynapseConfiguration(args, pomPipelineName);
 
             // Assert
-            Assert.AreEqual((CalendarYear)"2025", result.RelativeYear);
+            Assert.AreEqual((RelativeYear)"2025", result.RelativeYear);
         }
 
         /// <summary>

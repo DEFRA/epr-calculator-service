@@ -4,25 +4,25 @@ namespace EPR.Calculator.Service.Common.UnitTests.Misc
     using EPR.Calculator.Service.Common.UnitTests.AutoFixtureCustomisations;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-    /// <summary>Unit tests for the <see cref="CalendarYear"/> class.</summary>
+    /// <summary>Unit tests for the <see cref="RelativeYear"/> class.</summary>
     [TestClass]
-    public class CalendarYearTests
+    public class RelativeYearTests
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CalendarYearTests"/> class.
+        /// Initializes a new instance of the <see cref="RelativeYearTests"/> class.
         /// </summary>
-        public CalendarYearTests()
+        public RelativeYearTests()
         {
             this.Fixture = new Fixture();
-            this.Fixture.Customizations.Add(new CalendarYearCustomisation());
+            this.Fixture.Customizations.Add(new RelativeYearCustomisation());
             this.Fixture.Customizations.Add(new FinancialYearCustomisation());
-            this.Value = this.Fixture.Create<CalendarYear>();
-            this.TestClass = new CalendarYear(this.Value);
+            this.Value = this.Fixture.Create<RelativeYear>();
+            this.TestClass = new RelativeYear(this.Value);
         }
 
         private Fixture Fixture { get; init; }
 
-        private CalendarYear TestClass { get; init; }
+        private RelativeYear TestClass { get; init; }
 
         private string Value { get; init; }
 
@@ -31,7 +31,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.Misc
         public void CanConstruct()
         {
             // Act
-            var instance = new CalendarYear(this.Value);
+            var instance = new RelativeYear(this.Value);
 
             // Assert
             Assert.IsNotNull(instance);
@@ -46,7 +46,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.Misc
         public void CannotConstructWithInvalidValue(string invalidValue)
         {
             // Act
-            Assert.ThrowsException<ArgumentException>(() => new CalendarYear(invalidValue));
+            Assert.ThrowsException<ArgumentException>(() => new RelativeYear(invalidValue));
         }
 
         /// <summary>Tests for equality and inequality.</summary>
@@ -54,8 +54,8 @@ namespace EPR.Calculator.Service.Common.UnitTests.Misc
         public void ImplementsIEquatable_FinancialYear()
         {
             // Arrange
-            var same = new CalendarYear(this.Value);
-            var different = new CalendarYear("1234");
+            var same = new RelativeYear(this.Value);
+            var different = new RelativeYear("1234");
 
             // Assert
             Assert.IsFalse(this.TestClass.Equals(default(object)));
