@@ -18,10 +18,10 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
         public AzureSynapseRunnerParametersTests()
         {
             var fixture = new Fixture();
-            fixture.Customizations.Add(new CalendarYearCustomisation());
+            fixture.Customizations.Add(new RelativeYearCustomisation());
 
             this.CalculatorRunId = fixture.Create<int>();
-            this.RelativeYear = fixture.Create<CalendarYear>();
+            this.RelativeYear = fixture.Create<RelativeYear>();
             this.CheckInterval = fixture.Create<int>();
             this.MaxCheckCount = fixture.Create<int>();
             this.PipelineName = fixture.Create<string>();
@@ -44,7 +44,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
         private int CalculatorRunId { get; }
 
-        private CalendarYear RelativeYear { get; }
+        private RelativeYear RelativeYear { get; }
 
         private int CheckInterval { get; }
 
