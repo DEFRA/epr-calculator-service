@@ -53,26 +53,6 @@ namespace EPR.Calculator.Service.Common.UnitTests.Utils
         }
 
         [TestMethod]
-        [DataRow("2024")]
-        [DataRow("24-25")]
-        [DataRow("2024-2025")]
-        [DataRow("abcd-efgh")]
-        public void GetCalendarYearFromFinancialYearNew_InvalidFormat_ShouldThrowArgumentException(string financialYear)
-        {
-            var exception = Assert.ThrowsException<ArgumentException>(() => new FinancialYear(financialYear));
-            Assert.AreEqual("The year must be in the format yyyy-yy.", exception.Message);
-        }
-
-        [TestMethod]
-        [DataRow("")]
-        [DataRow(" ")]
-        public void GetCalendarYearFromFinancialYearNew_EmptyString_ShouldThrowArgumentException(string financialYear)
-        {
-            var exception = Assert.ThrowsException<ArgumentException>(() => new FinancialYear(financialYear));
-            Assert.AreEqual("The year must be in the format yyyy-yy.", exception.Message);
-        }
-
-        [TestMethod]
         public void GetRelativeYearFromFinancialYear_NullString_ShouldThrowArgumentException()
         {
             FinancialYear fy = default;

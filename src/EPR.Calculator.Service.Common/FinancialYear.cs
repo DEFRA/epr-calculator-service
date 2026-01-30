@@ -15,7 +15,7 @@
         /// </summary>
         /// <param name="value">The year in yyyy format.</param>
         /// <remarks>
-        /// Use this and <see cref="CalendarYear"/> in place of strings in places where it's helpfull to avoid
+        /// Use this and <see cref="RelativeYear"/> in place of strings in places where it's helpfull to avoid
         /// confusion between date types.
         /// </remarks>
         public FinancialYear(string value)
