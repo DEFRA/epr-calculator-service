@@ -566,7 +566,7 @@
                 mockErrorReportService.Object,
                 new Mock<ICalculatorTelemetryLogger>().Object);
 
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 2 };
+            var resultsRequestDto = new CalcResultsRequestDto { RunId = 4 };
 
             // Detach existing CalculatorRun entity if it is already being tracked
             var existingCalculatorRun = _context.ChangeTracker.Entries<CalculatorRun>()
@@ -1099,7 +1099,7 @@
             dbChunkerService.Setup(x => x.InsertRecords(It.IsAny<IEnumerable<ProducerReportedMaterial>>())).Callback<IEnumerable<ProducerReportedMaterial>>(arg => resultPRM = arg).Returns(Task.CompletedTask);
 
             await service.Transpose(resultsRequestDto, CancellationToken.None);
-            
+
             Assert.IsNotNull(resultProducerDetails);
             Assert.AreEqual(2, resultProducerDetails.Count());
             Assert.IsFalse(resultProducerDetails.Any(x=>x.SubsidiaryId == "100"));
