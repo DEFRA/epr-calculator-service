@@ -1,5 +1,7 @@
 namespace EPR.Calculator.Service.Function.UnitTests
 {
+    using EPR.Calculator.Service.Common;
+
     using EPR.Calculator.Service.Function;
     using EPR.Calculator.Service.Function.Constants;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -18,7 +20,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Arrange
             var testCalculatorRunId = 1868588173;
-            var testFinancialYear = "TestValue1739994975";
+            var testFinancialYear = new FinancialYear("TestValue1739994975");
             var testCreatedBy = "TestValue873880154";
 
             // Act

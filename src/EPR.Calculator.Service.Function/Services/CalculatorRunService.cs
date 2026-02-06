@@ -117,7 +117,7 @@ namespace EPR.Calculator.Service.Function.Services
                 MaxCheckCount = this.configuration.MaxCheckCount,
                 PipelineName = pipelineName,
                 CalculatorRunId = args.Id,
-                RelativeYear = Util.GetRelativeYearFromFinancialYear(financialYear),
+                RelativeYearValue = financialYear.ToRelativeYear().ToInt(),
             };
         }
 

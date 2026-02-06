@@ -99,22 +99,28 @@
                 throw new ValidationException(vr.ToString());
             }
 
-            string financialYear = calcRun?.FinancialYearId ?? string.Empty;
-            var relativeYear = Util.GetRelativeYearFromFinancialYear(financialYear);
-            var createdBy = updatedBy;
+            FinancialYear financialYear = new FinancialYear(calcRun?.FinancialYearId ?? string.Empty);
+            var relativeYear = financialYear.ToRelativeYear();
+
             using (var transaction = await this.Context.Database.BeginTransactionAsync(timeout))
             {
                 try
                 {
                     this.TelemetryLogger.LogInformation(new TrackMessage { RunId = runId, RunName = runName, Message = $"Creating run organization and POM for run: {runId}" });
-                    var createRunOrgCommand = Util.GetFormattedSqlString("dbo.CreateRunOrganization", runId, relativeYear, createdBy);
-                    await this.Wrapper.ExecuteSqlAsync(createRunOrgCommand, timeout);
-                    var createRunPomCommand = Util.GetFormattedSqlString("dbo.CreateRunPom", runId, relativeYear, createdBy);
-                    await this.Wrapper.ExecuteSqlAsync(createRunPomCommand, timeout);
+
+                    await this.Wrapper.ExecuteSqlAsync(
+                        $"exec dbo.CreateRunOrganization @RunId ={runId}, @relativeyear = {relativeYear.ToInt()}, @createdBy = {updatedBy}",
+                        timeout);
+
+                    await this.Wrapper.ExecuteSqlAsync(
+                        $"exec dbo.CreateRunPom @RunId ={runId}, @relativeyear = {relativeYear.ToInt()}, @createdBy = {updatedBy}",
+                        timeout);
 
                     calcRun!.CalculatorRunClassificationId = runClassifications.Single(x => x.Status == RunClassification.RUNNING.ToString()).Id;
+
                     await this.Context.SaveChangesAsync(timeout);
                     await transaction.CommitAsync(timeout);
+
                     return RunClassification.RUNNING;
                 }
                 catch (Exception)

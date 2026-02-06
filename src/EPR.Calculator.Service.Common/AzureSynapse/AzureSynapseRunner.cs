@@ -53,7 +53,7 @@
                 this.PipelineClientFactory,
                 args.PipelineUrl,
                 args.PipelineName,
-                args.RelativeYear);
+                args.RelativeYear());
 
             // If PipelineId null just return false
             if (pipelineRunId == null)
@@ -141,7 +141,7 @@
             IPipelineClientFactory factory,
             Uri pipelineUrl,
             string pipelineName,
-            string year)
+            RelativeYear relativeYear)
         {
             var credentials = new ManagedIdentityCredential();
 
@@ -149,17 +149,17 @@
 
             try
             {
-                var result = await pipelineClient.CreatePipelineRunAsync(pipelineName, parameters: new Dictionary<string, object> 
+                var result = await pipelineClient.CreatePipelineRunAsync(pipelineName, parameters: new Dictionary<string, object>
                 {
                     {
-                        DateParameter, year },
+                        DateParameter, relativeYear.ToString() },
                 });
 
                 return Guid.Parse(result.Value.RunId);
             }
             catch (Exception e)
             {
-                // Log that exception info 
+                // Log that exception info
                 this.logger.LogInformation($"pipeline url is not reached : {e.Message}");
 
                 // return null

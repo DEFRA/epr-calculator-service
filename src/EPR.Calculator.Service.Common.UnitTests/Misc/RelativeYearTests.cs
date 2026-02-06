@@ -16,7 +16,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.Misc
             this.Fixture = new Fixture();
             this.Fixture.Customizations.Add(new RelativeYearCustomisation());
             this.Fixture.Customizations.Add(new FinancialYearCustomisation());
-            this.Value = this.Fixture.Create<RelativeYear>();
+            this.Value = this.Fixture.Create<RelativeYear>().ToInt();
             this.TestClass = new RelativeYear(this.Value);
         }
 
@@ -24,7 +24,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.Misc
 
         private RelativeYear TestClass { get; init; }
 
-        private string Value { get; init; }
+        private int Value { get; init; }
 
         /// <summary>Tests the constructor.</summary>
         [TestMethod]
@@ -37,25 +37,13 @@ namespace EPR.Calculator.Service.Common.UnitTests.Misc
             Assert.IsNotNull(instance);
         }
 
-        /// <summary>
-        /// Tests that trying to construct using an invalid value throws an argument exception.
-        /// </summary>
-        [TestMethod]
-        [DataRow("")]
-        [DataRow("2024-25")]
-        public void CannotConstructWithInvalidValue(string invalidValue)
-        {
-            // Act
-            Assert.ThrowsException<ArgumentException>(() => new RelativeYear(invalidValue));
-        }
-
         /// <summary>Tests for equality and inequality.</summary>
         [TestMethod]
         public void ImplementsIEquatable_FinancialYear()
         {
             // Arrange
             var same = new RelativeYear(this.Value);
-            var different = new RelativeYear("1234");
+            var different = new RelativeYear(1234);
 
             // Assert
             Assert.IsFalse(this.TestClass.Equals(default(object)));
@@ -76,11 +64,14 @@ namespace EPR.Calculator.Service.Common.UnitTests.Misc
         [TestMethod]
         public void CanCallToString()
         {
-            // Act
-            var result = this.TestClass.ToString();
+            Assert.AreEqual(this.Value, this.TestClass.ToInt());
+        }
 
-            // Assert
-            Assert.AreSame(this.Value, result);
+        /// <summary>Tests the ToInt method.</summary>
+        [TestMethod]
+        public void CanCallToInt()
+        {
+            Assert.AreEqual($"{this.Value}", this.TestClass.ToString());
         }
     }
 }

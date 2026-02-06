@@ -16,8 +16,8 @@
                 return new NoSpecimen();
             }
 
-            var year = new Random().Next(0, 99);
-            return new RelativeYear($"20{year:00}");
+            var year = new Random().Next(2000, 2099);
+            return new RelativeYear(year);
         }
     }
 }
