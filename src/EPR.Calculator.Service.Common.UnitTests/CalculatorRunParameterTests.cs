@@ -18,7 +18,7 @@ namespace EPR.Calculator.Service.Common.UnitTests
             // Arrange
             var testId = 60754953;
             var testUser = "TestValue2015204409";
-            var testFinancialYear = "2024-25";
+            var testFinancialYear = new FinancialYear("2024-25");
             var testMessageType = "Result";
 
             // Act

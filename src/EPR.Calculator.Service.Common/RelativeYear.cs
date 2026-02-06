@@ -7,9 +7,6 @@
     /// </summary>
     public partial record struct RelativeYear
     {
-        [GeneratedRegex("^[0-9]{4}$", RegexOptions.IgnoreCase, "en-GB")]
-        private static partial Regex RelativeYearRegex();
-
         /// <summary>
         /// Initializes a new instance of the <see cref="RelativeYear"/> class.
         /// </summary>
@@ -18,23 +15,18 @@
         /// Use this and <see cref="FinancialYear"/> in place of strings in places where it's helpfull to avoid
         /// confusion between date types.
         /// </remarks>
-        public RelativeYear(string value)
+        public RelativeYear(int value)
         {
-            if (!RelativeYearRegex().IsMatch(value))
-            {
-                throw new System.ArgumentException("The year must be in the format yyyy.");
-            }
-
             this.Value = value;
         }
 
-        private string Value { get; init; }
-
-        public static implicit operator RelativeYear(string value) => new RelativeYear(value);
-
-        public static implicit operator string(RelativeYear value) => value.ToString();
+        private int Value { get; init; }
 
         /// <inheritdoc/>
-        public override string ToString() => this.Value;
+        public override string ToString() => this.Value.ToString();
+
+        public readonly int ToInt() => this.Value;
+
+        public FinancialYear ToFinancialYear() => new FinancialYear($"{this.Value}-{this.Value - 1999}");
     }
 }
