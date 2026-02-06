@@ -1,5 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using System;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Converter;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
@@ -49,5 +51,32 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
         [JsonPropertyName("parametersFileUploader")]
         public required string ParametersFileUploader { get; init; } = string.Empty;
+
+        public static CalcResultDetailJson From(CalcResultDetail calcResultDetail)
+        {
+            string[] GetFileInfo(string filePath)
+            {
+                return filePath.Split(CommonConstants.Comma);
+            }
+
+            return new CalcResultDetailJson
+            {
+                RunName = calcResultDetail.RunName,
+                RunId = calcResultDetail.RunId,
+                RunDate = calcResultDetail.RunDate.ToString(CalculationResults.DateFormatISO8601),
+                RunBy = calcResultDetail.RunBy,
+                FinancialYear = calcResultDetail.FinancialYear,
+                RpdFileORG = CalculationResults.ORG,
+                RpdFileORGTimeStamp = DateTimeConversion.ConvertToIso8601Utc(calcResultDetail.RpdFileORG),
+                RpdFilePOM = CalculationResults.POM,
+                RpdFilePOMTimeStamp = DateTimeConversion.ConvertToIso8601Utc(calcResultDetail.RpdFilePOM),
+                LapcapFile = GetFileInfo(calcResultDetail.LapcapFile)[0],
+                LapcapFileTimeStamp = DateTimeConversion.ConvertToIso8601Utc(GetFileInfo(calcResultDetail.LapcapFile)[1]),
+                LapcapFileUploader = GetFileInfo(calcResultDetail.LapcapFile)[2],
+                ParametersFile = GetFileInfo(calcResultDetail.ParametersFile)[0],
+                ParametersFileTimeStamp = DateTimeConversion.ConvertToIso8601Utc(GetFileInfo(calcResultDetail.ParametersFile)[1]),
+                ParametersFileUploader = GetFileInfo(calcResultDetail.ParametersFile)[2],
+            };
+        }
     }
 }

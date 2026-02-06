@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json.Serialization;
+using EPR.Calculator.Service.Common.Utils;
+using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Converter;
+using EPR.Calculator.Service.Function.Enums;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
@@ -8,6 +12,39 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
     {
         [JsonPropertyName("materialBreakdown")]
         public required IEnumerable<CalcResultCommsCostByMaterial2AMaterialBreakdown> MaterialBreakdown { get; init; }
+
+        public static CalcResultCommsCostByMaterial2AJson From(
+            Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostByMaterial,
+            List<MaterialDetail> materials)
+        {
+            IEnumerable<CalcResultCommsCostByMaterial2AMaterialBreakdown> GetMaterialBreakdown(
+                Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostByMaterial,
+                List<MaterialDetail> materials)
+            {
+                var materialBreakdown = new List<CalcResultCommsCostByMaterial2AMaterialBreakdown>();
+
+                foreach (var item in commsCostByMaterial)
+                {
+                    var material = materials.Single(m => m.Code == item.Key);
+
+                    var breakdown = CalcResultCommsCostByMaterial2AMaterialBreakdown.From(material.Name, item.Value);
+
+                    if (item.Key == MaterialCodes.Glass)
+                    {
+                        breakdown.HouseholdDrinksContainersTonnageGlass = item.Value.HouseholdDrinksContainers;
+                    }
+
+                    materialBreakdown.Add(breakdown);
+                }
+
+                return materialBreakdown;
+            }
+
+            return new CalcResultCommsCostByMaterial2AJson
+            {
+                MaterialBreakdown = GetMaterialBreakdown(commsCostByMaterial, materials)
+            };
+        }
     }
 
     public record CalcResultCommsCostByMaterial2AMaterialBreakdown
@@ -51,5 +88,24 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
         [JsonPropertyName("northernIrelandWithBadDebtProvision")]
         public required string NorthernIrelandWithBadDebtProvision { get; init; }
+
+        public static CalcResultCommsCostByMaterial2AMaterialBreakdown From(string materialName, CalcResultSummaryProducerCommsFeesCostByMaterial item)
+        {
+            return new CalcResultCommsCostByMaterial2AMaterialBreakdown
+            {
+                MaterialName = materialName,
+                HouseholdPackagingWasteTonnage = item.HouseholdPackagingWasteTonnage,
+                PublicBinTonnage = item.ReportedPublicBinTonnage,
+                TotalTonnage = item.TotalReportedTonnage,
+                PricePerTonne = CurrencyConverterUtils.ConvertToCurrency(item.PriceperTonne, (int)DecimalPlaces.Four),
+                ProducerTotalCostWithoutBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(item.ProducerTotalCostWithoutBadDebtProvision),
+                BadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(item.BadDebtProvision),
+                ProducerTotalCostwithBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(item.ProducerTotalCostwithBadDebtProvision),
+                EnglandWithBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(item.EnglandWithBadDebtProvision),
+                WalesWithBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(item.WalesWithBadDebtProvision),
+                ScotlandWithBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(item.ScotlandWithBadDebtProvision),
+                NorthernIrelandWithBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(item.NorthernIrelandWithBadDebtProvision)
+            };
+        }
     }
 }

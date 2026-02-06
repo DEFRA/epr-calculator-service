@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using EPR.Calculator.Service.Common.Utils;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
@@ -25,5 +26,20 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
         [JsonPropertyName("northernIrelandTotalForSAOperatingCostsWithBadDebtProvision")]
         public required string NorthernIrelandTotalForSAOperatingCostsWithBadDebtProvision { get; set; }
+
+         public static CalcResultSAOperatingCostsWithBadDebtProvision From(CalcResultSummaryProducerDisposalFees calcResultSummaryProducerDisposalFees)
+        {
+            var costs = calcResultSummaryProducerDisposalFees.SchemeAdministratorOperatingCosts;
+            return new CalcResultSAOperatingCostsWithBadDebtProvision
+            {
+                TotalProducerFeeForSAOperatingCosts_1_2a_2b_2c_WithoutBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithoutBadDebtProvision ?? 0),
+                BadDebtProvisionFor3 = CurrencyConverterUtils.ConvertToCurrency(costs?.BadDebtProvision ?? 0),
+                TotalProducerFeeForSAOperatingCosts_1_2a_2b_2c_WithBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision ?? 0),
+                EnglandTotalForSAOperatingCostsWithBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(costs?.EnglandTotalWithBadDebtProvision ?? 0),
+                WalesTotalForSAOperatingCostsWithBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(costs?.WalesTotalWithBadDebtProvision ?? 0),
+                ScotlandTotalForSAOperatingCostsWithBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(costs?.ScotlandTotalWithBadDebtProvision ?? 0),
+                NorthernIrelandTotalForSAOperatingCostsWithBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(costs?.NorthernIrelandTotalWithBadDebtProvision ?? 0)
+            };
+        }
     }
 }

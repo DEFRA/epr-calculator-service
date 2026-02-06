@@ -25,7 +25,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             var fixture = new Fixture();
 
             var testValue = fixture.Create<decimal>();
-            var totalProducerFeeForCommsCostsWithoutBadDebtProvision = CurrencyConverter.ConvertToCurrency(testValue);
+            var totalProducerFeeForCommsCostsWithoutBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(testValue);
             // Act
             _testClass.TotalProducerFeeForCommsCostsWithoutBadDebtProvision = totalProducerFeeForCommsCostsWithoutBadDebtProvision;
 
@@ -40,7 +40,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             var fixture = new Fixture();
 
             var testValue = fixture.Create<decimal>();
-            var badDebtProvisionFor2a = CurrencyConverter.ConvertToCurrency(testValue);
+            var badDebtProvisionFor2a = CurrencyConverterUtils.ConvertToCurrency(testValue);
 
             // Act
             _testClass.BadDebtProvisionFor2a = badDebtProvisionFor2a;
@@ -56,7 +56,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             var fixture = new Fixture();
 
             var testValue = fixture.Create<decimal>();
-            var totalProducerFeeForCommsCostsWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(testValue);
+            var totalProducerFeeForCommsCostsWithBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(testValue);
 
             // Act
             _testClass.TotalProducerFeeForCommsCostsWithBadDebtProvision = totalProducerFeeForCommsCostsWithBadDebtProvision;
@@ -72,7 +72,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             var fixture = new Fixture();
 
             var testValue = fixture.Create<decimal>();
-            var englandTotalWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(testValue);
+            var englandTotalWithBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(testValue);
 
             // Act
             _testClass.EnglandTotalWithBadDebtProvision = englandTotalWithBadDebtProvision;
@@ -88,7 +88,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             var fixture = new Fixture();
 
             var testValue = fixture.Create<decimal>();
-            var walesTotalWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(testValue);
+            var walesTotalWithBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(testValue);
 
             // Act
             _testClass.WalesTotalWithBadDebtProvision = walesTotalWithBadDebtProvision;
@@ -104,7 +104,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             var fixture = new Fixture();
 
             var testValue = fixture.Create<decimal>();
-            var scotlandTotalWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(testValue);
+            var scotlandTotalWithBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(testValue);
 
             // Act
             _testClass.ScotlandTotalWithBadDebtProvision = scotlandTotalWithBadDebtProvision;
@@ -120,7 +120,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             var fixture = new Fixture();
 
             var testValue = fixture.Create<decimal>();
-            var northernIrelandTotalWithBadDebtProvision = CurrencyConverter.ConvertToCurrency(testValue);
+            var northernIrelandTotalWithBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(testValue);
 
             // Act
             _testClass.NorthernIrelandTotalWithBadDebtProvision = northernIrelandTotalWithBadDebtProvision;

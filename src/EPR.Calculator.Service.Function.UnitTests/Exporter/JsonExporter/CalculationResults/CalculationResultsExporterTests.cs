@@ -23,23 +23,7 @@
         public CalculationResultsExporterTests()
         {
             this.Fixture = new Fixture();
-            this.TestClass = new CalculationResultsExporter(
-                new ProducerDisposalFeesWithBadDebtProvision1JsonMapper(),
-                new CommsCostsByMaterialFeesSummary2AMapper(),
-                new CalcResultCommsCostByMaterial2AJsonMapper(),
-                new SAOperatingCostsWithBadDebtProvisionMapper(),
-                new CalcResultLADataPrepCostsWithBadDebtProvision4Mapper(),
-                new FeeForCommsCostsWithBadDebtProvision2AMapper(),
-                new FeeForCommsCostsWithBadDebtProvision2BMapper(),
-                new TotalProducerFeeWithBadDebtProvisionFor2Con1And2AAnd2BAnd2CMapper(),
-                new FeeForSaSetUpCostsWithBadDebtProvision5Mapper(),
-                new CalcResultCommsCostsWithBadDebtProvision2CMapper(),
-                new CalculationOfSuggestedBillingInstructionsAndInvoiceAmountsMapper(),
-                new TotalProducerBillWithBadDebtProvisionMapper(),
-                new CalculationResultsProducerCalculationResultsFeeForLADisposalCosts1Mapper(),
-                new CalcResultProducerCalculationResultsTotalMapper(),
-                new DisposalFeeSummary1Mapper()
-            );
+            this.TestClass = new CalculationResultsExporter();
         }
 
         [TestMethod]
@@ -78,63 +62,63 @@
             Assert.IsNotNull(roundTrippedData);
 
             // 1
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.TotalFeeforLADisposalCostswoBadDebtprovision1),
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.TotalFeeforLADisposalCostswoBadDebtprovision1),
                 roundTrippedData["feeForLaDisposalCostsWithoutBadDebtprovision1"]);
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.BadDebtProvisionFor1),
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.BadDebtProvisionFor1),
                 roundTrippedData["badDebtProvision1"]);
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.TotalFeeforLADisposalCostswithBadDebtprovision1),
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.TotalFeeforLADisposalCostswithBadDebtprovision1),
                 roundTrippedData["feeForLaDisposalCostsWithBadDebtprovision1"]);
 
             // 2a
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A),
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A),
                 roundTrippedData["feeForCommsCostsByMaterialWithoutBadDebtprovision2a"]);
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.BadDebtProvisionFor2A),
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.BadDebtProvisionFor2A),
                 roundTrippedData["badDebtProvision2a"]);
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A),
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A),
                 roundTrippedData["feeForCommsCostsByMaterialWitBadDebtprovision2a"]);
 
             // 2b
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.CommsCostHeaderWithoutBadDebtFor2bTitle),
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.CommsCostHeaderWithoutBadDebtFor2bTitle),
                 roundTrippedData["feeForCommsCostsUkWideWithoutBadDebtprovision2b"]);
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.CommsCostHeaderBadDebtProvisionFor2bTitle),
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.CommsCostHeaderBadDebtProvisionFor2bTitle),
                 roundTrippedData["badDebtProvision2b"]);
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.CommsCostHeaderWithBadDebtFor2bTitle),
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.CommsCostHeaderWithBadDebtFor2bTitle),
                 roundTrippedData["feeForCommsCostsUkWideWithBadDebtprovision2b"]);
 
             // 2c
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.TwoCCommsCostsByCountryWithoutBadDebtProvision),
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.TwoCCommsCostsByCountryWithoutBadDebtProvision),
                 roundTrippedData["feeForCommsCostsByCountryWithoutBadDebtprovision2c"]);
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.TwoCBadDebtProvision),
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.TwoCBadDebtProvision),
                 roundTrippedData["badDebtProvision2c"]);
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.TwoCCommsCostsByCountryWithBadDebtProvision),
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.TwoCCommsCostsByCountryWithBadDebtProvision),
                 roundTrippedData["feeForCommsCostsByCountryWideWithBadDebtprovision2c"]);
 
             // 1+2a+2b+2c
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.TotalOnePlus2A2B2CFeeWithBadDebtProvision),
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.TotalOnePlus2A2B2CFeeWithBadDebtProvision),
                 roundTrippedData["total12a2b2cWithBadDebt"]);
 
             // 3
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.SaOperatingCostsWoTitleSection3),
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.SaOperatingCostsWoTitleSection3),
                 roundTrippedData["saOperatingCostsWithoutBadDebtProvision3"]);
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.BadDebtProvisionTitleSection3),
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.BadDebtProvisionTitleSection3),
                 roundTrippedData["badDebtProvision3"]);
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.SaOperatingCostsWithTitleSection3),
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.SaOperatingCostsWithTitleSection3),
                 roundTrippedData["saOperatingCostsWithBadDebtProvision3"]);
 
             // 4
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.LaDataPrepCostsTitleSection4),
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.LaDataPrepCostsTitleSection4),
                 roundTrippedData["laDataPrepCostsWithoutBadDebtProvision4"]);
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.LaDataPrepCostsBadDebtProvisionTitleSection4),
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.LaDataPrepCostsBadDebtProvisionTitleSection4),
                 roundTrippedData["badDebtProvision4"]);
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.LaDataPrepCostsWithBadDebtProvisionTitleSection4),
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.LaDataPrepCostsWithBadDebtProvisionTitleSection4),
                 roundTrippedData["laDataPrepCostsWithbadDebtProvision4"]);
 
             // 5
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.SaSetupCostsTitleSection5),
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.SaSetupCostsTitleSection5),
                 roundTrippedData["oneOffFeeSaSetuCostsWithbadDebtProvision5"]);
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.SaSetupCostsBadDebtProvisionTitleSection5),
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.SaSetupCostsBadDebtProvisionTitleSection5),
                 roundTrippedData["badDebtProvision5"]);
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(data.SaSetupCostsWithBadDebtProvisionTitleSection5),
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.SaSetupCostsWithBadDebtProvisionTitleSection5),
                 roundTrippedData["oneOffFeeSaSetuCostsWithoutbadDebtProvision5"]);
         }
 
@@ -178,14 +162,14 @@
             var actualChange = ReadNullableDecimal(actual, "tonnageChange");
             Assert.AreEqual(expected.Value.TonnageChange, actualChange);
 
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(expected.Value.PricePerTonne, 4), actual["pricePerTonne"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(expected.Value.ProducerDisposalFee), actual["producerDisposalFeeWithoutBadDebtProvision"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(expected.Value.BadDebtProvision), actual["badDebtProvision"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(expected.Value.ProducerDisposalFeeWithBadDebtProvision), actual["producerDisposalFeeWithBadDebtProvision"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(expected.Value.EnglandWithBadDebtProvision), actual["englandWithBadDebtProvision"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(expected.Value.WalesWithBadDebtProvision), actual["walesWithBadDebtProvision"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(expected.Value.ScotlandWithBadDebtProvision), actual["scotlandWithBadDebtProvision"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(expected.Value.NorthernIrelandWithBadDebtProvision), actual["northernIrelandWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(expected.Value.PricePerTonne, 4), actual["pricePerTonne"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(expected.Value.ProducerDisposalFee), actual["producerDisposalFeeWithoutBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(expected.Value.BadDebtProvision), actual["badDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(expected.Value.ProducerDisposalFeeWithBadDebtProvision), actual["producerDisposalFeeWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(expected.Value.EnglandWithBadDebtProvision), actual["englandWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(expected.Value.WalesWithBadDebtProvision), actual["walesWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(expected.Value.ScotlandWithBadDebtProvision), actual["scotlandWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(expected.Value.NorthernIrelandWithBadDebtProvision), actual["northernIrelandWithBadDebtProvision"]!.GetValue<string>());
         }
 
         [TestMethod]
@@ -207,7 +191,7 @@
             var actual = roundTrippedData[0]!["totalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2c"]!;
             var producer = data.ProducerDisposalFees.SingleOrDefault(t => !string.IsNullOrEmpty(t.Level))!;
 
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(producer.ProducerTotalOnePlus2A2B2CWithBadDeptProvision), actual["totalFeeWithBadDebtProvision"]);
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.ProducerTotalOnePlus2A2B2CWithBadDeptProvision), actual["totalFeeWithBadDebtProvision"]);
             AssertAreEqual($"{producer.ProducerOverallPercentageOfCostsForOnePlus2A2B2C.ToString("F8")}%", actual["producerPercentageOfOverallProducerCost"]);
         }
 
@@ -261,13 +245,13 @@
             var actual = roundTrippedData[0]!["feeForSASetUpCostsWithBadDebtProvision_5"]!;
             var producer = data.ProducerDisposalFees.SingleOrDefault(t => !string.IsNullOrEmpty(t.Level))!;
 
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.OneOffSchemeAdministrationSetupCosts!.TotalProducerFeeWithoutBadDebtProvision), actual["totalProducerOneOffFeeForSASetUpCostsWithoutBadDebtProvision"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.OneOffSchemeAdministrationSetupCosts.BadDebtProvision), actual["badDebtProvisionFor5"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.OneOffSchemeAdministrationSetupCosts.TotalProducerFeeWithBadDebtProvision), actual["totalProducerOneOffFeeForSASetUpCostsWithBadDebtProvision"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.OneOffSchemeAdministrationSetupCosts.EnglandTotalWithBadDebtProvision), actual["englandTotalForSASetUpCostsWithBadDebtProvision"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.OneOffSchemeAdministrationSetupCosts.WalesTotalWithBadDebtProvision), actual["walesTotalForSASetUpCostsWithBadDebtProvision"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.OneOffSchemeAdministrationSetupCosts.ScotlandTotalWithBadDebtProvision), actual["scotlandTotalForSASetUpCostsWithBadDebtProvision"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.OneOffSchemeAdministrationSetupCosts.NorthernIrelandTotalWithBadDebtProvision), actual["northernIrelandTotalForSASetUpCostsWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.OneOffSchemeAdministrationSetupCosts!.TotalProducerFeeWithoutBadDebtProvision), actual["totalProducerOneOffFeeForSASetUpCostsWithoutBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.OneOffSchemeAdministrationSetupCosts.BadDebtProvision), actual["badDebtProvisionFor5"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.OneOffSchemeAdministrationSetupCosts.TotalProducerFeeWithBadDebtProvision), actual["totalProducerOneOffFeeForSASetUpCostsWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.OneOffSchemeAdministrationSetupCosts.EnglandTotalWithBadDebtProvision), actual["englandTotalForSASetUpCostsWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.OneOffSchemeAdministrationSetupCosts.WalesTotalWithBadDebtProvision), actual["walesTotalForSASetUpCostsWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.OneOffSchemeAdministrationSetupCosts.ScotlandTotalWithBadDebtProvision), actual["scotlandTotalForSASetUpCostsWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.OneOffSchemeAdministrationSetupCosts.NorthernIrelandTotalWithBadDebtProvision), actual["northernIrelandTotalForSASetUpCostsWithBadDebtProvision"]!.GetValue<string>());
         }
 
         /// <summary>
@@ -326,13 +310,13 @@
             Assert.IsNotNull(twoACosts);
             var producer = data.ProducerDisposalFees.SingleOrDefault(t => !string.IsNullOrEmpty(t.Level));
             Assert.IsNotNull(producer);
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(producer.CommunicationCostsSectionTwoA!.TotalProducerFeeWithoutBadDebtProvision), twoACosts["totalProducerFeeForCommsCostsWithoutBadDebtProvision"]);
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(producer.CommunicationCostsSectionTwoA.BadDebtProvision), twoACosts["badDebtProvisionFor2a"]);
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(producer.CommunicationCostsSectionTwoA.TotalProducerFeeWithBadDebtProvision), twoACosts["totalProducerFeeForCommsCostsWithBadDebtProvision"]);
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(producer.CommunicationCostsSectionTwoA.EnglandTotalWithBadDebtProvision), twoACosts["englandTotalWithBadDebtProvision"]);
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(producer.CommunicationCostsSectionTwoA.WalesTotalWithBadDebtProvision), twoACosts["walesTotalWithBadDebtProvision"]);
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(producer.CommunicationCostsSectionTwoA.ScotlandTotalWithBadDebtProvision), twoACosts["scotlandTotalWithBadDebtProvision"]);
-            AssertAreEqual(CurrencyConverter.ConvertToCurrency(producer.CommunicationCostsSectionTwoA.NorthernIrelandTotalWithBadDebtProvision), twoACosts["northernIrelandTotalWithBadDebtProvision"]);
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.CommunicationCostsSectionTwoA!.TotalProducerFeeWithoutBadDebtProvision), twoACosts["totalProducerFeeForCommsCostsWithoutBadDebtProvision"]);
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.CommunicationCostsSectionTwoA.BadDebtProvision), twoACosts["badDebtProvisionFor2a"]);
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.CommunicationCostsSectionTwoA.TotalProducerFeeWithBadDebtProvision), twoACosts["totalProducerFeeForCommsCostsWithBadDebtProvision"]);
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.CommunicationCostsSectionTwoA.EnglandTotalWithBadDebtProvision), twoACosts["englandTotalWithBadDebtProvision"]);
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.CommunicationCostsSectionTwoA.WalesTotalWithBadDebtProvision), twoACosts["walesTotalWithBadDebtProvision"]);
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.CommunicationCostsSectionTwoA.ScotlandTotalWithBadDebtProvision), twoACosts["scotlandTotalWithBadDebtProvision"]);
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.CommunicationCostsSectionTwoA.NorthernIrelandTotalWithBadDebtProvision), twoACosts["northernIrelandTotalWithBadDebtProvision"]);
         }
 
         [TestMethod]
@@ -354,13 +338,13 @@
             var producer = data.ProducerDisposalFees.SingleOrDefault(t => !string.IsNullOrEmpty(t.Level));
             Assert.IsNotNull(producer);
             Assert.IsNotNull(twoBCosts);
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.CommunicationCostsSectionTwoB!.TotalProducerFeeWithoutBadDebtProvision), twoBCosts["totalProducerFeeForCommsCostsUKWideWithoutBadDebtProvision"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.CommunicationCostsSectionTwoB.BadDebtProvision), twoBCosts["badDebtProvisionFor2b"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.CommunicationCostsSectionTwoB.TotalProducerFeeWithBadDebtProvision), twoBCosts["totalProducerFeeForCommsCostsUKWideWithBadDebtProvision"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.CommunicationCostsSectionTwoB.EnglandTotalWithBadDebtProvision), twoBCosts["englandTotalWithBadDebtProvision"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.CommunicationCostsSectionTwoB.WalesTotalWithBadDebtProvision), twoBCosts["walesTotalWithBadDebtProvision"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.CommunicationCostsSectionTwoB.ScotlandTotalWithBadDebtProvision), twoBCosts["scotlandTotalWithBadDebtProvision"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.CommunicationCostsSectionTwoB.NorthernIrelandTotalWithBadDebtProvision), twoBCosts["northernIrelandTotalWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.CommunicationCostsSectionTwoB!.TotalProducerFeeWithoutBadDebtProvision), twoBCosts["totalProducerFeeForCommsCostsUKWideWithoutBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.CommunicationCostsSectionTwoB.BadDebtProvision), twoBCosts["badDebtProvisionFor2b"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.CommunicationCostsSectionTwoB.TotalProducerFeeWithBadDebtProvision), twoBCosts["totalProducerFeeForCommsCostsUKWideWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.CommunicationCostsSectionTwoB.EnglandTotalWithBadDebtProvision), twoBCosts["englandTotalWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.CommunicationCostsSectionTwoB.WalesTotalWithBadDebtProvision), twoBCosts["walesTotalWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.CommunicationCostsSectionTwoB.ScotlandTotalWithBadDebtProvision), twoBCosts["scotlandTotalWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.CommunicationCostsSectionTwoB.NorthernIrelandTotalWithBadDebtProvision), twoBCosts["northernIrelandTotalWithBadDebtProvision"]!.GetValue<string>());
         }
 
         /// <summary>
@@ -386,13 +370,13 @@
             var producer = data.ProducerDisposalFees.SingleOrDefault(t => !string.IsNullOrEmpty(t.Level));
             Assert.IsNotNull(producer);
             Assert.IsNotNull(twoCCosts);
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.TwoCTotalProducerFeeForCommsCostsWithoutBadDebt), twoCCosts["totalProducerFeeForCommsCostsByCountryWithoutBadDebtProvision"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.TwoCBadDebtProvision), twoCCosts["badDebProvisionFor2c"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.TwoCTotalProducerFeeForCommsCostsWithBadDebt), twoCCosts["totalProducerFeeForCommsCostsByCountryWithBadDebtProvision"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.TwoCEnglandTotalWithBadDebt), twoCCosts["englandTotalWithBadDebtProvision"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.TwoCWalesTotalWithBadDebt), twoCCosts["walesTotalWithBadDebtProvision"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.TwoCScotlandTotalWithBadDebt), twoCCosts["scotlandTotalWithBadDebtProvision"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.TwoCNorthernIrelandTotalWithBadDebt), twoCCosts["northernIrelandTotalWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.TwoCTotalProducerFeeForCommsCostsWithoutBadDebt), twoCCosts["totalProducerFeeForCommsCostsByCountryWithoutBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.TwoCBadDebtProvision), twoCCosts["badDebProvisionFor2c"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.TwoCTotalProducerFeeForCommsCostsWithBadDebt), twoCCosts["totalProducerFeeForCommsCostsByCountryWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.TwoCEnglandTotalWithBadDebt), twoCCosts["englandTotalWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.TwoCWalesTotalWithBadDebt), twoCCosts["walesTotalWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.TwoCScotlandTotalWithBadDebt), twoCCosts["scotlandTotalWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.TwoCNorthernIrelandTotalWithBadDebt), twoCCosts["northernIrelandTotalWithBadDebtProvision"]!.GetValue<string>());
         }
 
         [TestMethod]
@@ -570,13 +554,13 @@
 
             var producer = data.ProducerDisposalFees.SingleOrDefault(t => !string.IsNullOrEmpty(t.Level));
             Assert.IsNotNull(producer);
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.LocalAuthorityDataPreparationCosts!.TotalProducerFeeWithoutBadDebtProvision), costs["totalProducerFeeForLADataPrepCostsWithoutBadDebtProvision"]!.GetValue<String>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.LocalAuthorityDataPreparationCosts.BadDebtProvision), costs["badDebtProvisionFor4"]!.GetValue<String>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.LocalAuthorityDataPreparationCosts.TotalProducerFeeWithBadDebtProvision), costs["totalProducerFeeForLADataPrepCostsWithBadDebtProvision"]!.GetValue<String>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.LocalAuthorityDataPreparationCosts.EnglandTotalWithBadDebtProvision), costs["englandTotalForLADataPrepCostsWithBadDebtProvision"]!.GetValue<String>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.LocalAuthorityDataPreparationCosts.WalesTotalWithBadDebtProvision), costs["walesTotalForLADataPrepCostsWithBadDebtProvision"]!.GetValue<String>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.LocalAuthorityDataPreparationCosts.ScotlandTotalWithBadDebtProvision), costs["scotlandTotalForLADataPrepCostsWithBadDebtProvision"]!.GetValue<String>());
-            Assert.AreEqual(CurrencyConverter.ConvertToCurrency(producer.LocalAuthorityDataPreparationCosts.NorthernIrelandTotalWithBadDebtProvision), costs["northernIrelandTotalForLADataPrepCostsWithBadDebtProvision"]!.GetValue<String>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.LocalAuthorityDataPreparationCosts!.TotalProducerFeeWithoutBadDebtProvision), costs["totalProducerFeeForLADataPrepCostsWithoutBadDebtProvision"]!.GetValue<String>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.LocalAuthorityDataPreparationCosts.BadDebtProvision), costs["badDebtProvisionFor4"]!.GetValue<String>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.LocalAuthorityDataPreparationCosts.TotalProducerFeeWithBadDebtProvision), costs["totalProducerFeeForLADataPrepCostsWithBadDebtProvision"]!.GetValue<String>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.LocalAuthorityDataPreparationCosts.EnglandTotalWithBadDebtProvision), costs["englandTotalForLADataPrepCostsWithBadDebtProvision"]!.GetValue<String>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.LocalAuthorityDataPreparationCosts.WalesTotalWithBadDebtProvision), costs["walesTotalForLADataPrepCostsWithBadDebtProvision"]!.GetValue<String>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.LocalAuthorityDataPreparationCosts.ScotlandTotalWithBadDebtProvision), costs["scotlandTotalForLADataPrepCostsWithBadDebtProvision"]!.GetValue<String>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.LocalAuthorityDataPreparationCosts.NorthernIrelandTotalWithBadDebtProvision), costs["northernIrelandTotalForLADataPrepCostsWithBadDebtProvision"]!.GetValue<String>());
         }
 
         [TestMethod]
