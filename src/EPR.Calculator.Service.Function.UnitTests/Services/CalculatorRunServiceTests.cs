@@ -24,9 +24,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     [TestClass]
     public class CalculatorRunServiceTests
     {
-        private FinancialYear FinancialYear { get; init; } = "2024-25";
+        private FinancialYear FinancialYear { get; init; } = new FinancialYear("2024-25");
 
-        private RelativeYear RelativeYear { get; init; } = "2024";
+        private RelativeYear RelativeYear { get; init; } = new RelativeYear(2024);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CalculatorRunServiceTests"/> class.
@@ -180,7 +180,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 CalculatorRunId = id,
                 CheckInterval = checkInterval,
-                RelativeYear = this.RelativeYear,
+                RelativeYearValue = this.RelativeYear.ToInt(),
                 MaxCheckCount = maxCheckCount,
                 PipelineUrl = pipelineUrl,
                 PipelineName = orgPipelineName,
@@ -190,7 +190,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.AzureSynapseRunner.Setup(t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
                 p.CalculatorRunId == id &&
                 p.CheckInterval == checkInterval &&
-                p.RelativeYear == this.RelativeYear &&
+                p.RelativeYear == this.RelativeYear.ToInt &&
                 p.MaxCheckCount == maxCheckCount &&
                 p.PipelineUrl == pipelineUrl &&
                 p.PipelineName == orgPipelineName)))
@@ -208,7 +208,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
                 p.CalculatorRunId == id &&
                 p.CheckInterval == checkInterval &&
-                p.RelativeYear == this.RelativeYear &&
+                p.RelativeYearValue == this.RelativeYear.ToInt() &&
                 p.MaxCheckCount == maxCheckCount &&
                 p.PipelineUrl == pipelineUrl &&
                 p.PipelineName == orgPipelineName)),
@@ -219,7 +219,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
                 p.CalculatorRunId == id &&
                 p.CheckInterval == checkInterval &&
-                p.RelativeYear == this.RelativeYear &&
+                p.RelativeYearValue == this.RelativeYear.ToInt() &&
                 p.MaxCheckCount == maxCheckCount &&
                 p.PipelineUrl == pipelineUrl &&
                 p.PipelineName == pomPipelineName)),
@@ -287,7 +287,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 CalculatorRunId = id,
                 CheckInterval = checkInterval,
-                RelativeYear = this.RelativeYear,
+                RelativeYearValue = this.RelativeYear.ToInt(),
                 MaxCheckCount = maxCheckCount,
                 PipelineUrl = pipelineUrl,
                 PipelineName = orgPipelineName,
@@ -367,7 +367,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 CalculatorRunId = id,
                 CheckInterval = checkInterval,
-                RelativeYear = this.RelativeYear,
+                RelativeYearValue = this.RelativeYear.ToInt(),
                 MaxCheckCount = maxCheckCount,
                 PipelineUrl = pipelineUrl,
                 PipelineName = orgPipelineName,
@@ -377,7 +377,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 CalculatorRunId = id,
                 CheckInterval = checkInterval,
-                RelativeYear = this.RelativeYear,
+                RelativeYearValue = this.RelativeYear.ToInt(),
                 MaxCheckCount = maxCheckCount,
                 PipelineUrl = pipelineUrl,
                 PipelineName = pomPipelineName,
@@ -517,7 +517,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 });
 
             var calculatorRunParameters = this.Fixture.Create<CalculatorRunParameter>();
-            calculatorRunParameters.FinancialYear = "2024-25";
+            calculatorRunParameters.FinancialYear = new FinancialYear("2024-25");
             var runName = "Test Run Name";
 
             this.StatusService.Setup(s => s.UpdateRpdStatus(
@@ -623,7 +623,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var result = testService.GetAzureSynapseConfiguration(args, pomPipelineName);
 
             // Assert
-            Assert.AreEqual((RelativeYear)"2025", result.RelativeYear);
+            Assert.AreEqual(new RelativeYear(2025), result.RelativeYear());
         }
 
         /// <summary>

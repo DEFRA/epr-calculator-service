@@ -30,9 +30,10 @@
 
         private string Value { get; init; }
 
-        public static implicit operator FinancialYear(string value) => new FinancialYear(value);
-
         /// <inheritdoc/>
         public override string ToString() => this.Value;
+
+
+        public RelativeYear ToRelativeYear() => new RelativeYear(int.Parse(this.Value.Split('-')[0]));
     }
 }

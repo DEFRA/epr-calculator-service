@@ -37,7 +37,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             // Arrange
             var calculatorParameter = new CreateResultFileMessage
             {
-                FinancialYear = "2024-25",
+                FinancialYear = new FinancialYear("2024-25"),
                 CreatedBy = "Test user",
                 CalculatorRunId = 678767,
                 MessageType = MessageTypes.Result

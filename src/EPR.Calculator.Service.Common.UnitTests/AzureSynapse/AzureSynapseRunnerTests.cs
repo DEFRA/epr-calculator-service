@@ -77,7 +77,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
            => new AzureSynapseRunnerParameters
            {
                CalculatorRunId = CalculatorRunId,
-               RelativeYear = this.Fixture.Create<RelativeYear>(),
+               RelativeYearValue = this.Fixture.Create<RelativeYear>().ToInt(),
                CheckInterval = CheckInterval,
                MaxCheckCount = MaxCheckCount,
                PipelineUrl = new Uri(TestPipelineUrl),
@@ -134,19 +134,19 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             this.MockPipelineRunClient.Setup(client => client.GetPipelineRunAsync(
                 It.IsAny<string?>(),
                 It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(MockPipelineRunResponse(statusReturned)));            
+                .Returns(Task.FromResult(MockPipelineRunResponse(statusReturned)));
             // Act
             var testdat = new AzureSynapseRunnerParameters
             {
                 CalculatorRunId = CalculatorRunId,
-                RelativeYear = this.Fixture.Create<RelativeYear>(),
+                RelativeYearValue = this.Fixture.Create<RelativeYear>().ToInt(),
                 CheckInterval = CheckInterval,
                 MaxCheckCount = MaxCheckCount,
                 PipelineUrl = new Uri(TestPipelineUrl),
                 PipelineName = TestPipelineName,
             };
 
-            
+
 
             var pipelineSucceeded = await this.TestClass.Process(testdat);
 

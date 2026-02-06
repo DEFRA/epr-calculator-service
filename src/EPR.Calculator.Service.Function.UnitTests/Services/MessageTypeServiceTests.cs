@@ -1,4 +1,5 @@
-﻿using EPR.Calculator.Service.Function.Services;
+﻿using EPR.Calculator.Service.Common;
+using EPR.Calculator.Service.Function.Services;
 using Newtonsoft.Json;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
@@ -57,7 +58,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var billingMessage = (CreateResultFileMessage)result;
             Assert.AreEqual(123, billingMessage.CalculatorRunId);
             Assert.AreEqual("Test User", billingMessage.CreatedBy);
-            Assert.AreEqual("2024-25", billingMessage.FinancialYear);
+            Assert.AreEqual(new FinancialYear("2024-25"), billingMessage.FinancialYear);
             Assert.AreEqual("Result", billingMessage.MessageType);
         }
 

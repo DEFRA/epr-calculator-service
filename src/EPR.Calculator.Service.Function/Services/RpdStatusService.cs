@@ -59,7 +59,7 @@
         public async Task<RunClassification> UpdateRpdStatus(
             int runId,
             string? runName,
-            string updatedBy,
+            string createdBy,
             CancellationToken timeout)
         {
             this.TelemetryLogger.LogInformation(new TrackMessage
@@ -103,20 +103,22 @@
                 throw new ValidationException(vr.ToString());
             }
 
-            string financialYear = calcRun?.FinancialYearId ?? string.Empty;
-            var relativeYear = Util.GetRelativeYearFromFinancialYear(financialYear);
-            var createdBy = updatedBy;
+            FinancialYear financialYear = new FinancialYear(calcRun?.FinancialYearId ?? string.Empty);
+            var relativeYear = financialYear.ToRelativeYear();
+
             using (var transaction = await this.Context.Database.BeginTransactionAsync(timeout))
             {
                 try
                 {
                     this.TelemetryLogger.LogInformation(new TrackMessage { RunId = runId, RunName = runName, Message = $"Creating run organization and POM for run: {runId}" });
-                    await CalculatorRunOrgData.LoadOrgDataForCalcRun(runId, relativeYear, createdBy, timeout);
-                    await CalculatorRunPomData.LoadPomDataForCalcRun(runId, relativeYear, createdBy, timeout);
+                    await CalculatorRunOrgData.LoadOrgDataForCalcRun(runId, relativeYear.ToString(), createdBy, timeout);
+                    await CalculatorRunPomData.LoadPomDataForCalcRun(runId, relativeYear.ToString(), createdBy, timeout);
 
                     calcRun!.CalculatorRunClassificationId = runClassifications.Single(x => x.Status == RunClassification.RUNNING.ToString()).Id;
+
                     await this.Context.SaveChangesAsync(timeout);
                     await transaction.CommitAsync(timeout);
+
                     return RunClassification.RUNNING;
                 }
                 catch (Exception)
