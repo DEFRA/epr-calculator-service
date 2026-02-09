@@ -47,5 +47,8 @@
         string BillingFileCSVBlobContainerName { get; }
 
         string BillingFileJsonBlobContainerName { get; }
+        string OrgDataPipelineNameMyc {  get; }
+        string PomDataPipelineNameMyc {  get; }
+        bool UseMycPipeline { get; }
     }
 }

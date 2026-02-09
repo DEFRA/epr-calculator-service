@@ -151,6 +151,32 @@ namespace EPR.Calculator.Service.Function
         public int DbLoadingChunkSize => int.Parse(
             Environment.GetEnvironmentVariable(EnvironmentVariableKeys.DbLoadingChunkSize) ?? "1000");
 
+        /// <summary>
+        /// Gets the organization data pipeline name from environment variables.
+        /// </summary>
+        public string OrgDataPipelineNameMyc => Environment.GetEnvironmentVariable(EnvironmentVariableKeys.OrgDataPipelineNameMyc);
+
+        /// <summary>
+        /// Gets the POM data pipeline name from environment variables.
+        /// </summary>
+        public string PomDataPipelineNameMyc => Environment.GetEnvironmentVariable(EnvironmentVariableKeys.PomDataPipelineNameMyc);
+
+        /// <summary>
+        /// Gets a value indicating whether to execute the RPD pipeline from environment variables.
+        /// </summary>
+        public bool UseMycPipeline
+        {
+            get
+            {
+                bool.TryParse(
+                    Environment.GetEnvironmentVariable(EnvironmentVariableKeys.UseMycPipeline),
+                    out bool value);
+                return value;
+            }
+        }
+
+
+
 #pragma warning restore CS8603 // Possible null reference return.
 
         /// <summary>

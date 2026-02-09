@@ -17,6 +17,12 @@ namespace EPR.Calculator.Service.Function.Constants
         /// <summary>The name of the POM data pipeline.</summary>
         public const string PomDataPipelineName = "GetPomDataPipelineName";
 
+        /// <summary>The name of the organization data pipeline.</summary>
+        public const string OrgDataPipelineNameMyc = "GetOrgDataPipelineNameMyc";
+
+        /// <summary>The name of the POM data pipeline.</summary>
+        public const string PomDataPipelineNameMyc = "GetPomDataPipelineNameMyc";
+
         /// <summary>The interval for checking the pipeline status.</summary>
         public const string CheckInterval = "CheckInterval";
 
@@ -34,6 +40,9 @@ namespace EPR.Calculator.Service.Function.Constants
 
         /// <summary>The key for executing the RPD pipeline.</summary>
         public const string ExecuteRPDPipeline = "ExecuteRPDPipeline";
+
+        /// <summary>The key for using the Myc RPD pipeline.</summary>
+        public const string UseMycPipeline = "UseMycPipeline";
 
         /// <summary>The key for the RpdStatusTimeout environment variable.</summary>
         public const string RpdStatusTimeout = "RpdStatusTimeout";
