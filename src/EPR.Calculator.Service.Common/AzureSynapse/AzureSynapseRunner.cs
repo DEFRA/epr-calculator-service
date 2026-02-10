@@ -5,6 +5,7 @@
     using Azure.Analytics.Synapse.Artifacts.Models;
     using Azure.Identity;
     using Microsoft.Extensions.Logging;
+    using EPR.Calculator.API.Data.Models;
 
     /// <summary>
     /// Runs Azure Synapse pipelines.

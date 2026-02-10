@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResult
     {
-        public CalcResultDetail CalcResultDetail { get; set; } = new();
+        public required CalcResultDetail CalcResultDetail { get; set; }
 
         public required CalcResultLapcapData CalcResultLapcapData { get; set; } = new()
         {

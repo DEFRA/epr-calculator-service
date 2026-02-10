@@ -1,5 +1,6 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.ErrorReport;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Dtos;
@@ -124,10 +125,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
             await context.SaveChangesAsync();
 
             var builder = new CalcResultErrorReportBuilder(context);
-            var request = new CalcResultsRequestDto { RunId = 1 };
+            var request = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
             // Act
-            var result = (await builder.ConstructAsync(request)).ToList();
+            var result = builder.ConstructAsync(request).ToList();
 
             Assert.AreEqual(5, result.Count);
             var report = result[0];
@@ -195,10 +196,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
             await context.SaveChangesAsync();
 
             var builder = new CalcResultErrorReportBuilder(context);
-            var request = new CalcResultsRequestDto { RunId = 1 };
+            var request = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
             // Act
-            var result = (await builder.ConstructAsync(request)).ToList();
+            var result = builder.ConstructAsync(request).ToList();
 
             // Assert
             Assert.AreEqual(1, result.Count);
@@ -235,10 +236,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
             await context.SaveChangesAsync();
 
             var builder = new CalcResultErrorReportBuilder(context);
-            var request = new CalcResultsRequestDto { RunId = 1 };
+            var request = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
             // Act
-            var result = (await builder.ConstructAsync(request)).ToList();
+            var result = builder.ConstructAsync(request).ToList();
 
             // Assert
             Assert.AreEqual(1, result.Count);

@@ -36,7 +36,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
         [TestMethod]
         public void Map_ShouldMapAllPropertiesCorrectly()
         {
-            // Arrange  
+            // Arrange
             var fees = new CalcResultSummaryProducerDisposalFees
             {
                 BillingInstructionSection = new CalcResultSummaryBillingInstruction
@@ -57,12 +57,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
                 SubsidiaryId = "Subsidiary456",
             };
 
-            // Act  
+            // Act
             var result = _testClass?.Map(fees);
-            
+
             Assert.IsNotNull(result);
 
-            // Assert  
+            // Assert
             Assert.AreEqual("£1000.00", result.CurrentYearInvoicedTotalToDate);
             Assert.AreEqual("Tonnage Changed", result.TonnageChangeSinceLastInvoice);
             Assert.AreEqual("-£200.00", result.LiabilityDifferenceCalcVsPrev);
@@ -79,7 +79,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
         [TestMethod]
         public void Map_ShouldHandleNullValues()
         {
-            // Arrange  
+            // Arrange
             var fees = new CalcResultSummaryProducerDisposalFees
             {
                 ProducerId = "Producer123",
@@ -100,11 +100,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
                 }
             };
 
-            // Act  
+            // Act
             var result = _testClass?.Map(fees);
             Assert.IsNotNull(result);
 
-            // Assert  
+            // Assert
             Assert.AreEqual(CommonConstants.Hyphen, result.CurrentYearInvoicedTotalToDate);
             Assert.AreEqual(CommonConstants.Hyphen, result.TonnageChangeSinceLastInvoice);
             Assert.AreEqual(CommonConstants.Hyphen, result.LiabilityDifferenceCalcVsPrev);
@@ -120,7 +120,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
         [TestMethod]
         public void Map_ShouldHandleHyphenValues()
         {
-            // Arrange  
+            // Arrange
             var fees = new CalcResultSummaryProducerDisposalFees
             {
                 BillingInstructionSection = new CalcResultSummaryBillingInstruction
@@ -141,12 +141,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
                 SubsidiaryId = "Subsidiary456",
             };
 
-            // Act  
+            // Act
             var result = _testClass?.Map(fees);
 
             Assert.IsNotNull(result);
 
-            // Assert  
+            // Assert
             Assert.AreEqual(CommonConstants.Hyphen, result.CurrentYearInvoicedTotalToDate);
             Assert.AreEqual(CommonConstants.Hyphen, result.TonnageChangeSinceLastInvoice);
             Assert.AreEqual(CommonConstants.Hyphen, result.LiabilityDifferenceCalcVsPrev);

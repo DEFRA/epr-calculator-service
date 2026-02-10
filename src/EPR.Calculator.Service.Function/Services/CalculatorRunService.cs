@@ -108,8 +108,6 @@ namespace EPR.Calculator.Service.Function.Services
             CalculatorRunParameter args,
             string pipelineName)
         {
-            var financialYear = args.FinancialYear;
-
             return new AzureSynapseRunnerParameters
             {
                 PipelineUrl = new Uri(this.configuration.PipelineUrl),
@@ -117,7 +115,7 @@ namespace EPR.Calculator.Service.Function.Services
                 MaxCheckCount = this.configuration.MaxCheckCount,
                 PipelineName = pipelineName,
                 CalculatorRunId = args.Id,
-                RelativeYearValue = financialYear.ToRelativeYear().ToInt(),
+                RelativeYearValue = args.RelativeYear.Value,
             };
         }
 
@@ -190,7 +188,7 @@ namespace EPR.Calculator.Service.Function.Services
             if (statusUpdateResponse == RunClassification.RUNNING)
             {
                 var isTransposeSuccess = await this.transposePomAndOrgDataService.TransposeBeforeResultsFileAsync(
-                    new CalcResultsRequestDto { RunId = calculatorRunParameter.Id, CreatedBy = calculatorRunParameter.User },
+                    new CalcResultsRequestDto { RunId = calculatorRunParameter.Id, RelativeYear = calculatorRunParameter.RelativeYear, CreatedBy = calculatorRunParameter.User },
                     runName,
                     new CancellationTokenSource(this.configuration.TransposeTimeout).Token);
 
@@ -202,7 +200,7 @@ namespace EPR.Calculator.Service.Function.Services
                 }
 
                 isSuccess = await this.prepareCalcService.PrepareCalcResultsAsync(
-                    new CalcResultsRequestDto { RunId = calculatorRunParameter.Id, FinancialYear = calculatorRunParameter.FinancialYear.ToString() },
+                    new CalcResultsRequestDto { RunId = calculatorRunParameter.Id, RelativeYear = calculatorRunParameter.RelativeYear },
                     runName,
                     new CancellationTokenSource(this.configuration.PrepareCalcResultsTimeout).Token);
 

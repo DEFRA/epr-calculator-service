@@ -3,6 +3,8 @@
     using AutoFixture;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.API.Data.Models;
+    using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Enums;
@@ -337,7 +339,7 @@
                 mockErrorReportService.Object,
                 new Mock<ICalculatorTelemetryLogger>().Object);
 
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 3 };
+            var resultsRequestDto = new CalcResultsRequestDto { RunId = 3, RelativeYear = new RelativeYear(2025) };
 
             // Detach existing CalculatorRun entity if it is already being tracked
             var existingCalculatorRun = _context.ChangeTracker.Entries<CalculatorRun>()
@@ -412,7 +414,7 @@
                 mockErrorReportService.Object,
                 new Mock<ICalculatorTelemetryLogger>().Object);
 
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 3 };
+            var resultsRequestDto = new CalcResultsRequestDto { RunId = 3, RelativeYear = new RelativeYear(2025) };
 
             // Detach existing CalculatorRun entity if it is already being tracked
             var existingCalculatorRun = _context.ChangeTracker.Entries<CalculatorRun>()
@@ -506,7 +508,7 @@
                 mockErrorReportService.Object,
                 new Mock<ICalculatorTelemetryLogger>().Object);
 
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 2 };
+            var resultsRequestDto = new CalcResultsRequestDto { RunId = 2, RelativeYear = new RelativeYear(2025) };
 
             // Detach existing CalculatorRun entity if it is already being tracked
             var existingCalculatorRun = _context.ChangeTracker.Entries<CalculatorRun>()
@@ -566,7 +568,7 @@
                 mockErrorReportService.Object,
                 new Mock<ICalculatorTelemetryLogger>().Object);
 
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 2 };
+            var resultsRequestDto = new CalcResultsRequestDto { RunId = 2, RelativeYear = new RelativeYear(2025) };
 
             // Detach existing CalculatorRun entity if it is already being tracked
             var existingCalculatorRun = _context.ChangeTracker.Entries<CalculatorRun>()
@@ -760,7 +762,7 @@
                 new ()
                 {
                     Id = 1,
-                    RelativeYear = "2024",
+                    RelativeYear = new RelativeYear(2024),
                     EffectiveFrom = DateTime.UtcNow,
                     CreatedBy = "Test user",
                     CreatedAt = DateTime.UtcNow,
@@ -768,7 +770,7 @@
                 new ()
                 {
                     Id = 2,
-                    RelativeYear = "2024",
+                    RelativeYear = new RelativeYear(2024),
                     EffectiveFrom = DateTime.UtcNow,
                     CreatedBy = "Test user",
                     CreatedAt = DateTime.UtcNow,
@@ -912,14 +914,14 @@
             {
                 new ()
                 {
-                    RelativeYear = "2024",
+                    RelativeYear = new RelativeYear(2024),
                     EffectiveFrom = DateTime.UtcNow,
                     CreatedBy = "Test user",
                     CreatedAt = DateTime.UtcNow,
                 },
                 new ()
                 {
-                    RelativeYear = "2024",
+                    RelativeYear = new RelativeYear(2024),
                     EffectiveFrom = DateTime.UtcNow,
                     CreatedBy = "Test user",
                     CreatedAt = DateTime.UtcNow,
@@ -1001,14 +1003,13 @@
 
         protected static IEnumerable<CalculatorRun> GetCalculatorRuns()
         {
-            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
             var list = new List<CalculatorRun>
             {
                 new ()
                 {
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Run",
-                    Financial_Year = calculatorRunFinancialYear,
+                    RelativeYear = new RelativeYear(2024),
                     CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                     CalculatorRunOrganisationDataMasterId = 2,
@@ -1018,7 +1019,7 @@
                 {
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Calculated Result",
-                    Financial_Year = calculatorRunFinancialYear,
+                    RelativeYear = new RelativeYear(2024),
                     CreatedAt = new DateTime(2024, 8, 21, 14, 16, 27, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                 },
@@ -1026,7 +1027,7 @@
                 {
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Run",
-                    Financial_Year = calculatorRunFinancialYear,
+                    RelativeYear = new RelativeYear(2024),
                     CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                     CalculatorRunOrganisationDataMasterId = 1,
@@ -1036,7 +1037,7 @@
                 {
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Calculated Result",
-                    Financial_Year = calculatorRunFinancialYear,
+                    RelativeYear = new RelativeYear(2024),
                     CreatedAt = new DateTime(2024, 8, 21, 14, 16, 27, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                     CalculatorRunOrganisationDataMasterId = 2,
@@ -1086,7 +1087,7 @@
                 mockErrorReportService.Object,
                 new Mock<ICalculatorTelemetryLogger>().Object);
 
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 3 };
+            var resultsRequestDto = new CalcResultsRequestDto { RunId = 3, RelativeYear = new RelativeYear(2025) };
 
             // Detach existing CalculatorRun entity if it is already being tracked
             var existingCalculatorRun = _context.ChangeTracker.Entries<CalculatorRun>()
@@ -1099,7 +1100,7 @@
             dbChunkerService.Setup(x => x.InsertRecords(It.IsAny<IEnumerable<ProducerReportedMaterial>>())).Callback<IEnumerable<ProducerReportedMaterial>>(arg => resultPRM = arg).Returns(Task.CompletedTask);
 
             await service.Transpose(resultsRequestDto, CancellationToken.None);
-            
+
             Assert.IsNotNull(resultProducerDetails);
             Assert.AreEqual(2, resultProducerDetails.Count());
             Assert.IsFalse(resultProducerDetails.Any(x=>x.SubsidiaryId == "100"));

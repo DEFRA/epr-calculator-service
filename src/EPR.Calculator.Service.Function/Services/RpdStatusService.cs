@@ -99,8 +99,7 @@
                 throw new ValidationException(vr.ToString());
             }
 
-            FinancialYear financialYear = new FinancialYear(calcRun?.FinancialYearId ?? string.Empty);
-            var relativeYear = financialYear.ToRelativeYear();
+            var relativeYear = calcRun!.RelativeYear;
 
             using (var transaction = await this.Context.Database.BeginTransactionAsync(timeout))
             {
@@ -109,11 +108,11 @@
                     this.TelemetryLogger.LogInformation(new TrackMessage { RunId = runId, RunName = runName, Message = $"Creating run organization and POM for run: {runId}" });
 
                     await this.Wrapper.ExecuteSqlAsync(
-                        $"exec dbo.CreateRunOrganization @RunId ={runId}, @relativeyear = {relativeYear.ToInt()}, @createdBy = {updatedBy}",
+                        $"exec dbo.CreateRunOrganization @RunId ={runId}, @relativeyear = {relativeYear.Value}, @createdBy = {updatedBy}",
                         timeout);
 
                     await this.Wrapper.ExecuteSqlAsync(
-                        $"exec dbo.CreateRunPom @RunId ={runId}, @relativeyear = {relativeYear.ToInt()}, @createdBy = {updatedBy}",
+                        $"exec dbo.CreateRunPom @RunId ={runId}, @relativeyear = {relativeYear.Value}, @createdBy = {updatedBy}",
                         timeout);
 
                     calcRun!.CalculatorRunClassificationId = runClassifications.Single(x => x.Status == RunClassification.RUNNING.ToString()).Id;

@@ -2,6 +2,8 @@
 {
     using System;
     using AutoFixture.Kernel;
+    using EPR.Calculator.API.Data.Models;
+
 
     /// <summary>
     /// Customisation that allows AutoFixture to generate relative years.

@@ -21,6 +21,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
     using Microsoft.ApplicationInsights.Extensibility;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using EPR.Calculator.API.Data.Models;
+
 
     [TestClass]
     public class CalcResultBuilderTests
@@ -107,7 +109,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         [TestMethod]
         public void Build_ShouldReturnCalcResult()
         {
-            var resultsRequestDto = new CalcResultsRequestDto();
+            var resultsRequestDto = new CalcResultsRequestDto() { RunId = 1, RelativeYear = new RelativeYear(2025)};
             var mockResultDetail = new Mock<CalcResultDetail>();
             var mockLapcapData = new Mock<CalcResultLapcapData>();
             var mockOtherParams = new Mock<CalcResultParameterOtherCost>();
@@ -136,7 +138,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 .ReturnsAsync(mockCalcResultScaledUpProducersData.Object);
             this.mockCalcResultPartialObligationBuilder.Setup(m => m.ConstructAsync(resultsRequestDto, mockCalcResultScaledUpProducersData.Object.ScaledupProducers ?? new List<CalcResultScaledupProducer>()))
                 .ReturnsAsync(mockCalcResultPartialObligationsData.Object);
-            this.mockSummaryBuilder.Setup(x => x.ConstructAsync(resultsRequestDto, It.IsAny<CalcResult>()))
+            this.mockSummaryBuilder.Setup(x => x.ConstructAsync(It.IsAny<int>(), It.IsAny<RelativeYear>(), It.IsAny<bool>(), It.IsAny<CalcResult>()))
                 .ReturnsAsync(mockCalcResultSummary.Object);
 
             var results = this.calcResultBuilder.BuildAsync(resultsRequestDto);

@@ -1,5 +1,7 @@
 ﻿using AutoFixture;
 using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Common;
 using EPR.Calculator.Service.Function.Builder.CommsCost;
 using EPR.Calculator.Service.Function.Builder.Lapcap;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter;
@@ -113,7 +115,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                     RunDate = DateTime.UtcNow,
                     RunName = "CalculatorRunName",
                     RunBy = "Test user",
-                    FinancialYear = "2024-25",
+                    RelativeYear = new RelativeYear(2024),
                     RpdFileORG = "21/07/2017 17:32",
                     RpdFilePOM = "21/07/2017 17:32",
                     LapcapFile = "lapcap-data.csv,24/06/2025 10:00, test",

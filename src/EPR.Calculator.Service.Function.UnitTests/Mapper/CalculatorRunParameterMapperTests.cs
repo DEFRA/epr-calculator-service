@@ -4,6 +4,7 @@
 
 namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 {
+    using EPR.Calculator.API.Data.Models;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Function;
     using EPR.Calculator.Service.Function.Constants;
@@ -37,7 +38,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             // Arrange
             var calculatorParameter = new CreateResultFileMessage
             {
-                FinancialYear = new FinancialYear("2024-25"),
+                RelativeYear = new RelativeYear(2024),
                 CreatedBy = "Test user",
                 CalculatorRunId = 678767,
                 MessageType = MessageTypes.Result
@@ -48,7 +49,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(calculatorParameter.FinancialYear, result?.FinancialYear);
+            Assert.AreEqual(calculatorParameter.RelativeYear, result?.RelativeYear);
             Assert.AreEqual(calculatorParameter.CreatedBy, result?.User);
             Assert.AreEqual(calculatorParameter.CalculatorRunId, result?.Id);
         }

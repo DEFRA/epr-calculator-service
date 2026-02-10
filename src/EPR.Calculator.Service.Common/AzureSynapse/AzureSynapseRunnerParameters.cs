@@ -1,4 +1,6 @@
-﻿namespace EPR.Calculator.Service.Common.AzureSynapse
+﻿using EPR.Calculator.API.Data.Models;
+
+namespace EPR.Calculator.Service.Common.AzureSynapse
 {
     public record AzureSynapseRunnerParameters
     {

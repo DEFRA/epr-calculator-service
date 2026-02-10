@@ -2,6 +2,8 @@
 {
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.API.Data.Models;
+    using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Function.Builder.LateReportingTonnages;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Enums;
@@ -30,14 +32,13 @@
             dbContext.CalculatorRuns.RemoveRange(dbContext.CalculatorRuns);
             dbContext.SaveChanges();
 
-            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
             var calculatorRuns = new List<CalculatorRun>
             {
                 new() { Id = 1,
                         DefaultParameterSettingMasterId = 1,
                         CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                         Name = "Test Run",
-                        Financial_Year = calculatorRunFinancialYear,
+                        RelativeYear = new RelativeYear(2024),
                         CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
                         CreatedBy = "Test User",
                         LapcapDataMasterId = 2,
@@ -46,7 +47,7 @@
 
             var defaultParameterSettings = new List<DefaultParameterSettingMaster>
             {
-                new() { Id = 1, ParameterYear = calculatorRunFinancialYear },
+                new() { Id = 1, RelativeYear = new RelativeYear(2024) },
             };
 
             var defaultParameterTemplateMasterList = new List<DefaultParameterTemplateMaster>
@@ -90,7 +91,7 @@
         [TestMethod]
         public void Construct_ShouldReturnCorrectResults()
         {
-            var requestDto = new CalcResultsRequestDto { RunId = 1 };
+            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) };
 
             var results = builder.ConstructAsync(requestDto);
             results.Wait();

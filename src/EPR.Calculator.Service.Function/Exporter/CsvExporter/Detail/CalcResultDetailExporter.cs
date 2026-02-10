@@ -24,7 +24,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail
             AppendCsvLine(stringBuilder, RunId, calcResultDetail.RunId.ToString());
             AppendCsvLine(stringBuilder, RunDate, calcResultDetail.RunDate.ToString(CalculationResults.DateFormat));
             AppendCsvLine(stringBuilder, Runby, calcResultDetail.RunBy);
-            AppendCsvLine(stringBuilder, FinancialYear, calcResultDetail.FinancialYear);
+            AppendCsvLine(stringBuilder, FinancialYear, calcResultDetail.RelativeYear.ToFinancialYear());
             AppendRpdFileInfo(stringBuilder, RPDFileORG, RPDFilePOM, calcResultDetail.RpdFileORG, calcResultDetail.RpdFilePOM);
             AppendFileInfo(stringBuilder, LapcapFile, calcResultDetail.LapcapFile);
             AppendFileInfo(stringBuilder, ParametersFile, calcResultDetail.ParametersFile);

@@ -5,6 +5,7 @@
 using System;
 using Newtonsoft.Json;
 using EPR.Calculator.Service.Common;
+using EPR.Calculator.API.Data.Models;
 
 namespace EPR.Calculator.Service.Function
 {
@@ -16,26 +17,11 @@ namespace EPR.Calculator.Service.Function
         /// <summary>
         /// Gets or sets the financial year for the calculator run.
         /// </summary>
-        [JsonConverter(typeof(FinancialYearConverter))]
-        public required FinancialYear FinancialYear { get; set; }
+        public required RelativeYear RelativeYear { get; set; }
 
         /// <summary>
         /// Gets or sets the user who initiated the calculator run.
         /// </summary>
         public required string CreatedBy { get; set; }
-    }
-}
-
-public class FinancialYearConverter : JsonConverter<FinancialYear>
-{
-    public override void WriteJson(JsonWriter writer, FinancialYear value, JsonSerializer serializer)
-    {
-        writer.WriteValue(value.ToString());
-    }
-
-    public override FinancialYear ReadJson(JsonReader reader, Type objectType, FinancialYear existingValue, bool hasExistingValue, JsonSerializer serializer)
-    {
-        var s = reader.Value?.ToString() ?? throw new JsonSerializationException("Expected a FinancialYear string");
-        return new FinancialYear(s);
     }
 }

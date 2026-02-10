@@ -5,6 +5,7 @@
 namespace EPR.Calculator.Service.Function.UnitTests
 {
     using System.Text.Json;
+    using EPR.Calculator.API.Data.Models;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Function.Constants;
@@ -58,8 +59,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public async Task ServiceBusTrigger_ValidMessageRun()
         {
             // Arrange
-            var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
-            var processedParameterData = new CalculatorRunParameter() { FinancialYear = new FinancialYear("2024-25"), User = "Test user", Id = 678767, MessageType = MessageTypes.Result };
+            var myQueueItem = @"{ CalculatorRunId: 678767, RelativeYear: 2024, CreatedBy: 'Test user'}";
+            var processedParameterData = new CalculatorRunParameter() { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767, MessageType = MessageTypes.Result };
             var runName = "Test Run Name";
 
             this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
@@ -159,7 +160,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public async Task ServiceBusTrigger_MessageJsonException()
         {
             // Arrange
-            var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
+            var myQueueItem = @"{ CalculatorRunId: 678767, RelativeYear: 2024, CreatedBy: 'Test user'}";
             this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Throws<JsonException>();
 
             MockResultMessage(myQueueItem);
@@ -183,7 +184,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public async Task ServiceBusTrigger_Message_Mapper_Unhandled_Exception()
         {
             // Arrange
-            var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
+            var myQueueItem = @"{ CalculatorRunId: 678767, RelativeYear: 2024, CreatedBy: 'Test user'}";
             this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Throws<Exception>();
             MockResultMessage(myQueueItem);
             // Act
@@ -205,8 +206,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public async Task ServiceBusTrigger_InvalidMessageRunUnhandledException()
         {
             // Arrange
-            var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
-            var processedParameterData = new CalculatorRunParameter() { FinancialYear = new FinancialYear("2024-25"), User = "Test user", Id = 678767 , MessageType = MessageTypes.Result };
+            var myQueueItem = @"{ CalculatorRunId: 678767, RelativeYear: 2024, CreatedBy: 'Test user'}";
+            var processedParameterData = new CalculatorRunParameter() { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767 , MessageType = MessageTypes.Result };
             var runName = "Test Run Name";
 
             this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
@@ -231,7 +232,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public async Task ServiceBusTrigger_NullParamRun()
         {
             // Arrange
-            var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
+            var myQueueItem = @"{ CalculatorRunId: 678767, RelativeYear: 2024, CreatedBy: 'Test user'}";
             this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns((CalculatorRunParameter?)null!);
 
             // Act
@@ -250,8 +251,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Arrange
             this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns((CalculatorRunParameter?)null!);
-            var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
-            var processedParameterData = new CalculatorRunParameter() { FinancialYear = new FinancialYear("2024-25"), User = "Test user", Id = 678767 , MessageType = MessageTypes.Result };
+            var myQueueItem = @"{ CalculatorRunId: 678767, RelativeYear: 2024, CreatedBy: 'Test user'}";
+            var processedParameterData = new CalculatorRunParameter() { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767 , MessageType = MessageTypes.Result };
             var runName = "Test Run Name";
 
             this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
@@ -273,8 +274,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public async Task ServiceBusTrigger_StartProcess_Unhandled_Exception()
         {
             // Arrange
-            var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
-            var processedParameterData = new CalculatorRunParameter() { FinancialYear = new FinancialYear("2024-25"), User = "Test user", Id = 678767 , MessageType = MessageTypes.Result };
+            var myQueueItem = @"{ CalculatorRunId: 678767, RelativeYear: 2024, CreatedBy: 'Test user'}";
+            var processedParameterData = new CalculatorRunParameter() { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767 , MessageType = MessageTypes.Result };
             var runName = "Test Run Name";
 
             this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
@@ -297,8 +298,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public async Task ServiceBusTrigger_GetRunNameAsync_Unhandled_Exception()
         {
             // Arrange
-            var myQueueItem = @"{ CalculatorRunId: 678767, FinancialYear: '2024-25', CreatedBy: 'Test user'}";
-            var processedParameterData = new CalculatorRunParameter() { FinancialYear = new FinancialYear("2024-25"), User = "Test user", Id = 678767 , MessageType = MessageTypes.Result };
+            var myQueueItem = @"{ CalculatorRunId: 678767, RelativeYear: 2024, CreatedBy: 'Test user'}";
+            var processedParameterData = new CalculatorRunParameter() { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767 , MessageType = MessageTypes.Result };
 
             this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
             this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).Throws<Exception>();
@@ -320,7 +321,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var resultFileMessage = new CreateResultFileMessage
             {
                 CalculatorRunId = 1,
-                FinancialYear = new FinancialYear("2024-25"),
+                RelativeYear = new RelativeYear(2024),
                 CreatedBy = "TestUser",
                 MessageType = "Result"
             };

@@ -19,7 +19,7 @@
     <PackageReference Include="Microsoft.ApplicationInsights.Web" Version="2.23.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.ServiceBus" Version="5.12.0" />
-    <!-- 
+    <!--
         Adding Azure.Messaging.ServiceBus so that it can connect to the ASB emulator
         Previous implicit version being used was 7.16.0, as a dependency of
         Microsoft.Azure.WebJobs.Extensions.ServiceBus. All packages still require updating
@@ -29,7 +29,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.5.0" />
-    <PackageReference Include="EPR.Calculator.API.Data" Version="2.1.0"/>
+    <PackageReference Include="EPR.Calculator.API.Data" Version="2.1.1"/>
     <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

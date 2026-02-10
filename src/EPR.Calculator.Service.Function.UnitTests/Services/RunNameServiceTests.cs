@@ -3,6 +3,8 @@
     using System.Threading.Tasks;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.API.Data.Models;
+    using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Function.Services;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -48,8 +50,7 @@
             // Arrange
             var runId = 1;
             var expectedRunName = "Test Run Name";
-            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2027-28" };
-            this.dbContext.CalculatorRuns.Add(new CalculatorRun { Id = runId, Name = expectedRunName, Financial_Year = calculatorRunFinancialYear });
+            this.dbContext.CalculatorRuns.Add(new CalculatorRun { Id = runId, Name = expectedRunName, RelativeYear = new RelativeYear(2027) });
             await this.dbContext.SaveChangesAsync();
 
             // Act
@@ -85,8 +86,7 @@
         {
             // Arrange
             var runId = 2;
-            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2028-29" };
-            this.dbContext.CalculatorRuns.Add(new CalculatorRun { Id = runId, Name = string.Empty, Financial_Year = calculatorRunFinancialYear });
+            this.dbContext.CalculatorRuns.Add(new CalculatorRun { Id = runId, Name = string.Empty, RelativeYear = new RelativeYear(2028) });
             await this.dbContext.SaveChangesAsync();
 
             // Act

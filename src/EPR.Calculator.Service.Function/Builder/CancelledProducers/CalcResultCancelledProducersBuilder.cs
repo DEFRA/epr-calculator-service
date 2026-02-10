@@ -9,6 +9,8 @@
     using Azure.Analytics.Synapse.Artifacts.Models;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.API.Data.Models;
+    using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Interface;
@@ -34,7 +36,7 @@
             this.producerDetailsService = producerDetailsService;
         }
 
-        public async Task<CalcResultCancelledProducersResponse> ConstructAsync(CalcResultsRequestDto resultsRequestDto, string financialYear)
+        public async Task<CalcResultCancelledProducersResponse> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
         {
 
             this.materials = this.materialService.GetMaterials().Result;
@@ -42,7 +44,7 @@
             return await Task.Run(() =>
             {
                 var producers = new List<CalcResultCancelledProducersDto>();
-                producers.AddRange(GetCancelledProducers(financialYear, resultsRequestDto.RunId, resultsRequestDto.IsBillingFile).Result);
+                producers.AddRange(GetCancelledProducers(resultsRequestDto.RelativeYear, resultsRequestDto.RunId, resultsRequestDto.IsBillingFile).Result);
 
                 var response = new CalcResultCancelledProducersResponse
                 {
@@ -54,14 +56,14 @@
             });
         }
 
-        public async Task<IEnumerable<CalcResultCancelledProducersDto>> GetCancelledProducers(string financialYear, int runId, bool isBilling)
+        public async Task<IEnumerable<CalcResultCancelledProducersDto>> GetCancelledProducers(RelativeYear relativeYear, int runId, bool isBilling)
         {
-            IEnumerable<int> allProducerIds = await GetAllProducerIds(financialYear);
+            IEnumerable<int> allProducerIds = await GetAllProducerIds(relativeYear);
 
             var producerIdsForCurrentRun = await this.producerDetailsService.GetProducers(runId);
 
             var missingProducersIdsInCurrentRun = allProducerIds.Where(t => !producerIdsForCurrentRun.Any(k => k == t));
-            var missingProducersInCurrentRun = await this.producerDetailsService.GetLatestProducerDetailsForThisFinancialYear(financialYear, missingProducersIdsInCurrentRun);
+            var missingProducersInCurrentRun = await this.producerDetailsService.GetProducerDetails(relativeYear, missingProducersIdsInCurrentRun);
 
             // populate cancelled producers
             var calcResultCancelledProducers = new List<CalcResultCancelledProducersDto>();
@@ -76,7 +78,7 @@
             }
             else
             {
-                var acceptedCancelledProducersForPreviousRuns = await GetAcceptedCancelledProducers(financialYear);
+                var acceptedCancelledProducersForPreviousRuns = await GetAcceptedCancelledProducers(relativeYear);
                 filteredMissingProducers = missingProducersInCurrentRun.Where(t => !acceptedCancelledProducersForPreviousRuns
                 .Exists(k => k == t.InvoicedTonnage?.ProducerId)).ToList();
             }
@@ -121,7 +123,7 @@
             return calcResultCancelledProducers;
         }
 
-        private async Task<IEnumerable<int>> GetAllProducerIds(string financialYear)
+        private async Task<IEnumerable<int>> GetAllProducerIds(RelativeYear relativeYear)
         {
             return await (from prfb in context.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
                           join cr in context.CalculatorRuns.AsNoTracking()
@@ -133,11 +135,11 @@
                                                             RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
                                                             RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
                                                             RunClassificationStatusIds.FINALRUNCOMPLETEDID
-                             }.Contains(cr.CalculatorRunClassificationId) && cr.FinancialYearId == financialYear
+                             }.Contains(cr.CalculatorRunClassificationId) && cr.RelativeYearValue == relativeYear.Value
                              && prfb.BillingInstructionAcceptReject == CommonConstants.Accepted
                           select prfb.ProducerId).ToListAsync();
         }
-        
+
         private static decimal? GetInvoicedTonnageForMaterials(List<ProducerInvoicedDto> cancelledProducersWithData, int materialId, int? producerId)
         {
             return cancelledProducersWithData.Where(t => t.InvoicedTonnage?.MaterialId == materialId && t.InvoicedTonnage.ProducerId == producerId).OrderByDescending(t => t.CalculatorRunId).Select(k => k.InvoicedTonnage?.InvoicedNetTonnage).FirstOrDefault();
@@ -153,12 +155,12 @@
         }
 
 
-        private async Task<List<int>> GetAcceptedCancelledProducers(string financialYear)
+        private async Task<List<int>> GetAcceptedCancelledProducers(RelativeYear relativeYear)
         {
             var cancelledAcceptedProducers = await (from calc in context.CalculatorRuns.AsNoTracking()
                                                     join p in context.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
                                                         on calc.Id equals p.CalculatorRunId
-                                                    where calc.FinancialYearId == financialYear
+                                                    where calc.RelativeYearValue == relativeYear.Value
                                                         && p.BillingInstructionAcceptReject != null
                                                         && p.BillingInstructionAcceptReject == CommonConstants.Accepted
                                                         && p.SuggestedBillingInstruction == CommonConstants.CancelStatus

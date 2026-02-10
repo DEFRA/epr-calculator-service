@@ -49,7 +49,7 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                     prsbi.ReasonForRejection
                 };
 
-            var latestOrgDetailsByFinancialYearQuery =
+            var orgDetailsQuery =
                 from cr in context.CalculatorRuns
                 join crodm in context.CalculatorRunOrganisationDataMaster
                     on cr.CalculatorRunOrganisationDataMasterId equals crodm.Id
@@ -57,7 +57,7 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                     on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
                 join b in billingInstructionsQuery
                     on crodd.OrganisationId equals b.ProducerId
-                where cr.FinancialYearId == resultsRequestDto.FinancialYear
+                where cr.RelativeYearValue == resultsRequestDto.RelativeYear.Value
                       && crodd.OrganisationName != null
                       && crodd.SubsidiaryId == null
                 group cr by crodd.OrganisationId into g
@@ -75,9 +75,9 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                     on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
                 join b in billingInstructionsQuery
                     on crodd.OrganisationId equals b.ProducerId
-                join latest in latestOrgDetailsByFinancialYearQuery
+                join latest in orgDetailsQuery
                     on new { OrgId = crodd.OrganisationId, cr.Id }
-                    equals new { OrgId = latest.OrganisationId, Id = latest.LatestRunId } 
+                    equals new { OrgId = latest.OrganisationId, Id = latest.LatestRunId }
                 where crodd.SubsidiaryId == null
                 select new CalcResultRejectedProducer
                 {

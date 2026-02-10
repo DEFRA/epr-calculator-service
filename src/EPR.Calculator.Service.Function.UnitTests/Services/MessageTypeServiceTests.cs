@@ -1,4 +1,5 @@
-﻿using EPR.Calculator.Service.Common;
+﻿using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Common;
 using EPR.Calculator.Service.Function.Services;
 using Newtonsoft.Json;
 
@@ -44,7 +45,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var json = @"{
                             'CalculatorRunId': 123,
                             'CreatedBy': 'Test User',
-                            'FinancialYear': '2024-25',
+                            'RelativeYear': 2024,
                             'MessageType': 'Result',
                          }";
 
@@ -58,7 +59,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var billingMessage = (CreateResultFileMessage)result;
             Assert.AreEqual(123, billingMessage.CalculatorRunId);
             Assert.AreEqual("Test User", billingMessage.CreatedBy);
-            Assert.AreEqual(new FinancialYear("2024-25"), billingMessage.FinancialYear);
+            Assert.AreEqual(new RelativeYear(2024), billingMessage.RelativeYear);
             Assert.AreEqual("Result", billingMessage.MessageType);
         }
 
@@ -70,7 +71,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var json = @"{
                             'CalculatorRunId': 123,
                             'CreatedBy': 'Test User',
-                            'FinancialYear': '2024-25'
+                            'RelaiveYear': 2024
                          }";
 
             // Act
