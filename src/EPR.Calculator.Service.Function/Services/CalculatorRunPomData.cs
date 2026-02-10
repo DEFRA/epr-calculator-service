@@ -5,12 +5,14 @@ namespace EPR.Calculator.Service.Function.Services {
     using System.Threading.Tasks;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.API.Data.Models;
+
     using EPR.Calculator.Service.Common;
 
     using Microsoft.Data.SqlClient;
     using Microsoft.EntityFrameworkCore;
 
-    public interface ICalculatorRunPomData { Task LoadPomDataForCalcRun(int runId, string relativeYear, string createdBy, CancellationToken cancellationToken); }
+    public interface ICalculatorRunPomData { Task LoadPomDataForCalcRun(int runId, RelativeYear relativeYear, string createdBy, CancellationToken cancellationToken); }
 
     public class CalculatorRunPomData : ICalculatorRunPomData
     {
@@ -18,7 +20,7 @@ namespace EPR.Calculator.Service.Function.Services {
 
         public CalculatorRunPomData(ApplicationDBContext context) { _context = context; }
 
-        public async Task LoadPomDataForCalcRun(int runId, string relativeYear, string createdBy, CancellationToken cancellationToken)
+        public async Task LoadPomDataForCalcRun(int runId, RelativeYear relativeYear, string createdBy, CancellationToken cancellationToken)
         {
             var now = DateTime.Now;
 

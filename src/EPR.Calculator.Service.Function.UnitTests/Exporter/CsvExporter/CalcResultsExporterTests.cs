@@ -17,6 +17,7 @@
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.ErrorReport;
+    using EPR.Calculator.API.Data.Models;
 
     [TestClass]
     public class CalcResultsExporterTests
@@ -405,6 +406,7 @@
                     RunId = 1,
                     RunDate = DateTime.UtcNow,
                     RunName = "CalculatorRunName",
+                    RelativeYear = new RelativeYear(2024)
                 },
             };
         }

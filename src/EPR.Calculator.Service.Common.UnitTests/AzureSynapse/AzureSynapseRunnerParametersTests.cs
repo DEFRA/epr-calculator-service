@@ -2,6 +2,8 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 {
     using System;
     using AutoFixture;
+    using EPR.Calculator.API.Data.Models;
+
     using EPR.Calculator.Service.Common.AzureSynapse;
     using EPR.Calculator.Service.Common.UnitTests.AutoFixtureCustomisations;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -32,7 +34,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             this.TestClass = new AzureSynapseRunnerParameters
             {
                 CalculatorRunId = this.CalculatorRunId,
-                RelativeYearValue = this.RelativeYear.ToInt(),
+                RelativeYearValue = this.RelativeYear.Value,
                 CheckInterval = this.CheckInterval,
                 MaxCheckCount = this.MaxCheckCount,
                 PipelineName = this.PipelineName,
@@ -68,7 +70,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             var instance = new AzureSynapseRunnerParameters
             {
                 CalculatorRunId = this.CalculatorRunId,
-                RelativeYearValue = this.RelativeYear.ToInt(),
+                RelativeYearValue = this.RelativeYear.Value,
                 CheckInterval = this.CheckInterval,
                 MaxCheckCount = this.MaxCheckCount,
                 PipelineName = this.PipelineName,

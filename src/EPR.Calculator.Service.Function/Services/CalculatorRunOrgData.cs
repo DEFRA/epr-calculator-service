@@ -5,17 +5,18 @@ namespace EPR.Calculator.Service.Function.Services {
     using System.Threading.Tasks;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.API.Data.Models;
     using Microsoft.Data.SqlClient;
     using Microsoft.EntityFrameworkCore;
 
-    public interface ICalculatorRunOrgData { Task LoadOrgDataForCalcRun(int runId, string calendarYear, string createdBy, CancellationToken cancellationToken); }
+    public interface ICalculatorRunOrgData { Task LoadOrgDataForCalcRun(int runId, RelativeYear relativeYear, string createdBy, CancellationToken cancellationToken); }
 
     public class CalculatorRunOrgData : ICalculatorRunOrgData
     {
         private readonly ApplicationDBContext _context;
         public CalculatorRunOrgData(ApplicationDBContext context) { _context = context; }
 
-        public async Task LoadOrgDataForCalcRun(int runId, string calendarYear, string createdBy, CancellationToken cancellationToken)
+        public async Task LoadOrgDataForCalcRun(int runId, RelativeYear relativeYear, string createdBy, CancellationToken cancellationToken)
         {
             var now = DateTime.Now;
 
@@ -31,7 +32,7 @@ namespace EPR.Calculator.Service.Function.Services {
 
             var newMaster = new CalculatorRunOrganisationDataMaster
             {
-                RelativeYear = calendarYear,
+                RelativeYear = relativeYear,
                 CreatedAt = now,
                 CreatedBy = createdBy,
                 EffectiveFrom = now

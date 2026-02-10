@@ -2,6 +2,7 @@
 {
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.API.Data.Models;
     using EPR.Calculator.Service.Function.Builder.Lapcap;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Dtos;
@@ -49,13 +50,12 @@
         {
             const string aluminium = "Aluminium";
             const string plastic = "Plastic";
-            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
             var run = new CalculatorRun
             {
                 Id = 1,
                 CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                 Name = "Test Run",
-                Financial_Year = calculatorRunFinancialYear,
+                RelativeYear = new RelativeYear(2024),
                 CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
                 CreatedBy = "Test User",
                 LapcapDataMasterId = 2,
@@ -64,7 +64,7 @@
             var lapcapDataMaster = new LapcapDataMaster
             {
                 Id = 2,
-                ProjectionYear = calculatorRunFinancialYear,
+                RelativeYear = new RelativeYear(2024),
                 CreatedBy = "Testuser",
                 CreatedAt = DateTime.UtcNow,
                 EffectiveFrom = DateTime.UtcNow,
@@ -88,7 +88,7 @@
             dbContext.CalculatorRuns.Add(run);
             dbContext.SaveChanges();
 
-            var resultsDto = new CalcResultsRequestDto { RunId = 1 };
+            var resultsDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) };
             var results = builder.ConstructAsync(resultsDto);
 
             results.Wait();

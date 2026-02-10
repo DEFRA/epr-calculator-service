@@ -6,6 +6,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using AutoFixture;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.API.Data.Models;
     using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Interface;
@@ -107,15 +108,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Arrange
             var runId = this.Fixture.Create<int>();
             var run = this.Fixture.Create<CalculatorRun>();
-            var financialYear = this.Fixture.Create<DateTime>();
             run.Id = runId;
-            run.Financial_Year.Name = financialYear.ToString("yyyy-yy");
+            run.RelativeYear = this.Fixture.Create<RelativeYear>();
             this.Context.CalculatorRuns.Add(run);
             await this.Context.SaveChangesAsync();
 
-            this.CalculatorRunOrgData.Setup(s => s.LoadOrgDataForCalcRun(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            this.CalculatorRunOrgData.Setup(s => s.LoadOrgDataForCalcRun(It.IsAny<int>(), It.IsAny<RelativeYear>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
-            this.CalculatorRunPomData.Setup(s => s.LoadPomDataForCalcRun(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            this.CalculatorRunPomData.Setup(s => s.LoadPomDataForCalcRun(It.IsAny<int>(), It.IsAny<RelativeYear>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
             // Act
@@ -127,11 +127,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Assert
             var calcRun = await this.Context.CalculatorRuns.SingleAsync(x => x.Id == runId);
-            var expectedRelativeYear = financialYear.ToString("yyyy");
             Assert.IsNotNull(calcRun);
             Assert.AreEqual((int)RunClassification.RUNNING, calcRun.CalculatorRunClassificationId);
-            this.CalculatorRunOrgData.Verify(s => s.LoadOrgDataForCalcRun(runId, expectedRelativeYear, It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
-            this.CalculatorRunPomData.Verify(s => s.LoadPomDataForCalcRun(runId, expectedRelativeYear, It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
+            this.CalculatorRunOrgData.Verify(s => s.LoadOrgDataForCalcRun(runId, run.RelativeYear, It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
+            this.CalculatorRunPomData.Verify(s => s.LoadPomDataForCalcRun(runId, run.RelativeYear, It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [TestMethod]
@@ -141,7 +140,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var runId = this.Fixture.Create<int>();
             var run = this.Fixture.Create<CalculatorRun>();
             run.Id = runId;
-            run.Financial_Year.Name = this.Fixture.Create<DateTime>().ToString("yyyy-yy");
+            run.RelativeYear = this.Fixture.Create<RelativeYear>();
             this.Context.CalculatorRuns.Add(run);
             await this.Context.SaveChangesAsync();
 
@@ -177,7 +176,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var runId = this.Fixture.Create<int>();
             var run = this.Fixture.Create<CalculatorRun>();
             run.Id = runId;
-            run.Financial_Year.Name = this.Fixture.Create<DateTime>().ToString("yyyy-yy");
+            run.RelativeYear = this.Fixture.Create<RelativeYear>();
             this.Context.CalculatorRuns.Add(run);
             await this.Context.SaveChangesAsync();
 
@@ -210,13 +209,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var runId = this.Fixture.Create<int>();
             var run = this.Fixture.Create<CalculatorRun>();
             run.Id = runId;
-            run.Financial_Year.Name = this.Fixture.Create<DateTime>().ToString("yyyy-yy");
+            run.RelativeYear = this.Fixture.Create<RelativeYear>();
             this.Context.CalculatorRuns.Add(run);
             await this.Context.SaveChangesAsync();
 
-            this.CalculatorRunOrgData.Setup(s => s.LoadOrgDataForCalcRun(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            this.CalculatorRunOrgData.Setup(s => s.LoadOrgDataForCalcRun(It.IsAny<int>(), It.IsAny<RelativeYear>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Throws<Exception>();
-            this.CalculatorRunPomData.Setup(s => s.LoadPomDataForCalcRun(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            this.CalculatorRunPomData.Setup(s => s.LoadPomDataForCalcRun(It.IsAny<int>(), It.IsAny<RelativeYear>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
             // Act

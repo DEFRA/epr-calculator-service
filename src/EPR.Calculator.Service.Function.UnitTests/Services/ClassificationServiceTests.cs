@@ -2,6 +2,8 @@
 {
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.API.Data.Models;
+    using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Services;
     using Microsoft.EntityFrameworkCore;
@@ -36,16 +38,15 @@
         }
 
         [TestMethod]
-        [DataRow(1, RunClassification.RUNNING, "2023-24")]
-        [DataRow(2, RunClassification.UNCLASSIFIED, "2024-25")]
-        [DataRow(3, RunClassification.ERROR, "2025-26")]
-        public async Task ShouldUpdateRunClassification(int runId, RunClassification runClassification, string financialYear)
+        [DataRow(1, RunClassification.RUNNING, 2023)]
+        [DataRow(2, RunClassification.UNCLASSIFIED, 2024)]
+        [DataRow(3, RunClassification.ERROR, 2025)]
+        public async Task ShouldUpdateRunClassification(int runId, RunClassification runClassification, int relativeYearValue)
         {
             // Arrange
-            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = financialYear };
             this.dbContext.CalculatorRuns.RemoveRange(dbContext.CalculatorRuns);
             this.dbContext.SaveChanges();
-            this.dbContext.CalculatorRuns.Add(new CalculatorRun { Id = runId, Name = "Test Run 01", Financial_Year = calculatorRunFinancialYear });
+            this.dbContext.CalculatorRuns.Add(new CalculatorRun { Id = runId, Name = "Test Run 01", RelativeYear = new RelativeYear(relativeYearValue) });
             this.dbContext.SaveChanges();
 
             // Act

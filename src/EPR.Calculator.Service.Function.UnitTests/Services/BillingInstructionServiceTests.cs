@@ -4,6 +4,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using System.Threading.Tasks;
     using AutoFixture;
     using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.API.Data.Models;
     using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Interface;
@@ -61,6 +62,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     RunId = 4,
                     RunDate = DateTime.UtcNow,
                     RunName = "RunName",
+                    RelativeYear = new RelativeYear(2024),
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
@@ -142,6 +144,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     RunId = 4,
                     RunDate = DateTime.UtcNow,
                     RunName = "RunName",
+                    RelativeYear = new RelativeYear(2024),
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
@@ -163,7 +166,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     CalcResultLateReportingTonnageDetails = new List<CalcResultLateReportingTonnageDetail>(),
                     MaterialHeading = string.Empty,
                     TonnageHeading = string.Empty,
-                }, 
+                },
                 CalcResultSummary  = new() {  ProducerDisposalFees = null! }
             };
 
@@ -194,6 +197,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     RunId = 4,
                     RunDate = DateTime.UtcNow,
                     RunName = "RunName",
+                    RelativeYear = new RelativeYear(2024),
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
@@ -222,7 +226,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                      TitleHeader = CommonConstants.CancelledProducers,
                      CancelledProducers = new List<CalcResultCancelledProducersDto>()
                        { new CalcResultCancelledProducersDto() { LastTonnage = null,  ProducerId = 1, TradingNameValue ="Test",
-                           LatestInvoice = new LatestInvoice(){ BillingInstructionIdValue="1_1", RunNameValue ="RunName" , RunNumberValue="4" },                            
+                           LatestInvoice = new LatestInvoice(){ BillingInstructionIdValue="1_1", RunNameValue ="RunName" , RunNumberValue="4" },
                        }
                  }
                  }
@@ -234,7 +238,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Act
             var result = await _testClass.CreateBillingInstructions(calcResult);
-           
+
 
             Assert.IsTrue(result);
         }

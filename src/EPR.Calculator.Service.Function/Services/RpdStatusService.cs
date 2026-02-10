@@ -103,16 +103,15 @@
                 throw new ValidationException(vr.ToString());
             }
 
-            FinancialYear financialYear = new FinancialYear(calcRun?.FinancialYearId ?? string.Empty);
-            var relativeYear = financialYear.ToRelativeYear();
+            var relativeYear = calcRun!.RelativeYear;
 
             using (var transaction = await this.Context.Database.BeginTransactionAsync(timeout))
             {
                 try
                 {
                     this.TelemetryLogger.LogInformation(new TrackMessage { RunId = runId, RunName = runName, Message = $"Creating run organization and POM for run: {runId}" });
-                    await CalculatorRunOrgData.LoadOrgDataForCalcRun(runId, relativeYear.ToString(), createdBy, timeout);
-                    await CalculatorRunPomData.LoadPomDataForCalcRun(runId, relativeYear.ToString(), createdBy, timeout);
+                    await CalculatorRunOrgData.LoadOrgDataForCalcRun(runId, relativeYear, createdBy, timeout);
+                    await CalculatorRunPomData.LoadPomDataForCalcRun(runId, relativeYear, createdBy, timeout);
 
                     calcRun!.CalculatorRunClassificationId = runClassifications.Single(x => x.Status == RunClassification.RUNNING.ToString()).Id;
 

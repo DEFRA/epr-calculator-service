@@ -22,6 +22,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
     using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Interface;
+    using EPR.Calculator.Service.Common;
+    using EPR.Calculator.API.Data.Models;
 
     [TestClass]
     public class CalcResultCancelledProducersBuilderTests
@@ -47,7 +49,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             var producerDetailService = new ProducerDetailService(dbContext);
 
             this.builder = new CalcResultCancelledProducersBuilder(
-                this.dbContext, 
+                this.dbContext,
                 this.materialService.Object,
                 producerDetailService);
         }
@@ -58,7 +60,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         public void TearDown()
         {
             this.dbContext?.Database.EnsureDeleted();
-        }        
+        }
 
         [TestMethod]
         public async Task CanConstruct()
@@ -66,7 +68,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             TestDataHelper.SeedDatabaseForInitialRun(dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto() { RunId = 2 };
+            var requestDto = new CalcResultsRequestDto() { RunId = 2, RelativeYear = new RelativeYear(2025) };
 
             var expected = dbContext.ProducerDesignatedRunInvoiceInstruction.FirstOrDefault(t => t.ProducerId == 2 && t.CalculatorRunId == 1);
 
@@ -74,7 +76,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             this.materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
 
             // Act
-            var result = await builder.ConstructAsync(requestDto, "2025-26");
+            var result = await builder.ConstructAsync(requestDto);
 
             // Assert
             Assert.IsNotNull(result);
@@ -94,7 +96,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             this.SeedDatabaseForUnclassified(dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto() { RunId = 1 };
+            var requestDto = new CalcResultsRequestDto() { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
             var expected = dbContext.ProducerDesignatedRunInvoiceInstruction.FirstOrDefault(t => t.ProducerId == 2 && t.CalculatorRunId == 1);
 
@@ -102,7 +104,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             this.materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
 
             // Act
-            var result = await builder.ConstructAsync(requestDto, "2025-26");
+            var result = await builder.ConstructAsync(requestDto);
 
             // Assert
             Assert.IsNotNull(result);
@@ -118,7 +120,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             this.SeedDatabaseForInitialRunCompleted(dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto() { RunId = 2 };
+            var requestDto = new CalcResultsRequestDto() { RunId = 2, RelativeYear = new RelativeYear(2025) };
 
             var expected = dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject == CommonConstants.Accepted && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant() && t.CalculatorRunId == 2);
 
@@ -126,7 +128,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             this.materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
 
             // Act
-            var result = await builder.ConstructAsync(requestDto, "2025-26");
+            var result = await builder.ConstructAsync(requestDto);
 
             // Assert
             Assert.IsNotNull(result);
@@ -141,17 +143,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             this.SeedDatabaseForInitialRunCompleted(dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto() { RunId = 3, IsBillingFile = true };
+            var requestDto = new CalcResultsRequestDto() { RunId = 3, RelativeYear = new RelativeYear(2025), IsBillingFile = true };
 
             var expected = dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject == CommonConstants.Accepted && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant() && t.CalculatorRunId == 3);
 
 
             this.materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
 
-            //this.producerDetailsService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());            
+            //this.producerDetailsService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
 
             // Act
-            var result = await builder.ConstructAsync(requestDto, "2025-26");
+            var result = await builder.ConstructAsync(requestDto);
 
             // Assert
             Assert.IsNotNull(result);
@@ -166,7 +168,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             this.SeedDatabaseForInitialRunCompleted(dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto() { RunId = 3, IsBillingFile = true };
+            var requestDto = new CalcResultsRequestDto() { RunId = 3, RelativeYear = new RelativeYear(2025), IsBillingFile = true };
 
             var expected = dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject == CommonConstants.Rejected && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant() && t.CalculatorRunId == 3);
 
@@ -174,7 +176,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             this.materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
 
             // Act
-            var result = await builder.ConstructAsync(requestDto, "2025-26");
+            var result = await builder.ConstructAsync(requestDto);
 
             // Assert
             Assert.IsNotNull(result);
@@ -190,7 +192,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             this.SeedDatabaseForInitialRunCompleted(dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto() { RunId = 3 };
+            var requestDto = new CalcResultsRequestDto() { RunId = 3, RelativeYear = new RelativeYear(2025) };
 
             var expected = dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject ==
             CommonConstants.Rejected && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant()
@@ -199,7 +201,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             this.materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
 
             // Act
-            var result = await builder.ConstructAsync(requestDto, "2025-26");
+            var result = await builder.ConstructAsync(requestDto);
 
             // Assert
             Assert.IsNotNull(result);
@@ -214,7 +216,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             this.SeedDatabaseForInitialRunCompleted(dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto() { RunId = 3 };
+            var requestDto = new CalcResultsRequestDto() { RunId = 3, RelativeYear = new RelativeYear(2025) };
 
             var expected = dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject ==
             CommonConstants.Rejected && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant()
@@ -223,12 +225,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             this.materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
 
             // Act
-            var result = await builder.ConstructAsync(requestDto, "2025-26");
+            var result = await builder.ConstructAsync(requestDto);
 
             // Assert
             Assert.IsNotNull(result);
             var cancelledProducer = result.CancelledProducers.Where(t=>t.ProducerId == 3).FirstOrDefault();
-            Assert.IsNull(cancelledProducer);           
+            Assert.IsNull(cancelledProducer);
         }
 
         [TestMethod]
@@ -237,15 +239,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             this.SeedDatabaseForInitialRunCompleted(dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto() { RunId = 3 };
+            var requestDto = new CalcResultsRequestDto() { RunId = 3, RelativeYear = new RelativeYear(2025) };
 
             var expected = dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject ==
             CommonConstants.Rejected && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant()
             && t.CalculatorRunId == 2);
-          
+
 
             // Act
-            var result = await builder.ConstructAsync(requestDto, "2025-26");
+            var result = await builder.ConstructAsync(requestDto);
 
             // Assert
             Assert.IsNotNull(result);
@@ -257,11 +259,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
 
         private void SeedDatabaseForUnclassified(ApplicationDBContext context)
         {
-            var financialYear = new CalculatorRunFinancialYear { Name = "2025-26" };
-
             //calculator runs
-            var runs = new List<CalculatorRun>() { new CalculatorRun { Id = 1, Financial_Year = financialYear, FinancialYearId = "2025-26", CalculatorRunClassificationId=2, Name = "CalculatorRunTest1" },
-             new CalculatorRun { Id = 2, Financial_Year = financialYear, FinancialYearId = "2025-26", CalculatorRunClassificationId=2, Name = "CalculatorRunTest2" }};
+            var runs = new List<CalculatorRun>() { new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest1" },
+             new CalculatorRun { Id = 2, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest2" }};
             context.CalculatorRuns.AddRange(runs);
 
 
@@ -409,12 +409,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
 
         private void SeedDatabaseForInitialRunCompleted(ApplicationDBContext context)
         {
-            var financialYear = new CalculatorRunFinancialYear { Name = "2025-26" };
-
             //calculator runs
-            var runs = new List<CalculatorRun>() { new CalculatorRun { Id = 1, Financial_Year = financialYear, FinancialYearId = "2025-26", CalculatorRunClassificationId=7, Name = "CalculatorRunTest1" },
-             new CalculatorRun { Id = 2, Financial_Year = financialYear, FinancialYearId = "2025-26", CalculatorRunClassificationId=12, Name = "CalculatorRunTest2" },
-            new CalculatorRun { Id = 3, Financial_Year = financialYear, FinancialYearId = "2025-26", CalculatorRunClassificationId=2, Name = "CalculatorRunTest3" }};
+            var runs = new List<CalculatorRun>() { new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=7, Name = "CalculatorRunTest1" },
+             new CalculatorRun { Id = 2, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=12, Name = "CalculatorRunTest2" },
+            new CalculatorRun { Id = 3, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest3" }};
 
             context.CalculatorRuns.AddRange(runs);
 
@@ -778,12 +776,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
 
         private void CreateNewRun()
         {
-            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2025-26" };
             var run = new CalculatorRun
             {
                 CalculatorRunClassificationId = 7,
                 Name = "Test Run",
-                Financial_Year = calculatorRunFinancialYear,
+                RelativeYear = new RelativeYear(2025),
                 CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
                 CreatedBy = "Test User",
                 DefaultParameterSettingMasterId = 1,
@@ -793,7 +790,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             {
                 CalculatorRunClassificationId = 2,
                 Name = "Test Run1",
-                Financial_Year = calculatorRunFinancialYear,
+                RelativeYear = new RelativeYear(2025),
                 CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
                 CreatedBy = "Test User",
                 DefaultParameterSettingMasterId = 2,

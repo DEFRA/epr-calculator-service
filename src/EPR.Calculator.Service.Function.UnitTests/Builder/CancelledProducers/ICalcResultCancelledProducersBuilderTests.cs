@@ -1,4 +1,5 @@
-﻿using EPR.Calculator.Service.Function.Builder.CancelledProducers;
+﻿using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Builder.CancelledProducers;
 using EPR.Calculator.Service.Function.Builder.LateReportingTonnages;
 using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
 using EPR.Calculator.Service.Function.Dtos;
@@ -27,10 +28,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         public async Task Construct_ShouldReturnCancelledProducersResponse()
         {
             // Arrange
-            var requestDto = new CalcResultsRequestDto
-            {
-                // populate required properties here
-            };
+            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
             var expectedResponse = new CalcResultCancelledProducersResponse
             {
@@ -54,11 +52,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             };
 
             _builderMock
-                .Setup(b => b.ConstructAsync(It.IsAny<CalcResultsRequestDto>(), It.IsAny<string>()))
+                .Setup(b => b.ConstructAsync(It.IsAny<CalcResultsRequestDto>()))
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _builderMock.Object.ConstructAsync(requestDto,"2025-26");
+            var result = await _builderMock.Object.ConstructAsync(requestDto);
 
             // Assert
             Assert.IsNotNull(result);

@@ -2,6 +2,8 @@
 {
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.API.Data.Models;
+    using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Function.Builder;
     using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
     using EPR.Calculator.Service.Function.Constants;
@@ -47,18 +49,17 @@
             var calcRunPomDataMaster = new CalculatorRunPomDataMaster
             {
                 Id = 1,
-                RelativeYear = "2024",
+                RelativeYear = new RelativeYear(2024),
                 EffectiveFrom = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test User",
             };
-            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
             this.dbContext.CalculatorRunPomDataMaster.Add(calcRunPomDataMaster);
 
             var calcRunOrganisationDataMaster = new CalculatorRunOrganisationDataMaster
             {
                 Id = 11,
-                RelativeYear = "2024",
+                RelativeYear = new RelativeYear(2025),
                 EffectiveFrom = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test User",
@@ -68,7 +69,7 @@
             this.dbContext.CalculatorRuns.Add(new CalculatorRun
             {
                 Id = runId,
-                Financial_Year = calculatorRunFinancialYear,
+                RelativeYear = new RelativeYear(2024),
                 Name = "Name",
                 CalculatorRunOrganisationDataMaster = calcRunOrganisationDataMaster,
                 CalculatorRunPomDataMaster = calcRunPomDataMaster,
@@ -111,7 +112,7 @@
                 new CalculatorRun
                 {
                     Id = 2,
-                    Financial_Year = calculatorRunFinancialYear,
+                    RelativeYear = new RelativeYear(2024),
                     Name = "Name",
                 });
 
@@ -206,7 +207,7 @@
             // Arrange
             this.PrepareNonScaledUpProducer();
             this.PrepareScaledUpProducer();
-            var requestDto = new CalcResultsRequestDto { RunId = 1 };
+            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
             // Act
             var result = await this.builder.ConstructAsync(requestDto);
@@ -226,7 +227,7 @@
             // Arrange
             this.PrepareNonScaledUpProducer();
             this.PrepareScaledUpProducer();
-            var requestDto = new CalcResultsRequestDto { RunId = 1 };
+            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
             // Act
             var result = await this.builder.ConstructAsync(requestDto);
@@ -246,7 +247,7 @@
         {
             // Arrange
             this.PrepareNonScaledUpProducer();
-            var requestDto = new CalcResultsRequestDto { RunId = 1 };
+            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
             // Act
             var result = await this.builder.ConstructAsync(requestDto);
@@ -291,7 +292,7 @@
                 new ProducerData { ProducerDetail = new ProducerDetail { ProducerId = 2 }, MaterialName = "Glass", PackagingType = "HDC" },
             };
 
-            var resultsDto = new CalcResultsRequestDto { RunId = 2 };
+            var resultsDto = new CalcResultsRequestDto { RunId = 2, RelativeYear = new RelativeYear(2025) };
             var calcResult = TestDataHelper.GetCalcResult();
             calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers
             {

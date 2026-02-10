@@ -17,6 +17,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
     using EPR.Calculator.Service.Function.UnitTests.Builder;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using EPR.Calculator.API.Data.Models;
+
 
     [TestClass]
     public class CalcResultSummaryBuilderTests
@@ -108,7 +110,10 @@ namespace EPR.Calculator.Service.Function.UnitTests
                         TotalValue = 100,
                     },
                 },
-                CalcResultDetail = new CalcResultDetail() { },
+                CalcResultDetail = new CalcResultDetail() {
+                    RunId = 1,
+                    RelativeYear = new RelativeYear(2024)
+                },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData()
                 {
                     Name = Fixture.Create<string>(),
@@ -282,7 +287,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                     ColumnHeaders = null,
                     ScaledupProducers = new List<CalcResultScaledupProducer>(),
                 },
-                CalcResultPartialObligations = new CalcResultPartialObligations() 
+                CalcResultPartialObligations = new CalcResultPartialObligations()
                 {
                     TitleHeader = null,
                     MaterialBreakdownHeaders = null,
@@ -305,9 +310,9 @@ namespace EPR.Calculator.Service.Function.UnitTests
         [TestMethod]
         public void Construct_ShouldReturnCalcResultSummary()
         {
-            var requestDto = new CalcResultsRequestDto { RunId = 1 };
+            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) };
 
-            var results = this.calcResultsService.ConstructAsync(requestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, this.calcResult);
 
             results.Wait();
             var result = results.Result;
@@ -329,7 +334,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void Construct_NullScaledUpProdcuers_ShouldSetScaledupProducersToEmptyCollection()
         {
             // Assign
-            var requestDto = new CalcResultsRequestDto { RunId = 1 };
             var calcResult = this.calcResult;
             calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers
             {
@@ -344,7 +348,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             };
 
             // Act
-            var results = this.calcResultsService.ConstructAsync(requestDto, calcResult);
+            var results = this.calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
             results.Wait();
             var result = results.Result;
 
@@ -357,7 +361,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void Construct_NullPartialObligations_ShouldSetPartialOblgiationsToEmptyCollection()
         {
             // Assign
-            var requestDto = new CalcResultsRequestDto { RunId = 1 };
             var calcResult = this.calcResult;
             calcResult.CalcResultPartialObligations = new CalcResultPartialObligations
             {
@@ -372,7 +375,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             };
 
             // Act
-            var results = this.calcResultsService.ConstructAsync(requestDto, calcResult);
+            var results = this.calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
             results.Wait();
             var result = results.Result;
 
@@ -385,12 +388,11 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void Construct_ShouldSetScaledupProducers()
         {
             // Assign
-            var requestDto = new CalcResultsRequestDto { RunId = 1 };
             var calcResult = this.calcResult;
             calcResult.CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers();
 
             // Act
-            var results = this.calcResultsService.ConstructAsync(requestDto, calcResult);
+            var results = this.calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
             results.Wait();
             var result = results.Result;
 
@@ -403,12 +405,11 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void Construct_ShouldSetPartialObligations()
         {
             // Assign
-            var requestDto = new CalcResultsRequestDto { RunId = 1 };
             var calcResult = this.calcResult;
             calcResult.CalcResultPartialObligations = TestDataHelper.GetPartialObligations();
 
             // Act
-            var results = this.calcResultsService.ConstructAsync(requestDto, calcResult);
+            var results = this.calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
             results.Wait();
             var result = results.Result;
 
@@ -421,9 +422,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         [TestMethod]
         public void Construct_ShouldMapMaterialBreakdownHeaders()
         {
-            var requestDto = new CalcResultsRequestDto { RunId = 1 };
-
-            var results = this.calcResultsService.ConstructAsync(requestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, this.calcResult);
 
             results.Wait();
             var result = results.Result;
@@ -434,9 +433,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         [TestMethod]
         public void Construct_ShouldCalculateProducerDisposalFeesCorrectly()
         {
-            var requestDto = new CalcResultsRequestDto { RunId = 1 };
-
-            var results = this.calcResultsService.ConstructAsync(requestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, this.calcResult);
 
             results.Wait();
             var result = results.Result;
@@ -448,9 +445,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         [TestMethod]
         public void Construct_ShouldReturnEmptyProducerDisposalFees_WhenNoProducers()
         {
-            var requestDto = new CalcResultsRequestDto { RunId = 1 };
-
-            var results = this.calcResultsService.ConstructAsync(requestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, this.calcResult);
 
             results.Wait();
             var result = results.Result;
@@ -462,9 +457,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         [TestMethod]
         public void Construct_ShouldCalculateBadDebtProvisionCorrectly()
         {
-            var requestDto = new CalcResultsRequestDto { RunId = 1 };
-
-            var result = this.calcResultsService.ConstructAsync(requestDto, this.calcResult);
+            var result = this.calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, this.calcResult);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(0, 0);
@@ -473,9 +466,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         [TestMethod]
         public void Construct_ShouldReturnProducerDisposalFees_WithoutSubsidiaryTotalRow()
         {
-            var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-
-            var results = this.calcResultsService.ConstructAsync(calcResultsRequestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, this.calcResult);
 
             results.Wait();
             var result = results.Result;
@@ -488,9 +479,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         [TestMethod]
         public void Construct_ShouldReturnProducerDisposalFees_WithSubsidiaryTotalRow()
         {
-            var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-
-            var results = this.calcResultsService.ConstructAsync(calcResultsRequestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, this.calcResult);
 
             results.Wait();
             var result = results.Result;
@@ -501,9 +490,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         [TestMethod]
         public void Construct_ShouldReturnOverallTotalRow_ForAllProducers()
         {
-            var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-
-            var results = this.calcResultsService.ConstructAsync(calcResultsRequestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, this.calcResult);
             results.Wait();
             var result = results.Result;
             Assert.IsNotNull(result);
@@ -514,8 +501,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         [TestMethod]
         public void GetTotalBadDebtprovision1_ShouldReturnCorrectValue()
         {
-            var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-            var results = this.calcResultsService.ConstructAsync(calcResultsRequestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, this.calcResult);
             results.Wait();
             var result = results.Result;
             Assert.IsNotNull(result);
@@ -533,8 +519,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         [TestMethod]
         public void GetTotalDisposalCostswithBadDebtprovision1_ShouldReturnCorrectValue()
         {
-            var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-            var results = this.calcResultsService.ConstructAsync(calcResultsRequestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, this.calcResult);
             results.Wait();
             var result = results.Result;
             Assert.IsNotNull(result);
@@ -552,8 +537,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         [TestMethod]
         public void GetTotalCommsCostswoBadDebtprovision2A_ShouldReturnCorrectValue()
         {
-            var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-            var results = this.calcResultsService.ConstructAsync(calcResultsRequestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, this.calcResult);
             results.Wait();
             var result = results.Result;
             Assert.IsNotNull(result);
@@ -571,9 +555,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         [TestMethod]
         public void GetTotalBadDebtprovision2A_ShouldReturnCorrectValue()
         {
-            var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-
-            var results = this.calcResultsService.ConstructAsync(calcResultsRequestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, this.calcResult);
 
             results.Wait();
             var result = results.Result;
@@ -592,8 +574,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         [TestMethod]
         public void GetTotalCommsCostswithBadDebtprovision2A_ShouldReturnCorrectValue()
         {
-            var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-            var results = this.calcResultsService.ConstructAsync(calcResultsRequestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, this.calcResult);
             results.Wait();
             var result = results.Result;
             Assert.IsNotNull(result);
@@ -611,8 +592,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         [TestMethod]
         public void GetTotalFee_ShouldReturnZero_WhenNoTotalsLevel()
         {
-            var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-            var results = this.calcResultsService.ConstructAsync(calcResultsRequestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, this.calcResult);
             results.Wait();
             var result = results.Result;
             Assert.IsNotNull(result);
@@ -630,8 +610,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         [TestMethod]
         public void GetTotalFee_ShouldReturnZero_WhenProducerDisposalFeesNull()
         {
-            var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-            var results = this.calcResultsService.ConstructAsync(calcResultsRequestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, this.calcResult);
             results.Wait();
             var result = results.Result;
             Assert.IsNotNull(result);
@@ -649,8 +628,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         [TestMethod]
         public void GetTotalFee_ShouldReturnZero_WhenProducerDisposalFeesIsEmpty()
         {
-            var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
-            var results = this.calcResultsService.ConstructAsync(calcResultsRequestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, this.calcResult);
             results.Wait();
             var result = results.Result;
             Assert.IsNotNull(result);
@@ -668,8 +646,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         [TestMethod]
         public void ProducerTotalPercentageVsTotal_ShouldReturnCorrectValue()
         {
-            var requestDto = new CalcResultsRequestDto { RunId = 1 };
-            var results = this.calcResultsService.ConstructAsync(requestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, this.calcResult);
             results.Wait();
             var result = results.Result;
 
@@ -688,8 +665,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         [TestMethod]
         public void CommsCost2bBill_ShouldReturnCorrectValue()
         {
-            var requestDto = new CalcResultsRequestDto { RunId = 1 };
-            var results = this.calcResultsService.ConstructAsync(requestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, this.calcResult);
 
             results.Wait();
             var result = results.Result;
@@ -745,11 +721,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
         [TestMethod]
         public void GetPreviousInvoicedTonnage_ReturnsCorrectResults()
         {
-            // Arrange
-            var financialYear = "2024-25";
-
             // Act
-            var result = calcResultsService.GetPreviousInvoicedTonnageFromDb(financialYear);
+            var result = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024));
 
             // Assert
             Assert.IsNotNull(result);
@@ -775,7 +748,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                                                                                                 calcResultsService.ScaledupProducers?.ToList() ?? new List<CalcResultScaledupProducer>(),
                                                                                                 calcResultsService.PartialObligations?.ToList() ?? new List<CalcResultPartialObligation>());
 
-            var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb("2024-25");
+            var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024));
 
             var defaultParams = new List<DefaultParamResultsClass>();
 
@@ -821,7 +794,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 ProducerId = 1
             });
 
-            var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb("2024-25");
+            var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024));
             var defaultParams = new List<DefaultParamResultsClass>();
 
             var result = sut.GetCalcResultSummary(orderedProducerDetails, materials, this.calcResult, totalPackagingTonnage, producerInvoicedMaterialNetTonnage, defaultParams);
@@ -902,10 +875,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
         [TestMethod]
         public void GetCalcResultSummary_ScaledUpProducerShouldReturnCorrectValue()
         {
-
-            var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
             this.calcResult.CalcResultScaledupProducers.ScaledupProducers = GetScaledUpProducers();
-            var results = this.calcResultsService.ConstructAsync(calcResultsRequestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, this.calcResult);
 
             var orderedProducerDetails = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, this.context.ProducerDetail.ToList());
             var runProducerMaterialDetails = CalcResultSummaryBuilder.GetProducerRunMaterialDetails(
@@ -963,9 +934,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
         [TestMethod]
         public void GetCalcResultSummary_PartialObligationShouldReturnCorrectValue()
         {
-            var calcResultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
             this.calcResult.CalcResultPartialObligations.PartialObligations = GetPartialObligations();
-            var results = this.calcResultsService.ConstructAsync(calcResultsRequestDto, this.calcResult);
+            var results = this.calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, this.calcResult);
 
             var orderedProducerDetails = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, this.context.ProducerDetail.ToList());
             var runProducerMaterialDetails = CalcResultSummaryBuilder.GetProducerRunMaterialDetails(
@@ -1167,7 +1137,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void Construct_HandlesNullScaledupProducers_UsesEmptyList()
         {
             // Arrange
-            var requestDto = new CalcResultsRequestDto { RunId = 1 };
             var calcResult = this.calcResult;
             calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers
             {
@@ -1175,7 +1144,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             };
 
             // Act
-            var task = this.calcResultsService.ConstructAsync(requestDto, calcResult);
+            var task = this.calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
             task.Wait();
             var result = task.Result;
 
@@ -1188,7 +1157,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void Construct_HandlesNullPartialObligations_UsesEmptyList()
         {
             // Arrange
-            var requestDto = new CalcResultsRequestDto { RunId = 1 };
             var calcResult = this.calcResult;
             calcResult.CalcResultPartialObligations = new CalcResultPartialObligations
             {
@@ -1196,7 +1164,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             };
 
             // Act
-            var task = this.calcResultsService.ConstructAsync(requestDto, calcResult);
+            var task = this.calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
             task.Wait();
             var result = task.Result;
 
@@ -1223,7 +1191,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 new Organisation { OrganisationId = ordered.First().ProducerId, OrganisationName = "Org1" }
             };
 
-            var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb("2024-25");
+            var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024));
             var defaultParams = new List<DefaultParamResultsClass>();
             // Act
             var summary = this.calcResultsService.GetCalcResultSummary(ordered, materials, this.calcResult, totalPackaging, producerInvoicedMaterialNetTonnage, defaultParams);
@@ -1268,7 +1236,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 runDetails, materials, 1, calcResultsService.ScaledupProducers?.ToList() ?? new List<CalcResultScaledupProducer>(),
                 calcResultsService.PartialObligations?.ToList() ?? new List<CalcResultPartialObligation>());
 
-            var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb("2024-25");
+            var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024));
             var defaultParams = new List<DefaultParamResultsClass>();
 
             var summary = calcResultsService.GetCalcResultSummary(ordered, materials, calcResult, totalPackaging, producerInvoicedMaterialNetTonnage, defaultParams);
@@ -1315,7 +1283,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
 
-            var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb("2024-25");
+            var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024));
 
             var row = calcResultsService.GetProducerRow(
                 new List<CalcResultSummaryProducerDisposalFees>(),
@@ -1368,7 +1336,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
 
-            var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb("2024-25");
+            var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024));
 
             var row = calcResultsService.GetProducerRow(
                 new List<CalcResultSummaryProducerDisposalFees>(),
@@ -1417,7 +1385,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             calcResultsService.ScaledupProducers = new List<CalcResultScaledupProducer>();
 
             var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
-            var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb("2024-25");
+            var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024));
 
             var row = calcResultsService.GetProducerRow(
                 new List<CalcResultSummaryProducerDisposalFees>(),
@@ -1452,7 +1420,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             };
 
             var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
-            var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb("2024-25");
+            var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024));
 
             var row = calcResultsService.GetProducerRow(
                 new List<CalcResultSummaryProducerDisposalFees>(),
@@ -1479,7 +1447,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             calcResultsService.PartialObligations = new List<CalcResultPartialObligation>();
 
             var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
-            var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb("2024-25");
+            var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024));
 
             var row = calcResultsService.GetProducerRow(
                 new List<CalcResultSummaryProducerDisposalFees>(),
@@ -1508,22 +1476,12 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var canAdd = calcResultsService.CanAddTotalRow(parent, subOnly, new List<CalcResultSummaryProducerDisposalFees>());
             Assert.IsTrue(canAdd);
         }
-        
+
         [TestMethod]
         public void ConstructAsync_WhenIsBillingFileTrue_Persists_BillingInstructions_ToDb()
         {
-            // Arrange
-            var requestDto = new CalcResultsRequestDto
-            {
-                RunId = 1,
-                FinancialYear = "2024-25",
-                IsBillingFile = true
-            };
-
-            this.calcResult.CalcResultDetail.RunId = 1;
-
             // Act
-            var summary = this.calcResultsService.ConstructAsync(requestDto, this.calcResult).Result;
+            var summary = this.calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: true, this.calcResult).Result;
 
             // Assert (verify Level 1 row exists and has a section)
             var level1 = summary.ProducerDisposalFees
@@ -1551,15 +1509,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void ConstructAsync_WhenIsBillingFileFalse_DoesNotPersist_Billing_Instructions_ToDb()
         {
             // Arrange
-            var requestDto = new CalcResultsRequestDto
-            {
-                RunId = 1,
-                FinancialYear = "2024-25",
-                IsBillingFile = false 
-            };
-
-            this.calcResult.CalcResultDetail.RunId = 1;
-
             var beforeEntity = context.ProducerResultFileSuggestedBillingInstruction
                                      .Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
 
@@ -1577,9 +1526,9 @@ namespace EPR.Calculator.Service.Function.UnitTests
             };
 
             // Act
-            var summary = this.calcResultsService.ConstructAsync(requestDto, this.calcResult).Result;
+            var summary = this.calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, this.calcResult).Result;
 
-            
+
             var afterEntity = context.ProducerResultFileSuggestedBillingInstruction
                                     .Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
 
@@ -1597,9 +1546,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
         [TestMethod]
         public async Task UpdateBillingInstructions_NoChanges_When_NoLevel1Fees()
         {
-            // Arrange: 
+            // Arrange:
             var calcResult = TestDataHelper.GetCalcResult();
-            calcResult.CalcResultDetail.RunId = 1;
 
             var summary = TestDataHelper.GetCalcResultSummary();
             summary.ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
@@ -1629,7 +1577,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public async Task UpdateBillingInstructions_Level1ButMissingEntity_SkipsUpdate()
         {
             var calcResult = TestDataHelper.GetCalcResult();
-            calcResult.CalcResultDetail.RunId = 1;
 
             var summary = TestDataHelper.GetCalcResultSummary();
             summary.ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
@@ -1661,7 +1608,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Arrange
             var calcResult = TestDataHelper.GetCalcResult();
-            calcResult.CalcResultDetail.RunId = 1;
 
             var section = new CalcResultSummaryBillingInstruction
             {
@@ -1712,8 +1658,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public async Task UpdateBillingInstructions_Level1WithNullBillingInstructionSection_SetsFieldsToNullOrZero()
         {
             // Arrange
-            this.calcResult.CalcResultDetail.RunId = 1;
-
             var entity = context.ProducerResultFileSuggestedBillingInstruction.Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
             entity.CurrentYearInvoiceTotalToDate = 999.99m;
             entity.TonnageChangeSinceLastInvoice = "CHANGE";
@@ -1760,8 +1704,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public async Task UpdateBillingInstructions_Level1WithNullSuggestedInvoiceAmount_SetsInvoiceAmountToZero()
         {
             // Arrange
-            this.calcResult.CalcResultDetail.RunId = 1;
-
             var entity = context.ProducerResultFileSuggestedBillingInstruction.Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
             entity.SuggestedInvoiceAmount = 321.45m;
             await context.SaveChangesAsync();
@@ -1817,8 +1759,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 new() { Id = 2, Name = "Material2", Code = MaterialCodes.Glass },
             });
 
-            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
-
             context.ProducerDetail.AddRange(new List<ProducerDetail>
             {
                 new()
@@ -1827,8 +1767,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                     CalculatorRun = new CalculatorRun
                     {
                         Id = 1,
-                        Financial_Year = calculatorRunFinancialYear,
-                        FinancialYearId = "2024-25",
+                        RelativeYear = new RelativeYear(2024),
                         Name = "CalculatorRunTest1",
                         CalculatorRunClassificationId=7,
                         CalculatorRunOrganisationDataMasterId = 1
@@ -1841,8 +1780,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                         CalculatorRun = new CalculatorRun
                         {
                             Id = 2,
-                            Financial_Year = calculatorRunFinancialYear,
-                            FinancialYearId = "2024-25",
+                            RelativeYear = new RelativeYear(2024),
                             Name = "CalculatorRunTest2",
                             CalculatorRunClassificationId=7,
                             CalculatorRunOrganisationDataMasterId = 1
@@ -1855,8 +1793,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                         CalculatorRun = new CalculatorRun
                         {
                             Id = 3,
-                            Financial_Year = calculatorRunFinancialYear,
-                            FinancialYearId = "2024-25",
+                            RelativeYear = new RelativeYear(2024),
                             Name = "CalculatorRunTest3",
                             CalculatorRunClassificationId=7
                         }
@@ -1898,7 +1835,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             });
             context.CalculatorRunOrganisationDataMaster.AddRange(new List<CalculatorRunOrganisationDataMaster>
             {
-                new CalculatorRunOrganisationDataMaster {Id = 1,RelativeYear = "2025", CreatedAt= DateTime.UtcNow, CreatedBy = "TestUser" , EffectiveFrom = DateTime.UtcNow}
+                new CalculatorRunOrganisationDataMaster {Id = 1,RelativeYear = new RelativeYear(2025), CreatedAt= DateTime.UtcNow, CreatedBy = "TestUser" , EffectiveFrom = DateTime.UtcNow}
             });
 
             context.CalculatorRunOrganisationDataDetails.AddRange(new List<CalculatorRunOrganisationDataDetail>

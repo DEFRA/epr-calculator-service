@@ -3,6 +3,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
     using System;
     using System.Text;
     using AutoFixture;
+    using EPR.Calculator.API.Data.Models;
+    using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -26,7 +28,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             calcResultDetail.RunName = "SomeRunName";
             calcResultDetail.RunId = 999;
             calcResultDetail.RunDate = new DateTime(2024, 12, 1);
-            calcResultDetail.FinancialYear = "2024-25";
+            calcResultDetail.RelativeYear = new RelativeYear(2024);
             calcResultDetail.RpdFileORG = "RpdFileOrg";
             calcResultDetail.RpdFilePOM = "RpdFilePom";
             calcResultDetail.LapcapFile = "LapcapFile";

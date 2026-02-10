@@ -3,6 +3,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
     using System;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.API.Data.Models;
+
     using EPR.Calculator.Service.Function.Builder.Detail;
     using EPR.Calculator.Service.Function.Dtos;
     using Microsoft.EntityFrameworkCore;
@@ -33,29 +35,28 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
         private void SeedDatabase()
         {
-            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2023-24" };
             var calculatorRun = new CalculatorRun
             {
                 Id = 1,
                 Name = "TestRun",
                 CreatedBy = "TestUser",
                 CreatedAt = new DateTime(2023, 1, 1),
-                Financial_Year = calculatorRunFinancialYear,
-                CalculatorRunOrganisationDataMaster = new CalculatorRunOrganisationDataMaster { CreatedBy = "", RelativeYear = "2024", EffectiveFrom = new DateTime(2023, 1, 1), CreatedAt = new DateTime(2023, 1, 1) },
-                CalculatorRunPomDataMaster = new CalculatorRunPomDataMaster { CreatedBy = "", RelativeYear = "2024", EffectiveFrom = new DateTime(2023, 1, 1), CreatedAt = new DateTime(2023, 1, 1) },
+                RelativeYear = new RelativeYear(2024),
+                CalculatorRunOrganisationDataMaster = new CalculatorRunOrganisationDataMaster { CreatedBy = "", RelativeYear = new RelativeYear(2024), EffectiveFrom = new DateTime(2023, 1, 1), CreatedAt = new DateTime(2023, 1, 1) },
+                CalculatorRunPomDataMaster = new CalculatorRunPomDataMaster { CreatedBy = "", RelativeYear = new RelativeYear(2024), EffectiveFrom = new DateTime(2023, 1, 1), CreatedAt = new DateTime(2023, 1, 1) },
                 LapcapDataMaster = new LapcapDataMaster
                 {
                     LapcapFileName = "LapcapFile.csv",
                     CreatedAt = new DateTime(2023, 1, 1),
                     CreatedBy = "TestUser",
-                    ProjectionYear = new CalculatorRunFinancialYear { Name = "2024-25" },
+                    RelativeYear = new RelativeYear(2024),
                 },
                 DefaultParameterSettingMaster = new DefaultParameterSettingMaster
                 {
                     ParameterFileName = "Parameters.csv",
                     CreatedAt = new DateTime(2023, 1, 1),
                     CreatedBy = "TestUser",
-                    ParameterYear = calculatorRunFinancialYear,
+                    RelativeYear = new RelativeYear(2024),
                 },
             };
 
@@ -66,14 +67,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         [TestMethod]
         public void Construct_AllPropertiesPresent_ReturnsCorrectData()
         {
-            var results = _builder.ConstructAsync(new CalcResultsRequestDto() { RunId = 1 });
+            var results = _builder.ConstructAsync(new CalcResultsRequestDto() { RunId = 1, RelativeYear = new RelativeYear(2024) });
             results.Wait();
             var result = results.Result;
             Assert.AreEqual(1, result.RunId);
             Assert.AreEqual("TestRun", result.RunName);
             Assert.AreEqual("TestUser", result.RunBy);
             Assert.AreEqual(new DateTime(2023, 1, 1), result.RunDate);
-            Assert.AreEqual("2023-24", result.FinancialYear);
+            Assert.AreEqual(2024, result.RelativeYear.Value);
             Assert.AreEqual("01/01/2023 00:00", result.RpdFileORG);
             Assert.AreEqual("01/01/2023 00:00", result.RpdFilePOM);
             Assert.AreEqual("LapcapFile.csv,01/01/2023 00:00,TestUser", result.LapcapFile);
@@ -86,27 +87,26 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             _context.CalculatorRuns.RemoveRange(_context.CalculatorRuns);
             _context.SaveChangesAsync();
 
-            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2025-26" };
             var calculatorRun = new CalculatorRun
             {
                 Id = 2,
                 Name = "RunWithMissingProps",
                 CreatedBy = "TestUser2",
                 CreatedAt = new DateTime(2023, 2, 1),
-                Financial_Year = calculatorRunFinancialYear,
+                RelativeYear = new RelativeYear(2025),
             };
 
             _context.CalculatorRuns.Add(calculatorRun);
             _context.SaveChangesAsync();
 
-            var results = _builder.ConstructAsync(new CalcResultsRequestDto() { RunId = 2 });
+            var results = _builder.ConstructAsync(new CalcResultsRequestDto() { RunId = 2, RelativeYear = new RelativeYear(2025) });
             results.Wait();
             var result = results.Result;
             Assert.AreEqual(2, result.RunId);
             Assert.AreEqual("RunWithMissingProps", result.RunName);
             Assert.AreEqual("TestUser2", result.RunBy);
             Assert.AreEqual(new DateTime(2023, 2, 1), result.RunDate);
-            Assert.AreEqual("2025-26", result.FinancialYear);
+            Assert.AreEqual(2025, result.RelativeYear.Value);
             Assert.IsTrue(string.IsNullOrEmpty(result.RpdFileORG));
             Assert.IsTrue(string.IsNullOrEmpty(result.RpdFilePOM));
             Assert.IsTrue(string.IsNullOrEmpty(result.LapcapFile));

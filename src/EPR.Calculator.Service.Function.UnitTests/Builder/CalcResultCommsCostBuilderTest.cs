@@ -4,6 +4,8 @@
     using AutoFixture;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.API.Data.Models;
+
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Function.Builder.CommsCost;
     using EPR.Calculator.Service.Function.Constants;
@@ -55,7 +57,7 @@
             this.CreateDefaultParameters();
             this.CreateNewRun();
             this.CreateProducerDetail();
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
+            var resultsRequestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) };
             var apportionment = new CalcResultOnePlusFourApportionment
             {
                 Name = this.Fixture.Create<string>(),
@@ -235,8 +237,7 @@
 
         private void SeedDatabase(ApplicationDBContext context)
         {
-            var financialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
-            var run = new CalculatorRun { Id = 1, Financial_Year = financialYear, FinancialYearId = "2024-25", Name = "CalculatorRunTest1" };
+            var run = new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2024), Name = "CalculatorRunTest1" };
             context.CalculatorRuns.Add(run);
 
             var producerDetail = new ProducerDetail { Id = 1, CalculatorRunId = 1 };
@@ -391,12 +392,11 @@
 
         private void CreateNewRun()
         {
-            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2025-26" };
             var run = new CalculatorRun
             {
                 CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                 Name = "Test Run",
-                Financial_Year = calculatorRunFinancialYear,
+                RelativeYear = new RelativeYear(2024),
                 CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
                 CreatedBy = "Test User",
                 DefaultParameterSettingMasterId = 1,
@@ -409,10 +409,9 @@
         {
             var templateMasterList = this.dbContext.DefaultParameterTemplateMasterList.ToList();
 
-            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
             var defaultMaster = new DefaultParameterSettingMaster
             {
-                ParameterYear = calculatorRunFinancialYear,
+                RelativeYear = new RelativeYear(2024),
             };
 
             this.dbContext.DefaultParameterSettings.Add(defaultMaster);
