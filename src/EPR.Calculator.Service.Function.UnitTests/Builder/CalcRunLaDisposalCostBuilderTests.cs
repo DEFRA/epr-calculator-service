@@ -5,6 +5,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
     using AutoFixture;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.API.Data.Models;
     using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Dtos;
@@ -117,7 +118,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 new ProducerData { ProducerDetail = new ProducerDetail { ProducerId = 2 }, MaterialName = "Glass", PackagingType = "HDC" },
             };
 
-            var resultsDto = new CalcResultsRequestDto { RunId = 2 };
+            var resultsDto = new CalcResultsRequestDto { RunId = 2, RelativeYear = new RelativeYear(2025) };
             var calcResult = TestDataHelper.GetCalcResult();
             calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers
             {
@@ -140,7 +141,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public void Should_Return_LA_Disposal_Costs()
         {
             // Assign
-            var resultsDto = new CalcResultsRequestDto { RunId = 2 };
+            var resultsDto = new CalcResultsRequestDto { RunId = 2, RelativeYear = new RelativeYear(2025) };
             var calcResult = TestDataHelper.GetCalcResult();
             calcResult.CalcResultScaledupProducers = GetScaledUpProducers();
 
@@ -159,7 +160,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public void Should_Return_HeaderRow()
         {
             // Assign
-            var resultsDto = new CalcResultsRequestDto { RunId = 2 };
+            var resultsDto = new CalcResultsRequestDto { RunId = 2, RelativeYear = new RelativeYear(2025) };
             var calcResult = TestDataHelper.GetCalcResult();
             calcResult.CalcResultScaledupProducers = GetScaledUpProducers();
 
@@ -189,7 +190,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public void Should_Return_Material_Data_With_PublicBin()
         {
             // Assign
-            var resultsDto = new CalcResultsRequestDto { RunId = 1 };
+            var resultsDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
             var calcResult = TestDataHelper.GetCalcResult();
             SeedDatabase(this.dbContext);
 
@@ -248,7 +249,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public void Should_Return_Material_Data_With_Household_Drink_Containers()
         {
             // Assign
-            var resultsDto = new CalcResultsRequestDto { RunId = 1 };
+            var resultsDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
             var calcResult = TestDataHelper.GetCalcResult();
             SeedDatabase(this.dbContext);
 
@@ -306,7 +307,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public void Should_Return_Material_Data_With_Household_Drink_Containers_NoScaledUpData()
         {
             // Assign
-            var resultsDto = new CalcResultsRequestDto { RunId = 1 };
+            var resultsDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
             var calcResult = TestDataHelper.GetCalcResult();
             SeedDatabase(this.dbContext);
 
@@ -342,7 +343,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             // Arrange
             // Assign
-            var resultsDto = new CalcResultsRequestDto { RunId = 1 };
+            var resultsDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
             var calcResult = TestDataHelper.GetCalcResult();
             SeedDatabase(this.dbContext);
 
@@ -361,7 +362,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public async Task Should_Calculate_ProducerDataTotal_For_Specific_Material()
         {
              // Assign
-            var resultsDto = new CalcResultsRequestDto { RunId = 1 };
+            var resultsDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
             var calcResult = TestDataHelper.GetCalcResult();
             SeedDatabase(this.dbContext);
 
@@ -406,7 +407,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public async Task Should_Calculate_ProducerDataTotal_For_Specific_Material_NoScaledUpData()
         {
             // Assign
-            var resultsDto = new CalcResultsRequestDto { RunId = 1 };
+            var resultsDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
             var calcResult = TestDataHelper.GetCalcResult();
             SeedDatabase(this.dbContext);
             calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers()
@@ -511,9 +512,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
         private static void SeedDatabase(ApplicationDBContext context)
         {
-            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
-
-            var run = new CalculatorRun { Id = 1, Financial_Year = calculatorRunFinancialYear, Name = "CalculatorRunTest1" };
+            var run = new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2024), Name = "CalculatorRunTest1" };
             context.CalculatorRuns.Add(run);
 
             var producerDetail = new List<ProducerDetail>

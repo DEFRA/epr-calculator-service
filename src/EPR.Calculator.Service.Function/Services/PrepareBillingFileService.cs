@@ -17,8 +17,8 @@ using Microsoft.Extensions.Options;
 namespace EPR.Calculator.Service.Function.Services
 {
     public class PrepareBillingFileService(
-        ApplicationDBContext applicationDBContext, 
-        IPrepareCalcService prepareCalcService, 
+        ApplicationDBContext applicationDBContext,
+        IPrepareCalcService prepareCalcService,
         ICalculatorTelemetryLogger telemetryLogger) : IPrepareBillingFileService
     {
         public async Task<bool> PrepareBillingFileAsync(int calculatorRunId, string runName, string approvedBy)
@@ -78,7 +78,7 @@ namespace EPR.Calculator.Service.Function.Services
                     AcceptedProducerIds = acceptedProducerIds,
                     IsBillingFile = true,
                     ApprovedBy = approvedBy,
-                    FinancialYear = calculatorRun.FinancialYearId
+                    RelativeYear = calculatorRun.RelativeYear
                 },
                 runName,
                 CancellationToken.None);

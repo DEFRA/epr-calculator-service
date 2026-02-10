@@ -2,10 +2,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
 {
     using System.Collections.Generic;
     using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.Models;
     using EPR.Calculator.Service.Function.Builder.CommsCost;
     using EPR.Calculator.Service.Function.Builder.Lapcap;
     using EPR.Calculator.Service.Function.Models;
-
     using EPR.Calculator.Service.Function.Models.JsonExporter;
     using EPR.Calculator.Service.Function.UnitTests.Builder;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -54,7 +54,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             var calcResults = result.CalculationResults as CalculationResultsJson;
             Assert.IsNotNull(calcResults);
             Assert.IsNotNull(calcResults!.ProducerCalculationResultsSummary);
-            
+
         }
 
         private EPR.Calculator.Service.Function.Models.CalcResult CreateCalcResult()
@@ -67,7 +67,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     RunDate = DateTime.UtcNow,
                     RunName = "CalculatorRunName",
                     RunBy = "Test user",
-                    FinancialYear = "2024-25",
+                    RelativeYear = new RelativeYear(2024),
                     RpdFileORG = "21/07/2017 17:32",
                     RpdFilePOM = "21/07/2017 17:32",
                     LapcapFile = "lapcap-data.csv,24/06/2025 10:00, test",

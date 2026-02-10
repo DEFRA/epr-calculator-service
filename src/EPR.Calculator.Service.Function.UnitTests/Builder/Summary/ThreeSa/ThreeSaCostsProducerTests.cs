@@ -164,9 +164,7 @@
                         TotalValue = 100,
                     },
                 },
-                CalcResultDetail = new CalcResultDetail()
-                {
-                },
+                CalcResultDetail = new CalcResultDetail() { RunId = 1, RelativeYear = new API.Data.Models.RelativeYear(2024) },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData
                 {
                     CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>()

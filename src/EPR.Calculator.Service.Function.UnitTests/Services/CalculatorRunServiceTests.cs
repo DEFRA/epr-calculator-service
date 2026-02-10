@@ -6,6 +6,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using System.Text.Json;
     using System.Threading.Tasks;
     using AutoFixture;
+    using EPR.Calculator.API.Data.Models;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
     using EPR.Calculator.Service.Common.Logging;
@@ -24,8 +25,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     [TestClass]
     public class CalculatorRunServiceTests
     {
-        private FinancialYear FinancialYear { get; init; } = new FinancialYear("2024-25");
-
         private RelativeYear RelativeYear { get; init; } = new RelativeYear(2024);
 
         /// <summary>
@@ -34,7 +33,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public CalculatorRunServiceTests()
         {
             this.Fixture = new Fixture();
-            this.Fixture.Customizations.Add(new FinancialYearCustomisation());
             this.AzureSynapseRunner = new Mock<IAzureSynapseRunner>();
             this.MockLogger = new Mock<ICalculatorTelemetryLogger>();
             this.TransposeService = new Mock<ITransposePomAndOrgDataService>();
@@ -170,7 +168,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var calculatorRunParameters = new CalculatorRunParameter
             {
                 Id = id,
-                FinancialYear = this.FinancialYear,
+                RelativeYear = this.RelativeYear,
                 User = user,
                 MessageType = MessageTypes.Result
             };
@@ -180,7 +178,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 CalculatorRunId = id,
                 CheckInterval = checkInterval,
-                RelativeYearValue = this.RelativeYear.ToInt(),
+                RelativeYearValue = this.RelativeYear.Value,
                 MaxCheckCount = maxCheckCount,
                 PipelineUrl = pipelineUrl,
                 PipelineName = orgPipelineName,
@@ -190,7 +188,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.AzureSynapseRunner.Setup(t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
                 p.CalculatorRunId == id &&
                 p.CheckInterval == checkInterval &&
-                p.RelativeYear == this.RelativeYear.ToInt &&
+                p.RelativeYearValue == this.RelativeYear.Value &&
                 p.MaxCheckCount == maxCheckCount &&
                 p.PipelineUrl == pipelineUrl &&
                 p.PipelineName == orgPipelineName)))
@@ -208,7 +206,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
                 p.CalculatorRunId == id &&
                 p.CheckInterval == checkInterval &&
-                p.RelativeYearValue == this.RelativeYear.ToInt() &&
+                p.RelativeYearValue == this.RelativeYear.Value &&
                 p.MaxCheckCount == maxCheckCount &&
                 p.PipelineUrl == pipelineUrl &&
                 p.PipelineName == orgPipelineName)),
@@ -219,7 +217,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
                 p.CalculatorRunId == id &&
                 p.CheckInterval == checkInterval &&
-                p.RelativeYearValue == this.RelativeYear.ToInt() &&
+                p.RelativeYearValue == this.RelativeYear.Value &&
                 p.MaxCheckCount == maxCheckCount &&
                 p.PipelineUrl == pipelineUrl &&
                 p.PipelineName == pomPipelineName)),
@@ -277,7 +275,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var calculatorRunParameters = new CalculatorRunParameter
             {
                 Id = id,
-                FinancialYear = this.FinancialYear,
+                RelativeYear = this.RelativeYear,
                 User = user,
                 MessageType = MessageTypes.Result
             };
@@ -287,7 +285,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 CalculatorRunId = id,
                 CheckInterval = checkInterval,
-                RelativeYearValue = this.RelativeYear.ToInt(),
+                RelativeYearValue = this.RelativeYear.Value,
                 MaxCheckCount = maxCheckCount,
                 PipelineUrl = pipelineUrl,
                 PipelineName = orgPipelineName,
@@ -357,7 +355,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var calculatorRunParameters = new CalculatorRunParameter
             {
                 Id = id,
-                FinancialYear = this.FinancialYear,
+                RelativeYear = this.RelativeYear,
                 User = user,
                 MessageType = MessageTypes.Result
             };
@@ -367,7 +365,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 CalculatorRunId = id,
                 CheckInterval = checkInterval,
-                RelativeYearValue = this.RelativeYear.ToInt(),
+                RelativeYearValue = this.RelativeYear.Value,
                 MaxCheckCount = maxCheckCount,
                 PipelineUrl = pipelineUrl,
                 PipelineName = orgPipelineName,
@@ -377,7 +375,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 CalculatorRunId = id,
                 CheckInterval = checkInterval,
-                RelativeYearValue = this.RelativeYear.ToInt(),
+                RelativeYearValue = this.RelativeYear.Value,
                 MaxCheckCount = maxCheckCount,
                 PipelineUrl = pipelineUrl,
                 PipelineName = pomPipelineName,
@@ -458,7 +456,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var calculatorRunParameters = new CalculatorRunParameter
             {
                 Id = id,
-                FinancialYear = this.FinancialYear,
+                RelativeYear = this.RelativeYear,
                 User = user,
                 MessageType = MessageTypes.Result
             };
@@ -517,7 +515,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 });
 
             var calculatorRunParameters = this.Fixture.Create<CalculatorRunParameter>();
-            calculatorRunParameters.FinancialYear = new FinancialYear("2024-25");
+            calculatorRunParameters.RelativeYear = new RelativeYear(2024);
             var runName = "Test Run Name";
 
             this.StatusService.Setup(s => s.UpdateRpdStatus(
@@ -540,7 +538,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task StartProcess_ShouldReturnFalseOn_TaskCanceledException()
         {
             // Arrange
-            var calculatorRunParameter = new CalculatorRunParameter { Id = 1, User = "TestUser", FinancialYear = new FinancialYear("2024-25"), MessageType = MessageTypes.Result };
+            var calculatorRunParameter = new CalculatorRunParameter { Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = MessageTypes.Result };
             var runName = "TestRun";
             var mockHttpClient = new Mock<HttpClient>();
 
@@ -559,7 +557,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task StartProcess_ShouldReturnFalseOn_Exception()
         {
             // Arrange
-            var calculatorRunParameter = new CalculatorRunParameter { Id = 1, User = "TestUser", FinancialYear = new FinancialYear("2024-25") , MessageType = MessageTypes.Result };
+            var calculatorRunParameter = new CalculatorRunParameter { Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024) , MessageType = MessageTypes.Result };
             var runName = "TestRun";
             var mockHttpClient = new Mock<HttpClient>();
 
@@ -597,11 +595,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             // Arrange
             var service = this.CalculatorRunService;
-            var financialYear = new FinancialYear("2025-26");
             var args = new CalculatorRunParameter
             {
                 Id = 1,
-                FinancialYear = financialYear,
+                RelativeYear = new RelativeYear(2025),
                 User = "user",
                 MessageType = "Result"
             };

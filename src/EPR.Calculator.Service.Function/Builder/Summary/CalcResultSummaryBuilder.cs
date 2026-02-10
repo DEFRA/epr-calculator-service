@@ -10,6 +10,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
     using System.Threading.Tasks;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.API.Data.Models;
+    using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
     using EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions;
     using EPR.Calculator.Service.Function.Builder.Summary.Common;
@@ -46,10 +48,10 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             this.context = context;
         }
 
-        public async Task<CalcResultSummary> ConstructAsync(CalcResultsRequestDto resultsRequestDto, CalcResult calcResult)
+
+        public async Task<CalcResultSummary> ConstructAsync(int runId, RelativeYear relativeYear, bool isBillingFile, CalcResult calcResult)
         {
             // Get and map materials from DB
-            var runId = resultsRequestDto.RunId;
             var materialsFromDb = await this.context.Material.ToListAsync();
             var materials = Mappers.MaterialMapper.Map(materialsFromDb);
 
@@ -69,9 +71,9 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             var orderedProducerDetails = GetOrderedListOfProducersAssociatedRunId(
                 runId, producerDetails);
 
-            var producerInvoicedMaterialNetTonnage = GetPreviousInvoicedTonnageFromDb(resultsRequestDto.FinancialYear);
+            var producerInvoicedMaterialNetTonnage = GetPreviousInvoicedTonnageFromDb(relativeYear);
 
-            var defaultParams = await GetDefaultParamsAsync(resultsRequestDto.RunId);
+            var defaultParams = await GetDefaultParamsAsync(runId);
 
             // Household + PublicBin + HDC
             var totalPackagingTonnage = GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, runId, ScaledupProducers.ToList(), PartialObligations.ToList());
@@ -102,7 +104,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 producerInvoicedMaterialNetTonnage,
                 defaultParams);
 
-            if (resultsRequestDto.IsBillingFile)
+            if (isBillingFile)
             {
                 await UpdateBillingInstructions(calcResult, result);
             }
@@ -252,7 +254,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                         CommonConstants.LevelOne.ToString(),
                         materialCosts);
                 isProducerScaledUp = CalcResultSummaryUtil.IsProducerScaledup(producersAndSubsidiaries[0], ScaledupProducers) ? CommonConstants.Yes : CommonConstants.No;
-                isPartialObligation = CalcResultSummaryUtil.IsProducerPartiallyObligated(producersAndSubsidiaries[0], PartialObligations, isTotalRow: true) ? CommonConstants.Yes : CommonConstants.No; 
+                isPartialObligation = CalcResultSummaryUtil.IsProducerPartiallyObligated(producersAndSubsidiaries[0], PartialObligations, isTotalRow: true) ? CommonConstants.Yes : CommonConstants.No;
             }
 
             var producerForTotalRow = GetProducerDetailsForTotalRow(producersAndSubsidiaries[0].ProducerId, isOverAllTotalRow);
@@ -482,7 +484,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             return result;
         }
 
-        public IEnumerable<ProducerInvoicedDto> GetPreviousInvoicedTonnageFromDb(string financialYear)
+        public IEnumerable<ProducerInvoicedDto> GetPreviousInvoicedTonnageFromDb(RelativeYear relativeYear)
         {
             var validClassificationStatuses = new[]
             {
@@ -502,7 +504,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                  join t in context.ProducerInvoicedMaterialNetTonnage.AsNoTracking()
                      on new { calc.Id, p.ProducerId } equals new { Id = t.CalculatorRunId, t.ProducerId }
                  where validClassificationStatuses.Contains(calc.CalculatorRunClassificationId)
-                       && calc.FinancialYearId == financialYear
+                       && calc.RelativeYearValue == relativeYear.Value
                        && b.BillingInstructionAcceptReject == PrepareBillingFileConstants.BillingInstructionAccepted
                        && b.SuggestedBillingInstruction != PrepareBillingFileConstants.SuggestedBillingInstructionCancelBill
                        //not exists clause -- to exclude previous "net tonnage" and "current year invoice total to date" values if cancel bill has been accepted since.
@@ -512,7 +514,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                             where b2.ProducerId == p.ProducerId
                                   && b2.BillingInstructionAcceptReject == PrepareBillingFileConstants.BillingInstructionAccepted
                                   && b2.SuggestedBillingInstruction == PrepareBillingFileConstants.SuggestedBillingInstructionCancelBill
-                                  && calc2.FinancialYearId == financialYear
+                                  && calc2.RelativeYearValue == relativeYear.Value
                                   && validClassificationStatuses.Contains(calc2.CalculatorRunClassificationId)
                                   && calc2.Id > calc.Id
                             select 1).Any()
@@ -680,7 +682,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     WalesWithBadDebtProvision = MaterialCostsUtil.GetCountryDisposalFeeWithBadDebtProvision(producerDisposalFees, producersAndSubsidiaries, ScaledupProducers, PartialObligations, material, calcResult, Countries.Wales, isOverAllTotalRow),
                     ScotlandWithBadDebtProvision = MaterialCostsUtil.GetCountryDisposalFeeWithBadDebtProvision(producerDisposalFees, producersAndSubsidiaries, ScaledupProducers, PartialObligations, material, calcResult, Countries.Scotland, isOverAllTotalRow),
                     NorthernIrelandWithBadDebtProvision = MaterialCostsUtil.GetCountryDisposalFeeWithBadDebtProvision(producerDisposalFees, producersAndSubsidiaries, ScaledupProducers, PartialObligations, material, calcResult, Countries.NorthernIreland, isOverAllTotalRow),
-                    PreviousInvoicedTonnage = MaterialCostsUtil.GetPreviousInvoicedTonnage(producerDisposalFees, producersAndSubsidiaries, ScaledupProducers, PartialObligations, material, isOverAllTotalRow, previousInvoicedNetTonnage),                    
+                    PreviousInvoicedTonnage = MaterialCostsUtil.GetPreviousInvoicedTonnage(producerDisposalFees, producersAndSubsidiaries, ScaledupProducers, PartialObligations, material, isOverAllTotalRow, previousInvoicedNetTonnage),
                     TonnageChange = tonnageChange
                 });
 

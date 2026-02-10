@@ -222,7 +222,7 @@
             // Assert
             Assert.AreEqual(50.00m, result);
         }
-        
+
          [TestMethod]
         public void CanGetHouseholdTonnageForPartialObligation()
         {

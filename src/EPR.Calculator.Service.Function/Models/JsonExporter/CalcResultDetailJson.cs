@@ -65,7 +65,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                 RunId = calcResultDetail.RunId,
                 RunDate = calcResultDetail.RunDate.ToString(CalculationResults.DateFormatISO8601),
                 RunBy = calcResultDetail.RunBy,
-                FinancialYear = calcResultDetail.FinancialYear,
+                FinancialYear = calcResultDetail.RelativeYear.ToFinancialYear(),
                 RpdFileORG = CalculationResults.ORG,
                 RpdFileORGTimeStamp = DateTimeConversion.ConvertToIso8601Utc(calcResultDetail.RpdFileORG),
                 RpdFilePOM = CalculationResults.POM,

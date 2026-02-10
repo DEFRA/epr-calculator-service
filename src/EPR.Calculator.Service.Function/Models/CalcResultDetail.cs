@@ -1,14 +1,16 @@
 ﻿using System;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Common;
 
 namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResultDetail
     {
         public string RunName { get; set; } = string.Empty;
-        public int RunId { get; set; }
+        public required int RunId { get; set; }
+        public required RelativeYear RelativeYear { get; set; }
         public DateTime RunDate { get; set; }
         public string RunBy { get; set; } = string.Empty;
-        public string FinancialYear { get; set; } = string.Empty;
         public string RpdFileORG { get; set; } = string.Empty;
         public string RpdFilePOM { get; set; } = string.Empty;
         public string LapcapFile { get; set; } = string.Empty;

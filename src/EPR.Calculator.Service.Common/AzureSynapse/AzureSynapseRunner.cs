@@ -5,6 +5,7 @@
     using Azure.Analytics.Synapse.Artifacts.Models;
     using Azure.Identity;
     using Microsoft.Extensions.Logging;
+    using EPR.Calculator.API.Data.Models;
 
     /// <summary>
     /// Runs Azure Synapse pipelines.
@@ -47,7 +48,6 @@
         {
             this.logger.LogInformation("Azure synapse trigger process started");
 
-            // Instead of year, get financial year and map financial year to relative year.
             // Trigger the pipeline.
             var pipelineRunId = await this.StartPipelineRun(
                 this.PipelineClientFactory,

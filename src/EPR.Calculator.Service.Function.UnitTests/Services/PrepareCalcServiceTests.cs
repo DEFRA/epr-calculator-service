@@ -9,7 +9,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using Azure.Storage.Blobs;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.API.Data.Models;
     using EPR.Calculator.API.Exporter;
+    using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Function.Builder;
     using EPR.Calculator.Service.Function.Dtos;
@@ -69,6 +71,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     RunId = 4,
                     RunDate = DateTime.UtcNow,
                     RunName = "RunName",
+                    RelativeYear = new RelativeYear(2024),
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
@@ -156,7 +159,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             // Arrange
             var fixture = new Fixture();
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
+            var resultsRequestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
             var runName = fixture.Create<string>();
 
             this._storageService.Setup(x => x.UploadFileContentAsync(
@@ -177,7 +180,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             // Arrange
             var fixture = new Fixture();
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
+            var resultsRequestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
             this._storageService = new Mock<IStorageService>();
             var runName = fixture.Create<string>();
 
@@ -193,7 +196,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             // Arrange
             var fixture = new Fixture();
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
+            var resultsRequestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
             this._exporter.Setup(x => x.Export(It.IsAny<CalcResult>())).Throws(new Exception("Custom exception message"));
             var runName = fixture.Create<string>();
 
@@ -209,7 +212,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             // Arrange
             var fixture = new Fixture();
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 1 };
+            var resultsRequestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
             this._exporter.Setup(x => x.Export(It.IsAny<CalcResult>())).Throws(new OperationCanceledException("Operation canceled exception message"));
             var runName = fixture.Create<string>();
 
@@ -224,7 +227,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task PrepareCalcResults_ShouldReturnFalseStatus()
         {
             // Arrange
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 2 };
+            var resultsRequestDto = new CalcResultsRequestDto { RunId = 2, RelativeYear = new RelativeYear(2025) };
             var runName = "test";
 
             // Act
@@ -238,7 +241,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task PrepareCalcResults_CalcRun_ShouldReturnFalseStatus()
         {
             // Arrange
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 10 };
+            var resultsRequestDto = new CalcResultsRequestDto { RunId = 10, RelativeYear = new RelativeYear(2025) };
             var runName = "test";
 
             // Act
@@ -265,6 +268,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var calcResultsRequestDto = new CalcResultsRequestDto
             {
                 RunId = 1,
+                RelativeYear = new RelativeYear(2025),
                 IsBillingFile = true,
                 AcceptedProducerIds = new List<int> { 1, 2 },
                 ApprovedBy = "Test User 234",
@@ -319,14 +323,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 new() {
                     Id = 1,
-                    RelativeYear = "2024",
+                    RelativeYear = new RelativeYear(2024),
                     EffectiveFrom = DateTime.UtcNow,
                     CreatedBy = "Test user",
                     CreatedAt = DateTime.UtcNow,
                 },
                 new() {
                     Id = 2,
-                    RelativeYear = "2024",
+                    RelativeYear = new RelativeYear(2024),
                     EffectiveFrom = DateTime.UtcNow,
                     CreatedBy = "Test user",
                     CreatedAt = DateTime.UtcNow,
@@ -429,14 +433,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 new() {
                     Id = 1,
-                    RelativeYear = "2024",
+                    RelativeYear = new RelativeYear(2024),
                     EffectiveFrom = DateTime.UtcNow,
                     CreatedBy = "Test user",
                     CreatedAt = DateTime.UtcNow,
                 },
                 new() {
                     Id = 2,
-                    RelativeYear = "2024",
+                    RelativeYear = new RelativeYear(2024),
                     EffectiveFrom = DateTime.UtcNow,
                     CreatedBy = "Test user",
                     CreatedAt = DateTime.UtcNow,
@@ -510,7 +514,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         protected static IEnumerable<CalculatorRun> GetCalculatorRuns()
         {
-            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
             var list = new List<CalculatorRun>
             {
                 new ()
@@ -518,7 +521,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Id = 1,
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Run",
-                    Financial_Year = calculatorRunFinancialYear,
+                    RelativeYear = new RelativeYear(2024),
                     CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                     CalculatorRunOrganisationDataMasterId = 2,
@@ -531,7 +534,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Id = 2,
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Calculated Result",
-                    Financial_Year = calculatorRunFinancialYear,
+                    RelativeYear = new RelativeYear(2025),
                     CreatedAt = new DateTime(2024, 8, 21, 14, 16, 27, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                     DefaultParameterSettingMasterId = 5,
@@ -542,7 +545,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Id = 3,
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Run",
-                    Financial_Year = calculatorRunFinancialYear,
+                    RelativeYear = new RelativeYear(2025),
                     CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                     CalculatorRunOrganisationDataMasterId = 1,
@@ -555,7 +558,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Id = 4,
                     CalculatorRunClassificationId = (int)RunClassification.RUNNING,
                     Name = "Test Calculated Result",
-                    Financial_Year = calculatorRunFinancialYear,
+                    RelativeYear = new RelativeYear(2025),
                     CreatedAt = new DateTime(2024, 8, 21, 14, 16, 27, DateTimeKind.Utc),
                     CreatedBy = "Test User",
                     CalculatorRunOrganisationDataMasterId = 2,

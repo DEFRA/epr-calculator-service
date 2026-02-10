@@ -15,6 +15,8 @@ using Moq;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Dtos;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using EPR.Calculator.Service.Common;
+using EPR.Calculator.API.Data.Models;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
@@ -84,7 +86,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Id = calculatorRunId,
                     CalculatorRunClassificationId = 8,
                     Name = calculatorName,
-                    Financial_Year = new CalculatorRunFinancialYear { Name = "2025" }, CreatedBy = "user", CreatedAt = System.DateTime.UtcNow });
+                    RelativeYear = new RelativeYear(2025),
+                    CreatedBy = "user",
+                    CreatedAt = System.DateTime.UtcNow });
             _context.SaveChanges();
             var service = new PrepareBillingFileService(
                 this._context,
@@ -106,7 +110,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var calculatorRunId = 122444;
             var calculatorName = "TestRun";
             var acceptedProducerId = 999;
-            var calcFinancialYear = new CalculatorRunFinancialYear { Name = "2025" };
 
             // Add a CalculatorRun to the context
             _context.CalculatorRuns.Add(new CalculatorRun
@@ -114,7 +117,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Id = calculatorRunId,
                     CalculatorRunClassificationId = 1,
                     Name = calculatorName,
-                    Financial_Year = calcFinancialYear,
+                    RelativeYear = new RelativeYear(2025),
                     CreatedBy = "user",
                     CreatedAt = DateTime.UtcNow,
                     IsBillingFileGenerating = true
@@ -166,7 +169,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var calculatorRunId = 122445;
             var calculatorName = "TestRun";
             var acceptedProducerId = 999;
-            var calcFinancialYear = new CalculatorRunFinancialYear { Name = "2025" };
 
             // Add a CalculatorRun to the context
             _context.CalculatorRuns.Add(new CalculatorRun
@@ -174,7 +176,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 Id = calculatorRunId,
                 CalculatorRunClassificationId = 1,
                 Name = calculatorName,
-                Financial_Year = calcFinancialYear,
+                RelativeYear = new RelativeYear(2025),
                 CreatedBy = "user",
                 CreatedAt = DateTime.UtcNow,
                 IsBillingFileGenerating = true

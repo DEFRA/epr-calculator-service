@@ -5,11 +5,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using System.Threading.Tasks;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.API.Data.Models;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Function.Models;
     using EPR.Calculator.Service.Function.Services;
     using Microsoft.Data.Sqlite;
-
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Sqlite;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -39,10 +39,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             _connection.Close();
         }
 
-        private async Task<(CalculatorRunFinancialYear, CalculatorRunClassification, PomData)> SeedData()
+        private async Task<(RelativeYear, CalculatorRunClassification, PomData)> SeedData()
         {
-            var financialYear = new CalculatorRunFinancialYear { Name  = "2024-25" };
-            this.context.FinancialYears.Add(financialYear);
+            var calculatorRunRelativeYear = new CalculatorRunRelativeYear { Value  = 2024 };
+            this.context.CalculatorRunRelativeYears.Add(calculatorRunRelativeYear);
 
             var classification = new CalculatorRunClassification { Status = "Test Classification" };
             this.context.CalculatorRunClassifications.Add(classification);
@@ -67,7 +67,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 VALUES ({pomData.OrganisationId}, {pomData.PackagingActivity}, {pomData.PackagingType}, {pomData.PackagingClass}, {pomData.PackagingMaterial}, {pomData.PackagingMaterialWeight}, {pomData.LoadTimeStamp}, {pomData.SubmissionPeriod}, {pomData.SubmissionPeriodDesc}, {pomData.SubsidiaryId})");
 
             await this.context.SaveChangesAsync();
-            return (financialYear, classification, pomData);
+            return (new RelativeYear(calculatorRunRelativeYear.Value), classification, pomData);
+
         }
 
         [TestMethod]
@@ -75,23 +76,22 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             int runId = 1;
             int runId2 = 2;
-            string calendarYear = "2024";
             string createdBy = "TestUser";
             var cancellationToken = CancellationToken.None;
             var service = new CalculatorRunPomData(this.context);
-            var (financialYear, classification, pomData) = await SeedData();
+            var (relativeYear, classification, pomData) = await SeedData();
 
             //Run 1
-            var run = new CalculatorRun { Id = runId, Financial_Year = financialYear, FinancialYearId = "2024-25", Name = "CalculatorRunTest1", CalculatorRunClassificationId = classification.Id };
+            var run = new CalculatorRun { Id = runId, RelativeYear = relativeYear, Name = "CalculatorRunTest1", CalculatorRunClassificationId = classification.Id };
             var calcRun1 = this.context.CalculatorRuns.Add(run);
             await this.context.SaveChangesAsync();
 
-            await service.LoadPomDataForCalcRun(runId, calendarYear, createdBy, cancellationToken);
+            await service.LoadPomDataForCalcRun(runId, relativeYear, createdBy, cancellationToken);
 
             var masterRecords = await this.context.CalculatorRunPomDataMaster.ToListAsync();
             Assert.AreEqual(1, masterRecords.Count);
             var pomMasterRun1 = masterRecords[0];
-            Assert.AreEqual(calendarYear, pomMasterRun1.RelativeYear);
+            Assert.AreEqual(relativeYear, pomMasterRun1.RelativeYear);
             Assert.AreEqual(createdBy, pomMasterRun1.CreatedBy);
             Assert.IsNull(pomMasterRun1.EffectiveTo);
 
@@ -106,11 +106,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.AreEqual(pomMasterRun1.Id, calculatorRun1!.CalculatorRunPomDataMasterId);
 
             //Run 2
-            var run2 = new CalculatorRun { Id = runId2, Financial_Year = financialYear, FinancialYearId = "2024-25", Name = "CalculatorRunTest2", CalculatorRunClassificationId = classification.Id };
+            var run2 = new CalculatorRun { Id = runId2, RelativeYear = relativeYear, Name = "CalculatorRunTest2", CalculatorRunClassificationId = classification.Id };
             this.context.CalculatorRuns.Add(run2);
             await this.context.SaveChangesAsync();
 
-            await service.LoadPomDataForCalcRun(runId2, calendarYear, createdBy, cancellationToken);
+            await service.LoadPomDataForCalcRun(runId2, relativeYear, createdBy, cancellationToken);
 
             var updatedMasterRecords = await this.context.CalculatorRunPomDataMaster.ToListAsync();
             Assert.AreEqual(2, updatedMasterRecords.Count);
