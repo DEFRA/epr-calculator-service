@@ -3,9 +3,6 @@ using EPR.Calculator.API.Data;
 using EPR.Calculator.Service.Function.Builder.CommsCost;
 using EPR.Calculator.Service.Function.Builder.Lapcap;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter;
-using EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResults;
-using EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMaterial2A;
-using EPR.Calculator.Service.Function.Exporter.JsonExporter.Lapcap;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
@@ -22,23 +19,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
         private Fixture fixture;
         private CalcResultsJsonExporter testClass;
         private Mock<IMaterialService> mockMaterialService;
-        private ICalcResultLapcapExporter mockCalcResultLapcapExporter;
-        private ICalcResultCommsCostOnePlusFourApportionmentExporter mockCalcResultCommsCostOnePlusFourApportionmentExporter;
-        private ICalculationResultsExporter mockCalculationResultsExporter;
 
         public CalcResultsJsonExporterTests()
         {
             fixture = new Fixture();
             mockMaterialService = new Mock<IMaterialService>();
-            mockCalcResultLapcapExporter = new CalcResultLapcapExporter();
-            mockCalcResultCommsCostOnePlusFourApportionmentExporter = new CalcResultCommsCostOnePlusFourApportionmentExporter();
-            mockCalculationResultsExporter = new CalculationResultsExporter();
 
-            testClass = new CalcResultsJsonExporter(
-                mockMaterialService.Object,
-                mockCalcResultLapcapExporter,
-                mockCalcResultCommsCostOnePlusFourApportionmentExporter,
-                mockCalculationResultsExporter);
+            testClass = new CalcResultsJsonExporter(mockMaterialService.Object);
         }
 
         [TestMethod]

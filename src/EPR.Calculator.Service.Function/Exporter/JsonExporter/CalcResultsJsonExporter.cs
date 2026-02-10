@@ -6,9 +6,6 @@ using System.Text.Json;
 using System.Text.Unicode;
 using EPR.Calculator.API.Exporter;
 using EPR.Calculator.Service.Function.Converter;
-using EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResults;
-using EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMaterial2A;
-using EPR.Calculator.Service.Function.Exporter.JsonExporter.Lapcap;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
@@ -20,21 +17,11 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
     {
         private const int decimalPrecision = 3;
 
-        private readonly IMaterialService materialService;
-        private readonly ICalcResultLapcapExporter calcResultLapcapExporter;
-        private readonly ICalcResultCommsCostOnePlusFourApportionmentExporter calcResultCommsCostOnePlusFourApportionmentExporter;        
-        private readonly ICalculationResultsExporter calculationResultsExporter;
+        private readonly IMaterialService materialService; 
 
-        public CalcResultsJsonExporter(
-            IMaterialService materialService,
-            ICalcResultLapcapExporter calcResultLapcapExporter,
-            ICalcResultCommsCostOnePlusFourApportionmentExporter calcResultCommsCostOnePlusFourApportionmentExporter,
-            ICalculationResultsExporter calculationResultsExporter)
+        public CalcResultsJsonExporter(IMaterialService materialService)
         {
             this.materialService = materialService;
-            this.calcResultLapcapExporter = calcResultLapcapExporter;
-            this.calcResultCommsCostOnePlusFourApportionmentExporter = calcResultCommsCostOnePlusFourApportionmentExporter;
-            this.calculationResultsExporter = calculationResultsExporter;
         }
 
         public string Export(CalcResult results, IEnumerable<int> acceptedProducerIds)
@@ -46,16 +33,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
 
             var materials = this.materialService.GetMaterials().Result;
 
-            //TODO: Move other exporters
-            var billingFileContent = BillingFileJson.From(
-                results, 
-                calcResultLapcapExporter.Export(results.CalcResultLapcapData), 
-                calcResultCommsCostOnePlusFourApportionmentExporter.ConvertToJsonByUKWide(results.CalcResultCommsCostReportDetail),
-                calcResultCommsCostOnePlusFourApportionmentExporter.ConvertToJsonByCountry(results.CalcResultCommsCostReportDetail),
-                calculationResultsExporter.Export(results.CalcResultSummary, acceptedProducerIds, materials), 
-                acceptedProducerIds,
-                materials
-            );
+            var billingFileContent = BillingFileJson.From(results, acceptedProducerIds, materials);
            
             return JsonSerializer.Serialize(
                 billingFileContent,

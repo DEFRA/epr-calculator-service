@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
-using EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResults;
-using EPR.Calculator.Service.Function.Exporter.JsonExporter.CommsCostByMaterial2A;
-using EPR.Calculator.Service.Function.Exporter.JsonExporter.Lapcap;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter;
 using EPR.Calculator.Service.Function.Mapper;
+using System.Linq;
+using EPR.Calculator.Service.Function.Builder.CommsCost;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
@@ -32,10 +32,10 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         public CalcResult2ACommsDataByMaterial? CalcResult2aCommsDataByMaterial { get; set; }
 
         [JsonPropertyName("calcResult2bCommsDataByUkWide")]
-        public object? CalcResult2bCommsDataByUkWide { get; set; }
+        public CalcResultCommsCostOnePlusFourApportionmentUKWide? CalcResult2bCommsDataByUkWide { get; set; }
 
         [JsonPropertyName("calcResult2cCommsDataByCountry")]
-        public object? CalcResult2cCommsDataByCountry { get; set; }
+        public CalcResultCommsCostOnePlusFourApportionmentCountryWide? CalcResult2cCommsDataByCountry { get; set; }
 
         [JsonPropertyName("calcResultLaDisposalCostData")]
         public CalcResultLaDisposalCostDataJson? CalcResultLaDisposalCostData { get; set; }
@@ -49,29 +49,22 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("calculationResults")]
         public object? CalculationResults { get; set; }
 
-        public static BillingFileJson From(
-            CalcResult results,
-            object? calcResultLapcapData,
-            object? calcResult2bCommsDataByUkWide,
-            object? calcResult2cCommsDataByCountry,
-            object? calculationResults,
-            IEnumerable<int> acceptedProducerIds,
-            List<MaterialDetail> materials)
+        public static BillingFileJson From(CalcResult results, IEnumerable<int> acceptedProducerIds, List<MaterialDetail> materials)
         {
             return new BillingFileJson {
                 CalcResultDetail = CalcResultDetailJson.From(results.CalcResultDetail),
-                CalcResultLapcapData = calcResultLapcapData,
+                CalcResultLapcapData = CalcResultLapcapDataJson.From(results.CalcResultLapcapData),
                 CalcResultLateReportingTonnageData = CalcResultLateReportingTonnageJson.From(results.CalcResultLateReportingTonnageData),
                 ParametersOther = CalcResultParametersOtherJson.From(results.CalcResultParameterOtherCost),
                 OnePlusFourApportionment = CalcResultOnePlusFourApportionmentJson.From(results.CalcResultOnePlusFourApportionment),
                 ParametersCommsCost = CalcResultCommsCostJson.From(results.CalcResultCommsCostReportDetail),
                 CalcResult2aCommsDataByMaterial = CalcResult2ACommsDataByMaterial.From(results.CalcResultCommsCostReportDetail.CalcResultCommsCostCommsCostByMaterial),
-                CalcResult2bCommsDataByUkWide = calcResult2bCommsDataByUkWide,
-                CalcResult2cCommsDataByCountry = calcResult2cCommsDataByCountry,
+                CalcResult2bCommsDataByUkWide = CalcResultCommsCostOnePlusFourApportionmentUKWide.From(results.CalcResultCommsCostReportDetail.CommsCostByCountry.SingleOrDefault(r => r.Name == CalcResultCommsCostBuilder.TwoBCommsCostUkWide)),
+                CalcResult2cCommsDataByCountry = CalcResultCommsCostOnePlusFourApportionmentCountryWide.From(results.CalcResultCommsCostReportDetail.CommsCostByCountry.SingleOrDefault(r => r.Name == CalcResultCommsCostBuilder.TwoCCommsCostByCountry)),
                 CalcResultLaDisposalCostData = CalcResultLaDisposalCostDataJson.From(results.CalcResultLaDisposalCostData.CalcResultLaDisposalCostDetails),
                 CancelledProducers = CancelledProducers.From(results.CalcResultCancelledProducers),
                 ScaleUpProducers = CalcResultScaledupProducersJson.From(results.CalcResultScaledupProducers, acceptedProducerIds, materials),
-                CalculationResults = calculationResults
+                CalculationResults = CalculationResultsJson.From(results.CalcResultSummary, acceptedProducerIds, materials)
             };
         }
     }

@@ -1,34 +1,41 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using EPR.Calculator.Service.Common.Utils;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.Models.JsonExporter;
-using Microsoft.AspNetCore.JsonPatch.Internal;
 
-namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResults
+namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
-    /// <summary>
-    /// Converts a <see cref="CalcResultSummary"/> to a JSON string representation.
-    /// </summary>
-    public class CalculationResultsExporter : ICalculationResultsExporter
+    public class CalculationResultsJson
     {
-        /// <inheritdoc/>
-        public object Export(CalcResultSummary summary, IEnumerable<int> acceptedProducerIds, List<MaterialDetail> materials)
-            =>
-                new
-                {
-                    producerCalculationResultsSummary = ArrangeSummary(summary),
-                    producerCalculationResults = ArrangeProducerCalculationResult(summary, acceptedProducerIds, materials),
-                    producerCalculationResultsTotal = ArrangeProducerCalculationResultsTotal(summary),
-                };
+        [JsonPropertyName("producerCalculationResultsSummary")]
+        public required ProducerCalculationResultsSummary ProducerCalculationResultsSummary { get; set; }
+
+        [JsonPropertyName("producerCalculationResults")]
+        public required IEnumerable<CalcSummaryProducerCalculationResults> ProducerCalculationResults { get; set; }
+
+        [JsonPropertyName("producerCalculationResultsTotal")]
+        public CalcResultProducerCalculationResultsTotal? ProducerCalculationResultsTotal { get; set; }
+
+        public static CalculationResultsJson From(
+            CalcResultSummary summary,
+            IEnumerable<int> acceptedProducerIds,
+            List<MaterialDetail> materials)
+        {
+            return new CalculationResultsJson
+            {
+                ProducerCalculationResultsSummary = ArrangeSummary(summary),
+                ProducerCalculationResults = ArrangeProducerCalculationResult(summary, acceptedProducerIds, materials),
+                ProducerCalculationResultsTotal = ArrangeProducerCalculationResultsTotal(summary),
+            };
+        }
 
         /// <summary>
         /// Arrange the CalcResultSummary data using the property
         /// names and ordering required for serialisation.
         /// </summary>
-        private object ArrangeSummary(CalcResultSummary data)
+        private static ProducerCalculationResultsSummary ArrangeSummary(CalcResultSummary data)
         {
             return new ProducerCalculationResultsSummary
             {
@@ -64,8 +71,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResul
             };
         }
 
-
-        private List<CalcSummaryProducerCalculationResults> ArrangeProducerCalculationResult(
+        private static List<CalcSummaryProducerCalculationResults> ArrangeProducerCalculationResult(
             CalcResultSummary calcResultSummary,
             IEnumerable<int> acceptedProducerIds,
             List<MaterialDetail> materials)
@@ -82,7 +88,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter.CalculationResul
             return results;
         }
 
-        private CalcResultProducerCalculationResultsTotal? ArrangeProducerCalculationResultsTotal(CalcResultSummary calcResultSummary)
+        private static CalcResultProducerCalculationResultsTotal? ArrangeProducerCalculationResultsTotal(CalcResultSummary calcResultSummary)
         {
             return CalcResultProducerCalculationResultsTotal.From(calcResultSummary);
         }

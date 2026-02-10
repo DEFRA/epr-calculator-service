@@ -18,39 +18,43 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         {
             var calcResult = CreateCalcResult();
             var materials = TestDataHelper.GetMaterials();
-            var lapcapObj = new { Name = "lapcap" } as object;
-            var ukWide = new { Uk = 1 } as object;
-            var byCountry = new { Country = 2 } as object;
-            var calculationResults = new { Results = "x" } as object;
             var acceptedProducerIds = new List<int> { 1, 2 };
 
-            var result = BillingFileJson.From(
-                calcResult,
-                lapcapObj,
-                ukWide,
-                byCountry,
-                calculationResults,
-                acceptedProducerIds,
-                materials);
+            var result = BillingFileJson.From(calcResult, acceptedProducerIds, materials);
 
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.CalcResultDetail);
             Assert.AreEqual(1, result.CalcResultDetail!.RunId);
-            Assert.AreEqual(lapcapObj, result.CalcResultLapcapData);
-            Assert.AreEqual(ukWide, result.CalcResult2bCommsDataByUkWide);
-            Assert.AreEqual(byCountry, result.CalcResult2cCommsDataByCountry);
+            Assert.IsNotNull(result.CalcResultLapcapData);
+            // Lapcap mapping assertions
+            var lapcap = result.CalcResultLapcapData as CalcResultLapcapDataJson;
+            Assert.IsNotNull(lapcap);
+            Assert.IsNotNull(lapcap.CalcResultLapcapDataTotal);
+            Assert.AreEqual("£13,742.80", lapcap.CalcResultLapcapDataTotal!.TotalLaDisposalCost);
             var ladetails = result.CalcResultLaDisposalCostData!.CalcResultLaDisposalCostDetails.ToList();
             Assert.IsTrue(ladetails.Any(d => d.DisposalCostPricePerTonne == "20"));
-            Assert.AreEqual(calculationResults, result.CalculationResults);
             Assert.IsNotNull(result.CalcResult2aCommsDataByMaterial);
             var comms = result.CalcResult2aCommsDataByMaterial!.CalcResult2aCommsDataDetails;
             Assert.IsTrue(comms.Any(d => d.MaterialName == "Aluminium"));
             var aluminium = comms.Single(d => d.MaterialName == "Aluminium");
             Assert.AreEqual("£0.4200", aluminium.CommsCostByMaterialPricePerTonne);
+            Assert.IsNotNull(result.CalcResult2bCommsDataByUkWide);
+            Assert.AreEqual("10", result.CalcResult2bCommsDataByUkWide!.EnglandCommsCostUKWide);
+            Assert.IsNotNull(result.CalcResult2cCommsDataByCountry);
+            Assert.AreEqual("20", result.CalcResult2cCommsDataByCountry.WalesCommsCostByCountry);
+            Assert.IsNotNull(result.ParametersCommsCost);
+            var onePlusFourPct = result.ParametersCommsCost!.OnePlusFourCommsCostApportionmentPercentages;
+            Assert.IsNotNull(onePlusFourPct);
+            Assert.AreEqual("10%", onePlusFourPct.England);
+            Assert.AreEqual("20%", onePlusFourPct.Wales);
             Assert.IsNotNull(result.ScaleUpProducers!.ProducerSubmissions);
             var subs = result.ScaleUpProducers.ProducerSubmissions!.ToList();
             Assert.IsTrue(subs.Count >= 1);
             Assert.AreEqual(1, subs[0].ProducerId);
+            var calcResults = result.CalculationResults as CalculationResultsJson;
+            Assert.IsNotNull(calcResults);
+            Assert.IsNotNull(calcResults!.ProducerCalculationResultsSummary);
+            
         }
 
         private EPR.Calculator.Service.Function.Models.CalcResult CreateCalcResult()
@@ -246,10 +250,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     CalcResultCommsCostOnePlusFourApportionment = new List<CalcResultCommsCostOnePlusFourApportionment>
                     {
                         new CalcResultCommsCostCommsCostByMaterial { Name = CalcResultCommsCostBuilder.TwoBCommsCostUkWide, England = "10", Wales = "20", Scotland = "30", NorthernIreland = "40", Total = "100", ProducerReportedHouseholdPackagingWasteTonnage = "50", ReportedPublicBinTonnage = "60", HouseholdDrinksContainers = "70", LateReportingTonnage = "80", ProducerReportedHouseholdPlusLateReportingTonnage = "90", CommsCostByMaterialPricePerTonne = "100" },
+                        new CalcResultCommsCostOnePlusFourApportionment { Name = CalcResultCommsCostBuilder.OnePlusFourApportionment, England = "10", Wales = "20", Scotland = "30", NorthernIreland = "40", Total = "100" },
                         new CalcResultCommsCostOnePlusFourApportionment { Name = CalcResultCommsCostBuilder.TwoCCommsCostByCountry, England = "10", Wales = "20", Scotland = "30", NorthernIreland = "40", Total = "100" }
                     },
                     CommsCostByCountry = new List<CalcResultCommsCostOnePlusFourApportionment>
                     {
+                        new CalcResultCommsCostOnePlusFourApportionment { Name = CalcResultCommsCostBuilder.TwoBCommsCostUkWide, England = "10", Wales = "20", Scotland = "30", NorthernIreland = "40", Total = "100" },
                         new CalcResultCommsCostOnePlusFourApportionment { Name = CalcResultCommsCostBuilder.TwoCCommsCostByCountry, England = "10", Wales = "20", Scotland = "30", NorthernIreland = "40", Total = "100" }
                     }
                 },
