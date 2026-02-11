@@ -144,6 +144,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 MaxCheckCount = MaxCheckCount,
                 PipelineUrl = new Uri(TestPipelineUrl),
                 PipelineName = TestPipelineName,
+                TargetDB = "TestDB",
             };
 
             
@@ -152,6 +153,15 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
 
             // Assert
             Assert.AreEqual(expectedPipelineResult, pipelineSucceeded);
+            
+            // Verify that CreatePipelineRunAsync was called with parameters including targetDB = "TestDB"
+            this.MockPipelineClient.Verify(client => client.CreatePipelineRunAsync(
+                It.IsAny<string?>(),
+                It.IsAny<string?>(),
+                It.IsAny<bool?>(),
+                It.IsAny<string?>(),
+                It.Is<IDictionary<string, object>?>(dict => dict != null && dict.ContainsKey("targetDB") && dict["targetDB"].Equals("TestDB")),
+                It.IsAny<CancellationToken>()), Times.Once);
         }
 
         /// <summary>

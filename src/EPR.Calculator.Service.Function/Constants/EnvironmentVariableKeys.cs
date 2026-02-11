@@ -66,5 +66,8 @@ namespace EPR.Calculator.Service.Function.Constants
 
         /// <summary>The key for the InstrumentationKey environment variable.</summary>
         public const string InstrumentationKey = "InstrumentationKey";
+
+        /// <summary>The key for the SynapseTargetDB environment variable.</summary>
+        public const string SynapseTargetDB = "SynapseTargetDB";
     }
 }

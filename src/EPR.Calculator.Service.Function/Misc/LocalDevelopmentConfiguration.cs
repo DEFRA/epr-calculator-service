@@ -70,6 +70,9 @@
 
         public int DbLoadingChunkSize
             => this.Configuration.GetValue(EnvironmentVariableKeys.DbLoadingChunkSize, 1000);
+
+        public string? SynapseTargetDB => null;
+
     }
 #pragma warning restore S1075
 }

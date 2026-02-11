@@ -26,5 +26,7 @@
         /// if the pipeline has run successfully.</summary>
         public int CheckInterval { get; init; }
 
+        /// <summary>Optional target database that synapse should write to.</summary>
+        public string? TargetDB { get; init; }
     }
 }
