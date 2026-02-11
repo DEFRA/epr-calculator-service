@@ -151,6 +151,8 @@ namespace EPR.Calculator.Service.Function
         public int DbLoadingChunkSize => int.Parse(
             Environment.GetEnvironmentVariable(EnvironmentVariableKeys.DbLoadingChunkSize) ?? "1000");
 
+        public string? SynapseTargetDB => Environment.GetEnvironmentVariable(EnvironmentVariableKeys.SynapseTargetDB);
+
 #pragma warning restore CS8603 // Possible null reference return.
 
         /// <summary>

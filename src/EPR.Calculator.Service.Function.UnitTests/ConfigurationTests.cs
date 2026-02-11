@@ -290,5 +290,22 @@ namespace EPR.Calculator.Service.Function.UnitTests
             Assert.AreEqual(resultFileCSVContainerName, result);
         }
 
+        [TestMethod]
+        public void CanGetSynapseTargetDB()
+        {
+            var resultWhenNull = new Configuration().SynapseTargetDB;
+
+            Assert.IsNull(resultWhenNull);
+
+            var synapseTargetDbValue = this.Fixture.Create<string>();
+            Environment.SetEnvironmentVariable(
+                EnvironmentVariableKeys.SynapseTargetDB,
+                synapseTargetDbValue);
+
+            var resultWithValue = new Configuration().SynapseTargetDB;
+
+            Assert.AreEqual(synapseTargetDbValue, resultWithValue);
+        }
+
     }
 }

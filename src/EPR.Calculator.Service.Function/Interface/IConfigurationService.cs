@@ -47,5 +47,7 @@
         string BillingFileCSVBlobContainerName { get; }
 
         string BillingFileJsonBlobContainerName { get; }
+
+        string? SynapseTargetDB { get; }
     }
 }

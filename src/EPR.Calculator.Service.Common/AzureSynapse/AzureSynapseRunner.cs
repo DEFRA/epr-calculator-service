@@ -12,6 +12,7 @@
     public class AzureSynapseRunner : IAzureSynapseRunner
     {
         private const string DateParameter = "date";
+        private const string TargetDBParameter = "targetDB";
         private readonly ILogger<AzureSynapseRunner> logger;
 
         /// <summary>
@@ -53,7 +54,8 @@
                 this.PipelineClientFactory,
                 args.PipelineUrl,
                 args.PipelineName,
-                args.CalendarYear);
+                args.CalendarYear,
+                args.TargetDB);
 
             // If PipelineId null just return false
             if (pipelineRunId == null)
@@ -141,7 +143,8 @@
             IPipelineClientFactory factory,
             Uri pipelineUrl,
             string pipelineName,
-            string year)
+            string year,
+            string? targetDB)
         {
             var credentials = new ManagedIdentityCredential();
 
@@ -149,11 +152,17 @@
 
             try
             {
-                var result = await pipelineClient.CreatePipelineRunAsync(pipelineName, parameters: new Dictionary<string, object> 
+                var parameters = new Dictionary<string, object>
                 {
-                    {
-                        DateParameter, year },
-                });
+                    { DateParameter, year },
+                };
+
+                if (!string.IsNullOrEmpty(targetDB))
+                {
+                    parameters.Add(TargetDBParameter, targetDB);
+                }
+
+                var result = await pipelineClient.CreatePipelineRunAsync(pipelineName, parameters: parameters);
 
                 return Guid.Parse(result.Value.RunId);
             }

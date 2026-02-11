@@ -119,6 +119,7 @@ namespace EPR.Calculator.Service.Function.Services
                 PipelineName = pipelineName,
                 CalculatorRunId = args.Id,
                 CalendarYear = isOrganisationPipeline ? Util.GetCalendarYearFromFinancialYearNew(financialYear) : Util.GetCalendarYearFromFinancialYear(financialYear),
+                TargetDB = this.configuration.SynapseTargetDB,
             };
         }
 
