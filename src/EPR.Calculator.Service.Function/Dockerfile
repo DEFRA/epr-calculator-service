@@ -2,7 +2,6 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS installer-env
 
 COPY EPR.Calculator.Service.Common/. ./EPR.Calculator.Service.Common/.
 COPY EPR.Calculator.Service.Function/. ./EPR.Calculator.Service.Function/.
-COPY EPR.Calculator.Service.Data/. ./EPR.Calculator.Service.Data/.
 COPY stylecop.json ./
 
 # Publish 
