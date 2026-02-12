@@ -40,7 +40,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
         public AzureSynapseRunnerTests()
         {
             this.Fixture = new Fixture();
-            this.Fixture.Customizations.Add(new CalendarYearCustomisation());
+            this.Fixture.Customizations.Add(new RelativeYearCustomisation());
             this.Fixture.Customizations.Add(new FinancialYearCustomisation());
 
             // Create a mock client factory to inject the mock pipeline clients into the test class.
@@ -77,7 +77,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
            => new AzureSynapseRunnerParameters
            {
                CalculatorRunId = CalculatorRunId,
-               CalendarYear = this.Fixture.Create<CalendarYear>(),
+               RelativeYear = this.Fixture.Create<RelativeYear>(),
                CheckInterval = CheckInterval,
                MaxCheckCount = MaxCheckCount,
                PipelineUrl = new Uri(TestPipelineUrl),
@@ -139,7 +139,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             var testdat = new AzureSynapseRunnerParameters
             {
                 CalculatorRunId = CalculatorRunId,
-                CalendarYear = this.Fixture.Create<CalendarYear>(),
+                RelativeYear = this.Fixture.Create<RelativeYear>(),
                 CheckInterval = CheckInterval,
                 MaxCheckCount = MaxCheckCount,
                 PipelineUrl = new Uri(TestPipelineUrl),

@@ -100,16 +100,16 @@
             }
 
             string financialYear = calcRun?.FinancialYearId ?? string.Empty;
-            var calendarYear = Util.GetCalendarYearFromFinancialYear(financialYear);
+            var relativeYear = Util.GetRelativeYearFromFinancialYear(financialYear);
             var createdBy = updatedBy;
             using (var transaction = await this.Context.Database.BeginTransactionAsync(timeout))
             {
                 try
                 {
                     this.TelemetryLogger.LogInformation(new TrackMessage { RunId = runId, RunName = runName, Message = $"Creating run organization and POM for run: {runId}" });
-                    var createRunOrgCommand = Util.GetFormattedSqlString("dbo.CreateRunOrganization", runId, calendarYear, createdBy);
+                    var createRunOrgCommand = Util.GetFormattedSqlString("dbo.CreateRunOrganization", runId, relativeYear, createdBy);
                     await this.Wrapper.ExecuteSqlAsync(createRunOrgCommand, timeout);
-                    var createRunPomCommand = Util.GetFormattedSqlString("dbo.CreateRunPom", runId, calendarYear, createdBy);
+                    var createRunPomCommand = Util.GetFormattedSqlString("dbo.CreateRunPom", runId, relativeYear, createdBy);
                     await this.Wrapper.ExecuteSqlAsync(createRunPomCommand, timeout);
 
                     calcRun!.CalculatorRunClassificationId = runClassifications.Single(x => x.Status == RunClassification.RUNNING.ToString()).Id;

@@ -47,13 +47,13 @@
         {
             this.logger.LogInformation("Azure synapse trigger process started");
 
-            // Instead of year, get financial year and map financial year to calendar year.
+            // Instead of year, get financial year and map financial year to relative year.
             // Trigger the pipeline.
             var pipelineRunId = await this.StartPipelineRun(
                 this.PipelineClientFactory,
                 args.PipelineUrl,
                 args.PipelineName,
-                args.CalendarYear);
+                args.RelativeYear);
 
             // If PipelineId null just return false
             if (pipelineRunId == null)

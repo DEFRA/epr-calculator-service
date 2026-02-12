@@ -116,12 +116,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Assert
             var calcRun = await this.Context.CalculatorRuns.SingleAsync(x => x.Id == runId);
-            var expectedCalendarYear = financialYear.AddYears(-1).ToString("yyyy");
+            var expectedRelativeYear = financialYear.ToString("yyyy");
             Assert.IsNotNull(calcRun);
             Assert.AreEqual((int)RunClassification.RUNNING, calcRun.CalculatorRunClassificationId);
             this.Wrapper.Verify(
                 x => x.ExecuteSqlAsync(
-                It.Is<FormattableString>(s => s.ToString().Contains($"calendarYear = {expectedCalendarYear}")),
+                It.Is<FormattableString>(s => s.ToString().Contains($"relativeyear = {expectedRelativeYear}")),
                 It.IsAny<CancellationToken>()),
                 Times.Exactly(2));
         }

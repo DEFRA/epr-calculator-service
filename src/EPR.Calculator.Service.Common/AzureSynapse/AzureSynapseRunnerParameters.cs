@@ -8,9 +8,9 @@
         public int CalculatorRunId { get; init; }
 
         /// <summary>
-        /// Gets the Calendar Year, in the format yyyy.
+        /// Gets the Relative Year, in the format yyyy.
         /// </summary>
-        required public CalendarYear CalendarYear { get; init; }
+        required public RelativeYear RelativeYear { get; init; }
 
         /// <summary>Gets the URL of the pipeline to run.</summary>
         required public Uri PipelineUrl { get; init; }

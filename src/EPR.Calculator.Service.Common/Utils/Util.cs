@@ -35,34 +35,22 @@
         }
 
         /// <summary>
-        /// Converts a financial year string to the previous calendar year as a string.
+        /// Converts a financial year string to return the first part of financial year as a string.
         /// </summary>
         /// <param name="financialYear">The financial year string to convert, in the format "YYYY-YY".</param>
-        /// <returns>The previous calendar year as a string.</returns>
+        /// <returns>The Relative year as a string.</returns>
         /// <exception cref="ArgumentException">Thrown when the financial year string is null or empty.</exception>
-        public static CalendarYear GetCalendarYearFromFinancialYear(FinancialYear financialYear)
+        public static RelativeYear GetRelativeYearFromFinancialYear(FinancialYear financialYear)
         {
-            int year = int.Parse(GetStartYearFromFinancialYear(financialYear.ToString()));
-            return (year - 1).ToString();
-        }
-
-        /// <summary>
-        /// Converts a financial year string to return the current calendar year as a string.
-        /// </summary>
-        /// <param name="financialYear">The financial year string to convert, in the format "YYYY-YY".</param>
-        /// <returns>The previous calendar year as a string.</returns>
-        /// <exception cref="ArgumentException">Thrown when the financial year string is null or empty.</exception>
-        public static CalendarYear GetCalendarYearFromFinancialYearNew(FinancialYear financialYear)
-        {
-            // Returns the start year of the financial year as the calendar year.
+            // Returns the start year of the financial year as the relative year.
             // For example, "2025-26" returns "2025".
             int year = int.Parse(GetStartYearFromFinancialYear(financialYear.ToString()));
-            return new CalendarYear(year.ToString());
+            return new RelativeYear(year.ToString());
         }
 
-        public static FormattableString GetFormattedSqlString(string procedureName, int runId, string calendarYear, string createdBy)
+        public static FormattableString GetFormattedSqlString(string procedureName, int runId, string relativeYear, string createdBy)
         {
-            return $"exec {procedureName} @RunId ={runId}, @calendarYear = {calendarYear}, @createdBy = {createdBy}";
+            return $"exec {procedureName} @RunId ={runId}, @relativeyear = {relativeYear}, @createdBy = {createdBy}";
         }
     }
 }
