@@ -1,4 +1,6 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Text.Json.Serialization;
+using EPR.Calculator.Service.Common.Utils;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
@@ -48,5 +50,22 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
         public required decimal TotalTonnageTotal { get; init; }
 
+        public static CalcResult2ACommsDataDetailsTotal From(CalcResultCommsCostCommsCostByMaterial commsCostByMaterial)
+        {
+            return new CalcResult2ACommsDataDetailsTotal
+            {
+                EnglandCommsCostTotal = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.EnglandValue),
+                HouseholdDrinksContainersTonnageTotal = Math.Round(commsCostByMaterial.HouseholdDrinksContainersValue, 3),
+                LateReportingTonnageTotal = Math.Round(commsCostByMaterial.LateReportingTonnageValue, 3),
+                NorthernIrelandCommsCostTotal = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.NorthernIrelandValue),
+                ScotlandCommsCostTotal = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.ScotlandValue),
+                WalesCommsCostTotal = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.WalesValue),
+                ProducerHouseholdPackagingWasteTonnageTotal = Math.Round(commsCostByMaterial.ProducerReportedHouseholdPackagingWasteTonnageValue, 3),
+                PublicBinTonnage = Math.Round(commsCostByMaterial.ReportedPublicBinTonnageValue, 3),
+                Total = commsCostByMaterial.Name,
+                TotalCommsCostTotal = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.TotalValue),
+                TotalTonnageTotal = Math.Round(commsCostByMaterial.ProducerReportedTotalTonnage, 3)
+            };
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using EPR.Calculator.Service.Function.Converter;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json.Serialization;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
@@ -15,6 +16,23 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("calcResultLateReportingTonnageTotal")]
         [JsonConverter(typeof(DecimalPrecision3Converter))]
         public decimal CalcResultLateReportingTonnageTotal { get; set; }
+
+        public static CalcResultLateReportingTonnageJson From(CalcResultLateReportingTonnage? calcResultLateReportingTonnage)
+        {
+            if (calcResultLateReportingTonnage is null) return new CalcResultLateReportingTonnageJson();
+            string Total = "total";
+            return new CalcResultLateReportingTonnageJson
+            {
+                Name = "Late Reporting Tonnage",
+                calcResultLateReportingTonnageDetails = calcResultLateReportingTonnage.CalcResultLateReportingTonnageDetails
+                .Where(n=>n.Name.Trim().ToLower() != Total)
+                .Select(t => new CalcResultLateReportingTonnageDetailsJson { MaterialName = t.Name, TotalLateReportingTonnage = t.TotalLateReportingTonnage }).ToList(),
+                
+                CalcResultLateReportingTonnageTotal = calcResultLateReportingTonnage.CalcResultLateReportingTonnageDetails
+                .Where(n => n.Name.Trim().ToLower() != Total)
+                .Sum(t => t.TotalLateReportingTonnage)
+            };
+        }
     }
 
     public class CalcResultLateReportingTonnageDetailsJson

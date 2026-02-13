@@ -1,4 +1,6 @@
-﻿using EPR.Calculator.Service.Function.Converter;
+﻿using EPR.Calculator.Service.Common.Utils;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Converter;
 using System.Text.Json.Serialization;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
@@ -31,5 +33,21 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
         [JsonPropertyName("tonnageChangeAdvice")]
         public required string TonnageChangeAdvice { get; set; }
+
+        public static DisposalFeeSummary1 From(CalcResultSummaryProducerDisposalFees summary)
+        {
+            return new DisposalFeeSummary1
+            {
+                TotalProducerDisposalFeeWithoutBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(summary.TotalProducerDisposalFee),
+                BadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(summary.BadDebtProvision),
+                TotalProducerDisposalFeeWithBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(summary.TotalProducerDisposalFeeWithBadDebtProvision),
+                EnglandTotal = CurrencyConverterUtils.ConvertToCurrency(summary.EnglandTotal),
+                WalesTotal = CurrencyConverterUtils.ConvertToCurrency(summary.WalesTotal),
+                ScotlandTotal = CurrencyConverterUtils.ConvertToCurrency(summary.ScotlandTotal),
+                NorthernIrelandTotal = CurrencyConverterUtils.ConvertToCurrency(summary.NorthernIrelandTotal),
+                TonnageChangeCount = summary.TonnageChangeCount ?? CommonConstants.Hyphen,
+                TonnageChangeAdvice = summary.TonnageChangeAdvice ?? CommonConstants.Hyphen,
+            };
+        }
     }
 }
