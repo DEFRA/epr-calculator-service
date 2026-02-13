@@ -33,14 +33,14 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
 
                 // LEFT JOIN to find a subsidiary-specific detail: match ProdId + SubsId
                 join subOdd in context.CalculatorRunOrganisationDataDetails
-                    on new { OrgId = (int)er.ProducerId, MasterId = odm.Id, SubsId = er.SubsidiaryId }
+                    on new { OrgId = er.ProducerId, MasterId = odm.Id, SubsId = er.SubsidiaryId }
                     equals new { OrgId = subOdd.OrganisationId, MasterId = subOdd.CalculatorRunOrganisationDataMasterId, SubsId = subOdd.SubsidiaryId }
                     into subGroup
                 from subLeft in subGroup.DefaultIfEmpty()
 
                     // LEFT JOIN to find a producer-level detail (SubsidiaryId null) as fallback
                 join prodOdd in context.CalculatorRunOrganisationDataDetails
-                    on new { OrgId = (int)er.ProducerId, MasterId = odm.Id, SubsId = (string?)null }
+                    on new { OrgId = er.ProducerId, MasterId = odm.Id, SubsId = (string?)null }
                     equals new { OrgId = prodOdd.OrganisationId, MasterId = prodOdd.CalculatorRunOrganisationDataMasterId, SubsId = prodOdd.SubsidiaryId }
                     into prodGroup
                 from prodLeft in prodGroup.DefaultIfEmpty()

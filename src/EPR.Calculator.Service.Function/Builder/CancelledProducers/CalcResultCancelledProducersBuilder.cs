@@ -65,7 +65,7 @@
 
             // populate cancelled producers
             var calcResultCancelledProducers = new List<CalcResultCancelledProducersDto>();
-            var filteredMissingProducers = new List<ProducerInvoicedDto>();
+            List<ProducerInvoicedDto> filteredMissingProducers;
 
             if (isBilling)
             {
