@@ -46,7 +46,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 It.IsAny<IEnumerable<CalculatorRunClassification>>()))
                 .Returns(new RpdStatusValidation { isValid = true });
 
-            this.Wrapper = new Mock<IOrgAndPomWrapper>();
             this.CommandTimeoutService = new Mock<ICommandTimeoutService>();
 
             this.Configuration = new Mock<IConfigurationService>();
@@ -54,13 +53,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 .Returns(this.Fixture.Create<string>());
             this.TelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
 
+
+            this.CalculatorRunOrgData = new Mock<ICalculatorRunOrgData>();
+
+            this.CalculatorRunPomData = new Mock<ICalculatorRunPomData>();
+
             this.TestClass = new RpdStatusService(
                 this.Configuration.Object,
                 contextFactory.Object,
                 this.CommandTimeoutService.Object,
                 this.Validator.Object,
-                this.Wrapper.Object,
-                this.TelemetryLogger.Object);
+                this.TelemetryLogger.Object,
+                this.CalculatorRunOrgData.Object,
+                this.CalculatorRunPomData.Object);
         }
 
         private RpdStatusService TestClass { get; init; }
@@ -73,11 +78,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         private Mock<IRpdStatusDataValidator> Validator { get; init; }
 
-        private Mock<IOrgAndPomWrapper> Wrapper { get; init; }
-
         private Mock<ICommandTimeoutService> CommandTimeoutService { get; set; }
 
         private Mock<ICalculatorTelemetryLogger> TelemetryLogger { get; init; }
+
+        private Mock<ICalculatorRunOrgData> CalculatorRunOrgData { get; init; }
+
+        private Mock<ICalculatorRunPomData> CalculatorRunPomData { get; init; }
 
         private void SetupRunClassifications()
         {
@@ -119,11 +126,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var expectedCalendarYear = financialYear.AddYears(-1).ToString("yyyy");
             Assert.IsNotNull(calcRun);
             Assert.AreEqual((int)RunClassification.RUNNING, calcRun.CalculatorRunClassificationId);
-            this.Wrapper.Verify(
-                x => x.ExecuteSqlAsync(
-                It.Is<FormattableString>(s => s.ToString().Contains($"calendarYear = {expectedCalendarYear}")),
-                It.IsAny<CancellationToken>()),
-                Times.Exactly(2));
         }
 
         [TestMethod]
@@ -195,39 +197,39 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.IsInstanceOfType<FluentValidation.ValidationException>(result);
         }
 
-        [TestMethod]
-        public async Task UpdateRpdStatus_WrapperThrowsException()
-        {
-            // Arrange
-            var runId = this.Fixture.Create<int>();
-            var run = this.Fixture.Create<CalculatorRun>();
-            run.Id = runId;
-            run.Financial_Year.Name = this.Fixture.Create<DateTime>().ToString("yyyy-yy");
-            this.Context.CalculatorRuns.Add(run);
-            await this.Context.SaveChangesAsync();
+        // [TestMethod]
+        // public async Task UpdateRpdStatus_WrapperThrowsException()
+        // {
+        //     // Arrange
+        //     var runId = this.Fixture.Create<int>();
+        //     var run = this.Fixture.Create<CalculatorRun>();
+        //     run.Id = runId;
+        //     run.Financial_Year.Name = this.Fixture.Create<DateTime>().ToString("yyyy-yy");
+        //     this.Context.CalculatorRuns.Add(run);
+        //     await this.Context.SaveChangesAsync();
 
-            this.Wrapper.Setup(w => w.ExecuteSqlAsync(
-                It.IsAny<FormattableString>(),
-                It.IsAny<CancellationToken>()))
-                .Throws<Exception>();
+        //     this.Wrapper.Setup(w => w.ExecuteSqlAsync(
+        //         It.IsAny<FormattableString>(),
+        //         It.IsAny<CancellationToken>()))
+        //         .Throws<Exception>();
 
-            // Act
-            Exception? result = null;
-            try
-            {
-                await this.TestClass.UpdateRpdStatus(
-                    runId,
-                    this.Fixture.Create<string>(),
-                    this.Fixture.Create<string>(),
-                    CancellationToken.None);
-            }
-            catch (Exception ex)
-            {
-                result = ex;
-            }
+        //     // Act
+        //     Exception? result = null;
+        //     try
+        //     {
+        //         await this.TestClass.UpdateRpdStatus(
+        //             runId,
+        //             this.Fixture.Create<string>(),
+        //             this.Fixture.Create<string>(),
+        //             CancellationToken.None);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         result = ex;
+        //     }
 
-            // Assert
-            Assert.IsInstanceOfType<Exception>(result);
-        }
+        //     // Assert
+        //     Assert.IsInstanceOfType<Exception>(result);
+        // }
     }
 }

@@ -143,6 +143,8 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<IBillingInstructionService, BillingInstructionService>();
             services.AddTransient<IOnePlusFourApportionmentExporter, OnePlusFourApportionmentExporter>();
             services.AddTransient<IRpdStatusService, RpdStatusService>();
+            services.AddTransient<ICalculatorRunOrgData, CalculatorRunOrgData>();
+            services.AddTransient<ICalculatorRunPomData, CalculatorRunPomData>();
             services.AddTransient<ILapcaptDetailExporter, LapcaptDetailExporter>();
             services.AddTransient<ICalcResultDetailExporter, CalcResultDetailexporter>();
             services.AddTransient<ICalcResultLaDisposalCostExporter, CalcResultLaDisposalCostExporter>();

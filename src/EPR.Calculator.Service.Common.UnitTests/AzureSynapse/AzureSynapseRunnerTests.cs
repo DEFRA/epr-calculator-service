@@ -180,7 +180,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
                 .Returns(Task.FromResult(MockPipelineRunResponse(nameof(PipelineStatus.InProgress))))
                 .Returns(Task.FromResult(MockPipelineRunResponse(statusReturned)));
 
-            // Act
+            // Actl
             var pipelineSucceeded = await this.TestClass.Process(this.Parameters);
 
             // Assert
