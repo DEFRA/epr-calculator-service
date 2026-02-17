@@ -28,15 +28,17 @@
             IDbContextFactory<ApplicationDBContext> context,
             ICommandTimeoutService commandTimeoutService,
             IRpdStatusDataValidator validator,
-            IOrgAndPomWrapper wrapper,
-            ICalculatorTelemetryLogger telemetryLogger)
+            ICalculatorTelemetryLogger telemetryLogger,
+            ICalculatorRunOrgData calculatorRunOrgData,
+            ICalculatorRunPomData calculatorRunPomData)
         {
             this.Config = config;
             this.Context = context.CreateDbContext();
             this.CommandTimeoutService = commandTimeoutService;
             this.Validator = validator;
-            this.Wrapper = wrapper;
             this.TelemetryLogger = telemetryLogger;
+            this.CalculatorRunOrgData = calculatorRunOrgData;
+            this.CalculatorRunPomData = calculatorRunPomData; 
         }
 
         private ICalculatorTelemetryLogger TelemetryLogger { get; init; }
@@ -49,7 +51,9 @@
 
         private IRpdStatusDataValidator Validator { get; init; }
 
-        private IOrgAndPomWrapper Wrapper { get; init; }
+        private ICalculatorRunOrgData CalculatorRunOrgData { get; init; }
+
+        private ICalculatorRunPomData CalculatorRunPomData { get; init; }
 
         /// <inheritdoc/>
         public async Task<RunClassification> UpdateRpdStatus(
@@ -107,10 +111,8 @@
                 try
                 {
                     this.TelemetryLogger.LogInformation(new TrackMessage { RunId = runId, RunName = runName, Message = $"Creating run organization and POM for run: {runId}" });
-                    var createRunOrgCommand = Util.GetFormattedSqlString("dbo.CreateRunOrganization", runId, calendarYear, createdBy);
-                    await this.Wrapper.ExecuteSqlAsync(createRunOrgCommand, timeout);
-                    var createRunPomCommand = Util.GetFormattedSqlString("dbo.CreateRunPom", runId, calendarYear, createdBy);
-                    await this.Wrapper.ExecuteSqlAsync(createRunPomCommand, timeout);
+                    await CalculatorRunOrgData.LoadOrgDataForCalcRun(runId, calendarYear, createdBy, timeout);
+                    await CalculatorRunPomData.LoadPomDataForCalcRun(runId, calendarYear, createdBy, timeout);
 
                     calcRun!.CalculatorRunClassificationId = runClassifications.Single(x => x.Status == RunClassification.RUNNING.ToString()).Id;
                     await this.Context.SaveChangesAsync(timeout);
