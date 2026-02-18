@@ -19,31 +19,45 @@
 
         public async Task<CalcResultDetail> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
         {
-            var calcResultDetails = await this.context.CalculatorRuns
+            var calculatorRuns = await this.context.CalculatorRuns
                 .Include(o => o.CalculatorRunOrganisationDataMaster)
                 .Include(o => o.CalculatorRunPomDataMaster)
                 .Include(o => o.DefaultParameterSettingMaster)
                 .Include(x => x.LapcapDataMaster)
                 .ToListAsync();
 
-            var results = new CalcResultDetail();
-            var calcResultDetail = calcResultDetails.Find(x => x.Id == resultsRequestDto.RunId);
-            if (calcResultDetail != null)
+            string idMsg() => $"CalculatorRun {resultsRequestDto.RunId}";
+
+            var calculatorRun = calculatorRuns.Find(x => x.Id == resultsRequestDto.RunId)
+                                ?? throw new InvalidOperationException($"{idMsg()}  not found.");
+
+            var results = new CalcResultDetail
             {
-                results.RunId = calcResultDetail.Id;
-                results.RunName = calcResultDetail.Name ?? string.Empty;
-                results.RunBy = calcResultDetail.CreatedBy;
-                results.RunDate = calcResultDetail.CreatedAt;
-                results.FinancialYear = calcResultDetail.FinancialYearId?? string.Empty;
-                if (calcResultDetail.CalculatorRunOrganisationDataMaster != null)
-                    results.RpdFileORG = calcResultDetail.CalculatorRunOrganisationDataMaster.CreatedAt.ToString(CalculationResults.DateFormat);
-                if (calcResultDetail.CalculatorRunPomDataMaster != null)
-                    results.RpdFilePOM = calcResultDetail.CalculatorRunPomDataMaster.CreatedAt.ToString(CalculationResults.DateFormat);
-                if (calcResultDetail.LapcapDataMaster != null)
-                    results.LapcapFile = FormatFileData(calcResultDetail.LapcapDataMaster.LapcapFileName, calcResultDetail.LapcapDataMaster.CreatedAt, calcResultDetail.LapcapDataMaster.CreatedBy);
-                if (calcResultDetail.DefaultParameterSettingMaster != null)
-                    results.ParametersFile = FormatFileData(calcResultDetail.DefaultParameterSettingMaster.ParameterFileName, calcResultDetail.DefaultParameterSettingMaster.CreatedAt, calcResultDetail.DefaultParameterSettingMaster.CreatedBy);
-            }
+                RunId = calculatorRun.Id,
+                RunName = calculatorRun.Name ?? throw new InvalidOperationException($"{idMsg()} has no Name assigned."),
+                RunBy = calculatorRun.CreatedBy ?? throw new InvalidOperationException($"{idMsg()} has no CreatedBy assigned."),
+                RunDate = calculatorRun.CreatedAt,
+                RelativeYear = calculatorRun.RelativeYear ?? throw new InvalidOperationException($"{idMsg()} has no RelativeYear assigned."),
+                RpdFileORG = calculatorRun.CalculatorRunOrganisationDataMaster != null
+                                ? calculatorRun.CalculatorRunOrganisationDataMaster.CreatedAt.ToString(CalculationResults.DateFormat)
+                                : string.Empty,
+                RpdFilePOM = calculatorRun.CalculatorRunPomDataMaster != null
+                                ? calculatorRun.CalculatorRunPomDataMaster.CreatedAt.ToString(CalculationResults.DateFormat)
+                                : string.Empty,
+                LapcapFile = calculatorRun.LapcapDataMaster != null
+                                ? FormatFileData(
+                                    calculatorRun.LapcapDataMaster.LapcapFileName,
+                                    calculatorRun.LapcapDataMaster.CreatedAt,
+                                    calculatorRun.LapcapDataMaster.CreatedBy)
+                                : string.Empty,
+                ParametersFile = calculatorRun.DefaultParameterSettingMaster != null
+                                    ? FormatFileData(
+                                        calculatorRun.DefaultParameterSettingMaster.ParameterFileName,
+                                        calculatorRun.DefaultParameterSettingMaster.CreatedAt,
+                                        calculatorRun.DefaultParameterSettingMaster.CreatedBy)
+                                    : string.Empty
+            };
+
             return results;
         }
 

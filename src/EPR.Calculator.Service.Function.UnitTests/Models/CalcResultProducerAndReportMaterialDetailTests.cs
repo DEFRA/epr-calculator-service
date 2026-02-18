@@ -2,6 +2,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
 {
     using AutoFixture;
     using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.API.Data.Models;
+    using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Function.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -12,7 +14,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
 
         public CalcResultProducerAndReportMaterialDetailTests()
         {
-            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
             this.calcResultProducerAndReportMaterialDetail = new CalcResultProducerAndReportMaterialDetail
             {
                 ProducerDetail = new ProducerDetail
@@ -20,7 +21,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
                     Id = 1,
                     ProducerName = "Allied Packaging",
                     CalculatorRunId = 1,
-                    CalculatorRun = new CalculatorRun { Financial_Year = calculatorRunFinancialYear, Name = "Test Run 1" },
+                    CalculatorRun = new CalculatorRun { RelativeYear = new RelativeYear(2024), Name = "Test Run 1" },
                 },
                 ProducerReportedMaterial = new ProducerReportedMaterial
                 {

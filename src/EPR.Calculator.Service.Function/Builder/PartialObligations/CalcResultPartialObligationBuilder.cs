@@ -62,8 +62,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
                                 join crodd in this.context.CalculatorRunOrganisationDataDetails.AsNoTracking() on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
                                 join pd in this.context.ProducerDetail.Include(x => x.ProducerReportedMaterials) on crodd.OrganisationId equals pd.ProducerId
                                 where run.Id == runId && crodd.ObligationStatus == ObligationStates.Obligated && crodd.DaysObligated != null && crodd.SubsidiaryId == pd.SubsidiaryId && pd.CalculatorRunId == runId
-                                let regSubmissionYear = int.Parse(crodm.CalendarYear) + 1
-                                let daysInYear = DateTime.IsLeapYear(regSubmissionYear) ? 366 : 365
+                                let daysInYear = DateTime.IsLeapYear(crodm.RelativeYear.Value) ? 366 : 365
                                 let partialAmount = crodd.DaysObligated != null ? (decimal)crodd.DaysObligated! / daysInYear : 1
                                 select new CalcResultPartialObligation
                                 {
@@ -72,11 +71,11 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
                                     ProducerName = pd.ProducerName,
                                     TradingName = pd.TradingName,
                                     Level = pd.SubsidiaryId != null ? CommonConstants.LevelTwo.ToString() : CommonConstants.LevelOne.ToString(),
-                                    SubmissionYear = regSubmissionYear.ToString(),
+                                    SubmissionYear = crodm.RelativeYear.Value.ToString(),
                                     DaysInSubmissionYear = daysInYear,
-                                    JoiningDate = crodd.JoinerDate, 
+                                    JoiningDate = crodd.JoinerDate,
                                     DaysObligated = crodd.DaysObligated,
-                                    ObligatedPercentage = (partialAmount * 100).ToString("F2") + "%", 
+                                    ObligatedPercentage = (partialAmount * 100).ToString("F2") + "%",
                                     PartialObligationTonnageByMaterial = GetPartialObligationTonnages(pd, materials, partialAmount, scaledupProducers)
                                 }).ToListAsync();
 
@@ -88,7 +87,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
             var mats = from md in materials
                        join prm in producer.ProducerReportedMaterials.ToList() on md.Id equals prm.MaterialId into prms
                        select new { md, prms };
-            
+
             return mats.ToDictionary(m => m.md.Code, m => GetPartialObligationTonnage(m.md, m.prms.ToList(), partialAmount, producer, scaledupProducers));
         }
 
@@ -113,15 +112,15 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
             }
 
             tonnage.NetReportedTonnage = tonnage.TotalReportedTonnage - tonnage.ReportedSelfManagedConsumerWasteTonnage;
-            
+
             var maybeScaledUpReportedHouseholdPackagingWasteTonnage = CalcResultSummaryUtil.GetScaledUpTonnage(producer, material, PackagingTypes.Household, scaledupProducers) ?? tonnage.ReportedHouseholdPackagingWasteTonnage;
             var maybeScaledUpReportedPublicBinTonnage = CalcResultSummaryUtil.GetScaledUpTonnage(producer, material, PackagingTypes.PublicBin, scaledupProducers) ?? tonnage.ReportedPublicBinTonnage;
             var maybeScaledUpSelfManagedConsumerWasteTonnage = CalcResultSummaryUtil.GetScaledUpTonnage(producer, material, PackagingTypes.ConsumerWaste, scaledupProducers) ?? tonnage.ReportedSelfManagedConsumerWasteTonnage;
-            
+
             tonnage.PartialReportedHouseholdPackagingWasteTonnage = Math.Round(maybeScaledUpReportedHouseholdPackagingWasteTonnage * partialAmount, 3);
             tonnage.PartialReportedPublicBinTonnage = Math.Round(maybeScaledUpReportedPublicBinTonnage * partialAmount, 3);
             tonnage.PartialReportedSelfManagedConsumerWasteTonnage = Math.Round(maybeScaledUpSelfManagedConsumerWasteTonnage * partialAmount, 3);
-            
+
             if (material.Code == MaterialCodes.Glass)
             {
                 var maybeScaledUpHouseholdDrinksContainersTonnageGlass = CalcResultSummaryUtil.GetScaledUpTonnage(producer, material, PackagingTypes.HouseholdDrinksContainers, scaledupProducers) ?? tonnage.HouseholdDrinksContainersTonnageGlass;
@@ -132,7 +131,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
             {
                 tonnage.PartialTotalReportedTonnage = tonnage.PartialReportedHouseholdPackagingWasteTonnage + tonnage.PartialReportedPublicBinTonnage;
             }
-            
+
             tonnage.PartialNetReportedTonnage = tonnage.PartialTotalReportedTonnage - tonnage.PartialReportedSelfManagedConsumerWasteTonnage;
 
             return tonnage;

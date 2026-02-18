@@ -21,7 +21,7 @@ namespace EPR.Calculator.Service.Function.Mapper
         {
             return new CalculatorRunParameter()
             {
-                FinancialYear = createResultFileMessage.FinancialYear,
+                RelativeYear = createResultFileMessage.RelativeYear,
                 User = createResultFileMessage.CreatedBy,
                 Id = createResultFileMessage.CalculatorRunId,
                 MessageType = createResultFileMessage.MessageType,

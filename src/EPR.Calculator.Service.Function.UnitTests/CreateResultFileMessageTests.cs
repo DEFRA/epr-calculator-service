@@ -1,5 +1,7 @@
 namespace EPR.Calculator.Service.Function.UnitTests
 {
+    using EPR.Calculator.API.Data.Models;
+    using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Function;
     using EPR.Calculator.Service.Function.Constants;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -18,14 +20,14 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Arrange
             var testCalculatorRunId = 1868588173;
-            var testFinancialYear = "TestValue1739994975";
+            var testRelativeYear = new RelativeYear(2024);
             var testCreatedBy = "TestValue873880154";
 
             // Act
             var testClass = new CreateResultFileMessage
             {
                 CalculatorRunId = testCalculatorRunId,
-                FinancialYear = testFinancialYear,
+                RelativeYear = testRelativeYear,
                 CreatedBy = testCreatedBy,
                 MessageType = MessageTypes.Result
             };
@@ -33,7 +35,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             // Assert
             Assert.AreEqual(testCalculatorRunId, testClass.CalculatorRunId);
 
-            Assert.AreEqual(testFinancialYear, testClass.FinancialYear);
+            Assert.AreEqual(testRelativeYear, testClass.RelativeYear);
             Assert.AreEqual(testCreatedBy, testClass.CreatedBy);
         }
     }

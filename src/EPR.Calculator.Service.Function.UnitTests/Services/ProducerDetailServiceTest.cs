@@ -1,4 +1,6 @@
 ﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Common;
 using EPR.Calculator.Service.Function.Dtos;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.Builder;
@@ -31,18 +33,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public async Task GetLatestProducerDetailsForThisFinancialYearTest_Returns_CancelledProducers()
+        public async Task GetProducerDetailsTest_Returns_CancelledProducers()
         {
             TestDataHelper.SeedDatabaseForInitialRun(this.context);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto() { RunId = 1 };
+            var requestDto = new CalcResultsRequestDto() { RunId = 1, RelativeYear = new RelativeYear(2025) };
             var producerDetailService = new ProducerDetailService(this.context);
 
             List<int> producerIds = new List<int> { 1 };
 
             // Act
-            var result = await producerDetailService.GetLatestProducerDetailsForThisFinancialYear("2025-26", producerIds);
+            var result = await producerDetailService.GetProducerDetails(new RelativeYear(2025), producerIds);
 
             // Assert
             Assert.IsNotNull(result);
@@ -50,7 +52,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public async Task GetLatestProducerDetailsForThisFinancialYearTest_DoesNotReturns_CancelledProducers()
+        public async Task GetProducerDetailsTest_DoesNotReturns_CancelledProducers()
         {
             TestDataHelper.SeedDatabaseForUnclassified(this.context);
 
@@ -58,7 +60,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var producerDetailService = new ProducerDetailService(this.context);
             List<int> producerIds = new List<int> { 1 };
             // Act
-            var result = await producerDetailService.GetLatestProducerDetailsForThisFinancialYear("2025-26", producerIds);
+            var result = await producerDetailService.GetProducerDetails(new RelativeYear(2025), producerIds);
 
             // Assert
             Assert.AreEqual(0, result.Count());

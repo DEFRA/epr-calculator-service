@@ -77,6 +77,7 @@ namespace EPR.Calculator.Service.Function.Builder
         {
             var result = new CalcResult
             {
+                CalcResultDetail =  await this.calcResultDetailBuilder.ConstructAsync(resultsRequestDto),
                 CalcResultLapcapData =
                 new CalcResultLapcapData
                 {
@@ -95,9 +96,6 @@ namespace EPR.Calculator.Service.Function.Builder
                 CalcResultCancelledProducers = new CalcResultCancelledProducersResponse(),
                 CalcResultRejectedProducers = new List<CalcResultRejectedProducer>()
             };
-            this._telemetryClient.TrackTrace("calcResultDetailBuilder started...");
-            result.CalcResultDetail = await this.calcResultDetailBuilder.ConstructAsync(resultsRequestDto);
-            this._telemetryClient.TrackTrace("calcResultDetailBuilder end...");
 
             this._telemetryClient.TrackTrace("lapcapBuilder started...");
             result.CalcResultLapcapData = await this.lapcapBuilder.ConstructAsync(resultsRequestDto);
@@ -116,7 +114,7 @@ namespace EPR.Calculator.Service.Function.Builder
             this._telemetryClient.TrackTrace("lapcapplusFourApportionmentBuilder end...");
 
             this._telemetryClient.TrackTrace("CalcResultCancelledProducersBuilder started...");
-            result.CalcResultCancelledProducers = await this.calcResultCancelledProducersBuilder.ConstructAsync(resultsRequestDto, result.CalcResultDetail.FinancialYear);
+            result.CalcResultCancelledProducers = await this.calcResultCancelledProducersBuilder.ConstructAsync(resultsRequestDto);
             this._telemetryClient.TrackTrace("CalcResultCancelledProducersBuilder end...");
 
             this._telemetryClient.TrackTrace("calcResultScaledupProducersBuilder started...");
@@ -144,11 +142,11 @@ namespace EPR.Calculator.Service.Function.Builder
             this._telemetryClient.TrackTrace("commsCostReportBuilder end...");
 
             this._telemetryClient.TrackTrace("summaryBuilder started...");
-            result.CalcResultSummary = await this.summaryBuilder.ConstructAsync(resultsRequestDto, result);
+            result.CalcResultSummary = await this.summaryBuilder.ConstructAsync(resultsRequestDto.RunId, resultsRequestDto.RelativeYear, resultsRequestDto.IsBillingFile, result);
             this._telemetryClient.TrackTrace("summaryBuilder end...");
 
             this._telemetryClient.TrackTrace("Error report builder started...");
-            result.CalcResultErrorReports = await this.calcResultErrorReportBuilder.ConstructAsync(resultsRequestDto);
+            result.CalcResultErrorReports = this.calcResultErrorReportBuilder.ConstructAsync(resultsRequestDto);
             this._telemetryClient.TrackTrace("Error report builder end...");
 
             return result;

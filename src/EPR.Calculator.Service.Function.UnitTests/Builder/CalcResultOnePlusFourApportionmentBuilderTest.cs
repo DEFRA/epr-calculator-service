@@ -15,9 +15,10 @@
         public void Construct_ShouldReturnCorrectApportionment()
         {
             // Arrange
-            var resultsDto = new CalcResultsRequestDto { RunId = 6 };
+            var resultsDto = new CalcResultsRequestDto { RunId = 6, RelativeYear = new API.Data.Models.RelativeYear(2025) };
             var calcResult = new CalcResult
             {
+                CalcResultDetail = new CalcResultDetail(){ RunId = resultsDto.RunId, RelativeYear = resultsDto.RelativeYear },
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultLapcapData = new CalcResultLapcapData

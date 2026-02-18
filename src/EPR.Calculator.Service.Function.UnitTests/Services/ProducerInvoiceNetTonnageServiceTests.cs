@@ -5,6 +5,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     using System.Threading.Tasks;
     using AutoFixture;
     using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.API.Data.Models;
     using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.Service.Common.UnitTests.Utils;
     using EPR.Calculator.Service.Function.Interface;
@@ -18,7 +19,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     [TestClass]
     public class ProducerInvoiceNetTonnageServiceTests
     {
-     
+
         public ProducerInvoiceNetTonnageServiceTests()
         {
             producerInvoiceMaterialChunker = new Mock<IDbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage>>();
@@ -59,14 +60,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             producerInvoiceMapper.Setup(m => m.Map(It.IsAny<ProducerInvoiceTonnage>())).Returns(fixture.Create<ProducerInvoicedMaterialNetTonnage>());
 
             // Act
-            
+
             var result = await testClass.CreateProducerInvoiceNetTonnage(calcResult);
 
             // Assert
             telemetryLogger.Verify(mock => mock.LogInformation(It.IsAny<TrackMessage>()));
 
             Assert.IsTrue(result);
-        }        
+        }
 
         [TestMethod]
         public async Task CanCallCreateProducerInvoiceTonnageWithNoProducers()
@@ -82,6 +83,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     RunId = 4,
                     RunDate = DateTime.UtcNow,
                     RunName = "RunName",
+                    RelativeYear = new RelativeYear(2024),
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
                 {

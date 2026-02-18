@@ -1,5 +1,7 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Common;
 using EPR.Calculator.Service.Function.Builder.RejectedProducers;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Dtos;
@@ -33,21 +35,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
         }
 
         [TestMethod]
-        public async Task Construct_ReturnsRejectedProducers_WithLatestOrganisationDetailsForFinancialYear()
+        public async Task Construct_ReturnsRejectedProducers_WithLatestOrganisationDetails()
         {
             // Arrange
             var context = CreateDbContext();
 
             const int organisationId = 100;
-            const string financialYearName = "2025-26";
-
-            var financialYear = new CalculatorRunFinancialYear { Name = financialYearName };
-            context.FinancialYears.Add(financialYear);
+            context.CalculatorRunRelativeYears.Add(new CalculatorRunRelativeYear { Value = 2025 });
 
             var masterOld = new CalculatorRunOrganisationDataMaster
             {
                 Id = 1,
-                CalendarYear = "2025",
+                RelativeYear = new RelativeYear(2025),
                 EffectiveFrom = DateTime.UtcNow.AddDays(-10),
                 CreatedAt = DateTime.UtcNow.AddDays(-10),
                 CreatedBy = "testsuperuser.paycal"
@@ -55,7 +54,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
             var masterLatest = new CalculatorRunOrganisationDataMaster
             {
                 Id = 2,
-                CalendarYear = "2025",
+                RelativeYear = new RelativeYear(2025),
                 EffectiveFrom = DateTime.UtcNow.AddDays(-5),
                 CreatedAt = DateTime.UtcNow.AddDays(-5),
                 CreatedBy = "testsuperuser.paycal"
@@ -67,16 +66,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
             {
                 Id = 1,
                 Name = "Run 1",
-                Financial_Year = financialYear,
-                FinancialYearId = financialYear.Name,
+                RelativeYear = new RelativeYear(2025),
                 CalculatorRunOrganisationDataMasterId = masterOld.Id
             };
             var runLatest = new CalculatorRun
             {
                 Id = 2,
                 Name = "Run 2",
-                Financial_Year = financialYear,
-                FinancialYearId = financialYear.Name,
+                RelativeYear = new RelativeYear(2025),
                 CalculatorRunOrganisationDataMasterId = masterLatest.Id
             };
             context.CalculatorRuns.AddRange(runOld, runLatest);
@@ -129,7 +126,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
             var requestDto = new CalcResultsRequestDto
             {
                 RunId = runOld.Id,
-                FinancialYear = financialYearName
+                RelativeYear = new RelativeYear(2025)
             };
 
             // Act

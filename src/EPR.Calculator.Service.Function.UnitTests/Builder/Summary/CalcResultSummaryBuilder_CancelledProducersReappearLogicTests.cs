@@ -1,5 +1,7 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Common;
 using EPR.Calculator.Service.Function.Builder.Summary;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,7 +34,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         public void GetPreviousInvoicedTonnage_NoCancels_UsesLatestAcceptedRun() // US608960 happy path
         {
             // Arrange
-            const string financialYear = "2024-25";
             const int AL = 1;  // Aluminium
             const int FC = 2;  // Fibre composite
 
@@ -46,11 +47,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                 new Material { Id = FC, Code = "FC", Name = "Fibre composite", Description = "Fibre composite" }
             );
 
-            var fy = new CalculatorRunFinancialYear { Name = financialYear };
-
             context.CalculatorRuns.AddRange(
-                new CalculatorRun { Id = 1, Name = "R1", FinancialYearId = financialYear, Financial_Year = fy, CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID },
-                new CalculatorRun { Id = 2, Name = "R2", FinancialYearId = financialYear, Financial_Year = fy, CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID }
+                new CalculatorRun { Id = 1, Name = "R1", RelativeYear = new RelativeYear(2024), CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID },
+                new CalculatorRun { Id = 2, Name = "R2", RelativeYear = new RelativeYear(2024), CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID }
             );
 
             // Previous invoiced net tonnage
@@ -101,7 +100,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             context.SaveChanges();
 
             // Act
-            var previous = calcResultsService.GetPreviousInvoicedTonnageFromDb(financialYear).ToList();
+            var previous = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024)).ToList();
 
             // Assert
 
@@ -132,7 +131,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         public void GetPreviousInvoicedTonnage_CancelAcceptedInRun2_ExcludesPreviousInvoiceInRun1ForReappearingProducer() // US608960 AC1
         {
             //Arrange
-            const string financialYear = "2024-25";
             const int AL = 1;  // Aluminium
             const int FC = 2;  // Fibre composite
 
@@ -146,12 +144,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                 new Material { Id = FC, Code = "FC", Name = "Fibre composite", Description = "Fibre composite" }
             );
 
-            var fy = new CalculatorRunFinancialYear { Name = financialYear };
-
             context.CalculatorRuns.AddRange(
-                new CalculatorRun { Id = 1, Name = "R1", FinancialYearId = financialYear, Financial_Year = fy, CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID },
-                new CalculatorRun { Id = 2, Name = "R2", FinancialYearId = financialYear, Financial_Year = fy, CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID },
-                new CalculatorRun { Id = 3, Name = "R3", FinancialYearId = financialYear, Financial_Year = fy, CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID }
+                new CalculatorRun { Id = 1, Name = "R1", RelativeYear = new RelativeYear(2024), CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID },
+                new CalculatorRun { Id = 2, Name = "R2", RelativeYear = new RelativeYear(2024), CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID },
+                new CalculatorRun { Id = 3, Name = "R3", RelativeYear = new RelativeYear(2024), CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID }
             );
 
             // Previous invoiced net tonnage
@@ -190,7 +186,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             // Producer designated invoice instructions
             context.ProducerDesignatedRunInvoiceInstruction.AddRange(
 
-                //run 1 
+                //run 1
                 new ProducerDesignatedRunInvoiceInstruction { Id = 11, ProducerId = P1, CalculatorRunId = 1, CurrentYearInvoicedTotalAfterThisRun = 126157.44m, InvoiceAmount = 126157.44m, BillingInstructionId = "1_101001" },
                 new ProducerDesignatedRunInvoiceInstruction { Id = 12, ProducerId = P2, CalculatorRunId = 1, CurrentYearInvoicedTotalAfterThisRun = 103966.48m, InvoiceAmount = 103966.48m, BillingInstructionId = "1_101002" },
                 new ProducerDesignatedRunInvoiceInstruction { Id = 13, ProducerId = P3, CalculatorRunId = 1, CurrentYearInvoicedTotalAfterThisRun = 23712.34m, InvoiceAmount = 23712.34m, BillingInstructionId = "1_101003" },
@@ -205,7 +201,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             context.SaveChanges();
 
             // Act
-            var producerInvoicedDtos = calcResultsService.GetPreviousInvoicedTonnageFromDb(financialYear).ToList();
+            var producerInvoicedDtos = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024)).ToList();
 
             //Assert
 
@@ -214,7 +210,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
 
             foreach (var mat in new[] { AL, FC })
             {
-                //PreviousInvoicedTonnage for P1 and P3 are from Run 2 
+                //PreviousInvoicedTonnage for P1 and P3 are from Run 2
                 var p1 = producerInvoicedDtos.Single(r => r.InvoicedTonnage!.ProducerId == P1 && r.InvoicedTonnage.MaterialId == mat);
                 Assert.AreEqual(2, p1.CalculatorRunId);
                 Assert.IsNotNull(p1.InvoiceInstruction);
@@ -234,7 +230,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         public void GetPreviousInvoicedTonnage_CancelRejectedInRun2_UsesInvoiceFromRun1ForReappearingProducer() // US608960 AC2
         {
             // Arrange
-            const string financialYear = "2024-25";
             const int AL = 1;  // Aluminium
             const int FC = 2;  // Fibre composite
 
@@ -248,11 +243,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                 new Material { Id = FC, Code = "FC", Name = "Fibre composite", Description = "Fibre composite" }
             );
 
-            var fy = new CalculatorRunFinancialYear { Name = financialYear };
-
             context.CalculatorRuns.AddRange(
-                new CalculatorRun { Id = 1, Name = "R1", FinancialYearId = financialYear, Financial_Year = fy, CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID },
-                new CalculatorRun { Id = 2, Name = "R2", FinancialYearId = financialYear, Financial_Year = fy, CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID }
+                new CalculatorRun { Id = 1, Name = "R1", RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID },
+                new CalculatorRun { Id = 2, Name = "R2", RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID }
             );
 
             // Previous invoiced net tonnage
@@ -302,7 +295,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             context.SaveChanges();
 
             // Act
-            var previous = calcResultsService.GetPreviousInvoicedTonnageFromDb(financialYear).ToList();
+            var previous = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2025)).ToList();
 
             // Assert
 
@@ -337,7 +330,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         public void GetPreviousInvoicedTonnage_ReappearAcceptedInRun3_UsesRun3_IgnoringEarlierCancelAccepted() // US608960 AC 1
         {
             // Arrange
-            const string financialYear = "2024-25";
             const int AL = 1;  // Aluminium
             const int FC = 2;  // Fibre composite
 
@@ -350,12 +342,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                 new Material { Id = FC, Code = "FC", Name = "Fibre composite", Description = "Fibre composite" }
             );
 
-            var fy = new CalculatorRunFinancialYear { Name = financialYear };
-
             context.CalculatorRuns.AddRange(
-                new CalculatorRun { Id = 1, Name = "R1", FinancialYearId = financialYear, Financial_Year = fy, CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID },
-                new CalculatorRun { Id = 2, Name = "R2", FinancialYearId = financialYear, Financial_Year = fy, CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID },
-                new CalculatorRun { Id = 3, Name = "R3", FinancialYearId = financialYear, Financial_Year = fy, CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID }
+                new CalculatorRun { Id = 1, Name = "R1", RelativeYear = new RelativeYear(2024), CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID },
+                new CalculatorRun { Id = 2, Name = "R2", RelativeYear = new RelativeYear(2024), CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID },
+                new CalculatorRun { Id = 3, Name = "R3", RelativeYear = new RelativeYear(2024), CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID }
             );
 
             // Previous invoiced net tonnage
@@ -426,7 +416,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             context.SaveChanges();
 
             // Act
-            var previous = calcResultsService.GetPreviousInvoicedTonnageFromDb(financialYear).ToList();
+            var previous = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024)).ToList();
 
             // Assert – all producers now come from R3
             foreach (var mat in new[] { AL, FC })
@@ -455,7 +445,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         public void GetPreviousInvoicedTonnage_CancelRejectedInRun4_AfterReappearInRun3_StillUsesRun3() // US608960 AC 2
         {
             // Arrange
-            const string financialYear = "2024-25";
             const int AL = 1;  // Aluminium
             const int FC = 2;  // Fibre composite
 
@@ -468,13 +457,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                 new Material { Id = FC, Code = "FC", Name = "Fibre composite", Description = "Fibre composite" }
             );
 
-            var fy = new CalculatorRunFinancialYear { Name = financialYear };
-
             context.CalculatorRuns.AddRange(
-                new CalculatorRun { Id = 1, Name = "R1", FinancialYearId = financialYear, Financial_Year = fy, CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID },
-                new CalculatorRun { Id = 2, Name = "R2", FinancialYearId = financialYear, Financial_Year = fy, CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID },
-                new CalculatorRun { Id = 3, Name = "R3", FinancialYearId = financialYear, Financial_Year = fy, CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID },
-                new CalculatorRun { Id = 4, Name = "R4", FinancialYearId = financialYear, Financial_Year = fy, CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID }
+                new CalculatorRun { Id = 1, Name = "R1", RelativeYear = new RelativeYear(2024), CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID },
+                new CalculatorRun { Id = 2, Name = "R2", RelativeYear = new RelativeYear(2024), CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID },
+                new CalculatorRun { Id = 3, Name = "R3", RelativeYear = new RelativeYear(2024), CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID },
+                new CalculatorRun { Id = 4, Name = "R4", RelativeYear = new RelativeYear(2024), CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID }
             );
 
             // Invoiced net tonnage
@@ -563,7 +550,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             context.SaveChanges();
 
             // Act
-            var previous = calcResultsService.GetPreviousInvoicedTonnageFromDb(financialYear).ToList();
+            var previous = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024)).ToList();
 
             // P2 comes from R3 as rejected in R4; P1 & P3 are from R4
             foreach (var mat in new[] { AL, FC })

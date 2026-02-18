@@ -1,4 +1,6 @@
 ﻿using AutoFixture;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Common;
 using EPR.Calculator.Service.Common.UnitTests.Utils;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter.Detail;
 using EPR.Calculator.Service.Function.Models;
@@ -21,6 +23,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.Detail
             calcResultDetailExporter = new CalcResultDetailJsonExporter();
             Fixture = new Fixture();
         }
+
         [TestMethod]
         public void Export_ValidCalcResultDetail_ReturnsCorrectJson()
         {
@@ -31,7 +34,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.Detail
                 RunId = 123,
                 RunDate = new DateTime(2017, 07, 21, 17, 32, 0, DateTimeKind.Utc),
                 RunBy = "John Doe",
-                FinancialYear = "2025",
+                RelativeYear = new RelativeYear(2025),
                 RpdFileORG = "21/07/2017 17:32",
                 RpdFilePOM = "21/07/2017 17:32",
                 LapcapFile = "lapcap_file.csv,21/07/2017 17:32,John Doe",
@@ -46,7 +49,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.Detail
 
             Assert.AreEqual(calcResultDetail.RunName, roundTrippedData!["runName"]?.GetValue<string>());
             Assert.AreEqual(calcResultDetail.RunBy, roundTrippedData!["runBy"]?.GetValue<string>());
-            Assert.AreEqual(calcResultDetail.FinancialYear, roundTrippedData!["financialYear"]?.GetValue<string>());
+            Assert.AreEqual("2025-26", roundTrippedData!["financialYear"]?.GetValue<string>());
         }
     }
 }

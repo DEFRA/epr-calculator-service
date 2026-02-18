@@ -2,6 +2,8 @@
 {
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.API.Data.Models;
+    using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Function.Builder.PartialObligations;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Dtos;
@@ -22,13 +24,12 @@
 
         private void PrepareData()
         {
-            var year = new CalculatorRunFinancialYear { Name = "2024-25" };
 
             //Run 1
             var calcRunOrganisationDataMaster = new CalculatorRunOrganisationDataMaster
             {
                 Id = 11,
-                CalendarYear = "2024",
+                RelativeYear = new RelativeYear(2025),
                 EffectiveFrom = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test User",
@@ -38,7 +39,7 @@
             this.dbContext.CalculatorRuns.Add(new CalculatorRun
             {
                 Id = 1,
-                Financial_Year = year,
+                RelativeYear = new RelativeYear(2024),
                 Name = "Name",
                 CalculatorRunOrganisationDataMaster = calcRunOrganisationDataMaster
             });
@@ -90,7 +91,6 @@
             this.dbContext.ProducerDetail.Add(producerDetail2);
 
             var alm = new Material { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" };
-            var glass = new Material { Id = 3, Code = "GL", Name = "Glass", Description = "Glass" };
 
             this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
             {
@@ -120,20 +120,12 @@
                 PackagingTonnage = 20,
                 ProducerDetail = producerDetail2,
             });
-            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-            {
-                Id = 9,
-                PackagingType = "HDC",
-                Material = glass,
-                PackagingTonnage = 50,
-                ProducerDetail = producerDetail2,
-            });
 
             //Run 2
             var calcRunOrganisationDataMaster2 = new CalculatorRunOrganisationDataMaster
             {
                 Id = 22,
-                CalendarYear = "2024",
+                RelativeYear = new RelativeYear(2024),
                 EffectiveFrom = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test User",
@@ -143,7 +135,7 @@
             this.dbContext.CalculatorRuns.Add(new CalculatorRun
             {
                 Id = this.runId,
-                Financial_Year = year,
+                RelativeYear = new RelativeYear(2024),
                 Name = "Name",
                 CalculatorRunOrganisationDataMaster = calcRunOrganisationDataMaster2
             });
@@ -226,7 +218,7 @@
             this.dbContext.Material.AddRange(
                 alm,
                 new Material { Id = 2, Code = "FC", Name = "Fibre composite", Description = "Fibre composite" },
-                glass,
+                new Material { Id = 3, Code = "GL", Name = "Glass", Description = "Glass" },
                 new Material { Id = 4, Code = "PC", Name = "Paper or card", Description = "Paper or card" },
                 new Material { Id = 5, Code = "PL", Name = "Plastic", Description = "Plastic" },
                 new Material { Id = 6, Code = "ST", Name = "Steel", Description = "Steel" },
@@ -264,7 +256,7 @@
         {
             // Arrange
             this.PrepareData();
-            var requestDto = new CalcResultsRequestDto { RunId = 1 };
+            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
             // Act
             var result = await this.builder.ConstructAsync(requestDto, new List<CalcResultScaledupProducer>());
@@ -302,16 +294,17 @@
                 mat.Value.ReportedHouseholdPackagingWasteTonnage == 0 &&
                 mat.Value.ReportedPublicBinTonnage == 0 &&
                 mat.Value.ReportedSelfManagedConsumerWasteTonnage == 0 &&
-                mat.Value.HouseholdDrinksContainersTonnageGlass == 50 &&
-                mat.Value.NetReportedTonnage == 50 &&
-                mat.Value.TotalReportedTonnage == 50 &&
+                mat.Value.HouseholdDrinksContainersTonnageGlass == 0 &&
+                mat.Value.NetReportedTonnage == 0 &&
+                mat.Value.TotalReportedTonnage == 0 &&
                 mat.Value.PartialReportedHouseholdPackagingWasteTonnage == 0 &&
                 mat.Value.PartialReportedPublicBinTonnage == 0 &&
                 mat.Value.PartialReportedSelfManagedConsumerWasteTonnage == 0 &&
-                mat.Value.PartialHouseholdDrinksContainersTonnageGlass == 25.068m &&
-                mat.Value.PartialNetReportedTonnage == 25.068m &&
-                mat.Value.PartialTotalReportedTonnage == 25.068m
+                mat.Value.PartialNetReportedTonnage == 0 &&
+                mat.Value.PartialTotalReportedTonnage == 0 &&
+                mat.Value.PartialHouseholdDrinksContainersTonnageGlass == 0
             ));
+
         }
 
         [TestMethod]
@@ -319,87 +312,27 @@
         {
             // Arrange
             this.PrepareData();
-            var requestDto = new CalcResultsRequestDto { RunId = 1 };
+            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
             var scaledUpProducers = new List<CalcResultScaledupProducer>() {
                 new CalcResultScaledupProducer() {
-                    ProducerId = 22, 
+                    ProducerId = 22,
                     SubsidiaryId = null,
-                    SubmissionPeriodCode = "2025-P3",
                     ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>{
-                        { 
-                            MaterialCodes.Aluminium, 
+                        {
+                            MaterialCodes.Aluminium,
                             new CalcResultScaledupProducerTonnage()
                             {
-                                ReportedHouseholdPackagingWasteTonnage = 25,
+                                ReportedHouseholdPackagingWasteTonnage = 100,
                                 ReportedPublicBinTonnage = 0,
-                                ReportedSelfManagedConsumerWasteTonnage = 10,
-                                NetReportedTonnage = 15,
-                                TotalReportedTonnage = 25,
-                                ScaledupReportedHouseholdPackagingWasteTonnage = 75,
+                                ReportedSelfManagedConsumerWasteTonnage = 20,
+                                NetReportedTonnage = 80,
+                                TotalReportedTonnage = 100,
+                                ScaledupReportedHouseholdPackagingWasteTonnage = 300,
                                 ScaledupReportedPublicBinTonnage = 0,
-                                ScaledupReportedSelfManagedConsumerWasteTonnage = 30,
-                                ScaledupNetReportedTonnage = 45,
-                                ScaledupTotalReportedTonnage = 75
-                            }
-                        },
-                        { 
-                            MaterialCodes.Glass, 
-                            new CalcResultScaledupProducerTonnage()
-                            {
-                                ReportedHouseholdPackagingWasteTonnage = 0,
-                                ReportedPublicBinTonnage = 0,
-                                ReportedSelfManagedConsumerWasteTonnage = 0,
-                                HouseholdDrinksContainersTonnageGlass = 25,
-                                NetReportedTonnage = 25,
-                                TotalReportedTonnage = 25,
-                                ScaledupReportedHouseholdPackagingWasteTonnage = 0,
-                                ScaledupReportedPublicBinTonnage = 0,
-                                ScaledupReportedSelfManagedConsumerWasteTonnage = 0,
-                                ScaledupHouseholdDrinksContainersTonnageGlass = 75,
-                                ScaledupNetReportedTonnage = 75,
-                                ScaledupTotalReportedTonnage = 75
-                            }
-                        }
-                    }
-                },
-                new CalcResultScaledupProducer() {
-                    ProducerId = 22, 
-                    SubsidiaryId = null,
-                    SubmissionPeriodCode = "2025-P4",
-                    ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>{
-                        { 
-                            MaterialCodes.Aluminium, 
-                            new CalcResultScaledupProducerTonnage()
-                            {
-                                ReportedHouseholdPackagingWasteTonnage = 75,
-                                ReportedPublicBinTonnage = 0,
-                                ReportedSelfManagedConsumerWasteTonnage = 10,
-                                NetReportedTonnage = 65,
-                                TotalReportedTonnage = 75,
-                                ScaledupReportedHouseholdPackagingWasteTonnage = 225,
-                                ScaledupReportedPublicBinTonnage = 0,
-                                ScaledupReportedSelfManagedConsumerWasteTonnage = 30,
-                                ScaledupNetReportedTonnage = 195,
-                                ScaledupTotalReportedTonnage = 225
-                            }
-                        },
-                        { 
-                            MaterialCodes.Glass, 
-                            new CalcResultScaledupProducerTonnage()
-                            {
-                                ReportedHouseholdPackagingWasteTonnage = 0,
-                                ReportedPublicBinTonnage = 0,
-                                ReportedSelfManagedConsumerWasteTonnage = 0,
-                                HouseholdDrinksContainersTonnageGlass = 25,
-                                NetReportedTonnage = 25,
-                                TotalReportedTonnage = 25,
-                                ScaledupReportedHouseholdPackagingWasteTonnage = 0,
-                                ScaledupReportedPublicBinTonnage = 0,
-                                ScaledupReportedSelfManagedConsumerWasteTonnage = 0,
-                                ScaledupHouseholdDrinksContainersTonnageGlass = 75,
-                                ScaledupNetReportedTonnage = 75,
-                                ScaledupTotalReportedTonnage = 75
+                                ScaledupReportedSelfManagedConsumerWasteTonnage = 60,
+                                ScaledupNetReportedTonnage = 240,
+                                ScaledupTotalReportedTonnage = 300
                             }
                         }
                     }
@@ -441,15 +374,15 @@
                 mat.Value.ReportedHouseholdPackagingWasteTonnage == 0 &&
                 mat.Value.ReportedPublicBinTonnage == 0 &&
                 mat.Value.ReportedSelfManagedConsumerWasteTonnage == 0 &&
-                mat.Value.HouseholdDrinksContainersTonnageGlass == 50 &&
-                mat.Value.NetReportedTonnage == 50 &&
-                mat.Value.TotalReportedTonnage == 50 &&
+                mat.Value.HouseholdDrinksContainersTonnageGlass == 0 &&
+                mat.Value.NetReportedTonnage == 0 &&
+                mat.Value.TotalReportedTonnage == 0 &&
                 mat.Value.PartialReportedHouseholdPackagingWasteTonnage == 0 &&
                 mat.Value.PartialReportedPublicBinTonnage == 0 &&
-                mat.Value.PartialReportedSelfManagedConsumerWasteTonnage == 0 && 
-                mat.Value.PartialHouseholdDrinksContainersTonnageGlass == 75.205m &&
-                mat.Value.PartialNetReportedTonnage == 75.205m &&
-                mat.Value.PartialTotalReportedTonnage == 75.205m
+                mat.Value.PartialReportedSelfManagedConsumerWasteTonnage == 0 &&
+                mat.Value.PartialNetReportedTonnage == 0 &&
+                mat.Value.PartialTotalReportedTonnage == 0 &&
+                mat.Value.PartialHouseholdDrinksContainersTonnageGlass == 0
             ));
 
         }

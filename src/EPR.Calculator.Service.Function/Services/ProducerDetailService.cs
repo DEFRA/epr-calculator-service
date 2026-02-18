@@ -1,5 +1,7 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Common;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Models;
@@ -21,7 +23,7 @@ namespace EPR.Calculator.Service.Function.Services
         {
             this.context = context;
         }
-        public async Task<IEnumerable<ProducerInvoicedDto>> GetLatestProducerDetailsForThisFinancialYear(string financialYear, IEnumerable<int> missingProducersIdsInCurrentRun)
+        public async Task<IEnumerable<ProducerInvoicedDto>> GetProducerDetails(RelativeYear relativeYear, IEnumerable<int> missingProducersIdsInCurrentRun)
         {
             var producerdetails = await (from pd in context.ProducerDetail
                                          join pds in context.ProducerResultFileSuggestedBillingInstruction on new { pd.ProducerId, pd.CalculatorRunId } equals new { pds.ProducerId, pds.CalculatorRunId }
@@ -29,7 +31,7 @@ namespace EPR.Calculator.Service.Function.Services
                                          join d in context.ProducerDesignatedRunInvoiceInstruction on new { pd.ProducerId, pd.CalculatorRunId } equals new { d.ProducerId, d.CalculatorRunId }
                                          join c in context.CalculatorRuns on pd.CalculatorRunId equals c.Id
                                          where missingProducersIdsInCurrentRun.Contains(pd.ProducerId)
-                                            && c.FinancialYearId == financialYear
+                                            && c.RelativeYearValue == relativeYear.Value
                                             && new int[]
                                             {
                                                 RunClassificationStatusIds.INITIALRUNCOMPLETEDID,

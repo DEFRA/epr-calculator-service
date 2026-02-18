@@ -9,6 +9,8 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
     using Azure.Analytics.Synapse.Artifacts;
     using Azure.Analytics.Synapse.Artifacts.Models;
     using Azure.Core;
+    using EPR.Calculator.API.Data.Models;
+
     using EPR.Calculator.Service.Common.AzureSynapse;
     using EPR.Calculator.Service.Common.UnitTests.AutoFixtureCustomisations;
     using Microsoft.Extensions.Logging;
@@ -40,8 +42,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
         public AzureSynapseRunnerTests()
         {
             this.Fixture = new Fixture();
-            this.Fixture.Customizations.Add(new CalendarYearCustomisation());
-            this.Fixture.Customizations.Add(new FinancialYearCustomisation());
+            this.Fixture.Customizations.Add(new RelativeYearCustomisation());
 
             // Create a mock client factory to inject the mock pipeline clients into the test class.
             this.MockPipelineClient = new Mock<PipelineClient>();
@@ -77,7 +78,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
            => new AzureSynapseRunnerParameters
            {
                CalculatorRunId = CalculatorRunId,
-               CalendarYear = this.Fixture.Create<CalendarYear>(),
+               RelativeYearValue = this.Fixture.Create<RelativeYear>().Value,
                CheckInterval = CheckInterval,
                MaxCheckCount = MaxCheckCount,
                PipelineUrl = new Uri(TestPipelineUrl),
@@ -134,19 +135,19 @@ namespace EPR.Calculator.Service.Common.UnitTests.AzureSynapse
             this.MockPipelineRunClient.Setup(client => client.GetPipelineRunAsync(
                 It.IsAny<string?>(),
                 It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(MockPipelineRunResponse(statusReturned)));            
+                .Returns(Task.FromResult(MockPipelineRunResponse(statusReturned)));
             // Act
             var testdat = new AzureSynapseRunnerParameters
             {
                 CalculatorRunId = CalculatorRunId,
-                CalendarYear = this.Fixture.Create<CalendarYear>(),
+                RelativeYearValue = this.Fixture.Create<RelativeYear>().Value,
                 CheckInterval = CheckInterval,
                 MaxCheckCount = MaxCheckCount,
                 PipelineUrl = new Uri(TestPipelineUrl),
                 PipelineName = TestPipelineName,
             };
 
-            
+
 
             var pipelineSucceeded = await this.TestClass.Process(testdat);
 

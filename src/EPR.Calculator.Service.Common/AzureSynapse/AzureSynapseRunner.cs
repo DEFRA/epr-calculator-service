@@ -5,6 +5,7 @@
     using Azure.Analytics.Synapse.Artifacts.Models;
     using Azure.Identity;
     using Microsoft.Extensions.Logging;
+    using EPR.Calculator.API.Data.Models;
 
     /// <summary>
     /// Runs Azure Synapse pipelines.
@@ -47,13 +48,13 @@
         {
             this.logger.LogInformation("Azure synapse trigger process started");
 
-            // Instead of year, get financial year and map financial year to calendar year.
+            // Instead of year, get financial year and map financial year to relative year.
             // Trigger the pipeline.
             var pipelineRunId = await this.StartPipelineRun(
                 this.PipelineClientFactory,
                 args.PipelineUrl,
                 args.PipelineName,
-                args.CalendarYear);
+                args.RelativeYear());
 
             // If PipelineId null just return false
             if (pipelineRunId == null)
@@ -141,7 +142,7 @@
             IPipelineClientFactory factory,
             Uri pipelineUrl,
             string pipelineName,
-            string year)
+            RelativeYear relativeYear)
         {
             var credentials = new ManagedIdentityCredential();
 
@@ -149,17 +150,17 @@
 
             try
             {
-                var result = await pipelineClient.CreatePipelineRunAsync(pipelineName, parameters: new Dictionary<string, object> 
+                var result = await pipelineClient.CreatePipelineRunAsync(pipelineName, parameters: new Dictionary<string, object>
                 {
                     {
-                        DateParameter, year },
+                        DateParameter, relativeYear.ToString() },
                 });
 
                 return Guid.Parse(result.Value.RunId);
             }
             catch (Exception e)
             {
-                // Log that exception info 
+                // Log that exception info
                 this.logger.LogInformation($"pipeline url is not reached : {e.Message}");
 
                 // return null

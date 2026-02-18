@@ -108,9 +108,6 @@ namespace EPR.Calculator.Service.Function.Services
             CalculatorRunParameter args,
             string pipelineName)
         {
-            var financialYear = args.FinancialYear;
-            var isOrganisationPipeline = this.IsOrganisationPipeline(pipelineName);
-
             return new AzureSynapseRunnerParameters
             {
                 PipelineUrl = new Uri(this.configuration.PipelineUrl),
@@ -118,14 +115,8 @@ namespace EPR.Calculator.Service.Function.Services
                 MaxCheckCount = this.configuration.MaxCheckCount,
                 PipelineName = pipelineName,
                 CalculatorRunId = args.Id,
-                CalendarYear = isOrganisationPipeline ? Util.GetCalendarYearFromFinancialYearNew(financialYear) : Util.GetCalendarYearFromFinancialYear(financialYear),
+                RelativeYearValue = args.RelativeYear.Value,
             };
-        }
-
-        public bool IsOrganisationPipeline(string pipelineName)
-        {
-            // Returns true if 'org' appears anywhere in the pipeline name, case-insensitive.
-            return pipelineName.IndexOf("org", StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         /// <inheritdoc/>
@@ -197,7 +188,7 @@ namespace EPR.Calculator.Service.Function.Services
             if (statusUpdateResponse == RunClassification.RUNNING)
             {
                 var isTransposeSuccess = await this.transposePomAndOrgDataService.TransposeBeforeResultsFileAsync(
-                    new CalcResultsRequestDto { RunId = calculatorRunParameter.Id, CreatedBy = calculatorRunParameter.User },
+                    new CalcResultsRequestDto { RunId = calculatorRunParameter.Id, RelativeYear = calculatorRunParameter.RelativeYear, CreatedBy = calculatorRunParameter.User },
                     runName,
                     new CancellationTokenSource(this.configuration.TransposeTimeout).Token);
 
@@ -209,7 +200,7 @@ namespace EPR.Calculator.Service.Function.Services
                 }
 
                 isSuccess = await this.prepareCalcService.PrepareCalcResultsAsync(
-                    new CalcResultsRequestDto { RunId = calculatorRunParameter.Id, FinancialYear = calculatorRunParameter.FinancialYear.ToString() },
+                    new CalcResultsRequestDto { RunId = calculatorRunParameter.Id, RelativeYear = calculatorRunParameter.RelativeYear },
                     runName,
                     new CancellationTokenSource(this.configuration.PrepareCalcResultsTimeout).Token);
 

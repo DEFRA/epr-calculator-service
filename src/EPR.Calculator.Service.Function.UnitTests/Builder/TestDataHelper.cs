@@ -2,6 +2,8 @@
 {
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.API.Data.Models;
+    using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Models;
     using EPR.Calculator.Service.Function.Services;
@@ -167,7 +169,7 @@
 
         public static CalcResultDetail GetCalcResultDetail()
         {
-            return new CalcResultDetail() { };
+            return new CalcResultDetail() { RunId = 1, RelativeYear = new RelativeYear(2024) };
         }
 
         public static CalcResultLaDisposalCostData GetCalcResultLaDisposalCostData()
@@ -1545,7 +1547,6 @@
 
         public static List<ProducerDetail> GetProducers()
         {
-            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
             var producers = new List<ProducerDetail>
             {
                 new ProducerDetail
@@ -1554,7 +1555,7 @@
                     ProducerId = 1,
                     ProducerName = "Allied Packaging",
                     CalculatorRunId = 1,
-                    CalculatorRun = new CalculatorRun { Financial_Year = calculatorRunFinancialYear, Name = "Test Run 1" },
+                    CalculatorRun = new CalculatorRun { RelativeYear = new RelativeYear(204), Name = "Test Run 1" },
                 },
                 new ProducerDetail
                 {
@@ -1562,7 +1563,7 @@
                     ProducerId = 2,
                     ProducerName = "Beeline Materials",
                     CalculatorRunId = 1,
-                    CalculatorRun = new CalculatorRun { Financial_Year = calculatorRunFinancialYear, Name = "Test Run 1" },
+                    CalculatorRun = new CalculatorRun { RelativeYear = new RelativeYear(204), Name = "Test Run 1" },
                 },
                 new ProducerDetail
                 {
@@ -1570,7 +1571,7 @@
                     ProducerId = 3,
                     ProducerName = "Cloud Boxes",
                     CalculatorRunId = 1,
-                    CalculatorRun = new CalculatorRun { Financial_Year = calculatorRunFinancialYear, Name = "Test Run 1" },
+                    CalculatorRun = new CalculatorRun { RelativeYear = new RelativeYear(204), Name = "Test Run 1" },
                 },
             };
 
@@ -1986,14 +1987,13 @@
 
         public static IEnumerable<CalculatorRun> GetCaculatorRuns()
         {
-            var calculatorRunFinancialYear = new CalculatorRunFinancialYear { Name = "2024-25" };
             var list = new List<CalculatorRun>();
             list.Add(new CalculatorRun
             {
                 Id = 1,
                 CalculatorRunClassificationId = 3,
                 Name = "Test Run 1",
-                Financial_Year = calculatorRunFinancialYear,
+                RelativeYear = new RelativeYear(204),
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test user",
                 CalculatorRunOrganisationDataMasterId = 1,
@@ -2006,7 +2006,7 @@
                 Id = 2,
                 CalculatorRunClassificationId = 2,
                 Name = "Test Run 2",
-                Financial_Year = calculatorRunFinancialYear,
+                RelativeYear = new RelativeYear(204),
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test user",
                 CalculatorRunOrganisationDataMasterId = 2,
@@ -2121,7 +2121,7 @@
                 LoadTimeStamp = DateTime.UtcNow,
                 CalculatorRunOrganisationDataMasterId = GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
             });
-            
+
             return list;
         }
 
@@ -2131,7 +2131,7 @@
             list.Add(new CalculatorRunOrganisationDataMaster
             {
                 Id = 1,
-                CalendarYear = "2024",
+                RelativeYear = new RelativeYear(2024),
                 EffectiveFrom = DateTime.UtcNow,
                 EffectiveTo = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
@@ -2140,7 +2140,7 @@
             list.Add(new CalculatorRunOrganisationDataMaster
             {
                 Id = 2,
-                CalendarYear = "2024",
+                RelativeYear = new RelativeYear(2024),
                 EffectiveFrom = DateTime.UtcNow,
                 EffectiveTo = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
@@ -2193,7 +2193,7 @@
             list.Add(new CalculatorRunPomDataMaster
             {
                 Id = 1,
-                CalendarYear = "2024",
+                RelativeYear = new RelativeYear(2024),
                 EffectiveFrom = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test User",
@@ -2201,7 +2201,7 @@
             list.Add(new CalculatorRunPomDataMaster
             {
                 Id = 2,
-                CalendarYear = "2024",
+                RelativeYear = new RelativeYear(2024),
                 EffectiveFrom = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test User",
@@ -2211,11 +2211,9 @@
 
         public static void SeedDatabaseForInitialRun(ApplicationDBContext context)
         {
-            var financialYear = new CalculatorRunFinancialYear { Name = "2025-26" };
-
             //calculator runs
-            var runs = new List<CalculatorRun>() { new CalculatorRun { Id = 1, Financial_Year = financialYear, FinancialYearId = "2025-26", CalculatorRunClassificationId=7, Name = "CalculatorRunTest1" },
-             new CalculatorRun { Id = 2, Financial_Year = financialYear, FinancialYearId = "2025-26", CalculatorRunClassificationId=2, Name = "CalculatorRunTest2" }};
+            var runs = new List<CalculatorRun>() { new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=7, Name = "CalculatorRunTest1" },
+             new CalculatorRun { Id = 2, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest2" }};
             context.CalculatorRuns.AddRange(runs);
 
             context.CalculatorRunOrganisationDataMaster.AddRange(GetCalculatorRunOrganisationDataMaster());
@@ -2385,11 +2383,9 @@
 
         public static void SeedDatabaseForUnclassified(ApplicationDBContext context)
         {
-            var financialYear = new CalculatorRunFinancialYear { Name = "2025-26" };
-
             //calculator runs
-            var runs = new List<CalculatorRun>() { new CalculatorRun { Id = 1, Financial_Year = financialYear, FinancialYearId = "2025-26", CalculatorRunClassificationId=2, Name = "CalculatorRunTest1" },
-             new CalculatorRun { Id = 2, Financial_Year = financialYear, FinancialYearId = "2025-26", CalculatorRunClassificationId=2, Name = "CalculatorRunTest2" }};
+            var runs = new List<CalculatorRun>() { new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest1" },
+             new CalculatorRun { Id = 2, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest2" }};
             context.CalculatorRuns.AddRange(runs);
 
 
