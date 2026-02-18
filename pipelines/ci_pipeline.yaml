@@ -26,8 +26,6 @@ variables:
     value: 'EPR.Calculator.Service.Function'
   - name: testProjectFolder
     value: 'EPR.Calculator.Service.Common.UnitTests'
-  - name: DataFolder
-    value: EPR.Calculator.API.Data
   - name: sonarQubeProjectKey
     value: epr-calculator-service
   - name: sonarQubeProjectName
@@ -46,7 +44,7 @@ resources:
     - repository: CommonTemplates
       name: RWD-CPR-EPR4P-ADO/epr-webapps-code-deploy-templates
       type: git
-      ref: gitleaks-hard-fail-toggleoff
+      ref: main
 
 extends:
   template: epr-build-pipeline.yaml@CommonTemplates

@@ -79,9 +79,6 @@ namespace EPR.Calculator.Service.Function.Services
                                 string createdBy,
                                 CancellationToken cancellationToken)
         {
-            if (pomDetails == null) throw new ArgumentNullException(nameof(pomDetails));
-            if (orgDetails == null) throw new ArgumentNullException(nameof(orgDetails));
-
             var obligatedErrors = HandleObligatedErrors(orgDetails, calculatorRunId, createdBy);
             var obligatedWarnings = HandleObligatedWarnings(orgDetails, calculatorRunId, createdBy);
             var missingRegErrors = HandleMissingRegistrationData(pomDetails, orgDetails, calculatorRunId, createdBy);
