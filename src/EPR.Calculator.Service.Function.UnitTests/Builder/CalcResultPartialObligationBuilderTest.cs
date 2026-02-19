@@ -323,12 +323,12 @@
 
             var scaledUpProducers = new List<CalcResultScaledupProducer>() {
                 new CalcResultScaledupProducer() {
-                    ProducerId = 22, 
+                    ProducerId = 22,
                     SubsidiaryId = null,
                     SubmissionPeriodCode = "2025-P3",
                     ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>{
-                        { 
-                            MaterialCodes.Aluminium, 
+                        {
+                            MaterialCodes.Aluminium,
                             new CalcResultScaledupProducerTonnage()
                             {
                                 ReportedHouseholdPackagingWasteTonnage = 25,
@@ -343,8 +343,8 @@
                                 ScaledupTotalReportedTonnage = 75
                             }
                         },
-                        { 
-                            MaterialCodes.Glass, 
+                        {
+                            MaterialCodes.Glass,
                             new CalcResultScaledupProducerTonnage()
                             {
                                 ReportedHouseholdPackagingWasteTonnage = 0,
@@ -364,12 +364,12 @@
                     }
                 },
                 new CalcResultScaledupProducer() {
-                    ProducerId = 22, 
+                    ProducerId = 22,
                     SubsidiaryId = null,
                     SubmissionPeriodCode = "2025-P4",
                     ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>{
-                        { 
-                            MaterialCodes.Aluminium, 
+                        {
+                            MaterialCodes.Aluminium,
                             new CalcResultScaledupProducerTonnage()
                             {
                                 ReportedHouseholdPackagingWasteTonnage = 75,
@@ -384,8 +384,8 @@
                                 ScaledupTotalReportedTonnage = 225
                             }
                         },
-                        { 
-                            MaterialCodes.Glass, 
+                        {
+                            MaterialCodes.Glass,
                             new CalcResultScaledupProducerTonnage()
                             {
                                 ReportedHouseholdPackagingWasteTonnage = 0,
@@ -446,7 +446,7 @@
                 mat.Value.TotalReportedTonnage == 50 &&
                 mat.Value.PartialReportedHouseholdPackagingWasteTonnage == 0 &&
                 mat.Value.PartialReportedPublicBinTonnage == 0 &&
-                mat.Value.PartialReportedSelfManagedConsumerWasteTonnage == 0 && 
+                mat.Value.PartialReportedSelfManagedConsumerWasteTonnage == 0 &&
                 mat.Value.PartialHouseholdDrinksContainersTonnageGlass == 75.205m &&
                 mat.Value.PartialNetReportedTonnage == 75.205m &&
                 mat.Value.PartialTotalReportedTonnage == 75.205m
