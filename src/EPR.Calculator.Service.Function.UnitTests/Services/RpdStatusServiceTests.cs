@@ -46,7 +46,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 It.IsAny<IEnumerable<CalculatorRunClassification>>()))
                 .Returns(new RpdStatusValidation { isValid = true });
 
-            this.Wrapper = new Mock<IOrgAndPomWrapper>();
             this.CommandTimeoutService = new Mock<ICommandTimeoutService>();
 
             this.Configuration = new Mock<IConfigurationService>();
@@ -54,13 +53,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 .Returns(this.Fixture.Create<string>());
             this.TelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
 
+            this.CalculatorRunOrgData = new Mock<ICalculatorRunOrgData>();
+
+            this.CalculatorRunPomData = new Mock<ICalculatorRunPomData>();
+
             this.TestClass = new RpdStatusService(
                 this.Configuration.Object,
                 contextFactory.Object,
                 this.CommandTimeoutService.Object,
                 this.Validator.Object,
-                this.Wrapper.Object,
-                this.TelemetryLogger.Object);
+                this.TelemetryLogger.Object,
+                this.CalculatorRunOrgData.Object,
+                this.CalculatorRunPomData.Object);
         }
 
         private RpdStatusService TestClass { get; init; }
@@ -73,11 +77,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         private Mock<IRpdStatusDataValidator> Validator { get; init; }
 
-        private Mock<IOrgAndPomWrapper> Wrapper { get; init; }
-
         private Mock<ICommandTimeoutService> CommandTimeoutService { get; set; }
 
         private Mock<ICalculatorTelemetryLogger> TelemetryLogger { get; init; }
+
+        private Mock<ICalculatorRunOrgData> CalculatorRunOrgData { get; init; }
+
+        private Mock<ICalculatorRunPomData> CalculatorRunPomData { get; init; }
 
         private void SetupRunClassifications()
         {
@@ -107,6 +113,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.Context.CalculatorRuns.Add(run);
             await this.Context.SaveChangesAsync();
 
+            this.CalculatorRunOrgData.Setup(s => s.LoadOrgDataForCalcRun(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+            this.CalculatorRunPomData.Setup(s => s.LoadPomDataForCalcRun(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+
             // Act
             await this.TestClass.UpdateRpdStatus(
                 runId,
@@ -119,11 +130,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var expectedCalendarYear = financialYear.AddYears(-1).ToString("yyyy");
             Assert.IsNotNull(calcRun);
             Assert.AreEqual((int)RunClassification.RUNNING, calcRun.CalculatorRunClassificationId);
-            this.Wrapper.Verify(
-                x => x.ExecuteSqlAsync(
-                It.Is<FormattableString>(s => s.ToString().Contains($"calendarYear = {expectedCalendarYear}")),
-                It.IsAny<CancellationToken>()),
-                Times.Exactly(2));
+            this.CalculatorRunOrgData.Verify(s => s.LoadOrgDataForCalcRun(runId, expectedCalendarYear, It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
+            this.CalculatorRunPomData.Verify(s => s.LoadPomDataForCalcRun(runId, expectedCalendarYear, It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [TestMethod]
@@ -196,7 +204,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public async Task UpdateRpdStatus_WrapperThrowsException()
+        public async Task UpdateRpdStatus_DataThrowsException()
         {
             // Arrange
             var runId = this.Fixture.Create<int>();
@@ -206,10 +214,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             this.Context.CalculatorRuns.Add(run);
             await this.Context.SaveChangesAsync();
 
-            this.Wrapper.Setup(w => w.ExecuteSqlAsync(
-                It.IsAny<FormattableString>(),
-                It.IsAny<CancellationToken>()))
+            this.CalculatorRunOrgData.Setup(s => s.LoadOrgDataForCalcRun(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Throws<Exception>();
+            this.CalculatorRunPomData.Setup(s => s.LoadPomDataForCalcRun(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
 
             // Act
             Exception? result = null;
