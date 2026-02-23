@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace EPR.Calculator.Service.Common.Utils
 {
-    public static class CurrencyConverter
+    public static class CurrencyConverterUtils
     {
         /// <summary>
         /// Safely parses a string to decimal using invariant culture.

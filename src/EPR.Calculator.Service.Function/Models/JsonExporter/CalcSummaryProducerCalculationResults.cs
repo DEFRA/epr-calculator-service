@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
@@ -64,5 +65,32 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
         [JsonPropertyName("calculationOfSuggestedBillingInstructionsAndInvoiceAmounts")]
         public required CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts { get; set; }
+
+        public static CalcSummaryProducerCalculationResults From(CalcResultSummaryProducerDisposalFees producer, List<MaterialDetail> materials) 
+        {
+            return new CalcSummaryProducerCalculationResults
+                {
+                    ProducerID = producer.ProducerId,
+                    SubsidiaryID = producer.SubsidiaryId,
+                    ProducerName = producer.ProducerName,
+                    TradingName = producer.TradingName,
+                    Level = string.IsNullOrWhiteSpace(producer.Level) ? null : int.Parse(producer.Level),
+                    ScaledUpTonnages = producer.IsProducerScaledup,
+                    ProducerDisposalFeesWithBadDebtProvision1 = ProducerDisposalFeesWithBadDebtProvision1.From(producer.ProducerDisposalFeesByMaterial, materials, producer.Level!),
+                    FeesForCommsCostsWithBadDebtProvision2a = CalcResultCommsCostByMaterial2AJson.From(producer.ProducerCommsFeesByMaterial!, materials),
+                    FeeForSAOperatingCostsWithBadDebtProvision_3 = CalcResultSAOperatingCostsWithBadDebtProvision.From(producer),
+                    FeeForLADataPrepCostsWithBadDebtProvision_4 = FeeForLADataPrepCostsWithBadDebtProvision_4.From(producer),
+                    FeeForCommsCostsWithBadDebtProvision_2a = CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2A.From(producer),
+                    FeeForCommsCostsWithBadDebtProvision_2b = CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2B.From(producer),
+                    CommsCostsByMaterialFeesSummary2a = CalcResultSummaryCommsCostsByMaterialFeesSummary2A.From(producer),
+                    TotalProducerFeeWithBadDebtProvisionFor2con_1_2a_2b_2c = TotalProducerFeeWithBadDebtProvisionFor2Con12A2B2CMapper.From(producer),
+                    FeeForSASetUpCostsWithBadDebtProvision_5 = FeeForSaSetUpCostsWithBadDebtProvision5.From(producer),
+                    FeeForCommsCostsWithBadDebtProvision_2c = CalcResultsCommsCostsWithBadDebtProvision2C.From(producer),
+                    CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts = CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts.From(producer),
+                    TotalProducerBillWithBadDebtProvision = TotalProducerBillWithBadDebtProvision.From(producer),
+                    FeeForLADisposalCosts1 = CalculationResultsProducerCalculationResultsFeeForLADisposalCosts1.From(producer),
+                    DisposalFeeSummary1 = EPR.Calculator.Service.Function.Models.JsonExporter.DisposalFeeSummary1.From(producer),
+                };
+        }
     }
 }

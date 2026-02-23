@@ -6,5 +6,11 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
     {
         [JsonPropertyName("producerCalculationResultsTotal")]
         public string? ProducerCalculationResultsTotal { get; set; }
+
+        public static CalcResultProducerCalculationResultsTotal? From(CalcResultSummary calcResultSummary)
+        {
+            // specified in user story as remaining null
+            return null;
+        }
     }
 }

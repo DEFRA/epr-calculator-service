@@ -12,7 +12,7 @@
         public void CanCallGetDecimalValue()
         {
             // Act
-            var result = CurrencyConverter.GetDecimalValue("650.95");
+            var result = CurrencyConverterUtils.GetDecimalValue("650.95");
 
             // Assert
             Assert.AreEqual(650.95M, result);
@@ -22,7 +22,7 @@
         public void CanCallFormatAsGbpCurrency()
         {
             // Act
-            var result = CurrencyConverter.ConvertToCurrency("650.95");
+            var result = CurrencyConverterUtils.ConvertToCurrency("650.95");
 
             // Assert
             Assert.AreEqual("£650.95", result);
@@ -32,7 +32,7 @@
         public void CanCallFormatAsGbpCurrencyForZeroCurrency()
         {
             // Act
-            var result = CurrencyConverter.ConvertToCurrency(0, 2);
+            var result = CurrencyConverterUtils.ConvertToCurrency(0, 2);
 
             // Assert
             Assert.AreEqual("£0.00", result);
@@ -42,7 +42,7 @@
         public void CanCallFormatAsGbpCurrencyWithRounding()
         {
             // Act
-            var result = CurrencyConverter.ConvertToCurrency(10.578m, 2);
+            var result = CurrencyConverterUtils.ConvertToCurrency(10.578m, 2);
 
             // Assert
             Assert.AreEqual("£10.58", result);
@@ -52,7 +52,7 @@
         public void CanCallFormatAsGbpCurrencyWithRoundingFourDecimalPlaces()
         {
             // Act
-            var result = CurrencyConverter.ConvertToCurrency(10.53324785678m, 4);
+            var result = CurrencyConverterUtils.ConvertToCurrency(10.53324785678m, 4);
 
             // Assert
             Assert.AreEqual("£10.5332", result);
