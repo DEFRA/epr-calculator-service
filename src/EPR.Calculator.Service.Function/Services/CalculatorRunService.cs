@@ -121,7 +121,7 @@ namespace EPR.Calculator.Service.Function.Services
         }
 
         /// <inheritdoc/>
-        public async Task<bool> PrepareResultsFileAsync(CalculatorRunParameter calculatorRunParameter, string? runName)
+        public async Task<bool> PrepareResultsFileAsync(CalculatorRunParameter calculatorRunParameter, string runName)
         {
             try
             {
