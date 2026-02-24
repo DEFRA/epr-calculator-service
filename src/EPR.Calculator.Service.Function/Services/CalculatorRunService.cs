@@ -2,6 +2,7 @@
 
 namespace EPR.Calculator.Service.Function.Services
 {
+    using EPR.Calculator.API.Data.Models;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Common.AzureSynapse;
     using EPR.Calculator.Service.Common.Logging;
@@ -115,7 +116,7 @@ namespace EPR.Calculator.Service.Function.Services
                 MaxCheckCount = this.configuration.MaxCheckCount,
                 PipelineName = pipelineName,
                 CalculatorRunId = args.Id,
-                RelativeYearValue = args.RelativeYear.Value,
+                RelativeYearValue = args.RelativeYear.Value - 1,
             };
         }
 
