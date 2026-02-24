@@ -206,7 +206,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 t => t.Process(It.Is<AzureSynapseRunnerParameters>(p =>
                 p.CalculatorRunId == id &&
                 p.CheckInterval == checkInterval &&
-                p.RelativeYearValue == this.RelativeYear.Value &&
+                p.RelativeYearValue == this.RelativeYear.Value - 1 &&
                 p.MaxCheckCount == maxCheckCount &&
                 p.PipelineUrl == pipelineUrl &&
                 p.PipelineName == orgPipelineName)),
@@ -620,7 +620,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var result = testService.GetAzureSynapseConfiguration(args, pomPipelineName);
 
             // Assert
-            Assert.AreEqual(new RelativeYear(2025), result.RelativeYear());
+            Assert.AreEqual(new RelativeYear(2025-1), result.RelativeYear());
         }
 
         /// <summary>
