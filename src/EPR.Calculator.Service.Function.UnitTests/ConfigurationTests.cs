@@ -23,24 +23,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
         private Fixture Fixture { get; init; }
 
         /// <summary>
-        /// Tests that the configuration variables match the expected environment variables.
-        /// </summary>
-        [TestMethod]
-        public void Configuration_Variables_Test()
-        {
-            // Arrange
-            var configuration = new Configuration();
-
-            // Assert
-            Assert.AreEqual(Environment.GetEnvironmentVariable("PipelineUrl"), configuration.PipelineUrl);
-            Assert.AreEqual(Environment.GetEnvironmentVariable("GetOrgDataPipelineName"), configuration.OrgDataPipelineName);
-            Assert.AreEqual(Environment.GetEnvironmentVariable("GetPomDataPipelineName"), configuration.PomDataPipelineName);
-            Assert.AreEqual(Configuration.DefaultCheckInterval, configuration.CheckInterval);
-            Assert.AreEqual(Configuration.DefaultMaxCheckCount, configuration.MaxCheckCount);
-            Assert.AreEqual(false, configuration.ExecuteRPDPipeline);
-        }
-
-        /// <summary>
         /// Checks that the calculator run timeout can be retrieved.
         /// </summary>
         [TestMethod]

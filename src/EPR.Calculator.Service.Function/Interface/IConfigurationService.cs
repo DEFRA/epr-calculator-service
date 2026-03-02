@@ -1,23 +1,11 @@
-﻿namespace EPR.Calculator.Service.Function.Interface
+namespace EPR.Calculator.Service.Function.Interface
 {
     using EPR.Calculator.Service.Function.Constants;
     using System;
 
     public interface IConfigurationService
     {
-        int CheckInterval { get; }
-
         string DbConnectionString { get; }
-
-        bool ExecuteRPDPipeline { get; }
-
-        int MaxCheckCount { get; }
-
-        string OrgDataPipelineName { get; }
-
-        string PipelineUrl { get; }
-
-        string PomDataPipelineName { get; }
 
         Uri PrepareCalcResultEndPoint { get; }
 

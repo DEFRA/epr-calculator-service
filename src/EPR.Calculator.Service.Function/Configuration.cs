@@ -1,8 +1,4 @@
-﻿// <copyright file="Configuration.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
-
-namespace EPR.Calculator.Service.Function
+﻿namespace EPR.Calculator.Service.Function
 {
     using System;
     using System.Globalization;
@@ -20,54 +16,7 @@ namespace EPR.Calculator.Service.Function
         /// </summary>
         public const double DefaultTimeout = 24;
 
-        public const int DefaultCheckInterval = 5;
-
-        public const int DefaultMaxCheckCount = 10;
-
-        /// <summary>
-        /// Gets the pipeline URL from environment variables.
-        /// </summary>
 #pragma warning disable CS8603 // Possible null reference return.
-        public string PipelineUrl => Environment.GetEnvironmentVariable(EnvironmentVariableKeys.PipelineUrl);
-
-        /// <summary>
-        /// Gets the organization data pipeline name from environment variables.
-        /// </summary>
-        public string OrgDataPipelineName => Environment.GetEnvironmentVariable(EnvironmentVariableKeys.OrgDataPipelineName);
-
-        /// <summary>
-        /// Gets the POM data pipeline name from environment variables.
-        /// </summary>
-        public string PomDataPipelineName => Environment.GetEnvironmentVariable(EnvironmentVariableKeys.PomDataPipelineName);
-
-        /// <summary>
-        /// Gets the check interval from environment variables.
-        /// </summary>
-        public int CheckInterval
-        {
-            get
-            {
-                var parseSuccess = int.TryParse(
-                    Environment.GetEnvironmentVariable(EnvironmentVariableKeys.CheckInterval),
-                    out int value);
-                return parseSuccess ? value : DefaultCheckInterval;
-            }
-        }
-
-        /// <summary>
-        /// Gets the maximum check count from environment variables.
-        /// </summary>
-        public int MaxCheckCount
-        {
-            get
-            {
-                var parseSuccess = int.TryParse(
-                    Environment.GetEnvironmentVariable(EnvironmentVariableKeys.MaxCheckCount),
-                    out int value);
-                return parseSuccess ? value : DefaultMaxCheckCount;
-            }
-        }
-
         /// <summary>
         /// Gets the status update endpoint URI from environment variables.
         /// </summary>
@@ -82,20 +31,6 @@ namespace EPR.Calculator.Service.Function
         /// Gets the URI for the endpoint used to Transpose before calculation of results from environment variables.
         /// </summary>
         public Uri TransposeEndpoint => new(Environment.GetEnvironmentVariable(EnvironmentVariableKeys.TransposeEndpoint)!);
-
-        /// <summary>
-        /// Gets a value indicating whether to execute the RPD pipeline from environment variables.
-        /// </summary>
-        public bool ExecuteRPDPipeline
-        {
-            get
-            {
-                bool.TryParse(
-                    Environment.GetEnvironmentVariable(EnvironmentVariableKeys.ExecuteRPDPipeline),
-                    out bool value);
-                return value;
-            }
-        }
 
         /// <summary>
         /// Gets the RPD status timeout from environment variables.
