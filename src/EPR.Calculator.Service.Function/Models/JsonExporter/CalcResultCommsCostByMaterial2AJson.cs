@@ -31,7 +31,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
                     if (item.Key == MaterialCodes.Glass)
                     {
-                        breakdown.HouseholdDrinksContainersTonnageGlass = item.Value.HouseholdDrinksContainers;
+                        breakdown.HouseholdDrinksContainersTonnageGlass = item.Value.HouseholdDrinksContainersTonnage;
                     }
 
                     materialBreakdown.Add(breakdown);
@@ -95,7 +95,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
             {
                 MaterialName = materialName,
                 HouseholdPackagingWasteTonnage = item.HouseholdPackagingWasteTonnage,
-                PublicBinTonnage = item.ReportedPublicBinTonnage,
+                PublicBinTonnage = item.PublicBinTonnage,
                 TotalTonnage = item.TotalReportedTonnage,
                 PricePerTonne = CurrencyConverterUtils.ConvertToCurrency(item.PriceperTonne, (int)DecimalPlaces.Four),
                 ProducerTotalCostWithoutBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(item.ProducerTotalCostWithoutBadDebtProvision),

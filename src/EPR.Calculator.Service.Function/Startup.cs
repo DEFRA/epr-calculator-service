@@ -79,9 +79,10 @@ namespace EPR.Calculator.Service.Function
             // Register CustomTelemetryLogger
             builder.Services.AddSingleton<ICalculatorTelemetryLogger, CalculatorTelemetryLogger>(sp =>
             {
-                var fallbackToConsole = Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY") ==
-                                        "00000000-0000-0000-0000-000000000000";
-
+                var key = Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY");
+                var fallbackToConsole =
+                    string.IsNullOrWhiteSpace(key) ||
+                    key == "00000000-0000-0000-0000-000000000000";
                 return ActivatorUtilities.CreateInstance<CalculatorTelemetryLogger>(sp, fallbackToConsole);
             });
         }

@@ -65,6 +65,7 @@
                     },
                 },
                 CalcResultLateReportingTonnageData = Fixture.Create<CalcResultLateReportingTonnage>(),
+                CalcResultModulation = null,
             };
 
             var resultCalc = ConstructAsync(resultsDto, calcResult);

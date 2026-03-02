@@ -324,6 +324,7 @@
                     ],
                 },
                 CalcResultLateReportingTonnageData = Fixture.Create<CalcResultLateReportingTonnage>(),
+                CalcResultModulation = null,
             };
 
             _materialCostSummary = new Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial>();
@@ -375,30 +376,23 @@
 
             var expectedResult = new List<CalcResultSummaryHeader>();
             expectedResult.AddRange([
-                new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.ProducerOneOffFeeWithoutBadDebtProvision , ColumnIndex = 224 },
-                new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.BadDebtProvision, ColumnIndex = 225 },
-                new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.ProducerOneOffFeeWithBadDebtProvision, ColumnIndex = 226 },
-                new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.EnglandTotalWithBadDebtProvision, ColumnIndex = 227 },
-                new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.WalesTotalWithBadDebtProvision, ColumnIndex = 228 },
-                new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.ScotlandTotalWithBadDebtProvision, ColumnIndex = 229 },
-                new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.NorthernIrelandTotalWithBadDebtProvision, ColumnIndex = 230 }
+                new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.ProducerOneOffFeeWithoutBadDebtProvision },
+                new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.BadDebtProvision },
+                new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.ProducerOneOffFeeWithBadDebtProvision },
+                new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.EnglandTotalWithBadDebtProvision },
+                new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.WalesTotalWithBadDebtProvision },
+                new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.ScotlandTotalWithBadDebtProvision },
+                new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.NorthernIrelandTotalWithBadDebtProvision }
             ]);
 
             // Assert
             Assert.AreEqual(expectedResult[0].Name, result[0].Name);
-            Assert.AreEqual(expectedResult[0].ColumnIndex, result[0].ColumnIndex);
             Assert.AreEqual(expectedResult[1].Name, result[1].Name);
-            Assert.AreEqual(expectedResult[1].ColumnIndex, result[1].ColumnIndex);
             Assert.AreEqual(expectedResult[2].Name, result[2].Name);
-            Assert.AreEqual(expectedResult[2].ColumnIndex, result[2].ColumnIndex);
             Assert.AreEqual(expectedResult[3].Name, result[3].Name);
-            Assert.AreEqual(expectedResult[3].ColumnIndex, result[3].ColumnIndex);
             Assert.AreEqual(expectedResult[4].Name, result[4].Name);
-            Assert.AreEqual(expectedResult[4].ColumnIndex, result[4].ColumnIndex);
             Assert.AreEqual(expectedResult[5].Name, result[5].Name);
-            Assert.AreEqual(expectedResult[5].ColumnIndex, result[5].ColumnIndex);
             Assert.AreEqual(expectedResult[6].Name, result[6].Name);
-            Assert.AreEqual(expectedResult[6].ColumnIndex, result[6].ColumnIndex);
         }
 
         [TestMethod]

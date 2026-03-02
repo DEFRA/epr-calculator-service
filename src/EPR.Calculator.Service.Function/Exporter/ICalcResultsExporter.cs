@@ -2,6 +2,6 @@
 {
     public interface ICalcResultsExporter<in T>
     {
-        string Export(T results);
+        string Export(T calcResult);
     }
 }

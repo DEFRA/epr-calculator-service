@@ -96,7 +96,7 @@
             Assert.IsNotNull(result);
 
             MockLateReportingExporter.Verify(x => x.Export(calcResult.CalcResultLateReportingTonnageData));
-            MockCalcResultSummaryExporter.Verify(x => x.Export(It.IsAny<CalcResultSummary>(), It.IsAny<StringBuilder>()));
+            MockCalcResultSummaryExporter.Verify(x => x.Export(It.IsAny<CalcResultSummary>(), It.IsAny<StringBuilder>(), It.IsAny<bool>()));
             MockLapcaptDetailExporter.Verify(x => x.Export(It.IsAny<CalcResultLapcapData>(), It.IsAny<StringBuilder>()));
             MockResultDetailexporter.Verify(x => x.Export(It.IsAny<CalcResultDetail>(), It.IsAny<StringBuilder>()));
             MockLaDisposalCostDataExporter.Verify(x => x.Export(It.IsAny<CalcResultLaDisposalCostData>(), It.IsAny<StringBuilder>()));
@@ -417,6 +417,7 @@
                     RunName = "CalculatorRunName",
                     RelativeYear = new RelativeYear(2024)
                 },
+                CalcResultModulation = null,
             };
         }
 

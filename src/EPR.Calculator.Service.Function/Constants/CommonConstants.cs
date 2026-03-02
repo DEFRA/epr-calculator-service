@@ -8,8 +8,6 @@
         public const int DefaultMinValue = 0;
         public const int LevelOne = 1;
         public const int LevelTwo = 2;
-        public const int SecondaryHeaderMaxColumnSize = 298;
-
         public const string Material = "Material";
         public const string England = "England";
         public const string Wales = "Wales";
@@ -42,7 +40,7 @@
         public const string ParametersCommsCost = "parametersCommsCost";
 
         public const string CancelledProducers = "Cancelled Producers";
-        
+
         public const string ProducerId = "Producer ID";
         public const string SubsidiaryId = "Subsidiary ID";
         public const string ProducerOrSubsidiaryName = "Producer Name";

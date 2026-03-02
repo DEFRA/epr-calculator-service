@@ -297,6 +297,7 @@
                     ],
                 },
                 CalcResultLateReportingTonnageData = Fixture.Create<CalcResultLateReportingTonnage>(),
+                CalcResultModulation = null,
             };
         }
 
@@ -314,52 +315,42 @@
             var result = LaDataPrepCostsProducer.GetHeaders().ToList();
             var expectedResult = new List<CalcResultSummaryHeader>();
             expectedResult.AddRange([
-                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.TotalProducerFeeWithoutBadDebtProvision , ColumnIndex = columnIndex },
-                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.BadDebtProvision, ColumnIndex = columnIndex+1 },
-                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.TotalProducerFeeWithBadDebtProvision, ColumnIndex = columnIndex+2 },
-                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.EnglandTotalWithBadDebtProvision, ColumnIndex = columnIndex+3 },
-                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.WalesTotalWithBadDebtProvision, ColumnIndex = columnIndex+4 },
-                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.ScotlandTotalWithBadDebtProvision, ColumnIndex = columnIndex+5 },
-                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.NorthernIrelandTotalWithBadDebtProvision, ColumnIndex = columnIndex+6 }
+                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.TotalProducerFeeWithoutBadDebtProvision },
+                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.BadDebtProvision },
+                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.TotalProducerFeeWithBadDebtProvision },
+                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.EnglandTotalWithBadDebtProvision },
+                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.WalesTotalWithBadDebtProvision },
+                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.ScotlandTotalWithBadDebtProvision },
+                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.NorthernIrelandTotalWithBadDebtProvision }
             ]);
 
             // Assert
             Assert.AreEqual(expectedResult[0].Name, result[0].Name);
-            Assert.AreEqual(expectedResult[0].ColumnIndex, result[0].ColumnIndex);
             Assert.AreEqual(expectedResult[1].Name, result[1].Name);
-            Assert.AreEqual(expectedResult[1].ColumnIndex, result[1].ColumnIndex);
             Assert.AreEqual(expectedResult[2].Name, result[2].Name);
-            Assert.AreEqual(expectedResult[2].ColumnIndex, result[2].ColumnIndex);
             Assert.AreEqual(expectedResult[3].Name, result[3].Name);
-            Assert.AreEqual(expectedResult[3].ColumnIndex, result[3].ColumnIndex);
             Assert.AreEqual(expectedResult[4].Name, result[4].Name);
-            Assert.AreEqual(expectedResult[4].ColumnIndex, result[4].ColumnIndex);
             Assert.AreEqual(expectedResult[5].Name, result[5].Name);
-            Assert.AreEqual(expectedResult[5].ColumnIndex, result[5].ColumnIndex);
             Assert.AreEqual(expectedResult[6].Name, result[6].Name);
-            Assert.AreEqual(expectedResult[6].ColumnIndex, result[6].ColumnIndex);
         }
 
         [TestMethod]
         public void CanCallGetSummaryHeaders()
         {
             // Act
-            var result = LaDataPrepCostsProducer.GetSummaryHeaders().ToList();
+            var result = LaDataPrepCostsProducer.GetSummaryHeaders(columnIndex).ToList();
 
             var expectedResult = new List<CalcResultSummaryHeader>();
             expectedResult.AddRange([
-                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.LaDataPrepCostsWithoutBadDebtProvisionTitle, ColumnIndex = columnIndex },
-                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.BadDebtProvisionTitle, ColumnIndex = columnIndex+1 },
-                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.LaDataPrepCostsWithBadDebtProvisionTitle, ColumnIndex = columnIndex+2 }
+                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.LaDataPrepCostsWithoutBadDebtProvisionTitle },
+                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.BadDebtProvisionTitle },
+                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.LaDataPrepCostsWithBadDebtProvisionTitle }
             ]);
 
             // Assert
             Assert.AreEqual(expectedResult[0].Name, result[0].Name);
-            Assert.AreEqual(expectedResult[0].ColumnIndex, result[0].ColumnIndex);
             Assert.AreEqual(expectedResult[1].Name, result[1].Name);
-            Assert.AreEqual(expectedResult[1].ColumnIndex, result[1].ColumnIndex);
             Assert.AreEqual(expectedResult[2].Name, result[2].Name);
-            Assert.AreEqual(expectedResult[2].ColumnIndex, result[2].ColumnIndex);
         }
 
         [TestMethod]

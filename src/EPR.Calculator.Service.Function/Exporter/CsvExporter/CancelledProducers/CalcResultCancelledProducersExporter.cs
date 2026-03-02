@@ -40,7 +40,7 @@
             {
                 csvContent.Append(CsvSanitiser.SanitiseData(CancelledProducer.ProducerId));
                 csvContent.Append(CsvSanitiser.SanitiseData(CancelledProducer.ProducerOrSubsidiaryNameValue));
-                csvContent.Append(CsvSanitiser.SanitiseData(CancelledProducer.TradingNameValue)); 
+                csvContent.Append(CsvSanitiser.SanitiseData(CancelledProducer.TradingNameValue));
                 csvContent.Append(CsvSanitiser.SanitiseData(CancelledProducer.LastTonnage?.AluminiumValue));
                 csvContent.Append(CsvSanitiser.SanitiseData(CancelledProducer.LastTonnage?.FibreCompositeValue));
                 csvContent.Append(CsvSanitiser.SanitiseData(CancelledProducer.LastTonnage?.GlassValue));
@@ -57,15 +57,21 @@
             }
 
         }
-
-
         private static void WriteCancelledProducersSecondaryHeaders(StringBuilder csvContent)
         {
-            const int maxColumnSize = CommonConstants.SecondaryHeaderMaxColumnSize;
+            var headers = new Dictionary<int, string>
+            {
+                { CommonConstants.LastTonnageSubHeaderIndex, CommonConstants.LastTonnage },
+                { CommonConstants.LatestInvoiceSubHeaderIndex, CommonConstants.LatestInvoice }
+            };
+
+            var maxColumnSize = headers.Keys.Max() + 1;
             var headerRows = new string[maxColumnSize];
 
-            headerRows[CommonConstants.LastTonnageSubHeaderIndex] = CsvSanitiser.SanitiseData(CommonConstants.LastTonnage);
-            headerRows[CommonConstants.LatestInvoiceSubHeaderIndex] = CsvSanitiser.SanitiseData(CommonConstants.LatestInvoice);
+            foreach (var header in headers)
+            {
+                headerRows[header.Key] = CsvSanitiser.SanitiseData(header.Value);
+            }
 
             var headerRow = string.Join(CommonConstants.CsvFileDelimiter, headerRows);
             csvContent.AppendLine(headerRow);
