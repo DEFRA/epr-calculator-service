@@ -94,6 +94,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     MaterialHeading = string.Empty,
                     TonnageHeading = string.Empty,
                 },
+                CalcResultModulation = null,
             };
 
             var fixture = new Fixture();

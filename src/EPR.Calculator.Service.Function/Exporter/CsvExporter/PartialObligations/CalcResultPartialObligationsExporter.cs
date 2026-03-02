@@ -2,7 +2,11 @@ using System.Linq;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations
 {
+    using System;
+
     using System.Collections.Generic;
+    using System.Linq;
+
     using System.Text;
     using EPR.Calculator.API.Utils;
     using EPR.Calculator.Service.Function.Constants;
@@ -100,14 +104,12 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligation
 
         private static void WritePartialObligationsSecondaryHeaders(IEnumerable<CalcResultPartialObligationHeader> headers, StringBuilder csvContent)
         {
-            const int maxColumnSize = CommonConstants.SecondaryHeaderMaxColumnSize;
+            var maxColumnSize = headers.MaxBy(h => h.ColumnIndex ?? 0)?.ColumnIndex ?? throw new ArgumentException("No headers specified");
+
             var headerRows = new string[maxColumnSize];
-            foreach (var item in headers)
+            foreach (var item in headers.Where(h => h.ColumnIndex.HasValue))
             {
-                if (item.ColumnIndex.HasValue)
-                {
-                    headerRows[item.ColumnIndex.Value - 1] = CsvSanitiser.SanitiseData(item.Name, false);
-                }
+                headerRows[item.ColumnIndex!.Value - 1] = CsvSanitiser.SanitiseData(item.Name, false);
             }
 
             var headerRow = string.Join(CommonConstants.CsvFileDelimiter, headerRows);

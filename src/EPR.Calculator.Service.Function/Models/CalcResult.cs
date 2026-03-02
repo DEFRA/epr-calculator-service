@@ -70,5 +70,9 @@ namespace EPR.Calculator.Service.Function.Models
         public CalcResultSummary CalcResultSummary { get; set; } = new();
 
         public IEnumerable<CalcResultErrorReport> CalcResultErrorReports { get; set; } = [];
+
+        #pragma warning disable S1135 // Sonar TODO comment
+        public required string? CalcResultModulation { get; set; } // TODO add modulation class here for CSV section - not part of this ticket
+        #pragma warning restore S1135
     }
 }

@@ -8,6 +8,7 @@
     using EPR.Calculator.Service.Common.Logging;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.API.Data.Enums;
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Interface;
@@ -159,7 +160,7 @@
             "Critical Code Smell",
             "S3776:Cognitive Complexity of methods should not be too high",
             Justification = "Temporaraly suppress - will refactor later.")]
-        [ExcludeFromCodeCoverage]   
+        [ExcludeFromCodeCoverage]
         public async Task<bool> Transpose(CalcResultsRequestDto resultsRequestDto, CancellationToken cancellationToken)
         {
             this.context.ChangeTracker.AutoDetectChangesEnabled = false;
@@ -273,6 +274,12 @@
                                             Material = material,
                                             ProducerDetail = producerDetail,
                                             PackagingType = packagingType!,
+                                            RedRamRagRating = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.Red).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
+                                            AmberRamRagRating = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.Amber).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
+                                            GreenRamRagRating = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.Green).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
+                                            RedMedicalRamRagRating = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.RedMedical).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
+                                            AmberMedicalRamRagRating = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.AmberMedical).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
+                                            GreenMedicalRamRagRating = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.GreenMedical).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
                                             PackagingTonnage = Math.Round((decimal)(totalPackagingMaterialWeight) / 1000, 3),
                                         };
 
@@ -300,7 +307,7 @@
         private static bool IsPackagingTypeAndPackagingMaterialWeightExists(string? packagingType, double? totalPackagingMaterialWeight)
         {
             return packagingType != null && totalPackagingMaterialWeight != null;
-        }       
+        }
 
         private static bool IsRunPomDataDetailsExistsForSubsidaryId(List<CalculatorRunPomDataDetail> runPomDataDetailsForSubsidaryId)
         {

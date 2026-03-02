@@ -32,7 +32,8 @@
                 CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
                 CalcResultLateReportingTonnageData = this.GetCalcResultLateReportingTonnage(),
                 CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers(),
-                CalcResultPartialObligations = new CalcResultPartialObligations()
+                CalcResultPartialObligations = new CalcResultPartialObligations(),
+                CalcResultModulation = null,
             };
 
             // Set up consistent data

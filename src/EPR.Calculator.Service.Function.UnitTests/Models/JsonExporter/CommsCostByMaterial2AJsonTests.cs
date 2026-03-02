@@ -21,9 +21,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                 ["AL"] = new CalcResultSummaryProducerCommsFeesCostByMaterial
                 {
                     HouseholdPackagingWasteTonnage = 100.25m,
-                    ReportedPublicBinTonnage = 50.50m,
+                    PublicBinTonnage = 50.50m,
                     TotalReportedTonnage = 150.75m,
-                    HouseholdDrinksContainers = 0m,
+                    HouseholdDrinksContainersTonnage = 0m,
                     PriceperTonne = 0.42m,
                     ProducerTotalCostWithoutBadDebtProvision = 10m,
                     BadDebtProvision = 1m,
@@ -36,9 +36,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                 ["GL"] = new CalcResultSummaryProducerCommsFeesCostByMaterial
                 {
                     HouseholdPackagingWasteTonnage = 200m,
-                    ReportedPublicBinTonnage = 80m,
+                    PublicBinTonnage = 80m,
                     TotalReportedTonnage = 280m,
-                    HouseholdDrinksContainers = 12.34m,
+                    HouseholdDrinksContainersTonnage = 12.34m,
                     PriceperTonne = 0.3m,
                     ProducerTotalCostWithoutBadDebtProvision = 20m,
                     BadDebtProvision = 2m,

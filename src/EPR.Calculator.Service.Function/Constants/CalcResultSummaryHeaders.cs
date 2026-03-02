@@ -33,8 +33,29 @@ namespace EPR.Calculator.Service.Function.Constants
         public static readonly string TonnageChange = "Tonnage Change";
 
         public static readonly string HouseholdPackagingWasteTonnage = "Household Packaging Tonnage";
+        public static readonly string HouseholdPackagingWasteTonnageRed = "Household Red Material Tonnage";
+        public static readonly string HouseholdPackagingWasteTonnageAmber = "Household Amber Material Tonnage";
+        public static readonly string HouseholdPackagingWasteTonnageGreen = "Household Green Material Tonnage";
+        public static readonly string HouseholdPackagingWasteTonnageRedMedical = "Household Red-Medica Material Tonnage";
+        public static readonly string HouseholdPackagingWasteTonnageAmberMedical = "Household Amber-Medical Material Tonnage";
+        public static readonly string HouseholdPackagingWasteTonnageGreenMedical = "Household Green-Medical Material Tonnage";
+
         public static readonly string PublicBinTonnage = "Public Bin Tonnage";
+        public static readonly string PublicBinTonnageRed = "Public Bin Red Material Tonnage";
+        public static readonly string PublicBinTonnageAmber = "Public Bin Amber Material Tonnage";
+        public static readonly string PublicBinTonnageGreen = "Public Bin Green Material Tonnage";
+        public static readonly string PublicBinTonnageRedMedical = "Public Bin Red-Medical Material Tonnage";
+        public static readonly string PublicBinTonnageAmberMedical = "Public Bin Amber-Medical Material Tonnage";
+        public static readonly string PublicBinTonnageGreenMedical = "Public Bin Green-Medical Material Tonnage";
+
         public static readonly string HouseholdDrinksContainersTonnage = "Household Drinks Containers Tonnage - Glass";
+        public static readonly string HouseholdDrinksContainersTonnageRed = "Household Drinks Red Material Tonnage";
+        public static readonly string HouseholdDrinksContainersTonnageAmber = "Household Drinks Amber Material Tonnage";
+        public static readonly string HouseholdDrinksContainersTonnageGreen = "Household Drinks Green Material Tonnage";
+        public static readonly string HouseholdDrinksContainersTonnageRedMedical = "Household Drinks Red-Medical Material Tonnage";
+        public static readonly string HouseholdDrinksContainersTonnageAmberMedical = "Household Drinks Amber-Medical Material Tonnage";
+        public static readonly string HouseholdDrinksContainersTonnageGreenMedical = "Household Drinks Green-Medical Material Tonnage";
+
         public static readonly string TotalTonnage = "Total Tonnage";
         public static readonly string SelfManagedConsumerWasteTonnage = "Self Managed Consumer Waste Tonnage";
         public static readonly string NetTonnage = "Net Tonnage";
