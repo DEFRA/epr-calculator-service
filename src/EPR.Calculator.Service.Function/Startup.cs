@@ -1,4 +1,4 @@
-﻿// <copyright file="Startup.cs" company="PlaceholderCompany">
+// <copyright file="Startup.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
@@ -49,6 +49,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Configuration;
 using System.Reflection;
+using EPR.Calculator.Service.Function.Services.CommonDataApi;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -184,6 +185,18 @@ namespace EPR.Calculator.Service.Function
                 BillingFileExporter = provider.GetRequiredService<IBillingFileExporter<CalcResult>>(),
                 producerDataInsertService = provider.GetRequiredService<IPrepareProducerDataInsertService>(),
             });
+
+            services
+                .AddOptions<CommonDataApiHttpClientOptions>()
+                .Configure<IConfiguration>((options, config) =>
+                {
+                    config.GetSection(CommonDataApiHttpClientOptions.SectionKey).Bind(options);
+                })
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
+
+            services.AddHttpClient<CommonDataApiHttpClient>();
+
             SetupBlobStorage(services);
             services.AddTransient<IConfigurationService, Configuration>();
         }
