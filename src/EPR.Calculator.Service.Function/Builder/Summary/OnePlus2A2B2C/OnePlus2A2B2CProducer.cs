@@ -5,20 +5,18 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C
 {
     public static class OnePlus2A2B2CProducer
     {
-        public static readonly int ColumnIndex = 266;
-
         public static IEnumerable<CalcResultSummaryHeader> GetHeaders()
         {
             return [
-                new CalcResultSummaryHeader { Name = OnePlus2A2B2CHeaders.ProducerTotalWithBadDebtProvision , ColumnIndex = ColumnIndex },
-                new CalcResultSummaryHeader { Name = OnePlus2A2B2CHeaders.ProducerPercentageOfOverallProducerCost, ColumnIndex = ColumnIndex + 1 }
+                new CalcResultSummaryHeader { Name = OnePlus2A2B2CHeaders.ProducerTotalWithBadDebtProvision },
+                new CalcResultSummaryHeader { Name = OnePlus2A2B2CHeaders.ProducerPercentageOfOverallProducerCost }
             ];
         }
 
-        public static IEnumerable<CalcResultSummaryHeader> GetSummaryHeaders()
+        public static IEnumerable<CalcResultSummaryHeader> GetSummaryHeaders(int columnIndex)
         {
             return [
-                new CalcResultSummaryHeader { Name = OnePlus2A2B2CHeaders.TotalWithBadDebtProvision , ColumnIndex = ColumnIndex }
+                new CalcResultSummaryHeader { Name = OnePlus2A2B2CHeaders.TotalWithBadDebtProvision , ColumnIndex = columnIndex }
             ];
         }
 

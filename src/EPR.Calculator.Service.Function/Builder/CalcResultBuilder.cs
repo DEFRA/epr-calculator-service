@@ -94,7 +94,11 @@ namespace EPR.Calculator.Service.Function.Builder
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultCancelledProducers = new CalcResultCancelledProducersResponse(),
-                CalcResultRejectedProducers = new List<CalcResultRejectedProducer>()
+                CalcResultRejectedProducers = new List<CalcResultRejectedProducer>(),
+
+                #pragma warning disable S1135 // Sonar TODO comment
+                CalcResultModulation = resultsRequestDto.RelativeYear.Value >= 2026 ? "" : null // TODO add modulation class here for CSV section - not part of this ticket
+                #pragma warning restore S1135
             };
 
             this._telemetryClient.TrackTrace("lapcapBuilder started...");

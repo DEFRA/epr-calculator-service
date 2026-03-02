@@ -14,28 +14,26 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
 {
     public static class BillingInstructionsProducer
     {
-        public static readonly int ColumnIndex = 296;
-
         public static IEnumerable<CalcResultSummaryHeader> GetHeaders()
         {
             return [
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.CurrentYearInvoicedTotalToDate, ColumnIndex = ColumnIndex },
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.TonnageChangeSinceLastInvoice, ColumnIndex = ColumnIndex + 1 },
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.LiabilityDifference, ColumnIndex = ColumnIndex + 2 },
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.MaterialThresholdBreached, ColumnIndex = ColumnIndex + 3 },
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.TonnageThresholdBreached, ColumnIndex = ColumnIndex + 4 },
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.PercentageLiabilityDifference, ColumnIndex = ColumnIndex + 5 },
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.MaterialPercentageThresholdBreached, ColumnIndex = ColumnIndex + 6 },
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.TonnagePercentagThresholdBreached, ColumnIndex = ColumnIndex + 6 },
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.SuggestedBillingInstruction, ColumnIndex = ColumnIndex + 6 },
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.SuggestedInvoiceAmount, ColumnIndex = ColumnIndex + 6 }
+                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.CurrentYearInvoicedTotalToDate },
+                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.TonnageChangeSinceLastInvoice },
+                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.LiabilityDifference },
+                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.MaterialThresholdBreached },
+                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.TonnageThresholdBreached},
+                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.PercentageLiabilityDifference },
+                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.MaterialPercentageThresholdBreached },
+                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.TonnagePercentagThresholdBreached },
+                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.SuggestedBillingInstruction },
+                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.SuggestedInvoiceAmount }
             ];
         }
 
-        public static IEnumerable<CalcResultSummaryHeader> GetSummaryHeaders()
+        public static IEnumerable<CalcResultSummaryHeader> GetSummaryHeaders(int columnIndex)
         {
             return [
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.Title, ColumnIndex = ColumnIndex }
+                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.Title, ColumnIndex = columnIndex }
             ];
         }
 
@@ -190,7 +188,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
                 currentYearInvoiceTotalToDate == 0m)
             {
                 return null;
-            }            
+            }
             return Math.Round(liabilityDifference.Value / currentYearInvoiceTotalToDate.Value * 100, 2);
         }
 

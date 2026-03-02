@@ -29,6 +29,7 @@
                 CalcResultSummary = TestDataHelper.GetCalcResultSummary(),
                 CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
                 CalcResultLateReportingTonnageData = this.GetCalcResultLateReportingTonnage(),
+                CalcResultModulation = null,
             };
         }
 

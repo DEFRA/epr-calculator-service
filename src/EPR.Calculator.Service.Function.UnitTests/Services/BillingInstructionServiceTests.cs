@@ -114,7 +114,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                             }
                         }
                     }
-                }
+                },
+                CalcResultModulation = null,
             };
 
 
@@ -167,7 +168,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     MaterialHeading = string.Empty,
                     TonnageHeading = string.Empty,
                 },
-                CalcResultSummary  = new() {  ProducerDisposalFees = null! }
+                CalcResultSummary  = new() {  ProducerDisposalFees = null! },
+                CalcResultModulation = null,
             };
 
 
@@ -221,15 +223,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     TonnageHeading = string.Empty,
                 },
                 CalcResultSummary = new() { ProducerDisposalFees = fixture.Create<List<CalcResultSummaryProducerDisposalFees>>() } ,
-                 CalcResultCancelledProducers = new CalcResultCancelledProducersResponse()
-                 {
-                     TitleHeader = CommonConstants.CancelledProducers,
-                     CancelledProducers = new List<CalcResultCancelledProducersDto>()
-                       { new CalcResultCancelledProducersDto() { LastTonnage = null,  ProducerId = 1, TradingNameValue ="Test",
-                           LatestInvoice = new LatestInvoice(){ BillingInstructionIdValue="1_1", RunNameValue ="RunName" , RunNumberValue="4" },
-                       }
-                 }
-                 }
+                    CalcResultCancelledProducers = new CalcResultCancelledProducersResponse()
+                    {
+                        TitleHeader = CommonConstants.CancelledProducers,
+                        CancelledProducers = new List<CalcResultCancelledProducersDto>()
+                        { new CalcResultCancelledProducersDto() { LastTonnage = null,  ProducerId = 1, TradingNameValue ="Test",
+                            LatestInvoice = new LatestInvoice(){ BillingInstructionIdValue="1_1", RunNameValue ="RunName" , RunNumberValue="4" },
+                        }
+                    }
+                },
+                CalcResultModulation = null,
             };
 
 

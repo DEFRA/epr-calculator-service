@@ -6,25 +6,25 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
 {
     public static class TotalBillBreakdownProducer
     {
-        public static readonly int ColumnIndex = 289;
+        public static readonly int ColumnIndex = 385;
 
         public static IEnumerable<CalcResultSummaryHeader> GetHeaders()
         {
             return [
-                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.TotalProducerBillWithoutBadDebtProvision, ColumnIndex = ColumnIndex },
-                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.BadDebtProvision, ColumnIndex = ColumnIndex + 1 },
-                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.TotalProducerBillWithBadDebtProvision, ColumnIndex = ColumnIndex + 2 },
-                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.EnglandTotalWithBadDebtProvision, ColumnIndex = ColumnIndex + 3 },
-                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.WalesTotalWithBadDebtProvision, ColumnIndex = ColumnIndex + 4 },
-                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.ScotlandTotalWithBadDebtProvision, ColumnIndex = ColumnIndex + 5 },
-                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.NorthernIrelandTotalWithBadDebtProvision, ColumnIndex = ColumnIndex + 6 }
+                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.TotalProducerBillWithoutBadDebtProvision },
+                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.BadDebtProvision },
+                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.TotalProducerBillWithBadDebtProvision },
+                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.EnglandTotalWithBadDebtProvision },
+                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.WalesTotalWithBadDebtProvision },
+                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.ScotlandTotalWithBadDebtProvision },
+                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.NorthernIrelandTotalWithBadDebtProvision }
             ];
         }
 
-        public static IEnumerable<CalcResultSummaryHeader> GetSummaryHeaders()
+        public static IEnumerable<CalcResultSummaryHeader> GetSummaryHeaders(int columnIndex)
         {
             return [
-                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.TotalProducerBillBreakdown, ColumnIndex = ColumnIndex }
+                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.TotalProducerBillBreakdown, ColumnIndex = columnIndex }
             ];
         }
 

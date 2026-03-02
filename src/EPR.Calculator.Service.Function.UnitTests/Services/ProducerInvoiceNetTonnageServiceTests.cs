@@ -105,7 +105,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     CalcResultLateReportingTonnageDetails = new List<CalcResultLateReportingTonnageDetail>(),
                     MaterialHeading = string.Empty,
                     TonnageHeading = string.Empty,
-                }
+                },
+                CalcResultModulation = null,
             };
 
             materialService.Setup(mock => mock.GetMaterials()).ReturnsAsync(fixture.Create<List<MaterialDetail>>());

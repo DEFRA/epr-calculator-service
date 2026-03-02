@@ -64,39 +64,39 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             this.calcResultRejectedProducersExporterCsv = calcResultRejectedProducersExporter;
         }
 
-        public string Export(CalcResult results, IEnumerable<int> acceptedProducerIds)
+        public string Export(CalcResult calcResult, IEnumerable<int> acceptedProducerIds)
         {
             var csvContent = new StringBuilder();
-            resultDetailexporterCsv.Export(results.CalcResultDetail, csvContent);
+            resultDetailexporterCsv.Export(calcResult.CalcResultDetail, csvContent);
 
-            lapcaptDetailExporterCsv.Export(results.CalcResultLapcapData, csvContent);
+            lapcaptDetailExporterCsv.Export(calcResult.CalcResultLapcapData, csvContent);
 
-            csvContent.Append(lateReportingExporterCsv.Export(results.CalcResultLateReportingTonnageData));
+            csvContent.Append(lateReportingExporterCsv.Export(calcResult.CalcResultLateReportingTonnageData));
 
-            parameterOtherCostsCsv.Export(results.CalcResultParameterOtherCost, csvContent);
+            parameterOtherCostsCsv.Export(calcResult.CalcResultParameterOtherCost, csvContent);
 
-            onePlusFourApportionmentExporterCsv.Export(results.CalcResultOnePlusFourApportionment, csvContent);
+            onePlusFourApportionmentExporterCsv.Export(calcResult.CalcResultOnePlusFourApportionment, csvContent);
 
-            commsCostExporterCsv.Export(results.CalcResultCommsCostReportDetail, csvContent);
+            commsCostExporterCsv.Export(calcResult.CalcResultCommsCostReportDetail, csvContent);
 
-            laDisposalCostExporterCsv.Export(results.CalcResultLaDisposalCostData, csvContent);
+            laDisposalCostExporterCsv.Export(calcResult.CalcResultLaDisposalCostData, csvContent);
 
-            calcResultCancelledProducersExporterCsv.Export(results.CalcResultCancelledProducers, csvContent);
+            calcResultCancelledProducersExporterCsv.Export(calcResult.CalcResultCancelledProducers, csvContent);
 
             var acceptedProducers = GetScaledUpProducersForExport(
-                results.CalcResultScaledupProducers,
+                calcResult.CalcResultScaledupProducers,
                 acceptedProducerIds);
             calcResultScaledupProducersExporterCsv.Export(acceptedProducers, csvContent);
 
-            calcResultPartialObligationsExporterCsv.Export(GetPartialObligationsForExport(results.CalcResultPartialObligations, acceptedProducerIds), csvContent);
+            calcResultPartialObligationsExporterCsv.Export(GetPartialObligationsForExport(calcResult.CalcResultPartialObligations, acceptedProducerIds), csvContent);
 
-            var acceptedCalcResultSummary = GetAcceptedProducersCalcResults(results.CalcResultSummary, acceptedProducerIds);
+            var acceptedCalcResultSummary = GetAcceptedProducersCalcResults(calcResult.CalcResultSummary, acceptedProducerIds);
 
-            calcResultSummaryExporterCsv.Export(acceptedCalcResultSummary, csvContent);
+            calcResultSummaryExporterCsv.Export(acceptedCalcResultSummary, csvContent, showModulations: calcResult.CalcResultModulation is not null);
 
             csvContent = ResetTotals(csvContent.ToString());
 
-            calcResultRejectedProducersExporterCsv.Export(results.CalcResultRejectedProducers, csvContent);
+            calcResultRejectedProducersExporterCsv.Export(calcResult.CalcResultRejectedProducers, csvContent);
 
             return csvContent.ToString();
         }

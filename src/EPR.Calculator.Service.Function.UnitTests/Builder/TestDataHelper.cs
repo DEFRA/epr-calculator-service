@@ -21,7 +21,8 @@
                 CalcResultDetail = GetCalcResultDetail(),
                 CalcResultLapcapData = GetCalcResultLapcapData(),
                 CalcResultLateReportingTonnageData = GetCalcResultLateReportingTonnage(),
-                CalcResultSummary = GetCalcResultSummary()
+                CalcResultSummary = GetCalcResultSummary(),
+                CalcResultModulation = null,
             };
         }
 

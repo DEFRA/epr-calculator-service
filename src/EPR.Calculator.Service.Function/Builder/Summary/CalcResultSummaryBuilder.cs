@@ -10,6 +10,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
     using System.Threading.Tasks;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
+    using EPR.Calculator.API.Data.Enums;
     using EPR.Calculator.API.Data.Models;
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
@@ -47,7 +48,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         {
             this.context = context;
         }
-
 
         public async Task<CalcResultSummary> ConstructAsync(int runId, RelativeYear relativeYear, bool isBillingFile, CalcResult calcResult)
         {
@@ -201,7 +201,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             }
 
             // Set headers with calculated column index
-            CalcResultSummaryUtil.SetHeaders(result, materials);
+            CalcResultSummaryUtil.SetHeaders(result, materials, showModulations: calcResult.CalcResultModulation is not null);
 
             return result;
         }
@@ -365,7 +365,21 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 var calcResultSummaryProducerDisposalFeesByMaterial = new CalcResultSummaryProducerDisposalFeesByMaterial
                 {
                     HouseholdPackagingWasteTonnage = householdPackagingWasteTonnage,
+                    HouseholdPackagingWasteTonnageRed = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.Red, PackagingTypes.Household),
+                    HouseholdPackagingWasteTonnageAmber = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.Amber, PackagingTypes.Household),
+                    HouseholdPackagingWasteTonnageGreen = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.Green, PackagingTypes.Household),
+                    HouseholdPackagingWasteTonnageRedMedical = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.RedMedical, PackagingTypes.Household),
+                    HouseholdPackagingWasteTonnageAmberMedical = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.AmberMedical, PackagingTypes.Household),
+                    HouseholdPackagingWasteTonnageGreenMedical = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.GreenMedical, PackagingTypes.Household),
+
                     PublicBinTonnage = publicBinTonnage,
+                    PublicBinTonnageRed = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.Red, PackagingTypes.PublicBin),
+                    PublicBinTonnageAmber = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.Amber, PackagingTypes.PublicBin),
+                    PublicBinTonnageGreen = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.Green, PackagingTypes.PublicBin),
+                    PublicBinTonnageRedMedical = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.RedMedical, PackagingTypes.PublicBin),
+                    PublicBinTonnageAmberMedical = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.AmberMedical, PackagingTypes.PublicBin),
+                    PublicBinTonnageGreenMedical = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.GreenMedical, PackagingTypes.PublicBin),
+
                     TotalReportedTonnage = CalcResultSummaryUtil.GetReportedTonnage(producer, material, ScaledupProducers, PartialObligations),
                     ManagedConsumerWasteTonnage = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.ConsumerWaste, ScaledupProducers, PartialObligations),
                     NetReportedTonnage = CalcResultSummaryUtil.GetNetReportedTonnage(producer, material, ScaledupProducers, PartialObligations, level),
@@ -391,6 +405,12 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 if (material.Code == MaterialCodes.Glass && materialCostSummary.TryGetValue(material.Code, out var producerDisposalFees))
                 {
                     producerDisposalFees.HouseholdDrinksContainersTonnage = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.HouseholdDrinksContainers, ScaledupProducers, PartialObligations);
+                    producerDisposalFees.HouseholdDrinksContainersTonnageRed = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.Red, PackagingTypes.HouseholdDrinksContainers);
+                    producerDisposalFees.HouseholdDrinksContainersTonnageAmber = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.Amber, PackagingTypes.HouseholdDrinksContainers);
+                    producerDisposalFees.HouseholdDrinksContainersTonnageGreen = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.Green, PackagingTypes.HouseholdDrinksContainers);
+                    producerDisposalFees.HouseholdDrinksContainersTonnageRedMedical = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.RedMedical, PackagingTypes.HouseholdDrinksContainers);
+                    producerDisposalFees.HouseholdDrinksContainersTonnageAmberMedical = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.AmberMedical, PackagingTypes.HouseholdDrinksContainers);
+                    producerDisposalFees.HouseholdDrinksContainersTonnageGreenMedical = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.GreenMedical, PackagingTypes.HouseholdDrinksContainers);
                 }
 
                 result.TotalProducerDisposalFee += calcResultSummaryProducerDisposalFeesByMaterial.ProducerDisposalFee;
@@ -404,7 +424,21 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 var calcResultSummaryProducerCommsFeesCostByMaterial = new CalcResultSummaryProducerCommsFeesCostByMaterial
                 {
                     HouseholdPackagingWasteTonnage = householdPackagingWasteTonnage,
-                    ReportedPublicBinTonnage = publicBinTonnage,
+                    HouseholdPackagingWasteTonnageRed = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.Red, PackagingTypes.Household),
+                    HouseholdPackagingWasteTonnageAmber = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.Amber, PackagingTypes.Household),
+                    HouseholdPackagingWasteTonnageGreen = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.Green, PackagingTypes.Household),
+                    HouseholdPackagingWasteTonnageRedMedical = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.RedMedical, PackagingTypes.Household),
+                    HouseholdPackagingWasteTonnageAmberMedical = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.AmberMedical, PackagingTypes.Household),
+                    HouseholdPackagingWasteTonnageGreenMedical = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.GreenMedical, PackagingTypes.Household),
+
+                    PublicBinTonnage = publicBinTonnage,
+                    PublicBinTonnageRed = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.Red, PackagingTypes.PublicBin),
+                    PublicBinTonnageAmber = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.Amber, PackagingTypes.PublicBin),
+                    PublicBinTonnageGreen = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.Green, PackagingTypes.PublicBin),
+                    PublicBinTonnageRedMedical = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.RedMedical, PackagingTypes.PublicBin),
+                    PublicBinTonnageAmberMedical = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.AmberMedical, PackagingTypes.PublicBin),
+                    PublicBinTonnageGreenMedical = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.GreenMedical, PackagingTypes.PublicBin),
+
                     TotalReportedTonnage = CalcResultSummaryCommsCostTwoA.GetTotalReportedTonnage(producer, material, ScaledupProducers, PartialObligations),
                     PriceperTonne = CalcResultSummaryCommsCostTwoA.GetPriceperTonneForComms(material, calcResult),
                     ProducerTotalCostWithoutBadDebtProvision = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostWithoutBadDebtProvision(producer, material, calcResult, ScaledupProducers, PartialObligations),
@@ -420,7 +454,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
                 if (material.Code == MaterialCodes.Glass && commsCostSummary.TryGetValue(material.Code, out var comm))
                 {
-                    comm.HouseholdDrinksContainers = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.HouseholdDrinksContainers, ScaledupProducers, PartialObligations);
+                    comm.HouseholdDrinksContainersTonnage = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.HouseholdDrinksContainers, ScaledupProducers, PartialObligations);
+                    comm.HouseholdDrinksContainersTonnageRed = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.Red, PackagingTypes.HouseholdDrinksContainers);
+                    comm.HouseholdDrinksContainersTonnageAmber = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.Amber, PackagingTypes.HouseholdDrinksContainers);
+                    comm.HouseholdDrinksContainersTonnageGreen = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.Green, PackagingTypes.HouseholdDrinksContainers);
+                    comm.HouseholdDrinksContainersTonnageRedMedical = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.RedMedical, PackagingTypes.HouseholdDrinksContainers);
+                    comm.HouseholdDrinksContainersTonnageAmberMedical = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.AmberMedical, PackagingTypes.HouseholdDrinksContainers);
+                    comm.HouseholdDrinksContainersTonnageGreenMedical = CalcResultSummaryUtil.GetRagReportedTonnage(producer, material, RagRating.GreenMedical, PackagingTypes.HouseholdDrinksContainers);
                 }
 
                 result.TotalProducerCommsFee += calcResultSummaryProducerCommsFeesCostByMaterial.ProducerTotalCostWithoutBadDebtProvision;
@@ -670,7 +710,21 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 materialCosts.Add(material.Code, new CalcResultSummaryProducerDisposalFeesByMaterial
                 {
                     HouseholdPackagingWasteTonnage = householdPackagingWasteTonnage,
+                    HouseholdPackagingWasteTonnageRed = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.Red, PackagingTypes.Household),
+                    HouseholdPackagingWasteTonnageAmber = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.Amber, PackagingTypes.Household),
+                    HouseholdPackagingWasteTonnageGreen = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.Green, PackagingTypes.Household),
+                    HouseholdPackagingWasteTonnageRedMedical = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.RedMedical, PackagingTypes.Household),
+                    HouseholdPackagingWasteTonnageAmberMedical = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.AmberMedical, PackagingTypes.Household),
+                    HouseholdPackagingWasteTonnageGreenMedical = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.GreenMedical, PackagingTypes.Household),
+
                     PublicBinTonnage = publicBinTonnage,
+                    PublicBinTonnageRed = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.Red, PackagingTypes.PublicBin),
+                    PublicBinTonnageAmber = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.Amber, PackagingTypes.PublicBin),
+                    PublicBinTonnageGreen = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.Green, PackagingTypes.PublicBin),
+                    PublicBinTonnageRedMedical = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.RedMedical, PackagingTypes.PublicBin),
+                    PublicBinTonnageAmberMedical = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.AmberMedical, PackagingTypes.PublicBin),
+                    PublicBinTonnageGreenMedical = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.GreenMedical, PackagingTypes.PublicBin),
+
                     TotalReportedTonnage = CalcResultSummaryUtil.GetReportedTonnageTotal(producersAndSubsidiaries, material, ScaledupProducers, PartialObligations),
                     ManagedConsumerWasteTonnage = CalcResultSummaryUtil.GetTonnageTotal(producersAndSubsidiaries, material, PackagingTypes.ConsumerWaste, ScaledupProducers, PartialObligations),
                     NetReportedTonnage = netReportedTonnage,
@@ -688,8 +742,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
                 if (material.Code == MaterialCodes.Glass && materialCosts.TryGetValue(material.Code, out var materialCost))
                 {
-                    materialCost.HouseholdDrinksContainersTonnage = CalcResultSummaryUtil.GetTonnageTotal(
-                        producersAndSubsidiaries, material, PackagingTypes.HouseholdDrinksContainers, ScaledupProducers, PartialObligations);
+                    materialCost.HouseholdDrinksContainersTonnage = CalcResultSummaryUtil.GetTonnageTotal(producersAndSubsidiaries, material, PackagingTypes.HouseholdDrinksContainers, ScaledupProducers, PartialObligations);
+                    materialCost.HouseholdDrinksContainersTonnageRed = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.Red, PackagingTypes.HouseholdDrinksContainers);
+                    materialCost.HouseholdDrinksContainersTonnageAmber = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.Amber, PackagingTypes.HouseholdDrinksContainers);
+                    materialCost.HouseholdDrinksContainersTonnageGreen = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.Green, PackagingTypes.HouseholdDrinksContainers);
+                    materialCost.HouseholdDrinksContainersTonnageRedMedical = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.RedMedical, PackagingTypes.HouseholdDrinksContainers);
+                    materialCost.HouseholdDrinksContainersTonnageAmberMedical = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.AmberMedical, PackagingTypes.HouseholdDrinksContainers);
+                    materialCost.HouseholdDrinksContainersTonnageGreenMedical = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.GreenMedical, PackagingTypes.HouseholdDrinksContainers);
                 }
 
             }
@@ -712,7 +771,21 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 communicationCosts.Add(material.Code, new CalcResultSummaryProducerCommsFeesCostByMaterial
                 {
                     HouseholdPackagingWasteTonnage = householdPackagingWasteTonnage,
-                    ReportedPublicBinTonnage = publicBinTonnage,
+                    HouseholdPackagingWasteTonnageRed = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.Red, PackagingTypes.Household),
+                    HouseholdPackagingWasteTonnageAmber = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.Amber, PackagingTypes.Household),
+                    HouseholdPackagingWasteTonnageGreen = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.Green, PackagingTypes.Household),
+                    HouseholdPackagingWasteTonnageRedMedical = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.RedMedical, PackagingTypes.Household),
+                    HouseholdPackagingWasteTonnageAmberMedical = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.AmberMedical, PackagingTypes.Household),
+                    HouseholdPackagingWasteTonnageGreenMedical = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.GreenMedical, PackagingTypes.Household),
+
+                    PublicBinTonnage = publicBinTonnage,
+                    PublicBinTonnageRed = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.Red, PackagingTypes.PublicBin),
+                    PublicBinTonnageAmber = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.Amber, PackagingTypes.PublicBin),
+                    PublicBinTonnageGreen = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.Green, PackagingTypes.PublicBin),
+                    PublicBinTonnageRedMedical = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.RedMedical, PackagingTypes.PublicBin),
+                    PublicBinTonnageAmberMedical = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.AmberMedical, PackagingTypes.PublicBin),
+                    PublicBinTonnageGreenMedical = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.GreenMedical, PackagingTypes.PublicBin),
+
                     TotalReportedTonnage = CalcResultSummaryCommsCostTwoA.GetTotalReportedTonnageTotal(producersAndSubsidiaries, material, ScaledupProducers, PartialObligations),
                     PriceperTonne = CalcResultSummaryCommsCostTwoA.GetPriceperTonneForComms(material, calcResult),
                     ProducerTotalCostWithoutBadDebtProvision = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostWithoutBadDebtProvisionTotal(producersAndSubsidiaries, material,
@@ -728,7 +801,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
                 if (material.Code == MaterialCodes.Glass && communicationCosts.TryGetValue(material.Code, out var comm))
                 {
-                    comm.HouseholdDrinksContainers = CalcResultSummaryUtil.GetTonnageTotal(producersAndSubsidiaries, material, PackagingTypes.HouseholdDrinksContainers, ScaledupProducers, PartialObligations);
+                    comm.HouseholdDrinksContainersTonnage = CalcResultSummaryUtil.GetTonnageTotal(producersAndSubsidiaries, material, PackagingTypes.HouseholdDrinksContainers, ScaledupProducers, PartialObligations);
+                    comm.HouseholdDrinksContainersTonnageRed = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.Red, PackagingTypes.HouseholdDrinksContainers);
+                    comm.HouseholdDrinksContainersTonnageAmber = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.Amber, PackagingTypes.HouseholdDrinksContainers);
+                    comm.HouseholdDrinksContainersTonnageGreen = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.Green, PackagingTypes.HouseholdDrinksContainers);
+                    comm.HouseholdDrinksContainersTonnageRedMedical = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.RedMedical, PackagingTypes.HouseholdDrinksContainers);
+                    comm.HouseholdDrinksContainersTonnageAmberMedical = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.AmberMedical, PackagingTypes.HouseholdDrinksContainers);
+                    comm.HouseholdDrinksContainersTonnageGreenMedical = CalcResultSummaryUtil.GetRagReportedTonnageTotal(producersAndSubsidiaries, material, RagRating.GreenMedical, PackagingTypes.HouseholdDrinksContainers);
                 }
             }
 
