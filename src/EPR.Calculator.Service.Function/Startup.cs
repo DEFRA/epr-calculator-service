@@ -50,6 +50,7 @@ using System;
 using System.Configuration;
 using System.Reflection;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
+using EPR.Calculator.Service.Function.Services.DataLoading;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -196,6 +197,18 @@ namespace EPR.Calculator.Service.Function
                 .ValidateOnStart();
 
             services.AddHttpClient<CommonDataApiHttpClient>();
+
+            services
+                .AddOptions<CommonDataApiLoaderOptions>()
+                .Configure<IConfiguration>((options, config) =>
+                {
+                    config.GetSection(CommonDataApiLoaderOptions.SectionKey).Bind(options);
+                })
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
+
+            services.AddSingleton<TimeProvider>(_ => TimeProvider.System);
+            services.AddTransient<IDataLoader, CommonDataApiLoader>();
 
             SetupBlobStorage(services);
             services.AddTransient<IConfigurationService, Configuration>();
