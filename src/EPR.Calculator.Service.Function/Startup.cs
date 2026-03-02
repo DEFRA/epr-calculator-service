@@ -1,4 +1,4 @@
-// <copyright file="Startup.cs" company="PlaceholderCompany">
+﻿// <copyright file="Startup.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
@@ -8,7 +8,6 @@ using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Exporter;
 using EPR.Calculator.API.Validators;
 using EPR.Calculator.API.Wrapper;
-using EPR.Calculator.Service.Common.AzureSynapse;
 using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function;
 using EPR.Calculator.Service.Function.Builder;
@@ -111,8 +110,6 @@ namespace EPR.Calculator.Service.Function
         {
             services.AddTransient<ICalculatorRunService, CalculatorRunService>();
             services.AddTransient<ICalculatorRunParameterMapper, CalculatorRunParameterMapper>();
-            services.AddTransient<IAzureSynapseRunner, AzureSynapseRunner>();
-            services.AddTransient<IPipelineClientFactory, PipelineClientFactory>();
             services.AddTransient<ITransposePomAndOrgDataService, TransposePomAndOrgDataService>();
             services.AddTransient<IRpdStatusDataValidator, RpdStatusDataValidator>();
             services.AddTransient<IOrgAndPomWrapper, OrgAndPomWrapper>();
