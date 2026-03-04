@@ -222,7 +222,8 @@
                         (
                             pdd => pdd.CalculatorRunPomDataMasterId == pomDataMaster.Id &&
                             pdd.OrganisationId == organisation.OrganisationId &&
-                            pdd.SubsidiaryId == organisation.SubsidiaryId 
+                            pdd.SubsidiaryId == organisation.SubsidiaryId  &&
+                            pdd.SubmitterId == organisation.SubmitterId
                         ).ToList();
 
                     // Proceed further only if there is any pom data based on the pom data master id and organisation id
