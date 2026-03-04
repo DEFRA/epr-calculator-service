@@ -18,8 +18,8 @@
     public class TransposePomAndOrgDataServiceTests
     {
 
-        private readonly Guid SubmitterId1 = new Guid();
-        private readonly Guid SubmitterId2 = new Guid();
+        private readonly Guid SubmitterId1 = Guid.NewGuid();
+        private readonly Guid SubmitterId2 = Guid.NewGuid();
 
         private readonly ApplicationDBContext _context;
 
@@ -934,7 +934,6 @@
             {
                 new ()
                 {
-                    Id = 1,
                     OrganisationId = 1,
                     SubsidiaryId = "1",
                     SubmissionPeriod = "2023-P2",
@@ -950,7 +949,6 @@
                 },
                 new ()
                 {
-                    Id = 2,
                     OrganisationId = 1,
                     SubmissionPeriod = "2023-P2",
                     PackagingActivity = null,
@@ -965,14 +963,13 @@
                 },
                 new ()
                 {
-                    Id = 3,
                     OrganisationId = 1,
                     SubsidiaryId = "1",
                     SubmissionPeriod = "2023-P1",
                     PackagingActivity = null,
                     PackagingType = "CW",
                     PackagingClass = "O1",
-                    PackagingMaterial = "PC",
+                    PackagingMaterial = "AL",
                     PackagingMaterialWeight = 1000,
                     LoadTimeStamp = DateTime.UtcNow,
                     CalculatorRunPomDataMasterId = 1,
@@ -981,7 +978,6 @@
                 },
                 new ()
                 {
-                    Id = 4,
                     OrganisationId = 2,
                     SubsidiaryId = "1",
                     SubmissionPeriod = "2024-P1",
@@ -994,6 +990,21 @@
                     CalculatorRunPomDataMasterId = 1,
                     SubmissionPeriodDesc = "January to June 2024",
                     SubmitterId = SubmitterId1
+                },
+                new ()
+                {
+                    OrganisationId = 1,
+                    SubsidiaryId = "1",
+                    SubmissionPeriod = "2023-P2",
+                    PackagingActivity = null,
+                    PackagingType = "CW",
+                    PackagingClass = "O1",
+                    PackagingMaterial = "PC",
+                    PackagingMaterialWeight = 1000,
+                    LoadTimeStamp = DateTime.UtcNow,
+                    CalculatorRunPomDataMasterId = 1,
+                    SubmissionPeriodDesc = "July to December 2023",
+                    SubmitterId = SubmitterId2
                 },
             };
             return list;
@@ -1104,6 +1115,10 @@
             Assert.AreEqual(2, resultProducerDetails.Count());
             Assert.IsFalse(resultProducerDetails.Any(x=>x.SubsidiaryId == "100"));
             Assert.IsNotNull(resultPRM);
+            Assert.AreEqual(3, resultPRM.Count());
+            Assert.IsTrue(resultPRM.Any(x => x.ProducerDetail!.ProducerId == 1 && x.ProducerDetail.SubsidiaryId == null && x.Material!.Code == "PC" && x.PackagingType == "CW" && x.PackagingTonnage == 1));
+            Assert.IsTrue(resultPRM.Any(x => x.ProducerDetail!.ProducerId == 1 && x.ProducerDetail.SubsidiaryId == "1" && x.Material!.Code == "AL" && x.PackagingType == "CW" && x.PackagingTonnage == 1));
+            Assert.IsTrue(resultPRM.Any(x => x.ProducerDetail!.ProducerId == 1 && x.ProducerDetail.SubsidiaryId == "1" && x.Material!.Code == "PC" && x.PackagingType == "CW" && x.PackagingTonnage == 1));
         }
     }
 }
