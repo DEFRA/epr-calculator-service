@@ -5,8 +5,6 @@ using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Common.Utils;
 using System.Linq;
 using System.Security.Cryptography;
-using Microsoft.AspNetCore.Http.Internal;
-using FluentValidation.Validators;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {

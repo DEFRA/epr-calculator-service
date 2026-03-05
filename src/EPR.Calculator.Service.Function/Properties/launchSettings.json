@@ -1,9 +1,11 @@
 {
   "profiles": {
-    "EPR.Calculator.Service.AzureFuntions": {
+    "EPR.Calculator.Service.Function": {
       "commandName": "Project",
-      "commandLineArgs": "--port 7115",
-      "launchBrowser": false
+      "launchBrowser": false,
+      "environmentVariables": {
+        "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated"
+      }
     }
   }
 }
