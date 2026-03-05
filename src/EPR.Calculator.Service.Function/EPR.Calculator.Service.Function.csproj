@@ -55,6 +55,7 @@
     <None Update="local.settings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Remove="local.settings.template.jsonc"/>
   </ItemGroup>
   <ItemGroup>
 	<!--Workaround for this "System.Memory.Data not found" issue: https://github.com/Azure/azure-functions-host/issues/10575-->
