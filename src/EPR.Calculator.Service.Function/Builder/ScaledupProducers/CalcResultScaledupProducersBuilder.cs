@@ -1,4 +1,6 @@
-﻿namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
+﻿using System.Text.Json;
+using EPR.Calculator.Service.Function.Services;
+namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
 {
     using System;
     using System.Collections.Generic;
@@ -188,7 +190,11 @@
             var result = await (from run in this.context.CalculatorRuns
                                 join crpdm in this.context.CalculatorRunPomDataMaster on run.CalculatorRunPomDataMasterId equals crpdm.Id
                                 join crpdd in this.context.CalculatorRunPomDataDetails on crpdm.Id equals crpdd.CalculatorRunPomDataMasterId
-                                where run.Id == runId && organisationIds.Contains(crpdd.OrganisationId.GetValueOrDefault())
+                                join pd in this.context.ProducerDetail.Include(x => x.ProducerReportedMaterials) on crpdd.OrganisationId equals pd.ProducerId
+                                join org in this.context.CalculatorRunOrganisationDataDetails
+                                  on new { ProducerId = pd.ProducerId, SubsidiaryId = pd.SubsidiaryId, SubmitterId = crpdd.SubmitterId}
+                                    equals new { ProducerId = org.OrganisationId, SubsidiaryId = org.SubsidiaryId, SubmitterId = org.SubmitterId }
+                                where run.Id == runId  && organisationIds.Contains(crpdd.OrganisationId.GetValueOrDefault()) && org.ObligationStatus == ObligationStates.Obligated
                                 select crpdd).Distinct().ToListAsync();
             return result;
         }
@@ -198,8 +204,12 @@
             var result = await (from run in this.context.CalculatorRuns
                                 join crpdd in this.context.CalculatorRunPomDataDetails on run.CalculatorRunPomDataMasterId equals crpdd.CalculatorRunPomDataMasterId
                                 join spl in this.context.SubmissionPeriodLookup on crpdd.SubmissionPeriod equals spl.SubmissionPeriod
-                                join pd in this.context.ProducerDetail.Include(x => x.ProducerReportedMaterials) on crpdd.OrganisationId equals pd.ProducerId                                
-                                where run.Id == runId && organisationIds.Contains(crpdd.OrganisationId.GetValueOrDefault()) && pd.CalculatorRunId == runId
+                                join pd in this.context.ProducerDetail.Include(x => x.ProducerReportedMaterials) on crpdd.OrganisationId equals pd.ProducerId
+                                join org in this.context.CalculatorRunOrganisationDataDetails
+                                  on new { ProducerId = pd.ProducerId, SubsidiaryId = pd.SubsidiaryId, SubmitterId = crpdd.SubmitterId}
+                                    equals new { ProducerId = org.OrganisationId, SubsidiaryId = org.SubsidiaryId, SubmitterId = org.SubmitterId }
+                                where run.Id == runId && organisationIds.Contains(crpdd.OrganisationId.GetValueOrDefault())
+                                  && pd.CalculatorRunId == runId && org.ObligationStatus == ObligationStates.Obligated
                                 select new CalcResultScaledupProducer
                                 {
                                     ProducerId = pd.ProducerId,
@@ -229,14 +239,14 @@
                                  .Where(x => scaleupOrganisationIds.Contains(x.OrganisationId) && x.SubsidiaryId == null);
 
             var scaledupOrganisations = await (from run in this.context.CalculatorRuns.AsNoTracking()
-                                               join crodm in this.context.CalculatorRunOrganisationDataMaster.AsNoTracking() on run.CalculatorRunOrganisationDataMasterId equals crodm.Id
+                                            join crodm in this.context.CalculatorRunOrganisationDataMaster.AsNoTracking() on run.CalculatorRunOrganisationDataMasterId equals crodm.Id
                                             join crodd in filteredCrodds on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
-                                            where run.Id == runId 
+                                            where run.Id == runId
                                             select new Organisation
                                             {
                                                 OrganisationId = crodd.OrganisationId,
                                                 OrganisationName = crodd.OrganisationName,
-                                                TradingName = crodd.TradingName,
+                                                TradingName = crodd.TradingName
                                             }).AsNoTracking().Distinct().ToListAsync();
 
             return scaledupOrganisations ?? [];
