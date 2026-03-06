@@ -1,4 +1,5 @@
 ﻿using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ namespace EPR.Calculator.Service.Function.Interface
                                 IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails,
                                 int calculatorRunId,
                                 string createdBy,
+                                RelativeYear relativeYear,
                                 CancellationToken cancellationToken);
     }
 }

@@ -183,6 +183,7 @@
                 calculatorRunOrgDataDetails,
                 resultsRequestDto.RunId,
                 resultsRequestDto.CreatedBy,
+                resultsRequestDto.RelativeYear,
                 cancellationToken);
 
             calculatorRunPomDataDetails = calculatorRunPomDataDetails
