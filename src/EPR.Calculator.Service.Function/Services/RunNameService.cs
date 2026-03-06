@@ -1,4 +1,4 @@
-﻿namespace EPR.Calculator.Service.Function.Services
+namespace EPR.Calculator.Service.Function.Services
 {
     using System;
     using System.Collections.Generic;
@@ -28,7 +28,7 @@
         /// </summary>
         /// <param name="runId">The run ID.</param>
         /// <returns>The run name.</returns>
-        public async Task<string?> GetRunNameAsync(int runId)
+        public async Task<string> GetRunNameAsync(int runId)
         {
             var run = await this.Context.CalculatorRuns
                 .SingleOrDefaultAsync(r => r.Id == runId);
