@@ -2,9 +2,12 @@
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Interface;
+using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.IdentityModel.Tokens;
 using Moq;
+using EPR.Calculator.API.Data.Models;
+
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
@@ -12,6 +15,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     public class ErrorReportServiceTests
     {
         private Mock<IDbLoadingChunkerService<ErrorReport>> mockErrorReport = null!;
+        private Mock<IProducerDetailService> mockProductDetails = null!;
         private ErrorReportService _service = null!;
 
         [TestInitialize]
@@ -19,7 +23,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             // Use Strict so unexpected calls cause immediate failures
             mockErrorReport = new Mock<IDbLoadingChunkerService<ErrorReport>>(MockBehavior.Strict);
-            _service = new ErrorReportService(mockErrorReport.Object);
+            mockProductDetails = new Mock<IProducerDetailService>(MockBehavior.Strict);
+            _service = new ErrorReportService(mockErrorReport.Object, mockProductDetails.Object);
         }
 
         [TestMethod]
@@ -517,25 +522,35 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         [TestMethod]
         public void HandleObligatedErrors_ErrorsExistInRegData()
         {
+            var producer1 = 100101;
+            var producer2 = 200202;
             var submitterId1 = Guid.NewGuid();
             var submitterId2 = Guid.NewGuid();
             var error1 = "Some warning";
             var error2 = "Some other warning";
 
             var orgDetails = new[] {
-                CreateOrganisationData(100101,null,"ECOLTD",submitterId1, "E", errorCode: error1),
-                CreateOrganisationData(200202,null,"Green holdings",submitterId2, "O"),
-                CreateOrganisationData(200202,"100500","Pure leaf drinks",submitterId2, "E", errorCode: error2, statusCode: "some status code"),
-                CreateOrganisationData(200202,"100101","ECOLTD",submitterId2, "E", errorCode: null)
+                CreateOrganisationData(producer1,null,"ECOLTD",submitterId1, "E", errorCode: error1),
+                CreateOrganisationData(producer2,null,"Green holdings",submitterId2, "O"),
+                CreateOrganisationData(producer2,"100500","Pure leaf drinks",submitterId2, "E", errorCode: error2, statusCode: "some status code"),
+                CreateOrganisationData(producer2,"100101","ECOLTD",submitterId2, "E", errorCode: null)
             };
+
+            var pomDetails = new[] {
+                CreatePomData(producer1, "2024-P1",submitterId1,"HH","ST",5000),
+                CreatePomData(producer2, "2024-P1",submitterId2,"HH","PL",2000),
+                CreatePomData(producer2, "2024-P1",submitterId2,"HH","PL",3500,subsidiaryId:"100500"),
+                CreatePomData(producer2, "2024-P1",submitterId2,"HH","PL",3500,subsidiaryId:"100101")
+            };
+
+            var invoiceInstructions = new List<ProducerDesignatedRunInvoiceInstruction>();
 
             // Arrange
             var runId = 300;
             var createdBy = "no error";
 
             // Act
-            IEnumerable<ErrorReport> reportsList = _service.HandleObligatedErrors(orgDetails, runId, createdBy);
-
+            IEnumerable<ErrorReport> reportsList = _service.HandleObligatedErrors(pomDetails, orgDetails, invoiceInstructions, runId, createdBy);
             // Assert
             Assert.AreEqual(3, reportsList.Count(), "Expected 3 unmatched records to be returned.");
             Assert.IsTrue(reportsList.Any(p => p.ProducerId == 100101 && p.SubsidiaryId == null && p.ErrorCode == error1 && p.LeaverCode == ""));
@@ -545,41 +560,71 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         public void HandleObligatedErrors_NoErrorsExistInRegData()
         {
+            var producer1 = 100101;
+            var producer2 = 200202;
             var submitterId1 = Guid.NewGuid();
             var submitterId2 = Guid.NewGuid();
 
             var orgDetails = new[]
             {
-                CreateOrganisationData(100101,null,"ECOLTD",submitterId1, "N"),
-                CreateOrganisationData(200202,null,"Green holdings",submitterId2, "O"),
-                CreateOrganisationData(200202,"100500","Pure leaf drinks",submitterId2, "O"),
-                CreateOrganisationData(200202,"100101","ECOLTD",submitterId2, "O", "01")
+                CreateOrganisationData(producer1,null,"ECOLTD",submitterId1, "N"),
+                CreateOrganisationData(producer2,null,"Green holdings",submitterId2, "O"),
+                CreateOrganisationData(producer2,"100500","Pure leaf drinks",submitterId2, "O"),
+                CreateOrganisationData(producer2,"100101","ECOLTD",submitterId2, "O", "01")
             };
+
+            var pomDetails = new[] {
+                CreatePomData(producer1, "2024-P1",submitterId1,"HH","ST",5000),
+                CreatePomData(producer2, "2024-P1",submitterId2,"HH","PL",2000),
+                CreatePomData(producer2, "2024-P1",submitterId2,"HH","PL",3500,subsidiaryId:"100500"),
+                CreatePomData(producer2, "2024-P1",submitterId2,"HH","PL",3500,subsidiaryId:"100101")
+            };
+
+            var invoiceInstructions = new List<ProducerDesignatedRunInvoiceInstruction>();
 
             // Arrange
             var runId = 300;
             var createdBy = "no error";
 
             // Act
-            IEnumerable<ErrorReport> reportsList = _service.HandleObligatedErrors(orgDetails, runId, createdBy);
+            IEnumerable<ErrorReport> reportsList = _service.HandleObligatedErrors(pomDetails, orgDetails, invoiceInstructions,runId, createdBy);
 
             // Assert
             Assert.AreEqual(0, reportsList.Count(), "Expected 0 unmatched records to be returned.");
         }
 
         [TestMethod]
-        public void HandleWarningsdErrors_WarningsExistInRegData()
+        public void HandleObligatedErrors_DontShowErrorsWithNoPomAndNoNol()
         {
+            var producer1 = 100101; //No pom and has NoL
+            var producer2 = 200202; //Has pom and NoL
+            var producer3 = 300303; //Has pom and no NoL
+            var producer4 = 400404; //No pom or NoL
             var submitterId1 = Guid.NewGuid();
             var submitterId2 = Guid.NewGuid();
-            var error1 = "Some error";
-            var error2 = "Some other error";
+            var error1 = "Some warning";
+            var error2 = "Some other warning";
 
             var orgDetails = new[] {
-                CreateOrganisationData(100101,null,"ECOLTD",submitterId1, "O", errorCode: error1, statusCode: "some status code"),
-                CreateOrganisationData(200202,null,"Green holdings",submitterId2, "O"),
-                CreateOrganisationData(200202,"100500","Pure leaf drinks",submitterId2, "O", errorCode: error2),
-                CreateOrganisationData(200202,"100101","ECOLTD",submitterId2, "O", errorCode: null)
+                CreateOrganisationData(producer1,null,"ECOLTD",submitterId1, "E", errorCode: error1),
+                CreateOrganisationData(producer2,null,"Green holdings",submitterId2, "O"),
+                CreateOrganisationData(producer2,"100500","Pure leaf drinks",submitterId2, "E", errorCode: error2, statusCode: "some status code"),
+                CreateOrganisationData(producer2,"100101","ECOLTD",submitterId2, "E", errorCode: null),
+                CreateOrganisationData(producer3,null,"Pear",submitterId1, "E", errorCode: error1),
+                CreateOrganisationData(producer4,null,"Apple",submitterId1, "E", errorCode: error1)
+            };
+
+            var pomDetails = new[] {
+                CreatePomData(producer2, "2024-P1",submitterId2,"HH","PL",2000),
+                CreatePomData(producer2, "2024-P1",submitterId2,"HH","PL",3500,subsidiaryId:"100500"),
+                CreatePomData(producer2, "2024-P1",submitterId2,"HH","PL",3500,subsidiaryId:"100101"),
+                CreatePomData(producer3, "2024-P1",submitterId1,"HH","PL",5000)
+            };
+
+            var invoiceInstructions = new List<ProducerDesignatedRunInvoiceInstruction>
+            {
+                new ProducerDesignatedRunInvoiceInstruction { ProducerId = producer1 },
+                new ProducerDesignatedRunInvoiceInstruction { ProducerId = producer2 }
             };
 
             // Arrange
@@ -587,43 +632,148 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var createdBy = "no error";
 
             // Act
-            IEnumerable<ErrorReport> reportsList = _service.HandleObligatedWarnings(orgDetails, runId, createdBy);
+            IEnumerable<ErrorReport> reportsList = _service.HandleObligatedErrors(pomDetails, orgDetails, invoiceInstructions, runId, createdBy);
 
             // Assert
-            Assert.AreEqual(2, reportsList.Count(), "Expected 3 unmatched records to be returned.");
-            Assert.IsTrue(reportsList.Any(p => p.ProducerId == 100101 && p.SubsidiaryId == null && p.ErrorCode == error1 && p.LeaverCode == "some status code"));
-            Assert.IsTrue(reportsList.Any(p => p.ProducerId == 200202 && p.SubsidiaryId == "100500" && p.ErrorCode == error2 && p.LeaverCode == ""));;
+            Assert.AreEqual(4, reportsList.Count(), "Expected 4 unmatched records to be returned.");
+            Assert.IsTrue(reportsList.Any(p => p.ProducerId == producer1 && p.SubsidiaryId == null && p.ErrorCode == error1));
+            Assert.IsTrue(reportsList.Any(p => p.ProducerId == producer2 && p.SubsidiaryId == "100500" && p.ErrorCode == error2 && p.LeaverCode == "some status code"));
+            Assert.IsTrue(reportsList.Any(p => p.ProducerId == producer2 && p.SubsidiaryId == "100101" && p.ErrorCode == ErrorCodes.Empty && p.LeaverCode == ""));
+            Assert.IsTrue(reportsList.Any(p => p.ProducerId == producer3 && p.SubsidiaryId == null && p.ErrorCode == error1));
+        }
+
+        [TestMethod]
+        public void HandleWarningsErrors_WarningsExistInRegData()
+        {
+            var producer1 = 100101;
+            var producer2 = 200202;
+            var submitterId1 = Guid.NewGuid();
+            var submitterId2 = Guid.NewGuid();
+            var error1 = "Some error";
+            var error2 = "Some other error";
+
+            var orgDetails = new[] {
+                CreateOrganisationData(producer1,null,"ECOLTD",submitterId1, "O", errorCode: error1, statusCode: "some status code"),
+                CreateOrganisationData(producer2,null,"Green holdings",submitterId2, "O"),
+                CreateOrganisationData(producer2,"100500","Pure leaf drinks",submitterId2, "O", errorCode: error2),
+                CreateOrganisationData(producer2,"100101","ECOLTD",submitterId2, "O", errorCode: null)
+            };
+
+            var pomDetails = new[] {
+                CreatePomData(producer1, "2024-P1",submitterId1,"HH","ST",5000),
+                CreatePomData(producer2, "2024-P1",submitterId2,"HH","PL",2000),
+                CreatePomData(producer2, "2024-P1",submitterId2,"HH","PL",3500,subsidiaryId:"100500"),
+                CreatePomData(producer2, "2024-P1",submitterId2,"HH","PL",3500,subsidiaryId:"100101")
+            };
+
+            var invoiceInstructions = new List<ProducerDesignatedRunInvoiceInstruction>();
+
+            // Arrange
+            var runId = 300;
+            var createdBy = "no error";
+
+            // Act
+            IEnumerable<ErrorReport> reportsList = _service.HandleObligatedWarnings(pomDetails, orgDetails, invoiceInstructions, runId, createdBy);
+
+            // Assert
+            Assert.AreEqual(2, reportsList.Count(), "Expected 2 unmatched records to be returned.");
+            Assert.IsTrue(reportsList.Any(p => p.ProducerId == producer1 && p.SubsidiaryId == null && p.ErrorCode == error1 && p.LeaverCode == "some status code"));
+            Assert.IsTrue(reportsList.Any(p => p.ProducerId == producer2 && p.SubsidiaryId == "100500" && p.ErrorCode == error2 && p.LeaverCode == ""));;
+        }
+
+        [TestMethod]
+        public void HandleWarningsErrors_DontShowWarningsWithNoPomAndNoNol()
+        {
+            var producer1 = 100101; //No pom and has NoL
+            var producer2 = 200202; //Has pom and NoL
+            var producer3 = 300303; //Has pom and no NoL
+            var producer4 = 400404; //No pom or NoL
+            var submitterId1 = Guid.NewGuid();
+            var submitterId2 = Guid.NewGuid();
+            var error1 = "Some error";
+            var error2 = "Some other error";
+
+            var orgDetails = new[] {
+                CreateOrganisationData(producer1,null,"ECOLTD",submitterId1, "O", errorCode: error1, statusCode: "some status code"),
+                CreateOrganisationData(producer2,null,"Green holdings",submitterId2, "O"),
+                CreateOrganisationData(producer2,"100500","Pure leaf drinks",submitterId2, "O", errorCode: error2),
+                CreateOrganisationData(producer2,"100101","ECOLTD",submitterId2, "O", errorCode: null),
+                CreateOrganisationData(producer3,null,"Pear",submitterId1, "O", errorCode: error1),
+                CreateOrganisationData(producer4,null,"Apple",submitterId1, "O", errorCode: error1)
+            };
+
+            var pomDetails = new[] {
+                CreatePomData(producer2, "2024-P1",submitterId2,"HH","PL",2000),
+                CreatePomData(producer2, "2024-P1",submitterId2,"HH","PL",3500,subsidiaryId:"100500"),
+                CreatePomData(producer2, "2024-P1",submitterId2,"HH","PL",3500,subsidiaryId:"100101"),
+                CreatePomData(producer3, "2024-P1",submitterId1,"HH","PL",5000)
+            };
+
+            var invoiceInstructions = new List<ProducerDesignatedRunInvoiceInstruction>
+            {
+                new ProducerDesignatedRunInvoiceInstruction { ProducerId = producer1 },
+                new ProducerDesignatedRunInvoiceInstruction { ProducerId = producer2 }
+            };  
+
+            // Arrange
+            var runId = 300;
+            var createdBy = "no error";
+
+            // Act
+            IEnumerable<ErrorReport> reportsList = _service.HandleObligatedWarnings(pomDetails, orgDetails, invoiceInstructions, runId, createdBy);
+
+            // Assert
+            Assert.AreEqual(3, reportsList.Count(), "Expected 3 unmatched records to be returned.");
+            Assert.IsTrue(reportsList.Any(p => p.ProducerId == producer1 && p.SubsidiaryId == null && p.ErrorCode == error1 && p.LeaverCode == "some status code"));
+            Assert.IsTrue(reportsList.Any(p => p.ProducerId == producer2 && p.SubsidiaryId == "100500" && p.ErrorCode == error2 && p.LeaverCode == ""));
+            Assert.IsTrue(reportsList.Any(p => p.ProducerId == producer3 && p.SubsidiaryId == null && p.ErrorCode == error1));
         }
 
         [TestMethod]
         public async Task HandleErrors_AllTypes()
         {
+            var producer1 = 100101;
+            var producer2 = 200202;
+            var producer3 = 300303;
+            var producer4 = 400404;
+            var producer5 = 100200;
+            var producer6 = 500505;
+            var producer7 = 600606;
+            var producer8 = 700707;
+            var relativeYear = new RelativeYear(2025);
             var submitterId1 = Guid.NewGuid();
             var submitterId2 = Guid.NewGuid();
             var submitterId3 = Guid.NewGuid();
 
             var orgDetails = new[]
             {
-                CreateOrganisationData(100101,null,"ECOLTD",submitterId1, "N"),
-                CreateOrganisationData(200202,null,"Green holdings",submitterId2, "O"),
-                CreateOrganisationData(200202,"100500","Pure leaf drinks",submitterId2, "O"),
-                CreateOrganisationData(200202,"100101","ECOLTD",submitterId2, "O", "01"),
-                CreateOrganisationData(300303,null,"ECOLTD",submitterId3, "O", "01", errorCode: "some warning"),
-                CreateOrganisationData(400404,"404","Tea and cakes",submitterId3, "E", "01", errorCode: "some synapse error")
+                CreateOrganisationData(producer1,null,"ECOLTD",submitterId1, "N"),
+                CreateOrganisationData(producer2,null,"Green holdings",submitterId2, "O"),
+                CreateOrganisationData(producer2,"100500","Pure leaf drinks",submitterId2, "O"),
+                CreateOrganisationData(producer2,"100101","ECOLTD",submitterId2, "O", "01"),
+                CreateOrganisationData(producer3,null,"ECOLTD",submitterId3, "O", "01", errorCode: "some warning"),
+                CreateOrganisationData(producer4,"404","Tea and cakes",submitterId3, "E", "01", errorCode: "some synapse error"),
+                CreateOrganisationData(producer6,null, "Pear", submitterId3, "E", "16", errorCode: "some synapse error"), //Has pom but no Nol - should show in error report
+                CreateOrganisationData(producer7,null, "Kiwi", submitterId3, "O", "16", errorCode: "some warning"), //No pom but has Nol - should show in error report
+                CreateOrganisationData(producer8,null, "Banana", submitterId3, "O", "16", errorCode: "some warning"), // No pom but no Nol - shouldn't show in error report
             };
 
             var pomDetails = new[] {
-                CreatePomData(100101, "2024-P1",submitterId1,"HH","ST",5000),
-                CreatePomData(100101, "2024-P1",submitterId1,"HH","PL",3000),
-                CreatePomData(100101, "2024-P4",submitterId1,"HH","ST",5000),
-                CreatePomData(100101, "2024-P4",submitterId1,"HH","PL",3000),
-                CreatePomData(200202, "2024-P1",submitterId2,"HH","PL",2000),
-                CreatePomData(200202, "2024-P1",submitterId2,"HH","AL",4500),
-                CreatePomData(200202, "2024-P4",submitterId2,"HH","PL",2000),
-                CreatePomData(200202, "2024-P1",submitterId2,"HH","PL",3500,subsidiaryId:"100500"),
-                CreatePomData(200202, "2024-P1",submitterId2,"HH","PL",4000,subsidiaryId:"100500"),
-                CreatePomData(200202, "2024-P4",submitterId2,"HH","PL",3000,subsidiaryId:"100500"),
-                CreatePomData(100200, "2024-P1",submitterId1,"HH","ST",5000),
+                CreatePomData(producer1, "2024-P1",submitterId1,"HH","ST",5000),
+                CreatePomData(producer1, "2024-P1",submitterId1,"HH","PL",3000),
+                CreatePomData(producer1, "2024-P4",submitterId1,"HH","ST",5000),
+                CreatePomData(producer1, "2024-P4",submitterId1,"HH","PL",3000),
+                CreatePomData(producer2, "2024-P1",submitterId2,"HH","PL",2000),
+                CreatePomData(producer2, "2024-P1",submitterId2,"HH","AL",4500),
+                CreatePomData(producer2, "2024-P4",submitterId2,"HH","PL",2000),
+                CreatePomData(producer2, "2024-P1",submitterId2,"HH","PL",3500,subsidiaryId:"100500"),
+                CreatePomData(producer2, "2024-P1",submitterId2,"HH","PL",4000,subsidiaryId:"100500"),
+                CreatePomData(producer2, "2024-P4",submitterId2,"HH","PL",3000,subsidiaryId:"100500"),
+                CreatePomData(producer3, "2024-P1",submitterId3,"HH","ST",5000),
+                CreatePomData(producer3, "2024-P1",submitterId3,"HH","ST",5555),
+                CreatePomData(producer4, "2024-P1",submitterId3,"HH","ST",5666, subsidiaryId:"404"),
+                CreatePomData(producer5, "2024-P1",submitterId1,"HH","ST",5000),
+                CreatePomData(producer7, "2024-P1",submitterId3,"HH","ST",5000),
             };
 
             // Arrange
@@ -632,22 +782,31 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             IEnumerable<ErrorReport> errorReports = Enumerable.Empty<ErrorReport>();
             mockErrorReport.Setup(m => m.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>())).Callback<IEnumerable<ErrorReport>>(arg => errorReports = arg).Returns(Task.CompletedTask);
+            mockProductDetails
+            .Setup(m => m.GetProducerDetails(It.IsAny<RelativeYear>()))
+            .ReturnsAsync(new List<ProducerInvoicedDto>{ 
+                new ProducerInvoicedDto { CalculatorRunId = runId-1, InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = producer6 } 
+            }});
 
             // Act
-            var reportsList = await _service.HandleErrors(pomDetails, orgDetails, runId, createdBy, CancellationToken.None);
+            var reportsList = await _service.HandleErrors(pomDetails, orgDetails, runId, createdBy, relativeYear, CancellationToken.None);
 
-            Assert.AreEqual(6, errorReports.Count(), "Expected 6 unmatched records to be inserted.");
-            Assert.IsTrue(errorReports.Any(p => p.ProducerId == 100200 && p.SubsidiaryId == null && p.ErrorCode == ErrorCodes.MissingRegistrationData));
-            Assert.IsTrue(errorReports.Any(p => p.ProducerId == 200202 && p.SubsidiaryId == null && p.ErrorCode == ErrorCodes.Empty));
-            Assert.IsTrue(errorReports.Any(p => p.ProducerId == 200202 && p.SubsidiaryId == "100101" && p.ErrorCode == ErrorCodes.MissingPOMData && p.LeaverCode == "01"));
-            Assert.IsTrue(errorReports.Any(p => p.ProducerId == 300303 && p.SubsidiaryId == null && p.ErrorCode == "some warning"));
-            Assert.IsTrue(errorReports.Any(p => p.ProducerId == 400404 && p.SubsidiaryId == null && p.ErrorCode == ErrorCodes.Empty));
-            Assert.IsTrue(errorReports.Any(p => p.ProducerId == 400404 && p.SubsidiaryId == "404" && p.ErrorCode == "some synapse error"));
+            Assert.AreEqual(8, errorReports.Count(), "Expected 8 unmatched records to be inserted.");
+            Assert.IsTrue(errorReports.Any(p => p.ProducerId == producer5 && p.SubsidiaryId == null && p.ErrorCode == ErrorCodes.MissingRegistrationData));
+            Assert.IsTrue(errorReports.Any(p => p.ProducerId == producer2 && p.SubsidiaryId == null && p.ErrorCode == ErrorCodes.Empty));
+            Assert.IsTrue(errorReports.Any(p => p.ProducerId == producer2 && p.SubsidiaryId == "100101" && p.ErrorCode == ErrorCodes.MissingPOMData && p.LeaverCode == "01"));
+            Assert.IsTrue(errorReports.Any(p => p.ProducerId == producer3 && p.SubsidiaryId == null && p.ErrorCode == "some warning"));
+            Assert.IsTrue(errorReports.Any(p => p.ProducerId == producer4 && p.SubsidiaryId == null && p.ErrorCode == ErrorCodes.Empty));
+            Assert.IsTrue(errorReports.Any(p => p.ProducerId == producer4 && p.SubsidiaryId == "404" && p.ErrorCode == "some synapse error"));
+            Assert.IsTrue(errorReports.Any(p => p.ProducerId == producer6 && p.SubsidiaryId == null && p.ErrorCode == "some synapse error"));
+            Assert.IsTrue(errorReports.Any(p => p.ProducerId == producer7 && p.SubsidiaryId == null && p.ErrorCode == "some warning"));
+            Assert.IsFalse(errorReports.Any(p => p.ProducerId == producer8 && p.SubsidiaryId == null && p.ErrorCode == "some warning"));
 
-            Assert.AreEqual(3, reportsList.Count(), "Expected 3 errors. Warnings and empty error parents should not be included.");
-            Assert.IsTrue(reportsList.Any(p => p.OrgId == 100200 && p.SubId == null));
-            Assert.IsTrue(reportsList.Any(p => p.OrgId == 200202 && p.SubId == "100101"));
-            Assert.IsTrue(reportsList.Any(p => p.OrgId == 400404 && p.SubId == "404"));
+            Assert.AreEqual(4, reportsList.Count(), "Expected 4 errors. Warnings and empty error parents should not be included.");
+            Assert.IsTrue(reportsList.Any(p => p.OrgId == producer5 && p.SubId == null));
+            Assert.IsTrue(reportsList.Any(p => p.OrgId == producer2 && p.SubId == "100101"));
+            Assert.IsTrue(reportsList.Any(p => p.OrgId == producer4 && p.SubId == "404"));
+            Assert.IsTrue(reportsList.Any(p => p.OrgId == producer6 && p.SubId == null));
         }
 
         private static CalculatorRunPomDataDetail CreatePomData(int orgId, string submissionPeriod, Guid submitterId, string packagingType, string packagingMaterial, int packagingMaterialWeight, string submissionPeriodDesc = "Jan to December 2025", string? subsidiaryId = null)

@@ -1,4 +1,5 @@
 ﻿using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Interface;
 using System;
@@ -12,10 +13,12 @@ namespace EPR.Calculator.Service.Function.Services
     public class ErrorReportService : IErrorReportService
     {
         private IDbLoadingChunkerService<ErrorReport> ErrorReportChunker { get; init; }
+        private IProducerDetailService ProducerDetailService { get; init; }
 
-        public ErrorReportService(IDbLoadingChunkerService<ErrorReport> errorReportChunker)
-        {
+        public ErrorReportService(IDbLoadingChunkerService<ErrorReport> errorReportChunker, IProducerDetailService producerDetailService)
+        {   
             ErrorReportChunker = errorReportChunker ?? throw new ArgumentNullException(nameof(errorReportChunker));
+            ProducerDetailService = producerDetailService ?? throw new ArgumentNullException(nameof(producerDetailService));
         }
 
         public List<ErrorReport> HandleMissingRegistrationData(
@@ -57,22 +60,32 @@ namespace EPR.Calculator.Service.Function.Services
                 ).ToList();
         }
 
-        public List<ErrorReport> HandleObligatedErrors(IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails, int calculatorRunId, string createdBy)
+        public List<ErrorReport> HandleObligatedErrors(IEnumerable<CalculatorRunPomDataDetail> pomDetails, IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails, IEnumerable<ProducerDesignatedRunInvoiceInstruction> invoicedDetailsForFY, int calculatorRunId, string createdBy)
         {
+            if (pomDetails == null) throw new ArgumentNullException(nameof(pomDetails));
             if (orgDetails == null) throw new ArgumentNullException(nameof(orgDetails));
 
             return orgDetails
                     .Where(x => (x.ObligationStatus == ObligationStates.Error))
+                    .Where(o => 
+                        pomDetails.Any(p => p.OrganisationId == o.OrganisationId && p.SubsidiaryId == o.SubsidiaryId && p.SubmitterId == o.SubmitterId)
+                        || invoicedDetailsForFY.Any(i => i.ProducerId == o.OrganisationId)
+                    )
                     .Select(x => CreateError(x.OrganisationId, x.SubsidiaryId, calculatorRunId, createdBy, x.ErrorCode ?? string.Empty, leaverCode: x.StatusCode))
                     .ToList();
         }
 
-        public List<ErrorReport> HandleObligatedWarnings(IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails, int calculatorRunId, string createdBy)
+        public List<ErrorReport> HandleObligatedWarnings(IEnumerable<CalculatorRunPomDataDetail> pomDetails, IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails, IEnumerable<ProducerDesignatedRunInvoiceInstruction> invoicedDetailsForFY, int calculatorRunId, string createdBy)
         {
+            if (pomDetails == null) throw new ArgumentNullException(nameof(pomDetails));
             if (orgDetails == null) throw new ArgumentNullException(nameof(orgDetails));
 
             return orgDetails
                     .Where(x => x.ObligationStatus == ObligationStates.Obligated && !string.IsNullOrEmpty(x.ErrorCode))
+                    .Where(o => 
+                        pomDetails.Any(p => p.OrganisationId == o.OrganisationId && p.SubsidiaryId == o.SubsidiaryId && p.SubmitterId == o.SubmitterId)
+                        || invoicedDetailsForFY.Any(i => i.ProducerId == o.OrganisationId)
+                    )
                     .Select(x => CreateError(x.OrganisationId, x.SubsidiaryId, calculatorRunId, createdBy, x.ErrorCode ?? string.Empty, leaverCode: x.StatusCode))
                     .ToList();
         }
@@ -82,10 +95,13 @@ namespace EPR.Calculator.Service.Function.Services
                                 IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails,
                                 int calculatorRunId,
                                 string createdBy,
+                                RelativeYear relativeYear,
                                 CancellationToken cancellationToken)
         {
-            var obligatedErrors = HandleObligatedErrors(orgDetails, calculatorRunId, createdBy);
-            var obligatedWarnings = HandleObligatedWarnings(orgDetails, calculatorRunId, createdBy);
+            var invoiceInstructionsFY = (await ProducerDetailService.GetProducerDetails(relativeYear)).Select(p => p.InvoiceInstruction);
+
+            var obligatedErrors = HandleObligatedErrors(pomDetails, orgDetails, invoiceInstructionsFY!, calculatorRunId, createdBy);
+            var obligatedWarnings = HandleObligatedWarnings(pomDetails, orgDetails, invoiceInstructionsFY!, calculatorRunId, createdBy);
             var missingRegErrors = HandleMissingRegistrationData(pomDetails, orgDetails, calculatorRunId, createdBy);
             var missingPomErrors = HandleMissingPomData(pomDetails, orgDetails, calculatorRunId, createdBy);
 
