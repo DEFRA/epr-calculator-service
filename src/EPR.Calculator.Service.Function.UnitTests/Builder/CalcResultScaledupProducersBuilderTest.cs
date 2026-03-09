@@ -10,6 +10,8 @@
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Mappers;
     using EPR.Calculator.Service.Function.Models;
+    using EPR.Calculator.Service.Function.Services;
+
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
     using static EPR.Calculator.Service.Function.UnitTests.Builder.CalcRunLaDisposalCostBuilderTests;
@@ -20,6 +22,9 @@
         private readonly ApplicationDBContext dbContext;
         private readonly int runId = 1;
         private CalcResultScaledupProducersBuilder builder;
+
+        private readonly System.Guid submitterId = System.Guid.NewGuid();
+        private readonly System.Guid submitterId2 = System.Guid.NewGuid();
 
         private void PrepareNonScaledUpProducer()
         {
@@ -75,16 +80,30 @@
                 CalculatorRunPomDataMaster = calcRunPomDataMaster,
             });
 
-            this.dbContext.CalculatorRunOrganisationDataDetails.Add(
+            this.dbContext.CalculatorRunOrganisationDataDetails.AddRange(
                 new CalculatorRunOrganisationDataDetail
                 {
                     Id = 1,
                     OrganisationId = 11,
                     SubsidiaryId = null,
+                    SubmitterId  = submitterId,
                     OrganisationName = "Allied Packaging",
                     LoadTimeStamp = DateTime.UtcNow,
-                    CalculatorRunOrganisationDataMaster = calcRunOrganisationDataMaster
-                });
+                    CalculatorRunOrganisationDataMaster = calcRunOrganisationDataMaster,
+                    ObligationStatus = ObligationStates.Obligated
+                },
+                new CalculatorRunOrganisationDataDetail
+                {
+                    Id = 2,
+                    OrganisationId = 11,
+                    SubsidiaryId = null,
+                    SubmitterId  = submitterId2,
+                    OrganisationName = "Allied Packaging",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    CalculatorRunOrganisationDataMaster = calcRunOrganisationDataMaster,
+                    ObligationStatus = ObligationStates.NotObligated
+                }
+                );
 
             this.dbContext.CalculatorRunPomDataDetails.Add(
                 new CalculatorRunPomDataDetail
@@ -146,7 +165,7 @@
 
         private void PrepareScaledUpProducer()
         {
-            this.dbContext.CalculatorRunPomDataDetails.Add(
+            this.dbContext.CalculatorRunPomDataDetails.AddRange(
             new CalculatorRunPomDataDetail
             {
                 LoadTimeStamp = DateTime.UtcNow,
@@ -154,6 +173,43 @@
                 SubmissionPeriodDesc = "desc",
                 CalculatorRunPomDataMaster = this.dbContext.CalculatorRunPomDataMaster.First(),
                 OrganisationId = 11,
+                SubmitterId = submitterId,
+                PackagingType = "HH",
+                PackagingClass = "O1",
+                PackagingMaterial = "PC",
+                PackagingMaterialWeight = 1000
+            },
+            new CalculatorRunPomDataDetail
+            {
+                LoadTimeStamp = DateTime.UtcNow,
+                SubmissionPeriod = "2024-P2",
+                SubmissionPeriodDesc = "desc",
+                CalculatorRunPomDataMaster = this.dbContext.CalculatorRunPomDataMaster.First(),
+                OrganisationId = 11,
+                SubmitterId = submitterId2,
+                PackagingType = "HH",
+                PackagingClass = "O1",
+                PackagingMaterial = "PC",
+                PackagingMaterialWeight = 1000
+            }
+            );
+
+            var producerDetail = new ProducerDetail
+            {
+                CalculatorRunId = 1,
+                ProducerId = 11,
+                ProducerName = "Producer Test",
+            };
+
+            this.dbContext.ProducerDetail.Add(producerDetail);
+
+            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            {
+                PackagingType = "HH",
+                ProducerDetail = producerDetail,
+                MaterialId = 4,
+                PackagingTonnage = 1,
+
             });
 
             this.dbContext.SubmissionPeriodLookup.Add(
@@ -213,7 +269,11 @@
             var result = await this.builder.ConstructAsync(requestDto);
 
             // Assert
-            Assert.AreEqual(3, result.ScaledupProducers!.Count());
+            Assert.AreEqual(2, result.ScaledupProducers!.Count());
+            var tonnage = result.ScaledupProducers!.FirstOrDefault(x => x.ProducerId == 11 && x.IsTotalRow == false && x.IsSubtotalRow == false)?.ScaledupProducerTonnageByMaterial["PC"];
+            Assert.AreEqual(1, tonnage!.TotalReportedTonnage);
+            Assert.AreEqual(2.999m, tonnage!.ScaledupTotalReportedTonnage);
+            
         }
 
         /// <summary>
@@ -234,7 +294,7 @@
 
             // Assert
             var actualNumberScaledUpProducer = result.ScaledupProducers!.Where(t => !t.IsTotalRow);
-            Assert.AreEqual(2, actualNumberScaledUpProducer.Count());
+            Assert.AreEqual(1, actualNumberScaledUpProducer.Count());
         }
 
         /// <summary>
