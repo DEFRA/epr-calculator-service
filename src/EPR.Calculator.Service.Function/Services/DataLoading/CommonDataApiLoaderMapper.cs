@@ -21,9 +21,11 @@ namespace EPR.Calculator.Service.Function.Services.DataLoading
                 SubsidiaryId = r.SubsidiaryId,
                 PackagingType = r.PackagingType,
                 PackagingMaterial = r.PackagingMaterial,
+                PackagingMaterialSubtype = r.PackagingMaterialSubtype,
                 PackagingMaterialWeight = r.PackagingMaterialWeight,
                 PackagingClass = r.PackagingClass,
                 PackagingActivity = r.PackagingActivity,
+                RamRagRating = r.RamRagRating,
                 SubmitterId = Guid.TryParse(r.SubmitterId, out var guid)
                     ? guid
                     : throw new FormatException(

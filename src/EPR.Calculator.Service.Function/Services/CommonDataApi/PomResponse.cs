@@ -16,9 +16,11 @@ namespace EPR.Calculator.Service.Function.Services.CommonDataApi
         public string? SubsidiaryId { get; init; }
         public string? PackagingType { get; init; }
         public string? PackagingMaterial { get; init; }
+        public string? PackagingMaterialSubtype { get; init; }
         public double? PackagingMaterialWeight { get; init; }
         public string? PackagingClass { get; init; }
         public string? PackagingActivity { get; init; }
+        public string? RamRagRating { get; init; }
         public string? SubmitterId { get; init; }
     }
 }

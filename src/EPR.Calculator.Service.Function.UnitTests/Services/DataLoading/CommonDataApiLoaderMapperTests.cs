@@ -30,9 +30,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
                 SubsidiaryId = "SUB-001",
                 PackagingType = "HH",
                 PackagingMaterial = "PL",
+                PackagingMaterialSubtype = "ST-01",
                 PackagingMaterialWeight = 250.75,
                 PackagingClass = "P1",
                 PackagingActivity = "PAC",
+                RamRagRating = "Green",
                 SubmitterId = ValidGuid
             };
 
@@ -48,9 +50,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
             Assert.AreEqual("SUB-001", pom.SubsidiaryId);
             Assert.AreEqual("HH", pom.PackagingType);
             Assert.AreEqual("PL", pom.PackagingMaterial);
+            Assert.AreEqual("ST-01", pom.PackagingMaterialSubtype);
             Assert.AreEqual(250.75, pom.PackagingMaterialWeight);
             Assert.AreEqual("P1", pom.PackagingClass);
             Assert.AreEqual("PAC", pom.PackagingActivity);
+            Assert.AreEqual("Green", pom.RamRagRating);
             Assert.AreEqual(Guid.Parse(ValidGuid), pom.SubmitterId);
             Assert.AreEqual(FixedUtcNow.DateTime, pom.LoadTimeStamp);
         }
