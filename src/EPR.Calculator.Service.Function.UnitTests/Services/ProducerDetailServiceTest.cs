@@ -82,5 +82,22 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.AreEqual(3, result.Count());
         }
 
+        [TestMethod]
+        public async Task GetProducerDetails_Empty()
+        {
+
+            // Arrange
+            var producerDetailService = new ProducerDetailService(this.context);
+
+        
+            List<int> producerIds = new List<int> { 1 };
+
+            // Act
+            var result = await producerDetailService.GetProducerDetails(new RelativeYear(2025), producerIds);
+            
+            // Assert
+            Assert.IsNotNull(result);
+        }
+
     }
 }

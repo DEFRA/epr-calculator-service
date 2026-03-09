@@ -60,7 +60,7 @@ namespace EPR.Calculator.Service.Function.Services
 
         public async Task<IEnumerable<ProducerInvoicedDto>> GetProducerDetails(RelativeYear relativeYear, IEnumerable<int> missingProducersIdsInCurrentRun)
         {
-            return (await GetProducerDetails(relativeYear)).Where(p => missingProducersIdsInCurrentRun.Contains(p.ProducerDetail?.ProducerId ?? 0));
+            return (await GetProducerDetails(relativeYear)).Where(p => missingProducersIdsInCurrentRun.Contains(p.ProducerDetail!.ProducerId));
         }
 
         public async Task<IEnumerable<int>> GetProducers(int runId)

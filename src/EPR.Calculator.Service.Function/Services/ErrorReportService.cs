@@ -44,14 +44,11 @@ namespace EPR.Calculator.Service.Function.Services
 
         public List<ErrorReport> HandleMissingPomData(IEnumerable<CalculatorRunPomDataDetail> pomDetails, IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails, int calculatorRunId, string createdBy)
         {
-            if (pomDetails == null) throw new ArgumentNullException(nameof(pomDetails));
-            if (orgDetails == null) throw new ArgumentNullException(nameof(orgDetails));
-
             var distinctPoms = pomDetails.DistinctBy(x => (x.OrganisationId, x.SubsidiaryId, x.SubmitterId));
 
             return orgDetails
                 .Where(o => ObligationStates.IsObligated(o.ObligationStatus))
-                .Where(o => !distinctPoms.Any(p => p.OrganisationId == o.OrganisationId && p.SubsidiaryId == o.SubsidiaryId && p.SubmitterId == o.SubmitterId))
+                .Where(o => !distinctPoms.Any(p => new { OrgId = p.OrganisationId, p.SubsidiaryId, p.SubmitterId }.Equals(new { OrgId = (int?)o.OrganisationId, o.SubsidiaryId, o.SubmitterId })))
                 .SelectMany(reg =>
                     // Check whether this reg 'should have pom' by seeing if they have previously submitted under a different entity
                     distinctPoms.Any(p => (reg.SubsidiaryId ?? reg.OrganisationId.ToString()) == (p.SubsidiaryId ?? p.OrganisationId?.ToString()))
@@ -62,31 +59,25 @@ namespace EPR.Calculator.Service.Function.Services
 
         public List<ErrorReport> HandleObligatedErrors(IEnumerable<CalculatorRunPomDataDetail> pomDetails, IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails, IEnumerable<ProducerDesignatedRunInvoiceInstruction> invoicedDetailsForFY, int calculatorRunId, string createdBy)
         {
-            if (pomDetails == null) throw new ArgumentNullException(nameof(pomDetails));
-            if (orgDetails == null) throw new ArgumentNullException(nameof(orgDetails));
-
             return orgDetails
                     .Where(x => (x.ObligationStatus == ObligationStates.Error))
                     .Where(o => 
-                        pomDetails.Any(p => p.OrganisationId == o.OrganisationId && p.SubsidiaryId == o.SubsidiaryId && p.SubmitterId == o.SubmitterId)
+                        pomDetails.Any(p => new { OrgId = p.OrganisationId, p.SubsidiaryId, p.SubmitterId }.Equals(new { OrgId = (int?)o.OrganisationId, o.SubsidiaryId, o.SubmitterId }))
                         || invoicedDetailsForFY.Any(i => i.ProducerId == o.OrganisationId)
                     )
-                    .Select(x => CreateError(x.OrganisationId, x.SubsidiaryId, calculatorRunId, createdBy, x.ErrorCode ?? string.Empty, leaverCode: x.StatusCode))
+                    .Select(x => CreateError(x.OrganisationId, x.SubsidiaryId, calculatorRunId, createdBy, x.ErrorCode, leaverCode: x.StatusCode))
                     .ToList();
         }
 
         public List<ErrorReport> HandleObligatedWarnings(IEnumerable<CalculatorRunPomDataDetail> pomDetails, IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails, IEnumerable<ProducerDesignatedRunInvoiceInstruction> invoicedDetailsForFY, int calculatorRunId, string createdBy)
         {
-            if (pomDetails == null) throw new ArgumentNullException(nameof(pomDetails));
-            if (orgDetails == null) throw new ArgumentNullException(nameof(orgDetails));
-
             return orgDetails
                     .Where(x => x.ObligationStatus == ObligationStates.Obligated && !string.IsNullOrEmpty(x.ErrorCode))
                     .Where(o => 
-                        pomDetails.Any(p => p.OrganisationId == o.OrganisationId && p.SubsidiaryId == o.SubsidiaryId && p.SubmitterId == o.SubmitterId)
+                        pomDetails.Any(p => new { OrgId = p.OrganisationId, p.SubsidiaryId, p.SubmitterId }.Equals(new { OrgId = (int?)o.OrganisationId, o.SubsidiaryId, o.SubmitterId }))
                         || invoicedDetailsForFY.Any(i => i.ProducerId == o.OrganisationId)
                     )
-                    .Select(x => CreateError(x.OrganisationId, x.SubsidiaryId, calculatorRunId, createdBy, x.ErrorCode ?? string.Empty, leaverCode: x.StatusCode))
+                    .Select(x => CreateError(x.OrganisationId, x.SubsidiaryId, calculatorRunId, createdBy, x.ErrorCode, leaverCode: x.StatusCode))
                     .ToList();
         }
 

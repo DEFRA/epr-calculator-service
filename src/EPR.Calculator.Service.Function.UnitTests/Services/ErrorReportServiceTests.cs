@@ -28,6 +28,20 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
+        public void ErrorReportService_Constructor_InitializesDependencies()
+        {
+            var mockErrorReport = new Mock<IDbLoadingChunkerService<ErrorReport>>(MockBehavior.Strict);
+            var mockProductDetails = new Mock<IProducerDetailService>(MockBehavior.Strict);
+
+            ErrorReportService service = new ErrorReportService(mockErrorReport.Object, mockProductDetails.Object);
+            Assert.IsNotNull(service);
+
+            //Check that constructor throws when dependencies are null
+            Assert.ThrowsException<ArgumentNullException>(() => new ErrorReportService(null!, mockProductDetails.Object));
+            Assert.ThrowsException<ArgumentNullException>(() => new ErrorReportService(mockErrorReport.Object, null!));
+        }
+
+        [TestMethod]
         public void HandleMissingRegistrationData_InsertsCorrectErrorReports_WhenUnmatchedExists()
         {
             // Arrange
