@@ -60,7 +60,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<SonarQubeSetting Include="sonar.cpd.exclusions">
-			<Value>Constants/*.cs,Models/*.cs,Startup.cs</Value>
+      <Value>**/*.cs</Value>
 		</SonarQubeSetting>
 	</ItemGroup>
 </Project>
