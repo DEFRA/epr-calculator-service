@@ -516,41 +516,6 @@
             return calcResult.CalcResultLapcapData.CalcResultLapcapDataDetails?.FirstOrDefault(la => la.Name == CalcResultSummaryHeaders.OneCountryApportionment);
         }
 
-        public static decimal GetTotalProducerDisposalFee(Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> materialCostSummary)
-        {
-            return materialCostSummary.Values.Sum(m => m.ProducerDisposalFee);
-        }
-
-        public static decimal GetTotalBadDebtProvision(Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> materialCostSummary)
-        {
-            return materialCostSummary.Values.Sum(m => m.BadDebtProvision);
-        }
-
-        public static decimal GetTotalProducerDisposalFeeWithBadDebtProvision(Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> materialCostSummary)
-        {
-            return materialCostSummary.Values.Sum(m => m.ProducerDisposalFeeWithBadDebtProvision);
-        }
-
-        public static decimal GetEnglandTotal(Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> materialCostSummary)
-        {
-            return materialCostSummary.Values.Sum(m => m.EnglandWithBadDebtProvision);
-        }
-
-        public static decimal GetWalesTotal(Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> materialCostSummary)
-        {
-            return materialCostSummary.Values.Sum(m => m.WalesWithBadDebtProvision);
-        }
-
-        public static decimal GetScotlandTotal(Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> materialCostSummary)
-        {
-            return materialCostSummary.Values.Sum(m => m.ScotlandWithBadDebtProvision);
-        }
-
-        public static decimal GetNorthernIrelandTotal(Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> materialCostSummary)
-        {
-            return materialCostSummary.Values.Sum(m => m.NorthernIrelandWithBadDebtProvision);
-        }
-
         public static decimal GetTotal1Plus2ABadDebt(
             IEnumerable<ProducerDetail> producers,
             IEnumerable<MaterialDetail> materials,
@@ -616,24 +581,31 @@
             resultSummaryHeaders.AddRange(BillingInstructionsProducer.GetSummaryHeaders(billingInstructionsProducerIdx));
             result.ProducerDisposalFeesHeaders = resultSummaryHeaders;
 
-            result.MaterialBreakdownHeaders = GetMaterialsBreakdownHeader(
-                section1MaterialsIdx: section1MaterialsIdx,
-                section1DisposalFeeIdx: section1DisposalFeeIdx,
-                section2aMaterialsIdx: section2aMaterialsIdx,
-                section1DisposalIdx: section1DisposalIdx,
-                section2aComms2aIdx: section2aComms2aIdx,
-                commsCost2bIdx: commsCost2bIdx,
-                commsCost2cIdx: commsCost2cIdx,
-                onePlus2A2B2CProducerIdx: onePlus2A2B2CProducerIdx,
-                threeSaCostsSummaryIdx: threeSaCostsSummaryIdx,
-                laDataPrepCostsProducerIdx: laDataPrepCostsProducerIdx,
-                saSetupCostsSummaryIdx: saSetupCostsSummaryIdx,
-                totalBillBreakdownProducerIdx: totalBillBreakdownProducerIdx,
-                billingInstructionsProducerIdx: billingInstructionsProducerIdx,
-                result,
-                materials,
-                showModulations
-            );
+            var materialsBreakdownHeaders = new List<CalcResultSummaryHeader>();
+            var columnIndex = section1MaterialsIdx;
+            foreach (var material in materials)
+            {
+                materialsBreakdownHeaders.Add(new CalcResultSummaryHeader { Name = $"{material.Name} Breakdown", ColumnIndex = columnIndex});
+                columnIndex += section1Materials([material], showModulations).Count();
+            }
+            materialsBreakdownHeaders.Add(new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.DisposalFeeSummary, ColumnIndex = section1DisposalFeeIdx });
+
+            var commsCostColumnIndex = section2aMaterialsIdx;
+            foreach (var material in materials)
+            {
+                materialsBreakdownHeaders.Add(new CalcResultSummaryHeader { Name = $"{material.Name} Breakdown", ColumnIndex = commsCostColumnIndex });
+                commsCostColumnIndex += section2aMaterials([material], showModulations).Count();
+            }
+            materialsBreakdownHeaders.Add(new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.CommsCostSummaryHeader, ColumnIndex = commsCostColumnIndex});
+            materialsBreakdownHeaders.AddRange(CreateMoneyHeaders(section1DisposalIdx, result.TotalFeeforLADisposalCostswoBadDebtprovision1, result.BadDebtProvisionFor1, result.TotalFeeforLADisposalCostswithBadDebtprovision1));
+            materialsBreakdownHeaders.AddRange(CreateMoneyHeaders(section2aComms2aIdx, result.TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A, result.BadDebtProvisionFor2A, result.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A));
+            materialsBreakdownHeaders.AddRange(CreateMoneyHeaders(commsCost2bIdx, result.CommsCostHeaderWithoutBadDebtFor2bTitle, result.CommsCostHeaderBadDebtProvisionFor2bTitle, result.CommsCostHeaderWithBadDebtFor2bTitle));
+            materialsBreakdownHeaders.AddRange(CreateMoneyHeaders(commsCost2cIdx, result.TwoCCommsCostsByCountryWithoutBadDebtProvision, result.TwoCBadDebtProvision, result.TwoCCommsCostsByCountryWithBadDebtProvision));
+            materialsBreakdownHeaders.AddRange(CreateMoneyHeaders(onePlus2A2B2CProducerIdx, result.TotalOnePlus2A2B2CFeeWithBadDebtProvision));
+            materialsBreakdownHeaders.AddRange(CreateMoneyHeaders(threeSaCostsSummaryIdx, result.SaOperatingCostsWoTitleSection3, result.BadDebtProvisionTitleSection3, result.SaOperatingCostsWithTitleSection3));
+            materialsBreakdownHeaders.AddRange(CreateMoneyHeaders(laDataPrepCostsProducerIdx, result.LaDataPrepCostsTitleSection4, result.LaDataPrepCostsBadDebtProvisionTitleSection4, result.LaDataPrepCostsWithBadDebtProvisionTitleSection4));
+            materialsBreakdownHeaders.AddRange(CreateMoneyHeaders(saSetupCostsSummaryIdx, result.SaSetupCostsTitleSection5, result.SaSetupCostsBadDebtProvisionTitleSection5, result.SaSetupCostsWithBadDebtProvisionTitleSection5));
+            result.MaterialBreakdownHeaders = materialsBreakdownHeaders;
 
             var columnHeaders = new List<CalcResultSummaryHeader>();
             columnHeaders.AddRange(startingHeaders());
@@ -655,418 +627,234 @@
             result.ColumnHeaders = columnHeaders;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "Index section headers are needed - to be dynamic")]
-        private static List<CalcResultSummaryHeader> GetMaterialsBreakdownHeader(
-            int section1MaterialsIdx,
-            int section1DisposalFeeIdx,
-            int section2aMaterialsIdx,
-            int section1DisposalIdx,
-            int section2aComms2aIdx,
-            int commsCost2bIdx,
-            int commsCost2cIdx,
-            int onePlus2A2B2CProducerIdx,
-            int threeSaCostsSummaryIdx,
-            int laDataPrepCostsProducerIdx,
-            int saSetupCostsSummaryIdx,
-            int totalBillBreakdownProducerIdx,
-            int billingInstructionsProducerIdx,
-            CalcResultSummary result,
-            IEnumerable<MaterialDetail> materials,
-            bool showModulations)
+        private static IEnumerable<CalcResultSummaryHeader> CreateMoneyHeaders(int columnIndex, params decimal[] values)
         {
-            var materialsBreakdownHeaders = new List<CalcResultSummaryHeader>();
+            return values.Select((value, i) => new CalcResultSummaryHeader { Name = $"£{Math.Round(value, decimalRoundUp)}", ColumnIndex = columnIndex + i});
+        }
 
-            var columnIndex = section1MaterialsIdx;
-            foreach (var material in materials)
-            {
-                materialsBreakdownHeaders.Add(new CalcResultSummaryHeader { Name = $"{material.Name} Breakdown", ColumnIndex = columnIndex});
-                columnIndex += section1Materials([material], showModulations).Count();
-            }
-            materialsBreakdownHeaders.Add(new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.DisposalFeeSummary, ColumnIndex = section1DisposalFeeIdx });
-
-            var commsCostColumnIndex = section2aMaterialsIdx;
-            foreach (var material in materials)
-            {
-                materialsBreakdownHeaders.Add(new CalcResultSummaryHeader { Name = $"{material.Name} Breakdown", ColumnIndex = commsCostColumnIndex });
-                commsCostColumnIndex += section2aMaterials([material], showModulations).Count();
-            }
-            materialsBreakdownHeaders.Add(new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.CommsCostSummaryHeader, ColumnIndex = commsCostColumnIndex});
-
-            // Section-(1) & (2a)
-            materialsBreakdownHeaders.AddRange([
-                new CalcResultSummaryHeader { Name = $"£{Math.Round(result.TotalFeeforLADisposalCostswoBadDebtprovision1, decimalRoundUp)}", ColumnIndex = section1DisposalIdx },
-                new CalcResultSummaryHeader { Name = $"£{Math.Round(result.BadDebtProvisionFor1, decimalRoundUp)}", ColumnIndex = section1DisposalIdx + 1 },
-                new CalcResultSummaryHeader { Name = $"£{Math.Round(result.TotalFeeforLADisposalCostswithBadDebtprovision1, decimalRoundUp)}", ColumnIndex = section1DisposalIdx + 2}
-            ]);
-
-            materialsBreakdownHeaders.AddRange([
-                new CalcResultSummaryHeader { Name = $"£{Math.Round(result.TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A, decimalRoundUp)}", ColumnIndex = section2aComms2aIdx },
-                new CalcResultSummaryHeader { Name = $"£{Math.Round(result.BadDebtProvisionFor2A, decimalRoundUp)}", ColumnIndex = section2aComms2aIdx + 1 },
-                new CalcResultSummaryHeader { Name = $"£{Math.Round(result.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A, decimalRoundUp)}", ColumnIndex = section2aComms2aIdx + 2 }
-            ]);
-
-            // 2b comms total bill
-            materialsBreakdownHeaders.AddRange([
-                new CalcResultSummaryHeader { Name = $"£{Math.Round(result.CommsCostHeaderWithoutBadDebtFor2bTitle, decimalRoundUp)}", ColumnIndex = commsCost2bIdx },
-                new CalcResultSummaryHeader { Name = $"£{Math.Round(result.CommsCostHeaderBadDebtProvisionFor2bTitle,decimalRoundUp)}", ColumnIndex = commsCost2bIdx + 1 },
-                new CalcResultSummaryHeader { Name = $"£{Math.Round(result.CommsCostHeaderWithBadDebtFor2bTitle, decimalRoundUp)}", ColumnIndex = commsCost2bIdx + 2 },
-             ]);
-
-            materialsBreakdownHeaders.AddRange([
-                new CalcResultSummaryHeader { Name = $"£{Math.Round(result.TwoCCommsCostsByCountryWithoutBadDebtProvision, CalcResultSummaryUtil.decimalRoundUp)}", ColumnIndex = commsCost2cIdx },
-                new CalcResultSummaryHeader { Name = $"£{Math.Round(result.TwoCBadDebtProvision, CalcResultSummaryUtil.decimalRoundUp)}", ColumnIndex = commsCost2cIdx + 1} ,
-                new CalcResultSummaryHeader { Name = $"£{Math.Round(result.TwoCCommsCostsByCountryWithBadDebtProvision, CalcResultSummaryUtil.decimalRoundUp)}", ColumnIndex = commsCost2cIdx + 2}
-            ]);
-
-            // Section Total bill (1 + 2a + 2b + 2c)
-            materialsBreakdownHeaders.AddRange([
-                new CalcResultSummaryHeader { Name = $"£{Math.Round(result.TotalOnePlus2A2B2CFeeWithBadDebtProvision, decimalRoundUp)}", ColumnIndex = onePlus2A2B2CProducerIdx },
-            ]);
-
-            // Section-3 -first header
-            materialsBreakdownHeaders.AddRange([
-                new CalcResultSummaryHeader { Name = $"£{Math.Round(result.SaOperatingCostsWoTitleSection3, decimalRoundUp)}", ColumnIndex = threeSaCostsSummaryIdx },
-                new CalcResultSummaryHeader { Name = $"£{Math.Round(result.BadDebtProvisionTitleSection3, decimalRoundUp)}", ColumnIndex = threeSaCostsSummaryIdx + 1 },
-                new CalcResultSummaryHeader { Name = $"£{Math.Round(result.SaOperatingCostsWithTitleSection3, decimalRoundUp)}", ColumnIndex = threeSaCostsSummaryIdx + 2 }
-             ]);
-
-            // LA data prep costs section 4
-            materialsBreakdownHeaders.AddRange([
-                new CalcResultSummaryHeader { Name = $"£{Math.Round(result.LaDataPrepCostsTitleSection4, decimalRoundUp)}", ColumnIndex = laDataPrepCostsProducerIdx },
-                new CalcResultSummaryHeader { Name = $"£{Math.Round(result.LaDataPrepCostsBadDebtProvisionTitleSection4, decimalRoundUp)}", ColumnIndex = laDataPrepCostsProducerIdx + 1 },
-                new CalcResultSummaryHeader { Name = $"£{Math.Round(result.LaDataPrepCostsWithBadDebtProvisionTitleSection4, decimalRoundUp)}", ColumnIndex = laDataPrepCostsProducerIdx + 2 }
-            ]);
-
-            // Scheme administrator setup costs section 5
-            materialsBreakdownHeaders.AddRange([
-                new CalcResultSummaryHeader { Name = $"£{Math.Round(result.SaSetupCostsTitleSection5, decimalRoundUp)}", ColumnIndex = saSetupCostsSummaryIdx },
-                new CalcResultSummaryHeader { Name = $"£{Math.Round(result.SaSetupCostsBadDebtProvisionTitleSection5, decimalRoundUp)}", ColumnIndex = saSetupCostsSummaryIdx + 1},
-                new CalcResultSummaryHeader { Name = $"£{Math.Round(result.SaSetupCostsWithBadDebtProvisionTitleSection5, decimalRoundUp)}", ColumnIndex = saSetupCostsSummaryIdx + 2 }
-            ]);
-
-            return materialsBreakdownHeaders;
+        private static IEnumerable<CalcResultSummaryHeader> CreateHeaders(params string[] names)
+        {
+            return names.Select((name, i) => new CalcResultSummaryHeader { Name = name});
         }
 
         private static IEnumerable<CalcResultSummaryHeader> startingHeaders()
         {
-            return [
-                new () { Name = CalcResultSummaryHeaders.ProducerId },
-                new () { Name = CalcResultSummaryHeaders.SubsidiaryId },
-                new () { Name = CalcResultSummaryHeaders.ProducerOrSubsidiaryName },
-                new () { Name = CalcResultSummaryHeaders.TradingName },
-                new () { Name = CalcResultSummaryHeaders.Level },
-                new () { Name = CalcResultSummaryHeaders.ScaledupTonnages },
-                new () { Name = CalcResultSummaryHeaders.PartialCalculation },
-                new () { Name = CalcResultSummaryHeaders.StatusCode },
-                new () { Name = CalcResultSummaryHeaders.JoinersDate },
-                new () { Name = CalcResultSummaryHeaders.LeaversDate }
-            ];
+            return CreateHeaders(
+                CalcResultSummaryHeaders.ProducerId,
+                CalcResultSummaryHeaders.SubsidiaryId,
+                CalcResultSummaryHeaders.ProducerOrSubsidiaryName,
+                CalcResultSummaryHeaders.TradingName,
+                CalcResultSummaryHeaders.Level,
+                CalcResultSummaryHeaders.ScaledupTonnages,
+                CalcResultSummaryHeaders.PartialCalculation,
+                CalcResultSummaryHeaders.StatusCode,
+                CalcResultSummaryHeaders.JoinersDate,
+                CalcResultSummaryHeaders.LeaversDate);
         }
 
-        private static IEnumerable<CalcResultSummaryHeader> section1Materials(
-            IEnumerable<MaterialDetail> materials, bool showModulations)
+        private static IEnumerable<CalcResultSummaryHeader> section1Materials(IEnumerable<MaterialDetail> materials, bool showModulations)
         {
             return materials.SelectMany(material =>
             {
-                var columnHeadersList = new List<CalcResultSummaryHeader>
-                {
-                    new() { Name = CalcResultSummaryHeaders.PreviousInvoicedTonnage },
-                };
+                var headers = CreateHeaders(CalcResultSummaryHeaders.PreviousInvoicedTonnage)
+                    .ToList();
 
-                columnHeadersList.Add(new() { Name = CalcResultSummaryHeaders.HouseholdPackagingWasteTonnage });
+                headers.AddRange(CreateHeaders(CalcResultSummaryHeaders.HouseholdPackagingWasteTonnage));
                 if (showModulations)
                 {
-                    columnHeadersList.AddRange([
-                        new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageRed },
-                        new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageAmber },
-                        new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageGreen },
-                        new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageRedMedical },
-                        new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageAmberMedical },
-                        new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageGreenMedical }
-                    ]);
+                    headers.AddRange(CreateHeaders(
+                        CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageRed,
+                        CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageAmber,
+                        CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageGreen,
+                        CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageRedMedical,
+                        CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageAmberMedical,
+                        CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageGreenMedical));
                 }
 
-                columnHeadersList.Add(new() { Name = CalcResultSummaryHeaders.PublicBinTonnage });
+                headers.AddRange(CreateHeaders(CalcResultSummaryHeaders.PublicBinTonnage));
                 if (showModulations)
                 {
-                    columnHeadersList.AddRange([
-                        new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.PublicBinTonnageRed },
-                        new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.PublicBinTonnageAmber },
-                        new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.PublicBinTonnageGreen },
-                        new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.PublicBinTonnageRedMedical },
-                        new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.PublicBinTonnageAmberMedical },
-                        new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.PublicBinTonnageGreenMedical }
-                    ]);
+                    headers.AddRange(CreateHeaders(
+                        CalcResultSummaryHeaders.PublicBinTonnageRed,
+                        CalcResultSummaryHeaders.PublicBinTonnageAmber,
+                        CalcResultSummaryHeaders.PublicBinTonnageGreen,
+                        CalcResultSummaryHeaders.PublicBinTonnageRedMedical,
+                        CalcResultSummaryHeaders.PublicBinTonnageAmberMedical,
+                        CalcResultSummaryHeaders.PublicBinTonnageGreenMedical));
                 }
 
                 if (material.Code == MaterialCodes.Glass)
                 {
-                    columnHeadersList.Add(new() { Name = CalcResultSummaryHeaders.HouseholdDrinksContainersTonnage });
+                    headers.AddRange(CreateHeaders(CalcResultSummaryHeaders.HouseholdDrinksContainersTonnage));
                     if (showModulations)
                     {
-                        columnHeadersList.AddRange([
-                            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageRed },
-                            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageAmber },
-                            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageGreen },
-                            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageRedMedical },
-                            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageAmberMedical },
-                            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageGreenMedical }
-                        ]);
+                        headers.AddRange(CreateHeaders(
+                            CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageRed,
+                            CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageAmber,
+                            CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageGreen,
+                            CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageRedMedical,
+                            CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageAmberMedical,
+                            CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageGreenMedical));
                     }
                 }
 
-                columnHeadersList.AddRange([
-                    new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.TotalTonnage },
-                    new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.SelfManagedConsumerWasteTonnage },
-                    new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.NetTonnage },
-                    new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.TonnageChange },
-                    new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.PricePerTonne },
-                    new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.ProducerDisposalFee },
-                    new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.BadDebtProvision },
-                    new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.ProducerDisposalFeeWithBadDebtProvision },
-                    new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.EnglandWithBadDebtProvision },
-                    new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.WalesWithBadDebtProvision },
-                    new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.ScotlandWithBadDebtProvision },
-                    new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.NorthernIrelandWithBadDebtProvision },
-                ]);
+                headers.AddRange(CreateHeaders(
+                    CalcResultSummaryHeaders.TotalTonnage,
+                    CalcResultSummaryHeaders.SelfManagedConsumerWasteTonnage,
+                    CalcResultSummaryHeaders.NetTonnage,
+                    CalcResultSummaryHeaders.TonnageChange,
+                    CalcResultSummaryHeaders.PricePerTonne,
+                    CalcResultSummaryHeaders.ProducerDisposalFee,
+                    CalcResultSummaryHeaders.BadDebtProvision,
+                    CalcResultSummaryHeaders.ProducerDisposalFeeWithBadDebtProvision,
+                    CalcResultSummaryHeaders.EnglandWithBadDebtProvision,
+                    CalcResultSummaryHeaders.WalesWithBadDebtProvision,
+                    CalcResultSummaryHeaders.ScotlandWithBadDebtProvision,
+                    CalcResultSummaryHeaders.NorthernIrelandWithBadDebtProvision));
 
-                return columnHeadersList;
+                return headers;
             });
         }
 
         private static IEnumerable<CalcResultSummaryHeader> section1DisposalFee()
         {
-            return [
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.TotalProducerDisposalFee },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.BadDebtProvision },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.TotalProducerDisposalFeeWithBadDebtProvision },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.EnglandTotal },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.WalesTotal },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.ScotlandTotal },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.NorthernIrelandTotal },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.TonnageChangeCount },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.TonnageChangeAdvice }
-            ];
+            return CreateHeaders(
+                CalcResultSummaryHeaders.TotalProducerDisposalFee,
+                CalcResultSummaryHeaders.BadDebtProvision,
+                CalcResultSummaryHeaders.TotalProducerDisposalFeeWithBadDebtProvision,
+                CalcResultSummaryHeaders.EnglandTotal,
+                CalcResultSummaryHeaders.WalesTotal,
+                CalcResultSummaryHeaders.ScotlandTotal,
+                CalcResultSummaryHeaders.NorthernIrelandTotal,
+                CalcResultSummaryHeaders.TonnageChangeCount,
+                CalcResultSummaryHeaders.TonnageChangeAdvice);
         }
 
         private static IEnumerable<CalcResultSummaryHeader> section2aMaterials(IEnumerable<MaterialDetail> materials, bool showModulations)
         {
             return materials.SelectMany(material =>
             {
-                var columnHeadersList = new List<CalcResultSummaryHeader>{};
+                var headers = new List<CalcResultSummaryHeader>();
 
-                columnHeadersList.Add(new() { Name = CalcResultSummaryHeaders.HouseholdPackagingWasteTonnage });
+                headers.AddRange(CreateHeaders(CalcResultSummaryHeaders.HouseholdPackagingWasteTonnage));
                 if (showModulations)
                 {
-                    columnHeadersList.AddRange([
-                        new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageRed },
-                        new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageAmber },
-                        new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageGreen },
-                        new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageRedMedical },
-                        new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageAmberMedical },
-                        new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageGreenMedical }
-                    ]);
+                    headers.AddRange(CreateHeaders(
+                        CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageRed,
+                        CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageAmber,
+                        CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageGreen,
+                        CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageRedMedical,
+                        CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageAmberMedical,
+                        CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageGreenMedical
+                    ));
                 }
 
-                columnHeadersList.Add(new() { Name = CalcResultSummaryHeaders.PublicBinTonnage });
+                headers.AddRange(CreateHeaders(CalcResultSummaryHeaders.PublicBinTonnage));
                 if (showModulations)
                 {
-                    columnHeadersList.AddRange([
-                        new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.PublicBinTonnageRed },
-                        new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.PublicBinTonnageAmber },
-                        new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.PublicBinTonnageGreen },
-                        new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.PublicBinTonnageRedMedical },
-                        new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.PublicBinTonnageAmberMedical },
-                        new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.PublicBinTonnageGreenMedical }
-                    ]);
+                    headers.AddRange(CreateHeaders(
+                        CalcResultSummaryHeaders.PublicBinTonnageRed,
+                        CalcResultSummaryHeaders.PublicBinTonnageAmber,
+                        CalcResultSummaryHeaders.PublicBinTonnageGreen,
+                        CalcResultSummaryHeaders.PublicBinTonnageRedMedical,
+                        CalcResultSummaryHeaders.PublicBinTonnageAmberMedical,
+                        CalcResultSummaryHeaders.PublicBinTonnageGreenMedical));
                 }
 
                 if (material.Code == MaterialCodes.Glass)
                 {
-                    columnHeadersList.Add(new() { Name = CalcResultSummaryHeaders.HouseholdDrinksContainersTonnage });
+                    headers.AddRange(CreateHeaders(CalcResultSummaryHeaders.HouseholdDrinksContainersTonnage));
                     if (showModulations)
                     {
-                        columnHeadersList.AddRange([
-                            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageRed },
-                            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageAmber },
-                            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageGreen },
-                            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageRedMedical },
-                            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageAmberMedical },
-                            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageGreenMedical }
-                        ]);
+                        headers.AddRange(CreateHeaders(
+                            CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageRed,
+                            CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageAmber,
+                            CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageGreen,
+                            CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageRedMedical,
+                            CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageAmberMedical,
+                            CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageGreenMedical));
                     }
                 }
 
-                columnHeadersList.AddRange([
-                    new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.TotalTonnage },
-                    new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.PricePerTonne },
-                    new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.ProducerTotalCostWithoutBadDebtProvision },
-                    new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.BadDebtProvision },
-                    new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.ProducerTotalCostwithBadDebtProvision },
-                    new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.EnglandWithBadDebtProvision },
-                    new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.WalesWithBadDebtProvision },
-                    new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.ScotlandWithBadDebtProvision },
-                    new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.NorthernIrelandWithBadDebtProvision }
-                ]);
+                headers.AddRange(CreateHeaders(
+                    CalcResultSummaryHeaders.TotalTonnage,
+                    CalcResultSummaryHeaders.PricePerTonne,
+                    CalcResultSummaryHeaders.ProducerTotalCostWithoutBadDebtProvision,
+                    CalcResultSummaryHeaders.BadDebtProvision,
+                    CalcResultSummaryHeaders.ProducerTotalCostwithBadDebtProvision,
+                    CalcResultSummaryHeaders.EnglandWithBadDebtProvision,
+                    CalcResultSummaryHeaders.WalesWithBadDebtProvision,
+                    CalcResultSummaryHeaders.ScotlandWithBadDebtProvision,
+                    CalcResultSummaryHeaders.NorthernIrelandWithBadDebtProvision
+                ));
 
-                return columnHeadersList;
+                return headers;
             });
         }
 
         private static IEnumerable<CalcResultSummaryHeader> section2aComms()
         {
-            return [
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.TotalBadDebtProvision },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.TotalProducerFeeforCommsCostsbyMaterialwithBadDebtprovision },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.EnglandTotalwithBadDebtprovision },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.WalesTotalwithBadDebtprovision },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.ScotlandTotalwithBadDebtprovision },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.NorthernIrelandTotalwithBadDebtprovision }
-            ];
+            return CreateHeaders(
+                CalcResultSummaryHeaders.TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision,
+                CalcResultSummaryHeaders.TotalBadDebtProvision,
+                CalcResultSummaryHeaders.TotalProducerFeeforCommsCostsbyMaterialwithBadDebtprovision,
+                CalcResultSummaryHeaders.EnglandTotalwithBadDebtprovision,
+                CalcResultSummaryHeaders.WalesTotalwithBadDebtprovision,
+                CalcResultSummaryHeaders.ScotlandTotalwithBadDebtprovision,
+                CalcResultSummaryHeaders.NorthernIrelandTotalwithBadDebtprovision);
         }
 
         private static IEnumerable<CalcResultSummaryHeader> section1Disposal()
         {
-            return [
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.TotalProducerFeeforLADisposalCostswoBadDebtprovision },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.BadDebtProvisionFor1 },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.TotalProducerFeeforLADisposalCostswithBadDebtprovision },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.EnglandTotalwithBadDebtprovision },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.WalesTotalwithBadDebtprovision },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.ScotlandTotalwithBadDebtprovision },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.NorthernIrelandTotalwithBadDebtprovision }
-            ];
+            return CreateHeaders(
+                CalcResultSummaryHeaders.TotalProducerFeeforLADisposalCostswoBadDebtprovision,
+                CalcResultSummaryHeaders.BadDebtProvisionFor1,
+                CalcResultSummaryHeaders.TotalProducerFeeforLADisposalCostswithBadDebtprovision,
+                CalcResultSummaryHeaders.EnglandTotalwithBadDebtprovision,
+                CalcResultSummaryHeaders.WalesTotalwithBadDebtprovision,
+                CalcResultSummaryHeaders.ScotlandTotalwithBadDebtprovision,
+                CalcResultSummaryHeaders.NorthernIrelandTotalwithBadDebtprovision);
         }
 
         private static IEnumerable<CalcResultSummaryHeader> section2aComms2a()
         {
-            return [
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision2A },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.BadDebtProvisionfor2A },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.TotalProducerFeeforCommsCostsbyMaterialwithBadDebtprovision2A },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.EnglandTotalwithBadDebtprovision },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.WalesTotalwithBadDebtprovision },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.ScotlandTotalwithBadDebtprovision },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.NorthernIrelandTotalwithBadDebtprovision }
-            ];
+            return CreateHeaders(
+                CalcResultSummaryHeaders.TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision2A,
+                CalcResultSummaryHeaders.BadDebtProvisionfor2A,
+                CalcResultSummaryHeaders.TotalProducerFeeforCommsCostsbyMaterialwithBadDebtprovision2A,
+                CalcResultSummaryHeaders.EnglandTotalwithBadDebtprovision,
+                CalcResultSummaryHeaders.WalesTotalwithBadDebtprovision,
+                CalcResultSummaryHeaders.ScotlandTotalwithBadDebtprovision,
+                CalcResultSummaryHeaders.NorthernIrelandTotalwithBadDebtprovision);
         }
 
         private static IEnumerable<CalcResultSummaryHeader> commsCost2aPercentage()
         {
-            return [
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.PercentageofProducerTonnagevsAllProducers },
-            ];
+            return CreateHeaders(CalcResultSummaryHeaders.PercentageofProducerTonnagevsAllProducers);
         }
 
         private static IEnumerable<CalcResultSummaryHeader> commsCost2b()
         {
-            return [
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.ProducerFeeWithoutBadDebtForComms2b },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.BadDebtProvisionForComms2b },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.ProducerFeeForCommsCostsWithBadDebtForComms2b },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.EnglandTotalWithBadDebtProvisionForComms2b },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.WalesTotalWithBadDebtProvisionForComms2b },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.ScotlandTotalWithBadDebtProvisionForComms2b },
-                new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.NorthernIrelandTotalWithBadDebtProvisionForComms2b }
-            ];
+            return CreateHeaders(
+                CalcResultSummaryHeaders.ProducerFeeWithoutBadDebtForComms2b,
+                CalcResultSummaryHeaders.BadDebtProvisionForComms2b,
+                CalcResultSummaryHeaders.ProducerFeeForCommsCostsWithBadDebtForComms2b,
+                CalcResultSummaryHeaders.EnglandTotalWithBadDebtProvisionForComms2b,
+                CalcResultSummaryHeaders.WalesTotalWithBadDebtProvisionForComms2b,
+                CalcResultSummaryHeaders.ScotlandTotalWithBadDebtProvisionForComms2b,
+                CalcResultSummaryHeaders.NorthernIrelandTotalWithBadDebtProvisionForComms2b);
         }
 
         private static IEnumerable<CalcResultSummaryHeader> commsCost2c()
         {
-            return [
-                new CalcResultSummaryHeader { Name = TwoCCommsCostSubColumnHeader.TwoCCommsCostCountryInPropertionWithoutBadDebt },
-                new CalcResultSummaryHeader { Name = TwoCCommsCostSubColumnHeader.TwoCCommsCostBadDebtProvision },
-                new CalcResultSummaryHeader { Name = TwoCCommsCostSubColumnHeader.TwoCCommsCostCountryInPropertionWithBadDebt },
-                new CalcResultSummaryHeader { Name = TwoCCommsCostSubColumnHeader.TwoCCommsCostEnglandWithBadDebt },
-                new CalcResultSummaryHeader { Name = TwoCCommsCostSubColumnHeader.TwoCCommsCostWalesWithBadDebt },
-                new CalcResultSummaryHeader { Name = TwoCCommsCostSubColumnHeader.TwoCCommsCostScotlandWithBadDebt },
-                new CalcResultSummaryHeader { Name = TwoCCommsCostSubColumnHeader.TwoCCommsCostNIWithBadDebt }
-            ];
-        }
-
-        public static decimal GetTotalProducerCommsFee(Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostSummary)
-        {
-            decimal producerTotalCostWithoutBadDebtProvision = 0;
-
-            foreach (var material in commsCostSummary)
-            {
-                producerTotalCostWithoutBadDebtProvision += material.Value.ProducerTotalCostWithoutBadDebtProvision;
-            }
-
-            return producerTotalCostWithoutBadDebtProvision;
-        }
-
-        public static decimal GetCommsTotalBadDebtProvision(Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> materialCostSummary)
-        {
-            decimal totalBadDebtProvision = 0;
-
-            foreach (var material in materialCostSummary)
-            {
-                totalBadDebtProvision += material.Value.BadDebtProvision;
-            }
-
-            return totalBadDebtProvision;
-        }
-
-        public static decimal GetTotalProducerCommsFeeWithBadDebtProvision(Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostSummary)
-        {
-            decimal totalCommsCostsbyMaterialwithBadDebtprovision = 0;
-
-            foreach (var material in commsCostSummary)
-            {
-                totalCommsCostsbyMaterialwithBadDebtprovision += material.Value.ProducerTotalCostwithBadDebtProvision;
-            }
-
-            return totalCommsCostsbyMaterialwithBadDebtprovision;
-        }
-
-        public static decimal GetNorthernIrelandCommsTotal(Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostSummary)
-        {
-            decimal northernIrelandTotalwithBadDebtprovision = 0;
-
-            foreach (var material in commsCostSummary)
-            {
-                northernIrelandTotalwithBadDebtprovision += material.Value.NorthernIrelandWithBadDebtProvision;
-            }
-
-            return northernIrelandTotalwithBadDebtprovision;
-        }
-
-        public static decimal GetScotlandCommsTotal(Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostSummary)
-        {
-            decimal scotlandTotalwithBadDebtprovision = 0;
-
-            foreach (var material in commsCostSummary)
-            {
-                scotlandTotalwithBadDebtprovision += material.Value.ScotlandWithBadDebtProvision;
-            }
-
-            return scotlandTotalwithBadDebtprovision;
-        }
-
-        public static decimal GetWalesCommsTotal(Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostSummary)
-        {
-            decimal walesTotalwithBadDebtprovision = 0;
-
-            foreach (var material in commsCostSummary)
-            {
-                walesTotalwithBadDebtprovision += material.Value.WalesWithBadDebtProvision;
-            }
-
-            return walesTotalwithBadDebtprovision;
-        }
-
-        public static decimal GetEnglandCommsTotal(Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostSummary)
-        {
-            decimal englandTotalwithBadDebtprovision = 0;
-
-            foreach (var material in commsCostSummary)
-            {
-                englandTotalwithBadDebtprovision += material.Value.EnglandWithBadDebtProvision;
-            }
-
-            return englandTotalwithBadDebtprovision;
+            return CreateHeaders(
+                TwoCCommsCostSubColumnHeader.TwoCCommsCostCountryInPropertionWithoutBadDebt,
+                TwoCCommsCostSubColumnHeader.TwoCCommsCostBadDebtProvision,
+                TwoCCommsCostSubColumnHeader.TwoCCommsCostCountryInPropertionWithBadDebt,
+                TwoCCommsCostSubColumnHeader.TwoCCommsCostEnglandWithBadDebt,
+                TwoCCommsCostSubColumnHeader.TwoCCommsCostWalesWithBadDebt,
+                TwoCCommsCostSubColumnHeader.TwoCCommsCostScotlandWithBadDebt,
+                TwoCCommsCostSubColumnHeader.TwoCCommsCostNIWithBadDebt);
         }
 
         public static decimal GetCommsCostHeaderWithoutBadDebtFor2bTitle(CalcResult calcResult)
