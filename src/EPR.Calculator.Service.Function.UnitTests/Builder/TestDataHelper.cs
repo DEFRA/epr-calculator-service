@@ -643,6 +643,30 @@
                         },
                         new CalcResultLateReportingTonnageDetail
                         {
+                            Name = "Fibre composite",
+                            RedLateReportingTonnage = 5.00m,
+                            AmberLateReportingTonnage = 0m,
+                            GreenLateReportingTonnage = 5.00m,
+                            TotalLateReportingTonnage = 10.00m,
+                        },
+                        new CalcResultLateReportingTonnageDetail
+                        {
+                            Name = "Glass",
+                            RedLateReportingTonnage = 10.00m,
+                            AmberLateReportingTonnage = 0m,
+                            GreenLateReportingTonnage = 0m,
+                            TotalLateReportingTonnage = 10.00m,
+                        },
+                        new CalcResultLateReportingTonnageDetail
+                        {
+                            Name = "Paper or card",
+                            RedLateReportingTonnage = 0m,
+                            AmberLateReportingTonnage = 0m,
+                            GreenLateReportingTonnage = 0m,
+                            TotalLateReportingTonnage = 0m,
+                        },
+                        new CalcResultLateReportingTonnageDetail
+                        {
                             Name = "Plastic",
                             RedLateReportingTonnage = 1000.00m,
                             AmberLateReportingTonnage = 500.00m,
@@ -651,11 +675,35 @@
                         },
                         new CalcResultLateReportingTonnageDetail
                         {
+                            Name = "Steel",
+                            RedLateReportingTonnage = 0m,
+                            AmberLateReportingTonnage = 0m,
+                            GreenLateReportingTonnage = 0m,
+                            TotalLateReportingTonnage = 0m,
+                        },
+                        new CalcResultLateReportingTonnageDetail
+                        {
+                            Name = "Wood",
+                            RedLateReportingTonnage = 0m,
+                            AmberLateReportingTonnage = 0m,
+                            GreenLateReportingTonnage = 0m,
+                            TotalLateReportingTonnage = 0m,
+                        },
+                        new CalcResultLateReportingTonnageDetail
+                        {
+                            Name = "Other materials",
+                            RedLateReportingTonnage = 0m,
+                            AmberLateReportingTonnage = 0m,
+                            GreenLateReportingTonnage = 0m,
+                            TotalLateReportingTonnage = 0m,
+                        },
+                        new CalcResultLateReportingTonnageDetail
+                        {
                             Name = "Total",
-                            RedLateReportingTonnage = 2000.00m,
+                            RedLateReportingTonnage = 2015.00m,
                             AmberLateReportingTonnage = 2500.00m,
-                            GreenLateReportingTonnage = 5500.00m,
-                            TotalLateReportingTonnage = 10000.00m,
+                            GreenLateReportingTonnage = 5505.00m,
+                            TotalLateReportingTonnage = 10020.00m,
                         },
                 },
             };
@@ -1753,8 +1801,32 @@
             });
             list.Add(new DefaultParameterTemplateMaster
             {
+                ParameterUniqueReferenceId = "LRET-FC-R",
+                ParameterCategory = "Fibre composite-R",
+                ParameterType = "Late reporting tonnage",
+                ValidRangeFrom = 0m,
+                ValidRangeTo = 999999999.99m,
+            });
+            list.Add(new DefaultParameterTemplateMaster
+            {
                 ParameterUniqueReferenceId = "LRET-FC",
-                ParameterCategory = "Fibre composite",
+                ParameterCategory = "Fibre composite-A",
+                ParameterType = "Late reporting tonnage",
+                ValidRangeFrom = 0m,
+                ValidRangeTo = 999999999.99m,
+            });
+            list.Add(new DefaultParameterTemplateMaster
+            {
+                ParameterUniqueReferenceId = "LRET-FC-G",
+                ParameterCategory = "Fibre composite-G",
+                ParameterType = "Late reporting tonnage",
+                ValidRangeFrom = 0m,
+                ValidRangeTo = 999999999.99m,
+            });
+            list.Add(new DefaultParameterTemplateMaster
+            {
+                ParameterUniqueReferenceId = "LRET-GL-R",
+                ParameterCategory = "Glass-R",
                 ParameterType = "Late reporting tonnage",
                 ValidRangeFrom = 0m,
                 ValidRangeTo = 999999999.99m,
@@ -1762,7 +1834,23 @@
             list.Add(new DefaultParameterTemplateMaster
             {
                 ParameterUniqueReferenceId = "LRET-GL",
-                ParameterCategory = "Glass",
+                ParameterCategory = "Glass-A",
+                ParameterType = "Late reporting tonnage",
+                ValidRangeFrom = 0m,
+                ValidRangeTo = 999999999.99m,
+            });
+            list.Add(new DefaultParameterTemplateMaster
+            {
+                ParameterUniqueReferenceId = "LRET-GL-G",
+                ParameterCategory = "Glass-G",
+                ParameterType = "Late reporting tonnage",
+                ValidRangeFrom = 0m,
+                ValidRangeTo = 999999999.99m,
+            });
+            list.Add(new DefaultParameterTemplateMaster
+            {
+                ParameterUniqueReferenceId = "LRET-AL-R",
+                ParameterCategory = "Aluminium-R",
                 ParameterType = "Late reporting tonnage",
                 ValidRangeFrom = 0m,
                 ValidRangeTo = 999999999.99m,
@@ -1770,7 +1858,23 @@
             list.Add(new DefaultParameterTemplateMaster
             {
                 ParameterUniqueReferenceId = "LRET-AL",
-                ParameterCategory = "Aluminium",
+                ParameterCategory = "Aluminium-A",
+                ParameterType = "Late reporting tonnage",
+                ValidRangeFrom = 0m,
+                ValidRangeTo = 999999999.99m,
+            });
+            list.Add(new DefaultParameterTemplateMaster
+            {
+                ParameterUniqueReferenceId = "LRET-AL-G",
+                ParameterCategory = "Aluminium-G",
+                ParameterType = "Late reporting tonnage",
+                ValidRangeFrom = 0m,
+                ValidRangeTo = 999999999.99m,
+            });
+            list.Add(new DefaultParameterTemplateMaster
+            {
+                ParameterUniqueReferenceId = "LRET-WD-R",
+                ParameterCategory = "Wood-R",
                 ParameterType = "Late reporting tonnage",
                 ValidRangeFrom = 0m,
                 ValidRangeTo = 999999999.99m,
@@ -1778,7 +1882,23 @@
             list.Add(new DefaultParameterTemplateMaster
             {
                 ParameterUniqueReferenceId = "LRET-WD",
-                ParameterCategory = "Wood",
+                ParameterCategory = "Wood-A",
+                ParameterType = "Late reporting tonnage",
+                ValidRangeFrom = 0m,
+                ValidRangeTo = 999999999.99m,
+            });
+            list.Add(new DefaultParameterTemplateMaster
+            {
+                ParameterUniqueReferenceId = "LRET-WD-G",
+                ParameterCategory = "Wood-G",
+                ParameterType = "Late reporting tonnage",
+                ValidRangeFrom = 0m,
+                ValidRangeTo = 999999999.99m,
+            });
+            list.Add(new DefaultParameterTemplateMaster
+            {
+                ParameterUniqueReferenceId = "LRET-ST-R",
+                ParameterCategory = "Steel-R",
                 ParameterType = "Late reporting tonnage",
                 ValidRangeFrom = 0m,
                 ValidRangeTo = 999999999.99m,
@@ -1786,7 +1906,23 @@
             list.Add(new DefaultParameterTemplateMaster
             {
                 ParameterUniqueReferenceId = "LRET-ST",
-                ParameterCategory = "Steel",
+                ParameterCategory = "Steel-A",
+                ParameterType = "Late reporting tonnage",
+                ValidRangeFrom = 0m,
+                ValidRangeTo = 999999999.99m,
+            });
+            list.Add(new DefaultParameterTemplateMaster
+            {
+                ParameterUniqueReferenceId = "LRET-ST-G",
+                ParameterCategory = "Steel-G",
+                ParameterType = "Late reporting tonnage",
+                ValidRangeFrom = 0m,
+                ValidRangeTo = 999999999.99m,
+            });
+            list.Add(new DefaultParameterTemplateMaster
+            {
+                ParameterUniqueReferenceId = "LRET-PC-R",
+                ParameterCategory = "Paper or card-R",
                 ParameterType = "Late reporting tonnage",
                 ValidRangeFrom = 0m,
                 ValidRangeTo = 999999999.99m,
@@ -1794,7 +1930,39 @@
             list.Add(new DefaultParameterTemplateMaster
             {
                 ParameterUniqueReferenceId = "LRET-PC",
-                ParameterCategory = "Paper or card",
+                ParameterCategory = "Paper or card-A",
+                ParameterType = "Late reporting tonnage",
+                ValidRangeFrom = 0m,
+                ValidRangeTo = 999999999.99m,
+            });
+            list.Add(new DefaultParameterTemplateMaster
+            {
+                ParameterUniqueReferenceId = "LRET-PL-G",
+                ParameterCategory = "Plastic-G",
+                ParameterType = "Late reporting tonnage",
+                ValidRangeFrom = 0m,
+                ValidRangeTo = 999999999.99m,
+            });
+            list.Add(new DefaultParameterTemplateMaster
+            {
+                ParameterUniqueReferenceId = "LRET-OT-R",
+                ParameterCategory = "Other materials-R",
+                ParameterType = "Late reporting tonnage",
+                ValidRangeFrom = 0m,
+                ValidRangeTo = 999999999.99m,
+            });
+            list.Add(new DefaultParameterTemplateMaster
+            {
+                ParameterUniqueReferenceId = "LRET-OT",
+                ParameterCategory = "Other materials-A",
+                ParameterType = "Late reporting tonnage",
+                ValidRangeFrom = 0m,
+                ValidRangeTo = 999999999.99m,
+            });
+            list.Add(new DefaultParameterTemplateMaster
+            {
+                ParameterUniqueReferenceId = "LRET-OT-G",
+                ParameterCategory = "Other materials-G",
                 ParameterType = "Late reporting tonnage",
                 ValidRangeFrom = 0m,
                 ValidRangeTo = 999999999.99m,
@@ -1873,27 +2041,11 @@
             });
             list.Add(new DefaultParameterTemplateMaster
             {
-                ParameterUniqueReferenceId = "LRET-OT",
-                ParameterCategory = "Other materials",
-                ParameterType = "Late reporting tonnage",
-                ValidRangeFrom = 0m,
-                ValidRangeTo = 999999999.99m,
-            });
-            list.Add(new DefaultParameterTemplateMaster
-            {
                 ParameterUniqueReferenceId = "BADEBT-P",
                 ParameterCategory = "Bad debt provision",
                 ParameterType = "Percentage",
                 ValidRangeFrom = 0m,
                 ValidRangeTo = 1000.000m,
-            });
-            list.Add(new DefaultParameterTemplateMaster
-            {
-                ParameterUniqueReferenceId = "LRET-PL",
-                ParameterCategory = "Plastic",
-                ParameterType = "Late reporting tonnage",
-                ValidRangeFrom = 0m,
-                ValidRangeTo = 999999999.99m,
             });
             list.Add(new DefaultParameterTemplateMaster
             {
@@ -1990,6 +2142,14 @@
                 ParameterType = "Tonnage change threshold",
                 ValidRangeFrom = 0m,
                 ValidRangeTo = 999.990m,
+            });
+            list.Add(new DefaultParameterTemplateMaster
+            {
+                ParameterUniqueReferenceId = "REDM-RF",
+                ParameterCategory = "Modulation Factor",
+                ParameterType = "Red modulation factor",
+                ValidRangeFrom = 1.000m,
+                ValidRangeTo = 2.000m,
             });
             return list;
         }
