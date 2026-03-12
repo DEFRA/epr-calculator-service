@@ -283,6 +283,7 @@
                     It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
                     It.IsAny<int>(),
                     It.IsAny<string>(),
+                    It.IsAny<RelativeYear>(),
                     CancellationToken.None))
                 .ReturnsAsync(errorReport);
 
@@ -328,6 +329,7 @@
                     It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
                     It.IsAny<int>(),
                     It.IsAny<string>(),
+                    It.IsAny<RelativeYear>(),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(unmatchedRecords);
 
@@ -403,6 +405,7 @@
                     It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
                     It.IsAny<int>(),
                     It.IsAny<string>(),
+                    It.IsAny<RelativeYear>(),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(unmatchedRecords);
 
@@ -497,6 +500,7 @@
                     It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
                     It.IsAny<int>(),
                     It.IsAny<string>(),
+                    It.IsAny<RelativeYear>(),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(unmatchedRecords);
 
@@ -557,6 +561,7 @@
                     It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
                     It.IsAny<int>(),
                     It.IsAny<string>(),
+                    It.IsAny<RelativeYear>(),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(unmatchedRecords);
 
@@ -688,6 +693,7 @@
                     It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
                     It.IsAny<int>(),
                     It.IsAny<string>(),
+                    It.IsAny<RelativeYear>(),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(unmatchedRecords);
 
@@ -1085,6 +1091,7 @@
                     It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
                     It.IsAny<int>(),
                     It.IsAny<string>(),
+                    It.IsAny<RelativeYear>(),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(unmatchedRecords);
 

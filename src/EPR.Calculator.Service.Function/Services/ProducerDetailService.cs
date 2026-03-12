@@ -23,15 +23,14 @@ namespace EPR.Calculator.Service.Function.Services
         {
             this.context = context;
         }
-        public async Task<IEnumerable<ProducerInvoicedDto>> GetProducerDetails(RelativeYear relativeYear, IEnumerable<int> missingProducersIdsInCurrentRun)
+        public async Task<IEnumerable<ProducerInvoicedDto>> GetProducerDetails(RelativeYear relativeYear)
         {
             var producerdetails = await (from pd in context.ProducerDetail
                                          join pds in context.ProducerResultFileSuggestedBillingInstruction on new { pd.ProducerId, pd.CalculatorRunId } equals new { pds.ProducerId, pds.CalculatorRunId }
                                          join ins in context.ProducerInvoicedMaterialNetTonnage on new { pd.ProducerId, pd.CalculatorRunId } equals new { ins.ProducerId, ins.CalculatorRunId }
                                          join d in context.ProducerDesignatedRunInvoiceInstruction on new { pd.ProducerId, pd.CalculatorRunId } equals new { d.ProducerId, d.CalculatorRunId }
                                          join c in context.CalculatorRuns on pd.CalculatorRunId equals c.Id
-                                         where missingProducersIdsInCurrentRun.Contains(pd.ProducerId)
-                                            && c.RelativeYearValue == relativeYear.Value
+                                         where c.RelativeYearValue == relativeYear.Value
                                             && new int[]
                                             {
                                                 RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
@@ -57,6 +56,11 @@ namespace EPR.Calculator.Service.Function.Services
                                          .ThenBy(c => c.InvoicedTonnage != null ? c.InvoicedTonnage.MaterialId : 0)
                                          .ToListAsync();
             return producerdetails;
+        }
+
+        public async Task<IEnumerable<ProducerInvoicedDto>> GetProducerDetails(RelativeYear relativeYear, IEnumerable<int> missingProducersIdsInCurrentRun)
+        {
+            return (await GetProducerDetails(relativeYear)).Where(p => missingProducersIdsInCurrentRun.Contains(p.ProducerDetail!.ProducerId));
         }
 
         public async Task<IEnumerable<int>> GetProducers(int runId)
