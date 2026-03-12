@@ -34,9 +34,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             // Arrange
             var input = Fixture.Create<CalcResultLateReportingTonnage>();
             var expectedheader = $"\"{input.Name}\"," + Environment.NewLine +
-                $"\"{input.MaterialHeading}\",\"{input.TonnageHeading}\"," + Environment.NewLine;
+                $"\"{input.MaterialHeading}\",\"{input.TonnageHeading}\",\"{input.RedTonnageHeading}\",\"{input.AmberTonnageHeading}\",\"{input.GreenTonnageHeading}\"," + Environment.NewLine;
             var expectedMaterials = input.CalcResultLateReportingTonnageDetails.Select(m
-                => $"\"{m.Name}\",\"{m.TotalLateReportingTonnage:0.000}\",");
+                => $"\"{m.Name}\",\"{m.TotalLateReportingTonnage:0.000}\",\"{m.RedLateReportingTonnage:0.000}\",\"{m.AmberLateReportingTonnage:0.000}\",\"{m.GreenLateReportingTonnage:0.000}\",");
 
             var expectedResult = Environment.NewLine
                 + Environment.NewLine

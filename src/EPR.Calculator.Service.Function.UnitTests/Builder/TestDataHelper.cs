@@ -633,21 +633,30 @@
                 Name = "Late Reporting Tonnage",
                 CalcResultLateReportingTonnageDetails = new[]
                 {
-                    new CalcResultLateReportingTonnageDetail()
-                    {
-                        Name = "Aluminium",
-                        TotalLateReportingTonnage = 8000.00m,
-                    },
-                    new CalcResultLateReportingTonnageDetail()
-                    {
-                        Name = "Plastic",
-                        TotalLateReportingTonnage = 2000.00m,
-                    },
-                    new CalcResultLateReportingTonnageDetail()
-                    {
-                        Name = "Total",
-                        TotalLateReportingTonnage = 10000.00m,
-                    },
+                    new CalcResultLateReportingTonnageDetail
+                        {
+                            Name = "Aluminium",
+                            RedLateReportingTonnage = 1000.00m,
+                            AmberLateReportingTonnage = 2000.00m,
+                            GreenLateReportingTonnage = 5000.00m,
+                            TotalLateReportingTonnage = 8000.00m,
+                        },
+                        new CalcResultLateReportingTonnageDetail
+                        {
+                            Name = "Plastic",
+                            RedLateReportingTonnage = 1000.00m,
+                            AmberLateReportingTonnage = 500.00m,
+                            GreenLateReportingTonnage = 500.00m,
+                            TotalLateReportingTonnage = 2000.00m,
+                        },
+                        new CalcResultLateReportingTonnageDetail
+                        {
+                            Name = "Total",
+                            RedLateReportingTonnage = 2000.00m,
+                            AmberLateReportingTonnage = 2500.00m,
+                            GreenLateReportingTonnage = 5500.00m,
+                            TotalLateReportingTonnage = 10000.00m,
+                        },
                 },
             };
         }
