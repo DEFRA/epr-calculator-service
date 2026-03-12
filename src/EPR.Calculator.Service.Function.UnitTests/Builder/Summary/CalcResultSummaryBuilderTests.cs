@@ -1295,8 +1295,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 producer,
                 materials,
                 this.calcResult, new List<TotalPackagingTonnagePerRun>(),
-                producerInvoicedMaterialNetTonnage);
-
+                producerInvoicedMaterialNetTonnage,
+                showModulations: false);
 
             Assert.AreEqual(CommonConstants.Yes, row.IsProducerScaledup);
         }
@@ -1348,8 +1348,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 producer,
                 materials,
                 this.calcResult, new List<TotalPackagingTonnagePerRun>(),
-                producerInvoicedMaterialNetTonnage);
-
+                producerInvoicedMaterialNetTonnage,
+                showModulations: false);
 
             Assert.AreEqual(CommonConstants.Yes, row.IsPartialObligation);
         }
@@ -1398,7 +1398,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 materials,
                 this.calcResult,
                 new List<TotalPackagingTonnagePerRun>(),
-                producerInvoicedMaterialNetTonnage);
+                producerInvoicedMaterialNetTonnage,
+                showModulations: false);
 
             Assert.AreEqual(CommonConstants.No, row.IsProducerScaledup);
         }
@@ -1433,7 +1434,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 materials,
                 this.calcResult,
                 new List<TotalPackagingTonnagePerRun>(),
-                producerInvoicedMaterialNetTonnage);
+                producerInvoicedMaterialNetTonnage,
+                showModulations: false);
 
             Assert.AreEqual(CommonConstants.No, row.IsPartialObligation);
             Assert.AreEqual("99", row.StatusCode);
@@ -1460,7 +1462,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 materials,
                 this.calcResult,
                 new List<TotalPackagingTonnagePerRun>(),
-                producerInvoicedMaterialNetTonnage);
+                producerInvoicedMaterialNetTonnage,
+                showModulations: false);
 
             Assert.AreEqual(CommonConstants.No, row.IsPartialObligation);
         }

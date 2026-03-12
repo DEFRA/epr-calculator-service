@@ -113,7 +113,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var producer = TestDataHelper.GetProducerDisposalFees()[0];
 
             // Act
-            _testClass.AddNewRow(csvContent, producer, showModulations: false);
+            _testClass.AddNewRow(csvContent, producer);
             var results = csvContent.ToString().Split(",");
 
             // Assert
@@ -128,7 +128,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var producer = TestDataHelper.GetProducerDisposalFeesForOverAllTotal()[0];
 
             // Act
-            _testClass.AddNewRow(csvContent, producer, showModulations: false);
+            _testClass.AddNewRow(csvContent, producer);
             var results = csvContent.ToString().Split(",");
 
             // Assert
@@ -143,7 +143,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var producer = TestDataHelper.GetProducerDisposalFeesTonnageValueNull()[0];
 
             // Act
-            _testClass.AddNewRow(csvContent, producer, showModulations: false);
+            _testClass.AddNewRow(csvContent, producer);
             var results = csvContent.ToString().Split(",");
 
             // Assert
