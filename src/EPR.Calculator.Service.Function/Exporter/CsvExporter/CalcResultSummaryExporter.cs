@@ -4,6 +4,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using EPR.Calculator.API.Data.Enums;
+
     using EPR.Calculator.API.Utils;
     using EPR.Calculator.Service.Common.Utils;
     using EPR.Calculator.Service.Function.Constants;
@@ -26,19 +28,19 @@
             // Add data
             foreach (var producer in resultSummary.ProducerDisposalFees)
             {
-                AddNewRow(csvContent, producer, showModulations);
+                AddNewRow(csvContent, producer);
             }
         }
 
-        public void AddNewRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool showModulations)
+        public void AddNewRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
         {
             AddFirstColumns(csvContent, producer);
 
-            AppendProducerDisposalFeesByMaterial(csvContent, producer, showModulations);
+            AppendProducerDisposalFeesByMaterial(csvContent, producer);
 
             AddProducerDisposal(csvContent, producer);
 
-            AppendProducerCommsFeesByMaterial(csvContent, producer, showModulations);
+            AppendProducerCommsFeesByMaterial(csvContent, producer);
 
             AddProducerCommsFee(csvContent, producer);
 
@@ -142,8 +144,7 @@
 
         private void AppendProducerDisposalFeesByMaterial(
             StringBuilder csvContent,
-            CalcResultSummaryProducerDisposalFees producer,
-            bool showModulations)
+            CalcResultSummaryProducerDisposalFees producer)
         {
             if (producer.ProducerCommsFeesByMaterial == null) { return; }
             foreach (var disposalFee in producer.ProducerDisposalFeesByMaterial!)
@@ -157,7 +158,7 @@
                     csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.PreviousInvoicedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 }
 
-                foreach (var tonnage in MaterialTonnagePackages(disposalFee.Key, disposalFee.Value, showModulations)) {
+                foreach (var tonnage in MaterialTonnagePackages(disposalFee.Key, disposalFee.Value)) {
                     csvContent.Append(CsvSanitiser.SanitiseData(tonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 }
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.TotalReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
@@ -175,12 +176,12 @@
             }
         }
 
-        private void AppendProducerCommsFeesByMaterial(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool showModulations)
+        private void AppendProducerCommsFeesByMaterial(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
         {
             if (producer.ProducerCommsFeesByMaterial == null) { return; }
             foreach (var disposalFee in producer.ProducerCommsFeesByMaterial!)
             {
-                foreach (var tonnage in MaterialTonnagePackages(disposalFee.Key, disposalFee.Value, showModulations)) {
+                foreach (var tonnage in MaterialTonnagePackages(disposalFee.Key, disposalFee.Value)) {
                     csvContent.Append(CsvSanitiser.SanitiseData(tonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 }
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.TotalReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
@@ -195,41 +196,29 @@
             }
         }
 
-        private IEnumerable<decimal> MaterialTonnagePackages(string material, CalcResultSummaryProducerMaterialBase mb, bool showModulations)
+        private IEnumerable<decimal> MaterialTonnagePackages(string material, CalcResultSummaryProducerMaterialBase mb)
         {
             yield return mb.HouseholdPackagingWasteTonnage;
-            if (showModulations)
+
+            foreach (var dict in mb.HouseholdPackagingWasteTonnageRagRating.OrderBy(x => x.Key))
             {
-                yield return mb.HouseholdPackagingWasteTonnageRed;
-                yield return mb.HouseholdPackagingWasteTonnageAmber;
-                yield return mb.HouseholdPackagingWasteTonnageGreen;
-                yield return mb.HouseholdPackagingWasteTonnageRedMedical;
-                yield return mb.HouseholdPackagingWasteTonnageAmberMedical;
-                yield return mb.HouseholdPackagingWasteTonnageGreenMedical;
+                yield return dict.Value;
             }
 
             yield return mb.PublicBinTonnage;
-            if (showModulations)
+
+            foreach (var dict in mb.PublicBinTonnageRagRating.OrderBy(x => x.Key))
             {
-                yield return mb.PublicBinTonnageRed;
-                yield return mb.PublicBinTonnageAmber;
-                yield return mb.PublicBinTonnageGreen;
-                yield return mb.PublicBinTonnageRedMedical;
-                yield return mb.PublicBinTonnageAmberMedical;
-                yield return mb.PublicBinTonnageGreenMedical;
+                yield return dict.Value;
             }
 
             if (extraColumns.Contains(material))
             {
                 yield return mb.HouseholdDrinksContainersTonnage;
-                if (showModulations)
+
+                foreach (var dict in mb.HouseholdDrinksContainersTonnageRagRating.OrderBy(x => x.Key))
                 {
-                    yield return mb.HouseholdDrinksContainersTonnageRed;
-                    yield return mb.HouseholdDrinksContainersTonnageAmber;
-                    yield return mb.HouseholdDrinksContainersTonnageGreen;
-                    yield return mb.HouseholdDrinksContainersTonnageRedMedical;
-                    yield return mb.HouseholdDrinksContainersTonnageAmberMedical;
-                    yield return mb.HouseholdDrinksContainersTonnageGreenMedical;
+                    yield return dict.Value;
                 }
             }
         }
