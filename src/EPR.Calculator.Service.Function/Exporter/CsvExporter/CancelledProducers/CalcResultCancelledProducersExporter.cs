@@ -33,7 +33,7 @@
             WriteCancelledProducersSecondaryHeaders(csvContent);
 
             // Add column header
-            WriteCancelledProducersColumnHeaders(response.CancelledProducers!, csvContent);
+            WriteCancelledProducersColumnHeaders(csvContent);
             csvContent.AppendLine();
         }
 
@@ -74,7 +74,7 @@
             csvContent.AppendLine(headerRow);
         }
 
-        private static void WriteCancelledProducersColumnHeaders(IEnumerable<CalcResultCancelledProducersDto> producers, StringBuilder csvContent)
+        private static void WriteCancelledProducersColumnHeaders(StringBuilder csvContent)
         {
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.ProducerId));
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.ProducerOrSubsidiaryName));
