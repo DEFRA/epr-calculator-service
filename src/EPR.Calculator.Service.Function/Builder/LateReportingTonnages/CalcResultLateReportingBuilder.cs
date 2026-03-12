@@ -1,10 +1,18 @@
 ﻿namespace EPR.Calculator.Service.Function.Builder.LateReportingTonnages
 {
+    using System.Collections.Generic;
+
     using System.Linq;
+    using System.Security.Cryptography.X509Certificates;
+
     using System.Threading.Tasks;
     using EPR.Calculator.API.Data;
+    using EPR.Calculator.API.Data.DataModels;
+
     using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Models;
+    using Microsoft.AspNetCore.Routing.Template;
+
     using Microsoft.EntityFrameworkCore;
 
     public class CalcResultLateReportingBuilder : ICalcResultLateReportingBuilder
@@ -13,6 +21,9 @@
         public const string Total = "Total";
         public const string MaterialHeading = "Material";
         public const string TonnageHeading = "Late Reporting Tonnage";
+        public const string RedTonnageHeading = "Red + Red Medical Late Reporting Tonnage";
+        public const string AmberTonnageHeading = "Amber + Amber Medical Late Reporting Tonnage";
+        public const string GreenTonnageHeading = "Green + Green Medical Late Reporting Tonnage";
         private readonly ApplicationDBContext context;
 
         public CalcResultLateReportingBuilder(ApplicationDBContext context)
@@ -28,16 +39,33 @@
                                 join detail in this.context.DefaultParameterSettingDetail on master.Id equals detail.DefaultParameterSettingMasterId
                                 join template in this.context.DefaultParameterTemplateMasterList on detail.ParameterUniqueReferenceId equals template.ParameterUniqueReferenceId
                                 where run.Id == resultsRequestDto.RunId && template.ParameterType == TonnageHeading
-                                select new CalcResultLateReportingTonnageDetail
-                                {
-                                    Name = template.ParameterCategory,
-                                    TotalLateReportingTonnage = detail.ParameterValue,
-                                }).ToListAsync();
+                                select new { template.ParameterCategory, detail.ParameterValue}).ToListAsync();
 
-            result.Add(new CalcResultLateReportingTonnageDetail
+            var tonnageDetails = result
+                                .GroupBy(x => RemoveSuffix(x.ParameterCategory))
+                                .Select(g =>
+                                {
+                                    var red = GetParameterValueBySuffix(g, "-R");
+                                    var amber = GetParameterValueBySuffix(g, "-A");
+                                    var green = GetParameterValueBySuffix(g, "-G");
+
+                                    return new CalcResultLateReportingTonnageDetail
+                                    {
+                                        Name = g.Key,
+                                        RedLateReportingTonnage = red,
+                                        AmberLateReportingTonnage = amber,
+                                        GreenLateReportingTonnage = green,
+                                        TotalLateReportingTonnage = red + amber + green
+                                    };
+                                }).ToList();
+
+            tonnageDetails.Add(new CalcResultLateReportingTonnageDetail
             {
                 Name = Total,
-                TotalLateReportingTonnage = result.Sum(r => r.TotalLateReportingTonnage),
+                RedLateReportingTonnage = tonnageDetails.Sum(r => r.RedLateReportingTonnage),
+                AmberLateReportingTonnage = tonnageDetails.Sum(r => r.AmberLateReportingTonnage),
+                GreenLateReportingTonnage = tonnageDetails.Sum(r => r.GreenLateReportingTonnage),
+                TotalLateReportingTonnage = tonnageDetails.Sum(r => r.TotalLateReportingTonnage)
             });
 
             return new CalcResultLateReportingTonnage
@@ -45,8 +73,23 @@
                 Name = LateReportingHeader,
                 MaterialHeading = MaterialHeading,
                 TonnageHeading = TonnageHeading,
-                CalcResultLateReportingTonnageDetails = result,
+                RedTonnageHeading = RedTonnageHeading,
+                AmberTonnageHeading = AmberTonnageHeading,
+                GreenTonnageHeading = GreenTonnageHeading,
+                CalcResultLateReportingTonnageDetails = tonnageDetails,
             };
+        }
+
+        private static string RemoveSuffix(string value)
+        {
+            if (value.EndsWith("-R") || value.EndsWith("-G") || value.EndsWith("-A"))
+                return value.Substring(0, value.Length - 2);
+            return value;
+        }
+
+        private static decimal GetParameterValueBySuffix(IGrouping<string, dynamic> group, string suffix)
+        {
+            return group.First(x => x.ParameterCategory.EndsWith(suffix)).ParameterValue;
         }
     }
 }
