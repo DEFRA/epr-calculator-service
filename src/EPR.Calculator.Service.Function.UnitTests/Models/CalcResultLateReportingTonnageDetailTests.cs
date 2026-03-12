@@ -22,6 +22,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             this.TestClass = new CalcResultLateReportingTonnageDetail
             {
                 Name = this.Name,
+                RedLateReportingTonnage = this.RedLateReportingTonnage,
+                AmberLateReportingTonnage = this.AmberLateReportingTonnage,
+                GreenLateReportingTonnage = this.GreenLateReportingTonnage,
                 TotalLateReportingTonnage = this.TotalLateReportingTonnage,
             };
         }
@@ -32,6 +35,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
 
         private string Name { get; init; }
 
+        private decimal RedLateReportingTonnage { get; init; }
+        private decimal AmberLateReportingTonnage { get; init; }
+        private decimal GreenLateReportingTonnage { get; init; }
         private decimal TotalLateReportingTonnage { get; init; }
 
         [TestMethod]
@@ -41,6 +47,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var instance = new CalcResultLateReportingTonnageDetail
             {
                 Name = this.Name,
+                RedLateReportingTonnage = this.RedLateReportingTonnage,
+                AmberLateReportingTonnage = this.AmberLateReportingTonnage,
+                GreenLateReportingTonnage = this.GreenLateReportingTonnage,
                 TotalLateReportingTonnage = this.TotalLateReportingTonnage,
             };
 
@@ -55,6 +64,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var same = new CalcResultLateReportingTonnageDetail
             {
                 Name = this.Name,
+                RedLateReportingTonnage = this.RedLateReportingTonnage,
+                AmberLateReportingTonnage = this.AmberLateReportingTonnage,
+                GreenLateReportingTonnage = this.GreenLateReportingTonnage,
                 TotalLateReportingTonnage = this.TotalLateReportingTonnage,
             };
             var different = this.Fixture.Create<CalcResultLateReportingTonnageDetail>();
