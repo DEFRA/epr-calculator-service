@@ -306,6 +306,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                 CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers(),
                 CalcResultSummary = TestDataHelper.GetCalcResultSummary(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
+                CalcResultModulation = null,
             };
         }
     }

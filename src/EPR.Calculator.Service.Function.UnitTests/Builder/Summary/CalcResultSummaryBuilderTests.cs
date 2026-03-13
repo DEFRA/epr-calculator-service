@@ -293,7 +293,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
                     MaterialBreakdownHeaders = null,
                     ColumnHeaders = null,
                     PartialObligations = new List<CalcResultPartialObligation>(),
-                }
+                },
+                CalcResultModulation = null,
             };
 
             // Seed database
@@ -673,8 +674,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
             Assert.IsNotNull(result);
             Assert.AreEqual(CalcResultSummaryHeaders.CalculationResult, result.ResultSummaryHeader!.Name);
             Assert.AreEqual(26, result.ProducerDisposalFeesHeaders!.Count());
-            var isColumnHeaderExists = result.ProducerDisposalFeesHeaders!.Select(dict => dict.ColumnIndex == 237 || dict.ColumnIndex == 238 || dict.ColumnIndex == 219).ToList();
-            Assert.IsTrue(isColumnHeaderExists.Contains(true));
             Assert.IsNotNull(result.ProducerDisposalFees);
             Assert.AreEqual(5, result.ProducerDisposalFees.Count());
         }
@@ -769,6 +768,11 @@ namespace EPR.Calculator.Service.Function.UnitTests
             Assert.AreEqual(string.Empty, totals?.ProducerName);
             Assert.IsNotNull(producer.ProducerName);
             Assert.AreEqual("Producer1", producer.ProducerName);
+
+            var modulationResult = this.calcResult;
+            modulationResult.CalcResultModulation = "add modulations section";
+            var result2 = new CalcResultSummaryBuilder(this.context).GetCalcResultSummary(orderedProducerDetails, materials, modulationResult, totalPackagingTonnage, producerInvoicedMaterialNetTonnage, defaultParams);
+            Assert.AreEqual(209, result2.ColumnHeaders.Count());
         }
 
         [TestMethod]
@@ -1293,7 +1297,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 this.calcResult, new List<TotalPackagingTonnagePerRun>(),
                 producerInvoicedMaterialNetTonnage);
 
-
             Assert.AreEqual(CommonConstants.Yes, row.IsProducerScaledup);
         }
 
@@ -1345,7 +1348,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 materials,
                 this.calcResult, new List<TotalPackagingTonnagePerRun>(),
                 producerInvoicedMaterialNetTonnage);
-
 
             Assert.AreEqual(CommonConstants.Yes, row.IsPartialObligation);
         }

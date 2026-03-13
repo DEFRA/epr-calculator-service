@@ -5,28 +5,36 @@
     using EPR.Calculator.Service.Function.Builder.Summary.ThreeSa;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Models;
+    using System.Linq;
+
 
     public static class ThreeSaCostsProducer
     {
-        public static readonly int ColumnIndex = 210;
-
         public static IEnumerable<CalcResultSummaryHeader> GetHeaders()
         {
             return [
-                new CalcResultSummaryHeader { Name = ThreeSaCostHeader.TotalSaOperatingCostsWoTitleSection3, ColumnIndex = ColumnIndex },
-                new CalcResultSummaryHeader { Name = ThreeSaCostHeader.BadDebtProvisionSection3, ColumnIndex = ColumnIndex + 1 },
-                new CalcResultSummaryHeader { Name = ThreeSaCostHeader.SaOperatingCostsWithTitleSection3, ColumnIndex = ColumnIndex + 2 },
-                new CalcResultSummaryHeader { Name = ThreeSaCostHeader.EnglandTotalWithBadDebtProvisionSection3, ColumnIndex = ColumnIndex + 3 },
-                new CalcResultSummaryHeader { Name = ThreeSaCostHeader.WalesTotalWithBadDebtProvisionSection3, ColumnIndex = ColumnIndex + 4 },
-                new CalcResultSummaryHeader { Name = ThreeSaCostHeader.ScotlandTotalWithBadDebtProvisionSection3, ColumnIndex = ColumnIndex + 5 },
-                new CalcResultSummaryHeader { Name = ThreeSaCostHeader.NorthernIrelandTotalWithBadDebtProvisionSection3, ColumnIndex = ColumnIndex + 6 }
+                new CalcResultSummaryHeader { Name = ThreeSaCostHeader.TotalSaOperatingCostsWoTitleSection3 },
+                new CalcResultSummaryHeader { Name = ThreeSaCostHeader.BadDebtProvisionSection3 },
+                new CalcResultSummaryHeader { Name = ThreeSaCostHeader.SaOperatingCostsWithTitleSection3},
+                new CalcResultSummaryHeader { Name = ThreeSaCostHeader.EnglandTotalWithBadDebtProvisionSection3 },
+                new CalcResultSummaryHeader { Name = ThreeSaCostHeader.WalesTotalWithBadDebtProvisionSection3 },
+                new CalcResultSummaryHeader { Name = ThreeSaCostHeader.ScotlandTotalWithBadDebtProvisionSection3 },
+                new CalcResultSummaryHeader { Name = ThreeSaCostHeader.NorthernIrelandTotalWithBadDebtProvisionSection3 }
             ];
         }
 
+        public static IEnumerable<CalcResultSummaryHeader> GetSummaryHeaders(int columnIndex)
+        {
+            return [
+                new CalcResultSummaryHeader { Name = $"{ThreeSaCostHeader.SaOperatingCostsWithoutBadDebtProvisionTitleSection3}", ColumnIndex = columnIndex },
+                new CalcResultSummaryHeader { Name = $"{ThreeSaCostHeader.BadDebtProvisionTitleSection3}", ColumnIndex = columnIndex + 1 },
+                new CalcResultSummaryHeader { Name = $"{ThreeSaCostHeader.SaOperatingCostsWithBadDebtProvisionTitleSection3}", ColumnIndex = columnIndex + 2 }
+            ];
+        }
 
         public static void GetProducerSetUpCostsSection3(CalcResult calcResult, CalcResultSummary summary)
         {
-            summary.SaOperatingCostsWoTitleSection3 = ThreeSaCostsSummary.GetThreeSaCostsWithoutBadDebtProvision(calcResult);
+            summary.SaOperatingCostsWoTitleSection3 = calcResult.CalcResultParameterOtherCost.SaOperatingCost.OrderByDescending(t => t.OrderId).First().TotalValue;
             summary.BadDebtProvisionTitleSection3 = (summary.SaOperatingCostsWoTitleSection3 * calcResult.CalcResultParameterOtherCost.BadDebtValue) / 100;
             summary.SaOperatingCostsWithTitleSection3 = summary.BadDebtProvisionTitleSection3 + summary.SaOperatingCostsWoTitleSection3;
 

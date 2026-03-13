@@ -29,6 +29,7 @@
                 CalcResultSummary = TestDataHelper.GetCalcResultSummary(),
                 CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
                 CalcResultLateReportingTonnageData = this.GetCalcResultLateReportingTonnage(),
+                CalcResultModulation = null,
             };
         }
 
@@ -952,97 +953,6 @@
         }
 
         [TestMethod]
-        public void CanGetTotalProducerDisposalFee()
-        {
-            // Arrange
-            var materialCostSummary = TestDataHelper.GetProducerDisposalFeesByMaterial();
-
-            // Act
-            var result = CalcResultSummaryUtil.GetTotalProducerDisposalFee(materialCostSummary);
-
-            // Assert
-            Assert.AreEqual(5233.40m, result);
-        }
-
-        [TestMethod]
-        public void CanGetTotalBadDebtProvision()
-        {
-            // Arrange
-            var materialCostSummary = TestDataHelper.GetProducerDisposalFeesByMaterial();
-
-            // Act
-            var result = CalcResultSummaryUtil.GetTotalBadDebtProvision(materialCostSummary);
-
-            // Assert
-            Assert.AreEqual(314.01m, result);
-        }
-
-        [TestMethod]
-        public void CanGetTotalProducerDisposalFeeWithBadDebtProvision()
-        {
-            // Arrange
-            var materialCostSummary = TestDataHelper.GetProducerDisposalFeesByMaterial();
-
-            // Act
-            var result = CalcResultSummaryUtil.GetTotalProducerDisposalFeeWithBadDebtProvision(materialCostSummary);
-
-            // Assert
-            Assert.AreEqual(5547.40m, result);
-        }
-
-        [TestMethod]
-        public void CanGetEnglandTotal()
-        {
-            // Arrange
-            var materialCostSummary = TestDataHelper.GetProducerDisposalFeesByMaterial();
-
-            // Act
-            var result = CalcResultSummaryUtil.GetEnglandTotal(materialCostSummary);
-
-            // Assert
-            Assert.AreEqual(2998.30m, result);
-        }
-
-        [TestMethod]
-        public void CanGetWalesTotal()
-        {
-            // Arrange
-            var materialCostSummary = TestDataHelper.GetProducerDisposalFeesByMaterial();
-
-            // Act
-            var result = CalcResultSummaryUtil.GetWalesTotal(materialCostSummary);
-
-            // Assert
-            Assert.AreEqual(675.85m, result);
-        }
-
-        [TestMethod]
-        public void CanGetScotlandTotal()
-        {
-            // Arrange
-            var materialCostSummary = TestDataHelper.GetProducerDisposalFeesByMaterial();
-
-            // Act
-            var result = CalcResultSummaryUtil.GetScotlandTotal(materialCostSummary);
-
-            // Assert
-            Assert.AreEqual(1346.22m, result);
-        }
-
-        [TestMethod]
-        public void CanGetNorthernIrelandTotal()
-        {
-            // Arrange
-            var materialCostSummary = TestDataHelper.GetProducerDisposalFeesByMaterial();
-
-            // Act
-            var result = CalcResultSummaryUtil.GetNorthernIrelandTotal(materialCostSummary);
-
-            // Assert
-            Assert.AreEqual(527.03m, result);
-        }
-
-        [TestMethod]
         public void CanGetTotal1Plus2ABadDebt()
         {
             // Arrange
@@ -1056,97 +966,6 @@
 
             // Assert
             Assert.AreEqual(2217.89100000m, result);
-        }
-
-        [TestMethod]
-        public void CanGetTotalProducerCommsFee()
-        {
-            // Arrange
-            var commCostSummary = TestDataHelper.GetProducerCommsFeesByMaterial();
-
-            // Act
-            var result = CalcResultSummaryUtil.GetTotalProducerCommsFee(commCostSummary);
-
-            // Assert
-            Assert.AreEqual(1358.98m, result);
-        }
-
-        [TestMethod]
-        public void CanGetCommsTotalBadDebtProvision()
-        {
-            // Arrange
-            var commCostSummary = TestDataHelper.GetProducerCommsFeesByMaterial();
-
-            // Act
-            var result = CalcResultSummaryUtil.GetCommsTotalBadDebtProvision(commCostSummary);
-
-            // Assert
-            Assert.AreEqual(81.53m, result);
-        }
-
-        [TestMethod]
-        public void CanGetTotalProducerCommsFeeWithBadDebtProvision()
-        {
-            // Arrange
-            var commCostSummary = TestDataHelper.GetProducerCommsFeesByMaterial();
-
-            // Act
-            var result = CalcResultSummaryUtil.GetTotalProducerCommsFeeWithBadDebtProvision(commCostSummary);
-
-            // Assert
-            Assert.AreEqual(1440.51m, result);
-        }
-
-        [TestMethod]
-        public void CanGetEnglandCommsTotal()
-        {
-            // Arrange
-            var commCostSummary = TestDataHelper.GetProducerCommsFeesByMaterial();
-
-            // Act
-            var result = CalcResultSummaryUtil.GetEnglandCommsTotal(commCostSummary);
-
-            // Assert
-            Assert.AreEqual(756.17m, result);
-        }
-
-        [TestMethod]
-        public void CanGetWalesCommsTotal()
-        {
-            // Arrange
-            var commCostSummary = TestDataHelper.GetProducerCommsFeesByMaterial();
-
-            // Act
-            var result = CalcResultSummaryUtil.GetWalesCommsTotal(commCostSummary);
-
-            // Assert
-            Assert.AreEqual(190.86m, result);
-        }
-
-        [TestMethod]
-        public void CanGetScotlandCommsTotal()
-        {
-            // Arrange
-            var commCostSummary = TestDataHelper.GetProducerCommsFeesByMaterial();
-
-            // Act
-            var result = CalcResultSummaryUtil.GetScotlandCommsTotal(commCostSummary);
-
-            // Assert
-            Assert.AreEqual(350.43m, result);
-        }
-
-        [TestMethod]
-        public void CanGetNorthernIrelandCommsTotal()
-        {
-            // Arrange
-            var commCostSummary = TestDataHelper.GetProducerCommsFeesByMaterial();
-
-            // Act
-            var result = CalcResultSummaryUtil.GetNorthernIrelandCommsTotal(commCostSummary);
-
-            // Assert
-            Assert.AreEqual(143.06m, result);
         }
 
         [TestMethod]

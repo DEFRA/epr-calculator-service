@@ -201,37 +201,29 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         {
             // Act
             var result = BillingInstructionsProducer.GetHeaders().ToList();
-            var columnIndex = 296;
 
             var expectedResult = new List<CalcResultSummaryHeader>();
             expectedResult.AddRange([
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.CurrentYearInvoicedTotalToDate, ColumnIndex = columnIndex },
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.TonnageChangeSinceLastInvoice, ColumnIndex = columnIndex + 1 },
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.LiabilityDifference, ColumnIndex = columnIndex + 2 },
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.MaterialThresholdBreached, ColumnIndex = columnIndex + 3 },
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.TonnageThresholdBreached, ColumnIndex = columnIndex + 4 },
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.PercentageLiabilityDifference, ColumnIndex = columnIndex + 5 },
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.MaterialPercentageThresholdBreached, ColumnIndex = columnIndex + 6 },
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.TonnagePercentagThresholdBreached, ColumnIndex = columnIndex + 6 },
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.SuggestedBillingInstruction, ColumnIndex = columnIndex + 6 },
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.SuggestedInvoiceAmount, ColumnIndex = columnIndex + 6 }
+                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.CurrentYearInvoicedTotalToDate },
+                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.TonnageChangeSinceLastInvoice },
+                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.LiabilityDifference },
+                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.MaterialThresholdBreached },
+                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.TonnageThresholdBreached },
+                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.PercentageLiabilityDifference },
+                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.MaterialPercentageThresholdBreached },
+                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.TonnagePercentagThresholdBreached },
+                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.SuggestedBillingInstruction },
+                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.SuggestedInvoiceAmount }
             ]);
 
             // Assert
             Assert.AreEqual(expectedResult[0].Name, result[0].Name);
-            Assert.AreEqual(expectedResult[0].ColumnIndex, result[0].ColumnIndex);
             Assert.AreEqual(expectedResult[1].Name, result[1].Name);
-            Assert.AreEqual(expectedResult[1].ColumnIndex, result[1].ColumnIndex);
             Assert.AreEqual(expectedResult[2].Name, result[2].Name);
-            Assert.AreEqual(expectedResult[2].ColumnIndex, result[2].ColumnIndex);
             Assert.AreEqual(expectedResult[3].Name, result[3].Name);
-            Assert.AreEqual(expectedResult[3].ColumnIndex, result[3].ColumnIndex);
             Assert.AreEqual(expectedResult[4].Name, result[4].Name);
-            Assert.AreEqual(expectedResult[4].ColumnIndex, result[4].ColumnIndex);
             Assert.AreEqual(expectedResult[5].Name, result[5].Name);
-            Assert.AreEqual(expectedResult[5].ColumnIndex, result[5].ColumnIndex);
             Assert.AreEqual(expectedResult[6].Name, result[6].Name);
-            Assert.AreEqual(expectedResult[6].ColumnIndex, result[6].ColumnIndex);
         }
 
         /// <summary>
@@ -241,7 +233,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         public void CanCallGetSummaryHeaders()
         {
             // Act
-            var result = BillingInstructionsProducer.GetSummaryHeaders().ToList();
+            var result = BillingInstructionsProducer.GetSummaryHeaders(296).ToList();
 
             var expectedResult = new List<CalcResultSummaryHeader>();
             expectedResult.AddRange([
@@ -1240,7 +1232,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
             Assert.IsNull(fee.SuggestedInvoiceAmount);
-        }        
+        }
 
         /// <summary>
         /// The CreateMaterials

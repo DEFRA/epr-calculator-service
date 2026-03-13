@@ -60,37 +60,37 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             this.calcResultErrorReportExporter = calcResultErrorReportExporter;
         }
 
-        public string Export(CalcResult results)
+        public string Export(CalcResult calcResult)
         {
-            if (results == null)
+            if (calcResult == null)
             {
-                throw new ArgumentNullException(nameof(results), "The results parameter cannot be null.");
+                throw new ArgumentNullException(nameof(calcResult), "The calcResult parameter cannot be null.");
             }
 
             var csvContent = new StringBuilder();
-            resultDetailexporter.Export(results.CalcResultDetail, csvContent);
+            resultDetailexporter.Export(calcResult.CalcResultDetail, csvContent);
 
-            lapcaptDetailExporter.Export(results.CalcResultLapcapData, csvContent);
+            lapcaptDetailExporter.Export(calcResult.CalcResultLapcapData, csvContent);
 
-            csvContent.Append(lateReportingExporter.Export(results.CalcResultLateReportingTonnageData));
+            csvContent.Append(lateReportingExporter.Export(calcResult.CalcResultLateReportingTonnageData));
 
-            parameterOtherCosts.Export(results.CalcResultParameterOtherCost, csvContent);
+            parameterOtherCosts.Export(calcResult.CalcResultParameterOtherCost, csvContent);
 
-            onePlusFourApportionmentExporter.Export(results.CalcResultOnePlusFourApportionment, csvContent);
+            onePlusFourApportionmentExporter.Export(calcResult.CalcResultOnePlusFourApportionment, csvContent);
 
-            commsCostExporter.Export(results.CalcResultCommsCostReportDetail, csvContent);
+            commsCostExporter.Export(calcResult.CalcResultCommsCostReportDetail, csvContent);
 
-            laDisposalCostExporter.Export(results.CalcResultLaDisposalCostData, csvContent);
+            laDisposalCostExporter.Export(calcResult.CalcResultLaDisposalCostData, csvContent);
 
-            calcResultCancelledProducersExporter.Export(results.CalcResultCancelledProducers, csvContent);
+            calcResultCancelledProducersExporter.Export(calcResult.CalcResultCancelledProducers, csvContent);
 
-            calcResultScaledupProducersExporter.Export(results.CalcResultScaledupProducers, csvContent);
+            calcResultScaledupProducersExporter.Export(calcResult.CalcResultScaledupProducers, csvContent);
 
-            calcResultPartialObligationsExporter.Export(results.CalcResultPartialObligations, csvContent);
+            calcResultPartialObligationsExporter.Export(calcResult.CalcResultPartialObligations, csvContent);
 
-            calcResultSummaryExporter.Export(results.CalcResultSummary, csvContent);
+            calcResultSummaryExporter.Export(calcResult.CalcResultSummary, csvContent, calcResult.CalcResultModulation is not null);
 
-            calcResultErrorReportExporter.Export(results.CalcResultErrorReports, csvContent);
+            calcResultErrorReportExporter.Export(calcResult.CalcResultErrorReports, csvContent);
 
             return csvContent.ToString();
         }

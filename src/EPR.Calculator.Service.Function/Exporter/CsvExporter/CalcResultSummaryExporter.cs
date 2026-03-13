@@ -4,6 +4,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using EPR.Calculator.API.Data.Enums;
+
     using EPR.Calculator.API.Utils;
     using EPR.Calculator.Service.Common.Utils;
     using EPR.Calculator.Service.Function.Constants;
@@ -14,7 +16,7 @@
     {
         private readonly IEnumerable<string> extraColumns = [MaterialCodes.Glass];
 
-        public void Export(CalcResultSummary resultSummary, StringBuilder csvContent)
+        public void Export(CalcResultSummary resultSummary, StringBuilder csvContent, bool showModulations)
         {
             // Add empty lines
             csvContent.AppendLine();
@@ -155,14 +157,10 @@
                 {
                     csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.PreviousInvoicedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 }
-                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.HouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
 
-                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.PublicBinTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                if (extraColumns.Contains(disposalFee.Key))
-                {
-                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.HouseholdDrinksContainersTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+                foreach (var tonnage in MaterialTonnagePackages(disposalFee.Key, disposalFee.Value)) {
+                    csvContent.Append(CsvSanitiser.SanitiseData(tonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 }
-
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.TotalReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ManagedConsumerWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.NetReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
@@ -183,13 +181,9 @@
             if (producer.ProducerCommsFeesByMaterial == null) { return; }
             foreach (var disposalFee in producer.ProducerCommsFeesByMaterial!)
             {
-                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.HouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ReportedPublicBinTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                if (extraColumns.Contains(disposalFee.Key))
-                {
-                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.HouseholdDrinksContainers, DecimalPlaces.Three, DecimalFormats.F3));
+                foreach (var tonnage in MaterialTonnagePackages(disposalFee.Key, disposalFee.Value)) {
+                    csvContent.Append(CsvSanitiser.SanitiseData(tonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 }
-
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.TotalReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 csvContent.Append(producer.LeaverDate != CommonConstants.Totals ? CsvSanitiser.SanitiseData(disposalFee.Value.PriceperTonne, null, null, true) : CommonConstants.CsvFileDelimiter);
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ProducerTotalCostWithoutBadDebtProvision, DecimalPlaces.Two, null, true));
@@ -202,16 +196,41 @@
             }
         }
 
+        private IEnumerable<decimal> MaterialTonnagePackages(string material, CalcResultSummaryProducerMaterialBase mb)
+        {
+            yield return mb.HouseholdPackagingWasteTonnage;
+
+            foreach (var dict in mb.HouseholdPackagingWasteTonnageRagRating.OrderBy(x => x.Key))
+            {
+                yield return dict.Value;
+            }
+
+            yield return mb.PublicBinTonnage;
+
+            foreach (var dict in mb.PublicBinTonnageRagRating.OrderBy(x => x.Key))
+            {
+                yield return dict.Value;
+            }
+
+            if (extraColumns.Contains(material))
+            {
+                yield return mb.HouseholdDrinksContainersTonnage;
+
+                foreach (var dict in mb.HouseholdDrinksContainersTonnageRagRating.OrderBy(x => x.Key))
+                {
+                    yield return dict.Value;
+                }
+            }
+        }
+
         public void WriteSecondaryHeaders(StringBuilder csvContent, IEnumerable<CalcResultSummaryHeader> headers)
         {
-            const int maxColumnSize = CommonConstants.SecondaryHeaderMaxColumnSize;
+            var maxColumnSize = headers.MaxBy(h => h.ColumnIndex ?? 0)?.ColumnIndex ?? throw new ArgumentException("No headers specified");
+
             var headerRows = new string[maxColumnSize];
-            foreach (var item in headers)
+            foreach (var item in headers.Where(h => h.ColumnIndex.HasValue))
             {
-                if (item.ColumnIndex.HasValue)
-                {
-                    headerRows[item.ColumnIndex.Value - 1] = CsvSanitiser.SanitiseData(item.Name, false);
-                }
+                headerRows[item.ColumnIndex!.Value - 1] = CsvSanitiser.SanitiseData(item.Name, false);
             }
 
             var headerRow = string.Join(CommonConstants.CsvFileDelimiter, headerRows);

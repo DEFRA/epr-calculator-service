@@ -49,31 +49,28 @@
 
             var expectedResult = new List<CalcResultSummaryHeader>();
             expectedResult.AddRange([
-                new CalcResultSummaryHeader { Name = OnePlus2A2B2CHeaders.ProducerTotalWithBadDebtProvision, ColumnIndex = columnIndex },
-                new CalcResultSummaryHeader { Name = OnePlus2A2B2CHeaders.ProducerPercentageOfOverallProducerCost, ColumnIndex = columnIndex+1 },
+                new CalcResultSummaryHeader { Name = OnePlus2A2B2CHeaders.ProducerTotalWithBadDebtProvision },
+                new CalcResultSummaryHeader { Name = OnePlus2A2B2CHeaders.ProducerPercentageOfOverallProducerCost },
             ]);
 
             // Assert
             Assert.AreEqual(expectedResult[0].Name, result[0].Name);
-            Assert.AreEqual(expectedResult[0].ColumnIndex, result[0].ColumnIndex);
             Assert.AreEqual(expectedResult[1].Name, result[1].Name);
-            Assert.AreEqual(expectedResult[1].ColumnIndex, result[1].ColumnIndex);
         }
 
         [TestMethod]
         public void CanCallGetSummaryHeaders()
         {
             // Act
-            var result = OnePlus2A2B2CProducer.GetSummaryHeaders().ToList();
+            var result = OnePlus2A2B2CProducer.GetSummaryHeaders(columnIndex).ToList();
 
             var expectedResult = new List<CalcResultSummaryHeader>();
             expectedResult.AddRange([
-                new CalcResultSummaryHeader { Name = OnePlus2A2B2CHeaders.TotalWithBadDebtProvision, ColumnIndex = columnIndex },
+                new CalcResultSummaryHeader { Name = OnePlus2A2B2CHeaders.TotalWithBadDebtProvision },
             ]);
 
             // Assert
             Assert.AreEqual(expectedResult[0].Name, result[0].Name);
-            Assert.AreEqual(expectedResult[0].ColumnIndex, result[0].ColumnIndex);
         }
 
         [TestMethod]

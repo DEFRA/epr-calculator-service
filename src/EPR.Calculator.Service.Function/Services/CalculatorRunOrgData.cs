@@ -8,6 +8,8 @@ namespace EPR.Calculator.Service.Function.Services {
     using EPR.Calculator.API.Data.Models;
     using Microsoft.Data.SqlClient;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Metadata;
+
 
     public interface ICalculatorRunOrgData { Task LoadOrgDataForCalcRun(int runId, RelativeYear relativeYear, string createdBy, CancellationToken cancellationToken); }
 
@@ -41,52 +43,24 @@ namespace EPR.Calculator.Service.Function.Services {
             _context.CalculatorRunOrganisationDataMaster.Add(newMaster);
             await _context.SaveChangesAsync(cancellationToken);
 
-            var newMasterId = newMaster.Id;
-
-            // Bulk insert via raw SQL for performance (service side - no loading of entities into memory)
-            await _context.Database.ExecuteSqlInterpolatedAsync(
-                $@"
-                INSERT INTO calculator_run_organization_data_detail
-                (
-                    calculator_run_organization_data_master_id,
-                    load_ts,
-                    organisation_id,
-                    organisation_name,
-                    trading_name,
-                    subsidiary_id,
-                    obligation_status,
-                    submitter_id,
-                    status_code,
-                    num_days_obligated,
-                    error_code,
-                    joiner_date,
-                    leaver_date
-                )
-                SELECT
-                    {newMasterId},
-                    load_ts,
-                    organisation_id,
-                    organisation_name,
-                    trading_name,
-                    CASE
-                        WHEN LTRIM(RTRIM(subsidiary_id)) = ''
-                        THEN NULL
-                        ELSE subsidiary_id
-                    END,
-                    obligation_status,
-                    submitter_id,
-                    status_code,
-                    num_days_obligated,
-                    error_code,
-                    joiner_date,
-                    leaver_date
-                FROM organisation_data;",
-                cancellationToken);
+            // Bulk insert via raw SQL for performance (server side - no loading of entities into memory)
+            var insertTable = _context.Model.FindEntityType(typeof(CalculatorRunOrganisationDataDetail))!;
+            var selectTable = _context.Model.FindEntityType(typeof(OrganisationData))!;
+            var tableId = StoreObjectIdentifier.Table(insertTable.GetTableName()!, insertTable.GetSchema());
+            var columnNames = insertTable.GetProperties()
+                .Where(p => !string.Equals(p.Name, "Id", StringComparison.OrdinalIgnoreCase))
+                .Select(p => p.GetColumnName(tableId));
+            await _context.Database.ExecuteSqlRawAsync($@"
+                INSERT INTO {insertTable.GetTableName()} ({string.Join(", ", columnNames)})
+                SELECT {newMaster.Id}, {string.Join(", ", columnNames.Skip(1))}
+                FROM {selectTable.GetTableName()};",
+                cancellationToken
+            );
 
             var calculatorRun = await _context.CalculatorRuns
                 .FirstAsync(x => x.Id == runId, cancellationToken);
 
-            calculatorRun.CalculatorRunOrganisationDataMasterId = newMasterId;
+            calculatorRun.CalculatorRunOrganisationDataMasterId = newMaster.Id;
 
             await _context.SaveChangesAsync(cancellationToken);
         }

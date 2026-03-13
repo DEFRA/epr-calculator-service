@@ -340,6 +340,7 @@
                     MaterialHeading = string.Empty,
                     TonnageHeading = string.Empty
                 },
+                CalcResultModulation = null,
             };
 
             _materialCostSummary = new Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial>();
@@ -391,30 +392,23 @@
 
             var expectedResult = new List<CalcResultSummaryHeader>();
             expectedResult.AddRange([
-                new CalcResultSummaryHeader { Name = ThreeSaCostHeader.TotalSaOperatingCostsWoTitleSection3 , ColumnIndex = 210 },
-                new CalcResultSummaryHeader { Name = ThreeSaCostHeader.BadDebtProvisionSection3, ColumnIndex = 211 },
-                new CalcResultSummaryHeader { Name = ThreeSaCostHeader.SaOperatingCostsWithTitleSection3, ColumnIndex = 212 },
-                new CalcResultSummaryHeader { Name = ThreeSaCostHeader.EnglandTotalWithBadDebtProvisionSection3, ColumnIndex = 213 },
-                new CalcResultSummaryHeader { Name = ThreeSaCostHeader.WalesTotalWithBadDebtProvisionSection3, ColumnIndex = 214 },
-                new CalcResultSummaryHeader { Name = ThreeSaCostHeader.ScotlandTotalWithBadDebtProvisionSection3, ColumnIndex = 215 },
-                new CalcResultSummaryHeader { Name = ThreeSaCostHeader.NorthernIrelandTotalWithBadDebtProvisionSection3, ColumnIndex = 216 }
+                new CalcResultSummaryHeader { Name = ThreeSaCostHeader.TotalSaOperatingCostsWoTitleSection3 },
+                new CalcResultSummaryHeader { Name = ThreeSaCostHeader.BadDebtProvisionSection3 },
+                new CalcResultSummaryHeader { Name = ThreeSaCostHeader.SaOperatingCostsWithTitleSection3 },
+                new CalcResultSummaryHeader { Name = ThreeSaCostHeader.EnglandTotalWithBadDebtProvisionSection3 },
+                new CalcResultSummaryHeader { Name = ThreeSaCostHeader.WalesTotalWithBadDebtProvisionSection3 },
+                new CalcResultSummaryHeader { Name = ThreeSaCostHeader.ScotlandTotalWithBadDebtProvisionSection3 },
+                new CalcResultSummaryHeader { Name = ThreeSaCostHeader.NorthernIrelandTotalWithBadDebtProvisionSection3 }
             ]);
 
             // Assert
             Assert.AreEqual(expectedResult[0].Name, result[0].Name);
-            Assert.AreEqual(expectedResult[0].ColumnIndex, result[0].ColumnIndex);
             Assert.AreEqual(expectedResult[1].Name, result[1].Name);
-            Assert.AreEqual(expectedResult[1].ColumnIndex, result[1].ColumnIndex);
             Assert.AreEqual(expectedResult[2].Name, result[2].Name);
-            Assert.AreEqual(expectedResult[2].ColumnIndex, result[2].ColumnIndex);
             Assert.AreEqual(expectedResult[3].Name, result[3].Name);
-            Assert.AreEqual(expectedResult[3].ColumnIndex, result[3].ColumnIndex);
             Assert.AreEqual(expectedResult[4].Name, result[4].Name);
-            Assert.AreEqual(expectedResult[4].ColumnIndex, result[4].ColumnIndex);
             Assert.AreEqual(expectedResult[5].Name, result[5].Name);
-            Assert.AreEqual(expectedResult[5].ColumnIndex, result[5].ColumnIndex);
             Assert.AreEqual(expectedResult[6].Name, result[6].Name);
-            Assert.AreEqual(expectedResult[6].ColumnIndex, result[6].ColumnIndex);
         }
 
         [TestMethod]

@@ -101,7 +101,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             _calcResultPartialObligationsExporter.Setup(mock => mock.Export(It.IsAny<CalcResultPartialObligations>(), It.IsAny<StringBuilder>())).Verifiable();
             _lapcaptDetailExporter.Setup(mock => mock.Export(It.IsAny<CalcResultLapcapData>(), It.IsAny<StringBuilder>())).Verifiable();
             _parameterOtherCosts.Setup(mock => mock.Export(It.IsAny<CalcResultParameterOtherCost>(), It.IsAny<StringBuilder>())).Verifiable();
-            _calcResultSummaryExporter.Setup(mock => mock.Export(It.IsAny<CalcResultSummary>(), It.IsAny<StringBuilder>())).Verifiable();
+            _calcResultSummaryExporter.Setup(mock => mock.Export(It.IsAny<CalcResultSummary>(), It.IsAny<StringBuilder>(), It.IsAny<bool>())).Verifiable();
             _laDisposalCostExporter.Setup(mock => mock.Export(It.IsAny<CalcResultLaDisposalCostData>(), It.IsAny<StringBuilder>())).Verifiable();
             _commsCostExporter.Setup(mock => mock.Export(It.IsAny<CalcResultCommsCost>(), It.IsAny<StringBuilder>())).Verifiable();
             _calcResultCancelledProducersExporter.Setup(mock => mock.Export(It.IsAny<CalcResultCancelledProducersResponse>(), It.IsAny<StringBuilder>())).Verifiable();
@@ -117,7 +117,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             _calcResultPartialObligationsExporter.Verify(mock => mock.Export(It.IsAny<CalcResultPartialObligations>(), It.IsAny<StringBuilder>()));
             _lapcaptDetailExporter.Verify(mock => mock.Export(It.IsAny<CalcResultLapcapData>(), It.IsAny<StringBuilder>()));
             _parameterOtherCosts.Verify(mock => mock.Export(It.IsAny<CalcResultParameterOtherCost>(), It.IsAny<StringBuilder>()));
-            _calcResultSummaryExporter.Verify(mock => mock.Export(It.IsAny<CalcResultSummary>(), It.IsAny<StringBuilder>()));
+            _calcResultSummaryExporter.Verify(mock => mock.Export(It.IsAny<CalcResultSummary>(), It.IsAny<StringBuilder>(), It.IsAny<bool>()));
             _laDisposalCostExporter.Verify(mock => mock.Export(It.IsAny<CalcResultLaDisposalCostData>(), It.IsAny<StringBuilder>()));
             _commsCostExporter.Verify(mock => mock.Export(It.IsAny<CalcResultCommsCost>(), It.IsAny<StringBuilder>()));
             _calcResultCancelledProducersExporter.Verify(mock => mock.Export(It.IsAny<CalcResultCancelledProducersResponse>(), It.IsAny<StringBuilder>()));

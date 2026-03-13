@@ -39,10 +39,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var testValue = fixture.Create<decimal>();
 
             // Act
-            _testClass.ReportedPublicBinTonnage = testValue;
+            _testClass.PublicBinTonnage = testValue;
 
             // Assert
-            Assert.AreEqual(testValue, _testClass.ReportedPublicBinTonnage);
+            Assert.AreEqual(testValue, _testClass.PublicBinTonnage);
         }
 
         [TestMethod]
@@ -69,10 +69,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var testValue = fixture.Create<decimal>();
 
             // Act
-            _testClass.HouseholdDrinksContainers = testValue;
+            _testClass.HouseholdDrinksContainersTonnage = testValue;
 
             // Assert
-            Assert.AreEqual(testValue, _testClass.HouseholdDrinksContainers);
+            Assert.AreEqual(testValue, _testClass.HouseholdDrinksContainersTonnage);
         }
 
         [TestMethod]
