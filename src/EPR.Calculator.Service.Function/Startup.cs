@@ -8,7 +8,6 @@ using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Exporter;
 using EPR.Calculator.API.Validators;
 using EPR.Calculator.API.Wrapper;
-using EPR.Calculator.Service.Common.AzureSynapse;
 using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function;
 using EPR.Calculator.Service.Function.Builder;
@@ -49,6 +48,8 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Configuration;
 using System.Reflection;
+using EPR.Calculator.Service.Function.Services.CommonDataApi;
+using EPR.Calculator.Service.Function.Services.DataLoading;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -109,8 +110,6 @@ namespace EPR.Calculator.Service.Function
         {
             services.AddTransient<ICalculatorRunService, CalculatorRunService>();
             services.AddTransient<ICalculatorRunParameterMapper, CalculatorRunParameterMapper>();
-            services.AddTransient<IAzureSynapseRunner, AzureSynapseRunner>();
-            services.AddTransient<IPipelineClientFactory, PipelineClientFactory>();
             services.AddTransient<ITransposePomAndOrgDataService, TransposePomAndOrgDataService>();
             services.AddTransient<IRpdStatusDataValidator, RpdStatusDataValidator>();
             services.AddTransient<IOrgAndPomWrapper, OrgAndPomWrapper>();
@@ -184,6 +183,30 @@ namespace EPR.Calculator.Service.Function
                 BillingFileExporter = provider.GetRequiredService<IBillingFileExporter<CalcResult>>(),
                 producerDataInsertService = provider.GetRequiredService<IPrepareProducerDataInsertService>(),
             });
+
+            services
+                .AddOptions<CommonDataApiHttpClientOptions>()
+                .Configure<IConfiguration>((options, config) =>
+                {
+                    config.GetSection(CommonDataApiHttpClientOptions.SectionKey).Bind(options);
+                })
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
+
+            services.AddHttpClient<CommonDataApiHttpClient>();
+
+            services
+                .AddOptions<CommonDataApiLoaderOptions>()
+                .Configure<IConfiguration>((options, config) =>
+                {
+                    config.GetSection(CommonDataApiLoaderOptions.SectionKey).Bind(options);
+                })
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
+
+            services.AddSingleton<TimeProvider>(_ => TimeProvider.System);
+            services.AddTransient<IDataLoader, CommonDataApiLoader>();
+
             SetupBlobStorage(services);
             services.AddTransient<IConfigurationService, Configuration>();
         }
