@@ -177,12 +177,12 @@
         private static decimal GetRagValue(ProducerReportedMaterial? prm, RagRating ragRating) =>
             ragRating switch
             {
-                RagRating.Red => prm?.RedRamRagRating ?? 0m,
-                RagRating.Amber => prm?.AmberRamRagRating ?? 0m,
-                RagRating.Green => prm?.GreenRamRagRating ?? 0m,
-                RagRating.RedMedical => prm?.RedMedicalRamRagRating ?? 0m,
-                RagRating.AmberMedical => prm?.AmberMedicalRamRagRating ?? 0m,
-                RagRating.GreenMedical => prm?.GreenMedicalRamRagRating ?? 0m,
+                RagRating.Red => prm?.PackagingTonnageRed ?? 0m,
+                RagRating.Amber => prm?.PackagingTonnageAmber ?? 0m,
+                RagRating.Green => prm?.PackagingTonnageGreen ?? 0m,
+                RagRating.RedMedical => prm?.PackagingTonnageRedMedical ?? 0m,
+                RagRating.AmberMedical => prm?.PackagingTonnageAmberMedical ?? 0m,
+                RagRating.GreenMedical => prm?.PackagingTonnageGreenMedical ?? 0m,
                 _ => 0m
             };
 

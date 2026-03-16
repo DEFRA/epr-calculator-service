@@ -275,12 +275,12 @@
                                             ProducerDetail = producerDetail,
                                             PackagingType = packagingType!,
                                             PackagingTonnage = Math.Round((decimal)(totalPackagingMaterialWeight) / 1000, 3),
-                                            RedRamRagRating = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.Red).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
-                                            AmberRamRagRating = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.Amber).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
-                                            GreenRamRagRating = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.Green).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
-                                            RedMedicalRamRagRating = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.RedMedical).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
-                                            AmberMedicalRamRagRating = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.AmberMedical).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
-                                            GreenMedicalRamRagRating = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.GreenMedical).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
+                                            PackagingTonnageRed = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.Red).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
+                                            PackagingTonnageAmber = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.Amber).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
+                                            PackagingTonnageGreen = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.Green).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
+                                            PackagingTonnageRedMedical = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.RedMedical).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
+                                            PackagingTonnageAmberMedical = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.AmberMedical).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
+                                            PackagingTonnageGreenMedical = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.GreenMedical).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
                                         };
 
                                         // Populate the producer reported material list
