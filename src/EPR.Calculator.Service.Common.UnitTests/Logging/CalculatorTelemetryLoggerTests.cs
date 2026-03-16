@@ -73,6 +73,7 @@
                 et.Message.Contains(errorMessage.RunId.ToString() ?? string.Empty) &&
                 et.Message.Contains(errorMessage.RunName) &&
                 et.Message.Contains(errorMessage.Message) &&
+                et.Message.Contains(errorMessage.Exception.Message) &&
                 et.SeverityLevel == SeverityLevel.Error)), Times.Once);
         }
 
