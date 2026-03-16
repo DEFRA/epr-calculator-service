@@ -36,7 +36,7 @@ namespace EPR.Calculator.Service.Function.Constants
         public static readonly string HouseholdPackagingWasteTonnageRed = "Household Red Material Tonnage";
         public static readonly string HouseholdPackagingWasteTonnageAmber = "Household Amber Material Tonnage";
         public static readonly string HouseholdPackagingWasteTonnageGreen = "Household Green Material Tonnage";
-        public static readonly string HouseholdPackagingWasteTonnageRedMedical = "Household Red-Medica Material Tonnage";
+        public static readonly string HouseholdPackagingWasteTonnageRedMedical = "Household Red-Medical Material Tonnage";
         public static readonly string HouseholdPackagingWasteTonnageAmberMedical = "Household Amber-Medical Material Tonnage";
         public static readonly string HouseholdPackagingWasteTonnageGreenMedical = "Household Green-Medical Material Tonnage";
 
