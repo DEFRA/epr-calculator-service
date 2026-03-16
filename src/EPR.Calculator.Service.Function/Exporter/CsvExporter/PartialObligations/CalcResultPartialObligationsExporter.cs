@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations
 {
     using System.Collections.Generic;
@@ -6,7 +8,6 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligation
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Models;
-    using Microsoft.IdentityModel.Tokens;
 
     public class CalcResultPartialObligationsExporter : ICalcResultPartialObligationsExporter
     {
@@ -20,7 +21,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligation
             PreparePartialObligationsHeader(calcResultPartialObligations, stringBuilder);
 
             // Add data
-            if (!calcResultPartialObligations.PartialObligations.IsNullOrEmpty())
+            if (calcResultPartialObligations.PartialObligations?.Any() == true)
             {
                 AppendPartialObligations(calcResultPartialObligations.PartialObligations!, stringBuilder);
             }
