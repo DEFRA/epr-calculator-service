@@ -196,14 +196,14 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                           {
                               Id = mat.Id,
                               MaterialId = mat.MaterialId,
-                              PackagingTonnage = mat.PackagingTonnage,
                               PackagingType = mat.PackagingType,
-                              RedRamRagRating = mat.RedRamRagRating,
-                              AmberRamRagRating = mat.AmberRamRagRating,
-                              GreenRamRagRating = mat.GreenRamRagRating,
-                              RedMedicalRamRagRating = mat.RedRamRagRating,
-                              AmberMedicalRamRagRating = mat.AmberRamRagRating,
-                              GreenMedicalRamRagRating = mat.GreenRamRagRating,
+                              PackagingTonnage = mat.PackagingTonnage,
+                              PackagingTonnageRed = mat.PackagingTonnageRed,
+                              PackagingTonnageAmber = mat.PackagingTonnageAmber,
+                              PackagingTonnageGreen = mat.PackagingTonnageGreen,
+                              PackagingTonnageRedMedical = mat.PackagingTonnageRedMedical,
+                              PackagingTonnageAmberMedical = mat.PackagingTonnageAmberMedical,
+                              PackagingTonnageGreenMedical = mat.PackagingTonnageGreenMedical,
                               ProducerDetail = new ProducerDetail() { ProducerId = pd.ProducerId },
                           }).Distinct().ToListAsync();
         }
