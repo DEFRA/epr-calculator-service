@@ -54,12 +54,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 LoadTimestamp = DateTime.Now,
                 ObligationStatus = "O",
                 SubmitterId = new Guid("11111111-1111-1111-1111-111111111111"),
+                HasH1 = false,
+                HasH2 = false,
             };
 
+            // Raw SQL used because `organisation_data` is a keyless temp table; all NOT NULL columns must be included.
             await this.context.Database.ExecuteSqlInterpolatedAsync(
                 $@"
-                INSERT INTO organisation_data(organisation_id, organisation_name, load_ts, obligation_status, submitter_id)
-                VALUES ({orgData.OrganisationId}, {orgData.OrganisationName}, {orgData.LoadTimestamp}, {orgData.ObligationStatus}, {orgData.SubmitterId})");
+                INSERT INTO organisation_data(organisation_id, organisation_name, load_ts, obligation_status, submitter_id, has_h1, has_h2)
+                VALUES ({orgData.OrganisationId}, {orgData.OrganisationName}, {orgData.LoadTimestamp}, {orgData.ObligationStatus}, {orgData.SubmitterId}, {orgData.HasH1}, {orgData.HasH2} )");
 
             await this.context.SaveChangesAsync();
             return (new RelativeYear(calculatorRunRelativeYear.Value), classification, orgData);
