@@ -1,7 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-[assembly: InternalsVisibleTo("EPR.Calculator.Service.Function.UnitTests")]
-namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
+﻿namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
 {
     using System;
     using System.Collections.Generic;

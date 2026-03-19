@@ -1,7 +1,5 @@
-﻿using System.Runtime.CompilerServices;
-using EPR.Calculator.Service.Function.Builder.ParametersOther;
+﻿using EPR.Calculator.Service.Function.Builder.ParametersOther;
 
-[assembly: InternalsVisibleTo("EPR.Calculator.Service.Function.UnitTests")]
 namespace EPR.Calculator.Service.Function.Builder.Summary
 {
     using System;
