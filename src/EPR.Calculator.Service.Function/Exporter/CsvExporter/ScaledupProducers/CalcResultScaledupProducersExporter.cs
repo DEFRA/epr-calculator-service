@@ -1,4 +1,6 @@
-﻿namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers
+﻿using System.Linq;
+
+namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers
 {
     using System.Collections.Generic;
     using System.Text;
@@ -6,7 +8,6 @@
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Models;
-    using Microsoft.IdentityModel.Tokens;
 
     public class CalcResultScaledupProducersExporter : ICalcResultScaledupProducersExporter
     {
@@ -20,7 +21,7 @@
             PrepareScaledupProducersHeader(calcResultScaledupProducers, stringBuilder);
 
             // Add data
-            if (!calcResultScaledupProducers.ScaledupProducers.IsNullOrEmpty())
+            if (calcResultScaledupProducers.ScaledupProducers?.Any() == true)
             {
                 AppendScaledupProducers(calcResultScaledupProducers, stringBuilder);
             }

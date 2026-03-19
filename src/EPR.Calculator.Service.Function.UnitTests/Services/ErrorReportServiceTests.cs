@@ -1,10 +1,8 @@
-﻿using System.Collections.ObjectModel;
-using EPR.Calculator.API.Data.DataModels;
+﻿using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
-using Microsoft.IdentityModel.Tokens;
 using Moq;
 using EPR.Calculator.API.Data.Models;
 
@@ -530,7 +528,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             IEnumerable<ErrorReport> capturedReports = _service.HandleMissingPomData(pomDetails, orgDetails, runId, createdBy);
 
             // Assert
-            Assert.IsTrue(capturedReports.IsNullOrEmpty());
+            Assert.IsFalse(capturedReports.Any());
         }
 
         [TestMethod]

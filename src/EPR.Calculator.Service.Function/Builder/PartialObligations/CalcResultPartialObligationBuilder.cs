@@ -15,8 +15,6 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
     using EPR.Calculator.Service.Function.Builder.Summary.Common;
 
     using Microsoft.EntityFrameworkCore;
-    using Microsoft.IdentityModel.Tokens;
-
 
     public class CalcResultPartialObligationBuilder : ICalcResultPartialObligationBuilder
     {

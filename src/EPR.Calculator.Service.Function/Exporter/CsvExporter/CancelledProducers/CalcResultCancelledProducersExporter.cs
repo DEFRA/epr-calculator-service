@@ -1,14 +1,11 @@
 ﻿namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers
 {
     using System.Collections.Generic;
-    using System.Linq;
     using System.Text;
     using EPR.Calculator.API.Utils;
     using EPR.Calculator.Service.Function.Constants;
     using EPR.Calculator.Service.Function.Enums;
     using EPR.Calculator.Service.Function.Models;
-    using Microsoft.Extensions.Azure;
-    using Microsoft.IdentityModel.Tokens;
 
     public class CalcResultCancelledProducersExporter : ICalcResultCancelledProducersExporter
     {

@@ -41,7 +41,7 @@
             var exceptionTelemetry = new ExceptionTelemetry(errorMessage.Exception)
             {
                 SeverityLevel = SeverityLevel.Error,
-                Message = formattedMessage,
+                Message = $"{formattedMessage} ExceptionMessage: {errorMessage.Exception.Message}",
             };
             AddProperties(exceptionTelemetry.Properties, errorMessage.RunId, errorMessage.RunName);
             this._telemetryClient.TrackException(exceptionTelemetry);
