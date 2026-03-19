@@ -1,16 +1,15 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.LaDataPrepCosts
-{
-    using AutoFixture;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System.Collections.Generic;
-    using EPR.Calculator.Service.Function.Enums;
+﻿using AutoFixture;
+using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts;
+using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
+namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.LaDataPrepCosts
+{
     [TestClass]
     public class LaDataPrepCostsProducerTests
     {
@@ -116,7 +115,7 @@
                         TotalValue = 100,
                     },
                 },
-                CalcResultDetail = new CalcResultDetail() { RunId = 1, RelativeYear = new API.Data.Models.RelativeYear(2024) },
+                CalcResultDetail = new CalcResultDetail() { RunId = 1, RelativeYear = new RelativeYear(2024) },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData()
                 {
                     Name = Fixture.Create<string>(),

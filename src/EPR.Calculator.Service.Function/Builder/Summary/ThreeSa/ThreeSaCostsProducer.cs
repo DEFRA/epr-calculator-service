@@ -1,13 +1,10 @@
-﻿namespace EPR.Calculator.Service.Function.Builder.Summary.ThreeSA
+using EPR.Calculator.Service.Function.Builder.Summary.Common;
+using EPR.Calculator.Service.Function.Builder.Summary.ThreeSa;
+using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Models;
+
+namespace EPR.Calculator.Service.Function.Builder.Summary.ThreeSA
 {
-    using System.Collections.Generic;
-    using EPR.Calculator.Service.Function.Builder.Summary.Common;
-    using EPR.Calculator.Service.Function.Builder.Summary.ThreeSa;
-    using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Function.Models;
-    using System.Linq;
-
-
     public static class ThreeSaCostsProducer
     {
         public static IEnumerable<CalcResultSummaryHeader> GetHeaders()

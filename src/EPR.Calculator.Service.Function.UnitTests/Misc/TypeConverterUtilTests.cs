@@ -1,11 +1,8 @@
+using AutoFixture;
+using EPR.Calculator.Service.Function.Misc;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Misc
 {
-    using System;
-    using AutoFixture;
-    using EPR.Calculator.Service.Function.Misc;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using T = System.String;
-
     [TestClass]
     public class TypeConverterUtilTests
     {

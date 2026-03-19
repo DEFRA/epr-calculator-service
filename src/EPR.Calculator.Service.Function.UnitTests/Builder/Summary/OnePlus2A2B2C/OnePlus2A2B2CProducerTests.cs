@@ -1,14 +1,13 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.OnePlus2A2B2C
-{
-    using AutoFixture;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using AutoFixture;
+using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C;
+using EPR.Calculator.Service.Function.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
+namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.OnePlus2A2B2C
+{
     [TestClass]
     public class OnePlus2A2B2CProducerTests
     {

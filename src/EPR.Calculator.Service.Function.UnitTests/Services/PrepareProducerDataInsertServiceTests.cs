@@ -1,16 +1,11 @@
+using AutoFixture;
+using EPR.Calculator.Service.Common.Logging;
+using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Services;
+using Moq;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
-    using System;
-    using System.Text;
-    using System.Threading.Tasks;
-    using AutoFixture;
-    using EPR.Calculator.Service.Common.Logging;
-    using EPR.Calculator.Service.Function.Models;
-    using EPR.Calculator.Service.Function.Services;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Moq;
-
     [TestClass]
     public class PrepareProducerDataInsertServiceTests
     {

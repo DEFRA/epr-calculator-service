@@ -1,24 +1,23 @@
+using System.Diagnostics.CodeAnalysis;
+using EPR.Calculator.Service.Function.Builder.CancelledProducers;
+using EPR.Calculator.Service.Function.Builder.CommsCost;
+using EPR.Calculator.Service.Function.Builder.Detail;
+using EPR.Calculator.Service.Function.Builder.ErrorReport;
+using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
+using EPR.Calculator.Service.Function.Builder.Lapcap;
+using EPR.Calculator.Service.Function.Builder.LateReportingTonnages;
+using EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment;
+using EPR.Calculator.Service.Function.Builder.ParametersOther;
+using EPR.Calculator.Service.Function.Builder.PartialObligations;
+using EPR.Calculator.Service.Function.Builder.RejectedProducers;
+using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
+using EPR.Calculator.Service.Function.Builder.Summary;
+using EPR.Calculator.Service.Function.Dtos;
+using EPR.Calculator.Service.Function.Models;
+using Microsoft.ApplicationInsights;
+
 namespace EPR.Calculator.Service.Function.Builder
 {
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using EPR.Calculator.Service.Function.Builder.CancelledProducers;
-    using EPR.Calculator.Service.Function.Builder.CommsCost;
-    using EPR.Calculator.Service.Function.Builder.Detail;
-    using EPR.Calculator.Service.Function.Builder.ErrorReport;
-    using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
-    using EPR.Calculator.Service.Function.Builder.Lapcap;
-    using EPR.Calculator.Service.Function.Builder.LateReportingTonnages;
-    using EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment;
-    using EPR.Calculator.Service.Function.Builder.ParametersOther;
-    using EPR.Calculator.Service.Function.Builder.RejectedProducers;
-    using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
-    using EPR.Calculator.Service.Function.Builder.PartialObligations;
-    using EPR.Calculator.Service.Function.Builder.Summary;
-    using EPR.Calculator.Service.Function.Dtos;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.ApplicationInsights;
-
     public class CalcResultBuilder : ICalcResultBuilder
     {
         private readonly ICalcResultParameterOtherCostBuilder calcResultParameterOtherCostBuilder;
@@ -37,7 +36,7 @@ namespace EPR.Calculator.Service.Function.Builder
         private readonly TelemetryClient _telemetryClient;
 
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
+        [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         /// <summary>
         /// Initializes a new instance of the <see cref="CalcResultBuilder"/> class.
         /// </summary>

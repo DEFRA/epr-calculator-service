@@ -1,12 +1,9 @@
-﻿namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
-{
-    using System;
-    using System.Linq;
-    using System.Text;
-    using EPR.Calculator.API.Utils;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.Extensions.Primitives;
+﻿using System.Text;
+using EPR.Calculator.API.Utils;
+using EPR.Calculator.Service.Function.Models;
 
+namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
+{
     public interface ILateReportingExporter
     {
         string Export(CalcResultLateReportingTonnage? calcResultLateReportingData);

@@ -1,12 +1,9 @@
+using EPR.Calculator.API.Data;
+using EPR.Calculator.Service.Function.Interface;
+using Microsoft.EntityFrameworkCore;
+
 namespace EPR.Calculator.Service.Function.Services
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.Service.Function.Interface;
-    using Microsoft.EntityFrameworkCore;
-
     /// <summary>
     /// Service to fetch the run name from the database.
     /// </summary>

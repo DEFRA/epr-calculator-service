@@ -1,7 +1,7 @@
-﻿namespace EPR.Calculator.Service.Function.Interface
-{
-    using EPR.Calculator.Service.Common;
+﻿using EPR.Calculator.Service.Common;
 
+namespace EPR.Calculator.Service.Function.Interface
+{
     /// <summary>
     /// Interface for mapping calculator parameters to calculator run parameters.
     /// </summary>

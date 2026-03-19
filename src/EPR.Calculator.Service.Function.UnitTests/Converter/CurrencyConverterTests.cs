@@ -1,15 +1,13 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Converter
-{
-    using AutoFixture;
-    using EPR.Calculator.Service.Function.Converter;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System;
-    using System.Globalization;
-    using System.Text;
-    using System.Text.Encodings.Web;
-    using System.Text.Json;
-    using System.Text.Unicode;
+﻿using System.Globalization;
+using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
+using AutoFixture;
+using EPR.Calculator.Service.Function.Converter;
 
+namespace EPR.Calculator.Service.Function.UnitTests.Converter
+{
     [TestClass]
     public class CurrencyConverterTests
     {

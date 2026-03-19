@@ -1,21 +1,16 @@
+using AutoFixture;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Common.Logging;
+using EPR.Calculator.Service.Function.Interface;
+using EPR.Calculator.Service.Function.Mapper;
+using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.UnitTests.Builder;
+using Moq;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using AutoFixture;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.API.Data.Models;
-    using EPR.Calculator.Service.Common.Logging;
-    using EPR.Calculator.Service.Common.UnitTests.Utils;
-    using EPR.Calculator.Service.Function.Interface;
-    using EPR.Calculator.Service.Function.Mapper;
-    using EPR.Calculator.Service.Function.Models;
-    using EPR.Calculator.Service.Function.Services;
-    using EPR.Calculator.Service.Function.UnitTests.Builder;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Moq;
-
     [TestClass]
     public class ProducerInvoiceNetTonnageServiceTests
     {

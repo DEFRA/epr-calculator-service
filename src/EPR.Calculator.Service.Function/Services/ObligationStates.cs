@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace EPR.Calculator.Service.Function.Services
+﻿namespace EPR.Calculator.Service.Function.Services
 {
     public static class ObligationStates
     {
@@ -10,7 +8,7 @@ namespace EPR.Calculator.Service.Function.Services
 
         public static bool IsObligated(string status)
         {
-            return string.IsNullOrWhiteSpace(status) || status == ObligationStates.Obligated;
+            return string.IsNullOrWhiteSpace(status) || status == Obligated;
         }
     }
 }

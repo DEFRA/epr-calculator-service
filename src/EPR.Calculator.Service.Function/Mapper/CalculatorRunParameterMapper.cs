@@ -1,8 +1,8 @@
-﻿namespace EPR.Calculator.Service.Function.Mapper
-{
-    using EPR.Calculator.Service.Common;
-    using EPR.Calculator.Service.Function.Interface;
+﻿using EPR.Calculator.Service.Common;
+using EPR.Calculator.Service.Function.Interface;
 
+namespace EPR.Calculator.Service.Function.Mapper
+{
     /// <summary>
     /// Maps <see cref="CreateResultFileMessage"/> and <see cref="CreateBillingFileMessage"/> to <see cref="ICalculatorRunParameterMapper"/>.
     /// </summary>

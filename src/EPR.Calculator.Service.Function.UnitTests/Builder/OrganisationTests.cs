@@ -1,10 +1,8 @@
+using AutoFixture;
+using EPR.Calculator.Service.Function.Builder;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
-    using System;
-    using AutoFixture;
-    using EPR.Calculator.Service.Function.Builder;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     /// <summary>
     /// Unit tests for the <see cref="Organisation"/> class.
     /// </summary>

@@ -1,10 +1,7 @@
-﻿namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
-{
-    using System;
-    using System.IO;
-    using System.Linq;
-    using EPR.Calculator.API.Data;
+﻿using EPR.Calculator.API.Data;
 
+namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
+{
     /// <summary>
     /// Builds the file name for the calculator results file.
     /// </summary>

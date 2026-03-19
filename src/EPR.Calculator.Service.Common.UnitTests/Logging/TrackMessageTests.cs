@@ -1,7 +1,5 @@
 ﻿namespace EPR.Calculator.Service.Common.Logging.UnitTests
 {
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     /// <summary>
     /// Unit tests for the <see cref="TrackMessage"/> class.
     /// </summary>

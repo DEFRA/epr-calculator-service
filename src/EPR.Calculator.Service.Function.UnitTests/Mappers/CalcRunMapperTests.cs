@@ -1,10 +1,9 @@
+using AutoFixture;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Mappers;
+
 namespace EPR.Calculator.Service.Function.UnitTests
 {
-    using AutoFixture;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.Service.Function.Mappers;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     /// <summary>
     /// Unit tests for the <see cref="CalcRunMapper"/> class.
     /// </summary>

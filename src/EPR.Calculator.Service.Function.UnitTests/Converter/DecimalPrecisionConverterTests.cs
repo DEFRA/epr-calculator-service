@@ -1,10 +1,9 @@
+using System.Text;
+using System.Text.Json;
+using EPR.Calculator.Service.Function.Converter;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Converter
 {
-    using System.Text;
-    using System.Text.Json;
-    using EPR.Calculator.Service.Function.Converter;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     [TestClass]
     public class DecimalPrecisionConverterTests
     {

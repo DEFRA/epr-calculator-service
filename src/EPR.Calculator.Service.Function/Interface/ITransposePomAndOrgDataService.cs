@@ -1,10 +1,7 @@
-﻿namespace EPR.Calculator.Service.Function.Interface
-{
-    using System.Threading;
-    using System.Threading.Tasks;
-    using EPR.Calculator.Service.Function.Dtos;
-    using EPR.Calculator.Service.Function.Misc;
+﻿using EPR.Calculator.Service.Function.Dtos;
 
+namespace EPR.Calculator.Service.Function.Interface
+{
     public interface ITransposePomAndOrgDataService
     {
         Task<bool> TransposeBeforeResultsFileAsync(CalcResultsRequestDto resultsRequestDto, string? runName, CancellationToken cancellationToken);

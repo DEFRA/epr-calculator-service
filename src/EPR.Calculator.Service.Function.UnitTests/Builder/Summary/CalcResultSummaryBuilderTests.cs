@@ -1,25 +1,22 @@
-﻿using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs;
+﻿using AutoFixture;
+using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Builder;
+using EPR.Calculator.Service.Function.Builder.ParametersOther;
+using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
+using EPR.Calculator.Service.Function.Builder.Summary;
+using EPR.Calculator.Service.Function.Builder.Summary.OneAndTwoA;
+using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Dtos;
+using EPR.Calculator.Service.Function.Mappers;
+using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.UnitTests.Builder;
+using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.UnitTests
 {
-    using AutoFixture;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.Service.Common;
-    using EPR.Calculator.Service.Function.Builder.ParametersOther;
-    using EPR.Calculator.Service.Function.Builder;
-    using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
-    using EPR.Calculator.Service.Function.Builder.Summary;
-    using EPR.Calculator.Service.Function.Builder.Summary.OneAndTwoA;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Dtos;
-    using EPR.Calculator.Service.Function.Models;
-    using EPR.Calculator.Service.Function.UnitTests.Builder;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using EPR.Calculator.API.Data.Models;
-
-
     [TestClass]
     public class CalcResultSummaryBuilderTests
     {
@@ -682,7 +679,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void MaterialMapper_ShouldReturnCorrectValue()
         {
             var materials = this.context.Material.ToList();
-            var result = Mappers.MaterialMapper.Map(materials);
+            var result = MaterialMapper.Map(materials);
             Assert.IsNotNull(result);
             Assert.AreEqual(materials.Count, result.Count);
             var material = result[0];
@@ -739,7 +736,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 this.context.ProducerReportedMaterial.ToList(),
                 1);
 
-            var materials = Mappers.MaterialMapper.Map(this.context.Material.ToList());
+            var materials = MaterialMapper.Map(this.context.Material.ToList());
 
             var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails,
                                                                                                 materials,
@@ -789,7 +786,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 this.context.ProducerReportedMaterial.ToList(),
                 1);
 
-            var materials = Mappers.MaterialMapper.Map(this.context.Material.ToList());
+            var materials = MaterialMapper.Map(this.context.Material.ToList());
 
             var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, 1, calcResultsService.ScaledupProducers?.ToList() ?? new List<CalcResultScaledupProducer>(), calcResultsService.PartialObligations?.ToList() ?? new List<CalcResultPartialObligation>());
 
@@ -888,7 +885,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 this.context.ProducerReportedMaterial.ToList(),
                 1);
 
-            var materials = Mappers.MaterialMapper.Map(this.context.Material.ToList());
+            var materials = MaterialMapper.Map(this.context.Material.ToList());
 
             var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails,
                                                                                                 materials,
@@ -947,7 +944,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 this.context.ProducerReportedMaterial.ToList(),
                 1);
 
-            var materials = Mappers.MaterialMapper.Map(this.context.Material.ToList());
+            var materials = MaterialMapper.Map(this.context.Material.ToList());
 
             var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails,
                                                                                                 materials,
@@ -1182,7 +1179,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Arrange
             var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, this.context.ProducerDetail.ToList());
-            var materials = Mappers.MaterialMapper.Map(this.context.Material.ToList());
+            var materials = MaterialMapper.Map(this.context.Material.ToList());
             var runDetails = CalcResultSummaryBuilder.GetProducerRunMaterialDetails(ordered, this.context.ProducerReportedMaterial.ToList(), 1);
 
             this.calcResultsService.ScaledupProducers = new List<CalcResultScaledupProducer>();
@@ -1234,7 +1231,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             };
 
             var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
-            var materials = Mappers.MaterialMapper.Map(context.Material.ToList());
+            var materials = MaterialMapper.Map(context.Material.ToList());
             var runDetails = CalcResultSummaryBuilder.GetProducerRunMaterialDetails(ordered, context.ProducerReportedMaterial.ToList(), 1);
             var totalPackaging = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(
                 runDetails, materials, 1, calcResultsService.ScaledupProducers?.ToList() ?? new List<CalcResultScaledupProducer>(),
@@ -1254,7 +1251,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             var producer = context.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
 
-            var materials = Mappers.MaterialMapper.Map(context.Material.ToList());
+            var materials = MaterialMapper.Map(context.Material.ToList());
 
             var tonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>();
 
@@ -1306,7 +1303,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             var producer = context.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
 
-            var materials = Mappers.MaterialMapper.Map(context.Material.ToList());
+            var materials = MaterialMapper.Map(context.Material.ToList());
 
             var tonnageByMaterial = new Dictionary<string, CalcResultPartialObligationTonnage>();
 
@@ -1382,7 +1379,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void GetProducerRow_MarksProducerAsNotScaledUp_WhenNoMatch()
         {
             var producer = context.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
-            var materials = Mappers.MaterialMapper.Map(context.Material.ToList());
+            var materials = MaterialMapper.Map(context.Material.ToList());
 
             calcResultsService.ScaledupProducers = new List<CalcResultScaledupProducer>();
 
@@ -1405,7 +1402,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void GetProducerRow_OrgDetailColumnsIfAvailable()
         {
             var producer = context.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
-            var materials = Mappers.MaterialMapper.Map(context.Material.ToList());
+            var materials = MaterialMapper.Map(context.Material.ToList());
 
             calcResultsService.ScaledupProducers = new List<CalcResultScaledupProducer>();
             calcResultsService.Organisations = new List<Organisation>()
@@ -1444,7 +1441,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void GetProducerRow_MarksProducerAsNotPartialObligation_WhenNoMatch()
         {
             var producer = context.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
-            var materials = Mappers.MaterialMapper.Map(context.Material.ToList());
+            var materials = MaterialMapper.Map(context.Material.ToList());
 
             calcResultsService.PartialObligations = new List<CalcResultPartialObligation>();
 

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace EPR.Calculator.Service.Function.Models
+﻿namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResultRejectedProducer
     {

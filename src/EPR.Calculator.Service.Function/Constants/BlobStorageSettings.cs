@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace EPR.Calculator.Service.Function.Constants
+﻿namespace EPR.Calculator.Service.Function.Constants
 {
     public class BlobStorageSettings
     {

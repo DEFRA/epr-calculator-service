@@ -1,14 +1,15 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
-{
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.Service.Function.Builder.Summary.ThreeSa;
-    using EPR.Calculator.Service.Function.Builder.Summary.ThreeSA;
-    using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Diagnostics;
+﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Builder.Summary.ThreeSa;
+using EPR.Calculator.Service.Function.Builder.Summary.ThreeSA;
+using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
+namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
+{
     [TestClass]
     public class ThreeSaCostsProducerTests
     {
@@ -164,7 +165,7 @@
                         TotalValue = 100,
                     },
                 },
-                CalcResultDetail = new CalcResultDetail() { RunId = 1, RelativeYear = new API.Data.Models.RelativeYear(2024) },
+                CalcResultDetail = new CalcResultDetail() { RunId = 1, RelativeYear = new RelativeYear(2024) },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData
                 {
                     CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>()

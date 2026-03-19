@@ -1,8 +1,4 @@
-
-using System.Collections.Generic;
 using EPR.Calculator.API.Data.Enums;
-using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Enums;
 
 namespace EPR.Calculator.Service.Function.Models
 {

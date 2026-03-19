@@ -1,20 +1,10 @@
-﻿namespace EPR.Calculator.Service.Function.Builder.LateReportingTonnages
+﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.Service.Function.Dtos;
+using EPR.Calculator.Service.Function.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace EPR.Calculator.Service.Function.Builder.LateReportingTonnages
 {
-    using System.Collections.Generic;
-
-    using System.Linq;
-    using System.Security.Cryptography.X509Certificates;
-
-    using System.Threading.Tasks;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-
-    using EPR.Calculator.Service.Function.Dtos;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.AspNetCore.Routing.Template;
-
-    using Microsoft.EntityFrameworkCore;
-
     public class CalcResultLateReportingBuilder : ICalcResultLateReportingBuilder
     {
         public const string LateReportingHeader = "Parameters - Late Reporting Tonnages";

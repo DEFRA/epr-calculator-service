@@ -1,10 +1,8 @@
+using AutoFixture;
+using EPR.Calculator.Service.Function.Models;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Models
 {
-    using System;
-    using AutoFixture;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     /// <summary>
     /// Unit tests for the <see cref="CalcResultLateReportingTonnageDetail"/> class.
     /// </summary>

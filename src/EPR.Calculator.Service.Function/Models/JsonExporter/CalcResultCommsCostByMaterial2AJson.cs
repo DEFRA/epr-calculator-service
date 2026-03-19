@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using EPR.Calculator.Service.Common.Utils;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Converter;
 using EPR.Calculator.Service.Function.Enums;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter

@@ -1,13 +1,9 @@
 ﻿using AutoFixture;
-using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common;
 using EPR.Calculator.Service.Function.Builder.CommsCost;
 using EPR.Calculator.Service.Function.Builder.Lapcap;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter;
-using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.Models.JsonExporter;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.Builder;
 using Moq;
@@ -45,9 +41,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
             Assert.IsNotNull(result);
         }
 
-        private static EPR.Calculator.Service.Function.Models.CalcResult CreateCalcResult()
+        private static CalcResult CreateCalcResult()
         {
-            return new EPR.Calculator.Service.Function.Models.CalcResult
+            return new CalcResult
             {
                 CalcResultDetail = new CalcResultDetail
                 {

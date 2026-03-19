@@ -1,15 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 using EPR.Calculator.API.Data.Models;
 using Microsoft.Extensions.Options;
 
@@ -90,13 +83,13 @@ namespace EPR.Calculator.Service.Function.Services.CommonDataApi
             using var timeoutCts = new CancellationTokenSource(_opts.StreamStartTimeout);
             using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCts.Token);
 
-            using var request = new HttpRequestMessage(HttpMethod.Get, requestUri)
-            {
-              // Force HTTP/1.1 for requests. HTTP/2's framing layer can buffer
-              // response data in a way that prevents line-by-line NDJSON streaming
-              // from working correctly (notably on macOS).
-              Version = HttpVersion.Version11
-            };
+            using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
+
+            // Force HTTP/1.1 for requests. HTTP/2's framing layer can buffer
+            // response data in a way that prevents line-by-line NDJSON streaming
+            // from working correctly (notably on macOS).
+            request.Version = HttpVersion.Version11;
+
             using var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, linkedCts.Token);
             response.EnsureSuccessStatusCode();
 

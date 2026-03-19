@@ -1,7 +1,6 @@
-﻿using EPR.Calculator.API.Utils;
+﻿using System.Text;
+using EPR.Calculator.API.Utils;
 using EPR.Calculator.Service.Function.Models;
-using System.Linq;
-using System.Text;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts
 {

@@ -1,18 +1,11 @@
-using System.Linq;
+using System.Text;
+using EPR.Calculator.API.Utils;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations
 {
-    using System;
-
-    using System.Collections.Generic;
-    using System.Linq;
-
-    using System.Text;
-    using EPR.Calculator.API.Utils;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Function.Models;
-
     public class CalcResultPartialObligationsExporter : ICalcResultPartialObligationsExporter
     {
         public void Export(CalcResultPartialObligations calcResultPartialObligations, StringBuilder stringBuilder)

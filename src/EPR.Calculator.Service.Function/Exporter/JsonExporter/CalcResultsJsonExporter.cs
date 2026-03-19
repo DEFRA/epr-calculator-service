@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Text.Encodings.Web;
+﻿using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Unicode;
 using EPR.Calculator.API.Exporter;
 using EPR.Calculator.Service.Function.Converter;
-using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
 using EPR.Calculator.Service.Function.Services;
@@ -41,7 +36,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                     WriteIndented = true,
-                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
                     Converters = { new DecimalPrecisionConverter(decimalPrecision), },
                 });
         }

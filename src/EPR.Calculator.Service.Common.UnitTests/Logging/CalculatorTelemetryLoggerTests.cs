@@ -1,12 +1,9 @@
-﻿namespace EPR.Calculator.Service.Common.UnitTests.Logging
-{
-    using System;
-    using System.Collections.Generic;
-    using EPR.Calculator.Service.Common.Logging;
-    using Microsoft.ApplicationInsights.DataContracts;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Moq;
+﻿using EPR.Calculator.Service.Common.Logging;
+using Microsoft.ApplicationInsights.DataContracts;
+using Moq;
 
+namespace EPR.Calculator.Service.Common.UnitTests.Logging
+{
     /// <summary>
     /// Unit tests for the <see cref="CalculatorTelemetryLogger"/> class.
     /// </summary>

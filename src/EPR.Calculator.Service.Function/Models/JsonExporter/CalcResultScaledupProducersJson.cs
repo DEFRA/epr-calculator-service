@@ -1,11 +1,6 @@
-﻿using EPR.Calculator.Service.Function.Constants;
+﻿using System.Text.Json.Serialization;
+using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Converter;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
@@ -33,7 +28,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                         level = result;
                     }
 
-                    producerSubmissions.Add(EPR.Calculator.Service.Function.Models.JsonExporter.ProducerSubmission.From(level, item, materials));
+                    producerSubmissions.Add(ProducerSubmission.From(level, item, materials));
                 }
 
                 return producerSubmissions;
@@ -95,7 +90,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                 {
                     var material = materials.Single(m => m.Code == producerTonnage.Key);
 
-                    var breakdown = EPR.Calculator.Service.Function.Models.JsonExporter.MaterialBreakdown.From(material.Name, producerTonnage.Value);
+                    var breakdown = JsonExporter.MaterialBreakdown.From(material.Name, producerTonnage.Value);
 
                     if (producerTonnage.Key == MaterialCodes.Glass)
                     {

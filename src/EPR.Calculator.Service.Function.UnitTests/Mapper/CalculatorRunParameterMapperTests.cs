@@ -1,13 +1,10 @@
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Interface;
+using EPR.Calculator.Service.Function.Mapper;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 {
-    using EPR.Calculator.API.Data.Models;
-    using EPR.Calculator.Service.Common;
-    using EPR.Calculator.Service.Function;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Interface;
-    using EPR.Calculator.Service.Function.Mapper;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     /// <summary>
     /// Contains unit tests for the CalculatorRunParameterMapper class.
     /// </summary>

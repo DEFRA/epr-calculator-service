@@ -1,11 +1,8 @@
+using AutoFixture;
+using EPR.Calculator.Service.Function.Constants;
+
 namespace EPR.Calculator.Service.Function.UnitTests
 {
-    using System;
-    using AutoFixture;
-    using EPR.Calculator.Service.Function;
-    using EPR.Calculator.Service.Function.Constants;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     /// <summary>
     /// Contains tests for configuration variables.
     /// </summary>

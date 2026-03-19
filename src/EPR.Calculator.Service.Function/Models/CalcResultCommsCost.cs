@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace EPR.Calculator.Service.Function.Models
+﻿namespace EPR.Calculator.Service.Function.Models
 {
     /// <summary>
     /// The CommsCost report.

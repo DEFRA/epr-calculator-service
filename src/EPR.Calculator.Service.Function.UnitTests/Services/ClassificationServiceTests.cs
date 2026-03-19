@@ -1,14 +1,13 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Services
-{
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.API.Data.Models;
-    using EPR.Calculator.Service.Common;
-    using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Function.Services;
-    using Microsoft.EntityFrameworkCore;
-    using Moq;
+﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Services;
+using Microsoft.EntityFrameworkCore;
+using Moq;
 
+namespace EPR.Calculator.Service.Function.UnitTests.Services
+{
     /// <summary>
     /// Unit tests for the <see cref="ClassificationService"/> class.
     /// </summary>

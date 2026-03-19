@@ -1,29 +1,27 @@
+using AutoFixture;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Builder;
+using EPR.Calculator.Service.Function.Builder.CancelledProducers;
+using EPR.Calculator.Service.Function.Builder.CommsCost;
+using EPR.Calculator.Service.Function.Builder.Detail;
+using EPR.Calculator.Service.Function.Builder.ErrorReport;
+using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
+using EPR.Calculator.Service.Function.Builder.Lapcap;
+using EPR.Calculator.Service.Function.Builder.LateReportingTonnages;
+using EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment;
+using EPR.Calculator.Service.Function.Builder.ParametersOther;
+using EPR.Calculator.Service.Function.Builder.PartialObligations;
+using EPR.Calculator.Service.Function.Builder.RejectedProducers;
+using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
+using EPR.Calculator.Service.Function.Builder.Summary;
+using EPR.Calculator.Service.Function.Dtos;
+using EPR.Calculator.Service.Function.Models;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Extensibility;
+using Moq;
+
 namespace EPR.Calculator.Service.Function.UnitTests
 {
-    using AutoFixture;
-    using EPR.Calculator.Service.Function.Builder;
-    using EPR.Calculator.Service.Function.Builder.CancelledProducers;
-    using EPR.Calculator.Service.Function.Builder.CommsCost;
-    using EPR.Calculator.Service.Function.Builder.Detail;
-    using EPR.Calculator.Service.Function.Builder.ErrorReport;
-    using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
-    using EPR.Calculator.Service.Function.Builder.Lapcap;
-    using EPR.Calculator.Service.Function.Builder.LateReportingTonnages;
-    using EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment;
-    using EPR.Calculator.Service.Function.Builder.ParametersOther;
-    using EPR.Calculator.Service.Function.Builder.RejectedProducers;
-    using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
-    using EPR.Calculator.Service.Function.Builder.PartialObligations;
-    using EPR.Calculator.Service.Function.Builder.Summary;
-    using EPR.Calculator.Service.Function.Dtos;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.ApplicationInsights;
-    using Microsoft.ApplicationInsights.Extensibility;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Moq;
-    using EPR.Calculator.API.Data.Models;
-
-
     [TestClass]
     public class CalcResultBuilderTests
     {

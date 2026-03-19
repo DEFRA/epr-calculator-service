@@ -1,11 +1,10 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.OtherCosts
-{
-    using System.Text;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Text;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
+using EPR.Calculator.Service.Function.Models;
 
+namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.OtherCosts
+{
     [TestClass]
     public class CalcResultParameterOtherCostExporterTests
     {

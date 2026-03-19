@@ -1,15 +1,12 @@
-﻿namespace EPR.Calculator.Service.Function.Services
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Threading.Tasks;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.Service.Function.Interface;
-    using Microsoft.ApplicationInsights;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.DependencyInjection;
+﻿using System.Diagnostics;
+using EPR.Calculator.API.Data;
+using EPR.Calculator.Service.Function.Interface;
+using Microsoft.ApplicationInsights;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
+namespace EPR.Calculator.Service.Function.Services
+{
     /// <summary>
     /// Inserts records to the database, divided into chunks to avoid timeouts
     /// from inserting large numbers of records at once.

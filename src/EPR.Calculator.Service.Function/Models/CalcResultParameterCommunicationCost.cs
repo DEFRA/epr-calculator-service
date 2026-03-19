@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
-namespace EPR.Calculator.Service.Function.Models
+﻿namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResultParameterCommunicationCost
     {

@@ -1,9 +1,8 @@
-﻿namespace EPR.Calculator.Service.Function.Mappers
-{
-    using System.Collections.Generic;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.Service.Function.Models;
+﻿using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Models;
 
+namespace EPR.Calculator.Service.Function.Mappers
+{
     public static class MaterialMapper
     {
         public static List<MaterialDetail> Map(IEnumerable<Material> materialsInDb)

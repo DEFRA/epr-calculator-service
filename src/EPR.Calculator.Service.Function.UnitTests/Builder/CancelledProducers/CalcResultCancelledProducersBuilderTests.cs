@@ -1,30 +1,17 @@
+using AutoFixture;
+using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Builder.CancelledProducers;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Dtos;
+using EPR.Calculator.Service.Function.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Moq;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using AutoFixture;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.Service.Function.Builder.CancelledProducers;
-    using EPR.Calculator.Service.Function.Builder.CommsCost;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Dtos;
-    using EPR.Calculator.Service.Function.Models;
-    using EPR.Calculator.Service.Function.Services;
-    using Microsoft.ApplicationInsights.Extensibility;
-    using Microsoft.ApplicationInsights;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Moq;
-    using Microsoft.EntityFrameworkCore.Diagnostics;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Function.Interface;
-    using EPR.Calculator.Service.Common;
-    using EPR.Calculator.API.Data.Models;
-
     [TestClass]
     public class CalcResultCancelledProducersBuilderTests
     {

@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EPR.Calculator.API.Data.DataModels;
+﻿using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Interface;
-using EPR.Calculator.Service.Function.Models;
-using Microsoft.ApplicationInsights;
 using EPR.Calculator.Service.Function.Misc;
-
+using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Services
 {

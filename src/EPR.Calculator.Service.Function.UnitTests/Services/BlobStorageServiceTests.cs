@@ -1,21 +1,14 @@
-﻿using Castle.Core.Logging;
+﻿using AutoFixture;
+using Azure;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
+using EPR.Calculator.Service.Common.Logging;
+using EPR.Calculator.Service.Function.Interface;
+using EPR.Calculator.Service.Function.Services;
+using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
-    using System.Configuration;
-    using AutoFixture;
-    using Azure;
-    using Azure.Storage.Blobs;
-    using Azure.Storage.Blobs.Models;
-    using Azure.Storage.Blobs.Specialized;
-    using EPR.Calculator.Service.Common.Logging;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Interface;
-    using EPR.Calculator.Service.Function.Services;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.Logging;
-    using Moq;
-
     /// <summary>Unit tests for the <see cref="BlobStorageService"/> class.</summary>
     [TestClass]
     public class BlobStorageServiceTests

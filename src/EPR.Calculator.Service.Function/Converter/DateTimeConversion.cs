@@ -1,6 +1,5 @@
-﻿using EPR.Calculator.Service.Function.Constants;
-using System;
-using System.Globalization;
+﻿using System.Globalization;
+using EPR.Calculator.Service.Function.Constants;
 
 namespace EPR.Calculator.Service.Function.Converter
 {

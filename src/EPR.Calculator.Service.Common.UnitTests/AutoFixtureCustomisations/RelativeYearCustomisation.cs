@@ -1,10 +1,8 @@
-﻿namespace EPR.Calculator.Service.Common.UnitTests.AutoFixtureCustomisations
+﻿using AutoFixture.Kernel;
+using EPR.Calculator.API.Data.Models;
+
+namespace EPR.Calculator.Service.Common.UnitTests.AutoFixtureCustomisations
 {
-    using System;
-    using AutoFixture.Kernel;
-    using EPR.Calculator.API.Data.Models;
-
-
     /// <summary>
     /// Customisation that allows AutoFixture to generate relative years.
     /// </summary>

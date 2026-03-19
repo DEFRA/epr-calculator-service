@@ -1,11 +1,9 @@
+using EPR.Calculator.Service.Common.Utils;
+using EPR.Calculator.Service.Function.Models.JsonExporter;
+using EPR.Calculator.Service.Function.UnitTests.Builder;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
 {
-    using System.Linq;
-    using EPR.Calculator.Service.Common.Utils;
-    using EPR.Calculator.Service.Function.Models.JsonExporter;
-    using EPR.Calculator.Service.Function.UnitTests.Builder;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     [TestClass]
     public class ProducerDisposalFeesWithBadDebtProvision1Tests
     {

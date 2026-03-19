@@ -1,11 +1,9 @@
-﻿namespace EPR.Calculator.Service.Function.Builder.Summary.TwoCCommsCost
-{
-    using System.Collections.Generic;
-    using System.Linq;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs;
-    using EPR.Calculator.Service.Function.Models;
+﻿using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs;
+using EPR.Calculator.Service.Function.Models;
 
+namespace EPR.Calculator.Service.Function.Builder.Summary.TwoCCommsCost
+{
     public static class TwoCCommsCostUtil
     {
         public static void UpdateTwoCTotals(CalcResult calcResult,

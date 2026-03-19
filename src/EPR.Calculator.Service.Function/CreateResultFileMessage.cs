@@ -1,7 +1,4 @@
-using System;
-using Newtonsoft.Json;
-using EPR.Calculator.Service.Common;
-using EPR.Calculator.API.Data.Models;
+﻿using EPR.Calculator.API.Data.Models;
 
 namespace EPR.Calculator.Service.Function
 {

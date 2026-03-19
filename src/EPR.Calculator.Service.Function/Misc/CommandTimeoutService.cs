@@ -1,9 +1,9 @@
-﻿namespace EPR.Calculator.Service.Function.Services
-{
-    using EPR.Calculator.Service.Function.Interface;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Infrastructure;
+﻿using EPR.Calculator.Service.Function.Interface;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
+namespace EPR.Calculator.Service.Function.Services
+{
     /// <summary>
     /// Service to set the command timeout for the database.
     /// </summary>

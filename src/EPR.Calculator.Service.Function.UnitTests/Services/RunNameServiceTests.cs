@@ -1,15 +1,12 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Services
-{
-    using System.Threading.Tasks;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.API.Data.Models;
-    using EPR.Calculator.Service.Common;
-    using EPR.Calculator.Service.Function.Services;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Moq;
+﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Services;
+using Microsoft.EntityFrameworkCore;
+using Moq;
 
+namespace EPR.Calculator.Service.Function.UnitTests.Services
+{
     /// <summary>
     /// Unit tests for the <see cref="RunNameService"/> class.
     /// </summary>

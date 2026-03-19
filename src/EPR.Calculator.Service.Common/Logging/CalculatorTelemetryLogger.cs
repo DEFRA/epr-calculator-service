@@ -1,8 +1,7 @@
-﻿namespace EPR.Calculator.Service.Common.Logging
-{
-    using Microsoft.ApplicationInsights;
-    using Microsoft.ApplicationInsights.DataContracts;
+﻿using Microsoft.ApplicationInsights.DataContracts;
 
+namespace EPR.Calculator.Service.Common.Logging
+{
     /// <summary>
     /// Logger for telemetry data in the calculator service.
     /// </summary>

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Converter;
 
@@ -29,7 +26,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                         _ = int.TryParse(producer.LatestInvoice!.RunNumberValue, out runNumber);
                     }
 
-                    cancelledProducerTonnageInvoices.Add(EPR.Calculator.Service.Function.Models.JsonExporter.CancelledProducerTonnageInvoice.From(runNumber, producer));
+                    cancelledProducerTonnageInvoices.Add(JsonExporter.CancelledProducerTonnageInvoice.From(runNumber, producer));
                 }
 
                 return cancelledProducerTonnageInvoices;

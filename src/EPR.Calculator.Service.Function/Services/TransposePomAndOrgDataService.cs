@@ -1,22 +1,16 @@
-﻿namespace EPR.Calculator.Service.Function.Services
+using System.Diagnostics.CodeAnalysis;
+using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Enums;
+using EPR.Calculator.Service.Common.Logging;
+using EPR.Calculator.Service.Function.Dtos;
+using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Interface;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+namespace EPR.Calculator.Service.Function.Services
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using EPR.Calculator.Service.Common.Logging;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.API.Data.Enums;
-    using EPR.Calculator.Service.Function.Dtos;
-    using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Function.Interface;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
-    using System.Diagnostics.CodeAnalysis;
-
-
     /// <summary>
     /// Service for transposing POM and organization data.
     /// </summary>
@@ -156,7 +150,7 @@
             return false;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        [SuppressMessage(
             "Critical Code Smell",
             "S3776:Cognitive Complexity of methods should not be too high",
             Justification = "Temporaraly suppress - will refactor later.")]

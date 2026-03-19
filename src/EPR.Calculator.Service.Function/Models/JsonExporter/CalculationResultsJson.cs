@@ -1,9 +1,5 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json.Serialization;
 using EPR.Calculator.Service.Common.Utils;
-using EPR.Calculator.Service.Function.Mapper;
-using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {

@@ -1,11 +1,9 @@
+using AutoFixture;
+using EPR.Calculator.Service.Function.Models;
+using Moq;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Models
 {
-    using System.Collections.Generic;
-    using AutoFixture;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Moq;
-
     /// <summary>Unit tests for the <see cref="CalcResultScaledupProducers"/> class.</summary>
     [TestClass]
     public class CalcResultScaledupProducersTests

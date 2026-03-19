@@ -1,35 +1,28 @@
-﻿using EPR.Calculator.Service.Function.Builder.ParametersOther;
+using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Enums;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Builder.ParametersOther;
+using EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions;
+using EPR.Calculator.Service.Function.Builder.Summary.Common;
+using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA;
+using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoBTotalBill;
+using EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts;
+using EPR.Calculator.Service.Function.Builder.Summary.OneAndTwoA;
+using EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C;
+using EPR.Calculator.Service.Function.Builder.Summary.SaSetupCosts;
+using EPR.Calculator.Service.Function.Builder.Summary.ThreeSA;
+using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs;
+using EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown;
+using EPR.Calculator.Service.Function.Builder.Summary.TwoCCommsCost;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Mappers;
+using EPR.Calculator.Service.Function.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.Summary
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.API.Data.Enums;
-    using EPR.Calculator.API.Data.Models;
-    using EPR.Calculator.Service.Common;
-    using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
-    using EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions;
-    using EPR.Calculator.Service.Function.Builder.Summary.Common;
-    using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA;
-    using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoBTotalBill;
-    using EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts;
-    using EPR.Calculator.Service.Function.Builder.Summary.OneAndTwoA;
-    using EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C;
-    using EPR.Calculator.Service.Function.Builder.Summary.SaSetupCosts;
-    using EPR.Calculator.Service.Function.Builder.Summary.ThreeSA;
-    using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs;
-    using EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown;
-    using EPR.Calculator.Service.Function.Builder.Summary.TwoCCommsCost;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Dtos;
-    using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.EntityFrameworkCore;
-
     public class CalcResultSummaryBuilder : ICalcResultSummaryBuilder
     {
         private readonly ApplicationDBContext context;
@@ -51,7 +44,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         {
             // Get and map materials from DB
             var materialsFromDb = await this.context.Material.ToListAsync();
-            var materials = Mappers.MaterialMapper.Map(materialsFromDb);
+            var materials = MaterialMapper.Map(materialsFromDb);
 
             ScaledupProducers = calcResult.CalcResultScaledupProducers.ScaledupProducers ?? [];
             PartialObligations = calcResult.CalcResultPartialObligations.PartialObligations ?? [];

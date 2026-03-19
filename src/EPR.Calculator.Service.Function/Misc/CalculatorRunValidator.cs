@@ -1,10 +1,8 @@
-﻿namespace EPR.Calculator.Service.Function.Misc
-{
-    using System.Collections.Generic;
-    using System.Linq;
-    using EPR.Calculator.API.Data.DataModels;
-    using FluentValidation;
+﻿using EPR.Calculator.API.Data.DataModels;
+using FluentValidation;
 
+namespace EPR.Calculator.Service.Function.Misc
+{
     public class CalculatorRunValidator : AbstractValidator<string>
     {
         public CalculatorRunValidator() 

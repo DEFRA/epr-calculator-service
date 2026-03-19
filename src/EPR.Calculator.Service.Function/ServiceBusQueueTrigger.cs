@@ -1,5 +1,3 @@
-using System;
-using System.Threading.Tasks;
 using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function;
 using EPR.Calculator.Service.Function.Enums;

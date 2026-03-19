@@ -1,11 +1,8 @@
-﻿namespace EPR.Calculator.Service.Function.Builder.Summary.OneAndTwoA
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Models;
+﻿using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Models;
 
+namespace EPR.Calculator.Service.Function.Builder.Summary.OneAndTwoA
+{
     public static class CalcResultOneAndTwoAUtil
     {
         public static decimal GetTotalDisposalCostswoBadDebtprovision1(IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees)

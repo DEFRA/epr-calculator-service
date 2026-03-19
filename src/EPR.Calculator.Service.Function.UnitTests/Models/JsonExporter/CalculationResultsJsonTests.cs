@@ -1,17 +1,15 @@
+using System.Globalization;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
+using EPR.Calculator.Service.Common.UnitTests.Utils;
+using EPR.Calculator.Service.Common.Utils;
+using EPR.Calculator.Service.Function.Models.JsonExporter;
+using EPR.Calculator.Service.Function.UnitTests.Builder;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
 {
-    using EPR.Calculator.Service.Common.Utils;
-    using EPR.Calculator.Service.Function.Mapper;
-    using EPR.Calculator.Service.Function.Models;
-    using EPR.Calculator.Service.Function.Models.JsonExporter;
-    using EPR.Calculator.Service.Function.UnitTests.Builder;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System.Globalization;
-    using System.Text.Json;
-    using System.Text.Json.Nodes;
-    using System.Text.Json.Serialization;
-    using System.Collections.Generic;
-    using static EPR.Calculator.Service.Common.UnitTests.Utils.JsonNodeComparer;
+    using static JsonNodeComparer;
 
     [TestClass]
     public class CalculationResultsJsonFromTests

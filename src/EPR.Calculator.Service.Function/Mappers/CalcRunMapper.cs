@@ -1,8 +1,8 @@
-﻿namespace EPR.Calculator.Service.Function.Mappers
-{
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.Service.Function.Dtos;
+﻿using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Dtos;
 
+namespace EPR.Calculator.Service.Function.Mappers
+{
     public static class CalcRunMapper
     {
         private static readonly string FileExtension = "CSV";

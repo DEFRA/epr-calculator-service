@@ -1,10 +1,8 @@
+using AutoFixture;
+using EPR.Calculator.Service.Common.Utils;
+
 namespace EPR.Calculator.Service.Common.UnitTests.Utils
 {
-    using System;
-    using AutoFixture;
-    using EPR.Calculator.Service.Common.Utils;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     [TestClass]
     public class ResetObjectUtilTests
     {

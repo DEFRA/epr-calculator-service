@@ -1,12 +1,11 @@
-﻿namespace EPR.Calculator.Service.Common.UnitTests.Logging
-{
-    using EPR.Calculator.Service.Common.Logging;
-    using Microsoft.ApplicationInsights;
-    using Microsoft.ApplicationInsights.DataContracts;
-    using Microsoft.ApplicationInsights.Extensibility;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Moq;
+﻿using EPR.Calculator.Service.Common.Logging;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.DataContracts;
+using Microsoft.ApplicationInsights.Extensibility;
+using Moq;
 
+namespace EPR.Calculator.Service.Common.UnitTests.Logging
+{
     [TestClass]
     public class TelemetryClientWrapperTests
     {
@@ -38,7 +37,7 @@
         public void TelemetryClientShouldCall_TrackException()
         {
             // Arrange
-            var exceptionTelemetry = new ExceptionTelemetry(new System.Exception("Test exception"));
+            var exceptionTelemetry = new ExceptionTelemetry(new Exception("Test exception"));
 
             // Act
             this.telemetryClientWrapper.TrackException(exceptionTelemetry);

@@ -1,15 +1,12 @@
+using AutoFixture;
+using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
-    using System;
-    using System.Threading.Tasks;
-    using AutoFixture;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.Service.Function.Services;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Moq;
-
     [TestClass]
     public class CalcCountryApportionmentServiceTests
     {
@@ -31,10 +28,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             if(!_context.Country.Any())
             {
-                _context.Country.Add(new API.Data.DataModels.Country { Name = "England", Code = "Eng" });
-                _context.Country.Add(new API.Data.DataModels.Country { Name = "Scotland", Code = "Sct" });
-                _context.Country.Add(new API.Data.DataModels.Country { Name = "Northern Ireland", Code = "NI" });
-                _context.Country.Add(new API.Data.DataModels.Country { Name = "Wales", Code = "Wales" });
+                _context.Country.Add(new Country { Name = "England", Code = "Eng" });
+                _context.Country.Add(new Country { Name = "Scotland", Code = "Sct" });
+                _context.Country.Add(new Country { Name = "Northern Ireland", Code = "NI" });
+                _context.Country.Add(new Country { Name = "Wales", Code = "Wales" });
                 _context.SaveChanges();
             }
             _testClass = new CalcCountryApportionmentService(_context);

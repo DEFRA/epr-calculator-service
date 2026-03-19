@@ -1,16 +1,14 @@
+using AutoFixture;
+using EPR.Calculator.API.Data;
+using EPR.Calculator.Service.Function.Interface;
+using EPR.Calculator.Service.Function.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Configuration;
+using Moq;
+
 namespace EPR.Calculator.Service.Function.UnitTests
 {
-    using System;
-    using AutoFixture;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.Service.Function.Interface;
-    using EPR.Calculator.Service.Function.Services;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Infrastructure;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Moq;
-
     [TestClass]
     public class CommandTimeoutServiceTests
     {

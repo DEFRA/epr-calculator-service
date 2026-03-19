@@ -1,8 +1,7 @@
-﻿namespace EPR.Calculator.Service.Function.Interface
-{
-    using System.Threading.Tasks;
-    using EPR.Calculator.Service.Common;
+﻿using EPR.Calculator.Service.Common;
 
+namespace EPR.Calculator.Service.Function.Interface
+{
     /// <summary>
     /// Interface for starting the calculator process.
     /// </summary>

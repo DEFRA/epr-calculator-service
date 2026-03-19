@@ -1,14 +1,9 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.CommsCost
-{
-    using System;
-    using System.Text;
-    using AutoFixture;
-    using EPR.Calculator.Service.Function.Exporter;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Text;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
+using EPR.Calculator.Service.Function.Models;
 
+namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.CommsCost
+{
     [TestClass]
     public class CommsCostExporterTests
     {

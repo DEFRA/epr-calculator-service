@@ -1,15 +1,10 @@
-﻿namespace EPR.Calculator.API.Wrapper
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.Service.Function.Interface;
-    using Microsoft.EntityFrameworkCore;
+﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Interface;
+using Microsoft.EntityFrameworkCore;
 
+namespace EPR.Calculator.API.Wrapper
+{
     public class OrgAndPomWrapper : IOrgAndPomWrapper
     {
         private readonly ApplicationDBContext context;

@@ -1,11 +1,12 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder
-{
-    using AutoFixture;
-    using EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Dtos;
-    using EPR.Calculator.Service.Function.Models;
+﻿using AutoFixture;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Dtos;
+using EPR.Calculator.Service.Function.Models;
 
+namespace EPR.Calculator.Service.Function.UnitTests.Builder
+{
     [TestClass]
     public class CalcResultOnePlusFourApportionmentBuilderTest : CalcResultOnePlusFourApportionmentBuilder
     {
@@ -15,7 +16,7 @@
         public void Construct_ShouldReturnCorrectApportionment()
         {
             // Arrange
-            var resultsDto = new CalcResultsRequestDto { RunId = 6, RelativeYear = new API.Data.Models.RelativeYear(2025) };
+            var resultsDto = new CalcResultsRequestDto { RunId = 6, RelativeYear = new RelativeYear(2025) };
             var calcResult = new CalcResult
             {
                 CalcResultDetail = new CalcResultDetail(){ RunId = resultsDto.RunId, RelativeYear = resultsDto.RelativeYear },

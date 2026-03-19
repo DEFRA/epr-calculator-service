@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace EPR.Calculator.Service.Function.Dtos
+﻿namespace EPR.Calculator.Service.Function.Dtos
 {
     public class CalculatorRunDto
     {

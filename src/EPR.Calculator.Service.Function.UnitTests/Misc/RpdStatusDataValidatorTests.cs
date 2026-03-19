@@ -1,15 +1,13 @@
+using AutoFixture;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Validators;
+using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Interface;
+using Microsoft.AspNetCore.Http;
+using Moq;
+
 namespace EPR.Calculator.Service.Function.UnitTests
 {
-    using System.Collections.Generic;
-    using AutoFixture;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.API.Validators;
-    using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Function.Interface;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Moq;
-
     [TestClass]
     public class RpdStatusDataValidatorTests
     {

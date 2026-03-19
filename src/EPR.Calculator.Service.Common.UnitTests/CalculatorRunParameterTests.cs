@@ -1,9 +1,7 @@
+using EPR.Calculator.API.Data.Models;
+
 namespace EPR.Calculator.Service.Common.UnitTests
 {
-    using EPR.Calculator.API.Data.Models;
-    using EPR.Calculator.Service.Common;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     /// <summary>
     /// Unit tests for the <see cref="CalculatorRunParameter"/> class.
     /// </summary>

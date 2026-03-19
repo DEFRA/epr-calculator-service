@@ -1,8 +1,5 @@
 ﻿namespace EPR.Calculator.Service.Common.Logging.UnitTests
 {
-    using System;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     /// <summary>
     /// Unit tests for the <see cref="ErrorMessage"/> class.
     /// </summary>

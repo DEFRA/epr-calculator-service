@@ -1,7 +1,5 @@
 ﻿namespace EPR.Calculator.Service.Function.Misc
 {
-    using System.Collections.Generic;
-
     public class ValidationResult
     {
         /// <summary>

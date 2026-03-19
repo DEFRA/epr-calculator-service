@@ -1,12 +1,11 @@
+using AutoFixture;
+using EPR.Calculator.API.Utils;
+using EPR.Calculator.Service.Common.Utils;
+using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Models.JsonExporter;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
 {
-    using AutoFixture;
-    using EPR.Calculator.API.Utils;
-    using EPR.Calculator.Service.Common.Utils;
-    using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Function.Models.JsonExporter;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     [TestClass]
     public class CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2aTests
     {

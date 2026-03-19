@@ -1,11 +1,9 @@
+using AutoFixture;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter;
+using EPR.Calculator.Service.Function.Models;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 {
-    using System;
-    using AutoFixture;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     /// <summary>
     /// Unit tests for the <see cref="LateReportingExporter"/> class.
     /// </summary>

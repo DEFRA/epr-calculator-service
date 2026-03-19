@@ -1,18 +1,12 @@
-﻿namespace EPR.Calculator.Service.Function.Services
-{
-    using System;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using EPR.Calculator.Service.Common;
-    using EPR.Calculator.Service.Common.Logging;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.Service.Common.Utils;
-    using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Function.Interface;
-    using FluentValidation;
-    using Microsoft.EntityFrameworkCore;
+﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.Service.Common.Logging;
+using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Interface;
+using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 
+namespace EPR.Calculator.Service.Function.Services
+{
     /// <summary>
     /// Service for updating RPD status.
     /// </summary>

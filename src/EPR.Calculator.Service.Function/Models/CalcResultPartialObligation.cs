@@ -1,11 +1,5 @@
 ﻿namespace EPR.Calculator.Service.Function.Models
 {
-    using System;
-
-    using System.Collections.Generic;
-    using EPR.Calculator.API.Data.DataModels;
-
-
     public class CalcResultPartialObligation
     {
         public int ProducerId { get; set; }

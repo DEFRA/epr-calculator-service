@@ -1,10 +1,7 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests
-{
-    using System;
-    using AutoFixture;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using EPR.Calculator.Service.Common.Utils;
+﻿using EPR.Calculator.Service.Common.Utils;
 
+namespace EPR.Calculator.Service.Function.UnitTests
+{
     [TestClass]
     public class CurrencyConverterTests
     {

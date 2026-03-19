@@ -1,17 +1,12 @@
-﻿namespace EPR.Calculator.Service.Function.Builder.Lapcap
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.Service.Function.Dtos;
-    using EPR.Calculator.Service.Function.Models;
-    using EPR.Calculator.Service.Function.Services;
-    using Microsoft.EntityFrameworkCore;
+﻿using System.Globalization;
+using EPR.Calculator.API.Data;
+using EPR.Calculator.Service.Function.Dtos;
+using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Services;
+using Microsoft.EntityFrameworkCore;
 
+namespace EPR.Calculator.Service.Function.Builder.Lapcap
+{
     public class CalcResultLapcapDataBuilder : ICalcResultLapcapDataBuilder
     {
         private readonly ICalcCountryApportionmentService calcCountryApportionmentService;

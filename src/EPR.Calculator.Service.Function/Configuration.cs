@@ -1,11 +1,8 @@
-﻿namespace EPR.Calculator.Service.Function
-{
-    using System;
-    using System.Globalization;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Interface;
-    using Microsoft.EntityFrameworkCore.Diagnostics;
+﻿using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Interface;
 
+namespace EPR.Calculator.Service.Function
+{
     /// <summary>
     /// Provides configuration settings for the calculator service.
     /// </summary>

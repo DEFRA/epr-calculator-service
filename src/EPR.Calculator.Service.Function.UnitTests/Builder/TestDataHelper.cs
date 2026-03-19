@@ -1,14 +1,12 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder
+﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Services;
+
+namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.API.Data.Models;
-    using EPR.Calculator.Service.Common;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Models;
-    using EPR.Calculator.Service.Function.Services;
-
-
     public static class TestDataHelper
     {
         public static CalcResult GetCalcResult()
@@ -2221,7 +2219,7 @@
                 OrganisationName = "",
                 TradingName = "",
                 LoadTimeStamp = DateTime.UtcNow,
-                CalculatorRunOrganisationDataMasterId = TestDataHelper.GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
+                CalculatorRunOrganisationDataMasterId = GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
             });
             list.Add(new CalculatorRunOrganisationDataDetail
             {
@@ -2230,7 +2228,7 @@
                 SubsidiaryId = "Sub 2",
                 OrganisationName = "",
                 LoadTimeStamp = DateTime.UtcNow,
-                CalculatorRunOrganisationDataMasterId = TestDataHelper.GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
+                CalculatorRunOrganisationDataMasterId = GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
             });
             list.Add(new CalculatorRunOrganisationDataDetail
             {

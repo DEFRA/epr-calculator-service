@@ -1,6 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using EPR.Calculator.Service.Common;
+﻿using EPR.Calculator.Service.Common;
 
 namespace EPR.Calculator.Service.Function.Services.DataLoading
 {

@@ -1,11 +1,10 @@
-﻿namespace EPR.Calculator.API.Utils
-{
-    using System;
-    using System.Globalization;
-    using System.Text.Json;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Enums;
+﻿using System.Globalization;
+using System.Text.Json;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Enums;
 
+namespace EPR.Calculator.API.Utils
+{
     public static class CsvSanitiser
     {
         public static string SanitiseData<T>(T value, bool csvDelimiterRequired = true, bool appendLrmCharacterToPreventRenderedAsFormula = false)

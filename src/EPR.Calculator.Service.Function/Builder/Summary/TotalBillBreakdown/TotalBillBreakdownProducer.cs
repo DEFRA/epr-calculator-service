@@ -1,6 +1,5 @@
 ﻿using EPR.Calculator.Service.Function.Builder.Summary.TotalProducerBillBreakdown;
 using EPR.Calculator.Service.Function.Models;
-using System.Collections.Generic;
 
 namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
 {

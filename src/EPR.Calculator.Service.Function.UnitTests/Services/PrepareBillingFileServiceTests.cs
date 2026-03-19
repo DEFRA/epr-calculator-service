@@ -1,22 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.API.Data;
-using EPR.Calculator.Service.Common.Utils;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Dtos;
+using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
-using EPR.Calculator.Service.Common.Logging;
-using Moq;
-using EPR.Calculator.Service.Function.Interface;
-using EPR.Calculator.Service.Function.Dtos;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using EPR.Calculator.Service.Common;
-using EPR.Calculator.API.Data.Models;
+using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
@@ -88,7 +80,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Name = calculatorName,
                     RelativeYear = new RelativeYear(2025),
                     CreatedBy = "user",
-                    CreatedAt = System.DateTime.UtcNow });
+                    CreatedAt = DateTime.UtcNow });
             _context.SaveChanges();
             var service = new PrepareBillingFileService(
                 this._context,
@@ -221,7 +213,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public static ApplicationDBContext Create()
         {
             var options = new DbContextOptionsBuilder<ApplicationDBContext>()
-                .UseInMemoryDatabase(databaseName: "TestDb" + System.Guid.NewGuid())
+                .UseInMemoryDatabase(databaseName: "TestDb" + Guid.NewGuid())
                 .Options;
             return new ApplicationDBContext(options);
         }

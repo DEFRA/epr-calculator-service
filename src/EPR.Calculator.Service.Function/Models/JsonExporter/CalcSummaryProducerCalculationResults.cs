@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
@@ -89,7 +88,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                     CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts = CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts.From(producer),
                     TotalProducerBillWithBadDebtProvision = TotalProducerBillWithBadDebtProvision.From(producer),
                     FeeForLADisposalCosts1 = CalculationResultsProducerCalculationResultsFeeForLADisposalCosts1.From(producer),
-                    DisposalFeeSummary1 = EPR.Calculator.Service.Function.Models.JsonExporter.DisposalFeeSummary1.From(producer),
+                    DisposalFeeSummary1 = DisposalFeeSummary1.From(producer),
                 };
         }
     }
