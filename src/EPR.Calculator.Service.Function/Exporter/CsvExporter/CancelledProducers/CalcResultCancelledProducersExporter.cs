@@ -1,5 +1,6 @@
 ﻿namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers
 {
+    using System.Linq;
     using System.Collections.Generic;
     using System.Text;
     using EPR.Calculator.API.Utils;
