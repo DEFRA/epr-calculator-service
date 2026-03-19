@@ -1,7 +1,3 @@
-// <copyright file="CalculatorRunParameterMapperTests.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
-
 namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 {
     using EPR.Calculator.API.Data.Models;

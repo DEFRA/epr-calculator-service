@@ -1,7 +1,3 @@
-﻿// <copyright file="CalculatorParameter.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
-
 using System;
 using Newtonsoft.Json;
 using EPR.Calculator.Service.Common;
