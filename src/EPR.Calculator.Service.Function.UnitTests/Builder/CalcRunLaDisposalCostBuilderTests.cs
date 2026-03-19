@@ -291,16 +291,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails?.Single(x => x.Name == MaterialNames.Glass);
             Assert.IsNotNull(laDisposalCost);
             Assert.AreEqual(MaterialNames.Glass, laDisposalCost.Name);
-            Assert.IsTrue(laDisposalCost.England.Contains("45,000.00"));
-            Assert.IsTrue(laDisposalCost.Wales.Contains("0.00"));
-            Assert.IsTrue(laDisposalCost.Scotland.Contains("20,700.00"));
-            Assert.IsTrue(laDisposalCost.NorthernIreland.Contains("4,500.00"));
-            Assert.IsTrue(laDisposalCost.Total.Contains("70,200.00"));
-            Assert.IsTrue(laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage.Contains("300"));
-            Assert.IsTrue(laDisposalCost.ReportedPublicBinTonnage.Contains("0"));
-            Assert.IsTrue(laDisposalCost.HouseholdDrinkContainers.Contains("1500"));
-            Assert.IsTrue(laDisposalCost.LateReportingTonnage.Contains("0"));
-            Assert.IsTrue(laDisposalCost.ProducerReportedTotalTonnage.Contains("2200"));
+            Assert.AreEqual("£45,000.00", laDisposalCost.England);
+            Assert.AreEqual("£0.00", laDisposalCost.Wales);
+            Assert.AreEqual("£20,700.00", laDisposalCost.Scotland);
+            Assert.AreEqual("£4,500.00", laDisposalCost.NorthernIreland);
+            Assert.AreEqual("£70,200.00", laDisposalCost.Total);
+            Assert.AreEqual("300", laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage);
+            Assert.AreEqual("400", laDisposalCost.ReportedPublicBinTonnage);
+            Assert.AreEqual("1500", laDisposalCost.HouseholdDrinkContainers);
+            Assert.AreEqual("10.00", laDisposalCost.LateReportingTonnage);
+            Assert.AreEqual("2210.00", laDisposalCost.ProducerReportedTotalTonnage);
         }
 
         [TestMethod]
@@ -334,8 +334,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual(0, double.Parse(laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage));
             Assert.AreEqual(0, double.Parse(laDisposalCost.ReportedPublicBinTonnage));
             Assert.AreEqual(500, double.Parse(laDisposalCost.HouseholdDrinkContainers));
-            Assert.AreEqual(0, double.Parse(laDisposalCost.LateReportingTonnage));
-            Assert.AreEqual(500, double.Parse(laDisposalCost.ProducerReportedTotalTonnage));
+            Assert.AreEqual(10, double.Parse(laDisposalCost.LateReportingTonnage));
+            Assert.AreEqual(510, double.Parse(laDisposalCost.ProducerReportedTotalTonnage));
         }
 
         [TestMethod]

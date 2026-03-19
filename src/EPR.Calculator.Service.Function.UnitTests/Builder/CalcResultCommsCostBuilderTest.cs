@@ -146,12 +146,12 @@
             Assert.AreEqual(
                 "910.000",
                 aluminiumCost.ProducerReportedHouseholdPackagingWasteTonnage);
-            Assert.AreEqual("10.000", aluminiumCost.LateReportingTonnage);
+            Assert.AreEqual("8000.000", aluminiumCost.LateReportingTonnage);
             Assert.AreEqual(
-                "930.000",
+                "8920.000",
                 aluminiumCost.ProducerReportedHouseholdPlusLateReportingTonnage);
             Assert.AreEqual(
-                "0.0108",
+                "0.0011",
                 aluminiumCost.CommsCostByMaterialPricePerTonne);
 
             var fibreCompositeCost = materialCosts[2];
@@ -201,9 +201,9 @@
             Assert.AreEqual(
                 "32410.000",
                 totalMaterialCost.ProducerReportedHouseholdPackagingWasteTonnage);
-            Assert.AreEqual("80.000", totalMaterialCost.LateReportingTonnage);
+            Assert.AreEqual("10020.000", totalMaterialCost.LateReportingTonnage);
             Assert.AreEqual(
-                "32600.000",
+                "42540.000",
                 totalMaterialCost.ProducerReportedHouseholdPlusLateReportingTonnage);
             Assert.IsTrue(string.IsNullOrEmpty(totalMaterialCost.CommsCostByMaterialPricePerTonne));
         }
@@ -360,12 +360,16 @@
                     ParameterCategory = material,
                     ParameterType = parameterTypes[0],
                 });
-                this.dbContext.DefaultParameterTemplateMasterList.Add(new DefaultParameterTemplateMaster
+                var rag = new string[] { "R", "A", "G" };
+                foreach (var v in rag)
                 {
-                    ParameterUniqueReferenceId = Guid.NewGuid().ToString(),
-                    ParameterCategory = material,
-                    ParameterType = parameterTypes[1],
-                });
+                    this.dbContext.DefaultParameterTemplateMasterList.Add(new DefaultParameterTemplateMaster
+                    {
+                        ParameterUniqueReferenceId = Guid.NewGuid().ToString(),
+                        ParameterCategory = $"{material}-{v}",
+                        ParameterType = parameterTypes[1],
+                    });
+                }
             }
 
             var countries = new[]

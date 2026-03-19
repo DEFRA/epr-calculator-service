@@ -32,6 +32,9 @@
             csvContent.AppendLine(CsvSanitiser.SanitiseData(calcResultLateReportingData.Name));
             csvContent.Append(CsvSanitiser.SanitiseData($"{calcResultLateReportingData.MaterialHeading}"));
             csvContent.Append(CsvSanitiser.SanitiseData(calcResultLateReportingData.TonnageHeading));
+            csvContent.Append(CsvSanitiser.SanitiseData(calcResultLateReportingData.RedTonnageHeading));
+            csvContent.Append(CsvSanitiser.SanitiseData(calcResultLateReportingData.AmberTonnageHeading));
+            csvContent.Append(CsvSanitiser.SanitiseData(calcResultLateReportingData.GreenTonnageHeading));
             csvContent.AppendLine();
 
             foreach (var lateReportingData in calcResultLateReportingData.CalcResultLateReportingTonnageDetails)
@@ -42,6 +45,9 @@
                     {
                         lateReportingData.Name,
                         lateReportingData.TotalLateReportingTonnage.ToString("0.000"),
+                        lateReportingData.RedLateReportingTonnage.ToString("0.000"),
+                        lateReportingData.AmberLateReportingTonnage.ToString("0.000"),
+                        lateReportingData.GreenLateReportingTonnage.ToString("0.000"),
                     }.Select(s => CsvSanitiser.SanitiseData(s)));
                 csvContent.AppendLine();
             }
