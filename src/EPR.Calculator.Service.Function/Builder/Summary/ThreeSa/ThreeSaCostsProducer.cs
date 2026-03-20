@@ -1,9 +1,8 @@
 using EPR.Calculator.Service.Function.Builder.Summary.Common;
-using EPR.Calculator.Service.Function.Builder.Summary.ThreeSa;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Models;
 
-namespace EPR.Calculator.Service.Function.Builder.Summary.ThreeSA
+namespace EPR.Calculator.Service.Function.Builder.Summary.ThreeSa
 {
     public static class ThreeSaCostsProducer
     {

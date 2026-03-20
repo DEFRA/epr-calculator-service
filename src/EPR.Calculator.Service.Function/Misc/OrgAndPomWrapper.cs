@@ -3,7 +3,7 @@ using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Interface;
 using Microsoft.EntityFrameworkCore;
 
-namespace EPR.Calculator.API.Wrapper
+namespace EPR.Calculator.Service.Function.Misc
 {
     public class OrgAndPomWrapper : IOrgAndPomWrapper
     {

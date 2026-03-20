@@ -1,6 +1,6 @@
 ﻿using EPR.Calculator.API.Data.Models;
 
-namespace EPR.Calculator.Service.Function.Dtos
+namespace EPR.Calculator.Service.Function.Misc
 {
     public class CalcResultsRequestDto
     {

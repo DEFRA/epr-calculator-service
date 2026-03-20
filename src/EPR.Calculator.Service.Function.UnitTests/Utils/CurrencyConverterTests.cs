@@ -1,6 +1,6 @@
 ﻿using EPR.Calculator.Service.Common.Utils;
 
-namespace EPR.Calculator.Service.Function.UnitTests
+namespace EPR.Calculator.Service.Function.UnitTests.Utils
 {
     [TestClass]
     public class CurrencyConverterTests

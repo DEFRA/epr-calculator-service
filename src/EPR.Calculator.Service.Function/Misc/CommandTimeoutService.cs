@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
-namespace EPR.Calculator.Service.Function.Services
+namespace EPR.Calculator.Service.Function.Misc
 {
     /// <summary>
     /// Service to set the command timeout for the database.

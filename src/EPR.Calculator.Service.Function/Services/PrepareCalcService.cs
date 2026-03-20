@@ -1,10 +1,9 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.API.Exporter;
 using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Builder;
-using EPR.Calculator.Service.Function.Dtos;
 using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Exporter;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Misc;

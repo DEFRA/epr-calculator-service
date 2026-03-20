@@ -3,7 +3,7 @@ using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Misc;
 
-namespace EPR.Calculator.Service.Function.UnitTests
+namespace EPR.Calculator.Service.Function.UnitTests.Misc
 {
     [TestClass]
     public class CalculatorRunValidatorTests

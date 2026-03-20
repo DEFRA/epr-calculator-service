@@ -1,4 +1,4 @@
-﻿using EPR.Calculator.Service.Function.Dtos;
+﻿using EPR.Calculator.Service.Function.Misc;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EPR.Calculator.Service.Function.Interface

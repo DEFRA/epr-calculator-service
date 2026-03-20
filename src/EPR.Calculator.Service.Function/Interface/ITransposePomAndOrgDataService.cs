@@ -1,4 +1,4 @@
-﻿using EPR.Calculator.Service.Function.Dtos;
+﻿using EPR.Calculator.Service.Function.Misc;
 
 namespace EPR.Calculator.Service.Function.Interface
 {

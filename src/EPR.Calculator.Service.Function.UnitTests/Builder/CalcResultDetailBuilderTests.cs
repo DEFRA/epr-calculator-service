@@ -2,7 +2,7 @@ using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.Detail;
-using EPR.Calculator.Service.Function.Dtos;
+using EPR.Calculator.Service.Function.Misc;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder

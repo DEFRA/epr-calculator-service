@@ -6,7 +6,7 @@ using EPR.Calculator.Service.Function.Builder.CommsCost;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
 
-namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsCostByMaterial2A
+namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
 {
     using static JsonNodeComparer;
 

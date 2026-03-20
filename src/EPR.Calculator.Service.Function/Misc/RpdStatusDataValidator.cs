@@ -3,7 +3,7 @@ using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.AspNetCore.Http;
 
-namespace EPR.Calculator.API.Validators
+namespace EPR.Calculator.Service.Function.Misc
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="RpdStatusDataValidator"/> class.

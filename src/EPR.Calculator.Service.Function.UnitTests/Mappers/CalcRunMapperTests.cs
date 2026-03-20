@@ -2,7 +2,7 @@ using AutoFixture;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Mappers;
 
-namespace EPR.Calculator.Service.Function.UnitTests
+namespace EPR.Calculator.Service.Function.UnitTests.Mappers
 {
     /// <summary>
     /// Unit tests for the <see cref="CalcRunMapper"/> class.

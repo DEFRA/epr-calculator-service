@@ -1,4 +1,4 @@
-﻿namespace EPR.Calculator.Service.Function.Dtos
+﻿namespace EPR.Calculator.Service.Function.Models
 {
     public class CalculatorRunDto
     {
