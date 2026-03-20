@@ -499,12 +499,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.AreEqual("100101", reportsList[0].SubsidiaryId, "Incorrect Subsidiary Id");
             Assert.AreEqual("01", reportsList[0].LeaverCode, "Incorrect Leaver Code");
 
-            Assert.AreEqual(ErrorCodes.MissingH1POMData, reportsList[1].ErrorCode, "Incorrect Error Code");
+            Assert.AreEqual(ErrorCodes.MissingPOMData, reportsList[1].ErrorCode, "Incorrect Error Code");
             Assert.AreEqual(200202, reportsList[1].ProducerId, "Incorrect Producer Id");
             Assert.AreEqual("100102", reportsList[1].SubsidiaryId, "Incorrect Subsidiary Id");
             Assert.AreEqual("01", reportsList[1].LeaverCode, "Incorrect Leaver Code");
 
-            Assert.AreEqual(ErrorCodes.MissingH2POMData, reportsList[2].ErrorCode, "Incorrect Error Code");
+            Assert.AreEqual(ErrorCodes.MissingPOMData, reportsList[2].ErrorCode, "Incorrect Error Code");
             Assert.AreEqual(200202, reportsList[2].ProducerId, "Incorrect Producer Id");
             Assert.AreEqual("100103", reportsList[2].SubsidiaryId, "Incorrect Subsidiary Id");
             Assert.AreEqual("01", reportsList[2].LeaverCode, "Incorrect Leaver Code");
