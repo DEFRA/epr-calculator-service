@@ -38,7 +38,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             BlobStorageService = new BlobStorageService(
                 MockBlobServiceClient.Object,
-                ConfigurationService.Object,
                 TelemetryLogger.Object);
         }
 

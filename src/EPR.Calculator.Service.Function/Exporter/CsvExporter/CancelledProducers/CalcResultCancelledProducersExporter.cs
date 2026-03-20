@@ -29,7 +29,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducer
             WriteCancelledProducersSecondaryHeaders(csvContent);
 
             // Add column header
-            WriteCancelledProducersColumnHeaders(response.CancelledProducers!, csvContent);
+            WriteCancelledProducersColumnHeaders(csvContent);
             csvContent.AppendLine();
         }
 
@@ -76,7 +76,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducer
             csvContent.AppendLine(headerRow);
         }
 
-        private static void WriteCancelledProducersColumnHeaders(IEnumerable<CalcResultCancelledProducersDto> producers, StringBuilder csvContent)
+        private static void WriteCancelledProducersColumnHeaders(StringBuilder csvContent)
         {
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.ProducerId));
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.ProducerOrSubsidiaryName));

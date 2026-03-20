@@ -21,12 +21,10 @@ namespace EPR.Calculator.Service.Function.Services
         /// Initializes a new instance of the <see cref="BlobStorageService"/> class.
         /// </summary>
         /// <param name="blobServiceClient">The blob service client.</param>
-        /// <param name="config">The configuration service.</param>
         /// <param name="telemetryLogger">The telemetry logger.</param>
         /// <exception cref="ConfigurationErrorsException">Thrown when the container name is missing in the configuration.</exception>
         public BlobStorageService(
             BlobServiceClient blobServiceClient,
-            IConfigurationService config,
             ICalculatorTelemetryLogger telemetryLogger)
         {
             this.blobServiceClient = blobServiceClient;

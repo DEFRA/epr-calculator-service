@@ -92,7 +92,7 @@ namespace EPR.Calculator.Service.Function
                     throw new ConfigurationErrorsException("Blob Storage connection string is not configured.");
                 }
 
-                return new BlobStorageService(new BlobServiceClient(connectionString), configuration, logger);
+                return new BlobStorageService(new BlobServiceClient(connectionString), logger);
             });
         }
 
