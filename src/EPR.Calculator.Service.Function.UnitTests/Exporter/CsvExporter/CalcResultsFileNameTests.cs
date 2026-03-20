@@ -36,7 +36,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         /// Check that an exception is thrown when trying to construct the file name,
         /// but a blank run name is used.
         /// </summary>
-        /// <param name="value"></param>
         [TestMethod]
         public void CanCreateBillingCsvFileName()
         {
@@ -48,7 +47,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         /// Check that an exception is thrown when trying to construct the file name,
         /// but a blank run name is used.
         /// </summary>
-        /// <param name="value"></param>
         [TestMethod]
         public void CanCreateResultsCsvFileName()
         {
@@ -60,7 +58,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         /// Check that an exception is thrown when trying to construct the file name,
         /// but a blank run name is used.
         /// </summary>
-        /// <param name="value"></param>
         [TestMethod]
         public void CanCreateBillingJsonFileName()
         {
@@ -72,7 +69,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         /// Check that an exception is thrown when trying to construct the file name,
         /// but a blank run name is used.
         /// </summary>
-        /// <param name="value"></param>
         [DataTestMethod]
         [DataRow(null)]
         [DataRow("")]

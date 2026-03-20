@@ -37,9 +37,6 @@ namespace EPR.Calculator.Service.Function.Builder
 
 
         [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CalcResultBuilder"/> class.
-        /// </summary>
         public CalcResultBuilder(
             ICalcResultDetailBuilder calcResultDetailBuilder,
             ICalcResultLapcapDataBuilder lapcapBuilder,

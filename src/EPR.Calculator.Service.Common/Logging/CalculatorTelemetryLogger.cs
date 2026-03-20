@@ -54,6 +54,7 @@ namespace EPR.Calculator.Service.Common.Logging
         /// </summary>
         /// <param name="runId">The ID of the run.</param>
         /// <param name="runName">The name of the run.</param>
+        /// <param name="messageType">The type of message to log.</param>
         /// <param name="message">The message to log.</param>
         /// <returns>A formatted log message string.</returns>
         internal static string CreateLogMessage(int? runId, string? runName, string? messageType, string message)

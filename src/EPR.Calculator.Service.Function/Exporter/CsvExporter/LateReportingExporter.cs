@@ -12,7 +12,6 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
     /// <summary>
     /// Exports the Late Reporting Tonnage data to a string to be added to the results file.
     /// </summary>
-    /// <param name="calcResultLateReportingData">The data to export.</param>
     public class LateReportingExporter : ILateReportingExporter
     {
         public string Export(CalcResultLateReportingTonnage? calcResultLateReportingData)

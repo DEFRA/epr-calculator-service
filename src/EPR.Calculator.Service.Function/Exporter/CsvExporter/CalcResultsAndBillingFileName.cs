@@ -50,7 +50,6 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         /// Initializes a new instance of the <see cref="CalcResultsAndBillingFileName"/> class.
         /// Only use it for JSON billing files.
         /// </summary>
-        /// <param name="runId"></param>
         public CalcResultsAndBillingFileName(int runId, bool isDraftBillingFile, bool isJson)
         {
             if (!isJson || !isDraftBillingFile)

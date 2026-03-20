@@ -15,8 +15,6 @@ namespace EPR.Calculator.Service.Function.Services
         /// <summary>
         /// Initializes a new instance of the <see cref="RpdStatusService"/> class.
         /// </summary>
-        /// <param name="config">The application configuration.</param>
-        /// <param name="context">The PayCal database context.</param>
         public RpdStatusService(
             IConfigurationService config,
             IDbContextFactory<ApplicationDBContext> context,

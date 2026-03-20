@@ -12,14 +12,9 @@ namespace EPR.Calculator.Service.Function.Services
     /// from inserting large numbers of records at once.
     /// </summary>
     /// <typeparam name="TRecord">The type of the records to be inserted.</typeparam>
-    /// <param name="telemetryClient">A <see cref="telemetryClient"/> for outputting debug info to Azure Insights.</param>
-    /// <param name="context">The database context.</param>
-    /// <param name="table">The database table to load the data into.</param>
-    /// <param name="chunkSize">The number of records to load in each chunk.</param>
     public class DbLoadingChunkerService<TRecord> : IDbLoadingChunkerService<TRecord>
         where TRecord : class
     {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="DbLoadingChunkerService{TRecord}"/> class.
         /// </summary>
@@ -27,7 +22,6 @@ namespace EPR.Calculator.Service.Function.Services
         /// <param name="telemetryClient">A telemetry client.</param>
         /// <param name="commandTimeoutService">A service to set the database command timeout.</param>
         /// <param name="context">The database context.</param>
-        /// <param name="table">The database table to insert data into.</param>
         [ActivatorUtilitiesConstructor]
         public DbLoadingChunkerService(
             IConfigurationService config,
@@ -44,7 +38,6 @@ namespace EPR.Calculator.Service.Function.Services
         /// <param name="telemetryClient">A telemetry client.</param>
         /// /// <param name="commandTimeoutService">A service to set the database command timeout.</param>
         /// <param name="context">The database context.</param>
-        /// <param name="table">The database table to insert data into.</param>
         /// <param name="chunkSize">The number of records to include in each chunk of records.</param>
         public DbLoadingChunkerService(
             TelemetryClient telemetryClient,

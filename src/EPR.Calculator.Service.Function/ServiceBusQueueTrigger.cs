@@ -23,13 +23,6 @@ namespace EPR.Calculator.Service.Function
         private readonly IPrepareBillingFileService prepareBillingFileService;
         private readonly IClassificationService classificationService;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ServiceBusQueueTrigger"/> class.
-        /// </summary>
-        /// <param name="calculatorRunService">Service to trigger the process for synapse pipeline.</param>
-        /// <param name="calculatorRunParameterMapper">Mapper class to map and get the parameter.</param>
-        /// <param name="runNameService">Service to fetch the run name from the database.</param>
-        /// <param name="telemetryLogger">Service to fetch the telemetry log.</param>
         public ServiceBusQueueTrigger(
             ICalculatorRunService calculatorRunService,
             ICalculatorRunParameterMapper calculatorRunParameterMapper,
@@ -52,7 +45,6 @@ namespace EPR.Calculator.Service.Function
         /// Triggering Azure function <see cref="Run"/> to read the message from Service Bus.
         /// </summary>
         /// <param name="myQueueItem">Service Bus message.</param>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [FunctionName("EPRCalculatorRunServiceBusQueueTrigger")]
         public async Task Run([ServiceBusTrigger(queueName: "%ServiceBusQueueName%", Connection = "ServiceBusConnectionString")] string myQueueItem)
         {

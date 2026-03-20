@@ -14,10 +14,6 @@
         /// <summary>
         /// Contains records for several different types of comms cost records.
         /// </summary>
-        /// <remarks>
-        /// Find specific records by cross referencing the constants in <see cref="CalcResultCommsCostBuilder"/>  
-        /// with the records' name property.
-        /// </remarks>
         public IEnumerable<CalcResultCommsCostOnePlusFourApportionment> CommsCostByCountry { get; set; }
             = [];
     }
