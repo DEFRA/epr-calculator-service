@@ -225,8 +225,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
                 (materialThresholdBreached != CommonConstants.Hyphen || tonnageThresholdBreached != CommonConstants.Hyphen || materialPercentageThresholdBreached != CommonConstants.Hyphen || tonnagePercentageThresholdBreached != CommonConstants.Hyphen))
                 return CommonConstants.Rebill;
 
-            if (liabilityDifference == 0) return CommonConstants.Hyphen;
-
             return CommonConstants.Hyphen;
         }
 

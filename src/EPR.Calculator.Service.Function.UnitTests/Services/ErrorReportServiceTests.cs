@@ -701,7 +701,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Assert
             Assert.AreEqual(2, reportsList.Count(), "Expected 2 unmatched records to be returned.");
             Assert.IsTrue(reportsList.Any(p => p.ProducerId == producer1 && p.SubsidiaryId == null && p.ErrorCode == error1 && p.LeaverCode == "some status code"));
-            Assert.IsTrue(reportsList.Any(p => p.ProducerId == producer2 && p.SubsidiaryId == "100500" && p.ErrorCode == error2 && p.LeaverCode == ""));;
+            Assert.IsTrue(reportsList.Any(p => p.ProducerId == producer2 && p.SubsidiaryId == "100500" && p.ErrorCode == error2 && p.LeaverCode == ""));
         }
 
         [TestMethod]
