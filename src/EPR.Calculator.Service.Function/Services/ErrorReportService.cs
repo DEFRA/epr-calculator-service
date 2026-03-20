@@ -44,18 +44,6 @@ namespace EPR.Calculator.Service.Function.Services
 
         public List<ErrorReport> HandleMissingPomData(IEnumerable<CalculatorRunPomDataDetail> pomDetails, IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails, int calculatorRunId, string createdBy)
         {
-            // var distinctPoms = pomDetails.DistinctBy(x => (x.OrganisationId, x.SubsidiaryId, x.SubmitterId));
-
-            // return orgDetails
-            //     .Where(o => ObligationStates.IsObligated(o.ObligationStatus))
-            //     .Where(o => !distinctPoms.Any(p => new { OrgId = p.OrganisationId, p.SubsidiaryId, p.SubmitterId }.Equals(new { OrgId = (int?)o.OrganisationId, o.SubsidiaryId, o.SubmitterId })))
-            //     .SelectMany(reg =>
-            //         // Check whether this reg 'should have pom' by seeing if they have previously submitted under a different entity
-            //         distinctPoms.Any(p => (reg.SubsidiaryId ?? reg.OrganisationId.ToString()) == (p.SubsidiaryId ?? p.OrganisationId?.ToString()))
-            //             ? new [] { CreateError(reg.OrganisationId, reg.SubsidiaryId, calculatorRunId, createdBy, ErrorCodes.MissingPOMData, reg.StatusCode) }
-            //             : Array.Empty<ErrorReport>()
-            //     ).ToList();
-
             return orgDetails
                 .Where(o => ObligationStates.IsObligated(o.ObligationStatus))
                  // Only raise errors for missing POM when they previously had POM data submitted to avoid loads of errors
@@ -63,10 +51,8 @@ namespace EPR.Calculator.Service.Function.Services
                 .SelectMany(reg =>
                     (reg.HasH1, reg.HasH2) switch
                     {
-                        (false, true ) => new [] { CreateError(reg.OrganisationId, reg.SubsidiaryId, calculatorRunId, createdBy, ErrorCodes.MissingH1POMData , reg.StatusCode) },
-                        (true , false) => new [] { CreateError(reg.OrganisationId, reg.SubsidiaryId, calculatorRunId, createdBy, ErrorCodes.MissingH2POMData , reg.StatusCode) },
-                        (false, false) => new [] { CreateError(reg.OrganisationId, reg.SubsidiaryId, calculatorRunId, createdBy, ErrorCodes.MissingPOMData   , reg.StatusCode) },
-                        (true , true ) => Array.Empty<ErrorReport>()
+                        (true , true ) => Array.Empty<ErrorReport>(),
+                        (_   ,     _ ) => new [] { CreateError(reg.OrganisationId, reg.SubsidiaryId, calculatorRunId, createdBy, ErrorCodes.MissingPOMData , reg.StatusCode) }
                     }
                 ).ToList();
         }
