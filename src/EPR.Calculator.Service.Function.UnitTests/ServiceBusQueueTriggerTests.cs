@@ -30,21 +30,21 @@ namespace EPR.Calculator.Service.Function.UnitTests
         /// </summary>
         public ServiceBusQueueTriggerTests()
         {
-            this.calculatorRunService = new Mock<ICalculatorRunService>();
-            this.parameterMapper = new Mock<ICalculatorRunParameterMapper>();
-            this.runNameService = new Mock<IRunNameService>();
-            this.messageTypeService = new Mock<IMessageTypeService>();
-            this.classificationService = new Mock<IClassificationService>();
-            this.telemetryLogger = new Mock<ICalculatorTelemetryLogger>();
-            this.prepareBillingFileService = new Mock<IPrepareBillingFileService>();
-            this.function = new ServiceBusQueueTrigger(
-                this.calculatorRunService.Object,
-                this.parameterMapper.Object,
-                this.runNameService.Object,
-                this.telemetryLogger.Object,
-                this.messageTypeService.Object,
-                this.prepareBillingFileService.Object,
-                this.classificationService.Object);
+            calculatorRunService = new Mock<ICalculatorRunService>();
+            parameterMapper = new Mock<ICalculatorRunParameterMapper>();
+            runNameService = new Mock<IRunNameService>();
+            messageTypeService = new Mock<IMessageTypeService>();
+            classificationService = new Mock<IClassificationService>();
+            telemetryLogger = new Mock<ICalculatorTelemetryLogger>();
+            prepareBillingFileService = new Mock<IPrepareBillingFileService>();
+            function = new ServiceBusQueueTrigger(
+                calculatorRunService.Object,
+                parameterMapper.Object,
+                runNameService.Object,
+                telemetryLogger.Object,
+                messageTypeService.Object,
+                prepareBillingFileService.Object,
+                classificationService.Object);
         }
 
         /// <summary>
@@ -56,25 +56,25 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, RelativeYear: 2024, CreatedBy: 'Test user'}";
-            var processedParameterData = new CalculatorRunParameter() { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767, MessageType = MessageTypes.Result };
+            var processedParameterData = new CalculatorRunParameter { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767, MessageType = MessageTypes.Result };
             var runName = "Test Run Name";
 
-            this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
-            this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
-            this.calculatorRunService.Setup(t => t.PrepareResultsFileAsync(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).ReturnsAsync(true);
+            runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
+            parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
+            calculatorRunService.Setup(t => t.PrepareResultsFileAsync(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).ReturnsAsync(true);
             MockResultMessage(myQueueItem);
 
             // Act
-            await this.function.Run(myQueueItem);
+            await function.Run(myQueueItem);
 
             // Assert
-            this.calculatorRunService.Verify(
+            calculatorRunService.Verify(
                 p => p.PrepareResultsFileAsync(
                     It.Is<CalculatorRunParameter>(msg => msg == processedParameterData),
                     It.Is<string>(name => name == runName)),
                 Times.Once);
 
-            this.telemetryLogger.Verify(
+            telemetryLogger.Verify(
                 x => x.LogInformation(It.Is<TrackMessage>(log =>
                     log.Message.Contains("Executing the function app started"))),
                 Times.Once);
@@ -96,19 +96,19 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 MessageType = "Billing"
             };
 
-            var processedParameterData = new BillingFileMessage() { ApprovedBy = "2024-25", MessageType = "Billing", Id = 678767 };
+            var processedParameterData = new BillingFileMessage { ApprovedBy = "2024-25", MessageType = "Billing", Id = 678767 };
             var runName = "Test Run Name";
             var approvedBy = "Test User";
 
-            this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateBillingFileMessage>())).Returns(processedParameterData);
+            parameterMapper.Setup(t => t.Map(It.IsAny<CreateBillingFileMessage>())).Returns(processedParameterData);
             messageTypeService.Setup(s => s.DeserializeMessage(myQueueItem)).Returns(resultFileMessage);
-            this.prepareBillingFileService.Setup(t => t.PrepareBillingFileAsync(processedParameterData.Id, runName, approvedBy)).ReturnsAsync(true);
+            prepareBillingFileService.Setup(t => t.PrepareBillingFileAsync(processedParameterData.Id, runName, approvedBy)).ReturnsAsync(true);
 
             // Act
-            await this.function.Run(myQueueItem);
+            await function.Run(myQueueItem);
 
             // Assert
-            this.telemetryLogger.Verify(
+            telemetryLogger.Verify(
                 x => x.LogInformation(It.Is<TrackMessage>(log =>
                     log.Message.Contains("Azure function app execution finished"))),
                 Times.Once);
@@ -125,10 +125,10 @@ namespace EPR.Calculator.Service.Function.UnitTests
             var myQueueItem = string.Empty;
 
             // Act
-            await this.function.Run(myQueueItem);
+            await function.Run(myQueueItem);
 
             // Assert
-            this.telemetryLogger.Verify(
+            telemetryLogger.Verify(
                 log => log.LogError(It.Is<ErrorMessage>(msg =>
                     msg.Message.Contains("Message is null or empty") &&
                     msg.Exception is ArgumentNullException)),
@@ -142,10 +142,10 @@ namespace EPR.Calculator.Service.Function.UnitTests
             string? myQueueItem = null;
 
             // Act
-            await this.function.Run(myQueueItem!);
+            await function.Run(myQueueItem!);
 
             // Assert
-            this.telemetryLogger.Verify(
+            telemetryLogger.Verify(
                 log => log.LogError(It.Is<ErrorMessage>(msg =>
                     msg.Message.Contains("Message is null or empty") &&
                     msg.Exception is ArgumentNullException)),
@@ -157,15 +157,15 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, RelativeYear: 2024, CreatedBy: 'Test user'}";
-            this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Throws<JsonException>();
+            parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Throws<JsonException>();
 
             MockResultMessage(myQueueItem);
 
             // Act
-            await this.function.Run(myQueueItem);
+            await function.Run(myQueueItem);
 
             // Assert
-            this.telemetryLogger.Verify(
+            telemetryLogger.Verify(
                 log => log.LogError(It.Is<ErrorMessage>(msg =>
                     msg.Message.Contains("Error") &&
                     msg.Exception is JsonException)),
@@ -181,13 +181,13 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, RelativeYear: 2024, CreatedBy: 'Test user'}";
-            this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Throws<Exception>();
+            parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Throws<Exception>();
             MockResultMessage(myQueueItem);
             // Act
-            await this.function.Run(myQueueItem);
+            await function.Run(myQueueItem);
 
             // Assert
-            this.telemetryLogger.Verify(
+            telemetryLogger.Verify(
                 log => log.LogError(It.Is<ErrorMessage>(msg =>
                     msg.Message.Contains("Error") &&
                     msg.Exception is Exception)),
@@ -203,21 +203,21 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, RelativeYear: 2024, CreatedBy: 'Test user'}";
-            var processedParameterData = new CalculatorRunParameter() { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767 , MessageType = MessageTypes.Result };
+            var processedParameterData = new CalculatorRunParameter { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767 , MessageType = MessageTypes.Result };
             var runName = "Test Run Name";
 
-            this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
-            this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
+            parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
+            runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
 
             // Setup StartProcess to throw an exception
-            this.calculatorRunService.Setup(t => t.PrepareResultsFileAsync(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).ThrowsAsync(new Exception("Unhandled exception"));
+            calculatorRunService.Setup(t => t.PrepareResultsFileAsync(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).ThrowsAsync(new Exception("Unhandled exception"));
             MockResultMessage(myQueueItem);
 
             // Act
-            await this.function.Run(myQueueItem);
+            await function.Run(myQueueItem);
 
             // Assert
-            this.telemetryLogger.Verify(
+            telemetryLogger.Verify(
                 log => log.LogError(It.Is<ErrorMessage>(msg =>
                     msg.Message.Contains("Unhandled exception") &&
                     msg.Exception is Exception)),
@@ -229,13 +229,13 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, RelativeYear: 2024, CreatedBy: 'Test user'}";
-            this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns((CalculatorRunParameter?)null!);
+            parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns((CalculatorRunParameter?)null!);
 
             // Act
-            await this.function.Run(myQueueItem);
+            await function.Run(myQueueItem);
 
             // Assert
-            this.telemetryLogger.Verify(
+            telemetryLogger.Verify(
                 log => log.LogError(It.Is<ErrorMessage>(msg =>
                     msg.Message.Contains("Deserialized object is null") &&
                     msg.Exception is JsonException)),
@@ -246,21 +246,21 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public async Task ServiceBusTrigger_SuccessfulProcess_Run()
         {
             // Arrange
-            this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns((CalculatorRunParameter?)null!);
+            parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns((CalculatorRunParameter?)null!);
             var myQueueItem = @"{ CalculatorRunId: 678767, RelativeYear: 2024, CreatedBy: 'Test user'}";
-            var processedParameterData = new CalculatorRunParameter() { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767 , MessageType = MessageTypes.Result };
+            var processedParameterData = new CalculatorRunParameter { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767 , MessageType = MessageTypes.Result };
             var runName = "Test Run Name";
 
-            this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
-            this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
-            this.calculatorRunService.Setup(t => t.PrepareResultsFileAsync(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).ReturnsAsync(true);
+            parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
+            runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
+            calculatorRunService.Setup(t => t.PrepareResultsFileAsync(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).ReturnsAsync(true);
             MockResultMessage(myQueueItem);
 
             // Act
-            await this.function.Run(myQueueItem);
+            await function.Run(myQueueItem);
 
             // Assert
-            this.telemetryLogger.Verify(
+            telemetryLogger.Verify(
                 log => log.LogInformation(It.Is<TrackMessage>(msg =>
                     msg.Message.Contains("Process status: True"))),
                 Times.Once);
@@ -271,19 +271,19 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, RelativeYear: 2024, CreatedBy: 'Test user'}";
-            var processedParameterData = new CalculatorRunParameter() { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767 , MessageType = MessageTypes.Result };
+            var processedParameterData = new CalculatorRunParameter { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767 , MessageType = MessageTypes.Result };
             var runName = "Test Run Name";
 
-            this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
-            this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
-            this.calculatorRunService.Setup(t => t.PrepareResultsFileAsync(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).Throws<Exception>();
+            runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
+            parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
+            calculatorRunService.Setup(t => t.PrepareResultsFileAsync(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).Throws<Exception>();
             MockResultMessage(myQueueItem);
 
             // Act
-            await this.function.Run(myQueueItem);
+            await function.Run(myQueueItem);
 
             // Assert
-            this.telemetryLogger.Verify(
+            telemetryLogger.Verify(
                 log => log.LogError(It.Is<ErrorMessage>(msg =>
                     msg.Message.Contains("Error") &&
                     msg.Exception is Exception)),
@@ -295,17 +295,17 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, RelativeYear: 2024, CreatedBy: 'Test user'}";
-            var processedParameterData = new CalculatorRunParameter() { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767 , MessageType = MessageTypes.Result };
+            var processedParameterData = new CalculatorRunParameter { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767 , MessageType = MessageTypes.Result };
 
-            this.parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
-            this.runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).Throws<Exception>();
+            parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
+            runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).Throws<Exception>();
             MockResultMessage(myQueueItem);
 
             // Act
-            await this.function.Run(myQueueItem);
+            await function.Run(myQueueItem);
 
             // Assert
-            this.telemetryLogger.Verify(
+            telemetryLogger.Verify(
                 log => log.LogError(It.Is<ErrorMessage>(msg =>
                     msg.Message.Contains("Error") &&
                     msg.Exception is Exception)),

@@ -38,7 +38,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             {
                 csvContent.AppendJoin(
                     string.Empty,
-                    new string[]
+                    new[]
                     {
                         lateReportingData.Name,
                         lateReportingData.TotalLateReportingTonnage.ToString("0.000"),

@@ -145,7 +145,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual("10.00000000%", countryApp.NorthernIrelandDisposalCost);
             Assert.AreEqual("100.00000000%", countryApp.TotalDisposalCost);
 
-            this.mockService.Verify(x => x.SaveChangesAsync(It.IsAny<CalcCountryApportionmentServiceDto>()));
+            mockService.Verify(x => x.SaveChangesAsync(It.IsAny<CalcCountryApportionmentServiceDto>()));
         }
 
         public static List<LapcapDataDetail> GetLapcapDetails(LapcapDataMaster master)
@@ -174,11 +174,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             {
                 return 100M;
             }
-            else if (uniqueRef.StartsWith("SCT-"))
+
+            if (uniqueRef.StartsWith("SCT-"))
             {
                 return 75M;
             }
-            else if (uniqueRef.StartsWith("WLS-"))
+
+            if (uniqueRef.StartsWith("WLS-"))
             {
                 return 50M;
             }

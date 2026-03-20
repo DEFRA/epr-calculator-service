@@ -304,7 +304,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
 
             tonnageByMaterial.Add(
                 "AL",
-                new CalcResultScaledupProducerTonnage()
+                new CalcResultScaledupProducerTonnage
                 {
                     ReportedHouseholdPackagingWasteTonnage = 1000,
                     ReportedPublicBinTonnage = 100,
@@ -326,7 +326,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
             var scaledupProducerList = new List<CalcResultScaledupProducer>();
 
             scaledupProducerList.AddRange([
-                new CalcResultScaledupProducer()
+                new CalcResultScaledupProducer
                 {
                     ProducerId = 101001,
                     SubsidiaryId = string.Empty,
@@ -338,7 +338,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                     ScaleupFactor = 2,
                     ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterial(),
                 },
-                new CalcResultScaledupProducer()
+                new CalcResultScaledupProducer
                 {
                     ProducerId = 101001,
                     SubsidiaryId = string.Empty,

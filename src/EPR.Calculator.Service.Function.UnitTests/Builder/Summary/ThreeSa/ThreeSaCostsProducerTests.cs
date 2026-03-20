@@ -165,10 +165,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                         TotalValue = 100,
                     },
                 },
-                CalcResultDetail = new CalcResultDetail() { RunId = 1, RelativeYear = new RelativeYear(2024) },
+                CalcResultDetail = new CalcResultDetail { RunId = 1, RelativeYear = new RelativeYear(2024) },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData
                 {
-                    CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>()
+                    CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>
                     {
                         new CalcResultLaDisposalCostDataDetail
                         {
@@ -210,11 +210,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                     },
                     Name = "some test",
                 },
-                CalcResultLapcapData = new CalcResultLapcapData()
+                CalcResultLapcapData = new CalcResultLapcapData
                 {
-                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>()
-                    {
-                    },
+                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>(),
                 },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment
                 {
@@ -295,18 +293,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                 },
                 CalcResultSummary = new CalcResultSummary
                 {
-                    ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>()
+                    ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
                     {
                         new()
                         {
                             ProducerCommsFeesByMaterial =
-                                new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>()
-                                {
-                                },
+                                new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>(),
                             ProducerDisposalFeesByMaterial =
-                                new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>()
-                                {
-                                },
+                                new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>(),
                             ProducerId = "1",
                             ProducerName = "Test",
                             TotalProducerDisposalFeeWithBadDebtProvision = 100,
@@ -316,7 +310,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                         },
                     },
                 },
-                CalcResultCommsCostReportDetail = new CalcResultCommsCost()
+                CalcResultCommsCostReportDetail = new CalcResultCommsCost
                 {
                     CalcResultCommsCostCommsCostByMaterial =
                     [
@@ -334,7 +328,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                         }
                     ],
                 },
-                CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage()
+                CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
                 {
                     Name = string.Empty,
                     CalcResultLateReportingTonnageDetails = new List<CalcResultLateReportingTonnageDetail>(),
@@ -515,7 +509,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
 
         private void CreateProducerDetail()
         {
-            var producerNames = new string[]
+            var producerNames = new[]
             {
                 "Allied Packaging",
                 "Beeline Materials",

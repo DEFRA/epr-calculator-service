@@ -14,16 +14,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
         /// </summary>
         public CalcResultLateReportingTonnageDetailTests()
         {
-            this.Fixture = new Fixture();
-            this.Name = this.Fixture.Create<string>();
-            this.TotalLateReportingTonnage = this.Fixture.Create<decimal>();
-            this.TestClass = new CalcResultLateReportingTonnageDetail
+            Fixture = new Fixture();
+            Name = Fixture.Create<string>();
+            TotalLateReportingTonnage = Fixture.Create<decimal>();
+            TestClass = new CalcResultLateReportingTonnageDetail
             {
-                Name = this.Name,
-                RedLateReportingTonnage = this.RedLateReportingTonnage,
-                AmberLateReportingTonnage = this.AmberLateReportingTonnage,
-                GreenLateReportingTonnage = this.GreenLateReportingTonnage,
-                TotalLateReportingTonnage = this.TotalLateReportingTonnage,
+                Name = Name,
+                RedLateReportingTonnage = RedLateReportingTonnage,
+                AmberLateReportingTonnage = AmberLateReportingTonnage,
+                GreenLateReportingTonnage = GreenLateReportingTonnage,
+                TotalLateReportingTonnage = TotalLateReportingTonnage,
             };
         }
 
@@ -44,11 +44,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             // Act
             var instance = new CalcResultLateReportingTonnageDetail
             {
-                Name = this.Name,
-                RedLateReportingTonnage = this.RedLateReportingTonnage,
-                AmberLateReportingTonnage = this.AmberLateReportingTonnage,
-                GreenLateReportingTonnage = this.GreenLateReportingTonnage,
-                TotalLateReportingTonnage = this.TotalLateReportingTonnage,
+                Name = Name,
+                RedLateReportingTonnage = RedLateReportingTonnage,
+                AmberLateReportingTonnage = AmberLateReportingTonnage,
+                GreenLateReportingTonnage = GreenLateReportingTonnage,
+                TotalLateReportingTonnage = TotalLateReportingTonnage,
             };
 
             // Assert
@@ -61,35 +61,35 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             // Arrange
             var same = new CalcResultLateReportingTonnageDetail
             {
-                Name = this.Name,
-                RedLateReportingTonnage = this.RedLateReportingTonnage,
-                AmberLateReportingTonnage = this.AmberLateReportingTonnage,
-                GreenLateReportingTonnage = this.GreenLateReportingTonnage,
-                TotalLateReportingTonnage = this.TotalLateReportingTonnage,
+                Name = Name,
+                RedLateReportingTonnage = RedLateReportingTonnage,
+                AmberLateReportingTonnage = AmberLateReportingTonnage,
+                GreenLateReportingTonnage = GreenLateReportingTonnage,
+                TotalLateReportingTonnage = TotalLateReportingTonnage,
             };
-            var different = this.Fixture.Create<CalcResultLateReportingTonnageDetail>();
+            var different = Fixture.Create<CalcResultLateReportingTonnageDetail>();
 
             // Assert
-            Assert.IsFalse(this.TestClass.Equals(default(object)));
-            Assert.IsFalse(this.TestClass.Equals(new object()));
-            Assert.IsTrue(this.TestClass.Equals((object)same));
-            Assert.IsFalse(this.TestClass.Equals((object)different));
-            Assert.IsTrue(this.TestClass.Equals(same));
-            Assert.IsFalse(this.TestClass.Equals(different));
-            Assert.AreEqual(same.GetHashCode(), this.TestClass.GetHashCode());
-            Assert.AreNotEqual(different.GetHashCode(), this.TestClass.GetHashCode());
-            Assert.IsTrue(this.TestClass == same);
-            Assert.IsFalse(this.TestClass == different);
-            Assert.IsFalse(this.TestClass != same);
-            Assert.IsTrue(this.TestClass != different);
+            Assert.IsFalse(TestClass.Equals(default(object)));
+            Assert.IsFalse(TestClass.Equals(new object()));
+            Assert.IsTrue(TestClass.Equals((object)same));
+            Assert.IsFalse(TestClass.Equals((object)different));
+            Assert.IsTrue(TestClass.Equals(same));
+            Assert.IsFalse(TestClass.Equals(different));
+            Assert.AreEqual(same.GetHashCode(), TestClass.GetHashCode());
+            Assert.AreNotEqual(different.GetHashCode(), TestClass.GetHashCode());
+            Assert.IsTrue(TestClass == same);
+            Assert.IsFalse(TestClass == different);
+            Assert.IsFalse(TestClass != same);
+            Assert.IsTrue(TestClass != different);
         }
 
         [TestMethod]
         public void NameIsInitializedCorrectly()
-            => Assert.AreEqual(this.Name, this.TestClass.Name);
+            => Assert.AreEqual(Name, TestClass.Name);
 
         [TestMethod]
         public void TotalLateReportingTonnageIsInitializedCorrectly()
-            => Assert.AreEqual(this.TotalLateReportingTonnage, this.TestClass.TotalLateReportingTonnage);
+            => Assert.AreEqual(TotalLateReportingTonnage, TestClass.TotalLateReportingTonnage);
     }
 }

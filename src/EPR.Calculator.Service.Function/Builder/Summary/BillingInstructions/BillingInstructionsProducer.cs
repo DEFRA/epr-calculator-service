@@ -109,10 +109,9 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
         {
             if (fee.LeaverDate == CommonConstants.Totals)
                 return string.Empty;
-            else if (fee.TonnageChangeAdvice == "CHANGE")
+            if (fee.TonnageChangeAdvice == "CHANGE")
                 return "Tonnage Changed";
-            else
-                return null;
+            return null;
         }
 
         private static decimal? CalculateLiabilityDifference(CalcResultSummaryProducerDisposalFees fee, decimal? currentInvoicedTotalToDate)

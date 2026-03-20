@@ -17,7 +17,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             calcResult1Plus4Apportionment = new CalcResultOnePlusFourApportionment
             {
                 Name = "Apportionment",
-                CalcResultOnePlusFourApportionmentDetails = new List<CalcResultOnePlusFourApportionmentDetail>()
+                CalcResultOnePlusFourApportionmentDetails = new List<CalcResultOnePlusFourApportionmentDetail>
                 {
                     new CalcResultOnePlusFourApportionmentDetail
                     {

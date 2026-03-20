@@ -19,7 +19,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var resultsDto = new CalcResultsRequestDto { RunId = 6, RelativeYear = new RelativeYear(2025) };
             var calcResult = new CalcResult
             {
-                CalcResultDetail = new CalcResultDetail(){ RunId = resultsDto.RunId, RelativeYear = resultsDto.RelativeYear },
+                CalcResultDetail = new CalcResultDetail { RunId = resultsDto.RunId, RelativeYear = resultsDto.RelativeYear },
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultLapcapData = new CalcResultLapcapData

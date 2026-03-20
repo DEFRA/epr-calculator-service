@@ -20,8 +20,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void MapPerformsMapping()
         {
             // Arrange
-            var run = this.Fixture.Create<CalculatorRun>();
-            var classification = this.Fixture.Create<CalculatorRunClassification>();
+            var run = Fixture.Create<CalculatorRun>();
+            var classification = Fixture.Create<CalculatorRunClassification>();
 
             // Act
             var result = CalcRunMapper.Map(run, classification);

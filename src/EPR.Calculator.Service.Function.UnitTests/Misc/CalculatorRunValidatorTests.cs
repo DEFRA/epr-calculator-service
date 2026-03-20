@@ -17,8 +17,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
         /// </summary>
         public CalculatorRunValidatorTests()
         {
-            this.Fixture = new Fixture();
-            this.TestClass = new CalculatorRunValidator();
+            Fixture = new Fixture();
+            TestClass = new CalculatorRunValidator();
         }
 
         [TestMethod]

@@ -254,7 +254,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
         /// </summary>
         private void CreateProducerDetail()
         {
-            var producerNames = new string[]
+            var producerNames = new[]
             {
                 "Allied Packaging",
                 "Beeline Materials",

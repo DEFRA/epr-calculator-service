@@ -11,18 +11,18 @@ namespace EPR.Calculator.Service.Common.UnitTests.Utils
         {
             // Arrange
             var fixture = new Fixture();
-            var j = new TestClass()
+            var j = new TestClass
             {
                 Temperature = 10.9m,
                 Fruits = 10,
                 Name = "Test",
                 IsTotalRow = true,
                 IsTested = true,
-                childTest = new ChildTestClass() { IsChild = true },
+                childTest = new ChildTestClass { IsChild = true },
                 Humidity = fixture.Create<double>(),
                 LeaverDate = "Totals",
                 isOverallTotalRow = true,
-                Numbers = new List<int>() { 1, 2, 3 },
+                Numbers = new List<int> { 1, 2, 3 },
                 CurrentDateTime = DateTime.UtcNow
             };
 

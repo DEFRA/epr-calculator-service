@@ -15,9 +15,9 @@ namespace EPR.Calculator.Service.Common.UnitTests.Logging
 
         public TelemetryClientWrapperTests()
         {
-            this.mockTelemetryClient = new Mock<ITelemetryClientWrapper>();
-            this.telemetryClient = new TelemetryClient(new TelemetryConfiguration());
-            this.telemetryClientWrapper = new TelemetryClientWrapper(this.telemetryClient);
+            mockTelemetryClient = new Mock<ITelemetryClientWrapper>();
+            telemetryClient = new TelemetryClient(new TelemetryConfiguration());
+            telemetryClientWrapper = new TelemetryClientWrapper(telemetryClient);
         }
 
         [TestMethod]
@@ -27,10 +27,10 @@ namespace EPR.Calculator.Service.Common.UnitTests.Logging
             var traceTelemetry = new TraceTelemetry("Test trace message", SeverityLevel.Information);
 
             // Act
-            this.telemetryClientWrapper.TrackTrace(traceTelemetry);
+            telemetryClientWrapper.TrackTrace(traceTelemetry);
 
             // Assert
-            this.mockTelemetryClient.Verify(client => client.TrackTrace(traceTelemetry), Times.Never);
+            mockTelemetryClient.Verify(client => client.TrackTrace(traceTelemetry), Times.Never);
         }
 
         [TestMethod]
@@ -40,10 +40,10 @@ namespace EPR.Calculator.Service.Common.UnitTests.Logging
             var exceptionTelemetry = new ExceptionTelemetry(new Exception("Test exception"));
 
             // Act
-            this.telemetryClientWrapper.TrackException(exceptionTelemetry);
+            telemetryClientWrapper.TrackException(exceptionTelemetry);
 
             // Assert
-            this.mockTelemetryClient.Verify(client => client.TrackException(exceptionTelemetry), Times.Never);
+            mockTelemetryClient.Verify(client => client.TrackException(exceptionTelemetry), Times.Never);
         }
     }
 }

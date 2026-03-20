@@ -34,10 +34,10 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
             var culture = CultureInfo.CreateSpecificCulture("en-GB");
             culture.NumberFormat.CurrencySymbol = "£";
             culture.NumberFormat.CurrencyPositivePattern = 0;
-            var results = await (from run in this.context.CalculatorRuns
-                           join defaultMaster in this.context.DefaultParameterSettings on run.DefaultParameterSettingMasterId equals defaultMaster.Id
-                           join defaultDetail in this.context.DefaultParameterSettingDetail on defaultMaster.Id equals defaultDetail.DefaultParameterSettingMasterId
-                           join defaultTemplate in this.context.DefaultParameterTemplateMasterList on defaultDetail.ParameterUniqueReferenceId equals defaultTemplate.ParameterUniqueReferenceId
+            var results = await (from run in context.CalculatorRuns
+                           join defaultMaster in context.DefaultParameterSettings on run.DefaultParameterSettingMasterId equals defaultMaster.Id
+                           join defaultDetail in context.DefaultParameterSettingDetail on defaultMaster.Id equals defaultDetail.DefaultParameterSettingMasterId
+                           join defaultTemplate in context.DefaultParameterTemplateMasterList on defaultDetail.ParameterUniqueReferenceId equals defaultTemplate.ParameterUniqueReferenceId
                            where run.Id == resultsRequestDto.RunId
                            select new DefaultParamResultsClass
                            {
@@ -158,14 +158,14 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
             materialities.Add(tonnageDecrease);
             other.Materiality = materialities;
 
-            var countries = await this.context.Country.ToListAsync();
+            var countries = await context.Country.ToListAsync();
 
-            var costType = await this.context.CostType.SingleAsync(x => x.Name == "LA Data Prep Charge");
+            var costType = await context.CostType.SingleAsync(x => x.Name == "LA Data Prep Charge");
             var costTypeId = costType.Id;
 
             if (!resultsRequestDto.IsBillingFile)
             {
-                await this.calcCountryApportionmentService.SaveChangesAsync(new CalcCountryApportionmentServiceDto
+                await calcCountryApportionmentService.SaveChangesAsync(new CalcCountryApportionmentServiceDto
                 {
                     RunId = resultsRequestDto.RunId,
                     Countries = countries,

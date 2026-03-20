@@ -28,16 +28,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                 .UseInMemoryDatabase(databaseName: "PayCal")
                 .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
                 .Options;
-            this.dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
-            this.dbContext = new ApplicationDBContext(dbContextOptions);
-            this.dbContext.Database.EnsureCreated();
-            this.dbContextFactory.Setup(factory => factory.CreateDbContext()).Returns(this.dbContext);
-            this.materialService = new Mock<IMaterialService>();
+            dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
+            dbContext = new ApplicationDBContext(dbContextOptions);
+            dbContext.Database.EnsureCreated();
+            dbContextFactory.Setup(factory => factory.CreateDbContext()).Returns(dbContext);
+            materialService = new Mock<IMaterialService>();
             var producerDetailService = new ProducerDetailService(dbContext);
 
-            this.builder = new CalcResultCancelledProducersBuilder(
-                this.dbContext,
-                this.materialService.Object,
+            builder = new CalcResultCancelledProducersBuilder(
+                dbContext,
+                materialService.Object,
                 producerDetailService);
         }
 
@@ -46,7 +46,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         [TestCleanup]
         public void TearDown()
         {
-            this.dbContext?.Database.EnsureDeleted();
+            dbContext?.Database.EnsureDeleted();
         }
 
         [TestMethod]
@@ -55,12 +55,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             TestDataHelper.SeedDatabaseForInitialRun(dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto() { RunId = 2, RelativeYear = new RelativeYear(2025) };
+            var requestDto = new CalcResultsRequestDto { RunId = 2, RelativeYear = new RelativeYear(2025) };
 
             var expected = dbContext.ProducerDesignatedRunInvoiceInstruction.FirstOrDefault(t => t.ProducerId == 2 && t.CalculatorRunId == 1);
 
 
-            this.materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
+            materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
 
             // Act
             var result = await builder.ConstructAsync(requestDto);
@@ -80,15 +80,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         [TestMethod]
         public async Task CanConstructWithOutCancelledProducers()
         {
-            this.SeedDatabaseForUnclassified(dbContext);
+            SeedDatabaseForUnclassified(dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto() { RunId = 1, RelativeYear = new RelativeYear(2025) };
+            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
             var expected = dbContext.ProducerDesignatedRunInvoiceInstruction.FirstOrDefault(t => t.ProducerId == 2 && t.CalculatorRunId == 1);
 
 
-            this.materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
+            materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
 
             // Act
             var result = await builder.ConstructAsync(requestDto);
@@ -104,15 +104,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         [TestMethod]
         public async Task CancelledProducersShouldNotGetAcceptedProducers()
         {
-            this.SeedDatabaseForInitialRunCompleted(dbContext);
+            SeedDatabaseForInitialRunCompleted(dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto() { RunId = 2, RelativeYear = new RelativeYear(2025) };
+            var requestDto = new CalcResultsRequestDto { RunId = 2, RelativeYear = new RelativeYear(2025) };
 
             var expected = dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject == CommonConstants.Accepted && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant() && t.CalculatorRunId == 2);
 
 
-            this.materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
+            materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
 
             // Act
             var result = await builder.ConstructAsync(requestDto);
@@ -127,15 +127,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         [TestMethod]
         public async Task CancelledProducersShouldGetAcceptedProducersForBillingFile()
         {
-            this.SeedDatabaseForInitialRunCompleted(dbContext);
+            SeedDatabaseForInitialRunCompleted(dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto() { RunId = 3, RelativeYear = new RelativeYear(2025), IsBillingFile = true };
+            var requestDto = new CalcResultsRequestDto { RunId = 3, RelativeYear = new RelativeYear(2025), IsBillingFile = true };
 
             var expected = dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject == CommonConstants.Accepted && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant() && t.CalculatorRunId == 3);
 
 
-            this.materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
+            materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
 
             //this.producerDetailsService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
 
@@ -152,15 +152,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         [TestMethod]
         public async Task CancelledProducersShouldNotGetRejectedProducersForBillingFile()
         {
-            this.SeedDatabaseForInitialRunCompleted(dbContext);
+            SeedDatabaseForInitialRunCompleted(dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto() { RunId = 3, RelativeYear = new RelativeYear(2025), IsBillingFile = true };
+            var requestDto = new CalcResultsRequestDto { RunId = 3, RelativeYear = new RelativeYear(2025), IsBillingFile = true };
 
             var expected = dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject == CommonConstants.Rejected && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant() && t.CalculatorRunId == 3);
 
 
-            this.materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
+            materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
 
             // Act
             var result = await builder.ConstructAsync(requestDto);
@@ -176,16 +176,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         [TestMethod]
         public async Task CancelledProducersShouldGetRejectedProducers()
         {
-            this.SeedDatabaseForInitialRunCompleted(dbContext);
+            SeedDatabaseForInitialRunCompleted(dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto() { RunId = 3, RelativeYear = new RelativeYear(2025) };
+            var requestDto = new CalcResultsRequestDto { RunId = 3, RelativeYear = new RelativeYear(2025) };
 
             var expected = dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject ==
             CommonConstants.Rejected && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant()
             && t.CalculatorRunId == 2);
 
-            this.materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
+            materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
 
             // Act
             var result = await builder.ConstructAsync(requestDto);
@@ -200,16 +200,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         [TestMethod]
         public async Task CancelledProducersShouldNotGetRejectedInitialProducer()
         {
-            this.SeedDatabaseForInitialRunCompleted(dbContext);
+            SeedDatabaseForInitialRunCompleted(dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto() { RunId = 3, RelativeYear = new RelativeYear(2025) };
+            var requestDto = new CalcResultsRequestDto { RunId = 3, RelativeYear = new RelativeYear(2025) };
 
             var expected = dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject ==
             CommonConstants.Rejected && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant()
             && t.CalculatorRunId == 2);
 
-            this.materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
+            materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
 
             // Act
             var result = await builder.ConstructAsync(requestDto);
@@ -223,10 +223,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         [TestMethod]
         public async Task CancelledProducersWithNoMaterials()
         {
-            this.SeedDatabaseForInitialRunCompleted(dbContext);
+            SeedDatabaseForInitialRunCompleted(dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto() { RunId = 3, RelativeYear = new RelativeYear(2025) };
+            var requestDto = new CalcResultsRequestDto { RunId = 3, RelativeYear = new RelativeYear(2025) };
 
             var expected = dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject ==
             CommonConstants.Rejected && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant()
@@ -247,17 +247,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         private void SeedDatabaseForUnclassified(ApplicationDBContext context)
         {
             //calculator runs
-            var runs = new List<CalculatorRun>() { new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest1" },
+            var runs = new List<CalculatorRun> { new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest1" },
              new CalculatorRun { Id = 2, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest2" }};
             context.CalculatorRuns.AddRange(runs);
 
 
 
-            var producerDetails = new List<ProducerDetail>()
-            {  new ProducerDetail() { Id =1 , CalculatorRunId = 1, ProducerName="Test1", ProducerId = 1, TradingName = "TN1"},
-             new ProducerDetail() { Id =2 , CalculatorRunId = 1, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
-              new ProducerDetail() { Id =3 , CalculatorRunId = 2, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"},
-               new ProducerDetail() { Id =4 , CalculatorRunId = 1, ProducerName="Test3", ProducerId = 3, TradingName = "TN4"},
+            var producerDetails = new List<ProducerDetail>
+            {  new ProducerDetail { Id =1 , CalculatorRunId = 1, ProducerName="Test1", ProducerId = 1, TradingName = "TN1"},
+             new ProducerDetail { Id =2 , CalculatorRunId = 1, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
+              new ProducerDetail { Id =3 , CalculatorRunId = 2, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"},
+               new ProducerDetail { Id =4 , CalculatorRunId = 1, ProducerName="Test3", ProducerId = 3, TradingName = "TN4"},
             };
 
             context.ProducerDetail.AddRange(producerDetails);
@@ -284,8 +284,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
 
 
 
-            var designatedRunInvoice = new List<ProducerDesignatedRunInvoiceInstruction>()
-            { new ProducerDesignatedRunInvoiceInstruction()
+            var designatedRunInvoice = new List<ProducerDesignatedRunInvoiceInstruction>
+            { new ProducerDesignatedRunInvoiceInstruction
                 {
                     BillingInstructionId = "1_1",
                     CalculatorRunId = 1,
@@ -296,7 +296,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                     OutstandingBalance = 100,
 
                 },
-                new ProducerDesignatedRunInvoiceInstruction()
+                new ProducerDesignatedRunInvoiceInstruction
                 {
                     BillingInstructionId = "1_2",
                     CalculatorRunId = 1,
@@ -313,8 +313,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             context.ProducerDesignatedRunInvoiceInstruction.AddRange(designatedRunInvoice);
 
 
-            var billingInstructionList = new List<ProducerResultFileSuggestedBillingInstruction>()
-            {  new ProducerResultFileSuggestedBillingInstruction()
+            var billingInstructionList = new List<ProducerResultFileSuggestedBillingInstruction>
+            {  new ProducerResultFileSuggestedBillingInstruction
                 {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
@@ -324,8 +324,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                     CalculatorRunId = 1,
                     BillingInstructionAcceptReject = "Accepted"
                 },
-            new ProducerResultFileSuggestedBillingInstruction()
-                {
+            new ProducerResultFileSuggestedBillingInstruction
+            {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
                     ProducerId = 2,
@@ -334,8 +334,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                     CalculatorRunId = 1,
                     BillingInstructionAcceptReject = "Accepted"
                 },
-             new ProducerResultFileSuggestedBillingInstruction()
-                {
+             new ProducerResultFileSuggestedBillingInstruction
+             {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
                     ProducerId = 3,
@@ -350,9 +350,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
 
             context.ProducerResultFileSuggestedBillingInstruction.AddRange(billingInstructionList);
 
-            var materialInvoiceTonnage = new List<ProducerInvoicedMaterialNetTonnage>()
+            var materialInvoiceTonnage = new List<ProducerInvoicedMaterialNetTonnage>
             {
-                 new ProducerInvoicedMaterialNetTonnage()
+                 new ProducerInvoicedMaterialNetTonnage
                  {
                       CalculatorRunId =1,
                       MaterialId= 1,
@@ -360,8 +360,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                       ProducerId =1, Id=1
 
                  },
-                new ProducerInvoicedMaterialNetTonnage()
-                 {
+                new ProducerInvoicedMaterialNetTonnage
+                {
                       CalculatorRunId =1,
                       MaterialId= 2,
                       InvoicedNetTonnage = 100,
@@ -369,16 +369,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                     Id=2
 
                  },
-            new ProducerInvoicedMaterialNetTonnage()
-                 {
+            new ProducerInvoicedMaterialNetTonnage
+            {
                       CalculatorRunId =1,
                       MaterialId= 1,
                       InvoicedNetTonnage = 100,
                       ProducerId =2, Id=3
 
                  },
-                new ProducerInvoicedMaterialNetTonnage()
-                 {
+                new ProducerInvoicedMaterialNetTonnage
+                {
                       CalculatorRunId =1,
                       MaterialId= 2,
                       InvoicedNetTonnage = 100,
@@ -397,7 +397,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         private void SeedDatabaseForInitialRunCompleted(ApplicationDBContext context)
         {
             //calculator runs
-            var runs = new List<CalculatorRun>() { new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=7, Name = "CalculatorRunTest1" },
+            var runs = new List<CalculatorRun> { new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=7, Name = "CalculatorRunTest1" },
              new CalculatorRun { Id = 2, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=12, Name = "CalculatorRunTest2" },
             new CalculatorRun { Id = 3, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest3" }};
 
@@ -405,14 +405,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
 
 
 
-            var producerDetails = new List<ProducerDetail>()
-            {  new ProducerDetail() { Id =1 , CalculatorRunId = 1, ProducerName="Test1", ProducerId = 1, TradingName = "TN1"},
-             new ProducerDetail() { Id =2 , CalculatorRunId = 1, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
-               new ProducerDetail() { Id =4 , CalculatorRunId = 1, ProducerName="Test3", ProducerId = 3, TradingName = "TN4"},
-                new ProducerDetail() { Id =5 , CalculatorRunId = 1, ProducerName="Test4", ProducerId = 4, TradingName = "TN5"},
-                 new ProducerDetail() { Id =6 , CalculatorRunId = 2, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
-              new ProducerDetail() { Id =3 , CalculatorRunId = 2, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"},
-               new ProducerDetail() { Id =7 , CalculatorRunId = 3, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"}
+            var producerDetails = new List<ProducerDetail>
+            {  new ProducerDetail { Id =1 , CalculatorRunId = 1, ProducerName="Test1", ProducerId = 1, TradingName = "TN1"},
+             new ProducerDetail { Id =2 , CalculatorRunId = 1, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
+               new ProducerDetail { Id =4 , CalculatorRunId = 1, ProducerName="Test3", ProducerId = 3, TradingName = "TN4"},
+                new ProducerDetail { Id =5 , CalculatorRunId = 1, ProducerName="Test4", ProducerId = 4, TradingName = "TN5"},
+                 new ProducerDetail { Id =6 , CalculatorRunId = 2, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
+              new ProducerDetail { Id =3 , CalculatorRunId = 2, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"},
+               new ProducerDetail { Id =7 , CalculatorRunId = 3, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"}
             };
 
             context.ProducerDetail.AddRange(producerDetails);
@@ -445,8 +445,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
 
 
 
-            var designatedRunInvoice = new List<ProducerDesignatedRunInvoiceInstruction>()
-            { new ProducerDesignatedRunInvoiceInstruction()
+            var designatedRunInvoice = new List<ProducerDesignatedRunInvoiceInstruction>
+            { new ProducerDesignatedRunInvoiceInstruction
                 {
                     BillingInstructionId = "1_1",
                     CalculatorRunId = 1,
@@ -457,8 +457,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                     OutstandingBalance = 100,
 
                 },
-                 new ProducerDesignatedRunInvoiceInstruction()
-                {
+                 new ProducerDesignatedRunInvoiceInstruction
+                 {
                     BillingInstructionId = "1_2",
                     CalculatorRunId = 1,
                     CurrentYearInvoicedTotalAfterThisRun = 100,
@@ -468,8 +468,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                     OutstandingBalance = 100,
 
                 },
-                 new ProducerDesignatedRunInvoiceInstruction()
-                {
+                 new ProducerDesignatedRunInvoiceInstruction
+                 {
                     BillingInstructionId = "1_3",
                     CalculatorRunId = 1,
                     CurrentYearInvoicedTotalAfterThisRun = 100,
@@ -479,8 +479,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                     OutstandingBalance = 100,
 
                 },
-                 new ProducerDesignatedRunInvoiceInstruction()
-                {
+                 new ProducerDesignatedRunInvoiceInstruction
+                 {
                     BillingInstructionId = "1_4",
                     CalculatorRunId = 1,
                     CurrentYearInvoicedTotalAfterThisRun = 100,
@@ -490,8 +490,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                     OutstandingBalance = 100,
 
                 },
-                  new ProducerDesignatedRunInvoiceInstruction()
-                {
+                  new ProducerDesignatedRunInvoiceInstruction
+                  {
                     BillingInstructionId = "2_5",
                     CalculatorRunId = 2,
                     CurrentYearInvoicedTotalAfterThisRun = 100,
@@ -500,8 +500,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                     InvoiceAmount = 100,
                     OutstandingBalance = 100,
                 },
-                  new ProducerDesignatedRunInvoiceInstruction()
-                {
+                  new ProducerDesignatedRunInvoiceInstruction
+                  {
                     BillingInstructionId = "2_6",
                     CalculatorRunId = 2,
                     CurrentYearInvoicedTotalAfterThisRun = null,
@@ -516,8 +516,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             context.ProducerDesignatedRunInvoiceInstruction.AddRange(designatedRunInvoice);
 
 
-            var billingInstructionList = new List<ProducerResultFileSuggestedBillingInstruction>()
-            {  new ProducerResultFileSuggestedBillingInstruction()
+            var billingInstructionList = new List<ProducerResultFileSuggestedBillingInstruction>
+            {  new ProducerResultFileSuggestedBillingInstruction
                 {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
@@ -527,8 +527,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                     CalculatorRunId = 1,
                     BillingInstructionAcceptReject = "Accepted"
                 },
-            new ProducerResultFileSuggestedBillingInstruction()
-                {
+            new ProducerResultFileSuggestedBillingInstruction
+            {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
                     ProducerId = 2,
@@ -537,8 +537,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                     CalculatorRunId = 1,
                     BillingInstructionAcceptReject = "Accepted"
                 },
-             new ProducerResultFileSuggestedBillingInstruction()
-                {
+             new ProducerResultFileSuggestedBillingInstruction
+             {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
                     ProducerId = 3,
@@ -547,8 +547,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                     CalculatorRunId = 1,
                     BillingInstructionAcceptReject = "Rejected"
                 },
-              new ProducerResultFileSuggestedBillingInstruction()
-                {
+              new ProducerResultFileSuggestedBillingInstruction
+              {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
                     ProducerId = 4,
@@ -557,8 +557,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                     CalculatorRunId = 1,
                     BillingInstructionAcceptReject = "Accepted"
                 },
-               new ProducerResultFileSuggestedBillingInstruction()
-                {
+               new ProducerResultFileSuggestedBillingInstruction
+               {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
                     ProducerId = 1,
@@ -567,7 +567,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                     CalculatorRunId = 2,
                     BillingInstructionAcceptReject = "Accepted"
                 },
-                new ProducerResultFileSuggestedBillingInstruction()
+                new ProducerResultFileSuggestedBillingInstruction
                 {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
@@ -577,8 +577,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                     CalculatorRunId = 2,
                     BillingInstructionAcceptReject = "Accepted"
                 },
-                 new ProducerResultFileSuggestedBillingInstruction()
-                {
+                 new ProducerResultFileSuggestedBillingInstruction
+                 {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
                     ProducerId = 4,
@@ -587,8 +587,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                     CalculatorRunId = 2,
                     BillingInstructionAcceptReject = "Rejected"
                 },
-                  new ProducerResultFileSuggestedBillingInstruction()
-                {
+                  new ProducerResultFileSuggestedBillingInstruction
+                  {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
                     ProducerId = 4,
@@ -597,8 +597,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                     CalculatorRunId = 3,
                     BillingInstructionAcceptReject = "Accepted"
                 },
-                   new ProducerResultFileSuggestedBillingInstruction()
-                {
+                   new ProducerResultFileSuggestedBillingInstruction
+                   {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
                     ProducerId = 2,
@@ -613,9 +613,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
 
             context.ProducerResultFileSuggestedBillingInstruction.AddRange(billingInstructionList);
 
-            var materialInvoiceTonnage = new List<ProducerInvoicedMaterialNetTonnage>()
+            var materialInvoiceTonnage = new List<ProducerInvoicedMaterialNetTonnage>
             {
-                 new ProducerInvoicedMaterialNetTonnage()
+                 new ProducerInvoicedMaterialNetTonnage
                  {
                      CalculatorRunId =1,
                       MaterialId= 1,
@@ -624,16 +624,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                      Id=1
 
                  },
-                new ProducerInvoicedMaterialNetTonnage()
-                 {
+                new ProducerInvoicedMaterialNetTonnage
+                {
                       CalculatorRunId =1,
                       MaterialId= 2,
                       InvoicedNetTonnage = 100,
                       ProducerId =1,
                      Id=2
                  },
-            new ProducerInvoicedMaterialNetTonnage()
-                 {
+            new ProducerInvoicedMaterialNetTonnage
+            {
                       CalculatorRunId =1,
                       MaterialId= 1,
                       InvoicedNetTonnage = 100,
@@ -641,8 +641,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                       Id=3
 
                  },
-                new ProducerInvoicedMaterialNetTonnage()
-                 {
+                new ProducerInvoicedMaterialNetTonnage
+                {
                       CalculatorRunId =1,
                       MaterialId= 2,
                       InvoicedNetTonnage = 100,
@@ -650,7 +650,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                      Id=4
 
                  },
-                 new ProducerInvoicedMaterialNetTonnage()
+                 new ProducerInvoicedMaterialNetTonnage
                  {
                       CalculatorRunId =1,
                       MaterialId= 2,
@@ -659,8 +659,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                      Id=5
 
                  },
-                  new ProducerInvoicedMaterialNetTonnage()
-                 {
+                  new ProducerInvoicedMaterialNetTonnage
+                  {
                       CalculatorRunId =1,
                       MaterialId= 2,
                       InvoicedNetTonnage = 100,
@@ -668,8 +668,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                      Id=6
 
                  },
-            new ProducerInvoicedMaterialNetTonnage()
-             {
+            new ProducerInvoicedMaterialNetTonnage
+            {
                  CalculatorRunId = 2,
                  MaterialId = 2,
                  InvoicedNetTonnage = 100,
@@ -677,8 +677,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                  Id = 7
 
              }
-             ,new ProducerInvoicedMaterialNetTonnage()
-                 {
+             ,new ProducerInvoicedMaterialNetTonnage
+             {
                       CalculatorRunId =2,
                       MaterialId= 2,
                       InvoicedNetTonnage = 100,
@@ -692,7 +692,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
 
         private void CreateProducerDetail()
         {
-            var producerNames = new string[]
+            var producerNames = new[]
             {
                 "Allied Packaging",
                 "Beeline Materials",
@@ -709,7 +709,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             var producerId = 1;
             foreach (var producerName in producerNames)
             {
-                this.dbContext.ProducerDetail.Add(new ProducerDetail
+                dbContext.ProducerDetail.Add(new ProducerDetail
                 {
                     ProducerId = producerId++,
                     SubsidiaryId = $"{producerId}-Sub",
@@ -718,13 +718,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                 });
             }
 
-            this.dbContext.SaveChanges();
+            dbContext.SaveChanges();
 
             for (int producerDetailId = 1; producerDetailId <= 10; producerDetailId++)
             {
                 for (int materialId = 1; materialId < 9; materialId++)
                 {
-                    this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                    dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
                     {
                         MaterialId = materialId,
                         ProducerDetailId = producerDetailId,
@@ -734,7 +734,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                 }
             }
 
-            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial()
+            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
             {
                 MaterialId = 3,
                 ProducerDetailId = 1,
@@ -742,7 +742,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                 PackagingTonnage = 100,
             });
 
-            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial()
+            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
             {
                 MaterialId = 3,
                 ProducerDetailId = 2,
@@ -750,7 +750,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                 PackagingTonnage = 100,
             });
 
-            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial()
+            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
             {
                 MaterialId = 2,
                 ProducerDetailId = 1,
@@ -758,7 +758,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                 PackagingTonnage = 200,
             });
 
-            this.dbContext.SaveChanges();
+            dbContext.SaveChanges();
         }
 
         private void CreateNewRun()
@@ -782,9 +782,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                 CreatedBy = "Test User",
                 DefaultParameterSettingMasterId = 2,
             };
-            this.dbContext.CalculatorRuns.Add(run);
-            this.dbContext.CalculatorRuns.Add(run1);
-            this.dbContext.SaveChanges();
+            dbContext.CalculatorRuns.Add(run);
+            dbContext.CalculatorRuns.Add(run1);
+            dbContext.SaveChanges();
         }
     }
 }

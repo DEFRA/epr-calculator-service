@@ -43,17 +43,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         public PrepareCalcServiceTests()
         {
-            this._dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
+            _dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
                 .Options;
 
-            this._context = new ApplicationDBContext(this._dbContextOptions);
-            this._dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
-            this._dbContextFactory.Setup(f => f.CreateDbContext()).Returns(this._context);
-            this._telemetryLogger = new Mock<ICalculatorTelemetryLogger>();
+            _context = new ApplicationDBContext(_dbContextOptions);
+            _dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
+            _dbContextFactory.Setup(f => f.CreateDbContext()).Returns(_context);
+            _telemetryLogger = new Mock<ICalculatorTelemetryLogger>();
 
-            this.SeedDatabase();
+            SeedDatabase();
 
             var calcResult = new CalcResult
             {
@@ -91,48 +91,48 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             };
 
             var fixture = new Fixture();
-            this._rpdStatusDataValidator = new Mock<IRpdStatusDataValidator>();
-            this._wrapper = new Mock<IOrgAndPomWrapper>();
-            this._builder = new Mock<ICalcResultBuilder>();
-            this._builder.Setup(b => b.BuildAsync(It.IsAny<CalcResultsRequestDto>())).ReturnsAsync(calcResult);
-            this._exporter = new Mock<ICalcResultsExporter<CalcResult>>();
-            this._exporter.Setup(x => x.Export(It.IsAny<CalcResult>())).Returns("Some value");
-            this._transposePomAndOrgDataService = new Mock<ITransposePomAndOrgDataService>();
-            this._storageService = new Mock<IStorageService>();
-            this._validationRules = fixture.Create<CalculatorRunValidator>();
-            this._commandTimeoutService = new Mock<ICommandTimeoutService>();
-            this._jsonExporter = new Mock<ICalcBillingJsonExporter<CalcResult>>();
-            this._configService = new Mock<IConfigurationService>();
-            this._billingFileExporter = new Mock<IBillingFileExporter<CalcResult>>();
-            this._prepareProducerDataInsertService = new Mock<IPrepareProducerDataInsertService>();
+            _rpdStatusDataValidator = new Mock<IRpdStatusDataValidator>();
+            _wrapper = new Mock<IOrgAndPomWrapper>();
+            _builder = new Mock<ICalcResultBuilder>();
+            _builder.Setup(b => b.BuildAsync(It.IsAny<CalcResultsRequestDto>())).ReturnsAsync(calcResult);
+            _exporter = new Mock<ICalcResultsExporter<CalcResult>>();
+            _exporter.Setup(x => x.Export(It.IsAny<CalcResult>())).Returns("Some value");
+            _transposePomAndOrgDataService = new Mock<ITransposePomAndOrgDataService>();
+            _storageService = new Mock<IStorageService>();
+            _validationRules = fixture.Create<CalculatorRunValidator>();
+            _commandTimeoutService = new Mock<ICommandTimeoutService>();
+            _jsonExporter = new Mock<ICalcBillingJsonExporter<CalcResult>>();
+            _configService = new Mock<IConfigurationService>();
+            _billingFileExporter = new Mock<IBillingFileExporter<CalcResult>>();
+            _prepareProducerDataInsertService = new Mock<IPrepareProducerDataInsertService>();
 
-            this._prepareCalcServiceDependencies = new PrepareCalcServiceDependencies
+            _prepareCalcServiceDependencies = new PrepareCalcServiceDependencies
             {
-                Context = this._context,
-                Builder = this._builder.Object,
-                Exporter = this._exporter.Object,
-                StorageService = this._storageService.Object,
+                Context = _context,
+                Builder = _builder.Object,
+                Exporter = _exporter.Object,
+                StorageService = _storageService.Object,
                 ValidationRules = new Mock<CalculatorRunValidator>().Object,
-                CommandTimeoutService = this._commandTimeoutService.Object,
+                CommandTimeoutService = _commandTimeoutService.Object,
                 TelemetryLogger = new Mock<ICalculatorTelemetryLogger>().Object,
-                JsonExporter = this._jsonExporter.Object,
-                ConfigService = this._configService.Object,
-                BillingFileExporter = this._billingFileExporter.Object,
-                producerDataInsertService = this._prepareProducerDataInsertService.Object,
+                JsonExporter = _jsonExporter.Object,
+                ConfigService = _configService.Object,
+                BillingFileExporter = _billingFileExporter.Object,
+                producerDataInsertService = _prepareProducerDataInsertService.Object,
 
             };
 
-            this._testClass = new PrepareCalcService(this._prepareCalcServiceDependencies);
+            _testClass = new PrepareCalcService(_prepareCalcServiceDependencies);
         }
 
         [TestCleanup]
         public void TearDown()
         {
-            this._context.Database.EnsureDeleted();
-            this._context.Dispose();
+            _context.Database.EnsureDeleted();
+            _context.Dispose();
 
             // Dispose of the DbContextFactory if it implements IDisposable
-            if (this._dbContextFactory is IDisposable disposableFactory)
+            if (_dbContextFactory is IDisposable disposableFactory)
             {
                 disposableFactory.Dispose();
             }
@@ -142,7 +142,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public void CanConstruct()
         {
             // Act
-            var instance = new PrepareCalcService(this._prepareCalcServiceDependencies);
+            var instance = new PrepareCalcService(_prepareCalcServiceDependencies);
 
             // Assert
             Assert.IsNotNull(instance);
@@ -156,11 +156,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
             var runName = fixture.Create<string>();
 
-            this._storageService.Setup(x => x.UploadFileContentAsync(
+            _storageService.Setup(x => x.UploadFileContentAsync(
                 It.IsAny<(string, string, string, string, bool)>()))
                 .ReturnsAsync("expected result");
             // Act
-            var result = await this._testClass.PrepareCalcResultsAsync(resultsRequestDto, runName, CancellationToken.None);
+            var result = await _testClass.PrepareCalcResultsAsync(resultsRequestDto, runName, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(true, result);
@@ -175,11 +175,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Arrange
             var fixture = new Fixture();
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
-            this._storageService = new Mock<IStorageService>();
+            _storageService = new Mock<IStorageService>();
             var runName = fixture.Create<string>();
 
             // Act
-            var result = await this._testClass.PrepareCalcResultsAsync(resultsRequestDto, runName, CancellationToken.None);
+            var result = await _testClass.PrepareCalcResultsAsync(resultsRequestDto, runName, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(false, result);
@@ -191,11 +191,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Arrange
             var fixture = new Fixture();
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
-            this._exporter.Setup(x => x.Export(It.IsAny<CalcResult>())).Throws(new Exception("Custom exception message"));
+            _exporter.Setup(x => x.Export(It.IsAny<CalcResult>())).Throws(new Exception("Custom exception message"));
             var runName = fixture.Create<string>();
 
             // Act
-            var result = await this._testClass.PrepareCalcResultsAsync(resultsRequestDto, runName, CancellationToken.None);
+            var result = await _testClass.PrepareCalcResultsAsync(resultsRequestDto, runName, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(false, result);
@@ -207,11 +207,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Arrange
             var fixture = new Fixture();
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
-            this._exporter.Setup(x => x.Export(It.IsAny<CalcResult>())).Throws(new OperationCanceledException("Operation canceled exception message"));
+            _exporter.Setup(x => x.Export(It.IsAny<CalcResult>())).Throws(new OperationCanceledException("Operation canceled exception message"));
             var runName = fixture.Create<string>();
 
             // Act
-            var result = await this._testClass.PrepareCalcResultsAsync(resultsRequestDto, runName, CancellationToken.None);
+            var result = await _testClass.PrepareCalcResultsAsync(resultsRequestDto, runName, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(false, result);
@@ -225,7 +225,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var runName = "test";
 
             // Act
-            var result = await this._testClass.PrepareCalcResultsAsync(resultsRequestDto, runName, CancellationToken.None);
+            var result = await _testClass.PrepareCalcResultsAsync(resultsRequestDto, runName, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(false, result);
@@ -239,7 +239,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var runName = "test";
 
             // Act
-            var result = await this._testClass.PrepareCalcResultsAsync(resultsRequestDto, runName, CancellationToken.None);
+            var result = await _testClass.PrepareCalcResultsAsync(resultsRequestDto, runName, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(false, result);
@@ -249,13 +249,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public void PrepareBillingResults_Test()
         {
             var fixture = new Fixture();
-            var calcRun = this._context.CalculatorRuns.Single(x => x.Id == 1);
+            var calcRun = _context.CalculatorRuns.Single(x => x.Id == 1);
             calcRun.IsBillingFileGenerating = true;
-            this._context.SaveChanges();
+            _context.SaveChanges();
 
-            this._jsonExporter.Setup(t => t.Export(It.IsAny<CalcResult>(), It.IsAny<List<int>>())).Returns(fixture.Create<string>());
-            this._billingFileExporter.Setup(t => t.Export(It.IsAny<CalcResult>(), It.IsAny<List<int>>())).Returns(fixture.Create<string>());
-            this._storageService.Setup(x => x.UploadFileContentAsync(
+            _jsonExporter.Setup(t => t.Export(It.IsAny<CalcResult>(), It.IsAny<List<int>>())).Returns(fixture.Create<string>());
+            _billingFileExporter.Setup(t => t.Export(It.IsAny<CalcResult>(), It.IsAny<List<int>>())).Returns(fixture.Create<string>());
+            _storageService.Setup(x => x.UploadFileContentAsync(
                It.IsAny<(string, string, string, string, bool)>()))
                .ReturnsAsync("fileName");
 
@@ -271,13 +271,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             billingResult.Wait();
 
             Assert.IsTrue(billingResult.Result);
-            calcRun = this._context.CalculatorRuns.Single(x => x.Id == 1);
+            calcRun = _context.CalculatorRuns.Single(x => x.Id == 1);
             Assert.IsFalse(calcRun.IsBillingFileGenerating);
 
-            this._builder
+            _builder
                 .Verify(b => b.BuildAsync(It.Is<CalcResultsRequestDto>(x => x.RunId == 1 && x.IsBillingFile)), Times.Once);
 
-            var billingFileMetaData = this._context.CalculatorRunBillingFileMetadata.SingleOrDefault(x => x.CalculatorRunId == 1);
+            var billingFileMetaData = _context.CalculatorRunBillingFileMetadata.SingleOrDefault(x => x.CalculatorRunId == 1);
 
             Assert.IsNotNull(billingFileMetaData);
 
@@ -299,16 +299,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         private void SeedDatabase()
         {
-            this._context.CalculatorRunOrganisationDataMaster.AddRange(GetCalculatorRunOrganisationDataMaster());
-            this._context.CalculatorRunOrganisationDataDetails.AddRange(GetCalculatorRunOrganisationDataDetails());
+            _context.CalculatorRunOrganisationDataMaster.AddRange(GetCalculatorRunOrganisationDataMaster());
+            _context.CalculatorRunOrganisationDataDetails.AddRange(GetCalculatorRunOrganisationDataDetails());
 
-            this._context.CalculatorRunPomDataMaster.AddRange(GetCalculatorRunPomDataMaster());
-            this._context.CalculatorRunPomDataDetails.AddRange(GetCalculatorRunPomDataDetails());
+            _context.CalculatorRunPomDataMaster.AddRange(GetCalculatorRunPomDataMaster());
+            _context.CalculatorRunPomDataDetails.AddRange(GetCalculatorRunPomDataDetails());
 
-            this._context.CalculatorRuns.AddRange(GetCalculatorRuns());
-            this._context.Material.AddRange(GetMaterials());
+            _context.CalculatorRuns.AddRange(GetCalculatorRuns());
+            _context.Material.AddRange(GetMaterials());
 
-            this._context.SaveChanges();
+            _context.SaveChanges();
         }
 
         protected static IEnumerable<CalculatorRunOrganisationDataMaster> GetCalculatorRunOrganisationDataMaster()
@@ -336,7 +336,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         protected static IEnumerable<CalculatorRunOrganisationDataDetail> GetCalculatorRunOrganisationDataDetails()
         {
             var list = new List<CalculatorRunOrganisationDataDetail>();
-            list.AddRange(new List<CalculatorRunOrganisationDataDetail>()
+            list.AddRange(new List<CalculatorRunOrganisationDataDetail>
             {
                 new() {
                     Id = 1,

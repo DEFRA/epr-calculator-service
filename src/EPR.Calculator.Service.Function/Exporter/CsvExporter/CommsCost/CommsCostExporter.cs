@@ -57,7 +57,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost
                 }
                 else
                 {
-                    csvContent.AppendLine(CsvSanitiser.SanitiseData(commCostByMaterial.CommsCostByMaterialPricePerTonne, DecimalPlaces.Four, null, true, false));
+                    csvContent.AppendLine(CsvSanitiser.SanitiseData(commCostByMaterial.CommsCostByMaterialPricePerTonne, DecimalPlaces.Four, null, true));
                 }
             }
 

@@ -33,15 +33,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
         public CalcRunLaDisposalCostBuilderTests()
         {
-            this.Fixture = new Fixture();
+            Fixture = new Fixture();
             var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
                                     .UseInMemoryDatabase(databaseName: "PayCal")
                                     .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
                                     .Options;
 
-            this.dbContext = new ApplicationDBContext(dbContextOptions);
-            this.dbContext.Database.EnsureCreated();
-            this.builder = new CalcRunLaDisposalCostBuilder(this.dbContext);
+            dbContext = new ApplicationDBContext(dbContextOptions);
+            dbContext.Database.EnsureCreated();
+            builder = new CalcRunLaDisposalCostBuilder(dbContext);
         }
 
         private Fixture Fixture { get; init; }
@@ -49,8 +49,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         [TestCleanup]
         public void TearDown()
         {
-            this.dbContext?.Database.EnsureDeleted();
-            this.dbContext?.Dispose();
+            dbContext?.Database.EnsureDeleted();
+            dbContext?.Dispose();
         }
 
         [TestMethod]
@@ -144,7 +144,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             calcResult.CalcResultScaledupProducers = GetScaledUpProducers();
 
             // Act
-            var results = this.builder.ConstructAsync(resultsDto, calcResult);
+            var results = builder.ConstructAsync(resultsDto, calcResult);
             results.Wait();
             var lapcapDisposalCostResults = results.Result;
 
@@ -163,7 +163,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             calcResult.CalcResultScaledupProducers = GetScaledUpProducers();
 
             // Act
-            var results = this.builder.ConstructAsync(resultsDto, calcResult);
+            var results = builder.ConstructAsync(resultsDto, calcResult);
             results.Wait();
             var lapcapDisposalCostResults = results.Result;
 
@@ -190,13 +190,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             // Assign
             var resultsDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
             var calcResult = TestDataHelper.GetCalcResult();
-            SeedDatabase(this.dbContext);
+            SeedDatabase(dbContext);
 
-            calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers()
+            calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers
             {
-                ScaledupProducers = new List<CalcResultScaledupProducer>()
-                 {
-                      new CalcResultScaledupProducer()
+                ScaledupProducers = new List<CalcResultScaledupProducer>
+                {
+                      new CalcResultScaledupProducer
                       {
                           ProducerId = 1,
                           IsTotalRow = true,
@@ -221,7 +221,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
 
             // Act
-            var results = this.builder.ConstructAsync(resultsDto, calcResult);
+            var results = builder.ConstructAsync(resultsDto, calcResult);
             results.Wait();
             var lapcapDisposalCostResults = results.Result;
 
@@ -249,13 +249,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             // Assign
             var resultsDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
             var calcResult = TestDataHelper.GetCalcResult();
-            SeedDatabase(this.dbContext);
+            SeedDatabase(dbContext);
 
-            calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers()
+            calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers
             {
-                ScaledupProducers = new List<CalcResultScaledupProducer>()
-                 {
-                      new CalcResultScaledupProducer()
+                ScaledupProducers = new List<CalcResultScaledupProducer>
+                {
+                      new CalcResultScaledupProducer
                       {
                           ProducerId = 1,
                           IsTotalRow = true,
@@ -281,7 +281,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
 
             // Act
-            var results = this.builder.ConstructAsync(resultsDto, calcResult);
+            var results = builder.ConstructAsync(resultsDto, calcResult);
             results.Wait();
             var lapcapDisposalCostResults = results.Result;
 
@@ -307,15 +307,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             // Assign
             var resultsDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
             var calcResult = TestDataHelper.GetCalcResult();
-            SeedDatabase(this.dbContext);
+            SeedDatabase(dbContext);
 
-            calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers()
+            calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers
             {
                 ScaledupProducers = new List<CalcResultScaledupProducer>(),
             };
 
             // Act
-            var results = this.builder.ConstructAsync(resultsDto, calcResult);
+            var results = builder.ConstructAsync(resultsDto, calcResult);
             results.Wait();
             var lapcapDisposalCostResults = results.Result;
 
@@ -343,12 +343,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             // Assign
             var resultsDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
             var calcResult = TestDataHelper.GetCalcResult();
-            SeedDatabase(this.dbContext);
+            SeedDatabase(dbContext);
 
             calcResult.CalcResultScaledupProducers = GetScaledUpProducers();
 
             // Act
-            var lapcapDisposalCostResults = await this.builder.ConstructAsync(resultsDto, calcResult);
+            var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, calcResult);
 
             // Assert
             var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails?.Single(x => x.Name == CommonConstants.Total);
@@ -362,13 +362,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
              // Assign
             var resultsDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
             var calcResult = TestDataHelper.GetCalcResult();
-            SeedDatabase(this.dbContext);
+            SeedDatabase(dbContext);
 
-            calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers()
+            calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers
             {
-                ScaledupProducers = new List<CalcResultScaledupProducer>()
-                 {
-                      new CalcResultScaledupProducer()
+                ScaledupProducers = new List<CalcResultScaledupProducer>
+                {
+                      new CalcResultScaledupProducer
                       {
                           ProducerId = 1,
                           IsTotalRow = true,
@@ -393,7 +393,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
 
             // Act
-            var lapcapDisposalCostResults = await this.builder.ConstructAsync(resultsDto, calcResult);
+            var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, calcResult);
 
             // Assert
             var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails?.Single(x => x.Name == MaterialNames.Plastic);
@@ -407,14 +407,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             // Assign
             var resultsDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
             var calcResult = TestDataHelper.GetCalcResult();
-            SeedDatabase(this.dbContext);
-            calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers()
+            SeedDatabase(dbContext);
+            calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers
             {
                 ScaledupProducers = new List<CalcResultScaledupProducer>(),
             };
 
             // Act
-            var lapcapDisposalCostResults = await this.builder.ConstructAsync(resultsDto, calcResult);
+            var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, calcResult);
 
             // Assert
             var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails?.Single(x => x.Name == MaterialNames.Plastic);
@@ -437,11 +437,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
         private static CalcResultScaledupProducers GetScaledUpProducers()
         {
-            return new CalcResultScaledupProducers()
+            return new CalcResultScaledupProducers
             {
-                ScaledupProducers = new List<CalcResultScaledupProducer>()
+                ScaledupProducers = new List<CalcResultScaledupProducer>
                 {
-                     new CalcResultScaledupProducer()
+                     new CalcResultScaledupProducer
                      {
                         ProducerId = 1,
                         IsTotalRow = true,
@@ -462,7 +462,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             },
                         },
                      },
-                     new CalcResultScaledupProducer()
+                     new CalcResultScaledupProducer
                      {
                         ProducerId = 1,
                         IsTotalRow = true,
@@ -483,7 +483,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             },
                         },
                      },
-                     new CalcResultScaledupProducer()
+                     new CalcResultScaledupProducer
                      {
                         ProducerId = 1,
                         IsTotalRow = true,

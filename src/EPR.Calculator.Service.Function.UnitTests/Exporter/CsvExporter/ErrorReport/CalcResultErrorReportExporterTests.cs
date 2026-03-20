@@ -85,9 +85,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.ErrorRe
         {
             // Arrange  
             var exporter = new CalcResultErrorReportExporter();
-            var response = new List<CalcResultErrorReport>()
+            var response = new List<CalcResultErrorReport>
             {
-                new CalcResultErrorReport()
+                new CalcResultErrorReport
                 {
                     ProducerId = 0,
                     ErrorCodeText = "test",

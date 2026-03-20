@@ -14,7 +14,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.OtherCo
         public void CanCallExportCommsCost()
         {
             // Arrange
-            var otherCost = new CalcResultParameterOtherCost()
+            var otherCost = new CalcResultParameterOtherCost
             {
                 BadDebtProvision = new KeyValuePair<string, string>("key1", "6%"),
                 Details =
@@ -85,7 +85,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.OtherCo
             ICalcResultParameterOtherCostExporter exporter = this.exporter;
 
             // Act
-            this.exporter.Export(otherCost, csvContent);
+            exporter.Export(otherCost, csvContent);
 
             var result = csvContent.ToString();
 
@@ -103,7 +103,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.OtherCo
         public void CanCalLaDataPrepCosts()
         {
             // Arrange
-            var otherCost = new CalcResultParameterOtherCost()
+            var otherCost = new CalcResultParameterOtherCost
             {
                 Name = "Parameters - Other",
                 Details =
@@ -149,7 +149,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.OtherCo
         public void CanCalSchemeSetupCost()
         {
             // Arrange
-            var otherCost = new CalcResultParameterOtherCost()
+            var otherCost = new CalcResultParameterOtherCost
             {
                 Name = "Parameters - Other",
                 SchemeSetupCost =
@@ -176,7 +176,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.OtherCo
         public void CanCalMaterialityCost()
         {
             // Arrange
-            var otherCost = new CalcResultParameterOtherCost()
+            var otherCost = new CalcResultParameterOtherCost
             {
                 Name = "Parameters - Other",
                 Materiality =
@@ -211,7 +211,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.OtherCo
         public void CanCallSaOpertingCosts()
         {
             // Arrange
-            var otherCost = new CalcResultParameterOtherCost()
+            var otherCost = new CalcResultParameterOtherCost
             {
                 Name = "Parameters - Other",
                 SaOperatingCost =

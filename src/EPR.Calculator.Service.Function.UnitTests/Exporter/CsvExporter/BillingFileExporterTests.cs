@@ -104,7 +104,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             _calcResultCancelledProducersExporter.Setup(mock => mock.Export(It.IsAny<CalcResultCancelledProducersResponse>(), It.IsAny<StringBuilder>())).Verifiable();
 
             // Act
-            var result = this.testClass.Export(results, acceptedProducerIds);
+            var result = testClass.Export(results, acceptedProducerIds);
 
             // Assert
             _resultDetailexporter.Verify(mock => mock.Export(It.IsAny<CalcResultDetail>(), It.IsAny<StringBuilder>()));
@@ -132,7 +132,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var acceptedProducerIds = producers.ScaledupProducers?.Select(t => t.ProducerId).Take(2).ToList() ?? fixture.Create<List<int>>();
 
             // Act
-            var result = this.testClass.GetScaledUpProducersForExport(producers, acceptedProducerIds);
+            var result = testClass.GetScaledUpProducersForExport(producers, acceptedProducerIds);
 
             // Assert
             Assert.IsNotNull(result);

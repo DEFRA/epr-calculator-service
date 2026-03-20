@@ -25,7 +25,7 @@ namespace EPR.Calculator.Service.Function.Services
                                          join d in context.ProducerDesignatedRunInvoiceInstruction on new { pd.ProducerId, pd.CalculatorRunId } equals new { d.ProducerId, d.CalculatorRunId }
                                          join c in context.CalculatorRuns on pd.CalculatorRunId equals c.Id
                                          where c.RelativeYearValue == relativeYear.Value
-                                            && new int[]
+                                            && new[]
                                             {
                                                 RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
                                                 RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
@@ -33,7 +33,7 @@ namespace EPR.Calculator.Service.Function.Services
                                                 RunClassificationStatusIds.FINALRUNCOMPLETEDID
                                              }.Contains(c.CalculatorRunClassificationId)
                                             && pds.BillingInstructionAcceptReject == CommonConstants.Accepted
-                                         select new ProducerInvoicedDto()
+                                         select new ProducerInvoicedDto
                                          {
                                              CalculatorRunId = c.Id,
                                              CalculatorName = c.Name,

@@ -24,31 +24,31 @@ namespace EPR.Calculator.Service.Function.Services
         {
             try
             {
-                this.telemetryLogger.LogInformation(new TrackMessage
+                telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = calcResult.CalcResultDetail.RunId,
                     RunName = calcResult.CalcResultDetail.RunName,
                     Message = "Create billing instructions end...",
                 });
-                var IsBiilingInstructionsInserted = await this.billingInstructionService.CreateBillingInstructions(calcResult);
+                var IsBiilingInstructionsInserted = await billingInstructionService.CreateBillingInstructions(calcResult);
 
-                this.telemetryLogger.LogInformation(new TrackMessage
+                telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = calcResult.CalcResultDetail.RunId,
                     RunName = calcResult.CalcResultDetail.RunName,
                     Message = "Create billing instructions end...",
                 });
 
-                this.telemetryLogger.LogInformation(new TrackMessage
+                telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = calcResult.CalcResultDetail.RunId,
                     RunName = calcResult.CalcResultDetail.RunName,
                     Message = "Create producer Invoice Tonnage start...",
                 });
 
-                var IsProduceInvoiceTonnageInserted = await this.producerInvoiceNetTonnageService.CreateProducerInvoiceNetTonnage(calcResult);
+                var IsProduceInvoiceTonnageInserted = await producerInvoiceNetTonnageService.CreateProducerInvoiceNetTonnage(calcResult);
 
-                this.telemetryLogger.LogInformation(new TrackMessage
+                telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = calcResult.CalcResultDetail.RunId,
                     RunName = calcResult.CalcResultDetail.RunName,
@@ -59,7 +59,7 @@ namespace EPR.Calculator.Service.Function.Services
             }
             catch (Exception exception)
             {
-                this.telemetryLogger.LogError(new ErrorMessage
+                telemetryLogger.LogError(new ErrorMessage
                 {
                    
                     RunId = calcResult.CalcResultDetail.RunId,

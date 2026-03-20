@@ -17,7 +17,7 @@ namespace EPR.Calculator.Service.Function.Builder.Detail
 
         public async Task<CalcResultDetail> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
         {
-            var calculatorRuns = await this.context.CalculatorRuns
+            var calculatorRuns = await context.CalculatorRuns
                 .Include(o => o.CalculatorRunOrganisationDataMaster)
                 .Include(o => o.CalculatorRunPomDataMaster)
                 .Include(o => o.DefaultParameterSettingMaster)

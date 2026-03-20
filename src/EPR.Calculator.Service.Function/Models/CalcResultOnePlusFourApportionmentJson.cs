@@ -24,7 +24,7 @@ namespace EPR.Calculator.Service.Function.Models
 
             var i = 1;
 
-            return new CalcResultOnePlusFourApportionmentJson()
+            return new CalcResultOnePlusFourApportionmentJson
             {
                 OneFeeForLADisposalCosts = calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.
                 Where(t => t.OrderId == i && !string.IsNullOrWhiteSpace(t.Name)).

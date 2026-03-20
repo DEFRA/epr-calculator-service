@@ -13,8 +13,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
 
         public CalcResult1Plus4ApportionmentTests()
         {
-            this.Fixture = new Fixture();
-            this.TestClass = new CalcResult1Plus4Apportionment();
+            Fixture = new Fixture();
+            TestClass = new CalcResult1Plus4Apportionment();
         }
 
         [TestMethod]
@@ -24,10 +24,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var testValue = new Mock<IEnumerable<CalcResultParameterCostDetail>>().Object;
 
             // Act
-            this.TestClass.CalcResultParameterCommunicationCostDetails = testValue;
+            TestClass.CalcResultParameterCommunicationCostDetails = testValue;
 
             // Assert
-            Assert.AreSame(testValue, this.TestClass.CalcResultParameterCommunicationCostDetails);
+            Assert.AreSame(testValue, TestClass.CalcResultParameterCommunicationCostDetails);
         }
     }
 }

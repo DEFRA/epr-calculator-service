@@ -21,21 +21,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         /// </summary>
         public DbLoadingChunkerServiceTests()
         {
-            this.Fixture = new Fixture();
+            Fixture = new Fixture();
             var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()).Options;
-            this.Context = new ApplicationDBContext(dbContextOptions);
+            Context = new ApplicationDBContext(dbContextOptions);
 
-            this.ProducerDetailTestClass = new DbLoadingChunkerService<ProducerDetail>(
+            ProducerDetailTestClass = new DbLoadingChunkerService<ProducerDetail>(
                 new TelemetryClient(TelemetryConfiguration.CreateDefault()),
                 new Mock<ICommandTimeoutService>().Object,
-                this.Context,
+                Context,
                 ChunkSize);
 
-            this.ProducerReportedMaterialTestClass = new DbLoadingChunkerService<ProducerReportedMaterial>(
+            ProducerReportedMaterialTestClass = new DbLoadingChunkerService<ProducerReportedMaterial>(
                 new TelemetryClient(TelemetryConfiguration.CreateDefault()),
                 new Mock<ICommandTimeoutService>().Object,
-                this.Context,
+                Context,
                 ChunkSize);
         }
 
@@ -57,13 +57,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             // Arrange
             var numberOfRecords = 100;
-            var records = this.Fixture.CreateMany<ProducerDetail>(numberOfRecords);
+            var records = Fixture.CreateMany<ProducerDetail>(numberOfRecords);
 
             // Act
-            await this.ProducerDetailTestClass.InsertRecords(records);
+            await ProducerDetailTestClass.InsertRecords(records);
 
             // Assert
-            Assert.AreEqual(numberOfRecords, await this.Context.ProducerDetail.CountAsync());
+            Assert.AreEqual(numberOfRecords, await Context.ProducerDetail.CountAsync());
         }
 
         /// <summary>
@@ -79,12 +79,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 ProducerId = 1,
                 ProducerName = "UPU LIMITED",
                 CalculatorRunId = 1,
-                CalculatorRun = this.Fixture.Create<CalculatorRun>(),
+                CalculatorRun = Fixture.Create<CalculatorRun>(),
             };
 
-            await this.ProducerDetailTestClass.InsertRecords([expectedResult]);
+            await ProducerDetailTestClass.InsertRecords([expectedResult]);
 
-            var producerDetail = await this.Context.ProducerDetail.FirstOrDefaultAsync();
+            var producerDetail = await Context.ProducerDetail.FirstOrDefaultAsync();
             Assert.IsNotNull(producerDetail);
             Assert.AreEqual(expectedResult.ProducerId, producerDetail.ProducerId);
             Assert.AreEqual(expectedResult.ProducerName, producerDetail.ProducerName);
@@ -118,12 +118,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     SubsidiaryId = "1",
                     ProducerName = "UPU LIMITED",
                     CalculatorRunId = 1,
-                    CalculatorRun = this.Fixture.Create<CalculatorRun>(),
+                    CalculatorRun = Fixture.Create<CalculatorRun>(),
                 },
             };
-            await this.ProducerReportedMaterialTestClass.InsertRecords([expectedResult]);
+            await ProducerReportedMaterialTestClass.InsertRecords([expectedResult]);
 
-            var producerReportedMaterial = await this.Context.ProducerReportedMaterial.FirstOrDefaultAsync();
+            var producerReportedMaterial = await Context.ProducerReportedMaterial.FirstOrDefaultAsync();
             Assert.IsNotNull(producerReportedMaterial);
             Assert.AreEqual(expectedResult.Material.Code, producerReportedMaterial.Material!.Code);
             Assert.AreEqual(expectedResult.Material.Name, producerReportedMaterial.Material.Name);
@@ -145,12 +145,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 SubsidiaryId = "1",
                 ProducerName = "Subsid2",
                 CalculatorRunId = 1,
-                CalculatorRun = this.Fixture.Create<CalculatorRun>(),
+                CalculatorRun = Fixture.Create<CalculatorRun>(),
             };
 
-            await this.ProducerDetailTestClass.InsertRecords([expectedResult]);
+            await ProducerDetailTestClass.InsertRecords([expectedResult]);
 
-            var producerDetail = await this.Context.ProducerDetail.FirstOrDefaultAsync(t => t.SubsidiaryId != null);
+            var producerDetail = await Context.ProducerDetail.FirstOrDefaultAsync(t => t.SubsidiaryId != null);
             Assert.IsNotNull(producerDetail);
             Assert.AreEqual(expectedResult.ProducerId, producerDetail.ProducerId);
             Assert.AreEqual(expectedResult.ProducerName, producerDetail.ProducerName);
@@ -169,12 +169,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 ProducerId = 2,
                 ProducerName = "Subsid2",
                 CalculatorRunId = 1,
-                CalculatorRun = this.Fixture.Create<CalculatorRun>(),
+                CalculatorRun = Fixture.Create<CalculatorRun>(),
             };
 
-            await this.ProducerDetailTestClass.InsertRecords([expectedResult]);
+            await ProducerDetailTestClass.InsertRecords([expectedResult]);
 
-            var producerDetail = await this.Context.ProducerDetail.FirstOrDefaultAsync();
+            var producerDetail = await Context.ProducerDetail.FirstOrDefaultAsync();
             Assert.IsNotNull(producerDetail);
             Assert.AreEqual(expectedResult.ProducerId, producerDetail.ProducerId);
             Assert.AreEqual(expectedResult.ProducerName, producerDetail.ProducerName);
@@ -187,8 +187,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var instance = new DbLoadingChunkerService<string>(
                 new TelemetryClient(TelemetryConfiguration.CreateDefault()),
                 new Mock<ICommandTimeoutService>().Object,
-                this.Context,
-                this.Fixture.Create<int>());
+                Context,
+                Fixture.Create<int>());
 
             // Assert
             Assert.IsNotNull(instance);
@@ -198,7 +198,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new Mock<IConfigurationService>().Object,
                 new TelemetryClient(TelemetryConfiguration.CreateDefault()),
                 new Mock<ICommandTimeoutService>().Object,
-                this.Context);
+                Context);
 
             // Assert
             Assert.IsNotNull(instance);

@@ -64,7 +64,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         [TestMethod]
         public void Construct_AllPropertiesPresent_ReturnsCorrectData()
         {
-            var results = _builder.ConstructAsync(new CalcResultsRequestDto() { RunId = 1, RelativeYear = new RelativeYear(2024) });
+            var results = _builder.ConstructAsync(new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) });
             results.Wait();
             var result = results.Result;
             Assert.AreEqual(1, result.RunId);
@@ -96,7 +96,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             _context.CalculatorRuns.Add(calculatorRun);
             _context.SaveChangesAsync();
 
-            var results = _builder.ConstructAsync(new CalcResultsRequestDto() { RunId = 2, RelativeYear = new RelativeYear(2025) });
+            var results = _builder.ConstructAsync(new CalcResultsRequestDto { RunId = 2, RelativeYear = new RelativeYear(2025) });
             results.Wait();
             var result = results.Result;
             Assert.AreEqual(2, result.RunId);

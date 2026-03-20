@@ -24,11 +24,11 @@ namespace EPR.Calculator.Service.Function.UnitTests
         /// </summary>
         public RpdStatusDataValidatorTests()
         {
-            this.Fixture = new Fixture();
-            this.Wrapper = new Mock<IOrgAndPomWrapper>();
-            this.TestClass = new RpdStatusDataValidator(this.Wrapper.Object);
+            Fixture = new Fixture();
+            Wrapper = new Mock<IOrgAndPomWrapper>();
+            TestClass = new RpdStatusDataValidator(Wrapper.Object);
 
-            this.CalculatorRunClassifications = new List<CalculatorRunClassification>
+            CalculatorRunClassifications = new List<CalculatorRunClassification>
             {
                 new CalculatorRunClassification
                 {
@@ -47,7 +47,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void CanConstruct()
         {
             // Act
-            var instance = new RpdStatusDataValidator(this.Wrapper.Object);
+            var instance = new RpdStatusDataValidator(Wrapper.Object);
 
             // Assert
             Assert.IsNotNull(instance);
@@ -59,18 +59,18 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void IsValidRun_Success(RunClassification runClassification)
         {
             // Arrange
-            var runId = this.Fixture.Create<int>();
-            var run = this.Fixture.Create<CalculatorRun>();
+            var runId = Fixture.Create<int>();
+            var run = Fixture.Create<CalculatorRun>();
             run.Id = runId;
             run.CalculatorRunOrganisationDataMasterId = null;
             run.CalculatorRunPomDataMasterId = null;
             run.CalculatorRunClassificationId = (int)runClassification;
 
             // Act
-            var result = this.TestClass.IsValidRun(
+            var result = TestClass.IsValidRun(
                 run,
                 runId,
-                this.CalculatorRunClassifications);
+                CalculatorRunClassifications);
 
             // Assert
             Assert.IsTrue(result.isValid);
@@ -81,13 +81,13 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void IsValidRun_With_CalcRun_Missing()
         {
             // Arrange
-            var runId = this.Fixture.Create<int>();
+            var runId = Fixture.Create<int>();
 
             // Act
-            var result = this.TestClass.IsValidRun(
+            var result = TestClass.IsValidRun(
                 null,
                 runId,
-                this.Fixture.CreateMany<CalculatorRunClassification>());
+                Fixture.CreateMany<CalculatorRunClassification>());
 
             // Assert
             Assert.IsFalse(result.isValid);
@@ -99,15 +99,15 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void IsValidRun_With_RunId_Having_OrganisationDataMasterId()
         {
             // Arrange
-            var runId = this.Fixture.Create<int>();
-            var run = this.Fixture.Create<CalculatorRun>();
+            var runId = Fixture.Create<int>();
+            var run = Fixture.Create<CalculatorRun>();
             run.Id = runId;
 
             // Act
-            var result = this.TestClass.IsValidRun(
+            var result = TestClass.IsValidRun(
                 run,
                 runId,
-                this.Fixture.CreateMany<CalculatorRunClassification>());
+                Fixture.CreateMany<CalculatorRunClassification>());
 
             // Assert
             Assert.IsFalse(result.isValid);
@@ -119,16 +119,16 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void IsValidRun_With_RunId_Having_PomDataMasterId()
         {
             // Arrange
-            var runId = this.Fixture.Create<int>();
-            var run = this.Fixture.Create<CalculatorRun>();
+            var runId = Fixture.Create<int>();
+            var run = Fixture.Create<CalculatorRun>();
             run.Id = runId;
             run.CalculatorRunOrganisationDataMasterId = null;
 
             // Act
-            var result = this.TestClass.IsValidRun(
+            var result = TestClass.IsValidRun(
                 run,
                 runId,
-                this.Fixture.CreateMany<CalculatorRunClassification>());
+                Fixture.CreateMany<CalculatorRunClassification>());
 
             // Assert
             Assert.IsNotNull(result);
@@ -140,8 +140,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void IsValidRun_With_RunId_With_Incorrect_Classification()
         {
             // Arrange
-            var runId = this.Fixture.Create<int>();
-            var run = this.Fixture.Create<CalculatorRun>();
+            var runId = Fixture.Create<int>();
+            var run = Fixture.Create<CalculatorRun>();
             run.Id = runId;
             run.CalculatorRunOrganisationDataMasterId = null;
             run.CalculatorRunPomDataMasterId = null;
@@ -153,7 +153,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             };
 
             // Act
-            var result = this.TestClass.IsValidRun(run, runId, [classification]);
+            var result = TestClass.IsValidRun(run, runId, [classification]);
 
             // Assert
             Assert.IsNotNull(result);
@@ -165,17 +165,17 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void IsValidSuccessfullRun_Success()
         {
             // Arrange
-            var runId = this.Fixture.Create<int>();
-            var run = this.Fixture.Create<CalculatorRun>();
+            var runId = Fixture.Create<int>();
+            var run = Fixture.Create<CalculatorRun>();
             run.Id = runId;
             run.CalculatorRunOrganisationDataMasterId = null;
             run.CalculatorRunPomDataMasterId = null;
 
-            this.Wrapper.Setup(w => w.AnyPomData()).Returns(true);
-            this.Wrapper.Setup(w => w.AnyOrganisationData()).Returns(true);
+            Wrapper.Setup(w => w.AnyPomData()).Returns(true);
+            Wrapper.Setup(w => w.AnyOrganisationData()).Returns(true);
 
             // Act
-            var result = this.TestClass.IsValidSuccessfulRun(runId);
+            var result = TestClass.IsValidSuccessfulRun(runId);
 
             Assert.IsTrue(result.isValid);
             Assert.IsNull(result.ErrorMessage);
@@ -188,17 +188,17 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void IsValidSuccessfullRun_With_RunId_Having_Pom_Data_Missing(bool pomDataExists, bool orgDataExists)
         {
             // Arrange
-            var runId = this.Fixture.Create<int>();
-            var run = this.Fixture.Create<CalculatorRun>();
+            var runId = Fixture.Create<int>();
+            var run = Fixture.Create<CalculatorRun>();
             run.Id = runId;
             run.CalculatorRunOrganisationDataMasterId = null;
             run.CalculatorRunPomDataMasterId = null;
 
-            this.Wrapper.Setup(w => w.AnyPomData()).Returns(pomDataExists);
-            this.Wrapper.Setup(w => w.AnyOrganisationData()).Returns(orgDataExists);
+            Wrapper.Setup(w => w.AnyPomData()).Returns(pomDataExists);
+            Wrapper.Setup(w => w.AnyOrganisationData()).Returns(orgDataExists);
 
             // Act
-            var result = this.TestClass.IsValidSuccessfulRun(runId);
+            var result = TestClass.IsValidSuccessfulRun(runId);
 
             Assert.AreEqual(StatusCodes.Status422UnprocessableEntity, result.StatusCode);
             Assert.AreEqual("PomData or Organisation Data is missing", result.ErrorMessage);

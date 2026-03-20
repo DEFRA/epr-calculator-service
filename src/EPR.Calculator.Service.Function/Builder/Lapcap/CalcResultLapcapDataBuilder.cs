@@ -42,10 +42,10 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
                 TotalDisposalCost = LapcapHeaderConstants.TotalDisposalCost,
             });
 
-            var results = await (from run in this.context.CalculatorRuns
-                           join lapcapMaster in this.context.LapcapDataMaster on run.LapcapDataMasterId equals lapcapMaster.Id
-                           join lapcapDetail in this.context.LapcapDataDetail on lapcapMaster.Id equals lapcapDetail.LapcapDataMasterId
-                           join lapcapTemplate in this.context.LapcapDataTemplateMaster on lapcapDetail.UniqueReference equals lapcapTemplate.UniqueReference
+            var results = await (from run in context.CalculatorRuns
+                           join lapcapMaster in context.LapcapDataMaster on run.LapcapDataMasterId equals lapcapMaster.Id
+                           join lapcapDetail in context.LapcapDataDetail on lapcapMaster.Id equals lapcapDetail.LapcapDataMasterId
+                           join lapcapTemplate in context.LapcapDataTemplateMaster on lapcapDetail.UniqueReference equals lapcapTemplate.UniqueReference
                            where run.Id == resultsRequestDto.RunId
                            select new ResultsClass
                            {
@@ -54,11 +54,11 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
                                TotalCost = lapcapDetail.TotalCost,
                            }).ToListAsync();
 
-            var materials = await this.context.Material.Select(x => x.Name).ToListAsync();
+            var materials = await context.Material.Select(x => x.Name).ToListAsync();
 
-            var countries = await this.context.Country.ToListAsync();
+            var countries = await context.Country.ToListAsync();
 
-            var costType = await this.context.CostType.SingleAsync(x => x.Name == "Fee for LA Disposal Costs");
+            var costType = await context.CostType.SingleAsync(x => x.Name == "Fee for LA Disposal Costs");
             var costTypeId = costType.Id;
 
             foreach (var material in materials)
@@ -120,7 +120,7 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
 
             if(!resultsRequestDto.IsBillingFile)
             {
-                await this.calcCountryApportionmentService.SaveChangesAsync(new CalcCountryApportionmentServiceDto
+                await calcCountryApportionmentService.SaveChangesAsync(new CalcCountryApportionmentServiceDto
                 {
                     RunId = resultsRequestDto.RunId,
                     Countries = countries,

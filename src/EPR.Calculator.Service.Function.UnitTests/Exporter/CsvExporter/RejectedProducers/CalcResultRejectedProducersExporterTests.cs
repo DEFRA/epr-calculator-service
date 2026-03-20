@@ -32,7 +32,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Rejecte
             exporter.Export(rejectedProducers, csvContent);
 
             // Assert
-            var lines = csvContent.ToString().Split(Environment.NewLine, StringSplitOptions.None);
+            var lines = csvContent.ToString().Split(Environment.NewLine);
             Assert.IsTrue(lines[5].Contains("1"));
             Assert.IsTrue(lines[5].Contains("Producer A"));
             Assert.IsTrue(lines[5].Contains("Trade A"));
@@ -68,7 +68,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Rejecte
             exporter.Export(rejectedProducers, csvContent);
 
             // Assert
-            var lines = csvContent.ToString().Split(Environment.NewLine, StringSplitOptions.None);
+            var lines = csvContent.ToString().Split(Environment.NewLine);
             Assert.IsFalse(lines[5].Contains("02/01/2024 00:00:00"));
         }
 
@@ -108,7 +108,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Rejecte
             exporter.Export(rejectedProducers, csvContent);
 
             // Assert
-            var lines = csvContent.ToString().Split(Environment.NewLine, StringSplitOptions.None);
+            var lines = csvContent.ToString().Split(Environment.NewLine);
             Assert.IsTrue(lines[2].Contains("Rejected Report"));
             Assert.IsTrue(lines[5].Contains("Producer A"));
             Assert.IsTrue(lines[6].Contains("Producer B"));

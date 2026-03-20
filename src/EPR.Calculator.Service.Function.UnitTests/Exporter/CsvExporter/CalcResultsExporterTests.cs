@@ -344,13 +344,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                     {
                         Name = "Scaled-up Producers",
                     },
-                    MaterialBreakdownHeaders = new List<CalcResultScaledupProducerHeader>()
+                    MaterialBreakdownHeaders = new List<CalcResultScaledupProducerHeader>
                     {
                         new CalcResultScaledupProducerHeader { Name = "Each submission for the year", ColumnIndex = 1 },
                         new CalcResultScaledupProducerHeader { Name = "Aluminium Breakdown", ColumnIndex = 2 },
                         new CalcResultScaledupProducerHeader { Name = "Glass Breakdown", ColumnIndex = 3 },
                     },
-                    ColumnHeaders = new List<CalcResultScaledupProducerHeader>()
+                    ColumnHeaders = new List<CalcResultScaledupProducerHeader>
                     {
                         new CalcResultScaledupProducerHeader { Name = "Producer ID" },
                         new CalcResultScaledupProducerHeader { Name = "Subsidiary ID" },
@@ -424,7 +424,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 
             tonnageByMaterial.Add(
                 "AL",
-                new CalcResultScaledupProducerTonnage()
+                new CalcResultScaledupProducerTonnage
                 {
                     ReportedHouseholdPackagingWasteTonnage = 1000,
                     ReportedPublicBinTonnage = 100,
@@ -446,7 +446,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var scaledupProducerList = new List<CalcResultScaledupProducer>();
 
             scaledupProducerList.AddRange([
-                new CalcResultScaledupProducer()
+                new CalcResultScaledupProducer
                 {
                     ProducerId = 101001,
                     SubsidiaryId = string.Empty,
@@ -458,7 +458,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                     ScaleupFactor = 2,
                     ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterial(),
                 },
-                new CalcResultScaledupProducer()
+                new CalcResultScaledupProducer
                 {
                     ProducerId = 101001,
                     SubsidiaryId = string.Empty,

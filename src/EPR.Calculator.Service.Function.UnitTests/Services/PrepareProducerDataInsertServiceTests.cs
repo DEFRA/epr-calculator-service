@@ -17,7 +17,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             _billingInstructionService = new Mock<IBillingInstructionService>();
             _producerInvoiceNetTonnageService = new Mock<IProducerInvoiceNetTonnageService>();
             _telemetryLogger = new Mock<ICalculatorTelemetryLogger>();
-            this.testClass = new PrepareProducerDataInsertService(_billingInstructionService.Object, _producerInvoiceNetTonnageService.Object, _telemetryLogger.Object);
+            testClass = new PrepareProducerDataInsertService(_billingInstructionService.Object, _producerInvoiceNetTonnageService.Object, _telemetryLogger.Object);
         }
 
         private PrepareProducerDataInsertService testClass { get; init; }

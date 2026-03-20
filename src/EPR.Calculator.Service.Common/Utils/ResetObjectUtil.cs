@@ -24,20 +24,20 @@ namespace EPR.Calculator.Service.Common.Utils
         private static void ResetObjectValue(object resetObject, PropertyInfo property)
         {
             if (!property.CanWrite || (resetObject is IEnumerable)) return;
-            else if (property.Name == "LeaverDate" && property.GetValue(resetObject)?.ToString() == "Totals") return;
-            else if (property.Name == "IsTotalRow" || property.Name == "isOverallTotalRow") return;         
+            if (property.Name == "LeaverDate" && property.GetValue(resetObject)?.ToString() == "Totals") return;
+            if (property.Name == "IsTotalRow" || property.Name == "isOverallTotalRow") return;
 
             Type? propType = property.PropertyType;
             if (propType == typeof(string))
             {
-                property.SetValue(resetObject, string.Empty); return;
+                property.SetValue(resetObject, string.Empty);
             }
             else if (propType == typeof(int) || propType == typeof(double))
             {
                 property.SetValue(resetObject, 0);
-                return;
             }
-            else if (propType == typeof(decimal)) { property.SetValue(resetObject, 0m); return; }
+            else if (propType == typeof(decimal)) { property.SetValue(resetObject, 0m);
+            }
             else if (propType is not null && propType.IsValueType)
             {
                 object? d = Activator.CreateInstance(propType);

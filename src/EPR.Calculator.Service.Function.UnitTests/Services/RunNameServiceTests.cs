@@ -23,18 +23,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 .UseInMemoryDatabase(databaseName: "TestDatabase")
                 .Options;
 
-            this.dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
-            this.dbContext = new ApplicationDBContext(options);
-            this.dbContextFactory.Setup(factory => factory.CreateDbContext()).Returns(this.dbContext);
+            dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
+            dbContext = new ApplicationDBContext(options);
+            dbContextFactory.Setup(factory => factory.CreateDbContext()).Returns(dbContext);
 
-            this.runNameService = new RunNameService(
-                this.dbContextFactory.Object);
+            runNameService = new RunNameService(
+                dbContextFactory.Object);
         }
 
         [TestCleanup]
         public void Cleanup()
         {
-            this.dbContext?.Dispose();
+            dbContext?.Dispose();
         }
 
         /// <summary>
@@ -47,11 +47,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Arrange
             var runId = 1;
             var expectedRunName = "Test Run Name";
-            this.dbContext.CalculatorRuns.Add(new CalculatorRun { Id = runId, Name = expectedRunName, RelativeYear = new RelativeYear(2027) });
-            await this.dbContext.SaveChangesAsync();
+            dbContext.CalculatorRuns.Add(new CalculatorRun { Id = runId, Name = expectedRunName, RelativeYear = new RelativeYear(2027) });
+            await dbContext.SaveChangesAsync();
 
             // Act
-            var result = await this.runNameService.GetRunNameAsync(runId);
+            var result = await runNameService.GetRunNameAsync(runId);
 
             // Assert
             Assert.AreEqual(expectedRunName, result);
@@ -68,7 +68,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var runId = 10;
 
             // Act
-            var exceptionResult = await Assert.ThrowsExceptionAsync<KeyNotFoundException>(() => this.runNameService.GetRunNameAsync(runId));
+            var exceptionResult = await Assert.ThrowsExceptionAsync<KeyNotFoundException>(() => runNameService.GetRunNameAsync(runId));
 
             // Assert
             Assert.AreEqual("Calculator run with id 10 not found", exceptionResult.Message);
@@ -83,11 +83,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             // Arrange
             var runId = 2;
-            this.dbContext.CalculatorRuns.Add(new CalculatorRun { Id = runId, Name = string.Empty, RelativeYear = new RelativeYear(2028) });
-            await this.dbContext.SaveChangesAsync();
+            dbContext.CalculatorRuns.Add(new CalculatorRun { Id = runId, Name = string.Empty, RelativeYear = new RelativeYear(2028) });
+            await dbContext.SaveChangesAsync();
 
             // Act
-            var exceptionResult = await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => this.runNameService.GetRunNameAsync(runId));
+            var exceptionResult = await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => runNameService.GetRunNameAsync(runId));
 
             // Assert
             Assert.AreEqual("Value cannot be null. (Parameter 'Run name not found for the run id 2')", exceptionResult.Message);

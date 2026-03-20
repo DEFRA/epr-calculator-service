@@ -40,7 +40,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.ThreeSA
                 var totalProducerFeeWithoutBadDebtProvision = GetTotalProducerFeeWithoutBadDebtProvision(summary, item);
                 var badDebtProvision = GetBadDebtProvision(calcResult, totalProducerFeeWithoutBadDebtProvision);
 
-                item.SchemeAdministratorOperatingCosts = new CalcResultSummaryBadDebtProvision()
+                item.SchemeAdministratorOperatingCosts = new CalcResultSummaryBadDebtProvision
                 {
                     TotalProducerFeeWithoutBadDebtProvision = totalProducerFeeWithoutBadDebtProvision,
                     BadDebtProvision = badDebtProvision,

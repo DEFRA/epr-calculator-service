@@ -19,14 +19,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Converter
 
         public CurrencyConverterTests()
         {
-            this.Fixture = new Fixture();
-            this.SerialiserOptions = new JsonSerializerOptions
+            Fixture = new Fixture();
+            SerialiserOptions = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 WriteIndented = true,
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
             };
-            this.TestClass = new CurrencyConverter();
+            TestClass = new CurrencyConverter();
         }
 
         [TestMethod]
@@ -38,7 +38,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Converter
             var reader = BuildReader(testJson);
 
             // Act
-            var result = this.TestClass.Read(ref reader, typeof(decimal), this.SerialiserOptions);
+            var result = TestClass.Read(ref reader, typeof(decimal), SerialiserOptions);
 
             // Assert
             Assert.AreEqual(expectedValue, result);
@@ -59,7 +59,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Converter
             // Act
             try
             {
-                this.TestClass.Read(ref reader, typeof(decimal), this.SerialiserOptions);
+                TestClass.Read(ref reader, typeof(decimal), SerialiserOptions);
             }
             catch (Exception ex)
             {
@@ -83,7 +83,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Converter
             var value = Fixture.Create<decimal>();
 
             // Act
-            this.TestClass.Write(writer, value, this.SerialiserOptions);
+            TestClass.Write(writer, value, SerialiserOptions);
             writer.Flush();
             stream.Seek(0, SeekOrigin.Begin);
             var result = new StreamReader(stream).ReadToEnd();

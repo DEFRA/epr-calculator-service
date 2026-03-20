@@ -19,7 +19,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
         [TestInitialize]
         public void SetUp()
         {
-            this.calculatorRunParameterMapper = new CalculatorRunParameterMapper();
+            calculatorRunParameterMapper = new CalculatorRunParameterMapper();
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             };
 
             // Act
-            var result = this.calculatorRunParameterMapper?.Map(calculatorParameter);
+            var result = calculatorRunParameterMapper?.Map(calculatorParameter);
 
             // Assert
             Assert.IsNotNull(result);
@@ -62,7 +62,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             };
 
             // Act
-            var result = this.calculatorRunParameterMapper?.Map(billingFileMessage);
+            var result = calculatorRunParameterMapper?.Map(billingFileMessage);
 
             // Assert
             Assert.IsNotNull(result);

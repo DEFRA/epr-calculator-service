@@ -7,7 +7,7 @@ namespace EPR.Calculator.Service.Function.Mapper
     {
         public ProducerInvoicedMaterialNetTonnage Map(ProducerInvoiceTonnage producerInvoiceTonnage)
         {
-            return new ProducerInvoicedMaterialNetTonnage()
+            return new ProducerInvoicedMaterialNetTonnage
             {
                 CalculatorRunId = producerInvoiceTonnage.RunId,
                 ProducerId = producerInvoiceTonnage.ProducerId,

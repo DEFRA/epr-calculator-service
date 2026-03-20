@@ -26,7 +26,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
                 throw new ArgumentNullException(nameof(results), "The results parameter cannot be null.");
             }
 
-            var materials = this.materialService.GetMaterials().Result;
+            var materials = materialService.GetMaterials().Result;
 
             var billingFileContent = BillingFileJson.From(results, acceptedProducerIds, materials);
            

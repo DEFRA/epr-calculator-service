@@ -43,14 +43,14 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         public async Task<CalcResultSummary> ConstructAsync(int runId, RelativeYear relativeYear, bool isBillingFile, CalcResult calcResult)
         {
             // Get and map materials from DB
-            var materialsFromDb = await this.context.Material.ToListAsync();
+            var materialsFromDb = await context.Material.ToListAsync();
             var materials = MaterialMapper.Map(materialsFromDb);
 
             ScaledupProducers = calcResult.CalcResultScaledupProducers.ScaledupProducers ?? [];
             PartialObligations = calcResult.CalcResultPartialObligations.PartialObligations ?? [];
 
-            var runProducerMaterialDetails = await (from pd in this.context.ProducerDetail
-                                                    join prm in this.context.ProducerReportedMaterial on pd.Id equals prm.ProducerDetailId
+            var runProducerMaterialDetails = await (from pd in context.ProducerDetail
+                                                    join prm in context.ProducerReportedMaterial on pd.Id equals prm.ProducerDetailId
                                                     where pd.CalculatorRunId == runId
                                                     select new CalcResultsProducerAndReportMaterialDetail
                                                     {
@@ -70,9 +70,9 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             var totalPackagingTonnage = GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, runId, ScaledupProducers.ToList(), PartialObligations.ToList());
 
             // Get organisations
-            Organisations = await (from run in this.context.CalculatorRuns
-                                   join crodm in this.context.CalculatorRunOrganisationDataMaster on run.CalculatorRunOrganisationDataMasterId equals crodm.Id
-                                   join crodd in this.context.CalculatorRunOrganisationDataDetails on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
+            Organisations = await (from run in context.CalculatorRuns
+                                   join crodm in context.CalculatorRunOrganisationDataMaster on run.CalculatorRunOrganisationDataMasterId equals crodm.Id
+                                   join crodd in context.CalculatorRunOrganisationDataDetails on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
                                    where run.Id == runId
                                    select new Organisation
                                    {
@@ -105,10 +105,10 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
         private Task<List<DefaultParamResultsClass>> GetDefaultParamsAsync(int runId)
         {
-            return (from run in this.context.CalculatorRuns.AsNoTracking()
-                    join defaultMaster in this.context.DefaultParameterSettings.AsNoTracking() on run.DefaultParameterSettingMasterId equals defaultMaster.Id
-                    join defaultDetail in this.context.DefaultParameterSettingDetail.AsNoTracking() on defaultMaster.Id equals defaultDetail.DefaultParameterSettingMasterId
-                    join defaultTemplate in this.context.DefaultParameterTemplateMasterList.AsNoTracking() on defaultDetail.ParameterUniqueReferenceId equals defaultTemplate.ParameterUniqueReferenceId
+            return (from run in context.CalculatorRuns.AsNoTracking()
+                    join defaultMaster in context.DefaultParameterSettings.AsNoTracking() on run.DefaultParameterSettingMasterId equals defaultMaster.Id
+                    join defaultDetail in context.DefaultParameterSettingDetail.AsNoTracking() on defaultMaster.Id equals defaultDetail.DefaultParameterSettingMasterId
+                    join defaultTemplate in context.DefaultParameterTemplateMasterList.AsNoTracking() on defaultDetail.ParameterUniqueReferenceId equals defaultTemplate.ParameterUniqueReferenceId
                     where run.Id == runId
                     select new DefaultParamResultsClass
                     {
@@ -140,17 +140,17 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     // Make sure the total row is written only once
                     if (CanAddTotalRow(producer, producersAndSubsidiaries, producerDisposalFees))
                     {
-                        var totalRow = this.GetProducerTotalRow(producersAndSubsidiaries.ToList(), materials, calcResult, producerDisposalFees, false, totalPackagingTonnage, producerInvoicedMaterialNetTonnage);
+                        var totalRow = GetProducerTotalRow(producersAndSubsidiaries.ToList(), materials, calcResult, producerDisposalFees, false, totalPackagingTonnage, producerInvoicedMaterialNetTonnage);
                         producerDisposalFees.Add(totalRow);
                     }
 
                     // Calculate the values for the producer
-                    producerDisposalFees.Add(this.GetProducerRow(producerDisposalFees, producersAndSubsidiaries.ToList(), producer, materials, calcResult, totalPackagingTonnage, producerInvoicedMaterialNetTonnage));
+                    producerDisposalFees.Add(GetProducerRow(producerDisposalFees, producersAndSubsidiaries.ToList(), producer, materials, calcResult, totalPackagingTonnage, producerInvoicedMaterialNetTonnage));
                 }
 
                 // Calculate the total for all the producers
 
-                var allTotalRow = this.GetProducerTotalRow(orderedProducerDetails.ToList(), materials, calcResult, producerDisposalFees, true, totalPackagingTonnage, producerInvoicedMaterialNetTonnage);
+                var allTotalRow = GetProducerTotalRow(orderedProducerDetails.ToList(), materials, calcResult, producerDisposalFees, true, totalPackagingTonnage, producerInvoicedMaterialNetTonnage);
                 producerDisposalFees.Add(allTotalRow);
 
                 result.ProducerDisposalFees = producerDisposalFees;
@@ -648,7 +648,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     total += scaledupProducer.ScaledupProducerTonnageByMaterial.Sum(x => x.Value.ScaledupTotalReportedTonnage);
                 }
 
-                result.Add(new TotalPackagingTonnagePerRun() { ProducerId = item.ProducerId, SubsidiaryId = item.SubsidiaryId, TotalPackagingTonnage = total });
+                result.Add(new TotalPackagingTonnagePerRun { ProducerId = item.ProducerId, SubsidiaryId = item.SubsidiaryId, TotalPackagingTonnage = total });
             }
         }
 
@@ -657,7 +657,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             foreach (var item in partialObligations)
             {
                 var total = item.PartialObligationTonnageByMaterial.Sum(pp => pp.Value.PartialTotalReportedTonnage);
-                result.Add(new TotalPackagingTonnagePerRun() { ProducerId = item.ProducerId, SubsidiaryId = item.SubsidiaryId, TotalPackagingTonnage = total });
+                result.Add(new TotalPackagingTonnagePerRun { ProducerId = item.ProducerId, SubsidiaryId = item.SubsidiaryId, TotalPackagingTonnage = total });
             }
         }
 

@@ -29,19 +29,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         /// </summary>
         public PrepareBillingFileServiceTests()
         {
-            this._dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
+            _dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
                 .Options;
 
-            this._context = new ApplicationDBContext(this._dbContextOptions);
-            this._dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
-            this._dbContextFactory.Setup(f => f.CreateDbContext()).Returns(this._context);
+            _context = new ApplicationDBContext(_dbContextOptions);
+            _dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
+            _dbContextFactory.Setup(f => f.CreateDbContext()).Returns(_context);
 
-            this.MockLogger = new Mock<ICalculatorTelemetryLogger>();
+            MockLogger = new Mock<ICalculatorTelemetryLogger>();
 
-            this.PrepareCalcService = new Mock<IPrepareCalcService>();
-            this.PrepareCalcService.Setup(s => s.PrepareCalcResultsAsync(
+            PrepareCalcService = new Mock<IPrepareCalcService>();
+            PrepareCalcService.Setup(s => s.PrepareCalcResultsAsync(
                 It.IsAny<CalcResultsRequestDto>(),
                 It.IsAny<string>(),
                 It.IsAny<CancellationToken>()))
@@ -56,9 +56,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var calculatorName = "Test";
             var approvedBy = "user";
             var service = new PrepareBillingFileService(
-                this._context,
-                this.PrepareCalcService.Object,
-                this.MockLogger.Object);
+                _context,
+                PrepareCalcService.Object,
+                MockLogger.Object);
 
             // Act
             var result = await service.PrepareBillingFileAsync(calculatorRunId, calculatorName, approvedBy);
@@ -83,9 +83,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     CreatedAt = DateTime.UtcNow });
             _context.SaveChanges();
             var service = new PrepareBillingFileService(
-                this._context,
-                this.PrepareCalcService.Object,
-                this.MockLogger.Object);
+                _context,
+                PrepareCalcService.Object,
+                MockLogger.Object);
             var approvedBy = "user";
 
             // Act

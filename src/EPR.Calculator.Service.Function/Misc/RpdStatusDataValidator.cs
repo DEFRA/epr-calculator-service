@@ -66,8 +66,8 @@ namespace EPR.Calculator.API.Validators
 
         public RpdStatusValidation IsValidSuccessfulRun(int runId)
         {
-            var pomDataExists = this.wrapper.AnyPomData();
-            var organisationDataExists = this.wrapper.AnyOrganisationData();
+            var pomDataExists = wrapper.AnyPomData();
+            var organisationDataExists = wrapper.AnyOrganisationData();
             if (!pomDataExists || !organisationDataExists)
             {
                 return new RpdStatusValidation

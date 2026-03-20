@@ -31,7 +31,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
         {
             foreach (var fee in result.ProducerDisposalFees)
             {
-                fee.TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision()
+                fee.TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision
                 {
                     TotalProducerFeeWithoutBadDebtProvision = GetTotalProducerBillWithoutBadDebtProvision(fee) ?? 0,
                     BadDebtProvision = GetBadDebtProvisionForTotalProducerBill(fee) ?? 0,

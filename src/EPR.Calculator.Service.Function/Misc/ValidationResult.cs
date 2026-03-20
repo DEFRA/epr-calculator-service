@@ -5,7 +5,7 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="ValidationResult"/> class.
         /// </summary>
-        public ValidationResult() => this.ErrorMessages = new List<string>();
+        public ValidationResult() => ErrorMessages = new List<string>();
 
         public bool IsValid { get; set; }
 

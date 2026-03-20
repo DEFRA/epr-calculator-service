@@ -17,7 +17,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.OnePlus2A2B2
 
         public OnePlus2A2B2CProducerTests()
         {
-            this.Fixture = new Fixture();
+            Fixture = new Fixture();
             var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
                 .UseInMemoryDatabase(databaseName: "PayCal")
                 .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
@@ -133,7 +133,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.OnePlus2A2B2
 
         private void CreateProducerDetail()
         {
-            var producerNames = new string[]
+            var producerNames = new[]
             {
                 "Allied Packaging",
                 "Beeline Materials",

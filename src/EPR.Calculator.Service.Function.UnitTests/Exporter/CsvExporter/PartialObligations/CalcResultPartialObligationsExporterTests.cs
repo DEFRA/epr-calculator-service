@@ -101,8 +101,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
 
         private List<CalcResultPartialObligation> GetCalcResultPartialObligationsList()
         {
-            return new List<CalcResultPartialObligation>()
-                {
+            return new List<CalcResultPartialObligation>
+            {
                     new CalcResultPartialObligation
                     {
                         ProducerId = 101001,
@@ -183,7 +183,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
 
         private IEnumerable<CalcResultPartialObligationHeader> GetCoulmnHeaders()
         {
-            return new List<CalcResultPartialObligationHeader>()
+            return new List<CalcResultPartialObligationHeader>
             {
                 new CalcResultPartialObligationHeader { Name = "Producer Id" },
                 new CalcResultPartialObligationHeader { Name = "Subsidiary Id" },

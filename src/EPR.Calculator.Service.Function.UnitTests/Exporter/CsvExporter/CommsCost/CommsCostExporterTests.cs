@@ -28,7 +28,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.CommsCo
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.IsTrue(result.ToString().Contains("Parameters - Comms Costs"));
+            Assert.IsTrue(result.Contains("Parameters - Comms Costs"));
         }
 
         [TestMethod]
@@ -59,9 +59,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.CommsCo
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.IsTrue(result.ToString().Contains("1 + 4 Apportionment %s"));
-            Assert.IsTrue(result.ToString().Contains("2a Comms Costs - by Material"));
-            Assert.IsTrue(result.ToString().Contains("2c Comms Costs - by Country"));
+            Assert.IsTrue(result.Contains("1 + 4 Apportionment %s"));
+            Assert.IsTrue(result.Contains("2a Comms Costs - by Material"));
+            Assert.IsTrue(result.Contains("2c Comms Costs - by Country"));
         }
     }
 }

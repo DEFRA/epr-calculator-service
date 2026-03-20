@@ -18,7 +18,7 @@ namespace EPR.Calculator.Service.Function.Services
             ICalculatorTelemetryLogger telemetryLogger)
         {
             this.billingInstructionChunker = billingInstructionChunker;
-            this._telemetryLogger = telemetryLogger;
+            _telemetryLogger = telemetryLogger;
         }
 
         public async Task<bool> CreateBillingInstructions(CalcResult calcResult)
@@ -84,11 +84,11 @@ namespace EPR.Calculator.Service.Function.Services
 
                 if (billingInstructions.Count > 0)
                 {
-                    await this.billingInstructionChunker.InsertRecords(billingInstructions);
+                    await billingInstructionChunker.InsertRecords(billingInstructions);
                 }
                 else
                 {
-                    this._telemetryLogger.LogInformation(new TrackMessage
+                    _telemetryLogger.LogInformation(new TrackMessage
                     {
                         RunId = calcResult.CalcResultDetail.RunId,
                         RunName = calcResult.CalcResultDetail.RunName,
@@ -99,7 +99,7 @@ namespace EPR.Calculator.Service.Function.Services
 
                 var endTime = DateTime.UtcNow;
                 var timeDiff = startTime - endTime;
-                this._telemetryLogger.LogInformation(new TrackMessage
+                _telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = calcResult.CalcResultDetail.RunId,
                     RunName = calcResult.CalcResultDetail.RunName,
@@ -111,7 +111,7 @@ namespace EPR.Calculator.Service.Function.Services
             }
             catch (Exception exception)
             {
-                this._telemetryLogger.LogError(new ErrorMessage
+                _telemetryLogger.LogError(new ErrorMessage
                 {
                     RunId = calcResult.CalcResultDetail.RunId,
                     RunName = calcResult.CalcResultDetail.RunName,

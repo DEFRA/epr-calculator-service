@@ -52,7 +52,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         [TestMethod]
         public void CanCreateResultsCsvFileName()
         {
-            var resultsFileCsvName = new CalcResultsAndBillingFileName(10223, "RunName", new DateTime(2025, 10, 1, 9, 25, 0), false);
+            var resultsFileCsvName = new CalcResultsAndBillingFileName(10223, "RunName", new DateTime(2025, 10, 1, 9, 25, 0));
             Assert.AreEqual("10223-RunName_Results File_20251001.csv", resultsFileCsvName);
         }
 
@@ -148,7 +148,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var context = new Mock<ApplicationDBContext>();
             context.Setup(c => c.CalculatorRuns).ReturnsDbSet([mockRun]);
             var expectedFileName = $"{mockRun.Id}" +
-                $"-{mockRun.Name[0..30]}" +
+                $"-{mockRun.Name[..30]}" +
                 $"_Results File" +
                 $"_{mockRun.CreatedAt:yyyyMMdd}" +
                 $".csv";

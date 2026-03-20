@@ -25,7 +25,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
         public async Task<CalcResultPartialObligations> ConstructAsync(CalcResultsRequestDto resultsRequestDto, IEnumerable<CalcResultScaledupProducer> scaledupProducers)
         {
             var runId = resultsRequestDto.RunId;
-            var materialsFromDb = await this.context.Material.ToListAsync();
+            var materialsFromDb = await context.Material.ToListAsync();
             var materials = MaterialMapper.Map(materialsFromDb);
 
             var partialObligationsForRun = await GetPartialObligations(runId, materials, scaledupProducers);
@@ -49,10 +49,10 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
 
         public async Task<List<CalcResultPartialObligation>> GetPartialObligations(int runId, List<MaterialDetail> materials, IEnumerable<CalcResultScaledupProducer> scaledupProducers)
         {
-            var result = await (from run in this.context.CalculatorRuns.AsNoTracking()
-                                join crodm in this.context.CalculatorRunOrganisationDataMaster.AsNoTracking() on run.CalculatorRunOrganisationDataMasterId equals crodm.Id
-                                join crodd in this.context.CalculatorRunOrganisationDataDetails.AsNoTracking() on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
-                                join pd in this.context.ProducerDetail.Include(x => x.ProducerReportedMaterials) on crodd.OrganisationId equals pd.ProducerId
+            var result = await (from run in context.CalculatorRuns.AsNoTracking()
+                                join crodm in context.CalculatorRunOrganisationDataMaster.AsNoTracking() on run.CalculatorRunOrganisationDataMasterId equals crodm.Id
+                                join crodd in context.CalculatorRunOrganisationDataDetails.AsNoTracking() on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
+                                join pd in context.ProducerDetail.Include(x => x.ProducerReportedMaterials) on crodd.OrganisationId equals pd.ProducerId
                                 where run.Id == runId && crodd.ObligationStatus == ObligationStates.Obligated && crodd.DaysObligated != null && crodd.SubsidiaryId == pd.SubsidiaryId && pd.CalculatorRunId == runId
                                 let daysInYear = DateTime.IsLeapYear(crodm.RelativeYear.Value) ? 366 : 365
                                 let partialAmount = crodd.DaysObligated != null ? (decimal)crodd.DaysObligated! / daysInYear : 1

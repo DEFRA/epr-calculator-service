@@ -15,7 +15,7 @@ namespace EPR.Calculator.Service.Function.Services
         /// <param name="context">The context object.</param>
         public RunNameService(IDbContextFactory<ApplicationDBContext> context)
         {
-            this.Context = context.CreateDbContext();
+            Context = context.CreateDbContext();
         }
 
         private ApplicationDBContext Context { get; init; }
@@ -27,7 +27,7 @@ namespace EPR.Calculator.Service.Function.Services
         /// <returns>The run name.</returns>
         public async Task<string> GetRunNameAsync(int runId)
         {
-            var run = await this.Context.CalculatorRuns
+            var run = await Context.CalculatorRuns
                 .SingleOrDefaultAsync(r => r.Id == runId);
 
             if (run == null)

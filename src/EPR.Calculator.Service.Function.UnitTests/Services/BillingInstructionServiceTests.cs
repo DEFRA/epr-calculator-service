@@ -82,14 +82,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     MaterialHeading = string.Empty,
                     TonnageHeading = string.Empty,
                 },
-                CalcResultSummary = new CalcResultSummary()
+                CalcResultSummary = new CalcResultSummary
                 {
-                    ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>()
+                    ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
                     {
                         new ()
                         {
-                            ProducerCommsFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>() { },
-                            ProducerDisposalFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>() { },
+                            ProducerCommsFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>(),
+                            ProducerDisposalFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>(),
                             ProducerId = "1",
                             ProducerName = "Test",
                             TotalProducerDisposalFeeWithBadDebtProvision = 100,
@@ -219,17 +219,30 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     MaterialHeading = string.Empty,
                     TonnageHeading = string.Empty,
                 },
-                CalcResultSummary = new() { ProducerDisposalFees = fixture.Create<List<CalcResultSummaryProducerDisposalFees>>() } ,
-                    CalcResultCancelledProducers = new CalcResultCancelledProducersResponse()
+                CalcResultSummary = new()
+                {
+                    ProducerDisposalFees = fixture.Create<List<CalcResultSummaryProducerDisposalFees>>()
+                },
+                CalcResultCancelledProducers = new CalcResultCancelledProducersResponse
+                {
+                    TitleHeader = CommonConstants.CancelledProducers,
+                    CancelledProducers = new List<CalcResultCancelledProducersDto>
                     {
-                        TitleHeader = CommonConstants.CancelledProducers,
-                        CancelledProducers = new List<CalcResultCancelledProducersDto>()
-                        { new CalcResultCancelledProducersDto() { LastTonnage = null,  ProducerId = 1, TradingNameValue ="Test",
-                            LatestInvoice = new LatestInvoice(){ BillingInstructionIdValue="1_1", RunNameValue ="RunName" , RunNumberValue="4" },
+                        new CalcResultCancelledProducersDto
+                        {
+                            LastTonnage = null,
+                            ProducerId = 1,
+                            TradingNameValue = "Test",
+                            LatestInvoice = new LatestInvoice
+                            {
+                                BillingInstructionIdValue = "1_1",
+                                RunNameValue = "RunName",
+                                RunNumberValue = "4"
+                            },
                         }
                     }
                 },
-                CalcResultModulation = null,
+                CalcResultModulation = null
             };
 
 

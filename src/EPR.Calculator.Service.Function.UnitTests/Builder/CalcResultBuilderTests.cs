@@ -44,38 +44,38 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
         public CalcResultBuilderTests()
         {
-            this.Fixture = new Fixture();
-            this.mockCalcResultDetailBuilder = new Mock<ICalcResultDetailBuilder>();
-            this.mockLapcapBuilder = new Mock<ICalcResultLapcapDataBuilder>();
-            this.mockSummaryBuilder = new Mock<ICalcResultSummaryBuilder>();
-            this.mockCalcRunLaDisposalCostBuilder = new Mock<ICalcRunLaDisposalCostBuilder>();
-            this.mockCommsCostReportBuilder = new Mock<ICalcResultCommsCostBuilder>();
-            this.mockLateReportingBuilder = new Mock<ICalcResultLateReportingBuilder>();
-            this.mockCalcResultParameterOtherCostBuilder = new Mock<ICalcResultParameterOtherCostBuilder>();
-            this.mockOnePlusFourApportionmentBuilder = new Mock<ICalcResultOnePlusFourApportionmentBuilder>();
-            this.mockCalcResultScaledupProducersBuilder = new Mock<ICalcResultScaledupProducersBuilder>();
-            this.mockCalcResultPartialObligationBuilder = new Mock<ICalcResultPartialObligationBuilder>();
-            this.mockCalcResultCancelledProducersBuilder = new Mock<ICalcResultCancelledProducersBuilder>();
-            this.mockCalcResultRejectedProducersBuilder = new Mock<ICalcResultRejectedProducersBuilder>();
-            this.mockCalcResultErrorReportBuilder = new Mock<ICalcResultErrorReportBuilder>();
+            Fixture = new Fixture();
+            mockCalcResultDetailBuilder = new Mock<ICalcResultDetailBuilder>();
+            mockLapcapBuilder = new Mock<ICalcResultLapcapDataBuilder>();
+            mockSummaryBuilder = new Mock<ICalcResultSummaryBuilder>();
+            mockCalcRunLaDisposalCostBuilder = new Mock<ICalcRunLaDisposalCostBuilder>();
+            mockCommsCostReportBuilder = new Mock<ICalcResultCommsCostBuilder>();
+            mockLateReportingBuilder = new Mock<ICalcResultLateReportingBuilder>();
+            mockCalcResultParameterOtherCostBuilder = new Mock<ICalcResultParameterOtherCostBuilder>();
+            mockOnePlusFourApportionmentBuilder = new Mock<ICalcResultOnePlusFourApportionmentBuilder>();
+            mockCalcResultScaledupProducersBuilder = new Mock<ICalcResultScaledupProducersBuilder>();
+            mockCalcResultPartialObligationBuilder = new Mock<ICalcResultPartialObligationBuilder>();
+            mockCalcResultCancelledProducersBuilder = new Mock<ICalcResultCancelledProducersBuilder>();
+            mockCalcResultRejectedProducersBuilder = new Mock<ICalcResultRejectedProducersBuilder>();
+            mockCalcResultErrorReportBuilder = new Mock<ICalcResultErrorReportBuilder>();
 
-            this.telemetryClient = new TelemetryClient(new TelemetryConfiguration());
+            telemetryClient = new TelemetryClient(new TelemetryConfiguration());
 
-            this.calcResultBuilder = new CalcResultBuilder(
-                this.mockCalcResultDetailBuilder.Object,
-                this.mockLapcapBuilder.Object,
-                this.mockCalcResultParameterOtherCostBuilder.Object,
-                this.mockOnePlusFourApportionmentBuilder.Object,
-                this.mockCommsCostReportBuilder.Object,
-                this.mockLateReportingBuilder.Object,
-                this.mockCalcRunLaDisposalCostBuilder.Object,
-                this.mockCalcResultScaledupProducersBuilder.Object,
-                this.mockCalcResultPartialObligationBuilder.Object,
-                this.mockSummaryBuilder.Object,
-                this.mockCalcResultCancelledProducersBuilder.Object,
-                this.mockCalcResultRejectedProducersBuilder.Object,
-                this.mockCalcResultErrorReportBuilder.Object,
-                this.telemetryClient);
+            calcResultBuilder = new CalcResultBuilder(
+                mockCalcResultDetailBuilder.Object,
+                mockLapcapBuilder.Object,
+                mockCalcResultParameterOtherCostBuilder.Object,
+                mockOnePlusFourApportionmentBuilder.Object,
+                mockCommsCostReportBuilder.Object,
+                mockLateReportingBuilder.Object,
+                mockCalcRunLaDisposalCostBuilder.Object,
+                mockCalcResultScaledupProducersBuilder.Object,
+                mockCalcResultPartialObligationBuilder.Object,
+                mockSummaryBuilder.Object,
+                mockCalcResultCancelledProducersBuilder.Object,
+                mockCalcResultRejectedProducersBuilder.Object,
+                mockCalcResultErrorReportBuilder.Object,
+                telemetryClient);
         }
 
         private Fixture Fixture { get; init; }
@@ -85,20 +85,20 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Act
             var instance = new CalcResultBuilder(
-                this.mockCalcResultDetailBuilder.Object,
-                this.mockLapcapBuilder.Object,
-                this.mockCalcResultParameterOtherCostBuilder.Object,
-                this.mockOnePlusFourApportionmentBuilder.Object,
-                this.mockCommsCostReportBuilder.Object,
-                this.mockLateReportingBuilder.Object,
-                this.mockCalcRunLaDisposalCostBuilder.Object,
-                this.mockCalcResultScaledupProducersBuilder.Object,
-                this.mockCalcResultPartialObligationBuilder.Object,
-                this.mockSummaryBuilder.Object,
-                this.mockCalcResultCancelledProducersBuilder.Object,
-                this.mockCalcResultRejectedProducersBuilder.Object,
-                this.mockCalcResultErrorReportBuilder.Object,
-                this.telemetryClient);
+                mockCalcResultDetailBuilder.Object,
+                mockLapcapBuilder.Object,
+                mockCalcResultParameterOtherCostBuilder.Object,
+                mockOnePlusFourApportionmentBuilder.Object,
+                mockCommsCostReportBuilder.Object,
+                mockLateReportingBuilder.Object,
+                mockCalcRunLaDisposalCostBuilder.Object,
+                mockCalcResultScaledupProducersBuilder.Object,
+                mockCalcResultPartialObligationBuilder.Object,
+                mockSummaryBuilder.Object,
+                mockCalcResultCancelledProducersBuilder.Object,
+                mockCalcResultRejectedProducersBuilder.Object,
+                mockCalcResultErrorReportBuilder.Object,
+                telemetryClient);
 
             // Assert
             Assert.IsNotNull(instance);
@@ -107,39 +107,39 @@ namespace EPR.Calculator.Service.Function.UnitTests
         [TestMethod]
         public void Build_ShouldReturnCalcResult()
         {
-            var resultsRequestDto = new CalcResultsRequestDto() { RunId = 1, RelativeYear = new RelativeYear(2025)};
+            var resultsRequestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025)};
             var mockResultDetail = new Mock<CalcResultDetail>();
             var mockLapcapData = new Mock<CalcResultLapcapData>();
             var mockOtherParams = new Mock<CalcResultParameterOtherCost>();
             var mockOnePlusFourApp = new Mock<CalcResultOnePlusFourApportionment>();
             var mockCalcResultCommsCost = new Mock<CalcResultCommsCost>();
-            var mockCalcResultLateReportingTonnage = this.Fixture.Create<CalcResultLateReportingTonnage>();
+            var mockCalcResultLateReportingTonnage = Fixture.Create<CalcResultLateReportingTonnage>();
             var mockCalcResultLaDisposalCostData = new Mock<CalcResultLaDisposalCostData>();
             var mockCalcResultScaledUpProducersData = new Mock<CalcResultScaledupProducers>();
             var mockCalcResultPartialObligationsData = new Mock<CalcResultPartialObligations>();
             var mockCalcResultSummary = new Mock<CalcResultSummary>();
 
-            this.mockCalcResultDetailBuilder.Setup(m => m.ConstructAsync(resultsRequestDto)).ReturnsAsync(mockResultDetail.Object);
-            this.mockLapcapBuilder.Setup(m => m.ConstructAsync(resultsRequestDto)).ReturnsAsync(mockLapcapData.Object);
-            this.mockCalcResultParameterOtherCostBuilder.Setup(m => m.ConstructAsync(resultsRequestDto))
+            mockCalcResultDetailBuilder.Setup(m => m.ConstructAsync(resultsRequestDto)).ReturnsAsync(mockResultDetail.Object);
+            mockLapcapBuilder.Setup(m => m.ConstructAsync(resultsRequestDto)).ReturnsAsync(mockLapcapData.Object);
+            mockCalcResultParameterOtherCostBuilder.Setup(m => m.ConstructAsync(resultsRequestDto))
                 .ReturnsAsync(mockOtherParams.Object);
-            this.mockOnePlusFourApportionmentBuilder.Setup(m => m.ConstructAsync(resultsRequestDto, It.IsAny<CalcResult>()))
+            mockOnePlusFourApportionmentBuilder.Setup(m => m.ConstructAsync(resultsRequestDto, It.IsAny<CalcResult>()))
                 .Returns(mockOnePlusFourApp.Object);
-            this.mockCommsCostReportBuilder
+            mockCommsCostReportBuilder
                 .Setup(m => m.ConstructAsync(resultsRequestDto, It.IsAny<CalcResultOnePlusFourApportionment>(), It.IsAny<CalcResult>()))
                 .ReturnsAsync(mockCalcResultCommsCost.Object);
-            this.mockLateReportingBuilder.Setup(m => m.ConstructAsync(resultsRequestDto))
+            mockLateReportingBuilder.Setup(m => m.ConstructAsync(resultsRequestDto))
                 .ReturnsAsync(mockCalcResultLateReportingTonnage);
-            this.mockCalcRunLaDisposalCostBuilder.Setup(m => m.ConstructAsync(resultsRequestDto, It.IsAny<CalcResult>()))
+            mockCalcRunLaDisposalCostBuilder.Setup(m => m.ConstructAsync(resultsRequestDto, It.IsAny<CalcResult>()))
                 .ReturnsAsync(mockCalcResultLaDisposalCostData.Object);
-            this.mockCalcResultScaledupProducersBuilder.Setup(m => m.ConstructAsync(resultsRequestDto))
+            mockCalcResultScaledupProducersBuilder.Setup(m => m.ConstructAsync(resultsRequestDto))
                 .ReturnsAsync(mockCalcResultScaledUpProducersData.Object);
-            this.mockCalcResultPartialObligationBuilder.Setup(m => m.ConstructAsync(resultsRequestDto, mockCalcResultScaledUpProducersData.Object.ScaledupProducers ?? new List<CalcResultScaledupProducer>()))
+            mockCalcResultPartialObligationBuilder.Setup(m => m.ConstructAsync(resultsRequestDto, mockCalcResultScaledUpProducersData.Object.ScaledupProducers ?? new List<CalcResultScaledupProducer>()))
                 .ReturnsAsync(mockCalcResultPartialObligationsData.Object);
-            this.mockSummaryBuilder.Setup(x => x.ConstructAsync(It.IsAny<int>(), It.IsAny<RelativeYear>(), It.IsAny<bool>(), It.IsAny<CalcResult>()))
+            mockSummaryBuilder.Setup(x => x.ConstructAsync(It.IsAny<int>(), It.IsAny<RelativeYear>(), It.IsAny<bool>(), It.IsAny<CalcResult>()))
                 .ReturnsAsync(mockCalcResultSummary.Object);
 
-            var results = this.calcResultBuilder.BuildAsync(resultsRequestDto);
+            var results = calcResultBuilder.BuildAsync(resultsRequestDto);
             results.Wait();
             var result = results.Result;
 
@@ -155,7 +155,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             Assert.AreEqual(mockCalcResultPartialObligationsData.Object, result.CalcResultPartialObligations);
             Assert.AreEqual(mockCalcResultSummary.Object, result.CalcResultSummary);
 
-            this.mockCalcRunLaDisposalCostBuilder.Verify(m => m.ConstructAsync(resultsRequestDto, It.IsAny<CalcResult>()), Times.Once);
+            mockCalcRunLaDisposalCostBuilder.Verify(m => m.ConstructAsync(resultsRequestDto, It.IsAny<CalcResult>()), Times.Once);
 
         }
     }

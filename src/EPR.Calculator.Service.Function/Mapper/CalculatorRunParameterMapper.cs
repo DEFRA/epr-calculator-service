@@ -15,7 +15,7 @@ namespace EPR.Calculator.Service.Function.Mapper
         /// <returns>The mapped result file message.</returns>
         public CalculatorRunParameter Map(CreateResultFileMessage createResultFileMessage)
         {
-            return new CalculatorRunParameter()
+            return new CalculatorRunParameter
             {
                 RelativeYear = createResultFileMessage.RelativeYear,
                 User = createResultFileMessage.CreatedBy,
@@ -31,7 +31,7 @@ namespace EPR.Calculator.Service.Function.Mapper
         /// <returns>The mapped billing file message.</returns>
         public BillingFileMessage Map(CreateBillingFileMessage createBillingFileMessage)
         {
-            return new BillingFileMessage()
+            return new BillingFileMessage
             {
                 Id = createBillingFileMessage.CalculatorRunId,
                 ApprovedBy = createBillingFileMessage.ApprovedBy,

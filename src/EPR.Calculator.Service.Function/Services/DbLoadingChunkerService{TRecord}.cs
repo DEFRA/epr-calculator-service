@@ -52,10 +52,10 @@ namespace EPR.Calculator.Service.Function.Services
             ApplicationDBContext context,
             int chunkSize)
         {
-            this.TelemetryClient = telemetryClient;
-            this.Context = context;
-            this.Table = context.Set<TRecord>();
-            this.ChunkSize = chunkSize;
+            TelemetryClient = telemetryClient;
+            Context = context;
+            Table = context.Set<TRecord>();
+            ChunkSize = chunkSize;
 
             commandTimeoutService.SetCommandTimeout(context.Database);
         }
@@ -71,8 +71,8 @@ namespace EPR.Calculator.Service.Function.Services
         /// <inheritdoc/>
         public async Task InsertRecords(IEnumerable<TRecord> records)
         {
-            Console.WriteLine($"Loading {typeof(TRecord).Name} records in chunks of {this.ChunkSize}.");
-            this.TelemetryClient.TrackTrace($"Loading {typeof(TRecord).Name} records in chunks of {this.ChunkSize}.");
+            Console.WriteLine($"Loading {typeof(TRecord).Name} records in chunks of {ChunkSize}.");
+            TelemetryClient.TrackTrace($"Loading {typeof(TRecord).Name} records in chunks of {ChunkSize}.");
             var chunkContents = new List<TRecord>();
             var recordCount = 1;
             var chunkCount = 1;
@@ -86,9 +86,9 @@ namespace EPR.Calculator.Service.Function.Services
             foreach (var record in records)
             {
                 chunkContents.Add(record);
-                if (chunkContents.Count >= this.ChunkSize)
+                if (chunkContents.Count >= ChunkSize)
                 {
-                    await this.SaveChunk(chunkCount, chunkTimer, chunkContents);
+                    await SaveChunk(chunkCount, chunkTimer, chunkContents);
                     chunkContents.Clear();
                     chunkCount++;
                 }
@@ -97,21 +97,21 @@ namespace EPR.Calculator.Service.Function.Services
                 currentChunkRecordCount++;
             }
 
-            await this.SaveChunk(chunkCount, chunkTimer, chunkContents);
+            await SaveChunk(chunkCount, chunkTimer, chunkContents);
 
             totalTimer.Stop();
             Console.WriteLine($"Total time taken to insert chunks: {totalTimer.Elapsed}");
-            this.TelemetryClient.TrackTrace($"Total time taken to insert chunks: {totalTimer.Elapsed}");
+            TelemetryClient.TrackTrace($"Total time taken to insert chunks: {totalTimer.Elapsed}");
         }
 
         private async Task SaveChunk(int chunkCount, Stopwatch chunkTimer, IEnumerable<TRecord> chunkBuffer)
         {
-            this.Table.AddRange(chunkBuffer);
-            await this.Context.SaveChangesAsync();
+            Table.AddRange(chunkBuffer);
+            await Context.SaveChangesAsync();
 
             chunkTimer.Stop();
             Console.WriteLine($"Time to insert chunk {chunkCount}: {chunkTimer.Elapsed}");
-            this.TelemetryClient.TrackTrace($"Time to insert chunk {chunkCount}: {chunkTimer.Elapsed}");
+            TelemetryClient.TrackTrace($"Time to insert chunk {chunkCount}: {chunkTimer.Elapsed}");
             chunkTimer.Restart();
         }
     }

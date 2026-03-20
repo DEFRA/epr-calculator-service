@@ -38,7 +38,7 @@ namespace EPR.Calculator.Service.Function.Services
 
                 var producers = calcResult.CalcResultSummary.ProducerDisposalFees.Where(producer => producer.Level == CommonConstants.LevelOne.ToString());
 
-                var materials = await this.materialService.GetMaterials();
+                var materials = await materialService.GetMaterials();
 
                 var runId = calcResult.CalcResultDetail.RunId;
 
@@ -66,11 +66,11 @@ namespace EPR.Calculator.Service.Function.Services
 
                 if (producerInvoiceNetTonnage.Exists(t => t.CalculatorRunId > 0))
                 {
-                    await this.producerInvoiceMaterialChunker.InsertRecords(producerInvoiceNetTonnage);
+                    await producerInvoiceMaterialChunker.InsertRecords(producerInvoiceNetTonnage);
 
                     var endTime = DateTime.UtcNow;
                     var timeDiff = startTime - endTime;
-                    this.telemetryLogger.LogInformation(new TrackMessage
+                    telemetryLogger.LogInformation(new TrackMessage
                     {
                         RunId = calcResult.CalcResultDetail.RunId,
                         RunName = calcResult.CalcResultDetail.RunName,
@@ -81,7 +81,7 @@ namespace EPR.Calculator.Service.Function.Services
                 else
                 {
 
-                    this.telemetryLogger.LogInformation(new TrackMessage
+                    telemetryLogger.LogInformation(new TrackMessage
                     {
                         RunId = calcResult.CalcResultDetail.RunId,
                         RunName = calcResult.CalcResultDetail.RunName,
@@ -93,7 +93,7 @@ namespace EPR.Calculator.Service.Function.Services
             }
             catch (Exception exception)
             {
-                this.telemetryLogger.LogError(new ErrorMessage
+                telemetryLogger.LogError(new ErrorMessage
                 {
                     RunId = calcResult.CalcResultDetail.RunId,
                     RunName = calcResult.CalcResultDetail.RunName,

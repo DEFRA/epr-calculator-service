@@ -37,10 +37,10 @@ namespace EPR.Calculator.Service.Function.Services
         public async Task<string> UploadFileContentAsync(
             (string FileName, string Content, string RunName, string ContainerName, bool Overwrite) args)
         {
-            int? runId = int.TryParse(args.FileName.Split('-')[0], out var id) ? id : (int?)null;
+            int? runId = int.TryParse(args.FileName.Split('-')[0], out var id) ? id : null;
             try
             {
-                this.telemetryLogger.LogInformation(new TrackMessage
+                telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = runId,
                     RunName = args.RunName,
@@ -53,7 +53,7 @@ namespace EPR.Calculator.Service.Function.Services
                 var blobClient = blobContainerClient.GetBlobClient(args.FileName);
                 var binaryData = BinaryData.FromString(args.Content);
                 await blobClient.UploadAsync(binaryData, args.Overwrite);
-                this.telemetryLogger.LogInformation(new TrackMessage
+                telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = runId,
                     RunName = args.RunName,
@@ -63,7 +63,7 @@ namespace EPR.Calculator.Service.Function.Services
             }
             catch (Exception ex)
             {
-                this.telemetryLogger.LogError(new ErrorMessage
+                telemetryLogger.LogError(new ErrorMessage
                 {
                     RunId = runId,
                     RunName = args.RunName,

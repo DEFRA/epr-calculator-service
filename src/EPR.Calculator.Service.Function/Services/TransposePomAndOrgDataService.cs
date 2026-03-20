@@ -43,10 +43,10 @@ namespace EPR.Calculator.Service.Function.Services
             ICalculatorTelemetryLogger telemetryLogger)
         {
             this.context = context;
-            this.CommandTimeoutService = commandTimeoutService;
-            this.ProducerDetailChunker = producerDetailChunker;
-            this.ProducerReportedMaterialChunker = producerReportedMaterialChunker;
-            this.ErrorReportService = errorReportService;
+            CommandTimeoutService = commandTimeoutService;
+            ProducerDetailChunker = producerDetailChunker;
+            ProducerReportedMaterialChunker = producerReportedMaterialChunker;
+            ErrorReportService = errorReportService;
             this.telemetryLogger = telemetryLogger;
         }
 
@@ -65,18 +65,18 @@ namespace EPR.Calculator.Service.Function.Services
         {
             var startTime = DateTime.UtcNow;
 
-            this.CommandTimeoutService.SetCommandTimeout(context.Database);
+            CommandTimeoutService.SetCommandTimeout(context.Database);
 
             CalculatorRun? calculatorRun = null;
             try
             {
-                this.telemetryLogger.LogInformation(new TrackMessage
+                telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
                     Message = $"Transpose POM and ORG data for run: {resultsRequestDto.RunId}",
                 });
-                calculatorRun = await this.context.CalculatorRuns.SingleOrDefaultAsync(
+                calculatorRun = await context.CalculatorRuns.SingleOrDefaultAsync(
                 run => run.Id == resultsRequestDto.RunId,
                 cancellationToken);
                 if (calculatorRun == null)
@@ -84,12 +84,12 @@ namespace EPR.Calculator.Service.Function.Services
                     return false;
                 }
 
-                await this.Transpose(
+                await Transpose(
                     resultsRequestDto,
                     cancellationToken);
                 var endTime = DateTime.UtcNow;
                 var timeDiff = startTime - endTime;
-                this.telemetryLogger.LogInformation(new TrackMessage
+                telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
@@ -99,7 +99,7 @@ namespace EPR.Calculator.Service.Function.Services
             }
             catch (OperationCanceledException exception)
             {
-                this.telemetryLogger.LogError(new ErrorMessage
+                telemetryLogger.LogError(new ErrorMessage
                 {
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
@@ -110,9 +110,9 @@ namespace EPR.Calculator.Service.Function.Services
                 if (calculatorRun != null)
                 {
                     calculatorRun.CalculatorRunClassificationId = (int)RunClassification.ERROR;
-                    this.context.CalculatorRuns.Update(calculatorRun);
-                    await this.context.SaveChangesAsync();
-                    this.telemetryLogger.LogError(new ErrorMessage
+                    context.CalculatorRuns.Update(calculatorRun);
+                    await context.SaveChangesAsync();
+                    telemetryLogger.LogError(new ErrorMessage
                     {
                         RunId = resultsRequestDto.RunId,
                         RunName = runName,
@@ -125,7 +125,7 @@ namespace EPR.Calculator.Service.Function.Services
             }
             catch (Exception exception)
             {
-                this.telemetryLogger.LogError(new ErrorMessage
+                telemetryLogger.LogError(new ErrorMessage
                 {
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
@@ -135,9 +135,9 @@ namespace EPR.Calculator.Service.Function.Services
                 if (calculatorRun != null)
                 {
                     calculatorRun.CalculatorRunClassificationId = (int)RunClassification.ERROR;
-                    this.context.CalculatorRuns.Update(calculatorRun);
-                    await this.context.SaveChangesAsync();
-                    this.telemetryLogger.LogError(new ErrorMessage
+                    context.CalculatorRuns.Update(calculatorRun);
+                    await context.SaveChangesAsync();
+                    telemetryLogger.LogError(new ErrorMessage
                     {
                         RunId = resultsRequestDto.RunId,
                         RunName = runName,
@@ -157,19 +157,19 @@ namespace EPR.Calculator.Service.Function.Services
         [ExcludeFromCodeCoverage]
         public async Task<bool> Transpose(CalcResultsRequestDto resultsRequestDto, CancellationToken cancellationToken)
         {
-            this.context.ChangeTracker.AutoDetectChangesEnabled = false;
+            context.ChangeTracker.AutoDetectChangesEnabled = false;
             var newProducerDetails = new List<ProducerDetail>();
             var newProducerReportedMaterials = new List<ProducerReportedMaterial>();
 
-            var materials = await this.context.Material.ToListAsync(cancellationToken);
+            var materials = await context.Material.ToListAsync(cancellationToken);
 
-            var calculatorRun = await this.context.CalculatorRuns
+            var calculatorRun = await context.CalculatorRuns
                 .Where(x => x.Id == resultsRequestDto.RunId)
                 .SingleAsync(cancellationToken);
-            var calculatorRunOrgDataDetails = await this.context.CalculatorRunOrganisationDataDetails
+            var calculatorRunOrgDataDetails = await context.CalculatorRunOrganisationDataDetails
                 .Where(x => x.CalculatorRunOrganisationDataMasterId == calculatorRun.CalculatorRunOrganisationDataMasterId)
                 .ToListAsync(cancellationToken);
-            var calculatorRunPomDataDetails = await this.context.CalculatorRunPomDataDetails
+            var calculatorRunPomDataDetails = await context.CalculatorRunPomDataDetails
                 .Where(x => x.CalculatorRunPomDataMasterId == calculatorRun.CalculatorRunPomDataMasterId)
                 .ToListAsync(cancellationToken);
 
@@ -191,7 +191,7 @@ namespace EPR.Calculator.Service.Function.Services
 
             if (IsCalculatorRunPOMMasterIdExists(calculatorRun))
             {
-                var organisationDataMaster = await this.context.CalculatorRunOrganisationDataMaster
+                var organisationDataMaster = await context.CalculatorRunOrganisationDataMaster
                     .SingleAsync(x => x.Id == calculatorRun.CalculatorRunOrganisationDataMasterId, cancellationToken);
 
                 var OrganisationsList = GetAllOrganisationsBasedonRunId(calculatorRunOrgDataDetails);
@@ -205,7 +205,7 @@ namespace EPR.Calculator.Service.Function.Services
                     .ToList();
 
                 // Get the calculator run pom data master record based on the CalculatorRunPomDataMasterId
-                var pomDataMaster = await this.context.CalculatorRunPomDataMaster
+                var pomDataMaster = await context.CalculatorRunPomDataMaster
                     .SingleAsync(x => x.Id == calculatorRun.CalculatorRunPomDataMasterId, cancellationToken);
 
                 foreach (var organisation in organisationDataDetails.Where(t => !string.IsNullOrWhiteSpace(t.OrganisationName)))
@@ -289,8 +289,8 @@ namespace EPR.Calculator.Service.Function.Services
                     }
                 }
 
-                await this.ProducerDetailChunker.InsertRecords(newProducerDetails);
-                await this.ProducerReportedMaterialChunker.InsertRecords(newProducerReportedMaterials);
+                await ProducerDetailChunker.InsertRecords(newProducerDetails);
+                await ProducerReportedMaterialChunker.InsertRecords(newProducerReportedMaterials);
 
             }
 

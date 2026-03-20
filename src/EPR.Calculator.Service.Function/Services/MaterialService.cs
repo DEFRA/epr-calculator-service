@@ -16,7 +16,7 @@ namespace EPR.Calculator.Service.Function.Services
 
         public async Task<List<MaterialDetail>> GetMaterials()
         {
-            var materials = await this.context.Material.ToListAsync();
+            var materials = await context.Material.ToListAsync();
             return MaterialMapper.Map(materials);
         }
     }

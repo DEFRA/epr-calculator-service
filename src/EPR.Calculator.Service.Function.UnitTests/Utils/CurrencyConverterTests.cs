@@ -29,7 +29,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void CanCallFormatAsGbpCurrencyForZeroCurrency()
         {
             // Act
-            var result = CurrencyConverterUtils.ConvertToCurrency(0, 2);
+            var result = CurrencyConverterUtils.ConvertToCurrency(0);
 
             // Assert
             Assert.AreEqual("£0.00", result);
@@ -39,7 +39,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void CanCallFormatAsGbpCurrencyWithRounding()
         {
             // Act
-            var result = CurrencyConverterUtils.ConvertToCurrency(10.578m, 2);
+            var result = CurrencyConverterUtils.ConvertToCurrency(10.578m);
 
             // Assert
             Assert.AreEqual("£10.58", result);

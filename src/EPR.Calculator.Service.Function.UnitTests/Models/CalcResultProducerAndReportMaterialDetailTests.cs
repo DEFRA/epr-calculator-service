@@ -12,7 +12,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
 
         public CalcResultProducerAndReportMaterialDetailTests()
         {
-            this.calcResultProducerAndReportMaterialDetail = new CalcResultProducerAndReportMaterialDetail
+            calcResultProducerAndReportMaterialDetail = new CalcResultProducerAndReportMaterialDetail
             {
                 ProducerDetail = new ProducerDetail
                 {
@@ -41,10 +41,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var testValue = fixture.Create<ProducerDetail>();
 
             // Act
-            this.calcResultProducerAndReportMaterialDetail.ProducerDetail = testValue;
+            calcResultProducerAndReportMaterialDetail.ProducerDetail = testValue;
 
             // Assert
-            Assert.AreSame(testValue, this.calcResultProducerAndReportMaterialDetail.ProducerDetail);
+            Assert.AreSame(testValue, calcResultProducerAndReportMaterialDetail.ProducerDetail);
         }
 
         [TestMethod]
@@ -56,10 +56,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var testValue = fixture.Create<ProducerReportedMaterial>();
 
             // Act
-            this.calcResultProducerAndReportMaterialDetail.ProducerReportedMaterial = testValue;
+            calcResultProducerAndReportMaterialDetail.ProducerReportedMaterial = testValue;
 
             // Assert
-            Assert.AreSame(testValue, this.calcResultProducerAndReportMaterialDetail.ProducerReportedMaterial);
+            Assert.AreSame(testValue, calcResultProducerAndReportMaterialDetail.ProducerReportedMaterial);
         }
     }
 }

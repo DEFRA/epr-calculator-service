@@ -56,11 +56,11 @@ namespace EPR.Calculator.Service.Function
         [FunctionName("EPRCalculatorRunServiceBusQueueTrigger")]
         public async Task Run([ServiceBusTrigger(queueName: "%ServiceBusQueueName%", Connection = "ServiceBusConnectionString")] string myQueueItem)
         {
-            this.telemetryLogger.LogInformation(new TrackMessage { Message = "Executing the function app started" });            
+            telemetryLogger.LogInformation(new TrackMessage { Message = "Executing the function app started" });            
 
             if (string.IsNullOrEmpty(myQueueItem))
             {
-                this.LogError("Message is null or empty", new ArgumentNullException(nameof(myQueueItem)));
+                LogError("Message is null or empty", new ArgumentNullException(nameof(myQueueItem)));
                 return;
             }
 
@@ -71,24 +71,24 @@ namespace EPR.Calculator.Service.Function
             {
                 resultMessageType = messageTypeService.DeserializeMessage(myQueueItem);
 
-                var runName = await this.runNameService.GetRunNameAsync(resultMessageType.CalculatorRunId);
+                var runName = await runNameService.GetRunNameAsync(resultMessageType.CalculatorRunId);
 
                 if (resultMessageType is CreateBillingFileMessage billingmessage)
                 {
-                    this.telemetryLogger.LogInformation(new TrackMessage { Message = "CreateBillingFileMessage" });
-                    var billingFileMessage = this.calculatorRunParameterMapper.Map(billingmessage);
-                    this.telemetryLogger.LogInformation(new TrackMessage { Message = "After Billing File Map" });
-                    processStatus = await this.prepareBillingFileService.PrepareBillingFileAsync(billingFileMessage.Id, runName, billingFileMessage.ApprovedBy);
+                    telemetryLogger.LogInformation(new TrackMessage { Message = "CreateBillingFileMessage" });
+                    var billingFileMessage = calculatorRunParameterMapper.Map(billingmessage);
+                    telemetryLogger.LogInformation(new TrackMessage { Message = "After Billing File Map" });
+                    processStatus = await prepareBillingFileService.PrepareBillingFileAsync(billingFileMessage.Id, runName, billingFileMessage.ApprovedBy);
                 }
                 else if (resultMessageType is CreateResultFileMessage resultmessage)
                 {
-                    var calculatorRunParameter = this.calculatorRunParameterMapper.Map(resultmessage);
-                    this.telemetryLogger.LogInformation(new TrackMessage { Message = $"Process is going start with message type: {calculatorRunParameter.MessageType}" });
+                    var calculatorRunParameter = calculatorRunParameterMapper.Map(resultmessage);
+                    telemetryLogger.LogInformation(new TrackMessage { Message = $"Process is going start with message type: {calculatorRunParameter.MessageType}" });
 
-                    processStatus = await this.calculatorRunService.PrepareResultsFileAsync(calculatorRunParameter, runName);
+                    processStatus = await calculatorRunService.PrepareResultsFileAsync(calculatorRunParameter, runName);
                 }
 
-                this.telemetryLogger.LogInformation(new TrackMessage
+                telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = resultMessageType.CalculatorRunId,
                     RunName = runName,
@@ -98,7 +98,7 @@ namespace EPR.Calculator.Service.Function
                 if (!processStatus)
                 {
                     // Set the run classification as ERROR
-                    await this.classificationService.UpdateRunClassification(resultMessageType.CalculatorRunId, RunClassification.ERROR);
+                    await classificationService.UpdateRunClassification(resultMessageType.CalculatorRunId, RunClassification.ERROR);
                 }
             }
             catch (Exception exception)
@@ -106,13 +106,13 @@ namespace EPR.Calculator.Service.Function
                 if (resultMessageType != null)
                 {
                     // Set the run classification as ERROR
-                    await this.classificationService.UpdateRunClassification(resultMessageType.CalculatorRunId, RunClassification.ERROR);
+                    await classificationService.UpdateRunClassification(resultMessageType.CalculatorRunId, RunClassification.ERROR);
                 }
 
-                this.LogError($"Error - {myQueueItem} - {exception.Message}", exception);
+                LogError($"Error - {myQueueItem} - {exception.Message}", exception);
             }
 
-            this.telemetryLogger.LogInformation(new TrackMessage { Message = "Azure function app execution finished" });
+            telemetryLogger.LogInformation(new TrackMessage { Message = "Azure function app execution finished" });
         }
 
         private void LogError(string message, Exception exception)
@@ -124,7 +124,7 @@ namespace EPR.Calculator.Service.Function
                 RunId = null,
                 RunName = string.Empty,
             };
-            this.telemetryLogger.LogError(errorMessage);
+            telemetryLogger.LogError(errorMessage);
         }
     }
 }

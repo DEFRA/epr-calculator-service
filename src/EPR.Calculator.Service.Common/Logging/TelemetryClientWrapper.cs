@@ -25,7 +25,7 @@ namespace EPR.Calculator.Service.Common.Logging
         /// <param name="telemetry">The trace telemetry to track.</param>
         public void TrackTrace(TraceTelemetry telemetry)
         {
-            this.telemetryClient.TrackTrace(telemetry);
+            telemetryClient.TrackTrace(telemetry);
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace EPR.Calculator.Service.Common.Logging
         /// <param name="telemetry">The exception telemetry to track.</param>
         public void TrackException(ExceptionTelemetry telemetry)
         {
-            this.telemetryClient.TrackException(telemetry);
+            telemetryClient.TrackException(telemetry);
         }
     }
 }

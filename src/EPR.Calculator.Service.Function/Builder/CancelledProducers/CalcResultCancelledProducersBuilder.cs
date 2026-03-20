@@ -23,14 +23,14 @@ namespace EPR.Calculator.Service.Function.Builder.CancelledProducers
         {
             this.context = context;
             this.materialService = materialService;
-            this.materials = new List<MaterialDetail>();
+            materials = new List<MaterialDetail>();
             this.producerDetailsService = producerDetailsService;
         }
 
         public async Task<CalcResultCancelledProducersResponse> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
         {
 
-            this.materials = this.materialService.GetMaterials().Result;
+            materials = materialService.GetMaterials().Result;
 
             return await Task.Run(() =>
             {
@@ -51,10 +51,10 @@ namespace EPR.Calculator.Service.Function.Builder.CancelledProducers
         {
             IEnumerable<int> allProducerIds = await GetAllProducerIds(relativeYear);
 
-            var producerIdsForCurrentRun = await this.producerDetailsService.GetProducers(runId);
+            var producerIdsForCurrentRun = await producerDetailsService.GetProducers(runId);
 
             var missingProducersIdsInCurrentRun = allProducerIds.Where(t => !producerIdsForCurrentRun.Any(k => k == t));
-            var missingProducersInCurrentRun = await this.producerDetailsService.GetProducerDetails(relativeYear, missingProducersIdsInCurrentRun);
+            var missingProducersInCurrentRun = await producerDetailsService.GetProducerDetails(relativeYear, missingProducersIdsInCurrentRun);
 
             // populate cancelled producers
             var calcResultCancelledProducers = new List<CalcResultCancelledProducersDto>();
@@ -84,13 +84,13 @@ namespace EPR.Calculator.Service.Function.Builder.CancelledProducers
             {
                 var producerId = missingProducerId is null ? 0 : missingProducerId;
 
-                calcResultCancelledProducers.Add(new CalcResultCancelledProducersDto()
+                calcResultCancelledProducers.Add(new CalcResultCancelledProducersDto
                 {
                     ProducerId = (int)producerId,
                     ProducerOrSubsidiaryNameValue = producerDetails.FirstOrDefault(t => t.ProducerId == producerId)?.ProducerName,
                     TradingNameValue = producerDetails.FirstOrDefault(t => t.ProducerId == producerId)?.TradingName,
 
-                    LastTonnage = new LastTonnage()
+                    LastTonnage = new LastTonnage
                     {
                         AluminiumValue = GetInvoicedTonnageForMaterials(filteredMissingProducers, GetMaterialId(MaterialNames.Aluminium), producerId),
                         FibreCompositeValue = GetInvoicedTonnageForMaterials(filteredMissingProducers, GetMaterialId(MaterialNames.FibreComposite), producerId),
@@ -120,7 +120,7 @@ namespace EPR.Calculator.Service.Function.Builder.CancelledProducers
                           join cr in context.CalculatorRuns.AsNoTracking()
                           on prfb.CalculatorRunId equals cr.Id
                           where
-                             new int[]
+                             new[]
                              {
                                                             RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
                                                             RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
@@ -155,7 +155,7 @@ namespace EPR.Calculator.Service.Function.Builder.CancelledProducers
                                                         && p.BillingInstructionAcceptReject != null
                                                         && p.BillingInstructionAcceptReject == CommonConstants.Accepted
                                                         && p.SuggestedBillingInstruction == CommonConstants.CancelStatus
-                                                        && new int[]
+                                                        && new[]
                                                         {
                                                             RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
                                                             RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,

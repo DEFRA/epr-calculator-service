@@ -17,7 +17,7 @@ namespace EPR.Calculator.Service.Common.Logging
         /// <param name="fallbackToConsole">Will log to the console if enabled.</param>
         public CalculatorTelemetryLogger(ITelemetryClientWrapper telemetryClient, bool fallbackToConsole)
         {
-            this._telemetryClient = telemetryClient;
+            _telemetryClient = telemetryClient;
             _consoleWrapper = fallbackToConsole ? new ConsoleWrapper() : null;
         }
 
@@ -27,7 +27,7 @@ namespace EPR.Calculator.Service.Common.Logging
         /// <param name="logMessage">The log message to log.</param>
         public void LogInformation(TrackMessage logMessage)
         {
-            this.TrackTrace(logMessage, SeverityLevel.Information);
+            TrackTrace(logMessage, SeverityLevel.Information);
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace EPR.Calculator.Service.Common.Logging
                 Message = $"{formattedMessage} ExceptionMessage: {errorMessage.Exception.Message}",
             };
             AddProperties(exceptionTelemetry.Properties, errorMessage.RunId, errorMessage.RunName);
-            this._telemetryClient.TrackException(exceptionTelemetry);
+            _telemetryClient.TrackException(exceptionTelemetry);
             
             _consoleWrapper?.WriteLine(formattedMessage);
             _consoleWrapper?.WriteLine(errorMessage.Exception.ToString());
@@ -89,7 +89,7 @@ namespace EPR.Calculator.Service.Common.Logging
                 SeverityLevel = severityLevel,
             };
             AddProperties(traceTelemetry.Properties, logMessage.RunId, logMessage.RunName);
-            this._telemetryClient.TrackTrace(traceTelemetry);
+            _telemetryClient.TrackTrace(traceTelemetry);
             
             _consoleWrapper?.WriteLine(formattedMessage);
         }

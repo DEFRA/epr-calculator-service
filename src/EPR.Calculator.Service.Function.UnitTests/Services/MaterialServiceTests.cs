@@ -23,16 +23,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 .UseInMemoryDatabase(databaseName: "TestDatabase")
                 .Options;
 
-            this.dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
-            this.dbContext = new ApplicationDBContext(options);
-            this.dbContextFactory.Setup(factory => factory.CreateDbContext()).Returns(this.dbContext);
-            this.materialService = new MaterialService(this.dbContextFactory.Object);
+            dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
+            dbContext = new ApplicationDBContext(options);
+            dbContextFactory.Setup(factory => factory.CreateDbContext()).Returns(dbContext);
+            materialService = new MaterialService(dbContextFactory.Object);
         }
 
         [TestCleanup]
         public void Cleanup()
         {
-            this.dbContext?.Dispose();
+            dbContext?.Dispose();
         }
 
         [TestMethod]
@@ -52,11 +52,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 });
             }
 
-            this.dbContext.Material.AddRange(materials);
-            this.dbContext.SaveChanges();
+            dbContext.Material.AddRange(materials);
+            dbContext.SaveChanges();
 
             // Act
-            var result = await this.materialService.GetMaterials();
+            var result = await materialService.GetMaterials();
 
             // Assert
             Assert.AreEqual(8, result.Count);

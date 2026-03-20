@@ -17,23 +17,23 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var options = new DbContextOptionsBuilder<ApplicationDBContext>()
                 .UseInMemoryDatabase(databaseName: "PayCal")
                 .Options;
-            this.context = new ApplicationDBContext(options);
+            context = new ApplicationDBContext(options);
         }
 
         [TestCleanup]
         public void TearDown()
         {
-            this.context?.Database.EnsureDeleted();
+            context?.Database.EnsureDeleted();
         }
 
         [TestMethod]
         public async Task GetProducerDetailsTest_Returns_CancelledProducers()
         {
-            TestDataHelper.SeedDatabaseForInitialRun(this.context);
+            TestDataHelper.SeedDatabaseForInitialRun(context);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto() { RunId = 1, RelativeYear = new RelativeYear(2025) };
-            var producerDetailService = new ProducerDetailService(this.context);
+            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
+            var producerDetailService = new ProducerDetailService(context);
 
             List<int> producerIds = new List<int> { 1 };
 
@@ -48,10 +48,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         [TestMethod]
         public async Task GetProducerDetailsTest_DoesNotReturns_CancelledProducers()
         {
-            TestDataHelper.SeedDatabaseForUnclassified(this.context);
+            TestDataHelper.SeedDatabaseForUnclassified(context);
 
             // Arrange
-            var producerDetailService = new ProducerDetailService(this.context);
+            var producerDetailService = new ProducerDetailService(context);
             List<int> producerIds = new List<int> { 1 };
             // Act
             var result = await producerDetailService.GetProducerDetails(new RelativeYear(2025), producerIds);
@@ -63,10 +63,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         [TestMethod]
         public async Task GetProducers_Returns_Producers()
         {
-            TestDataHelper.SeedDatabaseForUnclassified(this.context);
+            TestDataHelper.SeedDatabaseForUnclassified(context);
 
             // Arrange
-            var producerDetailService = new ProducerDetailService(this.context);
+            var producerDetailService = new ProducerDetailService(context);
 
             // Act
             var result = await producerDetailService.GetProducers(1);
@@ -81,7 +81,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
 
             // Arrange
-            var producerDetailService = new ProducerDetailService(this.context);
+            var producerDetailService = new ProducerDetailService(context);
 
         
             List<int> producerIds = new List<int> { 1 };

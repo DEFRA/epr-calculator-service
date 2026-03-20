@@ -68,7 +68,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                 x.ParameterType == CommunicationCostByMaterial && materialNames.Contains(x.ParameterCategory));
 
             telemetryClient.TrackTrace("Getting producer reported materials...");
-            var producerReportedMaterials = await this.GetProducerReportedMaterials(context, runId);
+            var producerReportedMaterials = await GetProducerReportedMaterials(context, runId);
 
             telemetryClient.TrackTrace("Getting headers...");
             var list = new List<CalcResultCommsCostCommsCostByMaterial>();
@@ -199,7 +199,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                               PackagingTonnageRedMedical = mat.PackagingTonnageRedMedical,
                               PackagingTonnageAmberMedical = mat.PackagingTonnageAmberMedical,
                               PackagingTonnageGreenMedical = mat.PackagingTonnageGreenMedical,
-                              ProducerDetail = new ProducerDetail() { ProducerId = pd.ProducerId },
+                              ProducerDetail = new ProducerDetail { ProducerId = pd.ProducerId },
                           }).Distinct().ToListAsync();
         }
 
@@ -267,7 +267,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             CultureInfo culture)
         {
             var commsCostByCountryList = new List<CalcResultCommsCostOnePlusFourApportionment>();
-            commsCostByCountryList.Add(new CalcResultCommsCostCommsCostByMaterial()
+            commsCostByCountryList.Add(new CalcResultCommsCostCommsCostByMaterial
             {
                 England = CommsCostByMaterialHeaderConstant.England,
                 Wales = CommsCostByMaterialHeaderConstant.Wales,

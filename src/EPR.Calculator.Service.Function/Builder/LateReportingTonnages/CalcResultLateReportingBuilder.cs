@@ -23,11 +23,11 @@ namespace EPR.Calculator.Service.Function.Builder.LateReportingTonnages
 
         public async Task<CalcResultLateReportingTonnage> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
         {
-            var result = await (from run in this.context.CalculatorRuns
-                                join master in this.context.DefaultParameterSettings
+            var result = await (from run in context.CalculatorRuns
+                                join master in context.DefaultParameterSettings
                                 on run.DefaultParameterSettingMasterId equals master.Id
-                                join detail in this.context.DefaultParameterSettingDetail on master.Id equals detail.DefaultParameterSettingMasterId
-                                join template in this.context.DefaultParameterTemplateMasterList on detail.ParameterUniqueReferenceId equals template.ParameterUniqueReferenceId
+                                join detail in context.DefaultParameterSettingDetail on master.Id equals detail.DefaultParameterSettingMasterId
+                                join template in context.DefaultParameterTemplateMasterList on detail.ParameterUniqueReferenceId equals template.ParameterUniqueReferenceId
                                 where run.Id == resultsRequestDto.RunId && template.ParameterType == TonnageHeading
                                 select new { template.ParameterCategory, detail.ParameterValue}).ToListAsync();
 

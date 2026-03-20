@@ -1,4 +1,4 @@
-﻿using AutoFixture;
+using AutoFixture;
 using EPR.Calculator.Service.Function.Builder.Summary.Common;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
@@ -15,7 +15,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
 
         public CalcResultSummaryUtilTests()
         {
-            this.calcResult = new CalcResult
+            calcResult = new CalcResult
             {
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
@@ -24,11 +24,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
                 CalcResultLaDisposalCostData = TestDataHelper.GetCalcResultLaDisposalCostData(),
                 CalcResultLapcapData = TestDataHelper.GetCalcResultLapcapData(),
                 CalcResultOnePlusFourApportionment = TestDataHelper.GetCalcResultOnePlusFourApportionment(),
-                CalcResultParameterCommunicationCost = this.GetCalcResultParameterCommunicationCost(),
+                CalcResultParameterCommunicationCost = GetCalcResultParameterCommunicationCost(),
                 CalcResultSummary = TestDataHelper.GetCalcResultSummary(),
                 CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
-                CalcResultLateReportingTonnageData = this.GetCalcResultLateReportingTonnage(),
-                CalcResultModulation = null,
+                CalcResultLateReportingTonnageData = GetCalcResultLateReportingTonnage(),
+                CalcResultModulation = null
             };
         }
 
@@ -522,7 +522,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
 
             // Act
-            var result = CalcResultSummaryUtil.GetPricePerTonne(material, this.calcResult);
+            var result = CalcResultSummaryUtil.GetPricePerTonne(material, calcResult);
 
             // Assert
             Assert.AreEqual(0.6676m, result);
@@ -532,10 +532,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetPricePerTonne_NonMatchingMaterial()
         {
             // Arrange
-            var material = this.Fixture.Create<MaterialDetail>();
+            var material = Fixture.Create<MaterialDetail>();
 
             // Act
-            var result = CalcResultSummaryUtil.GetPricePerTonne(material, this.calcResult);
+            var result = CalcResultSummaryUtil.GetPricePerTonne(material, calcResult);
 
             // Assert
             Assert.AreEqual(0m, result);
@@ -552,7 +552,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
-            var result = CalcResultSummaryUtil.GetProducerDisposalFee(producer, producerAndSubsidiaries, material, this.calcResult, scaledupProducers, partialObligations);
+            var result = CalcResultSummaryUtil.GetProducerDisposalFee(producer, producerAndSubsidiaries, material, calcResult, scaledupProducers, partialObligations);
 
             // Assert
             Assert.AreEqual(654.248000m, result);
@@ -568,7 +568,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
-            var result = CalcResultSummaryUtil.GetProducerDisposalFeeProducerTotal(producers, material, this.calcResult, scaledupProducers, partialObligations);
+            var result = CalcResultSummaryUtil.GetProducerDisposalFeeProducerTotal(producers, material, calcResult, scaledupProducers, partialObligations);
 
             // Assert
             Assert.AreEqual(1962.744000m, result);
@@ -598,7 +598,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
-            var result = CalcResultSummaryUtil.GetProducerDisposalFeeProducerTotal(producers, material, this.calcResult, scaledupProducers, partialObligations);
+            var result = CalcResultSummaryUtil.GetProducerDisposalFeeProducerTotal(producers, material, calcResult, scaledupProducers, partialObligations);
 
             // Assert
             Assert.AreEqual(CommonConstants.DefaultMinValue, result);
@@ -615,7 +615,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
-            var result = CalcResultSummaryUtil.GetBadDebtProvision(producer, producerAndSubsidiaries, material, this.calcResult, scaledupProducers, partialObligations);
+            var result = CalcResultSummaryUtil.GetBadDebtProvision(producer, producerAndSubsidiaries, material, calcResult, scaledupProducers, partialObligations);
 
             // Assert
             Assert.AreEqual(39.254880m, result);
@@ -630,11 +630,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
-            var calculatorResult = this.calcResult;
+            var calculatorResult = calcResult;
             calculatorResult.CalcResultParameterOtherCost.BadDebtProvision = new KeyValuePair<string, string>("6 Bad Debt Provision", "some value");
 
             // Act
-            var result = CalcResultSummaryUtil.GetBadDebtProvision(producer, producers, material, this.calcResult, scaledupProducers, partialObligations);
+            var result = CalcResultSummaryUtil.GetBadDebtProvision(producer, producers, material, calcResult, scaledupProducers, partialObligations);
 
             // Assert
             Assert.AreEqual(CommonConstants.DefaultMinValue, result);
@@ -650,7 +650,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
-            var result = CalcResultSummaryUtil.GetBadDebtProvisionProducerTotal(producers, material, this.calcResult, scaledupProducers, partialObligations);
+            var result = CalcResultSummaryUtil.GetBadDebtProvisionProducerTotal(producers, material, calcResult, scaledupProducers, partialObligations);
 
             // Assert
             Assert.AreEqual(117.76464000m, result);
@@ -678,11 +678,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
-            var calculatorResult = this.calcResult;
+            var calculatorResult = calcResult;
             calculatorResult.CalcResultParameterOtherCost.BadDebtProvision = new KeyValuePair<string, string>("6 Bad Debt Provision", "some value");
 
             // Act
-            var result = CalcResultSummaryUtil.GetBadDebtProvisionProducerTotal(producers, material, this.calcResult, scaledupProducers, partialObligations);
+            var result = CalcResultSummaryUtil.GetBadDebtProvisionProducerTotal(producers, material, calcResult, scaledupProducers, partialObligations);
 
             // Assert
             Assert.AreEqual(CommonConstants.DefaultMinValue, result);
@@ -699,7 +699,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
-            var result = CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvision(producer, producerAndSubsidiaries, material, this.calcResult, scaledupProducers, partialObligations);
+            var result = CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvision(producer, producerAndSubsidiaries, material, calcResult, scaledupProducers, partialObligations);
 
             // Assert
             Assert.AreEqual(693.50288000m, result);
@@ -714,12 +714,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
-            var calculatorResult = this.calcResult;
+            var calculatorResult = calcResult;
             calculatorResult.CalcResultParameterOtherCost.BadDebtProvision = new KeyValuePair<string, string>("6 Bad Debt Provision", "some value");
 
 
             // Act
-            var result = CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvision(producer, producers, material, this.calcResult, scaledupProducers, partialObligations);
+            var result = CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvision(producer, producers, material, calcResult, scaledupProducers, partialObligations);
 
             // Assert
             Assert.AreEqual(CommonConstants.DefaultMinValue, result);
@@ -735,7 +735,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
-            var result = CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvisionProducerTotal(producers, material, this.calcResult, scaledupProducers, partialObligations);
+            var result = CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvisionProducerTotal(producers, material, calcResult, scaledupProducers, partialObligations);
 
             // Assert
             Assert.AreEqual(2080.50864000m, result);
@@ -750,9 +750,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
-            this.calcResult.CalcResultParameterOtherCost.BadDebtProvision = new KeyValuePair<string, string>("6 Bad Debt Provision", "-%");
+            calcResult.CalcResultParameterOtherCost.BadDebtProvision = new KeyValuePair<string, string>("6 Bad Debt Provision", "-%");
             // Act
-            var result = CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvisionProducerTotal(producers, material, this.calcResult, scaledupProducers, partialObligations);
+            var result = CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvisionProducerTotal(producers, material, calcResult, scaledupProducers, partialObligations);
 
             // Assert
             Assert.AreEqual(0, result);
@@ -783,7 +783,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
-            var result = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, producerAndSubsidiaries, material, this.calcResult, Countries.England, scaledupProducers, partialObligations);
+            var result = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, producerAndSubsidiaries, material, calcResult, Countries.England, scaledupProducers, partialObligations);
 
             // Assert
             Assert.AreEqual(374.8295162135948480m, result);
@@ -800,7 +800,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
-            var result = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, producerAndSubsidiaries, material, this.calcResult, (Countries)(-1), scaledupProducers, partialObligations);
+            var result = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, producerAndSubsidiaries, material, calcResult, (Countries)(-1), scaledupProducers, partialObligations);
 
             // Assert
             Assert.AreEqual(0, result);
@@ -817,7 +817,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
-            var result = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, producerAndSubsidiaries, material, this.calcResult, Countries.Wales, scaledupProducers, partialObligations);
+            var result = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, producerAndSubsidiaries, material, calcResult, Countries.Wales, scaledupProducers, partialObligations);
 
             // Assert
             Assert.AreEqual(84.4902597789384960m, result);
@@ -834,7 +834,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
-            var result = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, producerAndSubsidiaries, material, this.calcResult, Countries.Scotland, scaledupProducers, partialObligations);
+            var result = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, producerAndSubsidiaries, material, calcResult, Countries.Scotland, scaledupProducers, partialObligations);
 
             // Assert
             Assert.AreEqual(168.2977700641839840m, result);
@@ -851,7 +851,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
-            var result = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, producerAndSubsidiaries, material, this.calcResult, Countries.NorthernIreland, scaledupProducers, partialObligations);
+            var result = CalcResultSummaryUtil.GetCountryBadDebtProvision(producer, producerAndSubsidiaries, material, calcResult, Countries.NorthernIreland, scaledupProducers, partialObligations);
 
             // Assert
             Assert.AreEqual(65.8853339432826720m, result);
@@ -867,7 +867,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
-            var result = CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producers, material, this.calcResult, Countries.England, scaledupProducers, partialObligations);
+            var result = CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producers, material, calcResult, Countries.England, scaledupProducers, partialObligations);
 
             // Assert
             Assert.AreEqual(1124.4885486407845440m, result);
@@ -883,7 +883,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
-            var result = CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producers, material, this.calcResult, Countries.Wales, scaledupProducers, partialObligations);
+            var result = CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producers, material, calcResult, Countries.Wales, scaledupProducers, partialObligations);
 
             // Assert
             Assert.AreEqual(253.4707793368154880m, result);
@@ -899,7 +899,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
-            var result = CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producers, material, this.calcResult, Countries.Scotland, scaledupProducers, partialObligations);
+            var result = CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producers, material, calcResult, Countries.Scotland, scaledupProducers, partialObligations);
 
             // Assert
             Assert.AreEqual(504.8933101925519520m, result);
@@ -915,7 +915,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
-            var result = CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producers, material, this.calcResult, Countries.NorthernIreland, scaledupProducers, partialObligations);
+            var result = CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producers, material, calcResult, Countries.NorthernIreland, scaledupProducers, partialObligations);
 
             // Assert
             Assert.AreEqual(197.6560018298480160m, result);
@@ -942,7 +942,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             };
 
             // Act
-            var result = CalcResultSummaryUtil.GetCountryApportionmentPercentage(this.calcResult);
+            var result = CalcResultSummaryUtil.GetCountryApportionmentPercentage(calcResult);
 
             // Assert
             Assert.AreEqual(54.04873246369677m, result?.EnglandCost);
@@ -961,7 +961,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
-            var result = CalcResultSummaryUtil.GetTotal1Plus2ABadDebt(producers, materials, this.calcResult, scaledupProducers, partialObligations);
+            var result = CalcResultSummaryUtil.GetTotal1Plus2ABadDebt(producers, materials, calcResult, scaledupProducers, partialObligations);
 
             // Assert
             Assert.AreEqual(2217.89100000m, result);
@@ -971,7 +971,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetCommsCostHeaderWithoutBadDebtFor2bTitle()
         {
             // Act
-            var result = CalcResultSummaryUtil.GetCommsCostHeaderWithoutBadDebtFor2bTitle(this.calcResult);
+            var result = CalcResultSummaryUtil.GetCommsCostHeaderWithoutBadDebtFor2bTitle(calcResult);
 
             // Assert
             Assert.AreEqual(2530, result);
@@ -980,10 +980,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         [TestMethod]
         public void CanGetCommsCostHeaderBadDebtProvisionFor2bTitle()
         {
-            this.calcResult.CalcResultSummary.CommsCostHeaderWithoutBadDebtFor2bTitle = CalcResultSummaryUtil.GetCommsCostHeaderWithoutBadDebtFor2bTitle(this.calcResult);
+            calcResult.CalcResultSummary.CommsCostHeaderWithoutBadDebtFor2bTitle = CalcResultSummaryUtil.GetCommsCostHeaderWithoutBadDebtFor2bTitle(calcResult);
 
             // Act
-            var result = CalcResultSummaryUtil.GetCommsCostHeaderBadDebtProvisionFor2bTitle(this.calcResult, this.calcResult.CalcResultSummary);
+            var result = CalcResultSummaryUtil.GetCommsCostHeaderBadDebtProvisionFor2bTitle(calcResult, calcResult.CalcResultSummary);
 
             // Assert
             Assert.AreEqual(151.80m, result);
@@ -992,11 +992,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         [TestMethod]
         public void CanGetCommsCostHeaderWithBadDebtFor2bTitle()
         {
-            this.calcResult.CalcResultSummary.CommsCostHeaderWithoutBadDebtFor2bTitle = CalcResultSummaryUtil.GetCommsCostHeaderWithoutBadDebtFor2bTitle(this.calcResult);
-            this.calcResult.CalcResultSummary.CommsCostHeaderBadDebtProvisionFor2bTitle = CalcResultSummaryUtil.GetCommsCostHeaderBadDebtProvisionFor2bTitle(this.calcResult, this.calcResult.CalcResultSummary);
+            calcResult.CalcResultSummary.CommsCostHeaderWithoutBadDebtFor2bTitle = CalcResultSummaryUtil.GetCommsCostHeaderWithoutBadDebtFor2bTitle(calcResult);
+            calcResult.CalcResultSummary.CommsCostHeaderBadDebtProvisionFor2bTitle = CalcResultSummaryUtil.GetCommsCostHeaderBadDebtProvisionFor2bTitle(calcResult, calcResult.CalcResultSummary);
 
             // Act
-            var result = CalcResultSummaryUtil.GetCommsCostHeaderWithBadDebtFor2bTitle(this.calcResult.CalcResultSummary);
+            var result = CalcResultSummaryUtil.GetCommsCostHeaderWithBadDebtFor2bTitle(calcResult.CalcResultSummary);
 
             // Assert
             Assert.AreEqual(2681.80m, result);
@@ -1006,7 +1006,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetCountryOnePlusFourApportionmentForEngland()
         {
             // Act
-            var result = CalcResultSummaryUtil.GetCountryOnePlusFourApportionment(this.calcResult, Countries.England);
+            var result = CalcResultSummaryUtil.GetCountryOnePlusFourApportionment(calcResult, Countries.England);
 
             // Assert
             Assert.AreEqual(14.53m, result);
@@ -1016,7 +1016,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetCountryOnePlusFourApportionmentForWales()
         {
             // Act
-            var result = CalcResultSummaryUtil.GetCountryOnePlusFourApportionment(this.calcResult, Countries.Wales);
+            var result = CalcResultSummaryUtil.GetCountryOnePlusFourApportionment(calcResult, Countries.Wales);
 
             // Assert
             Assert.AreEqual(20, result);
@@ -1026,7 +1026,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetCountryOnePlusFourApportionmentForScotland()
         {
             // Act
-            var result = CalcResultSummaryUtil.GetCountryOnePlusFourApportionment(this.calcResult, Countries.Scotland);
+            var result = CalcResultSummaryUtil.GetCountryOnePlusFourApportionment(calcResult, Countries.Scotland);
 
             // Assert
             Assert.AreEqual(0.15m, result);
@@ -1036,7 +1036,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetCountryOnePlusFourApportionmentForNorthernIreland()
         {
             // Act
-            var result = CalcResultSummaryUtil.GetCountryOnePlusFourApportionment(this.calcResult, Countries.NorthernIreland);
+            var result = CalcResultSummaryUtil.GetCountryOnePlusFourApportionment(calcResult, Countries.NorthernIreland);
 
             // Assert
             Assert.AreEqual(0.15m, result);
@@ -1046,7 +1046,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetDefaultOnePlusFourApportionment()
         {
             // Act
-            var result = CalcResultSummaryUtil.GetCountryOnePlusFourApportionment(this.calcResult, (Countries)(-1));
+            var result = CalcResultSummaryUtil.GetCountryOnePlusFourApportionment(calcResult, (Countries)(-1));
 
             // Assert
             Assert.AreEqual(0, result);
@@ -1056,7 +1056,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void GetParamsOtherFourCountryApportionmentPercentageForEngland()
         {
             // Act
-            var result = CalcResultSummaryUtil.GetParamsOtherFourCountryApportionmentPercentage(this.calcResult, Countries.England);
+            var result = CalcResultSummaryUtil.GetParamsOtherFourCountryApportionmentPercentage(calcResult, Countries.England);
 
             // Assert
             Assert.AreEqual(43.83561643835616m, result);
@@ -1066,7 +1066,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void GetParamsOtherFourCountryApportionmentPercentageForWales()
         {
             // Act
-            var result = CalcResultSummaryUtil.GetParamsOtherFourCountryApportionmentPercentage(this.calcResult, Countries.Wales);
+            var result = CalcResultSummaryUtil.GetParamsOtherFourCountryApportionmentPercentage(calcResult, Countries.Wales);
 
             // Assert
             Assert.AreEqual(19.17808219178082m, result);
@@ -1076,7 +1076,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void GetParamsOtherFourCountryApportionmentPercentageForScotland()
         {
             // Act
-            var result = CalcResultSummaryUtil.GetParamsOtherFourCountryApportionmentPercentage(this.calcResult, Countries.Scotland);
+            var result = CalcResultSummaryUtil.GetParamsOtherFourCountryApportionmentPercentage(calcResult, Countries.Scotland);
 
             // Assert
             Assert.AreEqual(24.65753424657534m, result);
@@ -1086,7 +1086,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void GetParamsOtherFourCountryApportionmentPercentageForNorthernIreland()
         {
             // Act
-            var result = CalcResultSummaryUtil.GetParamsOtherFourCountryApportionmentPercentage(this.calcResult, Countries.NorthernIreland);
+            var result = CalcResultSummaryUtil.GetParamsOtherFourCountryApportionmentPercentage(calcResult, Countries.NorthernIreland);
 
             // Assert
             Assert.AreEqual(12.32876712328767m, result);
@@ -1158,12 +1158,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
 
         private CalcResultParameterCommunicationCost GetCalcResultParameterCommunicationCost()
         {
-            return this.Fixture.Create<CalcResultParameterCommunicationCost>();
+            return Fixture.Create<CalcResultParameterCommunicationCost>();
         }
 
         private CalcResultLateReportingTonnage GetCalcResultLateReportingTonnage()
         {
-            return this.Fixture.Create<CalcResultLateReportingTonnage>();
+            return Fixture.Create<CalcResultLateReportingTonnage>();
         }
     }
 }

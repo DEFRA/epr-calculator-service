@@ -104,7 +104,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
             var scaledupProducerList = new List<CalcResultScaledupProducer>();
 
             scaledupProducerList.AddRange([
-                new CalcResultScaledupProducer()
+                new CalcResultScaledupProducer
                 {
                     ProducerId = 101001,
                     SubsidiaryId = string.Empty,
@@ -116,7 +116,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
                     ScaleupFactor = 2,
                     ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterial(),
                 },
-                new CalcResultScaledupProducer()
+                new CalcResultScaledupProducer
                 {
                     ProducerId = 101001,
                     SubsidiaryId = string.Empty,
@@ -190,11 +190,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
 
         private Dictionary<string, CalcResultScaledupProducerTonnage> GetScaledupProducerTonnageByMaterial()
         {
-            return new Dictionary<string, CalcResultScaledupProducerTonnage>()
+            return new Dictionary<string, CalcResultScaledupProducerTonnage>
             {
                 {
                     "AL",
-                    new CalcResultScaledupProducerTonnage()
+                    new CalcResultScaledupProducerTonnage
                     {
                         ReportedHouseholdPackagingWasteTonnage = 1000,
                         ReportedPublicBinTonnage = 100,
@@ -210,7 +210,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
                 },
                 {
                     "GL",
-                    new CalcResultScaledupProducerTonnage()
+                    new CalcResultScaledupProducerTonnage
                     {
                         ReportedHouseholdPackagingWasteTonnage = 1000,
                         ReportedPublicBinTonnage = 100,
