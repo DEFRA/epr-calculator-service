@@ -1,5 +1,4 @@
-﻿using AutoFixture;
-using EPR.Calculator.API.Data;
+﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.ParametersOther;
 using EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions;
@@ -40,11 +39,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         /// Defines the _commsCostSummary
         /// </summary>
         private readonly Dictionary<MaterialDetail, CalcResultSummaryProducerCommsFeesCostByMaterial> _commsCostSummary;
-
-        /// <summary>
-        /// Gets the Fixture
-        /// </summary>
-        private Fixture Fixture { get; init; } = new Fixture();
 
         private List<ProducerInvoicedDto> producerInvoicedDto;
 

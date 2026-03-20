@@ -49,9 +49,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 MockClassReportExporter.Object);
         }
 
-        private Mock<ICalcResultDetailExporter> mockResultDetailexporter = new();
-        private Mock<IOnePlusFourApportionmentExporter> mockOnePlusFourExporter = new();
-        private Mock<ICalcResultSummaryExporter> mockCalcResultSummaryExporter = new();
         private Fixture Fixture { get; init; }
 
         private Mock<ILateReportingExporter> MockLateReportingExporter { get; init; }

@@ -16,8 +16,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
         private ApplicationDBContext? _dbContext;
         private IEnumerable<MaterialDetail>? _materials;
         private CalcResult? _calcResult;
-        private Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial>? _materialCostSummary;
-        private Dictionary<MaterialDetail, CalcResultSummaryProducerCommsFeesCostByMaterial>? _commsCostSummary;
 
         [TestInitialize]
         public void TestInitialize()
@@ -337,40 +335,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                 },
                 CalcResultModulation = null,
             };
-
-            _materialCostSummary = new Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial>();
-            _commsCostSummary = new Dictionary<MaterialDetail, CalcResultSummaryProducerCommsFeesCostByMaterial>();
-
-            foreach (var material in _materials)
-            {
-                _materialCostSummary.Add(material, new CalcResultSummaryProducerDisposalFeesByMaterial
-                {
-                    HouseholdPackagingWasteTonnage = 1000,
-                    ManagedConsumerWasteTonnage = 90,
-                    NetReportedTonnage = 910,
-                    PricePerTonne = 0.6676m,
-                    ProducerDisposalFee = 607.52m,
-                    BadDebtProvision = 36.45m,
-                    ProducerDisposalFeeWithBadDebtProvision = 643.97m,
-                    EnglandWithBadDebtProvision = 348.06m,
-                    WalesWithBadDebtProvision = 78.46m,
-                    ScotlandWithBadDebtProvision = 156.28m,
-                    NorthernIrelandWithBadDebtProvision = 61.18m,
-                });
-
-                _commsCostSummary.Add(material, new CalcResultSummaryProducerCommsFeesCostByMaterial
-                {
-                    HouseholdPackagingWasteTonnage = 1000,
-                    PriceperTonne = 0.6676m,
-                    ProducerTotalCostWithoutBadDebtProvision = 607.52m,
-                    BadDebtProvision = 36.45m,
-                    ProducerTotalCostwithBadDebtProvision = 643.97m,
-                    EnglandWithBadDebtProvision = 348.06m,
-                    WalesWithBadDebtProvision = 78.46m,
-                    ScotlandWithBadDebtProvision = 156.28m,
-                    NorthernIrelandWithBadDebtProvision = 61.18m,
-                });
-            }
         }
 
         [TestCleanup]

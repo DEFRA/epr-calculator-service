@@ -1844,14 +1844,5 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             context.SaveChanges();
         }
-
-        private class TestResult
-        {
-            public string Level { get; set; } = null!;
-
-            public string TonnageChangeCount { get; set; } = null!;
-
-            public string TonnageChangeAdvice { get; set; } = null!;
-        }
     }
 }

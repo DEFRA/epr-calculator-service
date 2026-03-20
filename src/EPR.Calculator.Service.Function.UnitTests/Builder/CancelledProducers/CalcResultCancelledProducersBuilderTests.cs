@@ -1,4 +1,3 @@
-using AutoFixture;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
@@ -40,8 +39,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                 materialService.Object,
                 producerDetailService);
         }
-
-        private Fixture Fixture { get; init; } = new Fixture();
 
         [TestCleanup]
         public void TearDown()
@@ -688,103 +685,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             };
             context.ProducerInvoicedMaterialNetTonnage.AddRange(materialInvoiceTonnage);
             context.SaveChanges();
-        }
-
-        private void CreateProducerDetail()
-        {
-            var producerNames = new[]
-            {
-                "Allied Packaging",
-                "Beeline Materials",
-                "Cloud Boxes",
-                "Decking and Shed",
-                "Electric Things",
-                "French Flooring",
-                "Good Fruit Co",
-                "Happy Shopper",
-                "Icicle Foods",
-                "Jumbo Box Store",
-            };
-
-            var producerId = 1;
-            foreach (var producerName in producerNames)
-            {
-                dbContext.ProducerDetail.Add(new ProducerDetail
-                {
-                    ProducerId = producerId++,
-                    SubsidiaryId = $"{producerId}-Sub",
-                    ProducerName = producerName,
-                    CalculatorRunId = 1,
-                });
-            }
-
-            dbContext.SaveChanges();
-
-            for (int producerDetailId = 1; producerDetailId <= 10; producerDetailId++)
-            {
-                for (int materialId = 1; materialId < 9; materialId++)
-                {
-                    dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-                    {
-                        MaterialId = materialId,
-                        ProducerDetailId = producerDetailId,
-                        PackagingType = "HH",
-                        PackagingTonnage = materialId * 100,
-                    });
-                }
-            }
-
-            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-            {
-                MaterialId = 3,
-                ProducerDetailId = 1,
-                PackagingType = "HDC",
-                PackagingTonnage = 100,
-            });
-
-            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-            {
-                MaterialId = 3,
-                ProducerDetailId = 2,
-                PackagingType = "HDC",
-                PackagingTonnage = 100,
-            });
-
-            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-            {
-                MaterialId = 2,
-                ProducerDetailId = 1,
-                PackagingType = "PB",
-                PackagingTonnage = 200,
-            });
-
-            dbContext.SaveChanges();
-        }
-
-        private void CreateNewRun()
-        {
-            var run = new CalculatorRun
-            {
-                CalculatorRunClassificationId = 7,
-                Name = "Test Run",
-                RelativeYear = new RelativeYear(2025),
-                CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
-                CreatedBy = "Test User",
-                DefaultParameterSettingMasterId = 1,
-            };
-
-            var run1 = new CalculatorRun
-            {
-                CalculatorRunClassificationId = 2,
-                Name = "Test Run1",
-                RelativeYear = new RelativeYear(2025),
-                CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
-                CreatedBy = "Test User",
-                DefaultParameterSettingMasterId = 2,
-            };
-            dbContext.CalculatorRuns.Add(run);
-            dbContext.CalculatorRuns.Add(run1);
-            dbContext.SaveChanges();
         }
     }
 }
