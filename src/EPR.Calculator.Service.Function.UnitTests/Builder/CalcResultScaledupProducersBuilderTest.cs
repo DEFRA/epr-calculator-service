@@ -313,14 +313,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         }
 
         [TestMethod]
-        public void GetScaledUpOrganisations_Test()
+        public async Task GetScaledUpOrganisations_Test()
         {
             PrepareNonScaledUpProducer();
             PrepareScaledUpProducer();
-            var task = builder.GetScaledUpOrganisationsAsync(runId);
-            task.Wait();
+            var result = await builder.GetScaledUpOrganisationsAsync(runId);
 
-            var result = task?.Result;
             Assert.IsNotNull(result);
             Assert.AreEqual(1, result.Count());
         }
@@ -497,9 +495,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         }
 
         [TestMethod]
-        public void GetProducerReportedMaterialsAsyncTest()
+        public async Task GetProducerReportedMaterialsAsyncTest()
         {
-            builder = new CalcResultScaledupProducersBuilder(dbContext);
+            builder = new CalcResultScaledupProducersBuilder(dbContext!);
             var result = await builder.GetProducerReportedMaterialsAsync(1, new List<int> { 1, 2 });
 
             Assert.IsNotNull(result);
@@ -507,9 +505,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         }
 
         [TestMethod]
-        public void GetScaledupOrganisationDetailsTest()
+        public async Task GetScaledupOrganisationDetailsTest()
         {
-            builder = new CalcResultScaledupProducersBuilder(dbContext);
+            builder = new CalcResultScaledupProducersBuilder(dbContext!);
             var result = await builder.GetScaledupOrganisationDetails(1, new List<int> { 1, 2 });
 
             Assert.IsNotNull(result);

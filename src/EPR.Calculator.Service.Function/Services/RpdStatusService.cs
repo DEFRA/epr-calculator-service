@@ -97,33 +97,32 @@ namespace EPR.Calculator.Service.Function.Services
 
             var relativeYear = calcRun!.RelativeYear;
 
-            using (var transaction = await Context.Database.BeginTransactionAsync(timeout))
+            await using var transaction = await Context.Database.BeginTransactionAsync(timeout);
+            
+            try
             {
-                try
+                TelemetryLogger.LogInformation(new TrackMessage { RunId = runId, RunName = runName, Message = $"Creating run organization and POM for run: {runId}" });
+                await CalculatorRunOrgData.LoadOrgDataForCalcRun(runId, relativeYear, createdBy, timeout);
+                await CalculatorRunPomData.LoadPomDataForCalcRun(runId, relativeYear, createdBy, timeout);
+
+                calcRun.CalculatorRunClassificationId = runClassifications.Single(x => x.Status == RunClassification.RUNNING.ToString()).Id;
+
+                await Context.SaveChangesAsync(timeout);
+                await transaction.CommitAsync(timeout);
+
+                return RunClassification.RUNNING;
+            }
+            catch (Exception)
+            {
+                TelemetryLogger.LogError(new ErrorMessage
                 {
-                    TelemetryLogger.LogInformation(new TrackMessage { RunId = runId, RunName = runName, Message = $"Creating run organization and POM for run: {runId}" });
-                    await CalculatorRunOrgData.LoadOrgDataForCalcRun(runId, relativeYear, createdBy, timeout);
-                    await CalculatorRunPomData.LoadPomDataForCalcRun(runId, relativeYear, createdBy, timeout);
-
-                    calcRun.CalculatorRunClassificationId = runClassifications.Single(x => x.Status == RunClassification.RUNNING.ToString()).Id;
-
-                    await Context.SaveChangesAsync(timeout);
-                    await transaction.CommitAsync(timeout);
-
-                    return RunClassification.RUNNING;
-                }
-                catch (Exception)
-                {
-                    TelemetryLogger.LogError(new ErrorMessage
-                    {
-                        RunId = runId,
-                        RunName = runName,
-                        Message = "Error updating RPD status",
-                        Exception = new Exception("Error updating RPD status"),
-                    });
-                    await transaction.RollbackAsync();
-                    throw;
-                }
+                    RunId = runId,
+                    RunName = runName,
+                    Message = "Error updating RPD status",
+                    Exception = new Exception("Error updating RPD status"),
+                });
+                await transaction.RollbackAsync();
+                throw;
             }
         }
     }

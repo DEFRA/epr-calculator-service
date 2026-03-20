@@ -195,7 +195,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
 
         public async Task<List<CalcResultScaledupProducer>> GetProducerReportedMaterialsAsync(int runId, IEnumerable<int> organisationIds)
         {
-            var result = await (from run in context.CalculatorRuns
+            return await (from run in context.CalculatorRuns
                                 join crpdd in context.CalculatorRunPomDataDetails on run.CalculatorRunPomDataMasterId equals crpdd.CalculatorRunPomDataMasterId
                                 join spl in context.SubmissionPeriodLookup on crpdd.SubmissionPeriod equals spl.SubmissionPeriod
                                 join pd in context.ProducerDetail.Include(x => x.ProducerReportedMaterials) on crpdd.OrganisationId equals pd.ProducerId
@@ -216,8 +216,6 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                                     DaysInWholePeriod = spl.DaysInWholePeriod,
                                     Level = pd.SubsidiaryId != null ? CommonConstants.LevelTwo.ToString() : CommonConstants.LevelOne.ToString(),
                                 }).Distinct().ToListAsync();
-
-            return result ?? new List<CalcResultScaledupProducer>();
         }
 
         public async Task<IEnumerable<Organisation>> GetScaledUpOrganisationsAsync(int runId)
@@ -243,7 +241,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                                                 TradingName = crodd.TradingName
                                             }).AsNoTracking().Distinct().ToListAsync();
 
-            return scaledupOrganisations ?? [];
+            return scaledupOrganisations;
         }
 
         public static Dictionary<string, CalcResultScaledupProducerTonnage> GetTonnages(IEnumerable<CalculatorRunPomDataDetail> pomData,

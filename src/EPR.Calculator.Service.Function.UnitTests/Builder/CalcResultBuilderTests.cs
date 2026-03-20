@@ -105,7 +105,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         }
 
         [TestMethod]
-        public void Build_ShouldReturnCalcResult()
+        public async Task Build_ShouldReturnCalcResult()
         {
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025)};
             var mockResultDetail = new Mock<CalcResultDetail>();
@@ -139,9 +139,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             mockSummaryBuilder.Setup(x => x.ConstructAsync(It.IsAny<int>(), It.IsAny<RelativeYear>(), It.IsAny<bool>(), It.IsAny<CalcResult>()))
                 .ReturnsAsync(mockCalcResultSummary.Object);
 
-            var results = calcResultBuilder.BuildAsync(resultsRequestDto);
-            results.Wait();
-            var result = results.Result;
+            var result = await calcResultBuilder.BuildAsync(resultsRequestDto);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(mockResultDetail.Object, result.CalcResultDetail);

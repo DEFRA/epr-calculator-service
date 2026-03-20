@@ -62,11 +62,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         }
 
         [TestMethod]
-        public void Construct_AllPropertiesPresent_ReturnsCorrectData()
+        public async Task Construct_AllPropertiesPresent_ReturnsCorrectData()
         {
-            var results = _builder.ConstructAsync(new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) });
-            results.Wait();
-            var result = results.Result;
+            var result = await _builder.ConstructAsync(new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) });
             Assert.AreEqual(1, result.RunId);
             Assert.AreEqual("TestRun", result.RunName);
             Assert.AreEqual("TestUser", result.RunBy);
@@ -79,10 +77,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         }
 
         [TestMethod]
-        public void Construct_MissingOptionalProperties_ReturnsPartialData()
+        public async Task Construct_MissingOptionalProperties_ReturnsPartialData()
         {
             _context.CalculatorRuns.RemoveRange(_context.CalculatorRuns);
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             var calculatorRun = new CalculatorRun
             {
@@ -94,11 +92,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
 
             _context.CalculatorRuns.Add(calculatorRun);
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
-            var results = _builder.ConstructAsync(new CalcResultsRequestDto { RunId = 2, RelativeYear = new RelativeYear(2025) });
-            results.Wait();
-            var result = results.Result;
+            var result = await _builder.ConstructAsync(new CalcResultsRequestDto { RunId = 2, RelativeYear = new RelativeYear(2025) });
+
             Assert.AreEqual(2, result.RunId);
             Assert.AreEqual("RunWithMissingProps", result.RunName);
             Assert.AreEqual("TestUser2", result.RunBy);

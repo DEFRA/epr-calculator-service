@@ -120,13 +120,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         }
 
         [TestMethod]
-        public void Construct_ShouldReturnCorrectResults()
+        public async Task Construct_ShouldReturnCorrectResults()
         {
             var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) };
 
-            var results = builder.ConstructAsync(requestDto);
-            results.Wait();
-            var result = results.Result;
+            var result = await builder.ConstructAsync(requestDto);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(CalcResultLateReportingBuilder.LateReportingHeader, result.Name);

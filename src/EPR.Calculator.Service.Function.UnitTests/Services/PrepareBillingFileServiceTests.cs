@@ -81,7 +81,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     RelativeYear = new RelativeYear(2025),
                     CreatedBy = "user",
                     CreatedAt = DateTime.UtcNow });
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             var service = new PrepareBillingFileService(
                 _context,
                 PrepareCalcService.Object,
@@ -124,7 +124,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 SuggestedBillingInstruction = "TestInstruction",
             });
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             // Setup PrepareCalcService to return true
             PrepareCalcService
@@ -183,7 +183,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 SuggestedBillingInstruction = "TestInstruction",
             });
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             // Setup PrepareCalcService to return true
             PrepareCalcService

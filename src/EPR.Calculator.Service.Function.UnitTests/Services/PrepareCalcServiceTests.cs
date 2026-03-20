@@ -239,12 +239,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public void PrepareBillingResults_Test()
+        public async Task PrepareBillingResults_Test()
         {
             var fixture = new Fixture();
             var calcRun = _context.CalculatorRuns.Single(x => x.Id == 1);
             calcRun.IsBillingFileGenerating = true;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             _jsonExporter.Setup(t => t.Export(It.IsAny<CalcResult>(), It.IsAny<List<int>>())).Returns(fixture.Create<string>());
             _billingFileExporter.Setup(t => t.Export(It.IsAny<CalcResult>(), It.IsAny<List<int>>())).Returns(fixture.Create<string>());
@@ -260,10 +260,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 AcceptedProducerIds = new List<int> { 1, 2 },
                 ApprovedBy = "Test User 234",
             };
-            var billingResult = _testClass.PrepareBillingResultsAsync(calcResultsRequestDto, "TestRun", CancellationToken.None);
-            billingResult.Wait();
+            var billingResult = await _testClass.PrepareBillingResultsAsync(calcResultsRequestDto, "TestRun", CancellationToken.None);
 
-            Assert.IsTrue(billingResult.Result);
+            Assert.IsTrue(billingResult);
             calcRun = _context.CalculatorRuns.Single(x => x.Id == 1);
             Assert.IsFalse(calcRun.IsBillingFileGenerating);
 

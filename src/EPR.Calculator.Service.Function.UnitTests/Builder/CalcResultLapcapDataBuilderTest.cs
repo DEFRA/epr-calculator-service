@@ -46,7 +46,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         }
 
         [TestMethod]
-        public void ConstructTest_For_Aluminuim_Plastic()
+        public async Task ConstructTest_For_Aluminuim_Plastic()
         {
             const string aluminium = "Aluminium";
             const string plastic = "Plastic";
@@ -81,19 +81,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             dbContext.LapcapDataMaster.Add(lapcapDataMaster);
             dbContext.LapcapDataDetail.AddRange(details);
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
 
             dbContext.Material.Add(new Material { Name = aluminium, Code = "AL", Description = "Some" });
             dbContext.Material.Add(new Material { Name = plastic, Code = "PL", Description = "Some" });
             dbContext.CalculatorRuns.Add(run);
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
 
             var resultsDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) };
-            var results = builder.ConstructAsync(resultsDto);
-
-            results.Wait();
-
-            var lapcapResults = results.Result;
+            var lapcapResults = await builder.ConstructAsync(resultsDto);
 
             Assert.IsNotNull(lapcapResults);
             Assert.AreEqual(CalcResultLapcapDataBuilder.LapcapHeader, lapcapResults.Name);

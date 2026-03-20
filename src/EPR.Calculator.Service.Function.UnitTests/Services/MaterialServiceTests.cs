@@ -53,7 +53,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             }
 
             dbContext.Material.AddRange(materials);
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
 
             // Act
             var result = await materialService.GetMaterials();

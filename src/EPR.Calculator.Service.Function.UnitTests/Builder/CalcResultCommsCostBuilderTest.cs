@@ -43,7 +43,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         }
 
         [TestMethod]
-        public void ConstructTest()
+        public async Task ConstructTest()
         {
             var calcResult = TestDataHelper.GetCalcResult();
             calcResult.CalcResultScaledupProducers = GetScaledUpProducers();
@@ -74,9 +74,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     },
                 },
             };
-            var results = builder.ConstructAsync(resultsRequestDto, apportionment, calcResult);
-            results.Wait();
-            var result = results.Result;
+            var result = await builder.ConstructAsync(resultsRequestDto, apportionment, calcResult);
 
             Assert.IsNotNull(result);
 

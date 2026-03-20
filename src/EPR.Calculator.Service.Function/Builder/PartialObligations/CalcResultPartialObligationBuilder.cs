@@ -49,7 +49,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
 
         public async Task<List<CalcResultPartialObligation>> GetPartialObligations(int runId, List<MaterialDetail> materials, IEnumerable<CalcResultScaledupProducer> scaledupProducers)
         {
-            var result = await (from run in context.CalculatorRuns.AsNoTracking()
+            return await (from run in context.CalculatorRuns.AsNoTracking()
                                 join crodm in context.CalculatorRunOrganisationDataMaster.AsNoTracking() on run.CalculatorRunOrganisationDataMasterId equals crodm.Id
                                 join crodd in context.CalculatorRunOrganisationDataDetails.AsNoTracking() on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
                                 join pd in context.ProducerDetail.Include(x => x.ProducerReportedMaterials) on crodd.OrganisationId equals pd.ProducerId
@@ -70,8 +70,6 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
                                     ObligatedPercentage = (partialAmount * 100).ToString("F2") + "%",
                                     PartialObligationTonnageByMaterial = GetPartialObligationTonnages(pd, materials, partialAmount, scaledupProducers)
                                 }).ToListAsync();
-
-            return result ?? new List<CalcResultPartialObligation>();
         }
 
         public static Dictionary<string, CalcResultPartialObligationTonnage> GetPartialObligationTonnages(ProducerDetail producer, IEnumerable<MaterialDetail> materials, decimal partialAmount, IEnumerable<CalcResultScaledupProducer> scaledupProducers)

@@ -135,7 +135,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         }
 
         [TestMethod]
-        public void Should_Return_LA_Disposal_Costs()
+        public async Task Should_Return_LA_Disposal_Costs()
         {
             // Assign
             var resultsDto = new CalcResultsRequestDto { RunId = 2, RelativeYear = new RelativeYear(2025) };
@@ -143,9 +143,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             calcResult.CalcResultScaledupProducers = GetScaledUpProducers();
 
             // Act
-            var results = builder.ConstructAsync(resultsDto, calcResult);
-            results.Wait();
-            var lapcapDisposalCostResults = results.Result;
+            var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, calcResult);
 
             // Assert
             Assert.IsNotNull(lapcapDisposalCostResults);
@@ -154,7 +152,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         }
 
         [TestMethod]
-        public void Should_Return_HeaderRow()
+        public async Task Should_Return_HeaderRow()
         {
             // Assign
             var resultsDto = new CalcResultsRequestDto { RunId = 2, RelativeYear = new RelativeYear(2025) };
@@ -162,9 +160,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             calcResult.CalcResultScaledupProducers = GetScaledUpProducers();
 
             // Act
-            var results = builder.ConstructAsync(resultsDto, calcResult);
-            results.Wait();
-            var lapcapDisposalCostResults = results.Result;
+            var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, calcResult);
 
             // Assert
             var headerRow = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails.Single(x => x.OrderId == 1);
@@ -184,7 +180,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         }
 
         [TestMethod]
-        public void Should_Return_Material_Data_With_PublicBin()
+        public async Task Should_Return_Material_Data_With_PublicBin()
         {
             // Assign
             var resultsDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
@@ -220,9 +216,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
 
             // Act
-            var results = builder.ConstructAsync(resultsDto, calcResult);
-            results.Wait();
-            var lapcapDisposalCostResults = results.Result;
+            var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, calcResult);
 
             // Assert
             var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails.Single(x => x.Name == MaterialNames.Plastic);
@@ -243,7 +237,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         }
 
         [TestMethod]
-        public void Should_Return_Material_Data_With_Household_Drink_Containers()
+        public async Task Should_Return_Material_Data_With_Household_Drink_Containers()
         {
             // Assign
             var resultsDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
@@ -280,9 +274,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
 
             // Act
-            var results = builder.ConstructAsync(resultsDto, calcResult);
-            results.Wait();
-            var lapcapDisposalCostResults = results.Result;
+            var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, calcResult);
 
             // Assert
             var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails.Single(x => x.Name == MaterialNames.Glass);
@@ -301,7 +293,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         }
 
         [TestMethod]
-        public void Should_Return_Material_Data_With_Household_Drink_Containers_NoScaledUpData()
+        public async Task Should_Return_Material_Data_With_Household_Drink_Containers_NoScaledUpData()
         {
             // Assign
             var resultsDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
@@ -314,9 +306,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
 
             // Act
-            var results = builder.ConstructAsync(resultsDto, calcResult);
-            results.Wait();
-            var lapcapDisposalCostResults = results.Result;
+            var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, calcResult);
 
             // Assert
             var culture = CultureInfo.GetCultureInfo("en-GB");

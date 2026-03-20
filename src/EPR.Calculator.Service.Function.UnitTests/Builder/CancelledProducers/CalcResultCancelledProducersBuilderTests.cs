@@ -43,7 +43,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         [TestCleanup]
         public void TearDown()
         {
-            dbContext.Database.EnsureDeleted();
+            dbContext?.Database.EnsureDeleted();
         }
 
         [TestMethod]

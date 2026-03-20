@@ -43,7 +43,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         }
 
         [TestMethod]
-        public void ConstructTest()
+        public async Task ConstructTest()
         {
             var run = new CalculatorRun
             {
@@ -62,7 +62,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             dbContext.DefaultParameterSettings.Add(defaultMaster);
             dbContext.CalculatorRuns.Add(run);
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
 
             foreach (var templateMaster in templateMasterList)
             {
@@ -91,11 +91,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             dbContext.Country.Add(new Country { Code = "Sc", Name = "Scotland", Description = "Scotland" });
             dbContext.Country.Add(new Country { Code = "NI", Name = "Northern Ireland", Description = "Northern Ireland" });
 
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
 
-            var results = builder.ConstructAsync(new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) });
-            results.Wait();
-            var otherCost = results.Result;
+            var otherCost = await builder.ConstructAsync(new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) });
 
             Assert.IsNotNull(otherCost.SaOperatingCost);
             Assert.AreEqual(2, otherCost.SaOperatingCost.Count());

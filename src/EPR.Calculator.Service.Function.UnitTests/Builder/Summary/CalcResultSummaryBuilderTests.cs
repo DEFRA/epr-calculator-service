@@ -304,12 +304,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         }
 
         [TestMethod]
-        public void Construct_ShouldReturnCalcResultSummary()
+        public async Task Construct_ShouldReturnCalcResultSummary()
         {
-            var results = calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
+            var result = await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
 
-            results.Wait();
-            var result = results.Result;
             Assert.IsNotNull(result);
             Assert.AreEqual(CalcResultSummaryHeaders.CalculationResult, result.ResultSummaryHeader?.Name);
             Assert.AreEqual(26, result.ProducerDisposalFeesHeaders.Count());
@@ -325,7 +323,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         }
 
         [TestMethod]
-        public void Construct_NullScaledUpProdcuers_ShouldSetScaledupProducersToEmptyCollection()
+        public async Task Construct_NullScaledUpProdcuers_ShouldSetScaledupProducersToEmptyCollection()
         {
             // Assign
             var calcResult = this.calcResult;
@@ -342,9 +340,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             };
 
             // Act
-            var results = calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
-            results.Wait();
-            var result = results.Result;
+            var result = await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
 
             // Assert
             Assert.IsNotNull(result);
@@ -352,7 +348,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         }
 
         [TestMethod]
-        public void Construct_NullPartialObligations_ShouldSetPartialOblgiationsToEmptyCollection()
+        public async Task Construct_NullPartialObligations_ShouldSetPartialOblgiationsToEmptyCollection()
         {
             // Assign
             var calcResult = this.calcResult;
@@ -369,9 +365,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             };
 
             // Act
-            var results = calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
-            results.Wait();
-            var result = results.Result;
+            var result = await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
 
             // Assert
             Assert.IsNotNull(result);
@@ -379,16 +373,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         }
 
         [TestMethod]
-        public void Construct_ShouldSetScaledupProducers()
+        public async Task Construct_ShouldSetScaledupProducers()
         {
             // Assign
             var calcResult = this.calcResult;
             calcResult.CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers();
 
             // Act
-            var results = calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
-            results.Wait();
-            var result = results.Result;
+            var result = await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
 
             // Assert
             Assert.IsNotNull(result);
@@ -396,16 +388,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         }
 
         [TestMethod]
-        public void Construct_ShouldSetPartialObligations()
+        public async Task Construct_ShouldSetPartialObligations()
         {
             // Assign
             var calcResult = this.calcResult;
             calcResult.CalcResultPartialObligations = TestDataHelper.GetPartialObligations();
 
             // Act
-            var results = calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
-            results.Wait();
-            var result = results.Result;
+            var result = await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
 
             // Assert
             Assert.IsNotNull(result);
@@ -414,35 +404,26 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
 
 
         [TestMethod]
-        public void Construct_ShouldMapMaterialBreakdownHeaders()
+        public async Task Construct_ShouldMapMaterialBreakdownHeaders()
         {
-            var results = calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
-
-            results.Wait();
-            var result = results.Result;
+            var result = await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
 
             Assert.AreEqual("Material1 Breakdown", result.MaterialBreakdownHeaders.First().Name);
         }
 
         [TestMethod]
-        public void Construct_ShouldCalculateProducerDisposalFeesCorrectly()
+        public async Task Construct_ShouldCalculateProducerDisposalFeesCorrectly()
         {
-            var results = calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
-
-            results.Wait();
-            var result = results.Result;
+            var result = await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
 
             Assert.IsTrue(result.ProducerDisposalFees.Any());
             Assert.AreEqual("Producer1", result.ProducerDisposalFees.First().ProducerName);
         }
 
         [TestMethod]
-        public void Construct_ShouldReturnEmptyProducerDisposalFees_WhenNoProducers()
+        public async Task Construct_ShouldReturnEmptyProducerDisposalFees_WhenNoProducers()
         {
-            var results = calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
-
-            results.Wait();
-            var result = results.Result;
+            var result = await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
 
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.ProducerDisposalFees);
@@ -458,12 +439,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         }
 
         [TestMethod]
-        public void Construct_ShouldReturnProducerDisposalFees_WithoutSubsidiaryTotalRow()
+        public async Task Construct_ShouldReturnProducerDisposalFees_WithoutSubsidiaryTotalRow()
         {
-            var results = calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
-
-            results.Wait();
-            var result = results.Result;
+            var result = await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(5, result.ProducerDisposalFees.Count());
@@ -471,34 +449,25 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         }
 
         [TestMethod]
-        public void Construct_ShouldReturnProducerDisposalFees_WithSubsidiaryTotalRow()
+        public async Task Construct_ShouldReturnProducerDisposalFees_WithSubsidiaryTotalRow()
         {
-            var results = calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
-
-            results.Wait();
-            var result = results.Result;
+            var result = await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
             Assert.IsNotNull(result);
             Assert.AreEqual(5, result.ProducerDisposalFees.Count());
         }
 
         [TestMethod]
-        public void Construct_ShouldReturnOverallTotalRow_ForAllProducers()
+        public async Task Construct_ShouldReturnOverallTotalRow_ForAllProducers()
         {
-            var results = calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
-            results.Wait();
-            var result = results.Result;
-            Assert.IsNotNull(result);
+            var result = await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);            Assert.IsNotNull(result);
             var totalRow = result.ProducerDisposalFees.LastOrDefault();
             Assert.IsNotNull(totalRow);
         }
 
         [TestMethod]
-        public void GetTotalBadDebtprovision1_ShouldReturnCorrectValue()
+        public async Task GetTotalBadDebtprovision1_ShouldReturnCorrectValue()
         {
-            var results = calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
-            results.Wait();
-            var result = results.Result;
-            Assert.IsNotNull(result);
+            var result = await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);            Assert.IsNotNull(result);
 
             var totalRow = result.ProducerDisposalFees.LastOrDefault();
             Assert.IsNotNull(totalRow);
@@ -511,12 +480,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         }
 
         [TestMethod]
-        public void GetTotalDisposalCostswithBadDebtprovision1_ShouldReturnCorrectValue()
+        public async Task GetTotalDisposalCostswithBadDebtprovision1_ShouldReturnCorrectValue()
         {
-            var results = calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
-            results.Wait();
-            var result = results.Result;
-            Assert.IsNotNull(result);
+            var result = await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);            Assert.IsNotNull(result);
 
             var totalRow = result.ProducerDisposalFees.LastOrDefault();
             Assert.IsNotNull(totalRow);
@@ -529,12 +495,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         }
 
         [TestMethod]
-        public void GetTotalCommsCostswoBadDebtprovision2A_ShouldReturnCorrectValue()
+        public async Task GetTotalCommsCostswoBadDebtprovision2A_ShouldReturnCorrectValue()
         {
-            var results = calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
-            results.Wait();
-            var result = results.Result;
-            Assert.IsNotNull(result);
+            var result = await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);            Assert.IsNotNull(result);
 
             var totalRow = result.ProducerDisposalFees.LastOrDefault();
             Assert.IsNotNull(totalRow);
@@ -547,12 +510,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         }
 
         [TestMethod]
-        public void GetTotalBadDebtprovision2A_ShouldReturnCorrectValue()
+        public async Task GetTotalBadDebtprovision2A_ShouldReturnCorrectValue()
         {
-            var results = calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
-
-            results.Wait();
-            var result = results.Result;
+            var result = await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
             Assert.IsNotNull(result);
 
             var totalRow = result.ProducerDisposalFees.LastOrDefault();
@@ -566,12 +526,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         }
 
         [TestMethod]
-        public void GetTotalCommsCostswithBadDebtprovision2A_ShouldReturnCorrectValue()
+        public async Task GetTotalCommsCostswithBadDebtprovision2A_ShouldReturnCorrectValue()
         {
-            var results = calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
-            results.Wait();
-            var result = results.Result;
-            Assert.IsNotNull(result);
+            var result = await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);            Assert.IsNotNull(result);
 
             var totalRow = result.ProducerDisposalFees.LastOrDefault();
             Assert.IsNotNull(totalRow);
@@ -584,12 +541,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         }
 
         [TestMethod]
-        public void GetTotalFee_ShouldReturnZero_WhenNoTotalsLevel()
+        public async Task GetTotalFee_ShouldReturnZero_WhenNoTotalsLevel()
         {
-            var results = calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
-            results.Wait();
-            var result = results.Result;
-            Assert.IsNotNull(result);
+            var result = await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);            Assert.IsNotNull(result);
 
             var totalRow = result.ProducerDisposalFees.LastOrDefault();
             Assert.IsNotNull(totalRow);
@@ -602,12 +556,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         }
 
         [TestMethod]
-        public void GetTotalFee_ShouldReturnZero_WhenProducerDisposalFeesNull()
+        public async Task GetTotalFee_ShouldReturnZero_WhenProducerDisposalFeesNull()
         {
-            var results = calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
-            results.Wait();
-            var result = results.Result;
-            Assert.IsNotNull(result);
+            var result = await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);            Assert.IsNotNull(result);
 
             var totalRow = result.ProducerDisposalFees.LastOrDefault();
             Assert.IsNotNull(totalRow);
@@ -620,12 +571,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         }
 
         [TestMethod]
-        public void GetTotalFee_ShouldReturnZero_WhenProducerDisposalFeesIsEmpty()
+        public async Task GetTotalFee_ShouldReturnZero_WhenProducerDisposalFeesIsEmpty()
         {
-            var results = calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
-            results.Wait();
-            var result = results.Result;
-            Assert.IsNotNull(result);
+            var result = await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);            Assert.IsNotNull(result);
 
             var totalRow = result.ProducerDisposalFees.LastOrDefault();
             Assert.IsNotNull(totalRow);
@@ -638,12 +586,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         }
 
         [TestMethod]
-        public void ProducerTotalPercentageVsTotal_ShouldReturnCorrectValue()
+        public async Task ProducerTotalPercentageVsTotal_ShouldReturnCorrectValue()
         {
-            var results = calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
-            results.Wait();
-            var result = results.Result;
-
+            var result = await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
             Assert.IsNotNull(result);
             Assert.AreEqual(CalcResultSummaryHeaders.CalculationResult, result.ResultSummaryHeader!.Name);
             Assert.AreEqual(26, result.ProducerDisposalFeesHeaders.Count());
@@ -657,12 +602,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         }
 
         [TestMethod]
-        public void CommsCost2bBill_ShouldReturnCorrectValue()
+        public async Task CommsCost2bBill_ShouldReturnCorrectValue()
         {
-            var results = calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
-
-            results.Wait();
-            var result = results.Result;
+            var result = await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(CalcResultSummaryHeaders.CalculationResult, result.ResultSummaryHeader!.Name);
@@ -1131,7 +1073,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         }
 
         [TestMethod]
-        public void Construct_HandlesNullScaledupProducers_UsesEmptyList()
+        public async Task Construct_HandlesNullScaledupProducers_UsesEmptyList()
         {
             // Arrange
             var calcResult = this.calcResult;
@@ -1141,9 +1083,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             };
 
             // Act
-            var task = calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
-            task.Wait();
-            var result = task.Result;
+            var result = await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
 
             // Assert
             Assert.IsNotNull(result);
@@ -1151,7 +1091,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         }
 
         [TestMethod]
-        public void Construct_HandlesNullPartialObligations_UsesEmptyList()
+        public async Task Construct_HandlesNullPartialObligations_UsesEmptyList()
         {
             // Arrange
             var calcResult = this.calcResult;
@@ -1161,9 +1101,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             };
 
             // Act
-            var task = calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
-            task.Wait();
-            var result = task.Result;
+            var result = await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
 
             // Assert
             Assert.IsNotNull(result);
@@ -1473,10 +1411,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         }
 
         [TestMethod]
-        public void ConstructAsync_WhenIsBillingFileTrue_Persists_BillingInstructions_ToDb()
+        public async Task ConstructAsync_WhenIsBillingFileTrue_Persists_BillingInstructions_ToDb()
         {
             // Act
-            var summary = calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: true, calcResult).Result;
+            var summary = await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: true, calcResult);
 
             // Assert (verify Level 1 row exists and has a section)
             var level1 = summary.ProducerDisposalFees

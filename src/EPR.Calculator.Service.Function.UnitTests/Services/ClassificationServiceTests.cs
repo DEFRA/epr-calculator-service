@@ -44,15 +44,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             // Arrange
             dbContext.CalculatorRuns.RemoveRange(dbContext.CalculatorRuns);
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
             dbContext.CalculatorRuns.Add(new CalculatorRun { Id = runId, Name = "Test Run 01", RelativeYear = new RelativeYear(relativeYearValue) });
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
 
             // Act
             await classificationService.UpdateRunClassification(runId, runClassification);
 
             // Assert
-            var calculatorRun = dbContext.CalculatorRuns.FirstOrDefault(run => run.Id == runId);
+            var calculatorRun = await dbContext.CalculatorRuns.FirstOrDefaultAsync(run => run.Id == runId);
             Assert.AreEqual(calculatorRun?.CalculatorRunClassificationId, (int)runClassification);
         }
 

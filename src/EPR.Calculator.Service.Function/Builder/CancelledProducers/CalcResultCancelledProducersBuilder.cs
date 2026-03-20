@@ -30,12 +30,11 @@ namespace EPR.Calculator.Service.Function.Builder.CancelledProducers
         public async Task<CalcResultCancelledProducersResponse> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
         {
 
-            materials = materialService.GetMaterials().Result;
+            materials = await materialService.GetMaterials();
 
-            return await Task.Run(() =>
+            return await Task.Run(async () =>
             {
-                var producers = new List<CalcResultCancelledProducersDto>();
-                producers.AddRange(GetCancelledProducers(resultsRequestDto.RelativeYear, resultsRequestDto.RunId, resultsRequestDto.IsBillingFile).Result);
+                var producers = await GetCancelledProducers(resultsRequestDto.RelativeYear, resultsRequestDto.RunId, resultsRequestDto.IsBillingFile);
 
                 var response = new CalcResultCancelledProducersResponse
                 {

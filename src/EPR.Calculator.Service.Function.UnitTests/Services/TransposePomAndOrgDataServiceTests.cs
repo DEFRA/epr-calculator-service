@@ -340,11 +340,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             await service.Transpose(resultsRequestDto, CancellationToken.None);
 
-            var producerDetail = _context.ProducerDetail.FirstOrDefault();
+            var producerDetail = await _context.ProducerDetail.FirstOrDefaultAsync();
             if (producerDetail == null)
             {
                 _context.ProducerDetail.Add(expectedResult);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 producerDetail = expectedResult;
             }
 
@@ -431,25 +431,25 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             await service.Transpose(resultsRequestDto, CancellationToken.None);
 
-            var producerReportedMaterial = _context.ProducerReportedMaterial.Include(producerReportedMaterial => producerReportedMaterial.Material).Include(producerReportedMaterial => producerReportedMaterial.ProducerDetail).FirstOrDefault();
+            var producerReportedMaterial = await _context.ProducerReportedMaterial.Include(producerReportedMaterial => producerReportedMaterial.Material).Include(producerReportedMaterial => producerReportedMaterial.ProducerDetail).FirstOrDefaultAsync();
             if (producerReportedMaterial == null)
             {
                 // Check if Material entity already exists in the context
-                var materialInContext = _context.Material.FirstOrDefault(m => m.Id == expectedResult.Material.Id);
+                var materialInContext = await _context.Material.FirstOrDefaultAsync(m => m.Id == expectedResult.Material.Id);
                 if (materialInContext != null)
                 {
                     expectedResult.Material = materialInContext;
                 }
 
                 // Check if ProducerDetail entity already exists in the context
-                var producerDetailInContext = _context.ProducerDetail.FirstOrDefault(pd => pd.Id == expectedResult.ProducerDetail.Id);
+                var producerDetailInContext = await _context.ProducerDetail.FirstOrDefaultAsync(pd => pd.Id == expectedResult.ProducerDetail.Id);
                 if (producerDetailInContext != null)
                 {
                     expectedResult.ProducerDetail = producerDetailInContext;
                 }
 
                 _context.ProducerReportedMaterial.Add(expectedResult);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 producerReportedMaterial = expectedResult;
             }
 
@@ -509,11 +509,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             await service.Transpose(resultsRequestDto, CancellationToken.None);
 
-            var producerDetail = _context.ProducerDetail.FirstOrDefault(t => t.SubsidiaryId != null);
+            var producerDetail = await _context.ProducerDetail.FirstOrDefaultAsync(t => t.SubsidiaryId != null);
             if (producerDetail == null)
             {
                 _context.ProducerDetail.Add(expectedResult);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 producerDetail = expectedResult;
             }
 
@@ -569,11 +569,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             await service.Transpose(resultsRequestDto, CancellationToken.None);
 
-            var producerDetail = _context.ProducerDetail.FirstOrDefault();
+            var producerDetail = await _context.ProducerDetail.FirstOrDefaultAsync();
             if (producerDetail == null)
             {
                 _context.ProducerDetail.Add(expectedResult);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 producerDetail = expectedResult;
             }
 
@@ -706,7 +706,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             using var assertContext = new ApplicationDBContext(_dbContextOptions);
             Assert.AreEqual(
                 (int)RunClassification.ERROR,
-                assertContext.CalculatorRuns.Single(run => run.Id == runId).CalculatorRunClassificationId);
+                (await assertContext.CalculatorRuns.SingleAsync(run => run.Id == runId)).CalculatorRunClassificationId);
         }
 
         /// <summary>
@@ -742,7 +742,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             using var assertContext = new ApplicationDBContext(_dbContextOptions);
             Assert.AreEqual(
                 (int)RunClassification.ERROR,
-                assertContext.CalculatorRuns.Single(run => run.Id == runId).CalculatorRunClassificationId);
+                (await assertContext.CalculatorRuns.SingleAsync(run => run.Id == runId)).CalculatorRunClassificationId);
         }
 
         protected static IEnumerable<CalculatorRunOrganisationDataMaster> GetCalculatorRunOrganisationDataMaster()
