@@ -128,9 +128,9 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             }
 
             var reportedMaterials = producer.ProducerReportedMaterials
-                .FirstOrDefault(p => p.Material?.Code == material.Code && p.PackagingType == packagingType);
+                .Where(p => p.Material?.Code == material.Code && p.PackagingType == packagingType);
 
-            return reportedMaterials?.PackagingTonnage ?? 0;
+             return reportedMaterials?.Sum(t => t.PackagingTonnage) ?? 0;
         }
 
         public static decimal GetTonnageTotal(

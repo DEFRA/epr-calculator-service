@@ -214,19 +214,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(3, result.Count);
-            Assert.IsTrue(result.Any(r => r.PackagingType == PackagingTypes.Household));
-            Assert.IsTrue(result.Any(r => r.PackagingType == PackagingTypes.PublicBin));
-            Assert.IsTrue(result.Any(r => r.PackagingType == PackagingTypes.HouseholdDrinksContainers && r.MaterialId == 3));
-            Assert.IsTrue(result.Any(r => r.MaterialId == 1));
-            Assert.IsTrue(result.Any(r => r.MaterialId == 2));
-            Assert.IsTrue(result.Any(r => r.MaterialId == 3));
-            Assert.IsTrue(result.Any(r => r.PackagingTonnage == 100));
-            Assert.IsTrue(result.Any(r => r.PackagingTonnage == 200));
-            Assert.IsTrue(result.Any(r => r.PackagingTonnage == 300));
-            Assert.IsTrue(result.Any(r => r.PackagingType == PackagingTypes.Household));
-            Assert.IsTrue(result.Any(r => r.PackagingType == PackagingTypes.PublicBin));
-            Assert.IsTrue(result.Any(r => r.PackagingType == PackagingTypes.HouseholdDrinksContainers && r.MaterialId == 3));
+            Assert.AreEqual(6, result.Count);
+            Assert.IsTrue(result.Any(r => r.Material!.Code == "PL" && r.PackagingType == "HH" && r.PackagingTonnage == 50 && r.SubmissionPeriod == "2025-H1"));
+            Assert.IsTrue(result.Any(r => r.Material!.Code == "PL" && r.PackagingType == "HH" && r.PackagingTonnage == 50 && r.SubmissionPeriod == "2025-H2"));
+            Assert.IsTrue(result.Any(r => r.Material!.Code == "ST" && r.PackagingType == "PB" && r.PackagingTonnage == 100 && r.SubmissionPeriod == "2025-H1"));
+            Assert.IsTrue(result.Any(r => r.Material!.Code == "ST" && r.PackagingType == "PB" && r.PackagingTonnage == 100 && r.SubmissionPeriod == "2025-H2"));
+            Assert.IsTrue(result.Any(r => r.Material!.Code == "GL" && r.PackagingType == "HDC" && r.PackagingTonnage == 150 && r.SubmissionPeriod == "2025-H1"));
+            Assert.IsTrue(result.Any(r => r.Material!.Code == "GL" && r.PackagingType == "HDC" && r.PackagingTonnage == 150 && r.SubmissionPeriod == "2025-H2"));
         }
 
         private void SeedDatabase(ApplicationDBContext context)
@@ -247,9 +241,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             var producerReportedMaterials = new List<ProducerReportedMaterial>
         {
-            new ProducerReportedMaterial { Id = 1, ProducerDetailId = 1, MaterialId = 1, PackagingType = PackagingTypes.Household, PackagingTonnage = 100 },
-            new ProducerReportedMaterial { Id = 2, ProducerDetailId = 1, MaterialId = 2, PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 200 },
-            new ProducerReportedMaterial { Id = 3, ProducerDetailId = 1, MaterialId = 3, PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 300 },
+            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 1, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
+            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 1, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
+            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 2, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
+            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 2, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
+            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 3, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
+            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 3, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
         };
             context.ProducerReportedMaterial.AddRange(producerReportedMaterials);
 
@@ -286,43 +283,49 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             dbContext.SaveChanges();
 
-            for (int producerDetailId = 1; producerDetailId <= 10; producerDetailId++)
-            {
-                for (int materialId = 1; materialId < 9; materialId++)
+            foreach (var subPeriod in new[] { "2025-H1", "2025-H2"}) {
+                for (int producerDetailId = 1; producerDetailId <= 10; producerDetailId++)
                 {
-                    dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                    for (int materialId = 1; materialId < 9; materialId++)
                     {
-                        MaterialId = materialId,
-                        ProducerDetailId = producerDetailId,
-                        PackagingType = "HH",
-                        PackagingTonnage = materialId * 100,
-                    });
+                        this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                        {
+                            MaterialId = materialId,
+                            ProducerDetailId = producerDetailId,
+                            PackagingType = "HH",
+                            SubmissionPeriod = subPeriod,
+                            PackagingTonnage = materialId * 50,
+                        });
+                    }
                 }
+
+                this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial()
+                {
+                    MaterialId = 3,
+                    ProducerDetailId = 1,
+                    PackagingType = "HDC",
+                    SubmissionPeriod = subPeriod,
+                    PackagingTonnage = 50,
+                });
+
+                this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial()
+                {
+                    MaterialId = 3,
+                    ProducerDetailId = 2,
+                    PackagingType = "HDC",
+                    SubmissionPeriod = subPeriod,
+                    PackagingTonnage = 50,
+                });
+
+                this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial()
+                {
+                    MaterialId = 2,
+                    ProducerDetailId = 1,
+                    PackagingType = "PB",
+                    SubmissionPeriod = subPeriod,
+                    PackagingTonnage = 100,
+                });
             }
-
-            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-            {
-                MaterialId = 3,
-                ProducerDetailId = 1,
-                PackagingType = "HDC",
-                PackagingTonnage = 100,
-            });
-
-            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-            {
-                MaterialId = 3,
-                ProducerDetailId = 2,
-                PackagingType = "HDC",
-                PackagingTonnage = 100,
-            });
-
-            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-            {
-                MaterialId = 2,
-                ProducerDetailId = 1,
-                PackagingType = "PB",
-                PackagingTonnage = 200,
-            });
 
             dbContext.SaveChanges();
         }

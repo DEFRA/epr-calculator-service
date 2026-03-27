@@ -253,17 +253,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public async Task TransposeBeforeCalcResults_Should_Return_True_On_Success()
+        public async Task Transpose_Should_Return_Correct_Details()
         {
-            // Arrange
-            var resultsRequestDto = Fixture.Create<CalcResultsRequestDto>();
-            resultsRequestDto.RunId = 1;
-            var runName = Fixture.Create<string>();
-            var cancellationToken = CancellationToken.None;
-
             var mockErrorReportService = new Mock<IErrorReportService>();
 
-            var errorReport = new HashSet<(int, string?)>();
+            var unmatchedRecords = new HashSet<(int ProducerId, string? SubsidiaryId)>
+                                    {
+                                        (2, "1"),
+                                    };
             mockErrorReportService
                 .Setup(s => s.HandleErrors(
                     It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
@@ -271,315 +268,59 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     It.IsAny<int>(),
                     It.IsAny<string>(),
                     It.IsAny<RelativeYear>(),
-                    CancellationToken.None))
-                .ReturnsAsync(errorReport);
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(unmatchedRecords);
+
+            var productDetailDbService = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
+            var productReportedMaterialDbService = new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>();
+
+            List<ProducerDetail> savedProductDetails = new List<ProducerDetail>();
+            List<ProducerReportedMaterial> savedProductReportedMaterials = new List<ProducerReportedMaterial>();
+
+            productDetailDbService
+                .Setup(c => c.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
+                .Returns((IEnumerable<ProducerDetail> arg) =>
+                {
+                    savedProductDetails = arg.ToList();
+                    return Task.FromResult(arg);
+                });
+
+            productReportedMaterialDbService
+                .Setup(c => c.InsertRecords(It.IsAny<IEnumerable<ProducerReportedMaterial>>()))
+                .Returns((IEnumerable<ProducerReportedMaterial> arg) =>
+                {
+                    savedProductReportedMaterials = arg.ToList();
+                    return Task.FromResult(arg);
+                });       
 
             var service = new TransposePomAndOrgDataService(
-               _context,
-               CommandTimeoutService,
-               new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
-               new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
-               mockErrorReportService.Object,
-               new Mock<ICalculatorTelemetryLogger>().Object);
+                this._context,
+                this.CommandTimeoutService,
+                productDetailDbService.Object,
+                productReportedMaterialDbService.Object,
+                mockErrorReportService.Object,
+                new Mock<ICalculatorTelemetryLogger>().Object);
 
-            // Act
-            var result = await service.TransposeBeforeResultsFileAsync(resultsRequestDto, runName, cancellationToken);
+            var resultsRequestDto = new CalcResultsRequestDto { RunId = 3, RelativeYear = new RelativeYear(2026) };
 
-            // Assert
+            var result = await service.Transpose(resultsRequestDto, CancellationToken.None);
+
             Assert.IsTrue(result);
-        }
+            Assert.AreEqual(2, savedProductDetails.Count());
+            Assert.AreEqual(6, savedProductReportedMaterials.Count());
+            Assert.IsTrue(savedProductDetails.Any(p => p.ProducerId == 1 && p.SubsidiaryId == null && p.CalculatorRunId == 3 && p.ProducerName == "Test LIMITED"));
+            Assert.IsTrue(savedProductDetails.Any(p => p.ProducerId == 1 && p.SubsidiaryId == "1" && p.CalculatorRunId == 3 && p.ProducerName == "UPU LIMITED"));
 
-        [TestMethod]
-        public async Task Transpose_Should_Return_Correct_ProducerDetail()
-        {
-            var expectedResult = new ProducerDetail
-            {
-                ProducerId = 9991,
-                ProducerName = "UPU LIMITED",
-                CalculatorRunId = 1,
-                CalculatorRun = null,
-            };
+            var prod1ReportedMats = savedProductReportedMaterials.Where(x => x.ProducerDetail!.ProducerId == 1 && x.ProducerDetail.SubsidiaryId == null).ToList();
+            var prod1Sub1ReportedMats = savedProductReportedMaterials.Where(x => x.ProducerDetail!.ProducerId == 1 && x.ProducerDetail.SubsidiaryId == "1").ToList();
 
-            var mockProducerDetailService = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
-            mockProducerDetailService.Setup(service => service.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
-                                     .Returns(Task.CompletedTask);
+            Assert.IsTrue(prod1ReportedMats.Any(p => p.SubmissionPeriod == "2025-H1" && p.PackagingType == "HH" && p.Material!.Code == "PL" && p.PackagingTonnage == 1));
+            Assert.IsTrue(prod1ReportedMats.Any(p => p.SubmissionPeriod == "2025-H2" && p.PackagingType == "HH" && p.Material!.Code == "PL" && p.PackagingTonnage == 2));
 
-            var mockErrorReportService = new Mock<IErrorReportService>();
-
-            var unmatchedRecords = new HashSet<(int ProducerId, string? SubsidiaryId)>
-                                    {
-                                        (2, "1"),
-                                    };
-            mockErrorReportService
-                .Setup(s => s.HandleErrors(
-                    It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
-                    It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
-                    It.IsAny<int>(),
-                    It.IsAny<string>(),
-                    It.IsAny<RelativeYear>(),
-                    It.IsAny<CancellationToken>()))
-                .ReturnsAsync(unmatchedRecords);
-
-            var service = new TransposePomAndOrgDataService(
-                _context,
-                CommandTimeoutService,
-                mockProducerDetailService.Object,
-                new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
-                mockErrorReportService.Object,
-                new Mock<ICalculatorTelemetryLogger>().Object);
-
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 3, RelativeYear = new RelativeYear(2025) };
-
-            // Detach existing CalculatorRun entity if it is already being tracked
-            var existingCalculatorRun = _context.ChangeTracker.Entries<CalculatorRun>()
-                                                .FirstOrDefault(e => e.Entity.Id == expectedResult.CalculatorRunId);
-            if (existingCalculatorRun != null)
-            {
-                _context.Entry(existingCalculatorRun.Entity).State = EntityState.Detached;
-            }
-
-            await service.Transpose(resultsRequestDto, CancellationToken.None);
-
-            var producerDetail = await _context.ProducerDetail.FirstOrDefaultAsync();
-            if (producerDetail == null)
-            {
-                _context.ProducerDetail.Add(expectedResult);
-                await _context.SaveChangesAsync();
-                producerDetail = expectedResult;
-            }
-
-            Assert.IsNotNull(producerDetail);
-            Assert.AreEqual(expectedResult.ProducerId, producerDetail.ProducerId);
-        }
-
-        [TestMethod]
-        public async Task Transpose_Should_Return_Correct_ProducerReportedMaterial()
-        {
-            var expectedResult = new ProducerReportedMaterial
-            {
-                Id = 3,
-                MaterialId = 4,
-                ProducerDetailId = 1,
-                PackagingType = "CW",
-                PackagingTonnage = 1,
-                Material = new Material
-                {
-                    Id = 4,
-                    Code = "PC",
-                    Name = "Paper or card",
-                    Description = "Paper or card",
-                },
-                ProducerDetail = new ProducerDetail
-                {
-                    Id = 1,
-                    ProducerId = 1,
-                    SubsidiaryId = "1",
-                    ProducerName = "UPU LIMITED",
-                    CalculatorRunId = 1
-                },
-            };
-
-            var mockErrorReportService = new Mock<IErrorReportService>();
-
-            var unmatchedRecords = new HashSet<(int ProducerId, string? SubsidiaryId)>
-                                    {
-                                        (2, "1"),
-                                    };
-            mockErrorReportService
-                .Setup(s => s.HandleErrors(
-                    It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
-                    It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
-                    It.IsAny<int>(),
-                    It.IsAny<string>(),
-                    It.IsAny<RelativeYear>(),
-                    It.IsAny<CancellationToken>()))
-                .ReturnsAsync(unmatchedRecords);
-
-            var service = new TransposePomAndOrgDataService(
-                _context,
-                CommandTimeoutService,
-                new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
-                new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
-                mockErrorReportService.Object,
-                new Mock<ICalculatorTelemetryLogger>().Object);
-
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 3, RelativeYear = new RelativeYear(2025) };
-
-            // Detach existing CalculatorRun entity if it is already being tracked
-            var existingCalculatorRun = _context.ChangeTracker.Entries<CalculatorRun>()
-                                                .FirstOrDefault(e => e.Entity.Id == expectedResult.ProducerDetail.CalculatorRunId);
-            if (existingCalculatorRun != null)
-            {
-                _context.Entry(existingCalculatorRun.Entity).State = EntityState.Detached;
-            }
-
-            // Detach existing Material entity if it is already being tracked
-            var existingMaterial = _context.ChangeTracker.Entries<Material>()
-                                           .FirstOrDefault(e => e.Entity.Id == expectedResult.Material.Id);
-            if (existingMaterial != null)
-            {
-                _context.Entry(existingMaterial.Entity).State = EntityState.Detached;
-            }
-
-            // Detach existing ProducerDetail entity if it is already being tracked
-            var existingProducerDetail = _context.ChangeTracker.Entries<ProducerDetail>()
-                                                 .FirstOrDefault(e => e.Entity.Id == expectedResult.ProducerDetail.Id);
-            if (existingProducerDetail != null)
-            {
-                _context.Entry(existingProducerDetail.Entity).State = EntityState.Detached;
-            }
-
-            await service.Transpose(resultsRequestDto, CancellationToken.None);
-
-            var producerReportedMaterial = await _context.ProducerReportedMaterial.Include(producerReportedMaterial => producerReportedMaterial.Material).Include(producerReportedMaterial => producerReportedMaterial.ProducerDetail).FirstOrDefaultAsync();
-            if (producerReportedMaterial == null)
-            {
-                // Check if Material entity already exists in the context
-                var materialInContext = await _context.Material.FirstOrDefaultAsync(m => m.Id == expectedResult.Material.Id);
-                if (materialInContext != null)
-                {
-                    expectedResult.Material = materialInContext;
-                }
-
-                // Check if ProducerDetail entity already exists in the context
-                var producerDetailInContext = await _context.ProducerDetail.FirstOrDefaultAsync(pd => pd.Id == expectedResult.ProducerDetail.Id);
-                if (producerDetailInContext != null)
-                {
-                    expectedResult.ProducerDetail = producerDetailInContext;
-                }
-
-                _context.ProducerReportedMaterial.Add(expectedResult);
-                await _context.SaveChangesAsync();
-                producerReportedMaterial = expectedResult;
-            }
-
-            Assert.IsNotNull(producerReportedMaterial);
-            Assert.AreEqual(expectedResult.Material.Code, producerReportedMaterial.Material!.Code);
-            Assert.AreEqual(expectedResult.Material.Name, producerReportedMaterial.Material.Name);
-            Assert.AreEqual(expectedResult.ProducerDetail.ProducerId, producerReportedMaterial.ProducerDetail!.ProducerId);
-            Assert.AreEqual(expectedResult.ProducerDetail.ProducerName, producerReportedMaterial.ProducerDetail.ProducerName);
-        }
-
-        [TestMethod]
-        public async Task Transpose_Should_Return_Correct_ProducerSubsidaryDetail()
-        {
-            var expectedResult = new ProducerDetail
-            {
-                Id = 2,
-                ProducerId = 2,
-                SubsidiaryId = "1",
-                ProducerName = "Subsid2",
-                CalculatorRunId = 1
-            };
-
-            var mockErrorReportService = new Mock<IErrorReportService>();
-
-            var unmatchedRecords = new HashSet<(int ProducerId, string? SubsidiaryId)>
-                                    {
-                                        (2, "1"),
-                                    };
-
-            mockErrorReportService
-                .Setup(s => s.HandleErrors(
-                    It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
-                    It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
-                    It.IsAny<int>(),
-                    It.IsAny<string>(),
-                    It.IsAny<RelativeYear>(),
-                    It.IsAny<CancellationToken>()))
-                .ReturnsAsync(unmatchedRecords);
-
-            var service = new TransposePomAndOrgDataService(
-                _context,
-                CommandTimeoutService,
-                new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
-                new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
-                mockErrorReportService.Object,
-                new Mock<ICalculatorTelemetryLogger>().Object);
-
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 2, RelativeYear = new RelativeYear(2025) };
-
-            // Detach existing CalculatorRun entity if it is already being tracked
-            var existingCalculatorRun = _context.ChangeTracker.Entries<CalculatorRun>()
-                                                .FirstOrDefault(e => e.Entity.Id == expectedResult.CalculatorRunId);
-            if (existingCalculatorRun != null)
-            {
-                _context.Entry(existingCalculatorRun.Entity).State = EntityState.Detached;
-            }
-
-            await service.Transpose(resultsRequestDto, CancellationToken.None);
-
-            var producerDetail = await _context.ProducerDetail.FirstOrDefaultAsync(t => t.SubsidiaryId != null);
-            if (producerDetail == null)
-            {
-                _context.ProducerDetail.Add(expectedResult);
-                await _context.SaveChangesAsync();
-                producerDetail = expectedResult;
-            }
-
-            Assert.IsNotNull(producerDetail);
-            Assert.AreEqual(expectedResult.ProducerId, producerDetail.ProducerId);
-            Assert.AreEqual(expectedResult.ProducerName, producerDetail.ProducerName);
-        }
-
-        [TestMethod]
-        public async Task Transpose_Should_Return_Correct_ProducerDetail_When_Submission_Period_Not_Exists()
-        {
-            var expectedResult = new ProducerDetail
-            {
-                ProducerId = 9994,
-                ProducerName = "Subsid2",
-                CalculatorRunId = 1
-            };
-
-            var mockErrorReportService = new Mock<IErrorReportService>();
-
-            var unmatchedRecords = new HashSet<(int ProducerId, string? SubsidiaryId)>
-                                    {
-                                        (2, "1"),
-                                    };
-
-            mockErrorReportService
-                .Setup(s => s.HandleErrors(
-                    It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
-                    It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
-                    It.IsAny<int>(),
-                    It.IsAny<string>(),
-                    It.IsAny<RelativeYear>(),
-                    It.IsAny<CancellationToken>()))
-                .ReturnsAsync(unmatchedRecords);
-
-            var service = new TransposePomAndOrgDataService(
-                _context,
-                CommandTimeoutService,
-                new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
-                new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
-                mockErrorReportService.Object,
-                new Mock<ICalculatorTelemetryLogger>().Object);
-
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 4, RelativeYear = new RelativeYear(2025) };
-
-            // Detach existing CalculatorRun entity if it is already being tracked
-            var existingCalculatorRun = _context.ChangeTracker.Entries<CalculatorRun>()
-                                                .FirstOrDefault(e => e.Entity.Id == expectedResult.CalculatorRunId);
-            if (existingCalculatorRun != null)
-            {
-                _context.Entry(existingCalculatorRun.Entity).State = EntityState.Detached;
-            }
-
-            await service.Transpose(resultsRequestDto, CancellationToken.None);
-
-            var producerDetail = await _context.ProducerDetail.FirstOrDefaultAsync();
-            if (producerDetail == null)
-            {
-                _context.ProducerDetail.Add(expectedResult);
-                await _context.SaveChangesAsync();
-                producerDetail = expectedResult;
-            }
-
-            Assert.IsNotNull(producerDetail);
-            Assert.AreEqual(expectedResult.ProducerId, producerDetail.ProducerId);
-            Assert.AreEqual(expectedResult.ProducerName, producerDetail.ProducerName);
+            Assert.IsTrue(prod1Sub1ReportedMats.Any(p => p.SubmissionPeriod == "2025-H1" && p.PackagingType == "CW" && p.Material!.Code == "AL" && p.PackagingTonnage == 0.5m));
+            Assert.IsTrue(prod1Sub1ReportedMats.Any(p => p.SubmissionPeriod == "2025-H2" && p.PackagingType == "CW" && p.Material!.Code == "AL" && p.PackagingTonnage == 0.5m));
+            Assert.IsTrue(prod1Sub1ReportedMats.Any(p => p.SubmissionPeriod == "2025-H1" && p.PackagingType == "CW" && p.Material!.Code == "PC" && p.PackagingTonnage == 0.5m));
+            Assert.IsTrue(prod1Sub1ReportedMats.Any(p => p.SubmissionPeriod == "2025-H2" && p.PackagingType == "CW" && p.Material!.Code == "PC" && p.PackagingTonnage == 0.5m));
         }
 
         [TestMethod]
@@ -752,7 +493,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new ()
                 {
                     Id = 1,
-                    RelativeYear = new RelativeYear(2024),
+                    RelativeYear = new RelativeYear(2026),
                     EffectiveFrom = DateTime.UtcNow,
                     CreatedBy = "Test user",
                     CreatedAt = DateTime.UtcNow,
@@ -760,7 +501,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new ()
                 {
                     Id = 2,
-                    RelativeYear = new RelativeYear(2024),
+                    RelativeYear = new RelativeYear(2026),
                     EffectiveFrom = DateTime.UtcNow,
                     CreatedBy = "Test user",
                     CreatedAt = DateTime.UtcNow,
@@ -904,14 +645,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 new ()
                 {
-                    RelativeYear = new RelativeYear(2024),
+                    RelativeYear = new RelativeYear(2026),
                     EffectiveFrom = DateTime.UtcNow,
                     CreatedBy = "Test user",
                     CreatedAt = DateTime.UtcNow,
                 },
                 new ()
                 {
-                    RelativeYear = new RelativeYear(2024),
+                    RelativeYear = new RelativeYear(2026),
                     EffectiveFrom = DateTime.UtcNow,
                     CreatedBy = "Test user",
                     CreatedAt = DateTime.UtcNow,
@@ -927,52 +668,96 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new ()
                 {
                     OrganisationId = 1,
-                    SubsidiaryId = "1",
-                    SubmissionPeriod = "2023-P2",
+                    SubmissionPeriod = "2025-H1",
                     PackagingActivity = null,
-                    PackagingType = "CW",
+                    PackagingType = "HH",
                     PackagingClass = "O1",
-                    PackagingMaterial = "PC",
+                    PackagingMaterial = "PL",
                     PackagingMaterialWeight = 1000,
                     LoadTimeStamp = DateTime.UtcNow,
                     CalculatorRunPomDataMasterId = 1,
-                    SubmissionPeriodDesc = "July to December 2023",
+                    SubmissionPeriodDesc = "January to June 2025",
                     SubmitterId = SubmitterId1
                 },
                 new ()
                 {
                     OrganisationId = 1,
-                    SubmissionPeriod = "2023-P2",
+                    SubmissionPeriod = "2025-H2",
                     PackagingActivity = null,
-                    PackagingType = "CW",
+                    PackagingType = "HH",
                     PackagingClass = "O1",
-                    PackagingMaterial = "PC",
-                    PackagingMaterialWeight = 1000,
+                    PackagingMaterial = "PL",
+                    PackagingMaterialWeight = 2000,
                     LoadTimeStamp = DateTime.UtcNow,
                     CalculatorRunPomDataMasterId = 1,
-                    SubmissionPeriodDesc = "July to December 2023",
+                    SubmissionPeriodDesc = "July to December 2053",
                     SubmitterId = SubmitterId1
                 },
                 new ()
                 {
                     OrganisationId = 1,
                     SubsidiaryId = "1",
-                    SubmissionPeriod = "2023-P1",
+                    SubmissionPeriod = "2025-H1",
+                    PackagingActivity = null,
+                    PackagingType = "CW",
+                    PackagingClass = "O1",
+                    PackagingMaterial = "PC",
+                    PackagingMaterialWeight = 500,
+                    LoadTimeStamp = DateTime.UtcNow,
+                    CalculatorRunPomDataMasterId = 1,
+                    SubmissionPeriodDesc = "January to June 2025",
+                    SubmitterId = SubmitterId1
+                },
+                new ()
+                {
+                    OrganisationId = 1,
+                    SubsidiaryId = "1",
+                    SubmissionPeriod = "2025-H2",
+                    PackagingActivity = null,
+                    PackagingType = "CW",
+                    PackagingClass = "O1",
+                    PackagingMaterial = "PC",
+                    PackagingMaterialWeight = 500,
+                    LoadTimeStamp = DateTime.UtcNow,
+                    CalculatorRunPomDataMasterId = 1,
+                    SubmissionPeriodDesc = "July to December 2025",
+                    SubmitterId = SubmitterId1
+                },
+                new ()
+                {
+                    OrganisationId = 1,
+                    SubsidiaryId = "1",
+                    SubmissionPeriod = "2025-H1",
                     PackagingActivity = null,
                     PackagingType = "CW",
                     PackagingClass = "O1",
                     PackagingMaterial = "AL",
-                    PackagingMaterialWeight = 1000,
+                    PackagingMaterialWeight = 500,
                     LoadTimeStamp = DateTime.UtcNow,
                     CalculatorRunPomDataMasterId = 1,
-                    SubmissionPeriodDesc = "January to June 2023",
+                    SubmissionPeriodDesc = "January to June 2025",
+                    SubmitterId = SubmitterId1
+                },
+                new ()
+                {
+                    OrganisationId = 1,
+                    SubsidiaryId = "1",
+                    SubmissionPeriod = "2025-H2",
+                    PackagingActivity = null,
+                    PackagingType = "CW",
+                    PackagingClass = "O1",
+                    PackagingMaterial = "AL",
+                    PackagingMaterialWeight = 500,
+                    LoadTimeStamp = DateTime.UtcNow,
+                    CalculatorRunPomDataMasterId = 1,
+                    SubmissionPeriodDesc = "July to December 2025",
                     SubmitterId = SubmitterId1
                 },
                 new ()
                 {
                     OrganisationId = 2,
                     SubsidiaryId = "1",
-                    SubmissionPeriod = "2024-P1",
+                    SubmissionPeriod = "2025-H1",
                     PackagingActivity = null,
                     PackagingType = "CW",
                     PackagingClass = "O1",
@@ -980,24 +765,24 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     PackagingMaterialWeight = 1000,
                     LoadTimeStamp = DateTime.UtcNow,
                     CalculatorRunPomDataMasterId = 1,
-                    SubmissionPeriodDesc = "January to June 2024",
+                    SubmissionPeriodDesc = "January to June 2025",
                     SubmitterId = SubmitterId1
                 },
                 new ()
                 {
                     OrganisationId = 1,
                     SubsidiaryId = "1",
-                    SubmissionPeriod = "2023-P2",
+                    SubmissionPeriod = "2025-H2",
                     PackagingActivity = null,
                     PackagingType = "CW",
                     PackagingClass = "O1",
                     PackagingMaterial = "PC",
-                    PackagingMaterialWeight = 1000,
+                    PackagingMaterialWeight = 9999,
                     LoadTimeStamp = DateTime.UtcNow,
                     CalculatorRunPomDataMasterId = 1,
-                    SubmissionPeriodDesc = "July to December 2023",
+                    SubmissionPeriodDesc = "July to December 2025",
                     SubmitterId = SubmitterId2
-                },
+                }                
             };
             return list;
         }
@@ -1046,71 +831,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 },
             };
             return list;
-        }
-
-        [TestMethod]
-        public async Task Transpose_Should_Return_ObligatedOrgs()
-        {
-            var expectedResult = new ProducerDetail
-            {
-                ProducerId = 9991,
-                ProducerName = "UPU LIMITED",
-                CalculatorRunId = 1,
-                CalculatorRun = Fixture.Create<CalculatorRun>(),
-            };
-
-            var mockProducerDetailService = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
-            IEnumerable<ProducerDetail> resultProducerDetails = new List<ProducerDetail>();
-            mockProducerDetailService.Setup(service => service.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
-                                      .Callback<IEnumerable<ProducerDetail>>(arg=> resultProducerDetails = arg)
-                                     .Returns(Task.CompletedTask);
-
-            var mockErrorReportService = new Mock<IErrorReportService>();
-
-            var unmatchedRecords = new HashSet<(int ProducerId, string? SubsidiaryId)>();
-
-            mockErrorReportService
-                .Setup(s => s.HandleErrors(
-                    It.IsAny<IEnumerable<CalculatorRunPomDataDetail>>(),
-                    It.IsAny<IEnumerable<CalculatorRunOrganisationDataDetail>>(),
-                    It.IsAny<int>(),
-                    It.IsAny<string>(),
-                    It.IsAny<RelativeYear>(),
-                    It.IsAny<CancellationToken>()))
-                .ReturnsAsync(unmatchedRecords);
-
-            var dbChunkerService = new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>();
-
-           var service = new TransposePomAndOrgDataService(
-                _context,
-                CommandTimeoutService,
-                mockProducerDetailService.Object,
-                dbChunkerService.Object,
-                mockErrorReportService.Object,
-                new Mock<ICalculatorTelemetryLogger>().Object);
-
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 3, RelativeYear = new RelativeYear(2025) };
-
-            // Detach existing CalculatorRun entity if it is already being tracked
-            var existingCalculatorRun = _context.ChangeTracker.Entries<CalculatorRun>()
-                                                .FirstOrDefault(e => e.Entity.Id == expectedResult.CalculatorRunId);
-            if (existingCalculatorRun != null)
-            {
-                _context.Entry(existingCalculatorRun.Entity).State = EntityState.Detached;
-            }
-            IEnumerable<ProducerReportedMaterial> resultPRM = new List<ProducerReportedMaterial>();
-            dbChunkerService.Setup(x => x.InsertRecords(It.IsAny<IEnumerable<ProducerReportedMaterial>>())).Callback<IEnumerable<ProducerReportedMaterial>>(arg => resultPRM = arg).Returns(Task.CompletedTask);
-
-            await service.Transpose(resultsRequestDto, CancellationToken.None);
-
-            Assert.IsNotNull(resultProducerDetails);
-            Assert.AreEqual(2, resultProducerDetails.Count());
-            Assert.IsFalse(resultProducerDetails.Any(x=>x.SubsidiaryId == "100"));
-            Assert.IsNotNull(resultPRM);
-            Assert.AreEqual(3, resultPRM.Count());
-            Assert.IsTrue(resultPRM.Any(x => x.ProducerDetail!.ProducerId == 1 && x.ProducerDetail.SubsidiaryId == null && x.Material!.Code == "PC" && x.PackagingType == "CW" && x.PackagingTonnage == 1));
-            Assert.IsTrue(resultPRM.Any(x => x.ProducerDetail!.ProducerId == 1 && x.ProducerDetail.SubsidiaryId == "1" && x.Material!.Code == "AL" && x.PackagingType == "CW" && x.PackagingTonnage == 1));
-            Assert.IsTrue(resultPRM.Any(x => x.ProducerDetail!.ProducerId == 1 && x.ProducerDetail.SubsidiaryId == "1" && x.Material!.Code == "PC" && x.PackagingType == "CW" && x.PackagingTonnage == 1));
         }
     }
 }

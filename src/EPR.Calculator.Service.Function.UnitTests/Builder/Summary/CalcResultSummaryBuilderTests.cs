@@ -628,18 +628,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             Assert.AreEqual(material.Code, actualMaterial.Code);
         }
 
-        [TestMethod]
-        public void GetProducerRunMaterialDetails_ShouldReturnCorrectValue()
+        private IEnumerable<CalcResultProducerAndReportMaterialDetail> GetProducerRunMaterialDetails(
+            IEnumerable<ProducerDetail> producerDetails,
+            IEnumerable<ProducerReportedMaterial> producerReportedmaterials,
+            int runId)
         {
-            var result = CalcResultSummaryBuilder.GetProducerRunMaterialDetails(
-                context.ProducerDetail.ToList(),
-                context.ProducerReportedMaterial.ToList(),
-                1);
-            Assert.IsNotNull(result);
-            Assert.AreEqual(5, result.Count());
-            var producer = result.FirstOrDefault(t => t.ProducerDetail.Id == 1);
-            Assert.AreEqual(3, producer?.ProducerDetail.ProducerReportedMaterials.Count);
-            Assert.AreEqual("Producer1", producer?.ProducerDetail.ProducerName);
+            return (from p in producerDetails
+                    join m in producerReportedmaterials on p.Id equals m.ProducerDetailId
+                    where p.CalculatorRunId == runId
+                    select new CalcResultProducerAndReportMaterialDetail
+                    {
+                        ProducerDetail = p,
+                        ProducerReportedMaterial = m,
+                    }).ToList();
         }
 
         [TestMethod]
@@ -668,8 +669,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         [TestMethod]
         public void GetCalcResultSummary_ShouldReturnCorrectValue()
         {
-            var orderedProducerDetails = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
-            var runProducerMaterialDetails = CalcResultSummaryBuilder.GetProducerRunMaterialDetails(
+            var orderedProducerDetails = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, this.context.ProducerDetail.ToList());
+            var runProducerMaterialDetails = GetProducerRunMaterialDetails(
                 orderedProducerDetails,
                 context.ProducerReportedMaterial.ToList(),
                 1);
@@ -718,8 +719,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                 new() { OrganisationId = 1, OrganisationName = "Org1" }
             };
 
-            var orderedProducerDetails = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList()).ToList();
-            var runProducerMaterialDetails = CalcResultSummaryBuilder.GetProducerRunMaterialDetails(
+            var orderedProducerDetails = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, this.context.ProducerDetail.ToList()).ToList();
+            var runProducerMaterialDetails = GetProducerRunMaterialDetails(
                 orderedProducerDetails,
                 context.ProducerReportedMaterial.ToList(),
                 1);
@@ -817,8 +818,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             calcResult.CalcResultScaledupProducers.ScaledupProducers = GetScaledUpProducers();
             await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
 
-            var orderedProducerDetails = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
-            var runProducerMaterialDetails = CalcResultSummaryBuilder.GetProducerRunMaterialDetails(
+            var orderedProducerDetails = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, this.context.ProducerDetail.ToList());
+            var runProducerMaterialDetails = GetProducerRunMaterialDetails(
                 orderedProducerDetails,
                 context.ProducerReportedMaterial.ToList(),
                 1);
@@ -876,8 +877,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             calcResult.CalcResultPartialObligations.PartialObligations = GetPartialObligations();
             await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
 
-            var orderedProducerDetails = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
-            var runProducerMaterialDetails = CalcResultSummaryBuilder.GetProducerRunMaterialDetails(
+            var orderedProducerDetails = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, this.context.ProducerDetail.ToList());
+            var runProducerMaterialDetails = GetProducerRunMaterialDetails(
                 orderedProducerDetails,
                 context.ProducerReportedMaterial.ToList(),
                 1);
@@ -1112,9 +1113,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         public void GetCalcResultSummary_AddsProducerTotalRow_AndProducerRow()
         {
             // Arrange
-            var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
-            var materials = MaterialMapper.Map(context.Material.ToList());
-            var runDetails = CalcResultSummaryBuilder.GetProducerRunMaterialDetails(ordered, context.ProducerReportedMaterial.ToList(), 1);
+            var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, this.context.ProducerDetail.ToList());
+            var materials = Mappers.MaterialMapper.Map(this.context.Material.ToList());
+            var runDetails = GetProducerRunMaterialDetails(ordered, this.context.ProducerReportedMaterial.ToList(), 1);
 
             calcResultsService.ScaledupProducers = new List<CalcResultScaledupProducer>();
 
@@ -1155,7 +1156,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                 ProducerDetail = sub,
                 MaterialId = 1,
                 PackagingType = "HH",
-                PackagingTonnage = 10m
+                SubmissionPeriod = "2025-H1",
+                PackagingTonnage = 5m
+            });
+            context.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            {
+                ProducerDetail = sub,
+                MaterialId = 1,
+                PackagingType = "HH",
+                SubmissionPeriod = "2025-H2",
+                PackagingTonnage = 5m
             });
             context.SaveChanges();
 
@@ -1165,8 +1175,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             };
 
             var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
-            var materials = MaterialMapper.Map(context.Material.ToList());
-            var runDetails = CalcResultSummaryBuilder.GetProducerRunMaterialDetails(ordered, context.ProducerReportedMaterial.ToList(), 1);
+            var materials = Mappers.MaterialMapper.Map(context.Material.ToList());
+            var runDetails = GetProducerRunMaterialDetails(ordered, context.ProducerReportedMaterial.ToList(), 1);
             var totalPackaging = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(
                 runDetails, materials, 1, calcResultsService.ScaledupProducers.ToList(),
                 calcResultsService.PartialObligations.ToList());
@@ -1737,15 +1747,24 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
 
             context.ProducerReportedMaterial.AddRange(new List<ProducerReportedMaterial>
             {
-                new() { Id = 1, MaterialId = 1, PackagingType = "HH", PackagingTonnage = 400m, ProducerDetailId = 1 },
-                new() { Id = 2, MaterialId = 2, PackagingType = "HH", PackagingTonnage = 400m, ProducerDetailId = 2 },
-                new() { Id = 3, MaterialId = 1, PackagingType = "CW", PackagingTonnage = 200m, ProducerDetailId = 1 },
-                new() { Id = 4, MaterialId = 2, PackagingType = "CW", PackagingTonnage = 200m, ProducerDetailId = 2 },
-                new() { Id = 5, MaterialId = 1, PackagingType = "HDC", PackagingTonnage = 300m, ProducerDetailId = 1 },
-                new() { Id = 6, MaterialId = 2, PackagingType = "HDC", PackagingTonnage = 300m, ProducerDetailId = 2 },
-                new() { Id = 7, MaterialId = 2, PackagingType = "HH", PackagingTonnage = 300m, ProducerDetailId = 4 },
-                new() { Id = 8, MaterialId = 1, PackagingType = "HH", PackagingTonnage = 300m, ProducerDetailId = 5 },
+                new() { MaterialId = 1, PackagingType = "HH", SubmissionPeriod = "2025-H1", PackagingTonnage = 350m, ProducerDetailId = 1 },
+                new() { MaterialId = 1, PackagingType = "HH", SubmissionPeriod = "2025-H2", PackagingTonnage = 50m, ProducerDetailId = 1 },
+                new() { MaterialId = 2, PackagingType = "HH", SubmissionPeriod = "2025-H1", PackagingTonnage = 250m, ProducerDetailId = 2 },
+                new() { MaterialId = 2, PackagingType = "HH", SubmissionPeriod = "2025-H2", PackagingTonnage = 150m, ProducerDetailId = 2 },
+                new() { MaterialId = 1, PackagingType = "CW", SubmissionPeriod = "2025-H1", PackagingTonnage = 75m, ProducerDetailId = 1 },
+                new() { MaterialId = 1, PackagingType = "CW", SubmissionPeriod = "2025-H2", PackagingTonnage = 125m, ProducerDetailId = 1 },
+                new() { MaterialId = 2, PackagingType = "CW", SubmissionPeriod = "2025-H1", PackagingTonnage = 25m, ProducerDetailId = 2 },
+                new() { MaterialId = 2, PackagingType = "CW", SubmissionPeriod = "2025-H2", PackagingTonnage = 175m, ProducerDetailId = 2 },
+                new() { MaterialId = 1, PackagingType = "HDC", SubmissionPeriod = "2025-H1",  PackagingTonnage = 125m, ProducerDetailId = 1 },
+                new() { MaterialId = 1, PackagingType = "HDC", SubmissionPeriod = "2025-H2",  PackagingTonnage = 175m, ProducerDetailId = 1 },
+                new() { MaterialId = 2, PackagingType = "HDC", SubmissionPeriod = "2025-H1",  PackagingTonnage = 100m, ProducerDetailId = 2 },
+                new() { MaterialId = 2, PackagingType = "HDC", SubmissionPeriod = "2025-H2",  PackagingTonnage = 200m, ProducerDetailId = 2 },
+                new() { MaterialId = 2, PackagingType = "HH", SubmissionPeriod = "2025-H1", PackagingTonnage = 50m, ProducerDetailId = 4 },
+                new() { MaterialId = 2, PackagingType = "HH", SubmissionPeriod = "2025-H2", PackagingTonnage = 250m, ProducerDetailId = 4 },
+                new() { MaterialId = 1, PackagingType = "HH", SubmissionPeriod = "2025-H1", PackagingTonnage = 110m, ProducerDetailId = 5 },
+                new() { MaterialId = 1, PackagingType = "HH", SubmissionPeriod = "2025-H2", PackagingTonnage = 190m, ProducerDetailId = 5 }
             });
+
             context.ProducerResultFileSuggestedBillingInstruction.AddRange(new List<ProducerResultFileSuggestedBillingInstruction>
             {
                 new ProducerResultFileSuggestedBillingInstruction { Id = 1, CalculatorRunId = 1, ProducerId = 1, SuggestedBillingInstruction="INITIAL", BillingInstructionAcceptReject="Accepted"},

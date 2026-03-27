@@ -300,7 +300,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
         public void GetTotalReportedTonnageTotalForHDCShouldReturnCorrectTotal()
         {
             // Arrange
-            decimal expectedCost1 = 180;
+            decimal expectedCost1 = 280;
             var material = GetHDCMaterial();
 
             // Act
@@ -327,50 +327,56 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
         {
             var producers = TestDataHelper.GetProducers();
 
-            producers[0].ProducerReportedMaterials.Add(new ProducerReportedMaterial
+            foreach (var subPeriod in new[] {"2025-H1", "2025-H2"})
             {
-                MaterialId = 1,
-                ProducerDetailId = 1,
-                PackagingType = "HH",
-                PackagingTonnage = (1 * 100),
-                Material = new Material
+                producers[0].ProducerReportedMaterials.Add(new ProducerReportedMaterial
                 {
-                    Id = 1,
-                    Code = "HH",
-                    Name = "Material1",
-                    Description = "Material1",
-                },
-            });
+                    MaterialId = 1,
+                    ProducerDetailId = 1,
+                    PackagingType = "HH",
+                    PackagingTonnage = 50,
+                    SubmissionPeriod = subPeriod,
+                    Material = new Material
+                    {
+                        Id = 1,
+                        Code = "HH",
+                        Name = "Material1",
+                        Description = "Material1",
+                    },
+                });
 
-            producers[0].ProducerReportedMaterials.Add(new ProducerReportedMaterial
-            {
-                MaterialId = 2,
-                ProducerDetailId = 2,
-                PackagingType = "HDC",
-                PackagingTonnage = (1 * 100),
-                Material = new Material
+                producers[0].ProducerReportedMaterials.Add(new ProducerReportedMaterial
                 {
-                    Id = 2,
-                    Code = "GL",
-                    Name = "Material2",
-                    Description = "Material2",
-                },
-            });
+                    MaterialId = 2,
+                    ProducerDetailId = 2,
+                    PackagingType = "HDC",
+                    PackagingTonnage = 50,
+                    SubmissionPeriod = subPeriod,
+                    Material = new Material
+                    {
+                        Id = 2,
+                        Code = "GL",
+                        Name = "Material2",
+                        Description = "Material2",
+                    },
+                });
 
-            producers[0].ProducerReportedMaterials.Add(new ProducerReportedMaterial
-            {
-                MaterialId = 3,
-                ProducerDetailId = 3,
-                PackagingType = "PB",
-                PackagingTonnage = (2 * 100),
-                Material = new Material
+                producers[0].ProducerReportedMaterials.Add(new ProducerReportedMaterial
                 {
-                    Id = 1,
-                    Code = "AL",
-                    Name = "Material1",
-                    Description = "Material1",
-                },
-            });
+                    MaterialId = 3,
+                    ProducerDetailId = 3,
+                    PackagingType = "PB",
+                    PackagingTonnage = 100,
+                    SubmissionPeriod = subPeriod,
+                    Material = new Material
+                    {
+                        Id = 1,
+                        Code = "AL",
+                        Name = "Material1",
+                        Description = "Material1",
+                    },
+                });
+            }
 
             return producers;
         }

@@ -28,7 +28,7 @@ namespace EPR.Calculator.Service.Function.Services
                 {
                     RunId = calcResult.CalcResultDetail.RunId,
                     RunName = calcResult.CalcResultDetail.RunName,
-                    Message = "Create billing instructions end...",
+                    Message = "Create billing instructions start...",
                 });
                 var IsBiilingInstructionsInserted = await billingInstructionService.CreateBillingInstructions(calcResult);
 
