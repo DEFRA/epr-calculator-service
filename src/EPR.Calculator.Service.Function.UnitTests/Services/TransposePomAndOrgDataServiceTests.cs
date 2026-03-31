@@ -69,6 +69,12 @@
 
         private Mock<IDbLoadingChunkerService<ProducerDetail>> Chunker { get; init; }
 
+        [TestInitialize]
+        public void TestInit()
+        {
+            this._context.ChangeTracker.Clear();
+        }
+
         [TestCleanup]
         public void TearDown()
         {
