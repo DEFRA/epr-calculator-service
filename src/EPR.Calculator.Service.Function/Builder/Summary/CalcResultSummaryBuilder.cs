@@ -513,7 +513,11 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 HouseholdDrinksContainersTonnage = material.Code == MaterialCodes.Glass
                     ? CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.HouseholdDrinksContainers, ScaledupProducers, PartialObligations)
                     : new(),
+<<<<<<< HEAD
                 HouseholdDrinksContainersTonnageRagRating = showModulations && material.Code == MaterialCodes.Glass
+=======
+                HouseholdDrinksContainersTonnageRagRating = showModulations
+>>>>>>> 49f421b (ECV-432 + ECV-430 - Self Managed Consumer Waste deduction from Amber, Red & Green)
                     ? Enum.GetValues<RagRating>().ToDictionary(
                         rag => rag,
                         rag => CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.HouseholdDrinksContainers, ScaledupProducers, PartialObligations, rag))
