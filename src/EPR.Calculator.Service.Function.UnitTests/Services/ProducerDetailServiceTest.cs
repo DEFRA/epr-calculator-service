@@ -22,7 +22,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         [TestCleanup]
         public void TearDown()
         {
-            context?.Database.EnsureDeleted();
+            context.Database.EnsureDeleted();
         }
 
         [TestMethod]

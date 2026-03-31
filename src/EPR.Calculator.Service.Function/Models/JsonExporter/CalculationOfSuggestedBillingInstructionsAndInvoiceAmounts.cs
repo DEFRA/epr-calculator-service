@@ -39,7 +39,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
         public static CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts From(CalcResultSummaryProducerDisposalFees fees)
         {
-            string? GetPercentageLiabilityDifference(decimal? percentageLiabilityDifference)
+            string GetPercentageLiabilityDifference(decimal? percentageLiabilityDifference)
             {
                 if (percentageLiabilityDifference == null)
                     return CommonConstants.Hyphen;
@@ -63,7 +63,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                 LiabilityDifferenceCalcVsPrev = GetFormattedCurrencyValue(costs.LiabilityDifference),
                 MaterialThresholdBreached = costs.MaterialThresholdBreached ?? CommonConstants.Hyphen,
                 TonnageThresholdBreached = costs.TonnageThresholdBreached ?? CommonConstants.Hyphen,
-                PercentageLiabilityDifferenceCalcVsPrev = GetPercentageLiabilityDifference(costs.PercentageLiabilityDifference)!,
+                PercentageLiabilityDifferenceCalcVsPrev = GetPercentageLiabilityDifference(costs.PercentageLiabilityDifference),
                 MaterialPercentageThresholdBreached = costs.MaterialPercentageThresholdBreached ?? CommonConstants.Hyphen,
                 TonnagePercentageThresholdBreached = costs.TonnagePercentageThresholdBreached ?? CommonConstants.Hyphen,
                 SuggestedBillingInstruction = costs.SuggestedBillingInstruction ?? CommonConstants.Hyphen,

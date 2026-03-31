@@ -37,7 +37,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.OnePlus2A2B2
         [TestCleanup]
         public void TearDown()
         {
-            _dbContext?.Database.EnsureDeleted();
+            _dbContext.Database.EnsureDeleted();
         }
 
         [TestMethod]

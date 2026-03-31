@@ -448,7 +448,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             IEnumerable<ErrorReport> capturedReports = _service.HandleMissingRegistrationData(pomDetails, orgDetails, runId, createdBy);
 
             // Assert
-            var reportsList = capturedReports!.ToList();
+            var reportsList = capturedReports.ToList();
             Assert.AreEqual(1, reportsList.Count, "Expected 1 unmatched records to be returned.");
             var error = reportsList.First();
             Assert.AreEqual(ErrorCodes.MissingRegistrationData, error.ErrorCode, "Incorrect Error Type");

@@ -364,7 +364,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
         [TestCleanup]
         public void TearDown()
         {
-            dbContext?.Database.EnsureDeleted();
+            dbContext.Database.EnsureDeleted();
         }
 
         [TestMethod]

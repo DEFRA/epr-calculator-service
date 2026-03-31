@@ -42,9 +42,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(calculatorParameter.RelativeYear, result?.RelativeYear);
-            Assert.AreEqual(calculatorParameter.CreatedBy, result?.User);
-            Assert.AreEqual(calculatorParameter.CalculatorRunId, result?.Id);
+            Assert.AreEqual(calculatorParameter.RelativeYear, result.RelativeYear);
+            Assert.AreEqual(calculatorParameter.CreatedBy, result.User);
+            Assert.AreEqual(calculatorParameter.CalculatorRunId, result.Id);
         }
 
         /// <summary>
@@ -66,9 +66,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(billingFileMessage.CalculatorRunId, result?.Id);
-            Assert.AreEqual(billingFileMessage.ApprovedBy, result?.ApprovedBy);
-            Assert.AreEqual(billingFileMessage.MessageType, result?.MessageType);
+            Assert.AreEqual(billingFileMessage.CalculatorRunId, result.Id);
+            Assert.AreEqual(billingFileMessage.ApprovedBy, result.ApprovedBy);
+            Assert.AreEqual(billingFileMessage.MessageType, result.MessageType);
         }
     }
 }

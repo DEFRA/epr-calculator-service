@@ -316,7 +316,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
-            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.HouseholdDrinksContainers, scaledupProducers!, partialObligations!);
+            var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.HouseholdDrinksContainers, scaledupProducers!, partialObligations);
 
             // Assert
             Assert.AreEqual(140m, result);

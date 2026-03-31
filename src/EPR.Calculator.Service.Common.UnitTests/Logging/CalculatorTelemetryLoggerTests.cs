@@ -41,7 +41,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.Logging
                 tc => tc.TrackTrace(It.Is<TraceTelemetry>(t =>
                 t.Message.Contains(logMessage.RunId.ToString() ?? string.Empty) &&
                 t.Message.Contains(logMessage.RunName ?? string.Empty) &&
-                t.Message.Contains(logMessage.Message ?? string.Empty) &&
+                t.Message.Contains(logMessage.Message) &&
                 t.SeverityLevel == SeverityLevel.Information)), Times.Once);
         }
 
@@ -79,9 +79,9 @@ namespace EPR.Calculator.Service.Common.UnitTests.Logging
         {
             // Arrange
             int? runId = 1;
-            string? runName = "TestRun";
+            string runName = "TestRun";
             string message = "Test message";
-            string? messageType = "Result";
+            string messageType = "Result";
 
             // Act
             var result = CalculatorTelemetryLogger.CreateLogMessage(runId, runName, messageType, message);
@@ -99,7 +99,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.Logging
             int? runId = null;
             string? runName = null;
             string message = "Test message";
-            string? messageType = "Result";
+            string messageType = "Result";
 
             // Act
             var result = CalculatorTelemetryLogger.CreateLogMessage(runId, runName, messageType, message);
@@ -116,7 +116,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.Logging
             // Arrange
             var properties = new Dictionary<string, string>();
             int? runId = 1;
-            string? runName = "TestRun";
+            string runName = "TestRun";
 
             // Act
             CalculatorTelemetryLogger.AddProperties(properties, runId, runName);
@@ -162,7 +162,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.Logging
                 tc => tc.TrackTrace(It.Is<TraceTelemetry>(t =>
                 t.Message.Contains(logMessage.RunId.ToString() ?? string.Empty) &&
                 t.Message.Contains(logMessage.RunName ?? string.Empty) &&
-                t.Message.Contains(logMessage.Message ?? string.Empty) &&
+                t.Message.Contains(logMessage.Message) &&
                 t.SeverityLevel == SeverityLevel.Information)), Times.Once);
 
             mockTelemetryClient.Verify(

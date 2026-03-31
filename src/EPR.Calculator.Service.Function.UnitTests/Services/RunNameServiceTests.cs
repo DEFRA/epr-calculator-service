@@ -34,7 +34,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         [TestCleanup]
         public void Cleanup()
         {
-            dbContext?.Dispose();
+            dbContext.Dispose();
         }
 
         /// <summary>

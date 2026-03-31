@@ -114,7 +114,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
         [TestCleanup]
         public void TearDown()
         {
-            _dbContext?.Database.EnsureDeleted();
+            _dbContext.Database.EnsureDeleted();
         }
 
         /// <summary>

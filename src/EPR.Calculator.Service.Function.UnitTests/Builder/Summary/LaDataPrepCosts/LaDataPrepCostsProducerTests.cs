@@ -301,8 +301,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.LaDataPrepCo
         [TestCleanup]
         public void TearDown()
         {
-            _dbContext?.Database.EnsureDeleted();
-            _dbContext?.Dispose();
+            _dbContext.Database.EnsureDeleted();
+            _dbContext.Dispose();
         }
 
         [TestMethod]

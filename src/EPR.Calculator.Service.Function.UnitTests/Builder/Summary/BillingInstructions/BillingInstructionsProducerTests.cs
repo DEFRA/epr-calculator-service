@@ -181,7 +181,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         [TestCleanup]
         public void TearDown()
         {
-            _dbContext?.Database.EnsureDeleted();
+            _dbContext.Database.EnsureDeleted();
         }
 
         /// <summary>
@@ -272,7 +272,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection;
 
 
-            var calcTotal = _calcResult.CalcResultSummary!.ProducerDisposalFees!.First().TotalProducerBillBreakdownCosts!.TotalProducerFeeWithBadDebtProvision;
+            var calcTotal = _calcResult.CalcResultSummary.ProducerDisposalFees.First().TotalProducerBillBreakdownCosts!.TotalProducerFeeWithBadDebtProvision;
             var expectedLiabilityDiff = (Math.Round(calcTotal, 2) - Math.Round(20.00m, 2));
 
             // Assert

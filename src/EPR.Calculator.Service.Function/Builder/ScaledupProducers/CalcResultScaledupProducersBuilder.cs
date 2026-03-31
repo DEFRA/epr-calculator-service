@@ -79,7 +79,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                         .Where(pom => pom.OrganisationId == item.ProducerId && pom.SubsidiaryId == item.SubsidiaryId && pom.SubmissionPeriod == item.SubmissionPeriodCode)
                         .ToList();
 
-                item.ScaledupProducerTonnageByMaterial = GetTonnages(pomData, materials, item.SubmissionPeriodCode!, item.ScaleupFactor!);
+                item.ScaledupProducerTonnageByMaterial = GetTonnages(pomData, materials, item.SubmissionPeriodCode!, item.ScaleupFactor);
             }
         }
 

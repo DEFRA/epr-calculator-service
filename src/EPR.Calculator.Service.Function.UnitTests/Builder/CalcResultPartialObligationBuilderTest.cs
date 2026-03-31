@@ -240,11 +240,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         [TestCleanup]
         public void Teardown()
         {
-            if (dbContext != null)
-            {
-                dbContext.Database.EnsureDeleted();
-                dbContext.Dispose();
-            }
+            dbContext.Database.EnsureDeleted();
+            dbContext.Dispose();
         }
 
         [TestMethod]
@@ -270,7 +267,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.IsTrue(parOrg.ObligatedPercentage == "50.14%");
 
 
-            var parOrgMats = parOrg.PartialObligationTonnageByMaterial!;
+            var parOrgMats = parOrg.PartialObligationTonnageByMaterial;
             Assert.AreEqual(8, parOrgMats.Count());
             Assert.IsTrue(parOrgMats.Any(mat =>
                 mat.Key == MaterialCodes.Aluminium &&
@@ -350,7 +347,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.IsTrue(parOrg.DaysInSubmissionYear == 365);
             Assert.IsTrue(parOrg.ObligatedPercentage == "50.14%");
 
-            var parOrgMats = parOrg.PartialObligationTonnageByMaterial!;
+            var parOrgMats = parOrg.PartialObligationTonnageByMaterial;
             Assert.AreEqual(8, parOrgMats.Count());
             Assert.IsTrue(parOrgMats.Any(mat =>
                 mat.Key == MaterialCodes.Aluminium &&

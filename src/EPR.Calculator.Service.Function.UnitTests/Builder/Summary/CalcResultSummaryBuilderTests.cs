@@ -646,7 +646,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
 
             Assert.IsNotNull(result);
             Assert.AreEqual(CalcResultSummaryHeaders.CalculationResult, result.ResultSummaryHeader!.Name);
-            Assert.AreEqual(26, result.ProducerDisposalFeesHeaders!.Count());
+            Assert.AreEqual(26, result.ProducerDisposalFeesHeaders.Count());
 
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.ProducerDisposalFees);
@@ -666,7 +666,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
 
             Assert.IsNotNull(result);
             Assert.AreEqual(CalcResultSummaryHeaders.CalculationResult, result.ResultSummaryHeader!.Name);
-            Assert.AreEqual(26, result.ProducerDisposalFeesHeaders!.Count());
+            Assert.AreEqual(26, result.ProducerDisposalFeesHeaders.Count());
             Assert.IsNotNull(result.ProducerDisposalFees);
             Assert.AreEqual(5, result.ProducerDisposalFees.Count());
         }
@@ -737,8 +737,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails,
                                                                                                 materials,
                                                                                                 1,
-                                                                                                calcResultsService.ScaledupProducers?.ToList() ?? new List<CalcResultScaledupProducer>(),
-                                                                                                calcResultsService.PartialObligations?.ToList() ?? new List<CalcResultPartialObligation>());
+                                                                                                calcResultsService.ScaledupProducers.ToList(),
+                                                                                                calcResultsService.PartialObligations.ToList());
 
             var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024));
 
@@ -758,7 +758,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             var producer = producerDisposalFees.First(t => t.Level == "1");
             Assert.IsNotNull(producer);
 
-            Assert.AreEqual(string.Empty, totals?.ProducerName);
+            Assert.AreEqual(string.Empty, totals.ProducerName);
             Assert.IsNotNull(producer.ProducerName);
             Assert.AreEqual("Producer1", producer.ProducerName);
 
@@ -784,7 +784,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
 
             var materials = MaterialMapper.Map(context.Material.ToList());
 
-            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, 1, calcResultsService.ScaledupProducers?.ToList() ?? new List<CalcResultScaledupProducer>(), calcResultsService.PartialObligations?.ToList() ?? new List<CalcResultPartialObligation>());
+            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, 1, calcResultsService.ScaledupProducers.ToList(), calcResultsService.PartialObligations.ToList());
 
             orderedProducerDetails.Add(new ProducerDetail
             {
@@ -807,7 +807,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             var producer = producerDisposalFees.First(t => t.Level == "1");
             Assert.IsNotNull(producer);
 
-            Assert.AreEqual(string.Empty, totals?.ProducerName);
+            Assert.AreEqual(string.Empty, totals.ProducerName);
             Assert.IsNotNull(producer.ProducerName);
             Assert.AreEqual("Producer1", producer.ProducerName);
         }
@@ -886,8 +886,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails,
                                                                                                 materials,
                                                                                                 1,
-                                                                                                calcResultsService.ScaledupProducers?.ToList() ?? new List<CalcResultScaledupProducer>(),
-                                                                                                calcResultsService.PartialObligations?.ToList() ?? new List<CalcResultPartialObligation>());
+                                                                                                calcResultsService.ScaledupProducers.ToList(),
+                                                                                                calcResultsService.PartialObligations.ToList());
             var scaledUpProducer = totalPackagingTonnage.First(t => t.ProducerId == 4);
 
             Assert.AreEqual(2, totalPackagingTonnage.Count());
@@ -945,8 +945,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails,
                                                                                                 materials,
                                                                                                 1,
-                                                                                                calcResultsService.ScaledupProducers?.ToList() ?? new List<CalcResultScaledupProducer>(),
-                                                                                                calcResultsService.PartialObligations?.ToList() ?? new List<CalcResultPartialObligation>());
+                                                                                                calcResultsService.ScaledupProducers.ToList(),
+                                                                                                calcResultsService.PartialObligations.ToList());
             var partialObligation = totalPackagingTonnage.First(t => t.ProducerId == 4);
 
             Assert.AreEqual(2, totalPackagingTonnage.Count());
@@ -1147,7 +1147,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.IsTrue(result.ProducerDisposalFees?.Any() ?? false);
+            Assert.IsTrue(result.ProducerDisposalFees.Any());
         }
 
         [TestMethod]
@@ -1167,7 +1167,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.IsTrue(result.ProducerDisposalFees?.Any() ?? false);
+            Assert.IsTrue(result.ProducerDisposalFees.Any());
         }
 
         [TestMethod]
@@ -1230,8 +1230,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             var materials = MaterialMapper.Map(context.Material.ToList());
             var runDetails = CalcResultSummaryBuilder.GetProducerRunMaterialDetails(ordered, context.ProducerReportedMaterial.ToList(), 1);
             var totalPackaging = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(
-                runDetails, materials, 1, calcResultsService.ScaledupProducers?.ToList() ?? new List<CalcResultScaledupProducer>(),
-                calcResultsService.PartialObligations?.ToList() ?? new List<CalcResultPartialObligation>());
+                runDetails, materials, 1, calcResultsService.ScaledupProducers.ToList(),
+                calcResultsService.PartialObligations.ToList());
 
             var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024));
             var defaultParams = new List<DefaultParamResultsClass>();
@@ -1483,7 +1483,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                                 .FirstOrDefault(f => f.Level == CommonConstants.LevelOne.ToString()
                                                   && f.ProducerIdInt == 1);
             Assert.IsNotNull(level1);
-            Assert.IsNotNull(level1!.BillingInstructionSection, "BillingInstructionSection should be populated on Level 1.");
+            Assert.IsNotNull(level1.BillingInstructionSection, "BillingInstructionSection should be populated on Level 1.");
 
             // Assert
             var entity = context.ProducerResultFileSuggestedBillingInstruction

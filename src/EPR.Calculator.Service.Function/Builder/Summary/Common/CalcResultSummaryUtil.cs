@@ -54,10 +54,10 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
                 && !p.IsSubtotalRow
                 && !p.IsTotalRow);
 
-            if (scaledupProducerForAllSubmissionPeriods!.Any())
+            if (scaledupProducerForAllSubmissionPeriods.Any())
             {
                 decimal tonnage = 0;
-                foreach (var scaledupProducerTonnageByMaterial in scaledupProducerForAllSubmissionPeriods!.Select(x => x.ScaledupProducerTonnageByMaterial))
+                foreach (var scaledupProducerTonnageByMaterial in scaledupProducerForAllSubmissionPeriods.Select(x => x.ScaledupProducerTonnageByMaterial))
                 {
                     switch (packagingType)
                     {
@@ -93,13 +93,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
                 switch (packagingType)
                 {
                     case PackagingTypes.Household:
-                        return maybePartialObligation!.PartialObligationTonnageByMaterial.GetValueOrDefault(material.Code)?.PartialReportedHouseholdPackagingWasteTonnage ?? 0;
+                        return maybePartialObligation.PartialObligationTonnageByMaterial.GetValueOrDefault(material.Code)?.PartialReportedHouseholdPackagingWasteTonnage ?? 0;
                     case PackagingTypes.PublicBin:
-                        return maybePartialObligation!.PartialObligationTonnageByMaterial.GetValueOrDefault(material.Code)?.PartialReportedPublicBinTonnage ?? 0;
+                        return maybePartialObligation.PartialObligationTonnageByMaterial.GetValueOrDefault(material.Code)?.PartialReportedPublicBinTonnage ?? 0;
                     case PackagingTypes.ConsumerWaste:
-                        return maybePartialObligation!.PartialObligationTonnageByMaterial.GetValueOrDefault(material.Code)?.PartialReportedSelfManagedConsumerWasteTonnage ?? 0;
+                        return maybePartialObligation.PartialObligationTonnageByMaterial.GetValueOrDefault(material.Code)?.PartialReportedSelfManagedConsumerWasteTonnage ?? 0;
                     case PackagingTypes.HouseholdDrinksContainers:
-                        return maybePartialObligation!.PartialObligationTonnageByMaterial.GetValueOrDefault(material.Code)?.PartialHouseholdDrinksContainersTonnageGlass ?? 0;
+                        return maybePartialObligation.PartialObligationTonnageByMaterial.GetValueOrDefault(material.Code)?.PartialHouseholdDrinksContainersTonnageGlass ?? 0;
                     default:
                         return 0;
                 }
@@ -118,13 +118,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             var maybePartialScaledUpTonnage = GetPartialTonnage(producer, material, packagingType, partialObligations);
 
             if (maybePartialScaledUpTonnage != null) {
-                return (decimal)maybePartialScaledUpTonnage!;
+                return (decimal)maybePartialScaledUpTonnage;
             }
 
             var maybeScaledUpTonnage = GetScaledUpTonnage(producer, material, packagingType, scaledUpProducers);
 
             if (maybeScaledUpTonnage != null) {
-                return (decimal)maybeScaledUpTonnage!;
+                return (decimal)maybeScaledUpTonnage;
             }
 
             var reportedMaterials = producer.ProducerReportedMaterials

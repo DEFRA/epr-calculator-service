@@ -43,7 +43,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         [TestCleanup]
         public void TearDown()
         {
-            dbContext?.Database.EnsureDeleted();
+            dbContext.Database.EnsureDeleted();
         }
 
         [TestMethod]
@@ -68,9 +68,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             Assert.IsNotNull(cancelledProducer);
             Assert.AreEqual(2, cancelledProducer.ProducerId);
             Assert.AreEqual("Test2", cancelledProducer.ProducerOrSubsidiaryNameValue);
-            Assert.AreEqual(expected?.BillingInstructionId, cancelledProducer?.LatestInvoice?.BillingInstructionIdValue);
-            Assert.AreEqual(expected?.CalculatorRunId.ToString(), cancelledProducer?.LatestInvoice?.RunNumberValue);
-            Assert.AreEqual(100, cancelledProducer?.LatestInvoice?.CurrentYearInvoicedTotalToDateValue);
+            Assert.AreEqual(expected?.BillingInstructionId, cancelledProducer.LatestInvoice?.BillingInstructionIdValue);
+            Assert.AreEqual(expected?.CalculatorRunId.ToString(), cancelledProducer.LatestInvoice?.RunNumberValue);
+            Assert.AreEqual(100, cancelledProducer.LatestInvoice?.CurrentYearInvoicedTotalToDateValue);
         }
 
 

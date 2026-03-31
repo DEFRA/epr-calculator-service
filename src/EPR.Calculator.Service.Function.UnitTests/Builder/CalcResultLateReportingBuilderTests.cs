@@ -135,23 +135,23 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual(CalcResultLateReportingBuilder.RedTonnageHeading, result.RedTonnageHeading);
             Assert.AreEqual(CalcResultLateReportingBuilder.AmberTonnageHeading, result.AmberTonnageHeading);
             Assert.AreEqual(CalcResultLateReportingBuilder.GreenTonnageHeading, result.GreenTonnageHeading);
-            Assert.AreEqual(3, result.CalcResultLateReportingTonnageDetails?.Count());
+            Assert.AreEqual(3, result.CalcResultLateReportingTonnageDetails.Count());
 
-            var material1 = result.CalcResultLateReportingTonnageDetails?.SingleOrDefault(x => x.Name == "Aluminium");
+            var material1 = result.CalcResultLateReportingTonnageDetails.SingleOrDefault(x => x.Name == "Aluminium");
             Assert.IsNotNull(material1);
             Assert.AreEqual(100.000M, material1.RedLateReportingTonnage);
             Assert.AreEqual(200.000M, material1.AmberLateReportingTonnage);
             Assert.AreEqual(300.000M, material1.GreenLateReportingTonnage);
             Assert.AreEqual(600.000M, material1.TotalLateReportingTonnage);
 
-            var material2 = result.CalcResultLateReportingTonnageDetails?.SingleOrDefault(x => x.Name == "Fibre composite");
+            var material2 = result.CalcResultLateReportingTonnageDetails.SingleOrDefault(x => x.Name == "Fibre composite");
             Assert.IsNotNull(material2);
             Assert.AreEqual(400.000M, material2.RedLateReportingTonnage);
             Assert.AreEqual(500.000M, material2.AmberLateReportingTonnage);
             Assert.AreEqual(600.000M, material2.GreenLateReportingTonnage);
             Assert.AreEqual(1500.000M, material2.TotalLateReportingTonnage);
 
-            var total = result.CalcResultLateReportingTonnageDetails?.SingleOrDefault(x => x.Name == CalcResultLateReportingBuilder.Total);
+            var total = result.CalcResultLateReportingTonnageDetails.SingleOrDefault(x => x.Name == CalcResultLateReportingBuilder.Total);
             Assert.IsNotNull(total);
             Assert.AreEqual(500.000M, total.RedLateReportingTonnage);
             Assert.AreEqual(700.000M, total.AmberLateReportingTonnage);

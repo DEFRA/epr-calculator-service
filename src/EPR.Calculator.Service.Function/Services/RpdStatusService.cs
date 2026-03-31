@@ -105,7 +105,7 @@ namespace EPR.Calculator.Service.Function.Services
                     await CalculatorRunOrgData.LoadOrgDataForCalcRun(runId, relativeYear, createdBy, timeout);
                     await CalculatorRunPomData.LoadPomDataForCalcRun(runId, relativeYear, createdBy, timeout);
 
-                    calcRun!.CalculatorRunClassificationId = runClassifications.Single(x => x.Status == RunClassification.RUNNING.ToString()).Id;
+                    calcRun.CalculatorRunClassificationId = runClassifications.Single(x => x.Status == RunClassification.RUNNING.ToString()).Id;
 
                     await Context.SaveChangesAsync(timeout);
                     await transaction.CommitAsync(timeout);

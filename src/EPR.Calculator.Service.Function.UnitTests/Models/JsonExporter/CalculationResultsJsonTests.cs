@@ -453,12 +453,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             {
                 Assert.Fail("Producer not found.");
             }
-            Assert.AreEqual(producer.ProducerId, roundTrippedData[0]!?["producerID"]?.ToString());
-            Assert.AreEqual(producer.SubsidiaryId, roundTrippedData[0]!?["subsidiaryID"]?.ToString());
-            Assert.AreEqual(producer.ProducerName, roundTrippedData[0]!?["producerName"]?.ToString());
-            Assert.AreEqual(producer?.TradingName, roundTrippedData[0]!?["tradingName"]?.ToString());
-            Assert.AreEqual(producer?.Level ?? "1" , roundTrippedData[0]!?["level"]?.ToString());
-            Assert.AreEqual(producer?.IsProducerScaledup ?? "No", roundTrippedData[0]!?["scaledUpTonnages"]?.ToString());
+            Assert.AreEqual(producer.ProducerId, roundTrippedData[0]!["producerID"]?.ToString());
+            Assert.AreEqual(producer.SubsidiaryId, roundTrippedData[0]!["subsidiaryID"]?.ToString());
+            Assert.AreEqual(producer.ProducerName, roundTrippedData[0]!["producerName"]?.ToString());
+            Assert.AreEqual(producer.TradingName, roundTrippedData[0]!["tradingName"]?.ToString());
+            Assert.AreEqual(producer.Level ?? "1" , roundTrippedData[0]!["level"]?.ToString());
+            Assert.AreEqual(producer.IsProducerScaledup, roundTrippedData[0]!["scaledUpTonnages"]?.ToString());
         }
 
         [TestMethod]

@@ -129,12 +129,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             _context.Database.EnsureDeleted();
             _context.Dispose();
-
-            // Dispose of the DbContextFactory if it implements IDisposable
-            if (_dbContextFactory is IDisposable disposableFactory)
-            {
-                disposableFactory.Dispose();
-            }
         }
 
         [TestMethod]
@@ -286,13 +280,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.AreEqual("1billing.json", billingFileMetaData.BillingJsonFileName);
 
             _storageService.Verify(x => x.UploadFileContentAsync(
-                It.Is<(string, string, string, string, bool)>(y => y.Item1 != null)), Times.Exactly(2));
+                It.IsAny<(string, string, string, string, bool)>()), Times.Exactly(2));
 
             _storageService.Verify(x => x.UploadFileContentAsync(
-                It.Is<(string, string, string, string, bool)>(y => y.Item5 == false)), Times.Once);
+                It.Is<(string, string, string, string, bool)>(y => !y.Item5)), Times.Once);
 
             _storageService.Verify(x => x.UploadFileContentAsync(
-                It.Is<(string, string, string, string, bool)>(y => y.Item5 == true)), Times.Once);
+                It.Is<(string, string, string, string, bool)>(y => y.Item5)), Times.Once);
 
         }
 
