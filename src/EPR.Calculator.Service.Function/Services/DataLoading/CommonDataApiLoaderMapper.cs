@@ -60,6 +60,8 @@ namespace EPR.Calculator.Service.Function.Services.DataLoading
                     ? guid
                     : throw new FormatException(
                         $"Invalid {nameof(OrganisationResponse)}.{nameof(OrganisationResponse.SubmitterId)}: {r.SubmitterId}"),
+                HasH1 = r.HasH1,
+                HasH2 = r.HasH2,
                 LoadTimestamp = loadTime.UtcDateTime
             };
         }

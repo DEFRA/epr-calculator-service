@@ -21,5 +21,7 @@ namespace EPR.Calculator.Service.Function.Services.CommonDataApi
         public string? ObligationStatus { get; init; }
         public short? NumDaysObligated { get; init; }
         public string? SubmitterId { get; init; }
+        public bool HasH1 { get; init; }
+        public bool HasH2 { get; init; }
     }
 }

@@ -16,7 +16,7 @@ namespace EPR.Calculator.Service.Function.Services
         private IProducerDetailService ProducerDetailService { get; init; }
 
         public ErrorReportService(IDbLoadingChunkerService<ErrorReport> errorReportChunker, IProducerDetailService producerDetailService)
-        {   
+        {
             ErrorReportChunker = errorReportChunker ?? throw new ArgumentNullException(nameof(errorReportChunker));
             ProducerDetailService = producerDetailService ?? throw new ArgumentNullException(nameof(producerDetailService));
         }
@@ -44,16 +44,16 @@ namespace EPR.Calculator.Service.Function.Services
 
         public List<ErrorReport> HandleMissingPomData(IEnumerable<CalculatorRunPomDataDetail> pomDetails, IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails, int calculatorRunId, string createdBy)
         {
-            var distinctPoms = pomDetails.DistinctBy(x => (x.OrganisationId, x.SubsidiaryId, x.SubmitterId));
-
             return orgDetails
                 .Where(o => ObligationStates.IsObligated(o.ObligationStatus))
-                .Where(o => !distinctPoms.Any(p => new { OrgId = p.OrganisationId, p.SubsidiaryId, p.SubmitterId }.Equals(new { OrgId = (int?)o.OrganisationId, o.SubsidiaryId, o.SubmitterId })))
+                 // Only raise errors for missing POM when they previously had POM data submitted to avoid loads of errors
+                .Where(o => pomDetails.Any(p => (o.SubsidiaryId ?? o.OrganisationId.ToString()) == (p.SubsidiaryId ?? p.OrganisationId?.ToString())))
                 .SelectMany(reg =>
-                    // Check whether this reg 'should have pom' by seeing if they have previously submitted under a different entity
-                    distinctPoms.Any(p => (reg.SubsidiaryId ?? reg.OrganisationId.ToString()) == (p.SubsidiaryId ?? p.OrganisationId?.ToString()))
-                        ? new [] { CreateError(reg.OrganisationId, reg.SubsidiaryId, calculatorRunId, createdBy, ErrorCodes.MissingPOMData, reg.StatusCode) }
-                        : Array.Empty<ErrorReport>()
+                    (reg.HasH1, reg.HasH2) switch
+                    {
+                        (true , true ) => Array.Empty<ErrorReport>(),
+                        (_   ,     _ ) => new [] { CreateError(reg.OrganisationId, reg.SubsidiaryId, calculatorRunId, createdBy, ErrorCodes.MissingPOMData , reg.StatusCode) }
+                    }
                 ).ToList();
         }
 
@@ -61,7 +61,7 @@ namespace EPR.Calculator.Service.Function.Services
         {
             return orgDetails
                     .Where(x => (x.ObligationStatus == ObligationStates.Error))
-                    .Where(o => 
+                    .Where(o =>
                         pomDetails.Any(p => new { OrgId = p.OrganisationId, p.SubsidiaryId, p.SubmitterId }.Equals(new { OrgId = (int?)o.OrganisationId, o.SubsidiaryId, o.SubmitterId }))
                         || invoicedDetailsForFY.Any(i => i.ProducerId == o.OrganisationId)
                     )
@@ -69,11 +69,12 @@ namespace EPR.Calculator.Service.Function.Services
                     .ToList();
         }
 
+
         public List<ErrorReport> HandleObligatedWarnings(IEnumerable<CalculatorRunPomDataDetail> pomDetails, IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails, IEnumerable<ProducerDesignatedRunInvoiceInstruction> invoicedDetailsForFY, int calculatorRunId, string createdBy)
         {
             return orgDetails
                     .Where(x => x.ObligationStatus == ObligationStates.Obligated && !string.IsNullOrEmpty(x.ErrorCode))
-                    .Where(o => 
+                    .Where(o =>
                         pomDetails.Any(p => new { OrgId = p.OrganisationId, p.SubsidiaryId, p.SubmitterId }.Equals(new { OrgId = (int?)o.OrganisationId, o.SubsidiaryId, o.SubmitterId }))
                         || invoicedDetailsForFY.Any(i => i.ProducerId == o.OrganisationId)
                     )

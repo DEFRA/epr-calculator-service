@@ -579,7 +579,7 @@
                 mockErrorReportService.Object,
                 new Mock<ICalculatorTelemetryLogger>().Object);
 
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 2, RelativeYear = new RelativeYear(2025) };
+            var resultsRequestDto = new CalcResultsRequestDto { RunId = 4, RelativeYear = new RelativeYear(2025) };
 
             // Detach existing CalculatorRun entity if it is already being tracked
             var existingCalculatorRun = _context.ChangeTracker.Entries<CalculatorRun>()

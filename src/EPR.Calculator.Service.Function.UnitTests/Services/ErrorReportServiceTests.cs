@@ -466,13 +466,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CreateOrganisationData(100101,null,"ECOLTD",submitterId1, "N"),
                 CreateOrganisationData(200202,null,"Green holdings",submitterId2, "O"),
                 CreateOrganisationData(200202,"100500","Pure leaf drinks",submitterId2, "O"),
-                CreateOrganisationData(200202,"100101","ECOLTD",submitterId2, "O", "01")
+                CreateOrganisationData(200202,"100101","ECOLTD",submitterId2, "O", "01", hasH1: false, hasH2: false),
+                CreateOrganisationData(200202,"100102","ECOLTD",submitterId2, "O", "01", hasH1: false, hasH2: true),
+                CreateOrganisationData(200202,"100103","ECOLTD",submitterId2, "O", "01", hasH1: true, hasH2: false)
             };
 
             var pomDetails = new[] {
                 CreatePomData(100101, "2024-P1",submitterId1,"HH","ST",5000),
-                CreatePomData(100101, "2024-P1",submitterId1,"HH","PL",3000),
-                CreatePomData(100101, "2024-P4",submitterId1,"HH","ST",5000),
+                CreatePomData(100102, "2024-P1",submitterId1,"HH","PL",3000),
+                CreatePomData(100103, "2024-P4",submitterId1,"HH","ST",5000),
                 CreatePomData(100101, "2024-P4",submitterId1,"HH","PL",3000),
                 CreatePomData(200202, "2024-P1",submitterId2,"HH","PL",2000),
                 CreatePomData(200202, "2024-P1",submitterId2,"HH","AL",4500),
@@ -487,15 +489,25 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var createdBy = "no error";
 
             // Act
-            IEnumerable<ErrorReport> reportsList = _service.HandleMissingPomData(pomDetails, orgDetails, runId, createdBy);
+            List<ErrorReport> reportsList = _service.HandleMissingPomData(pomDetails, orgDetails, runId, createdBy);
 
             // Assert
-            Assert.AreEqual(1, reportsList.Count(), "Expected 1 unmatched records to be returned.");
-            var error = reportsList.First();
-            Assert.AreEqual(ErrorCodes.MissingPOMData, error.ErrorCode, "Incorrect Error Code");
-            Assert.AreEqual(200202, error.ProducerId, "Incorrect Producer Id");
-            Assert.AreEqual("100101", error.SubsidiaryId, "Incorrect Subsidiary Id");
-            Assert.AreEqual("01", error.LeaverCode, "Incorrect Leaver Code");
+            Assert.AreEqual(3, reportsList.Count(), "Expected 3 unmatched records to be returned.");
+
+            Assert.AreEqual(ErrorCodes.MissingPOMData, reportsList[0].ErrorCode, "Incorrect Error Code");
+            Assert.AreEqual(200202, reportsList[0].ProducerId, "Incorrect Producer Id");
+            Assert.AreEqual("100101", reportsList[0].SubsidiaryId, "Incorrect Subsidiary Id");
+            Assert.AreEqual("01", reportsList[0].LeaverCode, "Incorrect Leaver Code");
+
+            Assert.AreEqual(ErrorCodes.MissingPOMData, reportsList[1].ErrorCode, "Incorrect Error Code");
+            Assert.AreEqual(200202, reportsList[1].ProducerId, "Incorrect Producer Id");
+            Assert.AreEqual("100102", reportsList[1].SubsidiaryId, "Incorrect Subsidiary Id");
+            Assert.AreEqual("01", reportsList[1].LeaverCode, "Incorrect Leaver Code");
+
+            Assert.AreEqual(ErrorCodes.MissingPOMData, reportsList[2].ErrorCode, "Incorrect Error Code");
+            Assert.AreEqual(200202, reportsList[2].ProducerId, "Incorrect Producer Id");
+            Assert.AreEqual("100103", reportsList[2].SubsidiaryId, "Incorrect Subsidiary Id");
+            Assert.AreEqual("01", reportsList[2].LeaverCode, "Incorrect Leaver Code");
         }
 
         [TestMethod]
@@ -725,7 +737,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 new ProducerDesignatedRunInvoiceInstruction { ProducerId = producer1 },
                 new ProducerDesignatedRunInvoiceInstruction { ProducerId = producer2 }
-            };  
+            };
 
             // Arrange
             var runId = 300;
@@ -762,7 +774,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CreateOrganisationData(producer1,null,"ECOLTD",submitterId1, "N"),
                 CreateOrganisationData(producer2,null,"Green holdings",submitterId2, "O"),
                 CreateOrganisationData(producer2,"100500","Pure leaf drinks",submitterId2, "O"),
-                CreateOrganisationData(producer2,"100101","ECOLTD",submitterId2, "O", "01"),
+                CreateOrganisationData(producer2,"100101","ECOLTD",submitterId2, "O", "01", hasH1: false, hasH2: false),
                 CreateOrganisationData(producer3,null,"ECOLTD",submitterId3, "O", "01", errorCode: "some warning"),
                 CreateOrganisationData(producer4,"404","Tea and cakes",submitterId3, "E", "01", errorCode: "some synapse error"),
                 CreateOrganisationData(producer6,null, "Pear", submitterId3, "E", "16", errorCode: "some synapse error"), //Has pom but no Nol - should show in error report
@@ -796,8 +808,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             mockErrorReport.Setup(m => m.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>())).Callback<IEnumerable<ErrorReport>>(arg => errorReports = arg).Returns(Task.CompletedTask);
             mockProductDetails
             .Setup(m => m.GetProducerDetails(It.IsAny<RelativeYear>()))
-            .ReturnsAsync(new List<ProducerInvoicedDto>{ 
-                new ProducerInvoicedDto { CalculatorRunId = runId-1, InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = producer6 } 
+            .ReturnsAsync(new List<ProducerInvoicedDto>{
+                new ProducerInvoicedDto { CalculatorRunId = runId-1, InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = producer6 }
             }});
 
             // Act
@@ -837,7 +849,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             };
         }
 
-        private CalculatorRunOrganisationDataDetail CreateOrganisationData(int orgId, string? subId, string orgName, Guid submitterId, string obligationStatus = "O", string statusCode = "", string submissionPeriodDesc = "Jan to December 2025", string? errorCode = null)
+        private CalculatorRunOrganisationDataDetail CreateOrganisationData(int orgId, string? subId, string orgName, Guid submitterId, string obligationStatus = "O", string statusCode = "", string submissionPeriodDesc = "Jan to December 2025", string? errorCode = null, bool hasH1 = true, bool hasH2 = true)
         {
             return new CalculatorRunOrganisationDataDetail
             {
@@ -847,7 +859,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 ObligationStatus = obligationStatus,
                 StatusCode = statusCode,
                 SubmitterId = submitterId,
-                ErrorCode = errorCode
+                ErrorCode = errorCode,
+                HasH1 = hasH1,
+                HasH2 = hasH2
             };
         }
     }

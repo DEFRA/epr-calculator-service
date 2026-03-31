@@ -103,7 +103,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
                 LeaverDate = "2024-12-31",
                 ObligationStatus = "Full",
                 NumDaysObligated = 365,
-                SubmitterId = ValidGuid
+                SubmitterId = ValidGuid,
+                HasH1 = true,
+                HasH2 = false
             };
 
             var mapper = CommonDataApiLoaderMapper.MapOrganisation(FixedUtcNow);
@@ -123,6 +125,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
             Assert.AreEqual("Full", org.ObligationStatus);
             Assert.AreEqual(365, org.DaysObligated);
             Assert.AreEqual(Guid.Parse(ValidGuid), org.SubmitterId);
+            Assert.IsTrue(org.HasH1);
+            Assert.IsFalse(org.HasH2);
             Assert.AreEqual(FixedUtcNow.DateTime, org.LoadTimestamp);
         }
 
