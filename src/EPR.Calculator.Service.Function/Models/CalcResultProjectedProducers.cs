@@ -29,6 +29,7 @@
         public string? SubsidiaryId { get; set; }
         public required string Level { get; set; }
         public required string SubmissionPeriodCode { get; set; }
+        public bool IsSubtotal { get; set; } = false;
         public required Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage> ProjectedTonnageByMaterial { get; set; }
     }
 
