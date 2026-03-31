@@ -123,7 +123,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             };
             await ProducerReportedMaterialTestClass.InsertRecords([expectedResult]);
 
-            var producerReportedMaterial = await Context.ProducerReportedMaterial.FirstOrDefaultAsync();
+            var producerReportedMaterial = await Context.ProducerReportedMaterial.Include(producerReportedMaterial => producerReportedMaterial.Material).Include(producerReportedMaterial => producerReportedMaterial.ProducerDetail).FirstOrDefaultAsync();
             Assert.IsNotNull(producerReportedMaterial);
             Assert.AreEqual(expectedResult.Material.Code, producerReportedMaterial.Material!.Code);
             Assert.AreEqual(expectedResult.Material.Name, producerReportedMaterial.Material.Name);

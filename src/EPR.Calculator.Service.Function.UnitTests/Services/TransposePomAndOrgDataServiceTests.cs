@@ -431,7 +431,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             await service.Transpose(resultsRequestDto, CancellationToken.None);
 
-            var producerReportedMaterial = _context.ProducerReportedMaterial.FirstOrDefault();
+            var producerReportedMaterial = _context.ProducerReportedMaterial.Include(producerReportedMaterial => producerReportedMaterial.Material).Include(producerReportedMaterial => producerReportedMaterial.ProducerDetail).FirstOrDefault();
             if (producerReportedMaterial == null)
             {
                 // Check if Material entity already exists in the context
