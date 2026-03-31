@@ -137,6 +137,32 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
         }
 
         [TestMethod]
+        public void ShouldShowHyphen_WhenFlagCanBeEmptyIsTrueAndValueIsNull()
+        {
+            // Arrange
+            decimal? v = null;
+
+            // Act
+            var result = CsvSanitiser.SanitiseData(v, DecimalPlaces.Three, null, canBeEmpty: true);
+
+            // Assert
+            Assert.AreEqual("\"-\",", result);
+        }
+
+        [TestMethod]
+        public void ShouldShowZero_WhenFlagCanBeEmptyIsFalseAndValueIsNull()
+        {
+            // Arrange
+            decimal? v = null;
+
+            // Act
+            var result = CsvSanitiser.SanitiseData(v, DecimalPlaces.Three, null);
+
+            // Assert
+            Assert.AreEqual("\"0\",", result);
+        }
+
+        [TestMethod]
         public void ShouldPrefixLrm_WhenFlagTrue_WithDelimiter()
         {
             // Arrange

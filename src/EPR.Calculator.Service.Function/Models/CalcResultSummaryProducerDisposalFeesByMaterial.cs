@@ -4,9 +4,9 @@ namespace EPR.Calculator.Service.Function.Models
     public class CalcResultSummaryProducerDisposalFeesByMaterial
         : CalcResultSummaryProducerMaterialBase
     {
-        public decimal ManagedConsumerWasteTonnage { get; set; }
+        public decimal SelfManagedConsumerWasteTonnage { get; set; }
 
-        public decimal NetReportedTonnage { get; set; }
+        public (decimal? total, decimal? red,  decimal? amber, decimal? green)  NetReportedTonnage { get; set; }
 
         public decimal PricePerTonne { get; set; }
 

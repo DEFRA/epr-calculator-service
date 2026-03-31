@@ -19,7 +19,7 @@
         public string IsPartialObligation { get; set; } = "No";
 
         public string? JoinerDate { get; set; }
-        
+
         public string? LeaverDate { get; set; }
 
         public bool isTotalRow { get; set; }
@@ -84,9 +84,9 @@
         public decimal ProducerOverallPercentageOfCostsForOnePlus2A2B2C { get; set; }
         // End Section Total bill (1 + 2a + 2b + 2c)
 
-        public Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>? ProducerDisposalFeesByMaterial { get; set; }
+        public Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> ProducerDisposalFeesByMaterial { get; set; } = new();
 
-        public Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>? ProducerCommsFeesByMaterial { get; set; }
+        public Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> ProducerCommsFeesByMaterial { get; set; } = new();
 
         public string? TonnageChangeCount { get; set; }
 
