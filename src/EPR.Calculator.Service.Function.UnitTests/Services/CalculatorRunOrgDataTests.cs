@@ -73,7 +73,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             //Run 1
             var run = new CalculatorRun { Id = runId, RelativeYear = relativeYear, Name = "CalculatorRunTest1", CalculatorRunClassificationId = classification.Id };
-            var calcRun1 = context.CalculatorRuns.Add(run);
+            context.CalculatorRuns.Add(run);
             await context.SaveChangesAsync();
 
             await service.LoadOrgDataForCalcRun(runId, relativeYear, createdBy, cancellationToken);

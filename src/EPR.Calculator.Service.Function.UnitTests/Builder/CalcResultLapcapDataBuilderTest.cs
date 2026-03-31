@@ -92,7 +92,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var results = builder.ConstructAsync(resultsDto);
 
             results.Wait();
-            var lapcapDisposalCostResults = results.Result;
 
             var lapcapResults = results.Result;
 

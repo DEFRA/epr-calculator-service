@@ -1,5 +1,4 @@
 using System.Globalization;
-using AutoFixture;
 using EPR.Calculator.Service.Common.Utils;
 
 namespace EPR.Calculator.Service.Common.UnitTests.Utils
@@ -11,7 +10,6 @@ namespace EPR.Calculator.Service.Common.UnitTests.Utils
         public void CanCallConvertToCurrency()
         {
             // Arrange
-            var fixture = new Fixture();
             var detail = 100.00m;
 
             // Act

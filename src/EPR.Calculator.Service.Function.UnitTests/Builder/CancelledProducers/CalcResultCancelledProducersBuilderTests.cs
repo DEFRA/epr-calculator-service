@@ -82,9 +82,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             // Arrange
             var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
-            var expected = dbContext.ProducerDesignatedRunInvoiceInstruction.FirstOrDefault(t => t.ProducerId == 2 && t.CalculatorRunId == 1);
-
-
             materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
 
             // Act
@@ -201,10 +198,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
 
             // Arrange
             var requestDto = new CalcResultsRequestDto { RunId = 3, RelativeYear = new RelativeYear(2025) };
-
-            var expected = dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject ==
-            CommonConstants.Rejected && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant()
-            && t.CalculatorRunId == 2);
 
             materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
 

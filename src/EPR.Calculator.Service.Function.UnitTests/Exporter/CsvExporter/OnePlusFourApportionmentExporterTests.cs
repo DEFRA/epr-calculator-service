@@ -1,5 +1,4 @@
 using System.Text;
-using AutoFixture;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter;
 using EPR.Calculator.Service.Function.Models;
 
@@ -13,7 +12,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 
         public OnePlusFourApportionmentExporterTests()
         {
-            var fixture = new Fixture();
             calcResult1Plus4Apportionment = new CalcResultOnePlusFourApportionment
             {
                 Name = "Apportionment",

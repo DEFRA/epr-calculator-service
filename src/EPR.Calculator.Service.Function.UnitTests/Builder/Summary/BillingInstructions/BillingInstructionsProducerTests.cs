@@ -265,9 +265,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
                 }
             };
 
-            var defaultParams = new List<DefaultParamResultsClass>();
-
-
             defaultParam.First().ParameterValue = 55000m;
             defaultParam.First().ParameterUniqueReference = "MATT-PD";
 

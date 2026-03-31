@@ -2188,7 +2188,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public static IEnumerable<CalculatorRunOrganisationDataDetail> GetCalculatorRunOrganisationDataDetails()
         {
             var submitterId1 = Guid.NewGuid();
-            var submitterId2 = Guid.NewGuid();
             var list = new List<CalculatorRunOrganisationDataDetail>();
             list.Add(new CalculatorRunOrganisationDataDetail
             {

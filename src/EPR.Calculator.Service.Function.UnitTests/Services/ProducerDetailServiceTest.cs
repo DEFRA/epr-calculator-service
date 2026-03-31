@@ -1,6 +1,5 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -32,7 +31,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             TestDataHelper.SeedDatabaseForInitialRun(context);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
             var producerDetailService = new ProducerDetailService(context);
 
             List<int> producerIds = new List<int> { 1 };

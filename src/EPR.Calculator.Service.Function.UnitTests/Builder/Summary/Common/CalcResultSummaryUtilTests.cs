@@ -924,23 +924,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         [TestMethod]
         public void CanGetCountryApportionmentPercentage()
         {
-            // Arrange
-            var expectedResult = new CalcResultLapcapDataDetails
-            {
-                Name = "1 Country Apportionment %s",
-                EnglandDisposalCost = "54.04873246%",
-                WalesDisposalCost = "12.18311592%",
-                ScotlandDisposalCost = "24.26778243%",
-                NorthernIrelandDisposalCost = "9.50036919%",
-                TotalDisposalCost = "100.00000000%",
-                EnglandCost = 54.04873246369677m,
-                WalesCost = 12.183115924193945m,
-                ScotlandCost = 24.267782426778243m,
-                NorthernIrelandCost = 9.500369185331037m,
-                TotalCost = 100,
-                OrderId = 11,
-            };
-
             // Act
             var result = CalcResultSummaryUtil.GetCountryApportionmentPercentage(calcResult);
 

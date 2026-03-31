@@ -74,7 +74,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                          }";
 
             // Act
-            var result = _service.DeserializeMessage(json);
+            _service.DeserializeMessage(json);
         }
 
         [TestMethod]

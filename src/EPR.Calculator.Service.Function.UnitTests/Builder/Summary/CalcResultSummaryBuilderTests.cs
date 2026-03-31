@@ -10,7 +10,6 @@ using EPR.Calculator.Service.Function.Builder.Summary.OneAndTwoA;
 using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Mappers;
-using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -307,8 +306,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         [TestMethod]
         public void Construct_ShouldReturnCalcResultSummary()
         {
-            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) };
-
             var results = calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
 
             results.Wait();
@@ -873,10 +870,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         }
 
         [TestMethod]
-        public void GetCalcResultSummary_ScaledUpProducerShouldReturnCorrectValue()
+        public async Task GetCalcResultSummary_ScaledUpProducerShouldReturnCorrectValue()
         {
             calcResult.CalcResultScaledupProducers.ScaledupProducers = GetScaledUpProducers();
-            var results = calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
+            await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
 
             var orderedProducerDetails = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
             var runProducerMaterialDetails = CalcResultSummaryBuilder.GetProducerRunMaterialDetails(
@@ -932,10 +929,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         }
 
         [TestMethod]
-        public void GetCalcResultSummary_PartialObligationShouldReturnCorrectValue()
+        public async Task GetCalcResultSummary_PartialObligationShouldReturnCorrectValue()
         {
             calcResult.CalcResultPartialObligations.PartialObligations = GetPartialObligations();
-            var results = calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
+            await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
 
             var orderedProducerDetails = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
             var runProducerMaterialDetails = CalcResultSummaryBuilder.GetProducerRunMaterialDetails(
@@ -1504,7 +1501,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         }
 
         [TestMethod]
-        public void ConstructAsync_WhenIsBillingFileFalse_DoesNotPersist_Billing_Instructions_ToDb()
+        public async Task ConstructAsync_WhenIsBillingFileFalse_DoesNotPersist_Billing_Instructions_ToDb()
         {
             // Arrange
             var beforeEntity = context.ProducerResultFileSuggestedBillingInstruction
@@ -1524,8 +1521,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             };
 
             // Act
-            var summary = calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult).Result;
-
+            await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calcResult);
 
             var afterEntity = context.ProducerResultFileSuggestedBillingInstruction
                                     .Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);

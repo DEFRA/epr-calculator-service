@@ -82,7 +82,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.OtherCo
                     },
             };
             var csvContent = new StringBuilder();
-            ICalcResultParameterOtherCostExporter exporter = this.exporter;
 
             // Act
             exporter.Export(otherCost, csvContent);

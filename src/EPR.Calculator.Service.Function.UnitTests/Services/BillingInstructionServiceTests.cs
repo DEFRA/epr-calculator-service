@@ -30,7 +30,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task CanCallCreateBillingInstructions()
         {
             // Arrange
-            var fixture = new Fixture();
             var calcResult = TestDataHelper.GetCalcResult();
 
             _telemetryLogger.Setup(mock => mock.LogInformation(It.IsAny<TrackMessage>())).Verifiable();
@@ -49,7 +48,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task CanCallCreateBillingInstructionsWithNoInstructions()
         {
             // Arrange
-            var fixture = new Fixture();
             var calcResult = new CalcResult
             {
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
@@ -132,7 +130,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task CanCallCreateBillingInstructionsWithNoProducers()
         {
             // Arrange
-            var fixture = new Fixture();
             var calcResult = new CalcResult
             {
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),

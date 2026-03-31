@@ -1,5 +1,4 @@
 using System.Text;
-using AutoFixture;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.UnitTests.Builder;
@@ -20,7 +19,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         public void CanCallWriteColumnHeaders()
         {
             // Arrange
-            var fixture = new Fixture();
             var resultSummary = new CalcResultSummary
             {
                 ColumnHeaders = new List<CalcResultSummaryHeader>

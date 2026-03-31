@@ -111,7 +111,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public void GetLatestOrganisationNameShouldReturnNullWhenOrganisationNotFound()
         {
             var orgDetails = new List<OrganisationDetails>();
-            var orgSubDetails = new List<OrganisationDetails>();
 
             var result = TestClass.GetLatestOrganisationName(1,orgDetails);
 
@@ -122,22 +121,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public void GetLatestOrganisationNameShouldReturnLatestOrganisationName()
         {
             var orgDetails = new List<OrganisationDetails>
-            {
-                new OrganisationDetails
-                {
-                    OrganisationId = 1,
-                    OrganisationName = "Test1",
-                    SubmissionPeriodDescription = "January to June 2023",
-                },
-                new OrganisationDetails
-                {
-                    OrganisationId = 1,
-                    OrganisationName = "Test2",
-                    SubmissionPeriodDescription = "July to December 2023",
-                },
-            };
-
-            var orgSubDetails = new List<OrganisationDetails>
             {
                 new OrganisationDetails
                 {
@@ -164,7 +147,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             // Arrange
             var orgId = Fixture.Create<int>();
-            var organisationsBySubmissionPeriod = Fixture.CreateMany<OrganisationDetails>().ToList();
             var organisationsList = Fixture.CreateMany<OrganisationDetails>().ToList();
 
             // Act
@@ -180,7 +162,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Arrange
             var orgId = Fixture.Create<int>();
             var subsidaryId = Fixture.Create<string>();
-            var organisationsBySubmissionPeriod = Fixture.CreateMany<OrganisationDetails>().ToList();
             var organisationsList = Fixture.CreateMany<OrganisationDetails>().ToList();
 
             // Act
@@ -678,8 +659,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var resultsRequestDto = Fixture.Create<CalcResultsRequestDto>();
             resultsRequestDto.RunId = runId;
             var runName = Fixture.Create<string>();
-            var mockCalculatorRunsTable = new Mock<DbSet<CalculatorRun>>();
-            var mockCalculatorRun = Fixture.Create<CalculatorRun>();
             Chunker.Setup(c => c.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
                 .Throws<OperationCanceledException>();
 

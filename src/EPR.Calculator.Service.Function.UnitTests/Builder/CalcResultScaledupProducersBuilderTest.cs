@@ -351,7 +351,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 new ProducerData { ProducerDetail = new ProducerDetail { ProducerId = 2 }, MaterialName = "Glass", PackagingType = "HDC" },
             };
 
-            var resultsDto = new CalcResultsRequestDto { RunId = 2, RelativeYear = new RelativeYear(2025) };
             var calcResult = TestDataHelper.GetCalcResult();
             calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers
             {

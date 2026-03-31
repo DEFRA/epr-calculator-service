@@ -16,7 +16,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         [TestInitialize]
         public void SetUp()
         {
-            var fixture = new Fixture();
             var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
                            .UseInMemoryDatabase(databaseName: "PayCal")
                            .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
