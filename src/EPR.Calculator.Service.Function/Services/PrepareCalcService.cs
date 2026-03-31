@@ -33,8 +33,6 @@ namespace EPR.Calculator.Service.Function.Services
             producerDataInsertService = deps.producerDataInsertService;
         }
 
-        public const string ContainerNameMissingError = "Container name is missing in configuration.";
-
         private const bool OverwriteJsonFile = true;
 
         private const bool OverwriteCsvFile = false;

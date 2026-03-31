@@ -10,10 +10,6 @@ namespace EPR.Calculator.Service.Function.Services
     /// </summary>
     public class BlobStorageService : IStorageService
     {
-        public const string BlobConnectionStringMissingError = "BlobStorage settings are missing in configuration.";
-        public const string AccountNameMissingError = "Account name is missing in configuration.";
-        public const string AccountKeyMissingError = "Account name is missing in configuration.";
-
         private readonly ICalculatorTelemetryLogger telemetryLogger;
         private readonly BlobServiceClient blobServiceClient;
 
