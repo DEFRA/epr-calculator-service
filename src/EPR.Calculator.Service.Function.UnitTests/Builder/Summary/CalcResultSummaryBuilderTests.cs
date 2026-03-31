@@ -289,6 +289,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                     ColumnHeaders = null,
                     PartialObligations = new List<CalcResultPartialObligation>(),
                 },
+                CalcResultProjectedProducers = new CalcResultProjectedProducers(),
                 CalcResultModulation = null,
             };
 

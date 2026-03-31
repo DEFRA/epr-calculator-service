@@ -295,6 +295,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.LaDataPrepCo
                 },
                 CalcResultLateReportingTonnageData = Fixture.Create<CalcResultLateReportingTonnage>(),
                 CalcResultModulation = null,
+                CalcResultProjectedProducers = new CalcResultProjectedProducers(),
             };
         }
 

@@ -33,6 +33,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                 CalcResultLateReportingTonnageData = GetCalcResultLateReportingTonnage(),
                 CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
+                CalcResultProjectedProducers = new CalcResultProjectedProducers(),
                 CalcResultModulation = null,
             };
 

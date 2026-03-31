@@ -1,4 +1,4 @@
-using AutoFixture;
+﻿using AutoFixture;
 using EPR.Calculator.Service.Function.Builder.Summary.Common;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
@@ -27,8 +27,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
                 CalcResultParameterCommunicationCost = GetCalcResultParameterCommunicationCost(),
                 CalcResultSummary = TestDataHelper.GetCalcResultSummary(),
                 CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
-                CalcResultLateReportingTonnageData = GetCalcResultLateReportingTonnage(),
-                CalcResultModulation = null
+                CalcResultLateReportingTonnageData = this.GetCalcResultLateReportingTonnage(),
+                CalcResultProjectedProducers = new CalcResultProjectedProducers(),
+                CalcResultModulation = null,
             };
         }
 

@@ -20,6 +20,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 CalcResultLapcapData = GetCalcResultLapcapData(),
                 CalcResultLateReportingTonnageData = GetCalcResultLateReportingTonnage(),
                 CalcResultSummary = GetCalcResultSummary(),
+                CalcResultProjectedProducers = new CalcResultProjectedProducers(),
                 CalcResultModulation = null,
             };
         }

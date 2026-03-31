@@ -110,6 +110,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                         }
                     }
                 },
+                CalcResultProjectedProducers = new CalcResultProjectedProducers(),
                 CalcResultModulation = null,
             };
 
@@ -163,6 +164,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     TonnageHeading = string.Empty,
                 },
                 CalcResultSummary  = new() {  ProducerDisposalFees = null! },
+                CalcResultProjectedProducers = new CalcResultProjectedProducers(),
                 CalcResultModulation = null,
             };
 
@@ -239,7 +241,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                         }
                     }
                 },
-                CalcResultModulation = null
+                CalcResultProjectedProducers = new CalcResultProjectedProducers(),
+                CalcResultModulation = null,
             };
 
 

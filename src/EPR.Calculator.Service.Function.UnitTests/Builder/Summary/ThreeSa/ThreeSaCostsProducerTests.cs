@@ -332,6 +332,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                     MaterialHeading = string.Empty,
                     TonnageHeading = string.Empty
                 },
+                CalcResultProjectedProducers = new CalcResultProjectedProducers(),
                 CalcResultModulation = null,
             };
         }

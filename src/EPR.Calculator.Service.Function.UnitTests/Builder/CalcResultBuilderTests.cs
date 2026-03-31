@@ -1,24 +1,28 @@
-using AutoFixture;
-using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Function.Builder;
-using EPR.Calculator.Service.Function.Builder.CancelledProducers;
-using EPR.Calculator.Service.Function.Builder.CommsCost;
-using EPR.Calculator.Service.Function.Builder.Detail;
-using EPR.Calculator.Service.Function.Builder.ErrorReport;
-using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
-using EPR.Calculator.Service.Function.Builder.Lapcap;
-using EPR.Calculator.Service.Function.Builder.LateReportingTonnages;
-using EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment;
-using EPR.Calculator.Service.Function.Builder.ParametersOther;
-using EPR.Calculator.Service.Function.Builder.PartialObligations;
-using EPR.Calculator.Service.Function.Builder.RejectedProducers;
-using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
-using EPR.Calculator.Service.Function.Builder.Summary;
-using EPR.Calculator.Service.Function.Misc;
-using EPR.Calculator.Service.Function.Models;
-using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.Extensibility;
-using Moq;
+namespace EPR.Calculator.Service.Function.UnitTests
+{
+    using AutoFixture;
+    using EPR.Calculator.Service.Function.Builder;
+    using EPR.Calculator.Service.Function.Builder.CancelledProducers;
+    using EPR.Calculator.Service.Function.Builder.CommsCost;
+    using EPR.Calculator.Service.Function.Builder.Detail;
+    using EPR.Calculator.Service.Function.Builder.ErrorReport;
+    using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
+    using EPR.Calculator.Service.Function.Builder.Lapcap;
+    using EPR.Calculator.Service.Function.Builder.LateReportingTonnages;
+    using EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment;
+    using EPR.Calculator.Service.Function.Builder.ParametersOther;
+    using EPR.Calculator.Service.Function.Builder.RejectedProducers;
+    using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
+    using EPR.Calculator.Service.Function.Builder.PartialObligations;
+    using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
+    using EPR.Calculator.Service.Function.Builder.Summary;
+    using EPR.Calculator.Service.Function.Dtos;
+    using EPR.Calculator.Service.Function.Models;
+    using Microsoft.ApplicationInsights;
+    using Microsoft.ApplicationInsights.Extensibility;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Moq;
+    using EPR.Calculator.API.Data.Models;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
@@ -37,6 +41,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         private readonly Mock<ICalcResultOnePlusFourApportionmentBuilder> mockOnePlusFourApportionmentBuilder;
         private readonly Mock<ICalcResultScaledupProducersBuilder> mockCalcResultScaledupProducersBuilder;
         private readonly Mock<ICalcResultPartialObligationBuilder> mockCalcResultPartialObligationBuilder;
+        private readonly Mock<ICalcResultProjectedProducersBuilder> mockCalcResultProjectedProducersBuilder;
         private readonly Mock<ICalcResultCancelledProducersBuilder> mockCalcResultCancelledProducersBuilder;
         private readonly Mock<ICalcResultRejectedProducersBuilder> mockCalcResultRejectedProducersBuilder;
         private readonly Mock<ICalcResultErrorReportBuilder> mockCalcResultErrorReportBuilder;
@@ -44,38 +49,40 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
         public CalcResultBuilderTests()
         {
-            Fixture = new Fixture();
-            mockCalcResultDetailBuilder = new Mock<ICalcResultDetailBuilder>();
-            mockLapcapBuilder = new Mock<ICalcResultLapcapDataBuilder>();
-            mockSummaryBuilder = new Mock<ICalcResultSummaryBuilder>();
-            mockCalcRunLaDisposalCostBuilder = new Mock<ICalcRunLaDisposalCostBuilder>();
-            mockCommsCostReportBuilder = new Mock<ICalcResultCommsCostBuilder>();
-            mockLateReportingBuilder = new Mock<ICalcResultLateReportingBuilder>();
-            mockCalcResultParameterOtherCostBuilder = new Mock<ICalcResultParameterOtherCostBuilder>();
-            mockOnePlusFourApportionmentBuilder = new Mock<ICalcResultOnePlusFourApportionmentBuilder>();
-            mockCalcResultScaledupProducersBuilder = new Mock<ICalcResultScaledupProducersBuilder>();
-            mockCalcResultPartialObligationBuilder = new Mock<ICalcResultPartialObligationBuilder>();
-            mockCalcResultCancelledProducersBuilder = new Mock<ICalcResultCancelledProducersBuilder>();
-            mockCalcResultRejectedProducersBuilder = new Mock<ICalcResultRejectedProducersBuilder>();
-            mockCalcResultErrorReportBuilder = new Mock<ICalcResultErrorReportBuilder>();
+            this.Fixture = new Fixture();
+            this.mockCalcResultDetailBuilder = new Mock<ICalcResultDetailBuilder>();
+            this.mockLapcapBuilder = new Mock<ICalcResultLapcapDataBuilder>();
+            this.mockSummaryBuilder = new Mock<ICalcResultSummaryBuilder>();
+            this.mockCalcRunLaDisposalCostBuilder = new Mock<ICalcRunLaDisposalCostBuilder>();
+            this.mockCommsCostReportBuilder = new Mock<ICalcResultCommsCostBuilder>();
+            this.mockLateReportingBuilder = new Mock<ICalcResultLateReportingBuilder>();
+            this.mockCalcResultParameterOtherCostBuilder = new Mock<ICalcResultParameterOtherCostBuilder>();
+            this.mockOnePlusFourApportionmentBuilder = new Mock<ICalcResultOnePlusFourApportionmentBuilder>();
+            this.mockCalcResultScaledupProducersBuilder = new Mock<ICalcResultScaledupProducersBuilder>();
+            this.mockCalcResultPartialObligationBuilder = new Mock<ICalcResultPartialObligationBuilder>();
+            this.mockCalcResultProjectedProducersBuilder = new Mock<ICalcResultProjectedProducersBuilder>();
+            this.mockCalcResultCancelledProducersBuilder = new Mock<ICalcResultCancelledProducersBuilder>();
+            this.mockCalcResultRejectedProducersBuilder = new Mock<ICalcResultRejectedProducersBuilder>();
+            this.mockCalcResultErrorReportBuilder = new Mock<ICalcResultErrorReportBuilder>();
 
             telemetryClient = new TelemetryClient(new TelemetryConfiguration());
 
-            calcResultBuilder = new CalcResultBuilder(
-                mockCalcResultDetailBuilder.Object,
-                mockLapcapBuilder.Object,
-                mockCalcResultParameterOtherCostBuilder.Object,
-                mockOnePlusFourApportionmentBuilder.Object,
-                mockCommsCostReportBuilder.Object,
-                mockLateReportingBuilder.Object,
-                mockCalcRunLaDisposalCostBuilder.Object,
-                mockCalcResultScaledupProducersBuilder.Object,
-                mockCalcResultPartialObligationBuilder.Object,
-                mockSummaryBuilder.Object,
-                mockCalcResultCancelledProducersBuilder.Object,
-                mockCalcResultRejectedProducersBuilder.Object,
-                mockCalcResultErrorReportBuilder.Object,
-                telemetryClient);
+            this.calcResultBuilder = new CalcResultBuilder(
+                this.mockCalcResultDetailBuilder.Object,
+                this.mockLapcapBuilder.Object,
+                this.mockCalcResultParameterOtherCostBuilder.Object,
+                this.mockOnePlusFourApportionmentBuilder.Object,
+                this.mockCommsCostReportBuilder.Object,
+                this.mockLateReportingBuilder.Object,
+                this.mockCalcRunLaDisposalCostBuilder.Object,
+                this.mockCalcResultScaledupProducersBuilder.Object,
+                this.mockCalcResultPartialObligationBuilder.Object,
+                this.mockCalcResultProjectedProducersBuilder.Object,
+                this.mockSummaryBuilder.Object,
+                this.mockCalcResultCancelledProducersBuilder.Object,
+                this.mockCalcResultRejectedProducersBuilder.Object,
+                this.mockCalcResultErrorReportBuilder.Object,
+                this.telemetryClient);
         }
 
         private Fixture Fixture { get; init; }
@@ -85,20 +92,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             // Act
             var instance = new CalcResultBuilder(
-                mockCalcResultDetailBuilder.Object,
-                mockLapcapBuilder.Object,
-                mockCalcResultParameterOtherCostBuilder.Object,
-                mockOnePlusFourApportionmentBuilder.Object,
-                mockCommsCostReportBuilder.Object,
-                mockLateReportingBuilder.Object,
-                mockCalcRunLaDisposalCostBuilder.Object,
-                mockCalcResultScaledupProducersBuilder.Object,
-                mockCalcResultPartialObligationBuilder.Object,
-                mockSummaryBuilder.Object,
-                mockCalcResultCancelledProducersBuilder.Object,
-                mockCalcResultRejectedProducersBuilder.Object,
-                mockCalcResultErrorReportBuilder.Object,
-                telemetryClient);
+                this.mockCalcResultDetailBuilder.Object,
+                this.mockLapcapBuilder.Object,
+                this.mockCalcResultParameterOtherCostBuilder.Object,
+                this.mockOnePlusFourApportionmentBuilder.Object,
+                this.mockCommsCostReportBuilder.Object,
+                this.mockLateReportingBuilder.Object,
+                this.mockCalcRunLaDisposalCostBuilder.Object,
+                this.mockCalcResultScaledupProducersBuilder.Object,
+                this.mockCalcResultPartialObligationBuilder.Object,
+                this.mockCalcResultProjectedProducersBuilder.Object,
+                this.mockSummaryBuilder.Object,
+                this.mockCalcResultCancelledProducersBuilder.Object,
+                this.mockCalcResultRejectedProducersBuilder.Object,
+                this.mockCalcResultErrorReportBuilder.Object,
+                this.telemetryClient);
 
             // Assert
             Assert.IsNotNull(instance);

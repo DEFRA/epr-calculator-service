@@ -53,6 +53,8 @@
 
         public required CalcResultPartialObligations CalcResultPartialObligations { get; set; }
 
+        public required CalcResultProjectedProducers CalcResultProjectedProducers { get; set; }
+
         public required CalcResultScaledupProducers CalcResultScaledupProducers { get; set; }
 
         public CalcResultCancelledProducersResponse CalcResultCancelledProducers { get; set; }

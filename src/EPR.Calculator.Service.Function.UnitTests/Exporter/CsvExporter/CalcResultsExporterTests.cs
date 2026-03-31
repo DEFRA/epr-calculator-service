@@ -1,18 +1,24 @@
-﻿using System.Text;
-using AutoFixture;
-using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Function.Exporter.CsvExporter;
-using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
-using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
-using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
-using EPR.Calculator.Service.Function.Exporter.CsvExporter.ErrorReport;
-using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
-using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
-using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
-using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
-using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
-using EPR.Calculator.Service.Function.Models;
-using Moq;
+﻿﻿namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using AutoFixture;
+    using EPR.Calculator.Service.Function.Models;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Moq;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
+    using EPR.Calculator.Service.Function.Exporter.CsvExporter.ErrorReport;
+    using EPR.Calculator.API.Data.Models;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 {
@@ -28,6 +34,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             MockLaDisposalCostDataExporter = new();
             MockScaledupProducersExporter = new();
             MockPartialObligationsExporter = new();
+            MockProjectedProducersExporter = new();
             MockLapcaptDetailExporter = new();
             MockParameterOtherCostExporter = new();
             MockCalcResultSummaryExporter = new();
@@ -41,6 +48,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 MockLaDisposalCostDataExporter.Object,
                 MockScaledupProducersExporter.Object,
                 MockPartialObligationsExporter.Object,
+                MockProjectedProducersExporter.Object,
                 MockLapcaptDetailExporter.Object,
                 MockParameterOtherCostExporter.Object,
                 MockCommsCostExporter.Object,
@@ -62,6 +70,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         private Mock<ICalcResultScaledupProducersExporter> MockScaledupProducersExporter { get; init; }
 
         private Mock<ICalcResultPartialObligationsExporter> MockPartialObligationsExporter { get; init; }
+
+        private Mock<ICalcResultProjectedProducersExporter> MockProjectedProducersExporter { get; init; }
 
         private Mock<ILapcaptDetailExporter> MockLapcaptDetailExporter { get; init; }
 
@@ -411,6 +421,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                     RunName = "CalculatorRunName",
                     RelativeYear = new RelativeYear(2024)
                 },
+                CalcResultProjectedProducers = new CalcResultProjectedProducers(),
                 CalcResultModulation = null,
             };
         }

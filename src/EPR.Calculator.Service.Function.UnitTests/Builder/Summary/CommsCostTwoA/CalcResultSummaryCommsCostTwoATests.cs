@@ -1,4 +1,4 @@
-using AutoFixture;
+﻿using AutoFixture;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA;
 using EPR.Calculator.Service.Function.Models;
@@ -35,8 +35,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                 CalcResultParameterCommunicationCost = GetCalcResultParameterCommunicationCost(),
                 CalcResultSummary = TestDataHelper.GetCalcResultSummary(),
                 CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
-                CalcResultLateReportingTonnageData = GetCalcResultLateReportingTonnage(),
-                CalcResultModulation = null
+                CalcResultLateReportingTonnageData = this.GetCalcResultLateReportingTonnage(),
+                CalcResultProjectedProducers = new CalcResultProjectedProducers(),
+                CalcResultModulation = null,
             };
         }
 
