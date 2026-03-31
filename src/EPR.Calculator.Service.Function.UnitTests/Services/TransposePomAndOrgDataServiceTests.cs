@@ -73,6 +73,7 @@
         public void TestInit()
         {
             this._context.ChangeTracker.Clear();
+            this._context.ChangeTracker.AutoDetectChangesEnabled = true;
         }
 
         [TestCleanup]
@@ -316,7 +317,7 @@
                 ProducerId = 9991,
                 ProducerName = "UPU LIMITED",
                 CalculatorRunId = 1,
-                CalculatorRun = Fixture.Create<CalculatorRun>(),
+                CalculatorRun = null,
             };
 
             var mockProducerDetailService = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
@@ -395,7 +396,7 @@
                     SubsidiaryId = "1",
                     ProducerName = "UPU LIMITED",
                     CalculatorRunId = 1,
-                    CalculatorRun = this.Fixture.Create<CalculatorRun>(),
+                    CalculatorRun = null,
                 },
             };
 
@@ -490,7 +491,7 @@
                 SubsidiaryId = "1",
                 ProducerName = "Subsid2",
                 CalculatorRunId = 1,
-                CalculatorRun = this.Fixture.Create<CalculatorRun>(),
+                CalculatorRun = null,
             };
 
             var mockErrorReportService = new Mock<IErrorReportService>();
@@ -551,7 +552,7 @@
                 ProducerId = 9994,
                 ProducerName = "Subsid2",
                 CalculatorRunId = 1,
-                CalculatorRun = this.Fixture.Create<CalculatorRun>(),
+                CalculatorRun = null,
             };
 
             var mockErrorReportService = new Mock<IErrorReportService>();
@@ -727,9 +728,10 @@
                 t => t.LogError(
                     It.Is<ErrorMessage>(message => message.Message == "RunId is updated with ClassificationId Error")),
                 Times.Once);
-            Assert.IsTrue(this._context.CalculatorRuns
-                .Single(run => run.Id == runId)
-                .CalculatorRunClassificationId == (int)RunClassification.ERROR);
+            using var assertContext = new ApplicationDBContext(_dbContextOptions);
+            Assert.AreEqual(
+                (int)RunClassification.ERROR,
+                assertContext.CalculatorRuns.Single(run => run.Id == runId).CalculatorRunClassificationId);
         }
 
         /// <summary>
@@ -762,9 +764,10 @@
                 t => t.LogError(
                     It.Is<ErrorMessage>(message => message.Message == "RunId is updated with ClassificationId Error")),
                 Times.Once);
-            Assert.IsTrue(this._context.CalculatorRuns
-                .Single(run => run.Id == runId)
-                .CalculatorRunClassificationId == (int)RunClassification.ERROR);
+            using var assertContext = new ApplicationDBContext(_dbContextOptions);
+            Assert.AreEqual(
+                (int)RunClassification.ERROR,
+                assertContext.CalculatorRuns.Single(run => run.Id == runId).CalculatorRunClassificationId);
         }
 
         protected static IEnumerable<CalculatorRunOrganisationDataMaster> GetCalculatorRunOrganisationDataMaster()
