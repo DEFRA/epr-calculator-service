@@ -335,8 +335,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                 _materialCostSummary.Add(material, new CalcResultSummaryProducerDisposalFeesByMaterial
                 {
                     HouseholdPackagingWasteTonnage = 1000,
-                    ManagedConsumerWasteTonnage = 90,
-                    NetReportedTonnage = 910,
+                    SelfManagedConsumerWasteTonnage = 90,
+                    NetReportedTonnage = (total: 910, red: null, amber: null, green: null),
                     PricePerTonne = 0.6676m,
                     ProducerDisposalFee = 607.52m,
                     BadDebtProvision = 36.45m,

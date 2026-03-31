@@ -18,6 +18,8 @@ namespace EPR.Calculator.Service.Function.Models
 
         public decimal TotalReportedTonnage { get; set; }
 
+        public Dictionary<RagRating, decimal> TotalReportedTonnageRagRating { get; set; } = new();
+
         public decimal BadDebtProvision { get; set; }
 
         public decimal EnglandWithBadDebtProvision { get; set; }

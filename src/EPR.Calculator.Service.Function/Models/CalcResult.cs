@@ -26,7 +26,7 @@
             {
                 Name = string.Empty
             };
-
+ 
         public required CalcResultParameterOtherCost CalcResultParameterOtherCost { get; set; } =
             new()
             {

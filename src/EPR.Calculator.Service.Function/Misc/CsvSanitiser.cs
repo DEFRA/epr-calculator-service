@@ -9,7 +9,7 @@ namespace EPR.Calculator.Service.Function.Misc
     {
         public static string SanitiseData<T>(T value, bool csvDelimiterRequired = true, bool appendLrmCharacterToPreventRenderedAsFormula = false)
         {
-            if (value == null)
+            if (value is null)
             {
                 return csvDelimiterRequired
                     ? CommonConstants.CsvFileDelimiter
@@ -48,8 +48,13 @@ namespace EPR.Calculator.Service.Function.Misc
             DecimalFormats? valueFormat,
             bool isCurrency = false,
             bool isPercentage = false,
-            bool delimiterRequired = true)
+            bool delimiterRequired = true,
+            bool canBeEmpty = false)
         {
+
+            if (canBeEmpty && value is null)
+                return CsvSanitiser.SanitiseData(CommonConstants.Hyphen, delimiterRequired);
+
             decimal decimalValue;
             if (value is string)
             {
