@@ -67,9 +67,7 @@ namespace EPR.Calculator.Service.Function.Services
             Console.WriteLine($"Loading {typeof(TRecord).Name} records in chunks of {ChunkSize}.");
             TelemetryClient.TrackTrace($"Loading {typeof(TRecord).Name} records in chunks of {ChunkSize}.");
             var chunkContents = new List<TRecord>();
-            var recordCount = 1;
             var chunkCount = 1;
-            var currentChunkRecordCount = 1;
 
             var totalTimer = new Stopwatch();
             var chunkTimer = new Stopwatch();
@@ -85,9 +83,6 @@ namespace EPR.Calculator.Service.Function.Services
                     chunkContents.Clear();
                     chunkCount++;
                 }
-
-                recordCount++;
-                currentChunkRecordCount++;
             }
 
             await SaveChunk(chunkCount, chunkTimer, chunkContents);
