@@ -69,6 +69,15 @@
                 };
                 this.dbContext.ProducerDetail.Add(prod33);
 
+                var prod44 = new ProducerDetail
+                {
+                    CalculatorRunId = run,
+                    ProducerId = 44,
+                    SubsidiaryId = "444",
+                    ProducerName = "Producer 44 - Sub 444 - No parent",
+                };
+                this.dbContext.ProducerDetail.Add(prod44);
+
                 foreach (var subPeriod in new[] { "2025-H1", "2025-H2"}) {
                     this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
                     {
@@ -112,6 +121,14 @@
                         PackagingTonnageGreenMedical = 45,
                         SubmissionPeriod = subPeriod,
                     });
+                    this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                    {
+                        ProducerDetailId = prod44.Id,
+                        MaterialId = 1, 
+                        PackagingType = "HH",
+                        PackagingTonnage = 150,
+                        SubmissionPeriod = subPeriod,
+                    });
                 }
             }
 
@@ -151,7 +168,7 @@
             var result = await this.builder.ConstructAsync(requestDto);
 
             // Assert
-            Assert.AreEqual(4, result.H2ProjectedProducers!.Count());
+            Assert.AreEqual(6, result.H2ProjectedProducers!.Count());
 
             //Producer 11 - H2 projections
             var prod11 = result.H2ProjectedProducers!.FirstOrDefault(p => p.ProducerId == 11 && p.SubsidiaryId == null && p.IsSubtotal == false);
@@ -210,6 +227,23 @@
             Assert.IsTrue(prod33.SubsidiaryId == null);
             Assert.IsTrue(prod33.Level == CommonConstants.LevelOne.ToString());
             Assert.IsTrue(prod33.SubmissionPeriodCode == "2025-H2");
+
+            //Producer 44 - H2 projections
+            var prod44Subtotal = result.H2ProjectedProducers!.FirstOrDefault(p => p.ProducerId == 44 && p.SubsidiaryId == null && p.IsSubtotal == true);
+            var prod44 = result.H2ProjectedProducers!.FirstOrDefault(p => p.ProducerId == 44 && p.SubsidiaryId == "444" && p.IsSubtotal == false);
+            Assert.IsTrue(prod44Subtotal != null);
+            Assert.IsTrue(prod44 != null);
+            Assert.IsTrue(prod44Subtotal.ProducerId == 44);
+            Assert.IsTrue(prod44Subtotal.SubsidiaryId == null);
+            Assert.IsTrue(prod44Subtotal.Level == CommonConstants.LevelOne.ToString());
+            Assert.IsTrue(prod44Subtotal.SubmissionPeriodCode == "2025-H2");
+
+            Assert.IsTrue(prod44.ProducerId == 44);
+            Assert.IsTrue(prod44.SubsidiaryId == "444");
+            Assert.IsTrue(prod44.Level == CommonConstants.LevelTwo.ToString());
+            Assert.IsTrue(prod44.SubmissionPeriodCode == "2025-H2");
+
+            Assert.AreEqual(prod44Subtotal.ProjectedTonnageByMaterial!["AL"].TotalTonnage, prod44.ProjectedTonnageByMaterial!["AL"].TotalTonnage);
         }
     }
 }

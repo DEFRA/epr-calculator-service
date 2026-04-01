@@ -9,7 +9,6 @@
         public decimal RedMedicalTonnage { get; set; }
         public decimal AmberMedicalTonnage { get; set; }
         public decimal GreenMedicalTonnage { get; set; }
-        public decimal TonnageWithoutRAM { get; set; }
 
          public override bool Equals(object? obj)
         {

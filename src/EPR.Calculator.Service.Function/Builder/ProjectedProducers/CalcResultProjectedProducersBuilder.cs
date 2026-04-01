@@ -171,17 +171,17 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                         return p;
                     }));
 
-                    var holdingProducer = prodGroup.First(p => p.SubsidiaryId == null);
+                    var producer = prodGroup.First();
 
                     producersWithSubtotals.Add(
                         new CalcResultH2ProjectedProducer
                         {
-                            ProducerId = holdingProducer.ProducerId,
+                            ProducerId = prodGroup.Key,
                             SubsidiaryId = null,
                             Level = CommonConstants.LevelOne.ToString(),
-                            SubmissionPeriodCode = holdingProducer.SubmissionPeriodCode,
+                            SubmissionPeriodCode = producer.SubmissionPeriodCode,
                             IsSubtotal = true,
-                            ProjectedTonnageByMaterial = holdingProducer.ProjectedTonnageByMaterial.ToDictionary(
+                            ProjectedTonnageByMaterial = producer.ProjectedTonnageByMaterial.ToDictionary(
                                 kvp => kvp.Key, 
                                 kvp => new CalcResultH2ProjectedProducerMaterialTonnage {
                                     HouseholdRAMTonnage = SumRAMTonnages(prodGroup.ToList(), kvp.Key, p => p.HouseholdRAMTonnage),
@@ -195,13 +195,29 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                         }
                     );   
                 } else {
-                    producersWithSubtotals.AddRange(prodGroup.Select(p => {
-                        p.Level = CommonConstants.LevelOne.ToString();
-                        return p;
-                    }));
+                    var producer = prodGroup.First();
+                    if(producer.SubsidiaryId != null)
+                    {
+                        producer.Level = CommonConstants.LevelTwo.ToString();
+                        producersWithSubtotals.AddRange(new List<CalcResultH2ProjectedProducer>
+                        {
+                            new ()
+                            {
+                                ProducerId = producer.ProducerId,
+                                SubsidiaryId = null,
+                                Level = CommonConstants.LevelOne.ToString(),
+                                SubmissionPeriodCode = producer.SubmissionPeriodCode,
+                                IsSubtotal = true,
+                                ProjectedTonnageByMaterial = producer.ProjectedTonnageByMaterial
+                            },
+                            producer
+                        });
+                    } else {
+                        producer.Level = CommonConstants.LevelOne.ToString();  
+                        producersWithSubtotals.Add(producer);
+                    }
                 }
             }
-            
 
             return producersWithSubtotals;
         }

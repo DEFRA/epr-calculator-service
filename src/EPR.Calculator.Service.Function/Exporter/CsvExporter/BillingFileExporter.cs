@@ -11,6 +11,8 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.RejectedProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers;
 using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
@@ -25,6 +27,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         private readonly ILateReportingExporter lateReportingExporterCsv;
         private readonly ICalcResultScaledupProducersExporter calcResultScaledupProducersExporterCsv;
         private readonly ICalcResultPartialObligationsExporter calcResultPartialObligationsExporterCsv;
+        private readonly ICalcResultProjectedProducersExporter calcResultProjectedProducersExporterCsv;
         private readonly ICalcResultLaDisposalCostExporter laDisposalCostExporterCsv;
         private readonly ICommsCostExporter commsCostExporterCsv;
         private readonly ICalcResultCancelledProducersExporter calcResultCancelledProducersExporterCsv;
@@ -38,6 +41,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             ICalcResultLaDisposalCostExporter laDisposalCostExporter,
             ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter,
             ICalcResultPartialObligationsExporter calcResultPartialObligationsExporter,
+            ICalcResultProjectedProducersExporter calcResultProjectedProducersExporter,
             ILapcaptDetailExporter lapcaptDetailExporter,
             ICalcResultParameterOtherCostExporter parameterOtherCosts,
             ICommsCostExporter commsCostExporter,
@@ -45,18 +49,19 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             ICalcResultCancelledProducersExporter calcResultCancelledProducersExporter,
             ICalcResultRejectedProducersExporter calcResultRejectedProducersExporter)
         {
-            resultDetailexporterCsv = resultDetailexporter;
-            onePlusFourApportionmentExporterCsv = onePlusFourApportionmentExporter;
-            lateReportingExporterCsv = lateReportingExporter;
-            calcResultScaledupProducersExporterCsv = calcResultScaledupProducersExporter;
-            calcResultPartialObligationsExporterCsv = calcResultPartialObligationsExporter;
-            lapcaptDetailExporterCsv = lapcaptDetailExporter;
-            parameterOtherCostsCsv = parameterOtherCosts;
-            calcResultSummaryExporterCsv = calcResultSummaryExporter;
-            laDisposalCostExporterCsv = laDisposalCostExporter;
-            commsCostExporterCsv = commsCostExporter;
-            calcResultCancelledProducersExporterCsv = calcResultCancelledProducersExporter;
-            calcResultRejectedProducersExporterCsv = calcResultRejectedProducersExporter;
+            this.resultDetailexporterCsv = resultDetailexporter;
+            this.onePlusFourApportionmentExporterCsv = onePlusFourApportionmentExporter;
+            this.lateReportingExporterCsv = lateReportingExporter;
+            this.calcResultScaledupProducersExporterCsv = calcResultScaledupProducersExporter;
+            this.calcResultPartialObligationsExporterCsv = calcResultPartialObligationsExporter;
+            this.calcResultProjectedProducersExporterCsv = calcResultProjectedProducersExporter;
+            this.lapcaptDetailExporterCsv = lapcaptDetailExporter;
+            this.parameterOtherCostsCsv = parameterOtherCosts;
+            this.calcResultSummaryExporterCsv = calcResultSummaryExporter;
+            this.laDisposalCostExporterCsv = laDisposalCostExporter;
+            this.commsCostExporterCsv = commsCostExporter;
+            this.calcResultCancelledProducersExporterCsv = calcResultCancelledProducersExporter;
+            this.calcResultRejectedProducersExporterCsv = calcResultRejectedProducersExporter;
         }
 
         public string Export(CalcResult calcResult, IEnumerable<int> acceptedProducerIds)
@@ -78,10 +83,14 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 
             calcResultCancelledProducersExporterCsv.Export(calcResult.CalcResultCancelledProducers, csvContent);
 
-            var acceptedProducers = GetScaledUpProducersForExport(
-                calcResult.CalcResultScaledupProducers,
-                acceptedProducerIds);
-            calcResultScaledupProducersExporterCsv.Export(acceptedProducers, csvContent);
+            if(calcResult.CalcResultModulation is not null)
+            {
+                var accepted = GetProjectedProducerForExport(calcResult.CalcResultProjectedProducers, acceptedProducerIds);
+                calcResultProjectedProducersExporterCsv.Export(accepted, csvContent);
+            } else {
+                var acceptedProducers = GetScaledUpProducersForExport(calcResult.CalcResultScaledupProducers, acceptedProducerIds);
+                calcResultScaledupProducersExporterCsv.Export(acceptedProducers, csvContent);
+            }
 
             calcResultPartialObligationsExporterCsv.Export(GetPartialObligationsForExport(calcResult.CalcResultPartialObligations, acceptedProducerIds), csvContent);
 
@@ -202,6 +211,21 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
                 MaterialBreakdownHeaders = producers.MaterialBreakdownHeaders,
                 PartialObligations = acceptedProducers,
                 TitleHeader = producers.TitleHeader,
+            };
+        }
+
+        private CalcResultProjectedProducers GetProjectedProducerForExport(
+            CalcResultProjectedProducers producers,
+            IEnumerable<int> acceptedProducerIds)
+        {
+            var acceptedProducers = producers.H2ProjectedProducers?.Where(
+                x => acceptedProducerIds.Contains(x.ProducerId) || x.ProducerId == 0
+            ).ToList() ?? new List<CalcResultH2ProjectedProducer>();
+
+            return new CalcResultProjectedProducers
+            {
+                H2ProjectedProducersHeaders = producers.H2ProjectedProducersHeaders,
+                H2ProjectedProducers = acceptedProducers,
             };
         }
 

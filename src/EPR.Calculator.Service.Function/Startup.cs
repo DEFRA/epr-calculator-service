@@ -139,6 +139,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcResultScaledupProducersExporter, CalcResultScaledupProducersExporter>();
             services.AddTransient<ICalcResultPartialObligationsExporter, CalcResultPartialObligationsExporter>();
             services.AddTransient<ICalcResultRejectedProducersExporter, CalcResultRejectedProducersExporter>();
+            services.AddTransient<ICalcResultProjectedProducersExporter, CalcResultProjectedProducersExporter>();
             services.AddTransient<LateReportingExporter, LateReportingExporter>();
             services.AddTransient<ICalcResultParameterOtherCostExporter, CalcResultParameterOtherCostExporter>();
             services.AddTransient<ICommsCostExporter, CommsCostExporter>();
