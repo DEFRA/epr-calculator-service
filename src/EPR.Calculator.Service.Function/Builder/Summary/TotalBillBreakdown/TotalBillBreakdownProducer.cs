@@ -1,6 +1,4 @@
-﻿using EPR.Calculator.Service.Function.Builder.Summary.TotalProducerBillBreakdown;
-using EPR.Calculator.Service.Function.Models;
-using System.Collections.Generic;
+﻿using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
 {
@@ -32,7 +30,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
         {
             foreach (var fee in result.ProducerDisposalFees)
             {
-                fee.TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision()
+                fee.TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision
                 {
                     TotalProducerFeeWithoutBadDebtProvision = GetTotalProducerBillWithoutBadDebtProvision(fee) ?? 0,
                     BadDebtProvision = GetBadDebtProvisionForTotalProducerBill(fee) ?? 0,

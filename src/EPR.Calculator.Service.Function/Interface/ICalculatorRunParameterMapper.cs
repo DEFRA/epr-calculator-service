@@ -1,11 +1,7 @@
-﻿// <copyright file="ICalculatorRunParameterMapper.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
+﻿using EPR.Calculator.Service.Common;
 
 namespace EPR.Calculator.Service.Function.Interface
 {
-    using EPR.Calculator.Service.Common;
-
     /// <summary>
     /// Interface for mapping calculator parameters to calculator run parameters.
     /// </summary>

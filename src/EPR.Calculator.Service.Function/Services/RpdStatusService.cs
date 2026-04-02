@@ -1,18 +1,12 @@
-﻿namespace EPR.Calculator.Service.Function.Services
-{
-    using System;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using EPR.Calculator.Service.Common;
-    using EPR.Calculator.Service.Common.Logging;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.Service.Common.Utils;
-    using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Function.Interface;
-    using FluentValidation;
-    using Microsoft.EntityFrameworkCore;
+﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.Service.Common.Logging;
+using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Interface;
+using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 
+namespace EPR.Calculator.Service.Function.Services
+{
     /// <summary>
     /// Service for updating RPD status.
     /// </summary>
@@ -21,8 +15,6 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="RpdStatusService"/> class.
         /// </summary>
-        /// <param name="config">The application configuration.</param>
-        /// <param name="context">The PayCal database context.</param>
         public RpdStatusService(
             IConfigurationService config,
             IDbContextFactory<ApplicationDBContext> context,
@@ -32,13 +24,13 @@
             ICalculatorRunOrgData calculatorRunOrgData,
             ICalculatorRunPomData calculatorRunPomData)
         {
-            this.Config = config;
-            this.Context = context.CreateDbContext();
-            this.CommandTimeoutService = commandTimeoutService;
-            this.Validator = validator;
-            this.TelemetryLogger = telemetryLogger;
-            this.CalculatorRunOrgData = calculatorRunOrgData;
-            this.CalculatorRunPomData = calculatorRunPomData;
+            Config = config;
+            Context = context.CreateDbContext();
+            CommandTimeoutService = commandTimeoutService;
+            Validator = validator;
+            TelemetryLogger = telemetryLogger;
+            CalculatorRunOrgData = calculatorRunOrgData;
+            CalculatorRunPomData = calculatorRunPomData;
         }
 
         private ICalculatorTelemetryLogger TelemetryLogger { get; init; }
@@ -62,25 +54,25 @@
             string createdBy,
             CancellationToken timeout)
         {
-            this.TelemetryLogger.LogInformation(new TrackMessage
+            TelemetryLogger.LogInformation(new TrackMessage
             {
                 RunId = runId,
                 RunName = runName,
-                Message = $"Updating RPD status...",
+                Message = "Updating RPD status...",
             });
 
-            this.CommandTimeoutService.SetCommandTimeout(this.Context.Database);
+            CommandTimeoutService.SetCommandTimeout(Context.Database);
 
-            var calcRun = await this.Context.CalculatorRuns.SingleOrDefaultAsync(
+            var calcRun = await Context.CalculatorRuns.SingleOrDefaultAsync(
                 run => run.Id == runId,
                 timeout);
-            var runClassifications = await this.Context.CalculatorRunClassifications
+            var runClassifications = await Context.CalculatorRunClassifications
                 .ToListAsync(timeout);
 
-            var validationResult = this.Validator.IsValidRun(calcRun, runId, runClassifications);
+            var validationResult = Validator.IsValidRun(calcRun, runId, runClassifications);
             if (!validationResult.isValid)
             {
-                this.TelemetryLogger.LogError(new ErrorMessage
+                TelemetryLogger.LogError(new ErrorMessage
                 {
                     RunId = runId,
                     RunName = runName,
@@ -90,10 +82,10 @@
                 throw new ValidationException(validationResult.ToString());
             }
 
-            var vr = this.Validator.IsValidSuccessfulRun(runId);
+            var vr = Validator.IsValidSuccessfulRun(runId);
             if (!vr.isValid)
             {
-                this.TelemetryLogger.LogError(new ErrorMessage
+                TelemetryLogger.LogError(new ErrorMessage
                 {
                     RunId = runId,
                     RunName = runName,
@@ -105,33 +97,32 @@
 
             var relativeYear = calcRun!.RelativeYear;
 
-            using (var transaction = await this.Context.Database.BeginTransactionAsync(timeout))
+            await using var transaction = await Context.Database.BeginTransactionAsync(timeout);
+            
+            try
             {
-                try
+                TelemetryLogger.LogInformation(new TrackMessage { RunId = runId, RunName = runName, Message = $"Creating run organization and POM for run: {runId}" });
+                await CalculatorRunOrgData.LoadOrgDataForCalcRun(runId, relativeYear, createdBy, timeout);
+                await CalculatorRunPomData.LoadPomDataForCalcRun(runId, relativeYear, createdBy, timeout);
+
+                calcRun.CalculatorRunClassificationId = runClassifications.Single(x => x.Status == RunClassification.RUNNING.ToString()).Id;
+
+                await Context.SaveChangesAsync(timeout);
+                await transaction.CommitAsync(timeout);
+
+                return RunClassification.RUNNING;
+            }
+            catch (Exception)
+            {
+                TelemetryLogger.LogError(new ErrorMessage
                 {
-                    this.TelemetryLogger.LogInformation(new TrackMessage { RunId = runId, RunName = runName, Message = $"Creating run organization and POM for run: {runId}" });
-                    await CalculatorRunOrgData.LoadOrgDataForCalcRun(runId, relativeYear, createdBy, timeout);
-                    await CalculatorRunPomData.LoadPomDataForCalcRun(runId, relativeYear, createdBy, timeout);
-
-                    calcRun!.CalculatorRunClassificationId = runClassifications.Single(x => x.Status == RunClassification.RUNNING.ToString()).Id;
-
-                    await this.Context.SaveChangesAsync(timeout);
-                    await transaction.CommitAsync(timeout);
-
-                    return RunClassification.RUNNING;
-                }
-                catch (Exception)
-                {
-                    this.TelemetryLogger.LogError(new ErrorMessage
-                    {
-                        RunId = runId,
-                        RunName = runName,
-                        Message = "Error updating RPD status",
-                        Exception = new Exception("Error updating RPD status"),
-                    });
-                    await transaction.RollbackAsync();
-                    throw;
-                }
+                    RunId = runId,
+                    RunName = runName,
+                    Message = "Error updating RPD status",
+                    Exception = new Exception("Error updating RPD status"),
+                });
+                await transaction.RollbackAsync();
+                throw;
             }
         }
     }

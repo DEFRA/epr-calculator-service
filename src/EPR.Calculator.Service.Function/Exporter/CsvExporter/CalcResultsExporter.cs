@@ -1,20 +1,18 @@
-﻿using EPR.Calculator.API.Exporter;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.ErrorReport;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
+using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 {
-    using System;
-    using System.Text;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.ErrorReport;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
-    using EPR.Calculator.Service.Function.Models;
-
     public class CalcResultsExporter : ICalcResultsExporter<CalcResult>
     {
         private readonly ICalcResultSummaryExporter calcResultSummaryExporter;
@@ -31,7 +29,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         private readonly ICalcResultErrorReportExporter calcResultErrorReportExporter;
 
         // Suppress SonarQube warning for constructor parameter count
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
+        [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         public CalcResultsExporter(
             ILateReportingExporter lateReportingExporter,
             ICalcResultDetailExporter resultDetailexporter,

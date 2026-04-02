@@ -1,5 +1,4 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 
 namespace EPR.Calculator.Service.Common.Utils
 {
@@ -37,7 +36,6 @@ namespace EPR.Calculator.Service.Common.Utils
         /// <summary>
         /// Formats decimal to gbp currency.
         /// </summary>
-        /// <param name="decimalValue"></param>
         /// <returns>gbp currency.</returns>
         public static string FormatCurrencyWithGbpSymbol(decimal decimalValue, int precision)
         {

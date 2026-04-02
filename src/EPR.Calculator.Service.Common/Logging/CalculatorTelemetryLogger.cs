@@ -1,8 +1,7 @@
-﻿namespace EPR.Calculator.Service.Common.Logging
-{
-    using Microsoft.ApplicationInsights;
-    using Microsoft.ApplicationInsights.DataContracts;
+﻿using Microsoft.ApplicationInsights.DataContracts;
 
+namespace EPR.Calculator.Service.Common.Logging
+{
     /// <summary>
     /// Logger for telemetry data in the calculator service.
     /// </summary>
@@ -18,7 +17,7 @@
         /// <param name="fallbackToConsole">Will log to the console if enabled.</param>
         public CalculatorTelemetryLogger(ITelemetryClientWrapper telemetryClient, bool fallbackToConsole)
         {
-            this._telemetryClient = telemetryClient;
+            _telemetryClient = telemetryClient;
             _consoleWrapper = fallbackToConsole ? new ConsoleWrapper() : null;
         }
 
@@ -28,7 +27,7 @@
         /// <param name="logMessage">The log message to log.</param>
         public void LogInformation(TrackMessage logMessage)
         {
-            this.TrackTrace(logMessage, SeverityLevel.Information);
+            TrackTrace(logMessage, SeverityLevel.Information);
         }
 
         /// <summary>
@@ -44,7 +43,7 @@
                 Message = $"{formattedMessage} ExceptionMessage: {errorMessage.Exception.Message}",
             };
             AddProperties(exceptionTelemetry.Properties, errorMessage.RunId, errorMessage.RunName);
-            this._telemetryClient.TrackException(exceptionTelemetry);
+            _telemetryClient.TrackException(exceptionTelemetry);
             
             _consoleWrapper?.WriteLine(formattedMessage);
             _consoleWrapper?.WriteLine(errorMessage.Exception.ToString());
@@ -55,6 +54,7 @@
         /// </summary>
         /// <param name="runId">The ID of the run.</param>
         /// <param name="runName">The name of the run.</param>
+        /// <param name="messageType">The type of message to log.</param>
         /// <param name="message">The message to log.</param>
         /// <returns>A formatted log message string.</returns>
         internal static string CreateLogMessage(int? runId, string? runName, string? messageType, string message)
@@ -90,7 +90,7 @@
                 SeverityLevel = severityLevel,
             };
             AddProperties(traceTelemetry.Properties, logMessage.RunId, logMessage.RunName);
-            this._telemetryClient.TrackTrace(traceTelemetry);
+            _telemetryClient.TrackTrace(traceTelemetry);
             
             _consoleWrapper?.WriteLine(formattedMessage);
         }

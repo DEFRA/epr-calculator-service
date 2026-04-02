@@ -1,12 +1,9 @@
-﻿namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
-{
-    using System;
-    using System.Linq;
-    using System.Text;
-    using EPR.Calculator.API.Utils;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.Extensions.Primitives;
+﻿using System.Text;
+using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Models;
 
+namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
+{
     public interface ILateReportingExporter
     {
         string Export(CalcResultLateReportingTonnage? calcResultLateReportingData);
@@ -15,7 +12,6 @@
     /// <summary>
     /// Exports the Late Reporting Tonnage data to a string to be added to the results file.
     /// </summary>
-    /// <param name="calcResultLateReportingData">The data to export.</param>
     public class LateReportingExporter : ILateReportingExporter
     {
         public string Export(CalcResultLateReportingTonnage? calcResultLateReportingData)
@@ -41,7 +37,7 @@
             {
                 csvContent.AppendJoin(
                     string.Empty,
-                    new string[]
+                    new[]
                     {
                         lateReportingData.Name,
                         lateReportingData.TotalLateReportingTonnage.ToString("0.000"),

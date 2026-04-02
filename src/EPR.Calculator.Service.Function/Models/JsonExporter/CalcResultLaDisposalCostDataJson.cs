@@ -1,12 +1,7 @@
-﻿using EPR.Calculator.Service.Function.Converter;
-using System.Text.Json.Serialization;
-using System.Collections.Generic;
-using EPR.Calculator.Service.Function.Constants;
+﻿using System.Text.Json.Serialization;
 using EPR.Calculator.Service.Common.Utils;
-using System.Linq;
-using System.Security.Cryptography;
-using Microsoft.AspNetCore.Http.Internal;
-using FluentValidation.Validators;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Converter;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
@@ -29,7 +24,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
                 foreach (var item in laDisposalCostDataDetail.Where(t => t.Name != CommonConstants.Total && t.Name != "Material"))
                 {
-                    commsByMaterialDataDetails.Add(EPR.Calculator.Service.Function.Models.JsonExporter.CalcResultLaDisposalCostDetails.From(item));
+                    commsByMaterialDataDetails.Add(JsonExporter.CalcResultLaDisposalCostDetails.From(item));
                 }
 
                 return commsByMaterialDataDetails;
@@ -69,7 +64,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
    
         public static CalcResultLaDisposalCostDetails From(CalcResultLaDisposalCostDataDetail item)
         {
-            return new CalcResultLaDisposalCostDetails()
+            return new CalcResultLaDisposalCostDetails
             {
                 MaterialName = item.Name,
                 EnglandLaDisposalCost = item.England,
@@ -132,7 +127,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
             var laDisposalCostDetailTotal = laDisposalCostDataDetail.SingleOrDefault(t => t.Name == CommonConstants.Total);
             if (laDisposalCostDetailTotal == null)
             {
-                return new CalcResultLaDisposalCostDataDetailsTotal()
+                return new CalcResultLaDisposalCostDataDetailsTotal
                 {
                     EnglandLaDisposalCostTotal = string.Empty,
                     HouseholdDrinksContainersTonnageTotal = 0,

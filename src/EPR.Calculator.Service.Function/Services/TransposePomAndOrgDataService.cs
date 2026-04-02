@@ -1,22 +1,16 @@
-﻿namespace EPR.Calculator.Service.Function.Services
+using System.Diagnostics.CodeAnalysis;
+using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Enums;
+using EPR.Calculator.Service.Common.Logging;
+using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Interface;
+using EPR.Calculator.Service.Function.Misc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+namespace EPR.Calculator.Service.Function.Services
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using EPR.Calculator.Service.Common.Logging;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.API.Data.Enums;
-    using EPR.Calculator.Service.Function.Dtos;
-    using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Function.Interface;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
-    using System.Diagnostics.CodeAnalysis;
-
-
     /// <summary>
     /// Service for transposing POM and organization data.
     /// </summary>
@@ -49,10 +43,10 @@
             ICalculatorTelemetryLogger telemetryLogger)
         {
             this.context = context;
-            this.CommandTimeoutService = commandTimeoutService;
-            this.ProducerDetailChunker = producerDetailChunker;
-            this.ProducerReportedMaterialChunker = producerReportedMaterialChunker;
-            this.ErrorReportService = errorReportService;
+            CommandTimeoutService = commandTimeoutService;
+            ProducerDetailChunker = producerDetailChunker;
+            ProducerReportedMaterialChunker = producerReportedMaterialChunker;
+            ErrorReportService = errorReportService;
             this.telemetryLogger = telemetryLogger;
         }
 
@@ -71,18 +65,18 @@
         {
             var startTime = DateTime.UtcNow;
 
-            this.CommandTimeoutService.SetCommandTimeout(context.Database);
+            CommandTimeoutService.SetCommandTimeout(context.Database);
 
             CalculatorRun? calculatorRun = null;
             try
             {
-                this.telemetryLogger.LogInformation(new TrackMessage
+                telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
                     Message = $"Transpose POM and ORG data for run: {resultsRequestDto.RunId}",
                 });
-                calculatorRun = await this.context.CalculatorRuns.SingleOrDefaultAsync(
+                calculatorRun = await context.CalculatorRuns.SingleOrDefaultAsync(
                 run => run.Id == resultsRequestDto.RunId,
                 cancellationToken);
                 if (calculatorRun == null)
@@ -90,12 +84,12 @@
                     return false;
                 }
 
-                await this.Transpose(
+                await Transpose(
                     resultsRequestDto,
                     cancellationToken);
                 var endTime = DateTime.UtcNow;
                 var timeDiff = startTime - endTime;
-                this.telemetryLogger.LogInformation(new TrackMessage
+                telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
@@ -105,7 +99,7 @@
             }
             catch (OperationCanceledException exception)
             {
-                this.telemetryLogger.LogError(new ErrorMessage
+                telemetryLogger.LogError(new ErrorMessage
                 {
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
@@ -116,9 +110,9 @@
                 if (calculatorRun != null)
                 {
                     calculatorRun.CalculatorRunClassificationId = (int)RunClassification.ERROR;
-                    this.context.CalculatorRuns.Update(calculatorRun);
-                    await this.context.SaveChangesAsync();
-                    this.telemetryLogger.LogError(new ErrorMessage
+                    context.CalculatorRuns.Update(calculatorRun);
+                    await context.SaveChangesAsync();
+                    telemetryLogger.LogError(new ErrorMessage
                     {
                         RunId = resultsRequestDto.RunId,
                         RunName = runName,
@@ -131,7 +125,7 @@
             }
             catch (Exception exception)
             {
-                this.telemetryLogger.LogError(new ErrorMessage
+                telemetryLogger.LogError(new ErrorMessage
                 {
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
@@ -141,9 +135,9 @@
                 if (calculatorRun != null)
                 {
                     calculatorRun.CalculatorRunClassificationId = (int)RunClassification.ERROR;
-                    this.context.CalculatorRuns.Update(calculatorRun);
-                    await this.context.SaveChangesAsync();
-                    this.telemetryLogger.LogError(new ErrorMessage
+                    context.CalculatorRuns.Update(calculatorRun);
+                    await context.SaveChangesAsync();
+                    telemetryLogger.LogError(new ErrorMessage
                     {
                         RunId = resultsRequestDto.RunId,
                         RunName = runName,
@@ -156,26 +150,26 @@
             return false;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        [SuppressMessage(
             "Critical Code Smell",
             "S3776:Cognitive Complexity of methods should not be too high",
             Justification = "Temporaraly suppress - will refactor later.")]
         [ExcludeFromCodeCoverage]
         public async Task<bool> Transpose(CalcResultsRequestDto resultsRequestDto, CancellationToken cancellationToken)
         {
-            this.context.ChangeTracker.AutoDetectChangesEnabled = false;
+            context.ChangeTracker.AutoDetectChangesEnabled = false;
             var newProducerDetails = new List<ProducerDetail>();
             var newProducerReportedMaterials = new List<ProducerReportedMaterial>();
 
-            var materials = await this.context.Material.ToListAsync(cancellationToken);
+            var materials = await context.Material.ToListAsync(cancellationToken);
 
-            var calculatorRun = await this.context.CalculatorRuns
+            var calculatorRun = await context.CalculatorRuns
                 .Where(x => x.Id == resultsRequestDto.RunId)
                 .SingleAsync(cancellationToken);
-            var calculatorRunOrgDataDetails = await this.context.CalculatorRunOrganisationDataDetails
+            var calculatorRunOrgDataDetails = await context.CalculatorRunOrganisationDataDetails
                 .Where(x => x.CalculatorRunOrganisationDataMasterId == calculatorRun.CalculatorRunOrganisationDataMasterId)
                 .ToListAsync(cancellationToken);
-            var calculatorRunPomDataDetails = await this.context.CalculatorRunPomDataDetails
+            var calculatorRunPomDataDetails = await context.CalculatorRunPomDataDetails
                 .Where(x => x.CalculatorRunPomDataMasterId == calculatorRun.CalculatorRunPomDataMasterId)
                 .ToListAsync(cancellationToken);
 
@@ -197,7 +191,7 @@
 
             if (IsCalculatorRunPOMMasterIdExists(calculatorRun))
             {
-                var organisationDataMaster = await this.context.CalculatorRunOrganisationDataMaster
+                var organisationDataMaster = await context.CalculatorRunOrganisationDataMaster
                     .SingleAsync(x => x.Id == calculatorRun.CalculatorRunOrganisationDataMasterId, cancellationToken);
 
                 var OrganisationsList = GetAllOrganisationsBasedonRunId(calculatorRunOrgDataDetails);
@@ -211,7 +205,7 @@
                     .ToList();
 
                 // Get the calculator run pom data master record based on the CalculatorRunPomDataMasterId
-                var pomDataMaster = await this.context.CalculatorRunPomDataMaster
+                var pomDataMaster = await context.CalculatorRunPomDataMaster
                     .SingleAsync(x => x.Id == calculatorRun.CalculatorRunPomDataMasterId, cancellationToken);
 
                 foreach (var organisation in organisationDataDetails.Where(t => !string.IsNullOrWhiteSpace(t.OrganisationName)))
@@ -295,8 +289,8 @@
                     }
                 }
 
-                await this.ProducerDetailChunker.InsertRecords(newProducerDetails);
-                await this.ProducerReportedMaterialChunker.InsertRecords(newProducerReportedMaterials);
+                await ProducerDetailChunker.InsertRecords(newProducerDetails);
+                await ProducerReportedMaterialChunker.InsertRecords(newProducerReportedMaterials);
 
             }
 

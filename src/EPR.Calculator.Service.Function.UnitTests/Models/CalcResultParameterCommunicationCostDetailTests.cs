@@ -1,10 +1,8 @@
+using AutoFixture;
+using EPR.Calculator.Service.Function.Models;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Models
 {
-    using System;
-    using AutoFixture;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     [TestClass]
     public class CalcResultParameterCommunicationCostDetailTests
     {
@@ -14,7 +12,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
         public CalcResultParameterCommunicationCostDetailTests()
         {
             Fixture = new Fixture();
-            this.TestClass = Fixture.Create<CalcResultParameterCommunicationCostDetail>();
+            TestClass = Fixture.Create<CalcResultParameterCommunicationCostDetail>();
         }
 
         [TestMethod]
@@ -24,10 +22,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var testValue = Fixture.Create<string>();
 
             // Act
-            this.TestClass.Material = testValue;
+            TestClass.Material = testValue;
 
             // Assert
-            Assert.AreEqual(testValue, this.TestClass.Material);
+            Assert.AreEqual(testValue, TestClass.Material);
         }
 
         [TestMethod]
@@ -37,10 +35,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var testValue = Fixture.Create<decimal>();
 
             // Act
-            this.TestClass.Cost = testValue;
+            TestClass.Cost = testValue;
 
             // Assert
-            Assert.AreEqual(testValue, this.TestClass.Cost);
+            Assert.AreEqual(testValue, TestClass.Cost);
         }
 
         [TestMethod]
@@ -50,10 +48,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var testValue = Fixture.Create<string>();
 
             // Act
-            this.TestClass.Country = testValue;
+            TestClass.Country = testValue;
 
             // Assert
-            Assert.AreEqual(testValue, this.TestClass.Country);
+            Assert.AreEqual(testValue, TestClass.Country);
         }
 
         [TestMethod]
@@ -63,10 +61,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var testValue = Fixture.Create<bool>();
 
             // Act
-            this.TestClass.IsApportionment = testValue;
+            TestClass.IsApportionment = testValue;
 
             // Assert
-            Assert.AreEqual(testValue, this.TestClass.IsApportionment);
+            Assert.AreEqual(testValue, TestClass.IsApportionment);
         }
 
         [TestMethod]
@@ -76,10 +74,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var testValue = Fixture.Create<bool>();
 
             // Act
-            this.TestClass.IsPercentage = testValue;
+            TestClass.IsPercentage = testValue;
 
             // Assert
-            Assert.AreEqual(testValue, this.TestClass.IsPercentage);
+            Assert.AreEqual(testValue, TestClass.IsPercentage);
         }
     }
 }

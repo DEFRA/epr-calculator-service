@@ -1,8 +1,5 @@
 ﻿namespace EPR.Calculator.Service.Function.Interface
 {
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-
     /// <summary>
     /// Inserts records to the database, divided into chunks to avoid timeouts
     /// from inserting large numbers of records at once.

@@ -1,8 +1,8 @@
-﻿namespace EPR.Calculator.Service.Common.Logging
-{
-    using Microsoft.ApplicationInsights;
-    using Microsoft.ApplicationInsights.DataContracts;
+﻿using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.DataContracts;
 
+namespace EPR.Calculator.Service.Common.Logging
+{
     /// <summary>
     /// Wrapper class for TelemetryClient to track traces and exceptions.
     /// </summary>
@@ -25,7 +25,7 @@
         /// <param name="telemetry">The trace telemetry to track.</param>
         public void TrackTrace(TraceTelemetry telemetry)
         {
-            this.telemetryClient.TrackTrace(telemetry);
+            telemetryClient.TrackTrace(telemetry);
         }
 
         /// <summary>
@@ -34,7 +34,7 @@
         /// <param name="telemetry">The exception telemetry to track.</param>
         public void TrackException(ExceptionTelemetry telemetry)
         {
-            this.telemetryClient.TrackException(telemetry);
+            telemetryClient.TrackException(telemetry);
         }
     }
 }

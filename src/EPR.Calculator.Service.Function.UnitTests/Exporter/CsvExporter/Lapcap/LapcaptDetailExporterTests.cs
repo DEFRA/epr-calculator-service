@@ -1,9 +1,9 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Lapcap
-{
-    using System.Text;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
-    using EPR.Calculator.Service.Function.UnitTests.Builder;
+﻿using System.Text;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
+using EPR.Calculator.Service.Function.UnitTests.Builder;
 
+namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Lapcap
+{
     [TestClass]
     public class LapcaptDetailExporterTests
     {

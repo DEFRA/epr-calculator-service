@@ -1,11 +1,10 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.OtherCosts
-{
-    using System.Text;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Text;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
+using EPR.Calculator.Service.Function.Models;
 
+namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.OtherCosts
+{
     [TestClass]
     public class CalcResultParameterOtherCostExporterTests
     {
@@ -15,7 +14,7 @@
         public void CanCallExportCommsCost()
         {
             // Arrange
-            var otherCost = new CalcResultParameterOtherCost()
+            var otherCost = new CalcResultParameterOtherCost
             {
                 BadDebtProvision = new KeyValuePair<string, string>("key1", "6%"),
                 Details =
@@ -83,10 +82,9 @@
                     },
             };
             var csvContent = new StringBuilder();
-            ICalcResultParameterOtherCostExporter exporter = this.exporter;
 
             // Act
-            this.exporter.Export(otherCost, csvContent);
+            exporter.Export(otherCost, csvContent);
 
             var result = csvContent.ToString();
 
@@ -104,7 +102,7 @@
         public void CanCalLaDataPrepCosts()
         {
             // Arrange
-            var otherCost = new CalcResultParameterOtherCost()
+            var otherCost = new CalcResultParameterOtherCost
             {
                 Name = "Parameters - Other",
                 Details =
@@ -150,7 +148,7 @@
         public void CanCalSchemeSetupCost()
         {
             // Arrange
-            var otherCost = new CalcResultParameterOtherCost()
+            var otherCost = new CalcResultParameterOtherCost
             {
                 Name = "Parameters - Other",
                 SchemeSetupCost =
@@ -177,7 +175,7 @@
         public void CanCalMaterialityCost()
         {
             // Arrange
-            var otherCost = new CalcResultParameterOtherCost()
+            var otherCost = new CalcResultParameterOtherCost
             {
                 Name = "Parameters - Other",
                 Materiality =
@@ -212,7 +210,7 @@
         public void CanCallSaOpertingCosts()
         {
             // Arrange
-            var otherCost = new CalcResultParameterOtherCost()
+            var otherCost = new CalcResultParameterOtherCost
             {
                 Name = "Parameters - Other",
                 SaOperatingCost =

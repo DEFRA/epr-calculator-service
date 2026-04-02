@@ -1,15 +1,13 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Converter
-{
-    using AutoFixture;
-    using EPR.Calculator.Service.Function.Converter;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System;
-    using System.Globalization;
-    using System.Text;
-    using System.Text.Encodings.Web;
-    using System.Text.Json;
-    using System.Text.Unicode;
+﻿using System.Globalization;
+using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
+using AutoFixture;
+using EPR.Calculator.Service.Function.Converter;
 
+namespace EPR.Calculator.Service.Function.UnitTests.Converter
+{
     [TestClass]
     public class CurrencyConverterTests
     {
@@ -21,14 +19,14 @@
 
         public CurrencyConverterTests()
         {
-            this.Fixture = new Fixture();
-            this.SerialiserOptions = new JsonSerializerOptions
+            Fixture = new Fixture();
+            SerialiserOptions = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 WriteIndented = true,
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
             };
-            this.TestClass = new CurrencyConverter();
+            TestClass = new CurrencyConverter();
         }
 
         [TestMethod]
@@ -40,7 +38,7 @@
             var reader = BuildReader(testJson);
 
             // Act
-            var result = this.TestClass.Read(ref reader, typeof(decimal), this.SerialiserOptions);
+            var result = TestClass.Read(ref reader, typeof(decimal), SerialiserOptions);
 
             // Assert
             Assert.AreEqual(expectedValue, result);
@@ -61,7 +59,7 @@
             // Act
             try
             {
-                this.TestClass.Read(ref reader, typeof(decimal), this.SerialiserOptions);
+                TestClass.Read(ref reader, typeof(decimal), SerialiserOptions);
             }
             catch (Exception ex)
             {
@@ -85,7 +83,7 @@
             var value = Fixture.Create<decimal>();
 
             // Act
-            this.TestClass.Write(writer, value, this.SerialiserOptions);
+            TestClass.Write(writer, value, SerialiserOptions);
             writer.Flush();
             stream.Seek(0, SeekOrigin.Begin);
             var result = new StreamReader(stream).ReadToEnd();

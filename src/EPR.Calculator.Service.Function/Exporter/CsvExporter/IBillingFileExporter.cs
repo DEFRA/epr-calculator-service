@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
+﻿namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 {
     public interface IBillingFileExporter<T>
     {

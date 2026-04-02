@@ -1,23 +1,18 @@
-﻿namespace EPR.Calculator.Service.Function.Services
-{
-    using System;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Azure.Storage.Blobs.Models;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.API.Exporter;
-    using EPR.Calculator.Service.Common.Logging;
-    using EPR.Calculator.Service.Function.Builder;
-    using EPR.Calculator.Service.Function.Dtos;
-    using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter;
-    using EPR.Calculator.Service.Function.Interface;
-    using EPR.Calculator.Service.Function.Misc;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
+﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Common.Logging;
+using EPR.Calculator.Service.Function.Builder;
+using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Exporter;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter;
+using EPR.Calculator.Service.Function.Interface;
+using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
+namespace EPR.Calculator.Service.Function.Services
+{
     /// <summary>
     /// Service for preparing calculation results.
     /// </summary>
@@ -25,20 +20,18 @@
     {
         public PrepareCalcService(PrepareCalcServiceDependencies deps)
         {
-            this.Context = deps.Context;
-            this.Builder = deps.Builder;
-            this.Exporter = deps.Exporter;
-            this.storageService = deps.StorageService;
-            this.validatior = deps.ValidationRules;
-            this.commandTimeoutService = deps.CommandTimeoutService;
-            this.telemetryLogger = deps.TelemetryLogger;
-            this.ConfigService = deps.ConfigService;
-            this.JsonExporter = deps.JsonExporter;
-            this.BillingFileExporter = deps.BillingFileExporter;
-            this.producerDataInsertService = deps.producerDataInsertService;
+            Context = deps.Context;
+            Builder = deps.Builder;
+            Exporter = deps.Exporter;
+            storageService = deps.StorageService;
+            validatior = deps.ValidationRules;
+            commandTimeoutService = deps.CommandTimeoutService;
+            telemetryLogger = deps.TelemetryLogger;
+            ConfigService = deps.ConfigService;
+            JsonExporter = deps.JsonExporter;
+            BillingFileExporter = deps.BillingFileExporter;
+            producerDataInsertService = deps.producerDataInsertService;
         }
-
-        public const string ContainerNameMissingError = "Container name is missing in configuration.";
 
         private const bool OverwriteJsonFile = true;
 
@@ -70,12 +63,12 @@
             string? runName,
             CancellationToken cancellationToken)
         {
-            this.commandTimeoutService.SetCommandTimeout(this.Context.Database);
+            commandTimeoutService.SetCommandTimeout(Context.Database);
 
             CalculatorRun? calculatorRun = null;
             try
             {
-                calculatorRun = await this.Context.CalculatorRuns.SingleOrDefaultAsync(
+                calculatorRun = await Context.CalculatorRuns.SingleOrDefaultAsync(
                     run => run.Id == resultsRequestDto.RunId,
                     cancellationToken);
                 if (calculatorRun == null)
@@ -90,51 +83,51 @@
                     return false;
                 }
 
-                this.telemetryLogger.LogInformation(new TrackMessage
+                telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
                     Message = "Builder started...",
                 });
 
-                var results = await this.Builder.BuildAsync(resultsRequestDto);
-                this.telemetryLogger.LogInformation(new TrackMessage
+                var results = await Builder.BuildAsync(resultsRequestDto);
+                telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
                     Message = "Builder end...",
                 });
 
-                this.telemetryLogger.LogInformation(new TrackMessage
+                telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
                     Message = "Create producer data insert service started...",
                 });
 
-                await this.producerDataInsertService.InsertProducerDataToDatabase(results);
-                this.telemetryLogger.LogInformation(new TrackMessage
+                await producerDataInsertService.InsertProducerDataToDatabase(results);
+                telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
                     Message = "Create producer data insert service end...",
                 });
 
-                this.telemetryLogger.LogInformation(new TrackMessage
+                telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
                     Message = "Exporter started...",
                 });
 
-                var exportedResults = this.Exporter.Export(results);
-                this.telemetryLogger.LogInformation(new TrackMessage
+                var exportedResults = Exporter.Export(results);
+                telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
                     Message = "Exporter end...",
                 });
-                this.telemetryLogger.LogInformation(new TrackMessage
+                telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
@@ -146,22 +139,22 @@
                     results.CalcResultDetail.RunName,
                     results.CalcResultDetail.RunDate);
 
-                string containerName = this.ConfigService.ResultFileCSVContainerName;
+                string containerName = ConfigService.ResultFileCSVContainerName;
 
-                var blobUri = await this.storageService.UploadFileContentAsync(
+                var blobUri = await storageService.UploadFileContentAsync(
                     (FileName: fileName,
                     Content: exportedResults,
                     RunName: runName ?? string.Empty,
                     ContainerName: containerName,
                     Overwrite: OverwriteCsvFile));
 
-                this.telemetryLogger.LogInformation(new TrackMessage
+                telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
                     Message = "Uploader end...",
                 });
-                this.telemetryLogger.LogInformation(new TrackMessage
+                telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
@@ -172,16 +165,16 @@
                 {
                     await SaveCsvFileMetadataAsync(results.CalcResultDetail.RunId, fileName.ToString(), blobUri);
                     // To fix the operation cancelled issue while updating the context
-                    calculatorRun = await this.Context.CalculatorRuns.SingleOrDefaultAsync(
+                    calculatorRun = await Context.CalculatorRuns.SingleOrDefaultAsync(
                             run => run.Id == resultsRequestDto.RunId,
                             cancellationToken);
                     calculatorRun!.CalculatorRunClassificationId = (int)RunClassification.UNCLASSIFIED;
-                    this.Context.CalculatorRuns.Update(calculatorRun);
-                    await this.Context.SaveChangesAsync(cancellationToken);
+                    Context.CalculatorRuns.Update(calculatorRun);
+                    await Context.SaveChangesAsync(cancellationToken);
                     return true;
                 }
 
-                this.telemetryLogger.LogInformation(new TrackMessage
+                telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
@@ -190,8 +183,8 @@
             }
             catch (OperationCanceledException exception)
             {
-                await this.HandleErrorAsync(calculatorRun, RunClassification.ERROR);
-                this.telemetryLogger.LogError(new ErrorMessage
+                await HandleErrorAsync(calculatorRun, RunClassification.ERROR);
+                telemetryLogger.LogError(new ErrorMessage
                 {
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
@@ -202,8 +195,8 @@
             }
             catch (Exception exception)
             {
-                await this.HandleErrorAsync(calculatorRun, RunClassification.ERROR);
-                this.telemetryLogger.LogError(new ErrorMessage
+                await HandleErrorAsync(calculatorRun, RunClassification.ERROR);
+                telemetryLogger.LogError(new ErrorMessage
                 {
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
@@ -213,8 +206,8 @@
                 return false;
             }
 
-            await this.HandleErrorAsync(calculatorRun, RunClassification.ERROR);
-            this.telemetryLogger.LogInformation(new TrackMessage
+            await HandleErrorAsync(calculatorRun, RunClassification.ERROR);
+            telemetryLogger.LogInformation(new TrackMessage
             {
                 RunId = resultsRequestDto.RunId,
                 RunName = runName,
@@ -228,16 +221,16 @@
             CancellationToken cancellationToken)
         {
 
-            this.telemetryLogger.LogInformation(new TrackMessage
+            telemetryLogger.LogInformation(new TrackMessage
             {
                 RunId = resultsRequestDto.RunId,
                 RunName = runName,
                 Message = "Billing Builder started...",
             });
 
-            var calcResults = await this.Builder.BuildAsync(resultsRequestDto);
+            var calcResults = await Builder.BuildAsync(resultsRequestDto);
 
-            this.telemetryLogger.LogInformation(new TrackMessage
+            telemetryLogger.LogInformation(new TrackMessage
             {
                 RunId = resultsRequestDto.RunId,
                 RunName = runName,
@@ -251,7 +244,7 @@
                 DateTime.UtcNow,
                 true);
 
-            this.telemetryLogger.LogInformation(new TrackMessage
+            telemetryLogger.LogInformation(new TrackMessage
             {
                 RunId = resultsRequestDto.RunId,
                 RunName = runName,
@@ -260,27 +253,27 @@
 
             var billingFileJsonName = new CalcResultsAndBillingFileName(resultsRequestDto.RunId, true, true);
 
-            this.telemetryLogger.LogInformation(new TrackMessage
+            telemetryLogger.LogInformation(new TrackMessage
             {
                 RunId = resultsRequestDto.RunId,
                 RunName = runName,
                 Message = $"Billing file JSON file name only is created {billingFileJsonName}",
             });
 
-            var jsonResponse = this.JsonExporter.Export(calcResults, resultsRequestDto.AcceptedProducerIds);
+            var jsonResponse = JsonExporter.Export(calcResults, resultsRequestDto.AcceptedProducerIds);
 
-            this.telemetryLogger.LogInformation(new TrackMessage
+            telemetryLogger.LogInformation(new TrackMessage
             {
                 RunId = resultsRequestDto.RunId,
                 RunName = runName,
-                Message = $"Billing file JSON content is now created",
+                Message = "Billing file JSON content is now created",
             });
 
             // call csv Exporter
 
-            var exportedResults = this.BillingFileExporter.Export(calcResults, resultsRequestDto.AcceptedProducerIds);
+            var exportedResults = BillingFileExporter.Export(calcResults, resultsRequestDto.AcceptedProducerIds);
 
-            this.telemetryLogger.LogInformation(new TrackMessage
+            telemetryLogger.LogInformation(new TrackMessage
             {
                 RunId = resultsRequestDto.RunId,
                 RunName = runName,
@@ -288,14 +281,14 @@
             });
 
 
-            var csvBlobUri = await this.storageService.UploadFileContentAsync((
+            var csvBlobUri = await storageService.UploadFileContentAsync((
                  FileName: billingFileCsvName,
                  Content: exportedResults,
                  RunName: runName,
                  ContainerName: ConfigService.BillingFileCSVBlobContainerName,
                  Overwrite: OverwriteCsvFile));
 
-            this.telemetryLogger.LogInformation(new TrackMessage
+            telemetryLogger.LogInformation(new TrackMessage
             {
                 RunId = resultsRequestDto.RunId,
                 RunName = runName,
@@ -304,28 +297,28 @@
 
             // upload the csv file to blob storage
 
-            this.telemetryLogger.LogInformation(new TrackMessage
+            telemetryLogger.LogInformation(new TrackMessage
             {
                 RunId = resultsRequestDto.RunId,
                 RunName = runName,
                 Message = $"Billing file JSON file before upload {billingFileJsonName}",
             });
 
-            await this.storageService.UploadFileContentAsync((
+            await storageService.UploadFileContentAsync((
                 FileName: billingFileJsonName,
                 Content: jsonResponse,
                 RunName: runName,
                 ContainerName: ConfigService.BillingFileJsonBlobContainerName,
                 Overwrite: OverwriteJsonFile));
 
-            this.telemetryLogger.LogInformation(new TrackMessage
+            telemetryLogger.LogInformation(new TrackMessage
             {
                 RunId = resultsRequestDto.RunId,
                 RunName = runName,
                 Message = $"Billing file JSON file after upload {billingFileJsonName}",
             });
 
-            var calcRun = await this.Context.CalculatorRuns.SingleAsync(run => run.Id == resultsRequestDto.RunId);
+            var calcRun = await Context.CalculatorRuns.SingleAsync(run => run.Id == resultsRequestDto.RunId);
             calcRun.IsBillingFileGenerating = false;
 
 
@@ -338,20 +331,20 @@
                 BillingJsonFileName = billingFileJsonName.ToString(),
             };
 
-            this.Context.CalculatorRunBillingFileMetadata.Add(billingFileMetadata);
+            Context.CalculatorRunBillingFileMetadata.Add(billingFileMetadata);
 
             var csvFileMetaData = new CalculatorRunCsvFileMetadata
             { BlobUri = csvBlobUri, CalculatorRunId = resultsRequestDto.RunId, FileName = billingFileCsvName };
 
-            this.Context.CalculatorRunCsvFileMetadata.Add(csvFileMetaData);
+            Context.CalculatorRunCsvFileMetadata.Add(csvFileMetaData);
 
-            await this.Context.SaveChangesAsync();
+            await Context.SaveChangesAsync();
 
-            this.telemetryLogger.LogInformation(new TrackMessage
+            telemetryLogger.LogInformation(new TrackMessage
             {
                 RunId = resultsRequestDto.RunId,
                 RunName = runName,
-                Message = $"Billing file All generated and updated successfully",
+                Message = "Billing file All generated and updated successfully",
             });
 
             return true;
@@ -362,8 +355,8 @@
             if (calculatorRun != null)
             {
                 calculatorRun.CalculatorRunClassificationId = (int)classification;
-                this.Context.CalculatorRuns.Update(calculatorRun);
-                await this.Context.SaveChangesAsync();
+                Context.CalculatorRuns.Update(calculatorRun);
+                await Context.SaveChangesAsync();
             }
         }
 
@@ -375,7 +368,7 @@
                 BlobUri = blobUri,
                 CalculatorRunId = runId,
             };
-            await this.Context.CalculatorRunCsvFileMetadata.AddAsync(csvFileMetadata);
+            await Context.CalculatorRunCsvFileMetadata.AddAsync(csvFileMetadata);
         }
     }
 }

@@ -1,9 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Text.Json.Serialization;
-using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
-using EPR.Calculator.Service.Function.Exporter.JsonExporter;
-using EPR.Calculator.Service.Function.Mapper;
-using System.Linq;
+﻿using System.Text.Json.Serialization;
 using EPR.Calculator.Service.Function.Builder.CommsCost;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter

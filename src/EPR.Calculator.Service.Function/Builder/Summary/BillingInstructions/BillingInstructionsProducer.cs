@@ -1,14 +1,6 @@
-﻿using EPR.Calculator.API.Data;
-using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.Service.Function.Builder.ParametersOther;
+﻿using EPR.Calculator.Service.Function.Builder.ParametersOther;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
 {
@@ -117,10 +109,9 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
         {
             if (fee.LeaverDate == CommonConstants.Totals)
                 return string.Empty;
-            else if (fee.TonnageChangeAdvice == "CHANGE")
+            if (fee.TonnageChangeAdvice == "CHANGE")
                 return "Tonnage Changed";
-            else
-                return null;
+            return null;
         }
 
         private static decimal? CalculateLiabilityDifference(CalcResultSummaryProducerDisposalFees fee, decimal? currentInvoicedTotalToDate)
@@ -233,8 +224,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
             if (liabilityDifference < 0 &&
                 (materialThresholdBreached != CommonConstants.Hyphen || tonnageThresholdBreached != CommonConstants.Hyphen || materialPercentageThresholdBreached != CommonConstants.Hyphen || tonnagePercentageThresholdBreached != CommonConstants.Hyphen))
                 return CommonConstants.Rebill;
-
-            if (liabilityDifference == 0) return CommonConstants.Hyphen;
 
             return CommonConstants.Hyphen;
         }

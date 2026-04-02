@@ -1,11 +1,11 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TonnageVsAllProducer
-{
-    using AutoFixture;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.Service.Function.Builder.Summary;
-    using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs;
-    using EPR.Calculator.Service.Function.Models;
+﻿using AutoFixture;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Builder.Summary;
+using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs;
+using EPR.Calculator.Service.Function.Models;
 
+namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TonnageVsAllProducer
+{
     [TestClass]
     public class TonnageVsAllProducerUtilTests
     {

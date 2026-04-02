@@ -1,13 +1,10 @@
-namespace EPR.Calculator.Service.Function.UnitTests
-{
-    using System;
-    using AutoFixture;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.API.Data.Models;
-    using EPR.Calculator.Service.Common;
-    using EPR.Calculator.Service.Function.Misc;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+using AutoFixture;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Misc;
 
+namespace EPR.Calculator.Service.Function.UnitTests.Misc
+{
     [TestClass]
     public class CalculatorRunValidatorTests
     {
@@ -20,8 +17,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
         /// </summary>
         public CalculatorRunValidatorTests()
         {
-            this.Fixture = new Fixture();
-            this.TestClass = new CalculatorRunValidator();
+            Fixture = new Fixture();
+            TestClass = new CalculatorRunValidator();
         }
 
         [TestMethod]

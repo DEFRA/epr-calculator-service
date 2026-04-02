@@ -1,22 +1,19 @@
+using AutoFixture;
+using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Common.Logging;
+using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Interface;
+using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Services;
+using FluentValidation;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Moq;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
-    using System;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using AutoFixture;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.API.Data.Models;
-    using EPR.Calculator.Service.Common.Logging;
-    using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Function.Interface;
-    using EPR.Calculator.Service.Function.Models;
-    using EPR.Calculator.Service.Function.Services;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Moq;
-
     [TestClass]
     public class RpdStatusServiceTests
     {
@@ -25,47 +22,47 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         /// </summary>
         public RpdStatusServiceTests()
         {
-            this.Fixture = new Fixture();
+            Fixture = new Fixture();
 
             var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
                 .Options;
 
-            this.Context = new ApplicationDBContext(dbContextOptions);
-            this.SetupRunClassifications();
-            this.Context.SaveChanges();
+            Context = new ApplicationDBContext(dbContextOptions);
+            SetupRunClassifications();
+            Context.SaveChanges();
             var contextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
-            contextFactory.Setup(f => f.CreateDbContext()).Returns(this.Context);
+            contextFactory.Setup(f => f.CreateDbContext()).Returns(Context);
 
-            this.Validator = new Mock<IRpdStatusDataValidator>();
-            this.Validator.Setup(v => v.IsValidSuccessfulRun(It.IsAny<int>()))
+            Validator = new Mock<IRpdStatusDataValidator>();
+            Validator.Setup(v => v.IsValidSuccessfulRun(It.IsAny<int>()))
                 .Returns(new RpdStatusValidation { isValid = true });
-            this.Validator.Setup(v => v.IsValidRun(
+            Validator.Setup(v => v.IsValidRun(
                 It.IsAny<CalculatorRun>(),
                 It.IsAny<int>(),
                 It.IsAny<IEnumerable<CalculatorRunClassification>>()))
                 .Returns(new RpdStatusValidation { isValid = true });
 
-            this.CommandTimeoutService = new Mock<ICommandTimeoutService>();
+            CommandTimeoutService = new Mock<ICommandTimeoutService>();
 
-            this.Configuration = new Mock<IConfigurationService>();
-            this.Configuration.Setup(s => s.ResultFileCSVContainerName)
-                .Returns(this.Fixture.Create<string>());
-            this.TelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
+            Configuration = new Mock<IConfigurationService>();
+            Configuration.Setup(s => s.ResultFileCSVContainerName)
+                .Returns(Fixture.Create<string>());
+            TelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
 
-            this.CalculatorRunOrgData = new Mock<ICalculatorRunOrgData>();
+            CalculatorRunOrgData = new Mock<ICalculatorRunOrgData>();
 
-            this.CalculatorRunPomData = new Mock<ICalculatorRunPomData>();
+            CalculatorRunPomData = new Mock<ICalculatorRunPomData>();
 
-            this.TestClass = new RpdStatusService(
-                this.Configuration.Object,
+            TestClass = new RpdStatusService(
+                Configuration.Object,
                 contextFactory.Object,
-                this.CommandTimeoutService.Object,
-                this.Validator.Object,
-                this.TelemetryLogger.Object,
-                this.CalculatorRunOrgData.Object,
-                this.CalculatorRunPomData.Object);
+                CommandTimeoutService.Object,
+                Validator.Object,
+                TelemetryLogger.Object,
+                CalculatorRunOrgData.Object,
+                CalculatorRunPomData.Object);
         }
 
         private RpdStatusService TestClass { get; init; }
@@ -88,13 +85,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         private void SetupRunClassifications()
         {
-            this.Context.CalculatorRunClassifications
+            Context.CalculatorRunClassifications
                  .Add(new CalculatorRunClassification
                  {
                      Id = (int)RunClassification.RUNNING,
                      Status = RunClassification.RUNNING.ToString(),
                  });
-            this.Context.CalculatorRunClassifications
+            Context.CalculatorRunClassifications
                 .Add(new CalculatorRunClassification
                 {
                     Id = (int)RunClassification.ERROR,
@@ -106,45 +103,45 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task UpdateRpdStatus_With_RunId_When_Successful()
         {
             // Arrange
-            var runId = this.Fixture.Create<int>();
-            var run = this.Fixture.Create<CalculatorRun>();
+            var runId = Fixture.Create<int>();
+            var run = Fixture.Create<CalculatorRun>();
             run.Id = runId;
-            run.RelativeYear = this.Fixture.Create<RelativeYear>();
-            this.Context.CalculatorRuns.Add(run);
-            await this.Context.SaveChangesAsync();
+            run.RelativeYear = Fixture.Create<RelativeYear>();
+            Context.CalculatorRuns.Add(run);
+            await Context.SaveChangesAsync();
 
-            this.CalculatorRunOrgData.Setup(s => s.LoadOrgDataForCalcRun(It.IsAny<int>(), It.IsAny<RelativeYear>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            CalculatorRunOrgData.Setup(s => s.LoadOrgDataForCalcRun(It.IsAny<int>(), It.IsAny<RelativeYear>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
-            this.CalculatorRunPomData.Setup(s => s.LoadPomDataForCalcRun(It.IsAny<int>(), It.IsAny<RelativeYear>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            CalculatorRunPomData.Setup(s => s.LoadPomDataForCalcRun(It.IsAny<int>(), It.IsAny<RelativeYear>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
             // Act
-            await this.TestClass.UpdateRpdStatus(
+            await TestClass.UpdateRpdStatus(
                 runId,
-                this.Fixture.Create<string>(),
-                this.Fixture.Create<string>(),
+                Fixture.Create<string>(),
+                Fixture.Create<string>(),
                 CancellationToken.None);
 
             // Assert
-            var calcRun = await this.Context.CalculatorRuns.SingleAsync(x => x.Id == runId);
+            var calcRun = await Context.CalculatorRuns.SingleAsync(x => x.Id == runId);
             Assert.IsNotNull(calcRun);
             Assert.AreEqual((int)RunClassification.RUNNING, calcRun.CalculatorRunClassificationId);
-            this.CalculatorRunOrgData.Verify(s => s.LoadOrgDataForCalcRun(runId, run.RelativeYear, It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
-            this.CalculatorRunPomData.Verify(s => s.LoadPomDataForCalcRun(runId, run.RelativeYear, It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
+            CalculatorRunOrgData.Verify(s => s.LoadOrgDataForCalcRun(runId, run.RelativeYear, It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
+            CalculatorRunPomData.Verify(s => s.LoadPomDataForCalcRun(runId, run.RelativeYear, It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [TestMethod]
         public async Task UpdateRpdStatus_IsNotValidRun()
         {
             // Arrange
-            var runId = this.Fixture.Create<int>();
-            var run = this.Fixture.Create<CalculatorRun>();
+            var runId = Fixture.Create<int>();
+            var run = Fixture.Create<CalculatorRun>();
             run.Id = runId;
-            run.RelativeYear = this.Fixture.Create<RelativeYear>();
-            this.Context.CalculatorRuns.Add(run);
-            await this.Context.SaveChangesAsync();
+            run.RelativeYear = Fixture.Create<RelativeYear>();
+            Context.CalculatorRuns.Add(run);
+            await Context.SaveChangesAsync();
 
-            this.Validator.Setup(v => v.IsValidRun(
+            Validator.Setup(v => v.IsValidRun(
                 It.IsAny<CalculatorRun>(),
                 It.IsAny<int>(),
                 It.IsAny<IEnumerable<CalculatorRunClassification>>()))
@@ -154,10 +151,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Exception? result = null;
             try
             {
-                await this.TestClass.UpdateRpdStatus(
+                await TestClass.UpdateRpdStatus(
                     runId,
-                    this.Fixture.Create<string>(),
-                    this.Fixture.Create<string>(),
+                    Fixture.Create<string>(),
+                    Fixture.Create<string>(),
                     CancellationToken.None);
             }
             catch (Exception ex)
@@ -166,31 +163,31 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             }
 
             // Assert
-            Assert.IsInstanceOfType<FluentValidation.ValidationException>(result);
+            Assert.IsInstanceOfType<ValidationException>(result);
         }
 
         [TestMethod]
         public async Task UpdateRpdStatus_IsNotValidSuccessfulRun()
         {
             // Arrange
-            var runId = this.Fixture.Create<int>();
-            var run = this.Fixture.Create<CalculatorRun>();
+            var runId = Fixture.Create<int>();
+            var run = Fixture.Create<CalculatorRun>();
             run.Id = runId;
-            run.RelativeYear = this.Fixture.Create<RelativeYear>();
-            this.Context.CalculatorRuns.Add(run);
-            await this.Context.SaveChangesAsync();
+            run.RelativeYear = Fixture.Create<RelativeYear>();
+            Context.CalculatorRuns.Add(run);
+            await Context.SaveChangesAsync();
 
-            this.Validator.Setup(v => v.IsValidSuccessfulRun(It.IsAny<int>()))
+            Validator.Setup(v => v.IsValidSuccessfulRun(It.IsAny<int>()))
                 .Returns(new RpdStatusValidation { isValid = false });
 
             // Act
             Exception? result = null;
             try
             {
-                await this.TestClass.UpdateRpdStatus(
+                await TestClass.UpdateRpdStatus(
                     runId,
-                    this.Fixture.Create<string>(),
-                    this.Fixture.Create<string>(),
+                    Fixture.Create<string>(),
+                    Fixture.Create<string>(),
                     CancellationToken.None);
             }
             catch (Exception ex)
@@ -199,33 +196,33 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             }
 
             // Assert
-            Assert.IsInstanceOfType<FluentValidation.ValidationException>(result);
+            Assert.IsInstanceOfType<ValidationException>(result);
         }
 
         [TestMethod]
         public async Task UpdateRpdStatus_DataThrowsException()
         {
             // Arrange
-            var runId = this.Fixture.Create<int>();
-            var run = this.Fixture.Create<CalculatorRun>();
+            var runId = Fixture.Create<int>();
+            var run = Fixture.Create<CalculatorRun>();
             run.Id = runId;
-            run.RelativeYear = this.Fixture.Create<RelativeYear>();
-            this.Context.CalculatorRuns.Add(run);
-            await this.Context.SaveChangesAsync();
+            run.RelativeYear = Fixture.Create<RelativeYear>();
+            Context.CalculatorRuns.Add(run);
+            await Context.SaveChangesAsync();
 
-            this.CalculatorRunOrgData.Setup(s => s.LoadOrgDataForCalcRun(It.IsAny<int>(), It.IsAny<RelativeYear>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            CalculatorRunOrgData.Setup(s => s.LoadOrgDataForCalcRun(It.IsAny<int>(), It.IsAny<RelativeYear>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Throws<Exception>();
-            this.CalculatorRunPomData.Setup(s => s.LoadPomDataForCalcRun(It.IsAny<int>(), It.IsAny<RelativeYear>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            CalculatorRunPomData.Setup(s => s.LoadPomDataForCalcRun(It.IsAny<int>(), It.IsAny<RelativeYear>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
             // Act
             Exception? result = null;
             try
             {
-                await this.TestClass.UpdateRpdStatus(
+                await TestClass.UpdateRpdStatus(
                     runId,
-                    this.Fixture.Create<string>(),
-                    this.Fixture.Create<string>(),
+                    Fixture.Create<string>(),
+                    Fixture.Create<string>(),
                     CancellationToken.None);
             }
             catch (Exception ex)

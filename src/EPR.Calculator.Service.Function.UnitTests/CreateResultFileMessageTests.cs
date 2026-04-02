@@ -1,11 +1,8 @@
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Constants;
+
 namespace EPR.Calculator.Service.Function.UnitTests
 {
-    using EPR.Calculator.API.Data.Models;
-    using EPR.Calculator.Service.Common;
-    using EPR.Calculator.Service.Function;
-    using EPR.Calculator.Service.Function.Constants;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     /// <summary>
     /// Unit tests for the <see cref="CreateResultFileMessageTests"/> class.
     /// </summary>

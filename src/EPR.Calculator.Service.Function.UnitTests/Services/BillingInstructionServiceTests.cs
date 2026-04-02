@@ -1,19 +1,16 @@
+using AutoFixture;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Common.Logging;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Interface;
+using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.UnitTests.Builder;
+using Moq;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
-    using System;
-    using System.Threading.Tasks;
-    using AutoFixture;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.API.Data.Models;
-    using EPR.Calculator.Service.Common.Logging;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Interface;
-    using EPR.Calculator.Service.Function.Models;
-    using EPR.Calculator.Service.Function.Services;
-    using EPR.Calculator.Service.Function.UnitTests.Builder;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Moq;
-
     [TestClass]
     public class BillingInstructionServiceTests
     {
@@ -33,7 +30,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task CanCallCreateBillingInstructions()
         {
             // Arrange
-            var fixture = new Fixture();
             var calcResult = TestDataHelper.GetCalcResult();
 
             _telemetryLogger.Setup(mock => mock.LogInformation(It.IsAny<TrackMessage>())).Verifiable();
@@ -52,7 +48,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task CanCallCreateBillingInstructionsWithNoInstructions()
         {
             // Arrange
-            var fixture = new Fixture();
             var calcResult = new CalcResult
             {
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
@@ -85,14 +80,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     MaterialHeading = string.Empty,
                     TonnageHeading = string.Empty,
                 },
-                CalcResultSummary = new CalcResultSummary()
+                CalcResultSummary = new CalcResultSummary
                 {
-                    ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>()
+                    ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
                     {
                         new ()
                         {
-                            ProducerCommsFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>() { },
-                            ProducerDisposalFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>() { },
+                            ProducerCommsFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>(),
+                            ProducerDisposalFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>(),
                             ProducerId = "1",
                             ProducerName = "Test",
                             TotalProducerDisposalFeeWithBadDebtProvision = 100,
@@ -135,7 +130,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task CanCallCreateBillingInstructionsWithNoProducers()
         {
             // Arrange
-            var fixture = new Fixture();
             var calcResult = new CalcResult
             {
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
@@ -222,17 +216,30 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     MaterialHeading = string.Empty,
                     TonnageHeading = string.Empty,
                 },
-                CalcResultSummary = new() { ProducerDisposalFees = fixture.Create<List<CalcResultSummaryProducerDisposalFees>>() } ,
-                    CalcResultCancelledProducers = new CalcResultCancelledProducersResponse()
+                CalcResultSummary = new()
+                {
+                    ProducerDisposalFees = fixture.Create<List<CalcResultSummaryProducerDisposalFees>>()
+                },
+                CalcResultCancelledProducers = new CalcResultCancelledProducersResponse
+                {
+                    TitleHeader = CommonConstants.CancelledProducers,
+                    CancelledProducers = new List<CalcResultCancelledProducersDto>
                     {
-                        TitleHeader = CommonConstants.CancelledProducers,
-                        CancelledProducers = new List<CalcResultCancelledProducersDto>()
-                        { new CalcResultCancelledProducersDto() { LastTonnage = null,  ProducerId = 1, TradingNameValue ="Test",
-                            LatestInvoice = new LatestInvoice(){ BillingInstructionIdValue="1_1", RunNameValue ="RunName" , RunNumberValue="4" },
+                        new CalcResultCancelledProducersDto
+                        {
+                            LastTonnage = null,
+                            ProducerId = 1,
+                            TradingNameValue = "Test",
+                            LatestInvoice = new LatestInvoice
+                            {
+                                BillingInstructionIdValue = "1_1",
+                                RunNameValue = "RunName",
+                                RunNumberValue = "4"
+                            },
                         }
                     }
                 },
-                CalcResultModulation = null,
+                CalcResultModulation = null
             };
 
 

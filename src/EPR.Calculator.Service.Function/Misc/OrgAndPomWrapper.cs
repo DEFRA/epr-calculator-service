@@ -1,15 +1,10 @@
-﻿namespace EPR.Calculator.API.Wrapper
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.Service.Function.Interface;
-    using Microsoft.EntityFrameworkCore;
+﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Interface;
+using Microsoft.EntityFrameworkCore;
 
+namespace EPR.Calculator.Service.Function.Misc
+{
     public class OrgAndPomWrapper : IOrgAndPomWrapper
     {
         private readonly ApplicationDBContext context;
@@ -21,21 +16,21 @@
 
         public bool AnyOrganisationData()
         {
-            return this.context.OrganisationData.Any();
+            return context.OrganisationData.Any();
         }
 
         public bool AnyPomData()
         {
-            return this.context.PomData.Any();
+            return context.PomData.Any();
         }
 
         public async Task<int> ExecuteSqlAsync(FormattableString sql, CancellationToken cancellationToken)
-            => await this.context.Database.ExecuteSqlAsync(sql, cancellationToken);
+            => await context.Database.ExecuteSqlAsync(sql, cancellationToken);
 
         public async Task<IEnumerable<OrganisationData>> GetOrganisationDataAsync()
-            => await this.context.OrganisationData.ToListAsync();
+            => await context.OrganisationData.ToListAsync();
 
         public async Task<IEnumerable<PomData>> GetPomDataAsync()
-            => await this.context.PomData.ToListAsync();
+            => await context.PomData.ToListAsync();
     }
 }

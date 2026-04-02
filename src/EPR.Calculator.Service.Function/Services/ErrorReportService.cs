@@ -2,11 +2,6 @@
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.Services
 {
@@ -105,7 +100,7 @@ namespace EPR.Calculator.Service.Function.Services
                                     .Select(x => CreateError(x.Key, null, calculatorRunId, createdBy, ErrorCodes.Empty, leaverCode: null));
 
             var allErrors = calcErrors.Concat(holdingRegErrors);
-            await this.ErrorReportChunker.InsertRecords(allErrors);
+            await ErrorReportChunker.InsertRecords(allErrors);
 
             return calcErrors
                     .Where(e => !obligatedWarnings.Contains(e)) // Filter out warnings so they are kept in calculator results.

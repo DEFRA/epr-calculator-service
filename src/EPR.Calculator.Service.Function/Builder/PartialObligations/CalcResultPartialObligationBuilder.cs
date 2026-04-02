@@ -1,21 +1,15 @@
+using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Builder.Summary.Common;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Mappers;
+using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Services;
+using Microsoft.EntityFrameworkCore;
+
 namespace EPR.Calculator.Service.Function.Builder.PartialObligations
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Dtos;
-    using EPR.Calculator.Service.Function.Mappers;
-    using EPR.Calculator.Service.Function.Misc;
-    using EPR.Calculator.Service.Function.Models;
-    using EPR.Calculator.Service.Function.Services;
-    using EPR.Calculator.Service.Function.Builder.Summary.Common;
-
-    using Microsoft.EntityFrameworkCore;
-
     public class CalcResultPartialObligationBuilder : ICalcResultPartialObligationBuilder
     {
 
@@ -31,7 +25,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
         public async Task<CalcResultPartialObligations> ConstructAsync(CalcResultsRequestDto resultsRequestDto, IEnumerable<CalcResultScaledupProducer> scaledupProducers)
         {
             var runId = resultsRequestDto.RunId;
-            var materialsFromDb = await this.context.Material.ToListAsync();
+            var materialsFromDb = await context.Material.ToListAsync();
             var materials = MaterialMapper.Map(materialsFromDb);
 
             var partialObligationsForRun = await GetPartialObligations(runId, materials, scaledupProducers);
@@ -55,10 +49,10 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
 
         public async Task<List<CalcResultPartialObligation>> GetPartialObligations(int runId, List<MaterialDetail> materials, IEnumerable<CalcResultScaledupProducer> scaledupProducers)
         {
-            var result = await (from run in this.context.CalculatorRuns.AsNoTracking()
-                                join crodm in this.context.CalculatorRunOrganisationDataMaster.AsNoTracking() on run.CalculatorRunOrganisationDataMasterId equals crodm.Id
-                                join crodd in this.context.CalculatorRunOrganisationDataDetails.AsNoTracking() on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
-                                join pd in this.context.ProducerDetail.Include(x => x.ProducerReportedMaterials) on crodd.OrganisationId equals pd.ProducerId
+            return await (from run in context.CalculatorRuns.AsNoTracking()
+                                join crodm in context.CalculatorRunOrganisationDataMaster.AsNoTracking() on run.CalculatorRunOrganisationDataMasterId equals crodm.Id
+                                join crodd in context.CalculatorRunOrganisationDataDetails.AsNoTracking() on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
+                                join pd in context.ProducerDetail.Include(x => x.ProducerReportedMaterials) on crodd.OrganisationId equals pd.ProducerId
                                 where run.Id == runId && crodd.ObligationStatus == ObligationStates.Obligated && crodd.DaysObligated != null && crodd.SubsidiaryId == pd.SubsidiaryId && pd.CalculatorRunId == runId
                                 let daysInYear = DateTime.IsLeapYear(crodm.RelativeYear.Value) ? 366 : 365
                                 let partialAmount = crodd.DaysObligated != null ? (decimal)crodd.DaysObligated! / daysInYear : 1
@@ -76,8 +70,6 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
                                     ObligatedPercentage = (partialAmount * 100).ToString("F2") + "%",
                                     PartialObligationTonnageByMaterial = GetPartialObligationTonnages(pd, materials, partialAmount, scaledupProducers)
                                 }).ToListAsync();
-
-            return result ?? new List<CalcResultPartialObligation>();
         }
 
         public static Dictionary<string, CalcResultPartialObligationTonnage> GetPartialObligationTonnages(ProducerDetail producer, IEnumerable<MaterialDetail> materials, decimal partialAmount, IEnumerable<CalcResultScaledupProducer> scaledupProducers)

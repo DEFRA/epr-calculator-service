@@ -1,17 +1,13 @@
-﻿namespace EPR.Calculator.Service.Function.Builder.ParametersOther
-{
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Dtos;
-    using EPR.Calculator.Service.Function.Models;
-    using EPR.Calculator.Service.Function.Services;
-    using Microsoft.EntityFrameworkCore;
+﻿using System.Globalization;
+using EPR.Calculator.API.Data;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Services;
+using Microsoft.EntityFrameworkCore;
 
+namespace EPR.Calculator.Service.Function.Builder.ParametersOther
+{
     public class CalcResultParameterOtherCostBuilder : ICalcResultParameterOtherCostBuilder
     {
         public const string SchemeAdminOperatingCost = "Scheme administrator operating costs";
@@ -38,10 +34,10 @@
             var culture = CultureInfo.CreateSpecificCulture("en-GB");
             culture.NumberFormat.CurrencySymbol = "£";
             culture.NumberFormat.CurrencyPositivePattern = 0;
-            var results = await (from run in this.context.CalculatorRuns
-                           join defaultMaster in this.context.DefaultParameterSettings on run.DefaultParameterSettingMasterId equals defaultMaster.Id
-                           join defaultDetail in this.context.DefaultParameterSettingDetail on defaultMaster.Id equals defaultDetail.DefaultParameterSettingMasterId
-                           join defaultTemplate in this.context.DefaultParameterTemplateMasterList on defaultDetail.ParameterUniqueReferenceId equals defaultTemplate.ParameterUniqueReferenceId
+            var results = await (from run in context.CalculatorRuns
+                           join defaultMaster in context.DefaultParameterSettings on run.DefaultParameterSettingMasterId equals defaultMaster.Id
+                           join defaultDetail in context.DefaultParameterSettingDetail on defaultMaster.Id equals defaultDetail.DefaultParameterSettingMasterId
+                           join defaultTemplate in context.DefaultParameterTemplateMasterList on defaultDetail.ParameterUniqueReferenceId equals defaultTemplate.ParameterUniqueReferenceId
                            where run.Id == resultsRequestDto.RunId
                            select new DefaultParamResultsClass
                            {
@@ -162,14 +158,14 @@
             materialities.Add(tonnageDecrease);
             other.Materiality = materialities;
 
-            var countries = await this.context.Country.ToListAsync();
+            var countries = await context.Country.ToListAsync();
 
-            var costType = await this.context.CostType.SingleAsync(x => x.Name == "LA Data Prep Charge");
+            var costType = await context.CostType.SingleAsync(x => x.Name == "LA Data Prep Charge");
             var costTypeId = costType.Id;
 
             if (!resultsRequestDto.IsBillingFile)
             {
-                await this.calcCountryApportionmentService.SaveChangesAsync(new CalcCountryApportionmentServiceDto
+                await calcCountryApportionmentService.SaveChangesAsync(new CalcCountryApportionmentServiceDto
                 {
                     RunId = resultsRequestDto.RunId,
                     Countries = countries,

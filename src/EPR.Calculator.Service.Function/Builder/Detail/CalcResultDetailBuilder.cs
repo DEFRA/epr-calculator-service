@@ -1,13 +1,11 @@
-﻿namespace EPR.Calculator.Service.Function.Builder.Detail
-{
-    using System;
-    using System.Threading.Tasks;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Dtos;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.EntityFrameworkCore;
+﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Models;
+using Microsoft.EntityFrameworkCore;
 
+namespace EPR.Calculator.Service.Function.Builder.Detail
+{
     public class CalcResultDetailBuilder : ICalcResultDetailBuilder
     {
         private readonly ApplicationDBContext context;
@@ -19,7 +17,7 @@
 
         public async Task<CalcResultDetail> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
         {
-            var calculatorRuns = await this.context.CalculatorRuns
+            var calculatorRuns = await context.CalculatorRuns
                 .Include(o => o.CalculatorRunOrganisationDataMaster)
                 .Include(o => o.CalculatorRunPomDataMaster)
                 .Include(o => o.DefaultParameterSettingMaster)

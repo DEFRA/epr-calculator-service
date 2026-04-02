@@ -1,11 +1,11 @@
-﻿namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost
-{
-    using System.Text;
-    using EPR.Calculator.API.Utils;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Function.Models;
+﻿using System.Text;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Models;
 
+namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost
+{
     /// <summary>
     /// Provides functionality to export communication cost details to a CSV format.
     /// </summary>
@@ -57,7 +57,7 @@
                 }
                 else
                 {
-                    csvContent.AppendLine(CsvSanitiser.SanitiseData(commCostByMaterial.CommsCostByMaterialPricePerTonne, DecimalPlaces.Four, null, true, false));
+                    csvContent.AppendLine(CsvSanitiser.SanitiseData(commCostByMaterial.CommsCostByMaterialPricePerTonne, DecimalPlaces.Four, null, true));
                 }
             }
 

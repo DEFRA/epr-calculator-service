@@ -1,14 +1,8 @@
-﻿namespace EPR.Calculator.Service.Common.UnitTests.Utils
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Runtime.CompilerServices;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using EPR.Calculator.Service.Common.Utils;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Runtime.CompilerServices;
+using EPR.Calculator.Service.Common.Utils;
 
+namespace EPR.Calculator.Service.Common.UnitTests.Utils
+{
     /// <summary>
     /// Unit tests for the <see cref="AsyncEnumerableExtensions"/> class.
     /// </summary>

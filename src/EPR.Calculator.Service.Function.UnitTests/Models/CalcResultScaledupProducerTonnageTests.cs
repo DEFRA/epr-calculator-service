@@ -1,9 +1,8 @@
+using AutoFixture;
+using EPR.Calculator.Service.Function.Models;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Models
 {
-    using AutoFixture;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     [TestClass]
     public class CalcResultScaledupProducerTonnageTests
     {
@@ -14,7 +13,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
         /// </summary>
         public CalcResultScaledupProducerTonnageTests()
         {
-            this.calcResultScaledupProducerTonnage = new CalcResultScaledupProducerTonnage();
+            calcResultScaledupProducerTonnage = new CalcResultScaledupProducerTonnage();
         }
 
         [TestMethod]
@@ -26,10 +25,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var testValue = fixture.Create<decimal>();
 
             // Act
-            this.calcResultScaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage = testValue;
+            calcResultScaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage = testValue;
 
             // Assert
-            Assert.AreEqual(testValue, this.calcResultScaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage);
+            Assert.AreEqual(testValue, calcResultScaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage);
         }
 
         [TestMethod]
@@ -41,10 +40,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var testValue = fixture.Create<decimal>();
 
             // Act
-            this.calcResultScaledupProducerTonnage.ReportedPublicBinTonnage = testValue;
+            calcResultScaledupProducerTonnage.ReportedPublicBinTonnage = testValue;
 
             // Assert
-            Assert.AreEqual(testValue, this.calcResultScaledupProducerTonnage.ReportedPublicBinTonnage);
+            Assert.AreEqual(testValue, calcResultScaledupProducerTonnage.ReportedPublicBinTonnage);
         }
 
         [TestMethod]
@@ -56,10 +55,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var testValue = fixture.Create<decimal>();
 
             // Act
-            this.calcResultScaledupProducerTonnage.TotalReportedTonnage = testValue;
+            calcResultScaledupProducerTonnage.TotalReportedTonnage = testValue;
 
             // Assert
-            Assert.AreEqual(testValue, this.calcResultScaledupProducerTonnage.TotalReportedTonnage);
+            Assert.AreEqual(testValue, calcResultScaledupProducerTonnage.TotalReportedTonnage);
         }
 
         [TestMethod]
@@ -71,10 +70,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var testValue = fixture.Create<decimal>();
 
             // Act
-            this.calcResultScaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage = testValue;
+            calcResultScaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage = testValue;
 
             // Assert
-            Assert.AreEqual(testValue, this.calcResultScaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage);
+            Assert.AreEqual(testValue, calcResultScaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage);
         }
 
         [TestMethod]
@@ -86,10 +85,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var testValue = fixture.Create<decimal>();
 
             // Act
-            this.calcResultScaledupProducerTonnage.NetReportedTonnage = testValue;
+            calcResultScaledupProducerTonnage.NetReportedTonnage = testValue;
 
             // Assert
-            Assert.AreEqual(testValue, this.calcResultScaledupProducerTonnage.NetReportedTonnage);
+            Assert.AreEqual(testValue, calcResultScaledupProducerTonnage.NetReportedTonnage);
         }
 
         [TestMethod]
@@ -101,10 +100,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var testValue = fixture.Create<decimal>();
 
             // Act
-            this.calcResultScaledupProducerTonnage.ScaledupReportedHouseholdPackagingWasteTonnage = testValue;
+            calcResultScaledupProducerTonnage.ScaledupReportedHouseholdPackagingWasteTonnage = testValue;
 
             // Assert
-            Assert.AreEqual(testValue, this.calcResultScaledupProducerTonnage.ScaledupReportedHouseholdPackagingWasteTonnage);
+            Assert.AreEqual(testValue, calcResultScaledupProducerTonnage.ScaledupReportedHouseholdPackagingWasteTonnage);
         }
 
         [TestMethod]
@@ -116,10 +115,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var testValue = fixture.Create<decimal>();
 
             // Act
-            this.calcResultScaledupProducerTonnage.ScaledupReportedPublicBinTonnage = testValue;
+            calcResultScaledupProducerTonnage.ScaledupReportedPublicBinTonnage = testValue;
 
             // Assert
-            Assert.AreEqual(testValue, this.calcResultScaledupProducerTonnage.ScaledupReportedPublicBinTonnage);
+            Assert.AreEqual(testValue, calcResultScaledupProducerTonnage.ScaledupReportedPublicBinTonnage);
         }
 
         [TestMethod]
@@ -131,10 +130,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var testValue = fixture.Create<decimal>();
 
             // Act
-            this.calcResultScaledupProducerTonnage.ScaledupTotalReportedTonnage = testValue;
+            calcResultScaledupProducerTonnage.ScaledupTotalReportedTonnage = testValue;
 
             // Assert
-            Assert.AreEqual(testValue, this.calcResultScaledupProducerTonnage.ScaledupTotalReportedTonnage);
+            Assert.AreEqual(testValue, calcResultScaledupProducerTonnage.ScaledupTotalReportedTonnage);
         }
 
         [TestMethod]
@@ -146,10 +145,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var testValue = fixture.Create<decimal>();
 
             // Act
-            this.calcResultScaledupProducerTonnage.ScaledupReportedSelfManagedConsumerWasteTonnage = testValue;
+            calcResultScaledupProducerTonnage.ScaledupReportedSelfManagedConsumerWasteTonnage = testValue;
 
             // Assert
-            Assert.AreEqual(testValue, this.calcResultScaledupProducerTonnage.ScaledupReportedSelfManagedConsumerWasteTonnage);
+            Assert.AreEqual(testValue, calcResultScaledupProducerTonnage.ScaledupReportedSelfManagedConsumerWasteTonnage);
         }
 
         [TestMethod]
@@ -161,10 +160,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var testValue = fixture.Create<decimal>();
 
             // Act
-            this.calcResultScaledupProducerTonnage.ScaledupNetReportedTonnage = testValue;
+            calcResultScaledupProducerTonnage.ScaledupNetReportedTonnage = testValue;
 
             // Assert
-            Assert.AreEqual(testValue, this.calcResultScaledupProducerTonnage.ScaledupNetReportedTonnage);
+            Assert.AreEqual(testValue, calcResultScaledupProducerTonnage.ScaledupNetReportedTonnage);
         }
     }
 }

@@ -1,9 +1,9 @@
-﻿namespace EPR.Calculator.Service.Function.Services
-{
-    using EPR.Calculator.Service.Function.Interface;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Infrastructure;
+﻿using EPR.Calculator.Service.Function.Interface;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
+namespace EPR.Calculator.Service.Function.Misc
+{
     /// <summary>
     /// Service to set the command timeout for the database.
     /// </summary>
@@ -20,12 +20,12 @@
         /// An <see cref="IConfigurationService"/> providing access to the app's environment variables.
         /// </param>
         public CommandTimeoutService(IConfigurationService configuration)
-            => this.Configuration = configuration;
+            => Configuration = configuration;
 
         private IConfigurationService Configuration { get; init; }
 
         /// <inheritdoc/>
         public void SetCommandTimeout(DatabaseFacade database)
-            => database.SetCommandTimeout(this.Configuration.CommandTimeout);
+            => database.SetCommandTimeout(Configuration.CommandTimeout);
     }
 }

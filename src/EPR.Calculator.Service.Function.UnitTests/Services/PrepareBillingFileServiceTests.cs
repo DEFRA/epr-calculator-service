@@ -1,22 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.API.Data;
-using EPR.Calculator.Service.Common.Utils;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Interface;
+using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
-using EPR.Calculator.Service.Common.Logging;
-using Moq;
-using EPR.Calculator.Service.Function.Interface;
-using EPR.Calculator.Service.Function.Dtos;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using EPR.Calculator.Service.Common;
-using EPR.Calculator.API.Data.Models;
+using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
@@ -37,19 +29,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         /// </summary>
         public PrepareBillingFileServiceTests()
         {
-            this._dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
+            _dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
                 .Options;
 
-            this._context = new ApplicationDBContext(this._dbContextOptions);
-            this._dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
-            this._dbContextFactory.Setup(f => f.CreateDbContext()).Returns(this._context);
+            _context = new ApplicationDBContext(_dbContextOptions);
+            _dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
+            _dbContextFactory.Setup(f => f.CreateDbContext()).Returns(_context);
 
-            this.MockLogger = new Mock<ICalculatorTelemetryLogger>();
+            MockLogger = new Mock<ICalculatorTelemetryLogger>();
 
-            this.PrepareCalcService = new Mock<IPrepareCalcService>();
-            this.PrepareCalcService.Setup(s => s.PrepareCalcResultsAsync(
+            PrepareCalcService = new Mock<IPrepareCalcService>();
+            PrepareCalcService.Setup(s => s.PrepareCalcResultsAsync(
                 It.IsAny<CalcResultsRequestDto>(),
                 It.IsAny<string>(),
                 It.IsAny<CancellationToken>()))
@@ -64,9 +56,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var calculatorName = "Test";
             var approvedBy = "user";
             var service = new PrepareBillingFileService(
-                this._context,
-                this.PrepareCalcService.Object,
-                this.MockLogger.Object);
+                _context,
+                PrepareCalcService.Object,
+                MockLogger.Object);
 
             // Act
             var result = await service.PrepareBillingFileAsync(calculatorRunId, calculatorName, approvedBy);
@@ -88,12 +80,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Name = calculatorName,
                     RelativeYear = new RelativeYear(2025),
                     CreatedBy = "user",
-                    CreatedAt = System.DateTime.UtcNow });
-            _context.SaveChanges();
+                    CreatedAt = DateTime.UtcNow });
+            await _context.SaveChangesAsync();
             var service = new PrepareBillingFileService(
-                this._context,
-                this.PrepareCalcService.Object,
-                this.MockLogger.Object);
+                _context,
+                PrepareCalcService.Object,
+                MockLogger.Object);
             var approvedBy = "user";
 
             // Act
@@ -132,7 +124,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 SuggestedBillingInstruction = "TestInstruction",
             });
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             // Setup PrepareCalcService to return true
             PrepareCalcService
@@ -191,7 +183,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 SuggestedBillingInstruction = "TestInstruction",
             });
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             // Setup PrepareCalcService to return true
             PrepareCalcService
@@ -221,7 +213,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public static ApplicationDBContext Create()
         {
             var options = new DbContextOptionsBuilder<ApplicationDBContext>()
-                .UseInMemoryDatabase(databaseName: "TestDb" + System.Guid.NewGuid())
+                .UseInMemoryDatabase(databaseName: "TestDb" + Guid.NewGuid())
                 .Options;
             return new ApplicationDBContext(options);
         }

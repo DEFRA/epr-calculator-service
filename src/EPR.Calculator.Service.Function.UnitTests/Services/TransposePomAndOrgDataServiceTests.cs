@@ -1,20 +1,19 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Services
+﻿using AutoFixture;
+using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Common.Logging;
+using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Interface;
+using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Moq;
+
+namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
-    using AutoFixture;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.API.Data.Models;
-    using EPR.Calculator.Service.Common;
-    using EPR.Calculator.Service.Common.Logging;
-    using EPR.Calculator.Service.Function.Dtos;
-    using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Function.Interface;
-    using EPR.Calculator.Service.Function.Services;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Moq;
-    using static EPR.Calculator.Service.Function.Services.TransposePomAndOrgDataService;
+    using static TransposePomAndOrgDataService;
 
     [TestClass]
     public class TransposePomAndOrgDataServiceTests
@@ -31,10 +30,10 @@
 
         public TransposePomAndOrgDataServiceTests()
         {
-            this.CommandTimeoutService = new Mock<ICommandTimeoutService>().Object;
-            this.ErrorReportService = new Mock<IErrorReportService>().Object;
-            this.TelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
-            this.Chunker = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
+            CommandTimeoutService = new Mock<ICommandTimeoutService>().Object;
+            ErrorReportService = new Mock<IErrorReportService>().Object;
+            TelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
+            Chunker = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
 
             _dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
@@ -42,19 +41,19 @@
                 .EnableSensitiveDataLogging() // Enable logging for unit test's dbcontext issues only
             .Options;
 
-            this._context = new ApplicationDBContext(this._dbContextOptions);
-            this.ContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
-            this.ContextFactory.Setup(f => f.CreateDbContext()).Returns(this._context);
+            _context = new ApplicationDBContext(_dbContextOptions);
+            ContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
+            ContextFactory.Setup(f => f.CreateDbContext()).Returns(_context);
 
-            this.SeedDatabase();
+            SeedDatabase();
 
-            this.TestClass = new TransposePomAndOrgDataService(
-                this._context,
-                this.CommandTimeoutService,
-                this.Chunker.Object,
+            TestClass = new TransposePomAndOrgDataService(
+                _context,
+                CommandTimeoutService,
+                Chunker.Object,
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
-                this.ErrorReportService,
-                this.TelemetryLogger.Object);
+                ErrorReportService,
+                TelemetryLogger.Object);
         }
 
         private ICommandTimeoutService CommandTimeoutService { get; init; }
@@ -72,29 +71,29 @@
         [TestInitialize]
         public void TestInit()
         {
-            this._context.ChangeTracker.Clear();
-            this._context.ChangeTracker.AutoDetectChangesEnabled = true;
+            _context.ChangeTracker.Clear();
+            _context.ChangeTracker.AutoDetectChangesEnabled = true;
         }
 
         [TestCleanup]
         public void TearDown()
         {
-            this._context.Database.EnsureDeleted();
-            this._context.Dispose();
+            _context.Database.EnsureDeleted();
+            _context.Dispose();
         }
 
         private void SeedDatabase()
         {
-            this._context.CalculatorRunOrganisationDataMaster.AddRange(GetCalculatorRunOrganisationDataMaster());
-            this._context.CalculatorRunOrganisationDataDetails.AddRange(GetCalculatorRunOrganisationDataDetails());
+            _context.CalculatorRunOrganisationDataMaster.AddRange(GetCalculatorRunOrganisationDataMaster());
+            _context.CalculatorRunOrganisationDataDetails.AddRange(GetCalculatorRunOrganisationDataDetails());
 
-            this._context.CalculatorRunPomDataMaster.AddRange(GetCalculatorRunPomDataMaster());
-            this._context.CalculatorRunPomDataDetails.AddRange(GetCalculatorRunPomDataDetails());
+            _context.CalculatorRunPomDataMaster.AddRange(GetCalculatorRunPomDataMaster());
+            _context.CalculatorRunPomDataDetails.AddRange(GetCalculatorRunPomDataDetails());
 
-            this._context.CalculatorRuns.AddRange(GetCalculatorRuns());
-            this._context.Material.AddRange(GetMaterials());
+            _context.CalculatorRuns.AddRange(GetCalculatorRuns());
+            _context.Material.AddRange(GetMaterials());
 
-            this._context.SaveChanges();
+            _context.SaveChanges();
         }
 
         [TestMethod]
@@ -102,7 +101,7 @@
         {
             var organisationDetails = GetCalculatorRunOrganisationDataDetails().ToList();
 
-            var result = this.TestClass.GetAllOrganisationsBasedonRunId(organisationDetails);
+            var result = TestClass.GetAllOrganisationsBasedonRunId(organisationDetails);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(5, result.Count());
@@ -112,9 +111,8 @@
         public void GetLatestOrganisationNameShouldReturnNullWhenOrganisationNotFound()
         {
             var orgDetails = new List<OrganisationDetails>();
-            var orgSubDetails = new List<OrganisationDetails>();
 
-            var result = this.TestClass.GetLatestOrganisationName(1,orgDetails);
+            var result = TestClass.GetLatestOrganisationName(1,orgDetails);
 
             Assert.IsNull(result);
         }
@@ -138,23 +136,7 @@
                 },
             };
 
-            var orgSubDetails = new List<OrganisationDetails>
-            {
-                new OrganisationDetails
-                {
-                    OrganisationId = 1,
-                    OrganisationName = "Test1",
-                    SubmissionPeriodDescription = "January to June 2023",
-                },
-                new OrganisationDetails
-                {
-                    OrganisationId = 1,
-                    OrganisationName = "Test2",
-                    SubmissionPeriodDescription = "July to December 2023",
-                },
-            };
-
-            var result = this.TestClass.GetLatestOrganisationName(1, orgDetails);
+            var result = TestClass.GetLatestOrganisationName(1, orgDetails);
 
             Assert.IsNotNull(result);
             Assert.AreEqual("Test1", result);
@@ -164,12 +146,11 @@
         public void GetLatestOrganisationName_Should_Return_OrganisationName()
         {
             // Arrange
-            var orgId = this.Fixture.Create<int>();
-            var organisationsBySubmissionPeriod = this.Fixture.CreateMany<OrganisationDetails>().ToList();
-            var organisationsList = this.Fixture.CreateMany<OrganisationDetails>().ToList();
+            var orgId = Fixture.Create<int>();
+            var organisationsList = Fixture.CreateMany<OrganisationDetails>().ToList();
 
             // Act
-            var result = this.TestClass.GetLatestOrganisationName(orgId, organisationsList);
+            var result = TestClass.GetLatestOrganisationName(orgId, organisationsList);
 
             // Assert
             Assert.IsNull(result);
@@ -179,13 +160,12 @@
         public void GetLatestSubsidaryName_Should_Return_SubsidaryName()
         {
             // Arrange
-            var orgId = this.Fixture.Create<int>();
-            var subsidaryId = this.Fixture.Create<string>();
-            var organisationsBySubmissionPeriod = this.Fixture.CreateMany<OrganisationDetails>().ToList();
-            var organisationsList = this.Fixture.CreateMany<OrganisationDetails>().ToList();
+            var orgId = Fixture.Create<int>();
+            var subsidaryId = Fixture.Create<string>();
+            var organisationsList = Fixture.CreateMany<OrganisationDetails>().ToList();
 
             // Act
-            var result = this.TestClass.GetLatestproducerName(orgId, subsidaryId,organisationsList);
+            var result = TestClass.GetLatestproducerName(orgId, subsidaryId,organisationsList);
 
             // Assert
             Assert.IsNull(result);
@@ -195,15 +175,15 @@
         public async Task TransposeBeforeCalcResults_Should_Return_False_When_CalculatorRun_Not_Found()
         {
             // Arrange
-            var resultsRequestDto = this.Fixture.Create<CalcResultsRequestDto>();
-            var runName = this.Fixture.Create<string>();
+            var resultsRequestDto = Fixture.Create<CalcResultsRequestDto>();
+            var runName = Fixture.Create<string>();
             var cancellationToken = It.IsAny<CancellationToken>();
 
-            this._context.CalculatorRuns.RemoveRange(this._context.CalculatorRuns);
-            await this._context.SaveChangesAsync();
+            _context.CalculatorRuns.RemoveRange(_context.CalculatorRuns);
+            await _context.SaveChangesAsync();
 
             // Act
-            var result = await this.TestClass.TransposeBeforeResultsFileAsync(resultsRequestDto, runName, cancellationToken);
+            var result = await TestClass.TransposeBeforeResultsFileAsync(resultsRequestDto, runName, cancellationToken);
 
             // Assert
             Assert.IsFalse(result);
@@ -213,8 +193,8 @@
         public async Task TransposeBeforeCalcResults_Should_LogError_And_Return_False_On_OperationCanceledException()
         {
             // Arrange
-            var resultsRequestDto = this.Fixture.Create<CalcResultsRequestDto>();
-            var runName = this.Fixture.Create<string>();
+            var resultsRequestDto = Fixture.Create<CalcResultsRequestDto>();
+            var runName = Fixture.Create<string>();
             var cancellationToken = CancellationToken.None;
 
             var mockContext = new Mock<ApplicationDBContext>(_dbContextOptions);
@@ -226,10 +206,10 @@
             var mockTelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
             var service = new TransposePomAndOrgDataService(
                 mockContext.Object,
-                this.CommandTimeoutService,
+                CommandTimeoutService,
                 new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
-                this.ErrorReportService,
+                ErrorReportService,
                 mockTelemetryLogger.Object);
 
             // Act
@@ -244,11 +224,11 @@
         public async Task TransposeBeforeCalcResults_Should_LogError_And_Return_False_On_Exception()
         {
             // Arrange
-            var resultsRequestDto = this.Fixture.Create<CalcResultsRequestDto>();
-            var runName = this.Fixture.Create<string>();
+            var resultsRequestDto = Fixture.Create<CalcResultsRequestDto>();
+            var runName = Fixture.Create<string>();
             var cancellationToken = CancellationToken.None;
 
-            var mockContext = new Mock<ApplicationDBContext>(this._dbContextOptions);
+            var mockContext = new Mock<ApplicationDBContext>(_dbContextOptions);
             var mockDbSet = new Mock<DbSet<CalculatorRun>>();
 
             mockContext.Setup(c => c.CalculatorRuns).Returns(mockDbSet.Object);
@@ -258,10 +238,10 @@
 
             var service = new TransposePomAndOrgDataService(
                 mockContext.Object,
-                this.CommandTimeoutService,
+                CommandTimeoutService,
                 new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
-                this.ErrorReportService,
+                ErrorReportService,
                 mockTelemetryLogger.Object);
 
             // Act
@@ -276,9 +256,9 @@
         public async Task TransposeBeforeCalcResults_Should_Return_True_On_Success()
         {
             // Arrange
-            var resultsRequestDto = this.Fixture.Create<CalcResultsRequestDto>();
+            var resultsRequestDto = Fixture.Create<CalcResultsRequestDto>();
             resultsRequestDto.RunId = 1;
-            var runName = this.Fixture.Create<string>();
+            var runName = Fixture.Create<string>();
             var cancellationToken = CancellationToken.None;
 
             var mockErrorReportService = new Mock<IErrorReportService>();
@@ -295,8 +275,8 @@
                 .ReturnsAsync(errorReport);
 
             var service = new TransposePomAndOrgDataService(
-               this._context,
-               this.CommandTimeoutService,
+               _context,
+               CommandTimeoutService,
                new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
                new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
                mockErrorReportService.Object,
@@ -341,8 +321,8 @@
                 .ReturnsAsync(unmatchedRecords);
 
             var service = new TransposePomAndOrgDataService(
-                this._context,
-                this.CommandTimeoutService,
+                _context,
+                CommandTimeoutService,
                 mockProducerDetailService.Object,
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
                 mockErrorReportService.Object,
@@ -360,11 +340,11 @@
 
             await service.Transpose(resultsRequestDto, CancellationToken.None);
 
-            var producerDetail = this._context.ProducerDetail.FirstOrDefault();
+            var producerDetail = await _context.ProducerDetail.FirstOrDefaultAsync();
             if (producerDetail == null)
             {
-                this._context.ProducerDetail.Add(expectedResult);
-                this._context.SaveChanges();
+                _context.ProducerDetail.Add(expectedResult);
+                await _context.SaveChangesAsync();
                 producerDetail = expectedResult;
             }
 
@@ -395,8 +375,7 @@
                     ProducerId = 1,
                     SubsidiaryId = "1",
                     ProducerName = "UPU LIMITED",
-                    CalculatorRunId = 1,
-                    CalculatorRun = null,
+                    CalculatorRunId = 1
                 },
             };
 
@@ -417,8 +396,8 @@
                 .ReturnsAsync(unmatchedRecords);
 
             var service = new TransposePomAndOrgDataService(
-                this._context,
-                this.CommandTimeoutService,
+                _context,
+                CommandTimeoutService,
                 new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
                 mockErrorReportService.Object,
@@ -452,25 +431,25 @@
 
             await service.Transpose(resultsRequestDto, CancellationToken.None);
 
-            var producerReportedMaterial = this._context.ProducerReportedMaterial.FirstOrDefault();
+            var producerReportedMaterial = await _context.ProducerReportedMaterial.Include(producerReportedMaterial => producerReportedMaterial.Material).Include(producerReportedMaterial => producerReportedMaterial.ProducerDetail).FirstOrDefaultAsync();
             if (producerReportedMaterial == null)
             {
                 // Check if Material entity already exists in the context
-                var materialInContext = _context.Material.FirstOrDefault(m => m.Id == expectedResult.Material.Id);
+                var materialInContext = await _context.Material.FirstOrDefaultAsync(m => m.Id == expectedResult.Material.Id);
                 if (materialInContext != null)
                 {
                     expectedResult.Material = materialInContext;
                 }
 
                 // Check if ProducerDetail entity already exists in the context
-                var producerDetailInContext = _context.ProducerDetail.FirstOrDefault(pd => pd.Id == expectedResult.ProducerDetail.Id);
+                var producerDetailInContext = await _context.ProducerDetail.FirstOrDefaultAsync(pd => pd.Id == expectedResult.ProducerDetail.Id);
                 if (producerDetailInContext != null)
                 {
                     expectedResult.ProducerDetail = producerDetailInContext;
                 }
 
-                this._context.ProducerReportedMaterial.Add(expectedResult);
-                this._context.SaveChanges();
+                _context.ProducerReportedMaterial.Add(expectedResult);
+                await _context.SaveChangesAsync();
                 producerReportedMaterial = expectedResult;
             }
 
@@ -490,8 +469,7 @@
                 ProducerId = 2,
                 SubsidiaryId = "1",
                 ProducerName = "Subsid2",
-                CalculatorRunId = 1,
-                CalculatorRun = null,
+                CalculatorRunId = 1
             };
 
             var mockErrorReportService = new Mock<IErrorReportService>();
@@ -512,8 +490,8 @@
                 .ReturnsAsync(unmatchedRecords);
 
             var service = new TransposePomAndOrgDataService(
-                this._context,
-                this.CommandTimeoutService,
+                _context,
+                CommandTimeoutService,
                 new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
                 mockErrorReportService.Object,
@@ -531,11 +509,11 @@
 
             await service.Transpose(resultsRequestDto, CancellationToken.None);
 
-            var producerDetail = this._context.ProducerDetail.FirstOrDefault(t => t.SubsidiaryId != null);
+            var producerDetail = await _context.ProducerDetail.FirstOrDefaultAsync(t => t.SubsidiaryId != null);
             if (producerDetail == null)
             {
-                this._context.ProducerDetail.Add(expectedResult);
-                this._context.SaveChanges();
+                _context.ProducerDetail.Add(expectedResult);
+                await _context.SaveChangesAsync();
                 producerDetail = expectedResult;
             }
 
@@ -551,8 +529,7 @@
             {
                 ProducerId = 9994,
                 ProducerName = "Subsid2",
-                CalculatorRunId = 1,
-                CalculatorRun = null,
+                CalculatorRunId = 1
             };
 
             var mockErrorReportService = new Mock<IErrorReportService>();
@@ -573,8 +550,8 @@
                 .ReturnsAsync(unmatchedRecords);
 
             var service = new TransposePomAndOrgDataService(
-                this._context,
-                this.CommandTimeoutService,
+                _context,
+                CommandTimeoutService,
                 new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
                 mockErrorReportService.Object,
@@ -592,11 +569,11 @@
 
             await service.Transpose(resultsRequestDto, CancellationToken.None);
 
-            var producerDetail = this._context.ProducerDetail.FirstOrDefault();
+            var producerDetail = await _context.ProducerDetail.FirstOrDefaultAsync();
             if (producerDetail == null)
             {
-                this._context.ProducerDetail.Add(expectedResult);
-                this._context.SaveChanges();
+                _context.ProducerDetail.Add(expectedResult);
+                await _context.SaveChangesAsync();
                 producerDetail = expectedResult;
             }
 
@@ -654,16 +631,16 @@
         public async Task TransposeShouldLogWhenCancelled()
         {
             // Arrange
-            var resultsRequestDto = this.Fixture.Create<CalcResultsRequestDto>();
-            var runName = this.Fixture.Create<string>();
+            var resultsRequestDto = Fixture.Create<CalcResultsRequestDto>();
+            var runName = Fixture.Create<string>();
             var cancellationToken = new CancellationToken(true);
 
             // Act
-            var result = await this.TestClass.TransposeBeforeResultsFileAsync(resultsRequestDto, runName, cancellationToken);
+            var result = await TestClass.TransposeBeforeResultsFileAsync(resultsRequestDto, runName, cancellationToken);
 
             // Assert
             Assert.IsFalse(result);
-            this.TelemetryLogger.Verify(
+            TelemetryLogger.Verify(
                 t => t.LogError(
                     It.Is<ErrorMessage>(message => message.Message == "Operation cancelled")),
                 Times.Once);
@@ -679,12 +656,10 @@
         {
             // Arrange
             var runId = 1;
-            var resultsRequestDto = this.Fixture.Create<CalcResultsRequestDto>();
+            var resultsRequestDto = Fixture.Create<CalcResultsRequestDto>();
             resultsRequestDto.RunId = runId;
-            var runName = this.Fixture.Create<string>();
-            var mockCalculatorRunsTable = new Mock<DbSet<CalculatorRun>>();
-            var mockCalculatorRun = this.Fixture.Create<CalculatorRun>();
-            this.Chunker.Setup(c => c.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
+            var runName = Fixture.Create<string>();
+            Chunker.Setup(c => c.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
                 .Throws<OperationCanceledException>();
 
             var mockErrorReportService = new Mock<IErrorReportService>();
@@ -705,12 +680,12 @@
                 .ReturnsAsync(unmatchedRecords);
 
             var service = new TransposePomAndOrgDataService(
-               this._context,
-               this.CommandTimeoutService,
-               this.Chunker.Object,
+               _context,
+               CommandTimeoutService,
+               Chunker.Object,
                new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
                mockErrorReportService.Object,
-               this.TelemetryLogger.Object);
+               TelemetryLogger.Object);
 
             // Act
             var result = await service.TransposeBeforeResultsFileAsync(
@@ -720,18 +695,18 @@
 
             // Assert
             Assert.IsFalse(result);
-            this.TelemetryLogger.Verify(
+            TelemetryLogger.Verify(
                 t => t.LogError(
                     It.Is<ErrorMessage>(message => message.Message == "Operation cancelled")),
                 Times.Once);
-            this.TelemetryLogger.Verify(
+            TelemetryLogger.Verify(
                 t => t.LogError(
                     It.Is<ErrorMessage>(message => message.Message == "RunId is updated with ClassificationId Error")),
                 Times.Once);
             using var assertContext = new ApplicationDBContext(_dbContextOptions);
             Assert.AreEqual(
                 (int)RunClassification.ERROR,
-                assertContext.CalculatorRuns.Single(run => run.Id == runId).CalculatorRunClassificationId);
+                (await assertContext.CalculatorRuns.SingleAsync(run => run.Id == runId)).CalculatorRunClassificationId);
         }
 
         /// <summary>
@@ -744,30 +719,30 @@
         {
             // Arrange
             var runId = 1;
-            var resultsRequestDto = this.Fixture.Create<CalcResultsRequestDto>();
+            var resultsRequestDto = Fixture.Create<CalcResultsRequestDto>();
             resultsRequestDto.RunId = runId;
-            this._context.CalculatorRunPomDataDetails = null!;
+            _context.CalculatorRunPomDataDetails = null!;
 
             // Act
-            var result = await this.TestClass.TransposeBeforeResultsFileAsync(
+            var result = await TestClass.TransposeBeforeResultsFileAsync(
                 resultsRequestDto,
-                this.Fixture.Create<string>(),
+                Fixture.Create<string>(),
                 CancellationToken.None);
 
             // Assert
             Assert.IsFalse(result);
-            this.TelemetryLogger.Verify(
+            TelemetryLogger.Verify(
                 t => t.LogError(
                     It.Is<ErrorMessage>(message => message.Message == "Error occurred while transposing POM and ORG data")),
                 Times.Once);
-            this.TelemetryLogger.Verify(
+            TelemetryLogger.Verify(
                 t => t.LogError(
                     It.Is<ErrorMessage>(message => message.Message == "RunId is updated with ClassificationId Error")),
                 Times.Once);
             using var assertContext = new ApplicationDBContext(_dbContextOptions);
             Assert.AreEqual(
                 (int)RunClassification.ERROR,
-                assertContext.CalculatorRuns.Single(run => run.Id == runId).CalculatorRunClassificationId);
+                (await assertContext.CalculatorRuns.SingleAsync(run => run.Id == runId)).CalculatorRunClassificationId);
         }
 
         protected static IEnumerable<CalculatorRunOrganisationDataMaster> GetCalculatorRunOrganisationDataMaster()
@@ -797,7 +772,7 @@
         protected IEnumerable<CalculatorRunOrganisationDataDetail> GetCalculatorRunOrganisationDataDetails()
         {
             var list = new List<CalculatorRunOrganisationDataDetail>();
-            list.AddRange(new List<CalculatorRunOrganisationDataDetail>()
+            list.AddRange(new List<CalculatorRunOrganisationDataDetail>
             {
                 new () //Added first to ensure the 2nd obligated instance gets picked up
                 {
@@ -1107,8 +1082,8 @@
             var dbChunkerService = new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>();
 
            var service = new TransposePomAndOrgDataService(
-                this._context,
-                this.CommandTimeoutService,
+                _context,
+                CommandTimeoutService,
                 mockProducerDetailService.Object,
                 dbChunkerService.Object,
                 mockErrorReportService.Object,

@@ -1,12 +1,10 @@
-﻿namespace EPR.Calculator.API.Validators
-{
-    using System.Collections.Generic;
-    using System.Linq;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.Service.Function.Interface;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.AspNetCore.Http;
+﻿using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Interface;
+using EPR.Calculator.Service.Function.Models;
+using Microsoft.AspNetCore.Http;
 
+namespace EPR.Calculator.Service.Function.Misc
+{
     /// <summary>
     /// Initializes a new instance of the <see cref="RpdStatusDataValidator"/> class.
     /// </summary>
@@ -68,8 +66,8 @@
 
         public RpdStatusValidation IsValidSuccessfulRun(int runId)
         {
-            var pomDataExists = this.wrapper.AnyPomData();
-            var organisationDataExists = this.wrapper.AnyOrganisationData();
+            var pomDataExists = wrapper.AnyPomData();
+            var organisationDataExists = wrapper.AnyOrganisationData();
             if (!pomDataExists || !organisationDataExists)
             {
                 return new RpdStatusValidation

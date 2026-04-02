@@ -1,7 +1,4 @@
-﻿// <copyright file="EnvironmentVariableKeys.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
-namespace EPR.Calculator.Service.Function.Constants
+﻿namespace EPR.Calculator.Service.Function.Constants
 {
     /// <summary>
     /// Contains keys for environment variables used in the calculator service.

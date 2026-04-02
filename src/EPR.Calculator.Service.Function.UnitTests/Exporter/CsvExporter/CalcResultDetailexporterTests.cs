@@ -1,14 +1,11 @@
+using System.Text;
+using AutoFixture;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
+using EPR.Calculator.Service.Function.Models;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 {
-    using System;
-    using System.Text;
-    using AutoFixture;
-    using EPR.Calculator.API.Data.Models;
-    using EPR.Calculator.Service.Common;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     [TestClass]
     public class CalcResultDetailexporterTests
     {

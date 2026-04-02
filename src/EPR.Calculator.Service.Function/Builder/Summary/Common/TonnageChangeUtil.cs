@@ -1,11 +1,6 @@
-﻿using EPR.Calculator.Service.Function.Constants;
+﻿using System.Globalization;
+using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 {

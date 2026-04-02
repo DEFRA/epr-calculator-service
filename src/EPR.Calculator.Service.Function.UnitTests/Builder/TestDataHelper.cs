@@ -1,14 +1,12 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder
+﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Services;
+
+namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.API.Data.Models;
-    using EPR.Calculator.Service.Common;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Models;
-    using EPR.Calculator.Service.Function.Services;
-
-
     public static class TestDataHelper
     {
         public static CalcResult GetCalcResult()
@@ -170,17 +168,17 @@
 
         public static CalcResultDetail GetCalcResultDetail()
         {
-            return new CalcResultDetail() { RunId = 1, RelativeYear = new RelativeYear(2024) };
+            return new CalcResultDetail { RunId = 1, RelativeYear = new RelativeYear(2024) };
         }
 
         public static CalcResultLaDisposalCostData GetCalcResultLaDisposalCostData()
         {
-            return new CalcResultLaDisposalCostData()
+            return new CalcResultLaDisposalCostData
             {
                 Name = "Disposal Cost Data",
-                CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>()
+                CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>
                 {
-                    new CalcResultLaDisposalCostDataDetail()
+                    new CalcResultLaDisposalCostDataDetail
                     {
                         Name = "Material",
                         Material = null,
@@ -196,7 +194,7 @@
                         DisposalCostPricePerTonne = "Disposal Cost Price Per Tonne",
                         OrderId = 1,
                     },
-                    new CalcResultLaDisposalCostDataDetail()
+                    new CalcResultLaDisposalCostDataDetail
                     {
                         Name = "Aluminium",
                         Material = null,
@@ -212,7 +210,7 @@
                         DisposalCostPricePerTonne = "£0.6676",
                         OrderId = 2,
                     },
-                    new CalcResultLaDisposalCostDataDetail()
+                    new CalcResultLaDisposalCostDataDetail
                     {
                         Name = "Fibre composite",
                         Material = null,
@@ -228,7 +226,7 @@
                         DisposalCostPricePerTonne = "£0.7825",
                         OrderId = 3,
                     },
-                    new CalcResultLaDisposalCostDataDetail()
+                    new CalcResultLaDisposalCostDataDetail
                     {
                         Name = "Glass",
                         Material = null,
@@ -244,7 +242,7 @@
                         DisposalCostPricePerTonne = "£6.4404",
                         OrderId = 4,
                     },
-                    new CalcResultLaDisposalCostDataDetail()
+                    new CalcResultLaDisposalCostDataDetail
                     {
                         Name = "Paper or card",
                         Material = null,
@@ -260,7 +258,7 @@
                         DisposalCostPricePerTonne = "£2.4488",
                         OrderId = 5,
                     },
-                    new CalcResultLaDisposalCostDataDetail()
+                    new CalcResultLaDisposalCostDataDetail
                     {
                         Name = "Plastic",
                         Material = null,
@@ -276,7 +274,7 @@
                         DisposalCostPricePerTonne = "£2.1601",
                         OrderId = 6,
                     },
-                    new CalcResultLaDisposalCostDataDetail()
+                    new CalcResultLaDisposalCostDataDetail
                     {
                         Name = "Steel",
                         Material = null,
@@ -292,7 +290,7 @@
                         DisposalCostPricePerTonne = "£1.9813",
                         OrderId = 7,
                     },
-                    new CalcResultLaDisposalCostDataDetail()
+                    new CalcResultLaDisposalCostDataDetail
                     {
                         Name = "Wood",
                         Material = null,
@@ -308,7 +306,7 @@
                         DisposalCostPricePerTonne = "£2.0000",
                         OrderId = 8,
                     },
-                    new CalcResultLaDisposalCostDataDetail()
+                    new CalcResultLaDisposalCostDataDetail
                     {
                         Name = "Other materials",
                         Material = null,
@@ -324,7 +322,7 @@
                         DisposalCostPricePerTonne = "£1.1954",
                         OrderId = 9,
                     },
-                    new CalcResultLaDisposalCostDataDetail()
+                    new CalcResultLaDisposalCostDataDetail
                     {
                         Name = "Total",
                         Material = null,
@@ -346,10 +344,10 @@
 
         public static CalcResultLapcapData GetCalcResultLapcapData()
         {
-            return new CalcResultLapcapData()
+            return new CalcResultLapcapData
             {
                 Name = "LAPCAP Data",
-                CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>()
+                CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>
                 {
                     new CalcResultLapcapDataDetails
                     {
@@ -522,12 +520,12 @@
 
         public static CalcResultOnePlusFourApportionment GetCalcResultOnePlusFourApportionment()
         {
-            return new CalcResultOnePlusFourApportionment()
+            return new CalcResultOnePlusFourApportionment
             {
                 Name = "One Plus Four Apportionment",
                 CalcResultOnePlusFourApportionmentDetails = new List<CalcResultOnePlusFourApportionmentDetail>
                 {
-                    new CalcResultOnePlusFourApportionmentDetail()
+                    new CalcResultOnePlusFourApportionmentDetail
                     {
                         EnglandDisposalTotal = "80",
                         NorthernIrelandDisposalTotal = "70",
@@ -540,7 +538,7 @@
                         WalesTotal = 020M,
                         Name = "Test",
                     },
-                    new CalcResultOnePlusFourApportionmentDetail()
+                    new CalcResultOnePlusFourApportionmentDetail
                     {
                         EnglandDisposalTotal = "80",
                         NorthernIrelandDisposalTotal = "70",
@@ -553,7 +551,7 @@
                         WalesTotal = 020M,
                         Name = "Test",
                     },
-                    new CalcResultOnePlusFourApportionmentDetail()
+                    new CalcResultOnePlusFourApportionmentDetail
                     {
                         EnglandDisposalTotal = "80",
                         NorthernIrelandDisposalTotal = "70",
@@ -566,7 +564,7 @@
                         WalesTotal = 020M,
                         Name = "Test",
                     },
-                    new CalcResultOnePlusFourApportionmentDetail()
+                    new CalcResultOnePlusFourApportionmentDetail
                     {
                         EnglandDisposalTotal = "80",
                         NorthernIrelandDisposalTotal = "70",
@@ -579,7 +577,7 @@
                         WalesTotal = 020M,
                         Name = "Test",
                     },
-                    new CalcResultOnePlusFourApportionmentDetail()
+                    new CalcResultOnePlusFourApportionmentDetail
                     {
                         EnglandDisposalTotal = "80",
                         NorthernIrelandDisposalTotal = "70",
@@ -598,7 +596,7 @@
 
         public static CalcResultCommsCost GetCalcResultCommsCostReportDetail()
         {
-            return new CalcResultCommsCost()
+            return new CalcResultCommsCost
             {
                 CalcResultCommsCostCommsCostByMaterial =
                 [
@@ -742,9 +740,9 @@
 
         public static List<CalcResultSummaryProducerDisposalFees> GetProducerDisposalFees()
         {
-            return new List<CalcResultSummaryProducerDisposalFees>()
+            return new List<CalcResultSummaryProducerDisposalFees>
             {
-                new CalcResultSummaryProducerDisposalFees()
+                new CalcResultSummaryProducerDisposalFees
                 {
                     ProducerId = "1",
                     ProducerIdInt = 1,
@@ -869,9 +867,9 @@
 
         public static List<CalcResultSummaryProducerDisposalFees> GetProducerDisposalFeesForOverAllTotal()
         {
-            return new List<CalcResultSummaryProducerDisposalFees>()
+            return new List<CalcResultSummaryProducerDisposalFees>
             {
-                new CalcResultSummaryProducerDisposalFees()
+                new CalcResultSummaryProducerDisposalFees
                 {
                     ProducerId = "1",
                     ProducerIdInt = 1,
@@ -997,9 +995,9 @@
 
         public static List<CalcResultSummaryProducerDisposalFees> GetProducerDisposalFeesTonnageValueNull()
         {
-            return new List<CalcResultSummaryProducerDisposalFees>()
+            return new List<CalcResultSummaryProducerDisposalFees>
             {
-                new CalcResultSummaryProducerDisposalFees()
+                new CalcResultSummaryProducerDisposalFees
                 {
                     ProducerId = "1",
                     ProducerIdInt = 1,
@@ -1414,12 +1412,12 @@
             {
                 ColumnHeaders = new List<CalcResultScaledupProducerHeader>(),
                 MaterialBreakdownHeaders = new List<CalcResultScaledupProducerHeader>(),
-                TitleHeader = new CalcResultScaledupProducerHeader()
+                TitleHeader = new CalcResultScaledupProducerHeader
                 {
                     Name = "Scaled-up Producers",
                     ColumnIndex = 1,
                 },
-                ScaledupProducers = new List<CalcResultScaledupProducer>()
+                ScaledupProducers = new List<CalcResultScaledupProducer>
                 {
                     new CalcResultScaledupProducer
                     {
@@ -1480,12 +1478,12 @@
             {
                 ColumnHeaders = new List<CalcResultPartialObligationHeader>(),
                 MaterialBreakdownHeaders = new List<CalcResultPartialObligationHeader>(),
-                TitleHeader = new CalcResultPartialObligationHeader()
+                TitleHeader = new CalcResultPartialObligationHeader
                 {
                     Name = "Partial Obligation Calculation",
                     ColumnIndex = 1,
                 },
-                PartialObligations = new List<CalcResultPartialObligation>()
+                PartialObligations = new List<CalcResultPartialObligation>
                 {
                     new CalcResultPartialObligation
                     {
@@ -1648,7 +1646,7 @@
 
         public static List<ProducerReportedMaterial> GetProducerReportedMaterials()
         {
-            return new List<ProducerReportedMaterial>()
+            return new List<ProducerReportedMaterial>
             {
                 new ProducerReportedMaterial
                 {
@@ -2190,7 +2188,6 @@
         public static IEnumerable<CalculatorRunOrganisationDataDetail> GetCalculatorRunOrganisationDataDetails()
         {
             var submitterId1 = Guid.NewGuid();
-            var submitterId2 = Guid.NewGuid();
             var list = new List<CalculatorRunOrganisationDataDetail>();
             list.Add(new CalculatorRunOrganisationDataDetail
             {
@@ -2221,7 +2218,7 @@
                 OrganisationName = "",
                 TradingName = "",
                 LoadTimeStamp = DateTime.UtcNow,
-                CalculatorRunOrganisationDataMasterId = TestDataHelper.GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
+                CalculatorRunOrganisationDataMasterId = GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
             });
             list.Add(new CalculatorRunOrganisationDataDetail
             {
@@ -2230,7 +2227,7 @@
                 SubsidiaryId = "Sub 2",
                 OrganisationName = "",
                 LoadTimeStamp = DateTime.UtcNow,
-                CalculatorRunOrganisationDataMasterId = TestDataHelper.GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
+                CalculatorRunOrganisationDataMasterId = GetCalculatorRunOrganisationDataMaster().ToList()[0].Id,
             });
             list.Add(new CalculatorRunOrganisationDataDetail
             {
@@ -2382,7 +2379,7 @@
         public static void SeedDatabaseForInitialRun(ApplicationDBContext context)
         {
             //calculator runs
-            var runs = new List<CalculatorRun>() { new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=7, Name = "CalculatorRunTest1" },
+            var runs = new List<CalculatorRun> { new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=7, Name = "CalculatorRunTest1" },
              new CalculatorRun { Id = 2, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest2" }};
             context.CalculatorRuns.AddRange(runs);
 
@@ -2410,11 +2407,11 @@
             });
 
 
-            var producerDetails = new List<ProducerDetail>()
-            {  new ProducerDetail() { Id =1 , CalculatorRunId = 1, ProducerName="Test1", ProducerId = 1, TradingName = "TN1"},
-             new ProducerDetail() { Id =2 , CalculatorRunId = 1, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
-              new ProducerDetail() { Id =3 , CalculatorRunId = 2, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"},
-               new ProducerDetail() { Id =4 , CalculatorRunId = 1, ProducerName="Test3", ProducerId = 3, TradingName = "TN4"},
+            var producerDetails = new List<ProducerDetail>
+            {  new ProducerDetail { Id =1 , CalculatorRunId = 1, ProducerName="Test1", ProducerId = 1, TradingName = "TN1"},
+             new ProducerDetail { Id =2 , CalculatorRunId = 1, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
+              new ProducerDetail { Id =3 , CalculatorRunId = 2, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"},
+               new ProducerDetail { Id =4 , CalculatorRunId = 1, ProducerName="Test3", ProducerId = 3, TradingName = "TN4"},
             };
 
             context.ProducerDetail.AddRange(producerDetails);
@@ -2441,8 +2438,8 @@
 
 
 
-            var designatedRunInvoice = new List<ProducerDesignatedRunInvoiceInstruction>()
-            { new ProducerDesignatedRunInvoiceInstruction()
+            var designatedRunInvoice = new List<ProducerDesignatedRunInvoiceInstruction>
+            { new ProducerDesignatedRunInvoiceInstruction
                 {
                     BillingInstructionId = "1_1",
                     CalculatorRunId = 1,
@@ -2453,7 +2450,7 @@
                     OutstandingBalance = 100,
 
                 },
-                new ProducerDesignatedRunInvoiceInstruction()
+                new ProducerDesignatedRunInvoiceInstruction
                 {
                     BillingInstructionId = "1_2",
                     CalculatorRunId = 1,
@@ -2470,8 +2467,8 @@
             context.ProducerDesignatedRunInvoiceInstruction.AddRange(designatedRunInvoice);
 
 
-            var billingInstructionList = new List<ProducerResultFileSuggestedBillingInstruction>()
-            {  new ProducerResultFileSuggestedBillingInstruction()
+            var billingInstructionList = new List<ProducerResultFileSuggestedBillingInstruction>
+            {  new ProducerResultFileSuggestedBillingInstruction
                 {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
@@ -2481,8 +2478,8 @@
                     CalculatorRunId = 1,
                     BillingInstructionAcceptReject = "Accepted"
                 },
-            new ProducerResultFileSuggestedBillingInstruction()
-                {
+            new ProducerResultFileSuggestedBillingInstruction
+            {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
                     ProducerId = 2,
@@ -2491,8 +2488,8 @@
                     CalculatorRunId = 1,
                     BillingInstructionAcceptReject = "Accepted"
                 },
-             new ProducerResultFileSuggestedBillingInstruction()
-                {
+             new ProducerResultFileSuggestedBillingInstruction
+             {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
                     ProducerId = 3,
@@ -2507,9 +2504,9 @@
 
             context.ProducerResultFileSuggestedBillingInstruction.AddRange(billingInstructionList);
 
-            var materialInvoiceTonnage = new List<ProducerInvoicedMaterialNetTonnage>()
+            var materialInvoiceTonnage = new List<ProducerInvoicedMaterialNetTonnage>
             {
-                 new ProducerInvoicedMaterialNetTonnage()
+                 new ProducerInvoicedMaterialNetTonnage
                  {
                       CalculatorRunId =1,
                       MaterialId= 1,
@@ -2517,8 +2514,8 @@
                       ProducerId =1, Id=1
 
                  },
-                new ProducerInvoicedMaterialNetTonnage()
-                 {
+                new ProducerInvoicedMaterialNetTonnage
+                {
                       CalculatorRunId =1,
                       MaterialId= 2,
                       InvoicedNetTonnage = 100,
@@ -2526,16 +2523,16 @@
                     Id=2
 
                  },
-            new ProducerInvoicedMaterialNetTonnage()
-                 {
+            new ProducerInvoicedMaterialNetTonnage
+            {
                       CalculatorRunId =1,
                       MaterialId= 1,
                       InvoicedNetTonnage = 100,
                       ProducerId =2, Id=3
 
                  },
-                new ProducerInvoicedMaterialNetTonnage()
-                 {
+                new ProducerInvoicedMaterialNetTonnage
+                {
                       CalculatorRunId =1,
                       MaterialId= 2,
                       InvoicedNetTonnage = 100,
@@ -2554,17 +2551,17 @@
         public static void SeedDatabaseForUnclassified(ApplicationDBContext context)
         {
             //calculator runs
-            var runs = new List<CalculatorRun>() { new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest1" },
+            var runs = new List<CalculatorRun> { new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest1" },
              new CalculatorRun { Id = 2, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest2" }};
             context.CalculatorRuns.AddRange(runs);
 
 
 
-            var producerDetails = new List<ProducerDetail>()
-            {  new ProducerDetail() { Id =1 , CalculatorRunId = 1, ProducerName="Test1", ProducerId = 1, TradingName = "TN1"},
-             new ProducerDetail() { Id =2 , CalculatorRunId = 1, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
-              new ProducerDetail() { Id =3 , CalculatorRunId = 2, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"},
-               new ProducerDetail() { Id =4 , CalculatorRunId = 1, ProducerName="Test3", ProducerId = 3, TradingName = "TN4"},
+            var producerDetails = new List<ProducerDetail>
+            {  new ProducerDetail { Id =1 , CalculatorRunId = 1, ProducerName="Test1", ProducerId = 1, TradingName = "TN1"},
+             new ProducerDetail { Id =2 , CalculatorRunId = 1, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
+              new ProducerDetail { Id =3 , CalculatorRunId = 2, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"},
+               new ProducerDetail { Id =4 , CalculatorRunId = 1, ProducerName="Test3", ProducerId = 3, TradingName = "TN4"},
             };
 
             context.ProducerDetail.AddRange(producerDetails);
@@ -2591,8 +2588,8 @@
 
 
 
-            var designatedRunInvoice = new List<ProducerDesignatedRunInvoiceInstruction>()
-            { new ProducerDesignatedRunInvoiceInstruction()
+            var designatedRunInvoice = new List<ProducerDesignatedRunInvoiceInstruction>
+            { new ProducerDesignatedRunInvoiceInstruction
                 {
                     BillingInstructionId = "1_1",
                     CalculatorRunId = 1,
@@ -2603,7 +2600,7 @@
                     OutstandingBalance = 100,
 
                 },
-                new ProducerDesignatedRunInvoiceInstruction()
+                new ProducerDesignatedRunInvoiceInstruction
                 {
                     BillingInstructionId = "1_2",
                     CalculatorRunId = 1,
@@ -2620,8 +2617,8 @@
             context.ProducerDesignatedRunInvoiceInstruction.AddRange(designatedRunInvoice);
 
 
-            var billingInstructionList = new List<ProducerResultFileSuggestedBillingInstruction>()
-            {  new ProducerResultFileSuggestedBillingInstruction()
+            var billingInstructionList = new List<ProducerResultFileSuggestedBillingInstruction>
+            {  new ProducerResultFileSuggestedBillingInstruction
                 {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
@@ -2631,8 +2628,8 @@
                     CalculatorRunId = 1,
                     BillingInstructionAcceptReject = "Accepted"
                 },
-            new ProducerResultFileSuggestedBillingInstruction()
-                {
+            new ProducerResultFileSuggestedBillingInstruction
+            {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
                     ProducerId = 2,
@@ -2641,8 +2638,8 @@
                     CalculatorRunId = 1,
                     BillingInstructionAcceptReject = "Accepted"
                 },
-             new ProducerResultFileSuggestedBillingInstruction()
-                {
+             new ProducerResultFileSuggestedBillingInstruction
+             {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
                     ProducerId = 3,
@@ -2657,9 +2654,9 @@
 
             context.ProducerResultFileSuggestedBillingInstruction.AddRange(billingInstructionList);
 
-            var materialInvoiceTonnage = new List<ProducerInvoicedMaterialNetTonnage>()
+            var materialInvoiceTonnage = new List<ProducerInvoicedMaterialNetTonnage>
             {
-                 new ProducerInvoicedMaterialNetTonnage()
+                 new ProducerInvoicedMaterialNetTonnage
                  {
                       CalculatorRunId =1,
                       MaterialId= 1,
@@ -2667,8 +2664,8 @@
                       ProducerId =1, Id=1
 
                  },
-                new ProducerInvoicedMaterialNetTonnage()
-                 {
+                new ProducerInvoicedMaterialNetTonnage
+                {
                       CalculatorRunId =1,
                       MaterialId= 2,
                       InvoicedNetTonnage = 100,
@@ -2676,16 +2673,16 @@
                     Id=2
 
                  },
-            new ProducerInvoicedMaterialNetTonnage()
-                 {
+            new ProducerInvoicedMaterialNetTonnage
+            {
                       CalculatorRunId =1,
                       MaterialId= 1,
                       InvoicedNetTonnage = 100,
                       ProducerId =2, Id=3
 
                  },
-                new ProducerInvoicedMaterialNetTonnage()
-                 {
+                new ProducerInvoicedMaterialNetTonnage
+                {
                       CalculatorRunId =1,
                       MaterialId= 2,
                       InvoicedNetTonnage = 100,

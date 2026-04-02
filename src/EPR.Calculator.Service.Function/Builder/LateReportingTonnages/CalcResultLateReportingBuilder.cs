@@ -1,20 +1,10 @@
-﻿namespace EPR.Calculator.Service.Function.Builder.LateReportingTonnages
+﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace EPR.Calculator.Service.Function.Builder.LateReportingTonnages
 {
-    using System.Collections.Generic;
-
-    using System.Linq;
-    using System.Security.Cryptography.X509Certificates;
-
-    using System.Threading.Tasks;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-
-    using EPR.Calculator.Service.Function.Dtos;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.AspNetCore.Routing.Template;
-
-    using Microsoft.EntityFrameworkCore;
-
     public class CalcResultLateReportingBuilder : ICalcResultLateReportingBuilder
     {
         public const string LateReportingHeader = "Parameters - Late Reporting Tonnages";
@@ -33,11 +23,11 @@
 
         public async Task<CalcResultLateReportingTonnage> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
         {
-            var result = await (from run in this.context.CalculatorRuns
-                                join master in this.context.DefaultParameterSettings
+            var result = await (from run in context.CalculatorRuns
+                                join master in context.DefaultParameterSettings
                                 on run.DefaultParameterSettingMasterId equals master.Id
-                                join detail in this.context.DefaultParameterSettingDetail on master.Id equals detail.DefaultParameterSettingMasterId
-                                join template in this.context.DefaultParameterTemplateMasterList on detail.ParameterUniqueReferenceId equals template.ParameterUniqueReferenceId
+                                join detail in context.DefaultParameterSettingDetail on master.Id equals detail.DefaultParameterSettingMasterId
+                                join template in context.DefaultParameterTemplateMasterList on detail.ParameterUniqueReferenceId equals template.ParameterUniqueReferenceId
                                 where run.Id == resultsRequestDto.RunId && template.ParameterType == TonnageHeading
                                 select new { template.ParameterCategory, detail.ParameterValue}).ToListAsync();
 

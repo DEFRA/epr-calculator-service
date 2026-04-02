@@ -1,25 +1,22 @@
-﻿namespace EPR.Calculator.Service.Function.Builder.Summary.Common
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Linq;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.API.Data.Enums;
-    using EPR.Calculator.Service.Function.Builder.CommsCost;
-    using EPR.Calculator.Service.Function.Builder.ParametersOther;
-    using EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions;
-    using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA;
-    using EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts;
-    using EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C;
-    using EPR.Calculator.Service.Function.Builder.Summary.SaSetupCosts;
-    using EPR.Calculator.Service.Function.Builder.Summary.ThreeSA;
-    using EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown;
-    using EPR.Calculator.Service.Function.Builder.Summary.TwoCCommsCost;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Function.Models;
+using System.Globalization;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Enums;
+using EPR.Calculator.Service.Function.Builder.CommsCost;
+using EPR.Calculator.Service.Function.Builder.ParametersOther;
+using EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions;
+using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA;
+using EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts;
+using EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C;
+using EPR.Calculator.Service.Function.Builder.Summary.SaSetupCosts;
+using EPR.Calculator.Service.Function.Builder.Summary.ThreeSa;
+using EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown;
+using EPR.Calculator.Service.Function.Builder.Summary.TwoCCommsCost;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Models;
 
+namespace EPR.Calculator.Service.Function.Builder.Summary.Common
+{
     public static class CalcResultSummaryUtil
     {
         private const int decimalRoundUp = 2;
@@ -57,10 +54,10 @@
                 && !p.IsSubtotalRow
                 && !p.IsTotalRow);
 
-            if (scaledupProducerForAllSubmissionPeriods!.Any())
+            if (scaledupProducerForAllSubmissionPeriods.Any())
             {
                 decimal tonnage = 0;
-                foreach (var scaledupProducerTonnageByMaterial in scaledupProducerForAllSubmissionPeriods!.Select(x => x.ScaledupProducerTonnageByMaterial))
+                foreach (var scaledupProducerTonnageByMaterial in scaledupProducerForAllSubmissionPeriods.Select(x => x.ScaledupProducerTonnageByMaterial))
                 {
                     switch (packagingType)
                     {
@@ -96,13 +93,13 @@
                 switch (packagingType)
                 {
                     case PackagingTypes.Household:
-                        return maybePartialObligation!.PartialObligationTonnageByMaterial.GetValueOrDefault(material.Code)?.PartialReportedHouseholdPackagingWasteTonnage ?? 0;
+                        return maybePartialObligation.PartialObligationTonnageByMaterial.GetValueOrDefault(material.Code)?.PartialReportedHouseholdPackagingWasteTonnage ?? 0;
                     case PackagingTypes.PublicBin:
-                        return maybePartialObligation!.PartialObligationTonnageByMaterial.GetValueOrDefault(material.Code)?.PartialReportedPublicBinTonnage ?? 0;
+                        return maybePartialObligation.PartialObligationTonnageByMaterial.GetValueOrDefault(material.Code)?.PartialReportedPublicBinTonnage ?? 0;
                     case PackagingTypes.ConsumerWaste:
-                        return maybePartialObligation!.PartialObligationTonnageByMaterial.GetValueOrDefault(material.Code)?.PartialReportedSelfManagedConsumerWasteTonnage ?? 0;
+                        return maybePartialObligation.PartialObligationTonnageByMaterial.GetValueOrDefault(material.Code)?.PartialReportedSelfManagedConsumerWasteTonnage ?? 0;
                     case PackagingTypes.HouseholdDrinksContainers:
-                        return maybePartialObligation!.PartialObligationTonnageByMaterial.GetValueOrDefault(material.Code)?.PartialHouseholdDrinksContainersTonnageGlass ?? 0;
+                        return maybePartialObligation.PartialObligationTonnageByMaterial.GetValueOrDefault(material.Code)?.PartialHouseholdDrinksContainersTonnageGlass ?? 0;
                     default:
                         return 0;
                 }
@@ -121,13 +118,13 @@
             var maybePartialScaledUpTonnage = GetPartialTonnage(producer, material, packagingType, partialObligations);
 
             if (maybePartialScaledUpTonnage != null) {
-                return (decimal)maybePartialScaledUpTonnage!;
+                return (decimal)maybePartialScaledUpTonnage;
             }
 
             var maybeScaledUpTonnage = GetScaledUpTonnage(producer, material, packagingType, scaledUpProducers);
 
             if (maybeScaledUpTonnage != null) {
-                return (decimal)maybeScaledUpTonnage!;
+                return (decimal)maybeScaledUpTonnage;
             }
 
             var reportedMaterials = producer.ProducerReportedMaterials

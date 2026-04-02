@@ -1,7 +1,7 @@
-﻿namespace EPR.Calculator.Service.Function.Enums
-{
-    using System.ComponentModel;
+﻿using System.ComponentModel;
 
+namespace EPR.Calculator.Service.Function.Enums
+{
     public enum RunClassification
     {
         [Description("IN THE QUEUE")]

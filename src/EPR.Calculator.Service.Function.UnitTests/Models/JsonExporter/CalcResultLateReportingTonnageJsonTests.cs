@@ -1,9 +1,8 @@
+using EPR.Calculator.Service.Function.Models.JsonExporter;
+using EPR.Calculator.Service.Function.UnitTests.Builder;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
 {
-    using EPR.Calculator.Service.Function.Models.JsonExporter;
-    using EPR.Calculator.Service.Function.UnitTests.Builder;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     [TestClass]
     public class CalcResultLateReportingTonnageJsonTests
     {
@@ -23,8 +22,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             var plastic = details.Find(d => d.MaterialName == "Plastic");
             Assert.IsNotNull(aluminium);
             Assert.IsNotNull(plastic);
-            Assert.AreEqual(8000.00m, aluminium!.TotalLateReportingTonnage);
-            Assert.AreEqual(2000.00m, plastic!.TotalLateReportingTonnage);
+            Assert.AreEqual(8000.00m, aluminium.TotalLateReportingTonnage);
+            Assert.AreEqual(2000.00m, plastic.TotalLateReportingTonnage);
             Assert.AreEqual(10020.00m, result.CalcResultLateReportingTonnageTotal);
         }
     }

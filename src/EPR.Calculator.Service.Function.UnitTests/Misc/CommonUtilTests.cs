@@ -1,8 +1,7 @@
+using EPR.Calculator.Service.Function.Misc;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Misc
 {
-    using EPR.Calculator.Service.Function.Misc;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     [TestClass]
     public class CommonUtilTests
     {

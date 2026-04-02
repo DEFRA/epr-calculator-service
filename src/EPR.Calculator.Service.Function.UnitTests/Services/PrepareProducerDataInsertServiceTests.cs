@@ -1,16 +1,11 @@
+using AutoFixture;
+using EPR.Calculator.Service.Common.Logging;
+using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Services;
+using Moq;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
-    using System;
-    using System.Text;
-    using System.Threading.Tasks;
-    using AutoFixture;
-    using EPR.Calculator.Service.Common.Logging;
-    using EPR.Calculator.Service.Function.Models;
-    using EPR.Calculator.Service.Function.Services;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Moq;
-
     [TestClass]
     public class PrepareProducerDataInsertServiceTests
     {
@@ -22,7 +17,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             _billingInstructionService = new Mock<IBillingInstructionService>();
             _producerInvoiceNetTonnageService = new Mock<IProducerInvoiceNetTonnageService>();
             _telemetryLogger = new Mock<ICalculatorTelemetryLogger>();
-            this.testClass = new PrepareProducerDataInsertService(_billingInstructionService.Object, _producerInvoiceNetTonnageService.Object, _telemetryLogger.Object);
+            testClass = new PrepareProducerDataInsertService(_billingInstructionService.Object, _producerInvoiceNetTonnageService.Object, _telemetryLogger.Object);
         }
 
         private PrepareProducerDataInsertService testClass { get; init; }

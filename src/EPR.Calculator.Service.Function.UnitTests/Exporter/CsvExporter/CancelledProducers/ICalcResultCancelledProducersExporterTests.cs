@@ -1,11 +1,7 @@
-﻿using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
+﻿using System.Text;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
 using EPR.Calculator.Service.Function.Models;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.CancelledProducers
 {

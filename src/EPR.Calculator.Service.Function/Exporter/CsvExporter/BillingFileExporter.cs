@@ -1,4 +1,6 @@
-﻿using EPR.Calculator.Service.Common.Utils;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text;
+using EPR.Calculator.Service.Common.Utils;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
@@ -6,17 +8,10 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.RejectedProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
-using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
 using EPR.Calculator.Service.Function.Models;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 {
@@ -50,18 +45,18 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             ICalcResultCancelledProducersExporter calcResultCancelledProducersExporter,
             ICalcResultRejectedProducersExporter calcResultRejectedProducersExporter)
         {
-            this.resultDetailexporterCsv = resultDetailexporter;
-            this.onePlusFourApportionmentExporterCsv = onePlusFourApportionmentExporter;
-            this.lateReportingExporterCsv = lateReportingExporter;
-            this.calcResultScaledupProducersExporterCsv = calcResultScaledupProducersExporter;
-            this.calcResultPartialObligationsExporterCsv = calcResultPartialObligationsExporter;
-            this.lapcaptDetailExporterCsv = lapcaptDetailExporter;
-            this.parameterOtherCostsCsv = parameterOtherCosts;
-            this.calcResultSummaryExporterCsv = calcResultSummaryExporter;
-            this.laDisposalCostExporterCsv = laDisposalCostExporter;
-            this.commsCostExporterCsv = commsCostExporter;
-            this.calcResultCancelledProducersExporterCsv = calcResultCancelledProducersExporter;
-            this.calcResultRejectedProducersExporterCsv = calcResultRejectedProducersExporter;
+            resultDetailexporterCsv = resultDetailexporter;
+            onePlusFourApportionmentExporterCsv = onePlusFourApportionmentExporter;
+            lateReportingExporterCsv = lateReportingExporter;
+            calcResultScaledupProducersExporterCsv = calcResultScaledupProducersExporter;
+            calcResultPartialObligationsExporterCsv = calcResultPartialObligationsExporter;
+            lapcaptDetailExporterCsv = lapcaptDetailExporter;
+            parameterOtherCostsCsv = parameterOtherCosts;
+            calcResultSummaryExporterCsv = calcResultSummaryExporter;
+            laDisposalCostExporterCsv = laDisposalCostExporter;
+            commsCostExporterCsv = commsCostExporter;
+            calcResultCancelledProducersExporterCsv = calcResultCancelledProducersExporter;
+            calcResultRejectedProducersExporterCsv = calcResultRejectedProducersExporter;
         }
 
         public string Export(CalcResult calcResult, IEnumerable<int> acceptedProducerIds)

@@ -1,17 +1,10 @@
 ﻿using EPR.Calculator.API.Data;
-using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.ErrorReport;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Dtos;
 using EPR.Calculator.Service.Function.Enums;
-using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Misc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
 {
@@ -40,7 +33,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
             context.CalculatorRuns.AddRange(TestDataHelper.GetCaculatorRuns());
 
             context.ErrorReports.AddRange(
-                new EPR.Calculator.API.Data.DataModels.ErrorReport
+                new API.Data.DataModels.ErrorReport
                 {
                     Id = 1,
                     CalculatorRunId = 1,
@@ -50,7 +43,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
                     CreatedAt = DateTime.UtcNow,
                     CreatedBy = "Test user"
                 },
-                new EPR.Calculator.API.Data.DataModels.ErrorReport
+                new API.Data.DataModels.ErrorReport
                 {
                     Id = 2,
                     CalculatorRunId = 1,
@@ -60,7 +53,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
                     CreatedAt = DateTime.UtcNow,
                     CreatedBy = "Test user"
                 },
-                new EPR.Calculator.API.Data.DataModels.ErrorReport
+                new API.Data.DataModels.ErrorReport
                 {
                     Id = 3,
                     CalculatorRunId = 1,
@@ -70,7 +63,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
                     CreatedAt = DateTime.UtcNow,
                     CreatedBy = "Test user"
                 },
-                new EPR.Calculator.API.Data.DataModels.ErrorReport
+                new API.Data.DataModels.ErrorReport
                 {
                     Id = 5,
                     CalculatorRunId = 1,
@@ -80,7 +73,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
                     CreatedAt = DateTime.UtcNow,
                     CreatedBy = "Test user"
                 },
-                new EPR.Calculator.API.Data.DataModels.ErrorReport
+                new API.Data.DataModels.ErrorReport
                 {
                     Id = 6,
                     CalculatorRunId = 2,
@@ -90,7 +83,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
                     CreatedAt = DateTime.UtcNow,
                     CreatedBy = "Test user"
                 },
-                new EPR.Calculator.API.Data.DataModels.ErrorReport
+                new API.Data.DataModels.ErrorReport
                 {
                     Id = 7,
                     CalculatorRunId = 2,
@@ -100,7 +93,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
                     CreatedAt = DateTime.UtcNow,
                     CreatedBy = "Test user"
                 },
-                new EPR.Calculator.API.Data.DataModels.ErrorReport
+                new API.Data.DataModels.ErrorReport
                 {
                     Id = 8,
                     CalculatorRunId = 2,
@@ -110,7 +103,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
                     CreatedAt = DateTime.UtcNow,
                     CreatedBy = "Test user"
                 },
-                new EPR.Calculator.API.Data.DataModels.ErrorReport
+                new API.Data.DataModels.ErrorReport
                 {
                     Id = 9,
                     CalculatorRunId = 1,
@@ -182,7 +175,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
             context.CalculatorRunOrganisationDataDetails.AddRange(TestDataHelper.GetCalculatorRunOrganisationDataDetails());
             context.CalculatorRuns.AddRange(TestDataHelper.GetCaculatorRuns());
 
-            context.ErrorReports.Add(new EPR.Calculator.API.Data.DataModels.ErrorReport
+            context.ErrorReports.Add(new API.Data.DataModels.ErrorReport
             {
                 Id = 1,
                 CalculatorRunId = 1,
@@ -222,7 +215,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
             context.CalculatorRunOrganisationDataDetails.AddRange(TestDataHelper.GetCalculatorRunOrganisationDataDetails());
             context.CalculatorRuns.AddRange(TestDataHelper.GetCaculatorRuns());
 
-            context.ErrorReports.Add(new EPR.Calculator.API.Data.DataModels.ErrorReport
+            context.ErrorReports.Add(new API.Data.DataModels.ErrorReport
             {
                 Id = 1,
                 CalculatorRunId = 1,

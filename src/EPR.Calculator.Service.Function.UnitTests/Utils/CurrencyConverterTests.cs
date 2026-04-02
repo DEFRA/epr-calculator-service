@@ -1,10 +1,7 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests
-{
-    using System;
-    using AutoFixture;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using EPR.Calculator.Service.Common.Utils;
+﻿using EPR.Calculator.Service.Common.Utils;
 
+namespace EPR.Calculator.Service.Function.UnitTests.Utils
+{
     [TestClass]
     public class CurrencyConverterTests
     {
@@ -32,7 +29,7 @@
         public void CanCallFormatAsGbpCurrencyForZeroCurrency()
         {
             // Act
-            var result = CurrencyConverterUtils.ConvertToCurrency(0, 2);
+            var result = CurrencyConverterUtils.ConvertToCurrency(0);
 
             // Assert
             Assert.AreEqual("£0.00", result);
@@ -42,7 +39,7 @@
         public void CanCallFormatAsGbpCurrencyWithRounding()
         {
             // Act
-            var result = CurrencyConverterUtils.ConvertToCurrency(10.578m, 2);
+            var result = CurrencyConverterUtils.ConvertToCurrency(10.578m);
 
             // Assert
             Assert.AreEqual("£10.58", result);

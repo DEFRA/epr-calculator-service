@@ -1,8 +1,5 @@
-namespace EPR.Calculator.Service.Function.Interface
+﻿namespace EPR.Calculator.Service.Function.Interface
 {
-    using EPR.Calculator.Service.Function.Constants;
-    using System;
-
     public interface IConfigurationService
     {
         string DbConnectionString { get; }

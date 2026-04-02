@@ -1,14 +1,15 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
-{
-    using AutoFixture;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.Service.Function.Builder.Summary.SaSetupCosts;
-    using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Diagnostics;
+﻿using AutoFixture;
+using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Builder.Summary.SaSetupCosts;
+using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
+namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
+{
     [TestClass]
     public class SaSetupCostsProducerTests
     {
@@ -160,13 +161,13 @@
                         TotalValue = 100,
                     },
                 },
-                CalcResultDetail = new CalcResultDetail() { RunId = 1, RelativeYear = new API.Data.Models.RelativeYear(2024) },
-                CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData()
+                CalcResultDetail = new CalcResultDetail { RunId = 1, RelativeYear = new RelativeYear(2024) },
+                CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData
                 {
                     Name = Fixture.Create<string>(),
-                    CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>()
+                    CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>
                     {
-                        new CalcResultLaDisposalCostDataDetail()
+                        new CalcResultLaDisposalCostDataDetail
                         {
                             DisposalCostPricePerTonne="20",
                             England="EnglandTest",
@@ -180,7 +181,7 @@
                             ReportedPublicBinTonnage = Fixture.Create<string>(),
                             ProducerReportedTotalTonnage = Fixture.Create<string>(),
                         },
-                        new CalcResultLaDisposalCostDataDetail()
+                        new CalcResultLaDisposalCostDataDetail
                         {
                             DisposalCostPricePerTonne="20",
                             England="EnglandTest",
@@ -193,7 +194,7 @@
                             ReportedPublicBinTonnage = Fixture.Create<string>(),
                             ProducerReportedTotalTonnage = Fixture.Create<string>(),
                         },
-                        new CalcResultLaDisposalCostDataDetail()
+                        new CalcResultLaDisposalCostDataDetail
                         {
                             DisposalCostPricePerTonne="10",
                             England="EnglandTest",
@@ -208,13 +209,11 @@
                         },
                     },
                 },
-                CalcResultLapcapData = new CalcResultLapcapData()
+                CalcResultLapcapData = new CalcResultLapcapData
                 {
-                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>()
-                    {
-                    },
+                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>(),
                 },
-                CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment()
+                CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment
                 {
                     Name = Fixture.Create<string>(),
                     CalcResultOnePlusFourApportionmentDetails =
@@ -290,12 +289,12 @@
                 CalcResultParameterCommunicationCost = Fixture.Create<CalcResultParameterCommunicationCost>(),
                 CalcResultSummary = new CalcResultSummary
                 {
-                    ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>()
+                    ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
                     {
                         new()
                         {
-                            ProducerCommsFeesByMaterial =  new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>(){ },
-                            ProducerDisposalFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>(){ },
+                            ProducerCommsFeesByMaterial =  new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>(),
+                            ProducerDisposalFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>(),
                             ProducerId ="1",
                             ProducerName ="Test",
                             TotalProducerDisposalFeeWithBadDebtProvision =100,
@@ -305,7 +304,7 @@
                         },
                     },
                 },
-                CalcResultCommsCostReportDetail = new CalcResultCommsCost()
+                CalcResultCommsCostReportDetail = new CalcResultCommsCost
                 {
                     CalcResultCommsCostCommsCostByMaterial =
                     [
@@ -365,7 +364,7 @@
         [TestCleanup]
         public void TearDown()
         {
-            dbContext?.Database.EnsureDeleted();
+            dbContext.Database.EnsureDeleted();
         }
 
         [TestMethod]
@@ -472,7 +471,7 @@
 
         private void CreateProducerDetail()
         {
-            var producerNames = new string[]
+            var producerNames = new[]
             {
                 "Allied Packaging",
                 "Beeline Materials",

@@ -1,10 +1,5 @@
 ﻿using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.Mapper
 {
@@ -12,7 +7,7 @@ namespace EPR.Calculator.Service.Function.Mapper
     {
         public ProducerInvoicedMaterialNetTonnage Map(ProducerInvoiceTonnage producerInvoiceTonnage)
         {
-            return new ProducerInvoicedMaterialNetTonnage()
+            return new ProducerInvoicedMaterialNetTonnage
             {
                 CalculatorRunId = producerInvoiceTonnage.RunId,
                 ProducerId = producerInvoiceTonnage.ProducerId,

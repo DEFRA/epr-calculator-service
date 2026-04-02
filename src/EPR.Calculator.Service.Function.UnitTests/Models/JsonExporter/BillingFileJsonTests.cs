@@ -1,15 +1,12 @@
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Builder.CommsCost;
+using EPR.Calculator.Service.Function.Builder.Lapcap;
+using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Models.JsonExporter;
+using EPR.Calculator.Service.Function.UnitTests.Builder;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
 {
-    using System.Collections.Generic;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.Models;
-    using EPR.Calculator.Service.Function.Builder.CommsCost;
-    using EPR.Calculator.Service.Function.Builder.Lapcap;
-    using EPR.Calculator.Service.Function.Models;
-    using EPR.Calculator.Service.Function.Models.JsonExporter;
-    using EPR.Calculator.Service.Function.UnitTests.Builder;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     [TestClass]
     public class BillingFileJsonTests
     {
@@ -53,13 +50,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             Assert.AreEqual(1, subs[0].ProducerId);
             var calcResults = result.CalculationResults as CalculationResultsJson;
             Assert.IsNotNull(calcResults);
-            Assert.IsNotNull(calcResults!.ProducerCalculationResultsSummary);
+            Assert.IsNotNull(calcResults.ProducerCalculationResultsSummary);
 
         }
 
-        private EPR.Calculator.Service.Function.Models.CalcResult CreateCalcResult()
+        private CalcResult CreateCalcResult()
         {
-            return new EPR.Calculator.Service.Function.Models.CalcResult
+            return new CalcResult
             {
                 CalcResultDetail = new CalcResultDetail
                 {

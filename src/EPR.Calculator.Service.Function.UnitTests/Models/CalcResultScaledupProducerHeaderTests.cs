@@ -1,10 +1,8 @@
+using AutoFixture;
+using EPR.Calculator.Service.Function.Models;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Models
 {
-    using System;
-    using AutoFixture;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     [TestClass]
     public class CalcResultScaledupProducerHeaderTests
     {
@@ -12,7 +10,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
 
         public CalcResultScaledupProducerHeaderTests()
         {
-            this.calcResultScaledupProducerHeader = new CalcResultScaledupProducerHeader
+            calcResultScaledupProducerHeader = new CalcResultScaledupProducerHeader
             {
                 Name = "Some column header name",
                 ColumnIndex = 1,
@@ -28,10 +26,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var testValue = fixture.Create<string>();
 
             // Act
-            this.calcResultScaledupProducerHeader.Name = testValue;
+            calcResultScaledupProducerHeader.Name = testValue;
 
             // Assert
-            Assert.AreEqual(testValue, this.calcResultScaledupProducerHeader.Name);
+            Assert.AreEqual(testValue, calcResultScaledupProducerHeader.Name);
         }
 
         [TestMethod]
@@ -43,10 +41,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var testValue = fixture.Create<int?>();
 
             // Act
-            this.calcResultScaledupProducerHeader.ColumnIndex = testValue;
+            calcResultScaledupProducerHeader.ColumnIndex = testValue;
 
             // Assert
-            Assert.AreEqual(testValue, this.calcResultScaledupProducerHeader.ColumnIndex);
+            Assert.AreEqual(testValue, calcResultScaledupProducerHeader.ColumnIndex);
         }
     }
 }

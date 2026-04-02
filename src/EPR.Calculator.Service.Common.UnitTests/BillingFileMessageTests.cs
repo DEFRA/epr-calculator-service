@@ -1,9 +1,7 @@
+using AutoFixture;
+
 namespace EPR.Calculator.Service.Common.UnitTests
 {
-    using AutoFixture;
-    using Common;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     [TestClass]
     public class BillingFileMessageTests
     {
@@ -12,7 +10,7 @@ namespace EPR.Calculator.Service.Common.UnitTests
         [TestInitialize]
         public void SetUp()
         {
-            _testClass = new BillingFileMessage() {MessageType="Billing", ApprovedBy = "TestUser"};
+            _testClass = new BillingFileMessage {MessageType="Billing", ApprovedBy = "TestUser"};
         }
 
         [TestMethod]
@@ -20,7 +18,7 @@ namespace EPR.Calculator.Service.Common.UnitTests
         {
             // Arrange
             var fixture = new Fixture();
-            var same = new BillingFileMessage() {MessageType = "Billing", ApprovedBy = "TestUser" };
+            var same = new BillingFileMessage {MessageType = "Billing", ApprovedBy = "TestUser" };
             var different = fixture.Create<BillingFileMessage>();
 
             // Assert

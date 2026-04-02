@@ -1,13 +1,10 @@
-﻿namespace EPR.Calculator.Service.Function.Services
-{
-    using System;
-    using System.Collections.Generic;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Interface;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
-    using System.Text.Json.Serialization;
+﻿using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Interface;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
+namespace EPR.Calculator.Service.Function.Services
+{
     /// <summary>
     /// Service for handling Mmssage type service operations.
     /// </summary>

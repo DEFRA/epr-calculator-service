@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace EPR.Calculator.API.Exporter
+﻿namespace EPR.Calculator.Service.Function.Exporter
 {
     public interface ICalcBillingJsonExporter<T>
     {

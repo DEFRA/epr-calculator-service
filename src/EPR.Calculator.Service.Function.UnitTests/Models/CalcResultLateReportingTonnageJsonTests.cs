@@ -1,11 +1,8 @@
+using AutoFixture;
+using EPR.Calculator.Service.Function.Models.JsonExporter;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Models
 {
-    using System;
-    using System.Collections.Generic;
-    using AutoFixture;
-    using EPR.Calculator.Service.Function.Models.JsonExporter;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     [TestClass]
     public class CalcResultLateReportingTonnageDetailsJsonTests
     {

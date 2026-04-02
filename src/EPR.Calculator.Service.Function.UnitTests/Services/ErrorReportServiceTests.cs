@@ -1,11 +1,10 @@
 ﻿using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using Moq;
-using EPR.Calculator.API.Data.Models;
-
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
@@ -449,7 +448,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             IEnumerable<ErrorReport> capturedReports = _service.HandleMissingRegistrationData(pomDetails, orgDetails, runId, createdBy);
 
             // Assert
-            var reportsList = capturedReports!.ToList();
+            var reportsList = capturedReports.ToList();
             Assert.AreEqual(1, reportsList.Count, "Expected 1 unmatched records to be returned.");
             var error = reportsList.First();
             Assert.AreEqual(ErrorCodes.MissingRegistrationData, error.ErrorCode, "Incorrect Error Type");
@@ -464,8 +463,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var orgDetails = new[] {
                 CreateOrganisationData(100101,null,"ECOLTD",submitterId1, "N"),
-                CreateOrganisationData(200202,null,"Green holdings",submitterId2, "O"),
-                CreateOrganisationData(200202,"100500","Pure leaf drinks",submitterId2, "O"),
+                CreateOrganisationData(200202,null,"Green holdings",submitterId2),
+                CreateOrganisationData(200202,"100500","Pure leaf drinks",submitterId2),
                 CreateOrganisationData(200202,"100101","ECOLTD",submitterId2, "O", "01", hasH1: false, hasH2: false),
                 CreateOrganisationData(200202,"100102","ECOLTD",submitterId2, "O", "01", hasH1: false, hasH2: true),
                 CreateOrganisationData(200202,"100103","ECOLTD",submitterId2, "O", "01", hasH1: true, hasH2: false)
@@ -518,8 +517,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var orgDetails = new[] {
                 CreateOrganisationData(100101,null,"ECOLTD",submitterId1, "N"),
-                CreateOrganisationData(200202,null,"Green holdings",submitterId2, "O"),
-                CreateOrganisationData(200202,"100500","Pure leaf drinks",submitterId2, "O"),
+                CreateOrganisationData(200202,null,"Green holdings",submitterId2),
+                CreateOrganisationData(200202,"100500","Pure leaf drinks",submitterId2),
                 CreateOrganisationData(200202,"100101","ECOLTD",submitterId2, "O", "01")
             };
 
@@ -555,7 +554,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var orgDetails = new[] {
                 CreateOrganisationData(producer1,null,"ECOLTD",submitterId1, "E", errorCode: error1),
-                CreateOrganisationData(producer2,null,"Green holdings",submitterId2, "O"),
+                CreateOrganisationData(producer2,null,"Green holdings",submitterId2),
                 CreateOrganisationData(producer2,"100500","Pure leaf drinks",submitterId2, "E", errorCode: error2, statusCode: "some status code"),
                 CreateOrganisationData(producer2,"100101","ECOLTD",submitterId2, "E", errorCode: null)
             };
@@ -592,8 +591,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var orgDetails = new[]
             {
                 CreateOrganisationData(producer1,null,"ECOLTD",submitterId1, "N"),
-                CreateOrganisationData(producer2,null,"Green holdings",submitterId2, "O"),
-                CreateOrganisationData(producer2,"100500","Pure leaf drinks",submitterId2, "O"),
+                CreateOrganisationData(producer2,null,"Green holdings",submitterId2),
+                CreateOrganisationData(producer2,"100500","Pure leaf drinks",submitterId2),
                 CreateOrganisationData(producer2,"100101","ECOLTD",submitterId2, "O", "01")
             };
 
@@ -631,7 +630,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var orgDetails = new[] {
                 CreateOrganisationData(producer1,null,"ECOLTD",submitterId1, "E", errorCode: error1),
-                CreateOrganisationData(producer2,null,"Green holdings",submitterId2, "O"),
+                CreateOrganisationData(producer2,null,"Green holdings",submitterId2),
                 CreateOrganisationData(producer2,"100500","Pure leaf drinks",submitterId2, "E", errorCode: error2, statusCode: "some status code"),
                 CreateOrganisationData(producer2,"100101","ECOLTD",submitterId2, "E", errorCode: null),
                 CreateOrganisationData(producer3,null,"Pear",submitterId1, "E", errorCode: error1),
@@ -677,10 +676,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var error2 = "Some other error";
 
             var orgDetails = new[] {
-                CreateOrganisationData(producer1,null,"ECOLTD",submitterId1, "O", errorCode: error1, statusCode: "some status code"),
-                CreateOrganisationData(producer2,null,"Green holdings",submitterId2, "O"),
-                CreateOrganisationData(producer2,"100500","Pure leaf drinks",submitterId2, "O", errorCode: error2),
-                CreateOrganisationData(producer2,"100101","ECOLTD",submitterId2, "O", errorCode: null)
+                CreateOrganisationData(producer1,null,"ECOLTD",submitterId1, errorCode: error1, statusCode: "some status code"),
+                CreateOrganisationData(producer2,null,"Green holdings",submitterId2),
+                CreateOrganisationData(producer2,"100500","Pure leaf drinks",submitterId2, errorCode: error2),
+                CreateOrganisationData(producer2,"100101","ECOLTD",submitterId2)
             };
 
             var pomDetails = new[] {
@@ -702,7 +701,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Assert
             Assert.AreEqual(2, reportsList.Count(), "Expected 2 unmatched records to be returned.");
             Assert.IsTrue(reportsList.Any(p => p.ProducerId == producer1 && p.SubsidiaryId == null && p.ErrorCode == error1 && p.LeaverCode == "some status code"));
-            Assert.IsTrue(reportsList.Any(p => p.ProducerId == producer2 && p.SubsidiaryId == "100500" && p.ErrorCode == error2 && p.LeaverCode == ""));;
+            Assert.IsTrue(reportsList.Any(p => p.ProducerId == producer2 && p.SubsidiaryId == "100500" && p.ErrorCode == error2 && p.LeaverCode == ""));
         }
 
         [TestMethod]
@@ -718,12 +717,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var error2 = "Some other error";
 
             var orgDetails = new[] {
-                CreateOrganisationData(producer1,null,"ECOLTD",submitterId1, "O", errorCode: error1, statusCode: "some status code"),
-                CreateOrganisationData(producer2,null,"Green holdings",submitterId2, "O"),
-                CreateOrganisationData(producer2,"100500","Pure leaf drinks",submitterId2, "O", errorCode: error2),
-                CreateOrganisationData(producer2,"100101","ECOLTD",submitterId2, "O", errorCode: null),
-                CreateOrganisationData(producer3,null,"Pear",submitterId1, "O", errorCode: error1),
-                CreateOrganisationData(producer4,null,"Apple",submitterId1, "O", errorCode: error1)
+                CreateOrganisationData(producer1,null,"ECOLTD",submitterId1, errorCode: error1, statusCode: "some status code"),
+                CreateOrganisationData(producer2,null,"Green holdings",submitterId2),
+                CreateOrganisationData(producer2,"100500","Pure leaf drinks",submitterId2, errorCode: error2),
+                CreateOrganisationData(producer2,"100101","ECOLTD",submitterId2),
+                CreateOrganisationData(producer3,null,"Pear",submitterId1, errorCode: error1),
+                CreateOrganisationData(producer4,null,"Apple",submitterId1, errorCode: error1)
             };
 
             var pomDetails = new[] {
@@ -772,8 +771,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var orgDetails = new[]
             {
                 CreateOrganisationData(producer1,null,"ECOLTD",submitterId1, "N"),
-                CreateOrganisationData(producer2,null,"Green holdings",submitterId2, "O"),
-                CreateOrganisationData(producer2,"100500","Pure leaf drinks",submitterId2, "O"),
+                CreateOrganisationData(producer2,null,"Green holdings",submitterId2),
+                CreateOrganisationData(producer2,"100500","Pure leaf drinks",submitterId2),
                 CreateOrganisationData(producer2,"100101","ECOLTD",submitterId2, "O", "01", hasH1: false, hasH2: false),
                 CreateOrganisationData(producer3,null,"ECOLTD",submitterId3, "O", "01", errorCode: "some warning"),
                 CreateOrganisationData(producer4,"404","Tea and cakes",submitterId3, "E", "01", errorCode: "some synapse error"),

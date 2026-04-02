@@ -1,17 +1,17 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder
-{
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.API.Data.Models;
-    using EPR.Calculator.Service.Function.Builder.Lapcap;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Dtos;
-    using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Function.Services;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Diagnostics;
-    using Moq;
+﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Builder.Lapcap;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Moq;
 
+namespace EPR.Calculator.Service.Function.UnitTests.Builder
+{
     [TestClass]
     public class CalcResultLapcapDataBuilderTest
     {
@@ -41,12 +41,12 @@
         [TestCleanup]
         public void TearDown()
         {
-            dbContext?.Database.EnsureDeleted();
-            dbContext?.Dispose();
+            dbContext.Database.EnsureDeleted();
+            dbContext.Dispose();
         }
 
         [TestMethod]
-        public void ConstructTest_For_Aluminuim_Plastic()
+        public async Task ConstructTest_For_Aluminuim_Plastic()
         {
             const string aluminium = "Aluminium";
             const string plastic = "Plastic";
@@ -81,26 +81,21 @@
 
             dbContext.LapcapDataMaster.Add(lapcapDataMaster);
             dbContext.LapcapDataDetail.AddRange(details);
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
 
             dbContext.Material.Add(new Material { Name = aluminium, Code = "AL", Description = "Some" });
             dbContext.Material.Add(new Material { Name = plastic, Code = "PL", Description = "Some" });
             dbContext.CalculatorRuns.Add(run);
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
 
             var resultsDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) };
-            var results = builder.ConstructAsync(resultsDto);
-
-            results.Wait();
-            var lapcapDisposalCostResults = results.Result;
-
-            var lapcapResults = results.Result;
+            var lapcapResults = await builder.ConstructAsync(resultsDto);
 
             Assert.IsNotNull(lapcapResults);
             Assert.AreEqual(CalcResultLapcapDataBuilder.LapcapHeader, lapcapResults.Name);
-            Assert.AreEqual(5, lapcapResults.CalcResultLapcapDataDetails?.Count());
+            Assert.AreEqual(5, lapcapResults.CalcResultLapcapDataDetails.Count());
 
-            var headerRow = lapcapResults.CalcResultLapcapDataDetails?.Single(x => x.OrderId == 1);
+            var headerRow = lapcapResults.CalcResultLapcapDataDetails.Single(x => x.OrderId == 1);
             Assert.IsNotNull(headerRow);
             Assert.AreEqual(LapcapHeaderConstants.Name, headerRow.Name);
             Assert.AreEqual(LapcapHeaderConstants.EnglandDisposalCost, headerRow.EnglandDisposalCost);
@@ -109,7 +104,7 @@
             Assert.AreEqual(LapcapHeaderConstants.NorthernIrelandDisposalCost, headerRow.NorthernIrelandDisposalCost);
             Assert.AreEqual(LapcapHeaderConstants.TotalDisposalCost, headerRow.TotalDisposalCost);
 
-            var aluminiumRow = lapcapResults.CalcResultLapcapDataDetails?.Single(x => x.Name == aluminium);
+            var aluminiumRow = lapcapResults.CalcResultLapcapDataDetails.Single(x => x.Name == aluminium);
             Assert.IsNotNull(aluminiumRow);
             Assert.AreEqual(aluminium, aluminiumRow.Name);
             Assert.AreEqual("£100.00", aluminiumRow.EnglandDisposalCost);
@@ -118,7 +113,7 @@
             Assert.AreEqual("£25.00", aluminiumRow.NorthernIrelandDisposalCost);
             Assert.AreEqual("£250.00", aluminiumRow.TotalDisposalCost);
 
-            var plasticRow = lapcapResults.CalcResultLapcapDataDetails?.Single(x => x.Name == plastic);
+            var plasticRow = lapcapResults.CalcResultLapcapDataDetails.Single(x => x.Name == plastic);
             Assert.IsNotNull(plasticRow);
             Assert.AreEqual(plastic, plasticRow.Name);
             Assert.AreEqual("£100.00", plasticRow.EnglandDisposalCost);
@@ -127,7 +122,7 @@
             Assert.AreEqual("£25.00", plasticRow.NorthernIrelandDisposalCost);
             Assert.AreEqual("£250.00", plasticRow.TotalDisposalCost);
 
-            var totalRow = lapcapResults.CalcResultLapcapDataDetails?.Single(x => x.OrderId == 4);
+            var totalRow = lapcapResults.CalcResultLapcapDataDetails.Single(x => x.OrderId == 4);
             Assert.IsNotNull(totalRow);
             Assert.AreEqual("Total", totalRow.Name);
             Assert.AreEqual("£200.00", totalRow.EnglandDisposalCost);
@@ -136,7 +131,7 @@
             Assert.AreEqual("£50.00", totalRow.NorthernIrelandDisposalCost);
             Assert.AreEqual("£500.00", totalRow.TotalDisposalCost);
 
-            var countryApp = lapcapResults.CalcResultLapcapDataDetails?.Single(x => x.OrderId == 5);
+            var countryApp = lapcapResults.CalcResultLapcapDataDetails.Single(x => x.OrderId == 5);
             Assert.IsNotNull(countryApp);
             Assert.AreEqual(CalcResultLapcapDataBuilder.CountryApportionment, countryApp.Name);
             Assert.AreEqual("40.00000000%", countryApp.EnglandDisposalCost);
@@ -145,7 +140,7 @@
             Assert.AreEqual("10.00000000%", countryApp.NorthernIrelandDisposalCost);
             Assert.AreEqual("100.00000000%", countryApp.TotalDisposalCost);
 
-            this.mockService.Verify(x => x.SaveChangesAsync(It.IsAny<CalcCountryApportionmentServiceDto>()));
+            mockService.Verify(x => x.SaveChangesAsync(It.IsAny<CalcCountryApportionmentServiceDto>()));
         }
 
         public static List<LapcapDataDetail> GetLapcapDetails(LapcapDataMaster master)
@@ -174,11 +169,13 @@
             {
                 return 100M;
             }
-            else if (uniqueRef.StartsWith("SCT-"))
+
+            if (uniqueRef.StartsWith("SCT-"))
             {
                 return 75M;
             }
-            else if (uniqueRef.StartsWith("WLS-"))
+
+            if (uniqueRef.StartsWith("WLS-"))
             {
                 return 50M;
             }

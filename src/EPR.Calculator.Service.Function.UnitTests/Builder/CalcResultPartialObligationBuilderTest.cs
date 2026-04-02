@@ -1,20 +1,16 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder
+﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Builder.PartialObligations;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+
+namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.API.Data.Models;
-    using EPR.Calculator.Service.Common;
-    using EPR.Calculator.Service.Function.Builder.PartialObligations;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Dtos;
-    using EPR.Calculator.Service.Function.Mappers;
-    using EPR.Calculator.Service.Function.Models;
-    using EPR.Calculator.Service.Function.Services;
-
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Diagnostics;
-    using static EPR.Calculator.Service.Function.UnitTests.Builder.CalcRunLaDisposalCostBuilderTests;
-
     [TestClass]
     public class CalcResultPartialObligationBuilderTest
     {
@@ -34,9 +30,9 @@
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test User",
             };
-            this.dbContext.CalculatorRunOrganisationDataMaster.Add(calcRunOrganisationDataMaster);
+            dbContext.CalculatorRunOrganisationDataMaster.Add(calcRunOrganisationDataMaster);
 
-            this.dbContext.CalculatorRuns.Add(new CalculatorRun
+            dbContext.CalculatorRuns.Add(new CalculatorRun
             {
                 Id = 1,
                 RelativeYear = new RelativeYear(2024),
@@ -44,7 +40,7 @@
                 CalculatorRunOrganisationDataMaster = calcRunOrganisationDataMaster
             });
 
-            this.dbContext.CalculatorRunOrganisationDataDetails.Add(
+            dbContext.CalculatorRunOrganisationDataDetails.Add(
                 new CalculatorRunOrganisationDataDetail
                 {
                     Id = 1,
@@ -56,7 +52,7 @@
                     ObligationStatus = ObligationStates.Obligated
                 });
 
-            this.dbContext.CalculatorRunOrganisationDataDetails.Add(
+            dbContext.CalculatorRunOrganisationDataDetails.Add(
                 new CalculatorRunOrganisationDataDetail
                 {
                     Id = 2,
@@ -78,7 +74,7 @@
                 SubsidiaryId = null,
                 ProducerName = "Allied Packaging",
             };
-            this.dbContext.ProducerDetail.Add(producerDetail);
+            dbContext.ProducerDetail.Add(producerDetail);
 
             var producerDetail2 = new ProducerDetail
             {
@@ -88,23 +84,23 @@
                 SubsidiaryId = null,
                 ProducerName = "Partial Packaging",
             };
-            this.dbContext.ProducerDetail.Add(producerDetail2);
+            dbContext.ProducerDetail.Add(producerDetail2);
 
             var alm = new Material { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" };
 
-            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
             {
                 Id = 1,
                 PackagingType = "HH",
                 ProducerDetail = producerDetail,
             });
-            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
             {
                 Id = 2,
                 PackagingType = "HDC",
                 ProducerDetail = producerDetail,
             });
-            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
             {
                 Id = 3,
                 PackagingType = "HH",
@@ -112,7 +108,7 @@
                 PackagingTonnage = 100,
                 ProducerDetail = producerDetail2,
             });
-            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
             {
                 Id = 4,
                 PackagingType = "CW",
@@ -130,17 +126,17 @@
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test User",
             };
-            this.dbContext.CalculatorRunOrganisationDataMaster.Add(calcRunOrganisationDataMaster2);
+            dbContext.CalculatorRunOrganisationDataMaster.Add(calcRunOrganisationDataMaster2);
 
-            this.dbContext.CalculatorRuns.Add(new CalculatorRun
+            dbContext.CalculatorRuns.Add(new CalculatorRun
             {
-                Id = this.runId,
+                Id = runId,
                 RelativeYear = new RelativeYear(2024),
                 Name = "Name",
                 CalculatorRunOrganisationDataMaster = calcRunOrganisationDataMaster2
             });
 
-            this.dbContext.CalculatorRunOrganisationDataDetails.Add(
+            dbContext.CalculatorRunOrganisationDataDetails.Add(
                 new CalculatorRunOrganisationDataDetail
                 {
                     Id = 3,
@@ -152,7 +148,7 @@
                     ObligationStatus = ObligationStates.Obligated
                 });
 
-            this.dbContext.CalculatorRunOrganisationDataDetails.Add(
+            dbContext.CalculatorRunOrganisationDataDetails.Add(
                 new CalculatorRunOrganisationDataDetail
                 {
                     Id = 4,
@@ -169,36 +165,36 @@
             var producerDetail3 = new ProducerDetail
             {
                 Id = 3,
-                CalculatorRunId = this.runId,
+                CalculatorRunId = runId,
                 ProducerId = 11,
                 SubsidiaryId = null,
                 ProducerName = "Allied Packaging",
             };
-            this.dbContext.ProducerDetail.Add(producerDetail3);
+            dbContext.ProducerDetail.Add(producerDetail3);
 
             var producerDetail4 = new ProducerDetail
             {
                 Id = 4,
-                CalculatorRunId = this.runId,
+                CalculatorRunId = runId,
                 ProducerId = 22,
                 SubsidiaryId = null,
                 ProducerName = "Partial Packaging",
             };
-            this.dbContext.ProducerDetail.Add(producerDetail4);
+            dbContext.ProducerDetail.Add(producerDetail4);
 
-            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
             {
                 Id = 5,
                 PackagingType = "HH",
                 ProducerDetail = producerDetail3,
             });
-            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
             {
                 Id = 6,
                 PackagingType = "HDC",
                 ProducerDetail = producerDetail3,
             });
-            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
             {
                 Id = 7,
                 PackagingType = "HH",
@@ -206,7 +202,7 @@
                 PackagingTonnage = 100,
                 ProducerDetail = producerDetail4,
             });
-            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
             {
                 Id = 8,
                 PackagingType = "CW",
@@ -215,7 +211,7 @@
                 ProducerDetail = producerDetail4,
             });
 
-            this.dbContext.Material.AddRange(
+            dbContext.Material.AddRange(
                 alm,
                 new Material { Id = 2, Code = "FC", Name = "Fibre composite", Description = "Fibre composite" },
                 new Material { Id = 3, Code = "GL", Name = "Glass", Description = "Glass" },
@@ -226,7 +222,7 @@
                 new Material { Id = 8, Code = "OT", Name = "Other materials", Description = "Other materials" }
             );
 
-            this.dbContext.SaveChanges();
+            dbContext.SaveChanges();
         }
 
         public CalcResultPartialObligationBuilderTest()
@@ -236,30 +232,27 @@
             .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
             .Options;
 
-            this.dbContext = new ApplicationDBContext(dbContextOptions);
-            this.dbContext.Database.EnsureCreated();
-            this.builder = new CalcResultPartialObligationBuilder(this.dbContext);
+            dbContext = new ApplicationDBContext(dbContextOptions);
+            dbContext.Database.EnsureCreated();
+            builder = new CalcResultPartialObligationBuilder(dbContext);
         }
 
         [TestCleanup]
         public void Teardown()
         {
-            if (this.dbContext != null)
-            {
-                this.dbContext.Database.EnsureDeleted();
-                this.dbContext.Dispose();
-            }
+            dbContext.Database.EnsureDeleted();
+            dbContext.Dispose();
         }
 
         [TestMethod]
         public async Task Construct_WhenPartialObligationsExists()
         {
             // Arrange
-            this.PrepareData();
+            PrepareData();
             var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
             // Act
-            var result = await this.builder.ConstructAsync(requestDto, new List<CalcResultScaledupProducer>());
+            var result = await builder.ConstructAsync(requestDto, new List<CalcResultScaledupProducer>());
 
             // Assert
             Assert.AreEqual(1, result.PartialObligations!.Count());
@@ -274,7 +267,7 @@
             Assert.IsTrue(parOrg.ObligatedPercentage == "50.14%");
 
 
-            var parOrgMats = parOrg.PartialObligationTonnageByMaterial!;
+            var parOrgMats = parOrg.PartialObligationTonnageByMaterial;
             Assert.AreEqual(8, parOrgMats.Count());
             Assert.IsTrue(parOrgMats.Any(mat =>
                 mat.Key == MaterialCodes.Aluminium &&
@@ -311,17 +304,17 @@
         public async Task Construct_WhenPartialObligationsExists_WithScaledUpTonnage()
         {
             // Arrange
-            this.PrepareData();
+            PrepareData();
             var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
-            var scaledUpProducers = new List<CalcResultScaledupProducer>() {
-                new CalcResultScaledupProducer() {
+            var scaledUpProducers = new List<CalcResultScaledupProducer> {
+                new CalcResultScaledupProducer {
                     ProducerId = 22,
                     SubsidiaryId = null,
                     ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>{
                         {
                             MaterialCodes.Aluminium,
-                            new CalcResultScaledupProducerTonnage()
+                            new CalcResultScaledupProducerTonnage
                             {
                                 ReportedHouseholdPackagingWasteTonnage = 100,
                                 ReportedPublicBinTonnage = 0,
@@ -340,7 +333,7 @@
             };
 
             // Act
-            var result = await this.builder.ConstructAsync(requestDto, scaledUpProducers);
+            var result = await builder.ConstructAsync(requestDto, scaledUpProducers);
 
             // Assert
             Assert.AreEqual(1, result.PartialObligations!.Count());
@@ -354,7 +347,7 @@
             Assert.IsTrue(parOrg.DaysInSubmissionYear == 365);
             Assert.IsTrue(parOrg.ObligatedPercentage == "50.14%");
 
-            var parOrgMats = parOrg.PartialObligationTonnageByMaterial!;
+            var parOrgMats = parOrg.PartialObligationTonnageByMaterial;
             Assert.AreEqual(8, parOrgMats.Count());
             Assert.IsTrue(parOrgMats.Any(mat =>
                 mat.Key == MaterialCodes.Aluminium &&

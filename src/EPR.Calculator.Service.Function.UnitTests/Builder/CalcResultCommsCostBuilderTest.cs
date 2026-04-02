@@ -1,23 +1,19 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder
+﻿using AutoFixture;
+using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Builder.CommsCost;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Models;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+
+namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
-    using System.Collections.Generic;
-    using AutoFixture;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.API.Data.Models;
-
-    using EPR.Calculator.Service.Common;
-    using EPR.Calculator.Service.Function.Builder.CommsCost;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Dtos;
-    using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.ApplicationInsights;
-    using Microsoft.ApplicationInsights.Extensibility;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     [TestClass]
     public class CalcResultCommsCostBuilderTest
     {
@@ -31,10 +27,10 @@
                 .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
                 .Options;
 
-            this.dbContext = new ApplicationDBContext(dbContextOptions);
-            this.dbContext.Database.EnsureCreated();
-            this.builder = new CalcResultCommsCostBuilder(
-                this.dbContext,
+            dbContext = new ApplicationDBContext(dbContextOptions);
+            dbContext.Database.EnsureCreated();
+            builder = new CalcResultCommsCostBuilder(
+                dbContext,
                 new TelemetryClient(TelemetryConfiguration.CreateDefault()));
         }
 
@@ -43,29 +39,29 @@
         [TestCleanup]
         public void TearDown()
         {
-            this.dbContext?.Database.EnsureDeleted();
+            dbContext.Database.EnsureDeleted();
         }
 
         [TestMethod]
-        public void ConstructTest()
+        public async Task ConstructTest()
         {
             var calcResult = TestDataHelper.GetCalcResult();
             calcResult.CalcResultScaledupProducers = GetScaledUpProducers();
 
-            this.CreateMaterials();
-            this.CreateDefaultTemplate();
-            this.CreateDefaultParameters();
-            this.CreateNewRun();
-            this.CreateProducerDetail();
+            CreateMaterials();
+            CreateDefaultTemplate();
+            CreateDefaultParameters();
+            CreateNewRun();
+            CreateProducerDetail();
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) };
             var apportionment = new CalcResultOnePlusFourApportionment
             {
-                Name = this.Fixture.Create<string>(),
+                Name = Fixture.Create<string>(),
                 CalcResultOnePlusFourApportionmentDetails = new List<CalcResultOnePlusFourApportionmentDetail>
                 {
                     new CalcResultOnePlusFourApportionmentDetail
                     {
-                        Name = this.Fixture.Create<string>(),
+                        Name = Fixture.Create<string>(),
                         EnglandTotal = 40M,
                         ScotlandTotal = 20M,
                         WalesTotal = 20M,
@@ -78,9 +74,7 @@
                     },
                 },
             };
-            var results = this.builder.ConstructAsync(resultsRequestDto, apportionment, calcResult);
-            results.Wait();
-            var result = results.Result;
+            var result = await builder.ConstructAsync(resultsRequestDto, apportionment, calcResult);
 
             Assert.IsNotNull(result);
 
@@ -212,11 +206,11 @@
         public async Task GetProducerReportedMaterials_ShouldReturnValidMaterials()
         {
             // Arrange
-            this.SeedDatabase(this.dbContext);
+            SeedDatabase(dbContext);
             var runId = 1;
 
             // Act
-            var result = await this.builder.GetProducerReportedMaterials(this.dbContext, runId);
+            var result = await builder.GetProducerReportedMaterials(dbContext, runId);
 
             // Assert
             Assert.IsNotNull(result);
@@ -264,7 +258,7 @@
 
         private void CreateProducerDetail()
         {
-            var producerNames = new string[]
+            var producerNames = new[]
             {
                 "Allied Packaging",
                 "Beeline Materials",
@@ -281,7 +275,7 @@
             var producerId = 1;
             foreach (var producerName in producerNames)
             {
-                this.dbContext.ProducerDetail.Add(new ProducerDetail
+                dbContext.ProducerDetail.Add(new ProducerDetail
                 {
                     ProducerId = producerId++,
                     SubsidiaryId = $"{producerId}-Sub",
@@ -290,13 +284,13 @@
                 });
             }
 
-            this.dbContext.SaveChanges();
+            dbContext.SaveChanges();
 
             for (int producerDetailId = 1; producerDetailId <= 10; producerDetailId++)
             {
                 for (int materialId = 1; materialId < 9; materialId++)
                 {
-                    this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                    dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
                     {
                         MaterialId = materialId,
                         ProducerDetailId = producerDetailId,
@@ -306,7 +300,7 @@
                 }
             }
 
-            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial()
+            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
             {
                 MaterialId = 3,
                 ProducerDetailId = 1,
@@ -314,7 +308,7 @@
                 PackagingTonnage = 100,
             });
 
-            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial()
+            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
             {
                 MaterialId = 3,
                 ProducerDetailId = 2,
@@ -322,7 +316,7 @@
                 PackagingTonnage = 100,
             });
 
-            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial()
+            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
             {
                 MaterialId = 2,
                 ProducerDetailId = 1,
@@ -330,14 +324,14 @@
                 PackagingTonnage = 200,
             });
 
-            this.dbContext.SaveChanges();
+            dbContext.SaveChanges();
         }
 
         private void CreateDefaultTemplate()
         {
-            this.dbContext.DefaultParameterTemplateMasterList.RemoveRange(
-                this.dbContext.DefaultParameterTemplateMasterList.ToList());
-            this.dbContext.SaveChanges();
+            dbContext.DefaultParameterTemplateMasterList.RemoveRange(
+                dbContext.DefaultParameterTemplateMasterList.ToList());
+            dbContext.SaveChanges();
 
             var materialDictionary = new Dictionary<string, string>
             {
@@ -351,19 +345,19 @@
                 { "OT", "Other materials" },
             };
 
-            var parameterTypes = new string[] { "Communication costs by material", "Late reporting tonnage" };
+            var parameterTypes = new[] { "Communication costs by material", "Late reporting tonnage" };
             foreach (var material in materialDictionary.Values)
             {
-                this.dbContext.DefaultParameterTemplateMasterList.Add(new DefaultParameterTemplateMaster
+                dbContext.DefaultParameterTemplateMasterList.Add(new DefaultParameterTemplateMaster
                 {
                     ParameterUniqueReferenceId = Guid.NewGuid().ToString(),
                     ParameterCategory = material,
                     ParameterType = parameterTypes[0],
                 });
-                var rag = new string[] { "R", "A", "G" };
+                var rag = new[] { "R", "A", "G" };
                 foreach (var v in rag)
                 {
-                    this.dbContext.DefaultParameterTemplateMasterList.Add(new DefaultParameterTemplateMaster
+                    dbContext.DefaultParameterTemplateMasterList.Add(new DefaultParameterTemplateMaster
                     {
                         ParameterUniqueReferenceId = Guid.NewGuid().ToString(),
                         ParameterCategory = $"{material}-{v}",
@@ -391,7 +385,7 @@
                 });
             }
 
-            this.dbContext.SaveChanges();
+            dbContext.SaveChanges();
         }
 
         private void CreateNewRun()
@@ -405,21 +399,21 @@
                 CreatedBy = "Test User",
                 DefaultParameterSettingMasterId = 1,
             };
-            this.dbContext.CalculatorRuns.Add(run);
-            this.dbContext.SaveChanges();
+            dbContext.CalculatorRuns.Add(run);
+            dbContext.SaveChanges();
         }
 
         private void CreateDefaultParameters()
         {
-            var templateMasterList = this.dbContext.DefaultParameterTemplateMasterList.ToList();
+            var templateMasterList = dbContext.DefaultParameterTemplateMasterList.ToList();
 
             var defaultMaster = new DefaultParameterSettingMaster
             {
                 RelativeYear = new RelativeYear(2024),
             };
 
-            this.dbContext.DefaultParameterSettings.Add(defaultMaster);
-            this.dbContext.SaveChanges();
+            dbContext.DefaultParameterSettings.Add(defaultMaster);
+            dbContext.SaveChanges();
 
             foreach (var templateMaster in templateMasterList)
             {
@@ -430,10 +424,10 @@
                     DefaultParameterSettingMasterId = 1,
                     DefaultParameterSettingMaster = defaultMaster,
                 };
-                this.dbContext.DefaultParameterSettingDetail.Add(defaultDetail);
+                dbContext.DefaultParameterSettingDetail.Add(defaultDetail);
             }
 
-            this.dbContext.SaveChanges();
+            dbContext.SaveChanges();
         }
 
         private static decimal GetValue(DefaultParameterTemplateMaster templateMaster)
@@ -458,11 +452,11 @@
 
         private static CalcResultScaledupProducers GetScaledUpProducers()
         {
-           return new CalcResultScaledupProducers()
-            {
-                ScaledupProducers = new List<CalcResultScaledupProducer>()
-                 {
-                     new CalcResultScaledupProducer()
+           return new CalcResultScaledupProducers
+           {
+                ScaledupProducers = new List<CalcResultScaledupProducer>
+                {
+                     new CalcResultScaledupProducer
                      {
                         ProducerId = 1,
                         IsTotalRow = true,
@@ -483,7 +477,7 @@
                         },
                         },
                      },
-                     new CalcResultScaledupProducer()
+                     new CalcResultScaledupProducer
                      {
                         ProducerId = 1,
                         IsTotalRow = true,
@@ -522,7 +516,7 @@
 
             foreach (var materialKv in materialDictionary)
             {
-                this.dbContext.Material.Add(new Material
+                dbContext.Material.Add(new Material
                 {
                     Name = materialKv.Value,
                     Code = materialKv.Key,
@@ -530,7 +524,7 @@
                 });
             }
 
-            this.dbContext.SaveChanges();
+            dbContext.SaveChanges();
         }
     }
 }

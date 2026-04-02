@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common;
+﻿using EPR.Calculator.API.Data.Models;
 
-namespace EPR.Calculator.Service.Function.Dtos
+namespace EPR.Calculator.Service.Function.Misc
 {
     public class CalcResultsRequestDto
     {

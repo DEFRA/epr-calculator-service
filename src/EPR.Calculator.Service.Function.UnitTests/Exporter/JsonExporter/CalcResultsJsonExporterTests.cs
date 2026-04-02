@@ -1,13 +1,9 @@
 ﻿using AutoFixture;
-using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common;
 using EPR.Calculator.Service.Function.Builder.CommsCost;
 using EPR.Calculator.Service.Function.Builder.Lapcap;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter;
-using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.Models.JsonExporter;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.Builder;
 using Moq;
@@ -45,9 +41,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
             Assert.IsNotNull(result);
         }
 
-        private static EPR.Calculator.Service.Function.Models.CalcResult CreateCalcResult()
+        private static CalcResult CreateCalcResult()
         {
-            return new EPR.Calculator.Service.Function.Models.CalcResult
+            return new CalcResult
             {
                 CalcResultDetail = new CalcResultDetail
                 {
@@ -301,64 +297,5 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                 CalcResultModulation = null,
             };
         }
-
-        private static Dictionary<string, CalcResultScaledupProducerTonnage> GetScaledupProducerTonnageByMaterial()
-        {
-            var tonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>();
-
-            tonnageByMaterial.Add(
-                "AL",
-                new CalcResultScaledupProducerTonnage()
-                {
-                    ReportedHouseholdPackagingWasteTonnage = 1000,
-                    ReportedPublicBinTonnage = 100,
-                    TotalReportedTonnage = 1100,
-                    ReportedSelfManagedConsumerWasteTonnage = 500,
-                    NetReportedTonnage = 1100,
-                    ScaledupReportedHouseholdPackagingWasteTonnage = 2000,
-                    ScaledupReportedPublicBinTonnage = 200,
-                    ScaledupTotalReportedTonnage = 2200,
-                    ScaledupReportedSelfManagedConsumerWasteTonnage = 1000,
-                    ScaledupNetReportedTonnage = 2200,
-                });
-
-            return tonnageByMaterial;
-        }
-
-        private static List<CalcResultScaledupProducer> GetCalcResultScaledupProducerList()
-        {
-            var scaledupProducerList = new List<CalcResultScaledupProducer>();
-
-            scaledupProducerList.AddRange([
-                new CalcResultScaledupProducer()
-                {
-                    ProducerId = 101001,
-                    SubsidiaryId = string.Empty,
-                    ProducerName = "Allied Packaging",
-                    Level = "1",
-                    SubmissionPeriodCode = "2024-P2",
-                    DaysInSubmissionPeriod = 91,
-                    DaysInWholePeriod = 91,
-                    ScaleupFactor = 2,
-                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterial(),
-                },
-                new CalcResultScaledupProducer()
-                {
-                    ProducerId = 101001,
-                    SubsidiaryId = string.Empty,
-                    ProducerName = "Allied Packaging",
-                    Level = "1",
-                    SubmissionPeriodCode = "2024-P2",
-                    DaysInSubmissionPeriod = 91,
-                    DaysInWholePeriod = 91,
-                    ScaleupFactor = 2,
-                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterial(),
-                    IsTotalRow = true,
-                },
-            ]);
-
-            return scaledupProducerList;
-        }
-
     }
 }

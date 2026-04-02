@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using EPR.Calculator.Service.Function.Enums;
+﻿using EPR.Calculator.Service.Function.Enums;
 
 namespace EPR.Calculator.Service.Function.Services
 {

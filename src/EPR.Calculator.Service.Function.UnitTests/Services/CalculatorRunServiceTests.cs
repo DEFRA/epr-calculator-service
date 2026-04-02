@@ -5,9 +5,9 @@ using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Common;
 using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Dtos;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Interface;
+using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.Services.DataLoading;
 using Moq;
@@ -296,7 +296,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        public void GetCalcResultMessage_ShouldReturnCorrect_StringContent()
+        public async Task GetCalcResultMessage_ShouldReturnCorrect_StringContent()
         {
             // Arrange
             var calculatorRunId = 123;
@@ -310,7 +310,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.IsNotNull(result);
             Assert.AreEqual(expectedContent.Headers.ContentType?.MediaType, result.Headers.ContentType?.MediaType);
             Assert.AreEqual(expectedContent.Headers.ContentType?.CharSet, result.Headers.ContentType?.CharSet);
-            Assert.AreEqual(expectedJson, result.ReadAsStringAsync().Result);
+            Assert.AreEqual(expectedJson, await result.ReadAsStringAsync());
         }
     }
 }

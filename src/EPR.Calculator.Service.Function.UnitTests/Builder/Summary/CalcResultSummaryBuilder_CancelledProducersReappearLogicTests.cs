@@ -1,7 +1,6 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common;
 using EPR.Calculator.Service.Function.Builder.Summary;
 using Microsoft.EntityFrameworkCore;
 

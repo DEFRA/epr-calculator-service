@@ -1,15 +1,14 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder
-{
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.API.Data.Models;
-    using EPR.Calculator.Service.Common;
-    using EPR.Calculator.Service.Function.Builder.LateReportingTonnages;
-    using EPR.Calculator.Service.Function.Dtos;
-    using EPR.Calculator.Service.Function.Enums;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Diagnostics;
+﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Builder.LateReportingTonnages;
+using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Misc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
+namespace EPR.Calculator.Service.Function.UnitTests.Builder
+{
     [TestClass]
     public class CalcResultLateReportingBuilderTest
     {
@@ -121,13 +120,11 @@
         }
 
         [TestMethod]
-        public void Construct_ShouldReturnCorrectResults()
+        public async Task Construct_ShouldReturnCorrectResults()
         {
             var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) };
 
-            var results = builder.ConstructAsync(requestDto);
-            results.Wait();
-            var result = results.Result;
+            var result = await builder.ConstructAsync(requestDto);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(CalcResultLateReportingBuilder.LateReportingHeader, result.Name);
@@ -136,23 +133,23 @@
             Assert.AreEqual(CalcResultLateReportingBuilder.RedTonnageHeading, result.RedTonnageHeading);
             Assert.AreEqual(CalcResultLateReportingBuilder.AmberTonnageHeading, result.AmberTonnageHeading);
             Assert.AreEqual(CalcResultLateReportingBuilder.GreenTonnageHeading, result.GreenTonnageHeading);
-            Assert.AreEqual(3, result.CalcResultLateReportingTonnageDetails?.Count());
+            Assert.AreEqual(3, result.CalcResultLateReportingTonnageDetails.Count());
 
-            var material1 = result.CalcResultLateReportingTonnageDetails?.SingleOrDefault(x => x.Name == "Aluminium");
+            var material1 = result.CalcResultLateReportingTonnageDetails.SingleOrDefault(x => x.Name == "Aluminium");
             Assert.IsNotNull(material1);
             Assert.AreEqual(100.000M, material1.RedLateReportingTonnage);
             Assert.AreEqual(200.000M, material1.AmberLateReportingTonnage);
             Assert.AreEqual(300.000M, material1.GreenLateReportingTonnage);
             Assert.AreEqual(600.000M, material1.TotalLateReportingTonnage);
 
-            var material2 = result.CalcResultLateReportingTonnageDetails?.SingleOrDefault(x => x.Name == "Fibre composite");
+            var material2 = result.CalcResultLateReportingTonnageDetails.SingleOrDefault(x => x.Name == "Fibre composite");
             Assert.IsNotNull(material2);
             Assert.AreEqual(400.000M, material2.RedLateReportingTonnage);
             Assert.AreEqual(500.000M, material2.AmberLateReportingTonnage);
             Assert.AreEqual(600.000M, material2.GreenLateReportingTonnage);
             Assert.AreEqual(1500.000M, material2.TotalLateReportingTonnage);
 
-            var total = result.CalcResultLateReportingTonnageDetails?.SingleOrDefault(x => x.Name == CalcResultLateReportingBuilder.Total);
+            var total = result.CalcResultLateReportingTonnageDetails.SingleOrDefault(x => x.Name == CalcResultLateReportingBuilder.Total);
             Assert.IsNotNull(total);
             Assert.AreEqual(500.000M, total.RedLateReportingTonnage);
             Assert.AreEqual(700.000M, total.AmberLateReportingTonnage);

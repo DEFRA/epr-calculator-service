@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace EPR.Calculator.Service.Function.Models
+﻿namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResultRejectedProducer
     {
@@ -19,6 +17,6 @@ namespace EPR.Calculator.Service.Function.Models
         public required string InstructionConfirmedBy { get; set; }
 
         public required string ReasonForRejection { get; set; }
-        public int runId { get; set; } = 0;
+        public int runId { get; set; }
     }
 }

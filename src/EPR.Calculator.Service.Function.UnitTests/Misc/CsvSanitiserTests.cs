@@ -1,9 +1,8 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests
-{
-    using EPR.Calculator.API.Utils;
-    using EPR.Calculator.Service.Function.Enums;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Misc;
 
+namespace EPR.Calculator.Service.Function.UnitTests.Misc
+{
     [TestClass]
     public class CsvSanitiserTests
     {

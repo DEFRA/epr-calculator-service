@@ -1,14 +1,9 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.CommsCost
-{
-    using System;
-    using System.Text;
-    using AutoFixture;
-    using EPR.Calculator.Service.Function.Exporter;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Text;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
+using EPR.Calculator.Service.Function.Models;
 
+namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.CommsCost
+{
     [TestClass]
     public class CommsCostExporterTests
     {
@@ -33,7 +28,7 @@
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.IsTrue(result.ToString().Contains("Parameters - Comms Costs"));
+            Assert.IsTrue(result.Contains("Parameters - Comms Costs"));
         }
 
         [TestMethod]
@@ -64,9 +59,9 @@
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.IsTrue(result.ToString().Contains("1 + 4 Apportionment %s"));
-            Assert.IsTrue(result.ToString().Contains("2a Comms Costs - by Material"));
-            Assert.IsTrue(result.ToString().Contains("2c Comms Costs - by Country"));
+            Assert.IsTrue(result.Contains("1 + 4 Apportionment %s"));
+            Assert.IsTrue(result.Contains("2a Comms Costs - by Material"));
+            Assert.IsTrue(result.Contains("2c Comms Costs - by Country"));
         }
     }
 }

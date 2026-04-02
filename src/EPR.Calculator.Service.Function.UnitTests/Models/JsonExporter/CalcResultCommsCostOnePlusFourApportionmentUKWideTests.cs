@@ -1,13 +1,14 @@
-namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter.CommsCostByMaterial2A
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using AutoFixture;
+using EPR.Calculator.Service.Function.Builder.CommsCost;
+using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Models.JsonExporter;
+using EPR.Calculator.Service.Function.UnitTests.Utils;
+
+namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
 {
-    using AutoFixture;
-    using EPR.Calculator.Service.Function.Builder.CommsCost;
-    using EPR.Calculator.Service.Function.Models;
-    using EPR.Calculator.Service.Function.Models.JsonExporter;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System.Text.Json;
-    using System.Text.Json.Nodes;
-    using static EPR.Calculator.Service.Common.UnitTests.Utils.JsonNodeComparer;
+    using static JsonNodeComparer;
 
     [TestClass]
     public class CalcResultCommsCostOnePlusFourApportionmentUKWideTests

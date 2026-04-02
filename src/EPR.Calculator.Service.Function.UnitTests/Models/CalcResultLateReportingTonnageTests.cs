@@ -1,12 +1,9 @@
+using AutoFixture;
+using EPR.Calculator.Service.Function.Models;
+using Moq;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Models
 {
-    using System;
-    using System.Collections.Generic;
-    using AutoFixture;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Moq;
-
     [TestClass]
     public class CalcResultLateReportingTonnageTests
     {
@@ -15,17 +12,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
         /// </summary>
         public CalcResultLateReportingTonnageTests()
         {
-            this.Fixture = new Fixture();
-            this.Name = this.Fixture.Create<string>();
-            this.MaterialHeading = this.Fixture.Create<string>();
-            this.TonnageHeading = this.Fixture.Create<string>();
-            this.CalcResultLateReportingTonnageDetails = new Mock<IEnumerable<CalcResultLateReportingTonnageDetail>>().Object;
-            this.TestClass = new CalcResultLateReportingTonnage
+            Fixture = new Fixture();
+            Name = Fixture.Create<string>();
+            MaterialHeading = Fixture.Create<string>();
+            TonnageHeading = Fixture.Create<string>();
+            CalcResultLateReportingTonnageDetails = new Mock<IEnumerable<CalcResultLateReportingTonnageDetail>>().Object;
+            TestClass = new CalcResultLateReportingTonnage
             {
-                Name = this.Name,
-                MaterialHeading = this.MaterialHeading,
-                TonnageHeading = this.TonnageHeading,
-                CalcResultLateReportingTonnageDetails = this.CalcResultLateReportingTonnageDetails,
+                Name = Name,
+                MaterialHeading = MaterialHeading,
+                TonnageHeading = TonnageHeading,
+                CalcResultLateReportingTonnageDetails = CalcResultLateReportingTonnageDetails,
             };
         }
 
@@ -47,10 +44,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             // Act
             var instance = new CalcResultLateReportingTonnage
             {
-                Name = this.Name,
-                MaterialHeading = this.MaterialHeading,
-                TonnageHeading = this.TonnageHeading,
-                CalcResultLateReportingTonnageDetails = this.CalcResultLateReportingTonnageDetails,
+                Name = Name,
+                MaterialHeading = MaterialHeading,
+                TonnageHeading = TonnageHeading,
+                CalcResultLateReportingTonnageDetails = CalcResultLateReportingTonnageDetails,
             };
 
             // Assert
@@ -63,42 +60,42 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             // Arrange
             var same = new CalcResultLateReportingTonnage
             {
-                Name = this.Name,
-                MaterialHeading = this.MaterialHeading,
-                TonnageHeading = this.TonnageHeading,
-                CalcResultLateReportingTonnageDetails = this.CalcResultLateReportingTonnageDetails,
+                Name = Name,
+                MaterialHeading = MaterialHeading,
+                TonnageHeading = TonnageHeading,
+                CalcResultLateReportingTonnageDetails = CalcResultLateReportingTonnageDetails,
             };
-            var different = this.Fixture.Create<CalcResultLateReportingTonnage>();
+            var different = Fixture.Create<CalcResultLateReportingTonnage>();
 
             // Assert
-            Assert.IsFalse(this.TestClass.Equals(default(object)));
-            Assert.IsFalse(this.TestClass.Equals(new object()));
-            Assert.IsTrue(this.TestClass.Equals((object)same));
-            Assert.IsFalse(this.TestClass.Equals((object)different));
-            Assert.IsTrue(this.TestClass.Equals(same));
-            Assert.IsFalse(this.TestClass.Equals(different));
-            Assert.AreEqual(same.GetHashCode(), this.TestClass.GetHashCode());
-            Assert.AreNotEqual(different.GetHashCode(), this.TestClass.GetHashCode());
-            Assert.IsTrue(this.TestClass == same);
-            Assert.IsFalse(this.TestClass == different);
-            Assert.IsFalse(this.TestClass != same);
-            Assert.IsTrue(this.TestClass != different);
+            Assert.IsFalse(TestClass.Equals(default(object)));
+            Assert.IsFalse(TestClass.Equals(new object()));
+            Assert.IsTrue(TestClass.Equals((object)same));
+            Assert.IsFalse(TestClass.Equals((object)different));
+            Assert.IsTrue(TestClass.Equals(same));
+            Assert.IsFalse(TestClass.Equals(different));
+            Assert.AreEqual(same.GetHashCode(), TestClass.GetHashCode());
+            Assert.AreNotEqual(different.GetHashCode(), TestClass.GetHashCode());
+            Assert.IsTrue(TestClass == same);
+            Assert.IsFalse(TestClass == different);
+            Assert.IsFalse(TestClass != same);
+            Assert.IsTrue(TestClass != different);
         }
 
         [TestMethod]
         public void NameIsInitializedCorrectly()
-            => Assert.AreEqual(this.Name, this.TestClass.Name);
+            => Assert.AreEqual(Name, TestClass.Name);
 
         [TestMethod]
         public void MaterialHeadingIsInitializedCorrectly()
-            => Assert.AreEqual(this.MaterialHeading, this.TestClass.MaterialHeading);
+            => Assert.AreEqual(MaterialHeading, TestClass.MaterialHeading);
 
         [TestMethod]
         public void TonnageHeadingIsInitializedCorrectly()
-            => Assert.AreEqual(this.TonnageHeading, this.TestClass.TonnageHeading);
+            => Assert.AreEqual(TonnageHeading, TestClass.TonnageHeading);
 
         [TestMethod]
         public void CalcResultLateReportingTonnageDetailsIsInitializedCorrectly()
-            => Assert.AreSame(this.CalcResultLateReportingTonnageDetails, this.TestClass.CalcResultLateReportingTonnageDetails);
+            => Assert.AreSame(CalcResultLateReportingTonnageDetails, TestClass.CalcResultLateReportingTonnageDetails);
     }
 }

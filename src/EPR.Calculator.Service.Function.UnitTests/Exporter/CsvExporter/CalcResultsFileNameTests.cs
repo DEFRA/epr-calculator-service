@@ -1,16 +1,14 @@
+using System.Reflection;
+using System.Text;
+using AutoFixture;
+using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter;
+using Moq;
+using Moq.EntityFrameworkCore;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 {
-    using System;
-    using System.Reflection;
-    using System.Text;
-    using AutoFixture;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Moq;
-    using Moq.EntityFrameworkCore;
-
     /// <summary>
     /// Unit tests for <see cref="CalcResultsExporter"/>.
     /// </summary>
@@ -38,7 +36,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         /// Check that an exception is thrown when trying to construct the file name,
         /// but a blank run name is used.
         /// </summary>
-        /// <param name="value"></param>
         [TestMethod]
         public void CanCreateBillingCsvFileName()
         {
@@ -50,11 +47,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         /// Check that an exception is thrown when trying to construct the file name,
         /// but a blank run name is used.
         /// </summary>
-        /// <param name="value"></param>
         [TestMethod]
         public void CanCreateResultsCsvFileName()
         {
-            var resultsFileCsvName = new CalcResultsAndBillingFileName(10223, "RunName", new DateTime(2025, 10, 1, 9, 25, 0), false);
+            var resultsFileCsvName = new CalcResultsAndBillingFileName(10223, "RunName", new DateTime(2025, 10, 1, 9, 25, 0));
             Assert.AreEqual("10223-RunName_Results File_20251001.csv", resultsFileCsvName);
         }
 
@@ -62,7 +58,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         /// Check that an exception is thrown when trying to construct the file name,
         /// but a blank run name is used.
         /// </summary>
-        /// <param name="value"></param>
         [TestMethod]
         public void CanCreateBillingJsonFileName()
         {
@@ -74,7 +69,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         /// Check that an exception is thrown when trying to construct the file name,
         /// but a blank run name is used.
         /// </summary>
-        /// <param name="value"></param>
         [DataTestMethod]
         [DataRow(null)]
         [DataRow("")]
@@ -150,7 +144,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var context = new Mock<ApplicationDBContext>();
             context.Setup(c => c.CalculatorRuns).ReturnsDbSet([mockRun]);
             var expectedFileName = $"{mockRun.Id}" +
-                $"-{mockRun.Name[0..30]}" +
+                $"-{mockRun.Name[..30]}" +
                 $"_Results File" +
                 $"_{mockRun.CreatedAt:yyyyMMdd}" +
                 $".csv";

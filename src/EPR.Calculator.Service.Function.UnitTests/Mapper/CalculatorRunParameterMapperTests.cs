@@ -1,17 +1,10 @@
-// <copyright file="CalculatorRunParameterMapperTests.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Interface;
+using EPR.Calculator.Service.Function.Mapper;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Mapper
 {
-    using EPR.Calculator.API.Data.Models;
-    using EPR.Calculator.Service.Common;
-    using EPR.Calculator.Service.Function;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Interface;
-    using EPR.Calculator.Service.Function.Mapper;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     /// <summary>
     /// Contains unit tests for the CalculatorRunParameterMapper class.
     /// </summary>
@@ -26,7 +19,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
         [TestInitialize]
         public void SetUp()
         {
-            this.calculatorRunParameterMapper = new CalculatorRunParameterMapper();
+            calculatorRunParameterMapper = new CalculatorRunParameterMapper();
         }
 
         /// <summary>
@@ -45,13 +38,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             };
 
             // Act
-            var result = this.calculatorRunParameterMapper?.Map(calculatorParameter);
+            var result = calculatorRunParameterMapper?.Map(calculatorParameter);
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(calculatorParameter.RelativeYear, result?.RelativeYear);
-            Assert.AreEqual(calculatorParameter.CreatedBy, result?.User);
-            Assert.AreEqual(calculatorParameter.CalculatorRunId, result?.Id);
+            Assert.AreEqual(calculatorParameter.RelativeYear, result.RelativeYear);
+            Assert.AreEqual(calculatorParameter.CreatedBy, result.User);
+            Assert.AreEqual(calculatorParameter.CalculatorRunId, result.Id);
         }
 
         /// <summary>
@@ -69,13 +62,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mapper
             };
 
             // Act
-            var result = this.calculatorRunParameterMapper?.Map(billingFileMessage);
+            var result = calculatorRunParameterMapper?.Map(billingFileMessage);
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(billingFileMessage.CalculatorRunId, result?.Id);
-            Assert.AreEqual(billingFileMessage.ApprovedBy, result?.ApprovedBy);
-            Assert.AreEqual(billingFileMessage.MessageType, result?.MessageType);
+            Assert.AreEqual(billingFileMessage.CalculatorRunId, result.Id);
+            Assert.AreEqual(billingFileMessage.ApprovedBy, result.ApprovedBy);
+            Assert.AreEqual(billingFileMessage.MessageType, result.MessageType);
         }
     }
 }

@@ -1,11 +1,7 @@
-﻿namespace EPR.Calculator.Service.Function.Interface
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using EPR.Calculator.API.Data.DataModels;
+﻿using EPR.Calculator.API.Data.DataModels;
 
+namespace EPR.Calculator.Service.Function.Interface
+{
     public interface IOrgAndPomWrapper
     {
         bool AnyOrganisationData();

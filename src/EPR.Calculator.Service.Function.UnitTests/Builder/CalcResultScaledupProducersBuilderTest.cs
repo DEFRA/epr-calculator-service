@@ -1,20 +1,19 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder
-{
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.API.Data.Models;
-    using EPR.Calculator.Service.Common;
-    using EPR.Calculator.Service.Function.Builder;
-    using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Dtos;
-    using EPR.Calculator.Service.Function.Mappers;
-    using EPR.Calculator.Service.Function.Models;
-    using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Builder;
+using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Mappers;
+using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Diagnostics;
-    using static EPR.Calculator.Service.Function.UnitTests.Builder.CalcRunLaDisposalCostBuilderTests;
+namespace EPR.Calculator.Service.Function.UnitTests.Builder
+{
+    using static CalcRunLaDisposalCostBuilderTests;
 
     [TestClass]
     public class CalcResultScaledupProducersBuilderTest
@@ -23,28 +22,28 @@
         private readonly int runId = 1;
         private CalcResultScaledupProducersBuilder builder;
 
-        private readonly System.Guid submitterId = System.Guid.NewGuid();
-        private readonly System.Guid submitterId2 = System.Guid.NewGuid();
+        private readonly Guid submitterId = Guid.NewGuid();
+        private readonly Guid submitterId2 = Guid.NewGuid();
 
         private void PrepareNonScaledUpProducer()
         {
             var producerDetail = new ProducerDetail
             {
                 Id = 1,
-                CalculatorRunId = this.runId,
+                CalculatorRunId = runId,
                 ProducerId = 11,
                 SubsidiaryId = "Subsidary 1",
                 ProducerName = "Producer Name",
             };
-            this.dbContext.ProducerDetail.Add(producerDetail);
+            dbContext.ProducerDetail.Add(producerDetail);
 
-            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
             {
                 Id = 1,
                 PackagingType = "HH",
                 ProducerDetail = producerDetail,
             });
-            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
             {
                 Id = 2,
                 PackagingType = "HDC",
@@ -59,7 +58,7 @@
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test User",
             };
-            this.dbContext.CalculatorRunPomDataMaster.Add(calcRunPomDataMaster);
+            dbContext.CalculatorRunPomDataMaster.Add(calcRunPomDataMaster);
 
             var calcRunOrganisationDataMaster = new CalculatorRunOrganisationDataMaster
             {
@@ -69,9 +68,9 @@
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test User",
             };
-            this.dbContext.CalculatorRunOrganisationDataMaster.Add(calcRunOrganisationDataMaster);
+            dbContext.CalculatorRunOrganisationDataMaster.Add(calcRunOrganisationDataMaster);
 
-            this.dbContext.CalculatorRuns.Add(new CalculatorRun
+            dbContext.CalculatorRuns.Add(new CalculatorRun
             {
                 Id = runId,
                 RelativeYear = new RelativeYear(2024),
@@ -80,7 +79,7 @@
                 CalculatorRunPomDataMaster = calcRunPomDataMaster,
             });
 
-            this.dbContext.CalculatorRunOrganisationDataDetails.AddRange(
+            dbContext.CalculatorRunOrganisationDataDetails.AddRange(
                 new CalculatorRunOrganisationDataDetail
                 {
                     Id = 1,
@@ -105,7 +104,7 @@
                 }
                 );
 
-            this.dbContext.CalculatorRunPomDataDetails.Add(
+            dbContext.CalculatorRunPomDataDetails.Add(
                 new CalculatorRunPomDataDetail
                 {
                     LoadTimeStamp = DateTime.UtcNow,
@@ -115,7 +114,7 @@
                     OrganisationId = 10,
                 });
 
-            this.dbContext.SubmissionPeriodLookup.Add(
+            dbContext.SubmissionPeriodLookup.Add(
                 new SubmissionPeriodLookup
                 {
                     DaysInSubmissionPeriod = 0,
@@ -127,7 +126,7 @@
                     SubmissionPeriodDesc = string.Empty,
                 });
 
-            this.dbContext.CalculatorRuns.Add(
+            dbContext.CalculatorRuns.Add(
                 new CalculatorRun
                 {
                     Id = 2,
@@ -142,14 +141,14 @@
                 ProducerId = 11,
                 ProducerName = "Producer Test",
             };
-            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
             {
                 Id = 3,
                 PackagingType = "HH",
                 ProducerDetail = producerDetail1,
             });
 
-            this.dbContext.Material.AddRange(
+            dbContext.Material.AddRange(
                 new Material { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
                 new Material { Id = 2, Code = "FC", Name = "Fibre composite", Description = "Fibre composite" },
                 new Material { Id = 3, Code = "GL", Name = "Glass", Description = "Glass" },
@@ -160,18 +159,18 @@
                 new Material { Id = 8, Code = "OT", Name = "Other materials", Description = "Other materials" }
             );
 
-            this.dbContext.SaveChanges();
+            dbContext.SaveChanges();
         }
 
         private void PrepareScaledUpProducer()
         {
-            this.dbContext.CalculatorRunPomDataDetails.AddRange(
+            dbContext.CalculatorRunPomDataDetails.AddRange(
             new CalculatorRunPomDataDetail
             {
                 LoadTimeStamp = DateTime.UtcNow,
                 SubmissionPeriod = "2024-P2",
                 SubmissionPeriodDesc = "desc",
-                CalculatorRunPomDataMaster = this.dbContext.CalculatorRunPomDataMaster.First(),
+                CalculatorRunPomDataMaster = dbContext.CalculatorRunPomDataMaster.First(),
                 OrganisationId = 11,
                 SubmitterId = submitterId,
                 PackagingType = "HH",
@@ -184,7 +183,7 @@
                 LoadTimeStamp = DateTime.UtcNow,
                 SubmissionPeriod = "2024-P2",
                 SubmissionPeriodDesc = "desc",
-                CalculatorRunPomDataMaster = this.dbContext.CalculatorRunPomDataMaster.First(),
+                CalculatorRunPomDataMaster = dbContext.CalculatorRunPomDataMaster.First(),
                 OrganisationId = 11,
                 SubmitterId = submitterId2,
                 PackagingType = "HH",
@@ -201,9 +200,9 @@
                 ProducerName = "Producer Test",
             };
 
-            this.dbContext.ProducerDetail.Add(producerDetail);
+            dbContext.ProducerDetail.Add(producerDetail);
 
-            this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
             {
                 PackagingType = "HH",
                 ProducerDetail = producerDetail,
@@ -212,7 +211,7 @@
 
             });
 
-            this.dbContext.SubmissionPeriodLookup.Add(
+            dbContext.SubmissionPeriodLookup.Add(
             new SubmissionPeriodLookup
             {
                 DaysInSubmissionPeriod = 0,
@@ -224,7 +223,7 @@
                 SubmissionPeriodDesc = string.Empty,
             });
 
-            this.dbContext.SaveChanges();
+            dbContext.SaveChanges();
         }
 
         /// <summary>
@@ -237,19 +236,16 @@
             .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
             .Options;
 
-            this.dbContext = new ApplicationDBContext(dbContextOptions);
-            this.dbContext.Database.EnsureCreated();
-            this.builder = new CalcResultScaledupProducersBuilder(this.dbContext);
+            dbContext = new ApplicationDBContext(dbContextOptions);
+            dbContext.Database.EnsureCreated();
+            builder = new CalcResultScaledupProducersBuilder(dbContext);
         }
 
         [TestCleanup]
         public void Teardown()
         {
-            if (this.dbContext != null)
-            {
-                this.dbContext.Database.EnsureDeleted();
-                this.dbContext.Dispose();
-            }
+            dbContext.Database.EnsureDeleted();
+            dbContext.Dispose();
         }
 
         /// <summary>
@@ -261,18 +257,18 @@
         public async Task Construct_WhenScaledUpDataPresent()
         {
             // Arrange
-            this.PrepareNonScaledUpProducer();
-            this.PrepareScaledUpProducer();
+            PrepareNonScaledUpProducer();
+            PrepareScaledUpProducer();
             var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
             // Act
-            var result = await this.builder.ConstructAsync(requestDto);
+            var result = await builder.ConstructAsync(requestDto);
 
             // Assert
             Assert.AreEqual(2, result.ScaledupProducers!.Count());
-            var tonnage = result.ScaledupProducers!.FirstOrDefault(x => x.ProducerId == 11 && x.IsTotalRow == false && x.IsSubtotalRow == false)?.ScaledupProducerTonnageByMaterial["PC"];
-            Assert.AreEqual(1, tonnage!.TotalReportedTonnage);
-            Assert.AreEqual(2.999m, tonnage!.ScaledupTotalReportedTonnage);
+            var tonnage = result.ScaledupProducers!.First(x => x.ProducerId == 11 && !x.IsTotalRow && !x.IsSubtotalRow).ScaledupProducerTonnageByMaterial["PC"];
+            Assert.AreEqual(1, tonnage.TotalReportedTonnage);
+            Assert.AreEqual(2.999m, tonnage.ScaledupTotalReportedTonnage);
             
         }
 
@@ -285,12 +281,12 @@
         public async Task Construct_ScaledUpDataPresentForThisRunOnly()
         {
             // Arrange
-            this.PrepareNonScaledUpProducer();
-            this.PrepareScaledUpProducer();
+            PrepareNonScaledUpProducer();
+            PrepareScaledUpProducer();
             var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
             // Act
-            var result = await this.builder.ConstructAsync(requestDto);
+            var result = await builder.ConstructAsync(requestDto);
 
             // Assert
             var actualNumberScaledUpProducer = result.ScaledupProducers!.Where(t => !t.IsTotalRow);
@@ -306,25 +302,23 @@
         public async Task Construct_WhenNoScaledUpDataPresent()
         {
             // Arrange
-            this.PrepareNonScaledUpProducer();
+            PrepareNonScaledUpProducer();
             var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
             // Act
-            var result = await this.builder.ConstructAsync(requestDto);
+            var result = await builder.ConstructAsync(requestDto);
 
             // Assert
             Assert.AreEqual(0, result.ScaledupProducers?.Count());
         }
 
         [TestMethod]
-        public void GetScaledUpOrganisations_Test()
+        public async Task GetScaledUpOrganisations_Test()
         {
-            this.PrepareNonScaledUpProducer();
-            this.PrepareScaledUpProducer();
-            var task = this.builder?.GetScaledUpOrganisationsAsync(this.runId);
-            task?.Wait();
+            PrepareNonScaledUpProducer();
+            PrepareScaledUpProducer();
+            var result = await builder.GetScaledUpOrganisationsAsync(runId);
 
-            var result = task?.Result;
             Assert.IsNotNull(result);
             Assert.AreEqual(1, result.Count());
         }
@@ -352,7 +346,6 @@
                 new ProducerData { ProducerDetail = new ProducerDetail { ProducerId = 2 }, MaterialName = "Glass", PackagingType = "HDC" },
             };
 
-            var resultsDto = new CalcResultsRequestDto { RunId = 2, RelativeYear = new RelativeYear(2025) };
             var calcResult = TestDataHelper.GetCalcResult();
             calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers
             {
@@ -364,7 +357,7 @@
             };
 
             // Act
-            var filteredData = producerData.Where(t => !calcResult.CalcResultScaledupProducers.ScaledupProducers.Any(i => i.ProducerId == t?.ProducerDetail?.ProducerId)).ToList();
+            var filteredData = producerData.Where(t => !calcResult.CalcResultScaledupProducers.ScaledupProducers.Any(i => i.ProducerId == t.ProducerDetail?.ProducerId)).ToList();
 
             // Assert
             Assert.AreEqual(1, filteredData.Count);
@@ -374,7 +367,7 @@
         [TestMethod]
         public void AddExtraRowsTest()
         {
-            this.builder = new CalcResultScaledupProducersBuilder(this.dbContext!);
+            builder = new CalcResultScaledupProducersBuilder(dbContext);
             var runProducerMaterialDetails = new List<CalcResultScaledupProducer>();
             runProducerMaterialDetails.AddRange([
                 new CalcResultScaledupProducer
@@ -436,7 +429,7 @@
         [TestMethod]
         public void GetOverallTotalRowTest()
         {
-            this.builder = new CalcResultScaledupProducersBuilder(this.dbContext!);
+            builder = new CalcResultScaledupProducersBuilder(dbContext);
             var runProducerMaterialDetails = new List<CalcResultScaledupProducer>();
             var dictionary = new Dictionary<string, CalcResultScaledupProducerTonnage>();
             dictionary.Add("AL", new CalcResultScaledupProducerTonnage
@@ -502,23 +495,21 @@
         }
 
         [TestMethod]
-        public void GetProducerReportedMaterialsAsyncTest()
+        public async Task GetProducerReportedMaterialsAsyncTest()
         {
-            this.builder = new CalcResultScaledupProducersBuilder(this.dbContext!);
-            var task = this.builder.GetProducerReportedMaterialsAsync(1, new List<int> { 1, 2 });
-            task.Wait();
-            var result = task.Result;
+            builder = new CalcResultScaledupProducersBuilder(dbContext!);
+            var result = await builder.GetProducerReportedMaterialsAsync(1, new List<int> { 1, 2 });
+
             Assert.IsNotNull(result);
             Assert.AreEqual(0, result.Count);
         }
 
         [TestMethod]
-        public void GetScaledupOrganisationDetailsTest()
+        public async Task GetScaledupOrganisationDetailsTest()
         {
-            this.builder = new CalcResultScaledupProducersBuilder(this.dbContext!);
-            var task = this.builder.GetScaledupOrganisationDetails(1, new List<int> { 1, 2 });
-            task.Wait();
-            var result = task.Result;
+            builder = new CalcResultScaledupProducersBuilder(dbContext!);
+            var result = await builder.GetScaledupOrganisationDetails(1, new List<int> { 1, 2 });
+
             Assert.IsNotNull(result);
             Assert.AreEqual(0, result.Count());
         }
@@ -580,8 +571,8 @@
             materials.Add(new Material { Code = "AL", Name = "Aluminium" });
             var materialDetails = MaterialMapper.Map(materials);
             CalcResultScaledupProducersBuilder.SetHeaders(producers, materialDetails);
-            Assert.AreEqual(19, producers?.ColumnHeaders?.Count());
-            Assert.AreEqual(2, producers?.MaterialBreakdownHeaders?.Count());
+            Assert.AreEqual(19, producers.ColumnHeaders?.Count());
+            Assert.AreEqual(2, producers.MaterialBreakdownHeaders?.Count());
         }
 
         [TestMethod]
@@ -619,7 +610,7 @@
             var materials = new List<Material>();
             materials.Add(new Material { Code = "AL", Name = "Aluminium" });
             var materialDetails = MaterialMapper.Map(materials);
-            this.builder = new CalcResultScaledupProducersBuilder(this.dbContext!);
+            builder = new CalcResultScaledupProducersBuilder(dbContext);
             CalcResultScaledupProducersBuilder.CalculateScaledupTonnage([scaledUpProducer], allPomDataDetails, materialDetails);
             Assert.IsNotNull(scaledUpProducer.ScaledupProducerTonnageByMaterial);
             var scaledUpTonnage = scaledUpProducer.ScaledupProducerTonnageByMaterial["AL"];
@@ -663,7 +654,7 @@
             var materials = new List<Material>();
             materials.Add(new Material { Code = "GL", Name = "Glass" });
             var materialDetails = MaterialMapper.Map(materials);
-            this.builder = new CalcResultScaledupProducersBuilder(this.dbContext);
+            builder = new CalcResultScaledupProducersBuilder(dbContext);
             CalcResultScaledupProducersBuilder.CalculateScaledupTonnage([scaledUpProducer], allPomDataDetails, materialDetails);
 
             var scaledUpTonnage = scaledUpProducer.ScaledupProducerTonnageByMaterial["GL"];

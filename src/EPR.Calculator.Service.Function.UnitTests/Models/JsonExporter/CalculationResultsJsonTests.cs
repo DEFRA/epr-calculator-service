@@ -1,17 +1,15 @@
+using System.Globalization;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
+using EPR.Calculator.Service.Common.Utils;
+using EPR.Calculator.Service.Function.Models.JsonExporter;
+using EPR.Calculator.Service.Function.UnitTests.Builder;
+using EPR.Calculator.Service.Function.UnitTests.Utils;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
 {
-    using EPR.Calculator.Service.Common.Utils;
-    using EPR.Calculator.Service.Function.Mapper;
-    using EPR.Calculator.Service.Function.Models;
-    using EPR.Calculator.Service.Function.Models.JsonExporter;
-    using EPR.Calculator.Service.Function.UnitTests.Builder;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System.Globalization;
-    using System.Text.Json;
-    using System.Text.Json.Nodes;
-    using System.Text.Json.Serialization;
-    using System.Collections.Generic;
-    using static EPR.Calculator.Service.Common.UnitTests.Utils.JsonNodeComparer;
+    using static JsonNodeComparer;
 
     [TestClass]
     public class CalculationResultsJsonFromTests
@@ -455,12 +453,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             {
                 Assert.Fail("Producer not found.");
             }
-            Assert.AreEqual(producer.ProducerId, roundTrippedData[0]!?["producerID"]?.ToString());
-            Assert.AreEqual(producer.SubsidiaryId, roundTrippedData[0]!?["subsidiaryID"]?.ToString());
-            Assert.AreEqual(producer.ProducerName, roundTrippedData[0]!?["producerName"]?.ToString());
-            Assert.AreEqual(producer?.TradingName, roundTrippedData[0]!?["tradingName"]?.ToString());
-            Assert.AreEqual(producer?.Level ?? "1" , roundTrippedData[0]!?["level"]?.ToString());
-            Assert.AreEqual(producer?.IsProducerScaledup ?? "No", roundTrippedData[0]!?["scaledUpTonnages"]?.ToString());
+            Assert.AreEqual(producer.ProducerId, roundTrippedData[0]!["producerID"]?.ToString());
+            Assert.AreEqual(producer.SubsidiaryId, roundTrippedData[0]!["subsidiaryID"]?.ToString());
+            Assert.AreEqual(producer.ProducerName, roundTrippedData[0]!["producerName"]?.ToString());
+            Assert.AreEqual(producer.TradingName, roundTrippedData[0]!["tradingName"]?.ToString());
+            Assert.AreEqual(producer.Level ?? "1" , roundTrippedData[0]!["level"]?.ToString());
+            Assert.AreEqual(producer.IsProducerScaledup, roundTrippedData[0]!["scaledUpTonnages"]?.ToString());
         }
 
         [TestMethod]

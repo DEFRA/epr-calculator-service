@@ -1,12 +1,8 @@
-﻿// <copyright file="CalculatorRunParameterMapper.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
+﻿using EPR.Calculator.Service.Common;
+using EPR.Calculator.Service.Function.Interface;
 
 namespace EPR.Calculator.Service.Function.Mapper
 {
-    using EPR.Calculator.Service.Common;
-    using EPR.Calculator.Service.Function.Interface;
-
     /// <summary>
     /// Maps <see cref="CreateResultFileMessage"/> and <see cref="CreateBillingFileMessage"/> to <see cref="ICalculatorRunParameterMapper"/>.
     /// </summary>
@@ -19,7 +15,7 @@ namespace EPR.Calculator.Service.Function.Mapper
         /// <returns>The mapped result file message.</returns>
         public CalculatorRunParameter Map(CreateResultFileMessage createResultFileMessage)
         {
-            return new CalculatorRunParameter()
+            return new CalculatorRunParameter
             {
                 RelativeYear = createResultFileMessage.RelativeYear,
                 User = createResultFileMessage.CreatedBy,
@@ -35,7 +31,7 @@ namespace EPR.Calculator.Service.Function.Mapper
         /// <returns>The mapped billing file message.</returns>
         public BillingFileMessage Map(CreateBillingFileMessage createBillingFileMessage)
         {
-            return new BillingFileMessage()
+            return new BillingFileMessage
             {
                 Id = createBillingFileMessage.CalculatorRunId,
                 ApprovedBy = createBillingFileMessage.ApprovedBy,

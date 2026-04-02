@@ -1,16 +1,10 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.Services
 {
@@ -31,7 +25,7 @@ namespace EPR.Calculator.Service.Function.Services
                                          join d in context.ProducerDesignatedRunInvoiceInstruction on new { pd.ProducerId, pd.CalculatorRunId } equals new { d.ProducerId, d.CalculatorRunId }
                                          join c in context.CalculatorRuns on pd.CalculatorRunId equals c.Id
                                          where c.RelativeYearValue == relativeYear.Value
-                                            && new int[]
+                                            && new[]
                                             {
                                                 RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
                                                 RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
@@ -39,7 +33,7 @@ namespace EPR.Calculator.Service.Function.Services
                                                 RunClassificationStatusIds.FINALRUNCOMPLETEDID
                                              }.Contains(c.CalculatorRunClassificationId)
                                             && pds.BillingInstructionAcceptReject == CommonConstants.Accepted
-                                         select new ProducerInvoicedDto()
+                                         select new ProducerInvoicedDto
                                          {
                                              CalculatorRunId = c.Id,
                                              CalculatorName = c.Name,

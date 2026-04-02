@@ -1,10 +1,9 @@
-﻿namespace EPR.Calculator.Service.Function.Builder.Summary.SaSetupCosts
-{
-    using System.Collections.Generic;
-    using EPR.Calculator.Service.Function.Builder.Summary.Common;
-    using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Function.Models;
+﻿using EPR.Calculator.Service.Function.Builder.Summary.Common;
+using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Models;
 
+namespace EPR.Calculator.Service.Function.Builder.Summary.SaSetupCosts
+{
     public static class SaSetupCostsProducer
     {
         public static IEnumerable<CalcResultSummaryHeader> GetHeaders()

@@ -1,12 +1,7 @@
-﻿// <copyright file="ICalculatorRunService.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
+﻿using EPR.Calculator.Service.Common;
 
 namespace EPR.Calculator.Service.Function.Interface
 {
-    using System.Threading.Tasks;
-    using EPR.Calculator.Service.Common;
-
     /// <summary>
     /// Interface for starting the calculator process.
     /// </summary>

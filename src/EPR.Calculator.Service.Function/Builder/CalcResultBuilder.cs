@@ -1,24 +1,23 @@
+using System.Diagnostics.CodeAnalysis;
+using EPR.Calculator.Service.Function.Builder.CancelledProducers;
+using EPR.Calculator.Service.Function.Builder.CommsCost;
+using EPR.Calculator.Service.Function.Builder.Detail;
+using EPR.Calculator.Service.Function.Builder.ErrorReport;
+using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
+using EPR.Calculator.Service.Function.Builder.Lapcap;
+using EPR.Calculator.Service.Function.Builder.LateReportingTonnages;
+using EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment;
+using EPR.Calculator.Service.Function.Builder.ParametersOther;
+using EPR.Calculator.Service.Function.Builder.PartialObligations;
+using EPR.Calculator.Service.Function.Builder.RejectedProducers;
+using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
+using EPR.Calculator.Service.Function.Builder.Summary;
+using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Models;
+using Microsoft.ApplicationInsights;
+
 namespace EPR.Calculator.Service.Function.Builder
 {
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using EPR.Calculator.Service.Function.Builder.CancelledProducers;
-    using EPR.Calculator.Service.Function.Builder.CommsCost;
-    using EPR.Calculator.Service.Function.Builder.Detail;
-    using EPR.Calculator.Service.Function.Builder.ErrorReport;
-    using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
-    using EPR.Calculator.Service.Function.Builder.Lapcap;
-    using EPR.Calculator.Service.Function.Builder.LateReportingTonnages;
-    using EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment;
-    using EPR.Calculator.Service.Function.Builder.ParametersOther;
-    using EPR.Calculator.Service.Function.Builder.RejectedProducers;
-    using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
-    using EPR.Calculator.Service.Function.Builder.PartialObligations;
-    using EPR.Calculator.Service.Function.Builder.Summary;
-    using EPR.Calculator.Service.Function.Dtos;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.ApplicationInsights;
-
     public class CalcResultBuilder : ICalcResultBuilder
     {
         private readonly ICalcResultParameterOtherCostBuilder calcResultParameterOtherCostBuilder;
@@ -37,10 +36,7 @@ namespace EPR.Calculator.Service.Function.Builder
         private readonly TelemetryClient _telemetryClient;
 
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CalcResultBuilder"/> class.
-        /// </summary>
+        [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         public CalcResultBuilder(
             ICalcResultDetailBuilder calcResultDetailBuilder,
             ICalcResultLapcapDataBuilder lapcapBuilder,
@@ -62,22 +58,22 @@ namespace EPR.Calculator.Service.Function.Builder
             this.commsCostReportBuilder = commsCostReportBuilder;
             this.lateReportingBuilder = lateReportingBuilder;
             this.calcResultParameterOtherCostBuilder = calcResultParameterOtherCostBuilder;
-            this.laDisposalCostBuilder = calcRunLaDisposalCostBuilder;
-            this.lapcapplusFourApportionmentBuilder = calcResultOnePlusFourApportionmentBuilder;
+            laDisposalCostBuilder = calcRunLaDisposalCostBuilder;
+            lapcapplusFourApportionmentBuilder = calcResultOnePlusFourApportionmentBuilder;
             this.calcResultScaledupProducersBuilder = calcResultScaledupProducersBuilder;
             this.calcResultPartialObligationBuilder = calcResultPartialObligationBuilder;
             this.summaryBuilder = summaryBuilder;
             this.calcResultCancelledProducersBuilder = calcResultCancelledProducersBuilder;
             this.calcResultRejectedProducersBuilder = calcResultRejectedProducersBuilder;
             this.calcResultErrorReportBuilder = calcResultErrorReportBuilder;
-            this._telemetryClient = telemetryClient;
+            _telemetryClient = telemetryClient;
         }
 
         public async Task<CalcResult> BuildAsync(CalcResultsRequestDto resultsRequestDto)
         {
             var result = new CalcResult
             {
-                CalcResultDetail =  await this.calcResultDetailBuilder.ConstructAsync(resultsRequestDto),
+                CalcResultDetail =  await calcResultDetailBuilder.ConstructAsync(resultsRequestDto),
                 CalcResultLapcapData =
                 new CalcResultLapcapData
                 {
@@ -101,57 +97,57 @@ namespace EPR.Calculator.Service.Function.Builder
                 #pragma warning restore S1135
             };
 
-            this._telemetryClient.TrackTrace("lapcapBuilder started...");
-            result.CalcResultLapcapData = await this.lapcapBuilder.ConstructAsync(resultsRequestDto);
-            this._telemetryClient.TrackTrace("lapcapBuilder end...");
+            _telemetryClient.TrackTrace("lapcapBuilder started...");
+            result.CalcResultLapcapData = await lapcapBuilder.ConstructAsync(resultsRequestDto);
+            _telemetryClient.TrackTrace("lapcapBuilder end...");
 
-            this._telemetryClient.TrackTrace("lateReportingBuilder started...");
-            result.CalcResultLateReportingTonnageData = await this.lateReportingBuilder.ConstructAsync(resultsRequestDto);
-            this._telemetryClient.TrackTrace("BuilateReportingBuilderlder end...");
+            _telemetryClient.TrackTrace("lateReportingBuilder started...");
+            result.CalcResultLateReportingTonnageData = await lateReportingBuilder.ConstructAsync(resultsRequestDto);
+            _telemetryClient.TrackTrace("BuilateReportingBuilderlder end...");
 
-            this._telemetryClient.TrackTrace("calcResultParameterOtherCostBuilder started...");
-            result.CalcResultParameterOtherCost = await this.calcResultParameterOtherCostBuilder.ConstructAsync(resultsRequestDto);
-            this._telemetryClient.TrackTrace("calcResultParameterOtherCostBuilder end...");
+            _telemetryClient.TrackTrace("calcResultParameterOtherCostBuilder started...");
+            result.CalcResultParameterOtherCost = await calcResultParameterOtherCostBuilder.ConstructAsync(resultsRequestDto);
+            _telemetryClient.TrackTrace("calcResultParameterOtherCostBuilder end...");
 
-            this._telemetryClient.TrackTrace("lapcapplusFourApportionmentBuilder started...");
-            result.CalcResultOnePlusFourApportionment = this.lapcapplusFourApportionmentBuilder.ConstructAsync(resultsRequestDto, result);
-            this._telemetryClient.TrackTrace("lapcapplusFourApportionmentBuilder end...");
+            _telemetryClient.TrackTrace("lapcapplusFourApportionmentBuilder started...");
+            result.CalcResultOnePlusFourApportionment = lapcapplusFourApportionmentBuilder.ConstructAsync(resultsRequestDto, result);
+            _telemetryClient.TrackTrace("lapcapplusFourApportionmentBuilder end...");
 
-            this._telemetryClient.TrackTrace("CalcResultCancelledProducersBuilder started...");
-            result.CalcResultCancelledProducers = await this.calcResultCancelledProducersBuilder.ConstructAsync(resultsRequestDto);
-            this._telemetryClient.TrackTrace("CalcResultCancelledProducersBuilder end...");
+            _telemetryClient.TrackTrace("CalcResultCancelledProducersBuilder started...");
+            result.CalcResultCancelledProducers = await calcResultCancelledProducersBuilder.ConstructAsync(resultsRequestDto);
+            _telemetryClient.TrackTrace("CalcResultCancelledProducersBuilder end...");
 
-            this._telemetryClient.TrackTrace("calcResultScaledupProducersBuilder started...");
-            var scaledupProducersResult = await this.calcResultScaledupProducersBuilder.ConstructAsync(resultsRequestDto);
+            _telemetryClient.TrackTrace("calcResultScaledupProducersBuilder started...");
+            var scaledupProducersResult = await calcResultScaledupProducersBuilder.ConstructAsync(resultsRequestDto);
             result.CalcResultScaledupProducers = scaledupProducersResult;
-            this._telemetryClient.TrackTrace("calcResultScaledupProducersBuilder end...");
+            _telemetryClient.TrackTrace("calcResultScaledupProducersBuilder end...");
 
-            this._telemetryClient.TrackTrace("calcResultPartialObligationBuilder started...");
-            result.CalcResultPartialObligations = await this.calcResultPartialObligationBuilder.ConstructAsync(resultsRequestDto, result.CalcResultScaledupProducers?.ScaledupProducers ?? new List<CalcResultScaledupProducer>());
-            this._telemetryClient.TrackTrace("calcResultPartialObligationBuilder end...");
+            _telemetryClient.TrackTrace("calcResultPartialObligationBuilder started...");
+            result.CalcResultPartialObligations = await calcResultPartialObligationBuilder.ConstructAsync(resultsRequestDto, result.CalcResultScaledupProducers?.ScaledupProducers ?? new List<CalcResultScaledupProducer>());
+            _telemetryClient.TrackTrace("calcResultPartialObligationBuilder end...");
 
             if (resultsRequestDto.IsBillingFile)
             {
-                this._telemetryClient.TrackTrace("CalcResultRejectedProducersBuilder started...");
-                result.CalcResultRejectedProducers = await this.calcResultRejectedProducersBuilder.ConstructAsync(resultsRequestDto);
-                this._telemetryClient.TrackTrace("CalcResultRejectedProducersBuilder end...");
+                _telemetryClient.TrackTrace("CalcResultRejectedProducersBuilder started...");
+                result.CalcResultRejectedProducers = await calcResultRejectedProducersBuilder.ConstructAsync(resultsRequestDto);
+                _telemetryClient.TrackTrace("CalcResultRejectedProducersBuilder end...");
             }
 
-            this._telemetryClient.TrackTrace("laDisposalCostBuilder started...");
-            result.CalcResultLaDisposalCostData = await this.laDisposalCostBuilder.ConstructAsync(resultsRequestDto, result);
-            this._telemetryClient.TrackTrace("laDisposalCostBuilder end...");
+            _telemetryClient.TrackTrace("laDisposalCostBuilder started...");
+            result.CalcResultLaDisposalCostData = await laDisposalCostBuilder.ConstructAsync(resultsRequestDto, result);
+            _telemetryClient.TrackTrace("laDisposalCostBuilder end...");
 
-            this._telemetryClient.TrackTrace("commsCostReportBuilder started...");
-            result.CalcResultCommsCostReportDetail = await this.commsCostReportBuilder.ConstructAsync(resultsRequestDto, result.CalcResultOnePlusFourApportionment, result);
-            this._telemetryClient.TrackTrace("commsCostReportBuilder end...");
+            _telemetryClient.TrackTrace("commsCostReportBuilder started...");
+            result.CalcResultCommsCostReportDetail = await commsCostReportBuilder.ConstructAsync(resultsRequestDto, result.CalcResultOnePlusFourApportionment, result);
+            _telemetryClient.TrackTrace("commsCostReportBuilder end...");
 
-            this._telemetryClient.TrackTrace("summaryBuilder started...");
-            result.CalcResultSummary = await this.summaryBuilder.ConstructAsync(resultsRequestDto.RunId, resultsRequestDto.RelativeYear, resultsRequestDto.IsBillingFile, result);
-            this._telemetryClient.TrackTrace("summaryBuilder end...");
+            _telemetryClient.TrackTrace("summaryBuilder started...");
+            result.CalcResultSummary = await summaryBuilder.ConstructAsync(resultsRequestDto.RunId, resultsRequestDto.RelativeYear, resultsRequestDto.IsBillingFile, result);
+            _telemetryClient.TrackTrace("summaryBuilder end...");
 
-            this._telemetryClient.TrackTrace("Error report builder started...");
-            result.CalcResultErrorReports = this.calcResultErrorReportBuilder.ConstructAsync(resultsRequestDto);
-            this._telemetryClient.TrackTrace("Error report builder end...");
+            _telemetryClient.TrackTrace("Error report builder started...");
+            result.CalcResultErrorReports = calcResultErrorReportBuilder.ConstructAsync(resultsRequestDto);
+            _telemetryClient.TrackTrace("Error report builder end...");
 
             return result;
         }

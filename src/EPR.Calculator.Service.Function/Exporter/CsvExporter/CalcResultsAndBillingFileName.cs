@@ -1,10 +1,7 @@
-﻿namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
-{
-    using System;
-    using System.IO;
-    using System.Linq;
-    using EPR.Calculator.API.Data;
+﻿using EPR.Calculator.API.Data;
 
+namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
+{
     /// <summary>
     /// Builds the file name for the calculator results file.
     /// </summary>
@@ -53,7 +50,6 @@
         /// Initializes a new instance of the <see cref="CalcResultsAndBillingFileName"/> class.
         /// Only use it for JSON billing files.
         /// </summary>
-        /// <param name="runId"></param>
         public CalcResultsAndBillingFileName(int runId, bool isDraftBillingFile, bool isJson)
         {
             if (!isJson || !isDraftBillingFile)

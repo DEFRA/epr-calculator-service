@@ -1,4 +1,3 @@
-using System;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
 

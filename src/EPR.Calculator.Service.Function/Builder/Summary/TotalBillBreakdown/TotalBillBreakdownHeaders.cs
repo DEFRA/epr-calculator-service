@@ -1,4 +1,4 @@
-﻿namespace EPR.Calculator.Service.Function.Builder.Summary.TotalProducerBillBreakdown
+﻿namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
 {
     public static class TotalBillBreakdownHeaders
     {

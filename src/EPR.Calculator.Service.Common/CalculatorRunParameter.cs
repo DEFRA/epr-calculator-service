@@ -1,6 +1,7 @@
-﻿namespace EPR.Calculator.Service.Common
+﻿using EPR.Calculator.API.Data.Models;
+
+namespace EPR.Calculator.Service.Common
 {
-    using EPR.Calculator.API.Data.Models;
     /// <summary>
     /// CalculatorRunParameter model class.
     /// </summary>

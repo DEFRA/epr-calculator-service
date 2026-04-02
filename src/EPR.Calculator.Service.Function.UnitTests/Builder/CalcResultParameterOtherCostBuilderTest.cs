@@ -1,17 +1,16 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder
-{
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.API.Data.Models;
-    using EPR.Calculator.Service.Common;
-    using EPR.Calculator.Service.Function.Builder.ParametersOther;
-    using EPR.Calculator.Service.Function.Dtos;
-    using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Function.Services;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Diagnostics;
-    using Moq;
+﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Builder.ParametersOther;
+using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Moq;
 
+namespace EPR.Calculator.Service.Function.UnitTests.Builder
+{
     [TestClass]
     public class CalcResultParameterOtherCostBuilderTest
     {
@@ -40,11 +39,11 @@
         [TestCleanup]
         public void TearDown()
         {
-            dbContext?.Database.EnsureDeleted();
+            dbContext.Database.EnsureDeleted();
         }
 
         [TestMethod]
-        public void ConstructTest()
+        public async Task ConstructTest()
         {
             var run = new CalculatorRun
             {
@@ -63,7 +62,7 @@
 
             dbContext.DefaultParameterSettings.Add(defaultMaster);
             dbContext.CalculatorRuns.Add(run);
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
 
             foreach (var templateMaster in templateMasterList)
             {
@@ -92,11 +91,9 @@
             dbContext.Country.Add(new Country { Code = "Sc", Name = "Scotland", Description = "Scotland" });
             dbContext.Country.Add(new Country { Code = "NI", Name = "Northern Ireland", Description = "Northern Ireland" });
 
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
 
-            var results = builder.ConstructAsync(new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) });
-            results.Wait();
-            var otherCost = results.Result;
+            var otherCost = await builder.ConstructAsync(new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) });
 
             Assert.IsNotNull(otherCost.SaOperatingCost);
             Assert.AreEqual(2, otherCost.SaOperatingCost.Count());

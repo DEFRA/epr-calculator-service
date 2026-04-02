@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace EPR.Calculator.Service.Function.Models
+﻿namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResultSummaryProducerDisposalFees
     {
@@ -24,7 +22,7 @@ namespace EPR.Calculator.Service.Function.Models
         
         public string? LeaverDate { get; set; }
 
-        public bool isTotalRow { get; set; } = false;
+        public bool isTotalRow { get; set; }
 
         public decimal TotalProducerDisposalFee { get; set; }
 
@@ -96,7 +94,7 @@ namespace EPR.Calculator.Service.Function.Models
 
         public CalcResultSummaryBillingInstruction? BillingInstructionSection { get; set; }
 
-        public bool isOverallTotalRow { get; set; } = false;
+        public bool isOverallTotalRow { get; set; }
         public int ProducerIdInt { get; set; }
     }
 }

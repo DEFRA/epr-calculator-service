@@ -1,21 +1,15 @@
-﻿namespace EPR.Calculator.Service.Function.Services
-{
-    using System;
-    using System.Configuration;
-    using System.Threading.Tasks;
-    using Azure.Storage.Blobs;
-    using EPR.Calculator.Service.Common.Logging;
-    using EPR.Calculator.Service.Function.Interface;
+﻿using System.Configuration;
+using Azure.Storage.Blobs;
+using EPR.Calculator.Service.Common.Logging;
+using EPR.Calculator.Service.Function.Interface;
 
+namespace EPR.Calculator.Service.Function.Services
+{
     /// <summary>
     /// Service for handling blob storage operations.
     /// </summary>
     public class BlobStorageService : IStorageService
     {
-        public const string BlobConnectionStringMissingError = "BlobStorage settings are missing in configuration.";
-        public const string AccountNameMissingError = "Account name is missing in configuration.";
-        public const string AccountKeyMissingError = "Account name is missing in configuration.";
-
         private readonly ICalculatorTelemetryLogger telemetryLogger;
         private readonly BlobServiceClient blobServiceClient;
 
@@ -23,12 +17,10 @@
         /// Initializes a new instance of the <see cref="BlobStorageService"/> class.
         /// </summary>
         /// <param name="blobServiceClient">The blob service client.</param>
-        /// <param name="config">The configuration service.</param>
         /// <param name="telemetryLogger">The telemetry logger.</param>
         /// <exception cref="ConfigurationErrorsException">Thrown when the container name is missing in the configuration.</exception>
         public BlobStorageService(
             BlobServiceClient blobServiceClient,
-            IConfigurationService config,
             ICalculatorTelemetryLogger telemetryLogger)
         {
             this.blobServiceClient = blobServiceClient;
@@ -39,10 +31,10 @@
         public async Task<string> UploadFileContentAsync(
             (string FileName, string Content, string RunName, string ContainerName, bool Overwrite) args)
         {
-            int? runId = int.TryParse(args.FileName.Split('-')[0], out var id) ? id : (int?)null;
+            int? runId = int.TryParse(args.FileName.Split('-')[0], out var id) ? id : null;
             try
             {
-                this.telemetryLogger.LogInformation(new TrackMessage
+                telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = runId,
                     RunName = args.RunName,
@@ -55,7 +47,7 @@
                 var blobClient = blobContainerClient.GetBlobClient(args.FileName);
                 var binaryData = BinaryData.FromString(args.Content);
                 await blobClient.UploadAsync(binaryData, args.Overwrite);
-                this.telemetryLogger.LogInformation(new TrackMessage
+                telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = runId,
                     RunName = args.RunName,
@@ -65,7 +57,7 @@
             }
             catch (Exception ex)
             {
-                this.telemetryLogger.LogError(new ErrorMessage
+                telemetryLogger.LogError(new ErrorMessage
                 {
                     RunId = runId,
                     RunName = args.RunName,

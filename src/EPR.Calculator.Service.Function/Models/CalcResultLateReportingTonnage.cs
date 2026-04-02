@@ -1,8 +1,5 @@
 ﻿namespace EPR.Calculator.Service.Function.Models
 {
-    using System;
-    using System.Collections.Generic;
-
     public record CalcResultLateReportingTonnage
     {
         public string Name { get; init; } = string.Empty;

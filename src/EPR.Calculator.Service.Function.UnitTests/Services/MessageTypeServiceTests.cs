@@ -1,5 +1,4 @@
 ﻿using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common;
 using EPR.Calculator.Service.Function.Services;
 using Newtonsoft.Json;
 
@@ -75,7 +74,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                          }";
 
             // Act
-            var result = _service.DeserializeMessage(json);
+            _service.DeserializeMessage(json);
         }
 
         [TestMethod]

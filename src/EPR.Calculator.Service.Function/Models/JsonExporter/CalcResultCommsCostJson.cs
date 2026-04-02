@@ -1,7 +1,6 @@
-﻿using EPR.Calculator.Service.Function.Builder.CommsCost;
+﻿using System.Text.Json.Serialization;
+using EPR.Calculator.Service.Function.Builder.CommsCost;
 using EPR.Calculator.Service.Function.Constants;
-using System.Linq;
-using System.Text.Json.Serialization;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {

@@ -1,14 +1,11 @@
-﻿namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Linq;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.Service.Function.Builder.Summary.Common;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Models;
+﻿using System.Globalization;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Builder.Summary.Common;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Models;
 
+namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
+{
     public static class CalcResultSummaryCommsCostTwoA
     {
         public static decimal GetEnglandWithBadDebtProvisionForCommsTotal(

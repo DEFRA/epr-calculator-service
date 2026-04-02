@@ -1,21 +1,14 @@
-﻿using Castle.Core.Logging;
+﻿using AutoFixture;
+using Azure;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
+using EPR.Calculator.Service.Common.Logging;
+using EPR.Calculator.Service.Function.Interface;
+using EPR.Calculator.Service.Function.Services;
+using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
-    using System.Configuration;
-    using AutoFixture;
-    using Azure;
-    using Azure.Storage.Blobs;
-    using Azure.Storage.Blobs.Models;
-    using Azure.Storage.Blobs.Specialized;
-    using EPR.Calculator.Service.Common.Logging;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Interface;
-    using EPR.Calculator.Service.Function.Services;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.Logging;
-    using Moq;
-
     /// <summary>Unit tests for the <see cref="BlobStorageService"/> class.</summary>
     [TestClass]
     public class BlobStorageServiceTests
@@ -25,28 +18,27 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         /// </summary>
         public BlobStorageServiceTests()
         {
-            this.Fixture = new Fixture();
+            Fixture = new Fixture();
 
-            this.MockBlobServiceClient = new Mock<BlobServiceClient>();
-            this.MockBlobContainerClient = new Mock<BlobContainerClient>();
-            this.MockBlobClient = new Mock<BlobClient>();
+            MockBlobServiceClient = new Mock<BlobServiceClient>();
+            MockBlobContainerClient = new Mock<BlobContainerClient>();
+            MockBlobClient = new Mock<BlobClient>();
 
-            this.ConfigurationService = new Mock<IConfigurationService>();
-            this.ConfigurationService.Setup(s => s.ResultFileCSVContainerName)
-                .Returns(this.Fixture.Create<string>());
+            ConfigurationService = new Mock<IConfigurationService>();
+            ConfigurationService.Setup(s => s.ResultFileCSVContainerName)
+                .Returns(Fixture.Create<string>());
 
-            this.MockBlobServiceClient.Setup(x => x.GetBlobContainerClient(It.IsAny<string>()))
-                .Returns(this.MockBlobContainerClient.Object);
+            MockBlobServiceClient.Setup(x => x.GetBlobContainerClient(It.IsAny<string>()))
+                .Returns(MockBlobContainerClient.Object);
 
-            this.MockBlobContainerClient.Setup(x => x.GetBlobClient(It.IsAny<string>()))
-                .Returns(this.MockBlobClient.Object);
+            MockBlobContainerClient.Setup(x => x.GetBlobClient(It.IsAny<string>()))
+                .Returns(MockBlobClient.Object);
 
-            this.TelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
+            TelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
 
-            this.BlobStorageService = new BlobStorageService(
-                this.MockBlobServiceClient.Object,
-                this.ConfigurationService.Object,
-                this.TelemetryLogger.Object);
+            BlobStorageService = new BlobStorageService(
+                MockBlobServiceClient.Object,
+                TelemetryLogger.Object);
         }
 
         private Fixture Fixture { get; init; }
@@ -74,12 +66,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var expectedUri = new Uri("https://example.com/test.txt");
 
             var responseMock = new Mock<Response<BlobContentInfo>>();
-            this.MockBlobClient.Setup(x => x.UploadAsync(It.IsAny<BinaryData>(), true, default))
+            MockBlobClient.Setup(x => x.UploadAsync(It.IsAny<BinaryData>(), true, default))
                           .ReturnsAsync(responseMock.Object);
-            this.MockBlobClient.Setup(x => x.Uri).Returns(expectedUri);
+            MockBlobClient.Setup(x => x.Uri).Returns(expectedUri);
 
             // Act
-            var result = await this.BlobStorageService.UploadFileContentAsync(
+            var result = await BlobStorageService.UploadFileContentAsync(
                 (FileName: fileName, 
                 Content: content, 
                 RunName: runName,
@@ -88,7 +80,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Assert
             Assert.AreEqual(result, expectedUri.ToString());
-            this.MockBlobClient.Verify(x => x.UploadAsync(It.IsAny<BinaryData>(), true, default), Times.Once);
+            MockBlobClient.Verify(x => x.UploadAsync(It.IsAny<BinaryData>(), true, default), Times.Once);
         }
 
         [TestMethod]
@@ -100,11 +92,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var runName = "test";
             var containerName = Fixture.Create<string>();
 
-            this.MockBlobClient.Setup(x => x.UploadAsync(It.IsAny<BinaryData>()))
+            MockBlobClient.Setup(x => x.UploadAsync(It.IsAny<BinaryData>()))
                 .ThrowsAsync(new Exception("Upload failed"));
 
             // Act
-            var result = await this.BlobStorageService.UploadFileContentAsync(
+            var result = await BlobStorageService.UploadFileContentAsync(
                 (FileName: fileName, 
                 Content: content,
                 RunName: runName,
@@ -113,7 +105,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Assert
             Assert.AreEqual(result, string.Empty);
-            this.MockBlobClient.Verify(x => x.UploadAsync(It.IsAny<BinaryData>(), true, default), Times.Once);
+            MockBlobClient.Verify(x => x.UploadAsync(It.IsAny<BinaryData>(), true, default), Times.Once);
         }
     }
 }

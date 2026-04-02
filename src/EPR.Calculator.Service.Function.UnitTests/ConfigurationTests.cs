@@ -1,14 +1,8 @@
-// <copyright file="ConfigurationTests.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
+using AutoFixture;
+using EPR.Calculator.Service.Function.Constants;
+
 namespace EPR.Calculator.Service.Function.UnitTests
 {
-    using System;
-    using AutoFixture;
-    using EPR.Calculator.Service.Function;
-    using EPR.Calculator.Service.Function.Constants;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     /// <summary>
     /// Contains tests for configuration variables.
     /// </summary>
@@ -18,7 +12,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         /// <summary>
         /// Initializes a new instance of the <see cref="ConfigurationTests"/> class.
         /// </summary>
-        public ConfigurationTests() => this.Fixture = new Fixture();
+        public ConfigurationTests() => Fixture = new Fixture();
 
         private Fixture Fixture { get; init; }
 
@@ -29,7 +23,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void CanGetPrepareCalcResultsTimeout()
         {
             // Arrange
-            var testValueInMinutes = this.Fixture.Create<double>();
+            var testValueInMinutes = Fixture.Create<double>();
             Environment.SetEnvironmentVariable(
                 EnvironmentVariableKeys.PrepareCalcResultsTimeout,
                 testValueInMinutes.ToString());
@@ -67,7 +61,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void CanGetRpdStatusTimeout()
         {
             // Arrange
-            var testValueInMinutes = this.Fixture.Create<double>();
+            var testValueInMinutes = Fixture.Create<double>();
             Environment.SetEnvironmentVariable(
                 EnvironmentVariableKeys.RpdStatusTimeout,
                 testValueInMinutes.ToString());
@@ -105,7 +99,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void CanGetTransposeTimeout()
         {
             // Arrange
-            var testValueInMinutes = this.Fixture.Create<double>();
+            var testValueInMinutes = Fixture.Create<double>();
             Environment.SetEnvironmentVariable(
                 EnvironmentVariableKeys.TransposeTimeout,
                 testValueInMinutes.ToString());
@@ -140,7 +134,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void CanGetDbConnectionString()
         {
             // Arrange
-            var connectionString = this.Fixture.Create<string>();
+            var connectionString = Fixture.Create<string>();
 
             Environment.SetEnvironmentVariable(
                 EnvironmentVariableKeys.DbConnectionString,
@@ -157,7 +151,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void CanGetTransposeEndpoint()
         {
             // Arrange
-            var transposeEndpoint = this.Fixture.Create<Uri>();
+            var transposeEndpoint = Fixture.Create<Uri>();
 
             Environment.SetEnvironmentVariable(
                 EnvironmentVariableKeys.TransposeEndpoint,
@@ -174,7 +168,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void CanGetDbLoadingChunkSize()
         {
             // Arrange
-            var dbLoadingChunkSize = this.Fixture.Create<int>();
+            var dbLoadingChunkSize = Fixture.Create<int>();
 
             Environment.SetEnvironmentVariable(
                EnvironmentVariableKeys.DbLoadingChunkSize,
@@ -191,11 +185,11 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void CanGetResultFileCSVContainerName()
         {
             // Arrange
-            var resultFileCSVContainerName = this.Fixture.Create<string>();
+            var resultFileCSVContainerName = Fixture.Create<string>();
 
             Environment.SetEnvironmentVariable(
                EnvironmentVariableKeys.ResultFileCSVContainerName,
-               resultFileCSVContainerName.ToString());
+               resultFileCSVContainerName);
 
             // Act
             var result = new Configuration().ResultFileCSVContainerName;
@@ -208,11 +202,11 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void BillingFileCSVBlobContainerName()
         {
             // Arrange
-            var resultFileCSVContainerName = this.Fixture.Create<string>();
+            var resultFileCSVContainerName = Fixture.Create<string>();
 
             Environment.SetEnvironmentVariable(
                 EnvironmentVariableKeys.BillingFileCSVBlobContainerName,
-                resultFileCSVContainerName.ToString());
+                resultFileCSVContainerName);
 
             // Act
             var result = new Configuration().BillingFileCSVBlobContainerName;
@@ -225,11 +219,11 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void BillingFileJsonBlobContainerName()
         {
             // Arrange
-            var resultFileCSVContainerName = this.Fixture.Create<string>();
+            var resultFileCSVContainerName = Fixture.Create<string>();
 
             Environment.SetEnvironmentVariable(
                 EnvironmentVariableKeys.BillingFileJsonBlobContainerName,
-                resultFileCSVContainerName.ToString());
+                resultFileCSVContainerName);
 
             // Act
             var result = new Configuration().BillingFileJsonBlobContainerName;
@@ -242,11 +236,11 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void BlobConnectionString()
         {
             // Arrange
-            var resultFileCSVContainerName = this.Fixture.Create<string>();
+            var resultFileCSVContainerName = Fixture.Create<string>();
 
             Environment.SetEnvironmentVariable(
                 EnvironmentVariableKeys.BlobConnectionString,
-                resultFileCSVContainerName.ToString());
+                resultFileCSVContainerName);
 
             // Act
             var result = new Configuration().BlobConnectionString;
@@ -259,11 +253,11 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void InstrumentationKey()
         {
             // Arrange
-            var resultFileCSVContainerName = this.Fixture.Create<string>();
+            var resultFileCSVContainerName = Fixture.Create<string>();
 
             Environment.SetEnvironmentVariable(
                 EnvironmentVariableKeys.InstrumentationKey,
-                resultFileCSVContainerName.ToString());
+                resultFileCSVContainerName);
 
             // Act
             var result = new Configuration().InstrumentationKey;

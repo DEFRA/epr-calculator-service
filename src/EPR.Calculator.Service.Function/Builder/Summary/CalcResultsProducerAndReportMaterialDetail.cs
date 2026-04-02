@@ -1,7 +1,7 @@
-﻿namespace EPR.Calculator.Service.Function.Builder.Summary
-{
-    using EPR.Calculator.API.Data.DataModels;
+﻿using EPR.Calculator.API.Data.DataModels;
 
+namespace EPR.Calculator.Service.Function.Builder.Summary
+{
     public class CalcResultsProducerAndReportMaterialDetail
     {
         public required ProducerDetail ProducerDetail { get; set; }

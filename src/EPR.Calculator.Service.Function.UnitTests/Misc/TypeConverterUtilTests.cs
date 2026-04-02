@@ -1,11 +1,7 @@
+using EPR.Calculator.Service.Function.Misc;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Misc
 {
-    using System;
-    using AutoFixture;
-    using EPR.Calculator.Service.Function.Misc;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using T = System.String;
-
     [TestClass]
     public class TypeConverterUtilTests
     {
@@ -18,7 +14,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
         public void CanCallConvertToDecimal()
         {
             // Arrange
-            var fixture = new Fixture();
             var value = "10.6";
 
             // Act
@@ -32,7 +27,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
         public void NotValueType_NotNull_CantConvert()
         {
             // Arrange
-            var fixture = new Fixture();
             var value = "10.6";
 
             // Act
@@ -46,7 +40,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
         public void CanCallConvertToWithValueNull()
         {
             // Arrange
-            var fixture = new Fixture();
             string? value = null;
 
             // Act
@@ -60,7 +53,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
         public void CanCallConvertToWithValueGuid()
         {
             // Arrange
-            var fixture = new Fixture();
             string value = Guid.NewGuid().ToString();
 
             // Act
@@ -74,7 +66,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
         public void CannotCallConvertToWithObject()
         {
             // Arrange
-            var fixture = new Fixture();
             var value = new object();
 
             // Act

@@ -1,15 +1,10 @@
+using EPR.Calculator.Service.Function.Constants;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Constants
 {
-    using System;
-    using AutoFixture;
-    using EPR.Calculator.Service.Function.Constants;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     [TestClass]
     public class TimeoutPoliciesTests
     {
-        private IFixture Fixture = new Fixture();
-
         [TestMethod]
         public void CanGetAllPolicies()
         {

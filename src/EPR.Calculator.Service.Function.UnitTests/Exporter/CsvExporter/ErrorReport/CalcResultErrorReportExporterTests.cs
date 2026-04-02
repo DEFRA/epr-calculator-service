@@ -1,12 +1,8 @@
-﻿using AutoFixture;
+﻿using System.Text;
+using AutoFixture;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ErrorReport;
 using EPR.Calculator.Service.Function.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.ErrorReport
 {
@@ -89,9 +85,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.ErrorRe
         {
             // Arrange  
             var exporter = new CalcResultErrorReportExporter();
-            var response = new List<CalcResultErrorReport>()
+            var response = new List<CalcResultErrorReport>
             {
-                new CalcResultErrorReport()
+                new CalcResultErrorReport
                 {
                     ProducerId = 0,
                     ErrorCodeText = "test",

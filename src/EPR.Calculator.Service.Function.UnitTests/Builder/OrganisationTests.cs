@@ -1,10 +1,8 @@
+using AutoFixture;
+using EPR.Calculator.Service.Function.Builder;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
-    using System;
-    using AutoFixture;
-    using EPR.Calculator.Service.Function.Builder;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     /// <summary>
     /// Unit tests for the <see cref="Organisation"/> class.
     /// </summary>
@@ -18,7 +16,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         /// </summary>
         public OrganisationTests()
         {
-            this.organisation = new Organisation();
+            organisation = new Organisation();
         }
 
         [TestMethod]
@@ -30,10 +28,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var testValue = fixture.Create<int>();
 
             // Act
-            this.organisation.OrganisationId = testValue;
+            organisation.OrganisationId = testValue;
 
             // Assert
-            Assert.AreEqual(testValue, this.organisation.OrganisationId);
+            Assert.AreEqual(testValue, organisation.OrganisationId);
         }
 
         [TestMethod]
@@ -45,10 +43,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var testValue = fixture.Create<string>();
 
             // Act
-            this.organisation.OrganisationName = testValue;
+            organisation.OrganisationName = testValue;
 
             // Assert
-            Assert.AreEqual(testValue, this.organisation.OrganisationName);
+            Assert.AreEqual(testValue, organisation.OrganisationName);
         }
     }
 }

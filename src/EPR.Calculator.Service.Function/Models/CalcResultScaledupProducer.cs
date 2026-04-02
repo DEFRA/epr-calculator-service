@@ -1,7 +1,5 @@
 ﻿namespace EPR.Calculator.Service.Function.Models
 {
-    using System.Collections.Generic;
-
     public class CalcResultScaledupProducer
     {
         public int ProducerId { get; set; }
@@ -14,9 +12,9 @@
 
         public string? Level { get; set; }
 
-        public bool IsSubtotalRow { get; set; } = false;
+        public bool IsSubtotalRow { get; set; }
 
-        public bool IsTotalRow { get; set; } = false;
+        public bool IsTotalRow { get; set; }
 
         public string? SubmissionPeriodCode { get; set; }
 

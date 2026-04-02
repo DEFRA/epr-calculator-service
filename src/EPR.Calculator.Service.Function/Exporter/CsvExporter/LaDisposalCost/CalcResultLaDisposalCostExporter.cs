@@ -1,11 +1,10 @@
-﻿namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost
-{
-    using System.Linq;
-    using System.Text;
-    using EPR.Calculator.API.Utils;
-    using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Function.Models;
+﻿using System.Text;
+using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Models;
 
+namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost
+{
     public class CalcResultLaDisposalCostExporter : ICalcResultLaDisposalCostExporter
     {
         public void Export(CalcResultLaDisposalCostData calcResultLaDisposalCostData, StringBuilder csvContent)

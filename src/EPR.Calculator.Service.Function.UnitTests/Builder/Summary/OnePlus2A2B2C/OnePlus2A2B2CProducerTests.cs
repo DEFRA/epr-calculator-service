@@ -1,14 +1,13 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.OnePlus2A2B2C
-{
-    using AutoFixture;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using AutoFixture;
+using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C;
+using EPR.Calculator.Service.Function.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
+namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.OnePlus2A2B2C
+{
     [TestClass]
     public class OnePlus2A2B2CProducerTests
     {
@@ -18,7 +17,7 @@
 
         public OnePlus2A2B2CProducerTests()
         {
-            this.Fixture = new Fixture();
+            Fixture = new Fixture();
             var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
                 .UseInMemoryDatabase(databaseName: "PayCal")
                 .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
@@ -38,7 +37,7 @@
         [TestCleanup]
         public void TearDown()
         {
-            _dbContext?.Database.EnsureDeleted();
+            _dbContext.Database.EnsureDeleted();
         }
 
         [TestMethod]
@@ -134,7 +133,7 @@
 
         private void CreateProducerDetail()
         {
-            var producerNames = new string[]
+            var producerNames = new[]
             {
                 "Allied Packaging",
                 "Beeline Materials",

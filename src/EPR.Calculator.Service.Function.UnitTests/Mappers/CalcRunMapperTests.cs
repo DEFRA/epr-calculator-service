@@ -1,10 +1,9 @@
-namespace EPR.Calculator.Service.Function.UnitTests
-{
-    using AutoFixture;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.Service.Function.Mappers;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+using AutoFixture;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Mappers;
 
+namespace EPR.Calculator.Service.Function.UnitTests.Mappers
+{
     /// <summary>
     /// Unit tests for the <see cref="CalcRunMapper"/> class.
     /// </summary>
@@ -21,8 +20,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public void MapPerformsMapping()
         {
             // Arrange
-            var run = this.Fixture.Create<CalculatorRun>();
-            var classification = this.Fixture.Create<CalculatorRunClassification>();
+            var run = Fixture.Create<CalculatorRun>();
+            var classification = Fixture.Create<CalculatorRunClassification>();
 
             // Act
             var result = CalcRunMapper.Map(run, classification);

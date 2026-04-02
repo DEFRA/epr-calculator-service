@@ -1,16 +1,12 @@
-﻿namespace EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs
-{
-    using System.Collections.Generic;
-    using System.Linq;
-    using EPR.Calculator.API.Data.DataModels;
+﻿using EPR.Calculator.API.Data.DataModels;
 
+namespace EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs
+{
     public static class TonnageVsAllProducerUtil
     {
         public static decimal GetPercentageofProducerReportedTonnagevsAllProducersTotal(IEnumerable<ProducerDetail> producers, IEnumerable<TotalPackagingTonnagePerRun> totalPackagingTonnage)
         {
-            decimal totalPercentageofProducerReported = 0;
-
-            totalPercentageofProducerReported = producers.Sum(producer => GetPercentageofProducerReportedTonnagevsAllProducers(producer, totalPackagingTonnage));
+            var totalPercentageofProducerReported = producers.Sum(producer => GetPercentageofProducerReportedTonnagevsAllProducers(producer, totalPackagingTonnage));
 
             return totalPercentageofProducerReported;
         }

@@ -1,11 +1,10 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.ScaledupProducers
-{
-    using System.Text;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Text;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
+using EPR.Calculator.Service.Function.Models;
 
+namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.ScaledupProducers
+{
     [TestClass]
     public class CalcResultScaledupProducersExporterTests
     {
@@ -105,7 +104,7 @@
             var scaledupProducerList = new List<CalcResultScaledupProducer>();
 
             scaledupProducerList.AddRange([
-                new CalcResultScaledupProducer()
+                new CalcResultScaledupProducer
                 {
                     ProducerId = 101001,
                     SubsidiaryId = string.Empty,
@@ -117,7 +116,7 @@
                     ScaleupFactor = 2,
                     ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterial(),
                 },
-                new CalcResultScaledupProducer()
+                new CalcResultScaledupProducer
                 {
                     ProducerId = 101001,
                     SubsidiaryId = string.Empty,
@@ -191,11 +190,11 @@
 
         private Dictionary<string, CalcResultScaledupProducerTonnage> GetScaledupProducerTonnageByMaterial()
         {
-            return new Dictionary<string, CalcResultScaledupProducerTonnage>()
+            return new Dictionary<string, CalcResultScaledupProducerTonnage>
             {
                 {
                     "AL",
-                    new CalcResultScaledupProducerTonnage()
+                    new CalcResultScaledupProducerTonnage
                     {
                         ReportedHouseholdPackagingWasteTonnage = 1000,
                         ReportedPublicBinTonnage = 100,
@@ -211,7 +210,7 @@
                 },
                 {
                     "GL",
-                    new CalcResultScaledupProducerTonnage()
+                    new CalcResultScaledupProducerTonnage
                     {
                         ReportedHouseholdPackagingWasteTonnage = 1000,
                         ReportedPublicBinTonnage = 100,

@@ -1,13 +1,11 @@
-﻿namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers
-{
-    using System.Linq;
-    using System.Collections.Generic;
-    using System.Text;
-    using EPR.Calculator.API.Utils;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Function.Models;
+using System.Text;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Models;
 
+namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers
+{
     public class CalcResultCancelledProducersExporter : ICalcResultCancelledProducersExporter
     {
 
@@ -31,7 +29,7 @@
             WriteCancelledProducersSecondaryHeaders(csvContent);
 
             // Add column header
-            WriteCancelledProducersColumnHeaders(response.CancelledProducers!, csvContent);
+            WriteCancelledProducersColumnHeaders(csvContent);
             csvContent.AppendLine();
         }
 
@@ -78,7 +76,7 @@
             csvContent.AppendLine(headerRow);
         }
 
-        private static void WriteCancelledProducersColumnHeaders(IEnumerable<CalcResultCancelledProducersDto> producers, StringBuilder csvContent)
+        private static void WriteCancelledProducersColumnHeaders(StringBuilder csvContent)
         {
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.ProducerId));
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.ProducerOrSubsidiaryName));

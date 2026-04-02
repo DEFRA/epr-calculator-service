@@ -1,14 +1,13 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Services
-{
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.API.Data.Models;
-    using EPR.Calculator.Service.Common;
-    using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Function.Services;
-    using Microsoft.EntityFrameworkCore;
-    using Moq;
+﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Services;
+using Microsoft.EntityFrameworkCore;
+using Moq;
 
+namespace EPR.Calculator.Service.Function.UnitTests.Services
+{
     /// <summary>
     /// Unit tests for the <see cref="ClassificationService"/> class.
     /// </summary>
@@ -25,16 +24,16 @@
                 .UseInMemoryDatabase(databaseName: "TestDatabase")
                 .Options;
 
-            this.dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
-            this.dbContext = new ApplicationDBContext(options);
-            this.dbContextFactory.Setup(factory => factory.CreateDbContext()).Returns(this.dbContext);
-            this.classificationService = new ClassificationService(this.dbContextFactory.Object);
+            dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
+            dbContext = new ApplicationDBContext(options);
+            dbContextFactory.Setup(factory => factory.CreateDbContext()).Returns(dbContext);
+            classificationService = new ClassificationService(dbContextFactory.Object);
         }
 
         [TestCleanup]
         public void Cleanup()
         {
-            this.dbContext?.Dispose();
+            dbContext.Dispose();
         }
 
         [TestMethod]
@@ -44,16 +43,16 @@
         public async Task ShouldUpdateRunClassification(int runId, RunClassification runClassification, int relativeYearValue)
         {
             // Arrange
-            this.dbContext.CalculatorRuns.RemoveRange(dbContext.CalculatorRuns);
-            this.dbContext.SaveChanges();
-            this.dbContext.CalculatorRuns.Add(new CalculatorRun { Id = runId, Name = "Test Run 01", RelativeYear = new RelativeYear(relativeYearValue) });
-            this.dbContext.SaveChanges();
+            dbContext.CalculatorRuns.RemoveRange(dbContext.CalculatorRuns);
+            await dbContext.SaveChangesAsync();
+            dbContext.CalculatorRuns.Add(new CalculatorRun { Id = runId, Name = "Test Run 01", RelativeYear = new RelativeYear(relativeYearValue) });
+            await dbContext.SaveChangesAsync();
 
             // Act
-            await this.classificationService.UpdateRunClassification(runId, runClassification);
+            await classificationService.UpdateRunClassification(runId, runClassification);
 
             // Assert
-            var calculatorRun = this.dbContext.CalculatorRuns.FirstOrDefault(run => run.Id == runId);
+            var calculatorRun = await dbContext.CalculatorRuns.FirstOrDefaultAsync(run => run.Id == runId);
             Assert.AreEqual(calculatorRun?.CalculatorRunClassificationId, (int)runClassification);
         }
 
@@ -64,7 +63,7 @@
             var runId = 10;
 
             // Act
-            var exceptionResult = await Assert.ThrowsExceptionAsync<KeyNotFoundException>(() => this.classificationService.UpdateRunClassification(runId, RunClassification.ERROR));
+            var exceptionResult = await Assert.ThrowsExceptionAsync<KeyNotFoundException>(() => classificationService.UpdateRunClassification(runId, RunClassification.ERROR));
 
             // Assert
             Assert.AreEqual("Calculator run id 10 not found", exceptionResult.Message);

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using EPR.Calculator.Service.Function.Builder.Summary.Common;
+﻿using EPR.Calculator.Service.Function.Builder.Summary.Common;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Models;
@@ -42,7 +40,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts
                 var totalProducerFeeWithoutBadDebtProvision = GetTotalWithoutBadDebtProvision(result, fee);
                 var badDebtProvision = GetBadDebtProvision(calcResult, totalProducerFeeWithoutBadDebtProvision);
 
-                fee.LocalAuthorityDataPreparationCosts = new CalcResultSummaryBadDebtProvision()
+                fee.LocalAuthorityDataPreparationCosts = new CalcResultSummaryBadDebtProvision
                 {
                     TotalProducerFeeWithoutBadDebtProvision = totalProducerFeeWithoutBadDebtProvision,
                     BadDebtProvision = badDebtProvision,

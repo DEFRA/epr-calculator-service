@@ -1,10 +1,9 @@
+using System.Text;
+using System.Text.Json;
+using EPR.Calculator.Service.Function.Converter;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Converter
 {
-    using System.Text;
-    using System.Text.Json;
-    using EPR.Calculator.Service.Function.Converter;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     [TestClass]
     public class DecimalPrecisionConverterTests
     {
@@ -17,7 +16,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Converter
             var stream = new MemoryStream();
             var jsonWriter = new Utf8JsonWriter(stream);
 
-            converter.Write(jsonWriter, val, new JsonSerializerOptions { });
+            converter.Write(jsonWriter, val, new JsonSerializerOptions());
             jsonWriter.Flush();
             stream.Position = 0;
             var result = new StreamReader(stream).ReadToEnd();
@@ -36,7 +35,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Converter
             var jsonReader = new Utf8JsonReader(bytes);
 
             jsonReader.Read();
-            var result = converter.Read(ref jsonReader, typeof(decimal), new JsonSerializerOptions { });
+            var result = converter.Read(ref jsonReader, typeof(decimal), new JsonSerializerOptions());
 
             // Assert
             Assert.AreEqual(123.988m, result);
