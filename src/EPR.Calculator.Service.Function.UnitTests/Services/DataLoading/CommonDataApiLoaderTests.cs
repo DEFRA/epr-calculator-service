@@ -2,8 +2,6 @@ using System.Net;
 using System.Text;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common;
-using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
 using EPR.Calculator.Service.Function.Services.DataLoading;
 using Microsoft.EntityFrameworkCore;
@@ -62,7 +60,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
             var loader = CreateLoader(enabled: false, httpHandler: handler);
 
             // Act
-            await loader.LoadData(CreateRunParams(), "TestRun");
+            await loader.LoadData(CreateRunParams());
 
             // Assert
             VerifyLogContains(LogLevel.Information, "Disabled", Times.Once(), "Logger should record it is disabled.");
@@ -85,7 +83,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
 
             // Act & Assert
             await Assert.ThrowsExceptionAsync<HttpRequestException>(
-                async () => await loader.LoadData(CreateRunParams(), "TestRun"));
+                async () => await loader.LoadData(CreateRunParams()));
 
             _mockTimeProvider.Verify(t => t.GetUtcNow(), Times.Once);
         }
@@ -102,33 +100,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
 
             // Act & Assert
             await Assert.ThrowsExceptionAsync<HttpRequestException>(
-                async () => await loader.LoadData(CreateRunParams(), "TestRun"));
+                async () => await loader.LoadData(CreateRunParams()));
 
             VerifyLogContains(LogLevel.Information, "Starting", Times.Once());
-        }
-
-        /// <summary>
-        ///     The "Starting" log message must include the run ID, run name, and relative year
-        ///     from the supplied run parameters.
-        /// </summary>
-        [TestMethod]
-        public async Task LoadData_IncludesRunParamsInStartLog()
-        {
-            // Arrange
-            var loader = CreateLoader(enabled: true, httpHandler: ServerErrorHandler());
-            var runParams = new CalculatorRunParameter
-            {
-                Id = 42,
-                User = "user",
-                RelativeYear = new RelativeYear(2025),
-                MessageType = MessageTypes.Result,
-            };
-
-            // Act & Assert
-            await Assert.ThrowsExceptionAsync<HttpRequestException>(
-                async () => await loader.LoadData(runParams, "MyTestRun"));
-
-            VerifyLogContains(LogLevel.Information, "Id=42", Times.Once());
         }
 
         // ─────────────────────────── LoadData – enabled path, HTTP stream failures ───────────────────────────
@@ -145,7 +119,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
 
             // Act & Assert
             await Assert.ThrowsExceptionAsync<HttpRequestException>(
-                async () => await loader.LoadData(CreateRunParams(), "TestRun"));
+                async () => await loader.LoadData(CreateRunParams()));
         }
 
         /// <summary>
@@ -165,7 +139,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
 
             // Act & Assert
             await Assert.ThrowsExceptionAsync<HttpRequestException>(
-                async () => await loader.LoadData(CreateRunParams(), "TestRun"));
+                async () => await loader.LoadData(CreateRunParams()));
         }
 
         /// <summary>
@@ -185,7 +159,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
 
             // Act & Assert
             await Assert.ThrowsExceptionAsync<HttpRequestException>(
-                async () => await loader.LoadData(CreateRunParams(), "TestRun"));
+                async () => await loader.LoadData(CreateRunParams()));
         }
 
         // ─────────────────────────── LoadData – cancellation ───────────────────────────
@@ -205,7 +179,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
 
             // Act & Assert
             await Assert.ThrowsExceptionAsync<TaskCanceledException>(
-                async () => await loader.LoadData(CreateRunParams(), "TestRun", cts.Token));
+                async () => await loader.LoadData(CreateRunParams(), cts.Token));
         }
 
         // ─────────────────────────── Run – try-catch-finally ───────────────────────────
@@ -229,7 +203,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
 
             // Act & Assert
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
-                async () => await loader.LoadData(CreateRunParams(), "TestRun"));
+                async () => await loader.LoadData(CreateRunParams()));
         }
 
         // ─────────────────────────── Helpers ───────────────────────────
@@ -260,13 +234,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
                 _mockLogger.Object);
         }
 
-        private static CalculatorRunParameter CreateRunParams() =>
-            new CalculatorRunParameter
+        private static CalculatorRunParams CreateRunParams() =>
+            new CalculatorRunParams
             {
                 Id = 1,
+                Name = "TestRun",
                 User = "test-user",
                 RelativeYear = new RelativeYear(2024),
-                MessageType = MessageTypes.Result,
             };
 
         private static HttpResponseMessage OkNdJson(string content) =>

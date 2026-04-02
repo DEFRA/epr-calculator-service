@@ -1,12 +1,11 @@
 using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
-using EPR.Calculator.Service.Common;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Services.DataLoading;
+using Microsoft.Extensions.Logging;
 
 namespace EPR.Calculator.Service.Function.Services
 {
@@ -16,31 +15,25 @@ namespace EPR.Calculator.Service.Function.Services
         ITransposePomAndOrgDataService transposePomAndOrgDataService,
         IPrepareCalcService prepareCalcService,
         IRpdStatusService statusService,
-        ICalculatorTelemetryLogger telemetryLogger)
+        ILogger<CalculatorRunService> logger)
         : ICalculatorRunService
     {
-        public async Task<bool> PrepareResultsFileAsync(CalculatorRunParameter calculatorRunParameter, string runName)
+        public async Task<bool> PrepareResultsFileAsync(CalculatorRunParams calculatorRunParams)
         {
             try
             {
-                telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = calculatorRunParameter.Id,
-                    RunName = runName,
-                    Message = "Process started"
-                });
-
-                await dataLoader.LoadData(calculatorRunParameter, runName);
-                return await RunResultsFileCalculationAsync(calculatorRunParameter, runName);
+                logger.LogInformation("Process started");
+                await dataLoader.LoadData(calculatorRunParams);
+                return await RunResultsFileCalculationAsync(calculatorRunParams);
             }
             catch (TaskCanceledException ex)
             {
-                LogError(calculatorRunParameter.Id, runName, "StartProcess - Task was canceled", ex);
+                logger.LogError(ex, "StartProcess - Task was canceled");
                 return false;
             }
             catch (Exception ex)
             {
-                LogError(calculatorRunParameter.Id, runName, "StartProcess - An error occurred", ex);
+                logger.LogError(ex, "StartProcess - An error occurred");
                 return false;
             }
         }
@@ -64,22 +57,20 @@ namespace EPR.Calculator.Service.Function.Services
         }
 
 
-        private async Task<bool> RunResultsFileCalculationAsync(CalculatorRunParameter calculatorRunParameter,
-            string runName)
+        private async Task<bool> RunResultsFileCalculationAsync(CalculatorRunParams calculatorRunParams)
         {
             var isSuccess = false;
 
-            var statusUpdateResponse = await LogAndUpdateStatus(calculatorRunParameter, runName);
+            var statusUpdateResponse = await LogAndUpdateStatus(calculatorRunParams);
 
             if (statusUpdateResponse == RunClassification.RUNNING)
             {
                 var isTransposeSuccess = await transposePomAndOrgDataService.TransposeBeforeResultsFileAsync(
-                    new CalcResultsRequestDto { RunId = calculatorRunParameter.Id, RelativeYear = calculatorRunParameter.RelativeYear, CreatedBy = calculatorRunParameter.User },
-                    runName,
+                    new CalcResultsRequestDto { RunId = calculatorRunParams.Id, RelativeYear = calculatorRunParams.RelativeYear, CreatedBy = calculatorRunParams.User },
+                    calculatorRunParams.Name,
                     new CancellationTokenSource(configuration.TransposeTimeout).Token);
 
-                LogInformation(calculatorRunParameter.Id, runName,
-                    $"UpdateStatusAndPrepareResult - transposeResultResponse: {isTransposeSuccess}");
+                logger.LogInformation("Transpose completed. IsSuccess: {IsTransposeSuccess}", isTransposeSuccess);
 
                 if (!isTransposeSuccess)
                 {
@@ -87,58 +78,25 @@ namespace EPR.Calculator.Service.Function.Services
                 }
 
                 isSuccess = await prepareCalcService.PrepareCalcResultsAsync(
-                    new CalcResultsRequestDto { RunId = calculatorRunParameter.Id, RelativeYear = calculatorRunParameter.RelativeYear },
-                    runName,
+                    new CalcResultsRequestDto { RunId = calculatorRunParams.Id, RelativeYear = calculatorRunParams.RelativeYear },
+                    calculatorRunParams.Name,
                     new CancellationTokenSource(configuration.PrepareCalcResultsTimeout).Token);
 
-                LogInformation(calculatorRunParameter.Id, runName,
-                    $"UpdateStatusAndPrepareResult - prepareCalcResultResponse: {isSuccess}");
+                logger.LogInformation("PrepareCalcResults completed. IsSuccess: {IsSuccess}", isSuccess);
             }
-
-            LogInformation(calculatorRunParameter.Id, runName,
-                $"UpdateStatusAndPrepareResult - StatusEndPoint: {configuration.PrepareCalcResultEndPoint}");
-            LogInformation(calculatorRunParameter.Id, runName,
-                $"UpdateStatusAndPrepareResult - CalculatorRunParameter ID: {calculatorRunParameter.Id}");
-            LogInformation(calculatorRunParameter.Id, runName,
-                $"UpdateStatusAndPrepareResult - GetPrepareCalcResultMessage: {GetCalcResultMessage(calculatorRunParameter.Id)}");
 
             return isSuccess;
         }
 
-        private async Task<RunClassification> LogAndUpdateStatus(CalculatorRunParameter calculatorRunParameter,
-            string runName)
+        private async Task<RunClassification> LogAndUpdateStatus(CalculatorRunParams calculatorRunParams)
         {
-            LogInformation(calculatorRunParameter.Id, runName,
-                $"UpdateStatusAndPrepareResult - StatusEndPoint: {configuration.StatusEndpoint}");
             var statusUpdateResponse = await statusService.UpdateRpdStatus(
-                calculatorRunParameter.Id,
-                runName,
-                calculatorRunParameter.User,
+                calculatorRunParams.Id,
+                calculatorRunParams.Name,
+                calculatorRunParams.User,
                 new CancellationTokenSource(configuration.RpdStatusTimeout).Token);
-            LogInformation(calculatorRunParameter.Id, runName,
-                $"UpdateStatusAndPrepareResult - Status Response: {statusUpdateResponse}");
+            logger.LogInformation("RPD status update response: {StatusResponse}", statusUpdateResponse);
             return statusUpdateResponse;
-        }
-
-        private void LogInformation(int runId, string runName, string message)
-        {
-            telemetryLogger.LogInformation(new TrackMessage
-            {
-                RunId = runId,
-                RunName = runName,
-                Message = message
-            });
-        }
-
-        private void LogError(int runId, string runName, string message, Exception ex)
-        {
-            telemetryLogger.LogError(new ErrorMessage
-            {
-                RunId = runId,
-                RunName = runName,
-                Message = message,
-                Exception = ex
-            });
         }
     }
 }

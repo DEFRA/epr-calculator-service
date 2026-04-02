@@ -1,20 +1,18 @@
-﻿using AutoFixture;
+using AutoFixture;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
-    using static TransposePomAndOrgDataService;
-
     [TestClass]
     public class TransposePomAndOrgDataServiceTests
     {
@@ -32,7 +30,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             CommandTimeoutService = new Mock<ICommandTimeoutService>().Object;
             ErrorReportService = new Mock<IErrorReportService>().Object;
-            TelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
+            Logger = new Mock<ILogger<TransposePomAndOrgDataService>>();
             Chunker = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
 
             _dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
@@ -53,7 +51,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 Chunker.Object,
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
                 ErrorReportService,
-                TelemetryLogger.Object);
+                Logger.Object);
         }
 
         private ICommandTimeoutService CommandTimeoutService { get; init; }
@@ -64,7 +62,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         public TransposePomAndOrgDataService TestClass { get; set; }
 
-        private Mock<ICalculatorTelemetryLogger> TelemetryLogger { get; init; }
+        private Mock<ILogger<TransposePomAndOrgDataService>> Logger { get; init; }
 
         private Mock<IDbLoadingChunkerService<ProducerDetail>> Chunker { get; init; }
 
@@ -110,7 +108,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         [TestMethod]
         public void GetLatestOrganisationNameShouldReturnNullWhenOrganisationNotFound()
         {
-            var orgDetails = new List<OrganisationDetails>();
+            var orgDetails = new List<TransposePomAndOrgDataService.OrganisationDetails>();
 
             var result = TestClass.GetLatestOrganisationName(1,orgDetails);
 
@@ -120,15 +118,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         [TestMethod]
         public void GetLatestOrganisationNameShouldReturnLatestOrganisationName()
         {
-            var orgDetails = new List<OrganisationDetails>
+            var orgDetails = new List<TransposePomAndOrgDataService.OrganisationDetails>
             {
-                new OrganisationDetails
+                new TransposePomAndOrgDataService.OrganisationDetails
                 {
                     OrganisationId = 1,
                     OrganisationName = "Test1",
                     SubmissionPeriodDescription = "January to June 2023",
                 },
-                new OrganisationDetails
+                new TransposePomAndOrgDataService.OrganisationDetails
                 {
                     OrganisationId = 1,
                     OrganisationName = "Test2",
@@ -147,7 +145,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             // Arrange
             var orgId = Fixture.Create<int>();
-            var organisationsList = Fixture.CreateMany<OrganisationDetails>().ToList();
+            var organisationsList = Fixture.CreateMany<TransposePomAndOrgDataService.OrganisationDetails>().ToList();
 
             // Act
             var result = TestClass.GetLatestOrganisationName(orgId, organisationsList);
@@ -162,7 +160,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Arrange
             var orgId = Fixture.Create<int>();
             var subsidaryId = Fixture.Create<string>();
-            var organisationsList = Fixture.CreateMany<OrganisationDetails>().ToList();
+            var organisationsList = Fixture.CreateMany<TransposePomAndOrgDataService.OrganisationDetails>().ToList();
 
             // Act
             var result = TestClass.GetLatestproducerName(orgId, subsidaryId,organisationsList);
@@ -203,21 +201,28 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             mockContext.Setup(c => c.CalculatorRuns).Returns(mockDbSet.Object);
             mockDbSet.As<IQueryable<CalculatorRun>>().Setup(m => m.Provider).Throws(new OperationCanceledException());
 
-            var mockTelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
+            var logger = new Mock<ILogger<TransposePomAndOrgDataService>>();
             var service = new TransposePomAndOrgDataService(
                 mockContext.Object,
                 CommandTimeoutService,
                 new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
                 ErrorReportService,
-                mockTelemetryLogger.Object);
+                logger.Object);
 
             // Act
             var result = await service.TransposeBeforeResultsFileAsync(resultsRequestDto, runName, cancellationToken);
 
             // Assert
             Assert.IsFalse(result);
-            mockTelemetryLogger.Verify(t => t.LogError(It.IsAny<ErrorMessage>()), Times.AtLeastOnce);
+            logger.Verify(
+                x => x.Log(
+                    LogLevel.Error,
+                    It.IsAny<EventId>(),
+                    It.IsAny<It.IsAnyType>(),
+                    It.IsAny<Exception?>(),
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+                Times.AtLeastOnce);
         }
 
         [TestMethod]
@@ -234,7 +239,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             mockContext.Setup(c => c.CalculatorRuns).Returns(mockDbSet.Object);
             mockDbSet.As<IQueryable<CalculatorRun>>().Setup(m => m.Provider).Throws(new Exception("Test Exception"));
 
-            var mockTelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
+            var logger = new Mock<ILogger<TransposePomAndOrgDataService>>();
 
             var service = new TransposePomAndOrgDataService(
                 mockContext.Object,
@@ -242,14 +247,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
                 ErrorReportService,
-                mockTelemetryLogger.Object);
+                logger.Object);
 
             // Act
             var result = await service.TransposeBeforeResultsFileAsync(resultsRequestDto, runName, cancellationToken);
 
             // Assert
             Assert.IsFalse(result);
-            mockTelemetryLogger.Verify(t => t.LogError(It.IsAny<ErrorMessage>()), Times.AtLeastOnce);
+            logger.Verify(
+                x => x.Log(
+                    LogLevel.Error,
+                    It.IsAny<EventId>(),
+                    It.IsAny<It.IsAnyType>(),
+                    It.IsAny<Exception?>(),
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+                Times.AtLeastOnce);
         }
 
         [TestMethod]
@@ -280,7 +292,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
                new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
                mockErrorReportService.Object,
-               new Mock<ICalculatorTelemetryLogger>().Object);
+               new Mock<ILogger<TransposePomAndOrgDataService>>().Object);
 
             // Act
             var result = await service.TransposeBeforeResultsFileAsync(resultsRequestDto, runName, cancellationToken);
@@ -326,7 +338,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 mockProducerDetailService.Object,
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
                 mockErrorReportService.Object,
-                new Mock<ICalculatorTelemetryLogger>().Object);
+                new Mock<ILogger<TransposePomAndOrgDataService>>().Object);
 
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 3, RelativeYear = new RelativeYear(2025) };
 
@@ -401,7 +413,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
                 mockErrorReportService.Object,
-                new Mock<ICalculatorTelemetryLogger>().Object);
+                new Mock<ILogger<TransposePomAndOrgDataService>>().Object);
 
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 3, RelativeYear = new RelativeYear(2025) };
 
@@ -495,7 +507,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
                 mockErrorReportService.Object,
-                new Mock<ICalculatorTelemetryLogger>().Object);
+                new Mock<ILogger<TransposePomAndOrgDataService>>().Object);
 
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 2, RelativeYear = new RelativeYear(2025) };
 
@@ -555,7 +567,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new Mock<IDbLoadingChunkerService<ProducerDetail>>().Object,
                 new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
                 mockErrorReportService.Object,
-                new Mock<ICalculatorTelemetryLogger>().Object);
+                new Mock<ILogger<TransposePomAndOrgDataService>>().Object);
 
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 4, RelativeYear = new RelativeYear(2025) };
 
@@ -590,7 +602,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var mockErrorReportService = new Mock<IErrorReportService>();
             var mockProducerDetailService = new Mock<IDbLoadingChunkerService<ProducerDetail>>();
             var mockProducerReportedMaterialService = new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>();
-            var mockTelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
+            var logger = new Mock<ILogger<TransposePomAndOrgDataService>>();
 
             var service = new TransposePomAndOrgDataService(
                 mockContext.Object,
@@ -598,7 +610,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 mockProducerDetailService.Object,
                 mockProducerReportedMaterialService.Object,
                 mockErrorReportService.Object,
-                mockTelemetryLogger.Object);
+                logger.Object);
 
             var organisationDetails = new List<CalculatorRunOrganisationDataDetail>
             {
@@ -624,7 +636,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         /// <summary>
         /// If the operation is cancelled or times out before the calculator run is retrieved,
-        /// the cancellation should be logged to telemetry.
+        /// the cancellation should be logged.
         /// </summary>
         /// <returns>A <see cref="Task"/>.</returns>
         [TestMethod]
@@ -640,15 +652,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Assert
             Assert.IsFalse(result);
-            TelemetryLogger.Verify(
-                t => t.LogError(
-                    It.Is<ErrorMessage>(message => message.Message == "Operation cancelled")),
+            Logger.Verify(
+                t => t.Log(
+                    LogLevel.Error,
+                    It.IsAny<EventId>(),
+                    It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Transpose operation cancelled")),
+                    It.IsAny<Exception?>(),
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
                 Times.Once);
         }
 
         /// <summary>
         /// If the operation is cancelled or times out before the calculator run is retrieved,
-        /// the cancellation should be logged to telemetry.
+        /// the cancellation should be logged.
         /// </summary>
         /// <returns>A <see cref="Task"/>.</returns>
         [TestMethod]
@@ -685,7 +701,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                Chunker.Object,
                new Mock<IDbLoadingChunkerService<ProducerReportedMaterial>>().Object,
                mockErrorReportService.Object,
-               TelemetryLogger.Object);
+               Logger.Object);
 
             // Act
             var result = await service.TransposeBeforeResultsFileAsync(
@@ -695,13 +711,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Assert
             Assert.IsFalse(result);
-            TelemetryLogger.Verify(
-                t => t.LogError(
-                    It.Is<ErrorMessage>(message => message.Message == "Operation cancelled")),
+            Logger.Verify(
+                t => t.Log(
+                    LogLevel.Error,
+                    It.IsAny<EventId>(),
+                    It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Transpose operation cancelled")),
+                    It.IsAny<Exception?>(),
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
                 Times.Once);
-            TelemetryLogger.Verify(
-                t => t.LogError(
-                    It.Is<ErrorMessage>(message => message.Message == "RunId is updated with ClassificationId Error")),
+            Logger.Verify(
+                t => t.Log(
+                    LogLevel.Warning,
+                    It.IsAny<EventId>(),
+                    It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Run classification set to")),
+                    It.IsAny<Exception?>(),
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
                 Times.Once);
             using var assertContext = new ApplicationDBContext(_dbContextOptions);
             Assert.AreEqual(
@@ -711,7 +735,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         /// <summary>
         /// If an unspecified exception occurs after the calculation run is retrieved,
-        /// the cancellation should be logged to telemetry and the run should be updated with an error status.
+        /// the cancellation should be logged and the run should be updated with an error status.
         /// </summary>
         /// <returns>A <see cref="Task"/>.</returns>
         [TestMethod]
@@ -731,13 +755,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Assert
             Assert.IsFalse(result);
-            TelemetryLogger.Verify(
-                t => t.LogError(
-                    It.Is<ErrorMessage>(message => message.Message == "Error occurred while transposing POM and ORG data")),
+            Logger.Verify(
+                t => t.Log(
+                    LogLevel.Error,
+                    It.IsAny<EventId>(),
+                    It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Error occurred while transposing POM and ORG data")),
+                    It.IsAny<Exception?>(),
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
                 Times.Once);
-            TelemetryLogger.Verify(
-                t => t.LogError(
-                    It.Is<ErrorMessage>(message => message.Message == "RunId is updated with ClassificationId Error")),
+            Logger.Verify(
+                t => t.Log(
+                    LogLevel.Warning,
+                    It.IsAny<EventId>(),
+                    It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Run classification set to")),
+                    It.IsAny<Exception?>(),
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
                 Times.Once);
             using var assertContext = new ApplicationDBContext(_dbContextOptions);
             Assert.AreEqual(
@@ -1087,7 +1119,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 mockProducerDetailService.Object,
                 dbChunkerService.Object,
                 mockErrorReportService.Object,
-                new Mock<ICalculatorTelemetryLogger>().Object);
+                new Mock<ILogger<TransposePomAndOrgDataService>>().Object);
 
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 3, RelativeYear = new RelativeYear(2025) };
 

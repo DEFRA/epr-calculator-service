@@ -2,14 +2,13 @@ using System.Text;
 using System.Text.Json;
 using AutoFixture;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.Services.DataLoading;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
@@ -26,7 +25,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public CalculatorRunServiceTests()
         {
             Fixture = new Fixture();
-            MockLogger = new Mock<ICalculatorTelemetryLogger>();
+            MockLogger = new Mock<ILogger<CalculatorRunService>>();
             DataLoader = new Mock<IDataLoader>();
             TransposeService = new Mock<ITransposePomAndOrgDataService>();
 
@@ -70,7 +69,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         private CalculatorRunService CalculatorRunService { get; }
 
-        private Mock<ICalculatorTelemetryLogger> MockLogger { get; }
+        private Mock<ILogger<CalculatorRunService>> MockLogger { get; }
 
         private Fixture Fixture { get; }
 
@@ -83,7 +82,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         private Mock<IRpdStatusService> StatusService { get; }
 
         /// <summary>
-        ///     Checks that <see cref="CalculatorRunService.PrepareResultsFileAsync(CalculatorRunParameter, string)" /> returns
+        ///     Checks that <see cref="CalculatorRunService.PrepareResultsFileAsync(CalculatorRunParams)" /> returns
         ///     false
         ///     when the calculator timed out.
         /// </summary>
@@ -92,9 +91,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task StartProcessReturnsFalseWhenCalculatorTimesOut()
         {
             // Arrange
-            var calculatorRunParameters = Fixture.Create<CalculatorRunParameter>();
-            calculatorRunParameters.RelativeYear = new RelativeYear(2024);
-            var runName = "Test Run Name";
+            var runParams = new CalculatorRunParams
+            {
+                Id = 1,
+                Name = "TestRun",
+                User = "TestUser",
+                RelativeYear = new RelativeYear(2024)
+            };
 
             StatusService.Setup(s => s.UpdateRpdStatus(
                     It.IsAny<int>(),
@@ -104,7 +107,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 .ThrowsAsync(new TaskCanceledException("Timed out!"));
 
             // Act
-            var result = await CalculatorRunService.PrepareResultsFileAsync(calculatorRunParameters, runName);
+            var result = await CalculatorRunService.PrepareResultsFileAsync(runParams);
 
             // Assert
             Assert.IsFalse(result);
@@ -114,16 +117,20 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task StartProcess_ShouldReturnFalseOn_TaskCanceledException()
         {
             // Arrange
-            var calculatorRunParameter = new CalculatorRunParameter
-                { Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = MessageTypes.Result };
-            var runName = "TestRun";
+            var runParams = new CalculatorRunParams
+            {
+                Id = 1,
+                Name = "TestRun",
+                User = "TestUser",
+                RelativeYear = new RelativeYear(2024)
+            };
 
             TransposeService.Setup(t => t.TransposeBeforeResultsFileAsync(It.IsAny<CalcResultsRequestDto>(),
                     It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ThrowsAsync(new TaskCanceledException());
 
             // Act
-            var result = await CalculatorRunService.PrepareResultsFileAsync(calculatorRunParameter, runName);
+            var result = await CalculatorRunService.PrepareResultsFileAsync(runParams);
 
             // Assert
             Assert.IsFalse(result);
@@ -133,16 +140,20 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task StartProcess_ShouldReturnFalseOn_Exception()
         {
             // Arrange
-            var calculatorRunParameter = new CalculatorRunParameter
-                { Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = MessageTypes.Result };
-            var runName = "TestRun";
+            var runParams = new CalculatorRunParams
+            {
+                Id = 1,
+                Name = "TestRun",
+                User = "TestUser",
+                RelativeYear = new RelativeYear(2024),
+            };
 
             TransposeService.Setup(t => t.TransposeBeforeResultsFileAsync(It.IsAny<CalcResultsRequestDto>(),
                     It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ThrowsAsync(new Exception("Test Exception"));
 
             // Act
-            var result = await CalculatorRunService.PrepareResultsFileAsync(calculatorRunParameter, runName);
+            var result = await CalculatorRunService.PrepareResultsFileAsync(runParams);
 
             // Assert
             Assert.IsFalse(result);
@@ -155,17 +166,20 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task PrepareResultsFileAsync_WhenAllStepsSucceed_ReturnsTrue()
         {
             // Arrange
-            var runParams = new CalculatorRunParameter
+            var runParams = new CalculatorRunParams
             {
-                Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = MessageTypes.Result
+                Id = 1,
+                Name = "TestRun",
+                User = "TestUser",
+                RelativeYear = new RelativeYear(2024),
             };
 
             // Act
-            var result = await CalculatorRunService.PrepareResultsFileAsync(runParams, "TestRun");
+            var result = await CalculatorRunService.PrepareResultsFileAsync(runParams);
 
             // Assert
             Assert.IsTrue(result);
-            DataLoader.Verify(d => d.LoadData(runParams, "TestRun", It.IsAny<CancellationToken>()), Times.Once);
+            DataLoader.Verify(d => d.LoadData(runParams, It.IsAny<CancellationToken>()), Times.Once);
         }
 
         /// <summary>
@@ -179,13 +193,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(RunClassification.UNCLASSIFIED);
 
-            var runParams = new CalculatorRunParameter
+            var runParams = new CalculatorRunParams
             {
-                Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = MessageTypes.Result
+                Id = 1,
+                Name = "TestRun",
+                User = "TestUser",
+                RelativeYear = new RelativeYear(2024),
             };
 
             // Act
-            var result = await CalculatorRunService.PrepareResultsFileAsync(runParams, "TestRun");
+            var result = await CalculatorRunService.PrepareResultsFileAsync(runParams);
 
             // Assert
             Assert.IsFalse(result);
@@ -206,13 +223,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     It.IsAny<CalcResultsRequestDto>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(false);
 
-            var runParams = new CalculatorRunParameter
+            var runParams = new CalculatorRunParams
             {
-                Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = MessageTypes.Result
+                Id = 1,
+                Name = "TestRun",
+                User = "TestUser",
+                RelativeYear = new RelativeYear(2024),
             };
 
             // Act
-            var result = await CalculatorRunService.PrepareResultsFileAsync(runParams, "TestRun");
+            var result = await CalculatorRunService.PrepareResultsFileAsync(runParams);
 
             // Assert
             Assert.IsFalse(result);
@@ -233,13 +253,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     It.IsAny<CalcResultsRequestDto>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(false);
 
-            var runParams = new CalculatorRunParameter
+            var runParams = new CalculatorRunParams
             {
-                Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = MessageTypes.Result
+                Id = 1,
+                Name = "TestRun",
+                User = "TestUser",
+                RelativeYear = new RelativeYear(2024),
             };
 
             // Act
-            var result = await CalculatorRunService.PrepareResultsFileAsync(runParams, "TestRun");
+            var result = await CalculatorRunService.PrepareResultsFileAsync(runParams);
 
             // Assert
             Assert.IsFalse(result);
@@ -253,16 +276,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             // Arrange
             DataLoader.Setup(d => d.LoadData(
-                    It.IsAny<CalculatorRunParameter>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                    It.IsAny<CalculatorRunParams>(), It.IsAny<CancellationToken>()))
                 .ThrowsAsync(new Exception("API failure"));
 
-            var runParams = new CalculatorRunParameter
+            var runParams = new CalculatorRunParams
             {
-                Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = MessageTypes.Result
+                Id = 1,
+                Name = "TestRun",
+                User = "TestUser",
+                RelativeYear = new RelativeYear(2024),
             };
 
             // Act
-            var result = await CalculatorRunService.PrepareResultsFileAsync(runParams, "TestRun");
+            var result = await CalculatorRunService.PrepareResultsFileAsync(runParams);
 
             // Assert
             Assert.IsFalse(result);
@@ -280,16 +306,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             // Arrange
             DataLoader.Setup(d => d.LoadData(
-                    It.IsAny<CalculatorRunParameter>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                    It.IsAny<CalculatorRunParams>(), It.IsAny<CancellationToken>()))
                 .ThrowsAsync(new TaskCanceledException("Cancelled"));
 
-            var runParams = new CalculatorRunParameter
+            var runParams = new CalculatorRunParams
             {
-                Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = MessageTypes.Result
+                Id = 1,
+                Name = "TestRun",
+                User = "TestUser",
+                RelativeYear = new RelativeYear(2024),
             };
 
             // Act
-            var result = await CalculatorRunService.PrepareResultsFileAsync(runParams, "TestRun");
+            var result = await CalculatorRunService.PrepareResultsFileAsync(runParams);
 
             // Assert
             Assert.IsFalse(result);

@@ -1,4 +1,4 @@
-﻿using AutoFixture;
+using AutoFixture;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
@@ -7,10 +7,10 @@ using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
-using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
@@ -31,7 +31,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             dbContext.Database.EnsureCreated();
             builder = new CalcResultCommsCostBuilder(
                 dbContext,
-                new TelemetryClient(TelemetryConfiguration.CreateDefault()));
+                new Mock<ILogger<CalcResultCommsCostBuilder>>().Object);
         }
 
         private Fixture Fixture { get; init; } = new Fixture();

@@ -1,6 +1,5 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Builder;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Exporter;
@@ -10,6 +9,7 @@ using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace EPR.Calculator.Service.Function.Services
 {
@@ -26,7 +26,7 @@ namespace EPR.Calculator.Service.Function.Services
             storageService = deps.StorageService;
             validatior = deps.ValidationRules;
             commandTimeoutService = deps.CommandTimeoutService;
-            telemetryLogger = deps.TelemetryLogger;
+            logger = deps.Logger;
             ConfigService = deps.ConfigService;
             JsonExporter = deps.JsonExporter;
             BillingFileExporter = deps.BillingFileExporter;
@@ -37,7 +37,7 @@ namespace EPR.Calculator.Service.Function.Services
 
         private const bool OverwriteCsvFile = false;
 
-        private readonly ICalculatorTelemetryLogger telemetryLogger;
+        private readonly ILogger<PrepareCalcService> logger;
 
         private ApplicationDBContext Context { get; init; }
 
@@ -73,6 +73,7 @@ namespace EPR.Calculator.Service.Function.Services
                     cancellationToken);
                 if (calculatorRun == null)
                 {
+                    logger.LogWarning("Calculator run not found for RunId: {RunId}", resultsRequestDto.RunId);
                     return false;
                 }
 
@@ -80,59 +81,24 @@ namespace EPR.Calculator.Service.Function.Services
                 var validationResult = validatior.ValidateCalculatorRunIds(calculatorRun);
                 if (!validationResult.IsValid)
                 {
+                    logger.LogWarning("Validation failed: {ErrorMessages}", string.Join("; ", validationResult.ErrorMessages));
                     return false;
                 }
 
-                telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = resultsRequestDto.RunId,
-                    RunName = runName,
-                    Message = "Builder started...",
-                });
-
+                logger.LogDebug("Builder started");
                 var results = await Builder.BuildAsync(resultsRequestDto);
-                telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = resultsRequestDto.RunId,
-                    RunName = runName,
-                    Message = "Builder end...",
-                });
+                logger.LogDebug("Builder end");
 
-                telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = resultsRequestDto.RunId,
-                    RunName = runName,
-                    Message = "Create producer data insert service started...",
-                });
+                logger.LogDebug("Producer data insert service started");
 
                 await producerDataInsertService.InsertProducerDataToDatabase(results);
-                telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = resultsRequestDto.RunId,
-                    RunName = runName,
-                    Message = "Create producer data insert service end...",
-                });
+                logger.LogDebug("Producer data insert service end");
 
-                telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = resultsRequestDto.RunId,
-                    RunName = runName,
-                    Message = "Exporter started...",
-                });
+                logger.LogDebug("Exporter started");
 
                 var exportedResults = Exporter.Export(results);
-                telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = resultsRequestDto.RunId,
-                    RunName = runName,
-                    Message = "Exporter end...",
-                });
-                telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = resultsRequestDto.RunId,
-                    RunName = runName,
-                    Message = "Uploader started...",
-                });
+                logger.LogDebug("Exporter end");
+                logger.LogDebug("Uploader started");
 
                 var fileName = new CalcResultsAndBillingFileName(
                     results.CalcResultDetail.RunId,
@@ -148,18 +114,8 @@ namespace EPR.Calculator.Service.Function.Services
                     ContainerName: containerName,
                     Overwrite: OverwriteCsvFile));
 
-                telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = resultsRequestDto.RunId,
-                    RunName = runName,
-                    Message = "Uploader end...",
-                });
-                telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = resultsRequestDto.RunId,
-                    RunName = runName,
-                    Message = "Csv File saving started...",
-                });
+                logger.LogDebug("Uploader end");
+                logger.LogDebug("CSV File saving started");
 
                 if (!string.IsNullOrEmpty(blobUri))
                 {
@@ -171,48 +127,27 @@ namespace EPR.Calculator.Service.Function.Services
                     calculatorRun!.CalculatorRunClassificationId = (int)RunClassification.UNCLASSIFIED;
                     Context.CalculatorRuns.Update(calculatorRun);
                     await Context.SaveChangesAsync(cancellationToken);
+                    logger.LogInformation("Run classification set to {Classification}", RunClassification.UNCLASSIFIED);
                     return true;
                 }
 
-                telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = resultsRequestDto.RunId,
-                    RunName = runName,
-                    Message = "Csv File saving end...",
-                });
+                logger.LogWarning("Blob upload returned empty URI — file may not have been saved");
             }
             catch (OperationCanceledException exception)
             {
                 await HandleErrorAsync(calculatorRun, RunClassification.ERROR);
-                telemetryLogger.LogError(new ErrorMessage
-                {
-                    RunId = resultsRequestDto.RunId,
-                    RunName = runName,
-                    Message = "Operation cancelled",
-                    Exception = exception,
-                });
+                logger.LogError(exception, "Operation cancelled");
                 return false;
             }
             catch (Exception exception)
             {
                 await HandleErrorAsync(calculatorRun, RunClassification.ERROR);
-                telemetryLogger.LogError(new ErrorMessage
-                {
-                    RunId = resultsRequestDto.RunId,
-                    RunName = runName,
-                    Message = "Error occurred",
-                    Exception = exception,
-                });
+                logger.LogError(exception, "Error occurred");
                 return false;
             }
 
             await HandleErrorAsync(calculatorRun, RunClassification.ERROR);
-            telemetryLogger.LogInformation(new TrackMessage
-            {
-                RunId = resultsRequestDto.RunId,
-                RunName = runName,
-                Message = "Error occurred",
-            });
+            logger.LogWarning("Blob upload failed — run marked as ERROR");
             return false;
         }
 
@@ -220,134 +155,79 @@ namespace EPR.Calculator.Service.Function.Services
             string runName,
             CancellationToken cancellationToken)
         {
-
-            telemetryLogger.LogInformation(new TrackMessage
+            try
             {
-                RunId = resultsRequestDto.RunId,
-                RunName = runName,
-                Message = "Billing Builder started...",
-            });
+                logger.LogDebug("Billing Builder started");
 
-            var calcResults = await Builder.BuildAsync(resultsRequestDto);
+                var calcResults = await Builder.BuildAsync(resultsRequestDto);
 
-            telemetryLogger.LogInformation(new TrackMessage
+                logger.LogDebug("Billing Builder ended");
+
+                // Get File name for the billing json file
+                var billingFileCsvName = new CalcResultsAndBillingFileName(
+                    resultsRequestDto.RunId,
+                    runName,
+                    DateTime.UtcNow,
+                    true);
+
+                var billingFileJsonName = new CalcResultsAndBillingFileName(resultsRequestDto.RunId, true, true);
+
+                var jsonResponse = JsonExporter.Export(calcResults, resultsRequestDto.AcceptedProducerIds);
+
+                logger.LogDebug("Billing file JSON content created");
+
+                // call csv Exporter
+
+                var exportedResults = BillingFileExporter.Export(calcResults, resultsRequestDto.AcceptedProducerIds);
+
+                var csvBlobUri = await storageService.UploadFileContentAsync((
+                     FileName: billingFileCsvName,
+                     Content: exportedResults,
+                     RunName: runName,
+                     ContainerName: ConfigService.BillingFileCSVBlobContainerName,
+                     Overwrite: OverwriteCsvFile));
+
+                logger.LogInformation("Billing CSV uploaded: {BillingFileCsvName}", billingFileCsvName);
+
+                await storageService.UploadFileContentAsync((
+                    FileName: billingFileJsonName,
+                    Content: jsonResponse,
+                    RunName: runName,
+                    ContainerName: ConfigService.BillingFileJsonBlobContainerName,
+                    Overwrite: OverwriteJsonFile));
+
+                logger.LogInformation("Billing JSON uploaded: {BillingFileJsonName}", billingFileJsonName);
+
+                var calcRun = await Context.CalculatorRuns.SingleAsync(run => run.Id == resultsRequestDto.RunId);
+                calcRun.IsBillingFileGenerating = false;
+
+                var billingFileMetadata = new CalculatorRunBillingFileMetadata
+                {
+                    BillingCsvFileName = billingFileCsvName.ToString(),
+                    BillingFileCreatedBy = resultsRequestDto.ApprovedBy ?? "System User",
+                    CalculatorRunId = resultsRequestDto.RunId,
+                    BillingFileCreatedDate = DateTime.UtcNow,
+                    BillingJsonFileName = billingFileJsonName.ToString(),
+                };
+
+                Context.CalculatorRunBillingFileMetadata.Add(billingFileMetadata);
+
+                var csvFileMetaData = new CalculatorRunCsvFileMetadata
+                { BlobUri = csvBlobUri, CalculatorRunId = resultsRequestDto.RunId, FileName = billingFileCsvName };
+
+                Context.CalculatorRunCsvFileMetadata.Add(csvFileMetaData);
+
+                await Context.SaveChangesAsync();
+
+                logger.LogInformation("Billing file all generated and updated successfully");
+
+                return true;
+            }
+            catch (Exception exception)
             {
-                RunId = resultsRequestDto.RunId,
-                RunName = runName,
-                Message = "Billing Builder ended...",
-            });
-
-            // Get File name for the billing json file
-            var billingFileCsvName = new CalcResultsAndBillingFileName(
-                resultsRequestDto.RunId,
-                runName,
-                DateTime.UtcNow,
-                true);
-
-            telemetryLogger.LogInformation(new TrackMessage
-            {
-                RunId = resultsRequestDto.RunId,
-                RunName = runName,
-                Message = $"Billing file CSV file name only is created {billingFileCsvName}",
-            });
-
-            var billingFileJsonName = new CalcResultsAndBillingFileName(resultsRequestDto.RunId, true, true);
-
-            telemetryLogger.LogInformation(new TrackMessage
-            {
-                RunId = resultsRequestDto.RunId,
-                RunName = runName,
-                Message = $"Billing file JSON file name only is created {billingFileJsonName}",
-            });
-
-            var jsonResponse = JsonExporter.Export(calcResults, resultsRequestDto.AcceptedProducerIds);
-
-            telemetryLogger.LogInformation(new TrackMessage
-            {
-                RunId = resultsRequestDto.RunId,
-                RunName = runName,
-                Message = "Billing file JSON content is now created",
-            });
-
-            // call csv Exporter
-
-            var exportedResults = BillingFileExporter.Export(calcResults, resultsRequestDto.AcceptedProducerIds);
-
-            telemetryLogger.LogInformation(new TrackMessage
-            {
-                RunId = resultsRequestDto.RunId,
-                RunName = runName,
-                Message = $"Billing file CSV file before upload {billingFileCsvName}",
-            });
-
-
-            var csvBlobUri = await storageService.UploadFileContentAsync((
-                 FileName: billingFileCsvName,
-                 Content: exportedResults,
-                 RunName: runName,
-                 ContainerName: ConfigService.BillingFileCSVBlobContainerName,
-                 Overwrite: OverwriteCsvFile));
-
-            telemetryLogger.LogInformation(new TrackMessage
-            {
-                RunId = resultsRequestDto.RunId,
-                RunName = runName,
-                Message = $"Billing file CSV file after upload {billingFileCsvName}",
-            });
-
-            // upload the csv file to blob storage
-
-            telemetryLogger.LogInformation(new TrackMessage
-            {
-                RunId = resultsRequestDto.RunId,
-                RunName = runName,
-                Message = $"Billing file JSON file before upload {billingFileJsonName}",
-            });
-
-            await storageService.UploadFileContentAsync((
-                FileName: billingFileJsonName,
-                Content: jsonResponse,
-                RunName: runName,
-                ContainerName: ConfigService.BillingFileJsonBlobContainerName,
-                Overwrite: OverwriteJsonFile));
-
-            telemetryLogger.LogInformation(new TrackMessage
-            {
-                RunId = resultsRequestDto.RunId,
-                RunName = runName,
-                Message = $"Billing file JSON file after upload {billingFileJsonName}",
-            });
-
-            var calcRun = await Context.CalculatorRuns.SingleAsync(run => run.Id == resultsRequestDto.RunId);
-            calcRun.IsBillingFileGenerating = false;
-
-
-            var billingFileMetadata = new CalculatorRunBillingFileMetadata
-            {
-                BillingCsvFileName = billingFileCsvName.ToString(),
-                BillingFileCreatedBy = resultsRequestDto.ApprovedBy ?? "System User",
-                CalculatorRunId = resultsRequestDto.RunId,
-                BillingFileCreatedDate = DateTime.UtcNow,
-                BillingJsonFileName = billingFileJsonName.ToString(),
-            };
-
-            Context.CalculatorRunBillingFileMetadata.Add(billingFileMetadata);
-
-            var csvFileMetaData = new CalculatorRunCsvFileMetadata
-            { BlobUri = csvBlobUri, CalculatorRunId = resultsRequestDto.RunId, FileName = billingFileCsvName };
-
-            Context.CalculatorRunCsvFileMetadata.Add(csvFileMetaData);
-
-            await Context.SaveChangesAsync();
-
-            telemetryLogger.LogInformation(new TrackMessage
-            {
-                RunId = resultsRequestDto.RunId,
-                RunName = runName,
-                Message = "Billing file All generated and updated successfully",
-            });
-
-            return true;
+                logger.LogError(exception, "Error occurred while preparing billing results");
+                return false;
+            }
         }
 
         private async Task HandleErrorAsync(CalculatorRun? calculatorRun, RunClassification classification)

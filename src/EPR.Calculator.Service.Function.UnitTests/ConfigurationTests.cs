@@ -148,23 +148,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
         }
 
         [TestMethod]
-        public void CanGetTransposeEndpoint()
-        {
-            // Arrange
-            var transposeEndpoint = Fixture.Create<Uri>();
-
-            Environment.SetEnvironmentVariable(
-                EnvironmentVariableKeys.TransposeEndpoint,
-                transposeEndpoint.ToString());
-
-            // Act
-            var result = new Configuration().TransposeEndpoint;
-
-            // Assert
-            Assert.AreEqual(transposeEndpoint, result);
-        }
-
-        [TestMethod]
         public void CanGetDbLoadingChunkSize()
         {
             // Arrange

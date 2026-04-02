@@ -19,7 +19,7 @@ namespace EPR.Calculator.Service.Function.Services
         public MessageBase DeserializeMessage(string json)
         {
             if (string.IsNullOrWhiteSpace(json))
-                throw new JsonException("Input JSON is null or empty.");
+                throw new ArgumentException("Input JSON is null or empty.");
 
             var jObject = JObject.Parse(json);
             var messageType = jObject["MessageType"]?.ToString();

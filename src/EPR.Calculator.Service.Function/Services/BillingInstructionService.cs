@@ -1,9 +1,10 @@
-﻿using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.Service.Common.Logging;
+using System.Diagnostics;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
+using Microsoft.Extensions.Logging;
 
 namespace EPR.Calculator.Service.Function.Services
 {
@@ -11,21 +12,21 @@ namespace EPR.Calculator.Service.Function.Services
     {
         private IDbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction> billingInstructionChunker { get; init; }
 
-        private readonly ICalculatorTelemetryLogger _telemetryLogger;
+        private readonly ILogger<BillingInstructionService> _logger;
 
         public BillingInstructionService(
             IDbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction> billingInstructionChunker,
-            ICalculatorTelemetryLogger telemetryLogger)
+            ILogger<BillingInstructionService> logger)
         {
             this.billingInstructionChunker = billingInstructionChunker;
-            _telemetryLogger = telemetryLogger;
+            _logger = logger;
         }
 
         public async Task<bool> CreateBillingInstructions(CalcResult calcResult)
         {
             try
             {
-                var startTime = DateTime.UtcNow;
+                var stopwatch = Stopwatch.StartNew();
                 var billingInstructions = new List<ProducerResultFileSuggestedBillingInstruction>();
 
                 var producers = calcResult.CalcResultSummary.ProducerDisposalFees.Where(producer => producer.Level == CommonConstants.LevelOne.ToString());
@@ -88,36 +89,20 @@ namespace EPR.Calculator.Service.Function.Services
                 }
                 else
                 {
-                    _telemetryLogger.LogInformation(new TrackMessage
-                    {
-                        RunId = calcResult.CalcResultDetail.RunId,
-                        RunName = calcResult.CalcResultDetail.RunName,
-                        Message = $"No billing instructions to insert into table for {calcResult.CalcResultDetail.RunId}",
-                    });
+                    _logger.LogWarning("No billing instructions to insert");
                     return false;
                 }
 
-                var endTime = DateTime.UtcNow;
-                var timeDiff = startTime - endTime;
-                _telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = calcResult.CalcResultDetail.RunId,
-                    RunName = calcResult.CalcResultDetail.RunName,
-                    Message = $"Inserting records {billingInstructions.Count} into billing instructions table for {calcResult.CalcResultDetail.RunId} completed in {timeDiff.TotalSeconds} seconds",
-                });
+                stopwatch.Stop();
+                _logger.LogInformation("Inserted {RecordCount} billing instructions in {Elapsed}",
+                    billingInstructions.Count, stopwatch.Elapsed.ToString("g"));
 
                 return true;
 
             }
             catch (Exception exception)
             {
-                _telemetryLogger.LogError(new ErrorMessage
-                {
-                    RunId = calcResult.CalcResultDetail.RunId,
-                    RunName = calcResult.CalcResultDetail.RunName,
-                    Message = "Error occurred while populating the billing instructions",
-                    Exception = exception,
-                });
+                _logger.LogError(exception, "Error occurred while populating the billing instructions");
 
                 return false;
             }

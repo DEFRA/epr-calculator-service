@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoFixture" Version="4.18.1"/>
+    <PackageReference Include="AutoFixture" Version="4.18.1" />
     <PackageReference Include="coverlet.collector" Version="6.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -19,22 +19,24 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="EPR.Calculator.API.Data" Version="2.3.0"/>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.7"/>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.7"/>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0"/>
-    <PackageReference Include="Moq" Version="4.20.72"/>
-    <PackageReference Include="Moq.EntityFrameworkCore" Version="8.0.1.7"/>
-    <PackageReference Include="MSTest.TestAdapter" Version="3.1.1"/>
-    <PackageReference Include="MSTest.TestFramework" Version="3.1.1"/>
+    <PackageReference Include="EPR.Calculator.API.Data" Version="2.3.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights" Version="3.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.7" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="Moq" Version="4.20.72" />
+    <PackageReference Include="Moq.EntityFrameworkCore" Version="8.0.1.7" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.1.1" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
+    <PackageReference Include="OpenTelemetry.Exporter.InMemory" Version="1.15.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EPR.Calculator.Service.Function\EPR.Calculator.Service.Function.csproj"/>
+    <ProjectReference Include="..\EPR.Calculator.Service.Function\EPR.Calculator.Service.Function.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting"/>
+    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
 
 </Project>

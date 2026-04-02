@@ -5,7 +5,6 @@ using EFCore.BulkExtensions;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common;
 using EPR.Calculator.Service.Common.Utils;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
 using Microsoft.EntityFrameworkCore;
@@ -29,32 +28,28 @@ namespace EPR.Calculator.Service.Function.Services.DataLoading
         : IDataLoader
     {
         /// <inheritdoc />
-        public async Task LoadData(CalculatorRunParameter runParams, string runName,
-            CancellationToken cancellationToken = default)
+        public async Task LoadData(CalculatorRunParams runParams, CancellationToken cancellationToken = default)
         {
             var opts = options.Value;
 
             if (!opts.Enabled)
             {
-                logger.LogInformation(
-                    "CommonDataApiLoader: Disabled, skipping load. Id={Id} Run={Run} RelativeYear={Year}",
-                    runParams.Id, runName, runParams.RelativeYear);
+                logger.LogInformation("CommonDataApiLoader: Disabled, skipping load");
                 return;
             }
 
             var loadTime = timeProvider.GetUtcNow();
 
             logger.LogInformation(
-                "CommonDataApiLoader: Starting. Id={Id} Run={Run} RelativeYear={Year} LoadTime={LoadTime}",
-                runParams.Id, runName, runParams.RelativeYear, loadTime.ToString("yyyy-MM-dd HH:mm:ss.fffffff"));
+                "CommonDataApiLoader: Starting. RelativeYear:{RelativeYear}, LoadTime:{LoadTime}",
+                runParams.RelativeYear, loadTime.ToString("yyyy-MM-dd HH:mm:ss.fffffff"));
 
             var sw = Stopwatch.StartNew();
             var (totalPoms, totalOrgs) = await Run(runParams.RelativeYear, loadTime, cancellationToken);
             sw.Stop();
 
             logger.LogInformation(
-                "CommonDataApiLoader: Finished. Id={Id} Run={Run} RelativeYear={Year} LoadTime={LoadTime} Poms={TotalPoms} Organisations={TotalOrganisations} Duration={Duration}",
-                runParams.Id, runName, runParams.RelativeYear, loadTime.ToString("yyyy-MM-dd HH:mm:ss.fffffff"),
+                "CommonDataApiLoader: Finished. Poms:{TotalPoms}, Organisations:{TotalOrganisations}, Elapsed:{Elapsed}",
                 totalPoms, totalOrgs, sw.Elapsed.ToString("g"));
         }
 
@@ -179,7 +174,7 @@ namespace EPR.Calculator.Service.Function.Services.DataLoading
                         batch.Count, typeof(TEntity).Name);
                 } while (await stream.Enumerator.MoveNextAsync());
 
-                logger.LogDebug("CommonDataApiLoader: {StreamType} stream complete. Total={Total}",
+                logger.LogDebug("CommonDataApiLoader: {StreamType} stream complete. Total:{Total}",
                     typeof(TEntity).Name, total);
 
                 return (txn, total);

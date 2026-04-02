@@ -1,13 +1,14 @@
+﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Enums;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Misc;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace EPR.Calculator.Service.Function.Services
 {
@@ -17,7 +18,7 @@ namespace EPR.Calculator.Service.Function.Services
     public class TransposePomAndOrgDataService : ITransposePomAndOrgDataService
     {
         private readonly ApplicationDBContext context;
-        private readonly ICalculatorTelemetryLogger telemetryLogger;
+        private readonly ILogger<TransposePomAndOrgDataService> logger;
 
         public class OrganisationDetails
         {
@@ -40,14 +41,14 @@ namespace EPR.Calculator.Service.Function.Services
             IDbLoadingChunkerService<ProducerDetail> producerDetailChunker,
             IDbLoadingChunkerService<ProducerReportedMaterial> producerReportedMaterialChunker,
             IErrorReportService errorReportService,
-            ICalculatorTelemetryLogger telemetryLogger)
+            ILogger<TransposePomAndOrgDataService> logger)
         {
             this.context = context;
             CommandTimeoutService = commandTimeoutService;
             ProducerDetailChunker = producerDetailChunker;
             ProducerReportedMaterialChunker = producerReportedMaterialChunker;
             ErrorReportService = errorReportService;
-            this.telemetryLogger = telemetryLogger;
+            this.logger = logger;
         }
 
         public ICommandTimeoutService CommandTimeoutService { get; init; }
@@ -63,87 +64,53 @@ namespace EPR.Calculator.Service.Function.Services
             string? runName,
             CancellationToken cancellationToken)
         {
-            var startTime = DateTime.UtcNow;
+            var stopwatch = Stopwatch.StartNew();
 
             CommandTimeoutService.SetCommandTimeout(context.Database);
 
             CalculatorRun? calculatorRun = null;
             try
             {
-                telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = resultsRequestDto.RunId,
-                    RunName = runName,
-                    Message = $"Transpose POM and ORG data for run: {resultsRequestDto.RunId}",
-                });
+                logger.LogInformation("Transpose POM and ORG data started");
                 calculatorRun = await context.CalculatorRuns.SingleOrDefaultAsync(
                 run => run.Id == resultsRequestDto.RunId,
                 cancellationToken);
                 if (calculatorRun == null)
                 {
+                    logger.LogWarning("Calculator run not found");
                     return false;
                 }
 
                 await Transpose(
                     resultsRequestDto,
                     cancellationToken);
-                var endTime = DateTime.UtcNow;
-                var timeDiff = startTime - endTime;
-                telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = resultsRequestDto.RunId,
-                    RunName = runName,
-                    Message = $"Transpose POM and ORG data for run: {resultsRequestDto.RunId} completed in {timeDiff.TotalSeconds} seconds",
-                });
+                stopwatch.Stop();
+                logger.LogInformation("Transpose completed in {Elapsed}", stopwatch.Elapsed.ToString("g"));
                 return true;
             }
             catch (OperationCanceledException exception)
             {
-                telemetryLogger.LogError(new ErrorMessage
-                {
-                    RunId = resultsRequestDto.RunId,
-                    RunName = runName,
-                    Message = "Operation cancelled",
-                    Exception = exception,
-                });
+                logger.LogError(exception, "Transpose operation cancelled");
 
                 if (calculatorRun != null)
                 {
                     calculatorRun.CalculatorRunClassificationId = (int)RunClassification.ERROR;
                     context.CalculatorRuns.Update(calculatorRun);
                     await context.SaveChangesAsync();
-                    telemetryLogger.LogError(new ErrorMessage
-                    {
-                        RunId = resultsRequestDto.RunId,
-                        RunName = runName,
-                        Message = "RunId is updated with ClassificationId Error",
-                        Exception = exception,
-                    });
+                    logger.LogWarning("Run classification set to {Classification}", RunClassification.ERROR);
                 }
 
                 return false;
             }
             catch (Exception exception)
             {
-                telemetryLogger.LogError(new ErrorMessage
-                {
-                    RunId = resultsRequestDto.RunId,
-                    RunName = runName,
-                    Message = "Error occurred while transposing POM and ORG data",
-                    Exception = exception,
-                });
+                logger.LogError(exception, "Error occurred while transposing POM and ORG data");
                 if (calculatorRun != null)
                 {
                     calculatorRun.CalculatorRunClassificationId = (int)RunClassification.ERROR;
                     context.CalculatorRuns.Update(calculatorRun);
                     await context.SaveChangesAsync();
-                    telemetryLogger.LogError(new ErrorMessage
-                    {
-                        RunId = resultsRequestDto.RunId,
-                        RunName = runName,
-                        Message = "RunId is updated with ClassificationId Error",
-                        Exception = exception,
-                    });
+                    logger.LogWarning("Run classification set to {Classification}", RunClassification.ERROR);
                 }
             }
 
@@ -288,6 +255,9 @@ namespace EPR.Calculator.Service.Function.Services
                         }
                     }
                 }
+
+                logger.LogInformation("Transpose produced {ProducerDetailCount} producer details and {ReportedMaterialCount} reported materials",
+                    newProducerDetails.Count, newProducerReportedMaterials.Count);
 
                 await ProducerDetailChunker.InsertRecords(newProducerDetails);
                 await ProducerReportedMaterialChunker.InsertRecords(newProducerReportedMaterials);

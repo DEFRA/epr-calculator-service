@@ -1,77 +1,57 @@
 ﻿using EPR.Calculator.API.Data;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Misc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace EPR.Calculator.Service.Function.Services
 {
     public class PrepareBillingFileService(
         ApplicationDBContext applicationDBContext,
         IPrepareCalcService prepareCalcService,
-        ICalculatorTelemetryLogger telemetryLogger) : IPrepareBillingFileService
+        ILogger<PrepareBillingFileService> logger) : IPrepareBillingFileService
     {
-        public async Task<bool> PrepareBillingFileAsync(int calculatorRunId, string runName, string approvedBy)
+        public async Task<bool> PrepareBillingFileAsync(BillingRunParams runParams)
         {
-            telemetryLogger.LogInformation(new TrackMessage
-            {
-                RunId = calculatorRunId,
-                RunName = runName,
-                Message = "PrepareBillingFileAsync started",
-            });
+            logger.LogInformation("PrepareBillingFileAsync started");
 
 #pragma warning disable S1135
             // TODO We need validate the Run Classification Id But not part of this ticket
 #pragma warning restore S1135
             var calculatorRun = await applicationDBContext.CalculatorRuns
-            .SingleOrDefaultAsync(x => x.Id == calculatorRunId);
+            .SingleOrDefaultAsync(x => x.Id == runParams.Id);
 
             if (calculatorRun is null)
             {
-                telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = calculatorRunId,
-                    RunName = runName,
-                    Message = PrepareBillingFileConstants.CalculatorRunNotFound,
-                });
+                logger.LogWarning("Billing: {BillingValidation}", PrepareBillingFileConstants.CalculatorRunNotFound);
                 return false;
             }
 
             if (!calculatorRun.IsBillingFileGenerating.GetValueOrDefault())
             {
-                telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = calculatorRunId,
-                    RunName = runName,
-                    Message = PrepareBillingFileConstants.IsBillingFileGeneratingNotSet,
-                });
+                logger.LogWarning("Billing: {BillingValidation}", PrepareBillingFileConstants.IsBillingFileGeneratingNotSet);
                 return false;
             }
 
-            List<int> acceptedProducerIds = await GetAcceptedProducerIdsAsync(calculatorRunId, applicationDBContext);
+            List<int> acceptedProducerIds = await GetAcceptedProducerIdsAsync(runParams.Id, applicationDBContext);
 
             if (acceptedProducerIds.Count == 0)
             {
-                telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = calculatorRunId,
-                    RunName = runName,
-                    Message = PrepareBillingFileConstants.AcceptedProducerIdsAreNull,
-                });
+                logger.LogWarning("Billing: {BillingValidation}", PrepareBillingFileConstants.AcceptedProducerIdsAreNull);
                 return false;
             }
 
             var result = await prepareCalcService.PrepareBillingResultsAsync(
                 new CalcResultsRequestDto
                 {
-                    RunId = calculatorRunId,
+                    RunId = runParams.Id,
                     AcceptedProducerIds = acceptedProducerIds,
                     IsBillingFile = true,
-                    ApprovedBy = approvedBy,
+                    ApprovedBy = runParams.ApprovedBy,
                     RelativeYear = calculatorRun.RelativeYear
                 },
-                runName,
+                runParams.Name,
                 CancellationToken.None);
 
             return result;

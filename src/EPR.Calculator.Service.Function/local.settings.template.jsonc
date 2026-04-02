@@ -11,6 +11,9 @@
     // Use Azurite for local storage
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
 
+    // Optional: set to an App Insights connection string to enable telemetry locally
+    // "APPLICATIONINSIGHTS_CONNECTION_STRING": "",
+
     // FYI: Disables the ServiceBusQueueTrigger function
     //"AzureWebJobs.EPRCalculatorRunServiceBusQueueTrigger.Disabled": false,
 
@@ -42,8 +45,6 @@
     // SQL database connection - for local DB use the migration scripts in epr-calculator-api to define the schema
     "DbConnectionString": "",
 
-    "PrepareCalcResultEndPoint": null,
-    "StatusUpdateEndpoint": null,
     "DbLoadingChunkSize": 1000,
     "PrepareCalcResultsTimeout": 11,
     "RpdStatusTimeout": 1,

@@ -2,6 +2,6 @@
 {
     public interface IPrepareBillingFileService
     {
-        Task<bool> PrepareBillingFileAsync(int calculatorRunId, string runName, string approvedBy);
+        Task<bool> PrepareBillingFileAsync(BillingRunParams runParams);
     }
 }

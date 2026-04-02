@@ -2,7 +2,6 @@ using AutoFixture;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Builder;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Exporter;
@@ -13,6 +12,7 @@ using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
@@ -32,7 +32,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         private Mock<IStorageService> _storageService;
         private CalculatorRunValidator _validationRules;
         private Mock<ICommandTimeoutService> _commandTimeoutService;
-        private Mock<ICalculatorTelemetryLogger> _telemetryLogger;
+        private Mock<ILogger<PrepareCalcService>> _logger;
         private Mock<ICalcBillingJsonExporter<CalcResult>> _jsonExporter;
         private Mock<IConfigurationService> _configService;
         private Mock<IBillingFileExporter<CalcResult>> _billingFileExporter;
@@ -50,7 +50,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             _context = new ApplicationDBContext(_dbContextOptions);
             _dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
             _dbContextFactory.Setup(f => f.CreateDbContext()).Returns(_context);
-            _telemetryLogger = new Mock<ICalculatorTelemetryLogger>();
+            _logger = new Mock<ILogger<PrepareCalcService>>();
 
             SeedDatabase();
 
@@ -113,7 +113,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 StorageService = _storageService.Object,
                 ValidationRules = new Mock<CalculatorRunValidator>().Object,
                 CommandTimeoutService = _commandTimeoutService.Object,
-                TelemetryLogger = new Mock<ICalculatorTelemetryLogger>().Object,
+                Logger = new Mock<ILogger<PrepareCalcService>>().Object,
                 JsonExporter = _jsonExporter.Object,
                 ConfigService = _configService.Object,
                 BillingFileExporter = _billingFileExporter.Object,

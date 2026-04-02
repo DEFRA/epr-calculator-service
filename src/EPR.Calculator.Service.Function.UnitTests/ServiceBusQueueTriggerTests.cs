@@ -1,329 +1,232 @@
 using System.Text.Json;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common;
-using EPR.Calculator.Service.Common.Logging;
-using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Exceptions;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.Telemetry;
+using Microsoft.ApplicationInsights.DataContracts;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests
 {
-    /// <summary>
-    /// Unit Test class for service bus queue trigger.
-    /// </summary>
     [TestClass]
     public class ServiceBusQueueTriggerTests
     {
         private readonly ServiceBusQueueTrigger function;
         private readonly Mock<ICalculatorRunService> calculatorRunService;
-        private readonly Mock<ICalculatorRunParameterMapper> parameterMapper;
         private readonly Mock<IRunNameService> runNameService;
         private readonly Mock<IClassificationService> classificationService;
-        private readonly Mock<ICalculatorTelemetryLogger> telemetryLogger;
+        private readonly Mock<ILogger<ServiceBusQueueTrigger>> logger;
         private readonly Mock<IMessageTypeService> messageTypeService;
         private readonly Mock<IPrepareBillingFileService> prepareBillingFileService;
+        private readonly Mock<ITelemetryClient> telemetryClient;
 
+        private const string ResultMessage = @"{""CalculatorRunId"": 1, ""RelativeYear"": 2024, ""CreatedBy"": ""Test user"", ""MessageType"": ""Result""}";
+        private const string BillingMessage = @"{""CalculatorRunId"": 1, ""ApprovedBy"": ""Test User"", ""MessageType"": ""Billing""}";
+        private const string RunName = "Test Run Name";
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ServiceBusQueueTriggerTests"/> class.
-        /// </summary>
         public ServiceBusQueueTriggerTests()
         {
             calculatorRunService = new Mock<ICalculatorRunService>();
-            parameterMapper = new Mock<ICalculatorRunParameterMapper>();
             runNameService = new Mock<IRunNameService>();
             messageTypeService = new Mock<IMessageTypeService>();
             classificationService = new Mock<IClassificationService>();
-            telemetryLogger = new Mock<ICalculatorTelemetryLogger>();
+            logger = new Mock<ILogger<ServiceBusQueueTrigger>>();
             prepareBillingFileService = new Mock<IPrepareBillingFileService>();
+            telemetryClient = new Mock<ITelemetryClient>();
+
             function = new ServiceBusQueueTrigger(
                 calculatorRunService.Object,
-                parameterMapper.Object,
                 runNameService.Object,
-                telemetryLogger.Object,
+                logger.Object,
                 messageTypeService.Object,
                 prepareBillingFileService.Object,
-                classificationService.Object);
+                classificationService.Object,
+                telemetryClient.Object);
         }
 
         /// <summary>
-        /// Tests the Run method with a valid message to ensure it processes the queue item correctly and returns true.
+        /// Tests that a valid result file message causes the calculator run service to be invoked.
         /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [TestMethod]
-        public async Task ServiceBusTrigger_ValidMessageRun()
+        public async Task Run_WithValidResultMessage_CallsCalculatorRunService()
         {
             // Arrange
-            var myQueueItem = @"{ CalculatorRunId: 678767, RelativeYear: 2024, CreatedBy: 'Test user'}";
-            var processedParameterData = new CalculatorRunParameter { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767, MessageType = MessageTypes.Result };
-            var runName = "Test Run Name";
-
-            runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
-            parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
-            calculatorRunService.Setup(t => t.PrepareResultsFileAsync(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).ReturnsAsync(true);
-            MockResultMessage(myQueueItem);
+            runNameService.Setup(s => s.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(RunName);
+            calculatorRunService.Setup(s => s.PrepareResultsFileAsync(It.IsAny<CalculatorRunParams>())).ReturnsAsync(true);
+            SetupResultFileMessage(ResultMessage);
 
             // Act
-            await function.Run(myQueueItem);
+            await function.Run(ResultMessage);
 
             // Assert
-            calculatorRunService.Verify(
-                p => p.PrepareResultsFileAsync(
-                    It.Is<CalculatorRunParameter>(msg => msg == processedParameterData),
-                    It.Is<string>(name => name == runName)),
-                Times.Once);
-
-            telemetryLogger.Verify(
-                x => x.LogInformation(It.Is<TrackMessage>(log =>
-                    log.Message.Contains("Executing the function app started"))),
-                Times.Once);
+            calculatorRunService.Verify(s => s.PrepareResultsFileAsync(It.IsAny<CalculatorRunParams>()), Times.Once);
+            AssertEvent("PayCalRunInit");
+            AssertEvent("PayCalRunStarted");
+            AssertEvent("PayCalRunCompleted");
         }
 
         /// <summary>
-        /// Tests the Run method with a valid message to ensure it processes the queue item correctly and returns true for billing file.
+        /// Tests that a valid billing file message causes the billing file service to be invoked.
         /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [TestMethod]
-        public async Task ServiceBusTrigger_ValidMessageRun_BiilingTest()
+        public async Task Run_WithValidBillingMessage_CallsPrepareBillingFileService()
         {
             // Arrange
-            var myQueueItem = @"{ Id: 678767, ApprovedBy: 'Test User', MessageType: 'Billing'}";
-            var resultFileMessage = new CreateBillingFileMessage
-            {
-                CalculatorRunId = 123,
-                ApprovedBy = "Test User",
-                MessageType = "Billing"
-            };
-
-            var processedParameterData = new BillingFileMessage { ApprovedBy = "2024-25", MessageType = "Billing", Id = 678767 };
-            var runName = "Test Run Name";
-            var approvedBy = "Test User";
-
-            parameterMapper.Setup(t => t.Map(It.IsAny<CreateBillingFileMessage>())).Returns(processedParameterData);
-            messageTypeService.Setup(s => s.DeserializeMessage(myQueueItem)).Returns(resultFileMessage);
-            prepareBillingFileService.Setup(t => t.PrepareBillingFileAsync(processedParameterData.Id, runName, approvedBy)).ReturnsAsync(true);
+            runNameService.Setup(s => s.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(RunName);
+            prepareBillingFileService.Setup(s => s.PrepareBillingFileAsync(It.IsAny<BillingRunParams>())).ReturnsAsync(true);
+            SetupBillingFileMessage(BillingMessage);
 
             // Act
-            await function.Run(myQueueItem);
+            await function.Run(BillingMessage);
 
             // Assert
-            telemetryLogger.Verify(
-                x => x.LogInformation(It.Is<TrackMessage>(log =>
-                    log.Message.Contains("Azure function app execution finished"))),
-                Times.Once);
+            prepareBillingFileService.Verify(s => s.PrepareBillingFileAsync(It.IsAny<BillingRunParams>()), Times.Once);
+            AssertEvent("PayCalRunInit");
+            AssertEvent("PayCalRunStarted");
+            AssertEvent("PayCalRunCompleted");
         }
 
         /// <summary>
-        /// Tests the Run method to ensure it logs an error and returns false when the message is null or empty.
+        /// Tests that a failure to deserialize the message throws a RunInitialiseException.
         /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [TestMethod]
-        public async Task ServiceBusTrigger_EmptyMessageRun()
+        public async Task Run_WhenDeserializeFails_ThrowsRunInitialiseException()
         {
             // Arrange
-            var myQueueItem = string.Empty;
+            messageTypeService.Setup(s => s.DeserializeMessage(It.IsAny<string>())).Throws<JsonException>();
 
-            // Act
-            await function.Run(myQueueItem);
-
-            // Assert
-            telemetryLogger.Verify(
-                log => log.LogError(It.Is<ErrorMessage>(msg =>
-                    msg.Message.Contains("Message is null or empty") &&
-                    msg.Exception is ArgumentNullException)),
-                Times.Once);
-        }
-
-        [TestMethod]
-        public async Task ServiceBusTrigger_NullMessageRun()
-        {
-            // Arrange
-            string? myQueueItem = null;
-
-            // Act
-            await function.Run(myQueueItem!);
-
-            // Assert
-            telemetryLogger.Verify(
-                log => log.LogError(It.Is<ErrorMessage>(msg =>
-                    msg.Message.Contains("Message is null or empty") &&
-                    msg.Exception is ArgumentNullException)),
-                Times.Once);
-        }
-
-        [TestMethod]
-        public async Task ServiceBusTrigger_MessageJsonException()
-        {
-            // Arrange
-            var myQueueItem = @"{ CalculatorRunId: 678767, RelativeYear: 2024, CreatedBy: 'Test user'}";
-            parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Throws<JsonException>();
-
-            MockResultMessage(myQueueItem);
-
-            // Act
-            await function.Run(myQueueItem);
-
-            // Assert
-            telemetryLogger.Verify(
-                log => log.LogError(It.Is<ErrorMessage>(msg =>
-                    msg.Message.Contains("Error") &&
-                    msg.Exception is JsonException)),
-                Times.Once);
+            // Act & Assert
+            await Assert.ThrowsExceptionAsync<RunInitialiseException>(() => function.Run(ResultMessage));
+            AssertEvent("PayCalRunInitFailed");
         }
 
         /// <summary>
-        /// Tests the Run method to ensure it logs an error and returns false when mapper throw unhandled exception.
+        /// Tests that a failure to retrieve the run name throws a RunInitialiseException.
         /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [TestMethod]
-        public async Task ServiceBusTrigger_Message_Mapper_Unhandled_Exception()
+        public async Task Run_WhenGetRunNameFails_ThrowsRunInitialiseException()
         {
             // Arrange
-            var myQueueItem = @"{ CalculatorRunId: 678767, RelativeYear: 2024, CreatedBy: 'Test user'}";
-            parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Throws<Exception>();
-            MockResultMessage(myQueueItem);
-            // Act
-            await function.Run(myQueueItem);
+            SetupResultFileMessage(ResultMessage);
+            runNameService.Setup(s => s.GetRunNameAsync(It.IsAny<int>())).ThrowsAsync(new Exception("Service unavailable"));
 
-            // Assert
-            telemetryLogger.Verify(
-                log => log.LogError(It.Is<ErrorMessage>(msg =>
-                    msg.Message.Contains("Error") &&
-                    msg.Exception is Exception)),
-                Times.Once);
+            // Act & Assert
+            await Assert.ThrowsExceptionAsync<RunInitialiseException>(() => function.Run(ResultMessage));
+            AssertEvent("PayCalRunInitFailed");
         }
 
         /// <summary>
-        /// Tests the Run method to ensure it logs an error and returns false when startprocess throw unhandled exception.
+        /// Tests that an unhandled exception from the calculator run service is logged as an error.
         /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [TestMethod]
-        public async Task ServiceBusTrigger_InvalidMessageRunUnhandledException()
+        public async Task Run_WhenPrepareResultsFileThrows_LogsError()
         {
             // Arrange
-            var myQueueItem = @"{ CalculatorRunId: 678767, RelativeYear: 2024, CreatedBy: 'Test user'}";
-            var processedParameterData = new CalculatorRunParameter { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767 , MessageType = MessageTypes.Result };
-            var runName = "Test Run Name";
-
-            parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
-            runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
-
-            // Setup StartProcess to throw an exception
-            calculatorRunService.Setup(t => t.PrepareResultsFileAsync(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).ThrowsAsync(new Exception("Unhandled exception"));
-            MockResultMessage(myQueueItem);
+            runNameService.Setup(s => s.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(RunName);
+            calculatorRunService.Setup(s => s.PrepareResultsFileAsync(It.IsAny<CalculatorRunParams>())).ThrowsAsync(new Exception("Unhandled exception"));
+            SetupResultFileMessage(ResultMessage);
 
             // Act
-            await function.Run(myQueueItem);
+            await function.Run(ResultMessage);
 
             // Assert
-            telemetryLogger.Verify(
-                log => log.LogError(It.Is<ErrorMessage>(msg =>
-                    msg.Message.Contains("Unhandled exception") &&
-                    msg.Exception is Exception)),
-                Times.Once);
+            VerifyLogError("Run failed");
+            AssertEvent("PayCalRunFailed");
+            AssertEventProperty("PayCalRunFailed", "FailureReason", "UnhandledException");
         }
 
+        /// <summary>
+        /// Tests that a false result from the calculator run service is logged as an error.
+        /// </summary>
         [TestMethod]
-        public async Task ServiceBusTrigger_NullParamRun()
+        public async Task Run_WhenPrepareResultsFileReturnsFalse_LogsError()
         {
             // Arrange
-            var myQueueItem = @"{ CalculatorRunId: 678767, RelativeYear: 2024, CreatedBy: 'Test user'}";
-            parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns((CalculatorRunParameter?)null!);
+            runNameService.Setup(s => s.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(RunName);
+            calculatorRunService.Setup(s => s.PrepareResultsFileAsync(It.IsAny<CalculatorRunParams>())).ReturnsAsync(false);
+            SetupResultFileMessage(ResultMessage);
 
             // Act
-            await function.Run(myQueueItem);
+            await function.Run(ResultMessage);
 
             // Assert
-            telemetryLogger.Verify(
-                log => log.LogError(It.Is<ErrorMessage>(msg =>
-                    msg.Message.Contains("Deserialized object is null") &&
-                    msg.Exception is JsonException)),
-                Times.Never);
+            VerifyLogError("Run failed");
+            AssertEvent("PayCalRunFailed");
+            AssertEventProperty("PayCalRunFailed", "FailureReason", "ProcessingFailed");
         }
 
+        /// <summary>
+        /// Tests that an unhandled exception from the billing file service is logged as an error.
+        /// </summary>
         [TestMethod]
-        public async Task ServiceBusTrigger_SuccessfulProcess_Run()
+        public async Task Run_WhenPrepareBillingFileThrows_LogsError()
         {
             // Arrange
-            parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns((CalculatorRunParameter?)null!);
-            var myQueueItem = @"{ CalculatorRunId: 678767, RelativeYear: 2024, CreatedBy: 'Test user'}";
-            var processedParameterData = new CalculatorRunParameter { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767 , MessageType = MessageTypes.Result };
-            var runName = "Test Run Name";
-
-            parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
-            runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
-            calculatorRunService.Setup(t => t.PrepareResultsFileAsync(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).ReturnsAsync(true);
-            MockResultMessage(myQueueItem);
+            runNameService.Setup(s => s.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(RunName);
+            prepareBillingFileService.Setup(s => s.PrepareBillingFileAsync(It.IsAny<BillingRunParams>())).ThrowsAsync(new Exception("Billing error"));
+            SetupBillingFileMessage(BillingMessage);
 
             // Act
-            await function.Run(myQueueItem);
+            await function.Run(BillingMessage);
 
             // Assert
-            telemetryLogger.Verify(
-                log => log.LogInformation(It.Is<TrackMessage>(msg =>
-                    msg.Message.Contains("Process status: True"))),
-                Times.Once);
+            VerifyLogError("Run failed");
+            AssertEvent("PayCalRunFailed");
+            AssertEventProperty("PayCalRunFailed", "FailureReason", "UnhandledException");
         }
 
-        [TestMethod]
-        public async Task ServiceBusTrigger_StartProcess_Unhandled_Exception()
+        private void SetupResultFileMessage(string message)
         {
-            // Arrange
-            var myQueueItem = @"{ CalculatorRunId: 678767, RelativeYear: 2024, CreatedBy: 'Test user'}";
-            var processedParameterData = new CalculatorRunParameter { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767 , MessageType = MessageTypes.Result };
-            var runName = "Test Run Name";
-
-            runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
-            parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
-            calculatorRunService.Setup(t => t.PrepareResultsFileAsync(It.IsAny<CalculatorRunParameter>(), It.IsAny<string>())).Throws<Exception>();
-            MockResultMessage(myQueueItem);
-
-            // Act
-            await function.Run(myQueueItem);
-
-            // Assert
-            telemetryLogger.Verify(
-                log => log.LogError(It.Is<ErrorMessage>(msg =>
-                    msg.Message.Contains("Error") &&
-                    msg.Exception is Exception)),
-                Times.Once);
-        }
-
-        [TestMethod]
-        public async Task ServiceBusTrigger_GetRunNameAsync_Unhandled_Exception()
-        {
-            // Arrange
-            var myQueueItem = @"{ CalculatorRunId: 678767, RelativeYear: 2024, CreatedBy: 'Test user'}";
-            var processedParameterData = new CalculatorRunParameter { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767 , MessageType = MessageTypes.Result };
-
-            parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
-            runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).Throws<Exception>();
-            MockResultMessage(myQueueItem);
-
-            // Act
-            await function.Run(myQueueItem);
-
-            // Assert
-            telemetryLogger.Verify(
-                log => log.LogError(It.Is<ErrorMessage>(msg =>
-                    msg.Message.Contains("Error") &&
-                    msg.Exception is Exception)),
-                Times.Once);
-        }
-
-        private void MockResultMessage(string myQueueItem)
-        {
-            var resultFileMessage = new CreateResultFileMessage
+            messageTypeService.Setup(s => s.DeserializeMessage(message)).Returns(new CreateResultFileMessage
             {
                 CalculatorRunId = 1,
                 RelativeYear = new RelativeYear(2024),
-                CreatedBy = "TestUser",
+                CreatedBy = "Test user",
                 MessageType = "Result"
-            };
-
-            messageTypeService.Setup(s => s.DeserializeMessage(myQueueItem)).Returns(resultFileMessage);
+            });
         }
 
+        private void SetupBillingFileMessage(string message)
+        {
+            messageTypeService.Setup(s => s.DeserializeMessage(message)).Returns(new CreateBillingFileMessage
+            {
+                CalculatorRunId = 1,
+                ApprovedBy = "Test User",
+                MessageType = "Billing"
+            });
+        }
+
+        private void VerifyLogError(string messageContains)
+        {
+            logger.Verify(
+                x => x.Log(
+                    LogLevel.Error,
+                    It.IsAny<EventId>(),
+                    It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains(messageContains)),
+                    It.IsAny<Exception?>(),
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+                Times.Once);
+        }
+
+        private void AssertEvent(string eventName)
+        {
+            telemetryClient.Verify(
+                c => c.TrackEvent(It.Is<EventTelemetry>(e => e.Name == eventName)),
+                Times.AtLeastOnce,
+                $"Expected telemetry event '{eventName}' was not raised.");
+        }
+
+        private void AssertEventProperty(string eventName, string propertyKey, string expectedValue)
+        {
+            telemetryClient.Verify(
+                c => c.TrackEvent(It.Is<EventTelemetry>(e =>
+                    e.Name == eventName &&
+                    e.Properties.ContainsKey(propertyKey) &&
+                    e.Properties[propertyKey] == expectedValue)),
+                Times.AtLeastOnce,
+                $"Expected '{eventName}'.{propertyKey} = '{expectedValue}'.");
+        }
     }
 }

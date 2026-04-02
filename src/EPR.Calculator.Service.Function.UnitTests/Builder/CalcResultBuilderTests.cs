@@ -16,8 +16,7 @@ using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
 using EPR.Calculator.Service.Function.Builder.Summary;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
-using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
@@ -40,7 +39,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         private readonly Mock<ICalcResultCancelledProducersBuilder> mockCalcResultCancelledProducersBuilder;
         private readonly Mock<ICalcResultRejectedProducersBuilder> mockCalcResultRejectedProducersBuilder;
         private readonly Mock<ICalcResultErrorReportBuilder> mockCalcResultErrorReportBuilder;
-        private TelemetryClient telemetryClient;
+        private ILogger<CalcResultBuilder> mockLogger;
 
         public CalcResultBuilderTests()
         {
@@ -59,7 +58,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             mockCalcResultRejectedProducersBuilder = new Mock<ICalcResultRejectedProducersBuilder>();
             mockCalcResultErrorReportBuilder = new Mock<ICalcResultErrorReportBuilder>();
 
-            telemetryClient = new TelemetryClient(new TelemetryConfiguration());
+            mockLogger = new Mock<ILogger<CalcResultBuilder>>().Object;
 
             calcResultBuilder = new CalcResultBuilder(
                 mockCalcResultDetailBuilder.Object,
@@ -75,7 +74,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 mockCalcResultCancelledProducersBuilder.Object,
                 mockCalcResultRejectedProducersBuilder.Object,
                 mockCalcResultErrorReportBuilder.Object,
-                telemetryClient);
+                mockLogger);
         }
 
         private Fixture Fixture { get; init; }
@@ -98,7 +97,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 mockCalcResultCancelledProducersBuilder.Object,
                 mockCalcResultRejectedProducersBuilder.Object,
                 mockCalcResultErrorReportBuilder.Object,
-                telemetryClient);
+                mockLogger);
 
             // Assert
             Assert.IsNotNull(instance);

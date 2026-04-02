@@ -1,12 +1,12 @@
 using AutoFixture;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.Builder;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
@@ -16,14 +16,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     {
         private BillingInstructionService _testClass = null!;
         private Mock<IDbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction>> _billingInstructionChunker = null!;
-        private Mock<ICalculatorTelemetryLogger> _telemetryLogger = null!;
+        private Mock<ILogger<BillingInstructionService>> _logger = null!;
 
         [TestInitialize]
         public void SetUp()
         {
             _billingInstructionChunker = new Mock<IDbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction>>();
-            _telemetryLogger = new Mock<ICalculatorTelemetryLogger>();
-            _testClass = new BillingInstructionService(_billingInstructionChunker.Object, _telemetryLogger.Object);
+            _logger = new Mock<ILogger<BillingInstructionService>>();
+            _testClass = new BillingInstructionService(_billingInstructionChunker.Object, _logger.Object);
         }
 
         [TestMethod]
@@ -32,15 +32,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Arrange
             var calcResult = TestDataHelper.GetCalcResult();
 
-            _telemetryLogger.Setup(mock => mock.LogInformation(It.IsAny<TrackMessage>())).Verifiable();
-            _telemetryLogger.Setup(mock => mock.LogError(It.IsAny<ErrorMessage>())).Verifiable();
-
             // Act
             var result = await _testClass.CreateBillingInstructions(calcResult);
 
             // Assert
-            _telemetryLogger.Verify(mock => mock.LogInformation(It.IsAny<TrackMessage>()));
-
             Assert.IsTrue(result);
         }
 
@@ -113,16 +108,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CalcResultModulation = null,
             };
 
-
-            _telemetryLogger.Setup(mock => mock.LogInformation(It.IsAny<TrackMessage>())).Verifiable();
-            _telemetryLogger.Setup(mock => mock.LogError(It.IsAny<ErrorMessage>())).Verifiable();
-
             // Act
             var result = await _testClass.CreateBillingInstructions(calcResult);
 
             // Assert
-            _telemetryLogger.Verify(mock => mock.LogInformation(It.IsAny<TrackMessage>()));
-
             Assert.IsFalse(result);
         }
 
@@ -166,16 +155,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CalcResultModulation = null,
             };
 
-
-            _telemetryLogger.Setup(mock => mock.LogInformation(It.IsAny<TrackMessage>())).Verifiable();
-            _telemetryLogger.Setup(mock => mock.LogError(It.IsAny<ErrorMessage>())).Verifiable();
-
             // Act
             var result = await _testClass.CreateBillingInstructions(calcResult);
 
             // Assert
-            _telemetryLogger.Verify(mock => mock.LogError(It.IsAny<ErrorMessage>()));
-
             Assert.IsFalse(result);
         }
 
@@ -241,10 +224,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 },
                 CalcResultModulation = null
             };
-
-
-            _telemetryLogger.Setup(mock => mock.LogInformation(It.IsAny<TrackMessage>())).Verifiable();
-            _telemetryLogger.Setup(mock => mock.LogError(It.IsAny<ErrorMessage>())).Verifiable();
 
             // Act
             var result = await _testClass.CreateBillingInstructions(calcResult);

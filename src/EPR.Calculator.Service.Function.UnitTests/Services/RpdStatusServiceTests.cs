@@ -2,7 +2,6 @@ using AutoFixture;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Models;
@@ -10,6 +9,7 @@ using EPR.Calculator.Service.Function.Services;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
@@ -49,7 +49,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Configuration = new Mock<IConfigurationService>();
             Configuration.Setup(s => s.ResultFileCSVContainerName)
                 .Returns(Fixture.Create<string>());
-            TelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
+            Logger = new Mock<ILogger<RpdStatusService>>();
 
             CalculatorRunOrgData = new Mock<ICalculatorRunOrgData>();
 
@@ -60,7 +60,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 contextFactory.Object,
                 CommandTimeoutService.Object,
                 Validator.Object,
-                TelemetryLogger.Object,
+                Logger.Object,
                 CalculatorRunOrgData.Object,
                 CalculatorRunPomData.Object);
         }
@@ -77,7 +77,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         private Mock<ICommandTimeoutService> CommandTimeoutService { get; set; }
 
-        private Mock<ICalculatorTelemetryLogger> TelemetryLogger { get; init; }
+        private Mock<ILogger<RpdStatusService>> Logger { get; init; }
 
         private Mock<ICalculatorRunOrgData> CalculatorRunOrgData { get; init; }
 

@@ -1,5 +1,5 @@
-﻿using EPR.Calculator.Service.Common.Logging;
-using EPR.Calculator.Service.Function.Models;
+﻿using EPR.Calculator.Service.Function.Models;
+using Microsoft.Extensions.Logging;
 
 namespace EPR.Calculator.Service.Function.Services
 {
@@ -11,62 +11,28 @@ namespace EPR.Calculator.Service.Function.Services
 
         public PrepareProducerDataInsertService(IBillingInstructionService billingInstructionService, 
             IProducerInvoiceNetTonnageService producerInvoiceNetTonnageService,
-            ICalculatorTelemetryLogger telemetryLogger)
+            ILogger<PrepareProducerDataInsertService> logger)
         {
             this.billingInstructionService = billingInstructionService;
             this.producerInvoiceNetTonnageService = producerInvoiceNetTonnageService;
-            this.telemetryLogger = telemetryLogger;
+            this.logger = logger;
         }      
 
-        private readonly ICalculatorTelemetryLogger telemetryLogger;
+        private readonly ILogger<PrepareProducerDataInsertService> logger;
 
         public async Task<bool> InsertProducerDataToDatabase(CalcResult calcResult)
         {
             try
             {
-                telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = calcResult.CalcResultDetail.RunId,
-                    RunName = calcResult.CalcResultDetail.RunName,
-                    Message = "Create billing instructions end...",
-                });
                 var IsBiilingInstructionsInserted = await billingInstructionService.CreateBillingInstructions(calcResult);
 
-                telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = calcResult.CalcResultDetail.RunId,
-                    RunName = calcResult.CalcResultDetail.RunName,
-                    Message = "Create billing instructions end...",
-                });
-
-                telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = calcResult.CalcResultDetail.RunId,
-                    RunName = calcResult.CalcResultDetail.RunName,
-                    Message = "Create producer Invoice Tonnage start...",
-                });
-
                 var IsProduceInvoiceTonnageInserted = await producerInvoiceNetTonnageService.CreateProducerInvoiceNetTonnage(calcResult);
-
-                telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = calcResult.CalcResultDetail.RunId,
-                    RunName = calcResult.CalcResultDetail.RunName,
-                    Message = "Create producer Invoice Tonnage end...",
-                });
 
                 return IsBiilingInstructionsInserted && IsProduceInvoiceTonnageInserted;
             }
             catch (Exception exception)
             {
-                telemetryLogger.LogError(new ErrorMessage
-                {
-                   
-                    RunId = calcResult.CalcResultDetail.RunId,
-                    RunName = calcResult.CalcResultDetail.RunName,
-                    Message = "Error occurred while populating the billing instructions",
-                    Exception = exception,
-                });
+                logger.LogError(exception, "Error occurred while populating the billing instructions");
 
                 return false;
             }

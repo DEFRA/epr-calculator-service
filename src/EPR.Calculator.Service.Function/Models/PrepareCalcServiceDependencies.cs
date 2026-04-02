@@ -1,11 +1,11 @@
 ﻿using EPR.Calculator.API.Data;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Builder;
 using EPR.Calculator.Service.Function.Exporter;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Services;
+using Microsoft.Extensions.Logging;
 
 namespace EPR.Calculator.Service.Function.Models
 {
@@ -17,7 +17,7 @@ namespace EPR.Calculator.Service.Function.Models
         public required IStorageService StorageService { get; init; }
         public required CalculatorRunValidator ValidationRules { get; init; }
         public required ICommandTimeoutService CommandTimeoutService { get; init; }
-        public required ICalculatorTelemetryLogger TelemetryLogger { get; init; }
+        public required ILogger<PrepareCalcService> Logger { get; init; }
         public required ICalcBillingJsonExporter<CalcResult> JsonExporter { get; init; }
         public required IConfigurationService ConfigService { get; init; }
         public required IBillingFileExporter<CalcResult> BillingFileExporter { get; init; }

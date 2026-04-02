@@ -1,9 +1,10 @@
-﻿using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.Service.Common.Logging;
+﻿using System.Diagnostics;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
+using Microsoft.Extensions.Logging;
 
 namespace EPR.Calculator.Service.Function.Services
 {
@@ -11,20 +12,20 @@ namespace EPR.Calculator.Service.Function.Services
     {
         private IDbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage> producerInvoiceMaterialChunker { get; init; }
 
-        private readonly ICalculatorTelemetryLogger telemetryLogger;
+        private readonly ILogger<ProducerInvoiceNetTonnageService> logger;
 
         private readonly IMaterialService materialService;
 
         private readonly IProducerInvoiceTonnageMapper producerInvoiceTonnageMapper;
 
         public ProducerInvoiceNetTonnageService(IDbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage> producerInvoiceMaterialChunker,
-            ICalculatorTelemetryLogger telemetryLogger,
+            ILogger<ProducerInvoiceNetTonnageService> logger,
             IMaterialService materialService,
             IProducerInvoiceTonnageMapper producerInvoiceTonnageMapper)
         {
             this.producerInvoiceMaterialChunker = producerInvoiceMaterialChunker;
             this.materialService = materialService;
-            this.telemetryLogger = telemetryLogger;
+            this.logger = logger;
             this.producerInvoiceTonnageMapper = producerInvoiceTonnageMapper;
         }
 
@@ -34,7 +35,7 @@ namespace EPR.Calculator.Service.Function.Services
             try
             {
                 var producerInvoiceNetTonnage = new List<ProducerInvoicedMaterialNetTonnage>();
-                var startTime = DateTime.UtcNow;
+                var stopwatch = Stopwatch.StartNew();
 
                 var producers = calcResult.CalcResultSummary.ProducerDisposalFees.Where(producer => producer.Level == CommonConstants.LevelOne.ToString());
 
@@ -68,38 +69,21 @@ namespace EPR.Calculator.Service.Function.Services
                 {
                     await producerInvoiceMaterialChunker.InsertRecords(producerInvoiceNetTonnage);
 
-                    var endTime = DateTime.UtcNow;
-                    var timeDiff = startTime - endTime;
-                    telemetryLogger.LogInformation(new TrackMessage
-                    {
-                        RunId = calcResult.CalcResultDetail.RunId,
-                        RunName = calcResult.CalcResultDetail.RunName,
-                        Message = $"Inserting records {producerInvoiceNetTonnage.Count} into producer invoice net tonnage table for {calcResult.CalcResultDetail.RunId} completed in {timeDiff.TotalSeconds} seconds",
-                    });
+                    stopwatch.Stop();
+                    logger.LogInformation("Inserted {RecordCount} producer invoice net tonnage records in {Elapsed}",
+                        producerInvoiceNetTonnage.Count, stopwatch.Elapsed.ToString("g"));
 
                 }
                 else
                 {
-
-                    telemetryLogger.LogInformation(new TrackMessage
-                    {
-                        RunId = calcResult.CalcResultDetail.RunId,
-                        RunName = calcResult.CalcResultDetail.RunName,
-                        Message = $"No producer invoice net tonnage to insert into table for {calcResult.CalcResultDetail.RunId}",
-                    });
+                    logger.LogWarning("No producer invoice net tonnage to insert");
                     return false;
                 }
                 return true;
             }
             catch (Exception exception)
             {
-                telemetryLogger.LogError(new ErrorMessage
-                {
-                    RunId = calcResult.CalcResultDetail.RunId,
-                    RunName = calcResult.CalcResultDetail.RunName,
-                    Message = "Error occurred while populating the  producer invoice net tonnage",
-                    Exception = exception,
-                });
+                logger.LogError(exception, "Error occurred while populating the producer invoice net tonnage");
 
                 return false;
             }

@@ -2,9 +2,9 @@
 using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Services;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
@@ -34,11 +34,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             MockBlobContainerClient.Setup(x => x.GetBlobClient(It.IsAny<string>()))
                 .Returns(MockBlobClient.Object);
 
-            TelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
+            Logger = new Mock<ILogger<BlobStorageService>>();
 
             BlobStorageService = new BlobStorageService(
                 MockBlobServiceClient.Object,
-                TelemetryLogger.Object);
+                Logger.Object);
         }
 
         private Fixture Fixture { get; init; }
@@ -53,7 +53,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         private Mock<IConfigurationService> ConfigurationService { get; init; }
 
-        private Mock<ICalculatorTelemetryLogger> TelemetryLogger { get; init; }
+        private Mock<ILogger<BlobStorageService>> Logger { get; init; }
 
         [TestMethod]
         public async Task UploadResultFileContentAsync_ReturnsTrue_WhenUploadSucceeds()

@@ -3,7 +3,6 @@ using System.Reflection;
 using Azure.Storage.Blobs;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function;
 using EPR.Calculator.Service.Function.Builder;
 using EPR.Calculator.Service.Function.Builder.CancelledProducers;
@@ -39,10 +38,12 @@ using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
 using EPR.Calculator.Service.Function.Services.DataLoading;
+using EPR.Calculator.Service.Function.Telemetry;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -68,16 +69,6 @@ namespace EPR.Calculator.Service.Function
                 options.UseSqlServer(
                     config.DbConnectionString);
             });
-
-            // Register CustomTelemetryLogger
-            builder.Services.AddSingleton<ICalculatorTelemetryLogger, CalculatorTelemetryLogger>(sp =>
-            {
-                var key = Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY");
-                var fallbackToConsole =
-                    string.IsNullOrWhiteSpace(key) ||
-                    key == "00000000-0000-0000-0000-000000000000";
-                return ActivatorUtilities.CreateInstance<CalculatorTelemetryLogger>(sp, fallbackToConsole);
-            });
         }
 
         private static void SetupBlobStorage(IServiceCollection services)
@@ -85,7 +76,7 @@ namespace EPR.Calculator.Service.Function
             services.AddSingleton<IStorageService>(provider =>
             {
                 var configuration = provider.GetRequiredService<IConfigurationService>();
-                var logger = provider.GetRequiredService<ICalculatorTelemetryLogger>();
+                var logger = provider.GetRequiredService<ILogger<BlobStorageService>>();
                 var connectionString = configuration.BlobConnectionString;
                 if (string.IsNullOrEmpty(connectionString))
                 {
@@ -103,7 +94,6 @@ namespace EPR.Calculator.Service.Function
         private static void RegisterDependencies(IServiceCollection services)
         {
             services.AddTransient<ICalculatorRunService, CalculatorRunService>();
-            services.AddTransient<ICalculatorRunParameterMapper, CalculatorRunParameterMapper>();
             services.AddTransient<ITransposePomAndOrgDataService, TransposePomAndOrgDataService>();
             services.AddTransient<IRpdStatusDataValidator, RpdStatusDataValidator>();
             services.AddTransient<IOrgAndPomWrapper, OrgAndPomWrapper>();
@@ -147,7 +137,6 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<IRunNameService, RunNameService>();
             services.AddTransient<IClassificationService, ClassificationService>();
             services.AddTransient<IMaterialService, MaterialService>();
-            services.AddTransient<ITelemetryClientWrapper, TelemetryClientWrapper>();
             services.AddTransient<IMessageTypeService, MessageTypeService>();
             services.AddTransient<IPrepareBillingFileService, PrepareBillingFileService>();
             services.AddTransient<ICalcCountryApportionmentService, CalcCountryApportionmentService>();
@@ -171,7 +160,7 @@ namespace EPR.Calculator.Service.Function
                 StorageService = provider.GetRequiredService<IStorageService>(),
                 ValidationRules = provider.GetRequiredService<CalculatorRunValidator>(),
                 CommandTimeoutService = provider.GetRequiredService<ICommandTimeoutService>(),
-                TelemetryLogger = provider.GetRequiredService<ICalculatorTelemetryLogger>(),
+                Logger = provider.GetRequiredService<ILogger<PrepareCalcService>>(),
                 JsonExporter = provider.GetRequiredService<ICalcBillingJsonExporter<CalcResult>>(),
                 ConfigService = provider.GetRequiredService<IConfigurationService>(),
                 BillingFileExporter = provider.GetRequiredService<IBillingFileExporter<CalcResult>>(),
@@ -199,6 +188,7 @@ namespace EPR.Calculator.Service.Function
                 .ValidateOnStart();
 
             services.AddSingleton<TimeProvider>(_ => TimeProvider.System);
+            services.AddSingleton<ITelemetryClient, TelemetryClientWrapper>();
             services.AddTransient<IDataLoader, CommonDataApiLoader>();
 
             SetupBlobStorage(services);

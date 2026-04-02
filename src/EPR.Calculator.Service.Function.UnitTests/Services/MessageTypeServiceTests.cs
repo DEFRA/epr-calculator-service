@@ -92,8 +92,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        [ExpectedException(typeof(JsonException))]
-        public void DeserializeMessage_NullOrEmpty_ThrowsJsonException()
+        [ExpectedException(typeof(ArgumentException))]
+        public void DeserializeMessage_NullOrEmpty_ThrowsArgumentException()
         {
             // Act
             _service.DeserializeMessage(null!);

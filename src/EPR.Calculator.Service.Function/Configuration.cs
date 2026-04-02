@@ -15,21 +15,6 @@ namespace EPR.Calculator.Service.Function
 
 #pragma warning disable CS8603 // Possible null reference return.
         /// <summary>
-        /// Gets the status update endpoint URI from environment variables.
-        /// </summary>
-        public Uri StatusEndpoint => new(Environment.GetEnvironmentVariable(EnvironmentVariableKeys.StatusUpdateEndpoint)!);
-
-        /// <summary>
-        /// Gets the URI for the endpoint used to prepare calculation results from environment variables.
-        /// </summary>
-        public Uri PrepareCalcResultEndPoint => new(Environment.GetEnvironmentVariable(EnvironmentVariableKeys.PrepareCalcResultEndPoint)!);
-
-        /// <summary>
-        /// Gets the URI for the endpoint used to Transpose before calculation of results from environment variables.
-        /// </summary>
-        public Uri TransposeEndpoint => new(Environment.GetEnvironmentVariable(EnvironmentVariableKeys.TransposeEndpoint)!);
-
-        /// <summary>
         /// Gets the RPD status timeout from environment variables.
         /// </summary>
         public TimeSpan RpdStatusTimeout => ParseTimeSpan(

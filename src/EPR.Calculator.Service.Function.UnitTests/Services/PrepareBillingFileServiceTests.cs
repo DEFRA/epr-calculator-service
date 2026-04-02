@@ -1,13 +1,13 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
@@ -18,10 +18,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     [TestClass]
     public class PrepareBillingFileServiceTests
     {
-        private readonly DbContextOptions<ApplicationDBContext> _dbContextOptions;
-        private Mock<IDbContextFactory<ApplicationDBContext>> _dbContextFactory;
-        private ApplicationDBContext _context;
-        private Mock<ICalculatorTelemetryLogger> MockLogger { get; }
+        private readonly ApplicationDBContext _context;
+        private Mock<ILogger<PrepareBillingFileService>> MockLogger { get; }
         private Mock<IPrepareCalcService> PrepareCalcService { get; init; }
 
         /// <summary>
@@ -29,16 +27,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         /// </summary>
         public PrepareBillingFileServiceTests()
         {
-            _dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
+            var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
                 .Options;
 
-            _context = new ApplicationDBContext(_dbContextOptions);
-            _dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
-            _dbContextFactory.Setup(f => f.CreateDbContext()).Returns(_context);
+            _context = new ApplicationDBContext(dbContextOptions);
+            var dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
+            dbContextFactory.Setup(f => f.CreateDbContext()).Returns(_context);
 
-            MockLogger = new Mock<ICalculatorTelemetryLogger>();
+            MockLogger = new Mock<ILogger<PrepareBillingFileService>>();
 
             PrepareCalcService = new Mock<IPrepareCalcService>();
             PrepareCalcService.Setup(s => s.PrepareCalcResultsAsync(
@@ -52,32 +50,41 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task PrepareBillingFileAsync_ReturnsFalse_WhenRunNotFound()
         {
             // Arrange
-            var calculatorRunId = 99854;
-            var calculatorName = "Test";
-            var approvedBy = "user";
+            var runParams = new BillingRunParams
+            {
+                Id = 99854,
+                Name = "Test",
+                ApprovedBy = "user"
+            };
+
             var service = new PrepareBillingFileService(
                 _context,
                 PrepareCalcService.Object,
                 MockLogger.Object);
 
             // Act
-            var result = await service.PrepareBillingFileAsync(calculatorRunId, calculatorName, approvedBy);
+            var result = await service.PrepareBillingFileAsync(runParams);
 
             // Assert
-            Assert.AreEqual(false, result);
+            Assert.IsFalse(result);
         }
 
         [TestMethod]
         public async Task PrepareBillingFileAsync_ReturnsFalse_WhenNoBillingInstructions()
         {
             // Arrange
-            var calculatorRunId = 99854;
-            var calculatorName = "Test";
+            var runParams = new BillingRunParams
+            {
+                Id = 99854,
+                Name = "Test",
+                ApprovedBy = "user"
+            };
+
             _context.CalculatorRuns.Add(
                 new CalculatorRun {
-                    Id = calculatorRunId,
+                    Id = runParams.Id,
                     CalculatorRunClassificationId = 8,
-                    Name = calculatorName,
+                    Name = runParams.Name,
                     RelativeYear = new RelativeYear(2025),
                     CreatedBy = "user",
                     CreatedAt = DateTime.UtcNow });
@@ -86,29 +93,33 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 _context,
                 PrepareCalcService.Object,
                 MockLogger.Object);
-            var approvedBy = "user";
 
             // Act
-            var result = await service.PrepareBillingFileAsync(calculatorRunId, calculatorName, approvedBy);
+            var result = await service.PrepareBillingFileAsync(runParams);
 
             // Assert
-            Assert.AreEqual(false, result);
+            Assert.IsFalse(result);
         }
 
         [TestMethod]
         public async Task PrepareBillingFileAsync_ReturnsTrue_WhenRunAndAcceptedBillingInstructionsExist()
         {
             // Arrange
-            var calculatorRunId = 122444;
-            var calculatorName = "TestRun";
+            var runParams = new BillingRunParams
+            {
+                Id = 122444,
+                Name = "TestRun",
+                ApprovedBy = "user"
+            };
+
             var acceptedProducerId = 999;
 
             // Add a CalculatorRun to the context
             _context.CalculatorRuns.Add(new CalculatorRun
                 {
-                    Id = calculatorRunId,
+                    Id = runParams.Id,
                     CalculatorRunClassificationId = 1,
-                    Name = calculatorName,
+                    Name = runParams.Name,
                     RelativeYear = new RelativeYear(2025),
                     CreatedBy = "user",
                     CreatedAt = DateTime.UtcNow,
@@ -118,7 +129,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Add an accepted billing instruction
             _context.Add(new ProducerResultFileSuggestedBillingInstruction
             {
-                CalculatorRunId = calculatorRunId,
+                CalculatorRunId = runParams.Id,
                 ProducerId = acceptedProducerId,
                 BillingInstructionAcceptReject = PrepareBillingFileConstants.BillingInstructionAccepted,
                 SuggestedBillingInstruction = "TestInstruction",
@@ -138,19 +149,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 _context,
                 PrepareCalcService.Object,
                 MockLogger.Object);
-            var approvedBy = "user";
 
             // Act
-            var result = await service.PrepareBillingFileAsync(calculatorRunId, calculatorName, approvedBy);
+            var result = await service.PrepareBillingFileAsync(runParams);
 
             // Assert
             Assert.IsTrue(result);
             PrepareCalcService.Verify(s => s.PrepareBillingResultsAsync(
                 It.Is<CalcResultsRequestDto>(dto =>
-                    dto.RunId == calculatorRunId &&
+                    dto.RunId == runParams.Id &&
                     dto.AcceptedProducerIds.Contains(acceptedProducerId) &&
                     dto.IsBillingFile),
-                calculatorName,
+                runParams.Name,
                 CancellationToken.None), Times.Once);
         }
 
@@ -158,16 +168,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task PrepareBillingFileAsync_ReturnsTrue_WhenRunAndNoAcceptedBillingInstructionsExist()
         {
             // Arrange
-            var calculatorRunId = 122445;
-            var calculatorName = "TestRun";
+            var runParams = new BillingRunParams
+            {
+                Id = 122445,
+                Name = "TestRun",
+                ApprovedBy = "user"
+            };
+
             var acceptedProducerId = 999;
 
             // Add a CalculatorRun to the context
             _context.CalculatorRuns.Add(new CalculatorRun
             {
-                Id = calculatorRunId,
+                Id = runParams.Id,
                 CalculatorRunClassificationId = 1,
-                Name = calculatorName,
+                Name = runParams.Name,
                 RelativeYear = new RelativeYear(2025),
                 CreatedBy = "user",
                 CreatedAt = DateTime.UtcNow,
@@ -177,7 +192,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Add an accepted billing instruction
             _context.Add(new ProducerResultFileSuggestedBillingInstruction
             {
-                CalculatorRunId = calculatorRunId,
+                CalculatorRunId = runParams.Id,
                 ProducerId = acceptedProducerId,
                 BillingInstructionAcceptReject = "Rejected",
                 SuggestedBillingInstruction = "TestInstruction",
@@ -197,13 +212,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 _context,
                 PrepareCalcService.Object,
                 MockLogger.Object);
-            var approvedBy = "user";
 
             // Act
-            var result = await service.PrepareBillingFileAsync(calculatorRunId, calculatorName, approvedBy);
+            var result = await service.PrepareBillingFileAsync(runParams);
 
             // Assert
-            Assert.AreEqual(false, result);
+            Assert.IsFalse(result);
         }
     }
 

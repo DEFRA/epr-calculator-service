@@ -3,9 +3,8 @@ using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Services;
-using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
@@ -27,13 +26,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Context = new ApplicationDBContext(dbContextOptions);
 
             ProducerDetailTestClass = new DbLoadingChunkerService<ProducerDetail>(
-                new TelemetryClient(TelemetryConfiguration.CreateDefault()),
+                new Mock<ILogger<DbLoadingChunkerService<ProducerDetail>>>().Object,
                 new Mock<ICommandTimeoutService>().Object,
                 Context,
                 ChunkSize);
 
             ProducerReportedMaterialTestClass = new DbLoadingChunkerService<ProducerReportedMaterial>(
-                new TelemetryClient(TelemetryConfiguration.CreateDefault()),
+                new Mock<ILogger<DbLoadingChunkerService<ProducerReportedMaterial>>>().Object,
                 new Mock<ICommandTimeoutService>().Object,
                 Context,
                 ChunkSize);
@@ -185,7 +184,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             // Act
             var instance = new DbLoadingChunkerService<string>(
-                new TelemetryClient(TelemetryConfiguration.CreateDefault()),
+                new Mock<ILogger<DbLoadingChunkerService<string>>>().Object,
                 new Mock<ICommandTimeoutService>().Object,
                 Context,
                 Fixture.Create<int>());
@@ -196,7 +195,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Act
             instance = new DbLoadingChunkerService<string>(
                 new Mock<IConfigurationService>().Object,
-                new TelemetryClient(TelemetryConfiguration.CreateDefault()),
+                new Mock<ILogger<DbLoadingChunkerService<string>>>().Object,
                 new Mock<ICommandTimeoutService>().Object,
                 Context);
 

@@ -4,23 +4,15 @@
     {
         string DbConnectionString { get; }
 
-        Uri PrepareCalcResultEndPoint { get; }
-
         TimeSpan PrepareCalcResultsTimeout { get; }
 
         TimeSpan RpdStatusTimeout { get; }
-
-        Uri StatusEndpoint { get; }
-
-        Uri TransposeEndpoint { get; }
 
         TimeSpan TransposeTimeout { get; }
 
         string ResultFileCSVContainerName { get; }
 
         string BlobConnectionString { get; }
-
-        string InstrumentationKey { get; }
 
         /// <summary>
         /// Gets the database command timout from the envirionment variables.
