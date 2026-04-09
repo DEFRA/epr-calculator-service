@@ -13,7 +13,7 @@
         public static readonly string HouseholdGreenTonnage = MaterialTonnageHeader("Household", "Green");
         public static readonly string HouseholdRedMedicalTonnage = MaterialTonnageHeader("Household", "Red Medical");
         public static readonly string HouseholdAmberMedicalTonnage = MaterialTonnageHeader("Household", "Amber Medical");
-        public static readonly string HouseholdGreenMedicalTonnage = MaterialTonnageHeader("Household", "Red");
+        public static readonly string HouseholdGreenMedicalTonnage = MaterialTonnageHeader("Household", "Green Medical");
         public static readonly string PublicBinPackagingTonnage = "Public Bin Packaging Tonnage";
         public static readonly string PublicBinRedTonnage = MaterialTonnageHeader("Public Bin", "Red");
         public static readonly string PublicBinAmberTonnage = MaterialTonnageHeader("Public Bin", "Amber");

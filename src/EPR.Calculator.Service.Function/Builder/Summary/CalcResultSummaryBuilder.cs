@@ -1,4 +1,4 @@
-using EPR.Calculator.API.Data;
+﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.API.Data.Models;
@@ -35,9 +35,9 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
         public IEnumerable<Organisation> ParentOrganisations { get; set; } = [];
 
-        public CalcResultSummaryBuilder(ApplicationDBContext context)
+        public CalcResultSummaryBuilder(ApplicationDBContext dbContext)
         {
-            this.context = context;
+            context = dbContext;
         }
 
         public async Task<CalcResultSummary> ConstructAsync(int runId, RelativeYear relativeYear, bool isBillingFile, CalcResult calcResult)

@@ -20,6 +20,7 @@
         public string? SubsidiaryId { get; set; }
         public string Level { get; set; }
         public string SubmissionPeriodCode { get; set; }
+        public bool IsSubtotal { get; set; }
         public Dictionary<string, ProjectedTonnage> ProjectedTonnageByMaterial { get; set; }
     }
 

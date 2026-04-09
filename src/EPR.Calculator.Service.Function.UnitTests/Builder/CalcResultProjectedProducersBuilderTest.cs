@@ -6,8 +6,9 @@
     using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
     using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Dtos;
     using EPR.Calculator.Service.Function.Mappers;
+    using EPR.Calculator.Service.Function.Misc;
+
     using EPR.Calculator.Service.Function.Models;
     using EPR.Calculator.Service.Function.Services;
 
@@ -23,7 +24,7 @@
 
         private void PrepareData()
         {
-            this.dbContext.Material.AddRange(
+            dbContext.Material.AddRange(
                 new Material { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
                 new Material { Id = 2, Code = "FC", Name = "Fibre composite", Description = "Fibre composite" },
                 new Material { Id = 3, Code = "GL", Name = "Glass", Description = "Glass" },
@@ -35,7 +36,7 @@
             );
 
             foreach (var run in new[] { 1, 2 }) {
-                this.dbContext.CalculatorRuns.Add(new CalculatorRun
+                dbContext.CalculatorRuns.Add(new CalculatorRun
                 {
                     Id = run,
                     RelativeYear = new RelativeYear(2026),
@@ -49,7 +50,7 @@
                     SubsidiaryId = null,
                     ProducerName = "Producer 11 - Parent",
                 };
-                this.dbContext.ProducerDetail.Add(prod11);
+                dbContext.ProducerDetail.Add(prod11);
 
                 var prod22 = new ProducerDetail
                 {
@@ -58,7 +59,7 @@
                     SubsidiaryId = "22",
                     ProducerName = "Producer 11 - Sub 22",
                 };
-                this.dbContext.ProducerDetail.Add(prod22);
+                dbContext.ProducerDetail.Add(prod22);
 
                 var prod33 = new ProducerDetail
                 {
@@ -67,7 +68,7 @@
                     SubsidiaryId = null,
                     ProducerName = "Producer 33 - No subs",
                 };
-                this.dbContext.ProducerDetail.Add(prod33);
+                dbContext.ProducerDetail.Add(prod33);
 
                 var prod44 = new ProducerDetail
                 {
@@ -76,10 +77,10 @@
                     SubsidiaryId = "444",
                     ProducerName = "Producer 44 - Sub 444 - No parent",
                 };
-                this.dbContext.ProducerDetail.Add(prod44);
+                dbContext.ProducerDetail.Add(prod44);
 
                 foreach (var subPeriod in new[] { "2025-H1", "2025-H2"}) {
-                    this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                    dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
                     {
                         ProducerDetailId = prod11.Id,
                         MaterialId = 1, 
@@ -93,7 +94,7 @@
                         PackagingTonnageGreenMedical = null,
                         SubmissionPeriod = subPeriod,
                     });
-                    this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                    dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
                     {
                         ProducerDetailId = prod22.Id,
                         MaterialId = 3, 
@@ -107,7 +108,7 @@
                         PackagingTonnageGreenMedical = null,
                         SubmissionPeriod = subPeriod,
                     });
-                    this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                    dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
                     {
                         ProducerDetailId = prod33.Id,
                         MaterialId = 1, 
@@ -121,7 +122,7 @@
                         PackagingTonnageGreenMedical = 45,
                         SubmissionPeriod = subPeriod,
                     });
-                    this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                    dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
                     {
                         ProducerDetailId = prod44.Id,
                         MaterialId = 1, 
@@ -132,7 +133,7 @@
                 }
             }
 
-            this.dbContext.SaveChanges();
+            dbContext.SaveChanges();
         }
 
         public CalcResultProjectedProducersBuilderTest()
@@ -142,18 +143,18 @@
             .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
             .Options;
 
-            this.dbContext = new ApplicationDBContext(dbContextOptions);
-            this.dbContext.Database.EnsureCreated();
-            this.builder = new CalcResultProjectedProducersBuilder(this.dbContext);
+            dbContext = new ApplicationDBContext(dbContextOptions);
+            dbContext.Database.EnsureCreated();
+            builder = new CalcResultProjectedProducersBuilder(dbContext);
         }
 
         [TestCleanup]
         public void Teardown()
         {
-            if (this.dbContext != null)
+            if (dbContext != null)
             {
-                this.dbContext.Database.EnsureDeleted();
-                this.dbContext.Dispose();
+                dbContext.Database.EnsureDeleted();
+                dbContext.Dispose();
             }
         }
 
@@ -161,11 +162,11 @@
         public async Task Construct_H2Correctly()
         {
             // Arrange
-            this.PrepareData();
+            PrepareData();
             var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2026) };
 
             // Act
-            var result = await this.builder.ConstructAsync(requestDto);
+            var result = await builder.ConstructAsync(requestDto);
 
             // Assert
             Assert.AreEqual(6, result.H2ProjectedProducers!.Count());
@@ -181,10 +182,12 @@
             var prod11Mats = prod11.ProjectedTonnageByMaterial!;
             var expProd11MatAl = new RAMTonnage{ Tonnage = 100, RedTonnage = 30, RedMedicalTonnage = 40, AmberTonnage = 40, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 };
             var expProd11AlDefaultRed = 0;
+            var expProd11AlTotalTonnage = 100;
             Assert.AreEqual(8, prod11Mats.Count());
             var prod11Al = prod11Mats["AL"];
             Assert.AreEqual(expProd11MatAl, prod11Al.HouseholdRAMTonnage);
             Assert.AreEqual(expProd11AlDefaultRed, prod11Al.HouseholdTonnageDefaultedRed);
+            Assert.AreEqual(expProd11AlTotalTonnage, prod11Al.TotalTonnage);
 
             //Producer 11 - Sub 22 - H2 projections
             var prod11Sub22 = result.H2ProjectedProducers!.FirstOrDefault(p => p.ProducerId == 11 && p.SubsidiaryId == "22" && p.IsSubtotal == false);
@@ -197,10 +200,12 @@
             var prod11Sub22Mats = prod11Sub22.ProjectedTonnageByMaterial!;
             var expProd11Sub22HDC = new RAMTonnage{ Tonnage = 500, RedTonnage = 0, RedMedicalTonnage = 0, AmberTonnage = 0, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 };
             var expProd11Sub22HDCDefaultRed = 500;
+            var expProd11Sub22HDCTotalTonnage = 500;
             Assert.AreEqual(8, prod11Sub22Mats.Count());
             var prod11Sub22Glass = prod11Sub22Mats["GL"];
             Assert.AreEqual(expProd11Sub22HDC, prod11Sub22Glass.HouseholdDrinksContainerRAMTonnage);
             Assert.AreEqual(expProd11Sub22HDCDefaultRed, prod11Sub22Glass.HouseholdDrinksContainerDefaultedRed);
+            Assert.AreEqual(expProd11Sub22HDCTotalTonnage, prod11Sub22Glass.TotalTonnage);
 
             //Subtotal H2 projections for prod 11
             var prod11Subtotal = result.H2ProjectedProducers!.FirstOrDefault(p => p.ProducerId == 11 && p.SubsidiaryId == null && p.IsSubtotal == true);
@@ -218,6 +223,8 @@
             Assert.AreEqual(expProd11AlDefaultRed, prod11SubtotalAl.HouseholdTonnageDefaultedRed);
             Assert.AreEqual(expProd11Sub22HDC, prod11SubtotalGlass.HouseholdDrinksContainerRAMTonnage);
             Assert.AreEqual(expProd11Sub22HDCDefaultRed, prod11SubtotalGlass.HouseholdDrinksContainerDefaultedRed);
+            Assert.AreEqual(expProd11AlTotalTonnage, prod11SubtotalAl.TotalTonnage);
+            Assert.AreEqual(expProd11Sub22HDCTotalTonnage, prod11SubtotalGlass.TotalTonnage);
 
             //Producer 33 - H2 projections
             var prod33 = result.H2ProjectedProducers!.FirstOrDefault(p => p.ProducerId == 33 && p.SubsidiaryId == null && p.IsSubtotal == false);

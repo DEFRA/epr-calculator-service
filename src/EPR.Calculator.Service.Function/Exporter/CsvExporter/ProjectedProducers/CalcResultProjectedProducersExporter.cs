@@ -1,17 +1,14 @@
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers
 {
-    using System;
-
-    using System.Collections.Generic;
-    using System.Linq;
-
-    using System.Text;
-    using EPR.Calculator.API.Utils;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Enums;
-    using EPR.Calculator.Service.Function.Models;
+    
 
     public class CalcResultProjectedProducersExporter : ICalcResultProjectedProducersExporter
     {

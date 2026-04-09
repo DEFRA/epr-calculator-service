@@ -1,20 +1,17 @@
-﻿using EPR.Calculator.API.Exporter;
-
-namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
-{
-    using System;
-    using System.Text;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.ErrorReport;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers;
-    using EPR.Calculator.Service.Function.Models;
+﻿using System;
+using System.Text;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.ErrorReport;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers;
+using EPR.Calculator.Service.Function.Models;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 {
@@ -37,33 +34,33 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         // Suppress SonarQube warning for constructor parameter count
         [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         public CalcResultsExporter(
-            ILateReportingExporter lateReportingExporter,
-            ICalcResultDetailExporter resultDetailexporter,
-            IOnePlusFourApportionmentExporter onePlusFourApportionmentExporter,
-            ICalcResultLaDisposalCostExporter laDisposalCostExporter,
-            ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter,
-            ICalcResultPartialObligationsExporter calcResultPartialObligationsExporter,
-            ICalcResultProjectedProducersExporter calcResultProjectedProducersExporter,
-            ILapcaptDetailExporter lapcaptDetailExporter,
-            ICalcResultParameterOtherCostExporter parameterOtherCosts,
-            ICommsCostExporter commsCostExporter,
-            ICalcResultSummaryExporter calcResultSummaryExporter,
-            ICalcResultCancelledProducersExporter calcResultCancelledProducersExporter,
-            ICalcResultErrorReportExporter calcResultErrorReportExporter)
+            ILateReportingExporter lateReporting,
+            ICalcResultDetailExporter resultDetail,
+            IOnePlusFourApportionmentExporter onePlusFourApportionment,
+            ICalcResultLaDisposalCostExporter laDisposalCost,
+            ICalcResultScaledupProducersExporter calcResultScaledupProducers,
+            ICalcResultPartialObligationsExporter calcResultPartialObligations,
+            ICalcResultProjectedProducersExporter calcResultProjectedProducers,
+            ILapcaptDetailExporter lapcaptDetail,
+            ICalcResultParameterOtherCostExporter parameterOt,
+            ICommsCostExporter commsCost,
+            ICalcResultSummaryExporter calcResultSummary,
+            ICalcResultCancelledProducersExporter calcResultCancelledProducers,
+            ICalcResultErrorReportExporter calcResultErrorReport)
         {
-            this.resultDetailexporter = resultDetailexporter;
-            this.onePlusFourApportionmentExporter = onePlusFourApportionmentExporter;
-            this.lateReportingExporter = lateReportingExporter;
-            this.calcResultScaledupProducersExporter = calcResultScaledupProducersExporter;
-            this.calcResultPartialObligationsExporter = calcResultPartialObligationsExporter;
-            this.calcResultProjectedProducersExporter = calcResultProjectedProducersExporter;
-            this.lapcaptDetailExporter = lapcaptDetailExporter;
-            this.parameterOtherCosts = parameterOtherCosts;
-            this.calcResultSummaryExporter = calcResultSummaryExporter;
-            this.laDisposalCostExporter = laDisposalCostExporter;
-            this.commsCostExporter = commsCostExporter;
-            this.calcResultCancelledProducersExporter = calcResultCancelledProducersExporter;
-            this.calcResultErrorReportExporter = calcResultErrorReportExporter;
+            resultDetailexporter = resultDetail;
+            onePlusFourApportionmentExporter = onePlusFourApportionment;
+            lateReportingExporter = lateReporting;
+            calcResultScaledupProducersExporter = calcResultScaledupProducers;
+            calcResultPartialObligationsExporter = calcResultPartialObligations;
+            calcResultProjectedProducersExporter = calcResultProjectedProducers;
+            lapcaptDetailExporter = lapcaptDetail;
+            parameterOtherCosts = parameterOt;
+            calcResultSummaryExporter = calcResultSummary;
+            laDisposalCostExporter = laDisposalCost;
+            commsCostExporter = commsCost;
+            calcResultCancelledProducersExporter = calcResultCancelledProducers;
+            calcResultErrorReportExporter = calcResultErrorReport;
         }
 
         public string Export(CalcResult calcResult)

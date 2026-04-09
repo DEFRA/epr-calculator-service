@@ -18,7 +18,6 @@ using EPR.Calculator.Service.Function.Builder.ParametersOther;
 using EPR.Calculator.Service.Function.Builder.PartialObligations;
 using EPR.Calculator.Service.Function.Builder.RejectedProducers;
 using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
-using EPR.Calculator.Service.Function.Builder.PartialObligations;
 using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
 using EPR.Calculator.Service.Function.Builder.Summary;
 using EPR.Calculator.Service.Function.Exporter;
@@ -33,7 +32,6 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.RejectedProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
-using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter;
 using EPR.Calculator.Service.Function.Interface;
@@ -145,6 +143,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICommsCostExporter, CommsCostExporter>();
             services.AddTransient<IDbLoadingChunkerService<ProducerDetail>, DbLoadingChunkerService<ProducerDetail>>();
             services.AddTransient<IDbLoadingChunkerService<ProducerReportedMaterial>, DbLoadingChunkerService<ProducerReportedMaterial>>();
+            services.AddTransient<IDbLoadingChunkerService<ProducerReportedMaterialProjected>, DbLoadingChunkerService<ProducerReportedMaterialProjected>>();
             services.AddTransient<IDbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction>, DbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction>>();
             services.AddTransient<IDbLoadingChunkerService<ErrorReport>, DbLoadingChunkerService<ErrorReport>>();
             services.AddTransient<ICalcResultSummaryExporter, CalcResultSummaryExporter>();
@@ -168,6 +167,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcResultErrorReportBuilder, CalcResultErrorReportBuilder>();
             services.AddTransient<ICalcResultErrorReportExporter, CalcResultErrorReportExporter>();
             services.AddTransient<IErrorReportService, ErrorReportService>();
+            services.AddTransient<IProjectedProducersService, ProjectedProducersService>();
 
             services.AddScoped<PrepareCalcServiceDependencies>(provider => new PrepareCalcServiceDependencies
             {

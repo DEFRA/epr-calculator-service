@@ -17,9 +17,9 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
 
         private readonly ApplicationDBContext context;
 
-        public CalcResultScaledupProducersBuilder(ApplicationDBContext context)
+        public CalcResultScaledupProducersBuilder(ApplicationDBContext dbContext)
         {
-            this.context = context;
+            context = dbContext;
         }
 
         public static CalcResultScaledupProducer GetOverallTotalRow(

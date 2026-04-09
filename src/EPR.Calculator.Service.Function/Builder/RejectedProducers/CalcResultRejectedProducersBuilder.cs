@@ -10,9 +10,9 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
     {
         private readonly ApplicationDBContext context;
 
-        public CalcResultRejectedProducersBuilder(ApplicationDBContext context)
+        public CalcResultRejectedProducersBuilder(ApplicationDBContext dbContext)
         {
-            this.context = context;
+            context = dbContext;
         }
 
         public async Task<IEnumerable<CalcResultRejectedProducer>> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
