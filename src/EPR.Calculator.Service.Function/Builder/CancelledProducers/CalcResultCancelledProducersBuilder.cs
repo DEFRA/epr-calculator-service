@@ -32,18 +32,15 @@ namespace EPR.Calculator.Service.Function.Builder.CancelledProducers
 
             materials = await materialService.GetMaterials();
 
-            return await Task.Run(async () =>
+            var producers = await GetCancelledProducers(resultsRequestDto.RelativeYear, resultsRequestDto.RunId, resultsRequestDto.IsBillingFile);
+
+            var response = new CalcResultCancelledProducersResponse
             {
-                var producers = await GetCancelledProducers(resultsRequestDto.RelativeYear, resultsRequestDto.RunId, resultsRequestDto.IsBillingFile);
+                TitleHeader = CommonConstants.CancelledProducers,
+                CancelledProducers = producers
+            };
 
-                var response = new CalcResultCancelledProducersResponse
-                {
-                    TitleHeader = CommonConstants.CancelledProducers,
-                    CancelledProducers = producers
-                };
-
-                return response;
-            });
+            return response;
         }
 
         public async Task<IEnumerable<CalcResultCancelledProducersDto>> GetCancelledProducers(RelativeYear relativeYear, int runId, bool isBilling)
