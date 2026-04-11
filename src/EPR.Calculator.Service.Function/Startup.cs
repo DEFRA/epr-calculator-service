@@ -156,7 +156,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<IMessageTypeService, MessageTypeService>();
             services.AddTransient<IPrepareBillingFileService, PrepareBillingFileService>();
             services.AddTransient<ICalcCountryApportionmentService, CalcCountryApportionmentService>();
-            services.AddTransient<IProducerDetailService, ProducerDetailService>();
+            services.AddTransient<IInvoicedProducerService, InvoicedProducerService>();
             services.AddTransient<ICalcResultCancelledProducersBuilder, CalcResultCancelledProducersBuilder>();
             services.AddTransient<ICalcResultCancelledProducersExporter, CalcResultCancelledProducersExporter>();
             services.AddTransient<IBillingFileExporter<CalcResult>, BillingFileExporter>();

@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using AutoFixture;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
@@ -225,8 +226,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CalcResultCancelledProducers = new CalcResultCancelledProducersResponse
                 {
                     TitleHeader = CommonConstants.CancelledProducers,
-                    CancelledProducers = new List<CalcResultCancelledProducersDto>
-                    {
+                    CancelledProducers = ImmutableArray.Create(
                         new CalcResultCancelledProducersDto
                         {
                             LastTonnage = null,
@@ -239,7 +239,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                                 RunNumberValue = "4"
                             },
                         }
-                    }
+                    )
                 },
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
                 CalcResultModulation = null,

@@ -1,5 +1,7 @@
-﻿using EPR.Calculator.API.Data;
+﻿using System.Collections.Immutable;
+using EPR.Calculator.API.Data;
 using EPR.Calculator.Service.Common.Logging;
+using EPR.Calculator.Service.Common.Utils;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Misc;
@@ -49,7 +51,7 @@ namespace EPR.Calculator.Service.Function.Services
                 return false;
             }
 
-            List<int> acceptedProducerIds = await GetAcceptedProducerIdsAsync(calculatorRunId, applicationDBContext);
+            var acceptedProducerIds = await GetAcceptedProducerIdsAsync(calculatorRunId);
 
             if (acceptedProducerIds.Count == 0)
             {
@@ -77,15 +79,18 @@ namespace EPR.Calculator.Service.Function.Services
             return result;
         }
 
-        private static async Task<List<int>> GetAcceptedProducerIdsAsync(int calculatorRunId, ApplicationDBContext applicationDBContext)
+        private async Task<ImmutableHashSet<int>> GetAcceptedProducerIdsAsync(int calculatorRunId)
         {
-            return await applicationDBContext.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
-            .Where(x => x.CalculatorRunId == calculatorRunId
-                    &&
-                    x.BillingInstructionAcceptReject == PrepareBillingFileConstants.BillingInstructionAccepted
+            return await applicationDBContext
+                .ProducerResultFileSuggestedBillingInstruction
+                .AsNoTracking()
+                .Where(x =>
+                    x.CalculatorRunId == calculatorRunId
+                    && x.BillingInstructionAcceptReject == PrepareBillingFileConstants.BillingInstructionAccepted
                     && x.SuggestedBillingInstruction.Trim().ToLower() != PrepareBillingFileConstants.SuggestedBillingInstructionCancelBill.Trim().ToLower())
-            .Select(x => x.ProducerId).Distinct()
-            .ToListAsync();
+                .Select(x => x.ProducerId)
+                .Distinct()
+                .ToImmutableHashSetAsync();
         }
     }
 }

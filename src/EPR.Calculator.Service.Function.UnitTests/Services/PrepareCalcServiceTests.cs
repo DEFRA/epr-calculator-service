@@ -258,7 +258,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 RunId = 1,
                 RelativeYear = new RelativeYear(2025),
                 IsBillingFile = true,
-                AcceptedProducerIds = new List<int> { 1, 2 },
+                AcceptedProducerIds = [1, 2],
                 ApprovedBy = "Test User 234",
             };
             var billingResult = await _testClass.PrepareBillingResultsAsync(calcResultsRequestDto, "TestRun", CancellationToken.None);

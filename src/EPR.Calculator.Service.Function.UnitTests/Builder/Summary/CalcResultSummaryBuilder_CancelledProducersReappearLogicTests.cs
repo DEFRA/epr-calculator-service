@@ -106,20 +106,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             // From latest accepted run (R2)
             foreach (var mat in new[] { AL, FC })
             {
-                var p1 = previous.Single(r => r.InvoicedTonnage!.ProducerId == P1 && r.InvoicedTonnage.MaterialId == mat);
+                var p1 = previous.Single(r => r.ProducerId == P1 && r.MaterialId == mat);
                 Assert.AreEqual(2, p1.CalculatorRunId);
-                Assert.IsNotNull(p1.InvoiceInstruction);
-                Assert.AreEqual(211377.83m, p1.InvoiceInstruction!.CurrentYearInvoicedTotalAfterThisRun);
+                Assert.AreEqual(211377.83m, p1.CurrentYearInvoicedTotalAfterThisRun);
 
-                var p2 = previous.Single(r => r.InvoicedTonnage!.ProducerId == P2 && r.InvoicedTonnage.MaterialId == mat);
+                var p2 = previous.Single(r => r.ProducerId == P2 && r.MaterialId == mat);
                 Assert.AreEqual(2, p2.CalculatorRunId);
-                Assert.IsNotNull(p2.InvoiceInstruction);
-                Assert.AreEqual(150000.00m, p2.InvoiceInstruction!.CurrentYearInvoicedTotalAfterThisRun);
+                Assert.AreEqual(150000.00m, p2.CurrentYearInvoicedTotalAfterThisRun);
 
-                var p3 = previous.Single(r => r.InvoicedTonnage!.ProducerId == P3 && r.InvoicedTonnage.MaterialId == mat);
+                var p3 = previous.Single(r => r.ProducerId == P3 && r.MaterialId == mat);
                 Assert.AreEqual(2, p3.CalculatorRunId);
-                Assert.IsNotNull(p3.InvoiceInstruction);
-                Assert.AreEqual(40367.29m, p3.InvoiceInstruction!.CurrentYearInvoicedTotalAfterThisRun);
+                Assert.AreEqual(40367.29m, p3.CurrentYearInvoicedTotalAfterThisRun);
             }
 
             //3 producers * 2 materials = 6
@@ -205,20 +202,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             //Assert
 
             //PreviousInvoicedTonnage for P2 must not be present from R1 as R2 is Cancel (Accepted)
-            Assert.IsFalse(producerInvoicedDtos.Any(r => r.InvoicedTonnage!.ProducerId == P2));
+            Assert.IsFalse(producerInvoicedDtos.Any(r => r.ProducerId == P2));
 
             foreach (var mat in new[] { AL, FC })
             {
                 //PreviousInvoicedTonnage for P1 and P3 are from Run 2
-                var p1 = producerInvoicedDtos.Single(r => r.InvoicedTonnage!.ProducerId == P1 && r.InvoicedTonnage.MaterialId == mat);
+                var p1 = producerInvoicedDtos.Single(r => r.ProducerId == P1 && r.MaterialId == mat);
                 Assert.AreEqual(2, p1.CalculatorRunId);
-                Assert.IsNotNull(p1.InvoiceInstruction);
-                Assert.AreEqual(211377.83m, p1.InvoiceInstruction!.CurrentYearInvoicedTotalAfterThisRun);
+                Assert.AreEqual(211377.83m, p1.CurrentYearInvoicedTotalAfterThisRun);
 
-                var p3 = producerInvoicedDtos.Single(r => r.InvoicedTonnage!.ProducerId == P3 && r.InvoicedTonnage.MaterialId == mat);
+                var p3 = producerInvoicedDtos.Single(r => r.ProducerId == P3 && r.MaterialId == mat);
                 Assert.AreEqual(2, p3.CalculatorRunId);
-                Assert.IsNotNull(p3.InvoiceInstruction);
-                Assert.AreEqual(40367.29m, p3.InvoiceInstruction!.CurrentYearInvoicedTotalAfterThisRun);
+                Assert.AreEqual(40367.29m, p3.CurrentYearInvoicedTotalAfterThisRun);
             }
 
             // 2 producers * 2 materials = 4 rows
@@ -301,24 +296,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             // P2 must be present and fetched from R1 as R2 cancel REJECTED
             foreach (var mat in new[] { AL, FC })
             {
-                var p2 = previous.Single(r => r.InvoicedTonnage!.ProducerId == P2 && r.InvoicedTonnage.MaterialId == mat);
+                var p2 = previous.Single(r => r.ProducerId == P2 && r.MaterialId == mat);
                 Assert.AreEqual(1, p2.CalculatorRunId);
-                Assert.IsNotNull(p2.InvoiceInstruction);
-                Assert.AreEqual(103966.48m, p2.InvoiceInstruction!.CurrentYearInvoicedTotalAfterThisRun);
+                Assert.AreEqual(103966.48m, p2.CurrentYearInvoicedTotalAfterThisRun);
             }
 
             // P1 & P3 fetched from R2
             foreach (var mat in new[] { AL, FC })
             {
-                var p1 = previous.Single(r => r.InvoicedTonnage!.ProducerId == P1 && r.InvoicedTonnage.MaterialId == mat);
+                var p1 = previous.Single(r => r.ProducerId == P1 && r.MaterialId == mat);
                 Assert.AreEqual(2, p1.CalculatorRunId);
-                Assert.IsNotNull(p1.InvoiceInstruction);
-                Assert.AreEqual(211377.83m, p1.InvoiceInstruction!.CurrentYearInvoicedTotalAfterThisRun);
+                Assert.AreEqual(211377.83m, p1.CurrentYearInvoicedTotalAfterThisRun);
 
-                var p3 = previous.Single(r => r.InvoicedTonnage!.ProducerId == P3 && r.InvoicedTonnage.MaterialId == mat);
+                var p3 = previous.Single(r => r.ProducerId == P3 && r.MaterialId == mat);
                 Assert.AreEqual(2, p3.CalculatorRunId);
-                Assert.IsNotNull(p3.InvoiceInstruction);
-                Assert.AreEqual(40367.29m, p3.InvoiceInstruction!.CurrentYearInvoicedTotalAfterThisRun);
+                Assert.AreEqual(40367.29m, p3.CurrentYearInvoicedTotalAfterThisRun);
             }
 
             // 3 producers * 2 materials = 6 rows
@@ -420,20 +412,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             // Assert – all producers now come from R3
             foreach (var mat in new[] { AL, FC })
             {
-                var p1 = previous.Single(r => r.InvoicedTonnage!.ProducerId == P1 && r.InvoicedTonnage.MaterialId == mat);
+                var p1 = previous.Single(r => r.ProducerId == P1 && r.MaterialId == mat);
                 Assert.AreEqual(3, p1.CalculatorRunId);
-                Assert.IsNotNull(p1.InvoiceInstruction);
-                Assert.AreEqual(338317.32m, p1.InvoiceInstruction!.CurrentYearInvoicedTotalAfterThisRun);
+                Assert.AreEqual(338317.32m, p1.CurrentYearInvoicedTotalAfterThisRun);
 
-                var p2 = previous.Single(r => r.InvoicedTonnage!.ProducerId == P2 && r.InvoicedTonnage.MaterialId == mat);
+                var p2 = previous.Single(r => r.ProducerId == P2 && r.MaterialId == mat);
                 Assert.AreEqual(3, p2.CalculatorRunId);
-                Assert.IsNotNull(p2.InvoiceInstruction);
-                Assert.AreEqual(104368.07m, p2.InvoiceInstruction!.CurrentYearInvoicedTotalAfterThisRun);
+                Assert.AreEqual(104368.07m, p2.CurrentYearInvoicedTotalAfterThisRun);
 
-                var p3 = previous.Single(r => r.InvoicedTonnage!.ProducerId == P3 && r.InvoicedTonnage.MaterialId == mat);
+                var p3 = previous.Single(r => r.ProducerId == P3 && r.MaterialId == mat);
                 Assert.AreEqual(3, p3.CalculatorRunId);
-                Assert.IsNotNull(p3.InvoiceInstruction);
-                Assert.AreEqual(62909.94m, p3.InvoiceInstruction!.CurrentYearInvoicedTotalAfterThisRun);
+                Assert.AreEqual(62909.94m, p3.CurrentYearInvoicedTotalAfterThisRun);
             }
 
             // 3 producers * 2 materials = 6
@@ -554,20 +543,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             // P2 comes from R3 as rejected in R4; P1 & P3 are from R4
             foreach (var mat in new[] { AL, FC })
             {
-                var p2 = previous.Single(r => r.InvoicedTonnage!.ProducerId == P2 && r.InvoicedTonnage.MaterialId == mat);
+                var p2 = previous.Single(r => r.ProducerId == P2 && r.MaterialId == mat);
                 Assert.AreEqual(3, p2.CalculatorRunId);
-                Assert.IsNotNull(p2.InvoiceInstruction);
-                Assert.AreEqual(104368.07m, p2.InvoiceInstruction!.CurrentYearInvoicedTotalAfterThisRun);
+                Assert.AreEqual(104368.07m, p2.CurrentYearInvoicedTotalAfterThisRun);
 
-                var p1 = previous.Single(r => r.InvoicedTonnage!.ProducerId == P1 && r.InvoicedTonnage.MaterialId == mat);
+                var p1 = previous.Single(r => r.ProducerId == P1 && r.MaterialId == mat);
                 Assert.AreEqual(4, p1.CalculatorRunId);
-                Assert.IsNotNull(p1.InvoiceInstruction);
-                Assert.AreEqual(350000.00m, p1.InvoiceInstruction!.CurrentYearInvoicedTotalAfterThisRun);
+                Assert.AreEqual(350000.00m, p1.CurrentYearInvoicedTotalAfterThisRun);
 
-                var p3 = previous.Single(r => r.InvoicedTonnage!.ProducerId == P3 && r.InvoicedTonnage.MaterialId == mat);
+                var p3 = previous.Single(r => r.ProducerId == P3 && r.MaterialId == mat);
                 Assert.AreEqual(4, p3.CalculatorRunId);
-                Assert.IsNotNull(p3.InvoiceInstruction);
-                Assert.AreEqual(65000.00m, p3.InvoiceInstruction!.CurrentYearInvoicedTotalAfterThisRun);
+                Assert.AreEqual(65000.00m, p3.CurrentYearInvoicedTotalAfterThisRun);
             }
 
             // 3 producers * 2 materials = 6

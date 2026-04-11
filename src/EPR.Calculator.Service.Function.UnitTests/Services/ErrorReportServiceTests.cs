@@ -1,4 +1,5 @@
-﻿using EPR.Calculator.API.Data.DataModels;
+﻿using System.Collections.Immutable;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Interface;
@@ -12,7 +13,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     public class ErrorReportServiceTests
     {
         private Mock<IDbLoadingChunkerService<ErrorReport>> mockErrorReport = null!;
-        private Mock<IProducerDetailService> mockProductDetails = null!;
+        private Mock<IInvoicedProducerService> mockProductDetails = null!;
         private ErrorReportService _service = null!;
 
         [TestInitialize]
@@ -20,7 +21,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             // Use Strict so unexpected calls cause immediate failures
             mockErrorReport = new Mock<IDbLoadingChunkerService<ErrorReport>>(MockBehavior.Strict);
-            mockProductDetails = new Mock<IProducerDetailService>(MockBehavior.Strict);
+            mockProductDetails = new Mock<IInvoicedProducerService>(MockBehavior.Strict);
             _service = new ErrorReportService(mockErrorReport.Object, mockProductDetails.Object);
         }
 
@@ -28,7 +29,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public void ErrorReportService_Constructor_InitializesDependencies()
         {
             var mockErrorReport = new Mock<IDbLoadingChunkerService<ErrorReport>>(MockBehavior.Strict);
-            var mockProductDetails = new Mock<IProducerDetailService>(MockBehavior.Strict);
+            var mockProductDetails = new Mock<IInvoicedProducerService>(MockBehavior.Strict);
 
             ErrorReportService service = new ErrorReportService(mockErrorReport.Object, mockProductDetails.Object);
             Assert.IsNotNull(service);
@@ -566,14 +567,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CreatePomData(producer2, "2024-P1",submitterId2,"HH","PL",3500,subsidiaryId:"100101")
             };
 
-            var invoiceInstructions = new List<ProducerDesignatedRunInvoiceInstruction>();
+            var invoiced = ImmutableList<InvoicedProducerRecord>.Empty;
 
             // Arrange
             var runId = 300;
             var createdBy = "no error";
 
             // Act
-            IEnumerable<ErrorReport> reportsList = _service.HandleObligatedErrors(pomDetails, orgDetails, invoiceInstructions, runId, createdBy);
+            IEnumerable<ErrorReport> reportsList = _service.HandleObligatedErrors(pomDetails, orgDetails, invoiced, runId, createdBy);
             // Assert
             Assert.AreEqual(3, reportsList.Count(), "Expected 3 unmatched records to be returned.");
             Assert.IsTrue(reportsList.Any(p => p.ProducerId == 100101 && p.SubsidiaryId == null && p.ErrorCode == error1 && p.LeaverCode == ""));
@@ -603,14 +604,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CreatePomData(producer2, "2024-P1",submitterId2,"HH","PL",3500,subsidiaryId:"100101")
             };
 
-            var invoiceInstructions = new List<ProducerDesignatedRunInvoiceInstruction>();
+            var invoiced = ImmutableList<InvoicedProducerRecord>.Empty;
 
             // Arrange
             var runId = 300;
             var createdBy = "no error";
 
             // Act
-            IEnumerable<ErrorReport> reportsList = _service.HandleObligatedErrors(pomDetails, orgDetails, invoiceInstructions,runId, createdBy);
+            IEnumerable<ErrorReport> reportsList = _service.HandleObligatedErrors(pomDetails, orgDetails, invoiced, runId, createdBy);
 
             // Assert
             Assert.AreEqual(0, reportsList.Count(), "Expected 0 unmatched records to be returned.");
@@ -644,18 +645,40 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CreatePomData(producer3, "2024-P1",submitterId1,"HH","PL",5000)
             };
 
-            var invoiceInstructions = new List<ProducerDesignatedRunInvoiceInstruction>
-            {
-                new ProducerDesignatedRunInvoiceInstruction { ProducerId = producer1 },
-                new ProducerDesignatedRunInvoiceInstruction { ProducerId = producer2 }
-            };
+            ImmutableList<InvoicedProducerRecord> invoiced =
+            [
+                new()
+                {
+                    CalculatorRunId = 101,
+                    CalculatorName = "TestRun",
+                    ProducerId = producer1,
+                    ProducerName = "Test Producer",
+                    TradingName = "Test Trading Name",
+                    MaterialId = 77,
+                    InvoicedNetTonnage = 20,
+                    BillingInstructionId = "id_1",
+                    CurrentYearInvoicedTotalAfterThisRun = 20.00m
+                },
+                new()
+                {
+                    CalculatorRunId = 101,
+                    CalculatorName = "TestRun",
+                    ProducerId = producer2,
+                    ProducerName = "Test Producer",
+                    TradingName = "Test Trading Name",
+                    MaterialId = 77,
+                    InvoicedNetTonnage = 20,
+                    BillingInstructionId = "id_1",
+                    CurrentYearInvoicedTotalAfterThisRun = 20.00m
+                }
+            ];
 
             // Arrange
             var runId = 300;
             var createdBy = "no error";
 
             // Act
-            IEnumerable<ErrorReport> reportsList = _service.HandleObligatedErrors(pomDetails, orgDetails, invoiceInstructions, runId, createdBy);
+            IEnumerable<ErrorReport> reportsList = _service.HandleObligatedErrors(pomDetails, orgDetails, invoiced, runId, createdBy);
 
             // Assert
             Assert.AreEqual(4, reportsList.Count(), "Expected 4 unmatched records to be returned.");
@@ -689,14 +712,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CreatePomData(producer2, "2024-P1",submitterId2,"HH","PL",3500,subsidiaryId:"100101")
             };
 
-            var invoiceInstructions = new List<ProducerDesignatedRunInvoiceInstruction>();
+            var invoiced = ImmutableList<InvoicedProducerRecord>.Empty;
 
             // Arrange
             var runId = 300;
             var createdBy = "no error";
 
             // Act
-            IEnumerable<ErrorReport> reportsList = _service.HandleObligatedWarnings(pomDetails, orgDetails, invoiceInstructions, runId, createdBy);
+            IEnumerable<ErrorReport> reportsList = _service.HandleObligatedWarnings(pomDetails, orgDetails, invoiced, runId, createdBy);
 
             // Assert
             Assert.AreEqual(2, reportsList.Count(), "Expected 2 unmatched records to be returned.");
@@ -732,18 +755,40 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CreatePomData(producer3, "2024-P1",submitterId1,"HH","PL",5000)
             };
 
-            var invoiceInstructions = new List<ProducerDesignatedRunInvoiceInstruction>
-            {
-                new ProducerDesignatedRunInvoiceInstruction { ProducerId = producer1 },
-                new ProducerDesignatedRunInvoiceInstruction { ProducerId = producer2 }
-            };
+            ImmutableList<InvoicedProducerRecord> invoiced =
+            [
+                new()
+                {
+                    CalculatorRunId = 101,
+                    CalculatorName = "TestRun",
+                    ProducerId = producer1,
+                    ProducerName = "Test Producer",
+                    TradingName = "Test Trading Name",
+                    MaterialId = 77,
+                    InvoicedNetTonnage = 20,
+                    BillingInstructionId = "id_1",
+                    CurrentYearInvoicedTotalAfterThisRun = 20.00m
+                },
+                new()
+                {
+                    CalculatorRunId = 101,
+                    CalculatorName = "TestRun",
+                    ProducerId = producer2,
+                    ProducerName = "Test Producer",
+                    TradingName = "Test Trading Name",
+                    MaterialId = 77,
+                    InvoicedNetTonnage = 20,
+                    BillingInstructionId = "id_1",
+                    CurrentYearInvoicedTotalAfterThisRun = 20.00m
+                }
+            ];
 
             // Arrange
             var runId = 300;
             var createdBy = "no error";
 
             // Act
-            IEnumerable<ErrorReport> reportsList = _service.HandleObligatedWarnings(pomDetails, orgDetails, invoiceInstructions, runId, createdBy);
+            IEnumerable<ErrorReport> reportsList = _service.HandleObligatedWarnings(pomDetails, orgDetails, invoiced, runId, createdBy);
 
             // Assert
             Assert.AreEqual(3, reportsList.Count(), "Expected 3 unmatched records to be returned.");
@@ -803,13 +848,27 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var runId = 300;
             var createdBy = "no error";
 
+            ImmutableArray<InvoicedProducerRecord> invoiced =
+            [
+                new()
+                {
+                    CalculatorRunId = runId-1,
+                    CalculatorName = "TestRun",
+                    ProducerId = producer6,
+                    ProducerName = "Test Producer",
+                    TradingName = "Test Trading Name",
+                    MaterialId = 77,
+                    InvoicedNetTonnage = 20,
+                    BillingInstructionId = "id_1",
+                    CurrentYearInvoicedTotalAfterThisRun = 20.00m
+                }
+            ];
+
             IEnumerable<ErrorReport> errorReports = Enumerable.Empty<ErrorReport>();
             mockErrorReport.Setup(m => m.InsertRecords(It.IsAny<IEnumerable<ErrorReport>>())).Callback<IEnumerable<ErrorReport>>(arg => errorReports = arg).Returns(Task.CompletedTask);
             mockProductDetails
-            .Setup(m => m.GetProducerDetails(It.IsAny<RelativeYear>()))
-            .ReturnsAsync(new List<ProducerInvoicedDto>{
-                new ProducerInvoicedDto { CalculatorRunId = runId-1, InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = producer6 }
-            }});
+            .Setup(m => m.GetInvoicedProducerRecordsForYear(It.IsAny<RelativeYear>(), It.IsAny<ImmutableHashSet<int>>()))
+            .ReturnsAsync(invoiced);
 
             // Act
             var reportsList = await _service.HandleErrors(pomDetails, orgDetails, runId, createdBy, relativeYear, CancellationToken.None);

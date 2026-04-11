@@ -95,7 +95,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         public void CanCallExport()
         {
             // Arrange
-            var fixture = new Fixture();
+            var fixture = new Fixture().Customize(new ImmutableCollectionsCustomization());
             var results = fixture.Create<CalcResult>();
             results.CalcResultModulation = null;
             var acceptedProducerIds = results.CalcResultScaledupProducers?.ScaledupProducers?.Select(t => t.ProducerId).Take(1).ToList() ?? fixture.Create<List<int>>();

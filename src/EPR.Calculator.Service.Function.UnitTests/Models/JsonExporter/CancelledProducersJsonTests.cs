@@ -10,7 +10,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         [TestMethod]
         public void From_ConvertsEmptyResponse()
         {
-            var response = new CalcResultCancelledProducersResponse { TitleHeader = "Header", CancelledProducers = new List<CalcResultCancelledProducersDto>() };
+            var response = new CalcResultCancelledProducersResponse { TitleHeader = "Header", CancelledProducers = [] };
             var result = CancelledProducers.From(response);
 
             Assert.IsNotNull(result);
@@ -24,8 +24,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             var response = new CalcResultCancelledProducersResponse
             {
                 TitleHeader = "Header",
-                CancelledProducers = new List<CalcResultCancelledProducersDto>
-                {
+                CancelledProducers = [
                     new CalcResultCancelledProducersDto
                     {
                         ProducerId = 123,
@@ -45,7 +44,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                             BillingInstructionIdValue = "BI-1"
                         }
                     }
-                }
+                ]
             };
 
             var result = CancelledProducers.From(response);
