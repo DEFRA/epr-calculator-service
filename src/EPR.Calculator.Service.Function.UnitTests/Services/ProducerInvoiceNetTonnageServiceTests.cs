@@ -118,7 +118,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task CannotCallCreateProducerInvoiceTonnageWithNullCalcResult()
         {
             // Arrange
-            var fixture = new Fixture();
+            var fixture = new Fixture().Customize(new ImmutableCollectionsCustomization());
             var calcResult = fixture.Create<CalcResult>();
 
             telemetryLogger.Setup(mock => mock.LogInformation(It.IsAny<TrackMessage>())).Verifiable();

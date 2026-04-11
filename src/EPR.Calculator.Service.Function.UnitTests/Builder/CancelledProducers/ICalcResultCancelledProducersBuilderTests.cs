@@ -1,4 +1,5 @@
-﻿using EPR.Calculator.API.Data.Models;
+﻿using System.Collections.Immutable;
+using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.CancelledProducers;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
@@ -25,8 +26,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             var expectedResponse = new CalcResultCancelledProducersResponse
             {
                 TitleHeader = "Cancelled Producers",
-                CancelledProducers = new List<CalcResultCancelledProducersDto>
-                {
+                CancelledProducers = ImmutableArray.Create(
                     new CalcResultCancelledProducersDto
                     {
                         ProducerId = 123,
@@ -40,7 +40,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                             CurrentYearInvoicedTotalToDateValue = 999.99M
                         }
                     }
-                }
+                )
             };
 
             _builderMock

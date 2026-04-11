@@ -60,7 +60,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         private IErrorReportService ErrorReportService { get; init; }
 
-        public Fixture Fixture { get; init; } = new Fixture();
+        public IFixture Fixture { get; init; } = new Fixture().Customize(new ImmutableCollectionsCustomization());
 
         public TransposePomAndOrgDataService TestClass { get; set; }
 
@@ -256,8 +256,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task TransposeBeforeCalcResults_Should_Return_True_On_Success()
         {
             // Arrange
-            var resultsRequestDto = Fixture.Create<CalcResultsRequestDto>();
-            resultsRequestDto.RunId = 1;
+            var resultsRequestDto = Fixture.Build<CalcResultsRequestDto>()
+                .With(r => r.RunId, 1)
+                .Create();
             var runName = Fixture.Create<string>();
             var cancellationToken = CancellationToken.None;
 
@@ -655,9 +656,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task TransposeShouldUpdateCalculationRunWhenCancelledBeoreRetrievingCalculatorRun()
         {
             // Arrange
-            var runId = 1;
-            var resultsRequestDto = Fixture.Create<CalcResultsRequestDto>();
-            resultsRequestDto.RunId = runId;
+            var resultsRequestDto = Fixture.Build<CalcResultsRequestDto>()
+                .With(r => r.RunId, 1)
+                .Create();
             var runName = Fixture.Create<string>();
             Chunker.Setup(c => c.InsertRecords(It.IsAny<IEnumerable<ProducerDetail>>()))
                 .Throws<OperationCanceledException>();
@@ -706,7 +707,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             using var assertContext = new ApplicationDBContext(_dbContextOptions);
             Assert.AreEqual(
                 (int)RunClassification.ERROR,
-                (await assertContext.CalculatorRuns.SingleAsync(run => run.Id == runId)).CalculatorRunClassificationId);
+                (await assertContext.CalculatorRuns.SingleAsync(run => run.Id == resultsRequestDto.RunId)).CalculatorRunClassificationId);
         }
 
         /// <summary>
@@ -718,9 +719,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task TransposeShouldUpdateCalculationRunWhenCancelledAfterRetrievingCalculatorRun()
         {
             // Arrange
-            var runId = 1;
-            var resultsRequestDto = Fixture.Create<CalcResultsRequestDto>();
-            resultsRequestDto.RunId = runId;
+            var resultsRequestDto = Fixture.Build<CalcResultsRequestDto>()
+                .With(r => r.RunId, 1)
+                .Create();
             _context.CalculatorRunPomDataDetails = null!;
 
             // Act
@@ -742,7 +743,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             using var assertContext = new ApplicationDBContext(_dbContextOptions);
             Assert.AreEqual(
                 (int)RunClassification.ERROR,
-                (await assertContext.CalculatorRuns.SingleAsync(run => run.Id == runId)).CalculatorRunClassificationId);
+                (await assertContext.CalculatorRuns.SingleAsync(run => run.Id == resultsRequestDto.RunId)).CalculatorRunClassificationId);
         }
 
         protected static IEnumerable<CalculatorRunOrganisationDataMaster> GetCalculatorRunOrganisationDataMaster()

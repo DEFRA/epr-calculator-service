@@ -660,9 +660,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(12.5M, result.First().InvoicedTonnage?.InvoicedNetTonnage);
-            Assert.AreEqual(3, result.First().InvoicedTonnage?.Id); // latest CalculatorRun Id
-            Assert.AreEqual(1, result.First().InvoicedTonnage?.ProducerId);
+            Assert.AreEqual(12.5M, result.First().InvoicedNetTonnage);
+            Assert.AreEqual(1, result.First().ProducerId);
         }
 
         [TestMethod]

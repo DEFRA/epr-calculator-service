@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Immutable;
+using System.Text;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
 using EPR.Calculator.Service.Function.Models;
 using Moq;
@@ -22,8 +23,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Cancell
             var response = new CalcResultCancelledProducersResponse
             {
                 TitleHeader = "Cancelled Producers Export",
-                CancelledProducers = new List<CalcResultCancelledProducersDto>
-                {
+                CancelledProducers = ImmutableArray.Create(
                     new CalcResultCancelledProducersDto
                     {
                         ProducerId = 123,
@@ -37,7 +37,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Cancell
                             CurrentYearInvoicedTotalToDateValue = 1010.75M
                         }
                     }
-                }
+                )
             };
 
             var sb = new StringBuilder();

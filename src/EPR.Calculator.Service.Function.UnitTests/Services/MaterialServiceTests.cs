@@ -26,7 +26,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
             dbContext = new ApplicationDBContext(options);
             dbContextFactory.Setup(factory => factory.CreateDbContext()).Returns(dbContext);
-            materialService = new MaterialService(dbContextFactory.Object);
+            materialService = new MaterialService(dbContext);
         }
 
         [TestCleanup]

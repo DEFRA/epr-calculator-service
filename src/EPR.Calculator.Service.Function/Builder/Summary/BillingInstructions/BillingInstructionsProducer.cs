@@ -29,7 +29,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
             ];
         }
 
-        public static void SetValues(CalcResultSummary result, IEnumerable<ProducerInvoicedDto> ProducerInvoicedMaterialNetTonnage, IEnumerable<DefaultParamResultsClass> defaultParams)
+        public static void SetValues(CalcResultSummary result, IEnumerable<InvoicedProducerRecord> ProducerInvoicedMaterialNetTonnage, IEnumerable<DefaultParamResultsClass> defaultParams)
         {
             decimal totalTonnage = 0;
             decimal liabilityDifferenceRunningTotal = 0m;
@@ -49,8 +49,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
             foreach (var fee in result.ProducerDisposalFees)
             {
                 var currentYearInvoicedTotalTonnage = ProducerInvoicedMaterialNetTonnage
-                                                    .Where(x => x.InvoicedTonnage!.ProducerId.ToString() == fee.ProducerId)
-                                                    .Select(y => y.InvoiceInstruction!.CurrentYearInvoicedTotalAfterThisRun)
+                                                    .Where(x => x.ProducerId.ToString() == fee.ProducerId)
+                                                    .Select(y => y.CurrentYearInvoicedTotalAfterThisRun)
                                                     .FirstOrDefault();
 
                 totalTonnage += currentYearInvoicedTotalTonnage.GetValueOrDefault();
