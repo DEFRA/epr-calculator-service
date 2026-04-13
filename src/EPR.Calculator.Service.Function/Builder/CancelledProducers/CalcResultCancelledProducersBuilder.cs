@@ -1,4 +1,5 @@
-﻿using EPR.Calculator.API.Data;
+﻿using System.Collections.Immutable;
+using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Constants;
@@ -49,7 +50,7 @@ namespace EPR.Calculator.Service.Function.Builder.CancelledProducers
 
             var producerIdsForCurrentRun = await producerDetailsService.GetProducers(runId);
 
-            var missingProducersIdsInCurrentRun = allProducerIds.Where(t => !producerIdsForCurrentRun.Any(k => k == t));
+            var missingProducersIdsInCurrentRun = allProducerIds.Where(t => !producerIdsForCurrentRun.Any(k => k == t)).ToImmutableHashSet();
             var missingProducersInCurrentRun = await producerDetailsService.GetProducerDetails(relativeYear, missingProducersIdsInCurrentRun);
 
             // populate cancelled producers
