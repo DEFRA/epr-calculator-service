@@ -576,17 +576,26 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             Assert.AreEqual(expected.green, result.green, "Green mismatch");
         }
 
+
         [TestMethod]
-        public void CanGetPricePerTonne()
+        public void CanGetActionedSelfManagedConsumerWasteTonnage()
         {
-            // Arrange
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            Assert.AreEqual(50  , CalcResultSummaryUtil.GetActionedSelfManagedConsumerWasteTonnage(totalReportedTonnage: 100 ,selfManagedConsumerWasteTonnage: 50 ));
+            Assert.AreEqual(100 , CalcResultSummaryUtil.GetActionedSelfManagedConsumerWasteTonnage(totalReportedTonnage: 100, selfManagedConsumerWasteTonnage: 100));
+            Assert.AreEqual(100 , CalcResultSummaryUtil.GetActionedSelfManagedConsumerWasteTonnage(totalReportedTonnage: 100, selfManagedConsumerWasteTonnage: 150));
+            Assert.AreEqual(0   , CalcResultSummaryUtil.GetActionedSelfManagedConsumerWasteTonnage(totalReportedTonnage: 0  , selfManagedConsumerWasteTonnage: 150));
+            Assert.AreEqual(null, CalcResultSummaryUtil.GetActionedSelfManagedConsumerWasteTonnage(totalReportedTonnage: 100, selfManagedConsumerWasteTonnage: 100, level: 2));
+        }
 
-            // Act
-            var result = CalcResultSummaryUtil.GetPricePerTonne(material, calcResult);
-
-            // Assert
-            Assert.AreEqual(0.6676m, result);
+        [TestMethod]
+        public void CanGetActionedSelfManagedConsumerWasteTonnageOverallTotal()
+        {
+            var producerDisposalFees = TestDataHelper.GetProducerDisposalFees();
+            var materials            = TestDataHelper.GetMaterials();
+            Assert.AreEqual(90 , CalcResultSummaryUtil.GetActionedSelfManagedConsumerWasteTonnageOverallTotal(producerDisposalFees, materials.First(m => m.Code == "AL")));
+            Assert.AreEqual(140, CalcResultSummaryUtil.GetActionedSelfManagedConsumerWasteTonnageOverallTotal(producerDisposalFees, materials.First(m => m.Code == "FC")));
+            Assert.AreEqual(150, CalcResultSummaryUtil.GetActionedSelfManagedConsumerWasteTonnageOverallTotal(producerDisposalFees, materials.First(m => m.Code == "GL")));
+            Assert.AreEqual(0  , CalcResultSummaryUtil.GetActionedSelfManagedConsumerWasteTonnageOverallTotal(producerDisposalFees, materials.First(m => m.Code == "ST")));
         }
 
         [TestMethod]
