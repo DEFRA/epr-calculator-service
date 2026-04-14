@@ -437,6 +437,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                                                 .Select(x => x.InvoicedTonnage?.InvoicedNetTonnage)
                                                 .FirstOrDefault();
 
+            var totalReportedTonnage = CalcResultSummaryUtil.GetReportedTonnage(producer, material, ScaledupProducers, PartialObligations);
+            var selfManagedConsumerWasteTonnage = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.ConsumerWaste, ScaledupProducers, PartialObligations);
             var netReportedTonnage = CalcResultSummaryUtil.GetNetReportedTonnage([producer], material, ScaledupProducers, PartialObligations, showModulations, level);
 
             return new CalcResultSummaryProducerDisposalFeesByMaterial
@@ -465,14 +467,15 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                         rag => CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.HouseholdDrinksContainers, ScaledupProducers, PartialObligations, rag))
                     : new(),
 
-                TotalReportedTonnage = CalcResultSummaryUtil.GetReportedTonnage(producer, material, ScaledupProducers, PartialObligations),
+                TotalReportedTonnage = totalReportedTonnage,
                 TotalReportedTonnageRagRating = showModulations
                     ? Enum.GetValues<RagRating>().GroupBy(GroupedRagRating).ToDictionary(
                         grp => grp.Key,
                         grp => grp.Sum(r => CalcResultSummaryUtil.GetReportedTonnage(producer, material, ScaledupProducers, PartialObligations, r)))
                     : new(),
 
-                SelfManagedConsumerWasteTonnage = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.ConsumerWaste, ScaledupProducers, PartialObligations),
+                SelfManagedConsumerWasteTonnage = selfManagedConsumerWasteTonnage,
+                ActionedSelfManagedConsumerWasteTonnage = CalcResultSummaryUtil.GetActionedSelfManagedConsumerWasteTonnage(totalReportedTonnage, selfManagedConsumerWasteTonnage, level),
                 NetReportedTonnage = netReportedTonnage,
                 TonnageChange = TonnageChangeUtil.ComputePerMaterialChange(level.ToString(), netReportedTonnage.total, previousInvoicedNetTonnage),
                 PricePerTonne = CalcResultSummaryUtil.GetPricePerTonne(material, calcResult),
@@ -513,11 +516,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 HouseholdDrinksContainersTonnage = material.Code == MaterialCodes.Glass
                     ? CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.HouseholdDrinksContainers, ScaledupProducers, PartialObligations)
                     : new(),
-<<<<<<< HEAD
                 HouseholdDrinksContainersTonnageRagRating = showModulations && material.Code == MaterialCodes.Glass
-=======
-                HouseholdDrinksContainersTonnageRagRating = showModulations
->>>>>>> 49f421b (ECV-432 + ECV-430 - Self Managed Consumer Waste deduction from Amber, Red & Green)
                     ? Enum.GetValues<RagRating>().ToDictionary(
                         rag => rag,
                         rag => CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.HouseholdDrinksContainers, ScaledupProducers, PartialObligations, rag))
@@ -706,6 +705,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                                                    .Select(x => x.InvoicedTonnage?.InvoicedNetTonnage)
                                                    .FirstOrDefault();
 
+                var totalReportedTonnage = CalcResultSummaryUtil.GetReportedTonnageTotal(producersAndSubsidiaries, material, ScaledupProducers, PartialObligations);
+                var selfManagedConsumerWasteTonnage = CalcResultSummaryUtil.GetTonnageTotal(producersAndSubsidiaries, material, PackagingTypes.ConsumerWaste, ScaledupProducers, PartialObligations);
                 // Net reported for this totals context (producer total or overall total)
                 var netReportedTonnage = MaterialCostsUtil.GetNetReportedTonnage(producerDisposalFees, producersAndSubsidiaries, ScaledupProducers, PartialObligations, material, isOverAllTotalRow, showModulations);
 
@@ -744,14 +745,15 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                             rag => CalcResultSummaryUtil.GetTonnageTotal(producersAndSubsidiaries, material, PackagingTypes.HouseholdDrinksContainers, ScaledupProducers, PartialObligations, rag))
                         : new(),
 
-                    TotalReportedTonnage = CalcResultSummaryUtil.GetReportedTonnageTotal(producersAndSubsidiaries, material, ScaledupProducers, PartialObligations),
+                    TotalReportedTonnage = totalReportedTonnage,
                     TotalReportedTonnageRagRating = showModulations
                         ? Enum.GetValues<RagRating>().GroupBy(GroupedRagRating).ToDictionary(
                             grp => grp.Key,
                             grp => grp.Sum(r => CalcResultSummaryUtil.GetReportedTonnageTotal(producersAndSubsidiaries, material, ScaledupProducers, PartialObligations, r)))
                         : new(),
 
-                    SelfManagedConsumerWasteTonnage = CalcResultSummaryUtil.GetTonnageTotal(producersAndSubsidiaries, material, PackagingTypes.ConsumerWaste, ScaledupProducers, PartialObligations),
+                    SelfManagedConsumerWasteTonnage = selfManagedConsumerWasteTonnage,
+                    ActionedSelfManagedConsumerWasteTonnage = MaterialCostsUtil.GetActionedSelfManagedConsumerWasteTonnage(producerDisposalFees, material, totalReportedTonnage, selfManagedConsumerWasteTonnage, isOverAllTotalRow),
                     NetReportedTonnage = netReportedTonnage,
                     PricePerTonne = CalcResultSummaryUtil.GetPricePerTonne(material, calcResult),
                     ProducerDisposalFee = MaterialCostsUtil.GetProducerDisposalFee(producerDisposalFees, producersAndSubsidiaries, ScaledupProducers, PartialObligations, material, calcResult, isOverAllTotalRow),

@@ -259,6 +259,25 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
                 : (total: total, red: null, amber: null, green: null);
         }
 
+        public static decimal? GetActionedSelfManagedConsumerWasteTonnage(
+            decimal totalReportedTonnage,
+            decimal selfManagedConsumerWasteTonnage,
+            int level = CommonConstants.LevelOne)
+        {
+            return level == CommonConstants.LevelOne
+                ? Math.Min(totalReportedTonnage, selfManagedConsumerWasteTonnage):
+                null;
+        }
+
+        public static decimal? GetActionedSelfManagedConsumerWasteTonnageOverallTotal(
+            IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
+            MaterialDetail material)
+        {
+            return producerDisposalFees
+                .Where(fee => fee.Level == CommonConstants.LevelOne.ToString())
+                .Sum(row => row?.ProducerDisposalFeesByMaterial.GetValueOrDefault(material.Code)?.ActionedSelfManagedConsumerWasteTonnage ?? 0);
+        }
+
         public static decimal? GetPreviousInvoicedTonnageOverallTotal(
           IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
           MaterialDetail material)
@@ -703,6 +722,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
                         CalcResultSummaryHeaders.AmberPlusAmberMedicalTotalTonnage,
                         CalcResultSummaryHeaders.GreenPlusGreenMedicalTotalTonnage,
                         CalcResultSummaryHeaders.SelfManagedConsumerWasteTonnage,
+                        CalcResultSummaryHeaders.ActionedSelfManagedConsumerWasteTonnage,
                         CalcResultSummaryHeaders.NetTonnage,
                         CalcResultSummaryHeaders.RedPlusRedMedicalNetTonnage,
                         CalcResultSummaryHeaders.AmberPlusAmberMedicalNetTonnage,

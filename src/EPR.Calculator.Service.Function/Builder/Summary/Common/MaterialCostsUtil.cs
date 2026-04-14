@@ -21,6 +21,18 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
                 : CalcResultSummaryUtil.GetNetReportedTonnage(producersAndSubsidiaries, material, scaledUpProducers, partialObligations, showModulations);
         }
 
+        public static decimal? GetActionedSelfManagedConsumerWasteTonnage(
+            IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
+            MaterialDetail material,
+            decimal totalReportedTonnage,
+            decimal selfManagedConsumerWasteTonnage,
+            bool isOverAllTotalRow)
+        {
+            return isOverAllTotalRow
+                ? CalcResultSummaryUtil.GetActionedSelfManagedConsumerWasteTonnageOverallTotal(producerDisposalFees, material)
+                : CalcResultSummaryUtil.GetActionedSelfManagedConsumerWasteTonnage(totalReportedTonnage: totalReportedTonnage, selfManagedConsumerWasteTonnage: selfManagedConsumerWasteTonnage);
+        }
+
         public static decimal? GetPreviousInvoicedTonnage(
             IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
             IEnumerable<ProducerDetail> producersAndSubsidiaries,

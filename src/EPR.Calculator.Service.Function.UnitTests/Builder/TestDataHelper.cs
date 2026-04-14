@@ -1142,7 +1142,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         ScotlandWithBadDebtProvision = 156.28m,
                         NorthernIrelandWithBadDebtProvision = 61.18m,
                         PreviousInvoicedTonnage = null,
-                        TonnageChange = 0
+                        TonnageChange = 0,
+                        ActionedSelfManagedConsumerWasteTonnage = 90
                     }
                 },
                 {
@@ -1164,7 +1165,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         ScotlandWithBadDebtProvision = 374.40m,
                         NorthernIrelandWithBadDebtProvision = 146.57m,
                         PreviousInvoicedTonnage = 0,
-                        TonnageChange = 0
+                        TonnageChange = 0,
+                        ActionedSelfManagedConsumerWasteTonnage = 140
                     }
                 },
                 {
@@ -1186,7 +1188,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         NorthernIrelandWithBadDebtProvision = 227,
                         HouseholdDrinksContainersTonnage = 220,
                         PreviousInvoicedTonnage = 0,
-                        TonnageChange = 0
+                        TonnageChange = 0,
+                        ActionedSelfManagedConsumerWasteTonnage = 150
                     }
                 },
                 {
@@ -1207,7 +1210,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         ScotlandWithBadDebtProvision = 11.21m,
                         NorthernIrelandWithBadDebtProvision = 4.39m,
                         PreviousInvoicedTonnage = 0,
-                        TonnageChange = 0
+                        TonnageChange = 0,
+                        ActionedSelfManagedConsumerWasteTonnage = 2.200m,
                     }
                 },
                 {
@@ -1228,7 +1232,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         ScotlandWithBadDebtProvision = 2.44m,
                         NorthernIrelandWithBadDebtProvision = 0.96m,
                         PreviousInvoicedTonnage = 0,
-                        TonnageChange = 0
+                        TonnageChange = 0,
+                        ActionedSelfManagedConsumerWasteTonnage = 0.600m
                     }
                 },
                 {
@@ -1249,7 +1254,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         ScotlandWithBadDebtProvision = 0.00m,
                         NorthernIrelandWithBadDebtProvision = 0.00m,
                         PreviousInvoicedTonnage = 0,
-                        TonnageChange = 0
+                        TonnageChange = 0,
+                        ActionedSelfManagedConsumerWasteTonnage = 0
                     }
                 },
                 {
@@ -1270,7 +1276,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         ScotlandWithBadDebtProvision = 208.36m,
                         NorthernIrelandWithBadDebtProvision = 81.57m,
                         PreviousInvoicedTonnage = 0,
-                        TonnageChange = 0
+                        TonnageChange = 0,
+                        ActionedSelfManagedConsumerWasteTonnage = 95.000m,
                     }
                 },
                 {
@@ -1291,7 +1298,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         ScotlandWithBadDebtProvision = 13.68m,
                         NorthernIrelandWithBadDebtProvision = 5.36m,
                         PreviousInvoicedTonnage = 0,
-                        TonnageChange = 0
+                        TonnageChange = 0,
+                        ActionedSelfManagedConsumerWasteTonnage = 5.500m
                     }
                 },
             };
