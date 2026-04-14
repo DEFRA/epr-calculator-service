@@ -709,7 +709,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             var modulationResult = calculationResult;
             modulationResult.CalcResultModulation = "add modulations section";
             var result2 = new CalcResultSummaryBuilder(context).GetCalcResultSummary(orderedProducerDetails, materials, modulationResult, totalPackagingTonnage, producerInvoicedMaterialNetTonnage, defaultParams);
-            Assert.AreEqual(221, result2.ColumnHeaders.Count());
+            Assert.AreEqual(223, result2.ColumnHeaders.Count());
         }
 
         [TestMethod]
