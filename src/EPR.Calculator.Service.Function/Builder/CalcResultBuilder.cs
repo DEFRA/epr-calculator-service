@@ -131,7 +131,7 @@ namespace EPR.Calculator.Service.Function.Builder
 
             if(result.CalcResultModulation is not null)
             {
-                    _telemetryClient.TrackTrace("calcResultProjectedProducerBuilder started...");
+                _telemetryClient.TrackTrace("calcResultProjectedProducerBuilder started...");
                 var calcResultProjectedProducers = await calcResultProjectedProducersBuilder.ConstructAsync(resultsRequestDto);
                 result.CalcResultProjectedProducers = calcResultProjectedProducers;
                 _telemetryClient.TrackTrace("calcResultProjectedProducerBuilder end...");
@@ -139,7 +139,11 @@ namespace EPR.Calculator.Service.Function.Builder
                 if(!resultsRequestDto.IsBillingFile)
                 {
                     _telemetryClient.TrackTrace("Storing projected producers started...");
-                    await projectedProducersService.StoreProjectedProducers(resultsRequestDto.RunId, calcResultProjectedProducers.H2ProjectedProducers?.ToList() ?? new List<CalcResultH2ProjectedProducer>());
+                    await projectedProducersService.StoreProjectedProducers(
+                        resultsRequestDto.RunId,
+                        calcResultProjectedProducers.H2ProjectedProducers?.ToList() ?? new List<CalcResultH2ProjectedProducer>(),
+                        calcResultProjectedProducers.H1ProjectedProducers?.ToList() ?? new List<CalcResultH1ProjectedProducer>()
+                    );
                     _telemetryClient.TrackTrace("Storing projected producers ended...");
                 }
             } else

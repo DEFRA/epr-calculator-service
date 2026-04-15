@@ -34,9 +34,21 @@
         public required Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage> ProjectedTonnageByMaterial { get; set; }
     }
 
+    public class CalcResultH1ProjectedProducer : CalcResultProjectedProducer<CalcResultH1ProjectedProducerMaterialTonnage>
+    {
+        public required int ProducerId { get; set; }
+        public string? SubsidiaryId { get; set; }
+        public required string Level { get; set; }
+        public required string SubmissionPeriodCode { get; set; }
+        public bool IsSubtotal { get; set; } = false;
+        public required Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage> ProjectedTonnageByMaterial { get; set; }
+    }
+
     public class CalcResultProjectedProducers
     {
         public ProjectedProducersHeaders? H2ProjectedProducersHeaders { get; set; }
+        public ProjectedProducersHeaders? H1ProjectedProducersHeaders { get; set; }
         public IEnumerable<CalcResultH2ProjectedProducer>? H2ProjectedProducers { get; set; }
+        public IEnumerable<CalcResultH1ProjectedProducer>? H1ProjectedProducers { get; set; }
     }
 }

@@ -35,80 +35,44 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             var materialsFromDb = await context.Material.ToListAsync();
             var materials = MaterialMapper.Map(materialsFromDb);
 
-            var h2ProjectedProduers = await GetH2ProjectedProducers(runId, materials);
+            var reportedMaterialsForRun = await GetReportedMaterialsForRun(runId);
+            var submissionPeriod = (string i) => $"{resultsRequestDto.RelativeYear.Value - 1}-{i}";
+            var h2ReportedMaterials = reportedMaterialsForRun.Where(r => r.SubmissionPeriod == submissionPeriod("H2"));
+            var h1ReportedMaterials = reportedMaterialsForRun.Where(r => r.SubmissionPeriod == submissionPeriod("H1"));
 
-            var h2ProjectedProducersWithSubtotals = AddSubtotals(h2ProjectedProduers);
+            var h2ProjectedProduers = await H2ProjectedProducersBuilderUtils.GetProjectedProducers(h2ReportedMaterials.ToList(), materials);
+            var h2ProjectedProducersWithSubtotals = AddSubtotals<CalcResultH2ProjectedProducer, CalcResultH2ProjectedProducerMaterialTonnage>(
+                h2ProjectedProduers,
+                createSubtotal: H2ProjectedProducersBuilderUtils.CreateParentProducer,
+                sumProducerGroupTonnages: H2ProjectedProducersBuilderUtils.SumProducerGroupTonnages
+            );
+            var h1ProjectedProduers = await H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1ReportedMaterials.ToList(), h2ProjectedProduers, materials);
+            var h1ProjectedProducersWithSubtotals = AddSubtotals<CalcResultH1ProjectedProducer, CalcResultH1ProjectedProducerMaterialTonnage>(
+                h1ProjectedProduers,
+                createSubtotal: H1ProjectedProducersBuilderUtils.CreateParentProducer,
+                sumProducerGroupTonnages: H1ProjectedProducersBuilderUtils.SumProducerGroupTonnages
+            );
 
             return new CalcResultProjectedProducers
             {
-                H2ProjectedProducersHeaders = new ProjectedProducersHeaders {
-                    TitleHeader = new ProjectedProducersHeader
-                    {
-                        Name = CalcResultProjectedProducersHeaders.H2ProjectedProducers,
-                        ColumnIndex = 1,
-                    },
-                    MaterialBreakdownHeaders = GetMaterialsBreakdownHeader(materials),
-                    ColumnHeaders = GetColumnHeaders(materials)
-                },
-                H2ProjectedProducers = h2ProjectedProducersWithSubtotals
-                                        .OrderBy(p => p.ProducerId)
-                                        .ThenBy(p => p.Level)
-                                        .ThenBy(p => p.SubsidiaryId)
-                                        .ToList()
+                H2ProjectedProducersHeaders = H2ProjectedProducersBuilderUtils.GetProjectedProducerHeaders(materials),
+                H1ProjectedProducersHeaders = H1ProjectedProducersBuilderUtils.GetProjectedProducerHeaders(materials),
+                H2ProjectedProducers = h2ProjectedProducersWithSubtotals.OrderBy(p => p.ProducerId).ThenBy(p => p.Level).ThenBy(p => p.SubsidiaryId).ToList(),
+                H1ProjectedProducers = h1ProjectedProducersWithSubtotals.OrderBy(p => p.ProducerId).ThenBy(p => p.Level).ThenBy(p => p.SubsidiaryId).ToList()
             };
         }
 
-        public async Task<List<CalcResultH2ProjectedProducer>> GetH2ProjectedProducers(int runId, List<MaterialDetail> materials)
+        private async Task<List<ProducerReportedMaterialsForSubmissionPeriod>> GetReportedMaterialsForRun(int runId)
         {
-            var result = await (from run in context.CalculatorRuns.AsNoTracking()
+            return await (from run in context.CalculatorRuns.AsNoTracking()
                     join pd in context.ProducerDetail.AsNoTracking() on run.Id equals pd.CalculatorRunId
                     join prm in context.ProducerReportedMaterial.AsNoTracking() on pd.Id equals prm.ProducerDetailId
-                    let submissionPeriod = (run.RelativeYearValue - 1).ToString() + "-H2"
-                    where pd.CalculatorRunId == runId && prm.SubmissionPeriod == submissionPeriod
-                    group prm by new { pd.ProducerId, pd.SubsidiaryId, submissionPeriod = submissionPeriod } into prms 
-                    select new CalcResultH2ProjectedProducer
-                    {
-                        ProducerId = prms.Key.ProducerId,
-                        SubsidiaryId = prms.Key.SubsidiaryId,
-                        Level = string.Empty, // Level will be set in AddSubtotals method
-                        SubmissionPeriodCode = prms.Key.submissionPeriod,
-                        ProjectedTonnageByMaterial = GetH2ProjectedTonnages(materials, prms.ToList())
-                    }).ToListAsync();
-
-            return result;
+                    where pd.CalculatorRunId == runId
+                    group prm by new { pd.ProducerId, pd.SubsidiaryId, prm.SubmissionPeriod } into prms 
+                    select new ProducerReportedMaterialsForSubmissionPeriod(prms.Key.ProducerId, prms.Key.SubsidiaryId, prms.Key.SubmissionPeriod, prms.ToList())).ToListAsync();
         }
 
-        public static Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage> GetH2ProjectedTonnages(List<MaterialDetail> materials, List<ProducerReportedMaterial> reportedMaterials)
-        {
-            return materials.ToDictionary(m => m.Code, m => GetH2ProjectedTonnage(m, reportedMaterials.Where(rm => rm.MaterialId == m.Id).ToList()));
-        }
-
-        public static CalcResultH2ProjectedProducerMaterialTonnage GetH2ProjectedTonnage(MaterialDetail material, List<ProducerReportedMaterial> reportedMaterials)
-        {
-            decimal DefaultRAMToRed(RAMTonnage tonnage)
-            {
-                var ramTonnage = tonnage.RedTonnage + tonnage.RedMedicalTonnage + tonnage.AmberTonnage + tonnage.AmberMedicalTonnage + tonnage.GreenTonnage + tonnage.GreenMedicalTonnage;
-                var diffTonnage = tonnage.Tonnage - ramTonnage;
-                return diffTonnage > 0 ? diffTonnage : 0;
-            }
-
-            var householdRAMTonnage = GetRAMTonnage(PackagingTypes.Household, reportedMaterials);
-            var publicBinRAMTonnage = GetRAMTonnage(PackagingTypes.PublicBin, reportedMaterials);
-            var hdcRAMTonnage = (material.Code == MaterialCodes.Glass) ? GetRAMTonnage(PackagingTypes.HouseholdDrinksContainers, reportedMaterials) : null;
-
-            return new CalcResultH2ProjectedProducerMaterialTonnage
-            {
-                HouseholdRAMTonnage = householdRAMTonnage,
-                PublicBinRAMTonnage = publicBinRAMTonnage,
-                HouseholdDrinksContainerRAMTonnage = hdcRAMTonnage,
-                HouseholdTonnageDefaultedRed = DefaultRAMToRed(householdRAMTonnage),
-                PublicBinTonnageDefaultedRed = DefaultRAMToRed(publicBinRAMTonnage),
-                HouseholdDrinksContainerDefaultedRed = (hdcRAMTonnage != null) ? DefaultRAMToRed(hdcRAMTonnage) : null,
-                TotalTonnage = householdRAMTonnage.Tonnage + publicBinRAMTonnage.Tonnage + (hdcRAMTonnage?.Tonnage ?? 0)
-            };
-        }
-
-        private static RAMTonnage GetRAMTonnage(string packagingType, List<ProducerReportedMaterial> reportedMaterials) {
+        public static RAMTonnage GetRAMTonnage(string packagingType, List<ProducerReportedMaterial> reportedMaterials) {
             decimal GetReportedTonnage(string packagingType, Func<ProducerReportedMaterial, decimal?> tonnageFunc) {
                 return reportedMaterials.Where(p => p.PackagingType == packagingType).Sum(t => tonnageFunc(t) ?? 0);
             }
@@ -124,189 +88,93 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             };
         }
 
-        public static List<CalcResultH2ProjectedProducer> AddSubtotals(List<CalcResultH2ProjectedProducer> projectedProducers)
+        public static decimal TonnageWithoutRAM(RAMTonnage tonnage)
         {
-            var producersWithSubtotals = new List<CalcResultH2ProjectedProducer>();
+            var ramTonnage = tonnage.RedTonnage + tonnage.RedMedicalTonnage + tonnage.AmberTonnage + tonnage.AmberMedicalTonnage + tonnage.GreenTonnage + tonnage.GreenMedicalTonnage;
+            var diffTonnage = tonnage.Tonnage - ramTonnage;
+            return diffTonnage > 0 ? diffTonnage : 0;
+        }
+
+        public static RAMTonnage SumRAMTonnages<TProducer, TTonnage>(List<TProducer> producers, string materialCode, Func<TTonnage, RAMTonnage?> getRAMTonnage) 
+            where TProducer : CalcResultProjectedProducer<TTonnage>
+            where TTonnage : CalcResultProjectedProducerMaterialTonnage
+        {
+            return new RAMTonnage {
+                Tonnage = producers.Sum(p => getRAMTonnage(p.ProjectedTonnageByMaterial[materialCode])?.Tonnage ?? 0),
+                RedTonnage = producers.Sum(p => getRAMTonnage(p.ProjectedTonnageByMaterial[materialCode])?.RedTonnage ?? 0),
+                RedMedicalTonnage = producers.Sum(p => getRAMTonnage(p.ProjectedTonnageByMaterial[materialCode])?.RedMedicalTonnage ?? 0),
+                AmberTonnage = producers.Sum(p => getRAMTonnage(p.ProjectedTonnageByMaterial[materialCode])?.AmberTonnage ?? 0),
+                AmberMedicalTonnage = producers.Sum(p => getRAMTonnage(p.ProjectedTonnageByMaterial[materialCode])?.AmberMedicalTonnage ?? 0),
+                GreenTonnage = producers.Sum(p => getRAMTonnage(p.ProjectedTonnageByMaterial[materialCode])?.GreenTonnage ?? 0),
+                GreenMedicalTonnage = producers.Sum(p => getRAMTonnage(p.ProjectedTonnageByMaterial[materialCode])?.GreenMedicalTonnage ?? 0),
+            };
+        }
+
+        private static List<TProducer> AddSubtotals<TProducer, TTonnage>(
+            List<TProducer> projectedProducers,
+            Func<TProducer, TProducer> createSubtotal,
+            Func<IEnumerable<TProducer>, TProducer> sumProducerGroupTonnages)
+            where TProducer : CalcResultProjectedProducer<TTonnage>
+            where TTonnage : CalcResultProjectedProducerMaterialTonnage
+        {
+            var result = new List<TProducer>();
             var producerGroups = projectedProducers.GroupBy(p => p.ProducerId);
 
-            foreach(var prodGroup in producerGroups)
+            foreach (var group in producerGroups)
             {
-                if(prodGroup.Count() > 1)
+                if (group.Count() > 1)
                 {
-                    producersWithSubtotals.AddRange(prodGroup.Select(p => {
+                    foreach (var p in group)
+                    {
                         p.Level = CommonConstants.LevelTwo.ToString();
-                        return p;
-                    }));
+                    }
 
-                    producersWithSubtotals.Add(
-                        SumProducerGroupTonnages(prodGroup, prodGroup.First())
+                    result.AddRange(group);
+                    result.Add(
+                        sumProducerGroupTonnages(group)
                     );
                 }
-                else {
-                    var producer = prodGroup.First();
-                    if(producer.SubsidiaryId != null)
+                else
+                {
+                    var producer = group.First();
+
+                    if (producer.SubsidiaryId != null)
                     {
                         producer.Level = CommonConstants.LevelTwo.ToString();
-                        producersWithSubtotals.AddRange(new List<CalcResultH2ProjectedProducer>
-                        {
-                            new ()
-                            {
-                                ProducerId = producer.ProducerId,
-                                SubsidiaryId = null,
-                                Level = CommonConstants.LevelOne.ToString(),
-                                SubmissionPeriodCode = producer.SubmissionPeriodCode,
-                                IsSubtotal = true,
-                                ProjectedTonnageByMaterial = producer.ProjectedTonnageByMaterial
-                            },
-                            producer
-                        });
-                    } else {
-                        producer.Level = CommonConstants.LevelOne.ToString();  
-                        producersWithSubtotals.Add(producer);
+
+                        var subtotal = createSubtotal(producer);
+                        subtotal.Level = CommonConstants.LevelOne.ToString();
+                        subtotal.IsSubtotal = true;
+                        subtotal.SubsidiaryId = null;
+
+                        result.Add(subtotal);
+                        result.Add(producer);
+                    }
+                    else
+                    {
+                        producer.Level = CommonConstants.LevelOne.ToString();
+                        result.Add(producer);
                     }
                 }
             }
 
-            return producersWithSubtotals;
-
+            return result;
         }
+    }
 
-        private static CalcResultH2ProjectedProducer SumProducerGroupTonnages(IGrouping<int, CalcResultH2ProjectedProducer> prodGroup, CalcResultH2ProjectedProducer producer)
+    public class ProducerReportedMaterialsForSubmissionPeriod
+    {
+        public int ProducerId { get; }
+        public string? SubsidiaryId { get; }
+        public string SubmissionPeriod { get; }
+        public List<ProducerReportedMaterial> ReportedMaterials { get; }
+
+        public ProducerReportedMaterialsForSubmissionPeriod(int producerId, string? subsidiaryId, string submissionPeriod, List<ProducerReportedMaterial> reportedMaterials)
         {
-            RAMTonnage SumRAMTonnages(List<CalcResultH2ProjectedProducer> producers, string materialCode, Func<CalcResultH2ProjectedProducerMaterialTonnage, RAMTonnage?> getRAMTonnage) 
-            {
-                return new RAMTonnage {
-                    Tonnage = producers.Sum(p => getRAMTonnage(p.ProjectedTonnageByMaterial[materialCode])?.Tonnage ?? 0),
-                    RedTonnage = producers.Sum(p => getRAMTonnage(p.ProjectedTonnageByMaterial[materialCode])?.RedTonnage ?? 0),
-                    RedMedicalTonnage = producers.Sum(p => getRAMTonnage(p.ProjectedTonnageByMaterial[materialCode])?.RedMedicalTonnage ?? 0),
-                    AmberTonnage = producers.Sum(p => getRAMTonnage(p.ProjectedTonnageByMaterial[materialCode])?.AmberTonnage ?? 0),
-                    AmberMedicalTonnage = producers.Sum(p => getRAMTonnage(p.ProjectedTonnageByMaterial[materialCode])?.AmberMedicalTonnage ?? 0),
-                    GreenTonnage = producers.Sum(p => getRAMTonnage(p.ProjectedTonnageByMaterial[materialCode])?.GreenTonnage ?? 0),
-                    GreenMedicalTonnage = producers.Sum(p => getRAMTonnage(p.ProjectedTonnageByMaterial[materialCode])?.GreenMedicalTonnage ?? 0),
-                };
-            }
-
-            return new CalcResultH2ProjectedProducer
-            {
-                ProducerId = prodGroup.Key,
-                SubsidiaryId = null,
-                Level = CommonConstants.LevelOne.ToString(),
-                SubmissionPeriodCode = producer.SubmissionPeriodCode,
-                IsSubtotal = true,
-                ProjectedTonnageByMaterial = producer.ProjectedTonnageByMaterial.ToDictionary(
-                    kvp => kvp.Key, 
-                    kvp => new CalcResultH2ProjectedProducerMaterialTonnage {
-                        HouseholdRAMTonnage = SumRAMTonnages(prodGroup.ToList(), kvp.Key, p => p.HouseholdRAMTonnage),
-                        PublicBinRAMTonnage = SumRAMTonnages(prodGroup.ToList(), kvp.Key, p => p.PublicBinRAMTonnage),
-                        HouseholdDrinksContainerRAMTonnage = kvp.Key == MaterialCodes.Glass ? SumRAMTonnages(prodGroup.ToList(), kvp.Key, p => p.HouseholdDrinksContainerRAMTonnage) : null,
-                        HouseholdTonnageDefaultedRed = prodGroup.Sum(p => p.ProjectedTonnageByMaterial[kvp.Key].HouseholdTonnageDefaultedRed),
-                        PublicBinTonnageDefaultedRed = prodGroup.Sum(p => p.ProjectedTonnageByMaterial[kvp.Key].PublicBinTonnageDefaultedRed),
-                        HouseholdDrinksContainerDefaultedRed = kvp.Key == MaterialCodes.Glass ? prodGroup.Sum(p => p.ProjectedTonnageByMaterial[kvp.Key].HouseholdDrinksContainerDefaultedRed ?? 0) : null,
-                        TotalTonnage = prodGroup.Sum(p => p.ProjectedTonnageByMaterial[kvp.Key].TotalTonnage) 
-                    })
-            };
-        }
-
-        public static List<ProjectedProducersHeader> GetMaterialsBreakdownHeader(IEnumerable<MaterialDetail> materials)
-        {
-            var materialsBreakdownHeaders = new List<ProjectedProducersHeader>();
-            var columnIndex = GetInitialColumnHeaders().Count + 1;
-
-            foreach (var material in materials)
-            {
-                materialsBreakdownHeaders.Add(new ProjectedProducersHeader
-                {
-                    Name = $"{material.Name} Breakdown",
-                    ColumnIndex = columnIndex,
-                });
-
-                var materialHeaderCount = GetMaterialColumnHeaders().Count + GetPostFixColumnHeaders().Count;
-
-                columnIndex = material.Code == MaterialCodes.Glass
-                    ? columnIndex + materialHeaderCount + GetGlassColumnHeaders().Count
-                    : columnIndex + materialHeaderCount;
-            }
-
-            return materialsBreakdownHeaders;
-        }
-
-        public static List<ProjectedProducersHeader> GetColumnHeaders(IEnumerable<MaterialDetail> materials)
-        {
-            var columnHeaders = new List<ProjectedProducersHeader>();
-
-            columnHeaders.AddRange(GetInitialColumnHeaders());
-
-            foreach (var material in materials)
-            {
-                columnHeaders.AddRange(GetMaterialColumnHeaders());
-
-                if (material.Code == MaterialCodes.Glass)
-                {
-                    columnHeaders.AddRange(GetGlassColumnHeaders());
-                }
-
-                columnHeaders.AddRange(GetPostFixColumnHeaders());
-            }
-
-            return columnHeaders;
-        }
-
-        private static List<ProjectedProducersHeader> GetInitialColumnHeaders()
-        {
-            return new List<ProjectedProducersHeader>
-            {
-                new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.ProducerId },
-                new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.SubsidiaryId },
-                new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.Level },
-                new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.SubmissionPeriodCode }
-            };
-        }
-
-        private static List<ProjectedProducersHeader> GetPostFixColumnHeaders()
-        {
-            return new List<ProjectedProducersHeader>
-            {
-                new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.TotalTonnage }
-            };
-        }
-
-
-        private static List<ProjectedProducersHeader> GetMaterialColumnHeaders()
-        {
-            return new List<ProjectedProducersHeader>
-                {
-                    new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.HouseholdPackagingTonnage },
-                    new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.HouseholdRedTonnage },
-                    new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.HouseholdAmberTonnage },
-                    new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.HouseholdGreenTonnage },
-                    new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.HouseholdRedMedicalTonnage },
-                    new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.HouseholdAmberMedicalTonnage },
-                    new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.HouseholdGreenMedicalTonnage },
-                    new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.HouseholdTonnageWithoutRAMDefaultedToRed },
-                    new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.PublicBinPackagingTonnage },
-                    new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.PublicBinRedTonnage },
-                    new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.PublicBinAmberTonnage },
-                    new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.PublicBinGreenTonnage },
-                    new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.PublicBinRedMedicalTonnage },
-                    new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.PublicBinAmberMedicalTonnage },
-                    new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.PublicBinGreenMedicalTonnage },
-                    new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.PublicBinTonnageWithoutRAMDefaultedToRed }
-                };
-        }
-
-        private static List<ProjectedProducersHeader> GetGlassColumnHeaders()
-        {
-            return new List<ProjectedProducersHeader>
-            {
-                new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.HouseholdDrinksContainersPackagingTonnage },
-                new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.HouseholdDrinksContainersRedTonnage },
-                new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.HouseholdDrinksContainersAmberTonnage },
-                new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.HouseholdDrinksContainersGreenTonnage },
-                new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.HouseholdDrinksContainersRedMedicalTonnage },
-                new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.HouseholdDrinksContainersAmberMedicalTonnage },
-                new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.HouseholdDrinksContainersGreenMedicalTonnage },
-                new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.HouseholdDrinksContainersTonnageWithoutRAMDefaultedToRed }
-            };
+            ProducerId = producerId;
+            SubsidiaryId = subsidiaryId;
+            SubmissionPeriod = submissionPeriod;
+            ReportedMaterials = reportedMaterials;
         }
     }
 }
