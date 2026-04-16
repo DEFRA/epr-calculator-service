@@ -10,6 +10,11 @@
         public decimal AmberMedicalTonnage { get; set; }
         public decimal GreenMedicalTonnage { get; set; }
 
+        public decimal GetTotalRamTonnage()
+        {
+            return RedTonnage + RedMedicalTonnage + AmberTonnage + AmberMedicalTonnage + GreenTonnage + GreenMedicalTonnage;
+        }
+
         public override bool Equals(object? obj)
         {
             return obj is RAMTonnage other &&
@@ -47,6 +52,23 @@
         public decimal PublicBinTonnageDefaultedRed { get; set; }
         public decimal? HouseholdDrinksContainerDefaultedRed { get; set; }
         public decimal TotalTonnage { get; set; }
+
+
+        private decimal GetTotalRamTonnage(Func<RAMTonnage, decimal> getTonnage)
+        {
+            var hdcTonnage = HouseholdDrinksContainerRAMTonnage != null ? getTonnage(HouseholdDrinksContainerRAMTonnage) : 0;
+            return getTonnage(HouseholdRAMTonnage) + getTonnage(PublicBinRAMTonnage) + hdcTonnage;
+        }
+        public decimal GetTotalRedTonnage()
+        {
+            var hdcDefaultedRed = HouseholdDrinksContainerDefaultedRed ?? 0;
+            return GetTotalRamTonnage(t => t.RedTonnage) + HouseholdTonnageDefaultedRed + PublicBinTonnageDefaultedRed + hdcDefaultedRed;  
+        }
+        public decimal GetTotalAmberTonnage() { return GetTotalRamTonnage(t => t.AmberTonnage); }
+        public decimal GetTotalGreenTonnage() { return GetTotalRamTonnage(t => t.GreenTonnage); }
+        public decimal GetTotalRedMedicalTonnage() { return GetTotalRamTonnage(t => t.RedMedicalTonnage); }
+        public decimal GetTotalAmberMedicalTonnage() { return GetTotalRamTonnage(t => t.AmberMedicalTonnage); }
+        public decimal GetTotalGreenMedicalTonnage() { return GetTotalRamTonnage(t => t.GreenMedicalTonnage); }
     }
 
     public class RAMProportions

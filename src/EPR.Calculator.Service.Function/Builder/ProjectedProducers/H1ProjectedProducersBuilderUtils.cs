@@ -57,12 +57,12 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             
             var h2ProjectedTonnage = h2ProjectedProducer.ProjectedTonnageByMaterial[material.Code];
             var h2RamProportions = new RAMProportions{
-                Red = GetH2RedRAMProportion(h2ProjectedTonnage),
-                Amber = GetH2RAMProportion(h2ProjectedTonnage, t => t.AmberTonnage),
-                Green = GetH2RAMProportion(h2ProjectedTonnage, t => t.GreenTonnage),
-                RedMedical = GetH2RAMProportion(h2ProjectedTonnage, t => t.RedMedicalTonnage),
-                AmberMedical = GetH2RAMProportion(h2ProjectedTonnage, t => t.AmberMedicalTonnage),
-                GreenMedical = GetH2RAMProportion(h2ProjectedTonnage, t => t.GreenMedicalTonnage)
+                Red = GetH2RAMProportion(h2ProjectedTonnage, t => t.GetTotalRedTonnage()),
+                Amber = GetH2RAMProportion(h2ProjectedTonnage, t => t.GetTotalAmberTonnage()),
+                Green = GetH2RAMProportion(h2ProjectedTonnage, t => t.GetTotalGreenTonnage()),
+                RedMedical = GetH2RAMProportion(h2ProjectedTonnage, t => t.GetTotalRedMedicalTonnage()),
+                AmberMedical = GetH2RAMProportion(h2ProjectedTonnage, t => t.GetTotalAmberMedicalTonnage()),
+                GreenMedical = GetH2RAMProportion(h2ProjectedTonnage, t => t.GetTotalGreenMedicalTonnage())
             };
             var h1ProportionateRAMTonnage = (RAMTonnage ramTonnage, decimal tonnageWithoutRAM) => GetH1RAMTonnageProportionateToH2(ramTonnage, tonnageWithoutRAM, h2RamProportions);
 
@@ -83,25 +83,10 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             };
         }
 
-        private static decimal GetH2RedRAMProportion(CalcResultH2ProjectedProducerMaterialTonnage h2ProjectedTonnage)
+        private static decimal GetH2RAMProportion(CalcResultH2ProjectedProducerMaterialTonnage h2ProjectedTonnage, Func<CalcResultH2ProjectedProducerMaterialTonnage, decimal> getTotalTonnage)
         {
-            var hdcRedTonnage = h2ProjectedTonnage.HouseholdDrinksContainerRAMTonnage?.RedTonnage ?? 0;
-            var hdcDefaultedRed = h2ProjectedTonnage.HouseholdDrinksContainerDefaultedRed ?? 0;
-            var totalTonnage = h2ProjectedTonnage.TotalTonnage;
-            var proportion = totalTonnage > 0 ? (h2ProjectedTonnage.HouseholdRAMTonnage.RedTonnage + h2ProjectedTonnage.HouseholdTonnageDefaultedRed + 
-                h2ProjectedTonnage.PublicBinRAMTonnage.RedTonnage + h2ProjectedTonnage.PublicBinTonnageDefaultedRed + hdcRedTonnage + hdcDefaultedRed) 
-                / totalTonnage : 0;
-            
-            return Math.Round(proportion, 6);
-        }
-
-        private static decimal GetH2RAMProportion(CalcResultH2ProjectedProducerMaterialTonnage h2ProjectedTonnage, Func<RAMTonnage, decimal> getTonnage)
-        {
-            var hdcTonnage = h2ProjectedTonnage.HouseholdDrinksContainerRAMTonnage != null ? getTonnage(h2ProjectedTonnage.HouseholdDrinksContainerRAMTonnage) : 0m;
             var totalTonnage = (h2ProjectedTonnage.TotalTonnage);
-            var proportion = totalTonnage > 0 ? (getTonnage(h2ProjectedTonnage.HouseholdRAMTonnage) + getTonnage(h2ProjectedTonnage.PublicBinRAMTonnage) + hdcTonnage
-            ) / totalTonnage : 0;
-
+            var proportion = totalTonnage > 0 ? getTotalTonnage(h2ProjectedTonnage) / totalTonnage : 0; //DoLater: Remove this
             return Math.Round(proportion, 6);
         }
 

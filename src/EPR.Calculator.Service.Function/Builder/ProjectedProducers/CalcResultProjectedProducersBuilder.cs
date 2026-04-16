@@ -37,16 +37,16 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 
             var reportedMaterialsForRun = await GetReportedMaterialsForRun(runId);
             var submissionPeriod = (string i) => $"{resultsRequestDto.RelativeYear.Value - 1}-{i}";
-            var h2ReportedMaterials = reportedMaterialsForRun.Where(r => r.SubmissionPeriod == submissionPeriod("H2"));
-            var h1ReportedMaterials = reportedMaterialsForRun.Where(r => r.SubmissionPeriod == submissionPeriod("H1"));
+            var h2ReportedMaterials = reportedMaterialsForRun.Where(r => r.SubmissionPeriod == submissionPeriod("H2")).ToList();
+            var h1ReportedMaterials = reportedMaterialsForRun.Where(r => r.SubmissionPeriod == submissionPeriod("H1")).ToList();
 
-            var h2ProjectedProduers = H2ProjectedProducersBuilderUtils.GetProjectedProducers(h2ReportedMaterials.ToList(), materials);
+            var h2ProjectedProduers = H2ProjectedProducersBuilderUtils.GetProjectedProducers(h2ReportedMaterials, materials);
             var h2ProjectedProducersWithSubtotals = AddSubtotals<CalcResultH2ProjectedProducer, CalcResultH2ProjectedProducerMaterialTonnage>(
                 h2ProjectedProduers,
                 createSubtotal: H2ProjectedProducersBuilderUtils.CreateParentProducer,
                 sumProducerGroupTonnages: H2ProjectedProducersBuilderUtils.SumProducerGroupTonnages
             );
-            var h1ProjectedProduers = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1ReportedMaterials.ToList(), h2ProjectedProduers, materials);
+            var h1ProjectedProduers = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1ReportedMaterials, h2ProjectedProduers, materials);
             var h1ProjectedProducersWithSubtotals = AddSubtotals<CalcResultH1ProjectedProducer, CalcResultH1ProjectedProducerMaterialTonnage>(
                 h1ProjectedProduers,
                 createSubtotal: H1ProjectedProducersBuilderUtils.CreateParentProducer,
@@ -90,14 +90,12 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 
         public static decimal TonnageWithoutRAM(RAMTonnage tonnage)
         {
-            var ramTonnage = tonnage.RedTonnage + tonnage.RedMedicalTonnage + tonnage.AmberTonnage + tonnage.AmberMedicalTonnage + tonnage.GreenTonnage + tonnage.GreenMedicalTonnage;
-            var diffTonnage = tonnage.Tonnage - ramTonnage;
-            return diffTonnage > 0 ? diffTonnage : 0;
+            return Math.Max(0, tonnage.Tonnage - tonnage.GetTotalRamTonnage());
         }
 
-        public static RAMTonnage SumRAMTonnages<TProducer, TTonnage>(List<TProducer> producers, string materialCode, Func<TTonnage, RAMTonnage?> getRAMTonnage) 
-            where TProducer : CalcResultProjectedProducer<TTonnage>
-            where TTonnage : CalcResultProjectedProducerMaterialTonnage
+        public static RAMTonnage SumRAMTonnages<TSubmissionPeriodProducer, TSubmissionPeriodMaterialTonnage>(List<TSubmissionPeriodProducer> producers, string materialCode, Func<TSubmissionPeriodMaterialTonnage, RAMTonnage?> getRAMTonnage) 
+            where TSubmissionPeriodProducer : CalcResultProjectedProducer<TSubmissionPeriodMaterialTonnage>
+            where TSubmissionPeriodMaterialTonnage : CalcResultProjectedProducerMaterialTonnage
         {
             return new RAMTonnage {
                 Tonnage = producers.Sum(p => getRAMTonnage(p.ProjectedTonnageByMaterial[materialCode])?.Tonnage ?? 0),
@@ -110,14 +108,14 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             };
         }
 
-        private static List<TProducer> AddSubtotals<TProducer, TTonnage>(
-            List<TProducer> projectedProducers,
-            Func<TProducer, TProducer> createSubtotal,
-            Func<IEnumerable<TProducer>, TProducer> sumProducerGroupTonnages)
-            where TProducer : CalcResultProjectedProducer<TTonnage>
-            where TTonnage : CalcResultProjectedProducerMaterialTonnage
+        private static List<TSubmissionPeriodProducer> AddSubtotals<TSubmissionPeriodProducer, TSubmissionPeriodMaterialTonnage>(
+            List<TSubmissionPeriodProducer> projectedProducers,
+            Func<TSubmissionPeriodProducer, TSubmissionPeriodProducer> createSubtotal,
+            Func<IEnumerable<TSubmissionPeriodProducer>, TSubmissionPeriodProducer> sumProducerGroupTonnages)
+            where TSubmissionPeriodProducer : CalcResultProjectedProducer<TSubmissionPeriodMaterialTonnage>
+            where TSubmissionPeriodMaterialTonnage : CalcResultProjectedProducerMaterialTonnage
         {
-            var result = new List<TProducer>();
+            var result = new List<TSubmissionPeriodProducer>();
             var producerGroups = projectedProducers.GroupBy(p => p.ProducerId);
 
             foreach (var group in producerGroups)
