@@ -1,4 +1,5 @@
-﻿using EPR.Calculator.API.Data;
+﻿using System.Collections.Immutable;
+using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Constants;
@@ -32,18 +33,15 @@ namespace EPR.Calculator.Service.Function.Builder.CancelledProducers
 
             materials = await materialService.GetMaterials();
 
-            return await Task.Run(async () =>
+            var producers = await GetCancelledProducers(resultsRequestDto.RelativeYear, resultsRequestDto.RunId, resultsRequestDto.IsBillingFile);
+
+            var response = new CalcResultCancelledProducersResponse
             {
-                var producers = await GetCancelledProducers(resultsRequestDto.RelativeYear, resultsRequestDto.RunId, resultsRequestDto.IsBillingFile);
+                TitleHeader = CommonConstants.CancelledProducers,
+                CancelledProducers = producers
+            };
 
-                var response = new CalcResultCancelledProducersResponse
-                {
-                    TitleHeader = CommonConstants.CancelledProducers,
-                    CancelledProducers = producers
-                };
-
-                return response;
-            });
+            return response;
         }
 
         public async Task<IEnumerable<CalcResultCancelledProducersDto>> GetCancelledProducers(RelativeYear relativeYear, int runId, bool isBilling)
@@ -52,7 +50,7 @@ namespace EPR.Calculator.Service.Function.Builder.CancelledProducers
 
             var producerIdsForCurrentRun = await producerDetailsService.GetProducers(runId);
 
-            var missingProducersIdsInCurrentRun = allProducerIds.Where(t => !producerIdsForCurrentRun.Any(k => k == t));
+            var missingProducersIdsInCurrentRun = allProducerIds.Where(t => !producerIdsForCurrentRun.Any(k => k == t)).ToImmutableHashSet();
             var missingProducersInCurrentRun = await producerDetailsService.GetProducerDetails(relativeYear, missingProducersIdsInCurrentRun);
 
             // populate cancelled producers
