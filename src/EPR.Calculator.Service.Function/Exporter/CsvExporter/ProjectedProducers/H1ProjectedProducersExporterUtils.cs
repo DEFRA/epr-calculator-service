@@ -27,51 +27,56 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
 
         private static void AppendProjectedProducerTonnageByMaterial(StringBuilder csvContent, Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage> h1ProjectedProducerTonnageByMaterial)
         {
-            void appendRamTonnage(RAMTonnage tonnage)
-            {
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.Tonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.RedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.AmberTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.GreenTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.RedMedicalTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.AmberMedicalTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.GreenMedicalTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-            }
-
             foreach (var producerTonnage in h1ProjectedProducerTonnageByMaterial)
             {
-                var materialCode = producerTonnage.Key;
-                var tonnage = producerTonnage.Value;
-
-                appendRamTonnage(tonnage.HouseholdRAMTonnage);
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.HouseholdTonnageWithoutRAM, DecimalPlaces.Three, DecimalFormats.F3));
-
-                appendRamTonnage(tonnage.PublicBinRAMTonnage);
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.PublicBinTonnageWithoutRAM, DecimalPlaces.Three, DecimalFormats.F3));
-
-                if (materialCode == MaterialCodes.Glass)
-                {
-                    appendRamTonnage(tonnage.HouseholdDrinksContainerRAMTonnage!);
-                    csvContent.Append(CsvSanitiser.SanitiseData(tonnage.HouseholdDrinksContainerTonnageWithoutRAM, DecimalPlaces.Three, DecimalFormats.F3));
-                }
-
-                var anyTonnageWithoutRam = tonnage.HouseholdTonnageWithoutRAM > 0 || tonnage.PublicBinTonnageWithoutRAM > 0 || (tonnage.HouseholdDrinksContainerTonnageWithoutRAM ?? 0) > 0;
-
-                csvContent.Append(anyTonnageWithoutRam ? CsvSanitiser.SanitiseData(tonnage.RedH2Proportion * 100, DecimalPlaces.Two, DecimalFormats.F2, isPercentage: true) : CsvSanitiser.SanitiseData(CommonConstants.Hyphen));
-                csvContent.Append(anyTonnageWithoutRam ? CsvSanitiser.SanitiseData(tonnage.AmberH2Proportion * 100, DecimalPlaces.Two, DecimalFormats.F2, isPercentage: true) : CsvSanitiser.SanitiseData(CommonConstants.Hyphen));
-                csvContent.Append(anyTonnageWithoutRam ? CsvSanitiser.SanitiseData(tonnage.GreenH2Proportion * 100, DecimalPlaces.Two, DecimalFormats.F2, isPercentage: true) : CsvSanitiser.SanitiseData(CommonConstants.Hyphen));
-                csvContent.Append(anyTonnageWithoutRam ? CsvSanitiser.SanitiseData(tonnage.RedMedicalH2Proportion * 100, DecimalPlaces.Two, DecimalFormats.F2, isPercentage: true) : CsvSanitiser.SanitiseData(CommonConstants.Hyphen));
-                csvContent.Append(anyTonnageWithoutRam ? CsvSanitiser.SanitiseData(tonnage.AmberMedicalH2Proportion * 100, DecimalPlaces.Two, DecimalFormats.F2, isPercentage: true) : CsvSanitiser.SanitiseData(CommonConstants.Hyphen));
-                csvContent.Append(anyTonnageWithoutRam ? CsvSanitiser.SanitiseData(tonnage.GreenMedicalH2Proportion * 100, DecimalPlaces.Two, DecimalFormats.F2, isPercentage: true) : CsvSanitiser.SanitiseData(CommonConstants.Hyphen));
-
-                appendRamTonnage(tonnage.ProjectedHouseholdRAMTonnage);
-                appendRamTonnage(tonnage.ProjectedPublicBinRAMTonnage);
-
-                if (materialCode == MaterialCodes.Glass)
-                {
-                    appendRamTonnage(tonnage.ProjectedHouseholdDrinksContainerRAMTonnage!);
-                }
+                AppendMaterialTonnage(csvContent, producerTonnage.Key, producerTonnage.Value);
             }
+        }
+
+        private static void AppendMaterialTonnage(StringBuilder csvContent, string materialCode, CalcResultH1ProjectedProducerMaterialTonnage tonnage)
+        {
+            string GetProportionPercentage(decimal proportion) {
+                var anyTonnageWithoutRam = tonnage.HouseholdTonnageWithoutRAM > 0 || tonnage.PublicBinTonnageWithoutRAM > 0 || (tonnage.HouseholdDrinksContainerTonnageWithoutRAM ?? 0) > 0;
+                return anyTonnageWithoutRam ? CsvSanitiser.SanitiseData(proportion * 100, DecimalPlaces.Two, DecimalFormats.F2, isPercentage: true) : CsvSanitiser.SanitiseData(CommonConstants.Hyphen);
+            }
+
+            AppendRamTonnage(csvContent, tonnage.HouseholdRAMTonnage);
+            csvContent.Append(CsvSanitiser.SanitiseData(tonnage.HouseholdTonnageWithoutRAM, DecimalPlaces.Three, DecimalFormats.F3));
+
+            AppendRamTonnage(csvContent, tonnage.PublicBinRAMTonnage);
+            csvContent.Append(CsvSanitiser.SanitiseData(tonnage.PublicBinTonnageWithoutRAM, DecimalPlaces.Three, DecimalFormats.F3));
+
+            if (materialCode == MaterialCodes.Glass)
+            {
+                AppendRamTonnage(csvContent, tonnage.HouseholdDrinksContainerRAMTonnage!);
+                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.HouseholdDrinksContainerTonnageWithoutRAM, DecimalPlaces.Three, DecimalFormats.F3));
+            }
+
+            csvContent.Append(GetProportionPercentage(tonnage.H2RamProportions.Red));
+            csvContent.Append(GetProportionPercentage(tonnage.H2RamProportions.Amber));
+            csvContent.Append(GetProportionPercentage(tonnage.H2RamProportions.Green));
+            csvContent.Append(GetProportionPercentage(tonnage.H2RamProportions.RedMedical));
+            csvContent.Append(GetProportionPercentage(tonnage.H2RamProportions.AmberMedical));
+            csvContent.Append(GetProportionPercentage(tonnage.H2RamProportions.GreenMedical));
+
+            AppendRamTonnage(csvContent, tonnage.ProjectedHouseholdRAMTonnage);
+            AppendRamTonnage(csvContent, tonnage.ProjectedPublicBinRAMTonnage);
+
+            if (materialCode == MaterialCodes.Glass)
+            {
+                AppendRamTonnage(csvContent, tonnage.ProjectedHouseholdDrinksContainerRAMTonnage!);
+            }
+        }
+
+        private static void AppendRamTonnage(StringBuilder csvContent, RAMTonnage tonnage)
+        {
+            csvContent.Append(CsvSanitiser.SanitiseData(tonnage.Tonnage, DecimalPlaces.Three, DecimalFormats.F3));
+            csvContent.Append(CsvSanitiser.SanitiseData(tonnage.RedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+            csvContent.Append(CsvSanitiser.SanitiseData(tonnage.AmberTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+            csvContent.Append(CsvSanitiser.SanitiseData(tonnage.GreenTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+            csvContent.Append(CsvSanitiser.SanitiseData(tonnage.RedMedicalTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+            csvContent.Append(CsvSanitiser.SanitiseData(tonnage.AmberMedicalTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+            csvContent.Append(CsvSanitiser.SanitiseData(tonnage.GreenMedicalTonnage, DecimalPlaces.Three, DecimalFormats.F3));
         }
 
         

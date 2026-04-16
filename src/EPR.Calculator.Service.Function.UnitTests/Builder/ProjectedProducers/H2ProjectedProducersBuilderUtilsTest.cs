@@ -64,9 +64,9 @@
         };
 
         [TestMethod]
-        public async Task GetProjectedProducers()
+        public void GetProjectedProducers()
         {
-            var result = await H2ProjectedProducersBuilderUtils.GetProjectedProducers(reportedMaterials, materials);
+            var result = H2ProjectedProducersBuilderUtils.GetProjectedProducers(reportedMaterials, materials);
 
             Assert.AreEqual(2, result.Count());
 

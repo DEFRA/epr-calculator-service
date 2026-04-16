@@ -49,6 +49,16 @@
         public decimal TotalTonnage { get; set; }
     }
 
+    public class RAMProportions
+    {
+        public decimal Red { get; init; }
+        public decimal Amber { get; init; }
+        public decimal Green { get; init; }
+        public decimal RedMedical { get; init; }
+        public decimal AmberMedical { get; init; }
+        public decimal GreenMedical { get; init; }
+    }
+
     public class CalcResultH1ProjectedProducerMaterialTonnage : CalcResultProjectedProducerMaterialTonnage
     {
         public required RAMTonnage HouseholdRAMTonnage { get; set; }
@@ -57,12 +67,7 @@
         public decimal HouseholdTonnageWithoutRAM { get; set; }
         public decimal PublicBinTonnageWithoutRAM { get; set; }
         public decimal? HouseholdDrinksContainerTonnageWithoutRAM { get; set; }
-        public decimal RedH2Proportion { get; set; }
-        public decimal AmberH2Proportion { get; set; }
-        public decimal GreenH2Proportion { get; set; }
-        public decimal RedMedicalH2Proportion { get; set; }
-        public decimal AmberMedicalH2Proportion { get; set; }
-        public decimal GreenMedicalH2Proportion { get; set; }
+        public required RAMProportions H2RamProportions { get; set; }
         public decimal TotalTonnage { get; set; }
         public decimal H2TotalTonnage { get; set; }
         public required RAMTonnage ProjectedHouseholdRAMTonnage { get; set; }

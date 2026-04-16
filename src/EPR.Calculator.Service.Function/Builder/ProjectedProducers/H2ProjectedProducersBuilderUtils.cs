@@ -19,7 +19,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 
     public static class H2ProjectedProducersBuilderUtils
     {
-        public static async Task<List<CalcResultH2ProjectedProducer>> GetProjectedProducers(List<ProducerReportedMaterialsForSubmissionPeriod> reportedMaterials, List<MaterialDetail> materials)
+        public static List<CalcResultH2ProjectedProducer> GetProjectedProducers(List<ProducerReportedMaterialsForSubmissionPeriod> reportedMaterials, List<MaterialDetail> materials)
         {
             return reportedMaterials.Select(rm => new CalcResultH2ProjectedProducer
             {
@@ -136,11 +136,11 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 
             columnHeaders.AddRange(GetInitialColumnHeaders());
 
-            foreach (var material in materials)
+            foreach (var material in materials.Select(m => m.Code))
             {
                 columnHeaders.AddRange(GetMaterialColumnHeaders());
 
-                if (material.Code == MaterialCodes.Glass)
+                if (material == MaterialCodes.Glass)
                 {
                     columnHeaders.AddRange(GetGlassColumnHeaders());
                 }

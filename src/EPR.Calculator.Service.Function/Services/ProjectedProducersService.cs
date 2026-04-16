@@ -107,9 +107,9 @@ namespace EPR.Calculator.Service.Function.Services
 
         private List<ProducerReportedMaterialProjected> MapH1ToProducerReportedMaterialProjected(List<ProducerReportedMaterialProjected> existingAsProjected, List<CalcResultH1ProjectedProducer> projectedH1Producers)
         {
-            ProducerReportedMaterialProjected? GetMaybeNewProjected(int producerDetailId, int materialId, string submissionPeriod, string packagingType, RAMTonnage? original, RAMTonnage? projected)
+            ProducerReportedMaterialProjected? GetMaybeNewProjected(int producerDetailId, int materialId, string submissionPeriod, string packagingType, decimal? tonnageWithoutRam, RAMTonnage? original, RAMTonnage? projected)
             {
-                if (original == null || projected == null) return null;
+                if (tonnageWithoutRam <= 0 || original == null || projected == null) return null;
 
                 return new ProducerReportedMaterialProjected
                 {
@@ -139,12 +139,19 @@ namespace EPR.Calculator.Service.Function.Services
                         var key = new { ProducerId = projectedProducer.ProducerId, SubsidiaryId = projectedProducer.SubsidiaryId, Code = materialTonnage.Key };
                         var maybeExisting = existingLookup[key].FirstOrDefault();
 
-                        return maybeExisting != null ? new List<ProducerReportedMaterialProjected?>
+                        if (maybeExisting == null) {
+                            return new List<ProducerReportedMaterialProjected>();
+                        }
+
+                        var maybeNewProjected = (string packagingType, decimal? tonnageWithoutRam, RAMTonnage? orgRam, RAMTonnage? projRam) =>
+                            GetMaybeNewProjected(maybeExisting.ProducerDetailId, maybeExisting.MaterialId, projectedProducer.SubmissionPeriodCode, packagingType, tonnageWithoutRam, orgRam, projRam);
+
+                        return new List<ProducerReportedMaterialProjected?>
                         {
-                            materialTonnage.Value.HouseholdTonnageWithoutRAM > 0 ? GetMaybeNewProjected(maybeExisting.ProducerDetailId, maybeExisting.MaterialId, projectedProducer.SubmissionPeriodCode, PackagingTypes.Household, materialTonnage.Value.HouseholdRAMTonnage, materialTonnage.Value.ProjectedHouseholdRAMTonnage) : null,
-                            materialTonnage.Value.PublicBinTonnageWithoutRAM > 0 ? GetMaybeNewProjected(maybeExisting.ProducerDetailId, maybeExisting.MaterialId, projectedProducer.SubmissionPeriodCode, PackagingTypes.PublicBin, materialTonnage.Value.PublicBinRAMTonnage, materialTonnage.Value.ProjectedPublicBinRAMTonnage) : null,
-                            materialTonnage.Value.HouseholdDrinksContainerTonnageWithoutRAM > 0 ? GetMaybeNewProjected(maybeExisting.ProducerDetailId, maybeExisting.MaterialId, projectedProducer.SubmissionPeriodCode, PackagingTypes.HouseholdDrinksContainers, materialTonnage.Value.HouseholdDrinksContainerRAMTonnage, materialTonnage.Value.ProjectedHouseholdDrinksContainerRAMTonnage) : null
-                        }.Where(p => p != null).Select(p => p!) : new List<ProducerReportedMaterialProjected>();
+                            maybeNewProjected(PackagingTypes.Household, materialTonnage.Value.HouseholdTonnageWithoutRAM, materialTonnage.Value.HouseholdRAMTonnage, materialTonnage.Value.ProjectedHouseholdRAMTonnage),
+                            maybeNewProjected(PackagingTypes.PublicBin, materialTonnage.Value.PublicBinTonnageWithoutRAM, materialTonnage.Value.PublicBinRAMTonnage, materialTonnage.Value.ProjectedPublicBinRAMTonnage),
+                            maybeNewProjected(PackagingTypes.HouseholdDrinksContainers, materialTonnage.Value.HouseholdDrinksContainerTonnageWithoutRAM, materialTonnage.Value.HouseholdDrinksContainerRAMTonnage, materialTonnage.Value.ProjectedHouseholdDrinksContainerRAMTonnage)
+                        }.Where(p => p != null).Select(p => p!);
                     }
                 )
             ).ToList();

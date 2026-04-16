@@ -29,11 +29,11 @@
         private RAMTonnage EmptyRAMTonnage = new RAMTonnage { Tonnage = 0, RedTonnage = 0, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 };
 
         [TestMethod]
-        public async Task GetProjectedProducers_With_H1_NoRam_H2_FullRam()
+        public void GetProjectedProducers_With_H1_NoRam_H2_FullRam()
         {
             var (h1HHAlm, h1HdcGlass, h1NoRamReportedMaterials) = GetH1NoRamReportedMaterials();
             var (h2Alm, h2Glass, h2FullRamProjectedProducers) = GetH2FullRamProjectedProducers();
-            var result = await H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1NoRamReportedMaterials, h2FullRamProjectedProducers, materials);
+            var result = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1NoRamReportedMaterials, h2FullRamProjectedProducers, materials);
 
             Assert.AreEqual(1, result.Count());
             Assert.AreEqual(3, result.First().ProjectedTonnageByMaterial.Count());
@@ -61,12 +61,12 @@
             var expAlmRedMedicalH2Proportion = Math.Round((h2Alm.HouseholdRAMTonnage.RedMedicalTonnage + h2Alm.PublicBinRAMTonnage.RedMedicalTonnage) / h2Alm.TotalTonnage, 6);
             var expAlmAmberMedicalH2Proportion = Math.Round((h2Alm.HouseholdRAMTonnage.AmberMedicalTonnage + h2Alm.PublicBinRAMTonnage.AmberMedicalTonnage) / h2Alm.TotalTonnage, 6);
             var expAlmGreenMedicalH2Proportion = Math.Round((h2Alm.HouseholdRAMTonnage.GreenMedicalTonnage + h2Alm.PublicBinRAMTonnage.GreenMedicalTonnage) / h2Alm.TotalTonnage, 6); 
-            Assert.AreEqual(expAlmRedH2Proportion, projectedAluminium.RedH2Proportion);
-            Assert.AreEqual(expAlmAmberH2Proportion, projectedAluminium.AmberH2Proportion);
-            Assert.AreEqual(expAlmGreenH2Proportion, projectedAluminium.GreenH2Proportion);
-            Assert.AreEqual(expAlmRedMedicalH2Proportion, projectedAluminium.RedMedicalH2Proportion);
-            Assert.AreEqual(expAlmAmberMedicalH2Proportion, projectedAluminium.AmberMedicalH2Proportion);
-            Assert.AreEqual(expAlmGreenMedicalH2Proportion, projectedAluminium.GreenMedicalH2Proportion);
+            Assert.AreEqual(expAlmRedH2Proportion, projectedAluminium.H2RamProportions.Red);
+            Assert.AreEqual(expAlmAmberH2Proportion, projectedAluminium.H2RamProportions.Amber);
+            Assert.AreEqual(expAlmGreenH2Proportion, projectedAluminium.H2RamProportions.Green);
+            Assert.AreEqual(expAlmRedMedicalH2Proportion, projectedAluminium.H2RamProportions.RedMedical);
+            Assert.AreEqual(expAlmAmberMedicalH2Proportion, projectedAluminium.H2RamProportions.AmberMedical);
+            Assert.AreEqual(expAlmGreenMedicalH2Proportion, projectedAluminium.H2RamProportions.GreenMedical);
 
             var expGlassRedH2Proportion = Math.Round((h2Glass.HouseholdRAMTonnage.RedTonnage + h2Glass.PublicBinRAMTonnage.RedTonnage + (h2Glass.HouseholdDrinksContainerRAMTonnage?.RedTonnage ?? 0)) / h2Glass.TotalTonnage, 6);
             var expGlassAmberH2Proportion = Math.Round((h2Glass.HouseholdRAMTonnage.AmberTonnage + h2Glass.PublicBinRAMTonnage.AmberTonnage + (h2Glass.HouseholdDrinksContainerRAMTonnage?.AmberTonnage ?? 0)) / h2Glass.TotalTonnage, 6);
@@ -74,12 +74,12 @@
             var expGlassRedMedicalH2Proportion = Math.Round((h2Glass.HouseholdRAMTonnage.RedMedicalTonnage + h2Glass.PublicBinRAMTonnage.RedMedicalTonnage + (h2Glass.HouseholdDrinksContainerRAMTonnage?.RedMedicalTonnage ?? 0)) / h2Glass.TotalTonnage, 6);
             var expGlassAmberMedicalH2Proportion = Math.Round((h2Glass.HouseholdRAMTonnage.AmberMedicalTonnage + h2Glass.PublicBinRAMTonnage.AmberMedicalTonnage + (h2Glass.HouseholdDrinksContainerRAMTonnage?.AmberMedicalTonnage ?? 0)) / h2Glass.TotalTonnage, 6);
             var expGlassGreenMedicalH2Proportion = Math.Round((h2Glass.HouseholdRAMTonnage.GreenMedicalTonnage + h2Glass.PublicBinRAMTonnage.GreenMedicalTonnage + (h2Glass.HouseholdDrinksContainerRAMTonnage?.GreenMedicalTonnage ?? 0)) / h2Glass.TotalTonnage, 6);
-            Assert.AreEqual(expGlassRedH2Proportion, projectedGlass.RedH2Proportion);
-            Assert.AreEqual(expGlassAmberH2Proportion, projectedGlass.AmberH2Proportion);
-            Assert.AreEqual(expGlassGreenH2Proportion, projectedGlass.GreenH2Proportion);
-            Assert.AreEqual(expGlassRedMedicalH2Proportion, projectedGlass.RedMedicalH2Proportion);
-            Assert.AreEqual(expGlassAmberMedicalH2Proportion, projectedGlass.AmberMedicalH2Proportion);
-            Assert.AreEqual(expGlassGreenMedicalH2Proportion, projectedGlass.GreenMedicalH2Proportion);
+            Assert.AreEqual(expGlassRedH2Proportion, projectedGlass.H2RamProportions.Red);
+            Assert.AreEqual(expGlassAmberH2Proportion, projectedGlass.H2RamProportions.Amber);
+            Assert.AreEqual(expGlassGreenH2Proportion, projectedGlass.H2RamProportions.Green);
+            Assert.AreEqual(expGlassRedMedicalH2Proportion, projectedGlass.H2RamProportions.RedMedical);
+            Assert.AreEqual(expGlassAmberMedicalH2Proportion, projectedGlass.H2RamProportions.AmberMedical);
+            Assert.AreEqual(expGlassGreenMedicalH2Proportion, projectedGlass.H2RamProportions.GreenMedical);
 
             Assert.AreEqual(
                 new RAMTonnage { Tonnage = h1HHAlm.PackagingTonnage, RedTonnage = h1HHAlm.PackagingTonnage * expAlmRedH2Proportion, AmberTonnage = h1HHAlm.PackagingTonnage * expAlmAmberH2Proportion, GreenTonnage = h1HHAlm.PackagingTonnage * expAlmGreenH2Proportion, RedMedicalTonnage = h1HHAlm.PackagingTonnage * expAlmRedMedicalH2Proportion, AmberMedicalTonnage = h1HHAlm.PackagingTonnage * expAlmAmberMedicalH2Proportion, GreenMedicalTonnage = h1HHAlm.PackagingTonnage * expAlmGreenMedicalH2Proportion },
@@ -98,12 +98,12 @@
         }
 
         [TestMethod]
-        public async Task GetProjectedProducers_With_H1_NoRam_H2_PartialRam()
+        public void GetProjectedProducers_With_H1_NoRam_H2_PartialRam()
         {
             var (h1HHAlm, h1HdcGlass, h1NoRamReportedMaterials) = GetH1NoRamReportedMaterials();
             var (h2Alm, h2Glass, h2PartialRamProjectedProducers) = GetH2PartialRamProjectedProducers();    
             
-            var result = await H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1NoRamReportedMaterials, h2PartialRamProjectedProducers, materials);
+            var result = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1NoRamReportedMaterials, h2PartialRamProjectedProducers, materials);
 
             Assert.AreEqual(1, result.Count());
             Assert.AreEqual(3, result.First().ProjectedTonnageByMaterial.Count());
@@ -120,12 +120,12 @@
             var expAlmRedMedicalH2Proportion = Math.Round((h2Alm.HouseholdRAMTonnage.RedMedicalTonnage + h2Alm.PublicBinRAMTonnage.RedMedicalTonnage) / h2Alm.TotalTonnage, 6);
             var expAlmAmberMedicalH2Proportion = Math.Round((h2Alm.HouseholdRAMTonnage.AmberMedicalTonnage + h2Alm.PublicBinRAMTonnage.AmberMedicalTonnage) / h2Alm.TotalTonnage, 6);
             var expAlmGreenMedicalH2Proportion = Math.Round((h2Alm.HouseholdRAMTonnage.GreenMedicalTonnage + h2Alm.PublicBinRAMTonnage.GreenMedicalTonnage) / h2Alm.TotalTonnage, 6); 
-            Assert.AreEqual(expAlmRedH2Proportion, projectedAluminium.RedH2Proportion);
-            Assert.AreEqual(expAlmAmberH2Proportion, projectedAluminium.AmberH2Proportion);
-            Assert.AreEqual(expAlmGreenH2Proportion, projectedAluminium.GreenH2Proportion);
-            Assert.AreEqual(expAlmRedMedicalH2Proportion, projectedAluminium.RedMedicalH2Proportion);
-            Assert.AreEqual(expAlmAmberMedicalH2Proportion, projectedAluminium.AmberMedicalH2Proportion);
-            Assert.AreEqual(expAlmGreenMedicalH2Proportion, projectedAluminium.GreenMedicalH2Proportion);
+            Assert.AreEqual(expAlmRedH2Proportion, projectedAluminium.H2RamProportions.Red);
+            Assert.AreEqual(expAlmAmberH2Proportion, projectedAluminium.H2RamProportions.Amber);
+            Assert.AreEqual(expAlmGreenH2Proportion, projectedAluminium.H2RamProportions.Green);
+            Assert.AreEqual(expAlmRedMedicalH2Proportion, projectedAluminium.H2RamProportions.RedMedical);
+            Assert.AreEqual(expAlmAmberMedicalH2Proportion, projectedAluminium.H2RamProportions.AmberMedical);
+            Assert.AreEqual(expAlmGreenMedicalH2Proportion, projectedAluminium.H2RamProportions.GreenMedical);
 
             var expGlassRedH2Proportion = Math.Round((
                 h2Glass.HouseholdRAMTonnage.RedTonnage + h2Glass.PublicBinRAMTonnage.RedTonnage + (h2Glass.HouseholdDrinksContainerRAMTonnage?.RedTonnage ?? 0) +
@@ -136,12 +136,12 @@
             var expGlassRedMedicalH2Proportion = Math.Round((h2Glass.HouseholdRAMTonnage.RedMedicalTonnage + h2Glass.PublicBinRAMTonnage.RedMedicalTonnage + (h2Glass.HouseholdDrinksContainerRAMTonnage?.RedMedicalTonnage ?? 0)) / h2Glass.TotalTonnage, 6);
             var expGlassAmberMedicalH2Proportion = Math.Round((h2Glass.HouseholdRAMTonnage.AmberMedicalTonnage + h2Glass.PublicBinRAMTonnage.AmberMedicalTonnage + (h2Glass.HouseholdDrinksContainerRAMTonnage?.AmberMedicalTonnage ?? 0)) / h2Glass.TotalTonnage, 6);
             var expGlassGreenMedicalH2Proportion = Math.Round((h2Glass.HouseholdRAMTonnage.GreenMedicalTonnage + h2Glass.PublicBinRAMTonnage.GreenMedicalTonnage + (h2Glass.HouseholdDrinksContainerRAMTonnage?.GreenMedicalTonnage ?? 0)) / h2Glass.TotalTonnage, 6);
-            Assert.AreEqual(expGlassRedH2Proportion, projectedGlass.RedH2Proportion);
-            Assert.AreEqual(expGlassAmberH2Proportion, projectedGlass.AmberH2Proportion);
-            Assert.AreEqual(expGlassGreenH2Proportion, projectedGlass.GreenH2Proportion);
-            Assert.AreEqual(expGlassRedMedicalH2Proportion, projectedGlass.RedMedicalH2Proportion);
-            Assert.AreEqual(expGlassAmberMedicalH2Proportion, projectedGlass.AmberMedicalH2Proportion);
-            Assert.AreEqual(expGlassGreenMedicalH2Proportion, projectedGlass.GreenMedicalH2Proportion);
+            Assert.AreEqual(expGlassRedH2Proportion, projectedGlass.H2RamProportions.Red);
+            Assert.AreEqual(expGlassAmberH2Proportion, projectedGlass.H2RamProportions.Amber);
+            Assert.AreEqual(expGlassGreenH2Proportion, projectedGlass.H2RamProportions.Green);
+            Assert.AreEqual(expGlassRedMedicalH2Proportion, projectedGlass.H2RamProportions.RedMedical);
+            Assert.AreEqual(expGlassAmberMedicalH2Proportion, projectedGlass.H2RamProportions.AmberMedical);
+            Assert.AreEqual(expGlassGreenMedicalH2Proportion, projectedGlass.H2RamProportions.GreenMedical);
 
             Assert.AreEqual(
                 new RAMTonnage { Tonnage = h1HHAlm.PackagingTonnage, RedTonnage = h1HHAlm.PackagingTonnage * expAlmRedH2Proportion, AmberTonnage = h1HHAlm.PackagingTonnage * expAlmAmberH2Proportion, GreenTonnage = h1HHAlm.PackagingTonnage * expAlmGreenH2Proportion, RedMedicalTonnage = h1HHAlm.PackagingTonnage * expAlmRedMedicalH2Proportion, AmberMedicalTonnage = h1HHAlm.PackagingTonnage * expAlmAmberMedicalH2Proportion, GreenMedicalTonnage = h1HHAlm.PackagingTonnage * expAlmGreenMedicalH2Proportion },
@@ -160,11 +160,11 @@
         }
     
         [TestMethod]
-        public async Task GetProjectedProducers_With_H1_PartialRam_H2_FullRam()
+        public void GetProjectedProducers_With_H1_PartialRam_H2_FullRam()
         {
             var (h1HHAlm, h1HdcGlass, h1PartialRamReportedMaterials) = GetH1PartialRamReportedMaterials();
             var (h2Alm, h2Glass, h2FullRamProjectedProducers) = GetH2FullRamProjectedProducers();    
-            var result = await H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1PartialRamReportedMaterials, h2FullRamProjectedProducers, materials);
+            var result = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1PartialRamReportedMaterials, h2FullRamProjectedProducers, materials);
 
             Assert.AreEqual(1, result.Count());
             Assert.AreEqual(3, result.First().ProjectedTonnageByMaterial.Count());
@@ -194,12 +194,12 @@
             var expAlmRedMedicalH2Proportion = Math.Round((h2Alm.HouseholdRAMTonnage.RedMedicalTonnage + h2Alm.PublicBinRAMTonnage.RedMedicalTonnage) / h2Alm.TotalTonnage, 6);
             var expAlmAmberMedicalH2Proportion = Math.Round((h2Alm.HouseholdRAMTonnage.AmberMedicalTonnage + h2Alm.PublicBinRAMTonnage.AmberMedicalTonnage) / h2Alm.TotalTonnage, 6);
             var expAlmGreenMedicalH2Proportion = Math.Round((h2Alm.HouseholdRAMTonnage.GreenMedicalTonnage + h2Alm.PublicBinRAMTonnage.GreenMedicalTonnage) / h2Alm.TotalTonnage, 6); 
-            Assert.AreEqual(expAlmRedH2Proportion, projectedAluminium.RedH2Proportion);
-            Assert.AreEqual(expAlmAmberH2Proportion, projectedAluminium.AmberH2Proportion);
-            Assert.AreEqual(expAlmGreenH2Proportion, projectedAluminium.GreenH2Proportion);
-            Assert.AreEqual(expAlmRedMedicalH2Proportion, projectedAluminium.RedMedicalH2Proportion);
-            Assert.AreEqual(expAlmAmberMedicalH2Proportion, projectedAluminium.AmberMedicalH2Proportion);
-            Assert.AreEqual(expAlmGreenMedicalH2Proportion, projectedAluminium.GreenMedicalH2Proportion);
+            Assert.AreEqual(expAlmRedH2Proportion, projectedAluminium.H2RamProportions.Red);
+            Assert.AreEqual(expAlmAmberH2Proportion, projectedAluminium.H2RamProportions.Amber);
+            Assert.AreEqual(expAlmGreenH2Proportion, projectedAluminium.H2RamProportions.Green);
+            Assert.AreEqual(expAlmRedMedicalH2Proportion, projectedAluminium.H2RamProportions.RedMedical);
+            Assert.AreEqual(expAlmAmberMedicalH2Proportion, projectedAluminium.H2RamProportions.AmberMedical);
+            Assert.AreEqual(expAlmGreenMedicalH2Proportion, projectedAluminium.H2RamProportions.GreenMedical);
 
             var expGlassRedH2Proportion = Math.Round((h2Glass.HouseholdRAMTonnage.RedTonnage + h2Glass.PublicBinRAMTonnage.RedTonnage + (h2Glass.HouseholdDrinksContainerRAMTonnage?.RedTonnage ?? 0)) / h2Glass.TotalTonnage, 6);
             var expGlassAmberH2Proportion = Math.Round((h2Glass.HouseholdRAMTonnage.AmberTonnage + h2Glass.PublicBinRAMTonnage.AmberTonnage + (h2Glass.HouseholdDrinksContainerRAMTonnage?.AmberTonnage ?? 0)) / h2Glass.TotalTonnage, 6);
@@ -207,12 +207,12 @@
             var expGlassRedMedicalH2Proportion = Math.Round((h2Glass.HouseholdRAMTonnage.RedMedicalTonnage + h2Glass.PublicBinRAMTonnage.RedMedicalTonnage + (h2Glass.HouseholdDrinksContainerRAMTonnage?.RedMedicalTonnage ?? 0)) / h2Glass.TotalTonnage, 6);
             var expGlassAmberMedicalH2Proportion = Math.Round((h2Glass.HouseholdRAMTonnage.AmberMedicalTonnage + h2Glass.PublicBinRAMTonnage.AmberMedicalTonnage + (h2Glass.HouseholdDrinksContainerRAMTonnage?.AmberMedicalTonnage ?? 0)) / h2Glass.TotalTonnage, 6);
             var expGlassGreenMedicalH2Proportion = Math.Round((h2Glass.HouseholdRAMTonnage.GreenMedicalTonnage + h2Glass.PublicBinRAMTonnage.GreenMedicalTonnage + (h2Glass.HouseholdDrinksContainerRAMTonnage?.GreenMedicalTonnage ?? 0)) / h2Glass.TotalTonnage, 6);
-            Assert.AreEqual(expGlassRedH2Proportion, projectedGlass.RedH2Proportion);
-            Assert.AreEqual(expGlassAmberH2Proportion, projectedGlass.AmberH2Proportion);
-            Assert.AreEqual(expGlassGreenH2Proportion, projectedGlass.GreenH2Proportion);
-            Assert.AreEqual(expGlassRedMedicalH2Proportion, projectedGlass.RedMedicalH2Proportion);
-            Assert.AreEqual(expGlassAmberMedicalH2Proportion, projectedGlass.AmberMedicalH2Proportion);
-            Assert.AreEqual(expGlassGreenMedicalH2Proportion, projectedGlass.GreenMedicalH2Proportion);
+            Assert.AreEqual(expGlassRedH2Proportion, projectedGlass.H2RamProportions.Red);
+            Assert.AreEqual(expGlassAmberH2Proportion, projectedGlass.H2RamProportions.Amber);
+            Assert.AreEqual(expGlassGreenH2Proportion, projectedGlass.H2RamProportions.Green);
+            Assert.AreEqual(expGlassRedMedicalH2Proportion, projectedGlass.H2RamProportions.RedMedical);
+            Assert.AreEqual(expGlassAmberMedicalH2Proportion, projectedGlass.H2RamProportions.AmberMedical);
+            Assert.AreEqual(expGlassGreenMedicalH2Proportion, projectedGlass.H2RamProportions.GreenMedical);
 
             Assert.AreEqual(
                 new RAMTonnage { 
@@ -247,11 +247,11 @@
         }
 
         [TestMethod]
-        public async Task GetProjectedProducers_With_H1_FullRam_H2_FullRam()
+        public void GetProjectedProducers_With_H1_FullRam_H2_FullRam()
         {
             var (h1HHAlm, h1HdcGlass, h1FullRamReportedMaterials) = GetH1FullRamReportedMaterials();
             var (h2Alm, h2Glass, h2FullRamProjectedProducers) = GetH2FullRamProjectedProducers();    
-            var result = await H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1FullRamReportedMaterials, h2FullRamProjectedProducers, materials);
+            var result = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1FullRamReportedMaterials, h2FullRamProjectedProducers, materials);
 
             Assert.AreEqual(1, result.Count());
             Assert.AreEqual(3, result.First().ProjectedTonnageByMaterial.Count());
@@ -282,11 +282,11 @@
         } 
 
         [TestMethod]
-        public async Task GetProjectedProducers_With_H1_NoReportedMaterial()
+        public void GetProjectedProducers_With_H1_NoReportedMaterial()
         {
             var (h1HHAlm, h1HdcGlass, h1FullRamReportedMaterials) = GetH1FullRamReportedMaterials();
             var (h2Alm, h2Glass, h2FullRamProjectedProducers) = GetH2FullRamProjectedProducers();    
-            var result = await H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1FullRamReportedMaterials, h2FullRamProjectedProducers, materials);
+            var result = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1FullRamReportedMaterials, h2FullRamProjectedProducers, materials);
 
             Assert.AreEqual(1, result.Count());
 
@@ -294,12 +294,12 @@
             Assert.AreEqual(EmptyRAMTonnage, projectedOtherMaterials.HouseholdRAMTonnage);
             Assert.AreEqual(EmptyRAMTonnage, projectedOtherMaterials.PublicBinRAMTonnage);
             Assert.IsNull(projectedOtherMaterials.HouseholdDrinksContainerRAMTonnage);
-            Assert.AreEqual(0, projectedOtherMaterials.RedH2Proportion);
-            Assert.AreEqual(0, projectedOtherMaterials.AmberH2Proportion);
-            Assert.AreEqual(0, projectedOtherMaterials.GreenH2Proportion);
-            Assert.AreEqual(0, projectedOtherMaterials.RedMedicalH2Proportion);
-            Assert.AreEqual(0, projectedOtherMaterials.AmberMedicalH2Proportion);
-            Assert.AreEqual(0, projectedOtherMaterials.GreenMedicalH2Proportion);
+            Assert.AreEqual(0, projectedOtherMaterials.H2RamProportions.Red);
+            Assert.AreEqual(0, projectedOtherMaterials.H2RamProportions.Amber);
+            Assert.AreEqual(0, projectedOtherMaterials.H2RamProportions.Green);
+            Assert.AreEqual(0, projectedOtherMaterials.H2RamProportions.RedMedical);
+            Assert.AreEqual(0, projectedOtherMaterials.H2RamProportions.AmberMedical);
+            Assert.AreEqual(0, projectedOtherMaterials.H2RamProportions.GreenMedical);
             Assert.AreEqual(EmptyRAMTonnage, projectedOtherMaterials.HouseholdRAMTonnage);
             Assert.AreEqual(EmptyRAMTonnage, projectedOtherMaterials.PublicBinRAMTonnage);
             Assert.IsNull(projectedOtherMaterials.HouseholdDrinksContainerRAMTonnage);

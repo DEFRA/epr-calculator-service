@@ -216,8 +216,8 @@
             var h1Prod11SubsidiaryAlm = h1Prod11Subsidiary.ProjectedTonnageByMaterial[MaterialCodes.Aluminium];
 
             Assert.AreEqual(
-                ((h1h1Prod11ParentAlm.RedH2Proportion * h1h1Prod11ParentAlm.H2TotalTonnage) + (h1Prod11SubsidiaryAlm.RedH2Proportion * h1Prod11SubsidiaryAlm.H2TotalTonnage)) / (h1h1Prod11ParentAlm.H2TotalTonnage + h1Prod11SubsidiaryAlm.H2TotalTonnage), 
-                h1Prod11Subtotal.ProjectedTonnageByMaterial[MaterialCodes.Aluminium].RedH2Proportion
+                ((h1h1Prod11ParentAlm.H2RamProportions.Red * h1h1Prod11ParentAlm.H2TotalTonnage) + (h1Prod11SubsidiaryAlm.H2RamProportions.Red * h1Prod11SubsidiaryAlm.H2TotalTonnage)) / (h1h1Prod11ParentAlm.H2TotalTonnage + h1Prod11SubsidiaryAlm.H2TotalTonnage), 
+                h1Prod11Subtotal.ProjectedTonnageByMaterial[MaterialCodes.Aluminium].H2RamProportions.Red
             );
             Assert.AreEqual(
                 h1Prod11Parent.ProjectedTonnageByMaterial[MaterialCodes.Glass].HouseholdDrinksContainerTonnageWithoutRAM + h1Prod11Subsidiary.ProjectedTonnageByMaterial[MaterialCodes.Glass].HouseholdDrinksContainerTonnageWithoutRAM, 

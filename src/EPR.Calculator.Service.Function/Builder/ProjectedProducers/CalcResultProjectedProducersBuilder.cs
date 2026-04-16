@@ -40,13 +40,13 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             var h2ReportedMaterials = reportedMaterialsForRun.Where(r => r.SubmissionPeriod == submissionPeriod("H2"));
             var h1ReportedMaterials = reportedMaterialsForRun.Where(r => r.SubmissionPeriod == submissionPeriod("H1"));
 
-            var h2ProjectedProduers = await H2ProjectedProducersBuilderUtils.GetProjectedProducers(h2ReportedMaterials.ToList(), materials);
+            var h2ProjectedProduers = H2ProjectedProducersBuilderUtils.GetProjectedProducers(h2ReportedMaterials.ToList(), materials);
             var h2ProjectedProducersWithSubtotals = AddSubtotals<CalcResultH2ProjectedProducer, CalcResultH2ProjectedProducerMaterialTonnage>(
                 h2ProjectedProduers,
                 createSubtotal: H2ProjectedProducersBuilderUtils.CreateParentProducer,
                 sumProducerGroupTonnages: H2ProjectedProducersBuilderUtils.SumProducerGroupTonnages
             );
-            var h1ProjectedProduers = await H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1ReportedMaterials.ToList(), h2ProjectedProduers, materials);
+            var h1ProjectedProduers = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1ReportedMaterials.ToList(), h2ProjectedProduers, materials);
             var h1ProjectedProducersWithSubtotals = AddSubtotals<CalcResultH1ProjectedProducer, CalcResultH1ProjectedProducerMaterialTonnage>(
                 h1ProjectedProduers,
                 createSubtotal: H1ProjectedProducersBuilderUtils.CreateParentProducer,
