@@ -2,7 +2,7 @@ using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Services;
-using Microsoft.Data.Sqlite;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
@@ -10,26 +10,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     [TestClass]
     public class CalculatorRunPomDataTests : IDisposable
     {
-        private readonly SqliteConnection _connection;
         private readonly ApplicationDBContext context;
 
         public CalculatorRunPomDataTests()
         {
-            _connection = new SqliteConnection("Data Source=:memory:");
-            _connection.Open();
-
-            var options = new DbContextOptionsBuilder<ApplicationDBContext>()
-                .UseSqlite(_connection)
-                .Options;
-
-            context = new ApplicationDBContext(options);
-            context.Database.EnsureCreated();
+            context = TestFixtures.New(o => o.UseSqlLite()).Create<ApplicationDBContext>();
         }
 
         public void Dispose()
         {
+            context.Database.CloseConnection();
             context.Dispose();
-            _connection.Close();
         }
 
         private async Task<(RelativeYear, CalculatorRunClassification, PomData)> SeedData()

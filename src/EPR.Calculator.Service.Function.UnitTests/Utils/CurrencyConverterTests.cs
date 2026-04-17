@@ -1,4 +1,4 @@
-﻿using EPR.Calculator.Service.Common.Utils;
+﻿using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Utils
 {

@@ -1,13 +1,13 @@
-using System.Collections.Immutable;
 using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.CancelledProducers;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Billing.Contexts;
+using EPR.Calculator.Service.Function.Features.Calculator.Contexts;
 using EPR.Calculator.Service.Function.Services;
-using Microsoft.EntityFrameworkCore;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 using Microsoft.Extensions.Logging;
-using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
 {
@@ -20,13 +20,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
 
         public CalcResultCancelledProducersBuilderTests()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDBContext>()
-                .UseInMemoryDatabase(databaseName: "PayCal")
-                .Options;
-
-            _dbContext = new ApplicationDBContext(options);
+            _dbContext = TestFixtures.New().Create<ApplicationDBContext>();
 
             _materialService = new Mock<IMaterialService>();
+            _materialService.Setup(t => t.GetMaterialIdsByType(It.IsAny<CancellationToken>())).ReturnsAsync(TestData.Materials.ToImmutableDictionary(t => t.Name, t => t.Id));
+
             var invoicedProducerService = new InvoicedProducerService(_dbContext, new Mock<ILogger<InvoicedProducerService>>().Object);
 
             _sut = new CalcResultCancelledProducersBuilder(invoicedProducerService, _materialService.Object);
@@ -36,22 +34,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         public void TearDown()
         {
             _dbContext.Database.EnsureDeleted();
+            _dbContext.Dispose();
         }
 
         [TestMethod]
         public async Task CanConstruct()
         {
-            TestDataHelper.SeedDatabaseForInitialRun(_dbContext);
+            TestData.SeedDatabaseForInitialRun(_dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto { RunId = 2, RelativeYear = new RelativeYear(2025) };
+            var runContext = TestFixtures.Default.Create<CalculatorRunContext>() with { RunId = 2 };
 
             var expected = _dbContext.ProducerDesignatedRunInvoiceInstruction.FirstOrDefault(t => t.ProducerId == 2 && t.CalculatorRunId == 1);
 
-            _materialService.Setup(t => t.GetMaterialIdsByType()).ReturnsAsync(TestDataHelper.GetMaterials().ToImmutableDictionary(t => t.Name, t => t.Id));
-
             // Act
-            var result = await _sut.ConstructAsync(requestDto);
+            var result = await _sut.ConstructAsync(runContext);
 
             // Assert
             Assert.IsNotNull(result);
@@ -68,15 +65,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         [TestMethod]
         public async Task CanConstructWithOutCancelledProducers()
         {
-            TestDataHelper.SeedDatabaseForUnclassified(_dbContext);
+            TestData.SeedDatabaseForUnclassified(_dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
+            var runContext = TestFixtures.Default.Create<CalculatorRunContext>();
 
-            _materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
+            _materialService.Setup(t => t.GetMaterials(It.IsAny<CancellationToken>())).ReturnsAsync(TestData.Materials);
 
             // Act
-            var result = await _sut.ConstructAsync(requestDto);
+            var result = await _sut.ConstructAsync(runContext);
 
             // Assert
             Assert.IsNotNull(result);
@@ -85,21 +82,22 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         }
 
 
-
         [TestMethod]
         public async Task CancelledProducersShouldNotGetAcceptedProducers()
         {
-            TestDataHelper.SeedDatabaseForInitialRunCompleted(_dbContext);
+            TestData.SeedDatabaseForInitialRunCompleted(_dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto { RunId = 2, RelativeYear = new RelativeYear(2025) };
+            var runContext = TestFixtures.Default.Create<CalculatorRunContext>() with { RunId = 2 };
 
-            var expected = _dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject == CommonConstants.Accepted && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant() && t.CalculatorRunId == 2);
-
-            _materialService.Setup(t => t.GetMaterialIdsByType()).ReturnsAsync(TestDataHelper.GetMaterials().ToImmutableDictionary(t => t.Name, t => t.Id));
+            var expected = _dbContext.ProducerResultFileSuggestedBillingInstruction
+                .FirstOrDefault(t =>
+                    t.BillingInstructionAcceptReject == CommonConstants.Accepted
+                    && CommonConstants.Cancel.Equals(t.SuggestedBillingInstruction, StringComparison.OrdinalIgnoreCase)
+                    && t.CalculatorRunId == 2);
 
             // Act
-            var result = await _sut.ConstructAsync(requestDto);
+            var result = await _sut.ConstructAsync(runContext);
 
             // Assert
             Assert.IsNotNull(result);
@@ -111,17 +109,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         [TestMethod]
         public async Task CancelledProducersShouldGetAcceptedProducersForBillingFile()
         {
-            TestDataHelper.SeedDatabaseForInitialRunCompleted(_dbContext);
+            TestData.SeedDatabaseForInitialRunCompleted(_dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto { RunId = 3, RelativeYear = new RelativeYear(2025), IsBillingFile = true };
+            var runContext = TestFixtures.Default.Create<BillingRunContext>();
 
-            var expected = _dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject == CommonConstants.Accepted && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant() && t.CalculatorRunId == 3);
-
-            _materialService.Setup(t => t.GetMaterialIdsByType()).ReturnsAsync(TestDataHelper.GetMaterials().ToImmutableDictionary(t => t.Name, t => t.Id));
+            var expected = _dbContext.ProducerResultFileSuggestedBillingInstruction
+                .FirstOrDefault(t =>
+                    t.BillingInstructionAcceptReject == CommonConstants.Accepted
+                    && CommonConstants.Cancel.Equals(t.SuggestedBillingInstruction, StringComparison.OrdinalIgnoreCase)
+                    && t.CalculatorRunId == runContext.RunId);
 
             // Act
-            var result = await _sut.ConstructAsync(requestDto);
+            var result = await _sut.ConstructAsync(runContext);
 
             // Assert
             Assert.IsNotNull(result);
@@ -133,17 +133,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         [TestMethod]
         public async Task CancelledProducersShouldNotGetRejectedProducersForBillingFile()
         {
-            TestDataHelper.SeedDatabaseForInitialRunCompleted(_dbContext);
+            TestData.SeedDatabaseForInitialRunCompleted(_dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto { RunId = 3, RelativeYear = new RelativeYear(2025), IsBillingFile = true };
+            var runContext = TestFixtures.Default.Create<BillingRunContext>();
 
-            var expected = _dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject == CommonConstants.Rejected && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant() && t.CalculatorRunId == 3);
-
-            _materialService.Setup(t => t.GetMaterialIdsByType()).ReturnsAsync(TestDataHelper.GetMaterials().ToImmutableDictionary(t => t.Name, t => t.Id));
+            var expected = _dbContext.ProducerResultFileSuggestedBillingInstruction
+                .FirstOrDefault(t =>
+                    t.BillingInstructionAcceptReject == CommonConstants.Rejected
+                    && CommonConstants.Cancel.Equals(t.SuggestedBillingInstruction, StringComparison.OrdinalIgnoreCase)
+                    && t.CalculatorRunId == runContext.RunId);
 
             // Act
-            var result = await _sut.ConstructAsync(requestDto);
+            var result = await _sut.ConstructAsync(runContext);
 
             // Assert
             Assert.IsNotNull(result);
@@ -156,19 +158,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         [TestMethod]
         public async Task CancelledProducersShouldGetRejectedProducers()
         {
-            TestDataHelper.SeedDatabaseForInitialRunCompleted(_dbContext);
+            TestData.SeedDatabaseForInitialRunCompleted(_dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto { RunId = 3, RelativeYear = new RelativeYear(2025) };
+            var runContext = TestFixtures.Default.Create<BillingRunContext>();
 
-            var expected = _dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject ==
-            CommonConstants.Rejected && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant()
-            && t.CalculatorRunId == 2);
-
-            _materialService.Setup(t => t.GetMaterialIdsByType()).ReturnsAsync(TestDataHelper.GetMaterials().ToImmutableDictionary(t => t.Name, t => t.Id));
+            var expected = _dbContext.ProducerResultFileSuggestedBillingInstruction
+                .FirstOrDefault(t =>
+                    t.BillingInstructionAcceptReject == CommonConstants.Rejected
+                    && CommonConstants.Cancel.Equals(t.SuggestedBillingInstruction, StringComparison.OrdinalIgnoreCase)
+                    && t.CalculatorRunId == 2);
 
             // Act
-            var result = await _sut.ConstructAsync(requestDto);
+            var result = await _sut.ConstructAsync(runContext);
 
             // Assert
             Assert.IsNotNull(result);
@@ -180,39 +182,36 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         [TestMethod]
         public async Task CancelledProducersShouldNotGetRejectedInitialProducer()
         {
-            TestDataHelper.SeedDatabaseForInitialRunCompleted(_dbContext);
+            TestData.SeedDatabaseForInitialRunCompleted(_dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto { RunId = 3, RelativeYear = new RelativeYear(2025) };
-
-            _materialService.Setup(t => t.GetMaterialIdsByType()).ReturnsAsync(TestDataHelper.GetMaterials().ToImmutableDictionary(t => t.Name, t => t.Id));
+            var runContext = TestFixtures.Default.Create<CalculatorRunContext>();
 
             // Act
-            var result = await _sut.ConstructAsync(requestDto);
+            var result = await _sut.ConstructAsync(runContext);
 
             // Assert
             Assert.IsNotNull(result);
-            var cancelledProducer = result.CancelledProducers.Where(t=>t.ProducerId == 3).FirstOrDefault();
+            var cancelledProducer = result.CancelledProducers.FirstOrDefault(t => t.ProducerId == 3);
             Assert.IsNull(cancelledProducer);
         }
 
         [TestMethod]
         public async Task CancelledProducersWithNoMaterials()
         {
-            TestDataHelper.SeedDatabaseForInitialRunCompleted(_dbContext);
+            TestData.SeedDatabaseForInitialRunCompleted(_dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto { RunId = 3, RelativeYear = new RelativeYear(2025) };
+            var runContext = TestFixtures.Default.Create<CalculatorRunContext>() with { RunId = 3 };
 
-            _materialService.Setup(t => t.GetMaterialIdsByType()).ReturnsAsync(TestDataHelper.GetMaterials().ToImmutableDictionary(t => t.Name, t => t.Id));
-
-            var expected = _dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject ==
-            CommonConstants.Rejected && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant()
-            && t.CalculatorRunId == 2);
-
+            var expected = _dbContext.ProducerResultFileSuggestedBillingInstruction
+                .FirstOrDefault(t =>
+                    t.BillingInstructionAcceptReject == CommonConstants.Rejected
+                    && CommonConstants.Cancel.Equals(t.SuggestedBillingInstruction, StringComparison.OrdinalIgnoreCase)
+                    && t.CalculatorRunId == 2);
 
             // Act
-            var result = await _sut.ConstructAsync(requestDto);
+            var result = await _sut.ConstructAsync(runContext);
 
             // Assert
             Assert.IsNotNull(result);
@@ -706,7 +705,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             var producerId = 1;
             foreach (var producerName in producerNames)
             {
-                this.dbContext.ProducerDetail.Add(new ProducerDetail
+                _dbContext.ProducerDetail.Add(new ProducerDetail
                 {
                     ProducerId = producerId++,
                     SubsidiaryId = $"{producerId}-Sub",
@@ -715,13 +714,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                 });
             }
 
-            this.dbContext.SaveChanges();
+            _dbContext.SaveChanges();
 
             for (int producerDetailId = 1; producerDetailId <= 10; producerDetailId++)
             {
                 for (int materialId = 1; materialId < 9; materialId++)
                 {
-                    this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                    _dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
                     {
                         MaterialId = materialId,
                         ProducerDetailId = producerDetailId,
@@ -729,7 +728,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                         PackagingType = "HH",
                         PackagingTonnage = materialId * 50,
                     });
-                    this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                    _dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
                     {
                         MaterialId = materialId,
                         ProducerDetailId = producerDetailId,
@@ -740,7 +739,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                 }
             }
 
-            this.dbContext.ProducerReportedMaterial.AddRange(
+            _dbContext.ProducerReportedMaterial.AddRange(
                 new()  {
                     MaterialId = 3,
                     ProducerDetailId = 1,
@@ -785,7 +784,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                 }
             );
 
-            this.dbContext.SaveChanges();
+            _dbContext.SaveChanges();
         }
 
         private void CreateNewRun()
@@ -809,9 +808,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
                 CreatedBy = "Test User",
                 DefaultParameterSettingMasterId = 2,
             };
-            this.dbContext.CalculatorRuns.Add(run);
-            this.dbContext.CalculatorRuns.Add(run1);
-            this.dbContext.SaveChanges();
+            _dbContext.CalculatorRuns.Add(run);
+            _dbContext.CalculatorRuns.Add(run1);
+            _dbContext.SaveChanges();
         }
     }
 }

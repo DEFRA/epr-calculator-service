@@ -1,10 +1,6 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,27 +11,21 @@ namespace EPR.Calculator.Service.Function.Services
         Task StoreProjectedProducers(int runId, List<CalcResultH2ProjectedProducer> h2ProjectedProducers);
     }
 
-    public class ProjectedProducersService : IProjectedProducersService
+    public class ProjectedProducersService(
+        ApplicationDBContext dbContext,
+        IBulkOperations bulkOps)
+        : IProjectedProducersService
     {
-        private readonly ApplicationDBContext context;
-        private IDbLoadingChunkerService<ProducerReportedMaterialProjected> producerReportedMaterialProjectedChunker { get; init; }
-
-        public ProjectedProducersService(ApplicationDBContext dbContext, IDbLoadingChunkerService<ProducerReportedMaterialProjected> prmpChunker)
-        {
-            context = dbContext;
-            producerReportedMaterialProjectedChunker = prmpChunker;
-        }
-
         public async Task StoreProjectedProducers(int runId, List<CalcResultH2ProjectedProducer> h2ProjectedProducers)
         {
             var existingAsProjected = await GetExistingAsProjected(runId);
             var missingProjected = MapH2ToProducerReportedMaterialProjected(existingAsProjected, h2ProjectedProducers);
             var allProjected = existingAsProjected.Concat(missingProjected).ToList();
-            await producerReportedMaterialProjectedChunker.InsertRecords(allProjected);          
+            await bulkOps.BulkInsertAsync(dbContext, allProjected);
         }
 
         private async Task<List<ProducerReportedMaterialProjected>> GetExistingAsProjected(int runId) {
-            var existing = await context.ProducerReportedMaterial
+            var existing = await dbContext.ProducerReportedMaterial
                             .Include(prm => prm.ProducerDetail)
                             .Include(prm => prm.Material)
                             .Where(prm => prm.ProducerDetail!.CalculatorRunId == runId)
@@ -90,7 +80,7 @@ namespace EPR.Calculator.Service.Function.Services
                 .Where(p => !p.IsSubtotal)
                 .SelectMany(projectedProducer => projectedProducer.ProjectedTonnageByMaterial.Where(p => HasDefaultedRedTonnage(p.Value))
                     .SelectMany(materialTonnage => {
-                        var key = new { ProducerId = projectedProducer.ProducerId, SubsidiaryId = projectedProducer.SubsidiaryId, Code = materialTonnage.Key };
+                        var key = new { projectedProducer.ProducerId, projectedProducer.SubsidiaryId, Code = materialTonnage.Key };
                         var maybeExisting = existingLookup[key].FirstOrDefault();
 
                         return maybeExisting != null ? new List<ProducerReportedMaterialProjected?>

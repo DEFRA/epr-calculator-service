@@ -1,23 +1,21 @@
 ﻿using EPR.Calculator.API.Data;
-using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.ErrorReport;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
-using EPR.Calculator.Service.Function.Misc;
-using Microsoft.EntityFrameworkCore;
+using EPR.Calculator.Service.Function.Features.Calculator.Contexts;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
 {
     [TestClass]
     public class CalcResultErrorReportBuilderTests
     {
-        private ApplicationDBContext CreateDbContext()
-        {
-            var options = new DbContextOptionsBuilder<ApplicationDBContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
+        ApplicationDBContext dbContext = null!;
 
-            return (ApplicationDBContext)Activator.CreateInstance(typeof(ApplicationDBContext), options)!;
+        [TestInitialize]
+        public void Init()
+        {
+            dbContext = TestFixtures.New().Create<ApplicationDBContext>();
         }
 
         [TestMethod]
@@ -26,13 +24,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
             // Arrange
             var synapseError = "Conflicting Obligations(blanks)";
             var testErrorCode = "Test Error code";
-            await using var context = CreateDbContext();
 
-            context.CalculatorRunOrganisationDataMaster.AddRange(TestDataHelper.GetCalculatorRunOrganisationDataMaster());
-            context.CalculatorRunOrganisationDataDetails.AddRange(TestDataHelper.GetCalculatorRunOrganisationDataDetails());
-            context.CalculatorRuns.AddRange(TestDataHelper.GetCaculatorRuns());
+            dbContext.CalculatorRunOrganisationDataMaster.AddRange(TestData.GetCalculatorRunOrganisationDataMaster());
+            dbContext.CalculatorRunOrganisationDataDetails.AddRange(TestData.GetCalculatorRunOrganisationDataDetails());
+            dbContext.CalculatorRuns.AddRange(TestData.GetCaculatorRuns());
 
-            context.ErrorReports.AddRange(
+            dbContext.ErrorReports.AddRange(
                 new API.Data.DataModels.ErrorReport
                 {
                     Id = 1,
@@ -115,13 +112,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
                 }
             );
 
-            await context.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
 
-            var builder = new CalcResultErrorReportBuilder(context);
-            var request = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
+            var builder = new CalcResultErrorReportBuilder(dbContext);
+            var runContext = TestFixtures.Default.Create<CalculatorRunContext>();
 
             // Act
-            var result = builder.ConstructAsync(request).ToList();
+            var result = builder.ConstructAsync(runContext).ToList();
 
             Assert.AreEqual(5, result.Count);
             var report = result[0];
@@ -169,13 +166,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
         public async Task ConstructAsync_NullSubsidiaryId_MapsToEmptyString()
         {
             // Arrange
-            await using var context = CreateDbContext();
+            dbContext.CalculatorRunOrganisationDataMaster.AddRange(TestData.GetCalculatorRunOrganisationDataMaster());
+            dbContext.CalculatorRunOrganisationDataDetails.AddRange(TestData.GetCalculatorRunOrganisationDataDetails());
+            dbContext.CalculatorRuns.AddRange(TestData.GetCaculatorRuns());
 
-            context.CalculatorRunOrganisationDataMaster.AddRange(TestDataHelper.GetCalculatorRunOrganisationDataMaster());
-            context.CalculatorRunOrganisationDataDetails.AddRange(TestDataHelper.GetCalculatorRunOrganisationDataDetails());
-            context.CalculatorRuns.AddRange(TestDataHelper.GetCaculatorRuns());
-
-            context.ErrorReports.Add(new API.Data.DataModels.ErrorReport
+            dbContext.ErrorReports.Add(new API.Data.DataModels.ErrorReport
             {
                 Id = 1,
                 CalculatorRunId = 1,
@@ -186,13 +181,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
                 CreatedBy = "Test user"
             });
 
-            await context.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
 
-            var builder = new CalcResultErrorReportBuilder(context);
-            var request = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
+            var builder = new CalcResultErrorReportBuilder(dbContext);
+            var runContext = TestFixtures.Default.Create<CalculatorRunContext>();
 
             // Act
-            var result = builder.ConstructAsync(request).ToList();
+            var result = builder.ConstructAsync(runContext).ToList();
 
             // Assert
             Assert.AreEqual(1, result.Count);
@@ -209,13 +204,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
         public async Task ConstructAsync_ReturnsProducerNameMappedErrorReport()
         {
             // Arrange
-            await using var context = CreateDbContext();
+            dbContext.CalculatorRunOrganisationDataMaster.AddRange(TestData.GetCalculatorRunOrganisationDataMaster());
+            dbContext.CalculatorRunOrganisationDataDetails.AddRange(TestData.GetCalculatorRunOrganisationDataDetails());
+            dbContext.CalculatorRuns.AddRange(TestData.GetCaculatorRuns());
 
-            context.CalculatorRunOrganisationDataMaster.AddRange(TestDataHelper.GetCalculatorRunOrganisationDataMaster());
-            context.CalculatorRunOrganisationDataDetails.AddRange(TestDataHelper.GetCalculatorRunOrganisationDataDetails());
-            context.CalculatorRuns.AddRange(TestDataHelper.GetCaculatorRuns());
-
-            context.ErrorReports.Add(new API.Data.DataModels.ErrorReport
+            dbContext.ErrorReports.Add(new API.Data.DataModels.ErrorReport
             {
                 Id = 1,
                 CalculatorRunId = 1,
@@ -226,13 +219,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
                 CreatedBy = "Test user"
             });
 
-            await context.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
 
-            var builder = new CalcResultErrorReportBuilder(context);
-            var request = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
+            var builder = new CalcResultErrorReportBuilder(dbContext);
+            var runContext = TestFixtures.Default.Create<CalculatorRunContext>();
 
             // Act
-            var result = builder.ConstructAsync(request).ToList();
+            var result = builder.ConstructAsync(runContext).ToList();
 
             // Assert
             Assert.AreEqual(1, result.Count);

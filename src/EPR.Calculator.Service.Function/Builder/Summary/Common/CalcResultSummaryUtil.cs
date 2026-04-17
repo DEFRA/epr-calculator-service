@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+using System.Collections.Immutable;
+using System.Globalization;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.Service.Function.Builder.CommsCost;
@@ -47,7 +48,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             return partialObligation != null;
         }
 
-        public static decimal? GetScaledUpTonnage(ProducerDetail producer, MaterialDetail material, string packagingType, IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
+        public static decimal? GetScaledUpTonnage(ProducerDetail producer, MaterialDto material, string packagingType, IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
         {
             var scaledupProducerForAllSubmissionPeriods = scaledUpProducers.Where(p => p.ProducerId == producer.ProducerId
                 && p.SubsidiaryId == producer.SubsidiaryId
@@ -84,7 +85,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             return null;
         }
 
-        public static decimal? GetPartialTonnage(ProducerDetail producer, MaterialDetail material, string packagingType, IEnumerable<CalcResultPartialObligation> partialObligations)
+        public static decimal? GetPartialTonnage(ProducerDetail producer, MaterialDto material, string packagingType, IEnumerable<CalcResultPartialObligation> partialObligations)
         {
             var maybePartialObligation = partialObligations.FirstOrDefault(p => p.ProducerId == producer.ProducerId && p.SubsidiaryId == producer.SubsidiaryId);
 
@@ -109,7 +110,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         public static decimal GetTonnage(
             ProducerDetail producer,
-            MaterialDetail material,
+            MaterialDto material,
             string packagingType,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
@@ -135,7 +136,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         public static decimal GetTonnageTotal(
             IEnumerable<ProducerDetail> producers,
-            MaterialDetail material,
+            MaterialDto material,
             string packagingType,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
@@ -145,7 +146,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         public static decimal GetReportedTonnage(
             ProducerDetail producer,
-            MaterialDetail material,
+            MaterialDto material,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
         {
@@ -164,7 +165,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         public static decimal GetReportedTonnageTotal(
             IEnumerable<ProducerDetail> producers,
-            MaterialDetail material,
+            MaterialDto material,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
         {
@@ -185,9 +186,9 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         public static decimal GetRagReportedTonnage(
             ProducerDetail producer,
-            MaterialDetail material,
+            MaterialDto material,
             RagRating ragRating,
-            String packagingType)
+            string packagingType)
         {
             var prm = producer.ProducerReportedMaterials.FirstOrDefault(p => p.Material?.Code == material.Code && p.PackagingType == packagingType);
             return GetRagValue(prm, ragRating);
@@ -195,16 +196,16 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         public static decimal GetRagReportedTonnageTotal(
             IEnumerable<ProducerDetail> producers,
-            MaterialDetail material,
+            MaterialDto material,
             RagRating ragRating,
-            String packagingType)
+            string packagingType)
         {
             return producers.Sum(producer => GetRagReportedTonnage(producer, material, ragRating, packagingType));
         }
 
         public static decimal GetNetReportedTonnageWithoutNegativeTonnages(
             ProducerDetail producer,
-            MaterialDetail material,
+            MaterialDto material,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
         {
@@ -216,7 +217,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         public static decimal GetNetReportedTonnage(
             ProducerDetail producer,
-            MaterialDetail material,
+            MaterialDto material,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations,
             int level = CommonConstants.LevelOne)
@@ -236,7 +237,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         public static decimal GetNetReportedTonnageTotal(
             IEnumerable<ProducerDetail> producers,
-            MaterialDetail material,
+            MaterialDto material,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
         {
@@ -250,22 +251,22 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         public static decimal GetNetReportedTonnageOverallTotal(
             IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
-            MaterialDetail material)
+            MaterialDto material)
         {
             var levelOneRows = producerDisposalFees.Where(fee => fee.Level == CommonConstants.LevelOne.ToString());
-            return levelOneRows.Sum(row => row?.ProducerDisposalFeesByMaterial?[material.Code].NetReportedTonnage) ?? 0;
+            return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial?[material.Code].NetReportedTonnage) ?? 0;
         }
 
         public static decimal? GetPreviousInvoicedTonnageOverallTotal(
           IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
-          MaterialDetail material)
+          MaterialDto material)
         {
             var levelOneRows = producerDisposalFees.Where(fee => fee.Level == CommonConstants.LevelOne.ToString());
             return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial?[material.Code].PreviousInvoicedTonnage);
         }
 
         public static decimal GetPricePerTonne(
-            MaterialDetail material,
+            MaterialDto material,
             CalcResult calcResult)
         {
             var laDisposalCostDataDetail = calcResult.CalcResultLaDisposalCostData.CalcResultLaDisposalCostDetails.FirstOrDefault(la => la.Name == material.Name);
@@ -283,13 +284,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
         public static decimal GetProducerDisposalFee(
             ProducerDetail producer,
             IEnumerable<ProducerDetail> producerAndSubsidiaries,
-            MaterialDetail material,
+            MaterialDto material,
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
         {
-            var totalReportedTonnage = producerAndSubsidiaries.Sum(producer => GetReportedTonnage(producer, material, scaledUpProducers, partialObligations));
-            var totalManagedConsumerWasteTonnage = producerAndSubsidiaries.Sum(producer => GetTonnage(producer, material, PackagingTypes.ConsumerWaste, scaledUpProducers, partialObligations));
+            var totalReportedTonnage = producerAndSubsidiaries.Sum(pd => GetReportedTonnage(pd, material, scaledUpProducers, partialObligations));
+            var totalManagedConsumerWasteTonnage = producerAndSubsidiaries.Sum(pd => GetTonnage(pd, material, PackagingTypes.ConsumerWaste, scaledUpProducers, partialObligations));
 
             if (totalManagedConsumerWasteTonnage > totalReportedTonnage)
             {
@@ -305,7 +306,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         public static decimal GetProducerDisposalFeeProducerTotal(
             IEnumerable<ProducerDetail> producers,
-            MaterialDetail material,
+            MaterialDto material,
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
@@ -333,24 +334,24 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         public static decimal GetProducerDisposalFeeOverallTotal(
             IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
-            MaterialDetail material)
+            MaterialDto material)
         {
             var levelOneRows = producerDisposalFees.Where(fee => fee.Level == CommonConstants.LevelOne.ToString());
-            return levelOneRows.Sum(row => row?.ProducerDisposalFeesByMaterial?[material.Code].ProducerDisposalFee) ?? 0;
+            return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial?[material.Code].ProducerDisposalFee) ?? 0;
         }
 
         public static decimal GetBadDebtProvisionOverallTotal(
             IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
-            MaterialDetail material)
+            MaterialDto material)
         {
             var levelOneRows = producerDisposalFees.Where(fee => fee.Level == CommonConstants.LevelOne.ToString());
-            return levelOneRows.Sum(row => row?.ProducerDisposalFeesByMaterial?[material.Code].BadDebtProvision) ?? 0;
+            return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial?[material.Code].BadDebtProvision) ?? 0;
         }
 
         public static decimal GetBadDebtProvision(
             ProducerDetail producer,
             IEnumerable<ProducerDetail> producerAndSubsidiaries,
-            MaterialDetail material,
+            MaterialDto material,
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
@@ -369,7 +370,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         public static decimal GetBadDebtProvisionProducerTotal(
             IEnumerable<ProducerDetail> producers,
-            MaterialDetail material,
+            MaterialDto material,
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
@@ -389,7 +390,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
         public static decimal GetProducerDisposalFeeWithBadDebtProvision(
             ProducerDetail producer,
             IEnumerable<ProducerDetail> producerAndSubsidiaries,
-            MaterialDetail material,
+            MaterialDto material,
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
@@ -408,7 +409,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         public static decimal GetProducerDisposalFeeWithBadDebtProvisionProducerTotal(
             IEnumerable<ProducerDetail> producers,
-            MaterialDetail material,
+            MaterialDto material,
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
@@ -427,16 +428,16 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         public static decimal GetProducerDisposalFeeWithBadDebtProvisionOverallTotal(
             IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
-            MaterialDetail material)
+            MaterialDto material)
         {
             var levelOneRows = producerDisposalFees.Where(fee => fee.Level == CommonConstants.LevelOne.ToString());
-            return levelOneRows.Sum(row => row?.ProducerDisposalFeesByMaterial?[material.Code].ProducerDisposalFeeWithBadDebtProvision) ?? 0;
+            return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial?[material.Code].ProducerDisposalFeeWithBadDebtProvision) ?? 0;
         }
 
         public static decimal GetCountryBadDebtProvision(
             ProducerDetail producer,
             IEnumerable<ProducerDetail> producerAndSubsidiaries,
-            MaterialDetail material,
+            MaterialDto material,
             CalcResult calcResult,
             Countries country,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
@@ -477,7 +478,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         public static decimal GetCountryBadDebtProvisionTotal(
             IEnumerable<ProducerDetail> producers,
-            MaterialDetail material,
+            MaterialDto material,
             CalcResult calcResult,
             Countries country,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
@@ -488,7 +489,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         public static decimal GetCountryBadDebtProvisionOverallTotal(
             IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
-            MaterialDetail material,
+            MaterialDto material,
             Countries country)
         {
             var levelOneRows = producerDisposalFees.Where(fee => fee.Level == CommonConstants.LevelOne.ToString());
@@ -496,13 +497,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             switch (country)
             {
                 case Countries.England:
-                    return levelOneRows.Sum(row => row?.ProducerDisposalFeesByMaterial?[material.Code].EnglandWithBadDebtProvision) ?? 0;
+                    return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial?[material.Code].EnglandWithBadDebtProvision) ?? 0;
                 case Countries.Wales:
-                    return levelOneRows.Sum(row => row?.ProducerDisposalFeesByMaterial?[material.Code].WalesWithBadDebtProvision) ?? 0;
+                    return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial?[material.Code].WalesWithBadDebtProvision) ?? 0;
                 case Countries.Scotland:
-                    return levelOneRows.Sum(row => row?.ProducerDisposalFeesByMaterial?[material.Code].ScotlandWithBadDebtProvision) ?? 0;
+                    return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial?[material.Code].ScotlandWithBadDebtProvision) ?? 0;
                 case Countries.NorthernIreland:
-                    return levelOneRows.Sum(row => row?.ProducerDisposalFeesByMaterial?[material.Code].NorthernIrelandWithBadDebtProvision) ?? 0;
+                    return levelOneRows.Sum(row => row.ProducerDisposalFeesByMaterial?[material.Code].NorthernIrelandWithBadDebtProvision) ?? 0;
                 default:
                     return 0m;
             }
@@ -510,12 +511,12 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         public static CalcResultLapcapDataDetails? GetCountryApportionmentPercentage(CalcResult calcResult)
         {
-            return calcResult.CalcResultLapcapData.CalcResultLapcapDataDetails?.FirstOrDefault(la => la.Name == CalcResultSummaryHeaders.OneCountryApportionment);
+            return calcResult.CalcResultLapcapData.CalcResultLapcapDataDetails.FirstOrDefault(la => la.Name == CalcResultSummaryHeaders.OneCountryApportionment);
         }
 
         public static decimal GetTotal1Plus2ABadDebt(
             IEnumerable<ProducerDetail> producers,
-            IEnumerable<MaterialDetail> materials,
+            ImmutableArray<MaterialDto> materials,
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
@@ -532,7 +533,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             return total;
         }
 
-        public static void SetHeaders(CalcResultSummary result, IEnumerable<MaterialDetail> materials, bool showModulations)
+        public static void SetHeaders(CalcResultSummary result, ImmutableArray<MaterialDto> materials, bool showModulations)
         {
             result.ResultSummaryHeader = new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.CalculationResult, ColumnIndex = 1 };
             result.NotesHeader         = new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.Notes, ColumnIndex = 1 };
@@ -631,7 +632,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         private static IEnumerable<CalcResultSummaryHeader> CreateHeaders(params string[] names)
         {
-            return names.Select((name, i) => new CalcResultSummaryHeader { Name = name});
+            return names.Select(name => new CalcResultSummaryHeader { Name = name });
         }
 
         private static IEnumerable<CalcResultSummaryHeader> startingHeaders()
@@ -649,7 +650,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
                 CalcResultSummaryHeaders.LeaversDate);
         }
 
-        private static IEnumerable<CalcResultSummaryHeader> section1Materials(IEnumerable<MaterialDetail> materials, bool showModulations)
+        private static IEnumerable<CalcResultSummaryHeader> section1Materials(ImmutableArray<MaterialDto> materials, bool showModulations)
         {
             return materials.SelectMany(material =>
             {
@@ -727,7 +728,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
                 CalcResultSummaryHeaders.TonnageChangeAdvice);
         }
 
-        private static IEnumerable<CalcResultSummaryHeader> section2aMaterials(IEnumerable<MaterialDetail> materials, bool showModulations)
+        private static IEnumerable<CalcResultSummaryHeader> section2aMaterials(ImmutableArray<MaterialDto> materials, bool showModulations)
         {
             return materials.SelectMany(material =>
             {

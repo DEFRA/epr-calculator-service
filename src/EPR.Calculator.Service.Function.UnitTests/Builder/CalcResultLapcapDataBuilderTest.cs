@@ -2,39 +2,24 @@
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.Lapcap;
-using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Enums;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Calculator.Contexts;
 using EPR.Calculator.Service.Function.Services;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Moq;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
     [TestClass]
     public class CalcResultLapcapDataBuilderTest
     {
-        public CalcResultLapcapDataBuilder builder;
-        protected ApplicationDBContext dbContext;
-        private Mock<ICalcCountryApportionmentService> mockService;
+        private CalcResultLapcapDataBuilder builder = null!;
+        private ApplicationDBContext dbContext = null!;
+        private Mock<ICalcCountryApportionmentService> mockService = null!;
 
-        public CalcResultLapcapDataBuilderTest()
+        [TestInitialize]
+        public void Init()
         {
-            var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
-                                    .UseInMemoryDatabase(databaseName: "PayCal")
-                                    .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-                                                .Options;
-
-            dbContext = new ApplicationDBContext(dbContextOptions);
-            dbContext.Database.EnsureCreated();
-            dbContext.DefaultParameterTemplateMasterList.RemoveRange(dbContext.DefaultParameterTemplateMasterList);
-            dbContext.SaveChanges();
-            dbContext.DefaultParameterTemplateMasterList.AddRange(TestDataHelper.GetDefaultParameterTemplateMasterData().ToList());
-            dbContext.SaveChanges();
-
+            dbContext = TestFixtures.New().Create<ApplicationDBContext>();
             mockService = new Mock<ICalcCountryApportionmentService>();
-
             builder = new CalcResultLapcapDataBuilder(dbContext, mockService.Object);
         }
 
@@ -53,7 +38,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var run = new CalculatorRun
             {
                 Id = 1,
-                CalculatorRunClassificationId = (int)RunClassification.RUNNING,
+                CalculatorRunClassificationId = RunClassificationStatusIds.RUNNINGID,
                 Name = "Test Run",
                 RelativeYear = new RelativeYear(2024),
                 CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
@@ -88,8 +73,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             dbContext.CalculatorRuns.Add(run);
             await dbContext.SaveChangesAsync();
 
-            var resultsDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) };
-            var lapcapResults = await builder.ConstructAsync(resultsDto);
+            var runContext = TestFixtures.Default.Create<CalculatorRunContext>();
+            var lapcapResults = await builder.ConstructAsync(runContext);
 
             Assert.IsNotNull(lapcapResults);
             Assert.AreEqual(CalcResultLapcapDataBuilder.LapcapHeader, lapcapResults.Name);
@@ -147,7 +132,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             var details = new List<LapcapDataDetail>();
 
-            foreach (var uniqueRef in LapcapDataUniqueReferences.UniqueReferences)
+            foreach (var uniqueRef in LapcapDataUniqueReferences)
             {
                 details.Add(
                     new LapcapDataDetail
@@ -182,5 +167,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             return 25M;
         }
+
+        public static readonly string[] LapcapDataUniqueReferences =
+        {
+            "ENG-AL", "ENG-FC", "ENG-GL", "ENG-OT",
+            "ENG-PC", "ENG-PL", "ENG-ST", "ENG-WD",
+            "NI-AL", "NI-FC", "NI-GL", "NI-OT",
+            "NI-PC", "NI-PL", "NI-ST", "NI-WD",
+            "SCT-AL", "SCT-FC", "SCT-GL", "SCT-OT",
+            "SCT-PC", "SCT-PL", "SCT-ST", "SCT-WD",
+            "WLS-AL", "WLS-FC", "WLS-GL", "WLS-OT",
+            "WLS-PC", "WLS-PL", "WLS-ST", "WLS-WD"
+        };
     }
 }

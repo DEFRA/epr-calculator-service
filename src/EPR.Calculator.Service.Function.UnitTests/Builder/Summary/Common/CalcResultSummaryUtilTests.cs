@@ -1,8 +1,8 @@
-﻿using AutoFixture;
 using EPR.Calculator.Service.Function.Builder.Summary.Common;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
 {
@@ -11,22 +11,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
     {
         private readonly CalcResult calcResult;
 
-        private Fixture Fixture { get; init; } = new Fixture();
-
         public CalcResultSummaryUtilTests()
         {
             calcResult = new CalcResult
             {
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
-                CalcResultParameterOtherCost = TestDataHelper.GetCalcResultParameterOtherCost(),
-                CalcResultDetail = TestDataHelper.GetCalcResultDetail(),
-                CalcResultLaDisposalCostData = TestDataHelper.GetCalcResultLaDisposalCostData(),
-                CalcResultLapcapData = TestDataHelper.GetCalcResultLapcapData(),
-                CalcResultOnePlusFourApportionment = TestDataHelper.GetCalcResultOnePlusFourApportionment(),
-                CalcResultParameterCommunicationCost = GetCalcResultParameterCommunicationCost(),
-                CalcResultSummary = TestDataHelper.GetCalcResultSummary(),
-                CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
+                CalcResultParameterOtherCost = TestData.GetCalcResultParameterOtherCost(),
+                CalcResultDetail = TestData.GetCalcResultDetail(),
+                CalcResultLaDisposalCostData = TestData.GetCalcResultLaDisposalCostData(),
+                CalcResultLapcapData = TestData.GetCalcResultLapcapData(),
+                CalcResultOnePlusFourApportionment = TestData.GetCalcResultOnePlusFourApportionment(),
+                CalcResultSummary = TestData.GetCalcResultSummary(),
+                CalcResultCommsCostReportDetail = TestData.GetCalcResultCommsCostReportDetail(),
                 CalcResultLateReportingTonnageData = this.GetCalcResultLateReportingTonnage(),
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
                 CalcResultModulation = null,
@@ -37,8 +34,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetNonTotalRowLevelIndex()
         {
             // Arrange
-            var producerDisposalFeesLookup = TestDataHelper.GetProducerDisposalFees();
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
+            var producerDisposalFeesLookup = TestData.GetProducerDisposalFeesWithLevel1();
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
 
             // Act
             var result = CalcResultSummaryUtil.GetLevelIndex(producerDisposalFeesLookup, producer);
@@ -51,8 +48,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetHouseholdPackagingWasteTonnage()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
+            var material = TestData.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -67,8 +64,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetPublicBinTonnage()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "PL");
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
+            var material = TestData.Materials.First(m => m.Code == "PL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -83,8 +80,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetHouseholdDrinksContainersTonnage()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
+            var material = TestData.Materials.First(m => m.Code == "GL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -99,8 +96,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetReportedTonnage()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
+            var material = TestData.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -115,8 +112,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetHouseholdPackagingWasteTonnageProducerTotal()
         {
             // Arrange
-            var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producers = TestData.GetProducers();
+            var material = TestData.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -131,8 +128,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetPublicBinTonnageProducerTotal()
         {
             // Arrange
-            var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "PL");
+            var producers = TestData.GetProducers();
+            var material = TestData.Materials.First(m => m.Code == "PL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -147,8 +144,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetReportedTonnageProducerTotal()
         {
             // Arrange
-            var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producers = TestData.GetProducers();
+            var material = TestData.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -163,8 +160,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetHouseholdDrinksContainersTonnageProducerTotal()
         {
             // Arrange
-            var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var producers = TestData.GetProducers();
+            var material = TestData.Materials.First(m => m.Code == "GL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -179,9 +176,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetTonnageForScaledupProducer()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
+            var material = TestData.Materials.First(m => m.Code == "AL");
+            var scaledupProducers = TestData.GetScaledupProducers().ScaledupProducers;
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
@@ -195,10 +192,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetHouseholdTonnageForScaledupProducer()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
             producer.SubsidiaryId = string.Empty;
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var material = TestData.Materials.First(m => m.Code == "AL");
+            var scaledupProducers = TestData.GetScaledupProducers().ScaledupProducers;
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
@@ -212,10 +209,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetHouseholdTonnageForScaledUpPartialObligation()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
-            var partialObligations = TestDataHelper.GetPartialObligations().PartialObligations;
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
+            var material = TestData.Materials.First(m => m.Code == "AL");
+            var scaledupProducers = TestData.GetScaledupProducers().ScaledupProducers;
+            var partialObligations = TestData.GetPartialObligations().PartialObligations;
 
             // Act
             var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.Household, scaledupProducers!, partialObligations!);
@@ -228,10 +225,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetHouseholdTonnageForPartialObligation()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
+            var material = TestData.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
-            var partialObligations = TestDataHelper.GetPartialObligations().PartialObligations;
+            var partialObligations = TestData.GetPartialObligations().PartialObligations;
 
             // Act
             var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.Household, scaledupProducers, partialObligations!);
@@ -244,10 +241,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetPublicBinTonnageForScaledupProducer()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
             producer.SubsidiaryId = string.Empty;
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var material = TestData.Materials.First(m => m.Code == "AL");
+            var scaledupProducers = TestData.GetScaledupProducers().ScaledupProducers;
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
@@ -261,10 +258,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetPublicBinTonnageForPartialObligation()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
+            var material = TestData.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
-            var partialObligations = TestDataHelper.GetPartialObligations().PartialObligations;
+            var partialObligations = TestData.GetPartialObligations().PartialObligations;
 
             // Act
             var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.PublicBin, scaledupProducers, partialObligations!);
@@ -277,10 +274,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetConsumerWasteTonnageForScaledupProducer()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
             producer.SubsidiaryId = string.Empty;
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var material = TestData.Materials.First(m => m.Code == "AL");
+            var scaledupProducers = TestData.GetScaledupProducers().ScaledupProducers;
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
@@ -294,10 +291,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetConsumerWasteTonnageForPartialObligation()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
+            var material = TestData.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
-            var partialObligations = TestDataHelper.GetPartialObligations().PartialObligations;
+            var partialObligations = TestData.GetPartialObligations().PartialObligations;
 
             // Act
             var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.ConsumerWaste, scaledupProducers, partialObligations!);
@@ -310,10 +307,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetHDCTonnageForScaledupProducer()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
             producer.SubsidiaryId = string.Empty;
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var material = TestData.Materials.First(m => m.Code == "GL");
+            var scaledupProducers = TestData.GetScaledupProducers().ScaledupProducers;
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
@@ -327,10 +324,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetHDCTonnageForPartialObligation()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
+            var material = TestData.Materials.First(m => m.Code == "GL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
-            var partialObligations = TestDataHelper.GetPartialObligations().PartialObligations;
+            var partialObligations = TestData.GetPartialObligations().PartialObligations;
 
             // Act
             var result = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.HouseholdDrinksContainers, scaledupProducers, partialObligations!);
@@ -343,10 +340,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetDefaultTonnageForScaledupProducer()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
             producer.SubsidiaryId = string.Empty;
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var material = TestData.Materials.First(m => m.Code == "GL");
+            var scaledupProducers = TestData.GetScaledupProducers().ScaledupProducers;
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
@@ -360,11 +357,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetDefaultTonnageForPartialObligation()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
             producer.SubsidiaryId = string.Empty;
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var material = TestData.Materials.First(m => m.Code == "GL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
-            var partialObligations = TestDataHelper.GetPartialObligations().PartialObligations;
+            var partialObligations = TestData.GetPartialObligations().PartialObligations;
 
             // Act
             var result = CalcResultSummaryUtil.GetTonnage(producer, material, "Default", scaledupProducers, partialObligations!);
@@ -378,9 +375,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetZeroTonnageForInvalidPackagingTypeForScaledupProducer()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
+            var material = TestData.Materials.First(m => m.Code == "GL");
+            var scaledupProducers = TestData.GetScaledupProducers().ScaledupProducers;
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
@@ -394,8 +391,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetManagedConsumerWasteTonnage()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
+            var material = TestData.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -410,8 +407,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetManagedConsumerWasteTonnageProducerTotal()
         {
             // Arrange
-            var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producers = TestData.GetProducers();
+            var material = TestData.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -426,8 +423,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetNetReportedTonnageWithoutNegativeTonnages()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
+            var material = TestData.Materials.First(m => m.Code == "GL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -442,8 +439,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetNetReportedTonnageForNegativeTonnagesReturnZero()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
+            var material = TestData.Materials.First(m => m.Code == "GL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -458,8 +455,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetNetReportedTonnage()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
+            var material = TestData.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -474,8 +471,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetNetReportedTonnageProducerTotal()
         {
             // Arrange
-            var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producers = TestData.GetProducers();
+            var material = TestData.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -490,8 +487,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetNetReportedTonnageProducerTotalForNegativeTonnage()
         {
             // Arrange
-            var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var producers = TestData.GetProducers();
+            var material = TestData.Materials.First(m => m.Code == "GL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -506,8 +503,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetNetReportedTonnageOverallTotal()
         {
             // Arrange
-            var producerDisposalFees = TestDataHelper.GetProducerDisposalFees();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producerDisposalFees = TestData.GetProducerDisposalFeesWithLevel1();
+            var material = TestData.Materials.First(m => m.Code == "AL");
 
             // Act
             var result = CalcResultSummaryUtil.GetNetReportedTonnageOverallTotal(producerDisposalFees, material);
@@ -520,7 +517,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetPricePerTonne()
         {
             // Arrange
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestData.Materials.First(m => m.Code == "AL");
 
             // Act
             var result = CalcResultSummaryUtil.GetPricePerTonne(material, calcResult);
@@ -533,7 +530,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetPricePerTonne_NonMatchingMaterial()
         {
             // Arrange
-            var material = Fixture.Create<MaterialDetail>();
+            var material = TestFixtures.Default.Create<MaterialDto>();
 
             // Act
             var result = CalcResultSummaryUtil.GetPricePerTonne(material, calcResult);
@@ -546,9 +543,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetProducerDisposalFee()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var producerAndSubsidiaries = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
+            var producerAndSubsidiaries = TestData.GetProducers();
+            var material = TestData.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -563,8 +560,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetProducerDisposalFeeProducerTotal()
         {
             // Arrange
-            var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producers = TestData.GetProducers();
+            var material = TestData.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -579,8 +576,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetProducerDisposalFeeOverallTotal()
         {
             // Arrange
-            var producerDisposalFees = TestDataHelper.GetProducerDisposalFees();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producerDisposalFees = TestData.GetProducerDisposalFeesWithLevel1();
+            var material = TestData.Materials.First(m => m.Code == "AL");
 
             // Act
             var result = CalcResultSummaryUtil.GetProducerDisposalFeeOverallTotal(producerDisposalFees, material);
@@ -593,8 +590,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetProducerDisposalFeeProducerTotalForNegativeTonnage()
         {
             // Arrange
-            var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var producers = TestData.GetProducers();
+            var material = TestData.Materials.First(m => m.Code == "GL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -609,9 +606,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetBadDebtProvision()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var producerAndSubsidiaries = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
+            var producerAndSubsidiaries = TestData.GetProducers();
+            var material = TestData.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -626,9 +623,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetBadDebtProvisionReturnsZeroForInvalidValue()
         {
             // Arrange
-            var producers = TestDataHelper.GetProducers();
+            var producers = TestData.GetProducers();
             var producer = producers.First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var material = TestData.Materials.First(m => m.Code == "GL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
             var calculatorResult = calcResult;
@@ -645,8 +642,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetBadDebtProvisionProducerTotal()
         {
             // Arrange
-            var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producers = TestData.GetProducers();
+            var material = TestData.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -661,8 +658,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetBadDebtProvisionOverallTotal()
         {
             // Arrange
-            var producerDisposalFees = TestDataHelper.GetProducerDisposalFees();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producerDisposalFees = TestData.GetProducerDisposalFeesWithLevel1();
+            var material = TestData.Materials.First(m => m.Code == "AL");
 
             // Act
             var result = CalcResultSummaryUtil.GetBadDebtProvisionOverallTotal(producerDisposalFees, material);
@@ -675,8 +672,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetBadDebtProvisionProducerTotalReturnsZeroForInvalidValue()
         {
             // Arrange
-            var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producers = TestData.GetProducers();
+            var material = TestData.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
             var calculatorResult = calcResult;
@@ -693,9 +690,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetProducerDisposalFeeWithBadDebtProvision()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var producerAndSubsidiaries = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
+            var producerAndSubsidiaries = TestData.GetProducers();
+            var material = TestData.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -710,9 +707,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetProducerDisposalFeeWithBadDebtProvisionReturnsZeroForInvalid()
         {
             // Arrange
-            var producers = TestDataHelper.GetProducers();
+            var producers = TestData.GetProducers();
             var producer = producers.First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestData.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
             var calculatorResult = calcResult;
@@ -730,8 +727,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetProducerDisposalFeeWithBadDebtProvisionProducerTotal()
         {
             // Arrange
-            var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producers = TestData.GetProducers();
+            var material = TestData.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -746,8 +743,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetProducerDisposalFeeWithBadDebtProvisionProducerTotalZero()
         {
             // Arrange
-            var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producers = TestData.GetProducers();
+            var material = TestData.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -763,8 +760,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetProducerDisposalFeeWithBadDebtProvisionOverallTotal()
         {
             // Arrange
-            var producerDisposalFees = TestDataHelper.GetProducerDisposalFees();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producerDisposalFees = TestData.GetProducerDisposalFeesWithLevel1();
+            var material = TestData.Materials.First(m => m.Code == "AL");
 
             // Act
             var result = CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvisionOverallTotal(producerDisposalFees, material);
@@ -777,9 +774,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetEnglandWithBadDebtProvision()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var producerAndSubsidiaries = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
+            var producerAndSubsidiaries = TestData.GetProducers();
+            var material = TestData.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -794,9 +791,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetDefaultBadDebtProvision()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var producerAndSubsidiaries = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
+            var producerAndSubsidiaries = TestData.GetProducers();
+            var material = TestData.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -811,9 +808,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetWalesWithBadDebtProvision()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var producerAndSubsidiaries = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
+            var producerAndSubsidiaries = TestData.GetProducers();
+            var material = TestData.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -828,9 +825,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetScotlandWithBadDebtProvision()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var producerAndSubsidiaries = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
+            var producerAndSubsidiaries = TestData.GetProducers();
+            var material = TestData.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -845,9 +842,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetNorthernIrelandWithBadDebtProvision()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var producerAndSubsidiaries = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
+            var producerAndSubsidiaries = TestData.GetProducers();
+            var material = TestData.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -862,8 +859,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetEnglandWithBadDebtProvisionProducerTotal()
         {
             // Arrange
-            var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producers = TestData.GetProducers();
+            var material = TestData.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -878,8 +875,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetWalesWithBadDebtProvisionProducerTotal()
         {
             // Arrange
-            var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producers = TestData.GetProducers();
+            var material = TestData.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -894,8 +891,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetScotlandWithBadDebtProvisionProducerTotal()
         {
             // Arrange
-            var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producers = TestData.GetProducers();
+            var material = TestData.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -910,8 +907,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetNorthernIrelandWithBadDebtProvisionProducerTotal()
         {
             // Arrange
-            var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producers = TestData.GetProducers();
+            var material = TestData.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -939,8 +936,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetTotal1Plus2ABadDebt()
         {
             // Arrange
-            var producers = TestDataHelper.GetProducers();
-            var materials = TestDataHelper.GetMaterials();
+            var producers = TestData.GetProducers();
+            var materials = TestData.Materials;
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -1080,9 +1077,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetReportedPublicBinTonnage()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 2);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "PL");
-            var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
+            var producer = TestData.GetProducers().First(p => p.Id == 2);
+            var material = TestData.Materials.First(m => m.Code == "PL");
+            var scaledupProducers = TestData.GetScaledupProducers().ScaledupProducers;
             var partialObligations = new List<CalcResultPartialObligation>();
 
             // Act
@@ -1096,8 +1093,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetReportedPublicBinTonnageTotal()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "PL");
+            var producer = TestData.GetProducers();
+            var material = TestData.Materials.First(m => m.Code == "PL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -1112,8 +1109,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetReportedHDCTonnage()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var producer = TestData.GetProducers().First(p => p.Id == 1);
+            var material = TestData.Materials.First(m => m.Code == "GL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -1128,8 +1125,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetReportedHDCTonnageTotal()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var producer = TestData.GetProducers();
+            var material = TestData.Materials.First(m => m.Code == "GL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -1140,14 +1137,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             Assert.AreEqual(60.00m, result);
         }
 
-        private CalcResultParameterCommunicationCost GetCalcResultParameterCommunicationCost()
-        {
-            return Fixture.Create<CalcResultParameterCommunicationCost>();
-        }
-
         private CalcResultLateReportingTonnage GetCalcResultLateReportingTonnage()
         {
-            return Fixture.Create<CalcResultLateReportingTonnage>();
+            return TestFixtures.Default.Create<CalcResultLateReportingTonnage>();
         }
     }
 }

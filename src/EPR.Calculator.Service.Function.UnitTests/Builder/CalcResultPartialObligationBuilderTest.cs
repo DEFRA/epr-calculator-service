@@ -3,20 +3,20 @@ using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.PartialObligations;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Calculator.Contexts;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
     [TestClass]
     public class CalcResultPartialObligationBuilderTest
     {
-        private readonly ApplicationDBContext dbContext;
+        private ApplicationDBContext dbContext = null!;
         private readonly int runId = 2;
-        private CalcResultPartialObligationBuilder builder;
+        private CalcResultPartialObligationBuilder builder = null!;
 
         private void PrepareData()
         {
@@ -229,16 +229,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             dbContext.SaveChanges();
         }
 
-        public CalcResultPartialObligationBuilderTest()
+        [TestInitialize]
+        public void Initalize()
         {
-            var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
-            .UseInMemoryDatabase(databaseName: "PayCal")
-            .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-            .Options;
+            dbContext = TestFixtures.New().Create<ApplicationDBContext>();
 
-            dbContext = new ApplicationDBContext(dbContextOptions);
-            dbContext.Database.EnsureCreated();
-            builder = new CalcResultPartialObligationBuilder(dbContext);
+            var materialService = new MaterialService(dbContext);
+            builder = new CalcResultPartialObligationBuilder(dbContext, materialService);
         }
 
         [TestCleanup]
@@ -253,10 +250,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             // Arrange
             PrepareData();
-            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
+            var runContext = TestFixtures.Default.Create<CalculatorRunContext>();
 
             // Act
-            var result = await builder.ConstructAsync(requestDto, new List<CalcResultScaledupProducer>());
+            var result = await builder.ConstructAsync(runContext, new List<CalcResultScaledupProducer>());
 
             // Assert
             Assert.AreEqual(1, result.PartialObligations!.Count());
@@ -272,7 +269,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
 
             var parOrgMats = parOrg.PartialObligationTonnageByMaterial;
-            Assert.AreEqual(8, parOrgMats.Count());
+            Assert.AreEqual(8, parOrgMats.Count);
             Assert.IsTrue(parOrgMats.Any(mat =>
                 mat.Key == MaterialCodes.Aluminium &&
                 mat.Value.ReportedHouseholdPackagingWasteTonnage == 100 &&
@@ -309,7 +306,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             // Arrange
             PrepareData();
-            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
+            var runContext = TestFixtures.Default.Create<CalculatorRunContext>();
 
             var scaledUpProducers = new List<CalcResultScaledupProducer> {
                 new CalcResultScaledupProducer {
@@ -337,7 +334,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
 
             // Act
-            var result = await builder.ConstructAsync(requestDto, scaledUpProducers);
+            var result = await builder.ConstructAsync(runContext, scaledUpProducers);
 
             // Assert
             Assert.AreEqual(1, result.PartialObligations!.Count());
@@ -352,7 +349,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.IsTrue(parOrg.ObligatedPercentage == "50.14%");
 
             var parOrgMats = parOrg.PartialObligationTonnageByMaterial;
-            Assert.AreEqual(8, parOrgMats.Count());
+            Assert.AreEqual(8, parOrgMats.Count);
             Assert.IsTrue(parOrgMats.Any(mat =>
                 mat.Key == MaterialCodes.Aluminium &&
                 mat.Value.ReportedHouseholdPackagingWasteTonnage == 100 &&

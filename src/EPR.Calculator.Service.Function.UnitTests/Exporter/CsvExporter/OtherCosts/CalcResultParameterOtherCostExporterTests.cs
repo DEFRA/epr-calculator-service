@@ -131,7 +131,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.OtherCo
             };
             var csvContent = new StringBuilder();
 
-            exporter.LaDataPrepCosts(otherCost, csvContent);
+            CalcResultParameterOtherCostExporter.LaDataPrepCosts(otherCost, csvContent);
             var result = csvContent.ToString();
 
             // Assert
@@ -165,7 +165,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.OtherCo
             var csvContent = new StringBuilder();
 
             // Assert
-            exporter.SchemeSetupCost(otherCost, csvContent);
+            CalcResultParameterOtherCostExporter.SchemeSetupCost(otherCost, csvContent);
             var result = csvContent.ToString();
             Assert.IsTrue(result.Contains("£40"));
             Assert.IsTrue(result.Contains("£100"));
@@ -197,7 +197,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.OtherCo
             var csvContent = new StringBuilder();
 
             // Assert
-            exporter.Materiality(otherCost, csvContent);
+            CalcResultParameterOtherCostExporter.Materiality(otherCost, csvContent);
             var result = csvContent.ToString();
             Assert.IsTrue(result.Contains("Amount £s"));
             Assert.IsTrue(result.Contains("%"));
@@ -238,7 +238,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.OtherCo
                     ],
             };
             var csvContent = new StringBuilder();
-            exporter.SaOpertingCosts(otherCost, csvContent);
+            CalcResultParameterOtherCostExporter.SaOpertingCosts(otherCost, csvContent);
             var result = csvContent.ToString();
 
             // Assert

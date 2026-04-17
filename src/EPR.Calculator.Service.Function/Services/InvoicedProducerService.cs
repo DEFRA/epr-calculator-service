@@ -2,9 +2,9 @@
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common.Utils;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Utils;
 using Microsoft.Extensions.Logging;
 
 namespace EPR.Calculator.Service.Function.Services

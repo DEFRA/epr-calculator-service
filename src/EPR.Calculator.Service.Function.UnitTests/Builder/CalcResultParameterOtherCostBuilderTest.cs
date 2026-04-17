@@ -2,34 +2,26 @@
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.ParametersOther;
-using EPR.Calculator.Service.Function.Enums;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Calculator.Contexts;
 using EPR.Calculator.Service.Function.Services;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Moq;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
     [TestClass]
     public class CalcResultParameterOtherCostBuilderTest
     {
-        public CalcResultParameterOtherCostBuilder builder;
-        protected ApplicationDBContext dbContext;
+        private CalcResultParameterOtherCostBuilder builder = null!;
+        private ApplicationDBContext dbContext = null!;
 
-        public CalcResultParameterOtherCostBuilderTest()
+        [TestInitialize]
+        public void Init()
         {
-            var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
-                .UseInMemoryDatabase(databaseName: "PayCal")
-                .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-                .Options;
+            dbContext = TestFixtures.New().Create<ApplicationDBContext>();
 
-            dbContext = new ApplicationDBContext(dbContextOptions);
-            dbContext.Database.EnsureCreated();
+            // Fixture populates this with default data, but these tests need more
             dbContext.DefaultParameterTemplateMasterList.RemoveRange(dbContext.DefaultParameterTemplateMasterList);
-            dbContext.SaveChanges();
-            dbContext.DefaultParameterTemplateMasterList.AddRange(TestDataHelper.GetDefaultParameterTemplateMasterData().ToList());
-            // dbContext.LapcapDataTemplateMaster.AddRange(BaseControllerTest.GetLapcapTemplateMasterData().ToList());
+            dbContext.DefaultParameterTemplateMasterList.AddRange(TestData.GetDefaultParameterTemplateMasterData());
             dbContext.SaveChanges();
 
             var mockService = new Mock<ICalcCountryApportionmentService>();
@@ -47,7 +39,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             var run = new CalculatorRun
             {
-                CalculatorRunClassificationId = (int)RunClassification.RUNNING,
+                CalculatorRunClassificationId = RunClassificationStatusIds.RUNNINGID,
                 Name = "Test Run",
                 RelativeYear = new RelativeYear(2024),
                 CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
@@ -93,7 +85,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             await dbContext.SaveChangesAsync();
 
-            var otherCost = await builder.ConstructAsync(new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) });
+            var otherCost = await builder.ConstructAsync(TestFixtures.Default.Create<CalculatorRunContext>());
 
             Assert.IsNotNull(otherCost.SaOperatingCost);
             Assert.AreEqual(2, otherCost.SaOperatingCost.Count());

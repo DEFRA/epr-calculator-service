@@ -1,33 +1,24 @@
-﻿using AutoFixture;
-using EPR.Calculator.API.Data;
+﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.LaDataPrepCosts
 {
     [TestClass]
     public class LaDataPrepCostsProducerTests
     {
-        private readonly ApplicationDBContext _dbContext;
-        private readonly CalcResult _calcResult;
-        private readonly int columnIndex = 275;
+        private ApplicationDBContext _dbContext = null!;
+        private CalcResult _calcResult = null!;
+        private int columnIndex = 275;
 
-        private Fixture Fixture { get; init; } = new Fixture();
-
-        public LaDataPrepCostsProducerTests()
+        [TestInitialize]
+        public void Init()
         {
-            var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
-                .UseInMemoryDatabase(databaseName: "PayCal")
-                .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-                .Options;
-
-            _dbContext = new ApplicationDBContext(dbContextOptions);
-            _dbContext.Database.EnsureCreated();
+            _dbContext = TestFixtures.New().Create<ApplicationDBContext>();
 
             CreateMaterials();
             CreateProducerDetail();
@@ -118,7 +109,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.LaDataPrepCo
                 CalcResultDetail = new CalcResultDetail { RunId = 1, RelativeYear = new RelativeYear(2024) },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData
                 {
-                    Name = Fixture.Create<string>(),
+                    Name = TestFixtures.Default.Create<string>(),
                     CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>
                     {
                         new CalcResultLaDisposalCostDataDetail
@@ -131,9 +122,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.LaDataPrepCo
                             Material = "Material1",
                             NorthernIreland = "NorthernIrelandTest",
                             Total = "TotalTest",
-                            ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
-                            ReportedPublicBinTonnage = Fixture.Create<string>(),
-                            ProducerReportedTotalTonnage = Fixture.Create<string>(),
+                            ProducerReportedHouseholdPackagingWasteTonnage = TestFixtures.Default.Create<string>(),
+                            ReportedPublicBinTonnage = TestFixtures.Default.Create<string>(),
+                            ProducerReportedTotalTonnage = TestFixtures.Default.Create<string>(),
                         },
                         new CalcResultLaDisposalCostDataDetail
                         {
@@ -144,9 +135,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.LaDataPrepCo
                             Scotland="ScotlandTest",
                             NorthernIreland = "NorthernIrelandTest",
                             Total = "TotalTest",
-                            ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
-                            ReportedPublicBinTonnage = Fixture.Create<string>(),
-                            ProducerReportedTotalTonnage = Fixture.Create<string>(),
+                            ProducerReportedHouseholdPackagingWasteTonnage = TestFixtures.Default.Create<string>(),
+                            ReportedPublicBinTonnage = TestFixtures.Default.Create<string>(),
+                            ProducerReportedTotalTonnage = TestFixtures.Default.Create<string>(),
                         },
                         new CalcResultLaDisposalCostDataDetail
                         {
@@ -157,9 +148,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.LaDataPrepCo
                             Scotland="ScotlandTest",
                             NorthernIreland = "NorthernIrelandTest",
                             Total = "TotalTest",
-                            ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
-                            ReportedPublicBinTonnage = Fixture.Create<string>(),
-                            ProducerReportedTotalTonnage = Fixture.Create<string>(),
+                            ProducerReportedHouseholdPackagingWasteTonnage = TestFixtures.Default.Create<string>(),
+                            ReportedPublicBinTonnage = TestFixtures.Default.Create<string>(),
+                            ProducerReportedTotalTonnage = TestFixtures.Default.Create<string>(),
                         },
                     },
                 },
@@ -169,7 +160,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.LaDataPrepCo
                 },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment
                 {
-                    Name = Fixture.Create<string>(),
+                    Name = TestFixtures.Default.Create<string>(),
                     CalcResultOnePlusFourApportionmentDetails =
                     [
                         new()
@@ -239,7 +230,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.LaDataPrepCo
                         }
                     ],
                 },
-                CalcResultParameterCommunicationCost = Fixture.Create<CalcResultParameterCommunicationCost>(),
                 CalcResultSummary = new CalcResultSummary
                 {
                     ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
@@ -293,7 +283,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.LaDataPrepCo
                         }
                     ],
                 },
-                CalcResultLateReportingTonnageData = Fixture.Create<CalcResultLateReportingTonnage>(),
+                CalcResultLateReportingTonnageData = TestFixtures.Default.Create<CalcResultLateReportingTonnage>(),
                 CalcResultModulation = null,
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
             };

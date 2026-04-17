@@ -1,23 +1,30 @@
-﻿using EPR.Calculator.API.Data.DataModels;
+﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Enums;
-using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Services
 {
-    public class ErrorReportService : IErrorReportService
+    public interface IErrorReportService
     {
-        private IDbLoadingChunkerService<ErrorReport> ErrorReportChunker { get; init; }
-        private IInvoicedProducerService InvoicedProducerService { get; init; }
+        Task<HashSet<(int OrgId, string? SubId)>> HandleErrors(
+            IEnumerable<CalculatorRunPomDataDetail> pomDetails,
+            IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails,
+            int calculatorRunId,
+            string createdBy,
+            RelativeYear relativeYear,
+            CancellationToken cancellationToken);
+    }
 
-        public ErrorReportService(IDbLoadingChunkerService<ErrorReport> errorReportChunker, IInvoicedProducerService invoicedProducerService)
-        {
-            ErrorReportChunker = errorReportChunker ?? throw new ArgumentNullException(nameof(errorReportChunker));
-            InvoicedProducerService = invoicedProducerService ?? throw new ArgumentNullException(nameof(invoicedProducerService));
-        }
-
-        public List<ErrorReport> HandleMissingRegistrationData(
+    public class ErrorReportService(
+        ApplicationDBContext dbContext,
+        IBulkOperations bulkOps,
+        IInvoicedProducerService invoicedProducerService)
+        : IErrorReportService
+    {
+        public static List<ErrorReport> HandleMissingRegistrationData(
                                 IEnumerable<CalculatorRunPomDataDetail> pomDetails,
                                 IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails,
                                 int calculatorRunId,
@@ -38,7 +45,7 @@ namespace EPR.Calculator.Service.Function.Services
                 .ToList();
         }
 
-        public List<ErrorReport> HandleMissingPomData(IEnumerable<CalculatorRunPomDataDetail> pomDetails, IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails, int calculatorRunId, string createdBy)
+        public static List<ErrorReport> HandleMissingPomData(IEnumerable<CalculatorRunPomDataDetail> pomDetails, IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails, int calculatorRunId, string createdBy)
         {
             return orgDetails
                 .Where(o => ObligationStates.IsObligated(o.ObligationStatus))
@@ -53,7 +60,7 @@ namespace EPR.Calculator.Service.Function.Services
                 ).ToList();
         }
 
-        public List<ErrorReport> HandleObligatedErrors(IEnumerable<CalculatorRunPomDataDetail> pomDetails, IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails, IEnumerable<InvoicedProducerRecord> invoicedDetailsForFY, int calculatorRunId, string createdBy)
+        public static List<ErrorReport> HandleObligatedErrors(IEnumerable<CalculatorRunPomDataDetail> pomDetails, IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails, IEnumerable<InvoicedProducerRecord> invoicedDetailsForFY, int calculatorRunId, string createdBy)
         {
             return orgDetails
                     .Where(x => (x.ObligationStatus == ObligationStates.Error))
@@ -66,7 +73,7 @@ namespace EPR.Calculator.Service.Function.Services
         }
 
 
-        public List<ErrorReport> HandleObligatedWarnings(IEnumerable<CalculatorRunPomDataDetail> pomDetails, IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails, IEnumerable<InvoicedProducerRecord> invoicedDetailsForFY, int calculatorRunId, string createdBy)
+        public static List<ErrorReport> HandleObligatedWarnings(IEnumerable<CalculatorRunPomDataDetail> pomDetails, IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails, IEnumerable<InvoicedProducerRecord> invoicedDetailsForFY, int calculatorRunId, string createdBy)
         {
             return orgDetails
                     .Where(x => x.ObligationStatus == ObligationStates.Obligated && !string.IsNullOrEmpty(x.ErrorCode))
@@ -86,10 +93,10 @@ namespace EPR.Calculator.Service.Function.Services
                                 RelativeYear relativeYear,
                                 CancellationToken cancellationToken)
         {
-            var invoiceInstructionsFY = (await InvoicedProducerService.GetInvoicedProducerRecordsForYear(relativeYear));
+            var invoiceInstructionsFY = (await invoicedProducerService.GetInvoicedProducerRecordsForYear(relativeYear));
 
-            var obligatedErrors = HandleObligatedErrors(pomDetails, orgDetails, invoiceInstructionsFY!, calculatorRunId, createdBy);
-            var obligatedWarnings = HandleObligatedWarnings(pomDetails, orgDetails, invoiceInstructionsFY!, calculatorRunId, createdBy);
+            var obligatedErrors = HandleObligatedErrors(pomDetails, orgDetails, invoiceInstructionsFY, calculatorRunId, createdBy);
+            var obligatedWarnings = HandleObligatedWarnings(pomDetails, orgDetails, invoiceInstructionsFY, calculatorRunId, createdBy);
             var missingRegErrors = HandleMissingRegistrationData(pomDetails, orgDetails, calculatorRunId, createdBy);
             var missingPomErrors = HandleMissingPomData(pomDetails, orgDetails, calculatorRunId, createdBy);
 
@@ -101,7 +108,7 @@ namespace EPR.Calculator.Service.Function.Services
                                     .Select(x => CreateError(x.Key, null, calculatorRunId, createdBy, ErrorCodes.Empty, leaverCode: null));
 
             var allErrors = calcErrors.Concat(holdingRegErrors);
-            await ErrorReportChunker.InsertRecords(allErrors);
+            await bulkOps.BulkInsertAsync(dbContext, allErrors, cancellationToken);
 
             return calcErrors
                     .Where(e => !obligatedWarnings.Contains(e)) // Filter out warnings so they are kept in calculator results.
@@ -109,7 +116,7 @@ namespace EPR.Calculator.Service.Function.Services
                     .ToHashSet();
         }
 
-        private ErrorReport CreateError(int orgId, string? subId, int calculatorRunId, string createdBy, string? errorCode, string? leaverCode)
+        private static ErrorReport CreateError(int orgId, string? subId, int calculatorRunId, string createdBy, string? errorCode, string? leaverCode)
         {
             return new ErrorReport
             {

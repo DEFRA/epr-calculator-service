@@ -1,7 +1,5 @@
 ﻿namespace EPR.Calculator.Service.Function.Models
 {
-    using System.Collections.Generic;
-
     public class ProjectedProducersHeader
     {
         required public string Name { get; set; }
@@ -30,7 +28,7 @@
         public string? SubsidiaryId { get; set; }
         public required string Level { get; set; }
         public required string SubmissionPeriodCode { get; set; }
-        public bool IsSubtotal { get; set; } = false;
+        public bool IsSubtotal { get; set; }
         public required Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage> ProjectedTonnageByMaterial { get; set; }
     }
 

@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Billing.Contexts;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 
@@ -8,7 +9,7 @@ namespace EPR.Calculator.Service.Function.Builder.CancelledProducers
 {
     public interface ICalcResultCancelledProducersBuilder
     {
-        Task<CalcResultCancelledProducersResponse> ConstructAsync(CalcResultsRequestDto request);
+        Task<CalcResultCancelledProducersResponse> ConstructAsync(RunContext runContext);
     }
 
     public class CalcResultCancelledProducersBuilder(
@@ -16,18 +17,18 @@ namespace EPR.Calculator.Service.Function.Builder.CancelledProducers
         IMaterialService materialService)
         : ICalcResultCancelledProducersBuilder
     {
-        public async Task<CalcResultCancelledProducersResponse> ConstructAsync(CalcResultsRequestDto request)
+        public async Task<CalcResultCancelledProducersResponse> ConstructAsync(RunContext runContext)
         {
             return new CalcResultCancelledProducersResponse
             {
                 TitleHeader = CommonConstants.CancelledProducers,
-                CancelledProducers = await GetCancelledProducers(request)
+                CancelledProducers = await GetCancelledProducers(runContext)
             };
         }
 
-        private async Task<ImmutableArray<CalcResultCancelledProducersDto>> GetCancelledProducers(CalcResultsRequestDto request)
+        private async Task<ImmutableArray<CalcResultCancelledProducersDto>> GetCancelledProducers(RunContext runContext)
         {
-            var lookup = await GetMissingAcceptedCancelledInvoicedProducerRecordsLookup(request);
+            var lookup = await GetMissingAcceptedCancelledInvoicedProducerRecordsLookup(runContext);
             var materialIdsByType = await materialService.GetMaterialIdsByType();
 
             var builder = ImmutableArray.CreateBuilder<CalcResultCancelledProducersDto>();
@@ -67,26 +68,26 @@ namespace EPR.Calculator.Service.Function.Builder.CancelledProducers
             return builder.ToImmutable();
         }
 
-        private async Task<ImmutableDictionary<int, ImmutableDictionary<int, InvoicedProducerRecord>>> GetMissingAcceptedCancelledInvoicedProducerRecordsLookup(CalcResultsRequestDto request)
+        private async Task<ImmutableDictionary<int, ImmutableDictionary<int, InvoicedProducerRecord>>> GetMissingAcceptedCancelledInvoicedProducerRecordsLookup(RunContext runContext)
         {
-            var producerIdsForRun = await invoicedProducerService.GetProducerIdsForRun(request.RunId);
-            var invoicedProducerIdsForYear = await invoicedProducerService.GetInvoicedProducerIdsForYear(request.RelativeYear);
+            var producerIdsForRun = await invoicedProducerService.GetProducerIdsForRun(runContext.RunId);
+            var invoicedProducerIdsForYear = await invoicedProducerService.GetInvoicedProducerIdsForYear(runContext.RelativeYear);
             var missingProducerIds = invoicedProducerIdsForYear.Except(producerIdsForRun);
 
             ImmutableHashSet<int> missingAcceptedCancelledProducerIds;
 
-            if (request.IsBillingFile)
+            if (runContext is BillingRunContext)
             {
-                var acceptedCancelledProducers = await invoicedProducerService.GetAcceptedCancelledProducerIdsForRun(request.RunId);
+                var acceptedCancelledProducers = await invoicedProducerService.GetAcceptedCancelledProducerIdsForRun(runContext.RunId);
                 missingAcceptedCancelledProducerIds = acceptedCancelledProducers.Intersect(missingProducerIds);
             }
             else
             {
-                var acceptedCancelledProducers = await invoicedProducerService.GetInvoicedThenCancelledProducerIdsForYear(request.RelativeYear);
+                var acceptedCancelledProducers = await invoicedProducerService.GetInvoicedThenCancelledProducerIdsForYear(runContext.RelativeYear);
                 missingAcceptedCancelledProducerIds = missingProducerIds.Except(acceptedCancelledProducers);
             }
 
-            var missingAcceptedCancelledInvoicedProducerRecords = await invoicedProducerService.GetInvoicedProducerRecordsForYear(request.RelativeYear, missingAcceptedCancelledProducerIds);
+            var missingAcceptedCancelledInvoicedProducerRecords = await invoicedProducerService.GetInvoicedProducerRecordsForYear(runContext.RelativeYear, missingAcceptedCancelledProducerIds);
 
             // The grouping here selects the latest invoice for each producer/material combination
             return missingAcceptedCancelledInvoicedProducerRecords

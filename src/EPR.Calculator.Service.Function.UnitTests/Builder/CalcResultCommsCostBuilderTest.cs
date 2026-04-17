@@ -1,227 +1,211 @@
-﻿using AutoFixture;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.CommsCost;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Enums;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Calculator.Contexts;
 using EPR.Calculator.Service.Function.Models;
-using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.Extensibility;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
-namespace EPR.Calculator.Service.Function.UnitTests.Builder
+namespace EPR.Calculator.Service.Function.UnitTests.Builder;
+
+[TestClass]
+public class CalcResultCommsCostBuilderTest
 {
-    [TestClass]
-    public class CalcResultCommsCostBuilderTest
+    private ApplicationDBContext _dbContext = null!;
+    private CalcResultCommsCostBuilder _sut = null!;
+    private IFixture _fixture = null!;
+
+    [TestInitialize]
+    public void Init()
     {
-        private readonly CalcResultCommsCostBuilder builder;
-        private readonly ApplicationDBContext dbContext;
+        _fixture = TestFixtures.New();
+        _dbContext = _fixture.Freeze<ApplicationDBContext>();
 
-        public CalcResultCommsCostBuilderTest()
+        _sut = _fixture.Create<CalcResultCommsCostBuilder>();
+    }
+
+    [TestMethod]
+    public async Task ConstructTest()
+    {
+        var calcResult = _fixture.Create<CalcResult>();
+        calcResult.CalcResultScaledupProducers = GetScaledUpProducers();
+
+        CreateMaterials();
+        CreateDefaultTemplate();
+        CreateDefaultParameters();
+        CreateNewRun();
+        CreateProducerDetail();
+        var runContext = TestFixtures.Default.Create<CalculatorRunContext>();
+        var apportionment = new CalcResultOnePlusFourApportionment
         {
-            var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
-                .UseInMemoryDatabase(databaseName: "PayCal")
-                .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-                .Options;
-
-            dbContext = new ApplicationDBContext(dbContextOptions);
-            dbContext.Database.EnsureCreated();
-            builder = new CalcResultCommsCostBuilder(
-                dbContext,
-                new TelemetryClient(TelemetryConfiguration.CreateDefault()));
-        }
-
-        private Fixture Fixture { get; init; } = new Fixture();
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            dbContext.Database.EnsureDeleted();
-        }
-
-        [TestMethod]
-        public async Task ConstructTest()
-        {
-            var calcResult = TestDataHelper.GetCalcResult();
-            calcResult.CalcResultScaledupProducers = GetScaledUpProducers();
-
-            CreateMaterials();
-            CreateDefaultTemplate();
-            CreateDefaultParameters();
-            CreateNewRun();
-            CreateProducerDetail();
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) };
-            var apportionment = new CalcResultOnePlusFourApportionment
-            {
-                Name = Fixture.Create<string>(),
-                CalcResultOnePlusFourApportionmentDetails = new List<CalcResultOnePlusFourApportionmentDetail>
+            Name = TestFixtures.Default.Create<string>(),
+            CalcResultOnePlusFourApportionmentDetails =
+            [
+                new CalcResultOnePlusFourApportionmentDetail
                 {
-                    new CalcResultOnePlusFourApportionmentDetail
-                    {
-                        Name = Fixture.Create<string>(),
-                        EnglandTotal = 40M,
-                        ScotlandTotal = 20M,
-                        WalesTotal = 20M,
-                        NorthernIrelandTotal = 20M,
-                        Total = "100%",
-                        EnglandDisposalTotal = "40%",
-                        ScotlandDisposalTotal = "20%",
-                        WalesDisposalTotal = "20%",
-                        NorthernIrelandDisposalTotal = "20%",
-                    },
-                },
-            };
-            var result = await builder.ConstructAsync(resultsRequestDto, apportionment, calcResult);
+                    Name = TestFixtures.Default.Create<string>(),
+                    EnglandTotal = 40M,
+                    ScotlandTotal = 20M,
+                    WalesTotal = 20M,
+                    NorthernIrelandTotal = 20M,
+                    Total = "100%",
+                    EnglandDisposalTotal = "40%",
+                    ScotlandDisposalTotal = "20%",
+                    WalesDisposalTotal = "20%",
+                    NorthernIrelandDisposalTotal = "20%"
+                }
+            ]
+        };
+        var result = await _sut.ConstructAsync(runContext, apportionment, calcResult);
 
-            Assert.IsNotNull(result);
+        Assert.IsNotNull(result);
 
-            Assert.AreEqual("Parameters - Comms Costs", result.Name);
+        Assert.AreEqual("Parameters - Comms Costs", result.Name);
 
-            var onePlusFourApp = result.CalcResultCommsCostOnePlusFourApportionment;
-            Assert.IsNotNull(onePlusFourApp);
-            Assert.AreEqual(2, onePlusFourApp.Count());
-            var headerApp = onePlusFourApp.First();
-            Assert.IsTrue(string.IsNullOrEmpty(headerApp.Name));
+        var onePlusFourApp = result.CalcResultCommsCostOnePlusFourApportionment;
+        Assert.IsNotNull(onePlusFourApp);
+        Assert.AreEqual(2, onePlusFourApp.Count());
+        var headerApp = onePlusFourApp.First();
+        Assert.IsTrue(string.IsNullOrEmpty(headerApp.Name));
 
-            Assert.AreEqual("England", headerApp.England);
-            Assert.AreEqual("Wales", headerApp.Wales);
-            Assert.AreEqual("Northern Ireland", headerApp.NorthernIreland);
-            Assert.AreEqual("Scotland", headerApp.Scotland);
+        Assert.AreEqual("England", headerApp.England);
+        Assert.AreEqual("Wales", headerApp.Wales);
+        Assert.AreEqual("Northern Ireland", headerApp.NorthernIreland);
+        Assert.AreEqual("Scotland", headerApp.Scotland);
 
-            Assert.AreEqual("Total", headerApp.Total);
+        Assert.AreEqual("Total", headerApp.Total);
 
-            var dataApp = result.CalcResultCommsCostOnePlusFourApportionment.Last();
-            Assert.IsNotNull(dataApp);
+        var dataApp = result.CalcResultCommsCostOnePlusFourApportionment.Last();
+        Assert.IsNotNull(dataApp);
 
-            Assert.AreEqual("1 + 4 Apportionment %s", dataApp.Name);
-            Assert.AreEqual("40%", dataApp.England);
-            Assert.AreEqual("20%", dataApp.Wales);
-            Assert.AreEqual("20%", dataApp.NorthernIreland);
-            Assert.AreEqual("20%", dataApp.Scotland);
-            Assert.AreEqual("100%", dataApp.Total);
+        Assert.AreEqual("1 + 4 Apportionment %s", dataApp.Name);
+        Assert.AreEqual("40%", dataApp.England);
+        Assert.AreEqual("20%", dataApp.Wales);
+        Assert.AreEqual("20%", dataApp.NorthernIreland);
+        Assert.AreEqual("20%", dataApp.Scotland);
+        Assert.AreEqual("100%", dataApp.Total);
 
-            var materialCosts = result.CalcResultCommsCostCommsCostByMaterial.ToList();
-            Assert.IsNotNull(materialCosts);
-            Assert.AreEqual(10, materialCosts.Count);
+        var materialCosts = result.CalcResultCommsCostCommsCostByMaterial.ToList();
+        Assert.IsNotNull(materialCosts);
+        Assert.AreEqual(10, materialCosts.Count);
 
-            var materialHeader = materialCosts.First();
+        var materialHeader = materialCosts.First();
 
-            Assert.IsNotNull(materialHeader);
+        Assert.IsNotNull(materialHeader);
 
-            Assert.AreEqual("2a Comms Costs - by Material", materialHeader.Name);
-            Assert.AreEqual("England", materialHeader.England);
-            Assert.AreEqual("Wales", materialHeader.Wales);
-            Assert.AreEqual("Scotland", materialHeader.Scotland);
-            Assert.AreEqual("Northern Ireland", materialHeader.NorthernIreland);
-            Assert.AreEqual("Total", materialHeader.Total);
-            Assert.AreEqual(
-                "Producer Household Packaging Tonnage",
-                materialHeader.ProducerReportedHouseholdPackagingWasteTonnage);
-            Assert.AreEqual("Public Bin Tonnage", materialHeader.ReportedPublicBinTonnage);
-            Assert.AreEqual("Household Drinks Containers Tonnage", materialHeader.HouseholdDrinksContainers);
-            Assert.AreEqual("Late Reporting Tonnage", materialHeader.LateReportingTonnage);
-            Assert.AreEqual(
-                "Producer Household Tonnage + Late Reporting Tonnage + Public Bin Tonnage + Household Drinks Containers Tonnage",
-                materialHeader.ProducerReportedHouseholdPlusLateReportingTonnage);
-            Assert.AreEqual(
-                "Comms Cost - by Material Price Per Tonne",
-                materialHeader.CommsCostByMaterialPricePerTonne);
+        Assert.AreEqual("2a Comms Costs - by Material", materialHeader.Name);
+        Assert.AreEqual("England", materialHeader.England);
+        Assert.AreEqual("Wales", materialHeader.Wales);
+        Assert.AreEqual("Scotland", materialHeader.Scotland);
+        Assert.AreEqual("Northern Ireland", materialHeader.NorthernIreland);
+        Assert.AreEqual("Total", materialHeader.Total);
+        Assert.AreEqual(
+            "Producer Household Packaging Tonnage",
+            materialHeader.ProducerReportedHouseholdPackagingWasteTonnage);
+        Assert.AreEqual("Public Bin Tonnage", materialHeader.ReportedPublicBinTonnage);
+        Assert.AreEqual("Household Drinks Containers Tonnage", materialHeader.HouseholdDrinksContainers);
+        Assert.AreEqual("Late Reporting Tonnage", materialHeader.LateReportingTonnage);
+        Assert.AreEqual(
+            "Producer Household Tonnage + Late Reporting Tonnage + Public Bin Tonnage + Household Drinks Containers Tonnage",
+            materialHeader.ProducerReportedHouseholdPlusLateReportingTonnage);
+        Assert.AreEqual(
+            "Comms Cost - by Material Price Per Tonne",
+            materialHeader.CommsCostByMaterialPricePerTonne);
 
-            var aluminiumCost = materialCosts[1];
-            Assert.AreEqual("Aluminium", aluminiumCost.Name);
-            Assert.AreEqual("£4.00", aluminiumCost.England);
-            Assert.AreEqual("£2.00", aluminiumCost.Wales);
-            Assert.AreEqual("£2.00", aluminiumCost.Scotland);
-            Assert.AreEqual("£2.00", aluminiumCost.NorthernIreland);
-            Assert.AreEqual("£10.00", aluminiumCost.Total);
-            Assert.AreEqual(
-                "910.000",
-                aluminiumCost.ProducerReportedHouseholdPackagingWasteTonnage);
-            Assert.AreEqual("8000.000", aluminiumCost.LateReportingTonnage);
-            Assert.AreEqual(
-                "8920.000",
-                aluminiumCost.ProducerReportedHouseholdPlusLateReportingTonnage);
-            Assert.AreEqual(
-                "0.0011",
-                aluminiumCost.CommsCostByMaterialPricePerTonne);
+        var aluminiumCost = materialCosts[1];
+        Assert.AreEqual("Aluminium", aluminiumCost.Name);
+        Assert.AreEqual("£4.00", aluminiumCost.England);
+        Assert.AreEqual("£2.00", aluminiumCost.Wales);
+        Assert.AreEqual("£2.00", aluminiumCost.Scotland);
+        Assert.AreEqual("£2.00", aluminiumCost.NorthernIreland);
+        Assert.AreEqual("£10.00", aluminiumCost.Total);
+        Assert.AreEqual(
+            "910.000",
+            aluminiumCost.ProducerReportedHouseholdPackagingWasteTonnage);
+        Assert.AreEqual("8000.000", aluminiumCost.LateReportingTonnage);
+        Assert.AreEqual(
+            "8920.000",
+            aluminiumCost.ProducerReportedHouseholdPlusLateReportingTonnage);
+        Assert.AreEqual(
+            "0.0011",
+            aluminiumCost.CommsCostByMaterialPricePerTonne);
 
-            var fibreCompositeCost = materialCosts[2];
-            Assert.AreEqual("Fibre composite", fibreCompositeCost.Name);
-            Assert.AreEqual("£4.00", fibreCompositeCost.England);
-            Assert.AreEqual("£2.00", fibreCompositeCost.Wales);
-            Assert.AreEqual("£2.00", fibreCompositeCost.Scotland);
-            Assert.AreEqual("£2.00", fibreCompositeCost.NorthernIreland);
-            Assert.AreEqual("£10.00", fibreCompositeCost.Total);
-            Assert.AreEqual(
-                "1800.000",
-                fibreCompositeCost.ProducerReportedHouseholdPackagingWasteTonnage);
-            Assert.AreEqual("10.000", fibreCompositeCost.LateReportingTonnage);
-            Assert.AreEqual(
-                "1810.000",
-                fibreCompositeCost.ProducerReportedHouseholdPlusLateReportingTonnage);
-            Assert.AreEqual(
-                "0.0055",
-                fibreCompositeCost.CommsCostByMaterialPricePerTonne);
+        var fibreCompositeCost = materialCosts[2];
+        Assert.AreEqual("Fibre composite", fibreCompositeCost.Name);
+        Assert.AreEqual("£4.00", fibreCompositeCost.England);
+        Assert.AreEqual("£2.00", fibreCompositeCost.Wales);
+        Assert.AreEqual("£2.00", fibreCompositeCost.Scotland);
+        Assert.AreEqual("£2.00", fibreCompositeCost.NorthernIreland);
+        Assert.AreEqual("£10.00", fibreCompositeCost.Total);
+        Assert.AreEqual(
+            "1800.000",
+            fibreCompositeCost.ProducerReportedHouseholdPackagingWasteTonnage);
+        Assert.AreEqual("10.000", fibreCompositeCost.LateReportingTonnage);
+        Assert.AreEqual(
+            "1810.000",
+            fibreCompositeCost.ProducerReportedHouseholdPlusLateReportingTonnage);
+        Assert.AreEqual(
+            "0.0055",
+            fibreCompositeCost.CommsCostByMaterialPricePerTonne);
 
-            var glassCost = materialCosts[3];
-            Assert.AreEqual("Glass", glassCost.Name);
-            Assert.AreEqual("£4.00", glassCost.England);
-            Assert.AreEqual("£2.00", glassCost.Wales);
-            Assert.AreEqual("£2.00", glassCost.Scotland);
-            Assert.AreEqual("£2.00", glassCost.NorthernIreland);
-            Assert.AreEqual("£10.00", glassCost.Total);
-            Assert.AreEqual(
-                "2700.000",
-                glassCost.ProducerReportedHouseholdPackagingWasteTonnage);
-            Assert.AreEqual("10.000", glassCost.LateReportingTonnage);
-            Assert.AreEqual(
-                "2810.000",
-                glassCost.ProducerReportedHouseholdPlusLateReportingTonnage);
-            Assert.AreEqual(
-                "0.0036",
-                glassCost.CommsCostByMaterialPricePerTonne);
-            Assert.AreEqual("100.0000", glassCost.HouseholdDrinksContainers);
+        var glassCost = materialCosts[3];
+        Assert.AreEqual("Glass", glassCost.Name);
+        Assert.AreEqual("£4.00", glassCost.England);
+        Assert.AreEqual("£2.00", glassCost.Wales);
+        Assert.AreEqual("£2.00", glassCost.Scotland);
+        Assert.AreEqual("£2.00", glassCost.NorthernIreland);
+        Assert.AreEqual("£10.00", glassCost.Total);
+        Assert.AreEqual(
+            "2700.000",
+            glassCost.ProducerReportedHouseholdPackagingWasteTonnage);
+        Assert.AreEqual("10.000", glassCost.LateReportingTonnage);
+        Assert.AreEqual(
+            "2810.000",
+            glassCost.ProducerReportedHouseholdPlusLateReportingTonnage);
+        Assert.AreEqual(
+            "0.0036",
+            glassCost.CommsCostByMaterialPricePerTonne);
+        Assert.AreEqual("100.0000", glassCost.HouseholdDrinksContainers);
 
-            var totalMaterialCost = materialCosts.Last();
-            Assert.AreEqual("Total", totalMaterialCost.Name);
-            Assert.AreEqual("£32.00", totalMaterialCost.England);
-            Assert.AreEqual("£16.00", totalMaterialCost.Wales);
-            Assert.AreEqual("£16.00", totalMaterialCost.Scotland);
-            Assert.AreEqual("£16.00", totalMaterialCost.NorthernIreland);
-            Assert.AreEqual("£80.00", totalMaterialCost.Total);
-            Assert.AreEqual(
-                "32410.000",
-                totalMaterialCost.ProducerReportedHouseholdPackagingWasteTonnage);
-            Assert.AreEqual("10020.000", totalMaterialCost.LateReportingTonnage);
-            Assert.AreEqual(
-                "42540.000",
-                totalMaterialCost.ProducerReportedHouseholdPlusLateReportingTonnage);
-            Assert.IsTrue(string.IsNullOrEmpty(totalMaterialCost.CommsCostByMaterialPricePerTonne));
-        }
+        var totalMaterialCost = materialCosts.Last();
+        Assert.AreEqual("Total", totalMaterialCost.Name);
+        Assert.AreEqual("£32.00", totalMaterialCost.England);
+        Assert.AreEqual("£16.00", totalMaterialCost.Wales);
+        Assert.AreEqual("£16.00", totalMaterialCost.Scotland);
+        Assert.AreEqual("£16.00", totalMaterialCost.NorthernIreland);
+        Assert.AreEqual("£80.00", totalMaterialCost.Total);
+        Assert.AreEqual(
+            "32410.000",
+            totalMaterialCost.ProducerReportedHouseholdPackagingWasteTonnage);
+        Assert.AreEqual("10020.000", totalMaterialCost.LateReportingTonnage);
+        Assert.AreEqual(
+            "42540.000",
+            totalMaterialCost.ProducerReportedHouseholdPlusLateReportingTonnage);
+        Assert.IsTrue(string.IsNullOrEmpty(totalMaterialCost.CommsCostByMaterialPricePerTonne));
+    }
 
-        [TestMethod]
-        public async Task GetProducerReportedMaterials_ShouldReturnValidMaterials()
-        {
-            // Arrange
-            SeedDatabase(dbContext);
-            var runId = 1;
+    [TestMethod]
+    public async Task GetProducerReportedMaterials_ShouldReturnValidMaterials()
+    {
+        // Arrange
+        SeedDatabase(_dbContext);
 
-            // Act
-            var result = await builder.GetProducerReportedMaterials(dbContext, runId);
+        var runId = 1;
 
-            // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(6, result.Count);
-            Assert.IsTrue(result.Any(r => r.Material!.Code == "PL" && r.PackagingType == "HH" && r.PackagingTonnage == 50 && r.SubmissionPeriod == "2025-H1"));
-            Assert.IsTrue(result.Any(r => r.Material!.Code == "PL" && r.PackagingType == "HH" && r.PackagingTonnage == 50 && r.SubmissionPeriod == "2025-H2"));
-            Assert.IsTrue(result.Any(r => r.Material!.Code == "ST" && r.PackagingType == "PB" && r.PackagingTonnage == 100 && r.SubmissionPeriod == "2025-H1"));
-            Assert.IsTrue(result.Any(r => r.Material!.Code == "ST" && r.PackagingType == "PB" && r.PackagingTonnage == 100 && r.SubmissionPeriod == "2025-H2"));
-            Assert.IsTrue(result.Any(r => r.Material!.Code == "GL" && r.PackagingType == "HDC" && r.PackagingTonnage == 150 && r.SubmissionPeriod == "2025-H1"));
-            Assert.IsTrue(result.Any(r => r.Material!.Code == "GL" && r.PackagingType == "HDC" && r.PackagingTonnage == 150 && r.SubmissionPeriod == "2025-H2"));
-        }
+        // Act
+        var result = await _sut.GetProducerReportedMaterials(runId);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.AreEqual(6, result.Count);
+        Assert.IsTrue(result.Any(r => r.Material!.Code == "PL" && r.PackagingType == "HH" && r.PackagingTonnage == 50 && r.SubmissionPeriod == "2025-H1"));
+        Assert.IsTrue(result.Any(r => r.Material!.Code == "PL" && r.PackagingType == "HH" && r.PackagingTonnage == 50 && r.SubmissionPeriod == "2025-H2"));
+        Assert.IsTrue(result.Any(r => r.Material!.Code == "ST" && r.PackagingType == "PB" && r.PackagingTonnage == 100 && r.SubmissionPeriod == "2025-H1"));
+        Assert.IsTrue(result.Any(r => r.Material!.Code == "ST" && r.PackagingType == "PB" && r.PackagingTonnage == 100 && r.SubmissionPeriod == "2025-H2"));
+        Assert.IsTrue(result.Any(r => r.Material!.Code == "GL" && r.PackagingType == "HDC" && r.PackagingTonnage == 150 && r.SubmissionPeriod == "2025-H1"));
+        Assert.IsTrue(result.Any(r => r.Material!.Code == "GL" && r.PackagingType == "HDC" && r.PackagingTonnage == 150 && r.SubmissionPeriod == "2025-H2"));
+    }
 
         private void SeedDatabase(ApplicationDBContext context)
         {
@@ -253,281 +237,282 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             context.SaveChanges();
         }
 
-        private void CreateProducerDetail()
+    private void CreateProducerDetail()
+    {
+        var producerNames = new[]
         {
-            var producerNames = new[]
+            "Allied Packaging",
+            "Beeline Materials",
+            "Cloud Boxes",
+            "Decking and Shed",
+            "Electric Things",
+            "French Flooring",
+            "Good Fruit Co",
+            "Happy Shopper",
+            "Icicle Foods",
+            "Jumbo Box Store"
+        };
+
+        var producerId = 1;
+        foreach (var producerName in producerNames)
+        {
+            _dbContext.ProducerDetail.Add(new ProducerDetail
             {
-                "Allied Packaging",
-                "Beeline Materials",
-                "Cloud Boxes",
-                "Decking and Shed",
-                "Electric Things",
-                "French Flooring",
-                "Good Fruit Co",
-                "Happy Shopper",
-                "Icicle Foods",
-                "Jumbo Box Store",
-            };
-
-            var producerId = 1;
-            foreach (var producerName in producerNames)
-            {
-                dbContext.ProducerDetail.Add(new ProducerDetail
-                {
-                    ProducerId = producerId++,
-                    SubsidiaryId = $"{producerId}-Sub",
-                    ProducerName = producerName,
-                    CalculatorRunId = 1,
-                });
-            }
-
-            dbContext.SaveChanges();
-
-            foreach (var subPeriod in new[] { "2025-H1", "2025-H2"}) {
-                for (int producerDetailId = 1; producerDetailId <= 10; producerDetailId++)
-                {
-                    for (int materialId = 1; materialId < 9; materialId++)
-                    {
-                        this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-                        {
-                            MaterialId = materialId,
-                            ProducerDetailId = producerDetailId,
-                            PackagingType = "HH",
-                            SubmissionPeriod = subPeriod,
-                            PackagingTonnage = materialId * 50,
-                        });
-                    }
-                }
-
-                this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial()
-                {
-                    MaterialId = 3,
-                    ProducerDetailId = 1,
-                    PackagingType = "HDC",
-                    SubmissionPeriod = subPeriod,
-                    PackagingTonnage = 50,
-                });
-
-                this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial()
-                {
-                    MaterialId = 3,
-                    ProducerDetailId = 2,
-                    PackagingType = "HDC",
-                    SubmissionPeriod = subPeriod,
-                    PackagingTonnage = 50,
-                });
-
-                this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial()
-                {
-                    MaterialId = 2,
-                    ProducerDetailId = 1,
-                    PackagingType = "PB",
-                    SubmissionPeriod = subPeriod,
-                    PackagingTonnage = 100,
-                });
-            }
-
-            dbContext.SaveChanges();
+                ProducerId = producerId++,
+                SubsidiaryId = $"{producerId}-Sub",
+                ProducerName = producerName,
+                CalculatorRunId = 1
+            });
         }
 
-        private void CreateDefaultTemplate()
+        _dbContext.SaveChanges();
+
+        foreach (var subPeriod in new[] { "2025-H1", "2025-H2" })
         {
-            dbContext.DefaultParameterTemplateMasterList.RemoveRange(
-                dbContext.DefaultParameterTemplateMasterList.ToList());
-            dbContext.SaveChanges();
-
-            var materialDictionary = new Dictionary<string, string>
+            for (var producerDetailId = 1; producerDetailId <= 10; producerDetailId++)
             {
-                { "AL", "Aluminium" },
-                { "FC", "Fibre composite" },
-                { "GL", "Glass" },
-                { "PC", "Paper or card" },
-                { "PL", "Plastic" },
-                { "ST", "Steel" },
-                { "WD", "Wood" },
-                { "OT", "Other materials" },
-            };
-
-            var parameterTypes = new[] { "Communication costs by material", "Late reporting tonnage" };
-            foreach (var material in materialDictionary.Values)
-            {
-                dbContext.DefaultParameterTemplateMasterList.Add(new DefaultParameterTemplateMaster
+                for (var materialId = 1; materialId < 9; materialId++)
                 {
-                    ParameterUniqueReferenceId = Guid.NewGuid().ToString(),
-                    ParameterCategory = material,
-                    ParameterType = parameterTypes[0],
-                });
-                var rag = new[] { "R", "A", "G" };
-                foreach (var v in rag)
-                {
-                    dbContext.DefaultParameterTemplateMasterList.Add(new DefaultParameterTemplateMaster
+                    _dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
                     {
-                        ParameterUniqueReferenceId = Guid.NewGuid().ToString(),
-                        ParameterCategory = $"{material}-{v}",
-                        ParameterType = parameterTypes[1],
+                        MaterialId = materialId,
+                        ProducerDetailId = producerDetailId,
+                        PackagingType = "HH",
+                        SubmissionPeriod = subPeriod,
+                        PackagingTonnage = materialId * 50
                     });
                 }
             }
 
-            var countries = new[]
+            _dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
             {
-                "England",
-                "Northern Ireland",
-                "Scotland",
-                "United Kingdom",
-                "Wales",
-            };
+                MaterialId = 3,
+                ProducerDetailId = 1,
+                PackagingType = "HDC",
+                SubmissionPeriod = subPeriod,
+                PackagingTonnage = 50
+            });
 
-            foreach (var country in countries)
+            _dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
             {
-                dbContext.DefaultParameterTemplateMasterList.Add(new DefaultParameterTemplateMaster
+                MaterialId = 3,
+                ProducerDetailId = 2,
+                PackagingType = "HDC",
+                SubmissionPeriod = subPeriod,
+                PackagingTonnage = 50
+            });
+
+            _dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            {
+                MaterialId = 2,
+                ProducerDetailId = 1,
+                PackagingType = "PB",
+                SubmissionPeriod = subPeriod,
+                PackagingTonnage = 100
+            });
+        }
+
+        _dbContext.SaveChanges();
+    }
+
+    private void CreateDefaultTemplate()
+    {
+        _dbContext.DefaultParameterTemplateMasterList.RemoveRange(
+            _dbContext.DefaultParameterTemplateMasterList.ToList());
+        _dbContext.SaveChanges();
+
+        var materialDictionary = new Dictionary<string, string>
+        {
+            { "AL", "Aluminium" },
+            { "FC", "Fibre composite" },
+            { "GL", "Glass" },
+            { "PC", "Paper or card" },
+            { "PL", "Plastic" },
+            { "ST", "Steel" },
+            { "WD", "Wood" },
+            { "OT", "Other materials" }
+        };
+
+        var parameterTypes = new[] { "Communication costs by material", "Late reporting tonnage" };
+        foreach (var material in materialDictionary.Values)
+        {
+            _dbContext.DefaultParameterTemplateMasterList.Add(new DefaultParameterTemplateMaster
+            {
+                ParameterUniqueReferenceId = Guid.NewGuid().ToString(),
+                ParameterCategory = material,
+                ParameterType = parameterTypes[0]
+            });
+            var rag = new[] { "R", "A", "G" };
+            foreach (var v in rag)
+            {
+                _dbContext.DefaultParameterTemplateMasterList.Add(new DefaultParameterTemplateMaster
                 {
                     ParameterUniqueReferenceId = Guid.NewGuid().ToString(),
-                    ParameterCategory = country,
-                    ParameterType = "Communication costs by country",
+                    ParameterCategory = $"{material}-{v}",
+                    ParameterType = parameterTypes[1]
                 });
             }
-
-            dbContext.SaveChanges();
         }
 
-        private void CreateNewRun()
+        var countries = new[]
         {
-            var run = new CalculatorRun
+            "England",
+            "Northern Ireland",
+            "Scotland",
+            "United Kingdom",
+            "Wales"
+        };
+
+        foreach (var country in countries)
+        {
+            _dbContext.DefaultParameterTemplateMasterList.Add(new DefaultParameterTemplateMaster
             {
-                CalculatorRunClassificationId = (int)RunClassification.RUNNING,
-                Name = "Test Run",
-                RelativeYear = new RelativeYear(2024),
-                CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
-                CreatedBy = "Test User",
+                ParameterUniqueReferenceId = Guid.NewGuid().ToString(),
+                ParameterCategory = country,
+                ParameterType = "Communication costs by country"
+            });
+        }
+
+        _dbContext.SaveChanges();
+    }
+
+    private void CreateNewRun()
+    {
+        var run = new CalculatorRun
+        {
+            CalculatorRunClassificationId = RunClassificationStatusIds.RUNNINGID,
+            Name = "Test Run",
+            RelativeYear = new RelativeYear(2024),
+            CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
+            CreatedBy = "Test User",
+            DefaultParameterSettingMasterId = 1
+        };
+        _dbContext.CalculatorRuns.Add(run);
+        _dbContext.SaveChanges();
+    }
+
+    private void CreateDefaultParameters()
+    {
+        var templateMasterList = _dbContext.DefaultParameterTemplateMasterList.ToList();
+
+        var defaultMaster = new DefaultParameterSettingMaster
+        {
+            RelativeYear = new RelativeYear(2024)
+        };
+
+        _dbContext.DefaultParameterSettings.Add(defaultMaster);
+        _dbContext.SaveChanges();
+
+        foreach (var templateMaster in templateMasterList)
+        {
+            var defaultDetail = new DefaultParameterSettingDetail
+            {
+                ParameterUniqueReferenceId = templateMaster.ParameterUniqueReferenceId,
+                ParameterValue = GetValue(templateMaster),
                 DefaultParameterSettingMasterId = 1,
+                DefaultParameterSettingMaster = defaultMaster
             };
-            dbContext.CalculatorRuns.Add(run);
-            dbContext.SaveChanges();
+            _dbContext.DefaultParameterSettingDetail.Add(defaultDetail);
         }
 
-        private void CreateDefaultParameters()
+        _dbContext.SaveChanges();
+    }
+
+    private static decimal GetValue(DefaultParameterTemplateMaster templateMaster)
+    {
+        if (templateMaster.ParameterType == "Communication costs by material")
         {
-            var templateMasterList = dbContext.DefaultParameterTemplateMasterList.ToList();
-
-            var defaultMaster = new DefaultParameterSettingMaster
+            switch (templateMaster.ParameterCategory)
             {
-                RelativeYear = new RelativeYear(2024),
-            };
-
-            dbContext.DefaultParameterSettings.Add(defaultMaster);
-            dbContext.SaveChanges();
-
-            foreach (var templateMaster in templateMasterList)
-            {
-                var defaultDetail = new DefaultParameterSettingDetail
-                {
-                    ParameterUniqueReferenceId = templateMaster.ParameterUniqueReferenceId,
-                    ParameterValue = GetValue(templateMaster),
-                    DefaultParameterSettingMasterId = 1,
-                    DefaultParameterSettingMaster = defaultMaster,
-                };
-                dbContext.DefaultParameterSettingDetail.Add(defaultDetail);
+                case "England":
+                    return 40M;
+                case "Northern Ireland":
+                    return 10M;
+                case "Scotland":
+                    return 20M;
+                case "Wales":
+                    return 30M;
             }
-
-            dbContext.SaveChanges();
         }
 
-        private static decimal GetValue(DefaultParameterTemplateMaster templateMaster)
+        return 10;
+    }
+
+    private static CalcResultScaledupProducers GetScaledUpProducers()
+    {
+        return new CalcResultScaledupProducers
         {
-            if (templateMaster.ParameterType == "Communication costs by material")
-            {
-                switch (templateMaster.ParameterCategory)
+            ScaledupProducers =
+            [
+                new CalcResultScaledupProducer
                 {
-                    case "England":
-                        return 40M;
-                    case "Northern Ireland":
-                        return 10M;
-                    case "Scotland":
-                        return 20M;
-                    case "Wales":
-                        return 30M;
+                    ProducerId = 1,
+                    IsTotalRow = true,
+                    ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>
+                    {
+                        ["Aluminium"] = new()
+                        {
+                            ReportedHouseholdPackagingWasteTonnage = 10,
+                            ReportedPublicBinTonnage = 10,
+                            TotalReportedTonnage = 10,
+                            ReportedSelfManagedConsumerWasteTonnage = 10,
+                            NetReportedTonnage = 10,
+                            ScaledupReportedHouseholdPackagingWasteTonnage = 10,
+                            ScaledupReportedPublicBinTonnage = 10,
+                            ScaledupTotalReportedTonnage = 10,
+                            ScaledupReportedSelfManagedConsumerWasteTonnage = 10,
+                            ScaledupNetReportedTonnage = 10
+                        }
+                    }
+                },
+
+                new CalcResultScaledupProducer
+                {
+                    ProducerId = 1,
+                    IsTotalRow = true,
+                    ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>
+                    {
+                        ["GL"] = new()
+                        {
+                            ReportedHouseholdPackagingWasteTonnage = 10,
+                            ReportedPublicBinTonnage = 10,
+                            TotalReportedTonnage = 10,
+                            ReportedSelfManagedConsumerWasteTonnage = 10,
+                            NetReportedTonnage = 10,
+                            ScaledupReportedHouseholdPackagingWasteTonnage = 10,
+                            ScaledupReportedPublicBinTonnage = 10,
+                            ScaledupTotalReportedTonnage = 10,
+                            ScaledupReportedSelfManagedConsumerWasteTonnage = 10,
+                            ScaledupNetReportedTonnage = 10
+                        }
+                    }
                 }
-            }
+            ]
+        };
+    }
 
-            return 10;
-        }
+    private void CreateMaterials()
+    {
+        var materialDictionary = new Dictionary<string, string>();
+        materialDictionary.Add("AL", "Aluminium");
+        materialDictionary.Add("FC", "Fibre composite");
+        materialDictionary.Add("GL", "Glass");
+        materialDictionary.Add("PC", "Paper or card");
+        materialDictionary.Add("PL", "Plastic");
+        materialDictionary.Add("ST", "Steel");
+        materialDictionary.Add("WD", "Wood");
+        materialDictionary.Add("OT", "Other materials");
 
-        private static CalcResultScaledupProducers GetScaledUpProducers()
+        foreach (var materialKv in materialDictionary)
         {
-           return new CalcResultScaledupProducers
-           {
-                ScaledupProducers = new List<CalcResultScaledupProducer>
-                {
-                     new CalcResultScaledupProducer
-                     {
-                        ProducerId = 1,
-                        IsTotalRow = true,
-                        ScaledupProducerTonnageByMaterial = new()
-                        {
-                         ["Aluminium"] = new CalcResultScaledupProducerTonnage
-                        {
-                            ReportedHouseholdPackagingWasteTonnage = 10,
-                            ReportedPublicBinTonnage = 10,
-                            TotalReportedTonnage = 10,
-                            ReportedSelfManagedConsumerWasteTonnage = 10,
-                            NetReportedTonnage = 10,
-                            ScaledupReportedHouseholdPackagingWasteTonnage = 10,
-                            ScaledupReportedPublicBinTonnage = 10,
-                            ScaledupTotalReportedTonnage = 10,
-                            ScaledupReportedSelfManagedConsumerWasteTonnage = 10,
-                            ScaledupNetReportedTonnage = 10,
-                        },
-                        },
-                     },
-                     new CalcResultScaledupProducer
-                     {
-                        ProducerId = 1,
-                        IsTotalRow = true,
-                        ScaledupProducerTonnageByMaterial = new()
-                        {
-                         ["GL"] = new CalcResultScaledupProducerTonnage
-                        {
-                            ReportedHouseholdPackagingWasteTonnage = 10,
-                            ReportedPublicBinTonnage = 10,
-                            TotalReportedTonnage = 10,
-                            ReportedSelfManagedConsumerWasteTonnage = 10,
-                            NetReportedTonnage = 10,
-                            ScaledupReportedHouseholdPackagingWasteTonnage = 10,
-                            ScaledupReportedPublicBinTonnage = 10,
-                            ScaledupTotalReportedTonnage = 10,
-                            ScaledupReportedSelfManagedConsumerWasteTonnage = 10,
-                            ScaledupNetReportedTonnage = 10,
-                        },
-                        },
-                     },
-                 },
-            };
-        }
-
-        private void CreateMaterials()
-        {
-            var materialDictionary = new Dictionary<string, string>();
-            materialDictionary.Add("AL", "Aluminium");
-            materialDictionary.Add("FC", "Fibre composite");
-            materialDictionary.Add("GL", "Glass");
-            materialDictionary.Add("PC", "Paper or card");
-            materialDictionary.Add("PL", "Plastic");
-            materialDictionary.Add("ST", "Steel");
-            materialDictionary.Add("WD", "Wood");
-            materialDictionary.Add("OT", "Other materials");
-
-            foreach (var materialKv in materialDictionary)
+            _dbContext.Material.Add(new Material
             {
-                dbContext.Material.Add(new Material
-                {
-                    Name = materialKv.Value,
-                    Code = materialKv.Key,
-                    Description = "Some",
-                });
-            }
-
-            dbContext.SaveChanges();
+                Name = materialKv.Value,
+                Code = materialKv.Key,
+                Description = "Some"
+            });
         }
+
+        _dbContext.SaveChanges();
     }
 }

@@ -1,0 +1,69 @@
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using EPR.Calculator.Service.Function.Builder.CommsCost;
+using EPR.Calculator.Service.Function.Features.Billing.FileExports.Json.Parts;
+using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
+using EPR.Calculator.Service.Function.UnitTests.Utils;
+
+namespace EPR.Calculator.Service.Function.UnitTests.Features.Billing.FileExports.Json.Parts;
+
+using static JsonNodeComparer;
+
+[TestClass]
+public class CalcResultCommsCostOnePlusFourApportionmentCountryWideTests
+{
+    [TestMethod]
+    public void CanCallFrom_WithValidData()
+    {
+        // Arrange
+        var countryData = TestFixtures.Default.Create<CalcResultCommsCostOnePlusFourApportionment>();
+        countryData.Name = CalcResultCommsCostBuilder.TwoCCommsCostByCountry;
+
+        // Act
+        var result = CalcResultCommsCostOnePlusFourApportionmentCountryWide.From(countryData);
+
+        // Assert
+        Assert.IsNotNull(result);
+    }
+
+    [TestMethod]
+    public void From_ValuesAreValid()
+    {
+        // Arrange
+        var countryData = TestFixtures.Default.Create<CalcResultCommsCostOnePlusFourApportionment>();
+        countryData.Name = CalcResultCommsCostBuilder.TwoCCommsCostByCountry;
+
+        // Act
+        var result = CalcResultCommsCostOnePlusFourApportionmentCountryWide.From(countryData);
+        var json = JsonSerializer.Serialize(result);
+        var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json);
+
+        // Assert
+        Assert.IsNotNull(roundTrippedData);
+
+        AssertAreEqual(countryData.Name, roundTrippedData["name"]);
+
+        AssertAreEqual(countryData.England,
+            roundTrippedData["englandCommsCostByCountry"]);
+        AssertAreEqual(countryData.Wales,
+            roundTrippedData["walesCommsCostByCountry"]);
+        AssertAreEqual(countryData.Scotland,
+            roundTrippedData["scotlandCommsCostByCountry"]);
+        AssertAreEqual(countryData.NorthernIreland,
+            roundTrippedData["northernIrelandCommsCostByCountry"]);
+
+        AssertAreEqual(countryData.Total,
+            roundTrippedData["totalCommsCostByCountry"]);
+    }
+
+    [TestMethod]
+    public void From_WithNullData_ReturnsNull()
+    {
+        // Act
+        var result = CalcResultCommsCostOnePlusFourApportionmentCountryWide.From(null);
+
+        // Assert
+        Assert.IsNull(result);
+    }
+}

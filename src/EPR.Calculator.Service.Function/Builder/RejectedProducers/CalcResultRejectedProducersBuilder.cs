@@ -1,29 +1,23 @@
-﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
 {
-    public class CalcResultRejectedProducersBuilder : ICalcResultRejectedProducersBuilder
+    public class CalcResultRejectedProducersBuilder(ApplicationDBContext dbContext)
+        : ICalcResultRejectedProducersBuilder
     {
-        private readonly ApplicationDBContext context;
-
-        public CalcResultRejectedProducersBuilder(ApplicationDBContext dbContext)
-        {
-            context = dbContext;
-        }
-
-        public async Task<IEnumerable<CalcResultRejectedProducer>> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
+        public async Task<IEnumerable<CalcResultRejectedProducer>> ConstructAsync(RunContext runContext)
         {
             var billingInstructionsQuery =
-                from prsbi in context.ProducerResultFileSuggestedBillingInstruction
-                join pd in context.ProducerDetail
+                from prsbi in dbContext.ProducerResultFileSuggestedBillingInstruction
+                join pd in dbContext.ProducerDetail
                     on new { prsbi.ProducerId, prsbi.CalculatorRunId }
                     equals new { pd.ProducerId, pd.CalculatorRunId } into pdGroup
                 from pd in pdGroup.DefaultIfEmpty()
-                where prsbi.CalculatorRunId == resultsRequestDto.RunId
+                where prsbi.CalculatorRunId == runContext.RunId
                       && prsbi.BillingInstructionAcceptReject == CommonConstants.Rejected
                       && !string.IsNullOrWhiteSpace(prsbi.ReasonForRejection)
                       && pd.SubsidiaryId == null
@@ -42,15 +36,14 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                 };
 
             var orgDetailsQuery =
-                from cr in context.CalculatorRuns
-                join crodm in context.CalculatorRunOrganisationDataMaster
+                from cr in dbContext.CalculatorRuns
+                join crodm in dbContext.CalculatorRunOrganisationDataMaster
                     on cr.CalculatorRunOrganisationDataMasterId equals crodm.Id
-                join crodd in context.CalculatorRunOrganisationDataDetails
+                join crodd in dbContext.CalculatorRunOrganisationDataDetails
                     on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
                 join b in billingInstructionsQuery
                     on crodd.OrganisationId equals b.ProducerId
-                where cr.RelativeYearValue == resultsRequestDto.RelativeYear.Value
-                      && crodd.OrganisationName != null
+                where cr.RelativeYearValue == runContext.RelativeYear.Value
                       && crodd.SubsidiaryId == null
                 group cr by crodd.OrganisationId into g
                 select new
@@ -60,10 +53,10 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                 };
 
             var rejectedProducersQuery =
-                from cr in context.CalculatorRuns
-                join crodm in context.CalculatorRunOrganisationDataMaster
+                from cr in dbContext.CalculatorRuns
+                join crodm in dbContext.CalculatorRunOrganisationDataMaster
                     on cr.CalculatorRunOrganisationDataMasterId equals crodm.Id
-                join crodd in context.CalculatorRunOrganisationDataDetails
+                join crodd in dbContext.CalculatorRunOrganisationDataDetails
                     on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
                 join b in billingInstructionsQuery
                     on crodd.OrganisationId equals b.ProducerId

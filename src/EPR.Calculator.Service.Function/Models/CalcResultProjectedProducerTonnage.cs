@@ -24,7 +24,7 @@
 
         public override int GetHashCode()
         {
-            return System.HashCode.Combine(Tonnage, RedTonnage, RedMedicalTonnage,
+            return HashCode.Combine(Tonnage, RedTonnage, RedMedicalTonnage,
                                     AmberTonnage, AmberMedicalTonnage,
                                     GreenTonnage, GreenMedicalTonnage);
     }

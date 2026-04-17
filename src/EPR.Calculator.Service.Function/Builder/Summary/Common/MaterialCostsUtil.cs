@@ -12,7 +12,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             IEnumerable<ProducerDetail> producersAndSubsidiaries,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations,
-            MaterialDetail material,
+            MaterialDto material,
             bool isOverAllTotalRow)
         {
             return isOverAllTotalRow
@@ -25,7 +25,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             IEnumerable<ProducerDetail> producersAndSubsidiaries,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations,
-            MaterialDetail material,
+            MaterialDto material,
             bool isOverAllTotalRow,
             decimal? previousInvoicedNetTonnage)
         {
@@ -39,7 +39,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             IEnumerable<ProducerDetail> producersAndSubsidiaries,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations,
-            MaterialDetail material,
+            MaterialDto material,
             CalcResult calcResult,
             bool isOverAllTotalRow)
         {
@@ -53,7 +53,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             IEnumerable<ProducerDetail> producersAndSubsidiaries,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations,
-            MaterialDetail material,
+            MaterialDto material,
             CalcResult calcResult,
             bool isOverAllTotalRow)
         {
@@ -67,7 +67,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             IEnumerable<ProducerDetail> producersAndSubsidiaries,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations,
-            MaterialDetail material,
+            MaterialDto material,
             CalcResult calcResult,
             bool isOverAllTotalRow)
         {
@@ -82,7 +82,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             IEnumerable<ProducerDetail> producersAndSubsidiaries,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations,
-            MaterialDetail material,
+            MaterialDto material,
             CalcResult calcResult,
             Countries country,
             bool isOverAllTotalRow)

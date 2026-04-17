@@ -1,14 +1,17 @@
 ﻿using System.Globalization;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.ParametersOther
 {
-    public class CalcResultParameterOtherCostBuilder : ICalcResultParameterOtherCostBuilder
+    public class CalcResultParameterOtherCostBuilder(
+        ApplicationDBContext dbContext,
+        ICalcCountryApportionmentService calcCountryApportionmentService)
+        : ICalcResultParameterOtherCostBuilder
     {
         public const string SchemeAdminOperatingCost = "Scheme administrator operating costs";
         public const string LaPrepCharge = "Local authority data preparation costs";
@@ -19,26 +22,17 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
         private const string BadDebtProvisionHeader = "6 Bad Debt Provision";
         private const string SaOperatingCostHeader = "3 SA Operating Costs";
         private const string LaDataPrepChargeHeader = "4 LA Data Prep Charge";
-        private readonly ApplicationDBContext context;
-        private readonly ICalcCountryApportionmentService calcCountryApportionmentService;
 
-        public CalcResultParameterOtherCostBuilder(ApplicationDBContext context,
-            ICalcCountryApportionmentService calcCountryApportionmentService) 
-        {
-            this.context = context;
-            this.calcCountryApportionmentService = calcCountryApportionmentService;
-        }
-
-        public async Task<CalcResultParameterOtherCost> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
+        public async Task<CalcResultParameterOtherCost> ConstructAsync(RunContext runContext)
         {
             var culture = CultureInfo.CreateSpecificCulture("en-GB");
             culture.NumberFormat.CurrencySymbol = "£";
             culture.NumberFormat.CurrencyPositivePattern = 0;
-            var results = await (from run in context.CalculatorRuns
-                           join defaultMaster in context.DefaultParameterSettings on run.DefaultParameterSettingMasterId equals defaultMaster.Id
-                           join defaultDetail in context.DefaultParameterSettingDetail on defaultMaster.Id equals defaultDetail.DefaultParameterSettingMasterId
-                           join defaultTemplate in context.DefaultParameterTemplateMasterList on defaultDetail.ParameterUniqueReferenceId equals defaultTemplate.ParameterUniqueReferenceId
-                           where run.Id == resultsRequestDto.RunId
+            var results = await (from run in dbContext.CalculatorRuns
+                           join defaultMaster in dbContext.DefaultParameterSettings on run.DefaultParameterSettingMasterId equals defaultMaster.Id
+                           join defaultDetail in dbContext.DefaultParameterSettingDetail on defaultMaster.Id equals defaultDetail.DefaultParameterSettingMasterId
+                           join defaultTemplate in dbContext.DefaultParameterTemplateMasterList on defaultDetail.ParameterUniqueReferenceId equals defaultTemplate.ParameterUniqueReferenceId
+                           where run.Id == runContext.RunId
                            select new DefaultParamResultsClass
                            {
                                ParameterValue = defaultDetail.ParameterValue,
@@ -158,16 +152,16 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
             materialities.Add(tonnageDecrease);
             other.Materiality = materialities;
 
-            var countries = await context.Country.ToListAsync();
+            var countries = await dbContext.Country.ToListAsync();
 
-            var costType = await context.CostType.SingleAsync(x => x.Name == "LA Data Prep Charge");
+            var costType = await dbContext.CostType.SingleAsync(x => x.Name == "LA Data Prep Charge");
             var costTypeId = costType.Id;
 
-            if (!resultsRequestDto.IsBillingFile)
+            if (runContext.RunType == RunType.Calculator)
             {
                 await calcCountryApportionmentService.SaveChangesAsync(new CalcCountryApportionmentServiceDto
                 {
-                    RunId = resultsRequestDto.RunId,
+                    RunId = runContext.RunId,
                     Countries = countries,
                     CostTypeId = costTypeId,
                     EnglandCost = laDataPrep.EnglandValue,

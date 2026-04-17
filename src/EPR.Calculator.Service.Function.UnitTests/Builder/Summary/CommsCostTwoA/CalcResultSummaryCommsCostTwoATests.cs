@@ -1,7 +1,7 @@
-﻿using AutoFixture;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwoA
 {
@@ -9,12 +9,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
   public class CalcResultSummaryCommsCostTwoATests
   {
         private readonly List<ProducerDetail> producers;
-        private readonly MaterialDetail material;
+        private readonly MaterialDto material;
         private readonly CalcResult calcResult;
         private readonly IEnumerable<CalcResultScaledupProducer> scaledupProducers;
         private readonly IEnumerable<CalcResultPartialObligation> partialObligations;
-
-        private Fixture Fixture { get; init; } = new Fixture();
 
         public CalcResultSummaryCommsCostTwoATests()
         {
@@ -27,14 +25,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             {
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
-                CalcResultParameterOtherCost = TestDataHelper.GetCalcResultParameterOtherCost(),
-                CalcResultDetail = TestDataHelper.GetCalcResultDetail(),
-                CalcResultLaDisposalCostData = TestDataHelper.GetCalcResultLaDisposalCostData(),
-                CalcResultLapcapData = TestDataHelper.GetCalcResultLapcapData(),
-                CalcResultOnePlusFourApportionment = TestDataHelper.GetCalcResultOnePlusFourApportionment(),
-                CalcResultParameterCommunicationCost = GetCalcResultParameterCommunicationCost(),
-                CalcResultSummary = TestDataHelper.GetCalcResultSummary(),
-                CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
+                CalcResultParameterOtherCost = TestData.GetCalcResultParameterOtherCost(),
+                CalcResultDetail = TestData.GetCalcResultDetail(),
+                CalcResultLaDisposalCostData = TestData.GetCalcResultLaDisposalCostData(),
+                CalcResultLapcapData = TestData.GetCalcResultLapcapData(),
+                CalcResultOnePlusFourApportionment = TestData.GetCalcResultOnePlusFourApportionment(),
+                CalcResultSummary = TestData.GetCalcResultSummary(),
+                CalcResultCommsCostReportDetail = TestData.GetCalcResultCommsCostReportDetail(),
                 CalcResultLateReportingTonnageData = this.GetCalcResultLateReportingTonnage(),
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
                 CalcResultModulation = null,
@@ -228,11 +225,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
         public void GetPriceperTonneForComms_WhenNoMaterialMatch_ShouldReturn0()
         {
             // Arrange
-            material.Name = "Aluminium";
+            var mat = material with { Name = "Aluminium" };
             decimal expectedCost1 = 0m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetPriceperTonneForComms(material, calcResult);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetPriceperTonneForComms(mat, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -326,7 +323,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
 
         private static List<ProducerDetail> GetProducers()
         {
-            var producers = TestDataHelper.GetProducers();
+            var producers = TestData.GetProducers();
 
             foreach (var subPeriod in new[] {"2025-H1", "2025-H2"})
             {
@@ -382,38 +379,31 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             return producers;
         }
 
-        private static MaterialDetail GetMaterial()
+        private static MaterialDto GetMaterial()
         {
-            var material = new MaterialDetail
+            var material = new MaterialDto
             {
                 Id = 1,
                 Code = "AL",
-                Name = "Material1",
-                Description = "Material1",
+                Name = "Material1"
             };
             return material;
         }
 
-        private static MaterialDetail GetHDCMaterial()
+        private static MaterialDto GetHDCMaterial()
         {
-            var material = new MaterialDetail
+            var material = new MaterialDto
             {
                 Id = 2,
                 Code = "GL",
-                Name = "Material2",
-                Description = "Material2",
+                Name = "Material2"
             };
             return material;
-        }
-
-        private CalcResultParameterCommunicationCost GetCalcResultParameterCommunicationCost()
-        {
-            return Fixture.Create<CalcResultParameterCommunicationCost>();
         }
 
         private CalcResultLateReportingTonnage GetCalcResultLateReportingTonnage()
         {
-            return Fixture.Create<CalcResultLateReportingTonnage>();
+            return TestFixtures.Default.Create<CalcResultLateReportingTonnage>();
         }
     }
 }

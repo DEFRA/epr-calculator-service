@@ -141,7 +141,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
 
         private static string GetMaterialThresholdBreached(CalcResultSummaryProducerDisposalFees fee, decimal? currentInvoicedTotalToDate, decimal? liabilityDifferenceCalculated, decimal? param_MATT_AI, decimal? param_MATT_AD)
         {
-            if (fee.LeaverDate == CommonConstants.Totals) return String.Empty;
+            if (fee.LeaverDate == CommonConstants.Totals) return string.Empty;
             if (fee.Level != CommonConstants.LevelOne.ToString()) return CommonConstants.Hyphen;
             if (!currentInvoicedTotalToDate.HasValue) return CommonConstants.Hyphen;
             if (!liabilityDifferenceCalculated.HasValue) return CommonConstants.Hyphen;
@@ -156,7 +156,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
 
         private static string GetTonnageThresholdBreached(CalcResultSummaryProducerDisposalFees fee, decimal? currentInvoicedTotalToDate, decimal? liabilityDifferenceCalculated, decimal? param_TONT_AI, decimal? param_TONT_AD)
         {
-            if (fee.LeaverDate == CommonConstants.Totals) return String.Empty;
+            if (fee.LeaverDate == CommonConstants.Totals) return string.Empty;
             if (fee.Level != CommonConstants.LevelOne.ToString()) return CommonConstants.Hyphen;
             if (!currentInvoicedTotalToDate.HasValue) return CommonConstants.Hyphen;
             if (fee.TonnageChangeAdvice != "CHANGE") return CommonConstants.Hyphen;
@@ -185,7 +185,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
 
         private static string GetMaterialPercentageThresholdBreached(CalcResultSummaryProducerDisposalFees fee, decimal? currentYearInvoiceTotalToDate, decimal? percentageLiabilityDifference, decimal? param_MATT_PI, decimal? param_MATT_PD)
         {
-            if (fee.LeaverDate == CommonConstants.Totals) return String.Empty;
+            if (fee.LeaverDate == CommonConstants.Totals) return string.Empty;
             if (fee.Level != CommonConstants.LevelOne.ToString()) return CommonConstants.Hyphen;
             if (!currentYearInvoiceTotalToDate.HasValue) return CommonConstants.Hyphen;
 
@@ -198,7 +198,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
 
         private static string GetTonnagePercentageThresholdBreached(CalcResultSummaryProducerDisposalFees fee, decimal? currentYearInvoiceTotalToDate, string? tonnageChangeSinceLastInvoice, decimal? percentageLiabilityDifference, decimal? param_TONT_PI, decimal? param_TONT_PD)
         {
-            if (fee.LeaverDate == CommonConstants.Totals) return String.Empty;
+            if (fee.LeaverDate == CommonConstants.Totals) return string.Empty;
             if (fee.Level != CommonConstants.LevelOne.ToString()) return CommonConstants.Hyphen;
 
             if (!currentYearInvoiceTotalToDate.HasValue) return CommonConstants.Hyphen;
@@ -212,7 +212,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
 
         private static string GetSuggestedBillingInstruction(CalcResultSummaryProducerDisposalFees fee, decimal? currentYearInvoiceTotalToDate, decimal? liabilityDifference, string materialThresholdBreached, string tonnageThresholdBreached, string materialPercentageThresholdBreached, string tonnagePercentageThresholdBreached)
         {
-            if (fee.LeaverDate == CommonConstants.Totals) return String.Empty;
+            if (fee.LeaverDate == CommonConstants.Totals) return string.Empty;
             if (fee.Level != CommonConstants.LevelOne.ToString()) return CommonConstants.Hyphen;
 
             if (!currentYearInvoiceTotalToDate.HasValue) return CommonConstants.Initial;

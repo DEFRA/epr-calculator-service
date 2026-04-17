@@ -1,38 +1,37 @@
 ﻿using System.Globalization;
 using EPR.Calculator.Service.Function.Builder.Lapcap;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment
 {
     public class CalcResultOnePlusFourApportionmentBuilder : ICalcResultOnePlusFourApportionmentBuilder
     {
-        public CalcResultOnePlusFourApportionment ConstructAsync(CalcResultsRequestDto resultsRequestDto, CalcResult calcResult)
+        public CalcResultOnePlusFourApportionment ConstructAsync(RunContext runContext, CalcResult calcResult)
         {
             const string totalLabel = "Total";
             var apportionmentDetails = new List<CalcResultOnePlusFourApportionmentDetail>();
-            int orderId = 1;
 
             // Add the header row
-            apportionmentDetails.Add(CreateHeaderRow(orderId));
+            apportionmentDetails.Add(CreateHeaderRow(1));
 
             // Add disposal cost row
             var totalLACost = GetTotalCost(calcResult, totalLabel);
-            apportionmentDetails.Add(CreateDisposalDetailRow(OnePlus4ApportionmentColumnHeaders.LADisposalCost, totalLACost, orderId++));
+            apportionmentDetails.Add(CreateDisposalDetailRow(OnePlus4ApportionmentColumnHeaders.LADisposalCost, totalLACost, 1));
 
             // Add data preparation charge row
             var dataPrepCharge = calcResult.CalcResultParameterOtherCost.Details
                 .Single(x => x.Name == OnePlus4ApportionmentColumnHeaders.LADataPrepCharge);
 
-            apportionmentDetails.Add(CreateDataPrepChargeRow(dataPrepCharge, orderId++));
+            apportionmentDetails.Add(CreateDataPrepChargeRow(dataPrepCharge, 2));
 
             // Add total row
-            apportionmentDetails.Add(CreateTotalRow(totalLACost, dataPrepCharge, orderId++));
+            apportionmentDetails.Add(CreateTotalRow(totalLACost, dataPrepCharge, 3));
 
             // Calculate apportionment
 #pragma warning disable S1854
-            var apportionmentData = CalculateApportionment(apportionmentDetails.First(x => x.OrderId == 3), orderId++);
+            var apportionmentData = CalculateApportionment(apportionmentDetails.First(x => x.OrderId == 3), 4);
 #pragma warning restore
             apportionmentDetails.Add(apportionmentData);
 

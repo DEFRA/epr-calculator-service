@@ -1,8 +1,7 @@
-﻿namespace EPR.Calculator.Service.Function.Models
+﻿namespace EPR.Calculator.Service.Function.Models;
+
+public class CalcResultLaDisposalCostData
 {
-    public class CalcResultLaDisposalCostData
-    {
-        public required string Name { get; set; }
-        public IEnumerable<CalcResultLaDisposalCostDataDetail> CalcResultLaDisposalCostDetails { get; set; } = new List<CalcResultLaDisposalCostDataDetail>();
-    }
+    public required string Name { get; set; }
+    public IEnumerable<CalcResultLaDisposalCostDataDetail> CalcResultLaDisposalCostDetails { get; set; } = new List<CalcResultLaDisposalCostDataDetail>();
 }

@@ -2,24 +2,24 @@
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.Summary;
-using Microsoft.EntityFrameworkCore;
+using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
 {
     [TestClass]
     public class CalcResultSummaryBuilder_CancelledProducersReappearLogicTests
     {
-        private readonly ApplicationDBContext context;
-        private readonly CalcResultSummaryBuilder calcResultsService;
+        private ApplicationDBContext context = null!;
+        private MaterialService materialService = null!;
+        private CalcResultSummaryBuilder calcResultsService = null!;
 
-        public CalcResultSummaryBuilder_CancelledProducersReappearLogicTests()
+        [TestInitialize]
+        public void TestInitialize()
         {
-            var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
-                .UseInMemoryDatabase("CancelledProducersReappearLogic_DB")
-                .Options;
-
-            context = new ApplicationDBContext(dbContextOptions);
-            calcResultsService = new CalcResultSummaryBuilder(context);
+            context = TestFixtures.New().Create<ApplicationDBContext>();
+            materialService = new MaterialService(context);
+            calcResultsService = new CalcResultSummaryBuilder(context, materialService);
         }
 
         [TestCleanup]

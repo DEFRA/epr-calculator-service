@@ -1,31 +1,37 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using EPR.Calculator.API.Data;
-using EPR.Calculator.Service.Function.Mappers;
 using EPR.Calculator.Service.Function.Models;
-using Microsoft.EntityFrameworkCore;
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Services
 {
     public interface IMaterialService
     {
-        public Task<List<MaterialDetail>> GetMaterials();
-        public Task<ImmutableDictionary<string, int>> GetMaterialIdsByType();
+        public Task<ImmutableArray<MaterialDto>> GetMaterials(CancellationToken cancellationToken = default);
+        public Task<ImmutableDictionary<string, int>> GetMaterialIdsByType(CancellationToken cancellationToken = default);
     }
 
     public class MaterialService(
         ApplicationDBContext dbContext)
         : IMaterialService
     {
-        public async Task<List<MaterialDetail>> GetMaterials()
+        public async Task<ImmutableArray<MaterialDto>> GetMaterials(CancellationToken cancellationToken = default)
         {
-            var materials = await dbContext.Material.ToListAsync();
-            return MaterialMapper.Map(materials);
+            return await dbContext.Material
+                .Select(material => new MaterialDto
+                {
+                    Id = material.Id,
+                    Code = material.Code,
+                    Name = material.Name
+                })
+                .ToImmutableArrayAsync(cancellationToken);
         }
 
-        public async Task<ImmutableDictionary<string, int>> GetMaterialIdsByType()
+        public async Task<ImmutableDictionary<string, int>> GetMaterialIdsByType(CancellationToken cancellationToken = default)
         {
-            var materials = await dbContext.Material.AsNoTracking().ToListAsync();
-            return materials.ToImmutableDictionary(m => m.Name, m => m.Id);
+            return await dbContext.Material
+                .Select(m => new { m.Name, m.Id })
+                .ToImmutableDictionaryAsync(m => m.Name, m => m.Id, cancellationToken);
         }
     }
 }

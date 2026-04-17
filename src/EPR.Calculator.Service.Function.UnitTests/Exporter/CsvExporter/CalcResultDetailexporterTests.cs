@@ -1,8 +1,8 @@
 using System.Text;
-using AutoFixture;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 {
@@ -20,8 +20,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         public void CanCallExport()
         {
             // Arrange
-            var fixture = new Fixture();
-            var calcResultDetail = fixture.Create<CalcResultDetail>();
+            var calcResultDetail = TestFixtures.Default.Create<CalcResultDetail>();
             calcResultDetail.RunName = "SomeRunName";
             calcResultDetail.RunId = 999;
             calcResultDetail.RunDate = new DateTime(2024, 12, 1);
@@ -38,7 +37,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 
             var result = csvContent.ToString();
             var lines = result.Split(Environment.NewLine);
-            Assert.AreEqual(7, lines.Count());
+            Assert.AreEqual(7, lines.Length);
 
             Assert.IsTrue(lines.First().Contains("Run Name"));
             Assert.IsTrue(lines.First().Contains("SomeRunName"));

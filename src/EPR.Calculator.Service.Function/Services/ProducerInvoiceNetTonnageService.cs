@@ -1,108 +1,63 @@
-﻿using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.Service.Common.Logging;
+﻿using System.Collections.Immutable;
+using System.Diagnostics;
+using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Interface;
-using EPR.Calculator.Service.Function.Mapper;
+using EPR.Calculator.Service.Function.Exceptions;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
+using Microsoft.Extensions.Logging;
 
 namespace EPR.Calculator.Service.Function.Services
 {
-    public class ProducerInvoiceNetTonnageService : IProducerInvoiceNetTonnageService
+    public interface IProducerInvoiceNetTonnageService
     {
-        private IDbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage> producerInvoiceMaterialChunker { get; init; }
+        public Task CreateProducerInvoiceNetTonnage(RunContext runContext, CalcResult calcResult);
+    }
 
-        private readonly ICalculatorTelemetryLogger telemetryLogger;
-
-        private readonly IMaterialService materialService;
-
-        private readonly IProducerInvoiceTonnageMapper producerInvoiceTonnageMapper;
-
-        public ProducerInvoiceNetTonnageService(IDbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage> producerInvoiceMaterialChunker,
-            ICalculatorTelemetryLogger telemetryLogger,
-            IMaterialService materialService,
-            IProducerInvoiceTonnageMapper producerInvoiceTonnageMapper)
+    public class ProducerInvoiceNetTonnageService(
+        ApplicationDBContext dbContext,
+        IBulkOperations bulkOps,
+        IMaterialService materialService,
+        ILogger<ProducerInvoiceNetTonnageService> logger)
+        : IProducerInvoiceNetTonnageService
+    {
+        public async Task CreateProducerInvoiceNetTonnage(RunContext runContext, CalcResult calcResult)
         {
-            this.producerInvoiceMaterialChunker = producerInvoiceMaterialChunker;
-            this.materialService = materialService;
-            this.telemetryLogger = telemetryLogger;
-            this.producerInvoiceTonnageMapper = producerInvoiceTonnageMapper;
-        }
+            var stopwatch = Stopwatch.StartNew();
+            var producers = calcResult.CalcResultSummary.ProducerDisposalFees.Where(producer => producer.Level == CommonConstants.LevelOne.ToString());
+            var materials = await materialService.GetMaterials();
 
+            var producerInvoiceNetTonnage = producers
+                .SelectMany(producer => materials.Select(material =>
+                {
+                    var disposalFees = producer.ProducerDisposalFeesByMaterial;
 
-        public async Task<bool> CreateProducerInvoiceNetTonnage(CalcResult calcResult)
-        {
-            try
-            {
-                var producerInvoiceNetTonnage = new List<ProducerInvoicedMaterialNetTonnage>();
-                var startTime = DateTime.UtcNow;
-
-                var producers = calcResult.CalcResultSummary.ProducerDisposalFees.Where(producer => producer.Level == CommonConstants.LevelOne.ToString());
-
-                var materials = await materialService.GetMaterials();
-
-                var runId = calcResult.CalcResultDetail.RunId;
-
-                var invoiceTonnages = producers.SelectMany(producer =>
-                    materials.Select(material =>
+                    if (disposalFees is not null && disposalFees.TryGetValue(material.Code, out var feeSummary))
                     {
-                        var disposalFees = producer.ProducerDisposalFeesByMaterial;
-
-                        if (disposalFees is not null && disposalFees.TryGetValue(material.Code, out var feeSummary))
+                        return new ProducerInvoicedMaterialNetTonnage
                         {
-                            return producerInvoiceTonnageMapper.Map(new ProducerInvoiceTonnage
-                            {
-                                RunId = runId,
-                                ProducerId = producer.ProducerIdInt,
-                                NetTonnage = feeSummary.NetReportedTonnage,
-                                MaterialId = material.Id
-                            });
-                        }
+                            CalculatorRunId = calcResult.CalcResultDetail.RunId,
+                            ProducerId = producer.ProducerIdInt,
+                            InvoicedNetTonnage = feeSummary.NetReportedTonnage,
+                            MaterialId = material.Id
+                        };
+                    }
 
-                        return new ProducerInvoicedMaterialNetTonnage();
-                    }).Where(x => x != null)
-                );
+                    return new ProducerInvoicedMaterialNetTonnage();
+                }))
+                .ToImmutableArray();
 
-                producerInvoiceNetTonnage.AddRange(invoiceTonnages);
-
-                if (producerInvoiceNetTonnage.Exists(t => t.CalculatorRunId > 0))
-                {
-                    await producerInvoiceMaterialChunker.InsertRecords(producerInvoiceNetTonnage);
-
-                    var endTime = DateTime.UtcNow;
-                    var timeDiff = startTime - endTime;
-                    telemetryLogger.LogInformation(new TrackMessage
-                    {
-                        RunId = calcResult.CalcResultDetail.RunId,
-                        RunName = calcResult.CalcResultDetail.RunName,
-                        Message = $"Inserting records {producerInvoiceNetTonnage.Count} into producer invoice net tonnage table for {calcResult.CalcResultDetail.RunId} completed in {timeDiff.TotalSeconds} seconds",
-                    });
-
-                }
-                else
-                {
-
-                    telemetryLogger.LogInformation(new TrackMessage
-                    {
-                        RunId = calcResult.CalcResultDetail.RunId,
-                        RunName = calcResult.CalcResultDetail.RunName,
-                        Message = $"No producer invoice net tonnage to insert into table for {calcResult.CalcResultDetail.RunId}",
-                    });
-                    return false;
-                }
-                return true;
-            }
-            catch (Exception exception)
+            if (producerInvoiceNetTonnage.Length == 0)
             {
-                telemetryLogger.LogError(new ErrorMessage
-                {
-                    RunId = calcResult.CalcResultDetail.RunId,
-                    RunName = calcResult.CalcResultDetail.RunName,
-                    Message = "Error occurred while populating the  producer invoice net tonnage",
-                    Exception = exception,
-                });
-
-                return false;
+                throw new RunProcessingException(runContext, "No producer invoice net tonnages generated.");
             }
+
+            await bulkOps.BulkInsertAsync(dbContext, producerInvoiceNetTonnage);
+
+            stopwatch.Stop();
+            logger.LogInformation("Inserted {RecordCount} producer invoice net tonnage records in {Elapsed}",
+                producerInvoiceNetTonnage.Length, stopwatch.Elapsed);
         }
     }
 }

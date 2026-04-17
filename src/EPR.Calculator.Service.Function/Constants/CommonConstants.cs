@@ -2,9 +2,6 @@
 {
     public static class CommonConstants
     {
-        public const bool True = true;
-        public const bool False = false;
-
         public const int DefaultMinValue = 0;
         public const int LevelOne = 1;
         public const int LevelTwo = 2;

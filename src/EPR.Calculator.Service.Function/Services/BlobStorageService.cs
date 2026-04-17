@@ -1,71 +1,39 @@
-﻿using System.Configuration;
-using Azure.Storage.Blobs;
-using EPR.Calculator.Service.Common.Logging;
-using EPR.Calculator.Service.Function.Interface;
+﻿using Azure.Storage.Blobs;
+using Microsoft.Extensions.Logging;
 
 namespace EPR.Calculator.Service.Function.Services
 {
-    /// <summary>
-    /// Service for handling blob storage operations.
-    /// </summary>
-    public class BlobStorageService : IStorageService
-    {
-        private readonly ICalculatorTelemetryLogger telemetryLogger;
-        private readonly BlobServiceClient blobServiceClient;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="BlobStorageService"/> class.
-        /// </summary>
-        /// <param name="blobServiceClient">The blob service client.</param>
-        /// <param name="telemetryLogger">The telemetry logger.</param>
-        /// <exception cref="ConfigurationErrorsException">Thrown when the container name is missing in the configuration.</exception>
-        public BlobStorageService(
-            BlobServiceClient blobServiceClient,
-            ICalculatorTelemetryLogger telemetryLogger)
+    public interface IStorageService
         {
-            this.blobServiceClient = blobServiceClient;
-            this.telemetryLogger = telemetryLogger;
+            Task<string> UploadFileAsync(
+                (string FileName,
+                 string Content,
+                 string RunName,
+                 string ContainerName,
+                 bool Overwrite
+                )
+                args, CancellationToken cancellationToken = default);
         }
 
-        /// <inheritdoc/>
-        public async Task<string> UploadFileContentAsync(
-            (string FileName, string Content, string RunName, string ContainerName, bool Overwrite) args)
+    public class BlobStorageService(
+        BlobServiceClient blobServiceClient,
+        ILogger<BlobStorageService> logger)
+        : IStorageService
+    {
+        public async Task<string> UploadFileAsync(
+            (string FileName, string Content, string RunName, string ContainerName, bool Overwrite) args, CancellationToken cancellationToken = default)
         {
-            int? runId = int.TryParse(args.FileName.Split('-')[0], out var id) ? id : null;
-            try
-            {
-                telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = runId,
-                    RunName = args.RunName,
-                    Message = "Upload Blob started...",
-                });
+            logger.LogDebug("Upload Blob started. ContentSizeBytes: {ContentSizeBytes}, FileName: {FileName}",
+                args.Content.Length, args.FileName);
 
-                var blobContainerClient = blobServiceClient.GetBlobContainerClient(args.ContainerName);
-                await blobContainerClient.CreateIfNotExistsAsync();
+            var blobContainerClient = blobServiceClient.GetBlobContainerClient(args.ContainerName);
+            await blobContainerClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
 
-                var blobClient = blobContainerClient.GetBlobClient(args.FileName);
-                var binaryData = BinaryData.FromString(args.Content);
-                await blobClient.UploadAsync(binaryData, args.Overwrite);
-                telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = runId,
-                    RunName = args.RunName,
-                    Message = "Upload Blob end...",
-                });
-                return blobClient.Uri.ToString();
-            }
-            catch (Exception ex)
-            {
-                telemetryLogger.LogError(new ErrorMessage
-                {
-                    RunId = runId,
-                    RunName = args.RunName,
-                    Message = "Error writing a Blob",
-                    Exception = ex,
-                });
-                return string.Empty;
-            }
+            var blobClient = blobContainerClient.GetBlobClient(args.FileName);
+            var binaryData = BinaryData.FromString(args.Content);
+            await blobClient.UploadAsync(binaryData, args.Overwrite, cancellationToken);
+            logger.LogDebug("Upload Blob end. FileName: {FileName}", args.FileName);
+            return blobClient.Uri.ToString();
         }
     }
 }

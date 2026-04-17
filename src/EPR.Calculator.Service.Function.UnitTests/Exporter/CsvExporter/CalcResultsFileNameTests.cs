@@ -1,35 +1,28 @@
 using System.Reflection;
 using System.Text;
-using AutoFixture;
-using EPR.Calculator.API.Data;
-using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter;
-using Moq;
-using Moq.EntityFrameworkCore;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 {
     /// <summary>
-    /// Unit tests for <see cref="CalcResultsExporter"/>.
+    /// Unit tests for <see cref="ResultsFileCsvWriter"/>.
     /// </summary>
     [TestClass]
     public class CalcResultsFileNameTests
     {
-        private Fixture Fixture { get; init; }
-
         private int RunId { get; init; }
 
         private DateTime TimeStamp { get; init; }
 
         public CalcResultsFileNameTests()
         {
-            Fixture = new Fixture();
-            Fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
-                .ForEach(b => Fixture.Behaviors.Remove(b));
-            Fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+            TestFixtures.New().Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
+                .ForEach(b => TestFixtures.New().Behaviors.Remove(b));
+            TestFixtures.New().Behaviors.Add(new OmitOnRecursionBehavior());
 
-            RunId = Fixture.Create<int>();
-            TimeStamp = Fixture.Create<DateTime>();
+            RunId = TestFixtures.Default.Create<int>();
+            TimeStamp = TestFixtures.Default.Create<DateTime>();
         }
 
         /// <summary>
@@ -61,7 +54,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         [TestMethod]
         public void CanCreateBillingJsonFileName()
         {
-            var billingFileJsonName = new CalcResultsAndBillingFileName(10223, true, true);
+            var billingFileJsonName = new CalcResultsAndBillingFileName(10223);
             Assert.AreEqual("10223billing.json", billingFileJsonName);
         }
 
@@ -133,30 +126,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         }
 
         /// <summary>
-        /// Checks generating a file name using values retrieved from the database.
-        /// </summary>
-        [TestMethod]
-        public void CanCallFromDatabase()
-        {
-            // Arrange
-            var mockRun = Fixture.Build<CalculatorRun>().Create();
-            mockRun.Name = Fixture.Create<string>();
-            var context = new Mock<ApplicationDBContext>();
-            context.Setup(c => c.CalculatorRuns).ReturnsDbSet([mockRun]);
-            var expectedFileName = $"{mockRun.Id}" +
-                $"-{mockRun.Name[..30]}" +
-                $"_Results File" +
-                $"_{mockRun.CreatedAt:yyyyMMdd}" +
-                $".csv";
-
-            // Act
-            var result = CalcResultsAndBillingFileName.FromDatabase(context.Object, mockRun.Id);
-
-            // Assert
-            Assert.AreEqual(expectedFileName, (string)result);
-        }
-
-        /// <summary>
         /// Tests the AppendFileInfo method with an invalid file path.
         /// </summary>
         [TestMethod]
@@ -198,7 +167,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         private static void InvokeAppendFileInfo(StringBuilder csvContent, string label, string filePath)
         {
             // Get the type of the class containing the method
-            Type type = typeof(CalcResultsExporter);
+            Type type = typeof(ResultsFileCsvWriter);
 
             // Get the method info using reflection
             MethodInfo? methodInfo = type.GetMethod("AppendFileInfo", BindingFlags.NonPublic | BindingFlags.Static);
@@ -212,7 +181,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         }
 
         private static string GetRandomString(int length)
-            => string.Join(string.Empty, new char[length].Select(c => GetRandomChar()));
+            => string.Join(string.Empty, new char[length].Select(_ => GetRandomChar()));
 
         private static char GetRandomChar()
             => (char)('a' + Random.Shared.Next(0, 26));

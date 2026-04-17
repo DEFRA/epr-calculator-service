@@ -3,17 +3,17 @@ using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.Lapcap;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
 {
-    public class CalcRunLaDisposalCostBuilder : ICalcRunLaDisposalCostBuilder
+    public class CalcRunLaDisposalCostBuilder(ApplicationDBContext dbContext)
+        : ICalcRunLaDisposalCostBuilder
     {
         private const string EmptyString = "0";
-        private readonly ApplicationDBContext context;
-        private List<ProducerData> producerData;
+        private List<ProducerData> producerData = new();
 
         internal class ProducerData
         {
@@ -26,18 +26,12 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
             public required ProducerDetail? ProducerDetail { get; set; }
         }
 
-        public CalcRunLaDisposalCostBuilder(ApplicationDBContext context)
-        {
-            this.context = context;
-            producerData = new List<ProducerData>();
-        }
-
-        public async Task<CalcResultLaDisposalCostData> ConstructAsync(CalcResultsRequestDto resultsRequestDto, CalcResult calcResult)
+        public async Task<CalcResultLaDisposalCostData> ConstructAsync(RunContext runContext, CalcResult calcResult)
         {
             var laDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>();
             var orderId = 1;
 
-            await SetProducerData(resultsRequestDto);
+            await SetProducerData(runContext);
 
             var scaledUpProducerReportedOn = calcResult.CalcResultScaledupProducers.ScaledupProducers?.FirstOrDefault(x => x.IsTotalRow);
             producerData = producerData.Where(t => calcResult.CalcResultScaledupProducers.ScaledupProducers != null && !calcResult.CalcResultScaledupProducers.ScaledupProducers.Any(i => i.ProducerId == t.ProducerDetail?.ProducerId)).ToList();
@@ -206,14 +200,14 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
             return amount;
         }
 
-        private async Task SetProducerData(CalcResultsRequestDto resultsRequestDto)
+        private async Task SetProducerData(RunContext runContext)
         {
-            producerData = await (from run in context.CalculatorRuns
-                                       join producerDetail in context.ProducerDetail on run.Id equals producerDetail.CalculatorRunId
-                                       join producerMaterial in context.ProducerReportedMaterial on producerDetail.Id equals producerMaterial
+            producerData = await (from run in dbContext.CalculatorRuns
+                                       join producerDetail in dbContext.ProducerDetail on run.Id equals producerDetail.CalculatorRunId
+                                       join producerMaterial in dbContext.ProducerReportedMaterial on producerDetail.Id equals producerMaterial
                                            .ProducerDetailId
-                                       join material in context.Material on producerMaterial.MaterialId equals material.Id
-                                       where run.Id == resultsRequestDto.RunId &&
+                                       join material in dbContext.Material on producerMaterial.MaterialId equals material.Id
+                                       where run.Id == runContext.RunId &&
                                            producerMaterial.PackagingType != null &&
                                            (
                                                producerMaterial.PackagingType == PackagingTypes.Household ||

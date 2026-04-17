@@ -1,9 +1,9 @@
-﻿using AutoFixture;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.Summary;
 using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoBTotalBill;
-using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs;
+using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwoBTotalBill
 {
@@ -22,16 +22,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
 
             _calcResult = new CalcResult
             {
-                CalcResultParameterOtherCost = TestDataHelper.GetCalcResultParameterOtherCost(),
-                CalcResultDetail = TestDataHelper.GetCalcResultDetail(),
-                CalcResultLaDisposalCostData = TestDataHelper.GetCalcResultLaDisposalCostData(),
-                CalcResultLapcapData = TestDataHelper.GetCalcResultLapcapData(),
+                CalcResultParameterOtherCost = TestData.GetCalcResultParameterOtherCost(),
+                CalcResultDetail = TestData.GetCalcResultDetail(),
+                CalcResultLaDisposalCostData = TestData.GetCalcResultLaDisposalCostData(),
+                CalcResultLapcapData = TestData.GetCalcResultLapcapData(),
                 CalcResultOnePlusFourApportionment = GetCalcResultOnePlusFourApportionment(),
-                CalcResultParameterCommunicationCost = GetCalcResultParameterCommunicationCost(),
-                CalcResultSummary = TestDataHelper.GetCalcResultSummary(),
-                CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
+                CalcResultSummary = TestData.GetCalcResultSummary(),
+                CalcResultCommsCostReportDetail = TestData.GetCalcResultCommsCostReportDetail(),
                 CalcResultLateReportingTonnageData = GetCalcResultLateReportingTonnage(),
-                CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers(),
+                CalcResultScaledupProducers = TestData.GetScaledupProducers(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
                 CalcResultModulation = null,
@@ -136,10 +135,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                 }
             };
 
-            var materails = TestDataHelper.GetMaterials();
             var scaledup = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
-            TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(_allResults, materails, 1, scaledup, partialObligations);
+            TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(_allResults, TestData.Materials, 1, scaledup, partialObligations);
         }
 
         [TestCleanup]
@@ -321,7 +319,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
 
         private List<ProducerDetail> GetProducers()
         {
-            var producers = Fixture.CreateMany<ProducerDetail>(2).ToList();
+            var producers = TestFixtures.New(o => o.UseSqlLite()).CreateMany<ProducerDetail>(2).ToList();
             producers[0].SubsidiaryId = "1";
             producers[0].CalculatorRunId = 1;
             producers[0].ProducerId = 1;
@@ -347,22 +345,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             return producers;
         }
 
-        private CalcResultParameterCommunicationCost GetCalcResultParameterCommunicationCost()
-        {
-            return Fixture.Create<CalcResultParameterCommunicationCost>();
-        }
-
         private CalcResultLateReportingTonnage GetCalcResultLateReportingTonnage()
         {
-            return Fixture.Create<CalcResultLateReportingTonnage>();
+            return TestFixtures.Default.Create<CalcResultLateReportingTonnage>();
         }
 
         private CalcResultOnePlusFourApportionment GetCalcResultOnePlusFourApportionment()
         {
-            var calcResultOnePlusFourApportionment = Fixture.Create<CalcResultOnePlusFourApportionment>();
+            var calcResultOnePlusFourApportionment = TestFixtures.Default.Create<CalcResultOnePlusFourApportionment>();
 
             // Ensure the lists have enough elements
-            calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails = Fixture.CreateMany<CalcResultOnePlusFourApportionmentDetail>(5).ToList();
+            calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails = TestFixtures.New(o => o.UseSqlLite()).CreateMany<CalcResultOnePlusFourApportionmentDetail>(5).ToList();
 
             // Set up consistent data
             calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.Last().EnglandDisposalTotal = "50%";

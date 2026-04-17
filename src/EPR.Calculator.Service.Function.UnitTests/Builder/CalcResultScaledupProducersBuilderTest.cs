@@ -4,12 +4,11 @@ using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder;
 using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Mappers;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Calculator.Contexts;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
@@ -19,8 +18,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
     public class CalcResultScaledupProducersBuilderTest
     {
         private readonly ApplicationDBContext dbContext;
+        private readonly Mock<IMaterialService> materialService;
         private readonly int runId = 1;
-        private CalcResultScaledupProducersBuilder builder;
+        private readonly CalcResultScaledupProducersBuilder builder;
 
         private readonly Guid submitterId = Guid.NewGuid();
         private readonly Guid submitterId2 = Guid.NewGuid();
@@ -239,14 +239,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         /// </summary>
         public CalcResultScaledupProducersBuilderTest()
         {
-            var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
-            .UseInMemoryDatabase(databaseName: "PayCal")
-            .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-            .Options;
-
-            dbContext = new ApplicationDBContext(dbContextOptions);
-            dbContext.Database.EnsureCreated();
-            builder = new CalcResultScaledupProducersBuilder(dbContext);
+            var fixture = TestFixtures.New();
+            dbContext = fixture.Create<ApplicationDBContext>();
+            materialService = fixture.Freeze<Mock<IMaterialService>>();
+            materialService
+                .Setup(x => x.GetMaterials(It.IsAny<CancellationToken>()))
+                .ReturnsAsync([new MaterialDto { Id = 0, Code = "PC", Name = "Paper or Card" }]);
+            builder = new CalcResultScaledupProducersBuilder(dbContext, materialService.Object);
         }
 
         [TestCleanup]
@@ -267,17 +266,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             // Arrange
             PrepareNonScaledUpProducer();
             PrepareScaledUpProducer();
-            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
+            var runContext = TestFixtures.Default.Create<CalculatorRunContext>();
 
             // Act
-            var result = await builder.ConstructAsync(requestDto);
+            var result = await builder.ConstructAsync(runContext);
 
             // Assert
             Assert.AreEqual(2, result.ScaledupProducers!.Count());
-            var tonnage = result.ScaledupProducers!.First(x => x.ProducerId == 11 && !x.IsTotalRow && !x.IsSubtotalRow).ScaledupProducerTonnageByMaterial["PC"];
+            var scaledupProducer = result.ScaledupProducers!.First(x => x.ProducerId == 11 && !x.IsTotalRow && !x.IsSubtotalRow);
+            var tonnage = scaledupProducer.ScaledupProducerTonnageByMaterial["PC"];
             Assert.AreEqual(1, tonnage.TotalReportedTonnage);
             Assert.AreEqual(2.999m, tonnage.ScaledupTotalReportedTonnage);
-            
         }
 
         /// <summary>
@@ -291,10 +290,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             // Arrange
             PrepareNonScaledUpProducer();
             PrepareScaledUpProducer();
-            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
+            var runContext = TestFixtures.Default.Create<CalculatorRunContext>();
 
             // Act
-            var result = await builder.ConstructAsync(requestDto);
+            var result = await builder.ConstructAsync(runContext);
 
             // Assert
             var actualNumberScaledUpProducer = result.ScaledupProducers!.Where(t => !t.IsTotalRow);
@@ -311,10 +310,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             // Arrange
             PrepareNonScaledUpProducer();
-            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
+            var runContext = TestFixtures.Default.Create<CalculatorRunContext>();
 
             // Act
-            var result = await builder.ConstructAsync(requestDto);
+            var result = await builder.ConstructAsync(runContext);
 
             // Assert
             Assert.AreEqual(0, result.ScaledupProducers?.Count());
@@ -354,7 +353,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 new ProducerData { ProducerDetail = new ProducerDetail { ProducerId = 2 }, MaterialName = "Glass", PackagingType = "HDC" },
             };
 
-            var calcResult = TestDataHelper.GetCalcResult();
+            var calcResult = TestData.GetCalcResult();
             calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers
             {
                 ScaledupProducers = new List<CalcResultScaledupProducer>
@@ -375,7 +374,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         [TestMethod]
         public void AddExtraRowsTest()
         {
-            builder = new CalcResultScaledupProducersBuilder(dbContext);
             var runProducerMaterialDetails = new List<CalcResultScaledupProducer>();
             runProducerMaterialDetails.AddRange([
                 new CalcResultScaledupProducer
@@ -437,7 +435,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         [TestMethod]
         public void GetOverallTotalRowTest()
         {
-            builder = new CalcResultScaledupProducersBuilder(dbContext);
             var runProducerMaterialDetails = new List<CalcResultScaledupProducer>();
             var dictionary = new Dictionary<string, CalcResultScaledupProducerTonnage>();
             dictionary.Add("AL", new CalcResultScaledupProducerTonnage
@@ -488,10 +485,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 ScaledupProducerTonnageByMaterial = dictionary,
             });
 
-            var materials = new List<Material>();
-            materials.Add(new Material { Code = "AL", Name = "Aluminium" });
-            var materialDetails = MaterialMapper.Map(materials);
-            var totalRow = CalcResultScaledupProducersBuilder.GetOverallTotalRow(runProducerMaterialDetails, materialDetails);
+            ImmutableArray<MaterialDto> materials =
+            [
+                new(){ Id = 1, Code = "AL", Name = "Aluminium" }
+            ];
+
+            var totalRow = CalcResultScaledupProducersBuilder.GetOverallTotalRow(runProducerMaterialDetails, materials);
             Assert.IsNotNull(totalRow);
             var aluminium = totalRow.ScaledupProducerTonnageByMaterial["Aluminium"];
             Assert.IsNotNull(aluminium);
@@ -505,8 +504,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         [TestMethod]
         public async Task GetProducerReportedMaterialsAsyncTest()
         {
-            builder = new CalcResultScaledupProducersBuilder(dbContext!);
-            var result = await builder.GetProducerReportedMaterialsAsync(1, new List<int> { 1, 2 });
+            var result = await builder.GetProducerReportedMaterialsAsync(1, [1,2]);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(0, result.Count);
@@ -515,8 +513,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         [TestMethod]
         public async Task GetScaledupOrganisationDetailsTest()
         {
-            builder = new CalcResultScaledupProducersBuilder(dbContext!);
-            var result = await builder.GetScaledupOrganisationDetails(1, new List<int> { 1, 2 });
+            var result = await builder.GetScaledupOrganisationDetails(1, [1,2]);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(0, result.Count());
@@ -525,9 +522,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         [TestMethod]
         public void GetTonnagesTest()
         {
-            var materials = new List<Material>();
-            materials.Add(new Material { Code = "AL", Name = "Aluminium" });
-            var materialDetails = MaterialMapper.Map(materials);
+            ImmutableArray<MaterialDto> materials =
+            [
+                new(){ Id = 1, Code = "AL", Name = "Aluminium" }
+            ];
+
             var pomDateDetails = new List<CalculatorRunPomDataDetail>();
             pomDateDetails.Add(new CalculatorRunPomDataDetail
             {
@@ -539,7 +538,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 PackagingMaterial = "AL",
                 PackagingType = "HH",
             });
-            var tonnage = CalcResultScaledupProducersBuilder.GetTonnages(pomDateDetails, materialDetails, "2024-P2", 2);
+            var tonnage = CalcResultScaledupProducersBuilder.GetTonnages(pomDateDetails, materials, "2024-P2", 2);
             Assert.IsNotNull(tonnage);
             var aluminium = tonnage["AL"];
             Assert.AreEqual(0.1m, aluminium.ReportedHouseholdPackagingWasteTonnage);
@@ -549,10 +548,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         [TestMethod]
         public void GetColumnHeadersTest()
         {
-            var materials = new List<Material>();
-            materials.Add(new Material { Code = "AL", Name = "Aluminium" });
-            var materialDetails = MaterialMapper.Map(materials);
-            var columnHeaders = CalcResultScaledupProducersBuilder.GetColumnHeaders(materialDetails);
+            ImmutableArray<MaterialDto> materials =
+            [
+                new(){ Id = 1, Code = "AL", Name = "Aluminium" }
+            ];
+            var columnHeaders = CalcResultScaledupProducersBuilder.GetColumnHeaders(materials);
             Assert.IsNotNull(columnHeaders);
             Assert.AreEqual(19, columnHeaders.Count);
         }
@@ -560,31 +560,30 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         [TestMethod]
         public void GetMaterialsBreakdownHeaderTest()
         {
-            var materials = new List<Material>();
-            materials.Add(new Material { Code = "AL", Name = "Aluminium" });
-            var materialDetails = MaterialMapper.Map(materials);
-            var materialsBreakDown = CalcResultScaledupProducersBuilder.GetMaterialsBreakdownHeader(materialDetails);
+            ImmutableArray<MaterialDto> materials =
+            [
+                new(){ Id = 1, Code = "AL", Name = "Aluminium" }
+            ];
+            var materialsBreakDown = CalcResultScaledupProducersBuilder.GetMaterialsBreakdownHeader(materials);
             Assert.IsNotNull(materialsBreakDown);
             Assert.AreEqual(2, materialsBreakDown.Count);
         }
 
         [TestMethod]
-        public void SetHeadersTest()
+        public async Task SetHeadersTest()
         {
             var producers = new CalcResultScaledupProducers
             {
                 ScaledupProducers = new List<CalcResultScaledupProducer>(),
             };
-            var materials = new List<Material>();
-            materials.Add(new Material { Code = "AL", Name = "Aluminium" });
-            var materialDetails = MaterialMapper.Map(materials);
-            CalcResultScaledupProducersBuilder.SetHeaders(producers, materialDetails);
+            var materials = await materialService.Object.GetMaterials();
+            CalcResultScaledupProducersBuilder.SetHeaders(producers, materials);
             Assert.AreEqual(19, producers.ColumnHeaders?.Count());
             Assert.AreEqual(2, producers.MaterialBreakdownHeaders?.Count());
         }
 
         [TestMethod]
-        public void CalculateScaledupTonnageTest()
+        public async Task CalculateScaledupTonnageTest()
         {
             var dictionary = new Dictionary<string, CalcResultScaledupProducerTonnage>();
             dictionary.Add("AL", new CalcResultScaledupProducerTonnage
@@ -615,18 +614,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 SubmissionPeriodDesc = "desc",
                 OrganisationId = 10,
             });
-            var materials = new List<Material>();
-            materials.Add(new Material { Code = "AL", Name = "Aluminium" });
-            var materialDetails = MaterialMapper.Map(materials);
-            builder = new CalcResultScaledupProducersBuilder(dbContext);
-            CalcResultScaledupProducersBuilder.CalculateScaledupTonnage([scaledUpProducer], allPomDataDetails, materialDetails);
+
+            materialService
+                .Setup(x => x.GetMaterials(It.IsAny<CancellationToken>()))
+                .ReturnsAsync([new(){ Id=1, Code="AL", Name = "Aluminium" }]);
+            var materials = await materialService.Object.GetMaterials();
+            CalcResultScaledupProducersBuilder.CalculateScaledupTonnage([scaledUpProducer], allPomDataDetails, materials);
             Assert.IsNotNull(scaledUpProducer.ScaledupProducerTonnageByMaterial);
             var scaledUpTonnage = scaledUpProducer.ScaledupProducerTonnageByMaterial["AL"];
             Assert.IsNotNull(scaledUpTonnage);
         }
 
         [TestMethod]
-        public void CalculateScaledupTonnageTestForGlass()
+        public async Task CalculateScaledupTonnageTestForGlass()
         {
             var dictionary = new Dictionary<string, CalcResultScaledupProducerTonnage>();
             dictionary.Add("GL", new CalcResultScaledupProducerTonnage
@@ -659,11 +659,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 SubmissionPeriodDesc = "desc",
                 OrganisationId = 10,
             });
-            var materials = new List<Material>();
-            materials.Add(new Material { Code = "GL", Name = "Glass" });
-            var materialDetails = MaterialMapper.Map(materials);
-            builder = new CalcResultScaledupProducersBuilder(dbContext);
-            CalcResultScaledupProducersBuilder.CalculateScaledupTonnage([scaledUpProducer], allPomDataDetails, materialDetails);
+
+            materialService
+                .Setup(x => x.GetMaterials(It.IsAny<CancellationToken>()))
+                .ReturnsAsync([new(){ Id=1, Code="GL", Name = "Glass" }]);
+            var materials = await materialService.Object.GetMaterials();
+            CalcResultScaledupProducersBuilder.CalculateScaledupTonnage([scaledUpProducer], allPomDataDetails, materials);
 
             var scaledUpTonnage = scaledUpProducer.ScaledupProducerTonnageByMaterial["GL"];
             Assert.IsNotNull(scaledUpTonnage);

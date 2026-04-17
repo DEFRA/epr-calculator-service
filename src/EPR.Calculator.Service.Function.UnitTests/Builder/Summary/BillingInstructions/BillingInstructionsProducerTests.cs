@@ -1,129 +1,87 @@
-﻿using System.Collections.Immutable;
-using EPR.Calculator.API.Data;
+﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.ParametersOther;
 using EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstructions
 {
-    /// <summary>
-    /// Defines the <see cref="BillingInstructionsProducerTests" />
-    /// </summary>
     [TestClass]
     public class BillingInstructionsProducerTests
     {
-        /// <summary>
-        /// Defines the _dbContext
-        /// </summary>
-        private readonly ApplicationDBContext _dbContext;
+        private ApplicationDBContext _dbContext = null!;
+        private ImmutableArray<MaterialDto> _materials;
+        private CalcResult _calcResult = null!;
+        private Dictionary<MaterialDto, CalcResultSummaryProducerDisposalFeesByMaterial> _materialCostSummary = null!;
+        private Dictionary<MaterialDto, CalcResultSummaryProducerCommsFeesCostByMaterial> _commsCostSummary = null!;
+        private List<InvoicedProducerRecord> producerInvoicedDto = null!;
+        private List<DefaultParamResultsClass> defaultParam = null!;
 
-        /// <summary>
-        /// Defines the _materials
-        /// </summary>
-        private readonly IEnumerable<MaterialDetail> _materials;
-
-        /// <summary>
-        /// Defines the _calcResult
-        /// </summary>
-        private readonly CalcResult _calcResult;
-
-        /// <summary>
-        /// Defines the _materialCostSummary
-        /// </summary>
-        private readonly Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial> _materialCostSummary;
-
-        /// <summary>
-        /// Defines the _commsCostSummary
-        /// </summary>
-        private readonly Dictionary<MaterialDetail, CalcResultSummaryProducerCommsFeesCostByMaterial> _commsCostSummary;
-
-        private List<InvoicedProducerRecord> producerInvoicedDto;
-
-        private List<DefaultParamResultsClass> defaultParam;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="BillingInstructionsProducerTests"/> class.
-        /// </summary>
-        public BillingInstructionsProducerTests()
+        [TestInitialize]
+        public void Init()
         {
-            var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
-                .UseInMemoryDatabase(databaseName: "PayCal")
-                .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-                .Options;
-
-            _dbContext = new ApplicationDBContext(dbContextOptions);
-            _dbContext.Database.EnsureCreated();
+            var fixture = TestFixtures.New();
+            _dbContext = fixture.Freeze<ApplicationDBContext>();
 
             CreateMaterials();
             CreateProducerDetail();
 
             _materials = [
-                new MaterialDetail
+                new MaterialDto
                 {
                     Id = 1,
                     Code = "AL",
-                    Name = "Aluminium",
-                    Description = "Aluminium",
+                    Name = "Aluminium"
                 },
-                new MaterialDetail
+                new MaterialDto
                 {
                     Id = 2,
                     Code = "FC",
-                    Name = "Fibre composite",
-                    Description = "Fibre composite",
+                    Name = "Fibre composite"
                 },
-                new MaterialDetail
+                new MaterialDto
                 {
                     Id = 3,
                     Code = "GL",
-                    Name = "Glass",
-                    Description = "Glass",
+                    Name = "Glass"
                 },
-                new MaterialDetail
+                new MaterialDto
                 {
                     Id = 4,
                     Code = "PC",
                     Name = "Paper or card",
-                    Description = "Paper or card",
                 },
-                new MaterialDetail
+                new MaterialDto
                 {
                     Id = 5,
                     Code = "PL",
                     Name = "Plastic",
-                    Description = "Plastic",
                 },
-                new MaterialDetail
+                new MaterialDto
                 {
                     Id = 6,
                     Code = "ST",
                     Name = "Steel",
-                    Description = "Steel",
                 },
-                new MaterialDetail
+                new MaterialDto
                 {
                     Id = 7,
                     Code = "WD",
-                    Name = "Wood",
-                    Description = "Wood",
+                    Name = "Wood"
                 },
-                new MaterialDetail
+                new MaterialDto
                 {
                     Id = 8,
                     Code = "OT",
-                    Name = "Other materials",
-                    Description = "Other materials",
+                    Name = "Other materials"
                 }
             ];
 
-            _calcResult = TestDataHelper.GetCalcResult();
-
-            _materialCostSummary = new Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial>();
-            _commsCostSummary = new Dictionary<MaterialDetail, CalcResultSummaryProducerCommsFeesCostByMaterial>();
+            _calcResult = fixture.Create<CalcResult>();
+            _materialCostSummary = new Dictionary<MaterialDto, CalcResultSummaryProducerDisposalFeesByMaterial>();
+            _commsCostSummary = new Dictionary<MaterialDto, CalcResultSummaryProducerCommsFeesCostByMaterial>();
 
             foreach (var material in _materials)
             {
