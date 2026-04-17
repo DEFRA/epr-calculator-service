@@ -53,7 +53,6 @@
         public decimal? HouseholdDrinksContainerDefaultedRed { get; set; }
         public decimal TotalTonnage { get; set; }
 
-
         private decimal GetTotalRamTonnage(Func<RAMTonnage, decimal> getTonnage)
         {
             var hdcTonnage = HouseholdDrinksContainerRAMTonnage != null ? getTonnage(HouseholdDrinksContainerRAMTonnage) : 0;
@@ -79,6 +78,22 @@
         public decimal RedMedical { get; init; }
         public decimal AmberMedical { get; init; }
         public decimal GreenMedical { get; init; }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is RAMProportions other &&
+                Red == other.Red &&
+                RedMedical == other.RedMedical &&
+                Amber == other.Amber &&
+                AmberMedical == other.AmberMedical &&
+                Green == other.Green &&
+                GreenMedical == other.GreenMedical;
+        }
+
+        public override int GetHashCode()
+        {
+            return System.HashCode.Combine(Red, RedMedical, Amber, AmberMedical, Green, GreenMedical);
+        }
     }
 
     public class CalcResultH1ProjectedProducerMaterialTonnage : CalcResultProjectedProducerMaterialTonnage
