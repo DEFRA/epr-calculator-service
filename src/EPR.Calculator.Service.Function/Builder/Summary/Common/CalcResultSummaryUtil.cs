@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.Service.Function.Builder.CommsCost;
@@ -128,9 +128,9 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             }
 
             var reportedMaterials = producer.ProducerReportedMaterials
-                .FirstOrDefault(p => p.Material?.Code == material.Code && p.PackagingType == packagingType);
+                .Where(p => p.Material?.Code == material.Code && p.PackagingType == packagingType);
 
-            return reportedMaterials?.PackagingTonnage ?? 0;
+             return reportedMaterials.Sum(t => t.PackagingTonnage);
         }
 
         public static decimal GetTonnageTotal(

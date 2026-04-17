@@ -13,7 +13,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
         public required IEnumerable<TotalPackagingTonnagePerRun> TotalPackagingTonnage;
         private CalcResult _calcResult;
         private List<ProducerDetail> _producers;
-        private List<CalcResultsProducerAndReportMaterialDetail> _allResults;
+        private List<CalcResultProducerAndReportMaterialDetail> _allResults;
         private Fixture Fixture { get; init; } = new Fixture();
 
         public CalcResultSummaryCommsCostTwoBTotalBillTests()
@@ -33,58 +33,79 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                 CalcResultLateReportingTonnageData = GetCalcResultLateReportingTonnage(),
                 CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
+                CalcResultProjectedProducers = new CalcResultProjectedProducers(),
                 CalcResultModulation = null,
             };
 
             // Set up consistent data
-            _calcResult.CalcResultParameterOtherCost = Fixture.Create<CalcResultParameterOtherCost>();
-            _calcResult.CalcResultParameterOtherCost.BadDebtProvision = new KeyValuePair<string, string>("10 Bad Debt Provision", "10.00%");
-
-            _allResults = new List<CalcResultsProducerAndReportMaterialDetail>
+            this._calcResult.CalcResultParameterOtherCost = Fixture.Create<CalcResultParameterOtherCost>();
+            this._calcResult.CalcResultParameterOtherCost.BadDebtProvision = new KeyValuePair<string, string>("10 Bad Debt Provision", "10.00%");
+            var producer1 = new ProducerDetail
+                            {
+                                Id = 1,
+                                CalculatorRunId = 1,
+                                SubsidiaryId = "1",
+                                ProducerId = 1,
+                                ProducerName = "Producer1",
+                            };
+            var producer2 = new ProducerDetail
+                            {
+                                Id = 2,
+                                CalculatorRunId = 1,
+                                SubsidiaryId = "1",
+                                ProducerId = 2,
+                                ProducerName = "Producer2",
+                            };
+            this._allResults = new List<CalcResultProducerAndReportMaterialDetail>
             {
-                new CalcResultsProducerAndReportMaterialDetail
+                new CalcResultProducerAndReportMaterialDetail
                 {
-                    ProducerDetail = new ProducerDetail
-                    {
-                        Id = 1,
-                        CalculatorRunId = 1,
-                        SubsidiaryId = "1",
-                        ProducerId = 1,
-                        ProducerName = "Producer1",
-                    },
-                    ProducerReportedMaterial = new ProducerReportedMaterial
-                    {
-                        Id = 1,
-                        MaterialId = 1,
-                        ProducerDetailId = 1,
-                        PackagingType = "HH",
-                        PackagingTonnage = 100,
-                        Material = new Material
-                        {
-                            Id = 1,
-                            Code = "HH",
-                            Name = "Material1",
-                            Description = "Material1",
-                        },
-                    },
+                    ProducerDetail = producer1,
+                    ProducerReportedMaterial = 
+                        new(){
+                            MaterialId = 1,
+                            ProducerDetailId = 1,
+                            PackagingType = "HH",
+                            PackagingTonnage = 50,
+                            SubmissionPeriod = "2025-H1",
+                            Material = new Material
+                            {
+                                Id = 1,
+                                Code = "HH",
+                                Name = "Material1",
+                                Description = "Material1",
+                            },
+                        }
                 },
-                new CalcResultsProducerAndReportMaterialDetail
+                new CalcResultProducerAndReportMaterialDetail
                 {
-                    ProducerDetail = new ProducerDetail
-                    {
-                        Id = 2,
-                        CalculatorRunId = 1,
-                        SubsidiaryId = "1",
-                        ProducerId = 2,
-                        ProducerName = "Producer2",
-                    },
-                    ProducerReportedMaterial = new ProducerReportedMaterial
-                    {
-                        Id = 2,
+                    ProducerDetail = producer1,
+                    ProducerReportedMaterial = 
+                        new(){
+                            MaterialId = 1,
+                            ProducerDetailId = 1,
+                            PackagingType = "HH",
+                            PackagingTonnage = 50,
+                            SubmissionPeriod = "2025-H2",
+                            Material = new Material
+                            {
+                                Id = 1,
+                                Code = "HH",
+                                Name = "Material1",
+                                Description = "Material1",
+                            },
+                        },
+                },
+                new CalcResultProducerAndReportMaterialDetail
+                {
+                    ProducerDetail = producer2,
+                    ProducerReportedMaterial = 
+                    new(){
                         MaterialId = 1,
                         ProducerDetailId = 2,
                         PackagingType = "HH",
-                        PackagingTonnage = 900,
+                        PackagingTonnage = 450,
+                        SubmissionPeriod = "2025-H1",
                         Material = new Material
                         {
                             Id = 1,
@@ -92,8 +113,27 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                             Name = "Material1",
                             Description = "Material1",
                         },
-                    },
+                    }
                 },
+                new CalcResultProducerAndReportMaterialDetail
+                {
+                    ProducerDetail = producer2,
+                    ProducerReportedMaterial = 
+                    new(){
+                        MaterialId = 1,
+                        ProducerDetailId = 2,
+                        PackagingType = "HH",
+                        PackagingTonnage = 450,
+                        SubmissionPeriod = "2025-H2",
+                        Material = new Material
+                        {
+                            Id = 1,
+                            Code = "HH",
+                            Name = "Material1",
+                            Description = "Material1",
+                        },
+                    }
+                }
             };
 
             var materails = TestDataHelper.GetMaterials();
@@ -286,21 +326,23 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             producers[0].CalculatorRunId = 1;
             producers[0].ProducerId = 1;
 
-            producers[0].ProducerReportedMaterials.Add(new ProducerReportedMaterial
-            {
-                Id = 1,
-                MaterialId = 1,
-                ProducerDetailId = 1,
-                PackagingType = "HH",
-                PackagingTonnage = 100,
-                Material = new Material
+            foreach(var subPeriod in new[] {"2025-H1", "2025-H2"}) {
+                producers[0].ProducerReportedMaterials.Add(new ProducerReportedMaterial
                 {
-                    Id = 1,
-                    Code = "HH",
-                    Name = "Material1",
-                    Description = "Material1",
-                },
-            });
+                    MaterialId = 1,
+                    ProducerDetailId = 1,
+                    PackagingType = "HH",
+                    PackagingTonnage = 50,
+                    SubmissionPeriod = subPeriod,
+                    Material = new Material
+                    {
+                        Id = 1,
+                        Code = "HH",
+                        Name = "Material1",
+                        Description = "Material1",
+                    },
+                });
+            }
 
             return producers;
         }

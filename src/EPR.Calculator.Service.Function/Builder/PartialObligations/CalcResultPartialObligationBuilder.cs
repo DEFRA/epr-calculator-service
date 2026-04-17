@@ -83,7 +83,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
 
         public static CalcResultPartialObligationTonnage GetPartialObligationTonnage(MaterialDetail material, List<ProducerReportedMaterial> reportedForMaterial, decimal partialAmount, ProducerDetail producer, IEnumerable<CalcResultScaledupProducer> scaledupProducers){
             decimal GetReportedTonnage(string packagingType) {
-                return reportedForMaterial.FirstOrDefault(p => p.PackagingType == packagingType)?.PackagingTonnage ?? 0;
+                return reportedForMaterial.Where(p => p.PackagingType == packagingType).Sum(t => t.PackagingTonnage);
             }
             var tonnage = new CalcResultPartialObligationTonnage();
 

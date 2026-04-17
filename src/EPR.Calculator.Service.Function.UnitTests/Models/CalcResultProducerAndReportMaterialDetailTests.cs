@@ -26,6 +26,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
                     Material = new Material { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
                     PackagingTonnage = 1000.00m,
                     PackagingType = "HH",
+                    SubmissionPeriod = "2025-H1",
                     MaterialId = 1,
                     ProducerDetail = null,
                 },

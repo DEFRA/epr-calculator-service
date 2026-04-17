@@ -1,4 +1,4 @@
-using EPR.Calculator.API.Data;
+﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.API.Data.Models;
@@ -35,9 +35,9 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
         public IEnumerable<Organisation> ParentOrganisations { get; set; } = [];
 
-        public CalcResultSummaryBuilder(ApplicationDBContext context)
+        public CalcResultSummaryBuilder(ApplicationDBContext dbContext)
         {
-            this.context = context;
+            context = dbContext;
         }
 
         public async Task<CalcResultSummary> ConstructAsync(int runId, RelativeYear relativeYear, bool isBillingFile, CalcResult calcResult)
@@ -52,7 +52,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             var runProducerMaterialDetails = await (from pd in context.ProducerDetail
                                                     join prm in context.ProducerReportedMaterial on pd.Id equals prm.ProducerDetailId
                                                     where pd.CalculatorRunId == runId
-                                                    select new CalcResultsProducerAndReportMaterialDetail
+                                                    select new CalcResultProducerAndReportMaterialDetail
                                                     {
                                                         ProducerDetail = pd,
                                                         ProducerReportedMaterial = prm,
@@ -202,22 +202,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             IEnumerable<ProducerDetail> producerDetails)
         {
             return producerDetails.Where(pd => pd.CalculatorRunId == runId).OrderBy(pd => pd.ProducerId).ThenBy(pd => pd.SubsidiaryId).ToList();
-        }
-
-        public static IEnumerable<CalcResultsProducerAndReportMaterialDetail> GetProducerRunMaterialDetails(
-            IEnumerable<ProducerDetail> producerDetails,
-            IEnumerable<ProducerReportedMaterial> producerReportedmaterials,
-            int runId)
-        {
-            return (from p in producerDetails
-                    join m in producerReportedmaterials
-                    on p.Id equals m.ProducerDetailId
-                    where p.CalculatorRunId == runId
-                    select new CalcResultsProducerAndReportMaterialDetail
-                    {
-                        ProducerDetail = p,
-                        ProducerReportedMaterial = m,
-                    }).ToList();
         }
 
         public CalcResultSummaryProducerDisposalFees GetProducerTotalRow(
@@ -598,7 +582,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         }
 
         public static IEnumerable<TotalPackagingTonnagePerRun> GetTotalPackagingTonnagePerRun(
-            IEnumerable<CalcResultsProducerAndReportMaterialDetail> allResults,
+            IEnumerable<CalcResultProducerAndReportMaterialDetail> allResults,
             IEnumerable<MaterialDetail> materials, int runId,
             IEnumerable<CalcResultScaledupProducer> scaledupProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)

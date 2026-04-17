@@ -250,12 +250,13 @@ namespace EPR.Calculator.Service.Function.Services
 
                             foreach (var material in materials)
                             {
-                                var pomDataDetailsByMaterial = runPomDataDetailsForSubsidaryId.Where(pdd => pdd.PackagingMaterial == material.Code).GroupBy(pdd => pdd.PackagingType);
+                                var pomDataDetailsByMaterial = runPomDataDetailsForSubsidaryId.Where(pdd => pdd.PackagingMaterial == material.Code).GroupBy(pdd => new { pdd.SubmissionPeriod, pdd.PackagingType });
 
                                 foreach (var pomData in pomDataDetailsByMaterial)
                                 {
                                     var pom = pomData.AsEnumerable();
                                     var packagingType = pom.FirstOrDefault()?.PackagingType;
+                                    var submissionPeriod = pom.FirstOrDefault()?.SubmissionPeriod;
                                     var totalPackagingMaterialWeight = pom.Sum(x => x.PackagingMaterialWeight) ?? 0;
 
                                     // Proceed further only if the packaging type and packaging material weight is not null
@@ -268,6 +269,7 @@ namespace EPR.Calculator.Service.Function.Services
                                             Material = material,
                                             ProducerDetail = producerDetail,
                                             PackagingType = packagingType!,
+                                            SubmissionPeriod = submissionPeriod!,
                                             PackagingTonnage = Math.Round((decimal)(totalPackagingMaterialWeight) / 1000, 3),
                                             PackagingTonnageRed = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.Red).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
                                             PackagingTonnageAmber = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.Amber).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),

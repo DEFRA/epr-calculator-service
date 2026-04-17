@@ -1287,20 +1287,24 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
             {
                 for (int materialId = 1; materialId < 9; materialId++)
                 {
-                    _dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                    foreach (var subPeriod in new[] {"2025-H1", "2025-H2"})
                     {
-                        MaterialId = materialId,
-                        ProducerDetailId = producerDetailId,
-                        PackagingType = "HH",
-                        PackagingTonnage = materialId * 100,
-                    });
-                    _dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-                    {
-                        MaterialId = materialId,
-                        ProducerDetailId = producerDetailId,
-                        PackagingType = "CW",
-                        PackagingTonnage = materialId * 50,
-                    });
+                        _dbContext.ProducerReportedMaterial.AddRange(
+                        new(){
+                            MaterialId = materialId,
+                            ProducerDetailId = producerDetailId,
+                            PackagingType = "HH",
+                            SubmissionPeriod = subPeriod,
+                            PackagingTonnage = materialId * 50,
+                        },
+                        new(){
+                            MaterialId = materialId,
+                            ProducerDetailId = producerDetailId,
+                            PackagingType = "CW",
+                            SubmissionPeriod = subPeriod,
+                            PackagingTonnage = materialId * 25,
+                        });
+                    }
                 }
             }
 

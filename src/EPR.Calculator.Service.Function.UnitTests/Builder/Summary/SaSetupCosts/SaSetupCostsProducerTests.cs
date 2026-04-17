@@ -323,6 +323,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                     ],
                 },
                 CalcResultLateReportingTonnageData = Fixture.Create<CalcResultLateReportingTonnage>(),
+                CalcResultProjectedProducers = new CalcResultProjectedProducers(),
                 CalcResultModulation = null,
             };
 
@@ -503,20 +504,24 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
             {
                 for (int materialId = 1; materialId < 9; materialId++)
                 {
-                    dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-                    {
-                        MaterialId = materialId,
-                        ProducerDetailId = producerDetailId,
-                        PackagingType = "HH",
-                        PackagingTonnage = materialId * 100,
-                    });
-                    dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-                    {
-                        MaterialId = materialId,
-                        ProducerDetailId = producerDetailId,
-                        PackagingType = "CW",
-                        PackagingTonnage = materialId * 50,
-                    });
+                    foreach (var subPeriod in new[] { "2025-H1", "2025-H2"}) {
+                        dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                        {
+                            MaterialId = materialId,
+                            ProducerDetailId = producerDetailId,
+                            PackagingType = "HH",
+                            SubmissionPeriod = subPeriod,
+                            PackagingTonnage = materialId * 50,
+                        });
+                        dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                        {
+                            MaterialId = materialId,
+                            ProducerDetailId = producerDetailId,
+                            PackagingType = "CW",
+                            SubmissionPeriod = subPeriod,
+                            PackagingTonnage = materialId * 25,
+                        });
+                    }
                 }
             }
 

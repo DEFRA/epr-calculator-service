@@ -262,12 +262,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
 
             var producerReportedMaterials = new List<ProducerReportedMaterial>
         {
-            new ProducerReportedMaterial { Id = 1, ProducerDetailId = 1, MaterialId = 1, PackagingType = PackagingTypes.Household, PackagingTonnage = 100 },
-            new ProducerReportedMaterial { Id = 2, ProducerDetailId = 1, MaterialId = 2, PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 200 },
-            new ProducerReportedMaterial { Id = 3, ProducerDetailId = 1, MaterialId = 3, PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 300 },
-             new ProducerReportedMaterial { Id = 4, ProducerDetailId = 2, MaterialId = 1, PackagingType = PackagingTypes.Household, PackagingTonnage = 100 },
-            new ProducerReportedMaterial { Id = 5, ProducerDetailId = 2, MaterialId = 2, PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 200 },
-            new ProducerReportedMaterial { Id = 6, ProducerDetailId = 2, MaterialId = 3, PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 300 },
+            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 1, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
+            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 1, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
+            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 2, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
+            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 2, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
+            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 3, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
+            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 3, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
+            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 1, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
+            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 1, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
+            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 2, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
+            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 2, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
+            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 3, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
+            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 3, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
 
         };
             context.ProducerReportedMaterial.AddRange(producerReportedMaterials);
@@ -395,14 +401,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
 
 
 
-            var producerDetails = new List<ProducerDetail>
-            {  new ProducerDetail { Id =1 , CalculatorRunId = 1, ProducerName="Test1", ProducerId = 1, TradingName = "TN1"},
-             new ProducerDetail { Id =2 , CalculatorRunId = 1, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
-               new ProducerDetail { Id =4 , CalculatorRunId = 1, ProducerName="Test3", ProducerId = 3, TradingName = "TN4"},
-                new ProducerDetail { Id =5 , CalculatorRunId = 1, ProducerName="Test4", ProducerId = 4, TradingName = "TN5"},
-                 new ProducerDetail { Id =6 , CalculatorRunId = 2, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
-              new ProducerDetail { Id =3 , CalculatorRunId = 2, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"},
-               new ProducerDetail { Id =7 , CalculatorRunId = 3, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"}
+            var producerDetails = new List<ProducerDetail>()
+            {  
+                new ProducerDetail() { Id =1 , CalculatorRunId = 1, ProducerName="Test1", ProducerId = 1, TradingName = "TN1"},
+                new ProducerDetail() { Id =2 , CalculatorRunId = 1, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
+                new ProducerDetail() { Id =4 , CalculatorRunId = 1, ProducerName="Test3", ProducerId = 3, TradingName = "TN4"},
+                new ProducerDetail() { Id =5 , CalculatorRunId = 1, ProducerName="Test4", ProducerId = 4, TradingName = "TN5"},
+                new ProducerDetail() { Id =6 , CalculatorRunId = 2, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
+                new ProducerDetail() { Id =3 , CalculatorRunId = 2, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"},
+                new ProducerDetail() { Id =7 , CalculatorRunId = 3, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"}
             };
 
             context.ProducerDetail.AddRange(producerDetails);
@@ -417,18 +424,30 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
 
             var producerReportedMaterials = new List<ProducerReportedMaterial>
         {
-            new ProducerReportedMaterial { Id = 1, ProducerDetailId = 1, MaterialId = 1, PackagingType = PackagingTypes.Household, PackagingTonnage = 100 },
-            new ProducerReportedMaterial { Id = 2, ProducerDetailId = 1, MaterialId = 2, PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 200 },
-            new ProducerReportedMaterial { Id = 3, ProducerDetailId = 1, MaterialId = 3, PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 300 },
-             new ProducerReportedMaterial { Id = 4, ProducerDetailId = 2, MaterialId = 1, PackagingType = PackagingTypes.Household, PackagingTonnage = 100 },
-            new ProducerReportedMaterial { Id = 5, ProducerDetailId = 2, MaterialId = 2, PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 200 },
-            new ProducerReportedMaterial { Id = 6, ProducerDetailId = 2, MaterialId = 3, PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 300 },
-                         new ProducerReportedMaterial { Id = 7, ProducerDetailId = 4, MaterialId = 1, PackagingType = PackagingTypes.Household, PackagingTonnage = 100 },
-            new ProducerReportedMaterial { Id = 8, ProducerDetailId = 4, MaterialId = 2, PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 200 },
-            new ProducerReportedMaterial { Id = 9, ProducerDetailId = 4, MaterialId = 3, PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 300 },
-                                 new ProducerReportedMaterial { Id = 10, ProducerDetailId = 3, MaterialId = 1, PackagingType = PackagingTypes.Household, PackagingTonnage = 100 },
-            new ProducerReportedMaterial { Id = 11, ProducerDetailId = 3, MaterialId = 2, PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 200 },
-            new ProducerReportedMaterial { Id = 12, ProducerDetailId = 3, MaterialId = 3, PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 300 },
+            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 1, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
+            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 1, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
+            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 2, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
+            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 2, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
+            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 3, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
+            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 3, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
+            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 1,SubmissionPeriod = "2025-H1",  PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
+            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 1,SubmissionPeriod = "2025-H2",  PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
+            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 2, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
+            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 2, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
+            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 3, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
+            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 3, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
+            new ProducerReportedMaterial { ProducerDetailId = 4, MaterialId = 1, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
+            new ProducerReportedMaterial { ProducerDetailId = 4, MaterialId = 1, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
+            new ProducerReportedMaterial { ProducerDetailId = 4, MaterialId = 2, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
+            new ProducerReportedMaterial { ProducerDetailId = 4, MaterialId = 2, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
+            new ProducerReportedMaterial { ProducerDetailId = 4, MaterialId = 3, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
+            new ProducerReportedMaterial { ProducerDetailId = 4, MaterialId = 3, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
+            new ProducerReportedMaterial { ProducerDetailId = 3, MaterialId = 1,SubmissionPeriod = "2025-H1",  PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
+            new ProducerReportedMaterial { ProducerDetailId = 3, MaterialId = 1,SubmissionPeriod = "2025-H2",  PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
+            new ProducerReportedMaterial { ProducerDetailId = 3, MaterialId = 2,SubmissionPeriod = "2025-H1",  PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
+            new ProducerReportedMaterial { ProducerDetailId = 3, MaterialId = 2,SubmissionPeriod = "2025-H2",  PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
+            new ProducerReportedMaterial { ProducerDetailId = 3, MaterialId = 3,SubmissionPeriod = "2025-H1",  PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
+            new ProducerReportedMaterial { ProducerDetailId = 3, MaterialId = 3,SubmissionPeriod = "2025-H2",  PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
 
         };
             context.ProducerReportedMaterial.AddRange(producerReportedMaterials);
@@ -678,6 +697,133 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             };
             context.ProducerInvoicedMaterialNetTonnage.AddRange(materialInvoiceTonnage);
             context.SaveChanges();
+        }
+
+        private void CreateProducerDetail()
+        {
+            var producerNames = new string[]
+            {
+                "Allied Packaging",
+                "Beeline Materials",
+                "Cloud Boxes",
+                "Decking and Shed",
+                "Electric Things",
+                "French Flooring",
+                "Good Fruit Co",
+                "Happy Shopper",
+                "Icicle Foods",
+                "Jumbo Box Store",
+            };
+
+            var producerId = 1;
+            foreach (var producerName in producerNames)
+            {
+                this.dbContext.ProducerDetail.Add(new ProducerDetail
+                {
+                    ProducerId = producerId++,
+                    SubsidiaryId = $"{producerId}-Sub",
+                    ProducerName = producerName,
+                    CalculatorRunId = 1,
+                });
+            }
+
+            this.dbContext.SaveChanges();
+
+            for (int producerDetailId = 1; producerDetailId <= 10; producerDetailId++)
+            {
+                for (int materialId = 1; materialId < 9; materialId++)
+                {
+                    this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                    {
+                        MaterialId = materialId,
+                        ProducerDetailId = producerDetailId,
+                        SubmissionPeriod = "2025-H1",
+                        PackagingType = "HH",
+                        PackagingTonnage = materialId * 50,
+                    });
+                    this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                    {
+                        MaterialId = materialId,
+                        ProducerDetailId = producerDetailId,
+                        SubmissionPeriod = "2025-H2",
+                        PackagingType = "HH",
+                        PackagingTonnage = materialId * 50,
+                    });
+                }
+            }
+
+            this.dbContext.ProducerReportedMaterial.AddRange(
+                new()  {
+                    MaterialId = 3,
+                    ProducerDetailId = 1,
+                    PackagingType = "HDC",
+                    SubmissionPeriod = "2025-H1",
+                    PackagingTonnage = 50,
+                },
+                new()  {
+                    MaterialId = 3,
+                    ProducerDetailId = 1,
+                    PackagingType = "HDC",
+                    SubmissionPeriod = "2025-H2",
+                    PackagingTonnage = 50,
+                },
+                new() {
+                    MaterialId = 3,
+                    ProducerDetailId = 2,
+                    PackagingType = "HDC",
+                    SubmissionPeriod = "2025-H1",
+                    PackagingTonnage = 100,
+                },
+                new() {
+                    MaterialId = 3,
+                    ProducerDetailId = 2,
+                    PackagingType = "HDC",
+                    SubmissionPeriod = "2025-H2",
+                    PackagingTonnage = 50,
+                },
+                new() {
+                    MaterialId = 2,
+                    ProducerDetailId = 1,
+                    PackagingType = "PB",
+                    SubmissionPeriod = "2025-H1",
+                    PackagingTonnage = 50,
+                },
+                new() {
+                    MaterialId = 2,
+                    ProducerDetailId = 1,
+                    PackagingType = "PB",
+                    SubmissionPeriod = "2025-H2",
+                    PackagingTonnage = 100,
+                }
+            );
+
+            this.dbContext.SaveChanges();
+        }
+
+        private void CreateNewRun()
+        {
+            var run = new CalculatorRun
+            {
+                CalculatorRunClassificationId = 7,
+                Name = "Test Run",
+                RelativeYear = new RelativeYear(2025),
+                CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
+                CreatedBy = "Test User",
+                DefaultParameterSettingMasterId = 1,
+            };
+
+            var run1 = new CalculatorRun
+            {
+                CalculatorRunClassificationId = 2,
+                Name = "Test Run1",
+                RelativeYear = new RelativeYear(2025),
+                CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
+                CreatedBy = "Test User",
+                DefaultParameterSettingMasterId = 2,
+            };
+            this.dbContext.CalculatorRuns.Add(run);
+            this.dbContext.CalculatorRuns.Add(run1);
+            this.dbContext.SaveChanges();
         }
     }
 }

@@ -1,4 +1,4 @@
-using EPR.Calculator.API.Data;
+﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder;
@@ -37,18 +37,20 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
             dbContext.ProducerDetail.Add(producerDetail);
 
-            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-            {
-                Id = 1,
-                PackagingType = "HH",
-                ProducerDetail = producerDetail,
-            });
-            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-            {
-                Id = 2,
-                PackagingType = "HDC",
-                ProducerDetail = producerDetail,
-            });
+            foreach (var subPeriod in new[] { "2025-H1", "2025-H2"}) {
+                this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                {
+                    PackagingType = "HH",
+                    SubmissionPeriod = subPeriod,
+                    ProducerDetail = producerDetail,
+                });
+                this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                {
+                    PackagingType = "HDC",
+                    SubmissionPeriod = subPeriod,
+                    ProducerDetail = producerDetail,
+                });
+            }
 
             var calcRunPomDataMaster = new CalculatorRunPomDataMaster
             {
@@ -141,12 +143,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 ProducerId = 11,
                 ProducerName = "Producer Test",
             };
-            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-            {
-                Id = 3,
-                PackagingType = "HH",
-                ProducerDetail = producerDetail1,
-            });
+
+
+            foreach (var subPeriod in new[] { "2025-H1", "2025-H2"}) {
+                this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                {
+                    PackagingType = "HH",
+                    SubmissionPeriod = subPeriod, 
+                    ProducerDetail = producerDetail1,
+                });
+            }
 
             dbContext.Material.AddRange(
                 new Material { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
@@ -202,14 +208,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             dbContext.ProducerDetail.Add(producerDetail);
 
-            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-            {
-                PackagingType = "HH",
-                ProducerDetail = producerDetail,
-                MaterialId = 4,
-                PackagingTonnage = 1,
-
-            });
+            foreach (var subPeriod in new[] { "2025-H1", "2025-H2"}) {
+                this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                {
+                    PackagingType = "HH",
+                    ProducerDetail = producerDetail,
+                    SubmissionPeriod = subPeriod,
+                    MaterialId = 4,
+                    PackagingTonnage = 0.5m,
+                });
+            }
 
             dbContext.SubmissionPeriodLookup.Add(
             new SubmissionPeriodLookup

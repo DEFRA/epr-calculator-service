@@ -187,20 +187,8 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                                  mat.PackagingType == PackagingTypes.PublicBin ||
                                  (mat.PackagingType == PackagingTypes.HouseholdDrinksContainers &&
                                   material.Code == MaterialCodes.Glass))
-                          select new ProducerReportedMaterial
-                          {
-                              Id = mat.Id,
-                              MaterialId = mat.MaterialId,
-                              PackagingType = mat.PackagingType,
-                              PackagingTonnage = mat.PackagingTonnage,
-                              PackagingTonnageRed = mat.PackagingTonnageRed,
-                              PackagingTonnageAmber = mat.PackagingTonnageAmber,
-                              PackagingTonnageGreen = mat.PackagingTonnageGreen,
-                              PackagingTonnageRedMedical = mat.PackagingTonnageRedMedical,
-                              PackagingTonnageAmberMedical = mat.PackagingTonnageAmberMedical,
-                              PackagingTonnageGreenMedical = mat.PackagingTonnageGreenMedical,
-                              ProducerDetail = new ProducerDetail { ProducerId = pd.ProducerId },
-                          }).Distinct().ToListAsync();
+                          select mat
+                        ).Distinct().ToListAsync();
         }
 
         private static CalcResultCommsCostCommsCostByMaterial GetTotalRow(IEnumerable<CalcResultCommsCostCommsCostByMaterial> list,

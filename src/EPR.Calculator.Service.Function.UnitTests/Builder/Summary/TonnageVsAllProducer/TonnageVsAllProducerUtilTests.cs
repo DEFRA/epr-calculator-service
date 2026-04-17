@@ -52,7 +52,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TonnageVsAll
             // Arrange
             var fixture = new Fixture();
             var producers = fixture.Create<List<ProducerDetail>>();
-            var allResults = fixture.Create<List<CalcResultsProducerAndReportMaterialDetail>>();
+            var allResults = fixture.Create<List<CalcResultProducerAndReportMaterialDetail>>();
             var materialDetails = Fixture.Create<List<MaterialDetail>>();
 
             var testProducerId = fixture.Create<int>();
@@ -115,7 +115,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TonnageVsAll
             // Arrange
             var fixture = new Fixture();
             var producers = fixture.Create<List<ProducerDetail>>();
-            var allResults = fixture.Create<List<CalcResultsProducerAndReportMaterialDetail>>();
+            var allResults = fixture.Create<List<CalcResultProducerAndReportMaterialDetail>>();
             var materialDetails = fixture.Create<List<MaterialDetail>>();
 
             var testProducerId = fixture.Create<int>();
@@ -174,12 +174,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TonnageVsAll
             Assert.AreEqual(50, result);
         }
 
-        private List<CalcResultsProducerAndReportMaterialDetail> GenerateAllResults(
+        private List<CalcResultProducerAndReportMaterialDetail> GenerateAllResults(
                 int testProducerId,
                 int testCalculatorRunId,
                 string testSubsidaryId)
         {
-            var allResults = Fixture.Create<List<CalcResultsProducerAndReportMaterialDetail>>();
+            var allResults = Fixture.Create<List<CalcResultProducerAndReportMaterialDetail>>();
             allResults.First().ProducerReportedMaterial.ProducerDetailId = testProducerId;
             allResults.First().ProducerDetail.Id = testProducerId;
             allResults.First().ProducerDetail.ProducerId = testProducerId;

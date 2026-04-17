@@ -88,34 +88,36 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             var alm = new Material { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" };
 
-            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-            {
-                Id = 1,
-                PackagingType = "HH",
-                ProducerDetail = producerDetail,
-            });
-            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-            {
-                Id = 2,
-                PackagingType = "HDC",
-                ProducerDetail = producerDetail,
-            });
-            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-            {
-                Id = 3,
-                PackagingType = "HH",
-                Material = alm,
-                PackagingTonnage = 100,
-                ProducerDetail = producerDetail2,
-            });
-            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-            {
-                Id = 4,
-                PackagingType = "CW",
-                Material = alm,
-                PackagingTonnage = 20,
-                ProducerDetail = producerDetail2,
-            });
+            foreach (var subPeriod in new[] { "2025-H1", "2025-H2"}) {
+                this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                {
+                    PackagingType = "HH",
+                    SubmissionPeriod = subPeriod,
+                    ProducerDetail = producerDetail,
+                });
+                this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                {
+                    PackagingType = "HDC",
+                    SubmissionPeriod = subPeriod,
+                    ProducerDetail = producerDetail,
+                });
+                this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                {
+                    PackagingType = "HH",
+                    Material = alm,
+                    PackagingTonnage = 50,
+                    SubmissionPeriod = subPeriod,
+                    ProducerDetail = producerDetail2,
+                });
+                this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                {
+                    PackagingType = "CW",
+                    Material = alm,
+                    PackagingTonnage = 10,
+                    SubmissionPeriod = subPeriod,
+                    ProducerDetail = producerDetail2,
+                });
+            }
 
             //Run 2
             var calcRunOrganisationDataMaster2 = new CalculatorRunOrganisationDataMaster
@@ -182,34 +184,36 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
             dbContext.ProducerDetail.Add(producerDetail4);
 
-            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-            {
-                Id = 5,
-                PackagingType = "HH",
-                ProducerDetail = producerDetail3,
-            });
-            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-            {
-                Id = 6,
-                PackagingType = "HDC",
-                ProducerDetail = producerDetail3,
-            });
-            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-            {
-                Id = 7,
-                PackagingType = "HH",
-                Material = alm,
-                PackagingTonnage = 100,
-                ProducerDetail = producerDetail4,
-            });
-            dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-            {
-                Id = 8,
-                PackagingType = "CW",
-                Material = alm,
-                PackagingTonnage = 20,
-                ProducerDetail = producerDetail4,
-            });
+            foreach (var subPeriod in new[] { "2025-H1", "2025-H2"}) {
+                this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                {
+                    PackagingType = "HH",
+                    SubmissionPeriod = subPeriod,
+                    ProducerDetail = producerDetail3,
+                });
+                this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                {
+                    PackagingType = "HDC",
+                    SubmissionPeriod = subPeriod,
+                    ProducerDetail = producerDetail3,
+                });
+                this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                {
+                    PackagingType = "HH",
+                    Material = alm,
+                    PackagingTonnage = 50,
+                    SubmissionPeriod = subPeriod,
+                    ProducerDetail = producerDetail4,
+                });
+                this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                {
+                    PackagingType = "CW",
+                    Material = alm,
+                    PackagingTonnage = 10,
+                    SubmissionPeriod = subPeriod,
+                    ProducerDetail = producerDetail4,
+                });
+            }
 
             dbContext.Material.AddRange(
                 alm,

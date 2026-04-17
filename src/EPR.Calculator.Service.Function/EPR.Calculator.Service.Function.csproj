@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -37,7 +37,7 @@
     <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.1"/>
     <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="6.0.1"/>
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.5.0"/>
-    <PackageReference Include="EPR.Calculator.API.Data" Version="2.3.0"/>
+    <PackageReference Include="EPR.Calculator.API.Data" Version="2.4.0"/>
     <PackageReference Include="System.Linq.AsyncEnumerable" Version="10.0.3"/>
   </ItemGroup>
 

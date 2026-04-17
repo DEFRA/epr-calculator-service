@@ -101,6 +101,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     MaterialHeading = string.Empty,
                     TonnageHeading = string.Empty,
                 },
+                CalcResultProjectedProducers = new CalcResultProjectedProducers(),
                 CalcResultModulation = null,
             };
 

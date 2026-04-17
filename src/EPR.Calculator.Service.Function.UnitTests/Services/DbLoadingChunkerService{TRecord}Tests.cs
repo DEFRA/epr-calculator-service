@@ -97,38 +97,55 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         [TestMethod]
         public async Task Transpose_Should_Return_Correct_Producer_Reported_Material()
         {
-            var expectedResult = new ProducerReportedMaterial
+            var producer = new ProducerDetail
             {
                 Id = 1,
-                MaterialId = 4,
-                ProducerDetailId = 1,
-                PackagingType = "CW",
-                PackagingTonnage = 1,
-                Material = new Material
-                {
-                    Id = 4,
-                    Code = "PC",
-                    Name = "Paper or card",
-                    Description = "Paper or card",
-                },
-                ProducerDetail = new ProducerDetail
-                {
-                    Id = 1,
-                    ProducerId = 1,
-                    SubsidiaryId = "1",
-                    ProducerName = "UPU LIMITED",
-                    CalculatorRunId = 1,
-                    CalculatorRun = Fixture.Create<CalculatorRun>(),
-                },
+                ProducerId = 1,
+                SubsidiaryId = "1",
+                ProducerName = "UPU LIMITED",
+                CalculatorRunId = 1,
+                CalculatorRun = this.Fixture.Create<CalculatorRun>(),
             };
-            await ProducerReportedMaterialTestClass.InsertRecords([expectedResult]);
+            var material = new Material
+            {
+                Id = 4,
+                Code = "PC",
+                Name = "Paper or card",
+                Description = "Paper or card",
+            };
+            var expectedResult = new List<ProducerReportedMaterial>(){
+                new(){
+                    MaterialId = 4,
+                    ProducerDetailId = 1,
+                    PackagingType = "CW",
+                    PackagingTonnage = 1,
+                    SubmissionPeriod = "2025-H1",
+                    Material = material,
+                    ProducerDetail = producer
+                },
+                new(){
+                    MaterialId = 4,
+                    ProducerDetailId = 1,
+                    PackagingType = "CW",
+                    PackagingTonnage = 1,
+                    SubmissionPeriod = "2025-H2",
+                    Material = material,
+                    ProducerDetail = producer
+                }
+            };
+            await this.ProducerReportedMaterialTestClass.InsertRecords(expectedResult);
 
-            var producerReportedMaterial = await Context.ProducerReportedMaterial.Include(producerReportedMaterial => producerReportedMaterial.Material).Include(producerReportedMaterial => producerReportedMaterial.ProducerDetail).FirstOrDefaultAsync();
+            var producerReportedMaterial = this.Context.ProducerReportedMaterial.ToList();
             Assert.IsNotNull(producerReportedMaterial);
-            Assert.AreEqual(expectedResult.Material.Code, producerReportedMaterial.Material!.Code);
-            Assert.AreEqual(expectedResult.Material.Name, producerReportedMaterial.Material.Name);
-            Assert.AreEqual(expectedResult.ProducerDetail.ProducerId, producerReportedMaterial.ProducerDetail!.ProducerId);
-            Assert.AreEqual(expectedResult.ProducerDetail.ProducerName, producerReportedMaterial.ProducerDetail.ProducerName);
+            Assert.AreEqual(2, producerReportedMaterial.Count());
+            Assert.AreEqual(expectedResult[0].Material!.Code, producerReportedMaterial[0].Material!.Code);
+            Assert.AreEqual(expectedResult[0].Material!.Name, producerReportedMaterial[0].Material!.Name);
+            Assert.AreEqual(expectedResult[0].ProducerDetail!.ProducerId, producerReportedMaterial[0].ProducerDetail!.ProducerId);
+            Assert.AreEqual(expectedResult[0].ProducerDetail!.ProducerName, producerReportedMaterial[0].ProducerDetail!.ProducerName);
+            Assert.AreEqual(expectedResult[1].Material!.Code, producerReportedMaterial[1].Material!.Code);
+            Assert.AreEqual(expectedResult[1].Material!.Name, producerReportedMaterial[1].Material!.Name);
+            Assert.AreEqual(expectedResult[1].ProducerDetail!.ProducerId, producerReportedMaterial[1].ProducerDetail!.ProducerId);
+            Assert.AreEqual(expectedResult[1].ProducerDetail!.ProducerName, producerReportedMaterial[1].ProducerDetail!.ProducerName);
         }
 
         /// <summary>
