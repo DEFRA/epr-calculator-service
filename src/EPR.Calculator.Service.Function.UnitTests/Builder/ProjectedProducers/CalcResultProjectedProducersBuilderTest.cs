@@ -27,129 +27,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         private readonly ApplicationDBContext dbContext;
         private CalcResultProjectedProducersBuilder builder;
 
-        private void PrepareData()
-        {
-            dbContext.Material.AddRange(
-                new Material { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
-                new Material { Id = 2, Code = "GL", Name = "Glass", Description = "Glass" },
-                new Material { Id = 3, Code = "OT", Name = "Other materials", Description = "Other materials" }
-            );
-
-            foreach (var run in new[] { 1, 2 }) {
-                dbContext.CalculatorRuns.Add(new CalculatorRun
-                {
-                    Id = run,
-                    RelativeYear = new RelativeYear(2026),
-                    Name = "Run " + run
-                });
-
-                var prod11 = new ProducerDetail
-                {
-                    CalculatorRunId = run,
-                    ProducerId = 11,
-                    SubsidiaryId = null,
-                    ProducerName = "Producer 11 - Parent",
-                };
-                dbContext.ProducerDetail.Add(prod11);
-
-                var prod22 = new ProducerDetail
-                {
-                    CalculatorRunId = run,
-                    ProducerId = 11,
-                    SubsidiaryId = "22",
-                    ProducerName = "Producer 11 - Sub 22",
-                };
-                dbContext.ProducerDetail.Add(prod22);
-
-                var prod33 = new ProducerDetail
-                {
-                    CalculatorRunId = run,
-                    ProducerId = 33,
-                    SubsidiaryId = null,
-                    ProducerName = "Producer 33 - No subs",
-                };
-                dbContext.ProducerDetail.Add(prod33);
-
-                var prod44 = new ProducerDetail
-                {
-                    CalculatorRunId = run,
-                    ProducerId = 44,
-                    SubsidiaryId = "444",
-                    ProducerName = "Producer 44 - Sub 444 - No parent",
-                };
-                dbContext.ProducerDetail.Add(prod44);
-
-                foreach (var subPeriod in new[] { "2025-H1", "2025-H2"}) {
-                    dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-                    {
-                        ProducerDetailId = prod11.Id,
-                        MaterialId = 1,
-                        PackagingType = "HH",
-                        PackagingTonnage = 100,
-                        PackagingTonnageRed = 30,
-                        PackagingTonnageRedMedical = 40,
-                        PackagingTonnageAmber = 40,
-                        PackagingTonnageAmberMedical = 0,
-                        PackagingTonnageGreen = null,
-                        PackagingTonnageGreenMedical = null,
-                        SubmissionPeriod = subPeriod,
-                    });
-                    dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-                    {
-                        ProducerDetailId = prod22.Id,
-                        MaterialId = 1,
-                        PackagingType = "HH",
-                        PackagingTonnage = 500,
-                        PackagingTonnageRed = null,
-                        PackagingTonnageRedMedical = null,
-                        PackagingTonnageAmber = null,
-                        PackagingTonnageAmberMedical = null,
-                        PackagingTonnageGreen = null,
-                        PackagingTonnageGreenMedical = null,
-                        SubmissionPeriod = subPeriod,
-                    });
-                    dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-                    {
-                        ProducerDetailId = prod22.Id,
-                        MaterialId = 2,
-                        PackagingType = "HDC",
-                        PackagingTonnage = 500,
-                        PackagingTonnageRed = 100,
-                        PackagingTonnageRedMedical = null,
-                        PackagingTonnageAmber = null,
-                        PackagingTonnageAmberMedical = null,
-                        PackagingTonnageGreen = null,
-                        PackagingTonnageGreenMedical = null,
-                        SubmissionPeriod = subPeriod,
-                    });
-                    dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-                    {
-                        ProducerDetailId = prod33.Id,
-                        MaterialId = 1,
-                        PackagingType = "PB",
-                        PackagingTonnage = 150,
-                        PackagingTonnageRed = 10,
-                        PackagingTonnageRedMedical = 40,
-                        PackagingTonnageAmber = 20,
-                        PackagingTonnageAmberMedical = 30,
-                        PackagingTonnageGreen = 5,
-                        PackagingTonnageGreenMedical = 45,
-                        SubmissionPeriod = subPeriod,
-                    });
-                    dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-                    {
-                        ProducerDetailId = prod44.Id,
-                        MaterialId = 1,
-                        PackagingType = "HH",
-                        PackagingTonnage = 150,
-                        SubmissionPeriod = subPeriod,
-                    });
-                }
-            }
-
-            dbContext.SaveChanges();
-        }
-
         public CalcResultProjectedProducersBuilderTest()
         {
             var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
@@ -184,8 +61,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         private int AMTonnageI = 9;
         private int GTonnageI = 10;
         private int GMTonnageI = 11;
-
-
 
         private CalcResultsRequestDto insertData(string[][] given)
         {
@@ -355,10 +230,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         private async Task<string[][]> fillGaps(string[][] given) =>
             convertResult(await builder.ConstructAsync(insertData(given)));
 
-        string ToPrintable(string[] arr) =>
+        private string ToPrintable(string[] arr) =>
           arr is null ? "null" : "[" + string.Join(", ", arr.Select(x => x?.ToString() ?? "null")) + "]";
 
-        string ToPrintableArray(string[][] arr) =>
+        private string ToPrintableArray(string[][] arr) =>
             arr is null ? "null" : "[\n" + string.Join("\n", arr.Select(x => ToPrintable(x))) + "\n]";
 
         private void assert(string[][] expected, string[][] actual)
@@ -490,12 +365,23 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         [TestMethod]
         public async Task Construct_WorksCorrectly()
         {
-            // Arrange
-            PrepareData();
-            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2026) };
+            var given = new[] {
+                new[] { "11","","2025-H1","AL","HH","100","30","40","40","0","","" },
+                new[] { "11","","2025-H2","AL","HH","100","30","40","40","0","","" },
+                new[] { "11","22","2025-H1","AL","HH","500","","","","","", },
+                new[] { "11","22","2025-H2","AL","HH","500","","","","","", },
+                new[] { "11","22","2025-H1","GL","HDC","500","100","","","","", },
+                new[] { "11","22","2025-H2","GL","HDC","500","100","","","","", },
+                new[] { "33","","2025-H1","AL","PB","150","10","40","20","30","5","45" },
+                new[] { "33","","2025-H2","AL","PB","150","10","40","20","30","5","45" },
+                new[] { "44","444","2025-H1","AL","HH","150","","","","","", },
+                new[] { "44","444","2025-H2","AL","HH","150","","","","","", },
+            };
+            //var expected = new string[] {
+            //};
+            //assert(expected, await fillGaps(given));
 
-            // Act
-            var result = await builder.ConstructAsync(requestDto);
+            var result = await builder.ConstructAsync(insertData(given));
 
             // Assert H2
             Assert.IsNotNull(result.H2ProjectedProducersHeaders);
