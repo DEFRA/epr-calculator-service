@@ -172,25 +172,29 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             }
         }
 
+        private int ProducerI = 0;
+        private int SubsidiaryI = 1;
+        private int PeriodI = 2;
+        private int MaterialCodeI = 3;
+        private int PackagingTypeI = 4;
+        private int TotalTonnageI = 5;
+        private int RTonnageI = 6;
+        private int RMTonnageI = 7;
+        private int ATonnageI = 8;
+        private int AMTonnageI = 9;
+        private int GTonnageI = 10;
+        private int GMTonnageI = 11;
+
+
+
         private CalcResultsRequestDto insertData(string[][] given)
         {
             for (int i = 0; i < given.GetLength(0); i++)
             {
                 var entry = given[i];
-                if (entry.Length != 10)
-                    throw new Exception($"Supplied test data should have length 10 - entry {i} had length {entry.Length}.");
+                if (entry.Length != 12)
+                    throw new Exception($"Supplied test data should have length 12 - entry {i} had length {entry.Length}.");
             }
-
-            var PeriodI = 0;
-            var MaterialCodeI = 1;
-            var PackagingTypeI = 2;
-            var TotalTonnageI = 3;
-            var RTonnageI = 4;
-            var RMTonnageI = 5;
-            var ATonnageI = 6;
-            var AMTonnageI = 7;
-            var GTonnageI = 8;
-            var GMTonnageI = 9;
 
             var runId = 1;
             var relativeYear = new RelativeYear(2026);
@@ -206,18 +210,22 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                    .Distinct()
                    .Select((m, i) => new Material { Id = i + 1, Code = m, Name = m, Description = m })
                    .ToArray();
-
             dbContext.Material.AddRange(materials);
 
-            var producerId = 1; //TODO get from input array (and subsidiaries)
-            var prod11 = new ProducerDetail
-            {
-                CalculatorRunId = runId,
-                ProducerId = producerId,
-                SubsidiaryId = null,
-                ProducerName = $"Producer {producerId} - Parent",
-            };
-            dbContext.ProducerDetail.Add(prod11);
+            var producers = given
+                   .Select(row => (row[ProducerI], row[SubsidiaryI]))
+                   .Distinct()
+                   .Select(ps => new ProducerDetail
+                   {
+                       CalculatorRunId = runId,
+                       ProducerId = int.Parse(ps.Item1),
+                       SubsidiaryId = string.IsNullOrWhiteSpace(ps.Item2) ? null : ps.Item2, // TODO if store this as blank, we end up with two results!?
+                       ProducerName = $"Producer {ps.Item1}/{ps.Item2}",
+                   })
+                   .ToArray();
+
+            dbContext.ProducerDetail.AddRange(producers);
+            var idByProducerId = producers.ToDictionary(p => p.ProducerId, p => p.Id);
 
             decimal? ToDecimal(string? s)
             {
@@ -227,12 +235,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 
             foreach (var entry in given)
             {
-                var (period, materialCode, packagingType, totalTonnage, rTonnage, rmTonnage, aTonnage, amTonnage, gTonnage, gmTonnage)
-                    = (entry[PeriodI], entry[MaterialCodeI], entry[PackagingTypeI], entry[TotalTonnageI], entry[RTonnageI], entry[RMTonnageI], entry[ATonnageI], entry[AMTonnageI], entry[GTonnageI], entry[GMTonnageI]);
+                var (producerId, subsidiaryId, period, materialCode, packagingType, totalTonnage, rTonnage, rmTonnage, aTonnage, amTonnage, gTonnage, gmTonnage)
+                    = (entry[ProducerI], entry[SubsidiaryI], entry[PeriodI], entry[MaterialCodeI], entry[PackagingTypeI], entry[TotalTonnageI], entry[RTonnageI], entry[RMTonnageI], entry[ATonnageI], entry[AMTonnageI], entry[GTonnageI], entry[GMTonnageI]);
                 dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
                 {
-                    ProducerDetailId = prod11.Id, // TODO lookup
-                    MaterialId = 1, // TODO lookup
+                    ProducerDetailId = idByProducerId[int.Parse(producerId)], // !string.IsNullOrWhiteSpace(subsidiaryId) ? int.Parse(subsidiaryId) : int.Parse(producerId),
+                    MaterialId = materials.First(m => m.Code == materialCode).Id,
                     PackagingType = packagingType,
                     PackagingTonnage = ToDecimal(totalTonnage) ?? throw new InvalidOperationException("Total tonnage cannot be blank"),
                     PackagingTonnageRed = ToDecimal(rTonnage),
@@ -253,26 +261,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 
         private string[][] convertResult(CalcResultProjectedProducers given)
         {
-            var PeriodI = 0;
-            var MaterialCodeI = 1;
-            var PackagingTypeI = 2;
-            var TotalTonnageI = 3;
-            var RTonnageI = 4;
-            var RMTonnageI = 5;
-            var ATonnageI = 6;
-            var AMTonnageI = 7;
-            var GTonnageI = 8;
-            var GMTonnageI = 9;
-
             var result = new List<string[]>();
 
-            string[]? createH1Row(RAMTonnage? projectedRamTonnage, string submissonPeriodCode, string materialCode, string packagingType)
+            string[]? createH1Row(int producerId, string? subsidiaryId, string submissonPeriodCode, string materialCode, string packagingType, RAMTonnage? projectedRamTonnage)
             {
                 if (projectedRamTonnage == null || projectedRamTonnage.Tonnage == 0)
                     return null;
                 else
                 {
-                    var row = new string[10];
+                    var row = new string[12];
+                    row[ProducerI] = producerId.ToString();
+                    row[SubsidiaryI] = subsidiaryId ?? "";
                     row[PeriodI] = submissonPeriodCode;
                     row[MaterialCodeI] = materialCode;
                     row[PackagingTypeI] = packagingType;
@@ -287,13 +286,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 }
             }
 
-            string[]? createH2Row(RAMTonnage? originalRamTonnage, decimal? redRamTonnage, string submissonPeriodCode, string materialCode, string packagingType)
+            string[]? createH2Row(int producerId, string? subsidiaryId, string submissonPeriodCode, string materialCode, string packagingType, RAMTonnage? originalRamTonnage, decimal? redRamTonnage)
             {
                 if (originalRamTonnage == null || originalRamTonnage.Tonnage == 0)
                     return null;
                 else
                 {
-                    var row = new string[10];
+                    var row = new string[12];
+                    row[ProducerI] = producerId.ToString();
+                    row[SubsidiaryI] = subsidiaryId ?? "";
                     row[PeriodI] = submissonPeriodCode;
                     row[MaterialCodeI] = materialCode;
                     row[PackagingTypeI] = packagingType;
@@ -312,17 +313,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 foreach (var producer in given.H1ProjectedProducers)
                 {
                     var producerId = producer.ProducerId;
+                    var subsidiaryId = producer.SubsidiaryId;
                     var submissionPeriod = producer.SubmissionPeriodCode;
 
                     foreach (var kv in producer.ProjectedTonnageByMaterial)
                     {
                         var materialCode = kv.Key;
                         var v = kv.Value;
-                        var hhRow = createH1Row(v.ProjectedHouseholdRAMTonnage, producer.SubmissionPeriodCode, materialCode, "HH");
+                        var hhRow = createH1Row(producerId, subsidiaryId, producer.SubmissionPeriodCode, materialCode, "HH", v.ProjectedHouseholdRAMTonnage);
                         if (hhRow != null) result.Add(hhRow);
-                        var pbRow = createH1Row(v.ProjectedPublicBinRAMTonnage, producer.SubmissionPeriodCode, materialCode, "PB");
+                        var pbRow = createH1Row(producerId, subsidiaryId, producer.SubmissionPeriodCode, materialCode, "PB", v.ProjectedPublicBinRAMTonnage);
                         if (pbRow != null) result.Add(pbRow);
-                        var hdcRow = createH1Row(v.ProjectedHouseholdDrinksContainerRAMTonnage, producer.SubmissionPeriodCode, materialCode, "HDC");
+                        var hdcRow = createH1Row(producerId, subsidiaryId, producer.SubmissionPeriodCode, materialCode, "HDC", v.ProjectedHouseholdDrinksContainerRAMTonnage);
                         if (hdcRow != null) result.Add(hdcRow);
                     }
                 }
@@ -331,17 +333,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 foreach (var producer in given.H2ProjectedProducers)
                 {
                     var producerId = producer.ProducerId;
+                    var subsidiaryId = producer.SubsidiaryId;
                     var submissionPeriod = producer.SubmissionPeriodCode;
 
                     foreach (var kv in producer.ProjectedTonnageByMaterial)
                     {
                         var materialCode = kv.Key;
                         var v = kv.Value;
-                        var hhRow = createH2Row(v.HouseholdRAMTonnage, v.HouseholdTonnageDefaultedRed, producer.SubmissionPeriodCode, materialCode, "HH");
+                        var hhRow = createH2Row(producerId, subsidiaryId, producer.SubmissionPeriodCode, materialCode, "HH", v.HouseholdRAMTonnage, v.HouseholdTonnageDefaultedRed);
                         if (hhRow != null) result.Add(hhRow);
-                        var pbRow = createH2Row(v.PublicBinRAMTonnage, v.PublicBinTonnageDefaultedRed, producer.SubmissionPeriodCode, materialCode, "PB");
+                        var pbRow = createH2Row(producerId, subsidiaryId, producer.SubmissionPeriodCode, materialCode, "PB", v.PublicBinRAMTonnage, v.PublicBinTonnageDefaultedRed);
                         if (pbRow != null) result.Add(pbRow);
-                        var hdcRow = createH2Row(v.HouseholdDrinksContainerRAMTonnage, v.HouseholdDrinksContainerDefaultedRed, producer.SubmissionPeriodCode, materialCode, "HDC");
+                        var hdcRow = createH2Row(producerId, subsidiaryId, producer.SubmissionPeriodCode, materialCode, "HDC", v.HouseholdDrinksContainerRAMTonnage, v.HouseholdDrinksContainerDefaultedRed);
                         if (hdcRow != null) result.Add(hdcRow);
                     }
                 }
@@ -381,19 +384,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         }
 
         // Could move to CSV
-        // format: SubmissionPeriod, Material, PackagingType, TotalTonnage, RTonnage, RMTonnage, ATonnage, AMTonnage, GTonnage, GMTonnage
+        // format: ProducerId, SubsidiaryId, SubmissionPeriod, Material, PackagingType, TotalTonnage, RTonnage, RMTonnage, ATonnage, AMTonnage, GTonnage, GMTonnage
 
         [TestMethod]
         public async Task H1H2Projection_untouched()
         {
             // RAM is complete - no modifications made
             var given = new[] {
-                new[] { "2025-H1", "AL", "HH", "100", "30", "40", "40", "0", "", "" },
-                new[] { "2025-H2", "AL", "HH", "100", "30", "40", "40", "0", "", "" }
+                new[] { "101", "", "2025-H1", "AL", "HH", "100", "30", "40", "40", "0", "", "" },
+                new[] { "101", "", "2025-H2", "AL", "HH", "100", "30", "40", "40", "0", "", "" }
             };
             var expected = new [] {
-                new[] { "2025-H1", "AL", "HH", "100", "30", "40", "40", "0", "0", "0" },
-                new[] { "2025-H2", "AL", "HH", "100", "30", "40", "40", "0", "0", "0" }
+                new[] { "101", "", "2025-H1", "AL", "HH", "100", "30.0", "40.0", "40.0", "0", "0", "0" },
+                new[] { "101", "", "2025-H2", "AL", "HH", "100", "30", "40", "40", "0", "0", "0" }
             };
             assert(expected, await fillGaps(given));
         }
@@ -403,10 +406,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         {
             // RAM is complete - only H2 - no modifications made
             var given = new[] {
-                new[] { "2025-H2", "AL", "HH", "100", "30", "40", "40", "0", "", "" }
+                new[] { "101", "", "2025-H2", "AL", "HH", "100", "30", "40", "40", "0", "", "" }
             };
             var expected = new [] {
-                new[] { "2025-H2", "AL", "HH", "100", "30", "40", "40", "0", "0", "0" }
+                new[] { "101", "", "2025-H2", "AL", "HH", "100", "30", "40", "40", "0", "0", "0" }
             };
             assert(expected, await fillGaps(given));
         }
@@ -416,10 +419,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         {
             // Incomplete H2 - inferred as Red
             var given = new[] {
-                new[] { "2025-H2", "AL", "HH", "100", "", "", "", "", "", "" }
+                new[] { "101", "", "2025-H2", "AL", "HH", "100", "", "", "", "", "", "" }
             };
             var expected = new [] {
-                new[] { "2025-H2", "AL", "HH", "100", "100", "0", "0", "0", "0", "0" }
+                new[] { "101", "", "2025-H2", "AL", "HH", "100", "100", "0", "0", "0", "0", "0" }
             };
             assert(expected, await fillGaps(given));
         }
@@ -429,10 +432,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         {
             // Partial H2 - inferred as Red
             var given = new[] {
-                new[] { "2025-H2", "AL", "HH", "100", "50", "", "", "", "", "" }
+                new[] { "101", "", "2025-H2", "AL", "HH", "100", "50", "", "", "", "", "" }
             };
             var expected = new [] {
-                new[] { "2025-H2", "AL", "HH", "100", "100", "0", "0", "0", "0", "0" }
+                new[] { "101", "", "2025-H2", "AL", "HH", "100", "100", "0", "0", "0", "0", "0" }
             };
             assert(expected, await fillGaps(given));
         }
@@ -442,10 +445,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         {
             // Partial H2 - inferred as Red
             var given = new[] {
-                new[] { "2025-H2", "AL", "HH", "100", "", "50", "", "", "", "" }
+                new[] { "101", "", "2025-H2", "AL", "HH", "100", "", "50", "", "", "", "" }
             };
             var expected = new [] {
-                new[] { "2025-H2", "AL", "HH", "100", "50", "50", "0", "0", "0", "0" }
+                new[] { "101", "", "2025-H2", "AL", "HH", "100", "50", "50", "0", "0", "0", "0" }
             };
             assert(expected, await fillGaps(given));
         }
@@ -455,14 +458,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         {
             // Incomplete H1 - reflects proportions from H2
             var given = new[] {
-                new[] { "2025-H1", "AL", "HH", "42", "", "", "", "", "", "" },
-                new[] { "2025-H2", "AL", "HH", "21", "6", "5", "4", "3", "2", "1" }
+                new[] { "101", "", "2025-H1", "AL", "HH", "42", "", "", "", "", "", "" },
+                new[] { "101", "", "2025-H2", "AL", "HH", "21", "6", "5", "4", "3", "2", "1" }
             };
             var expected = new [] {
-                // TODO review this
-                //new[] { "2025-H1", "AL", "HH", "42", "12", "10", "8", "6", "4", "2" },
-                new[] { "2025-H1", "AL", "HH", "42", "11.999988", "9.999990", "7.999992", "5.999994", "3.999996", "1.999998" },
-                new[] { "2025-H2", "AL", "HH", "21", "6", "5", "4", "3", "2", "1" }
+                // TODO review number precision
+                //new[] { "101", "", "2025-H1", "AL", "HH", "42", "12", "10", "8", "6", "4", "2" },
+                new[] { "101", "", "2025-H1", "AL", "HH", "42", "11.999988", "9.999990", "7.999992", "5.999994", "3.999996", "1.999998" },
+                new[] { "101", "", "2025-H2", "AL", "HH", "21", "6", "5", "4", "3", "2", "1" }
             };
             assert(expected, await fillGaps(given));
         }
@@ -472,14 +475,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         {
             // Incomplete H1 - reflects proportions from H2, perserving any H1
             var given = new[] {
-                new[] { "2025-H1", "AL", "HH", "43", "1", "", "", "", "", "" },
-                new[] { "2025-H2", "AL", "HH", "21", "6", "5", "4", "3", "2", "1" }
+                new[] { "101", "", "2025-H1", "AL", "HH", "43", "1", "", "", "", "", "" },
+                new[] { "101", "", "2025-H2", "AL", "HH", "21", "6", "5", "4", "3", "2", "1" }
             };
             var expected = new [] {
-                // TODO review this
-                //new[] { "2025-H1", "AL", "HH", "42", "13", "10", "8", "6", "4", "2" },
-                new[] { "2025-H1", "AL", "HH", "43", "12.999988", "9.999990", "7.999992", "5.999994", "3.999996", "1.999998" },
-                new[] { "2025-H2", "AL", "HH", "21", "6", "5", "4", "3", "2", "1" }
+                // TODO review number precision
+                //new[] { "P1", "", "2025-H1", "AL", "HH", "42", "13", "10", "8", "6", "4", "2" },
+                new[] { "101", "", "2025-H1", "AL", "HH", "43", "12.999988", "9.999990", "7.999992", "5.999994", "3.999996", "1.999998" },
+                new[] { "101", "", "2025-H2", "AL", "HH", "21", "6", "5", "4", "3", "2", "1" }
             };
             assert(expected, await fillGaps(given));
         }
