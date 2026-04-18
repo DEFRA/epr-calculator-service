@@ -329,7 +329,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         DisposalCostPricePerTonne = null,
                         OrderId = 10,
                     },
-                },
+                }
             };
         }
 
@@ -1664,7 +1664,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public static List<ProducerReportedMaterial> GetProducerReportedMaterials()
         {
             var prodMats = new List<ProducerReportedMaterial>();
-
             foreach (var subPeriod in new[] { "2025-H1", "2025-H2"}) {
                 prodMats.AddRange(new[]{
                     new ProducerReportedMaterial

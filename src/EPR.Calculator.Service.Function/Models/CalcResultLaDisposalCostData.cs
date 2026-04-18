@@ -1,4 +1,6 @@
-﻿namespace EPR.Calculator.Service.Function.Models
+﻿using EPR.Calculator.API.Data.Enums;
+
+namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResultLaDisposalCostData
     {

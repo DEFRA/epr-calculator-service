@@ -157,7 +157,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                             ReportedPublicBinTonnage = Fixture.Create<string>(),
                             ProducerReportedTotalTonnage = Fixture.Create<string>(),
                         },
-                    },
+                    }
                 },
                 CalcResultLapcapData = new CalcResultLapcapData { CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetail>() },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment

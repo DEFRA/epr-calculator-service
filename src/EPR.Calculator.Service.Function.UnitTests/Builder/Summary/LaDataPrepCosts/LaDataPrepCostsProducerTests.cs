@@ -161,7 +161,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.LaDataPrepCo
                             ReportedPublicBinTonnage = Fixture.Create<string>(),
                             ProducerReportedTotalTonnage = Fixture.Create<string>(),
                         },
-                    },
+                    }
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
                 {

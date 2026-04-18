@@ -1,4 +1,7 @@
-﻿namespace EPR.Calculator.Service.Function.Models
+﻿using EPR.Calculator.Service.Function.Builder.Modulation;
+using EPR.Calculator.API.Data.Enums;
+using EPR.Calculator.Service.Function.Services;
+namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResult
     {
@@ -49,7 +52,7 @@
             = new()
             {
                 Name = string.Empty,
-                CalcResultLaDisposalCostDetails = [],
+                CalcResultLaDisposalCostDetails = []
             };
 
         public required CalcResultPartialObligations CalcResultPartialObligations { get; set; }
@@ -70,5 +73,9 @@
         public CalcResultSummary CalcResultSummary { get; set; } = new();
 
         public IEnumerable<CalcResultErrorReport> CalcResultErrorReports { get; set; } = [];
+
+        public SelfManagedConsumerWaste? Smcw { get; set; }
+
+        public ModulationResult? CalcResultModulation { get; set; }
     }
 }

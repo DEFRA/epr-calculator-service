@@ -82,7 +82,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 
             calcResultCancelledProducersExporterCsv.Export(calcResult.CalcResultCancelledProducers, csvContent);
 
-            if(calcResult.ShowModulations)
+            if (calcResult.ShowModulations)
             {
                 var accepted = GetProjectedProducerForExport(calcResult.CalcResultProjectedProducers, acceptedProducerIds);
                 calcResultProjectedProducersExporterCsv.Export(accepted, csvContent);

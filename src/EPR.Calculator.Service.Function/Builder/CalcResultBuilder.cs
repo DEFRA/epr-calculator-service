@@ -1,5 +1,5 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.Service.Function.Builder.CancelledProducers;
 using EPR.Calculator.Service.Function.Builder.CommsCost;
 using EPR.Calculator.Service.Function.Builder.Detail;
@@ -7,24 +7,30 @@ using EPR.Calculator.Service.Function.Builder.ErrorReport;
 using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
 using EPR.Calculator.Service.Function.Builder.Lapcap;
 using EPR.Calculator.Service.Function.Builder.LateReportingTonnages;
+using EPR.Calculator.Service.Function.Builder.Modulation;
 using EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment;
 using EPR.Calculator.Service.Function.Builder.ParametersOther;
-using EPR.Calculator.Service.Function.Builder.RejectedProducers;
-using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
 using EPR.Calculator.Service.Function.Builder.PartialObligations;
 using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
+using EPR.Calculator.Service.Function.Builder.RejectedProducers;
+using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
 using EPR.Calculator.Service.Function.Builder.Summary;
+using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
-using Microsoft.ApplicationInsights;
-using EPR.Calculator.Service.Function.Services;
-using System.Linq;
 using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Services;
+using Microsoft.ApplicationInsights;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using static EPR.Calculator.Service.Function.Builder.LaDisposalCost.CalcRunLaDisposalCostBuilder;
 
 namespace EPR.Calculator.Service.Function.Builder
 {
     public class CalcResultBuilder : ICalcResultBuilder
     {
+        private readonly IParameterService parameterService;
+        private readonly IMaterialService materialService;
         private readonly ICalcResultParameterOtherCostBuilder calcResultParameterOtherCostBuilder;
         private readonly ICalcResultDetailBuilder calcResultDetailBuilder;
         private readonly ICalcResultLapcapDataBuilder lapcapBuilder;
@@ -39,14 +45,16 @@ namespace EPR.Calculator.Service.Function.Builder
         public readonly ICalcResultCancelledProducersBuilder calcResultCancelledProducersBuilder;
         public readonly ICalcResultRejectedProducersBuilder calcResultRejectedProducersBuilder;
         public readonly ICalcResultErrorReportBuilder calcResultErrorReportBuilder;
-        public readonly IMaterialService _materialService;
-        public readonly IProjectedProducersService _projectedProducersService;
+        public readonly IProjectedProducersService projectedProducersService;
         public readonly ISelfManagedConsumerWasteService _selfManagedConsumerWasteService;
+        private readonly ICalcResultModulationBuilder modulationBuilder;
         private readonly TelemetryClient _telemetryClient;
 
 
         [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         public CalcResultBuilder(
+            IParameterService parameterService,
+            IMaterialService materialService,
             ICalcResultDetailBuilder calcResultDetail,
             ICalcResultLapcapDataBuilder lapcap,
             ICalcResultParameterOtherCostBuilder calcResultParameterOtherCost,
@@ -61,11 +69,13 @@ namespace EPR.Calculator.Service.Function.Builder
             ICalcResultCancelledProducersBuilder calcResultCancelledProducers,
             ICalcResultRejectedProducersBuilder calcResultRejectedProducers,
             ICalcResultErrorReportBuilder calcResultErrorReport,
-            IMaterialService materialService,
             IProjectedProducersService projectedProducersService,
             ISelfManagedConsumerWasteService selfManagedConsumerWasteService,
+            ICalcResultModulationBuilder modulationBuilder,
             TelemetryClient telemetryClient)
         {
+            this.parameterService = parameterService;
+            this.materialService = materialService;
             calcResultDetailBuilder = calcResultDetail;
             lapcapBuilder = lapcap;
             commsCostReportBuilder = commsCostReport;
@@ -80,9 +90,9 @@ namespace EPR.Calculator.Service.Function.Builder
             calcResultCancelledProducersBuilder = calcResultCancelledProducers;
             calcResultRejectedProducersBuilder = calcResultRejectedProducers;
             calcResultErrorReportBuilder = calcResultErrorReport;
-            _materialService = materialService;
-            _projectedProducersService = projectedProducersService;
+            this.projectedProducersService = projectedProducersService;
             _selfManagedConsumerWasteService = selfManagedConsumerWasteService;
+            this.modulationBuilder = modulationBuilder;
             _telemetryClient = telemetryClient;
         }
 
@@ -91,9 +101,8 @@ namespace EPR.Calculator.Service.Function.Builder
             var result = new CalcResult
             {
                 ShowModulations = resultsRequestDto.RelativeYear.Value >= 2026,
-                CalcResultDetail =  await calcResultDetailBuilder.ConstructAsync(resultsRequestDto),
-                CalcResultLapcapData =
-                new CalcResultLapcapData
+                CalcResultDetail = await calcResultDetailBuilder.ConstructAsync(resultsRequestDto),
+                CalcResultLapcapData = new CalcResultLapcapData
                 {
                     CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetail>(),
                 },
@@ -112,8 +121,11 @@ namespace EPR.Calculator.Service.Function.Builder
                 CalcResultRejectedProducers = new List<CalcResultRejectedProducer>(),
             };
 
+            var defaultParams =
+                await parameterService.GetDefaultParameters(resultsRequestDto.RunId);
+
             _telemetryClient.TrackTrace("materialService started...");
-            var materialDetails = await _materialService.GetMaterials();
+            var materialDetails = await materialService.GetMaterials();
             _telemetryClient.TrackTrace("materialService started...");
 
             _telemetryClient.TrackTrace("lapcapBuilder started...");
@@ -146,7 +158,7 @@ namespace EPR.Calculator.Service.Function.Builder
                 if(!resultsRequestDto.IsBillingFile)
                 {
                     _telemetryClient.TrackTrace("Storing projected producers started...");
-                    await _projectedProducersService.StoreProjectedProducers(
+                    await projectedProducersService.StoreProjectedProducers(
                         resultsRequestDto.RunId,
                         calcResultProjectedProducers.H2ProjectedProducers?.ToList() ?? new List<CalcResultH2ProjectedProducer>(),
                         calcResultProjectedProducers.H1ProjectedProducers?.ToList() ?? new List<CalcResultH1ProjectedProducer>()
@@ -170,6 +182,7 @@ namespace EPR.Calculator.Service.Function.Builder
 
             _telemetryClient.TrackTrace("selfManagedConsumerWasteService started...");
             var smcw = await _selfManagedConsumerWasteService.Calculate(resultsRequestDto, materialDetails, scaledUpProducers, partialObligations, result.ShowModulations);
+            result.Smcw = smcw;
             _telemetryClient.TrackTrace("selfManagedConsumerWasteService ended...");
 
             if (resultsRequestDto.IsBillingFile)
@@ -186,6 +199,13 @@ namespace EPR.Calculator.Service.Function.Builder
             _telemetryClient.TrackTrace("commsCostReportBuilder started...");
             result.CalcResultCommsCostReportDetail = await commsCostReportBuilder.ConstructAsync(resultsRequestDto, result.CalcResultOnePlusFourApportionment, result);
             _telemetryClient.TrackTrace("commsCostReportBuilder end...");
+
+            if (result.ShowModulations)
+            {
+                _telemetryClient.TrackTrace("modulationBuilder started...");
+                result.CalcResultModulation = await modulationBuilder.ConstructAsync(defaultParams, materialDetails, result.CalcResultLaDisposalCostData, smcw);
+                _telemetryClient.TrackTrace("modulationBuilder end...");
+            }
 
             _telemetryClient.TrackTrace("summaryBuilder started...");
             result.CalcResultSummary = await summaryBuilder.ConstructAsync(resultsRequestDto.RunId, resultsRequestDto.RelativeYear, resultsRequestDto.IsBillingFile, result, smcw);
