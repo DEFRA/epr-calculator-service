@@ -286,7 +286,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
                 for (int materialId = 1; materialId < 9; materialId++)
                 {
                     foreach (var subPeriod in new[] { "2025-H1", "2025-H2"}) {
-                        _dbContext?.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                        _dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
                         {
                             MaterialId = materialId,
                             ProducerDetailId = producerDetailId,
@@ -294,7 +294,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
                             SubmissionPeriod = subPeriod,
                             PackagingTonnage = materialId * 50,
                         });
-                        _dbContext?.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                        _dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
                         {
                             MaterialId = materialId,
                             ProducerDetailId = producerDetailId,

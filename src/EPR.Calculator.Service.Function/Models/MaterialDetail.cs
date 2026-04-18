@@ -1,6 +1,6 @@
 ﻿namespace EPR.Calculator.Service.Function.Models
 {
-    public class MaterialDetail
+    public record MaterialDetail
     {
         public int Id { get; set; }
 
