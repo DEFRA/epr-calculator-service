@@ -93,7 +93,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
             return new CalcResultLaDisposalCostData
             {
                 Name = CommonConstants.LADisposalCostData,
-                CalcResultLaDisposalCostDetails = laDisposalCostDetails.AsEnumerable(),
+                CalcResultLaDisposalCostDetails = laDisposalCostDetails.AsEnumerable()
             };
         }
 

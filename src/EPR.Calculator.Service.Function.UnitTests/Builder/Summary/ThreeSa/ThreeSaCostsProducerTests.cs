@@ -207,7 +207,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                             ReportedPublicBinTonnage = string.Empty,
                         },
                     },
-                    Name = "some test",
+                    Name = "some test"
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
                 {

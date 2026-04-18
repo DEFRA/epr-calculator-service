@@ -61,7 +61,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDispo
                         ReportedPublicBinTonnage = string.Empty,
                     },
                 },
-                Name = "LA Disposal Cost Data",
+                Name = "LA Disposal Cost Data"
             };
 
             var csvContent = new StringBuilder();

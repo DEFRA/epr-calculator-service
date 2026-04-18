@@ -207,7 +207,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                             ReportedPublicBinTonnage = Fixture.Create<string>(),
                             ProducerReportedTotalTonnage = Fixture.Create<string>(),
                         },
-                    },
+                    }
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
