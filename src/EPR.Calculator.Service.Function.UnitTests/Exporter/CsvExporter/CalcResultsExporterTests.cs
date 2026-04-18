@@ -115,8 +115,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         {
             // Arrange
             var calcResult = CreateCalcResult();
-            calcResult.CalcResultModulation = "Test Modulation";
-            
+            calcResult.ApplyModulation = true;
+
             // Act
             var result = TestClass.Export(calcResult);
 
@@ -438,7 +438,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                     RelativeYear = new RelativeYear(2024)
                 },
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
-                CalcResultModulation = null,
+                ApplyModulation = false
             };
         }
 

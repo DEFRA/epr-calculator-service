@@ -37,7 +37,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                 CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
                 CalcResultLateReportingTonnageData = this.GetCalcResultLateReportingTonnage(),
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
-                CalcResultModulation = null,
+                ApplyModulation = false
             };
         }
 

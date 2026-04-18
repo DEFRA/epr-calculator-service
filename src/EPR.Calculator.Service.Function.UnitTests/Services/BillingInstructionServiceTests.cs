@@ -111,7 +111,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     }
                 },
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
-                CalcResultModulation = null,
+                ApplyModulation = false
             };
 
 
@@ -165,7 +165,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 },
                 CalcResultSummary  = new() {  ProducerDisposalFees = null! },
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
-                CalcResultModulation = null,
+                ApplyModulation = false
             };
 
 
@@ -242,7 +242,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     }
                 },
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
-                CalcResultModulation = null,
+                ApplyModulation = false,
             };
 
 

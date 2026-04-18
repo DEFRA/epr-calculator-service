@@ -1,4 +1,5 @@
 using AutoFixture;
+using EPR.Calculator.Service.Function.Builder.Modulation;
 using EPR.Calculator.Service.Function.Builder;
 using EPR.Calculator.Service.Function.Builder.CancelledProducers;
 using EPR.Calculator.Service.Function.Builder.CommsCost;
@@ -17,18 +18,20 @@ using EPR.Calculator.Service.Function.Builder.Summary;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Services;
-using System.Threading.Tasks;
 using EPR.Calculator.Service.Function.Misc;
+using Microsoft.EntityFrameworkCore;
+using EPR.Calculator.API.Data;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace EPR.Calculator.Service.Function.UnitTests
 {
     [TestClass]
     public class CalcResultBuilderTests
     {
+        private readonly ApplicationDBContext dbContext;
         private readonly Mock<ICalcResultDetailBuilder> mockCalcResultDetailBuilder;
         private readonly Mock<ICalcResultLapcapDataBuilder> mockLapcapBuilder;
         private readonly Mock<ICalcResultLateReportingBuilder> mockLateReportingBuilder;
@@ -45,10 +48,20 @@ namespace EPR.Calculator.Service.Function.UnitTests
         private readonly Mock<ICalcResultRejectedProducersBuilder> mockCalcResultRejectedProducersBuilder;
         private readonly Mock<ICalcResultErrorReportBuilder> mockCalcResultErrorReportBuilder;
         private readonly Mock<IProjectedProducersService> mockProjectedProducerService;
+        private readonly Mock<ICalcResultModulationBuilder> mockModulationBuilder;
         private TelemetryClient telemetryClient;
 
         public CalcResultBuilderTests()
         {
+            // TODO use a db connector object rather than dbContext directly, which can be injected/mocked here
+            var dbContextOptions =
+                new DbContextOptionsBuilder<ApplicationDBContext>()
+                    .UseInMemoryDatabase(databaseName: "PayCal")
+                    .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
+                    .Options;
+
+            dbContext = new ApplicationDBContext(dbContextOptions);
+
             Fixture = new Fixture();
             mockCalcResultDetailBuilder = new Mock<ICalcResultDetailBuilder>();
             mockLapcapBuilder = new Mock<ICalcResultLapcapDataBuilder>();
@@ -65,10 +78,12 @@ namespace EPR.Calculator.Service.Function.UnitTests
             mockCalcResultRejectedProducersBuilder = new Mock<ICalcResultRejectedProducersBuilder>();
             mockCalcResultErrorReportBuilder = new Mock<ICalcResultErrorReportBuilder>();
             mockProjectedProducerService = new Mock<IProjectedProducersService>();
+            mockModulationBuilder = new Mock<ICalcResultModulationBuilder>();
 
             telemetryClient = new TelemetryClient(new TelemetryConfiguration());
 
             calcResultBuilder = new CalcResultBuilder(
+                dbContext,
                 mockCalcResultDetailBuilder.Object,
                 mockLapcapBuilder.Object,
                 mockCalcResultParameterOtherCostBuilder.Object,
@@ -84,6 +99,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 mockCalcResultRejectedProducersBuilder.Object,
                 mockCalcResultErrorReportBuilder.Object,
                 mockProjectedProducerService.Object,
+                mockModulationBuilder.Object,
                 telemetryClient);
         }
 
@@ -94,6 +110,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Act
             var instance = new CalcResultBuilder(
+                dbContext,
                 mockCalcResultDetailBuilder.Object,
                 mockLapcapBuilder.Object,
                 mockCalcResultParameterOtherCostBuilder.Object,
@@ -109,6 +126,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 mockCalcResultRejectedProducersBuilder.Object,
                 mockCalcResultErrorReportBuilder.Object,
                 mockProjectedProducerService.Object,
+                mockModulationBuilder.Object,
                 telemetryClient);
 
             // Assert

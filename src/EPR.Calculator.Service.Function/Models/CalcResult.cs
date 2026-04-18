@@ -1,4 +1,5 @@
-﻿namespace EPR.Calculator.Service.Function.Models
+﻿using EPR.Calculator.Service.Function.Builder.Modulation;
+namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResult
     {
@@ -70,8 +71,8 @@
 
         public IEnumerable<CalcResultErrorReport> CalcResultErrorReports { get; set; } = [];
 
-        #pragma warning disable S1135 // Sonar TODO comment
-        public required string? CalcResultModulation { get; set; } // TODO add modulation class here for CSV section - not part of this ticket
-        #pragma warning restore S1135
+        public required bool ApplyModulation { get; set; }
+
+        public ModulationResult? CalcResultModulation { get; set; }
     }
 }

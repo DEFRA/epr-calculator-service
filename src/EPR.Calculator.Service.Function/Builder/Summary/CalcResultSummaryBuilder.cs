@@ -192,7 +192,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             }
 
             // Set headers with calculated column index
-            CalcResultSummaryUtil.SetHeaders(result, materials, showModulations: calcResult.CalcResultModulation is not null);
+            CalcResultSummaryUtil.SetHeaders(result, materials, showModulations: calcResult.ApplyModulation);
 
             return result;
         }
@@ -423,7 +423,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             IEnumerable<ProducerInvoicedDto> producerInvoicedMaterialNetTonnage,
             int level)
         {
-            var showModulations = calcResult.CalcResultModulation is not null;
+            var showModulations = calcResult.ApplyModulation;
 
             var previousInvoicedNetTonnage = producerInvoicedMaterialNetTonnage
                                                 .Where(x => x.InvoicedTonnage?.MaterialId == material.Id && x.InvoicedTonnage.ProducerId == producer.ProducerId)
@@ -484,7 +484,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             MaterialDetail material,
             CalcResult calcResult)
         {
-            var showModulations = calcResult.CalcResultModulation is not null;
+            var showModulations = calcResult.ApplyModulation;
 
             var calcResultSummaryProducerCommsFeesCostByMaterial = new CalcResultSummaryProducerCommsFeesCostByMaterial
             {
@@ -684,7 +684,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             bool isOverAllTotalRow,
             IEnumerable<ProducerInvoicedDto> producerInvoicedMaterialNetTonnage)
         {
-            var showModulations = calcResult.CalcResultModulation is not null;
+            var showModulations = calcResult.ApplyModulation;
             var materialCosts = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>();
 
             foreach (var material in materials)
@@ -761,7 +761,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             IEnumerable<MaterialDetail> materials,
             CalcResult calcResult)
         {
-            var showModulations = calcResult.CalcResultModulation is not null;
+            var showModulations = calcResult.ApplyModulation;
             var communicationCosts = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>();
 
             foreach (var material in materials)

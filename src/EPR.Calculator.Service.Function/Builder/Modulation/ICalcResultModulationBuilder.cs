@@ -1,0 +1,27 @@
+﻿using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Enums;
+
+namespace EPR.Calculator.Service.Function.Builder.Modulation
+{
+    public interface ICalcResultModulationBuilder
+    {
+        Task<ModulationResult> ConstructAsync(
+            CalcResultsRequestDto resultsRequestDto,
+            CalcResultLaDisposalCostData laDisposalCostData,
+            decimal redFactor,
+            List<ProducerData> producerData
+        );
+    }
+
+    public class ModulationResult
+    {
+        public required decimal GreenTotal { get; set; }
+        public required decimal AmberTotal { get; set; }
+        public required decimal RedTotal { get; set; }
+        public required decimal GreenDiscount { get; set; }
+        public required Dictionary<string, Dictionary<RagRating, decimal>> PricePerTonnePerMaterial { get; set; }
+        public required Dictionary<string, Dictionary<RagRating, decimal>> CostPerMaterial { get; set; }
+    }
+}

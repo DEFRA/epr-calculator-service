@@ -87,7 +87,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     TonnageHeading = string.Empty,
                 },
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
-                CalcResultModulation = null,
+                ApplyModulation = false
             };
 
             var fixture = new Fixture();

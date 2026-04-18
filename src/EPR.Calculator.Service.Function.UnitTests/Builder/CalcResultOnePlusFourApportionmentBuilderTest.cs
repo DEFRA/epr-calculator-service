@@ -67,7 +67,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 },
                 CalcResultLateReportingTonnageData = Fixture.Create<CalcResultLateReportingTonnage>(),
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
-                CalcResultModulation = null,
+                ApplyModulation = false
             };
 
             var resultCalc = ConstructAsync(resultsDto, calcResult);

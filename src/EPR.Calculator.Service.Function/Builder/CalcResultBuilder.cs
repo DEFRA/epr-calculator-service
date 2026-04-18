@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using EPR.Calculator.Service.Function.Builder.CancelledProducers;
 using EPR.Calculator.Service.Function.Builder.CommsCost;
 using EPR.Calculator.Service.Function.Builder.Detail;
@@ -14,17 +12,41 @@ using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
 using EPR.Calculator.Service.Function.Builder.PartialObligations;
 using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
 using EPR.Calculator.Service.Function.Builder.Summary;
+using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.ApplicationInsights;
 using EPR.Calculator.Service.Function.Services;
-using System.Linq;
 using EPR.Calculator.Service.Function.Misc;
+using static EPR.Calculator.Service.Function.Builder.LaDisposalCost.CalcRunLaDisposalCostBuilder;
 using System.Diagnostics.CodeAnalysis;
+using EPR.Calculator.Service.Function.Builder.Modulation;
+using EPR.Calculator.API.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder
 {
+    class Parameter
+    {
+        public required string ReferenceId;
+        public required decimal Value;
+    }
+
+    public class ProducerData
+    {
+        public required string MaterialName { get; set; }
+        public required decimal TonnageRed { get; set; }
+        public required decimal TonnageRedMedical { get; set; }
+        public required decimal TonnageAmber { get; set; }
+        public required decimal TonnageAmberMedical { get; set; }
+        public required decimal TonnageGreen { get; set; }
+        public required decimal TonnageGreenMedical { get; set; }
+        public decimal Tonnage { get; set; }
+    }
+
+
     public class CalcResultBuilder : ICalcResultBuilder
     {
+        private readonly ApplicationDBContext dbContext;
         private readonly ICalcResultParameterOtherCostBuilder calcResultParameterOtherCostBuilder;
         private readonly ICalcResultDetailBuilder calcResultDetailBuilder;
         private readonly ICalcResultLapcapDataBuilder lapcapBuilder;
@@ -40,11 +62,13 @@ namespace EPR.Calculator.Service.Function.Builder
         public readonly ICalcResultRejectedProducersBuilder calcResultRejectedProducersBuilder;
         public readonly ICalcResultErrorReportBuilder calcResultErrorReportBuilder;
         public readonly IProjectedProducersService projectedProducersService;
+        private readonly ICalcResultModulationBuilder modulationBuilder;
         private readonly TelemetryClient _telemetryClient;
 
 
         [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         public CalcResultBuilder(
+            ApplicationDBContext dbContext,
             ICalcResultDetailBuilder calcResultDetail,
             ICalcResultLapcapDataBuilder lapcap,
             ICalcResultParameterOtherCostBuilder calcResultParameterOtherCost,
@@ -60,8 +84,10 @@ namespace EPR.Calculator.Service.Function.Builder
             ICalcResultRejectedProducersBuilder calcResultRejectedProducers,
             ICalcResultErrorReportBuilder calcResultErrorReport,
             IProjectedProducersService projectedProducers,
+            ICalcResultModulationBuilder modulationBuilder,
             TelemetryClient telemetryClient)
         {
+            this.dbContext = dbContext;
             calcResultDetailBuilder = calcResultDetail;
             lapcapBuilder = lapcap;
             commsCostReportBuilder = commsCostReport;
@@ -77,6 +103,7 @@ namespace EPR.Calculator.Service.Function.Builder
             calcResultRejectedProducersBuilder = calcResultRejectedProducers;
             calcResultErrorReportBuilder = calcResultErrorReport;
             projectedProducersService = projectedProducers;
+            this.modulationBuilder = modulationBuilder;
             _telemetryClient = telemetryClient;
         }
 
@@ -84,7 +111,7 @@ namespace EPR.Calculator.Service.Function.Builder
         {
             var result = new CalcResult
             {
-                CalcResultDetail =  await calcResultDetailBuilder.ConstructAsync(resultsRequestDto),
+                CalcResultDetail = await calcResultDetailBuilder.ConstructAsync(resultsRequestDto),
                 CalcResultLapcapData =
                 new CalcResultLapcapData
                 {
@@ -104,10 +131,24 @@ namespace EPR.Calculator.Service.Function.Builder
                 CalcResultCancelledProducers = new CalcResultCancelledProducersResponse(),
                 CalcResultRejectedProducers = new List<CalcResultRejectedProducer>(),
 
-                #pragma warning disable S1135 // Sonar TODO comment
-                CalcResultModulation = resultsRequestDto.RelativeYear.Value >= 2026 ? "" : null // TODO add modulation class here for CSV section - not part of this ticket
-                #pragma warning restore S1135
+                ApplyModulation = resultsRequestDto.RelativeYear.Value >= 2026
             };
+
+            // TODO pass to other builders that require default params
+            // TODO move lookup into a db connector object
+            var defaultParams =
+                await (
+                    from run in dbContext.CalculatorRuns
+                    join defaultMaster in dbContext.DefaultParameterSettings on run.DefaultParameterSettingMasterId equals
+                        defaultMaster.Id
+                    join defaultDetail in dbContext.DefaultParameterSettingDetail on defaultMaster.Id equals defaultDetail
+                        .DefaultParameterSettingMasterId
+                    join defaultTemplate in dbContext.DefaultParameterTemplateMasterList on defaultDetail
+                        .ParameterUniqueReferenceId equals defaultTemplate.ParameterUniqueReferenceId
+                    where run.Id == resultsRequestDto.RunId
+                    select new { Key = defaultDetail.ParameterUniqueReferenceId, Value = defaultDetail.ParameterValue }
+                ).ToDictionaryAsync(pair => pair.Key, pair => pair.Value);
+
 
             _telemetryClient.TrackTrace("lapcapBuilder started...");
             result.CalcResultLapcapData = await lapcapBuilder.ConstructAsync(resultsRequestDto);
@@ -129,13 +170,13 @@ namespace EPR.Calculator.Service.Function.Builder
             result.CalcResultCancelledProducers = await calcResultCancelledProducersBuilder.ConstructAsync(resultsRequestDto);
             _telemetryClient.TrackTrace("CalcResultCancelledProducersBuilder end...");
 
-            if(result.CalcResultModulation is not null)
+            if (result.ApplyModulation)
             {
                 _telemetryClient.TrackTrace("calcResultProjectedProducerBuilder started...");
                 var calcResultProjectedProducers = await calcResultProjectedProducersBuilder.ConstructAsync(resultsRequestDto);
                 result.CalcResultProjectedProducers = calcResultProjectedProducers;
                 _telemetryClient.TrackTrace("calcResultProjectedProducerBuilder end...");
-                
+
                 if(!resultsRequestDto.IsBillingFile)
                 {
                     _telemetryClient.TrackTrace("Storing projected producers started...");
@@ -172,6 +213,42 @@ namespace EPR.Calculator.Service.Function.Builder
             _telemetryClient.TrackTrace("commsCostReportBuilder started...");
             result.CalcResultCommsCostReportDetail = await commsCostReportBuilder.ConstructAsync(resultsRequestDto, result.CalcResultOnePlusFourApportionment, result);
             _telemetryClient.TrackTrace("commsCostReportBuilder end...");
+
+            _telemetryClient.TrackTrace("modulationBuilder started...");
+            // TODO this currently doesn't have partial obligations etc applied
+            // TODO could this be provided in memory via constructor rather than look up from db?
+            var producerData =
+                await (
+                    from run in dbContext.CalculatorRuns
+                    join producerDetail in dbContext.ProducerDetail on run.Id equals producerDetail.CalculatorRunId
+                    join producerMaterial in dbContext.ProducerReportedMaterial on producerDetail.Id equals producerMaterial.ProducerDetailId
+                    join material in dbContext.Material on producerMaterial.MaterialId equals material.Id
+                    where run.Id == resultsRequestDto.RunId &&
+                        producerMaterial.PackagingType != null &&
+                        (
+                            producerMaterial.PackagingType == PackagingTypes.Household ||
+                            producerMaterial.PackagingType == PackagingTypes.PublicBin ||
+                            (
+                                producerMaterial.PackagingType == PackagingTypes.HouseholdDrinksContainers &&
+                                material.Code == MaterialCodes.Glass
+                            )
+                        )
+                    group producerMaterial by material.Name into g
+                    select new ProducerData
+                    {
+                        MaterialName = g.Key,
+                        TonnageRed = g.Sum(pm => pm.PackagingTonnageRed) ?? 0m,
+                        TonnageRedMedical = g.Sum(pm => pm.PackagingTonnageRedMedical) ?? 0m,
+                        TonnageAmber = g.Sum(pm => pm.PackagingTonnageAmber) ?? 0m,
+                        TonnageAmberMedical = g.Sum(pm => pm.PackagingTonnageAmberMedical) ?? 0m,
+                        TonnageGreen = g.Sum(pm => pm.PackagingTonnageGreen) ?? 0m,
+                        TonnageGreenMedical = g.Sum(pm => pm.PackagingTonnageGreenMedical) ?? 0m,
+                        Tonnage = g.Sum(pm => pm.PackagingTonnage)
+                    }
+                ).ToListAsync();
+            var redFactor = defaultParams["REDM-RF"];
+            result.CalcResultModulation = await modulationBuilder.ConstructAsync(resultsRequestDto, result.CalcResultLaDisposalCostData, redFactor, producerData);
+            _telemetryClient.TrackTrace("modulationBuilder end...");
 
             _telemetryClient.TrackTrace("summaryBuilder started...");
             result.CalcResultSummary = await summaryBuilder.ConstructAsync(resultsRequestDto.RunId, resultsRequestDto.RelativeYear, resultsRequestDto.IsBillingFile, result);

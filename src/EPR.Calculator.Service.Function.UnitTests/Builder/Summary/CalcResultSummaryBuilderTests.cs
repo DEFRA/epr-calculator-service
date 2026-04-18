@@ -290,7 +290,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                     PartialObligations = new List<CalcResultPartialObligation>(),
                 },
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
-                CalcResultModulation = null,
+                ApplyModulation = false
             };
 
             // Seed database
@@ -707,7 +707,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             Assert.AreEqual("Producer1", producer.ProducerName);
 
             var modulationResult = calculationResult;
-            modulationResult.CalcResultModulation = "add modulations section";
+            modulationResult.ApplyModulation = true;
             var result2 = new CalcResultSummaryBuilder(context).GetCalcResultSummary(orderedProducerDetails, materials, modulationResult, totalPackagingTonnage, producerInvoicedMaterialNetTonnage, defaultParams);
             Assert.AreEqual(209, result2.ColumnHeaders.Count());
         }

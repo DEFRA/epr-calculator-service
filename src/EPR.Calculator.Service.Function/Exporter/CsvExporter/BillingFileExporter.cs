@@ -82,7 +82,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 
             calcResultCancelledProducersExporterCsv.Export(calcResult.CalcResultCancelledProducers, csvContent);
 
-            if(calcResult.CalcResultModulation is not null)
+            if (calcResult.ApplyModulation)
             {
                 var accepted = GetProjectedProducerForExport(calcResult.CalcResultProjectedProducers, acceptedProducerIds);
                 calcResultProjectedProducersExporterCsv.Export(accepted, csvContent);
@@ -95,7 +95,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 
             var acceptedCalcResultSummary = GetAcceptedProducersCalcResults(calcResult.CalcResultSummary, acceptedProducerIds);
 
-            calcResultSummaryExporterCsv.Export(acceptedCalcResultSummary, csvContent, showModulations: calcResult.CalcResultModulation is not null);
+            calcResultSummaryExporterCsv.Export(acceptedCalcResultSummary, csvContent, showModulations: calcResult.ApplyModulation);
 
             csvContent = ResetTotals(csvContent.ToString());
 

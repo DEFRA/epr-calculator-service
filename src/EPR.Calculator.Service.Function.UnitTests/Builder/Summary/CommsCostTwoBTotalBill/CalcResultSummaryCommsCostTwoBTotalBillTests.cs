@@ -34,7 +34,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                 CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
-                CalcResultModulation = null,
+                ApplyModulation = false
             };
 
             // Set up consistent data
@@ -61,7 +61,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                 new CalcResultProducerAndReportMaterialDetail
                 {
                     ProducerDetail = producer1,
-                    ProducerReportedMaterial = 
+                    ProducerReportedMaterial =
                         new(){
                             MaterialId = 1,
                             ProducerDetailId = 1,
@@ -80,7 +80,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                 new CalcResultProducerAndReportMaterialDetail
                 {
                     ProducerDetail = producer1,
-                    ProducerReportedMaterial = 
+                    ProducerReportedMaterial =
                         new(){
                             MaterialId = 1,
                             ProducerDetailId = 1,
@@ -99,7 +99,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                 new CalcResultProducerAndReportMaterialDetail
                 {
                     ProducerDetail = producer2,
-                    ProducerReportedMaterial = 
+                    ProducerReportedMaterial =
                     new(){
                         MaterialId = 1,
                         ProducerDetailId = 2,
@@ -118,7 +118,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                 new CalcResultProducerAndReportMaterialDetail
                 {
                     ProducerDetail = producer2,
-                    ProducerReportedMaterial = 
+                    ProducerReportedMaterial =
                     new(){
                         MaterialId = 1,
                         ProducerDetailId = 2,
