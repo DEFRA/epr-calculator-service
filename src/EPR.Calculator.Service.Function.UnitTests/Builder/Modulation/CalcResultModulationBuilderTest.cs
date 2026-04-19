@@ -38,7 +38,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
             materialServiceMock = new Mock<IMaterialService>();
             materialServiceMock.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
 
-            builder = new CalcResultModulationBuilder(dbContext, materialServiceMock.Object);
+            builder = new CalcResultModulationBuilder(materialServiceMock.Object);
         }
 
         [TestCleanup]
@@ -158,7 +158,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
             Assert.AreEqual(655600m, modulationResults.GreenTotal);
             Assert.AreEqual(358900m, modulationResults.AmberTotal);
             Assert.AreEqual(899130m, modulationResults.RedTotal);
-            Assert.AreEqual(0.2285768761439902379499694936m, modulationResults.GreenDiscount);
+            Assert.AreEqual(0.2285768761439902379499694936m, 1 - modulationResults.GreenFactor);
 
             assertPricePerTonnePerMaterial(
                 new Dictionary<string, (decimal, decimal, decimal)>

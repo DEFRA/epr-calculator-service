@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.Enums;
-using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
@@ -12,7 +10,7 @@ using Newtonsoft.Json;
 namespace EPR.Calculator.Service.Function.Builder.Modulation
 {
     [ExcludeFromCodeCoverage]
-    public class CalcResultModulationBuilder(ApplicationDBContext context, IMaterialService materialService)
+    public class CalcResultModulationBuilder(IMaterialService materialService)
         : ICalcResultModulationBuilder
     {
         private class MaterialCost
@@ -86,6 +84,9 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
             var greenDiscount =
                 materialCosts.Sum(c => c.RedExcessiveCost) / materialCosts.Sum(c => c.BaseFee);
 
+            var greenFactor =
+                (1 - greenDiscount);
+
             var updated =
                 materialCosts.Select(material => material.GreenCost = material.AmberCost * greenDiscount);
 
@@ -94,7 +95,9 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
                 GreenTotal = materialCosts.Sum(c => c.BaseFee),
                 AmberTotal = materialCosts.Sum(c => c.AmberCost),
                 RedTotal = materialCosts.Sum(c => c.RedCost),
-                GreenDiscount = greenDiscount,
+                GreenFactor = greenFactor,
+                RedFactor = redFactor,
+                MaterialNames = materials.ToList(),
                 PricePerTonnePerMaterial = materials.ToDictionary(
                     material => material,
                     material =>
@@ -105,8 +108,8 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
                             rag => rag switch
                             {
                                 var r when r == RagRating.Amber || r == RagRating.AmberMedical => basePrice,
-                                var r when r == RagRating.Red   || r == RagRating.RedMedical   => basePrice * redFactor,
-                                var r when r == RagRating.Green || r == RagRating.GreenMedical => basePrice * (1 - greenDiscount),
+                                var r when r == RagRating.Red || r == RagRating.RedMedical => basePrice * redFactor,
+                                var r when r == RagRating.Green || r == RagRating.GreenMedical => basePrice * greenFactor,
                                 _ => throw new InvalidOperationException($"Unexpected rag {rag}")
                             }
                         );
@@ -122,7 +125,7 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
                           rag => rag switch
                           {
                               var r when r == RagRating.Amber || r == RagRating.AmberMedical => materialCost.AmberCost,
-                              var r when r == RagRating.Red   || r == RagRating.RedMedical   => materialCost.RedCost,
+                              var r when r == RagRating.Red || r == RagRating.RedMedical => materialCost.RedCost,
                               var r when r == RagRating.Green || r == RagRating.GreenMedical => materialCost.BaseFee * (1 - greenDiscount),
                               _ => throw new InvalidOperationException($"Unexpected rag {rag}")
                           }

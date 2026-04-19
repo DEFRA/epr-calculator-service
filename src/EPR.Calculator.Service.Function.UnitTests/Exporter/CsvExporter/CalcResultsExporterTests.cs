@@ -30,6 +30,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             MockResultDetailexporter = new();
             MockOnePlusFourExporter = new();
             MockLaDisposalCostDataExporter = new();
+            MockCalcResultModulationExporter = new();
             MockScaledupProducersExporter = new();
             MockPartialObligationsExporter = new();
             MockProjectedProducersExporter = new();
@@ -44,6 +45,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 MockResultDetailexporter.Object,
                 MockOnePlusFourExporter.Object,
                 MockLaDisposalCostDataExporter.Object,
+                MockCalcResultModulationExporter.Object,
                 MockScaledupProducersExporter.Object,
                 MockPartialObligationsExporter.Object,
                 MockProjectedProducersExporter.Object,
@@ -64,6 +66,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         private Mock<IOnePlusFourApportionmentExporter> MockOnePlusFourExporter { get; init; }
 
         private Mock<ICalcResultLaDisposalCostExporter> MockLaDisposalCostDataExporter { get; init; }
+
+        private Mock<ICalcResultModulationExporter> MockCalcResultModulationExporter { get; init; }
 
         private Mock<ICalcResultScaledupProducersExporter> MockScaledupProducersExporter { get; init; }
 
