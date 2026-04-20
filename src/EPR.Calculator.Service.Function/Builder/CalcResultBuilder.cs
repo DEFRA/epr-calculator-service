@@ -207,7 +207,7 @@ namespace EPR.Calculator.Service.Function.Builder
             _telemetryClient.TrackTrace("commsCostReportBuilder end...");
 
             _telemetryClient.TrackTrace("modulationBuilder started...");
-            result.CalcResultModulation = await modulationBuilder.ConstructAsync(resultsRequestDto, result.CalcResultLaDisposalCostData, defaultParams);
+            result.CalcResultModulation = await modulationBuilder.ConstructAsync(result.CalcResultLaDisposalCostData, defaultParams);
             _telemetryClient.TrackTrace("modulationBuilder end...");
 
             _telemetryClient.TrackTrace("summaryBuilder started...");

@@ -8,7 +8,6 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
     public interface ICalcResultModulationBuilder
     {
         Task<ModulationResult> ConstructAsync(
-            CalcResultsRequestDto resultsRequestDto,
             CalcResultLaDisposalCostData laDisposalCostData,
             Dictionary<string, decimal> defaultParams
         );

@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using EPR.Calculator.API.Data.Enums;
+using EPR.Calculator.API.Data.Migrations;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
@@ -13,29 +14,25 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
     public class CalcResultModulationBuilder(IMaterialService materialService)
         : ICalcResultModulationBuilder
     {
-        private class MaterialCost
+        private record MaterialCost
         {
-            public required string Material { get; set; }
-            public decimal PricePerTonne { get; set; }
-            public decimal BaseFee { get; set; }
-            public decimal AmberCost { get; set; }
-            public decimal RedCost { get; set; }
-            public decimal Difference { get; set; }
-            public decimal RedExcessiveCost { get; set; }
+            public required string Material { get; init; }
+            public required decimal PricePerTonne { get; init; }
+            public required decimal BaseFee { get; init; }
+            public required decimal AmberCost { get; init; }
+            public required decimal RedCost { get; init; }
+            public required decimal Difference { get; init; }
+            public required decimal RedExcessiveCost { get; init; }
             public decimal GreenCost { get; set; }
         }
 
         public async Task<ModulationResult> ConstructAsync(
-            CalcResultsRequestDto resultsRequestDto,
             CalcResultLaDisposalCostData laDisposalCostData,
             Dictionary<string, decimal> defaultParams
         )
         {
-            var runId = resultsRequestDto.RunId;
-
             var redFactor = defaultParams["REDM-RF"];
 
-            // -----------
             var materials = (await materialService.GetMaterials()).Select(m => m.Name);// TODO move everything to use Code instead
 
             decimal pricePerTonne(string material)
@@ -52,20 +49,20 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
             var materialCosts =
                 materials.Select(material =>
                 {
-                    var basePrice = pricePerTonne(material);
+                    var amberDisposalCostPerTonne = pricePerTonne(material);
                     var greenTonnage = tonnage(material, RagRating.Green) + tonnage(material, RagRating.GreenMedical);
                     var amberTonnage = tonnage(material, RagRating.Amber) + tonnage(material, RagRating.AmberMedical);
-                    var redTonnage = tonnage(material, RagRating.Red) + tonnage(material, RagRating.RedMedical);
-                    var difference = basePrice * redFactor - basePrice;
+                    var redTonnage   = tonnage(material, RagRating.Red)   + tonnage(material, RagRating.RedMedical);
+                    var difference   = amberDisposalCostPerTonne * (redFactor - 1);
 
                     return new MaterialCost
                     {
-                        Material = material,
-                        PricePerTonne = basePrice,
-                        BaseFee = basePrice * greenTonnage,
-                        AmberCost = basePrice * amberTonnage,
-                        RedCost = basePrice * redFactor * redTonnage,
-                        Difference = difference,
+                        Material         = material,
+                        PricePerTonne    = amberDisposalCostPerTonne,
+                        BaseFee          = amberDisposalCostPerTonne * greenTonnage,
+                        AmberCost        = amberDisposalCostPerTonne * amberTonnage,
+                        RedCost          = amberDisposalCostPerTonne * redFactor * redTonnage,
+                        Difference       = difference,
                         RedExcessiveCost = redTonnage * difference
                     };
                 });
@@ -81,17 +78,20 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
             var updated =
                 materialCosts.Select(material => material.GreenCost = material.AmberCost * greenDiscount);
 
+            decimal to4dp(decimal d)
+            {
+                return Math.Round(d, 4);
+            }
+
             return new ModulationResult
             {
-                // These are only used to assert test results, could remove?
                 GreenTotal = materialCosts.Sum(c => c.BaseFee),
-                AmberTotal = materialCosts.Sum(c => c.AmberCost),// This is the same as laDisposalCostData.CalcResultLaDisposalCostDetails.First(ldc => ldc.Material == material).DisposalCostPricePerTonne;. - Could pull out of the Total row and not sum!
-                RedTotal = materialCosts.Sum(c => c.RedCost),
+                AmberTotal = materialCosts.Sum(c => c.AmberCost),
+                RedTotal   = materialCosts.Sum(c => c.RedCost),
 
                 GreenFactor = greenFactor,
-                RedFactor = redFactor,
+                RedFactor   = redFactor,
                 MaterialNames = materials.ToList(),
-                // Since this is just redFactor and greenFactor * basePrice, we could work with laDisposalCostData
                 PricePerTonnePerMaterial = materials.ToDictionary(
                     material => material,
                     material =>
@@ -101,9 +101,9 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
                             rag => rag,
                             rag => rag switch
                             {
-                                var r when r == RagRating.Amber || r == RagRating.AmberMedical => basePrice,
-                                var r when r == RagRating.Red || r == RagRating.RedMedical => basePrice * redFactor,
-                                var r when r == RagRating.Green || r == RagRating.GreenMedical => basePrice * greenFactor,
+                                var r when r == RagRating.Amber || r == RagRating.AmberMedical => to4dp(basePrice),
+                                var r when r == RagRating.Red   || r == RagRating.RedMedical   => to4dp(basePrice * redFactor),
+                                var r when r == RagRating.Green || r == RagRating.GreenMedical => to4dp(basePrice * greenFactor),
                                 _ => throw new InvalidOperationException($"Unexpected rag {rag}")
                             }
                         );
