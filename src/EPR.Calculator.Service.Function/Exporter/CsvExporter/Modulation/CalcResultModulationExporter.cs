@@ -19,14 +19,18 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation
             {
                 csvContent.AppendLine();
             }
-            void append(string s)
+            void append(string? s)
             {
                 csvContent.Append(CsvSanitiser.SanitiseData(s));
             }
 
-            void appendd(decimal d, DecimalPlaces dp)
+            void appendd(decimal? d, DecimalPlaces dp)
             {
                 csvContent.Append(CsvSanitiser.SanitiseData(d, dp, null));
+            }
+            void appendc(decimal? d, DecimalPlaces dp)
+            {
+                csvContent.Append(CsvSanitiser.SanitiseData(d, dp, null, true));
             }
 
             nl();
@@ -63,8 +67,10 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation
             append("Green Material Disposal Cost = Green Modulation Factor * Amber Material Disposal Cost");
             nl();
 
-            foreach (var materialName in modulationResult.MaterialNames)
+            foreach (var kv in modulationResult.MaterialModulation)
             {
+                var materialName = kv.Key;
+                var modulation = kv.Value;
                 append(materialName); // A
 
                 Console.WriteLine($">> {materialName} - {JsonConvert.SerializeObject(laDisposalCostData.CalcResultLaDisposalCostDetails, Formatting.Indented)}");
@@ -86,15 +92,12 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation
                 appendd(netA, DecimalPlaces.Two); // I
                 appendd(netG, DecimalPlaces.Two); // J
 
-                var costPerMaterialRag = modulationResult.CostPerMaterial[materialName];
-                appendd(costPerMaterialRag[RagRating.Red], DecimalPlaces.Two); // K
-                //csvContent.Append(CsvSanitiser.SanitiseData(costPerMaterialRag[RagRating.Amber], DecimalPlaces.Two, null));
-                appendd(costPerMaterialRag[RagRating.Green], DecimalPlaces.Two); // L
+                appendc(modulation.TotalRedMaterialAtAmberDisposalCost, DecimalPlaces.Two); // K
+                appendc(modulation.TotalGreenMaterialAtAmberDisposalCost, DecimalPlaces.Two); // L
 
-                var pricePerTonneRag = modulationResult.PricePerTonnePerMaterial[materialName];
-                appendd(pricePerTonneRag[RagRating.Red], DecimalPlaces.Two); // M
-                appendd(pricePerTonneRag[RagRating.Amber], DecimalPlaces.Two); // N
-                appendd(pricePerTonneRag[RagRating.Green], DecimalPlaces.Two); // O
+                appendc(modulation.RedMaterialDisposalCost  , DecimalPlaces.Two); // M
+                appendc(modulation.AmberMaterialDisposalCost, DecimalPlaces.Two); // N
+                appendc(modulation.GreenMaterialDisposalCost, DecimalPlaces.Two); // O
                 nl();
             }
 
@@ -119,21 +122,12 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation
                 appendd(netA, DecimalPlaces.Two); // I
                 appendd(netG, DecimalPlaces.Two); // J
 
-                decimal totalCostPerMaterial(RagRating rag)
-                {
-                    return modulationResult.CostPerMaterial.Values.Select(e => e[rag]).Sum();
-                }
-                appendd(totalCostPerMaterial(RagRating.Red  ), DecimalPlaces.Two); // K
-                //csvContent.Append(CsvSanitiser.SanitiseData(costPerMaterialRag[RagRating.Amber], DecimalPlaces.Two, null));
-                appendd(totalCostPerMaterial(RagRating.Green), DecimalPlaces.Two); // L
+                appendc(modulationResult.MaterialModulation.Values.Select(m => m.TotalRedMaterialAtAmberDisposalCost  ).Sum(), DecimalPlaces.Two); // K
+                appendc(modulationResult.MaterialModulation.Values.Select(m => m.TotalGreenMaterialAtAmberDisposalCost).Sum(), DecimalPlaces.Two); // L
 
-                decimal totalPricePerTonne(RagRating rag)
-                {
-                    return modulationResult.PricePerTonnePerMaterial.Values.Select(e => e[rag]).Sum();
-                }
-                appendd(totalPricePerTonne(RagRating.Red  ), DecimalPlaces.Two); // M
-                appendd(totalPricePerTonne(RagRating.Amber), DecimalPlaces.Two); // N
-                appendd(totalPricePerTonne(RagRating.Green), DecimalPlaces.Two); // O
+                appendc(null, DecimalPlaces.Two); // M
+                appendc(null, DecimalPlaces.Two); // N
+                appendc(null, DecimalPlaces.Two); // O
                 nl();
             }
         }

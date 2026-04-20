@@ -48,7 +48,6 @@ namespace EPR.Calculator.Service.Function.Builder
 
     public class CalcResultBuilder : ICalcResultBuilder
     {
-        private readonly ApplicationDBContext dbContext;
         private readonly IParameterService parameterService;
         private readonly ICalcResultParameterOtherCostBuilder calcResultParameterOtherCostBuilder;
         private readonly ICalcResultDetailBuilder calcResultDetailBuilder;
@@ -71,7 +70,6 @@ namespace EPR.Calculator.Service.Function.Builder
 
         [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         public CalcResultBuilder(
-            ApplicationDBContext dbContext,
             IParameterService parameterService,
             ICalcResultDetailBuilder calcResultDetail,
             ICalcResultLapcapDataBuilder lapcap,
@@ -91,7 +89,6 @@ namespace EPR.Calculator.Service.Function.Builder
             ICalcResultModulationBuilder modulationBuilder,
             TelemetryClient telemetryClient)
         {
-            this.dbContext = dbContext;
             this.parameterService = parameterService;
             calcResultDetailBuilder = calcResultDetail;
             lapcapBuilder = lapcap;

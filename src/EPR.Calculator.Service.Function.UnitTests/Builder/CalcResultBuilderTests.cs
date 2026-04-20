@@ -31,7 +31,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
     [TestClass]
     public class CalcResultBuilderTests
     {
-        private readonly ApplicationDBContext dbContext;
         private readonly Mock<IParameterService> mockParameterService;
         private readonly Mock<ICalcResultDetailBuilder> mockCalcResultDetailBuilder;
         private readonly Mock<ICalcResultLapcapDataBuilder> mockLapcapBuilder;
@@ -54,15 +53,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
         public CalcResultBuilderTests()
         {
-            // TODO use a db connector object rather than dbContext directly, which can be injected/mocked here
-            var dbContextOptions =
-                new DbContextOptionsBuilder<ApplicationDBContext>()
-                    .UseInMemoryDatabase(databaseName: "PayCal")
-                    .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-                    .Options;
-
-            dbContext = new ApplicationDBContext(dbContextOptions);
-
             Fixture = new Fixture();
             mockParameterService = new Mock<IParameterService>();
             mockCalcResultDetailBuilder = new Mock<ICalcResultDetailBuilder>();
@@ -85,7 +75,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
             telemetryClient = new TelemetryClient(new TelemetryConfiguration());
 
             calcResultBuilder = new CalcResultBuilder(
-                dbContext,
                 mockParameterService.Object,
                 mockCalcResultDetailBuilder.Object,
                 mockLapcapBuilder.Object,
@@ -113,7 +102,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Act
             var instance = new CalcResultBuilder(
-                dbContext,
                 mockParameterService.Object,
                 mockCalcResultDetailBuilder.Object,
                 mockLapcapBuilder.Object,

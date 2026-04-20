@@ -21,7 +21,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
             builder = new CalcResultModulationBuilder(materialServiceMock.Object);
         }
 
-        public CalcResultLaDisposalCostDataDetail mkLaDisposalCost(string materialName, decimal costPerTonnage)
+        private CalcResultLaDisposalCostDataDetail mkLaDisposalCost(string materialName, decimal costPerTonnage)
         {
             return new CalcResultLaDisposalCostDataDetail
             {
@@ -43,54 +43,35 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
             };
         }
 
-        public Dictionary<RagRating, decimal> mkProducerData(decimal r, decimal rm, decimal a, decimal am, decimal g, decimal gm)
+        private Dictionary<RagRating, decimal> mkProducerData(decimal r, decimal rm, decimal a, decimal am, decimal g, decimal gm)
         {
             return new Dictionary<RagRating, decimal>
             {
-                [RagRating.Red         ] = r,
-                [RagRating.RedMedical  ] = rm,
-                [RagRating.Amber       ] = a,
+                [RagRating.Red] = r,
+                [RagRating.RedMedical] = rm,
+                [RagRating.Amber] = a,
                 [RagRating.AmberMedical] = am,
-                [RagRating.Green       ] = g,
+                [RagRating.Green] = g,
                 [RagRating.GreenMedical] = gm
             };
         }
 
-        private void assertPricePerTonnePerMaterial(Dictionary<string, (decimal, decimal, decimal)> expected, ModulationResult modulationResults)
+        private MaterialModulation mkMaterialModulation(decimal adc, decimal rdc, decimal gdc, decimal rt, decimal gt, decimal rAtAdc, decimal gAtAdc)
         {
-            foreach (var entry in expected)
+            return new MaterialModulation
             {
-                var material = entry.Key;
-                var (r, a, g) = entry.Value;
-
-                Assert.AreEqual(r, modulationResults.PricePerTonnePerMaterial[material][RagRating.Red], $"For {material}");
-                Assert.AreEqual(r, modulationResults.PricePerTonnePerMaterial[material][RagRating.RedMedical], $"For {material}");
-                Assert.AreEqual(a, modulationResults.PricePerTonnePerMaterial[material][RagRating.Amber], $"For {material}");
-                Assert.AreEqual(a, modulationResults.PricePerTonnePerMaterial[material][RagRating.AmberMedical], $"For {material}");
-                Assert.AreEqual(g, modulationResults.PricePerTonnePerMaterial[material][RagRating.Green], $"For {material}");
-                Assert.AreEqual(g, modulationResults.PricePerTonnePerMaterial[material][RagRating.GreenMedical], $"For {material}");
-            }
+                AmberMaterialDisposalCost = adc,
+                RedMaterialDisposalCost   = rdc,
+                GreenMaterialDisposalCost = gdc,
+                RedMaterialTonnages       = rt,
+                GreenMaterialTonnages     = gt,
+                TotalRedMaterialAtAmberDisposalCost   = rAtAdc,
+                TotalGreenMaterialAtAmberDisposalCost = gAtAdc
+            };
         }
-
-        private void assertCostPerMaterial(Dictionary<string, (decimal, decimal, decimal)> expected, ModulationResult modulationResults)
-        {
-            foreach (var entry in expected)
-            {
-                var material = entry.Key;
-                var (r, a, g) = entry.Value;
-
-                Assert.AreEqual(r, modulationResults.CostPerMaterial[material][RagRating.Red], $"For {material}");
-                Assert.AreEqual(r, modulationResults.CostPerMaterial[material][RagRating.RedMedical], $"For {material}");
-                Assert.AreEqual(a, modulationResults.CostPerMaterial[material][RagRating.Amber], $"For {material}");
-                Assert.AreEqual(a, modulationResults.CostPerMaterial[material][RagRating.AmberMedical], $"For {material}");
-                Assert.AreEqual(g, modulationResults.CostPerMaterial[material][RagRating.Green], $"For {material}");
-                Assert.AreEqual(g, modulationResults.CostPerMaterial[material][RagRating.GreenMedical], $"For {material}");
-            }
-        }
-
 
         [TestMethod]
-        public async Task Modulation_Test1()
+        public async Task ModulationBuilder_TestCalculation()
         {
             var laDisposalCostData = new CalcResultLaDisposalCostData
             {
@@ -108,14 +89,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
                 },
                 NetByMaterialAndRag = new Dictionary<string, Dictionary<RagRating, decimal>>
                 {
-                    ["Aluminium"      ] = mkProducerData( 200,  20, 300,  30,  500,  50),
-                    ["Fibre composite"] = mkProducerData( 250,  25,  50,   5,   50,   5),
-                    ["Glass"          ] = mkProducerData( 100,  10, 200,  20,  200,  20),
-                    ["Paper or card"  ] = mkProducerData( 100, 300, 600, 450, 1800, 600),
-                    ["Plastic"        ] = mkProducerData(2000, 150, 200,  75,  150, 120),
-                    ["Steel"          ] = mkProducerData(  15,  18,  25,  15,   40,  34),
-                    ["Wood"           ] = mkProducerData( 250,  15,   0,   0,    0,   0),
-                    ["Other materials"] = mkProducerData(  20,  10,   0,   0,    0,   0)
+                    ["Aluminium"] = mkProducerData(200, 20, 300, 30, 500, 50),
+                    ["Fibre composite"] = mkProducerData(250, 25, 50, 5, 50, 5),
+                    ["Glass"] = mkProducerData(100, 10, 200, 20, 200, 20),
+                    ["Paper or card"] = mkProducerData(100, 300, 600, 450, 1800, 600),
+                    ["Plastic"] = mkProducerData(2000, 150, 200, 75, 150, 120),
+                    ["Steel"] = mkProducerData(15, 18, 25, 15, 40, 34),
+                    ["Wood"] = mkProducerData(250, 15, 0, 0, 0, 0),
+                    ["Other materials"] = mkProducerData(20, 10, 0, 0, 0, 0)
                 }
             };
             Console.WriteLine($">> {JsonConvert.SerializeObject(laDisposalCostData.CalcResultLaDisposalCostDetails, Formatting.Indented)}");
@@ -124,40 +105,31 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
             var modulationResults = await builder.ConstructAsync(laDisposalCostData, defaultParameters);
             Console.WriteLine($">> {JsonConvert.SerializeObject(modulationResults, Formatting.Indented)}");
 
-            //Assert.AreEqual(655600m, modulationResults.GreenTotal);
-            //Assert.AreEqual(358900m, modulationResults.AmberTotal);
-            //Assert.AreEqual(899130m, modulationResults.RedTotal);
+            Assert.AreEqual(1.2m, modulationResults.RedFactor);
             Assert.AreEqual(0.2285768761439902379499694936m, 1 - modulationResults.GreenFactor);
 
-            assertPricePerTonnePerMaterial(
-                new Dictionary<string, (decimal, decimal, decimal)>
+            var expected =
+                new Dictionary<string, MaterialModulation>
                 {
-                    ["Aluminium"]       = (120, 100,  77.1423m),
-                    ["Fibre composite"] = (156, 130, 100.2850m),
-                    ["Glass"]           = (180, 150, 115.7135m),
-                    ["Paper or card"]   = (240, 200, 154.2846m),
-                    ["Plastic"]         = (300, 250, 192.8558m),
-                    ["Steel"]           = (210, 175, 134.9990m),
-                    ["Wood"]            = (180, 150, 115.7135m),
-                    ["Other materials"] = (480, 400, 308.5692m),
-                },
-                modulationResults
-            );
+                    ["Aluminium"] = mkMaterialModulation(100, 120, 77.1423m, 220, 550, 22000, 55000),
+                    ["Fibre composite"] = mkMaterialModulation(130, 156, 100.2850m, 275, 55, 35750, 7150),
+                    ["Glass"] = mkMaterialModulation(150, 180, 115.7135m, 110, 220, 16500, 33000),
+                    ["Paper or card"] = mkMaterialModulation(200, 240, 154.2846m, 400, 2400, 80000, 480000),
+                    ["Plastic"] = mkMaterialModulation(250, 300, 192.8558m, 2150, 270, 537500, 67500),
+                    ["Steel"] = mkMaterialModulation(175, 210, 134.9990m, 33, 74, 5775, 12950),
+                    ["Wood"] = mkMaterialModulation(150, 180, 115.7135m, 265, 0, 39750, 0),
+                    ["Other materials"] = mkMaterialModulation(400, 480, 308.5692m, 30, 0, 12000, 0)
+                };
 
-            assertCostPerMaterial(
-                new Dictionary<string, (decimal, decimal, decimal)>
-                {
-                    ["Aluminium"] = (26400, 33000, 42428.271812080536912751677852m),
-                    ["Fibre composite"] = (42900, 7150, 5515.6753355704697986577181208m),
-                    ["Glass"] = (19800, 33000, 25456.963087248322147651006711m),
-                    ["Paper or card"] = (96000, 210000, 370283.09945088468578401464307m),
-                    ["Plastic"] = (645000, 68750, 52071.060860280658938377059182m),
-                    ["Steel"] = (6930, 7000, 9989.929453935326418547895058m),
-                    ["Wood"] = (47700, 0, 0m),
-                    ["Other materials"] = (14400, 0, 0m),
-                },
-                modulationResults
-            );
+            CollectionAssert.AreEquivalent(expected.Keys.ToList(), modulationResults.MaterialModulation.Keys.ToList());
+
+            foreach (var kvp in expected)
+            {
+                Assert.AreEqual(kvp.Value, modulationResults.MaterialModulation[kvp.Key], $"Value mismatch for key: {kvp.Key}");
+            }
         }
+
+        // redfactor = 1 -> all prices are the same
+        // what if materialCosts.Sum(c => c.amberMaterialDisposalCost * c.greenMaterialTonnages
     }
 }

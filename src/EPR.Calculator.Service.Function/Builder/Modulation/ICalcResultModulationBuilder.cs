@@ -13,15 +13,21 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
         );
     }
 
+    public record MaterialModulation
+    {
+        public required decimal AmberMaterialDisposalCost { get; init; }
+        public required decimal RedMaterialDisposalCost { get; init; }
+        public required decimal GreenMaterialDisposalCost { get; init; }
+        public required decimal RedMaterialTonnages { get; init; }
+        public required decimal GreenMaterialTonnages { get; init; }
+        public required decimal TotalRedMaterialAtAmberDisposalCost { get; init; }
+        public required decimal TotalGreenMaterialAtAmberDisposalCost { get; init; }
+    }
+
     public record ModulationResult
     {
-        public required decimal GreenTotal { get; init; }
-        public required decimal AmberTotal { get; init; }
-        public required decimal RedTotal { get; init; }
-        public required decimal RedFactor { get; init; }
         public required decimal GreenFactor { get; init; }
-        public required List<string> MaterialNames { get; init; } // TODO storing here temporarily - not currently passed to Exporters...
-        public required Dictionary<string, Dictionary<RagRating, decimal>> PricePerTonnePerMaterial { get; init; }
-        public required Dictionary<string, Dictionary<RagRating, decimal>> CostPerMaterial { get; init; }
+        public required decimal RedFactor { get; init; }
+        public required Dictionary<string, MaterialModulation> MaterialModulation { get; init; }
     }
 }

@@ -77,54 +77,43 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
                     {
                         [RagRating.Red]   = 21000000.123m,
                         [RagRating.Amber] =  5000000.234m,
-                        [RagRating.Green] =   209863.182m,
+                        [RagRating.Green] =   209863.182m
                     },
                     ["Fibre composite"] = new Dictionary<RagRating, decimal>
                     {
-                        [RagRating.Red]   = 3001.333m,
+                        [RagRating.Red]   =   3001.333m,
                         [RagRating.Amber] = 400000.222m,
-                        [RagRating.Green] = 706.332m,
+                        [RagRating.Green] =    706.332m
                     },
                 }
             };
 
             var modulationResult = new ModulationResult
             {
-                GreenTotal = 0m,
-                AmberTotal = 0m,
-                RedTotal = 0m,
                 RedFactor = 1.2m,
                 GreenFactor = 0.751106m,
-                MaterialNames = new List<string> { "Aluminium", "Fibre composite" },
-                PricePerTonnePerMaterial = new Dictionary<string, Dictionary<RagRating, decimal>>
+                MaterialModulation = new Dictionary<string, MaterialModulation>
                 {
-                    ["Aluminium"] = new Dictionary<RagRating, decimal>
+                    ["Aluminium"] = new MaterialModulation
                     {
-                        [RagRating.Red] = 26181753.110m,
-                        [RagRating.Amber] = 0.6322m,
-                        [RagRating.Green] = 0.4675m,
+                        AmberMaterialDisposalCost = 0.6312m,
+                        RedMaterialDisposalCost   = 0.7612m,
+                        GreenMaterialDisposalCost = 0.4712m,
+                        RedMaterialTonnages   = 0,
+                        GreenMaterialTonnages = 0,
+                        TotalRedMaterialAtAmberDisposalCost   = 6280704.41m,
+                        TotalGreenMaterialAtAmberDisposalCost = 4955297.80m
                     },
-                    ["Fibre composite"] = new Dictionary<RagRating, decimal>
+                    ["Fibre composite"] = new MaterialModulation
                     {
-                        [RagRating.Red] = 115.9m,
-                        [RagRating.Amber] = 96.5911m,
-                        [RagRating.Green] = 2.5511m,
-                    },
-                },
-                CostPerMaterial = new Dictionary<string, Dictionary<RagRating, decimal>>
-                {
-                    ["Aluminium"] = new Dictionary<RagRating, decimal>
-                    {
-                        [RagRating.Red] = 6280704.41m,
-                        [RagRating.Amber] = 0m,
-                        [RagRating.Green] = 4955297.8m,
-                    },
-                    ["Fibre composite"] = new Dictionary<RagRating, decimal>
-                    {
-                        [RagRating.Red] = 115.9m,
-                        [RagRating.Amber] = 96.59m,
-                        [RagRating.Green] = 2.55m,
-                    },
+                        AmberMaterialDisposalCost = 96.5912m,
+                        RedMaterialDisposalCost   = 115.90m,
+                        GreenMaterialDisposalCost = 72.55m,
+                        RedMaterialTonnages   = 0,
+                        GreenMaterialTonnages = 0,
+                        TotalRedMaterialAtAmberDisposalCost   = 14817325.23m,
+                        TotalGreenMaterialAtAmberDisposalCost = 11697888.16m
+                    }
                 }
             };
 
@@ -146,7 +135,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
                 {
                     "Material",
                     "Producer Household Packaging Tonnage",
-                    "Public Bin Tonnage","Household Drinks Containers Tonnage",
+                    "Public Bin Tonnage",
+                    "Household Drinks Containers Tonnage",
                     "Late Reporting Tonnage",
                     "Actioned Self-Managed Consumer Waste",
                     "Producer Household Tonnage + Late Reporting Tonnage + Public Bin Tonnage + Household Drinks Containers Tonnage - Self-Managed Consumer Waste",
@@ -159,9 +149,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
                     "Amber Material Disposal Cost = Material Disposal Cost per Tonne",
                     "Green Material Disposal Cost = Green Modulation Factor * Amber Material Disposal Cost"
                 },
-                new[] { "Aluminium"      , "26181753.110", "24610.429", "", "3500", "", "26209863.54", "21000000.12", "5000000.23", "209863.18" , "6280704.41", "4955297.8" , "26181753.11",  "0.63", "0.47" },
-                new[] { "Fibre composite",   "401772.341",  "1146.546", "",  "789", "",   "403707.89",     "3001.33",  "400000.22", "706.33"    ,      "115.9",       "2.55",      "115.9" , "96.59", "2.55" },
-                new[] { "Total"          , "26583525.451", "25756.975", "", "4289", "", "26613571.43", "21003001.46", "5400000.46", "210569.51" , "6280820.31", "4955300.35", "26181869.01", "97.22", "3.02" },
+                new[] { "Aluminium"      , "26181753.110", "24610.429", "", "3500", "", "26209863.54", "21000000.12", "5000000.23", "209863.18",  "£6280704.41",  "£4955297.80",   "£0.76",  "£0.63",  "£0.47" },
+                new[] { "Fibre composite",   "401772.341",  "1146.546", "",  "789", "",   "403707.89",     "3001.33",  "400000.22",    "706.33", "£14817325.23", "£11697888.16", "£115.90", "£96.59", "£72.55" },
+                new[] { "Total"          , "26583525.451", "25756.975", "", "4289", "", "26613571.43", "21003001.46", "5400000.46", "210569.51", "£21098029.64", "£16653185.96" },
                 new string[] { }
             };
 
@@ -180,7 +170,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
                 {
                     var expectedRow = expected[i];
                     var actualRow = actual[i];
-                    var data = $"Expected row: {expectedRow}\nActual row: {actualRow}";
+                    var data = $"Expected row: {expectedRow}\nActual row  : {actualRow}";
 
                     for (int j = 0; j < expectedRow.Length; j++)
                     {
