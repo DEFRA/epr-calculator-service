@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moq;
 using Newtonsoft.Json;
 using EPR.Calculator.API.Data.Enums;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
 {
@@ -140,7 +141,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
 
 
             var resultsDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2026) };
-            var redFactor = 1.2m;
+            var defaultParameters = new Dictionary<string, decimal> { ["REDM-RF"] = 1.2m };
             var producerData = new List<ProducerData>
             {
                 mkProducerData("Aluminium", 200, 20, 300, 30, 500, 50),
@@ -152,7 +153,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
                 mkProducerData("Wood", 250, 15, 0, 0, 0, 0),
                 mkProducerData("Other materials", 20, 10, 0, 0, 0, 0)
             };
-            var modulationResults = await builder.ConstructAsync(resultsDto, laDisposalCostData, redFactor, producerData);
+            var modulationResults = await builder.ConstructAsync(resultsDto, laDisposalCostData, defaultParameters, producerData);
             Console.WriteLine($">> {JsonConvert.SerializeObject(modulationResults, Formatting.Indented)}");
 
             Assert.AreEqual(655600m, modulationResults.GreenTotal);

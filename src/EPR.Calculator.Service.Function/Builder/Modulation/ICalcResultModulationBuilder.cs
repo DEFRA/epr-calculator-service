@@ -10,7 +10,7 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
         Task<ModulationResult> ConstructAsync(
             CalcResultsRequestDto resultsRequestDto,
             CalcResultLaDisposalCostData laDisposalCostData,
-            decimal redFactor,
+            Dictionary<string, decimal> defaultParams,
             List<ProducerData> producerData
         );
     }

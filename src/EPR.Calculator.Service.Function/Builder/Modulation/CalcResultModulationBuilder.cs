@@ -28,11 +28,13 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
         public async Task<ModulationResult> ConstructAsync(
             CalcResultsRequestDto resultsRequestDto,
             CalcResultLaDisposalCostData laDisposalCostData,
-            decimal redFactor,
+            Dictionary<string, decimal> defaultParams,
             List<ProducerData> producerData
         )
         {
             var runId = resultsRequestDto.RunId;
+
+            var redFactor = defaultParams["REDM-RF"];
 
             // -----------
             var materials = (await materialService.GetMaterials()).Select(m => m.Name);// TODO move everything to use Code instead
@@ -45,6 +47,8 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
 
             decimal tonnage(string material, RagRating rag)
             {
+                // TODO has this been added to LaDisposalCostData?
+                // could work with this rather than ProducerData...
                 var data = producerData.First(data => data.MaterialName == material);
                 return rag switch
                 {
@@ -92,12 +96,15 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
 
             return new ModulationResult
             {
+                // These are only used to assert test results, could remove?
                 GreenTotal = materialCosts.Sum(c => c.BaseFee),
-                AmberTotal = materialCosts.Sum(c => c.AmberCost),
+                AmberTotal = materialCosts.Sum(c => c.AmberCost),// This is the same as laDisposalCostData.CalcResultLaDisposalCostDetails.First(ldc => ldc.Material == material).DisposalCostPricePerTonne;. - Could pull out of the Total row and not sum!
                 RedTotal = materialCosts.Sum(c => c.RedCost),
+
                 GreenFactor = greenFactor,
                 RedFactor = redFactor,
                 MaterialNames = materials.ToList(),
+                // Since this is just redFactor and greenFactor * basePrice, we could work with laDisposalCostData
                 PricePerTonnePerMaterial = materials.ToDictionary(
                     material => material,
                     material =>

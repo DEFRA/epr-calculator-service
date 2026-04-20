@@ -47,6 +47,7 @@ namespace EPR.Calculator.Service.Function.Builder
     public class CalcResultBuilder : ICalcResultBuilder
     {
         private readonly ApplicationDBContext dbContext;
+        private readonly IParameterService parameterService;
         private readonly ICalcResultParameterOtherCostBuilder calcResultParameterOtherCostBuilder;
         private readonly ICalcResultDetailBuilder calcResultDetailBuilder;
         private readonly ICalcResultLapcapDataBuilder lapcapBuilder;
@@ -69,6 +70,7 @@ namespace EPR.Calculator.Service.Function.Builder
         [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         public CalcResultBuilder(
             ApplicationDBContext dbContext,
+            IParameterService parameterService,
             ICalcResultDetailBuilder calcResultDetail,
             ICalcResultLapcapDataBuilder lapcap,
             ICalcResultParameterOtherCostBuilder calcResultParameterOtherCost,
@@ -88,6 +90,7 @@ namespace EPR.Calculator.Service.Function.Builder
             TelemetryClient telemetryClient)
         {
             this.dbContext = dbContext;
+            this.parameterService = parameterService;
             calcResultDetailBuilder = calcResultDetail;
             lapcapBuilder = lapcap;
             commsCostReportBuilder = commsCostReport;
@@ -135,20 +138,8 @@ namespace EPR.Calculator.Service.Function.Builder
             };
 
             // TODO pass to other builders that require default params
-            // TODO move lookup into a db connector object
             var defaultParams =
-                await (
-                    from run in dbContext.CalculatorRuns
-                    join defaultMaster in dbContext.DefaultParameterSettings on run.DefaultParameterSettingMasterId equals
-                        defaultMaster.Id
-                    join defaultDetail in dbContext.DefaultParameterSettingDetail on defaultMaster.Id equals defaultDetail
-                        .DefaultParameterSettingMasterId
-                    join defaultTemplate in dbContext.DefaultParameterTemplateMasterList on defaultDetail
-                        .ParameterUniqueReferenceId equals defaultTemplate.ParameterUniqueReferenceId
-                    where run.Id == resultsRequestDto.RunId
-                    select new { Key = defaultDetail.ParameterUniqueReferenceId, Value = defaultDetail.ParameterValue }
-                ).ToDictionaryAsync(pair => pair.Key, pair => pair.Value);
-
+                await parameterService.GetDefaultParameters(resultsRequestDto.RunId);
 
             _telemetryClient.TrackTrace("lapcapBuilder started...");
             result.CalcResultLapcapData = await lapcapBuilder.ConstructAsync(resultsRequestDto);
@@ -246,8 +237,7 @@ namespace EPR.Calculator.Service.Function.Builder
                         Tonnage = g.Sum(pm => pm.PackagingTonnage)
                     }
                 ).ToListAsync();
-            var redFactor = defaultParams["REDM-RF"];
-            result.CalcResultModulation = await modulationBuilder.ConstructAsync(resultsRequestDto, result.CalcResultLaDisposalCostData, redFactor, producerData);
+            result.CalcResultModulation = await modulationBuilder.ConstructAsync(resultsRequestDto, result.CalcResultLaDisposalCostData, defaultParams, producerData);
             _telemetryClient.TrackTrace("modulationBuilder end...");
 
             _telemetryClient.TrackTrace("summaryBuilder started...");

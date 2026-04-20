@@ -32,6 +32,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
     public class CalcResultBuilderTests
     {
         private readonly ApplicationDBContext dbContext;
+        private readonly Mock<IParameterService> mockParameterService;
         private readonly Mock<ICalcResultDetailBuilder> mockCalcResultDetailBuilder;
         private readonly Mock<ICalcResultLapcapDataBuilder> mockLapcapBuilder;
         private readonly Mock<ICalcResultLateReportingBuilder> mockLateReportingBuilder;
@@ -63,6 +64,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             dbContext = new ApplicationDBContext(dbContextOptions);
 
             Fixture = new Fixture();
+            mockParameterService = new Mock<IParameterService>();
             mockCalcResultDetailBuilder = new Mock<ICalcResultDetailBuilder>();
             mockLapcapBuilder = new Mock<ICalcResultLapcapDataBuilder>();
             mockSummaryBuilder = new Mock<ICalcResultSummaryBuilder>();
@@ -84,6 +86,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             calcResultBuilder = new CalcResultBuilder(
                 dbContext,
+                mockParameterService.Object,
                 mockCalcResultDetailBuilder.Object,
                 mockLapcapBuilder.Object,
                 mockCalcResultParameterOtherCostBuilder.Object,
@@ -111,6 +114,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             // Act
             var instance = new CalcResultBuilder(
                 dbContext,
+                mockParameterService.Object,
                 mockCalcResultDetailBuilder.Object,
                 mockLapcapBuilder.Object,
                 mockCalcResultParameterOtherCostBuilder.Object,
