@@ -29,8 +29,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
                 {
                     new CalcResultLaDisposalCostDataDetail
                     {
-                        Material = "Aluminium",
-                        Name = "",
+                        Name = "Aluminium",
+                        Material = "",
                         England = "",
                         Wales = "",
                         Scotland = "",
@@ -43,8 +43,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
                     },
                     new CalcResultLaDisposalCostDataDetail
                     {
-                        Material  = "Fibre composite",
-                        Name = "",
+                        Name  = "Fibre composite",
+                        Material = "",
                         England = "",
                         Wales = "",
                         Scotland = "",
@@ -57,8 +57,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
                     },
                     new CalcResultLaDisposalCostDataDetail
                     {
-                        Material  = "",
                         Name = "Total",
+                        Material  = "",
                         England = "",
                         Wales = "",
                         Scotland = "",

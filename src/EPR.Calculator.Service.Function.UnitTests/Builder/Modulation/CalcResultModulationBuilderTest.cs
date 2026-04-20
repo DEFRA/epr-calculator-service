@@ -1,16 +1,9 @@
-﻿using EPR.Calculator.API.Data;
-using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Function.Builder;
-using EPR.Calculator.Service.Function.Builder.Modulation;
-using EPR.Calculator.Service.Function.Misc;
+﻿using EPR.Calculator.Service.Function.Builder.Modulation;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moq;
 using Newtonsoft.Json;
 using EPR.Calculator.API.Data.Enums;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
 {
@@ -18,44 +11,23 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
     public class CalcResultModulationBuilderTest
     {
         public CalcResultModulationBuilder builder;
-        protected ApplicationDBContext dbContext;
         private Mock<IMaterialService> materialServiceMock;
 
         public CalcResultModulationBuilderTest()
         {
-            var dbContextOptions =
-                new DbContextOptionsBuilder<ApplicationDBContext>()
-                    .UseInMemoryDatabase(databaseName: "PayCal")
-                    .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-                                .Options;
-
-            dbContext = new ApplicationDBContext(dbContextOptions);
-            dbContext.Database.EnsureCreated();
-            dbContext.DefaultParameterTemplateMasterList.RemoveRange(dbContext.DefaultParameterTemplateMasterList);
-            dbContext.SaveChanges();
-            dbContext.DefaultParameterTemplateMasterList.AddRange(TestDataHelper.GetDefaultParameterTemplateMasterData().ToList());
-            dbContext.SaveChanges();
-
             materialServiceMock = new Mock<IMaterialService>();
             materialServiceMock.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
 
             builder = new CalcResultModulationBuilder(materialServiceMock.Object);
         }
 
-        [TestCleanup]
-        public void TearDown()
-        {
-            dbContext.Database.EnsureDeleted();
-            dbContext.Dispose();
-        }
-
         public CalcResultLaDisposalCostDataDetail mkLaDisposalCost(string materialName, decimal costPerTonnage)
         {
             return new CalcResultLaDisposalCostDataDetail
             {
-                Material = materialName,
-                DisposalCostPricePerTonne = costPerTonnage.ToString(),
-                Name = "",
+                Name = materialName,
+                DisposalCostPricePerTonne = "£" + costPerTonnage.ToString(),
+                Material = "",
                 England = "",
                 Wales = "",
                 Scotland = "",

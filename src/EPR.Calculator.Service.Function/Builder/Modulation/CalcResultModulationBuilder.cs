@@ -37,8 +37,9 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
 
             decimal pricePerTonne(string material)
             {
-                var cost = laDisposalCostData.CalcResultLaDisposalCostDetails.First(ldc => ldc.Material == material).DisposalCostPricePerTonne;
-                return decimal.Parse(cost!, CultureInfo.InvariantCulture);
+                // TODO the Material field is empty!? remove it or move material to the Material field...
+                var cost = laDisposalCostData.CalcResultLaDisposalCostDetails.First(ldc => ldc.Name == material).DisposalCostPricePerTonne;
+                return decimal.Parse(cost!.TrimStart('£'), CultureInfo.InvariantCulture);
             }
 
             decimal tonnage(string material, RagRating rag)

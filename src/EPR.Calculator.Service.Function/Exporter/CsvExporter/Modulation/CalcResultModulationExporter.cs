@@ -69,7 +69,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation
 
                 Console.WriteLine($">> {materialName} - {JsonConvert.SerializeObject(laDisposalCostData.CalcResultLaDisposalCostDetails, Formatting.Indented)}");
 
-                var laDisposalCost = laDisposalCostData.CalcResultLaDisposalCostDetails.First(laDisposalCost => laDisposalCost.Material == materialName);
+                var laDisposalCost = laDisposalCostData.CalcResultLaDisposalCostDetails.First(laDisposalCost => laDisposalCost.Name == materialName);
                 Console.WriteLine($">> {materialName} - {JsonConvert.SerializeObject(laDisposalCost, Formatting.Indented)}");
                 append(laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage); // B
                 append(laDisposalCost.ReportedPublicBinTonnage); // C

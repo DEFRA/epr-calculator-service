@@ -45,6 +45,8 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using EPR.Calculator.Service.Function.Builder.Modulation;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -114,6 +116,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<CalculatorRunValidator, CalculatorRunValidator>();
             services.AddTransient<ICommandTimeoutService, CommandTimeoutService>();
             services.AddTransient<IPrepareCalcService, PrepareCalcService>();
+            services.AddTransient<IParameterService, ParameterService>();
             services.AddTransient<ICalcResultDetailBuilder, CalcResultDetailBuilder>();
             services.AddTransient<ICalcResultLapcapDataBuilder, CalcResultLapcapDataBuilder>();
             services.AddTransient<ICalcResultParameterOtherCostBuilder, CalcResultParameterOtherCostBuilder>();
@@ -125,6 +128,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcResultPartialObligationBuilder, CalcResultPartialObligationBuilder>();
             services.AddTransient<ICalcResultProjectedProducersBuilder, CalcResultProjectedProducersBuilder>();
             services.AddTransient<ICalcResultRejectedProducersBuilder, CalcResultRejectedProducersBuilder>();
+            services.AddTransient<ICalcResultModulationBuilder, CalcResultModulationBuilder>();
             services.AddTransient<ICalcResultSummaryBuilder, CalcResultSummaryBuilder>();
             services.AddTransient<IBillingInstructionService, BillingInstructionService>();
             services.AddTransient<IOnePlusFourApportionmentExporter, OnePlusFourApportionmentExporter>();
@@ -140,6 +144,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcResultProjectedProducersExporter, CalcResultProjectedProducersExporter>();
             services.AddTransient<LateReportingExporter, LateReportingExporter>();
             services.AddTransient<ICalcResultParameterOtherCostExporter, CalcResultParameterOtherCostExporter>();
+            services.AddTransient<ICalcResultModulationExporter, CalcResultModulationExporter>();
             services.AddTransient<ICommsCostExporter, CommsCostExporter>();
             services.AddTransient<IDbLoadingChunkerService<ProducerDetail>, DbLoadingChunkerService<ProducerDetail>>();
             services.AddTransient<IDbLoadingChunkerService<ProducerReportedMaterial>, DbLoadingChunkerService<ProducerReportedMaterial>>();
