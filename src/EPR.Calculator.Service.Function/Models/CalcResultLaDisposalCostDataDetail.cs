@@ -1,4 +1,6 @@
-﻿namespace EPR.Calculator.Service.Function.Models
+﻿using EPR.Calculator.API.Data.Enums;
+
+namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResultLaDisposalCostDataDetail
     {
@@ -28,6 +30,7 @@
 
         public string ProducerReportedTotalTonnage { get; set; } = string.Empty;
 
+        // TODO replace with decimal and format in the Exporter
         public string? DisposalCostPricePerTonne { get; set; }
 
         public int OrderId { get; set; }

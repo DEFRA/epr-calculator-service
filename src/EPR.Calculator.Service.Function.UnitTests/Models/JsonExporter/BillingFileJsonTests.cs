@@ -308,6 +308,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                         },
                     },
                     Name = "LA Disposal Cost Data",
+                    NetByMaterialAndRag = new Dictionary<string, Dictionary<API.Data.Enums.RagRating, decimal>>()
                 },
                 CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers(),
                 CalcResultSummary = TestDataHelper.GetCalcResultSummary(),

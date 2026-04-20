@@ -14,15 +14,16 @@ namespace EPR.Calculator.Service.Function.Services
             this.dbContext = context.CreateDbContext();
         }
 
+        // TODO or return a record rather than a Dictionary?
         public async Task<Dictionary<string, decimal>> GetDefaultParameters(int runId)
         {
             return await (
-                from run in dbContext.CalculatorRuns
-                join defaultMaster in dbContext.DefaultParameterSettings on run.DefaultParameterSettingMasterId equals
+                from run in dbContext.CalculatorRuns.AsNoTracking()
+                join defaultMaster in dbContext.DefaultParameterSettings.AsNoTracking() on run.DefaultParameterSettingMasterId equals
                     defaultMaster.Id
-                join defaultDetail in dbContext.DefaultParameterSettingDetail on defaultMaster.Id equals defaultDetail
+                join defaultDetail in dbContext.DefaultParameterSettingDetail.AsNoTracking() on defaultMaster.Id equals defaultDetail
                     .DefaultParameterSettingMasterId
-                join defaultTemplate in dbContext.DefaultParameterTemplateMasterList on defaultDetail
+                join defaultTemplate in dbContext.DefaultParameterTemplateMasterList.AsNoTracking() on defaultDetail
                     .ParameterUniqueReferenceId equals defaultTemplate.ParameterUniqueReferenceId
                 where run.Id == runId
                 select new { Key = defaultDetail.ParameterUniqueReferenceId, Value = defaultDetail.ParameterValue }

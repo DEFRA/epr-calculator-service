@@ -10,20 +10,19 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
         Task<ModulationResult> ConstructAsync(
             CalcResultsRequestDto resultsRequestDto,
             CalcResultLaDisposalCostData laDisposalCostData,
-            Dictionary<string, decimal> defaultParams,
-            List<ProducerData> producerData
+            Dictionary<string, decimal> defaultParams
         );
     }
 
-    public class ModulationResult
+    public record ModulationResult
     {
-        public required decimal GreenTotal { get; set; }
-        public required decimal AmberTotal { get; set; }
-        public required decimal RedTotal { get; set; }
-        public required decimal RedFactor { get; set; }
-        public required decimal GreenFactor { get; set; }
-        public required List<string> MaterialNames { get; set; } // TODO storing here temporarily - not currently passed to Exporters...
-        public required Dictionary<string, Dictionary<RagRating, decimal>> PricePerTonnePerMaterial { get; set; }
-        public required Dictionary<string, Dictionary<RagRating, decimal>> CostPerMaterial { get; set; }
+        public required decimal GreenTotal { get; init; }
+        public required decimal AmberTotal { get; init; }
+        public required decimal RedTotal { get; init; }
+        public required decimal RedFactor { get; init; }
+        public required decimal GreenFactor { get; init; }
+        public required List<string> MaterialNames { get; init; } // TODO storing here temporarily - not currently passed to Exporters...
+        public required Dictionary<string, Dictionary<RagRating, decimal>> PricePerTonnePerMaterial { get; init; }
+        public required Dictionary<string, Dictionary<RagRating, decimal>> CostPerMaterial { get; init; }
     }
 }

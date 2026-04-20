@@ -63,6 +63,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDispo
                     },
                 },
                 Name = "LA Disposal Cost Data",
+                NetByMaterialAndRag = new Dictionary<string, Dictionary<API.Data.Enums.RagRating, decimal>>()
             };
 
             var csvContent = new StringBuilder();

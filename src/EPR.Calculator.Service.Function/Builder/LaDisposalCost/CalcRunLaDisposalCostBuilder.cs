@@ -6,6 +6,7 @@ using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
+using EPR.Calculator.API.Data.Enums;
 
 namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
 {
@@ -58,7 +59,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
                     ProducerReportedHouseholdPackagingWasteTonnage = GetTonnageDataByMaterial(details.Name, scaledUpProducerReportedOn!),
                     ReportedPublicBinTonnage = GetReportedPublicBinTonnage(details.Name, scaledUpProducerReportedOn!),
                     HouseholdDrinkContainers = GetReportedHouseholdDrinksContainerTonnage(details.Name, scaledUpProducerReportedOn!),
-                    OrderId = ++orderId,
+                    OrderId = ++orderId
                 };
                 laDiposalDetail.LateReportingTonnage = GetLateReportingTonnageDataByMaterial(laDiposalDetail.Name, calcResult.CalcResultLateReportingTonnageData.CalcResultLateReportingTonnageDetails.ToList());
                 laDiposalDetail.ProducerReportedTotalTonnage = GetProducerReportedTotalTonnage(laDiposalDetail);
@@ -75,6 +76,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
             {
                 Name = CommonConstants.LADisposalCostData,
                 CalcResultLaDisposalCostDetails = laDisposalCostDetails.AsEnumerable(),
+                NetByMaterialAndRag = new Dictionary<string, Dictionary<RagRating, decimal>>() // TODO populate
             };
         }
 

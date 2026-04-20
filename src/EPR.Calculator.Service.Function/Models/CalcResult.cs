@@ -1,4 +1,5 @@
 ﻿using EPR.Calculator.Service.Function.Builder.Modulation;
+using EPR.Calculator.API.Data.Enums;
 namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResult
@@ -50,6 +51,7 @@ namespace EPR.Calculator.Service.Function.Models
             {
                 Name = string.Empty,
                 CalcResultLaDisposalCostDetails = [],
+                NetByMaterialAndRag = new Dictionary<string, Dictionary<RagRating, decimal>>()
             };
 
         public required CalcResultPartialObligations CalcResultPartialObligations { get; set; }

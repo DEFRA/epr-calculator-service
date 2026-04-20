@@ -71,18 +71,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
             };
         }
 
-        public ProducerData mkProducerData(string materialName, decimal r, decimal rm, decimal a, decimal am, decimal g, decimal gm)
+        public Dictionary<RagRating, decimal> mkProducerData(decimal r, decimal rm, decimal a, decimal am, decimal g, decimal gm)
         {
-            return new ProducerData
+            return new Dictionary<RagRating, decimal>
             {
-                MaterialName = materialName,
-                TonnageRed = r,
-                TonnageRedMedical = rm,
-                TonnageAmber = a,
-                TonnageAmberMedical = am,
-                TonnageGreen = g,
-                TonnageGreenMedical = gm,
-                Tonnage = r + rm + a + am + g + gm
+                [RagRating.Red         ] = r,
+                [RagRating.RedMedical  ] = rm,
+                [RagRating.Amber       ] = a,
+                [RagRating.AmberMedical] = am,
+                [RagRating.Green       ] = g,
+                [RagRating.GreenMedical] = gm
             };
         }
 
@@ -135,6 +133,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
                     mkLaDisposalCost("Steel", 175),
                     mkLaDisposalCost("Wood", 150),
                     mkLaDisposalCost("Other materials", 400)
+                },
+                NetByMaterialAndRag = new Dictionary<string, Dictionary<RagRating, decimal>>
+                {
+                    ["Aluminium"      ] = mkProducerData( 200,  20, 300,  30,  500,  50),
+                    ["Fibre composite"] = mkProducerData( 250,  25,  50,   5,   50,   5),
+                    ["Glass"          ] = mkProducerData( 100,  10, 200,  20,  200,  20),
+                    ["Paper or card"  ] = mkProducerData( 100, 300, 600, 450, 1800, 600),
+                    ["Plastic"        ] = mkProducerData(2000, 150, 200,  75,  150, 120),
+                    ["Steel"          ] = mkProducerData(  15,  18,  25,  15,   40,  34),
+                    ["Wood"           ] = mkProducerData( 250,  15,   0,   0,    0,   0),
+                    ["Other materials"] = mkProducerData(  20,  10,   0,   0,    0,   0)
                 }
             };
             Console.WriteLine($">> {JsonConvert.SerializeObject(laDisposalCostData.CalcResultLaDisposalCostDetails, Formatting.Indented)}");
@@ -142,18 +151,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
 
             var resultsDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2026) };
             var defaultParameters = new Dictionary<string, decimal> { ["REDM-RF"] = 1.2m };
-            var producerData = new List<ProducerData>
-            {
-                mkProducerData("Aluminium", 200, 20, 300, 30, 500, 50),
-                mkProducerData("Fibre composite", 250, 25, 50, 5, 50, 5),
-                mkProducerData("Glass", 100, 10, 200, 20, 200, 20),
-                mkProducerData("Paper or card", 100, 300, 600, 450, 1800, 600),
-                mkProducerData("Plastic", 2000, 150, 200, 75, 150, 120),
-                mkProducerData("Steel", 15, 18, 25, 15, 40, 34),
-                mkProducerData("Wood", 250, 15, 0, 0, 0, 0),
-                mkProducerData("Other materials", 20, 10, 0, 0, 0, 0)
-            };
-            var modulationResults = await builder.ConstructAsync(resultsDto, laDisposalCostData, defaultParameters, producerData);
+            var modulationResults = await builder.ConstructAsync(resultsDto, laDisposalCostData, defaultParameters);
             Console.WriteLine($">> {JsonConvert.SerializeObject(modulationResults, Formatting.Indented)}");
 
             Assert.AreEqual(655600m, modulationResults.GreenTotal);

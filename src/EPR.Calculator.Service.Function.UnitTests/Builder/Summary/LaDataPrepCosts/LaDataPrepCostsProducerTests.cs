@@ -162,6 +162,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.LaDataPrepCo
                             ProducerReportedTotalTonnage = Fixture.Create<string>(),
                         },
                     },
+                    NetByMaterialAndRag = new Dictionary<string, Dictionary<API.Data.Enums.RagRating, decimal>>()
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
                 {

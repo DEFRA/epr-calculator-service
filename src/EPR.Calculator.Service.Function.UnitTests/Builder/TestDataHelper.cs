@@ -340,6 +340,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         OrderId = 10,
                     },
                 },
+                NetByMaterialAndRag = new Dictionary<string, Dictionary<API.Data.Enums.RagRating, decimal>>()
             };
         }
 

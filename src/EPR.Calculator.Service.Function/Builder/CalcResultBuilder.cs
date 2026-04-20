@@ -18,10 +18,12 @@ using Microsoft.ApplicationInsights;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.Misc;
 using static EPR.Calculator.Service.Function.Builder.LaDisposalCost.CalcRunLaDisposalCostBuilder;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using EPR.Calculator.Service.Function.Builder.Modulation;
 using EPR.Calculator.API.Data;
 using Microsoft.EntityFrameworkCore;
+using EPR.Calculator.API.Data.Enums;
 
 namespace EPR.Calculator.Service.Function.Builder
 {
@@ -115,10 +117,9 @@ namespace EPR.Calculator.Service.Function.Builder
             var result = new CalcResult
             {
                 CalcResultDetail = await calcResultDetailBuilder.ConstructAsync(resultsRequestDto),
-                CalcResultLapcapData =
-                new CalcResultLapcapData
+                CalcResultLapcapData = new CalcResultLapcapData
                 {
-                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>(),
+                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>()
                 },
                 CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
                 {
@@ -206,38 +207,7 @@ namespace EPR.Calculator.Service.Function.Builder
             _telemetryClient.TrackTrace("commsCostReportBuilder end...");
 
             _telemetryClient.TrackTrace("modulationBuilder started...");
-            // TODO this currently doesn't have partial obligations etc applied
-            // TODO could this be provided in memory via constructor rather than look up from db?
-            var producerData =
-                await (
-                    from run in dbContext.CalculatorRuns
-                    join producerDetail in dbContext.ProducerDetail on run.Id equals producerDetail.CalculatorRunId
-                    join producerMaterial in dbContext.ProducerReportedMaterial on producerDetail.Id equals producerMaterial.ProducerDetailId
-                    join material in dbContext.Material on producerMaterial.MaterialId equals material.Id
-                    where run.Id == resultsRequestDto.RunId &&
-                        producerMaterial.PackagingType != null &&
-                        (
-                            producerMaterial.PackagingType == PackagingTypes.Household ||
-                            producerMaterial.PackagingType == PackagingTypes.PublicBin ||
-                            (
-                                producerMaterial.PackagingType == PackagingTypes.HouseholdDrinksContainers &&
-                                material.Code == MaterialCodes.Glass
-                            )
-                        )
-                    group producerMaterial by material.Name into g
-                    select new ProducerData
-                    {
-                        MaterialName = g.Key,
-                        TonnageRed = g.Sum(pm => pm.PackagingTonnageRed) ?? 0m,
-                        TonnageRedMedical = g.Sum(pm => pm.PackagingTonnageRedMedical) ?? 0m,
-                        TonnageAmber = g.Sum(pm => pm.PackagingTonnageAmber) ?? 0m,
-                        TonnageAmberMedical = g.Sum(pm => pm.PackagingTonnageAmberMedical) ?? 0m,
-                        TonnageGreen = g.Sum(pm => pm.PackagingTonnageGreen) ?? 0m,
-                        TonnageGreenMedical = g.Sum(pm => pm.PackagingTonnageGreenMedical) ?? 0m,
-                        Tonnage = g.Sum(pm => pm.PackagingTonnage)
-                    }
-                ).ToListAsync();
-            result.CalcResultModulation = await modulationBuilder.ConstructAsync(resultsRequestDto, result.CalcResultLaDisposalCostData, defaultParams, producerData);
+            result.CalcResultModulation = await modulationBuilder.ConstructAsync(resultsRequestDto, result.CalcResultLaDisposalCostData, defaultParams);
             _telemetryClient.TrackTrace("modulationBuilder end...");
 
             _telemetryClient.TrackTrace("summaryBuilder started...");

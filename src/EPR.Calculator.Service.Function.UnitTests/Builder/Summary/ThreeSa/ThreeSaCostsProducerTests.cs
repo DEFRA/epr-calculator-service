@@ -206,6 +206,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                         },
                     },
                     Name = "some test",
+                    NetByMaterialAndRag = new Dictionary<string, Dictionary<API.Data.Enums.RagRating, decimal>>()
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
                 {

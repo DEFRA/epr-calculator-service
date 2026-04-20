@@ -57,6 +57,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
                     },
                 },
                 Name = "",
+                NetByMaterialAndRag = new Dictionary<string, Dictionary<RagRating, decimal>>()
             };
 
             var modulationResult = new ModulationResult

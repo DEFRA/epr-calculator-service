@@ -155,6 +155,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                             ProducerReportedTotalTonnage = Fixture.Create<string>(),
                         },
                     },
+                    NetByMaterialAndRag = new Dictionary<string, Dictionary<API.Data.Enums.RagRating, decimal>>()
                 },
                 CalcResultLapcapData = new CalcResultLapcapData { CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>() },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment

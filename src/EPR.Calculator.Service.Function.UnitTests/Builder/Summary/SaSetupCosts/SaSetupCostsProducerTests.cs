@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.Summary.SaSetupCosts;
 using EPR.Calculator.Service.Function.Enums;
@@ -208,6 +209,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                             ProducerReportedTotalTonnage = Fixture.Create<string>(),
                         },
                     },
+                    NetByMaterialAndRag = new Dictionary<string, Dictionary<RagRating, decimal>>()
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
                 {

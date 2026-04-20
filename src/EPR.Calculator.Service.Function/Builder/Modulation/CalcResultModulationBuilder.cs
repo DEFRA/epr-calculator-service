@@ -28,8 +28,7 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
         public async Task<ModulationResult> ConstructAsync(
             CalcResultsRequestDto resultsRequestDto,
             CalcResultLaDisposalCostData laDisposalCostData,
-            Dictionary<string, decimal> defaultParams,
-            List<ProducerData> producerData
+            Dictionary<string, decimal> defaultParams
         )
         {
             var runId = resultsRequestDto.RunId;
@@ -47,19 +46,7 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
 
             decimal tonnage(string material, RagRating rag)
             {
-                // TODO has this been added to LaDisposalCostData?
-                // could work with this rather than ProducerData...
-                var data = producerData.First(data => data.MaterialName == material);
-                return rag switch
-                {
-                    RagRating.Red => data.TonnageRed,
-                    RagRating.RedMedical => data.TonnageRedMedical,
-                    RagRating.Amber => data.TonnageAmber,
-                    RagRating.AmberMedical => data.TonnageAmberMedical,
-                    RagRating.Green => data.TonnageGreen,
-                    RagRating.GreenMedical => data.TonnageGreenMedical,
-                    _ => 0m
-                };
+                return laDisposalCostData.NetByMaterialAndRag[material][rag];
             }
 
             var materialCosts =
