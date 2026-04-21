@@ -14,8 +14,7 @@ namespace EPR.Calculator.Service.Function.Services
             this.dbContext = context.CreateDbContext();
         }
 
-        // TODO or return a record rather than a Dictionary?
-        public async Task<Dictionary<string, decimal>> GetDefaultParameters(int runId)
+        public async Task<IReadOnlyDictionary<string, decimal>> GetDefaultParameters(int runId)
         {
             return await (
                 from run in dbContext.CalculatorRuns.AsNoTracking()

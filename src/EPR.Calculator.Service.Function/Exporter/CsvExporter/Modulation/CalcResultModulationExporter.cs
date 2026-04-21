@@ -40,13 +40,11 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation
             nl();
 
             append("Red Modulation Factor");
-            appendd(modulationResult.RedFactor, DecimalPlaces.Two);
+            appendd(modulationResult.RedFactor, DecimalPlaces.Three);
             nl();
 
-            append("Green Modulation Factor"); // TODO needs explanation?
-            //Green discount  = (red modulation factor - 1) * total red material at amber cost/total green material at amber cost
-            //Green discount factor = 1 - green discount
-            appendd(modulationResult.GreenFactor, DecimalPlaces.Six); // TODO confirm precision
+            append("Green Modulation Factor");
+            appendd(modulationResult.GreenFactor, DecimalPlaces.Six);
             nl();
 
             append("Material");
@@ -72,10 +70,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation
                 var modulation = kv.Value;
                 append(materialName); // A
 
-                Console.WriteLine($">> {materialName} - {JsonConvert.SerializeObject(laDisposalCostData.CalcResultLaDisposalCostDetails, Formatting.Indented)}");
-
                 var laDisposalCost = laDisposalCostData.CalcResultLaDisposalCostDetails.First(laDisposalCost => laDisposalCost.Name == materialName);
-                Console.WriteLine($">> {materialName} - {JsonConvert.SerializeObject(laDisposalCost, Formatting.Indented)}");
                 append(laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage); // B
                 append(laDisposalCost.ReportedPublicBinTonnage); // C
                 append(laDisposalCost.HouseholdDrinkContainers); // D
@@ -94,17 +89,14 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation
                 appendc(modulation.TotalRedMaterialAtAmberDisposalCost, DecimalPlaces.Two); // K
                 appendc(modulation.TotalGreenMaterialAtAmberDisposalCost, DecimalPlaces.Two); // L
 
-                appendc(modulation.RedMaterialDisposalCost  , DecimalPlaces.Two); // M
-                appendc(modulation.AmberMaterialDisposalCost, DecimalPlaces.Two); // N
-                appendc(modulation.GreenMaterialDisposalCost, DecimalPlaces.Two); // O
+                appendc(modulation.RedMaterialDisposalCost  , DecimalPlaces.Four); // M
+                appendc(modulation.AmberMaterialDisposalCost, DecimalPlaces.Four); // N
+                appendc(modulation.GreenMaterialDisposalCost, DecimalPlaces.Four); // O
                 nl();
             }
 
             {
                 append(CommonConstants.Total); // A
-                // we would ideally just sum up the data
-                // e.g. `append(laDisposalCostData.CalcResultLaDisposalCostDetails.Select(d => d.ProducerReportedHouseholdPackagingWasteTonnage).Sum());`
-                // but the total is in the model
                 var laDisposalCost = laDisposalCostData.CalcResultLaDisposalCostDetails.First(laDisposalCost => laDisposalCost.Name == CommonConstants.Total);
                 append(laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage); // B
                 append(laDisposalCost.ReportedPublicBinTonnage); // C

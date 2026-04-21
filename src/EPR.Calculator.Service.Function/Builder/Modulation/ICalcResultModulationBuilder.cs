@@ -1,14 +1,11 @@
-﻿using EPR.Calculator.Service.Function.Misc;
-using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.API.Data.Enums;
+﻿using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Builder.Modulation
 {
     public interface ICalcResultModulationBuilder
     {
         Task<ModulationResult> ConstructAsync(
-            Dictionary<string, decimal> defaultParams,
+            IReadOnlyDictionary<string, decimal> defaultParams,
             List<MaterialDetail> materials,
             CalcResultLaDisposalCostData laDisposalCostData
         );
@@ -29,6 +26,6 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
     {
         public required decimal GreenFactor { get; init; }
         public required decimal RedFactor { get; init; }
-        public required Dictionary<string, MaterialModulation> MaterialModulation { get; init; }
+        public required IReadOnlyDictionary<string, MaterialModulation> MaterialModulation { get; init; }
     }
 }

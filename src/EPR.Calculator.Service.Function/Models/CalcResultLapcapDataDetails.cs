@@ -2,7 +2,7 @@
 {
     public class CalcResultLapcapDataDetails
     {
-        public required string Name { get; set; } // TODO rename Material
+        public required string Name { get; set; }
 
         public string EnglandDisposalCost { get; set; } = string.Empty;
 

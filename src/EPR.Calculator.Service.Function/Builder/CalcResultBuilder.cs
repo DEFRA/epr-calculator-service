@@ -138,7 +138,6 @@ namespace EPR.Calculator.Service.Function.Builder
                 ApplyModulation = resultsRequestDto.RelativeYear.Value >= 2026
             };
 
-            // TODO pass to other builders that require default params
             var defaultParams =
                 await parameterService.GetDefaultParameters(resultsRequestDto.RunId);
 
@@ -208,9 +207,12 @@ namespace EPR.Calculator.Service.Function.Builder
             result.CalcResultCommsCostReportDetail = await commsCostReportBuilder.ConstructAsync(resultsRequestDto, result.CalcResultOnePlusFourApportionment, result);
             _telemetryClient.TrackTrace("commsCostReportBuilder end...");
 
-            _telemetryClient.TrackTrace("modulationBuilder started...");
-            result.CalcResultModulation = await modulationBuilder.ConstructAsync(defaultParams, materials, result.CalcResultLaDisposalCostData);
-            _telemetryClient.TrackTrace("modulationBuilder end...");
+            if (result.ApplyModulation)
+            {
+                _telemetryClient.TrackTrace("modulationBuilder started...");
+                result.CalcResultModulation = await modulationBuilder.ConstructAsync(defaultParams, materials, result.CalcResultLaDisposalCostData);
+                _telemetryClient.TrackTrace("modulationBuilder end...");
+            }
 
             _telemetryClient.TrackTrace("summaryBuilder started...");
             result.CalcResultSummary = await summaryBuilder.ConstructAsync(resultsRequestDto.RunId, resultsRequestDto.RelativeYear, resultsRequestDto.IsBillingFile, result);
