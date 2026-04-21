@@ -46,7 +46,6 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation
             append("Green Modulation Factor"); // TODO needs explanation?
             //Green discount  = (red modulation factor - 1) * total red material at amber cost/total green material at amber cost
             //Green discount factor = 1 - green discount
-            // TODO can't span columns
             appendd(modulationResult.GreenFactor, DecimalPlaces.Six); // TODO confirm precision
             nl();
 

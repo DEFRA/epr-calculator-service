@@ -49,6 +49,7 @@ namespace EPR.Calculator.Service.Function.Builder
     public class CalcResultBuilder : ICalcResultBuilder
     {
         private readonly IParameterService parameterService;
+        private readonly IMaterialService materialService;
         private readonly ICalcResultParameterOtherCostBuilder calcResultParameterOtherCostBuilder;
         private readonly ICalcResultDetailBuilder calcResultDetailBuilder;
         private readonly ICalcResultLapcapDataBuilder lapcapBuilder;
@@ -71,6 +72,7 @@ namespace EPR.Calculator.Service.Function.Builder
         [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         public CalcResultBuilder(
             IParameterService parameterService,
+            IMaterialService materialService,
             ICalcResultDetailBuilder calcResultDetail,
             ICalcResultLapcapDataBuilder lapcap,
             ICalcResultParameterOtherCostBuilder calcResultParameterOtherCost,
@@ -90,6 +92,7 @@ namespace EPR.Calculator.Service.Function.Builder
             TelemetryClient telemetryClient)
         {
             this.parameterService = parameterService;
+            this.materialService = materialService;
             calcResultDetailBuilder = calcResultDetail;
             lapcapBuilder = lapcap;
             commsCostReportBuilder = commsCostReport;
@@ -138,6 +141,8 @@ namespace EPR.Calculator.Service.Function.Builder
             // TODO pass to other builders that require default params
             var defaultParams =
                 await parameterService.GetDefaultParameters(resultsRequestDto.RunId);
+
+            var materials = await materialService.GetMaterials();
 
             _telemetryClient.TrackTrace("lapcapBuilder started...");
             result.CalcResultLapcapData = await lapcapBuilder.ConstructAsync(resultsRequestDto);
@@ -204,7 +209,7 @@ namespace EPR.Calculator.Service.Function.Builder
             _telemetryClient.TrackTrace("commsCostReportBuilder end...");
 
             _telemetryClient.TrackTrace("modulationBuilder started...");
-            result.CalcResultModulation = await modulationBuilder.ConstructAsync(result.CalcResultLaDisposalCostData, defaultParams);
+            result.CalcResultModulation = await modulationBuilder.ConstructAsync(defaultParams, materials, result.CalcResultLaDisposalCostData);
             _telemetryClient.TrackTrace("modulationBuilder end...");
 
             _telemetryClient.TrackTrace("summaryBuilder started...");

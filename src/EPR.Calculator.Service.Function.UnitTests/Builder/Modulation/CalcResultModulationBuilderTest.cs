@@ -11,14 +11,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
     public class CalcResultModulationBuilderTest
     {
         public CalcResultModulationBuilder builder;
-        private Mock<IMaterialService> materialServiceMock;
 
         public CalcResultModulationBuilderTest()
         {
-            materialServiceMock = new Mock<IMaterialService>();
-            materialServiceMock.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
-
-            builder = new CalcResultModulationBuilder(materialServiceMock.Object);
+            builder = new CalcResultModulationBuilder();
         }
 
         private CalcResultLaDisposalCostDataDetail mkLaDisposalCost(string materialName, decimal costPerTonnage)
@@ -78,31 +74,32 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
                 Name = "",
                 CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>
                 {
-                    mkLaDisposalCost("Aluminium", 100),
+                    mkLaDisposalCost("Aluminium"      , 100),
                     mkLaDisposalCost("Fibre composite", 130),
-                    mkLaDisposalCost("Glass", 150),
-                    mkLaDisposalCost("Paper or card", 200),
-                    mkLaDisposalCost("Plastic", 250),
-                    mkLaDisposalCost("Steel", 175),
-                    mkLaDisposalCost("Wood", 150),
+                    mkLaDisposalCost("Glass"          , 150),
+                    mkLaDisposalCost("Paper or card"  , 200),
+                    mkLaDisposalCost("Plastic"        , 250),
+                    mkLaDisposalCost("Steel"          , 175),
+                    mkLaDisposalCost("Wood"           , 150),
                     mkLaDisposalCost("Other materials", 400)
                 },
                 NetByMaterialAndRag = new Dictionary<string, Dictionary<RagRating, decimal>>
                 {
-                    ["Aluminium"] = mkProducerData(200, 20, 300, 30, 500, 50),
-                    ["Fibre composite"] = mkProducerData(250, 25, 50, 5, 50, 5),
-                    ["Glass"] = mkProducerData(100, 10, 200, 20, 200, 20),
-                    ["Paper or card"] = mkProducerData(100, 300, 600, 450, 1800, 600),
-                    ["Plastic"] = mkProducerData(2000, 150, 200, 75, 150, 120),
-                    ["Steel"] = mkProducerData(15, 18, 25, 15, 40, 34),
-                    ["Wood"] = mkProducerData(250, 15, 0, 0, 0, 0),
-                    ["Other materials"] = mkProducerData(20, 10, 0, 0, 0, 0)
+                    ["Aluminium"]       = mkProducerData( 200,  20, 300,  30,  500,  50),
+                    ["Fibre composite"] = mkProducerData( 250,  25,  50,   5,   50,   5),
+                    ["Glass"]           = mkProducerData( 100,  10, 200,  20,  200,  20),
+                    ["Paper or card"]   = mkProducerData( 100, 300, 600, 450, 1800, 600),
+                    ["Plastic"]         = mkProducerData(2000, 150, 200,  75,  150, 120),
+                    ["Steel"]           = mkProducerData(  15,  18,  25,  15,   40,  34),
+                    ["Wood"]            = mkProducerData( 250,  15,   0,   0,    0,   0),
+                    ["Other materials"] = mkProducerData(  20,  10,   0,   0,    0,   0)
                 }
             };
             Console.WriteLine($">> {JsonConvert.SerializeObject(laDisposalCostData.CalcResultLaDisposalCostDetails, Formatting.Indented)}");
 
             var defaultParameters = new Dictionary<string, decimal> { ["REDM-RF"] = 1.2m };
-            var modulationResults = await builder.ConstructAsync(laDisposalCostData, defaultParameters);
+            var materials = TestDataHelper.GetMaterials().ToList();
+            var modulationResults = await builder.ConstructAsync(defaultParameters, materials, laDisposalCostData);
             Console.WriteLine($">> {JsonConvert.SerializeObject(modulationResults, Formatting.Indented)}");
 
             Assert.AreEqual(1.2m, modulationResults.RedFactor);
@@ -111,14 +108,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
             var expected =
                 new Dictionary<string, MaterialModulation>
                 {
-                    ["Aluminium"] = mkMaterialModulation(100, 120, 77.1423m, 220, 550, 22000, 55000),
-                    ["Fibre composite"] = mkMaterialModulation(130, 156, 100.2850m, 275, 55, 35750, 7150),
-                    ["Glass"] = mkMaterialModulation(150, 180, 115.7135m, 110, 220, 16500, 33000),
-                    ["Paper or card"] = mkMaterialModulation(200, 240, 154.2846m, 400, 2400, 80000, 480000),
-                    ["Plastic"] = mkMaterialModulation(250, 300, 192.8558m, 2150, 270, 537500, 67500),
-                    ["Steel"] = mkMaterialModulation(175, 210, 134.9990m, 33, 74, 5775, 12950),
-                    ["Wood"] = mkMaterialModulation(150, 180, 115.7135m, 265, 0, 39750, 0),
-                    ["Other materials"] = mkMaterialModulation(400, 480, 308.5692m, 30, 0, 12000, 0)
+                    ["Aluminium"]       = mkMaterialModulation(100, 120,  77.1423m,  220,  550,  22000,  55000),
+                    ["Fibre composite"] = mkMaterialModulation(130, 156, 100.2850m,  275,   55,  35750,   7150),
+                    ["Glass"]           = mkMaterialModulation(150, 180, 115.7135m,  110,  220,  16500,  33000),
+                    ["Paper or card"]   = mkMaterialModulation(200, 240, 154.2846m,  400, 2400,  80000, 480000),
+                    ["Plastic"]         = mkMaterialModulation(250, 300, 192.8558m, 2150,  270, 537500,  67500),
+                    ["Steel"]           = mkMaterialModulation(175, 210, 134.9990m,   33,   74,   5775,  12950),
+                    ["Wood"]            = mkMaterialModulation(150, 180, 115.7135m,  265,    0,  39750,      0),
+                    ["Other materials"] = mkMaterialModulation(400, 480, 308.5692m,   30,    0,  12000,      0)
                 };
 
             CollectionAssert.AreEquivalent(expected.Keys.ToList(), modulationResults.MaterialModulation.Keys.ToList());

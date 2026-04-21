@@ -8,8 +8,9 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
     public interface ICalcResultModulationBuilder
     {
         Task<ModulationResult> ConstructAsync(
-            CalcResultLaDisposalCostData laDisposalCostData,
-            Dictionary<string, decimal> defaultParams
+            Dictionary<string, decimal> defaultParams,
+            List<MaterialDetail> materials,
+            CalcResultLaDisposalCostData laDisposalCostData
         );
     }
 

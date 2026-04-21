@@ -11,17 +11,15 @@ using Newtonsoft.Json;
 namespace EPR.Calculator.Service.Function.Builder.Modulation
 {
     [ExcludeFromCodeCoverage]
-    public class CalcResultModulationBuilder(IMaterialService materialService)
-        : ICalcResultModulationBuilder
+    public class CalcResultModulationBuilder : ICalcResultModulationBuilder
     {
         public async Task<ModulationResult> ConstructAsync(
-            CalcResultLaDisposalCostData laDisposalCostData,
-            Dictionary<string, decimal> defaultParams
+            Dictionary<string, decimal> defaultParams,
+            List<MaterialDetail> materials,
+            CalcResultLaDisposalCostData laDisposalCostData
         )
         {
             var redFactor = defaultParams["REDM-RF"];
-
-            var materials = (await materialService.GetMaterials()).Select(m => m.Name);// TODO move everything to use Code instead
 
             decimal pricePerTonne(string material)
             {
@@ -38,15 +36,16 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
             var materialCosts =
                 materials.Select(material =>
                 {
-                    var materialDisposalCost = pricePerTonne(material);
+                    var materialName = material.Name; // TODO can we use Code instead
+                    var materialDisposalCost = pricePerTonne(materialName);
                     return new
                     {
                         material = material,
                         amberMaterialDisposalCost = materialDisposalCost,
                         redMaterialDisposalCost   = materialDisposalCost * redFactor,
-                        redMaterialTonnages   = tonnage(material, RagRating.Red)   + tonnage(material, RagRating.RedMedical),
-                        amberMaterialTonnages = tonnage(material, RagRating.Amber) + tonnage(material, RagRating.AmberMedical),
-                        greenMaterialTonnages = tonnage(material, RagRating.Green) + tonnage(material, RagRating.GreenMedical)
+                        redMaterialTonnages   = tonnage(materialName, RagRating.Red)   + tonnage(materialName, RagRating.RedMedical),
+                        amberMaterialTonnages = tonnage(materialName, RagRating.Amber) + tonnage(materialName, RagRating.AmberMedical),
+                        greenMaterialTonnages = tonnage(materialName, RagRating.Green) + tonnage(materialName, RagRating.GreenMedical)
                     };
                 });
 
@@ -61,7 +60,7 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
             Console.WriteLine($"# greenFactor: {greenFactor}");
             var materialModulations =
                 materials.ToDictionary(
-                    material => material,
+                    material => material.Name,
                     material =>
             {
                 var cost = materialCosts.First(c => c.material == material);

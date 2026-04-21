@@ -32,6 +32,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
     public class CalcResultBuilderTests
     {
         private readonly Mock<IParameterService> mockParameterService;
+        private readonly Mock<IMaterialService> mockMaterialService;
         private readonly Mock<ICalcResultDetailBuilder> mockCalcResultDetailBuilder;
         private readonly Mock<ICalcResultLapcapDataBuilder> mockLapcapBuilder;
         private readonly Mock<ICalcResultLateReportingBuilder> mockLateReportingBuilder;
@@ -55,6 +56,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             Fixture = new Fixture();
             mockParameterService = new Mock<IParameterService>();
+            mockMaterialService = new Mock<IMaterialService>();
             mockCalcResultDetailBuilder = new Mock<ICalcResultDetailBuilder>();
             mockLapcapBuilder = new Mock<ICalcResultLapcapDataBuilder>();
             mockSummaryBuilder = new Mock<ICalcResultSummaryBuilder>();
@@ -76,6 +78,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             calcResultBuilder = new CalcResultBuilder(
                 mockParameterService.Object,
+                mockMaterialService.Object,
                 mockCalcResultDetailBuilder.Object,
                 mockLapcapBuilder.Object,
                 mockCalcResultParameterOtherCostBuilder.Object,
@@ -103,6 +106,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             // Act
             var instance = new CalcResultBuilder(
                 mockParameterService.Object,
+                mockMaterialService.Object,
                 mockCalcResultDetailBuilder.Object,
                 mockLapcapBuilder.Object,
                 mockCalcResultParameterOtherCostBuilder.Object,
