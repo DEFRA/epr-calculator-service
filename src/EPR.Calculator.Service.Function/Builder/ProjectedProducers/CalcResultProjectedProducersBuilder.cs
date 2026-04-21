@@ -93,18 +93,16 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             return Math.Max(0, tonnage.Tonnage - tonnage.GetTotalRamTonnage());
         }
 
-        public static RAMTonnage SumRAMTonnages<TSubmissionPeriodProducer, TSubmissionPeriodMaterialTonnage>(List<TSubmissionPeriodProducer> producers, string materialCode, Func<TSubmissionPeriodMaterialTonnage, RAMTonnage?> getRAMTonnage) 
-            where TSubmissionPeriodProducer : CalcResultProjectedProducer<TSubmissionPeriodMaterialTonnage>
-            where TSubmissionPeriodMaterialTonnage : CalcResultProjectedProducerMaterialTonnage
+        public static RAMTonnage SumRAMTonnages(List<ICalcResultProjectedProducer> producers, string materialCode, Func<CalcResultProjectedProducerMaterialTonnage, RAMTonnage?> getRAMTonnage) 
         {
             return new RAMTonnage {
-                Tonnage = producers.Sum(p => getRAMTonnage(p.ProjectedTonnageByMaterial[materialCode])?.Tonnage ?? 0),
-                RedTonnage = producers.Sum(p => getRAMTonnage(p.ProjectedTonnageByMaterial[materialCode])?.RedTonnage ?? 0),
-                RedMedicalTonnage = producers.Sum(p => getRAMTonnage(p.ProjectedTonnageByMaterial[materialCode])?.RedMedicalTonnage ?? 0),
-                AmberTonnage = producers.Sum(p => getRAMTonnage(p.ProjectedTonnageByMaterial[materialCode])?.AmberTonnage ?? 0),
-                AmberMedicalTonnage = producers.Sum(p => getRAMTonnage(p.ProjectedTonnageByMaterial[materialCode])?.AmberMedicalTonnage ?? 0),
-                GreenTonnage = producers.Sum(p => getRAMTonnage(p.ProjectedTonnageByMaterial[materialCode])?.GreenTonnage ?? 0),
-                GreenMedicalTonnage = producers.Sum(p => getRAMTonnage(p.ProjectedTonnageByMaterial[materialCode])?.GreenMedicalTonnage ?? 0),
+                Tonnage = producers.Sum(p => getRAMTonnage(p.ProjectedTonnageByMaterial.FirstOrDefault(v => v.Key == materialCode).Value)?.Tonnage ?? 0),
+                RedTonnage = producers.Sum(p => getRAMTonnage(p.ProjectedTonnageByMaterial.FirstOrDefault(v => v.Key == materialCode).Value)?.RedTonnage ?? 0),
+                RedMedicalTonnage = producers.Sum(p => getRAMTonnage(p.ProjectedTonnageByMaterial.FirstOrDefault(v => v.Key == materialCode).Value)?.RedMedicalTonnage ?? 0),
+                AmberTonnage = producers.Sum(p => getRAMTonnage(p.ProjectedTonnageByMaterial.FirstOrDefault(v => v.Key == materialCode).Value)?.AmberTonnage ?? 0),
+                AmberMedicalTonnage = producers.Sum(p => getRAMTonnage(p.ProjectedTonnageByMaterial.FirstOrDefault(v => v.Key == materialCode).Value)?.AmberMedicalTonnage ?? 0),
+                GreenTonnage = producers.Sum(p => getRAMTonnage(p.ProjectedTonnageByMaterial.FirstOrDefault(v => v.Key == materialCode).Value)?.GreenTonnage ?? 0),
+                GreenMedicalTonnage = producers.Sum(p => getRAMTonnage(p.ProjectedTonnageByMaterial.FirstOrDefault(v => v.Key == materialCode).Value)?.GreenMedicalTonnage ?? 0),
             };
         }
 
@@ -112,7 +110,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             List<TSubmissionPeriodProducer> projectedProducers,
             Func<TSubmissionPeriodProducer, TSubmissionPeriodProducer> createSubtotal,
             Func<IEnumerable<TSubmissionPeriodProducer>, TSubmissionPeriodProducer> sumProducerGroupTonnages)
-            where TSubmissionPeriodProducer : CalcResultProjectedProducer<TSubmissionPeriodMaterialTonnage>
+            where TSubmissionPeriodProducer : ICalcResultProjectedProducer
             where TSubmissionPeriodMaterialTonnage : CalcResultProjectedProducerMaterialTonnage
         {
             var result = new List<TSubmissionPeriodProducer>();
@@ -122,12 +120,9 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             {
                 if (group.Count() > 1)
                 {
-                    foreach (var p in group)
-                    {
-                        p.Level = CommonConstants.LevelTwo.ToString();
-                    }
+                    var updatedGroup = group.Select(p => p with { Level = CommonConstants.LevelTwo.ToString()});
 
-                    result.AddRange(group);
+                    result.AddRange(updatedGroup);
                     result.Add(
                         sumProducerGroupTonnages(group)
                     );
@@ -138,20 +133,21 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 
                     if (producer.SubsidiaryId != null)
                     {
-                        producer.Level = CommonConstants.LevelTwo.ToString();
+                        var levelTwoProd = producer with { Level = CommonConstants.LevelTwo.ToString() };
 
-                        var subtotal = createSubtotal(producer);
-                        subtotal.Level = CommonConstants.LevelOne.ToString();
-                        subtotal.IsSubtotal = true;
-                        subtotal.SubsidiaryId = null;
+                        var subtotal = createSubtotal(producer) with {
+                            Level = CommonConstants.LevelOne.ToString(),
+                            IsSubtotal = true,
+                            SubsidiaryId = null
+                        };
 
                         result.Add(subtotal);
-                        result.Add(producer);
+                        result.Add(levelTwoProd);
                     }
                     else
                     {
-                        producer.Level = CommonConstants.LevelOne.ToString();
-                        result.Add(producer);
+                        var levelOneProd = producer with { Level = CommonConstants.LevelOne.ToString()};
+                        result.Add(levelOneProd);
                     }
                 }
             }
