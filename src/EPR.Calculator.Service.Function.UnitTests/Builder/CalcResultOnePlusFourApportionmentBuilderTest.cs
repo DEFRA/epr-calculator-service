@@ -19,15 +19,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var resultsDto = new CalcResultsRequestDto { RunId = 6, RelativeYear = new RelativeYear(2025) };
             var calcResult = new CalcResult
             {
+                ShowModulations = false,
                 CalcResultDetail = new CalcResultDetail { RunId = resultsDto.RunId, RelativeYear = resultsDto.RelativeYear },
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
                     Name = "LAPCAP Data",
-                    CalcResultLapcapDataDetails = new[]
+                    CalcResultLapcapDataDetail = new[]
                     {
-                        new CalcResultLapcapDataDetails
+                        new CalcResultLapcapDataDetail
                         {
                             Name = "Total",
                             EnglandDisposalCost = "£13,280.45",
@@ -67,7 +68,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 },
                 CalcResultLateReportingTonnageData = Fixture.Create<CalcResultLateReportingTonnage>(),
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
-                CalcResultModulation = null,
             };
 
             var resultCalc = ConstructAsync(resultsDto, calcResult);
