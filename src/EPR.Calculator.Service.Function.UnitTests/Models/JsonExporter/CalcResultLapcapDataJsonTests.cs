@@ -11,9 +11,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void CanCallFrom_WithValidData()
         {
             // Arrange
-            var records = new List<CalcResultLapcapDataDetails>
+            var records = new List<CalcResultLapcapDataDetail>
             {
-                new CalcResultLapcapDataDetails
+                new CalcResultLapcapDataDetail
                 {
                     Name = "Paper",
                     EnglandDisposalCost = "£50",
@@ -22,7 +22,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     NorthernIrelandDisposalCost = "£80",
                     TotalDisposalCost = "£260"
                 },
-                new CalcResultLapcapDataDetails
+                new CalcResultLapcapDataDetail
                 {
                     Name = "Plastics",
                     EnglandDisposalCost = "£100",
@@ -31,7 +31,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     NorthernIrelandDisposalCost = "£400",
                     TotalDisposalCost = "£1000"
                 },
-                new CalcResultLapcapDataDetails
+                new CalcResultLapcapDataDetail
                 {
                     Name = CalcResultLapcapDataBuilder.Total,
                     EnglandDisposalCost = "£1",
@@ -40,7 +40,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     NorthernIrelandDisposalCost = "£4",
                     TotalDisposalCost = "£10"
                 },
-                new CalcResultLapcapDataDetails
+                new CalcResultLapcapDataDetail
                 {
                     Name = CalcResultLapcapDataBuilder.CountryApportionment,
                     EnglandDisposalCost = "80",
@@ -54,7 +54,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             var data = new CalcResultLapcapData
             {
                 Name = "Test Lapcap Data",
-                CalcResultLapcapDataDetails = records,
+                CalcResultLapcapDataDetail = records,
             };
 
             // Act
@@ -63,8 +63,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(data.Name, result.Name);
-            Assert.IsNotNull(result.CalcResultLapcapDataDetails);
-            var details = result.CalcResultLapcapDataDetails.ToList();
+            Assert.IsNotNull(result.CalcResultLapcapDataDetail);
+            var details = result.CalcResultLapcapDataDetail.ToList();
             Assert.IsTrue(details.Any(d => d.MaterialName == "Paper"));
 
             Assert.IsNotNull(result.CalcResultLapcapDataTotal);

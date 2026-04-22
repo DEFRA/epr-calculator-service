@@ -39,21 +39,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
         }
 
         [TestMethod]
-        public void CanSetAndGetMaterial()
-        {
-            // Arrange
-            var fixture = new Fixture();
-
-            var testValue = fixture.Create<string>();
-
-            // Act
-            _testClass.Material = testValue;
-
-            // Assert
-            Assert.AreEqual(testValue, _testClass.Material);
-        }
-
-        [TestMethod]
         public void CanSetAndGetEngland()
         {
             // Arrange

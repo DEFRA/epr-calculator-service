@@ -7,6 +7,7 @@ using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -17,6 +18,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
     {
         private readonly CalcRunLaDisposalCostBuilder builder;
         private readonly ApplicationDBContext dbContext;
+        private readonly SelfManagedConsumerWaste smcw;
 
         public class ProducerData
         {
@@ -42,6 +44,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             dbContext = new ApplicationDBContext(dbContextOptions);
             dbContext.Database.EnsureCreated();
             builder = new CalcRunLaDisposalCostBuilder(dbContext);
+
+            smcw = new SelfManagedConsumerWaste
+            {
+                ProducerTotals = [],
+                OverallTotalPerMaterials = []
+            };
         }
 
         private Fixture Fixture { get; init; }
@@ -143,7 +151,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             calcResult.CalcResultScaledupProducers = GetScaledUpProducers();
 
             // Act
-            var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, calcResult);
+            var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, calcResult, smcw);
 
             // Assert
             Assert.IsNotNull(lapcapDisposalCostResults);
@@ -160,7 +168,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             calcResult.CalcResultScaledupProducers = GetScaledUpProducers();
 
             // Act
-            var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, calcResult);
+            var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, calcResult, smcw);
 
             // Assert
             var headerRow = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails.Single(x => x.OrderId == 1);
@@ -216,7 +224,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
 
             // Act
-            var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, calcResult);
+            var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, calcResult, smcw);
 
             // Assert
             var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails.Single(x => x.Name == MaterialNames.Plastic);
@@ -274,7 +282,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
 
             // Act
-            var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, calcResult);
+            var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, calcResult, smcw);
 
             // Assert
             var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails.Single(x => x.Name == MaterialNames.Glass);
@@ -306,7 +314,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
 
             // Act
-            var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, calcResult);
+            var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, calcResult, smcw);
 
             // Assert
             var culture = CultureInfo.GetCultureInfo("en-GB");
@@ -337,7 +345,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             calcResult.CalcResultScaledupProducers = GetScaledUpProducers();
 
             // Act
-            var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, calcResult);
+            var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, calcResult, smcw);
 
             // Assert
             var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails.Single(x => x.Name == CommonConstants.Total);
@@ -382,7 +390,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
 
             // Act
-            var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, calcResult);
+            var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, calcResult, smcw);
 
             // Assert
             var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails.Single(x => x.Name == MaterialNames.Plastic);
@@ -403,7 +411,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
 
             // Act
-            var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, calcResult);
+            var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, calcResult, smcw);
 
             // Assert
             var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails.Single(x => x.Name == MaterialNames.Plastic);
