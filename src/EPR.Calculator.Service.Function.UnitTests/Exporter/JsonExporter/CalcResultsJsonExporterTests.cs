@@ -45,6 +45,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
         {
             return new CalcResult
             {
+                ShowModulations = true,
                 CalcResultDetail = new CalcResultDetail
                 {
                     RunId = 1,
@@ -60,7 +61,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
                     Name = "LAPCAP Data",
-                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>
+                    CalcResultLapcapDataDetail = new List<CalcResultLapcapDataDetail>
                     {
                         new()
                         {
@@ -258,7 +259,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                             Wales = "WalesTest",
                             Name = "ScotlandTest",
                             Scotland = "ScotlandTest",
-                            Material = "Material1",
                             NorthernIreland = "NorthernIrelandTest",
                             Total = "null",
                             ProducerReportedHouseholdPackagingWasteTonnage = "null",
@@ -295,7 +295,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                 CalcResultSummary = TestDataHelper.GetCalcResultSummary(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
-                CalcResultModulation = null,
             };
         }
     }
