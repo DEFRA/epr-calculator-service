@@ -19,13 +19,13 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.Level));
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.SubmissionPeriodCode));
 
-                AppendProjectedProducerTonnageByMaterial(csvContent, producer.ProjectedTonnageByMaterial);
+                AppendProjectedProducerTonnageByMaterial(csvContent, producer.H2ProjectedTonnageByMaterial);
 
                 csvContent.AppendLine();
             }
         }
 
-        private static void AppendProjectedProducerTonnageByMaterial(StringBuilder csvContent, Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage> h2ProjectedProducerTonnageByMaterial)
+        private static void AppendProjectedProducerTonnageByMaterial(StringBuilder csvContent, IReadOnlyDictionary<string, CalcResultH2ProjectedProducerMaterialTonnage> h2ProjectedProducerTonnageByMaterial)
         {
             void appendRamTonnage(RAMTonnage tonnage)
             {
@@ -44,15 +44,15 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
                 var tonnage = producerTonnage.Value;
 
                 appendRamTonnage(tonnage.HouseholdRAMTonnage);
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.HouseholdTonnageDefaultedRed, DecimalPlaces.Three, DecimalFormats.F3));
+                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.HouseholdTonnageWithoutRAM, DecimalPlaces.Three, DecimalFormats.F3));
 
                 appendRamTonnage(tonnage.PublicBinRAMTonnage);
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.PublicBinTonnageDefaultedRed, DecimalPlaces.Three, DecimalFormats.F3));
+                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.PublicBinTonnageWithoutRAM, DecimalPlaces.Three, DecimalFormats.F3));
 
                 if (materialCode == MaterialCodes.Glass)
                 {
                     appendRamTonnage(tonnage.HouseholdDrinksContainerRAMTonnage!);
-                    csvContent.Append(CsvSanitiser.SanitiseData(tonnage.HouseholdDrinksContainerDefaultedRed, DecimalPlaces.Three, DecimalFormats.F3));
+                    csvContent.Append(CsvSanitiser.SanitiseData(tonnage.HouseholdDrinksContainerTonnageWithoutRAM, DecimalPlaces.Three, DecimalFormats.F3));
                 }
 
                 csvContent.Append(CsvSanitiser.SanitiseData(tonnage.TotalTonnage, DecimalPlaces.Three, DecimalFormats.F3));
