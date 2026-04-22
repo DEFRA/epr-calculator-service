@@ -19,13 +19,13 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.Level));
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.SubmissionPeriodCode));
 
-                AppendProjectedProducerTonnageByMaterial(csvContent, producer.ProjectedTonnageByMaterial);
+                AppendProjectedProducerTonnageByMaterial(csvContent, producer.H1ProjectedTonnageByMaterial);
 
                 csvContent.AppendLine();
             }
         }
 
-        private static void AppendProjectedProducerTonnageByMaterial(StringBuilder csvContent, Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage> h1ProjectedProducerTonnageByMaterial)
+        private static void AppendProjectedProducerTonnageByMaterial(StringBuilder csvContent, IReadOnlyDictionary<string, CalcResultH1ProjectedProducerMaterialTonnage> h1ProjectedProducerTonnageByMaterial)
         {
             foreach (var producerTonnage in h1ProjectedProducerTonnageByMaterial)
             {

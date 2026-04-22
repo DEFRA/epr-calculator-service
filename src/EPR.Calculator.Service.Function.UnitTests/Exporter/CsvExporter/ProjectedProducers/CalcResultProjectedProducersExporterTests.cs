@@ -197,17 +197,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                         SubsidiaryId = null,
                         Level = "1",
                         SubmissionPeriodCode = "2026-H2",
-                        ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
+                        H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
                         {
                             {
                                 "AL",
                                 new CalcResultH2ProjectedProducerMaterialTonnage
                                 {
                                    HouseholdRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 30, RedMedicalTonnage = 40, AmberTonnage = 40, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
-                                   HouseholdTonnageDefaultedRed = 0,
+                                   HouseholdTonnageWithoutRAM = 0,
                                    PublicBinRAMTonnage = new RAMTonnage{ Tonnage = 200, RedTonnage = 50, RedMedicalTonnage = 20, AmberTonnage = 30, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
-                                   PublicBinTonnageDefaultedRed = 0,
-                                   TotalTonnage = 300
+                                   PublicBinTonnageWithoutRAM = 0,
+                                   TotalTonnage = 300,
+                                   ProjectedHouseholdRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 30, RedMedicalTonnage = 40, AmberTonnage = 40, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                   ProjectedPublicBinRAMTonnage = new RAMTonnage{ Tonnage = 200, RedTonnage = 50, RedMedicalTonnage = 20, AmberTonnage = 30, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
                                 }
                             },
                             {
@@ -215,12 +217,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                                 new CalcResultH2ProjectedProducerMaterialTonnage
                                 {
                                     HouseholdRAMTonnage = new RAMTonnage{ Tonnage = 200, RedTonnage = 50, RedMedicalTonnage = 20, AmberTonnage = 30, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
-                                    HouseholdTonnageDefaultedRed = 0,
+                                    HouseholdTonnageWithoutRAM = 0,
                                     PublicBinRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 30, RedMedicalTonnage = 40, AmberTonnage = 40, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
-                                    PublicBinTonnageDefaultedRed = 0,
+                                    PublicBinTonnageWithoutRAM = 0,
                                     HouseholdDrinksContainerRAMTonnage = new RAMTonnage{ Tonnage = 500, RedTonnage = 0, RedMedicalTonnage = 0, AmberTonnage = 0, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
-                                    HouseholdDrinksContainerDefaultedRed = 500,
-                                    TotalTonnage = 800
+                                    HouseholdDrinksContainerTonnageWithoutRAM = 500,
+                                    TotalTonnage = 800,
+                                    ProjectedHouseholdRAMTonnage = new RAMTonnage{ Tonnage = 200, RedTonnage = 50, RedMedicalTonnage = 20, AmberTonnage = 30, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    ProjectedPublicBinRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 30, RedMedicalTonnage = 40, AmberTonnage = 40, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    ProjectedHouseholdDrinksContainerRAMTonnage = new RAMTonnage{ Tonnage = 500, RedTonnage = 500, RedMedicalTonnage = 0, AmberTonnage = 0, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
                                 }
                             },
                         },
@@ -238,7 +243,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                         SubsidiaryId = null,
                         Level = "1",
                         SubmissionPeriodCode = "2026-H1",
-                        ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>
+                        H1ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>
                         {
                             {
                                 "AL",

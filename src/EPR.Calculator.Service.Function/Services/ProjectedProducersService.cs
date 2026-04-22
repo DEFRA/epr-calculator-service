@@ -83,22 +83,22 @@ namespace EPR.Calculator.Service.Function.Services
             }
 
             bool HasDefaultedRedTonnage(CalcResultH2ProjectedProducerMaterialTonnage projectedTonnageByMaterial) =>
-                projectedTonnageByMaterial.HouseholdTonnageDefaultedRed > 0 || projectedTonnageByMaterial.PublicBinTonnageDefaultedRed > 0 || projectedTonnageByMaterial.HouseholdDrinksContainerDefaultedRed > 0;
+                projectedTonnageByMaterial.HouseholdTonnageWithoutRAM > 0 || projectedTonnageByMaterial.PublicBinTonnageWithoutRAM > 0 || projectedTonnageByMaterial.HouseholdDrinksContainerTonnageWithoutRAM > 0;
 
             var existingLookup = existingAsProjected.ToLookup(x => new { x.ProducerDetail!.ProducerId, x.ProducerDetail.SubsidiaryId, x.Material!.Code });
 
             return projectedH2Producers
                 .Where(p => !p.IsSubtotal)
-                .SelectMany(projectedProducer => projectedProducer.ProjectedTonnageByMaterial.Where(p => HasDefaultedRedTonnage(p.Value))
+                .SelectMany(projectedProducer => projectedProducer.H2ProjectedTonnageByMaterial.Where(p => HasDefaultedRedTonnage(p.Value))
                     .SelectMany(materialTonnage => {
                         var key = new { ProducerId = projectedProducer.ProducerId, SubsidiaryId = projectedProducer.SubsidiaryId, Code = materialTonnage.Key };
                         var maybeExisting = existingLookup[key].FirstOrDefault();
 
                         return maybeExisting != null ? new List<ProducerReportedMaterialProjected?>
                         {
-                            GetMaybeNewProjected(maybeExisting.ProducerDetailId, maybeExisting.MaterialId, projectedProducer.SubmissionPeriodCode, PackagingTypes.Household, materialTonnage.Value.HouseholdTonnageDefaultedRed),
-                            GetMaybeNewProjected(maybeExisting.ProducerDetailId, maybeExisting.MaterialId, projectedProducer.SubmissionPeriodCode, PackagingTypes.PublicBin, materialTonnage.Value.PublicBinTonnageDefaultedRed),
-                            GetMaybeNewProjected(maybeExisting.ProducerDetailId, maybeExisting.MaterialId, projectedProducer.SubmissionPeriodCode, PackagingTypes.HouseholdDrinksContainers, materialTonnage.Value.HouseholdDrinksContainerDefaultedRed)
+                            GetMaybeNewProjected(maybeExisting.ProducerDetailId, maybeExisting.MaterialId, projectedProducer.SubmissionPeriodCode, PackagingTypes.Household, materialTonnage.Value.HouseholdTonnageWithoutRAM),
+                            GetMaybeNewProjected(maybeExisting.ProducerDetailId, maybeExisting.MaterialId, projectedProducer.SubmissionPeriodCode, PackagingTypes.PublicBin, materialTonnage.Value.PublicBinTonnageWithoutRAM),
+                            GetMaybeNewProjected(maybeExisting.ProducerDetailId, maybeExisting.MaterialId, projectedProducer.SubmissionPeriodCode, PackagingTypes.HouseholdDrinksContainers, materialTonnage.Value.HouseholdDrinksContainerTonnageWithoutRAM)
                         }.Where(p => p != null).Select(p => p!) : new List<ProducerReportedMaterialProjected>();
                     }
                 )
@@ -134,7 +134,7 @@ namespace EPR.Calculator.Service.Function.Services
 
             return projectedH1Producers
                 .Where(p => !p.IsSubtotal)
-                .SelectMany(projectedProducer => projectedProducer.ProjectedTonnageByMaterial.Where(p => HasTonnageWithoutRam(p.Value))
+                .SelectMany(projectedProducer => projectedProducer.H1ProjectedTonnageByMaterial.Where(p => HasTonnageWithoutRam(p.Value))
                     .SelectMany(materialTonnage => {
                         var key = new { ProducerId = projectedProducer.ProducerId, SubsidiaryId = projectedProducer.SubsidiaryId, Code = materialTonnage.Key };
                         var maybeExisting = existingLookup[key].FirstOrDefault();
