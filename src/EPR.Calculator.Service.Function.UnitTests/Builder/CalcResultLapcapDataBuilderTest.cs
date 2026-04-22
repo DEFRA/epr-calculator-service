@@ -93,9 +93,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             Assert.IsNotNull(lapcapResults);
             Assert.AreEqual(CalcResultLapcapDataBuilder.LapcapHeader, lapcapResults.Name);
-            Assert.AreEqual(5, lapcapResults.CalcResultLapcapDataDetails.Count());
+            Assert.AreEqual(5, lapcapResults.CalcResultLapcapDataDetail.Count());
 
-            var headerRow = lapcapResults.CalcResultLapcapDataDetails.Single(x => x.OrderId == 1);
+            var headerRow = lapcapResults.CalcResultLapcapDataDetail.Single(x => x.OrderId == 1);
             Assert.IsNotNull(headerRow);
             Assert.AreEqual(LapcapHeaderConstants.Name, headerRow.Name);
             Assert.AreEqual(LapcapHeaderConstants.EnglandDisposalCost, headerRow.EnglandDisposalCost);
@@ -104,7 +104,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual(LapcapHeaderConstants.NorthernIrelandDisposalCost, headerRow.NorthernIrelandDisposalCost);
             Assert.AreEqual(LapcapHeaderConstants.TotalDisposalCost, headerRow.TotalDisposalCost);
 
-            var aluminiumRow = lapcapResults.CalcResultLapcapDataDetails.Single(x => x.Name == aluminium);
+            var aluminiumRow = lapcapResults.CalcResultLapcapDataDetail.Single(x => x.Name == aluminium);
             Assert.IsNotNull(aluminiumRow);
             Assert.AreEqual(aluminium, aluminiumRow.Name);
             Assert.AreEqual("£100.00", aluminiumRow.EnglandDisposalCost);
@@ -113,7 +113,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual("£25.00", aluminiumRow.NorthernIrelandDisposalCost);
             Assert.AreEqual("£250.00", aluminiumRow.TotalDisposalCost);
 
-            var plasticRow = lapcapResults.CalcResultLapcapDataDetails.Single(x => x.Name == plastic);
+            var plasticRow = lapcapResults.CalcResultLapcapDataDetail.Single(x => x.Name == plastic);
             Assert.IsNotNull(plasticRow);
             Assert.AreEqual(plastic, plasticRow.Name);
             Assert.AreEqual("£100.00", plasticRow.EnglandDisposalCost);
@@ -122,7 +122,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual("£25.00", plasticRow.NorthernIrelandDisposalCost);
             Assert.AreEqual("£250.00", plasticRow.TotalDisposalCost);
 
-            var totalRow = lapcapResults.CalcResultLapcapDataDetails.Single(x => x.OrderId == 4);
+            var totalRow = lapcapResults.CalcResultLapcapDataDetail.Single(x => x.OrderId == 4);
             Assert.IsNotNull(totalRow);
             Assert.AreEqual("Total", totalRow.Name);
             Assert.AreEqual("£200.00", totalRow.EnglandDisposalCost);
@@ -131,7 +131,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual("£50.00", totalRow.NorthernIrelandDisposalCost);
             Assert.AreEqual("£500.00", totalRow.TotalDisposalCost);
 
-            var countryApp = lapcapResults.CalcResultLapcapDataDetails.Single(x => x.OrderId == 5);
+            var countryApp = lapcapResults.CalcResultLapcapDataDetail.Single(x => x.OrderId == 5);
             Assert.IsNotNull(countryApp);
             Assert.AreEqual(CalcResultLapcapDataBuilder.CountryApportionment, countryApp.Name);
             Assert.AreEqual("40.00000000%", countryApp.EnglandDisposalCost);

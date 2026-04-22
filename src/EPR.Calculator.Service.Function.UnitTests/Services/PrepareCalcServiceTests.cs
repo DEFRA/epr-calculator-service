@@ -56,6 +56,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var calcResult = new CalcResult
             {
+                ShowModulations = true,
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultDetail = new CalcResultDetail
@@ -68,7 +69,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
                     Name = string.Empty,
-                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>(),
+                    CalcResultLapcapDataDetail = new List<CalcResultLapcapDataDetail>(),
                 },
                 CalcResultParameterOtherCost = new()
                 {
@@ -87,7 +88,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     TonnageHeading = string.Empty,
                 },
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
-                CalcResultModulation = null,
             };
 
             var fixture = new Fixture();

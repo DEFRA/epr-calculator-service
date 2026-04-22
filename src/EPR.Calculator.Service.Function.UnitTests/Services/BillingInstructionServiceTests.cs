@@ -50,6 +50,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Arrange
             var calcResult = new CalcResult
             {
+                ShowModulations = true,
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultDetail = new CalcResultDetail
@@ -62,7 +63,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
                     Name = string.Empty,
-                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>(),
+                    CalcResultLapcapDataDetail = new List<CalcResultLapcapDataDetail>(),
                 },
                 CalcResultParameterOtherCost = new()
                 {
@@ -111,7 +112,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     }
                 },
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
-                CalcResultModulation = null,
             };
 
 
@@ -133,6 +133,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Arrange
             var calcResult = new CalcResult
             {
+                ShowModulations = true,
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultDetail = new CalcResultDetail
@@ -145,7 +146,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
                     Name = string.Empty,
-                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>(),
+                    CalcResultLapcapDataDetail = new List<CalcResultLapcapDataDetail>(),
                 },
                 CalcResultParameterOtherCost = new()
                 {
@@ -165,7 +166,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 },
                 CalcResultSummary  = new() {  ProducerDisposalFees = null! },
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
-                CalcResultModulation = null,
             };
 
 
@@ -188,6 +188,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var fixture = new Fixture();
             var calcResult = new CalcResult
             {
+                ShowModulations = true,
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultDetail = new CalcResultDetail
@@ -200,7 +201,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
                     Name = string.Empty,
-                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>(),
+                    CalcResultLapcapDataDetail = new List<CalcResultLapcapDataDetail>(),
                 },
                 CalcResultParameterOtherCost = new()
                 {
@@ -242,7 +243,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     }
                 },
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
-                CalcResultModulation = null,
             };
 
 
