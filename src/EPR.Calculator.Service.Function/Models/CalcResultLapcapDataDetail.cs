@@ -1,15 +1,15 @@
 ﻿namespace EPR.Calculator.Service.Function.Models
 {
-    public class CalcResultLapcapDataDetails
+    public class CalcResultLapcapDataDetail
     {
         public required string Name { get; set; }
 
         public string EnglandDisposalCost { get; set; } = string.Empty;
 
         public string WalesDisposalCost { get; set; } = string.Empty;
-        
+
         public string ScotlandDisposalCost { get; set; } = string.Empty;
-        
+
         public string NorthernIrelandDisposalCost { get; set; } = string.Empty;
 
         public string TotalDisposalCost { get; set; } = string.Empty;
@@ -21,7 +21,7 @@
         public decimal ScotlandCost { get; set; }
 
         public decimal NorthernIrelandCost { get; set; }
-        
+
         public decimal TotalCost { get; set; }
 
         public int OrderId { get; set; }
