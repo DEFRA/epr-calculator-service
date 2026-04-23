@@ -378,71 +378,56 @@
         } 
 
         [TestMethod]
-        public void AlignProjectedRAMTonnages_NoDifferences()
+        public void ReconcileRoundingDifference_NoMissingRam()
         {
-            var tonnage = new RAMTonnage
-            {
-                Tonnage = 210,
-                RedTonnage = 10,
-                AmberTonnage = 20,
-                GreenTonnage = 30,
-                RedMedicalTonnage = 40,
-                AmberMedicalTonnage = 50,
-                GreenMedicalTonnage = 60
-            };
-
-            Assert.AreEqual(tonnage, H1ProjectedProducersBuilderUtils.AssignMissingProjectedRAMTonnage(tonnage));
+            var tonnage = new RAMTonnage { Tonnage = 200, RedTonnage = 0, AmberTonnage = 20, GreenTonnage = 30, RedMedicalTonnage = 0, AmberMedicalTonnage = 50, GreenMedicalTonnage = 0 };
+            var h2Proportions = new RAMProportions { Red = 0.5m, Amber = 0, Green = 0.5m, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 };
+            var withProportions = H1ProjectedProducersBuilderUtils.GetProportionateRam(tonnage, 100, h2Proportions);
+            var roundingDiff = withProportions.Tonnage - withProportions.GetTotalRamTonnage();
+            Assert.AreEqual(0, roundingDiff);
+            var reconciled = H1ProjectedProducersBuilderUtils.ReconcileRoundingDifference(withProportions);
+            Assert.AreEqual(withProportions, reconciled);
         }
 
         [TestMethod]
-        public void AlignProjectedRAMTonnages_APositiveDifference()
+        public void ReconcileRoundingDifference_MissingRam()
         {
-            var tonnage = new RAMTonnage
-            {
-                Tonnage = 200,
-                RedTonnage = 10,
-                AmberTonnage = 20,
-                GreenTonnage = 30,
-                RedMedicalTonnage = 40,
-                AmberMedicalTonnage = 50,
-                GreenMedicalTonnage = 60
-            };
-
-            Assert.AreEqual(tonnage with { GreenMedicalTonnage = 50 }, H1ProjectedProducersBuilderUtils.AssignMissingProjectedRAMTonnage(tonnage));
+            var tonnage = new RAMTonnage { Tonnage = 200, RedTonnage = 0, AmberTonnage = 20, GreenTonnage = 30, RedMedicalTonnage = 0, AmberMedicalTonnage = 50, GreenMedicalTonnage = 0 };
+            var h2Proportions = new RAMProportions { Red = 0.333333m, Amber = 0.333333m, Green = 0.333334m, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 };
+            var withProportions = H1ProjectedProducersBuilderUtils.GetProportionateRam(tonnage, 100, h2Proportions);
+            var roundingDiff = withProportions.Tonnage - withProportions.GetTotalRamTonnage();
+            Assert.IsTrue(roundingDiff > 0);
+            var reconciled = H1ProjectedProducersBuilderUtils.ReconcileRoundingDifference(withProportions);
+            Assert.AreEqual(0, reconciled.Tonnage - reconciled.GetTotalRamTonnage());
+            Assert.AreEqual(withProportions with { GreenTonnage = withProportions.GreenTonnage + roundingDiff }, reconciled);
         }
 
         [TestMethod]
-        public void AlignProjectedRAMTonnages_ANegativeDifference()
+        public void ReconcileRoundingDifference_SurplusRam()
         {
-            var tonnage = new RAMTonnage
-            {
-                Tonnage = 220,
-                RedTonnage = 10,
-                AmberTonnage = 20,
-                GreenTonnage = 30,
-                RedMedicalTonnage = 40,
-                AmberMedicalTonnage = 50,
-                GreenMedicalTonnage = 60
-            };
-
-            Assert.AreEqual(tonnage with { GreenMedicalTonnage = 70 }, H1ProjectedProducersBuilderUtils.AssignMissingProjectedRAMTonnage(tonnage));
+            var tonnage = new RAMTonnage { Tonnage = 200, RedTonnage = 0, AmberTonnage = 20, GreenTonnage = 30, RedMedicalTonnage = 0, AmberMedicalTonnage = 50, GreenMedicalTonnage = 0 };
+            var h2Proportions = new RAMProportions { Red = 0.333335m, Amber = 0.333335m, Green = 0.333330m, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 };
+            var withProportions = H1ProjectedProducersBuilderUtils.GetProportionateRam(tonnage, 100, h2Proportions);
+            var roundingDiff = withProportions.Tonnage - withProportions.GetTotalRamTonnage();
+            Assert.IsTrue(roundingDiff < 0);
+            var reconciled = H1ProjectedProducersBuilderUtils.ReconcileRoundingDifference(withProportions);
+            Assert.AreEqual(0, reconciled.Tonnage - reconciled.GetTotalRamTonnage());
+            Assert.AreEqual(withProportions with { GreenTonnage = withProportions.GreenTonnage + roundingDiff }, reconciled);
         }
 
         [TestMethod]
-        public void AlignProjectedRAMTonnages_EqualTonnages()
+        public void ReconcileRoundingDifference_MissingRam_EqualDominantRam()
         {
-            var tonnage = new RAMTonnage
-            {
-                Tonnage = 270,
-                RedTonnage = 10,
-                AmberTonnage = 30,
-                GreenTonnage = 60,
-                RedMedicalTonnage = 40,
-                AmberMedicalTonnage = 60,
-                GreenMedicalTonnage = 60
-            };
-
-            Assert.AreEqual(tonnage with { GreenTonnage = 70 }, H1ProjectedProducersBuilderUtils.AssignMissingProjectedRAMTonnage(tonnage));
+            // Red and amber result in the same tonnages - assign missing ram to amber due to priority order
+            var tonnage = new RAMTonnage { Tonnage = 200, RedTonnage = 30, AmberTonnage = 30, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 40, GreenMedicalTonnage = 0 };
+            var h2Proportions = new RAMProportions { Red = 0.333333m, Amber = 0.333333m, Green = 0.333334m, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 };
+            var withProportions = H1ProjectedProducersBuilderUtils.GetProportionateRam(tonnage, 100, h2Proportions);
+            var roundingDiff = withProportions.Tonnage - withProportions.GetTotalRamTonnage();
+            Assert.IsTrue(roundingDiff > 0);
+            Assert.AreEqual(withProportions.RedTonnage, withProportions.AmberTonnage);
+            var reconciled = H1ProjectedProducersBuilderUtils.ReconcileRoundingDifference(withProportions);
+            Assert.AreEqual(0, reconciled.Tonnage - reconciled.GetTotalRamTonnage());
+            Assert.AreEqual(withProportions with { AmberTonnage = withProportions.AmberTonnage + roundingDiff }, reconciled);
         }
 
         private decimal To3DP(decimal value)
