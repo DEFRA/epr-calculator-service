@@ -38,7 +38,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
             string GetProportionPercentage(decimal proportion) {
                 var showProportion = 
                     (tonnage.HouseholdTonnageWithoutRAM > 0 || tonnage.PublicBinTonnageWithoutRAM > 0 || (tonnage.HouseholdDrinksContainerTonnageWithoutRAM ?? 0) > 0)
-                        && tonnage.H2TotalTonnage > 0;
+                        && tonnage.H2RamProportions.AnyProportions();
                 return showProportion ? CsvSanitiser.SanitiseData(proportion * 100, DecimalPlaces.Two, DecimalFormats.F2, isPercentage: true) : CsvSanitiser.SanitiseData(CommonConstants.Hyphen);
             }
 
