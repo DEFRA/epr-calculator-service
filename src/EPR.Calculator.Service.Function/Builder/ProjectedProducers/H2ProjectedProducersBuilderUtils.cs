@@ -87,7 +87,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             };
         }
 
-        public static CalcResultH2ProjectedProducer SumProducerGroupTonnages(IEnumerable<CalcResultH2ProjectedProducer> prodGroup)
+        public static CalcResultH2ProjectedProducer SumProducerGroupTonnages(List<CalcResultH2ProjectedProducer> prodGroup)
         {
             var producer = prodGroup.First();
             var sumRam = (string matKey, Func<CalcResultProjectedProducerMaterialTonnage, RAMTonnage?> tonnageFunc) => 

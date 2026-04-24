@@ -266,6 +266,27 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             AssertExcepted(expected, await FillGaps(given));
         }
 
+        [TestMethod]
+        public async Task H1H2Projection_h1_use_subtotal_h2_projection()
+        {
+            var given = new[] {
+                new[] { "101", "", "2025-H2", "", "AL", "HH", "100", "20",  "40", "40",  "0",  "", "" },
+                new[] { "101", "A", "2025-H2", "", "AL", "HH", "200", "20",  "40", "40",  "0",  "", "" },
+                new[] { "101", "B", "2025-H2", "", "AL", "HH", "300", "150", "25", "25",  "0",  "", "" },
+                new[] { "101", "", "2025-H1", "", "AL", "HH", "100", "20",  "40", "40",  "0",  "", "" },
+                new[] { "101", "A", "2025-H2", "", "AL", "HH", "200", "20",  "40", "40",  "0",  "", "" },
+                new[] { "101", "B", "2025-H2", "", "AL", "HH", "300", "150", "25", "25",  "0",  "", "" },
+            };
+            var expected = new[]  {
+                new[] { "101", "", "2025-H1", "1", "AL", "HH", "100", "20.000", "40.000", "40.000", "0", "0", "0" },
+                new[] { "101", "", "2025-H2", "1", "AL", "HH", "1100", "760", "170", "170", "0", "0", "0" },
+                new[] { "101", "", "2025-H2", "2", "AL", "HH", "100", "20", "40", "40", "0", "0", "0" },
+                new[] { "101", "A", "2025-H2", "2", "AL", "HH", "400", "240", "80", "80", "0", "0", "0" },
+                new[] { "101", "B", "2025-H2", "2", "AL", "HH", "600", "500", "50", "50", "0", "0", "0" }
+            };
+            AssertExcepted(expected, await FillGaps(given));
+        }
+
         private CalcResultsRequestDto InsertData(string[][] given)
         {
             for (int i = 0; i < given.GetLength(0); i++)

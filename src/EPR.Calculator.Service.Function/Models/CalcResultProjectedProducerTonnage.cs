@@ -24,6 +24,11 @@
         public decimal RedMedical { get; init; }
         public decimal AmberMedical { get; init; }
         public decimal GreenMedical { get; init; }
+
+        public bool AnyProportions()
+        {
+            return Red > 0 || Amber > 0 || Green > 0 || RedMedical > 0 || AmberMedical > 0 || GreenMedical > 0;
+        }
     }
 
     public abstract record CalcResultProjectedProducerMaterialTonnage
@@ -57,6 +62,5 @@
     public record CalcResultH1ProjectedProducerMaterialTonnage : CalcResultProjectedProducerMaterialTonnage
     {
         public required RAMProportions H2RamProportions { get; init; }
-        public required decimal H2TotalTonnage { get; init; }
     }
 }
