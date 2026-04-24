@@ -256,8 +256,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                                    H2RamProportions = new RAMProportions { Red = 0.1m, Amber = 0.2m, Green = 0.3m, RedMedical = 0.4m, AmberMedical = 0.5m, GreenMedical = 0.6m },
                                    ProjectedHouseholdRAMTonnage = new RAMTonnage{ Tonnage = 50, RedTonnage = 15, RedMedicalTonnage = 20, AmberTonnage = 10, AmberMedicalTonnage = 0, GreenTonnage = 20, GreenMedicalTonnage = 0 },
                                    ProjectedPublicBinRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 25, RedMedicalTonnage = 10, AmberTonnage = 20, AmberMedicalTonnage = 0, GreenTonnage = 50, GreenMedicalTonnage = 0 },
-                                   TotalTonnage = 300,
-                                   H2TotalTonnage = 300
+                                   TotalTonnage = 300
                                 }
                             },
                             {
@@ -274,8 +273,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                                     ProjectedHouseholdRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 15, RedMedicalTonnage = 20, AmberTonnage = 10, AmberMedicalTonnage = 0, GreenTonnage = 20, GreenMedicalTonnage = 0 },
                                     ProjectedPublicBinRAMTonnage = new RAMTonnage{ Tonnage = 50, RedTonnage = 25, RedMedicalTonnage = 10, AmberTonnage = 20, AmberMedicalTonnage = 0, GreenTonnage = 50, GreenMedicalTonnage = 0 },
                                     ProjectedHouseholdDrinksContainerRAMTonnage = new RAMTonnage{ Tonnage = 700, RedTonnage = 50, RedMedicalTonnage = 200, AmberTonnage = 200, AmberMedicalTonnage = 0, GreenTonnage = 50, GreenMedicalTonnage = 0 },
-                                    TotalTonnage = 300,
-                                    H2TotalTonnage = 700
+                                    TotalTonnage = 300
                                 }
                             },
                             {
@@ -289,8 +287,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                                     H2RamProportions = new RAMProportions { Red = 0, Amber = 0, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 },
                                     ProjectedHouseholdRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 15, RedMedicalTonnage = 20, AmberTonnage = 10, AmberMedicalTonnage = 0, GreenTonnage = 20, GreenMedicalTonnage = 0 },
                                     ProjectedPublicBinRAMTonnage = new RAMTonnage{ Tonnage = 50, RedTonnage = 25, RedMedicalTonnage = 10, AmberTonnage = 20, AmberMedicalTonnage = 0, GreenTonnage = 50, GreenMedicalTonnage = 0 },
-                                    TotalTonnage = 300,
-                                    H2TotalTonnage = 0
+                                    TotalTonnage = 300
                                 }
                             },
                         },
