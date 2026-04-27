@@ -8,10 +8,10 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
     {
         public static decimal? ComputePerMaterialChange(
             string level,
-            decimal netReportedTonnage,
+            decimal? netReportedTonnage,
             decimal? previousInvoicedTonnage)
         {
-            if (level != CommonConstants.LevelOne.ToString())
+            if (level != CommonConstants.LevelOne.ToString() || netReportedTonnage is null)
                 return null;
 
             if (!previousInvoicedTonnage.HasValue)
@@ -56,7 +56,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             IDictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> byMaterial)
         {
             if (level != CommonConstants.LevelOne.ToString())
-            {                
+            {
                 return (null, null);
             }
 

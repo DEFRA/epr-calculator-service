@@ -109,7 +109,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var producer = TestDataHelper.GetProducerDisposalFees()[0];
 
             // Act
-            _testClass.AddNewRow(csvContent, producer);
+            _testClass.AddNewRow(csvContent, producer, showModulations: false);
             var results = csvContent.ToString().Split(",");
 
             // Assert
@@ -124,7 +124,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var producer = TestDataHelper.GetProducerDisposalFeesForOverAllTotal()[0];
 
             // Act
-            _testClass.AddNewRow(csvContent, producer);
+            _testClass.AddNewRow(csvContent, producer, showModulations: false);
             var results = csvContent.ToString().Split(",");
 
             // Assert
@@ -139,11 +139,26 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var producer = TestDataHelper.GetProducerDisposalFeesTonnageValueNull()[0];
 
             // Act
-            _testClass.AddNewRow(csvContent, producer);
+            _testClass.AddNewRow(csvContent, producer, showModulations: false);
             var results = csvContent.ToString().Split(",");
 
             // Assert
             Assert.AreEqual(306, results.Length);
+        }
+
+        [TestMethod]
+        public void CanCallAddNewRow_WithModulations()
+        {
+            // Arrange
+            var csvContent = new StringBuilder();
+            var producer = TestDataHelper.GetProducerDisposalFees()[0];
+
+            // Act
+            _testClass.AddNewRow(csvContent, producer, showModulations: true);
+            var results = csvContent.ToString().Split(",");
+
+            // Assert
+            Assert.AreEqual(338, results.Length);
         }
 
         [TestMethod]

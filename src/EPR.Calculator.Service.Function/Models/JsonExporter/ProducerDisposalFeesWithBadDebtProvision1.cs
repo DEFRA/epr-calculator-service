@@ -81,7 +81,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
         [JsonPropertyName("netTonnage")]
         [JsonConverter(typeof(DecimalPrecision3Converter))]
-        public required decimal NetTonnage { get; init; }
+        public required decimal? NetTonnage { get; init; }
 
         [JsonPropertyName("tonnageChange")]
         public required string TonnageChange { get; init; }
@@ -119,8 +119,8 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                 HouseholdPackagingWasteTonnage = producerTonnage.HouseholdPackagingWasteTonnage,
                 PublicBinTonnage = producerTonnage.PublicBinTonnage,
                 TotalTonnage = producerTonnage.TotalReportedTonnage,
-                SelfManagedConsumerWasteTonnage = producerTonnage.ManagedConsumerWasteTonnage,
-                NetTonnage = producerTonnage.NetReportedTonnage,
+                SelfManagedConsumerWasteTonnage = producerTonnage.SelfManagedConsumerWasteTonnage,
+                NetTonnage = producerTonnage.NetReportedTonnage.total,
                 TonnageChange = level == "1" ? (producerTonnage.TonnageChange?.ToString() ?? CommonConstants.Hyphen) : CommonConstants.Hyphen,
                 PricePerTonne = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.PricePerTonne, 4),
                 ProducerDisposalFeeWithoutBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.ProducerDisposalFee),

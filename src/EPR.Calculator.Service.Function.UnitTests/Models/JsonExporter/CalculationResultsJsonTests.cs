@@ -110,7 +110,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
 
             var actual = roundTrippedData[0]!["producerDisposalFeesWithBadDebtProvision1"]!["materialBreakdown"]![0]!;
             var producer = data.ProducerDisposalFees.SingleOrDefault(t => !string.IsNullOrEmpty(t.Level))!;
-            var expected = producer.ProducerDisposalFeesByMaterial!.First();
+            var expected = producer.ProducerDisposalFeesByMaterial.First();
 
             decimal? actualValue = 0;
             if(actual["previousInvoicedTonnage"]?.ToString() == "-")
@@ -122,8 +122,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             Assert.AreEqual(expected.Value.HouseholdPackagingWasteTonnage, actual["householdPackagingWasteTonnage"]!.GetValue<decimal>());
             Assert.AreEqual(expected.Value.PublicBinTonnage, actual["publicBinTonnage"]!.GetValue<decimal>());
             Assert.AreEqual(expected.Value.TotalReportedTonnage, actual["totalTonnage"]!.GetValue<decimal>());
-            Assert.AreEqual(expected.Value.ManagedConsumerWasteTonnage, actual["selfManagedConsumerWasteTonnage"]!.GetValue<decimal>());
-            Assert.AreEqual(expected.Value.NetReportedTonnage, actual["netTonnage"]!.GetValue<decimal>());
+            Assert.AreEqual(expected.Value.SelfManagedConsumerWasteTonnage, actual["selfManagedConsumerWasteTonnage"]!.GetValue<decimal>());
+            Assert.AreEqual(expected.Value.NetReportedTonnage.total, actual["netTonnage"]!.GetValue<decimal>());
 
             var actualPrev = ReadNullableDecimal(actual, "previousInvoicedTonnage");
             Assert.AreEqual(expected.Value.PreviousInvoicedTonnage, actualPrev);
@@ -416,7 +416,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
 
             // Assert
             Assert.IsNotNull(roundTrippedData);
-           
+
             var feeForLADisposalCosts1 = roundTrippedData[0]?["feeForLADisposalCosts1"];
             var producer = data.ProducerDisposalFees.SingleOrDefault(t => !string.IsNullOrEmpty(t.Level));
             if (producer == null)

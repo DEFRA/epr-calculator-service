@@ -54,8 +54,16 @@
         public static readonly string HouseholdDrinksContainersTonnageGreenMedical = "Household Drinks Containers Green Medical Material Tonnage";
 
         public static readonly string TotalTonnage = "Total Tonnage";
+        public static readonly string RedPlusRedMedicalTotalTonnage = "Red + Red Medical Total Tonnage";
+        public static readonly string AmberPlusAmberMedicalTotalTonnage = "Amber + Amber Medical Total Tonnage";
+        public static readonly string GreenPlusGreenMedicalTotalTonnage = "Green + Green Medical Total Tonnage";
         public static readonly string SelfManagedConsumerWasteTonnage = "Self Managed Consumer Waste Tonnage";
+        public static readonly string ActionedSelfManagedConsumerWasteTonnage = "Actioned Self Managed Consumer Waste Tonnage";
         public static readonly string NetTonnage = "Net Tonnage";
+        public static readonly string RedPlusRedMedicalNetTonnage = "Red + Red Medical Net Tonnage";
+        public static readonly string AmberPlusAmberMedicalNetTonnage = "Amber + Amber Medical Net Tonnage";
+        public static readonly string GreenPlusGreenMedicalNetTonnage = "Green + Green Medical Net Tonnage";
+
 
         public static readonly string PricePerTonne = "Price per Tonne";
         public static readonly string ProducerDisposalFee = "Producer Disposal Fee w/o Bad Debt Provision";

@@ -53,7 +53,7 @@ namespace EPR.Calculator.Service.Function.Services
                             {
                                 RunId = runId,
                                 ProducerId = producer.ProducerIdInt,
-                                NetTonnage = feeSummary.NetReportedTonnage,
+                                NetTonnage = feeSummary.NetReportedTonnage.total,
                                 MaterialId = material.Id
                             });
                         }

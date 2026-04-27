@@ -7,17 +7,30 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 {
     public static class MaterialCostsUtil
     {
-        public static decimal GetNetReportedTonnage(
+        public static (decimal? total, decimal? red,  decimal? amber, decimal? green) GetNetReportedTonnage(
             IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
             IEnumerable<ProducerDetail> producersAndSubsidiaries,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations,
             MaterialDetail material,
+            bool isOverAllTotalRow,
+            bool showModulations)
+        {
+            return isOverAllTotalRow
+                ? CalcResultSummaryUtil.GetNetReportedTonnageOverallTotal(producerDisposalFees, material, showModulations)
+                : CalcResultSummaryUtil.GetNetReportedTonnage(producersAndSubsidiaries, material, scaledUpProducers, partialObligations, showModulations);
+        }
+
+        public static decimal? GetActionedSelfManagedConsumerWasteTonnage(
+            IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
+            MaterialDetail material,
+            decimal totalReportedTonnage,
+            decimal selfManagedConsumerWasteTonnage,
             bool isOverAllTotalRow)
         {
             return isOverAllTotalRow
-                ? CalcResultSummaryUtil.GetNetReportedTonnageOverallTotal(producerDisposalFees, material)
-                : CalcResultSummaryUtil.GetNetReportedTonnageTotal(producersAndSubsidiaries, material, scaledUpProducers, partialObligations);
+                ? CalcResultSummaryUtil.GetActionedSelfManagedConsumerWasteTonnageOverallTotal(producerDisposalFees, material)
+                : CalcResultSummaryUtil.GetActionedSelfManagedConsumerWasteTonnage(totalReportedTonnage: totalReportedTonnage, selfManagedConsumerWasteTonnage: selfManagedConsumerWasteTonnage);
         }
 
         public static decimal? GetPreviousInvoicedTonnage(
