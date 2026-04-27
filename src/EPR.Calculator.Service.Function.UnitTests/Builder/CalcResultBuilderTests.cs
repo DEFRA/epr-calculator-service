@@ -191,7 +191,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             mockCalcResultScaledupProducersBuilder.Verify(m => m.ConstructAsync(resultsRequestDto), Times.Never);
             mockCalcResultProjectedProducersBuilder.Verify(m => m.ConstructAsync(resultsRequestDto), Times.Once);
-            mockProjectedProducerService.Verify(m => m.StoreProjectedProducers(1 ,It.IsAny<List<CalcResultH2ProjectedProducer>>()), Times.Once);
+            mockProjectedProducerService.Verify(m => m.StoreProjectedProducers(1, It.IsAny<List<CalcResultH2ProjectedProducer>>(), It.IsAny<List<CalcResultH1ProjectedProducer>>()), Times.Once);
         }
 
         [TestMethod]
@@ -212,7 +212,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             mockCalcResultScaledupProducersBuilder.Verify(m => m.ConstructAsync(resultsRequestDto), Times.Never);
             mockCalcResultProjectedProducersBuilder.Verify(m => m.ConstructAsync(resultsRequestDto), Times.Once);
-            mockProjectedProducerService.Verify(m => m.StoreProjectedProducers(1 ,It.IsAny<List<CalcResultH2ProjectedProducer>>()), Times.Never);
+            mockProjectedProducerService.Verify(m => m.StoreProjectedProducers(1, It.IsAny<List<CalcResultH2ProjectedProducer>>(), It.IsAny<List<CalcResultH1ProjectedProducer>>()), Times.Never);
         }
     }
 }

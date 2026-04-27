@@ -2,7 +2,8 @@
 {
     public static class CalcResultProjectedProducersHeaders
     {
-        public static readonly string H2ProjectedProducers = "H2 Packaging Data – Submitted & Projected";
+        public static readonly string H2ProjectedProducers = "H2 Packaging Data - Submitted & Projected";
+        public static readonly string H1ProjectedProducers = "H1 Packaging Data - Submitted & Projected";
         public static readonly string ProducerId = "Producer ID";
         public static readonly string SubsidiaryId = "Subsidiary ID";
         public static readonly string Level = "Level";
@@ -31,6 +32,15 @@
         public static readonly string HouseholdTonnageWithoutRAMDefaultedToRed = "Household Tonnage Without RAM(Defaulted to Red)";
         public static readonly string PublicBinTonnageWithoutRAMDefaultedToRed = "Public Bin Tonnage Without RAM(Defaulted to Red)";
         public static readonly string HouseholdDrinksContainersTonnageWithoutRAMDefaultedToRed = "Household Drinks Container Tonnage Without RAM(Defaulted to Red)";
+        public static readonly string HouseholdTonnageWithoutRAM = "Household Tonnage Without RAM";
+        public static readonly string PublicBinTonnageWithoutRAM = "Public Bin Tonnage Without RAM";
+        public static readonly string HouseholdDrinksContainersTonnageWithoutRAM = "Household Drinks Container Tonnage Without RAM";
+        public static readonly string RedH2MaterialTonnageProportion = "H2 Red Material %";
+        public static readonly string AmberH2MaterialTonnageProportion = "H2 Amber Material %";
+        public static readonly string GreenH2MaterialTonnageProportion = "H2 Green Material %";
+        public static readonly string RedMedicalH2MaterialTonnageProportion = "H2 Red Medical Material %";
+        public static readonly string AmberMedicalH2MaterialTonnageProportion = "H2 Amber Medical Material %";
+        public static readonly string GreenMedicalH2MaterialTonnageProportion = "H2 Green Medical Material %";
         public static readonly string TotalTonnage = "Total Tonnage";
         public static readonly string NoProjectedProducers = "None";
 

@@ -18,13 +18,30 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
             stringBuilder.AppendLine();
             stringBuilder.AppendLine();
 
-            // Add headers
-            PrepareH2ProjectedProducersHeaders(calcResultProjectedProducers.H2ProjectedProducersHeaders!, stringBuilder);
+            // Add H2 headers
+            PrepareProjectedProducersHeaders(calcResultProjectedProducers.H2ProjectedProducersHeaders!, stringBuilder);
 
-            // Add data
+            // Add H2 data
             if (calcResultProjectedProducers.H2ProjectedProducers?.Any() == true)
             {
-                AppendH2ProjectedProducers(calcResultProjectedProducers.H2ProjectedProducers!, stringBuilder);
+                H2ProjectedProducersExporterUtils.AppendProjectedProducers(calcResultProjectedProducers.H2ProjectedProducers!, stringBuilder);
+            }
+            else
+            {
+                stringBuilder.AppendLine(CsvSanitiser.SanitiseData(CalcResultProjectedProducersHeaders.NoProjectedProducers));
+            }
+
+            // Add empty lines
+            stringBuilder.AppendLine();
+            stringBuilder.AppendLine();
+
+            // Add H1 headers
+            PrepareProjectedProducersHeaders(calcResultProjectedProducers.H1ProjectedProducersHeaders!, stringBuilder);
+
+            // Add H1 data
+            if (calcResultProjectedProducers.H1ProjectedProducers?.Any() == true)
+            {
+                H1ProjectedProducersExporterUtils.AppendProjectedProducers(calcResultProjectedProducers.H1ProjectedProducers!, stringBuilder);
             }
             else
             {
@@ -32,70 +49,21 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
             }
         }
 
-        private static void AppendH2ProjectedProducers(IEnumerable<CalcResultH2ProjectedProducer> h2ProjectedProducers, StringBuilder csvContent)
+        private void PrepareProjectedProducersHeaders(ProjectedProducersHeaders headers, StringBuilder csvContent)
         {
-            foreach (var producer in h2ProjectedProducers)
-            {
-                csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerId));
-                csvContent.Append(CsvSanitiser.SanitiseData(producer.SubsidiaryId));
-                csvContent.Append(CsvSanitiser.SanitiseData(producer.Level));
-                csvContent.Append(CsvSanitiser.SanitiseData(producer.SubmissionPeriodCode));
-
-                AppendH2ProjectedProducerTonnageByMaterial(csvContent, producer.ProjectedTonnageByMaterial);
-
-                csvContent.AppendLine();
-            }
-        }
-
-        private static void AppendH2ProjectedProducerTonnageByMaterial(StringBuilder csvContent, Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage> h2ProjectedProducerTonnageByMaterial)
-        {
-            void appendRamTonnage(RAMTonnage tonnage)
-            {
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.Tonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.RedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.AmberTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.GreenTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.RedMedicalTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.AmberMedicalTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.GreenMedicalTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-            }
-
-            foreach (var producerTonnage in h2ProjectedProducerTonnageByMaterial)
-            {
-                var materialCode = producerTonnage.Key;
-                var tonnage = producerTonnage.Value;
-
-                appendRamTonnage(tonnage.HouseholdRAMTonnage);
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.HouseholdTonnageDefaultedRed, DecimalPlaces.Three, DecimalFormats.F3));
-
-                appendRamTonnage(tonnage.PublicBinRAMTonnage);
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.PublicBinTonnageDefaultedRed, DecimalPlaces.Three, DecimalFormats.F3));
-
-                if (materialCode == MaterialCodes.Glass)
-                {
-                    appendRamTonnage(tonnage.HouseholdDrinksContainerRAMTonnage!);
-                    csvContent.Append(CsvSanitiser.SanitiseData(tonnage.HouseholdDrinksContainerDefaultedRed, DecimalPlaces.Three, DecimalFormats.F3));
-                }
-
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.TotalTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-            }
-        }
-
-        private static void PrepareH2ProjectedProducersHeaders(ProjectedProducersHeaders headers, StringBuilder csvContent)
-        {
-            // Add H2 projected producers headers
+            // Add projected producers headers
             csvContent.AppendLine(CsvSanitiser.SanitiseData(headers.TitleHeader!.Name));
             csvContent.AppendLine();
 
             // Add material breakdown headers
-            WriteH2ProjectedProducersSecondaryHeaders(headers.MaterialBreakdownHeaders!, csvContent);
+            WriteProjectedProducersSecondaryHeaders(headers.MaterialBreakdownHeaders!, csvContent);
 
             // Add column headers
-            WriteH2ProjectedProducersColumnHeaders(headers.ColumnHeaders!, csvContent);
+            WriteProjectedProducersColumnHeaders(headers.ColumnHeaders!, csvContent);
             csvContent.AppendLine();
         }
 
-        private static void WriteH2ProjectedProducersSecondaryHeaders(IEnumerable<ProjectedProducersHeader> headers, StringBuilder csvContent)
+        private void WriteProjectedProducersSecondaryHeaders(IEnumerable<ProjectedProducersHeader> headers, StringBuilder csvContent)
         {
             var maxColumnSize = headers.MaxBy(h => h.ColumnIndex ?? 0)?.ColumnIndex ?? throw new ArgumentException("No headers specified");
 
@@ -109,7 +77,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
             csvContent.AppendLine(headerRow);
         }
 
-        private static void WriteH2ProjectedProducersColumnHeaders(IEnumerable<ProjectedProducersHeader> columnHeaders, StringBuilder csvContent)
+        private void WriteProjectedProducersColumnHeaders(IEnumerable<ProjectedProducersHeader> columnHeaders, StringBuilder csvContent)
         {
             foreach (var item in columnHeaders)
             {

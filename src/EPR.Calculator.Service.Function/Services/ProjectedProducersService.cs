@@ -12,7 +12,7 @@ namespace EPR.Calculator.Service.Function.Services
 {
     public interface IProjectedProducersService
     {
-        Task StoreProjectedProducers(int runId, List<CalcResultH2ProjectedProducer> h2ProjectedProducers);
+        Task StoreProjectedProducers(int runId, List<CalcResultH2ProjectedProducer> h2ProjectedProducers, List<CalcResultH1ProjectedProducer> h1ProjectedProducers);
     }
 
     public class ProjectedProducersService : IProjectedProducersService
@@ -26,11 +26,12 @@ namespace EPR.Calculator.Service.Function.Services
             producerReportedMaterialProjectedChunker = prmpChunker;
         }
 
-        public async Task StoreProjectedProducers(int runId, List<CalcResultH2ProjectedProducer> h2ProjectedProducers)
+        public async Task StoreProjectedProducers(int runId, List<CalcResultH2ProjectedProducer> h2ProjectedProducers, List<CalcResultH1ProjectedProducer> h1ProjectedProducers)
         {
             var existingAsProjected = await GetExistingAsProjected(runId);
-            var missingProjected = MapH2ToProducerReportedMaterialProjected(existingAsProjected, h2ProjectedProducers);
-            var allProjected = existingAsProjected.Concat(missingProjected).ToList();
+            var missingH2Projected = MapH2ToProducerReportedMaterialProjected(existingAsProjected, h2ProjectedProducers);
+            var missingH1Projected = MapH1ToProducerReportedMaterialProjected(existingAsProjected, h1ProjectedProducers);
+            var allProjected = existingAsProjected.Concat(missingH2Projected).Concat(missingH1Projected).ToList();
             await producerReportedMaterialProjectedChunker.InsertRecords(allProjected);          
         }
 
@@ -71,7 +72,7 @@ namespace EPR.Calculator.Service.Function.Services
                     MaterialId = materialId,
                     SubmissionPeriod = submissionPeriod,
                     PackagingType = packagingType,
-                    PackagingTonnage = (decimal)defaultRedTonnage,
+                    PackagingTonnage = 0,
                     PackagingTonnageRed = defaultRedTonnage,
                     PackagingTonnageAmber = 0,
                     PackagingTonnageGreen = 0,
@@ -99,6 +100,58 @@ namespace EPR.Calculator.Service.Function.Services
                             GetMaybeNewProjected(maybeExisting.ProducerDetailId, maybeExisting.MaterialId, projectedProducer.SubmissionPeriodCode, PackagingTypes.PublicBin, materialTonnage.Value.PublicBinTonnageDefaultedRed),
                             GetMaybeNewProjected(maybeExisting.ProducerDetailId, maybeExisting.MaterialId, projectedProducer.SubmissionPeriodCode, PackagingTypes.HouseholdDrinksContainers, materialTonnage.Value.HouseholdDrinksContainerDefaultedRed)
                         }.Where(p => p != null).Select(p => p!) : new List<ProducerReportedMaterialProjected>();
+                    }
+                )
+            ).ToList();
+        }
+
+        private List<ProducerReportedMaterialProjected> MapH1ToProducerReportedMaterialProjected(List<ProducerReportedMaterialProjected> existingAsProjected, List<CalcResultH1ProjectedProducer> projectedH1Producers)
+        {
+            ProducerReportedMaterialProjected? GetMaybeNewProjected(int producerDetailId, int materialId, string submissionPeriod, string packagingType, decimal? tonnageWithoutRam, RAMTonnage? original, RAMTonnage? projected)
+            {
+                if (tonnageWithoutRam <= 0 || original == null || projected == null) return null;
+
+                return new ProducerReportedMaterialProjected
+                {
+                    ProducerDetailId = producerDetailId,
+                    MaterialId = materialId,
+                    SubmissionPeriod = submissionPeriod,
+                    PackagingType = packagingType,
+                    PackagingTonnage = 0,
+                    PackagingTonnageRed = projected.RedTonnage - original.RedTonnage,
+                    PackagingTonnageAmber = projected.AmberTonnage - original.AmberTonnage,
+                    PackagingTonnageGreen = projected.GreenTonnage - original.GreenTonnage,
+                    PackagingTonnageRedMedical = projected.RedMedicalTonnage - original.RedMedicalTonnage,
+                    PackagingTonnageAmberMedical = projected.AmberMedicalTonnage - original.AmberMedicalTonnage,
+                    PackagingTonnageGreenMedical = projected.GreenMedicalTonnage - original.GreenMedicalTonnage
+                };
+            }
+
+            bool HasTonnageWithoutRam(CalcResultH1ProjectedProducerMaterialTonnage projectedTonnageByMaterial) =>
+                projectedTonnageByMaterial.HouseholdTonnageWithoutRAM > 0 || projectedTonnageByMaterial.PublicBinTonnageWithoutRAM > 0 || projectedTonnageByMaterial.HouseholdDrinksContainerTonnageWithoutRAM > 0;
+
+            var existingLookup = existingAsProjected.ToLookup(x => new { x.ProducerDetail!.ProducerId, x.ProducerDetail.SubsidiaryId, x.Material!.Code });
+
+            return projectedH1Producers
+                .Where(p => !p.IsSubtotal)
+                .SelectMany(projectedProducer => projectedProducer.ProjectedTonnageByMaterial.Where(p => HasTonnageWithoutRam(p.Value))
+                    .SelectMany(materialTonnage => {
+                        var key = new { ProducerId = projectedProducer.ProducerId, SubsidiaryId = projectedProducer.SubsidiaryId, Code = materialTonnage.Key };
+                        var maybeExisting = existingLookup[key].FirstOrDefault();
+
+                        if (maybeExisting == null) {
+                            return new List<ProducerReportedMaterialProjected>();
+                        }
+
+                        var maybeNewProjected = (string packagingType, decimal? tonnageWithoutRam, RAMTonnage? orgRam, RAMTonnage? projRam) =>
+                            GetMaybeNewProjected(maybeExisting.ProducerDetailId, maybeExisting.MaterialId, projectedProducer.SubmissionPeriodCode, packagingType, tonnageWithoutRam, orgRam, projRam);
+
+                        return new List<ProducerReportedMaterialProjected?>
+                        {
+                            maybeNewProjected(PackagingTypes.Household, materialTonnage.Value.HouseholdTonnageWithoutRAM, materialTonnage.Value.HouseholdRAMTonnage, materialTonnage.Value.ProjectedHouseholdRAMTonnage),
+                            maybeNewProjected(PackagingTypes.PublicBin, materialTonnage.Value.PublicBinTonnageWithoutRAM, materialTonnage.Value.PublicBinRAMTonnage, materialTonnage.Value.ProjectedPublicBinRAMTonnage),
+                            maybeNewProjected(PackagingTypes.HouseholdDrinksContainers, materialTonnage.Value.HouseholdDrinksContainerTonnageWithoutRAM, materialTonnage.Value.HouseholdDrinksContainerRAMTonnage, materialTonnage.Value.ProjectedHouseholdDrinksContainerRAMTonnage)
+                        }.Where(p => p != null).Select(p => p!);
                     }
                 )
             ).ToList();
