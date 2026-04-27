@@ -52,13 +52,24 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                 createSubtotal: H1ProjectedProducersBuilderUtils.CreateParentProducer,
                 sumProducerGroupTonnages: H1ProjectedProducersBuilderUtils.SumProducerGroupTonnages
             );
+            
+            var completeH1AndH2RamProducers = h2ProjectedProducersWithSubtotals
+                .Cast<ICalcResultProjectedProducer>()
+                .Concat(h1ProjectedProducersWithSubtotals)
+                .GroupBy(p => p.ProducerId)
+                .Where(g => g.All(p => p.ProjectedTonnageByMaterial.All(m => !m.Value.IsWithoutRamTonnage())))
+                .Select(g => g.Key)
+                .ToHashSet();
+
+            var h2ProjectedProducersFiltered = h2ProjectedProducersWithSubtotals.Where(p => !completeH1AndH2RamProducers.Contains(p.ProducerId));
+            var h1ProjectedProducersFiltered = h1ProjectedProducersWithSubtotals.Where(p => !completeH1AndH2RamProducers.Contains(p.ProducerId));
 
             return new CalcResultProjectedProducers
             {
                 H2ProjectedProducersHeaders = H2ProjectedProducersBuilderUtils.GetProjectedProducerHeaders(materials),
                 H1ProjectedProducersHeaders = H1ProjectedProducersBuilderUtils.GetProjectedProducerHeaders(materials),
-                H2ProjectedProducers = h2ProjectedProducersWithSubtotals.OrderBy(p => p.ProducerId).ThenBy(p => p.Level).ThenBy(p => p.SubsidiaryId).ToList(),
-                H1ProjectedProducers = h1ProjectedProducersWithSubtotals.OrderBy(p => p.ProducerId).ThenBy(p => p.Level).ThenBy(p => p.SubsidiaryId).ToList()
+                H2ProjectedProducers = h2ProjectedProducersFiltered.OrderBy(p => p.ProducerId).ThenBy(p => p.Level).ThenBy(p => p.SubsidiaryId).ToList(),
+                H1ProjectedProducers = h1ProjectedProducersFiltered.OrderBy(p => p.ProducerId).ThenBy(p => p.Level).ThenBy(p => p.SubsidiaryId).ToList()
             };
         }
 

@@ -25,7 +25,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             {
                 var prodGroup = h2ProjectedProducers.Where(p => p.ProducerId == rm.ProducerId);
                 var maybeSubtotal = prodGroup.Where(p => p.IsSubtotal); 
-                return maybeSubtotal.Any() ? maybeSubtotal.First() : prodGroup.Where(p => p.SubsidiaryId == rm.SubsidiaryId).FirstOrDefault();
+                return maybeSubtotal.Any() ? maybeSubtotal.First() : prodGroup.FirstOrDefault(p => p.SubsidiaryId == rm.SubsidiaryId);
             }
 
             return reportedMaterials.Select(rm => new CalcResultH1ProjectedProducer

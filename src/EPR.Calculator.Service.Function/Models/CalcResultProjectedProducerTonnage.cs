@@ -55,6 +55,11 @@
         public decimal GetTotalProjectedRedMedicalTonnage() { return GetTotalProjectedRamTonnage(t => t.RedMedicalTonnage); }
         public decimal GetTotalProjectedAmberMedicalTonnage() { return GetTotalProjectedRamTonnage(t => t.AmberMedicalTonnage); }
         public decimal GetTotalProjectedGreenMedicalTonnage() { return GetTotalProjectedRamTonnage(t => t.GreenMedicalTonnage); }
+
+        public bool IsWithoutRamTonnage()
+        {
+            return HouseholdTonnageWithoutRAM > 0 || PublicBinTonnageWithoutRAM > 0 || (HouseholdDrinksContainerTonnageWithoutRAM ?? 0) > 0;
+        }
     }
 
     public record CalcResultH2ProjectedProducerMaterialTonnage : CalcResultProjectedProducerMaterialTonnage {}
