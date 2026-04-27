@@ -1,5 +1,7 @@
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
+using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
 using EPR.Calculator.Service.Function.Builder.Summary.Common;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Mappers;
@@ -10,6 +12,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.PartialObligations
 {
+    public record PartialObligationData
+    {
+
+    }
+
+    public interface ICalcResultPartialObligationBuilder
+    {
+        //Task<CalcResultPartialObligations> ConstructAsync(CalcResultsRequestDto resultsRequestDto, IEnumerable<CalcResultScaledupProducer> scaledupProducers);
+        Task<List<(ProducerReportedMaterialsForSubmissionPeriod, PartialObligationData?)>> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<ProducerReportedMaterialsForSubmissionPeriod> producers);
+    }
+
     public class CalcResultPartialObligationBuilder : ICalcResultPartialObligationBuilder
     {
 
@@ -22,7 +35,8 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
             this.context = context;
         }
 
-        public async Task<CalcResultPartialObligations> ConstructAsync(CalcResultsRequestDto resultsRequestDto, IEnumerable<CalcResultScaledupProducer> scaledupProducers)
+        //public async Task<CalcResultPartialObligations> ConstructAsync(CalcResultsRequestDto resultsRequestDto, IEnumerable<CalcResultScaledupProducer> scaledupProducers)
+        public async Task<List<(ProducerReportedMaterialsForSubmissionPeriod, PartialObligationData?)>> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<ProducerReportedMaterialsForSubmissionPeriod> producers)
         {
             var runId = resultsRequestDto.RunId;
             var materialsFromDb = await context.Material.ToListAsync();

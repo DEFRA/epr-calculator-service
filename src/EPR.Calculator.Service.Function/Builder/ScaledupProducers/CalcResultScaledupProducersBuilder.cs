@@ -1,5 +1,6 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Mappers;
 using EPR.Calculator.Service.Function.Misc;
@@ -9,6 +10,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
 {
+    public record ScaledupProducerData
+    {
+
+    }
+
+    public interface ICalcResultScaledupProducersBuilder
+    {
+        Task<List<(ProducerReportedMaterialsForSubmissionPeriod, ScaledupProducerData?)>> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<ProducerReportedMaterialsForSubmissionPeriod> producers);
+    }
+
     public class CalcResultScaledupProducersBuilder : ICalcResultScaledupProducersBuilder
     {
         private const decimal NormalScaleup = 1.0M;
@@ -136,7 +147,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
         }
 
         /// <inheritdoc/>
-        public async Task<CalcResultScaledupProducers> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
+        public async Task<List<(ProducerReportedMaterialsForSubmissionPeriod, ScaledupProducerData?)>> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<ProducerReportedMaterialsForSubmissionPeriod> producers)
         {
             var runId = resultsRequestDto.RunId;
             var materialsFromDb = await context.Material.ToListAsync();

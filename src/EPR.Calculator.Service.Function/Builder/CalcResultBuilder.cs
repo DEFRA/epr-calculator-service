@@ -20,11 +20,15 @@ using EPR.Calculator.Service.Function.Services;
 using System.Linq;
 using EPR.Calculator.Service.Function.Misc;
 using System.Diagnostics.CodeAnalysis;
+using static EPR.Calculator.Service.Function.Builder.LaDisposalCost.CalcRunLaDisposalCostBuilder;
+using EPR.Calculator.API.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder
 {
     public class CalcResultBuilder : ICalcResultBuilder
     {
+        private ApplicationDBContext dbContext;
         private readonly ICalcResultParameterOtherCostBuilder calcResultParameterOtherCostBuilder;
         private readonly ICalcResultDetailBuilder calcResultDetailBuilder;
         private readonly ICalcResultLapcapDataBuilder lapcapBuilder;
@@ -45,6 +49,7 @@ namespace EPR.Calculator.Service.Function.Builder
 
         [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         public CalcResultBuilder(
+            ApplicationDBContext dbContext,
             ICalcResultDetailBuilder calcResultDetail,
             ICalcResultLapcapDataBuilder lapcap,
             ICalcResultParameterOtherCostBuilder calcResultParameterOtherCost,
@@ -62,6 +67,7 @@ namespace EPR.Calculator.Service.Function.Builder
             IProjectedProducersService projectedProducers,
             TelemetryClient telemetryClient)
         {
+            this.dbContext = dbContext;
             calcResultDetailBuilder = calcResultDetail;
             lapcapBuilder = lapcap;
             commsCostReportBuilder = commsCostReport;
@@ -129,34 +135,61 @@ namespace EPR.Calculator.Service.Function.Builder
             result.CalcResultCancelledProducers = await calcResultCancelledProducersBuilder.ConstructAsync(resultsRequestDto);
             _telemetryClient.TrackTrace("CalcResultCancelledProducersBuilder end...");
 
-            if(result.CalcResultModulation is not null)
+            async Task<List<ProducerReportedMaterialsForSubmissionPeriod>> GetProducers(int runId)
+            {
+                return await (
+                    from run in dbContext.CalculatorRuns.AsNoTracking()
+                    join pd in dbContext.ProducerDetail.AsNoTracking() on run.Id equals pd.CalculatorRunId
+                    join prm in dbContext.ProducerReportedMaterial.AsNoTracking() on pd.Id equals prm.ProducerDetailId
+                    where pd.CalculatorRunId == runId
+                    group prm by new { pd.ProducerId, pd.SubsidiaryId, prm.SubmissionPeriod } into prms
+                    select new ProducerReportedMaterialsForSubmissionPeriod(prms.Key.ProducerId, prms.Key.SubsidiaryId, prms.Key.SubmissionPeriod, prms.ToList())
+                ).ToListAsync();
+            }
+
+            List<ProducerReportedMaterialsForSubmissionPeriod> producers1 = await GetProducers(resultsRequestDto.RunId);
+
+            List<ProducerReportedMaterialsForSubmissionPeriod> producers2 = null;
+            if (result.CalcResultModulation is not null)
             {
                 _telemetryClient.TrackTrace("calcResultProjectedProducerBuilder started...");
-                var calcResultProjectedProducers = await calcResultProjectedProducersBuilder.ConstructAsync(resultsRequestDto);
-                result.CalcResultProjectedProducers = calcResultProjectedProducers;
+                var calcResultProjectedProducers = await calcResultProjectedProducersBuilder.ConstructAsync(resultsRequestDto, producers1);
+                result.CalcResultProjectedProducers = calcResultProjectedProducers.Select(e => e.Item2).ToList();
+                producers2 = calcResultProjectedProducers.Select(e => e.Item1).ToList();
                 _telemetryClient.TrackTrace("calcResultProjectedProducerBuilder end...");
-                
-                if(!resultsRequestDto.IsBillingFile)
-                {
-                    _telemetryClient.TrackTrace("Storing projected producers started...");
-                    await projectedProducersService.StoreProjectedProducers(
-                        resultsRequestDto.RunId,
-                        calcResultProjectedProducers.H2ProjectedProducers?.ToList() ?? new List<CalcResultH2ProjectedProducer>(),
-                        calcResultProjectedProducers.H1ProjectedProducers?.ToList() ?? new List<CalcResultH1ProjectedProducer>()
-                    );
-                    _telemetryClient.TrackTrace("Storing projected producers ended...");
-                }
             } else
             {
+                producers2 = producers1;
+            }
+
+            List<ProducerReportedMaterialsForSubmissionPeriod> producers3 = null;
+            if (resultsRequestDto.RelativeYear.Value == 2025)
+            {
                 _telemetryClient.TrackTrace("calcResultScaledupProducersBuilder started...");
-                var scaledupProducersResult = await calcResultScaledupProducersBuilder.ConstructAsync(resultsRequestDto);
-                result.CalcResultScaledupProducers = scaledupProducersResult;
+                var scaledupProducersResult = await calcResultScaledupProducersBuilder.ConstructAsync(resultsRequestDto, producers2);
+                result.CalcResultScaledupProducers = scaledupProducersResult.Select(e => e.Item2).ToList();;
+                producers3 = scaledupProducersResult.Select(e => e.Item1).ToList();
                 _telemetryClient.TrackTrace("calcResultScaledupProducersBuilder end...");
+            } else
+            {
+                producers3 = producers2;
             }
 
             _telemetryClient.TrackTrace("calcResultPartialObligationBuilder started...");
-            result.CalcResultPartialObligations = await calcResultPartialObligationBuilder.ConstructAsync(resultsRequestDto, result.CalcResultScaledupProducers?.ScaledupProducers ?? new List<CalcResultScaledupProducer>());
+            var partialObligationsResult = await calcResultPartialObligationBuilder.ConstructAsync(resultsRequestDto, producers3);// result.CalcResultScaledupProducers?.ScaledupProducers ?? new List<CalcResultScaledupProducer>());
+            result.CalcResultPartialObligations = partialObligationsResult.Select(e => e.Item2).ToList();;
+            List<ProducerReportedMaterialsForSubmissionPeriod> producers4 = partialObligationsResult.Select(e => e.Item1).ToList();
             _telemetryClient.TrackTrace("calcResultPartialObligationBuilder end...");
+
+            if (!resultsRequestDto.IsBillingFile)
+            {
+                _telemetryClient.TrackTrace("Storing projected producers started...");
+                await projectedProducersService.StoreProjectedProducers(
+                    resultsRequestDto.RunId,
+                    producers4
+                );
+                _telemetryClient.TrackTrace("Storing projected producers ended...");
+            }
 
             if (resultsRequestDto.IsBillingFile)
             {

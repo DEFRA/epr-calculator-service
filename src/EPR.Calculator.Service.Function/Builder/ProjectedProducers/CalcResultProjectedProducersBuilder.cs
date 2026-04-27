@@ -15,9 +15,14 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 
     using Microsoft.EntityFrameworkCore;
 
+    public record ProjectionData
+    {
+
+    }
+
     public interface ICalcResultProjectedProducersBuilder
     {
-        Task<CalcResultProjectedProducers> ConstructAsync(CalcResultsRequestDto resultsRequestDto);
+        Task<List<(ProducerReportedMaterialsForSubmissionPeriod, ProjectionData?)>> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<ProducerReportedMaterialsForSubmissionPeriod> producers);
     }
 
     public class CalcResultProjectedProducersBuilder : ICalcResultProjectedProducersBuilder
@@ -29,16 +34,15 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             context = dbContext;
         }
 
-        public async Task<CalcResultProjectedProducers> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
+        public async Task<List<(ProducerReportedMaterialsForSubmissionPeriod, ProjectionData?)>> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<ProducerReportedMaterialsForSubmissionPeriod> producers)
         {
             var runId = resultsRequestDto.RunId;
             var materialsFromDb = await context.Material.ToListAsync();
             var materials = MaterialMapper.Map(materialsFromDb);
 
-            var reportedMaterialsForRun = await GetReportedMaterialsForRun(runId);
             var submissionPeriod = (string i) => $"{resultsRequestDto.RelativeYear.Value - 1}-{i}";
-            var h2ReportedMaterials = reportedMaterialsForRun.Where(r => r.SubmissionPeriod == submissionPeriod("H2")).ToList();
-            var h1ReportedMaterials = reportedMaterialsForRun.Where(r => r.SubmissionPeriod == submissionPeriod("H1")).ToList();
+            var h2ReportedMaterials = producers.Where(r => r.SubmissionPeriod == submissionPeriod("H2")).ToList();
+            var h1ReportedMaterials = producers.Where(r => r.SubmissionPeriod == submissionPeriod("H1")).ToList();
 
             var h2ProjectedProduers = H2ProjectedProducersBuilderUtils.GetProjectedProducers(h2ReportedMaterials, materials);
             var h2ProjectedProducersWithSubtotals = AddSubtotals<CalcResultH2ProjectedProducer>(
@@ -60,16 +64,6 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                 H2ProjectedProducers = h2ProjectedProducersWithSubtotals.OrderBy(p => p.ProducerId).ThenBy(p => p.Level).ThenBy(p => p.SubsidiaryId).ToList(),
                 H1ProjectedProducers = h1ProjectedProducersWithSubtotals.OrderBy(p => p.ProducerId).ThenBy(p => p.Level).ThenBy(p => p.SubsidiaryId).ToList()
             };
-        }
-
-        private async Task<List<ProducerReportedMaterialsForSubmissionPeriod>> GetReportedMaterialsForRun(int runId)
-        {
-            return await (from run in context.CalculatorRuns.AsNoTracking()
-                    join pd in context.ProducerDetail.AsNoTracking() on run.Id equals pd.CalculatorRunId
-                    join prm in context.ProducerReportedMaterial.AsNoTracking() on pd.Id equals prm.ProducerDetailId
-                    where pd.CalculatorRunId == runId
-                    group prm by new { pd.ProducerId, pd.SubsidiaryId, prm.SubmissionPeriod } into prms 
-                    select new ProducerReportedMaterialsForSubmissionPeriod(prms.Key.ProducerId, prms.Key.SubsidiaryId, prms.Key.SubmissionPeriod, prms.ToList())).ToListAsync();
         }
 
         public static RAMTonnage GetRAMTonnage(string packagingType, List<ProducerReportedMaterial> reportedMaterials) {
