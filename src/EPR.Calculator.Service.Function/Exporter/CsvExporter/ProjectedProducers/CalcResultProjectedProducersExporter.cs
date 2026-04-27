@@ -8,12 +8,23 @@ using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers
 {
-    
-
     public class CalcResultProjectedProducersExporter : ICalcResultProjectedProducersExporter
     {
         public void Export(CalcResultProjectedProducers calcResultProjectedProducers, StringBuilder stringBuilder)
         {
+            var allH2 = calcResultProjectedProducers.H2ProjectedProducers ?? new List<CalcResultH2ProjectedProducer>();
+            var allH1 = calcResultProjectedProducers.H1ProjectedProducers ?? new List<CalcResultH1ProjectedProducer>();
+            var completeH1AndH2RamProducers = allH2
+                .Cast<ICalcResultProjectedProducer>()
+                .Concat(allH1)
+                .GroupBy(p => p.ProducerId)
+                .Where(g => g.All(p => p.ProjectedTonnageByMaterial.All(m => !m.Value.IsWithoutRamTonnage())))
+                .Select(g => g.Key)
+                .ToHashSet();
+
+            var h2WhereModified = allH2.Where(p => !completeH1AndH2RamProducers.Contains(p.ProducerId)).ToList();
+            var h1WhereModified = allH1.Where(p => !completeH1AndH2RamProducers.Contains(p.ProducerId)).ToList();
+
             // Add empty lines
             stringBuilder.AppendLine();
             stringBuilder.AppendLine();
@@ -22,9 +33,9 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
             PrepareProjectedProducersHeaders(calcResultProjectedProducers.H2ProjectedProducersHeaders!, stringBuilder);
 
             // Add H2 data
-            if (calcResultProjectedProducers.H2ProjectedProducers?.Any() == true)
+            if (h2WhereModified.Any() == true)
             {
-                H2ProjectedProducersExporterUtils.AppendProjectedProducers(calcResultProjectedProducers.H2ProjectedProducers!, stringBuilder);
+                H2ProjectedProducersExporterUtils.AppendProjectedProducers(h2WhereModified, stringBuilder);
             }
             else
             {
@@ -39,9 +50,9 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
             PrepareProjectedProducersHeaders(calcResultProjectedProducers.H1ProjectedProducersHeaders!, stringBuilder);
 
             // Add H1 data
-            if (calcResultProjectedProducers.H1ProjectedProducers?.Any() == true)
+            if (h1WhereModified.Any() == true)
             {
-                H1ProjectedProducersExporterUtils.AppendProjectedProducers(calcResultProjectedProducers.H1ProjectedProducers!, stringBuilder);
+                H1ProjectedProducersExporterUtils.AppendProjectedProducers(h1WhereModified, stringBuilder);
             }
             else
             {
@@ -52,14 +63,14 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
         private void PrepareProjectedProducersHeaders(ProjectedProducersHeaders headers, StringBuilder csvContent)
         {
             // Add projected producers headers
-            csvContent.AppendLine(CsvSanitiser.SanitiseData(headers.TitleHeader!.Name));
+            csvContent.AppendLine(CsvSanitiser.SanitiseData(headers.TitleHeader.Name));
             csvContent.AppendLine();
 
             // Add material breakdown headers
-            WriteProjectedProducersSecondaryHeaders(headers.MaterialBreakdownHeaders!, csvContent);
+            WriteProjectedProducersSecondaryHeaders(headers.MaterialBreakdownHeaders, csvContent);
 
             // Add column headers
-            WriteProjectedProducersColumnHeaders(headers.ColumnHeaders!, csvContent);
+            WriteProjectedProducersColumnHeaders(headers.ColumnHeaders, csvContent);
             csvContent.AppendLine();
         }
 

@@ -162,6 +162,53 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
         }
 
         [TestMethod]
+        public void Export_ShouldIncludeProjectedProducers_WhichWereNotComplete()
+        {
+            var completeProjectedProducers = new CalcResultProjectedProducers
+            {
+                H2ProjectedProducersHeaders = H2ProjectedProducersBuilderUtils.GetProjectedProducerHeaders(materials),
+                H2ProjectedProducers = GetH2ProjectedProducersList().Concat(GetCompleteH2ProjectedProducersList()),
+                H1ProjectedProducersHeaders = H1ProjectedProducersBuilderUtils.GetProjectedProducerHeaders(materials),
+                H1ProjectedProducers = GetH1ProjectedProducersList().Concat(GetCompleteH1ProjectedProducersList()),
+            };
+
+            var csvContent = new StringBuilder();
+
+            exporter.Export(completeProjectedProducers, csvContent);
+
+            Assert.IsTrue(csvContent.ToString().Contains("101001"));
+            Assert.IsFalse(csvContent.ToString().Contains("202002"));
+            Assert.IsFalse(csvContent.ToString().Contains("ABC"));
+            Assert.IsFalse(csvContent.ToString().Contains("CDE"));
+        }
+
+        [TestMethod]
+        public void Export_ShouldIncludeEmptyProjectedProducers_WhenAllAreH2H1Complete()
+        {
+            var completeProjectedProducers = new CalcResultProjectedProducers
+            {
+                H2ProjectedProducersHeaders = H2ProjectedProducersBuilderUtils.GetProjectedProducerHeaders(materials),
+                H2ProjectedProducers = GetCompleteH2ProjectedProducersList(),
+                H1ProjectedProducersHeaders = H1ProjectedProducersBuilderUtils.GetProjectedProducerHeaders(materials),
+                H1ProjectedProducers = GetCompleteH1ProjectedProducersList(),
+            };
+
+            var csvContent = new StringBuilder();
+
+            exporter.Export(completeProjectedProducers, csvContent);
+
+            var rows = csvContent.ToString()
+                        .Split(Environment.NewLine)
+                        .Select(r => r.Split(','))
+                        .ToArray();
+
+            Assert.IsTrue(rows[2][0].Contains(CalcResultProjectedProducersHeaders.H2ProjectedProducers));
+            Assert.IsTrue(rows[6][0].Contains(CalcResultProjectedProducersHeaders.NoProjectedProducers));
+            Assert.IsTrue(rows[9][0].Contains(CalcResultProjectedProducersHeaders.H1ProjectedProducers));
+            Assert.IsTrue(rows[13][0].Contains(CalcResultProjectedProducersHeaders.NoProjectedProducers));
+        }
+
+        [TestMethod]
         public void Export_ShouldIncludeEmptyProjectedProducers_WhenNull()
         {
             var projectedProducers = new CalcResultProjectedProducers
@@ -233,6 +280,114 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                 };
         }
 
+        private List<CalcResultH2ProjectedProducer> GetCompleteH2ProjectedProducersList()
+        {
+            return new List<CalcResultH2ProjectedProducer>()
+                {
+                    new CalcResultH2ProjectedProducer
+                    {
+                        ProducerId = 202002,
+                        SubsidiaryId = null,
+                        Level = "1",
+                        SubmissionPeriodCode = "2026-H2",
+                        H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
+                        {
+                            {
+                                "AL",
+                                new CalcResultH2ProjectedProducerMaterialTonnage
+                                {
+                                   HouseholdRAMTonnage = new RAMTonnage{ Tonnage = 200, RedTonnage = 60, RedMedicalTonnage = 80, AmberTonnage = 80, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                   HouseholdTonnageWithoutRAM = 0,
+                                   PublicBinRAMTonnage = new RAMTonnage{ Tonnage = 400, RedTonnage = 100, RedMedicalTonnage = 40, AmberTonnage = 60, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                   PublicBinTonnageWithoutRAM = 0,
+                                   TotalTonnage = 600,
+                                   ProjectedHouseholdRAMTonnage = new RAMTonnage{ Tonnage = 200, RedTonnage = 60, RedMedicalTonnage = 80, AmberTonnage = 80, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                   ProjectedPublicBinRAMTonnage = new RAMTonnage{ Tonnage = 400, RedTonnage = 100, RedMedicalTonnage = 40, AmberTonnage = 60, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                }
+                            },
+                            {
+                                "GL",
+                                new CalcResultH2ProjectedProducerMaterialTonnage
+                                {
+                                    HouseholdRAMTonnage = new RAMTonnage{ Tonnage = 200, RedTonnage = 50, RedMedicalTonnage = 20, AmberTonnage = 30, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    HouseholdTonnageWithoutRAM = 0,
+                                    PublicBinRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 30, RedMedicalTonnage = 40, AmberTonnage = 40, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    PublicBinTonnageWithoutRAM = 0,
+                                    HouseholdDrinksContainerRAMTonnage = new RAMTonnage{ Tonnage = 500, RedTonnage = 500, RedMedicalTonnage = 0, AmberTonnage = 0, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    HouseholdDrinksContainerTonnageWithoutRAM = 0,
+                                    TotalTonnage = 800,
+                                    ProjectedHouseholdRAMTonnage = new RAMTonnage{ Tonnage = 200, RedTonnage = 50, RedMedicalTonnage = 20, AmberTonnage = 30, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    ProjectedPublicBinRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 30, RedMedicalTonnage = 40, AmberTonnage = 40, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    ProjectedHouseholdDrinksContainerRAMTonnage = new RAMTonnage{ Tonnage = 500, RedTonnage = 500, RedMedicalTonnage = 0, AmberTonnage = 0, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                }
+                            },
+                        },
+                    },
+                    new CalcResultH2ProjectedProducer
+                    {
+                        ProducerId = 202002,
+                        SubsidiaryId = null,
+                        Level = "2",
+                        SubmissionPeriodCode = "2026-H2",
+                        H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
+                        {
+                            {
+                                "AL",
+                                new CalcResultH2ProjectedProducerMaterialTonnage
+                                {
+                                   HouseholdRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 30, RedMedicalTonnage = 40, AmberTonnage = 40, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                   HouseholdTonnageWithoutRAM = 0,
+                                   PublicBinRAMTonnage = new RAMTonnage{ Tonnage = 200, RedTonnage = 50, RedMedicalTonnage = 20, AmberTonnage = 30, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                   PublicBinTonnageWithoutRAM = 0,
+                                   TotalTonnage = 300,
+                                   ProjectedHouseholdRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 30, RedMedicalTonnage = 40, AmberTonnage = 40, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                   ProjectedPublicBinRAMTonnage = new RAMTonnage{ Tonnage = 200, RedTonnage = 50, RedMedicalTonnage = 20, AmberTonnage = 30, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                }
+                            },
+                            {
+                                "GL",
+                                new CalcResultH2ProjectedProducerMaterialTonnage
+                                {
+                                    HouseholdRAMTonnage = new RAMTonnage{ Tonnage = 200, RedTonnage = 50, RedMedicalTonnage = 20, AmberTonnage = 30, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    HouseholdTonnageWithoutRAM = 0,
+                                    PublicBinRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 30, RedMedicalTonnage = 40, AmberTonnage = 40, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    PublicBinTonnageWithoutRAM = 0,
+                                    HouseholdDrinksContainerRAMTonnage = new RAMTonnage{ Tonnage = 500, RedTonnage = 500, RedMedicalTonnage = 0, AmberTonnage = 0, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    HouseholdDrinksContainerTonnageWithoutRAM = 0,
+                                    TotalTonnage = 800,
+                                    ProjectedHouseholdRAMTonnage = new RAMTonnage{ Tonnage = 200, RedTonnage = 50, RedMedicalTonnage = 20, AmberTonnage = 30, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    ProjectedPublicBinRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 30, RedMedicalTonnage = 40, AmberTonnage = 40, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    ProjectedHouseholdDrinksContainerRAMTonnage = new RAMTonnage{ Tonnage = 500, RedTonnage = 500, RedMedicalTonnage = 0, AmberTonnage = 0, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                }
+                            },
+                        },
+                    },
+                    new CalcResultH2ProjectedProducer
+                    {
+                        ProducerId = 202002,
+                        SubsidiaryId = "ABC",
+                        Level = "2",
+                        SubmissionPeriodCode = "2026-H2",
+                        H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
+                        {
+                            {
+                                "AL",
+                                new CalcResultH2ProjectedProducerMaterialTonnage
+                                {
+                                   HouseholdRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 30, RedMedicalTonnage = 40, AmberTonnage = 40, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                   HouseholdTonnageWithoutRAM = 0,
+                                   PublicBinRAMTonnage = new RAMTonnage{ Tonnage = 200, RedTonnage = 50, RedMedicalTonnage = 20, AmberTonnage = 30, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                   PublicBinTonnageWithoutRAM = 0,
+                                   TotalTonnage = 300,
+                                   ProjectedHouseholdRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 30, RedMedicalTonnage = 40, AmberTonnage = 40, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                   ProjectedPublicBinRAMTonnage = new RAMTonnage{ Tonnage = 200, RedTonnage = 50, RedMedicalTonnage = 20, AmberTonnage = 30, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                }
+                            }
+                        },
+                    }
+                };
+        }
+
         private List<CalcResultH1ProjectedProducer> GetH1ProjectedProducersList()
         {
             return new List<CalcResultH1ProjectedProducer>()
@@ -290,6 +445,122 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                                     TotalTonnage = 300
                                 }
                             },
+                        },
+                    },
+                };
+        }
+
+        private List<CalcResultH1ProjectedProducer> GetCompleteH1ProjectedProducersList()
+        {
+            return new List<CalcResultH1ProjectedProducer>()
+                {
+                    new CalcResultH1ProjectedProducer
+                    {
+                        ProducerId = 202002,
+                        SubsidiaryId = null,
+                        Level = "1",
+                        SubmissionPeriodCode = "2026-H1",
+                        H1ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>
+                        {
+                            {
+                                "AL",
+                                new CalcResultH1ProjectedProducerMaterialTonnage
+                                {
+                                   HouseholdRAMTonnage = new RAMTonnage{ Tonnage = 200, RedTonnage = 50, RedMedicalTonnage = 20, AmberTonnage = 30, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                   HouseholdTonnageWithoutRAM = 0,
+                                   PublicBinRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 30, RedMedicalTonnage = 40, AmberTonnage = 40, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                   PublicBinTonnageWithoutRAM = 0,
+                                   H2RamProportions = new RAMProportions { Red = 0.1m, Amber = 0.2m, Green = 0.3m, RedMedical = 0.4m, AmberMedical = 0.5m, GreenMedical = 0.6m },
+                                   ProjectedHouseholdRAMTonnage = new RAMTonnage{ Tonnage = 200, RedTonnage = 50, RedMedicalTonnage = 20, AmberTonnage = 30, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                   ProjectedPublicBinRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 30, RedMedicalTonnage = 40, AmberTonnage = 40, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                   TotalTonnage = 300
+                                }
+                            },
+                            {
+                                "GL",
+                                new CalcResultH1ProjectedProducerMaterialTonnage
+                                {
+                                    HouseholdRAMTonnage = new RAMTonnage{ Tonnage = 200, RedTonnage = 60, RedMedicalTonnage = 80, AmberTonnage = 80, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    HouseholdTonnageWithoutRAM = 0,
+                                    PublicBinRAMTonnage = new RAMTonnage{ Tonnage = 400, RedTonnage = 100, RedMedicalTonnage = 40, AmberTonnage = 60, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    PublicBinTonnageWithoutRAM = 0,
+                                    HouseholdDrinksContainerRAMTonnage = new RAMTonnage{ Tonnage = 1000, RedTonnage = 800, RedMedicalTonnage = 200, AmberTonnage = 0, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    HouseholdDrinksContainerTonnageWithoutRAM = 0,
+                                    H2RamProportions = new RAMProportions { Red = 0.6m, Amber = 0.5m, Green = 0.4m, RedMedical = 0.3m, AmberMedical = 0.2m, GreenMedical = 0.1m },
+                                    ProjectedHouseholdRAMTonnage = new RAMTonnage{ Tonnage = 200, RedTonnage = 60, RedMedicalTonnage = 80, AmberTonnage = 80, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    ProjectedPublicBinRAMTonnage = new RAMTonnage{ Tonnage = 400, RedTonnage = 100, RedMedicalTonnage = 40, AmberTonnage = 60, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    ProjectedHouseholdDrinksContainerRAMTonnage = new RAMTonnage{ Tonnage = 1000, RedTonnage = 800, RedMedicalTonnage = 200, AmberTonnage = 0, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    TotalTonnage = 800
+                                }
+                            }
+                        },
+                    },
+                    new CalcResultH1ProjectedProducer
+                    {
+                        ProducerId = 202002,
+                        SubsidiaryId = null,
+                        Level = "2",
+                        SubmissionPeriodCode = "2026-H1",
+                        H1ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>
+                        {
+                            {
+                                "GL",
+                                new CalcResultH1ProjectedProducerMaterialTonnage
+                                {
+                                    HouseholdRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 30, RedMedicalTonnage = 40, AmberTonnage = 40, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    HouseholdTonnageWithoutRAM = 0,
+                                    PublicBinRAMTonnage = new RAMTonnage{ Tonnage = 200, RedTonnage = 50, RedMedicalTonnage = 20, AmberTonnage = 30, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    PublicBinTonnageWithoutRAM = 0,
+                                    HouseholdDrinksContainerRAMTonnage = new RAMTonnage{ Tonnage = 500, RedTonnage = 400, RedMedicalTonnage = 100, AmberTonnage = 0, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    HouseholdDrinksContainerTonnageWithoutRAM = 0,
+                                    H2RamProportions = new RAMProportions { Red = 0.6m, Amber = 0.5m, Green = 0.4m, RedMedical = 0.3m, AmberMedical = 0.2m, GreenMedical = 0.1m },
+                                    ProjectedHouseholdRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 30, RedMedicalTonnage = 40, AmberTonnage = 40, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    ProjectedPublicBinRAMTonnage = new RAMTonnage{ Tonnage = 200, RedTonnage = 50, RedMedicalTonnage = 20, AmberTonnage = 30, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    ProjectedHouseholdDrinksContainerRAMTonnage = new RAMTonnage{ Tonnage = 500, RedTonnage = 400, RedMedicalTonnage = 100, AmberTonnage = 0, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    TotalTonnage = 800
+                                }
+                            }
+                        },
+                    },
+                    new CalcResultH1ProjectedProducer
+                    {
+                        ProducerId = 202002,
+                        SubsidiaryId = "CDE",
+                        Level = "2",
+                        SubmissionPeriodCode = "2026-H1",
+                        H1ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>
+                        {
+                            {
+                                "AL",
+                                new CalcResultH1ProjectedProducerMaterialTonnage
+                                {
+                                   HouseholdRAMTonnage = new RAMTonnage{ Tonnage = 200, RedTonnage = 50, RedMedicalTonnage = 20, AmberTonnage = 30, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                   HouseholdTonnageWithoutRAM = 0,
+                                   PublicBinRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 30, RedMedicalTonnage = 40, AmberTonnage = 40, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                   PublicBinTonnageWithoutRAM = 0,
+                                   H2RamProportions = new RAMProportions { Red = 0.1m, Amber = 0.2m, Green = 0.3m, RedMedical = 0.4m, AmberMedical = 0.5m, GreenMedical = 0.6m },
+                                   ProjectedHouseholdRAMTonnage = new RAMTonnage{ Tonnage = 200, RedTonnage = 50, RedMedicalTonnage = 20, AmberTonnage = 30, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                   ProjectedPublicBinRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 30, RedMedicalTonnage = 40, AmberTonnage = 40, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                   TotalTonnage = 300
+                                }
+                            },
+                            {
+                                "GL",
+                                new CalcResultH1ProjectedProducerMaterialTonnage
+                                {
+                                    HouseholdRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 30, RedMedicalTonnage = 40, AmberTonnage = 40, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    HouseholdTonnageWithoutRAM = 0,
+                                    PublicBinRAMTonnage = new RAMTonnage{ Tonnage = 200, RedTonnage = 50, RedMedicalTonnage = 20, AmberTonnage = 30, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    PublicBinTonnageWithoutRAM = 0,
+                                    HouseholdDrinksContainerRAMTonnage = new RAMTonnage{ Tonnage = 500, RedTonnage = 400, RedMedicalTonnage = 100, AmberTonnage = 0, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    HouseholdDrinksContainerTonnageWithoutRAM = 0,
+                                    H2RamProportions = new RAMProportions { Red = 0.6m, Amber = 0.5m, Green = 0.4m, RedMedical = 0.3m, AmberMedical = 0.2m, GreenMedical = 0.1m },
+                                    ProjectedHouseholdRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 30, RedMedicalTonnage = 40, AmberTonnage = 40, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    ProjectedPublicBinRAMTonnage = new RAMTonnage{ Tonnage = 200, RedTonnage = 50, RedMedicalTonnage = 20, AmberTonnage = 30, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    ProjectedHouseholdDrinksContainerRAMTonnage = new RAMTonnage{ Tonnage = 500, RedTonnage = 400, RedMedicalTonnage = 100, AmberTonnage = 0, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    TotalTonnage = 800
+                                }
+                            }
                         },
                     },
                 };
