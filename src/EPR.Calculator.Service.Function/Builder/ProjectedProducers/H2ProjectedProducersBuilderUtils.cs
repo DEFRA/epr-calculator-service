@@ -1,33 +1,27 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Models;
+using Microsoft.EntityFrameworkCore;
+
 namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Mappers;
-    using EPR.Calculator.Service.Function.Misc;
-    using EPR.Calculator.Service.Function.Models;
-    using EPR.Calculator.Service.Function.Services;
-    using EPR.Calculator.Service.Function.Builder.Summary.Common;
-
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Metadata.Internal;
-
-
     public static class H2ProjectedProducersBuilderUtils
     {
-        public static List<CalcResultH2ProjectedProducer> GetProjectedProducers(List<ProducerReportedMaterialsForSubmissionPeriod> reportedMaterials, List<MaterialDetail> materials)
+        public static List<CalcResultH2ProjectedProducer> GetProjectedProducers(List<ProducerDetail> producerDetails, List<MaterialDetail> materials, string submissionPeriod)
         {
-            return reportedMaterials.Select(rm => new CalcResultH2ProjectedProducer
+            return producerDetails.Select(pd => new CalcResultH2ProjectedProducer
             {
-                ProducerId = rm.ProducerId,
-                SubsidiaryId = rm.SubsidiaryId,
+                ProducerId = pd.ProducerId,
+                SubsidiaryId = pd.SubsidiaryId,
                 Level = string.Empty,  // Level will be set later when subtotals are added
-                SubmissionPeriodCode = rm.SubmissionPeriod,
-                H2ProjectedTonnageByMaterial = GetProjectedTonnages(materials, rm.ReportedMaterials)
+                SubmissionPeriodCode = submissionPeriod,
+                H2ProjectedTonnageByMaterial = GetProjectedTonnages(
+                    materials,
+                    pd.ProducerReportedMaterials.Where(rm => rm.SubmissionPeriod == submissionPeriod).ToList()
+                )
             }).ToList();
         }
 
@@ -90,9 +84,9 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
         public static CalcResultH2ProjectedProducer SumProducerGroupTonnages(List<CalcResultH2ProjectedProducer> prodGroup)
         {
             var producer = prodGroup.First();
-            var sumRam = (string matKey, Func<CalcResultProjectedProducerMaterialTonnage, RAMTonnage?> tonnageFunc) => 
+            var sumRam = (string matKey, Func<CalcResultProjectedProducerMaterialTonnage, RAMTonnage?> tonnageFunc) =>
                 CalcResultProjectedProducersBuilder.SumRAMTonnages(prodGroup.Cast<ICalcResultProjectedProducer>().ToList(), matKey, tonnageFunc);
-            
+
             return new CalcResultH2ProjectedProducer
             {
                 ProducerId = producer.ProducerId,
@@ -101,7 +95,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                 SubmissionPeriodCode = producer.SubmissionPeriodCode,
                 IsSubtotal = true,
                 H2ProjectedTonnageByMaterial = producer.H2ProjectedTonnageByMaterial.ToDictionary(
-                    kvp => kvp.Key, 
+                    kvp => kvp.Key,
                     kvp => new CalcResultH2ProjectedProducerMaterialTonnage {
                         HouseholdRAMTonnage = sumRam(kvp.Key, p => p.HouseholdRAMTonnage),
                         PublicBinRAMTonnage = sumRam(kvp.Key, p => p.PublicBinRAMTonnage),
@@ -112,7 +106,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                         ProjectedHouseholdRAMTonnage = sumRam(kvp.Key, p => p.ProjectedHouseholdRAMTonnage),
                         ProjectedPublicBinRAMTonnage = sumRam(kvp.Key, p => p.ProjectedPublicBinRAMTonnage),
                         ProjectedHouseholdDrinksContainerRAMTonnage = kvp.Key == MaterialCodes.Glass ? sumRam(kvp.Key, p => p.ProjectedHouseholdDrinksContainerRAMTonnage) : null,
-                        TotalTonnage = prodGroup.Sum(p => p.H2ProjectedTonnageByMaterial[kvp.Key].TotalTonnage) 
+                        TotalTonnage = prodGroup.Sum(p => p.H2ProjectedTonnageByMaterial[kvp.Key].TotalTonnage)
                     })
             };
         }

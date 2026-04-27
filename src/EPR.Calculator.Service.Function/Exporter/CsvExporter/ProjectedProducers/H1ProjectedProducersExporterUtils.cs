@@ -79,6 +79,6 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
             csvContent.Append(CsvSanitiser.SanitiseData(tonnage.GreenMedicalTonnage, DecimalPlaces.Three, DecimalFormats.F3));
         }
 
-        
+
     }
 }

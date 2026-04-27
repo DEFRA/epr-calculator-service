@@ -1,21 +1,16 @@
 ﻿using System.Globalization;
+using Newtonsoft.Json;
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 {
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.API.Data.Models;
-    using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Mappers;
     using EPR.Calculator.Service.Function.Misc;
 
     using EPR.Calculator.Service.Function.Models;
-    using EPR.Calculator.Service.Function.Services;
-
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
-    using static EPR.Calculator.Service.Function.UnitTests.Builder.CalcRunLaDisposalCostBuilderTests;
 
     [TestClass]
     public class CalcResultProjectedProducersBuilderTest
@@ -72,22 +67,50 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             };
             var expected = new [] {
                 new[] { "101", "", "2025-H1", "1", "AL", "HH", "100", "20.0", "40.0", "40.0", "0", "0", "0" },
-                new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "20", "40", "40", "0", "0", "0" }
+                new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "20"  , "40"  , "40"  , "0", "0", "0" }
             };
             AssertExcepted(expected, await FillGaps(given));
         }
-        
+
+        [TestMethod]
+        public async Task H1H2Projection_untouched_previous()
+        {
+            // RAM is complete - no modifications made
+            var given = new[] {
+                new[] { "101", "", "2025-H1", "", "AL", "HH", "100", "20", "40", "40", "0", "", "" },
+                new[] { "101", "", "2025-H2", "", "AL", "HH", "100", "20", "40", "40", "0", "", "" }
+            };
+            var expected = new [] {
+                new[] { "101", "", "2025-H1", "1", "AL", "HH", "100", "20.0", "40.0", "40.0", "0", "0", "0" },
+                new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "20"  , "40"  , "40"  , "0", "0", "0" }
+            };
+            AssertExcepted(expected, await FillGapsPrevious(given));
+        }
+
         [TestMethod]
         public async Task H1H2Projection_untouched_onlyh2()
         {
             // RAM is complete - only H2 - no modifications made
             var given = new[] {
-                new[] { "101", "", "2025-H2", "", "AL", "HH", "100", "30", "40", "40", "0", "", "" }
+                new[] { "101", "", "2025-H2", "", "AL", "HH", "100", "20", "40", "40", "0", "", "" }
             };
             var expected = new [] {
-                new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "30", "40", "40", "0", "0", "0" }
+                new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "20", "40", "40", "0", "0", "0" }
             };
             AssertExcepted(expected, await FillGaps(given));
+        }
+
+        [TestMethod]
+        public async Task H1H2Projection_untouched_onlyh2_previous()
+        {
+            // RAM is complete - only H2 - no modifications made
+            var given = new[] {
+                new[] { "101", "", "2025-H2", "", "AL", "HH", "100", "20", "40", "40", "0", "", "" }
+            };
+            var expected = new [] {
+                new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "20", "40", "40", "0", "0", "0" }
+            };
+            AssertExcepted(expected, await FillGapsPrevious(given));
         }
 
         [TestMethod]
@@ -108,29 +131,59 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         {
             // RAM is complete - no modifications made
             var given = new[] {
-                new[] { "101", "", "2025-H1", "", "AL", "HH", "100", "20", "40", "40", "0", "", "" },
+                new[] { "101", "" , "2025-H1", "", "AL", "HH" , "100", "20", "40", "40", "0", "", "" },
                 new[] { "101", "A", "2025-H1", "", "GL", "HDC", "100", "20", "40", "40", "0", "", "" },
-                new[] { "101", "B", "2025-H1", "", "AL", "PB", "100", "20", "40", "40", "0", "", "" },
-                new[] { "101", "", "2025-H2", "", "PL", "HH", "100", "20", "40", "40", "0", "", "" },
-                new[] { "101", "A", "2025-H2", "", "ST", "PB", "100", "20", "40", "40", "0", "", "" },
-                new[] { "101", "B", "2025-H2", "", "AL", "HH", "100", "20", "40", "40", "0", "", "" }
+                new[] { "101", "B", "2025-H1", "", "AL", "PB" , "100", "20", "40", "40", "0", "", "" },
+                new[] { "101", "" , "2025-H2", "", "PL", "HH" , "100", "20", "40", "40", "0", "", "" },
+                new[] { "101", "A", "2025-H2", "", "ST", "PB" , "100", "20", "40", "40", "0", "", "" },
+                new[] { "101", "B", "2025-H2", "", "AL", "HH" , "100", "20", "40", "40", "0", "", "" }
             };
             var expected = new string[][]
             {
-                new string[] { "101", "", "2025-H1", "1", "AL", "HH", "100", "20.0", "40.0", "40.0", "0", "0", "0" },
-                new string[] { "101", "", "2025-H1", "1", "AL", "PB", "100", "20.0", "40.0", "40.0", "0", "0", "0" },
-                new string[] { "101", "", "2025-H1", "1", "GL", "HDC", "100", "20", "40", "40", "0", "0", "0" },
-                new string[] { "101", "", "2025-H1", "2", "AL", "HH", "100", "20.0", "40.0", "40.0", "0", "0", "0" },
-                new string[] { "101", "B", "2025-H1", "2", "AL", "PB", "100", "20.0", "40.0", "40.0", "0", "0", "0" },
-                new string[] { "101", "A", "2025-H1", "2", "GL", "HDC", "100", "20", "40", "40", "0", "0", "0" },
-                new string[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "20", "40", "40", "0", "0", "0" },
-                new string[] { "101", "", "2025-H2", "1", "PL", "HH", "100", "20", "40", "40", "0", "0", "0" },
-                new string[] { "101", "", "2025-H2", "1", "ST", "PB", "100", "20", "40", "40", "0", "0", "0" },
-                new string[] { "101", "", "2025-H2", "2", "PL", "HH", "100", "20", "40", "40", "0", "0", "0" },
-                new string[] { "101", "B", "2025-H2", "2", "AL", "HH", "100", "20", "40", "40", "0", "0", "0" },
-                new string[] { "101", "A", "2025-H2", "2", "ST", "PB", "100", "20", "40", "40", "0", "0", "0" }
+                //new string[] { "101", "" , "2025-H1", "1", "AL", "HH" , "100", "20", "40", "40", "0", "0", "0" },
+                //new string[] { "101", "" , "2025-H1", "1", "AL", "PB" , "100", "20", "40", "40", "0", "0", "0" },
+                //new string[] { "101", "" , "2025-H1", "1", "GL", "HDC", "100", "20", "40", "40", "0", "0", "0" },
+                new string[] { "101", "" , "2025-H1", "2", "AL", "HH" , "100", "20.0", "40.0", "40.0", "0", "0", "0" },
+                new string[] { "101", "B", "2025-H1", "2", "AL", "PB" , "100", "20.0", "40.0", "40.0", "0", "0", "0" },
+                new string[] { "101", "A", "2025-H1", "2", "GL", "HDC", "100", "20"  , "40"  , "40"  , "0", "0", "0" },
+                //new string[] { "101", "" , "2025-H2", "1", "AL", "HH" , "100", "20", "40", "40", "0", "0", "0" },
+                //new string[] { "101", "" , "2025-H2", "1", "PL", "HH" , "100", "20", "40", "40", "0", "0", "0" },
+                //new string[] { "101", "" , "2025-H2", "1", "ST", "PB" , "100", "20", "40", "40", "0", "0", "0" },
+                new string[] { "101", "" , "2025-H2", "2", "PL", "HH" , "100", "20"  , "40"  , "40"  , "0", "0", "0" },
+                new string[] { "101", "B", "2025-H2", "2", "AL", "HH" , "100", "20"  , "40"  , "40"  , "0", "0", "0" },
+                new string[] { "101", "A", "2025-H2", "2", "ST", "PB" , "100", "20"  , "40"  , "40"  , "0", "0", "0" }
             };
             AssertExcepted(expected, await FillGaps(given));
+        }
+
+        [TestMethod]
+        public async Task H1H2Projection_untouched_hc_previous()
+        {
+            // RAM is complete - no modifications made
+            var given = new[] {
+                new[] { "101", "" , "2025-H1", "", "AL", "HH" , "100", "20", "40", "40", "0", "", "" },
+                new[] { "101", "A", "2025-H1", "", "GL", "HDC", "100", "20", "40", "40", "0", "", "" },
+                new[] { "101", "B", "2025-H1", "", "AL", "PB" , "100", "20", "40", "40", "0", "", "" },
+                new[] { "101", "" , "2025-H2", "", "PL", "HH" , "100", "20", "40", "40", "0", "", "" },
+                new[] { "101", "A", "2025-H2", "", "ST", "PB" , "100", "20", "40", "40", "0", "", "" },
+                new[] { "101", "B", "2025-H2", "", "AL", "HH" , "100", "20", "40", "40", "0", "", "" }
+            };
+            var expected = new string[][]
+            {
+                new string[] { "101", "" , "2025-H1", "1", "AL", "HH" , "100", "20.0", "40.0", "40.0", "0", "0", "0" },
+                new string[] { "101", "" , "2025-H1", "1", "AL", "PB" , "100", "20.0", "40.0", "40.0", "0", "0", "0" },
+                new string[] { "101", "" , "2025-H1", "1", "GL", "HDC", "100", "20"  , "40"  , "40"  , "0", "0", "0" },
+                new string[] { "101", "" , "2025-H1", "2", "AL", "HH" , "100", "20.0", "40.0", "40.0", "0", "0", "0" },
+                new string[] { "101", "B", "2025-H1", "2", "AL", "PB" , "100", "20.0", "40.0", "40.0", "0", "0", "0" },
+                new string[] { "101", "A", "2025-H1", "2", "GL", "HDC", "100", "20"  , "40"  , "40"  , "0", "0", "0" },
+                new string[] { "101", "" , "2025-H2", "1", "AL", "HH" , "100", "20"  , "40"  , "40"  , "0", "0", "0" },
+                new string[] { "101", "" , "2025-H2", "1", "PL", "HH" , "100", "20"  , "40"  , "40"  , "0", "0", "0" },
+                new string[] { "101", "" , "2025-H2", "1", "ST", "PB" , "100", "20"  , "40"  , "40"  , "0", "0", "0" },
+                new string[] { "101", "" , "2025-H2", "2", "PL", "HH" , "100", "20"  , "40"  , "40"  , "0", "0", "0" },
+                new string[] { "101", "B", "2025-H2", "2", "AL", "HH" , "100", "20"  , "40"  , "40"  , "0", "0", "0" },
+                new string[] { "101", "A", "2025-H2", "2", "ST", "PB" , "100", "20"  , "40"  , "40"  , "0", "0", "0" }
+            };
+            AssertExcepted(expected, await FillGapsPrevious(given));
         }
 
         [TestMethod]
@@ -147,6 +200,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         }
 
         [TestMethod]
+        public async Task H1H2Projection_onlyh2_incomplete_previous()
+        {
+            // Incomplete H2 - inferred as Red
+            var given = new[] {
+                new[] { "101", "", "2025-H2", "", "AL", "HH", "100", "", "", "", "", "", "" }
+            };
+            var expected = new [] {
+                new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "100", "0", "0", "0", "0", "0" }
+            };
+            AssertExcepted(expected, await FillGapsPrevious(given));
+        }
+
+        [TestMethod]
         public async Task H1H2Projection_onlyh2_partial()
         {
             // Partial H2 - inferred as Red
@@ -160,6 +226,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         }
 
         [TestMethod]
+        public async Task H1H2Projection_onlyh2_partial_previous()
+        {
+            // Partial H2 - inferred as Red
+            var given = new[] {
+                new[] { "101", "", "2025-H2", "", "AL", "HH", "100", "50", "", "", "", "", "" }
+            };
+            var expected = new [] {
+                new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "100", "0", "0", "0", "0", "0" }
+            };
+            AssertExcepted(expected, await FillGapsPrevious(given));
+        }
+
+        [TestMethod]
         public async Task H1H2Projection_onlyh2_partial2()
         {
             // Partial H2 - inferred as Red
@@ -170,6 +249,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "50", "50", "0", "0", "0", "0" }
             };
             AssertExcepted(expected, await FillGaps(given));
+        }
+
+        [TestMethod]
+        public async Task H1H2Projection_onlyh2_partial2_previous2()
+        {
+            // Partial H2 - inferred as Red
+            var given = new[] {
+                new[] { "101", "", "2025-H2", "", "AL", "HH", "100", "", "50", "", "", "", "" }
+            };
+            var expected = new [] {
+                new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "50", "50", "0", "0", "0", "0" }
+            };
+            AssertExcepted(expected, await FillGapsPrevious(given));
         }
 
         [TestMethod]
@@ -240,7 +332,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 new[] { "101", "A", "2025-H1", "", "PL", "PB", "200", "", "", "20", "", "", "20" }
             };
             var expected = new [] {
-                new[] { "101", "", "2025-H1", "1", "PL", "PB", "300", "240", "10", "30", "0", "0", "20" },
+                //new[] { "101", "", "2025-H1", "1", "PL", "PB", "300", "240", "10", "30", "0", "0", "20" },
                 new[] { "101", "", "2025-H1", "2", "PL", "PB", "100", "80", "10", "10", "0", "0", "0" },
                 new[] { "101", "A", "2025-H1", "2", "PL", "PB", "200", "160", "0", "20", "0", "0", "20" }
             };
@@ -256,9 +348,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 new[] { "101", "A", "2025-H2", "", "GL", "HDC", "21", "6", "5", "4", "3", "2", "1" }
             };
             var expected = new [] {
-                new[] { "101", "", "2025-H1", "1", "GL", "HDC", "43", "13.000", "10.000", "8.000", "6.000", "4.000", "2.000" },
+                //new[] { "101", "", "2025-H1", "1", "GL", "HDC", "43", "13.000", "10.000", "8.000", "6.000", "4.000", "2.000" },
                 new[] { "101", "A", "2025-H1", "2", "GL", "HDC", "43", "13.000", "10.000", "8.000", "6.000", "4.000", "2.000" },
-                new[] { "101", "", "2025-H2", "1", "GL", "HDC", "21", "6", "5", "4", "3", "2", "1" },
+                //new[] { "101", "", "2025-H2", "1", "GL", "HDC", "21", "6", "5", "4", "3", "2", "1" },
                 new[] { "101", "A", "2025-H2", "2", "GL", "HDC", "21", "6", "5", "4", "3", "2", "1" }
             };
             AssertExcepted(expected, await FillGaps(given));
@@ -266,6 +358,34 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 
         [TestMethod]
         public async Task H1H2Projection_subtotal_hg_no_parent_report_multi_materials()
+        {
+            // Part of holding group where holding group doesn't report for themselves - different materials
+            var given = new[] {
+                new[] { "101", "A", "2025-H1", "", "ST", "HH", "100", "20",  "20", "40",  "0",  "", "" },
+                new[] { "101", "A", "2025-H2", "", "AL", "HH", "100", "20",  "40", "40",  "0",  "", "" },
+                new[] { "101", "A", "2025-H1", "", "PL", "PB", "100", "20",  "40", "40",  "0",  "", "" },
+                new[] { "101", "A", "2025-H2", "", "PL", "PB", "100", "20",  "40", "40",  "0",  "", "" },
+                new[] { "101", "B", "2025-H1", "", "ST", "HH", "200", "50",  "50", "100", "0",  "", "" },
+                new[] { "101", "B", "2025-H2", "", "AL", "HH", "200", "150", "25", "25",  "0",  "", "" }
+            };
+            var expected = new[]  {
+                //new[] { "101", "",  "2025-H1", "1", "PL", "PB", "100", "20.0", "40.0", "40.0", "0", "0", "0" },
+                //new[] { "101", "",  "2025-H1", "1", "ST", "HH", "300", "90",   "70",   "140",  "0", "0", "0" },
+                new[] { "101", "A", "2025-H1", "2", "PL", "PB", "100", "20.0", "40.0", "40.0", "0", "0", "0" },
+                new[] { "101", "A", "2025-H1", "2", "ST", "HH", "100", "40",   "20",   "40",   "0", "0", "0" },
+                new[] { "101", "B", "2025-H1", "2", "ST", "HH", "200", "50",   "50",   "100",  "0", "0", "0" },
+
+                //new[] { "101", "",  "2025-H2", "1", "AL", "HH", "300", "170",  "65",   "65",   "0", "0", "0" },
+                //new[] { "101", "",  "2025-H2", "1", "PL", "PB", "100", "20",   "40",   "40",   "0", "0", "0" },
+                new[] { "101", "A", "2025-H2", "2", "AL", "HH", "100", "20",   "40",   "40",   "0", "0", "0" },
+                new[] { "101", "B", "2025-H2", "2", "AL", "HH", "200", "150",  "25",   "25",   "0", "0", "0" },
+                new[] { "101", "A", "2025-H2", "2", "PL", "PB", "100", "20",   "40",   "40",   "0", "0", "0" }
+            };
+            AssertExcepted(expected, await FillGaps(given));
+        }
+
+        [TestMethod]
+        public async Task H1H2Projection_subtotal_hg_no_parent_report_multi_materials_previous()
         {
             // Part of holding group where holding group doesn't report for themselves - different materials
             var given = new[] {
@@ -289,28 +409,60 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 new[] { "101", "B", "2025-H2", "2", "AL", "HH", "200", "150",  "25",   "25",   "0", "0", "0" },
                 new[] { "101", "A", "2025-H2", "2", "PL", "PB", "100", "20",   "40",   "40",   "0", "0", "0" }
             };
-            AssertExcepted(expected, await FillGaps(given));
+            AssertExcepted(expected, await FillGapsPrevious(given));
         }
 
+        /*
+        Don't understand this test
+        Multiple 101 ! 2025-H2 AL - testing ability to merge?
+        https://github.com/DEFRA/epr-calculator-service/blob/feature/ECV-512/src/EPR.Calculator.Service.Function.UnitTests/Builder/ProjectedProducers/CalcResultProjectedProducersBuilderTest.cs#L387
+*/
         [TestMethod]
         public async Task H1H2Projection_h1_use_subtotal_h2_projection()
         {
             var given = new[] {
-                new[] { "101", "", "2025-H2", "", "AL", "HH", "100", "20",  "40", "40",  "0",  "", "" },
+                new[] { "101", "" , "2025-H2", "", "AL", "HH", "100", "20",  "40", "40",  "0",  "", "" },
                 new[] { "101", "A", "2025-H2", "", "AL", "HH", "200", "20",  "40", "40",  "0",  "", "" },
                 new[] { "101", "B", "2025-H2", "", "AL", "HH", "300", "150", "25", "25",  "0",  "", "" },
-                new[] { "101", "", "2025-H1", "", "AL", "HH", "100", "20",  "40", "40",  "0",  "", "" },
-                new[] { "101", "A", "2025-H2", "", "AL", "HH", "200", "20",  "40", "40",  "0",  "", "" },
-                new[] { "101", "B", "2025-H2", "", "AL", "HH", "300", "150", "25", "25",  "0",  "", "" },
+                new[] { "101", "" , "2025-H1", "", "AL", "HH", "100", "20",  "40", "40",  "0",  "", "" },
+                new[] { "101", "A", "2025-H1", "", "AL", "HH", "200", "20",  "40", "40",  "0",  "", "" },
+                new[] { "101", "B", "2025-H1", "", "AL", "HH", "300", "150", "25", "25",  "0",  "", "" },
             };
             var expected = new[]  {
-                new[] { "101", "", "2025-H1", "1", "AL", "HH", "100", "20.000", "40.000", "40.000", "0", "0", "0" },
-                new[] { "101", "", "2025-H2", "1", "AL", "HH", "1100", "760", "170", "170", "0", "0", "0" },
-                new[] { "101", "", "2025-H2", "2", "AL", "HH", "100", "20", "40", "40", "0", "0", "0" },
-                new[] { "101", "A", "2025-H2", "2", "AL", "HH", "400", "240", "80", "80", "0", "0", "0" },
-                new[] { "101", "B", "2025-H2", "2", "AL", "HH", "600", "500", "50", "50", "0", "0", "0" }
+                //new[] { "101", "" , "2025-H1", "1", "AL", "HH", "600", "320.00", "140.000", "140.000", "0", "0", "0" },
+                new[] { "101", "" , "2025-H1", "2", "AL", "HH", "100",  "20.00",  "40.000",  "40.000", "0", "0", "0" },
+                new[] { "101", "A", "2025-H1", "2", "AL", "HH", "200",  "85.00",  "57.500",  "57.500", "0", "0", "0" },
+                new[] { "101", "B", "2025-H1", "2", "AL", "HH", "300", "215.00",  "42.500",  "42.500", "0", "0", "0" },
+                //new[] { "101", "" , "2025-H2", "1", "AL", "HH", "600",    "390",     "105",     "105", "0", "0", "0" },
+                new[] { "101", "" , "2025-H2", "2", "AL", "HH", "100",     "20",      "40",      "40", "0", "0", "0" },
+                new[] { "101", "A", "2025-H2", "2", "AL", "HH", "200",    "120",      "40",      "40", "0", "0", "0" },
+                new[] { "101", "B", "2025-H2", "2", "AL", "HH", "300",    "250",      "25",      "25", "0", "0", "0" }
             };
             AssertExcepted(expected, await FillGaps(given));
+        }
+
+        [TestMethod]
+        public async Task H1H2Projection_h1_use_subtotal_h2_projection_previous()
+        {
+            var given = new[] {
+                new[] { "101", "" , "2025-H2", "", "AL", "HH", "100", "20",  "40", "40",  "0",  "", "" },
+                new[] { "101", "A", "2025-H2", "", "AL", "HH", "200", "20",  "40", "40",  "0",  "", "" },
+                new[] { "101", "B", "2025-H2", "", "AL", "HH", "300", "150", "25", "25",  "0",  "", "" },
+                new[] { "101", "" , "2025-H1", "", "AL", "HH", "100", "20",  "40", "40",  "0",  "", "" },
+                new[] { "101", "A", "2025-H1", "", "AL", "HH", "200", "20",  "40", "40",  "0",  "", "" },
+                new[] { "101", "B", "2025-H1", "", "AL", "HH", "300", "150", "25", "25",  "0",  "", "" },
+            };
+            var expected = new[]  {
+                new[] { "101", "" , "2025-H1", "1", "AL", "HH", "600", "320.00", "140.000", "140.000", "0", "0", "0" },
+                new[] { "101", "" , "2025-H1", "2", "AL", "HH", "100",  "20.00",  "40.000",  "40.000", "0", "0", "0" },
+                new[] { "101", "A", "2025-H1", "2", "AL", "HH", "200",  "85.00",  "57.500",  "57.500", "0", "0", "0" },
+                new[] { "101", "B", "2025-H1", "2", "AL", "HH", "300", "215.00",  "42.500",  "42.500", "0", "0", "0" },
+                new[] { "101", "" , "2025-H2", "1", "AL", "HH", "600",    "390",     "105",     "105", "0", "0", "0" },
+                new[] { "101", "" , "2025-H2", "2", "AL", "HH", "100",     "20",      "40",      "40", "0", "0", "0" },
+                new[] { "101", "A", "2025-H2", "2", "AL", "HH", "200",    "120",      "40",      "40", "0", "0", "0" },
+                new[] { "101", "B", "2025-H2", "2", "AL", "HH", "300",    "250",      "25",      "25", "0", "0", "0" }
+            };
+            AssertExcepted(expected, await FillGapsPrevious(given));
         }
 
         private CalcResultsRequestDto InsertData(string[][] given)
@@ -338,53 +490,113 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                    .ToArray();
             dbContext.Material.AddRange(materials);
 
-            var producers = given
-                   .Select(row => (row[ProducerI], row[SubsidiaryI]))
-                   .Distinct()
-                   .Select(ps => new ProducerDetail
-                   {
-                       CalculatorRunId = runId,
-                       ProducerId = int.Parse(ps.Item1),
-                       SubsidiaryId = string.IsNullOrWhiteSpace(ps.Item2) ? null : ps.Item2,
-                       ProducerName = $"Producer {ps.Item1}/{ps.Item2}",
-                   })
-                   .ToArray();
+            dbContext.SaveChanges();
 
-            dbContext.ProducerDetail.AddRange(producers);
-            var idByProducerId = producers.ToDictionary(p => (p.ProducerId, p.SubsidiaryId ?? ""), p => p.Id);
+            return new CalcResultsRequestDto { RunId = runId, RelativeYear = relativeYear };
+        }
 
+        private string[][] ConvertResult((List<ProducerDetail>, CalcResultProjectedProducers) given)
+        {
+            Console.WriteLine($">> ConvertResult");
+
+            var materials = dbContext.Material.Select(e => e).ToList();
+
+            string[]? createRow(int producerId, string? subsidiaryId, string level, ProducerReportedMaterial submission)
+            {
+                if (submission.PackagingTonnage == 0)
+                    return null;
+                else
+                {
+                    var row = new string[13];
+                    row[ProducerI] = producerId.ToString();
+                    row[SubsidiaryI] = subsidiaryId ?? "";
+                    row[PeriodI] = submission.SubmissionPeriod;
+                    row[LevelI] = level;
+                    row[MaterialCodeI] = materials.Find(m => m.Id == submission.MaterialId).Code;
+                    row[PackagingTypeI] = submission.PackagingType;
+                    row[TotalTonnageI] = submission.PackagingTonnage.ToString();
+                    row[RTonnageI]  = (submission.PackagingTonnageRed  ?? 0m).ToString();
+                    row[RMTonnageI] = (submission.PackagingTonnageRedMedical ?? 0m).ToString();
+                    row[ATonnageI]  = (submission.PackagingTonnageAmber  ?? 0m).ToString();
+                    row[AMTonnageI] = (submission.PackagingTonnageAmberMedical ?? 0m).ToString();
+                    row[GTonnageI]  = (submission.PackagingTonnageGreen  ?? 0m).ToString();
+                    row[GMTonnageI] = (submission.PackagingTonnageGreenMedical ?? 0m).ToString();
+                    return row;
+                }
+            }
+
+            // TODO if L2 - then add L1?
+            var levelLookup = given.Item1.Select(p => (ProducerId: p.ProducerId, SubsidiaryId: p.SubsidiaryId)).Distinct()
+                .GroupBy(p => p.ProducerId).SelectMany(producerGroup =>
+                {
+                    return producerGroup.GroupBy(p => p.SubsidiaryId).Select(subsidiaryGroup =>
+                        ((producerGroup.Key, subsidiaryGroup.Key), (producerGroup.Count() == 1 && string.IsNullOrEmpty(subsidiaryGroup.Key)) ? "1" : "2")
+                    ).ToList();
+                }).ToDictionary();
+            Console.WriteLine($">> levelLookup {JsonConvert.SerializeObject(levelLookup, Formatting.Indented)}");
+
+            var result = given.Item1.SelectMany(p =>
+                p.ProducerReportedMaterials.Select(r =>
+                    createRow(producerId: p.ProducerId, subsidiaryId: p.SubsidiaryId, level: levelLookup[(p.ProducerId, p.SubsidiaryId)], r)
+                )
+            );
+
+            Console.WriteLine($">> result {JsonConvert.SerializeObject(result, Formatting.Indented)}");
+
+            return result
+                    .OrderBy(a => a[PeriodI])
+                    .ThenBy(a => a[ProducerI])
+                    .ThenBy(a => string.IsNullOrEmpty(a[SubsidiaryI]) ? 0 : 1)
+                    .ThenBy(a => a[LevelI])
+                    .ThenBy(a => a[MaterialCodeI])
+                    .ThenBy(a => a[PackagingTypeI])
+                    .ToArray();
+        }
+        private List<ProducerDetail> ToProducers(string[][] given)
+        {
             decimal? ToDecimal(string? s)
             {
                 if (string.IsNullOrWhiteSpace(s)) return null;
                 return decimal.Parse(s, CultureInfo.InvariantCulture);
             }
 
-            foreach (var entry in given)
-            {
-                var (producerId, subsidiaryId, period, materialCode, packagingType, totalTonnage, rTonnage, rmTonnage, aTonnage, amTonnage, gTonnage, gmTonnage)
-                    = (entry[ProducerI], entry[SubsidiaryI], entry[PeriodI], entry[MaterialCodeI], entry[PackagingTypeI], entry[TotalTonnageI], entry[RTonnageI], entry[RMTonnageI], entry[ATonnageI], entry[AMTonnageI], entry[GTonnageI], entry[GMTonnageI]);
-                dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-                {
-                    ProducerDetailId = idByProducerId[(int.Parse(producerId), subsidiaryId)],
-                    MaterialId = materials.First(m => m.Code == materialCode).Id,
-                    PackagingType = packagingType,
-                    PackagingTonnage = ToDecimal(totalTonnage) ?? throw new InvalidOperationException("Total tonnage cannot be blank"),
-                    PackagingTonnageRed = ToDecimal(rTonnage),
-                    PackagingTonnageRedMedical = ToDecimal(rmTonnage),
-                    PackagingTonnageAmber = ToDecimal(aTonnage),
-                    PackagingTonnageAmberMedical = ToDecimal(amTonnage),
-                    PackagingTonnageGreen = ToDecimal(gTonnage),
-                    PackagingTonnageGreenMedical = ToDecimal(gmTonnage),
-                    SubmissionPeriod = period
-                });
-            }
+            var materials = dbContext.Material.Select(e => e).ToList();
 
-            dbContext.SaveChanges();
-
-            return new CalcResultsRequestDto { RunId = runId, RelativeYear = relativeYear };
+            var res = given.GroupBy(row => (ProducerId: row[ProducerI], SubsidiaryId: row[SubsidiaryI])).Distinct()
+                .Select(producerRows => {
+                    //Console.WriteLine($"{producerRows.Key}: {row[MaterialCodeI]}");
+                    var producer =  new ProducerDetail{
+                        ProducerId  = int.Parse(producerRows.Key.ProducerId),
+                        SubsidiaryId = string.IsNullOrWhiteSpace(producerRows.Key.SubsidiaryId) ? null : producerRows.Key.SubsidiaryId
+                    };
+                    foreach (var row in producerRows)
+                    {
+                        producer.ProducerReportedMaterials.Add(
+                            new ProducerReportedMaterial
+                            {
+                                MaterialId = materials.Find(m => m.Code == row[MaterialCodeI]).Id,
+                                PackagingType = row[PackagingTypeI],
+                                PackagingTonnage = ToDecimal(row[TotalTonnageI]) ?? 0m,
+                                PackagingTonnageRed = ToDecimal(row[RTonnageI]),
+                                PackagingTonnageAmber = ToDecimal(row[ATonnageI]),
+                                PackagingTonnageGreen = ToDecimal(row[GTonnageI]),
+                                PackagingTonnageRedMedical = ToDecimal(row[RMTonnageI]),
+                                PackagingTonnageAmberMedical = ToDecimal(row[AMTonnageI]),
+                                PackagingTonnageGreenMedical = ToDecimal(row[GMTonnageI]),
+                                SubmissionPeriod = row[PeriodI]
+                            }
+                        );
+                    }
+                    return producer;
+                }).ToList();
+            Console.WriteLine($"{res.Count()}: {JsonConvert.SerializeObject(res, Formatting.Indented)}");
+            return res;
         }
 
-        private string[][] ConvertResult(CalcResultProjectedProducers given)
+        private async Task<string[][]> FillGaps(string[][] given) =>
+            ConvertResult(await builder.ConstructAsync(InsertData(given), ToProducers(given)));
+
+        private string[][] ConvertResultPrevious(CalcResultProjectedProducers given)
         {
             var result = new List<string[]>();
 
@@ -440,11 +652,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     .ThenBy(a => a[LevelI])
                     .ThenBy(a => a[MaterialCodeI])
                     .ThenBy(a => a[PackagingTypeI])
-                    .ToArray();       
+                    .ToArray();
         }
 
-        private async Task<string[][]> FillGaps(string[][] given) =>
-            ConvertResult(await builder.ConstructAsync(InsertData(given)));
+        private async Task<string[][]> FillGapsPrevious(string[][] given) =>
+            ConvertResultPrevious((await builder.ConstructAsync(InsertData(given), ToProducers(given))).Item2);
 
         private string ToPrintable(string[] arr) =>
           arr is null ? "null" : "[" + string.Join(", ", arr.Select(x => x?.ToString() ?? "null")) + "]";

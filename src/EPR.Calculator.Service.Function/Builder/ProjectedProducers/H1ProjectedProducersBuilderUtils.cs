@@ -1,40 +1,35 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Models;
+using Microsoft.EntityFrameworkCore;
+
 namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Mappers;
-    using EPR.Calculator.Service.Function.Misc;
-    using EPR.Calculator.Service.Function.Models;
-    using EPR.Calculator.Service.Function.Services;
-    using EPR.Calculator.Service.Function.Builder.Summary.Common;
-
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Metadata.Internal;
-
-
     public static class H1ProjectedProducersBuilderUtils
     {
-        public static List<CalcResultH1ProjectedProducer> GetProjectedProducers(List<ProducerReportedMaterialsForSubmissionPeriod> reportedMaterials, List<CalcResultH2ProjectedProducer> h2ProjectedProducers, List<MaterialDetail> materials)
+        public static List<CalcResultH1ProjectedProducer> GetProjectedProducers(List<ProducerDetail> producerDetails, List<CalcResultH2ProjectedProducer> h2ProjectedProducers, List<MaterialDetail> materials, string submissionPeriod)
         {
-            CalcResultH2ProjectedProducer? GetH2Producer(ProducerReportedMaterialsForSubmissionPeriod rm)
+            CalcResultH2ProjectedProducer? GetH2Producer(ProducerDetail rm)
             {
                 var prodGroup = h2ProjectedProducers.Where(p => p.ProducerId == rm.ProducerId);
-                var maybeSubtotal = prodGroup.Where(p => p.IsSubtotal); 
+                var maybeSubtotal = prodGroup.Where(p => p.IsSubtotal);
                 return maybeSubtotal.Any() ? maybeSubtotal.First() : prodGroup.FirstOrDefault(p => p.SubsidiaryId == rm.SubsidiaryId);
             }
 
-            return reportedMaterials.Select(rm => new CalcResultH1ProjectedProducer
+            return producerDetails.Select(pd => new CalcResultH1ProjectedProducer
             {
-                ProducerId = rm.ProducerId,
-                SubsidiaryId = rm.SubsidiaryId,
+                ProducerId = pd.ProducerId,
+                SubsidiaryId = pd.SubsidiaryId,
                 Level = string.Empty, // Level will be set later when subtotals are added
-                SubmissionPeriodCode = rm.SubmissionPeriod,
-                H1ProjectedTonnageByMaterial = GetProjectedTonnages(materials, rm.ReportedMaterials, GetH2Producer(rm))
+                SubmissionPeriodCode = submissionPeriod,
+                H1ProjectedTonnageByMaterial = GetProjectedTonnages(
+                    materials,
+                    pd.ProducerReportedMaterials.Where(rm => rm.SubmissionPeriod == submissionPeriod).ToList(),
+                    GetH2Producer(pd)
+                )
             }).ToList();
         }
 
@@ -57,7 +52,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             var householdTonnageWithoutRAM = CalcResultProjectedProducersBuilder.TonnageWithoutRAM(householdRAMTonnage);
             var publicBinTonnageWithoutRAM = CalcResultProjectedProducersBuilder.TonnageWithoutRAM(publicBinRAMTonnage);
             decimal? householdDrinksContainerTonnageWithoutRAM = (hdcRAMTonnage != null) ? CalcResultProjectedProducersBuilder.TonnageWithoutRAM(hdcRAMTonnage) : null;
-            
+
             var h2ProjectedTonnage = h2ProjectedProducer != null ? h2ProjectedProducer.H2ProjectedTonnageByMaterial[material.Code] : GetEmptyH2MaterialTonnage(material.Code);
             var h2RamProportions = new RAMProportions{
                 Red = GetH2RAMProportion(h2ProjectedTonnage.GetTotalProjectedRedTonnage(), h2ProjectedTonnage.TotalTonnage),
@@ -68,7 +63,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                 GreenMedical = GetH2RAMProportion(h2ProjectedTonnage.GetTotalProjectedGreenMedicalTonnage(), h2ProjectedTonnage.TotalTonnage)
             };
 
-            var h1ProportionateRAMTonnage = (RAMTonnage ramTonnage, decimal tonnageWithoutRAM, decimal h2TotalTonnage) 
+            var h1ProportionateRAMTonnage = (RAMTonnage ramTonnage, decimal tonnageWithoutRAM, decimal h2TotalTonnage)
                 => GetProjectedTonnage(ramTonnage, tonnageWithoutRAM, h2RamProportions, h2TotalTonnage);
 
             return new CalcResultH1ProjectedProducerMaterialTonnage
@@ -106,12 +101,12 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             };
         }
 
-        public static RAMTonnage GetProjectedTonnage(RAMTonnage h1RAMTonnage, decimal tonnageWithoutRAM, RAMProportions h2RamProportions, decimal h2TotalTonnage)
+        private static RAMTonnage GetProjectedTonnage(RAMTonnage h1RAMTonnage, decimal tonnageWithoutRAM, RAMProportions h2RamProportions, decimal h2TotalTonnage)
         {
             if (h2TotalTonnage > 0) {
                 var projectedTonnage = GetProportionateRam(h1RAMTonnage, tonnageWithoutRAM, h2RamProportions);
                 return ReconcileRoundingDifference(projectedTonnage);
-            } 
+            }
             else
             {
                 return h1RAMTonnage with { RedTonnage = h1RAMTonnage.RedTonnage + tonnageWithoutRAM };
@@ -158,9 +153,9 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
         public static CalcResultH1ProjectedProducer SumProducerGroupTonnages(List<CalcResultH1ProjectedProducer> prodGroup)
         {
             var producer = prodGroup.First();
-            var sumRam = (string matKey, Func<CalcResultProjectedProducerMaterialTonnage, RAMTonnage?> tonnageFunc) => 
+            var sumRam = (string matKey, Func<CalcResultProjectedProducerMaterialTonnage, RAMTonnage?> tonnageFunc) =>
                 CalcResultProjectedProducersBuilder.SumRAMTonnages(prodGroup.Cast<ICalcResultProjectedProducer>().ToList(), matKey, tonnageFunc);
-            
+
             return new CalcResultH1ProjectedProducer
             {
                 ProducerId = producer.ProducerId,
@@ -169,7 +164,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                 SubmissionPeriodCode = producer.SubmissionPeriodCode,
                 IsSubtotal = true,
                 H1ProjectedTonnageByMaterial = producer.H1ProjectedTonnageByMaterial.ToDictionary(
-                    kvp => kvp.Key, 
+                    kvp => kvp.Key,
                     kvp => new CalcResultH1ProjectedProducerMaterialTonnage {
                         HouseholdRAMTonnage = sumRam(kvp.Key, p => p.HouseholdRAMTonnage),
                         PublicBinRAMTonnage = sumRam(kvp.Key, p => p.PublicBinRAMTonnage),
@@ -191,7 +186,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             {
                 HouseholdRAMTonnage = new RAMTonnage { Tonnage = 0, RedTonnage = 0, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
                 PublicBinRAMTonnage = new RAMTonnage { Tonnage = 0, RedTonnage = 0, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
-                HouseholdDrinksContainerRAMTonnage = materialCode == MaterialCodes.Glass ? 
+                HouseholdDrinksContainerRAMTonnage = materialCode == MaterialCodes.Glass ?
                     new RAMTonnage { Tonnage = 0, RedTonnage = 0, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 } : null,
                 HouseholdTonnageWithoutRAM = 0,
                 PublicBinTonnageWithoutRAM = 0,
@@ -199,11 +194,11 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                 H2RamProportions = new RAMProportions {
                     Red = 0, Amber = 0, Green = 0,
                     RedMedical = 0, AmberMedical = 0, GreenMedical = 0
-                },   
+                },
                 TotalTonnage = 0,
                 ProjectedHouseholdRAMTonnage = new RAMTonnage { Tonnage = 0, RedTonnage = 0, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
                 ProjectedPublicBinRAMTonnage = new RAMTonnage { Tonnage = 0, RedTonnage = 0, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
-                ProjectedHouseholdDrinksContainerRAMTonnage = materialCode == MaterialCodes.Glass ? 
+                ProjectedHouseholdDrinksContainerRAMTonnage = materialCode == MaterialCodes.Glass ?
                     new RAMTonnage { Tonnage = 0, RedTonnage = 0, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 } : null
             };
         }
@@ -213,14 +208,14 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             {
                 HouseholdRAMTonnage = new RAMTonnage { Tonnage = 0, RedTonnage = 0, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
                 PublicBinRAMTonnage = new RAMTonnage { Tonnage = 0, RedTonnage = 0, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
-                HouseholdDrinksContainerRAMTonnage = materialCode == MaterialCodes.Glass ? 
+                HouseholdDrinksContainerRAMTonnage = materialCode == MaterialCodes.Glass ?
                     new RAMTonnage { Tonnage = 0, RedTonnage = 0, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 } : null,
                 HouseholdTonnageWithoutRAM = 0,
                 PublicBinTonnageWithoutRAM = 0,
                 HouseholdDrinksContainerTonnageWithoutRAM = materialCode == MaterialCodes.Glass ? 0 : null,
                 ProjectedHouseholdRAMTonnage = new RAMTonnage { Tonnage = 0, RedTonnage = 0, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
                 ProjectedPublicBinRAMTonnage = new RAMTonnage { Tonnage = 0, RedTonnage = 0, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
-                ProjectedHouseholdDrinksContainerRAMTonnage = materialCode == MaterialCodes.Glass ? 
+                ProjectedHouseholdDrinksContainerRAMTonnage = materialCode == MaterialCodes.Glass ?
                     new RAMTonnage { Tonnage = 0, RedTonnage = 0, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 } : null,
                 TotalTonnage = 0
             };
@@ -249,7 +244,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             var projectedGlassHeaderCount = GetProjectedGlassColumnHeaders().Count;
 
             foreach (var material in materials)
-            { 
+            {
                 var header = $"{material.Name} Breakdown";
                 materialsBreakdownHeaders.Add(new ProjectedProducersHeader
                 {
@@ -258,10 +253,10 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                 });
 
                 var projectedColumnIndex = 0;
-                
+
                 if(material.Code == MaterialCodes.Glass)
                 {
-                    var breakdownHeaderCount = materialHeaderCount + glassHeaderCount; 
+                    var breakdownHeaderCount = materialHeaderCount + glassHeaderCount;
                     projectedColumnIndex = breakdownColumnIndex + breakdownHeaderCount;
                     breakdownColumnIndex += breakdownHeaderCount + projectedMaterialHeaderCount + projectedGlassHeaderCount;
                 } else {
@@ -337,7 +332,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                 new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.PublicBinAmberMedicalTonnage },
                 new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.PublicBinGreenMedicalTonnage },
                 new ProjectedProducersHeader { Name = CalcResultProjectedProducersHeaders.PublicBinTonnageWithoutRAM },
-                
+
             };
         }
 
