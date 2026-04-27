@@ -17,10 +17,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
     using Microsoft.EntityFrameworkCore.Diagnostics;
     using static EPR.Calculator.Service.Function.UnitTests.Builder.CalcRunLaDisposalCostBuilderTests;
 
-    using System.Linq;
-    using System.Runtime.InteropServices;
-    using EPR.Calculator.Service.Function.Models.JsonExporter;
-
     [TestClass]
     public class CalcResultProjectedProducersBuilderTest
     {
@@ -69,41 +65,50 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         [TestMethod]
         public async Task H1H2Projection_untouched()
         {
-            // RAM is complete - no modifications made
+            // RAM is complete - no modifications needed and therefore they do not appear
             var given = new[] {
                 new[] { "101", "", "2025-H1", "", "AL", "HH", "100", "20", "40", "40", "0", "", "" },
                 new[] { "101", "", "2025-H2", "", "AL", "HH", "100", "20", "40", "40", "0", "", "" }
             };
-            var expected = new [] {
-                new[] { "101", "", "2025-H1", "1", "AL", "HH", "100", "20.0", "40.0", "40.0", "0", "0", "0" },
-                new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "20", "40", "40", "0", "0", "0" }
-            };
+            var expected = Array.Empty<string[]>();
             AssertExcepted(expected, await FillGaps(given));
         }
-
+        
         [TestMethod]
         public async Task H1H2Projection_untouched_onlyh2()
         {
-            // RAM is complete - only H2 - no modifications made
+            // RAM is complete - only H2 - no modifications needed and therefore they do not appear
             var given = new[] {
                 new[] { "101", "", "2025-H2", "", "AL", "HH", "100", "30", "40", "40", "0", "", "" }
             };
-            var expected = new [] {
-                new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "30", "40", "40", "0", "0", "0" }
-            };
+            var expected = Array.Empty<string[]>();
             AssertExcepted(expected, await FillGaps(given));
         }
 
         [TestMethod]
         public async Task H1H2Projection_untouched_onlyh1()
         {
-            // RAM is complete - only H1 - no modifications made
+            // RAM is complete - only H1 - no modifications needed and therefore they do not appear
             var given = new[] {
                 new[] { "101", "", "2025-H1", "", "AL", "HH", "100", "30", "40", "40", "0", "", "" }
             };
-            var expected = new [] {
-                new[] { "101", "", "2025-H1", "1", "AL", "HH", "100", "30", "40", "40", "0", "0", "0" }
+            var expected = Array.Empty<string[]>();
+            AssertExcepted(expected, await FillGaps(given));
+        }
+
+        [TestMethod]
+        public async Task H1H2Projection_untouched_hc()
+        {
+            // RAM is complete - no modifications needed and therefore they do not appear
+            var given = new[] {
+                new[] { "101", "", "2025-H1", "", "AL", "HH", "100", "20", "40", "40", "0", "", "" },
+                new[] { "101", "A", "2025-H1", "", "GL", "HDC", "100", "20", "40", "40", "0", "", "" },
+                new[] { "101", "B", "2025-H1", "", "AL", "PB", "100", "20", "40", "40", "0", "", "" },
+                new[] { "101", "", "2025-H2", "", "PL", "HH", "100", "20", "40", "40", "0", "", "" },
+                new[] { "101", "A", "2025-H2", "", "ST", "PB", "100", "20", "40", "40", "0", "", "" },
+                new[] { "101", "B", "2025-H2", "", "AL", "HH", "100", "20", "40", "40", "0", "", "" }
             };
+            var expected = Array.Empty<string[]>();
             AssertExcepted(expected, await FillGaps(given));
         }
 
@@ -243,7 +248,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         {
             // Part of holding group where holding group doesn't report for themselves - different materials
             var given = new[] {
-                new[] { "101", "A", "2025-H1", "", "ST", "HH", "100", "20",  "40", "40",  "0",  "", "" },
+                new[] { "101", "A", "2025-H1", "", "ST", "HH", "100", "20",  "20", "40",  "0",  "", "" },
                 new[] { "101", "A", "2025-H2", "", "AL", "HH", "100", "20",  "40", "40",  "0",  "", "" },
                 new[] { "101", "A", "2025-H1", "", "PL", "PB", "100", "20",  "40", "40",  "0",  "", "" },
                 new[] { "101", "A", "2025-H2", "", "PL", "PB", "100", "20",  "40", "40",  "0",  "", "" },
@@ -252,9 +257,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             };
             var expected = new[]  {
                 new[] { "101", "",  "2025-H1", "1", "PL", "PB", "100", "20.0", "40.0", "40.0", "0", "0", "0" },
-                new[] { "101", "",  "2025-H1", "1", "ST", "HH", "300", "70",   "90",   "140",  "0", "0", "0" },
+                new[] { "101", "",  "2025-H1", "1", "ST", "HH", "300", "90",   "70",   "140",  "0", "0", "0" },
                 new[] { "101", "A", "2025-H1", "2", "PL", "PB", "100", "20.0", "40.0", "40.0", "0", "0", "0" },
-                new[] { "101", "A", "2025-H1", "2", "ST", "HH", "100", "20",   "40",   "40",   "0", "0", "0" },
+                new[] { "101", "A", "2025-H1", "2", "ST", "HH", "100", "40",   "20",   "40",   "0", "0", "0" },
                 new[] { "101", "B", "2025-H1", "2", "ST", "HH", "200", "50",   "50",   "100",  "0", "0", "0" },
 
                 new[] { "101", "",  "2025-H2", "1", "AL", "HH", "300", "170",  "65",   "65",   "0", "0", "0" },
