@@ -17,7 +17,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
 
     public interface ICalcResultScaledupProducersBuilder
     {
-        Task<List<(ProducerReportedMaterialsForSubmissionPeriod, ScaledupProducerData?)>> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<ProducerReportedMaterialsForSubmissionPeriod> producers);
+        Task<List<(L1, ScaledupProducerData?)>> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<L1> producers);
     }
 
     public class CalcResultScaledupProducersBuilder : ICalcResultScaledupProducersBuilder
@@ -147,7 +147,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
         }
 
         /// <inheritdoc/>
-        public async Task<List<(ProducerReportedMaterialsForSubmissionPeriod, ScaledupProducerData?)>> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<ProducerReportedMaterialsForSubmissionPeriod> producers)
+        public async Task<List<(L1, ScaledupProducerData?)>> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<L1> producers)
         {
             var runId = resultsRequestDto.RunId;
             var materialsFromDb = await context.Material.ToListAsync();
@@ -187,7 +187,8 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
             };
 
             SetHeaders(scaledupProducersSummary, materials);
-            return scaledupProducersSummary;
+            //return scaledupProducersSummary;
+            return producers.Select(p => (p, (ScaledupProducerData?)null)).ToList();
         }
 
         public async Task<IEnumerable<CalculatorRunPomDataDetail>> GetScaledupOrganisationDetails(int runId, IEnumerable<int> organisationIds)

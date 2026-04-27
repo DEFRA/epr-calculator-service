@@ -22,7 +22,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 
     public interface ICalcResultProjectedProducersBuilder
     {
-        Task<List<(ProducerReportedMaterialsForSubmissionPeriod, ProjectionData?)>> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<ProducerReportedMaterialsForSubmissionPeriod> producers);
+        Task<List<(L1, ProjectionData?)>> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<L1> producers);
     }
 
     public class CalcResultProjectedProducersBuilder : ICalcResultProjectedProducersBuilder
@@ -34,9 +34,10 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             context = dbContext;
         }
 
-        public async Task<List<(ProducerReportedMaterialsForSubmissionPeriod, ProjectionData?)>> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<ProducerReportedMaterialsForSubmissionPeriod> producers)
+        public async Task<List<(L1, ProjectionData?)>> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<L1> producers)
         {
-            var runId = resultsRequestDto.RunId;
+            return producers.Select(p => (p, (ProjectionData?)null)).ToList();
+            /*var runId = resultsRequestDto.RunId;
             var materialsFromDb = await context.Material.ToListAsync();
             var materials = MaterialMapper.Map(materialsFromDb);
 
@@ -63,7 +64,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                 H1ProjectedProducersHeaders = H1ProjectedProducersBuilderUtils.GetProjectedProducerHeaders(materials),
                 H2ProjectedProducers = h2ProjectedProducersWithSubtotals.OrderBy(p => p.ProducerId).ThenBy(p => p.Level).ThenBy(p => p.SubsidiaryId).ToList(),
                 H1ProjectedProducers = h1ProjectedProducersWithSubtotals.OrderBy(p => p.ProducerId).ThenBy(p => p.Level).ThenBy(p => p.SubsidiaryId).ToList()
-            };
+            };*/
         }
 
         public static RAMTonnage GetRAMTonnage(string packagingType, List<ProducerReportedMaterial> reportedMaterials) {

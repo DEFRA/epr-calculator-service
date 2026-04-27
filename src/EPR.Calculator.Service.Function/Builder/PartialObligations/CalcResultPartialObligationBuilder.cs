@@ -20,7 +20,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
     public interface ICalcResultPartialObligationBuilder
     {
         //Task<CalcResultPartialObligations> ConstructAsync(CalcResultsRequestDto resultsRequestDto, IEnumerable<CalcResultScaledupProducer> scaledupProducers);
-        Task<List<(ProducerReportedMaterialsForSubmissionPeriod, PartialObligationData?)>> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<ProducerReportedMaterialsForSubmissionPeriod> producers);
+        Task<List<(L1, PartialObligationData?)>> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<L1> producers);
     }
 
     public class CalcResultPartialObligationBuilder : ICalcResultPartialObligationBuilder
@@ -36,15 +36,16 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
         }
 
         //public async Task<CalcResultPartialObligations> ConstructAsync(CalcResultsRequestDto resultsRequestDto, IEnumerable<CalcResultScaledupProducer> scaledupProducers)
-        public async Task<List<(ProducerReportedMaterialsForSubmissionPeriod, PartialObligationData?)>> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<ProducerReportedMaterialsForSubmissionPeriod> producers)
+        public async Task<List<(L1, PartialObligationData?)>> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<L1> producers)
         {
             var runId = resultsRequestDto.RunId;
             var materialsFromDb = await context.Material.ToListAsync();
             var materials = MaterialMapper.Map(materialsFromDb);
 
-            var partialObligationsForRun = await GetPartialObligations(runId, materials, scaledupProducers);
+            var partialObligationsForRun = new List<CalcResultPartialObligation>();// await GetPartialObligations(runId, materials, scaledupProducers);
 
-            return new CalcResultPartialObligations
+            return producers.Select(p => (p, (PartialObligationData?)null)).ToList();
+            /*return new CalcResultPartialObligations
             {
                 TitleHeader = new CalcResultPartialObligationHeader
                 {
@@ -58,7 +59,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
                                         .ThenBy(p => p.Level)
                                         .ThenBy(p => p.SubsidiaryId)
                                         .ToList()
-            };
+            };*/
         }
 
         public async Task<List<CalcResultPartialObligation>> GetPartialObligations(int runId, List<MaterialDetail> materials, IEnumerable<CalcResultScaledupProducer> scaledupProducers)

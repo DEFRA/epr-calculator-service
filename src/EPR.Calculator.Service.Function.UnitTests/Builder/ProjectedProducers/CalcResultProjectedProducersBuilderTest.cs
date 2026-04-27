@@ -1,6 +1,9 @@
 ﻿using System.Globalization;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 {
+    using System.Reflection.Metadata.Ecma335;
+    using AutoFixture;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.API.Data.Models;
@@ -12,7 +15,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 
     using EPR.Calculator.Service.Function.Models;
     using EPR.Calculator.Service.Function.Services;
-
+    using Microsoft.Azure.Amqp.Framing;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
     using static EPR.Calculator.Service.Function.UnitTests.Builder.CalcRunLaDisposalCostBuilderTests;
@@ -76,7 +79,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             };
             AssertExcepted(expected, await FillGaps(given));
         }
-        
+
         [TestMethod]
         public async Task H1H2Projection_untouched_onlyh2()
         {
@@ -384,10 +387,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             return new CalcResultsRequestDto { RunId = runId, RelativeYear = relativeYear };
         }
 
-        private string[][] ConvertResult(CalcResultProjectedProducers given)
+        private string[][] ConvertResult(List<(L1, ProjectionData?)> given)
         {
-            var result = new List<string[]>();
-
             string[]? createRow(int producerId, string? subsidiaryId, string submissonPeriodCode, string materialCode, string packagingType, string? level, RAMTonnage? projectedRamTonnage)
             {
                 if (projectedRamTonnage == null || projectedRamTonnage.Tonnage == 0)
@@ -412,6 +413,58 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 }
             }
 
+            RAMTonnage toRAMTonnage(ReportedData data)
+            {
+                return new RAMTonnage
+                {
+                    Tonnage = data.R + data.A + data.G + data.RM + data.AM + data.GM,
+                    RedTonnage = data.R,
+                    AmberTonnage = data.A,
+                    GreenTonnage = data.G,
+                    RedMedicalTonnage = data.RM,
+                    AmberMedicalTonnage = data.AM,
+                    GreenMedicalTonnage = data.GM
+                };
+            }
+
+            List<string[]> populateForSingleL1(SingleL1 sl1)
+            {
+                var result = new List<string[]>();
+                foreach (var submission in sl1.MaterialSubmissions)
+                {
+                    result.Add(createRow(sl1.OrgId, null, submission.SubmissionPeriod, submission.Material.Name, "HH", "L1", toRAMTonnage(submission.HH)));
+                    result.Add(createRow(sl1.OrgId, null, submission.SubmissionPeriod, submission.Material.Name, "PB", "L1", toRAMTonnage(submission.PB)));
+                    result.Add(createRow(sl1.OrgId, null, submission.SubmissionPeriod, submission.Material.Name, "HDC", "L1", toRAMTonnage(submission.HDC)));
+                }
+                return result;
+            }
+
+            List<string[]> populateForHoldingCompany(HC hc)
+            {
+                var result = new List<string[]>();
+                foreach (var l2 in hc.L2s)
+                {
+                    foreach (var submission in l2.MaterialSubmissions)
+                    {
+                        result.Add(createRow(l2.OrgId, l2.SubsidiaryId, submission.SubmissionPeriod, submission.Material.Name, "HH", "L1", toRAMTonnage(submission.HH)));
+                        result.Add(createRow(l2.OrgId, l2.SubsidiaryId, submission.SubmissionPeriod, submission.Material.Name, "PB", "L1", toRAMTonnage(submission.PB)));
+                        result.Add(createRow(l2.OrgId, l2.SubsidiaryId, submission.SubmissionPeriod, submission.Material.Name, "HDC", "L1", toRAMTonnage(submission.HDC)));
+                    }
+                }
+                return result;
+            }
+
+            var result = new List<string[]>();
+            foreach (var l1 in given.Select(e => e.Item1))
+            {
+                result.AddRange(l1 switch
+                {
+                    SingleL1 sl1 => populateForSingleL1(sl1),
+                    HC hc => populateForHoldingCompany(hc),
+                    //_ => throw new ArgumentException("Unsupported L1 type")
+                });
+            }
+/*
             if (given.H1ProjectedProducers != null && given.H2ProjectedProducers != null) {
                 foreach (var producer in given.H1ProjectedProducers.Cast<ICalcResultProjectedProducer>().Concat(given.H2ProjectedProducers))
                 {
@@ -431,7 +484,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                         if (hdcRow != null) result.Add(hdcRow);
                     }
                 }
-            }
+            }*/
 
             return result
                     .OrderBy(a => a[PeriodI])
@@ -440,11 +493,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     .ThenBy(a => a[LevelI])
                     .ThenBy(a => a[MaterialCodeI])
                     .ThenBy(a => a[PackagingTypeI])
-                    .ToArray();       
+                    .ToArray();
         }
+        private List<L1> mockProducers = new List<L1>();
 
         private async Task<string[][]> FillGaps(string[][] given) =>
-            ConvertResult(await builder.ConstructAsync(InsertData(given)));
+            ConvertResult(await builder.ConstructAsync(InsertData(given), mockProducers));
 
         private string ToPrintable(string[] arr) =>
           arr is null ? "null" : "[" + string.Join(", ", arr.Select(x => x?.ToString() ?? "null")) + "]";
