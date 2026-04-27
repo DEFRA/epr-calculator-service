@@ -1,75 +1,126 @@
+using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Builder.PartialObligations;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Mappers;
+using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Models;
+using Microsoft.EntityFrameworkCore;
+
 namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Mappers;
-    using EPR.Calculator.Service.Function.Misc;
-    using EPR.Calculator.Service.Function.Models;
-    using EPR.Calculator.Service.Function.Services;
-    using EPR.Calculator.Service.Function.Builder.Summary.Common;
-
-    using Microsoft.EntityFrameworkCore;
-
     public interface ICalcResultProjectedProducersBuilder
     {
-        Task<CalcResultProjectedProducers> ConstructAsync(CalcResultsRequestDto resultsRequestDto);
+        Task<(List<ProducerDetail>, CalcResultProjectedProducers)> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<ProducerDetail> producerDetails);
     }
 
     public class CalcResultProjectedProducersBuilder : ICalcResultProjectedProducersBuilder
     {
-        private readonly ApplicationDBContext context;
+        private readonly ApplicationDBContext dbContext;
 
         public CalcResultProjectedProducersBuilder(ApplicationDBContext dbContext)
         {
-            context = dbContext;
+            this.dbContext = dbContext;
         }
 
-        public async Task<CalcResultProjectedProducers> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
+        public async Task<(List<ProducerDetail>, CalcResultProjectedProducers)> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<ProducerDetail> producerDetails)
         {
-            var runId = resultsRequestDto.RunId;
-            var materialsFromDb = await context.Material.ToListAsync();
+            var materialsFromDb = await dbContext.Material.ToListAsync();
             var materials = MaterialMapper.Map(materialsFromDb);
+            var h2Period = $"{resultsRequestDto.RelativeYear.Value - 1}-H2";
+            var h1Period = $"{resultsRequestDto.RelativeYear.Value - 1}-H1";
 
-            var reportedMaterialsForRun = await GetReportedMaterialsForRun(runId);
-            var submissionPeriod = (string i) => $"{resultsRequestDto.RelativeYear.Value - 1}-{i}";
-            var h2ReportedMaterials = reportedMaterialsForRun.Where(r => r.SubmissionPeriod == submissionPeriod("H2")).ToList();
-            var h1ReportedMaterials = reportedMaterialsForRun.Where(r => r.SubmissionPeriod == submissionPeriod("H1")).ToList();
+            var allH2Rows = new List<CalcResultH2ProjectedProducer>();
+            var allH1Rows = new List<CalcResultH1ProjectedProducer>();
+            var updatedProducers = new List<ProducerDetail>(producerDetails.Count);
 
-            var h2ProjectedProduers = H2ProjectedProducersBuilderUtils.GetProjectedProducers(h2ReportedMaterials, materials);
-            var h2ProjectedProducersWithSubtotals = AddSubtotals<CalcResultH2ProjectedProducer>(
-                h2ProjectedProduers,
-                createSubtotal: H2ProjectedProducersBuilderUtils.CreateParentProducer,
-                sumProducerGroupTonnages: H2ProjectedProducersBuilderUtils.SumProducerGroupTonnages
-            );
-            var h1ProjectedProduers = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1ReportedMaterials, h2ProjectedProducersWithSubtotals, materials);
-            var h1ProjectedProducersWithSubtotals = AddSubtotals<CalcResultH1ProjectedProducer>(
-                h1ProjectedProduers,
-                createSubtotal: H1ProjectedProducersBuilderUtils.CreateParentProducer,
-                sumProducerGroupTonnages: H1ProjectedProducersBuilderUtils.SumProducerGroupTonnages
-            );
+            // H1 for a producer only depends on H2 from the same ProducerId group, so each group
+            // can be processed fully in one pass.
+            foreach (var producerGroup in producerDetails.GroupBy(pd => pd.ProducerId))
+            {
+                var groupList = producerGroup.ToList();
 
-            return new CalcResultProjectedProducers
+                var h2Rows = H2ProjectedProducersBuilderUtils.GetProjectedProducers(groupList, materials, h2Period);
+                var h2WithGroupSubtotals = AddSubtotals<CalcResultH2ProjectedProducer>(
+                    h2Rows,
+                    createSubtotal: H2ProjectedProducersBuilderUtils.CreateParentProducer,
+                    sumProducerGroupTonnages: H2ProjectedProducersBuilderUtils.SumProducerGroupTonnages
+                );
+
+                var h1Rows = H1ProjectedProducersBuilderUtils.GetProjectedProducers(groupList, h2WithGroupSubtotals, materials, h1Period);
+
+                for (var i = 0; i < groupList.Count; i++)
+                    updatedProducers.Add(ApplyProjectedMaterials(groupList[i], h1Rows[i], h2Rows[i], materials, h1Period, h2Period));
+
+                allH2Rows.AddRange(h2WithGroupSubtotals);
+                allH1Rows.AddRange(AddSubtotals<CalcResultH1ProjectedProducer>(
+                    h1Rows,
+                    createSubtotal: H1ProjectedProducersBuilderUtils.CreateParentProducer,
+                    sumProducerGroupTonnages: H1ProjectedProducersBuilderUtils.SumProducerGroupTonnages
+                ));
+            }
+
+            var result = new CalcResultProjectedProducers
             {
                 H2ProjectedProducersHeaders = H2ProjectedProducersBuilderUtils.GetProjectedProducerHeaders(materials),
                 H1ProjectedProducersHeaders = H1ProjectedProducersBuilderUtils.GetProjectedProducerHeaders(materials),
-                H2ProjectedProducers = h2ProjectedProducersWithSubtotals.OrderBy(p => p.ProducerId).ThenBy(p => p.Level).ThenBy(p => p.SubsidiaryId).ToList(),
-                H1ProjectedProducers = h1ProjectedProducersWithSubtotals.OrderBy(p => p.ProducerId).ThenBy(p => p.Level).ThenBy(p => p.SubsidiaryId).ToList()
+                H2ProjectedProducers = allH2Rows.OrderBy(p => p.ProducerId).ThenBy(p => p.Level).ThenBy(p => p.SubsidiaryId).ToList(),
+                H1ProjectedProducers = allH1Rows.OrderBy(p => p.ProducerId).ThenBy(p => p.Level).ThenBy(p => p.SubsidiaryId).ToList()
             };
+
+            return (updatedProducers, result);
         }
 
-        private async Task<List<ProducerReportedMaterialsForSubmissionPeriod>> GetReportedMaterialsForRun(int runId)
+        private ProducerDetail ApplyProjectedMaterials(
+            ProducerDetail pd,
+            ICalcResultProjectedProducer h1Row,
+            ICalcResultProjectedProducer h2Row,
+            List<MaterialDetail> materials,
+            string h1Period,
+            string h2Period)
         {
-            return await (from run in context.CalculatorRuns.AsNoTracking()
-                    join pd in context.ProducerDetail.AsNoTracking() on run.Id equals pd.CalculatorRunId
-                    join prm in context.ProducerReportedMaterial.AsNoTracking() on pd.Id equals prm.ProducerDetailId
-                    where pd.CalculatorRunId == runId
-                    group prm by new { pd.ProducerId, pd.SubsidiaryId, prm.SubmissionPeriod } into prms 
-                    select new ProducerReportedMaterialsForSubmissionPeriod(prms.Key.ProducerId, prms.Key.SubsidiaryId, prms.Key.SubmissionPeriod, prms.ToList())).ToListAsync();
+            var h1ById = h1Row.ProjectedTonnageByMaterial
+                .ToDictionary(kvp => materials.Find(m => m.Code == kvp.Key)?.Id ?? -1, kvp => kvp.Value);
+            var h2ById = h2Row.ProjectedTonnageByMaterial
+                .ToDictionary(kvp => materials.Find(m => m.Code == kvp.Key)?.Id ?? -1, kvp => kvp.Value);
+
+            ProducerReportedMaterial Apply(ProducerReportedMaterial rm, Dictionary<int, CalcResultProjectedProducerMaterialTonnage> projectedById)
+            {
+                if (!projectedById.TryGetValue(rm.MaterialId, out var projected)) return rm;
+                var projectedRam = rm.PackagingType switch
+                {
+                    PackagingTypes.Household => projected.ProjectedHouseholdRAMTonnage,
+                    PackagingTypes.PublicBin => projected.ProjectedPublicBinRAMTonnage,
+                    PackagingTypes.HouseholdDrinksContainers => projected.ProjectedHouseholdDrinksContainerRAMTonnage,
+                    _ => null
+                };
+                if (projectedRam == null) return rm;
+                return new ProducerReportedMaterial
+                {
+                    Id = rm.Id,
+                    MaterialId = rm.MaterialId,
+                    ProducerDetailId = rm.ProducerDetailId,
+                    PackagingType = rm.PackagingType,
+                    PackagingTonnage = rm.PackagingTonnage,
+                    PackagingTonnageRed = projectedRam.RedTonnage,
+                    PackagingTonnageAmber = projectedRam.AmberTonnage,
+                    PackagingTonnageGreen = projectedRam.GreenTonnage,
+                    PackagingTonnageRedMedical = projectedRam.RedMedicalTonnage,
+                    PackagingTonnageAmberMedical = projectedRam.AmberMedicalTonnage,
+                    PackagingTonnageGreenMedical = projectedRam.GreenMedicalTonnage,
+                    SubmissionPeriod = rm.SubmissionPeriod,
+                    ProducerDetail = rm.ProducerDetail,
+                    Material = rm.Material
+                };
+            }
+
+            return CalcResultPartialObligationBuilder.UpdateReportedMaterials(
+                pd,
+                reportedMaterials =>
+                    reportedMaterials.Where(rm => rm.SubmissionPeriod == h1Period).Select(rm => Apply(rm, h1ById))
+                    .Concat(reportedMaterials.Where(rm => rm.SubmissionPeriod == h2Period).Select(rm => Apply(rm, h2ById)))
+                    .ToList()
+            );
         }
 
         public static RAMTonnage GetRAMTonnage(string packagingType, List<ProducerReportedMaterial> reportedMaterials) {
@@ -172,22 +223,6 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             }
 
             return result;
-        }
-    }
-
-    public class ProducerReportedMaterialsForSubmissionPeriod
-    {
-        public int ProducerId { get; }
-        public string? SubsidiaryId { get; }
-        public string SubmissionPeriod { get; }
-        public List<ProducerReportedMaterial> ReportedMaterials { get; }
-
-        public ProducerReportedMaterialsForSubmissionPeriod(int producerId, string? subsidiaryId, string submissionPeriod, List<ProducerReportedMaterial> reportedMaterials)
-        {
-            ProducerId = producerId;
-            SubsidiaryId = subsidiaryId;
-            SubmissionPeriod = submissionPeriod;
-            ReportedMaterials = reportedMaterials;
         }
     }
 }

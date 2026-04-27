@@ -126,7 +126,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
             Assert.AreEqual("10.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinRedMedicalTonnage][1]);
             Assert.AreEqual("0.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinAmberMedicalTonnage][1]);
             Assert.AreEqual("0.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinGreenMedicalTonnage][1]);
-     
+
             //Glass
             Assert.AreEqual("500.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersPackagingTonnage].First());
             Assert.AreEqual("0.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersRedTonnage].First());
@@ -574,7 +574,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                         Key = h?.Trim().Trim('"'),
                         Value = (i < values.Length ? values[i] : null)?
                                     .Trim()
-                                    .Trim('"') 
+                                    .Trim('"')
                                 ?? string.Empty
                     })
                     .Where(x => !string.IsNullOrWhiteSpace(x.Key))

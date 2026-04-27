@@ -174,6 +174,8 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<IErrorReportService, ErrorReportService>();
             services.AddTransient<IProjectedProducersService, ProjectedProducersService>();
             services.AddTransient<ISelfManagedConsumerWasteService, SelfManagedConsumerWasteService>();
+            services.AddTransient<IReportedProducerService, ReportedProducerService>();
+
             services.AddScoped<PrepareCalcServiceDependencies>(provider => new PrepareCalcServiceDependencies
             {
                 Context = provider.GetRequiredService<ApplicationDBContext>(),

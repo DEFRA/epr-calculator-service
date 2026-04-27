@@ -1,20 +1,9 @@
 ﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 {
-    using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.API.Data.Models;
-    using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
     using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Mappers;
-    using EPR.Calculator.Service.Function.Misc;
-
     using EPR.Calculator.Service.Function.Models;
-    using EPR.Calculator.Service.Function.Services;
-
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Diagnostics;
-    using static EPR.Calculator.Service.Function.UnitTests.Builder.CalcRunLaDisposalCostBuilderTests;
 
     [TestClass]
     public class H2ProjectedProducersBuilderUtilsTest
@@ -25,48 +14,48 @@
             new MaterialDetail { Id = 2, Code = "GL", Name = "Glass", Description = "Glass" }
         };
 
-        private List<ProducerReportedMaterialsForSubmissionPeriod> reportedMaterials = new List<ProducerReportedMaterialsForSubmissionPeriod>()
-        {
-            new(11, null, "2026-H2", new List<ProducerReportedMaterial>
-                {
-                    new ProducerReportedMaterial
-                    {
-                        MaterialId = 1,
-                        PackagingType = PackagingTypes.Household,
-                        PackagingTonnage = 100,
-                        PackagingTonnageRed = 30,
-                        PackagingTonnageRedMedical = 40,
-                        PackagingTonnageAmber = 40,
-                        PackagingTonnageAmberMedical = 0,
-                        PackagingTonnageGreen = null,
-                        PackagingTonnageGreenMedical = null,
-                        SubmissionPeriod = "2026-H2"
-                    }
-                }
-            ),
-            new(11, "22", "2026-H2", new List<ProducerReportedMaterial>
-                {
-                    new ProducerReportedMaterial
-                    {
-                        MaterialId = 2,
-                        PackagingType = PackagingTypes.HouseholdDrinksContainers,
-                        PackagingTonnage = 500,
-                        PackagingTonnageRed = null,
-                        PackagingTonnageRedMedical = null,
-                        PackagingTonnageAmber = null,
-                        PackagingTonnageAmberMedical = null,
-                        PackagingTonnageGreen = null,
-                        PackagingTonnageGreenMedical = null,
-                        SubmissionPeriod = "2026-H2"
-                    }
-                }
-            )
-        };
-
         [TestMethod]
         public void GetProjectedProducers()
         {
-            var result = H2ProjectedProducersBuilderUtils.GetProjectedProducers(reportedMaterials, materials);
+            var producer = new ProducerDetail { ProducerId = 11, SubsidiaryId = null };
+            producer.ProducerReportedMaterials.Add(
+                new ProducerReportedMaterial
+                {
+                    MaterialId = 1,
+                    PackagingType = PackagingTypes.Household,
+                    PackagingTonnage = 100,
+                    PackagingTonnageRed = 30,
+                    PackagingTonnageRedMedical = 40,
+                    PackagingTonnageAmber = 40,
+                    PackagingTonnageAmberMedical = 0,
+                    PackagingTonnageGreen = null,
+                    PackagingTonnageGreenMedical = null,
+                    SubmissionPeriod = "2026-H2"
+                }
+            );
+
+            var subsidiary = new ProducerDetail { ProducerId = 11, SubsidiaryId = "22" };
+            subsidiary.ProducerReportedMaterials.Add(
+                new ProducerReportedMaterial
+                {
+                    MaterialId = 2,
+                    PackagingType = PackagingTypes.HouseholdDrinksContainers,
+                    PackagingTonnage = 500,
+                    PackagingTonnageRed = null,
+                    PackagingTonnageRedMedical = null,
+                    PackagingTonnageAmber = null,
+                    PackagingTonnageAmberMedical = null,
+                    PackagingTonnageGreen = null,
+                    PackagingTonnageGreenMedical = null,
+                    SubmissionPeriod = "2026-H2"
+                }
+            );
+            var reportedMaterials = new List<ProducerDetail>()
+            {
+                producer, subsidiary
+            };
+
+            var result = H2ProjectedProducersBuilderUtils.GetProjectedProducers(reportedMaterials, materials, "2026-H2");
 
             Assert.AreEqual(2, result.Count());
 
@@ -110,7 +99,7 @@
         [TestMethod]
         public void SumProducerGroupTonnages_CorrectlySums()
         {
-            var prodGroup = new List<CalcResultH2ProjectedProducer>() 
+            var prodGroup = new List<CalcResultH2ProjectedProducer>()
             {
                 new (){
                     ProducerId = 11,
@@ -147,7 +136,6 @@
                     }
                 },
             };
-            
             var expSummedAlm = new CalcResultH2ProjectedProducerMaterialTonnage() {
                 HouseholdRAMTonnage = new RAMTonnage { Tonnage = 200, RedTonnage = 200, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
                 PublicBinRAMTonnage = new RAMTonnage { Tonnage = 400, RedTonnage = 0, AmberTonnage = 200, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },

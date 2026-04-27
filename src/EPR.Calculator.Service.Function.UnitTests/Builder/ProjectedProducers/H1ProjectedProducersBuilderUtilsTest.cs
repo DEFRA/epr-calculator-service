@@ -1,20 +1,9 @@
 ﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 {
-    using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.API.Data.Models;
-    using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
     using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Mappers;
-    using EPR.Calculator.Service.Function.Misc;
-
     using EPR.Calculator.Service.Function.Models;
-    using EPR.Calculator.Service.Function.Services;
-
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Diagnostics;
-    using static EPR.Calculator.Service.Function.UnitTests.Builder.CalcRunLaDisposalCostBuilderTests;
 
     [TestClass]
     public class H1ProjectedProducersBuilderUtilsTest
@@ -33,7 +22,7 @@
         {
             var (h1HHAlm, h1HdcGlass, h1NoRamReportedMaterials) = GetH1NoRamReportedMaterials();
             var (h2Alm, h2Glass, h2FullRamProjectedProducers) = GetH2FullRamProjectedProducers();
-            var result = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1NoRamReportedMaterials, h2FullRamProjectedProducers, materials);
+            var result = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1NoRamReportedMaterials, h2FullRamProjectedProducers, materials, "2026-H1");
 
             Assert.AreEqual(1, result.Count());
             Assert.AreEqual(3, result.First().H1ProjectedTonnageByMaterial.Count());
@@ -101,9 +90,9 @@
         public void GetProjectedProducers_With_H1_NoRam_H2_PartialRam()
         {
             var (h1HHAlm, h1HdcGlass, h1NoRamReportedMaterials) = GetH1NoRamReportedMaterials();
-            var (h2Alm, h2Glass, h2PartialRamProjectedProducers) = GetH2PartialRamProjectedProducers();    
-            
-            var result = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1NoRamReportedMaterials, h2PartialRamProjectedProducers, materials);
+            var (h2Alm, h2Glass, h2PartialRamProjectedProducers) = GetH2PartialRamProjectedProducers();
+
+            var result = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1NoRamReportedMaterials, h2PartialRamProjectedProducers, materials, "2026-H1");
 
             Assert.AreEqual(1, result.Count());
             Assert.AreEqual(3, result.First().H1ProjectedTonnageByMaterial.Count());
@@ -152,13 +141,13 @@
             AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2Proportions.AmberMedical), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage.AmberMedicalTonnage);
             AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2Proportions.GreenMedical), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage.GreenMedicalTonnage);
         }
-    
+
         [TestMethod]
         public void GetProjectedProducers_With_H1_PartialRam_H2_FullRam()
         {
             var (h1HHAlm, h1HdcGlass, h1PartialRamReportedMaterials) = GetH1PartialRamReportedMaterials();
-            var (h2Alm, h2Glass, h2FullRamProjectedProducers) = GetH2FullRamProjectedProducers();    
-            var result = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1PartialRamReportedMaterials, h2FullRamProjectedProducers, materials);
+            var (h2Alm, h2Glass, h2FullRamProjectedProducers) = GetH2FullRamProjectedProducers();
+            var result = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1PartialRamReportedMaterials, h2FullRamProjectedProducers, materials, "2026-H1");
 
             Assert.AreEqual(1, result.Count());
             Assert.AreEqual(3, result.First().H1ProjectedTonnageByMaterial.Count());
@@ -181,7 +170,7 @@
             Assert.AreEqual(0, projectedGlass.HouseholdTonnageWithoutRAM);
             Assert.AreEqual(0, projectedGlass.PublicBinTonnageWithoutRAM);
             Assert.AreEqual(expH1HdcGlassWithoutRam, projectedGlass.HouseholdDrinksContainerTonnageWithoutRAM);
-            
+
             var expAlmH2Proportions = new RAMProportions {
                 Red = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.RedTonnage + h2Alm.ProjectedPublicBinRAMTonnage.RedTonnage) / h2Alm.TotalTonnage),
                 Amber = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.AmberTonnage + h2Alm.ProjectedPublicBinRAMTonnage.AmberTonnage) / h2Alm.TotalTonnage),
@@ -203,11 +192,11 @@
             Assert.AreEqual(expGlassH2Proportions, projectedGlass.H2RamProportions);
 
             Assert.AreEqual(h1HHAlm.PackagingTonnage, projectedAluminium.ProjectedHouseholdRAMTonnage.Tonnage);
-            AssertWithin(To3DP(expH1AlmWithoutRam * expAlmH2Proportions.Red), projectedAluminium.ProjectedHouseholdRAMTonnage.RedTonnage);  
-            AssertWithin(To3DP((h1HHAlm.PackagingTonnageAmber ?? 0) + (expH1AlmWithoutRam * expAlmH2Proportions.Amber)), projectedAluminium.ProjectedHouseholdRAMTonnage.AmberTonnage); 
-            AssertWithin(To3DP(expH1AlmWithoutRam * expAlmH2Proportions.Green), projectedAluminium.ProjectedHouseholdRAMTonnage.GreenTonnage);  
-            AssertWithin(To3DP(expH1AlmWithoutRam * expAlmH2Proportions.RedMedical), projectedAluminium.ProjectedHouseholdRAMTonnage.RedMedicalTonnage);    
-            AssertWithin(To3DP((h1HHAlm.PackagingTonnageAmberMedical ?? 0) + (expH1AlmWithoutRam * expAlmH2Proportions.AmberMedical)), projectedAluminium.ProjectedHouseholdRAMTonnage.AmberMedicalTonnage);    
+            AssertWithin(To3DP(expH1AlmWithoutRam * expAlmH2Proportions.Red), projectedAluminium.ProjectedHouseholdRAMTonnage.RedTonnage);
+            AssertWithin(To3DP((h1HHAlm.PackagingTonnageAmber ?? 0) + (expH1AlmWithoutRam * expAlmH2Proportions.Amber)), projectedAluminium.ProjectedHouseholdRAMTonnage.AmberTonnage);
+            AssertWithin(To3DP(expH1AlmWithoutRam * expAlmH2Proportions.Green), projectedAluminium.ProjectedHouseholdRAMTonnage.GreenTonnage);
+            AssertWithin(To3DP(expH1AlmWithoutRam * expAlmH2Proportions.RedMedical), projectedAluminium.ProjectedHouseholdRAMTonnage.RedMedicalTonnage);
+            AssertWithin(To3DP((h1HHAlm.PackagingTonnageAmberMedical ?? 0) + (expH1AlmWithoutRam * expAlmH2Proportions.AmberMedical)), projectedAluminium.ProjectedHouseholdRAMTonnage.AmberMedicalTonnage);
             AssertWithin(To3DP(expH1AlmWithoutRam * expAlmH2Proportions.GreenMedical), projectedAluminium.ProjectedHouseholdRAMTonnage.GreenMedicalTonnage);
 
             Assert.AreEqual(EmptyRAMTonnage(), projectedAluminium.ProjectedPublicBinRAMTonnage);
@@ -228,8 +217,8 @@
         public void GetProjectedProducers_With_H1_FullRam_H2_FullRam()
         {
             var (h1HHAlm, h1HdcGlass, h1FullRamReportedMaterials) = GetH1FullRamReportedMaterials();
-            var (h2Alm, h2Glass, h2FullRamProjectedProducers) = GetH2FullRamProjectedProducers();    
-            var result = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1FullRamReportedMaterials, h2FullRamProjectedProducers, materials);
+            var (h2Alm, h2Glass, h2FullRamProjectedProducers) = GetH2FullRamProjectedProducers();
+            var result = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1FullRamReportedMaterials, h2FullRamProjectedProducers, materials, "2026-H1");
 
             Assert.AreEqual(1, result.Count());
             Assert.AreEqual(3, result.First().H1ProjectedTonnageByMaterial.Count());
@@ -257,14 +246,14 @@
             Assert.AreEqual(EmptyRAMTonnage(), projectedGlass.ProjectedHouseholdRAMTonnage);
             Assert.AreEqual(EmptyRAMTonnage(), projectedGlass.ProjectedPublicBinRAMTonnage);
             Assert.AreEqual(ProducerReportedMaterialToRAMTonnage(h1HdcGlass),projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage);
-        } 
+        }
 
         [TestMethod]
         public void GetProjectedProducers_With_H1_PartialRam_H2_NoReportedMaterial()
         {
             var (h1HHAlm, h1HdcGlass, h1NoRamReportedMaterials) = GetH1PartialRamReportedMaterials();
             var (h2Alm, h2Glass, h2NoReportedMaterialProjectedProducers) = GetH2NoReportedMaterialProjectedProducers();
-            var result = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1NoRamReportedMaterials, h2NoReportedMaterialProjectedProducers, materials);
+            var result = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1NoRamReportedMaterials, h2NoReportedMaterialProjectedProducers, materials, "2026-H1");
 
             Assert.AreEqual(1, result.Count());
             Assert.AreEqual(3, result.First().H1ProjectedTonnageByMaterial.Count());
@@ -287,14 +276,14 @@
             Assert.AreEqual(expH1HdcGlassWithoutRam, projectedGlass.HouseholdDrinksContainerTonnageWithoutRAM);
 
             Assert.AreEqual(
-                new RAMTonnage { 
+                new RAMTonnage {
                     Tonnage = h1HHAlm.PackagingTonnage,
                     RedTonnage = (h1HHAlm.PackagingTonnageRed ?? 0) + expH1AlmWithoutRam,
-                    AmberTonnage = h1HHAlm.PackagingTonnageAmber ?? 0, 
-                    GreenTonnage = h1HHAlm.PackagingTonnageGreen ?? 0, 
-                    RedMedicalTonnage = h1HHAlm.PackagingTonnageRedMedical ?? 0, 
-                    AmberMedicalTonnage = h1HHAlm.PackagingTonnageAmberMedical ?? 0, 
-                    GreenMedicalTonnage = h1HHAlm.PackagingTonnageGreenMedical ?? 0 
+                    AmberTonnage = h1HHAlm.PackagingTonnageAmber ?? 0,
+                    GreenTonnage = h1HHAlm.PackagingTonnageGreen ?? 0,
+                    RedMedicalTonnage = h1HHAlm.PackagingTonnageRedMedical ?? 0,
+                    AmberMedicalTonnage = h1HHAlm.PackagingTonnageAmberMedical ?? 0,
+                    GreenMedicalTonnage = h1HHAlm.PackagingTonnageGreenMedical ?? 0
                 },
                 projectedAluminium.ProjectedHouseholdRAMTonnage
             );
@@ -305,14 +294,14 @@
             Assert.AreEqual(EmptyRAMTonnage(), projectedGlass.ProjectedPublicBinRAMTonnage);
 
             Assert.AreEqual(
-                new RAMTonnage { 
+                new RAMTonnage {
                     Tonnage = h1HdcGlass.PackagingTonnage,
-                    RedTonnage = (h1HdcGlass.PackagingTonnageRed ?? 0) + expH1HdcGlassWithoutRam, 
-                    AmberTonnage = h1HdcGlass.PackagingTonnageAmber ?? 0, 
-                    GreenTonnage = h1HdcGlass.PackagingTonnageGreen ?? 0, 
-                    RedMedicalTonnage = h1HdcGlass.PackagingTonnageRedMedical ?? 0, 
-                    AmberMedicalTonnage = h1HdcGlass.PackagingTonnageAmberMedical ?? 0, 
-                    GreenMedicalTonnage = h1HdcGlass.PackagingTonnageGreenMedical ?? 0 
+                    RedTonnage = (h1HdcGlass.PackagingTonnageRed ?? 0) + expH1HdcGlassWithoutRam,
+                    AmberTonnage = h1HdcGlass.PackagingTonnageAmber ?? 0,
+                    GreenTonnage = h1HdcGlass.PackagingTonnageGreen ?? 0,
+                    RedMedicalTonnage = h1HdcGlass.PackagingTonnageRedMedical ?? 0,
+                    AmberMedicalTonnage = h1HdcGlass.PackagingTonnageAmberMedical ?? 0,
+                    GreenMedicalTonnage = h1HdcGlass.PackagingTonnageGreenMedical ?? 0
                 },
                 projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage
             );
@@ -322,8 +311,8 @@
         public void GetProjectedProducers_With_H1_NoReportedMaterial()
         {
             var (h1HHAlm, h1HdcGlass, h1FullRamReportedMaterials) = GetH1FullRamReportedMaterials();
-            var (h2Alm, h2Glass, h2FullRamProjectedProducers) = GetH2FullRamProjectedProducers();    
-            var result = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1FullRamReportedMaterials, h2FullRamProjectedProducers, materials);
+            var (h2Alm, h2Glass, h2FullRamProjectedProducers) = GetH2FullRamProjectedProducers();
+            var result = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1FullRamReportedMaterials, h2FullRamProjectedProducers, materials, "2026-H1");
 
             Assert.AreEqual(1, result.Count());
 
@@ -346,8 +335,8 @@
         public void GetProjectedProducers_With_H1_NoH2Producer()
         {
             var (h1HHAlm, h1HdcGlass, h1FullRamReportedMaterials) = GetH1FullRamReportedMaterials();
-            var noH2Producers = new List<CalcResultH2ProjectedProducer>();    
-            var result = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1FullRamReportedMaterials, noH2Producers, materials);
+            var noH2Producers = new List<CalcResultH2ProjectedProducer>();
+            var result = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1FullRamReportedMaterials, noH2Producers, materials, "2026-H1");
 
             Assert.AreEqual(1, result.Count());
             Assert.AreEqual(3, result.First().ProjectedTonnageByMaterial.Count());
@@ -375,14 +364,14 @@
             Assert.AreEqual(EmptyRAMTonnage(), projectedGlass.ProjectedHouseholdRAMTonnage);
             Assert.AreEqual(EmptyRAMTonnage(), projectedGlass.ProjectedPublicBinRAMTonnage);
             Assert.AreEqual(ProducerReportedMaterialToRAMTonnage(h1HdcGlass),projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage);
-        } 
+        }
 
         [TestMethod]
         public void GetProjectedProducers_Use_HC_Subtotal_H2_Proportions()
         {
             var (h1HHAlm, h1HdcGlass, subH1HHAlm, subH1HdcGlass, h1NoRamReportedMaterials) = GetH1NoRamReportedMaterialsWithSubsidiary();
             var (h2SubtotalAlm, h2SubtotalGlass, h2FullRamProjectedProducers) = GetH2WithHCSubtotal();
-            var result = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1NoRamReportedMaterials, h2FullRamProjectedProducers, materials);
+            var result = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1NoRamReportedMaterials, h2FullRamProjectedProducers, materials, "2026-H1");
 
             Assert.AreEqual(2, result.Count());
             var hc = result.Where(p => p.ProducerId == 11 && p.SubsidiaryId == null).FirstOrDefault();
@@ -511,7 +500,7 @@
         public void SumProducerGroupTonnages_CorrectlyTotalsProportionForHC()
         {
             var expRamH2Proportions = new RAMProportions { Red = 50, Amber = 50, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 };
-            var prodGroup = new List<CalcResultH1ProjectedProducer>() 
+            var prodGroup = new List<CalcResultH1ProjectedProducer>()
             {
                 new (){
                     ProducerId = 11,
@@ -550,7 +539,7 @@
                     }
                 },
             };
-            
+
             var expSummedAlm = new CalcResultH1ProjectedProducerMaterialTonnage() {
                 HouseholdRAMTonnage = new RAMTonnage { Tonnage = 200, RedTonnage = 200, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
                 PublicBinRAMTonnage = new RAMTonnage { Tonnage = 400, RedTonnage = 0, AmberTonnage = 200, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
@@ -596,86 +585,82 @@
                 AmberMedicalTonnage = material.PackagingTonnageAmberMedical ?? 0,
                 GreenMedicalTonnage = material.PackagingTonnageGreenMedical ?? 0
             };
-        } 
+        }
 
         private decimal CalcWithoutRam(ProducerReportedMaterial material)
         {
             return material.PackagingTonnage - (material.PackagingTonnageRed ?? 0) - (material.PackagingTonnageAmber ?? 0) - (material.PackagingTonnageGreen ?? 0) - (material.PackagingTonnageRedMedical ?? 0) - (material.PackagingTonnageAmberMedical ?? 0) - (material.PackagingTonnageGreenMedical ?? 0);
         }
 
-        private (ProducerReportedMaterial, ProducerReportedMaterial, List<ProducerReportedMaterialsForSubmissionPeriod>) GetH1NoRamReportedMaterials()
+        private (ProducerReportedMaterial, ProducerReportedMaterial, List<ProducerDetail>) GetH1NoRamReportedMaterials()
         {
             var hhAlm = new ProducerReportedMaterial { MaterialId = 1, PackagingType = PackagingTypes.Household, PackagingTonnage = 100, SubmissionPeriod = "2026-H1" };
             var hdcGlass = new ProducerReportedMaterial { MaterialId = 2, PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 200, SubmissionPeriod = "2026-H1" };
-            return (hhAlm, hdcGlass, new List<ProducerReportedMaterialsForSubmissionPeriod>()
+            var producer = new ProducerDetail
             {
-                new(
-                    producerId: 11,
-                    subsidiaryId: null,
-                    submissionPeriod: "2026-H1",
-                    new List<ProducerReportedMaterial>{ hhAlm, hdcGlass }
-                )
-            });
+                ProducerId = 11,
+                SubsidiaryId = null,
+            };
+            producer.ProducerReportedMaterials.Add(hhAlm);
+            producer.ProducerReportedMaterials.Add(hdcGlass);
+            return (hhAlm, hdcGlass, new List<ProducerDetail> { producer });
         }
 
-        private (ProducerReportedMaterial, ProducerReportedMaterial, ProducerReportedMaterial, ProducerReportedMaterial, List<ProducerReportedMaterialsForSubmissionPeriod>) GetH1NoRamReportedMaterialsWithSubsidiary()
+        private (ProducerReportedMaterial, ProducerReportedMaterial, ProducerReportedMaterial, ProducerReportedMaterial, List<ProducerDetail>) GetH1NoRamReportedMaterialsWithSubsidiary()
         {
             var hhAlm = new ProducerReportedMaterial { MaterialId = 1, PackagingType = PackagingTypes.Household, PackagingTonnage = 100, SubmissionPeriod = "2026-H1" };
             var hhSubAlm = new ProducerReportedMaterial { MaterialId = 1, PackagingType = PackagingTypes.Household, PackagingTonnage = 200, SubmissionPeriod = "2026-H1" };
             var hdcGlass = new ProducerReportedMaterial { MaterialId = 2, PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 200, SubmissionPeriod = "2026-H1" };
             var hdcSubGlass = new ProducerReportedMaterial { MaterialId = 2, PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 50, SubmissionPeriod = "2026-H1" };
-            return (hhAlm, hdcGlass, hhSubAlm, hdcSubGlass, new List<ProducerReportedMaterialsForSubmissionPeriod>()
+            var producer1 = new ProducerDetail
             {
-                new(
-                    producerId: 11,
-                    subsidiaryId: null,
-                    submissionPeriod: "2026-H1",
-                    new List<ProducerReportedMaterial>{ hhAlm, hdcGlass }
-                ),
-                new(
-                    producerId: 11,
-                    subsidiaryId: "A",
-                    submissionPeriod: "2026-H1",
-                    new List<ProducerReportedMaterial>{ hhSubAlm, hdcSubGlass }
-                )
-            });
+                ProducerId = 11,
+                SubsidiaryId = null,
+            };
+            producer1.ProducerReportedMaterials.Add(hhAlm);
+            producer1.ProducerReportedMaterials.Add(hdcGlass);
+            var producer2 = new ProducerDetail
+            {
+                ProducerId = 11,
+                SubsidiaryId = "A",
+            };
+            producer2.ProducerReportedMaterials.Add(hhSubAlm);
+            producer2.ProducerReportedMaterials.Add(hdcSubGlass);
+            return (hhAlm, hdcGlass, hhSubAlm, hdcSubGlass, new List<ProducerDetail> { producer1, producer2 });
         }
 
-
-        private (ProducerReportedMaterial, ProducerReportedMaterial, List<ProducerReportedMaterialsForSubmissionPeriod>) GetH1PartialRamReportedMaterials()
+        private (ProducerReportedMaterial, ProducerReportedMaterial, List<ProducerDetail>) GetH1PartialRamReportedMaterials()
         {
             var hhAlm = new ProducerReportedMaterial { MaterialId = 1, PackagingType = PackagingTypes.Household, PackagingTonnage = 100, PackagingTonnageRed = 0, PackagingTonnageAmber = 50, PackagingTonnageGreen = 0, PackagingTonnageRedMedical = 0, PackagingTonnageAmberMedical = 25, PackagingTonnageGreenMedical = 0, SubmissionPeriod = "2026-H1" };
             var hdcGlass = new ProducerReportedMaterial { MaterialId = 2, PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 200, PackagingTonnageRed = 20, PackagingTonnageAmber = 0, PackagingTonnageGreen = 100, PackagingTonnageRedMedical = 20, PackagingTonnageAmberMedical = 0, PackagingTonnageGreenMedical = 0, SubmissionPeriod = "2026-H1" };
-            return (hhAlm, hdcGlass, new List<ProducerReportedMaterialsForSubmissionPeriod>()
+            var producer = new ProducerDetail
             {
-                new(
-                    producerId: 11,
-                    subsidiaryId: null,
-                    submissionPeriod: "2026-H1",
-                    new List<ProducerReportedMaterial>{ hhAlm, hdcGlass }
-                )
-            });
+                ProducerId = 11,
+                SubsidiaryId = null,
+            };
+            producer.ProducerReportedMaterials.Add(hhAlm);
+            producer.ProducerReportedMaterials.Add(hdcGlass);
+            return (hhAlm, hdcGlass, new List<ProducerDetail> { producer });
         }
 
-        private (ProducerReportedMaterial, ProducerReportedMaterial, List<ProducerReportedMaterialsForSubmissionPeriod>) GetH1FullRamReportedMaterials()
+        private (ProducerReportedMaterial, ProducerReportedMaterial, List<ProducerDetail>) GetH1FullRamReportedMaterials()
         {
             var hhAlm = new ProducerReportedMaterial { MaterialId = 1, PackagingType = PackagingTypes.Household, PackagingTonnage = 100, PackagingTonnageRed = 0, PackagingTonnageAmber = 50, PackagingTonnageGreen = 25, PackagingTonnageRedMedical = 0, PackagingTonnageAmberMedical = 25, PackagingTonnageGreenMedical = 0, SubmissionPeriod = "2026-H1" };
             var hdcGlass = new ProducerReportedMaterial { MaterialId = 2, PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 200, PackagingTonnageRed = 20, PackagingTonnageAmber = 60, PackagingTonnageGreen = 100, PackagingTonnageRedMedical = 20, PackagingTonnageAmberMedical = 0, PackagingTonnageGreenMedical = 0, SubmissionPeriod = "2026-H1" };
-            return (hhAlm, hdcGlass, new List<ProducerReportedMaterialsForSubmissionPeriod>()
+            var producer = new ProducerDetail
             {
-                new(
-                    producerId: 11,
-                    subsidiaryId: null,
-                    submissionPeriod: "2026-H1",
-                    new List<ProducerReportedMaterial>{ hhAlm, hdcGlass }
-                )
-            });
+                ProducerId = 11,
+                SubsidiaryId = null,
+            };
+            producer.ProducerReportedMaterials.Add(hhAlm);
+            producer.ProducerReportedMaterials.Add(hdcGlass);
+            return (hhAlm, hdcGlass, new List<ProducerDetail> { producer });
         }
 
         private (CalcResultH2ProjectedProducerMaterialTonnage, CalcResultH2ProjectedProducerMaterialTonnage, List<CalcResultH2ProjectedProducer>) GetH2WithHCSubtotal()
         {
-            var alm = new CalcResultH2ProjectedProducerMaterialTonnage 
-                        { 
+            var alm = new CalcResultH2ProjectedProducerMaterialTonnage
+                        {
                             HouseholdRAMTonnage = new RAMTonnage { Tonnage = 75, RedTonnage = 10, AmberTonnage = 11, GreenTonnage = 12, RedMedicalTonnage = 13, AmberMedicalTonnage = 14, GreenMedicalTonnage = 15 },
                             PublicBinRAMTonnage = new RAMTonnage { Tonnage = 135, RedTonnage = 20, AmberTonnage = 21, GreenTonnage = 22, RedMedicalTonnage = 23, AmberMedicalTonnage = 24, GreenMedicalTonnage = 25 },
                             HouseholdTonnageWithoutRAM = 0,
@@ -684,8 +669,8 @@
                             ProjectedHouseholdRAMTonnage = new RAMTonnage { Tonnage = 75, RedTonnage = 10, AmberTonnage = 11, GreenTonnage = 12, RedMedicalTonnage = 13, AmberMedicalTonnage = 14, GreenMedicalTonnage = 15 },
                             ProjectedPublicBinRAMTonnage = new RAMTonnage { Tonnage = 135, RedTonnage = 20, AmberTonnage = 21, GreenTonnage = 22, RedMedicalTonnage = 23, AmberMedicalTonnage = 24, GreenMedicalTonnage = 25 },
                         };
-            var glass = new CalcResultH2ProjectedProducerMaterialTonnage 
-                        { 
+            var glass = new CalcResultH2ProjectedProducerMaterialTonnage
+                        {
                             HouseholdRAMTonnage = new RAMTonnage { Tonnage = 75, RedTonnage = 10, AmberTonnage = 11, GreenTonnage = 12, RedMedicalTonnage = 13, AmberMedicalTonnage = 14, GreenMedicalTonnage = 15 },
                             PublicBinRAMTonnage = new RAMTonnage { Tonnage = 135, RedTonnage = 20, AmberTonnage = 21, GreenTonnage = 22, RedMedicalTonnage = 23, AmberMedicalTonnage = 24, GreenMedicalTonnage = 25 },
                             HouseholdDrinksContainerRAMTonnage = new RAMTonnage { Tonnage = 195, RedTonnage = 30, AmberTonnage = 31, GreenTonnage = 32, RedMedicalTonnage = 33, AmberMedicalTonnage = 34, GreenMedicalTonnage = 35 },
@@ -710,7 +695,7 @@
                     {
                         { MaterialCodes.Aluminium, alm },
                         { MaterialCodes.Glass, glass }
-                    } 
+                    }
                 },
                 new()
                 {
@@ -722,7 +707,7 @@
                     {
                         { MaterialCodes.Aluminium, GetEmptyH2MaterialTonnage() },
                         { MaterialCodes.Glass, GetEmptyH2MaterialTonnageWithHDC() }
-                    } 
+                    }
                 },
                 new()
                 {
@@ -734,15 +719,15 @@
                     {
                         { MaterialCodes.Aluminium, GetEmptyH2MaterialTonnage() },
                         { MaterialCodes.Glass, GetEmptyH2MaterialTonnageWithHDC() }
-                    } 
+                    }
                 }
             });
         }
 
         private (CalcResultH2ProjectedProducerMaterialTonnage, CalcResultH2ProjectedProducerMaterialTonnage, List<CalcResultH2ProjectedProducer>) GetH2FullRamProjectedProducers()
         {
-            var alm = new CalcResultH2ProjectedProducerMaterialTonnage 
-                        { 
+            var alm = new CalcResultH2ProjectedProducerMaterialTonnage
+                        {
                             HouseholdRAMTonnage = new RAMTonnage { Tonnage = 75, RedTonnage = 10, AmberTonnage = 11, GreenTonnage = 12, RedMedicalTonnage = 13, AmberMedicalTonnage = 14, GreenMedicalTonnage = 15 },
                             PublicBinRAMTonnage = new RAMTonnage { Tonnage = 135, RedTonnage = 20, AmberTonnage = 21, GreenTonnage = 22, RedMedicalTonnage = 23, AmberMedicalTonnage = 24, GreenMedicalTonnage = 25 },
                             HouseholdTonnageWithoutRAM = 0,
@@ -751,8 +736,8 @@
                             ProjectedHouseholdRAMTonnage = new RAMTonnage { Tonnage = 75, RedTonnage = 10, AmberTonnage = 11, GreenTonnage = 12, RedMedicalTonnage = 13, AmberMedicalTonnage = 14, GreenMedicalTonnage = 15 },
                             ProjectedPublicBinRAMTonnage = new RAMTonnage { Tonnage = 135, RedTonnage = 20, AmberTonnage = 21, GreenTonnage = 22, RedMedicalTonnage = 23, AmberMedicalTonnage = 24, GreenMedicalTonnage = 25 },
                         };
-            var glass = new CalcResultH2ProjectedProducerMaterialTonnage 
-                        { 
+            var glass = new CalcResultH2ProjectedProducerMaterialTonnage
+                        {
                             HouseholdRAMTonnage = new RAMTonnage { Tonnage = 75, RedTonnage = 10, AmberTonnage = 11, GreenTonnage = 12, RedMedicalTonnage = 13, AmberMedicalTonnage = 14, GreenMedicalTonnage = 15 },
                             PublicBinRAMTonnage = new RAMTonnage { Tonnage = 135, RedTonnage = 20, AmberTonnage = 21, GreenTonnage = 22, RedMedicalTonnage = 23, AmberMedicalTonnage = 24, GreenMedicalTonnage = 25 },
                             HouseholdDrinksContainerRAMTonnage = new RAMTonnage { Tonnage = 195, RedTonnage = 30, AmberTonnage = 31, GreenTonnage = 32, RedMedicalTonnage = 33, AmberMedicalTonnage = 34, GreenMedicalTonnage = 35 },
@@ -776,26 +761,26 @@
                     {
                         { MaterialCodes.Aluminium, alm},
                         { MaterialCodes.Glass, glass }
-                    } 
+                    }
                 }
             });
         }
 
         private (CalcResultH2ProjectedProducerMaterialTonnage, CalcResultH2ProjectedProducerMaterialTonnage, List<CalcResultH2ProjectedProducer>) GetH2PartialRamProjectedProducers()
         {
-            var alm = new CalcResultH2ProjectedProducerMaterialTonnage 
-                        { 
+            var alm = new CalcResultH2ProjectedProducerMaterialTonnage
+                        {
                             HouseholdRAMTonnage = new RAMTonnage { Tonnage = 75, RedTonnage = 0, AmberTonnage = 11, GreenTonnage = 12, RedMedicalTonnage = 13, AmberMedicalTonnage = 14, GreenMedicalTonnage = 15 },
                             PublicBinRAMTonnage = new RAMTonnage { Tonnage = 135, RedTonnage = 0, AmberTonnage = 21, GreenTonnage = 22, RedMedicalTonnage = 23, AmberMedicalTonnage = 24, GreenMedicalTonnage = 25 },
                             HouseholdTonnageWithoutRAM = 10,
                             PublicBinTonnageWithoutRAM = 20,
-                            TotalTonnage = 210, 
+                            TotalTonnage = 210,
                             ProjectedHouseholdRAMTonnage = new RAMTonnage { Tonnage = 75, RedTonnage = 10, AmberTonnage = 11, GreenTonnage = 12, RedMedicalTonnage = 13, AmberMedicalTonnage = 14, GreenMedicalTonnage = 15 },
                             ProjectedPublicBinRAMTonnage = new RAMTonnage { Tonnage = 135, RedTonnage = 20, AmberTonnage = 21, GreenTonnage = 22, RedMedicalTonnage = 23, AmberMedicalTonnage = 24, GreenMedicalTonnage = 25 },
-                            
+
                         };
-            var glass = new CalcResultH2ProjectedProducerMaterialTonnage 
-                        { 
+            var glass = new CalcResultH2ProjectedProducerMaterialTonnage
+                        {
                             HouseholdRAMTonnage = new RAMTonnage { Tonnage = 75, RedTonnage = 10, AmberTonnage = 11, GreenTonnage = 5, RedMedicalTonnage = 0, AmberMedicalTonnage = 14, GreenMedicalTonnage = 0 },
                             PublicBinRAMTonnage = new RAMTonnage { Tonnage = 135, RedTonnage = 10, AmberTonnage = 21, GreenTonnage = 22, RedMedicalTonnage = 23, AmberMedicalTonnage = 24, GreenMedicalTonnage = 25 },
                             HouseholdDrinksContainerRAMTonnage = new RAMTonnage { Tonnage = 195, RedTonnage = 30, AmberTonnage = 11, GreenTonnage = 32, RedMedicalTonnage = 33, AmberMedicalTonnage = 34, GreenMedicalTonnage = 35 },
@@ -819,15 +804,15 @@
                     {
                         { MaterialCodes.Aluminium, alm},
                         { MaterialCodes.Glass, glass }
-                    } 
+                    }
                 }
             });
         }
 
         private CalcResultH2ProjectedProducerMaterialTonnage GetEmptyH2MaterialTonnage()
         {
-            return new CalcResultH2ProjectedProducerMaterialTonnage 
-            { 
+            return new CalcResultH2ProjectedProducerMaterialTonnage
+            {
                 HouseholdRAMTonnage = EmptyRAMTonnage(),
                 PublicBinRAMTonnage = EmptyRAMTonnage(),
                 HouseholdTonnageWithoutRAM = 0,
@@ -840,8 +825,8 @@
 
         private CalcResultH2ProjectedProducerMaterialTonnage GetEmptyH2MaterialTonnageWithHDC()
         {
-            return new CalcResultH2ProjectedProducerMaterialTonnage 
-            { 
+            return new CalcResultH2ProjectedProducerMaterialTonnage
+            {
                 HouseholdRAMTonnage = EmptyRAMTonnage(),
                 PublicBinRAMTonnage = EmptyRAMTonnage(),
                 HouseholdDrinksContainerRAMTonnage = EmptyRAMTonnage(),
@@ -870,8 +855,8 @@
                     {
                         { MaterialCodes.Aluminium, alm},
                         { MaterialCodes.Glass, glass },
-                        { MaterialCodes.OtherMaterials, 
-                            new CalcResultH2ProjectedProducerMaterialTonnage { 
+                        { MaterialCodes.OtherMaterials,
+                            new CalcResultH2ProjectedProducerMaterialTonnage {
                                 HouseholdRAMTonnage = new RAMTonnage { Tonnage = 75, RedTonnage = 10, AmberTonnage = 11, GreenTonnage = 12, RedMedicalTonnage = 13, AmberMedicalTonnage = 14, GreenMedicalTonnage = 15 },
                                 PublicBinRAMTonnage = new RAMTonnage { Tonnage = 135, RedTonnage = 20, AmberTonnage = 21, GreenTonnage = 22, RedMedicalTonnage = 23, AmberMedicalTonnage = 24, GreenMedicalTonnage = 25 },
                                 HouseholdTonnageWithoutRAM = 10,
@@ -879,10 +864,10 @@
                                 TotalTonnage = 310,
                                 ProjectedHouseholdRAMTonnage = new RAMTonnage { Tonnage = 75, RedTonnage = 20, AmberTonnage = 11, GreenTonnage = 12, RedMedicalTonnage = 13, AmberMedicalTonnage = 14, GreenMedicalTonnage = 15 },
                                 ProjectedPublicBinRAMTonnage = new RAMTonnage { Tonnage = 135, RedTonnage = 40, AmberTonnage = 21, GreenTonnage = 22, RedMedicalTonnage = 23, AmberMedicalTonnage = 24, GreenMedicalTonnage = 25 },
-                                
+
                             }
                         }
-                    } 
+                    }
                 }
             });
         }

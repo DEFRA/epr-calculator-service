@@ -821,63 +821,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         }
 
         [TestMethod]
-        public void GetTonnages_ShouldCalculateCorrectlyForGlass()
-        {
-            List<CalculatorRunPomDataDetail> pomData = new List<CalculatorRunPomDataDetail>();
-            List<MaterialDetail> materials = new List<MaterialDetail>();
-
-            var glassMaterial = new MaterialDetail
-            {
-                Code = MaterialCodes.Glass,
-                Name = "Glass",
-                Description = "Glass material description",
-            };
-            materials.Add(glassMaterial);
-
-            var glassPomData = new List<CalculatorRunPomDataDetail>
-            {
-                new CalculatorRunPomDataDetail
-                {
-                    PackagingMaterial = MaterialCodes.Glass,
-                    SubmissionPeriod = "2024-P1",
-                    PackagingType = PackagingTypes.Household,
-                    PackagingMaterialWeight = 100,
-                    SubmissionPeriodDesc = "2024 Period 1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                },
-                new CalculatorRunPomDataDetail
-                {
-                    PackagingMaterial = MaterialCodes.Glass,
-                    SubmissionPeriod = "2024-P1",
-                    PackagingType = PackagingTypes.HouseholdDrinksContainers,
-                    PackagingMaterialWeight = 30,
-                    SubmissionPeriodDesc = "2024 Period 1",
-                    LoadTimeStamp = DateTime.UtcNow,
-                },
-            };
-
-            pomData.AddRange(glassPomData);
-
-            // Act
-            var result = CalcResultScaledupProducersBuilder.GetTonnages(pomData, materials, "2024-P1", 1);
-
-            // Assert
-            Assert.IsTrue(result.ContainsKey(MaterialCodes.Glass));
-            var glassTonnage = result[MaterialCodes.Glass];
-
-            Assert.AreEqual(0.1m, glassTonnage.ReportedHouseholdPackagingWasteTonnage);
-            Assert.AreEqual(0, glassTonnage.ReportedPublicBinTonnage);
-            Assert.AreEqual(0.03m, glassTonnage.HouseholdDrinksContainersTonnageGlass);
-            Assert.AreEqual(0.13m, glassTonnage.TotalReportedTonnage);
-            Assert.AreEqual(0.13m, glassTonnage.NetReportedTonnage);
-            Assert.AreEqual(0.1m, glassTonnage.ScaledupReportedHouseholdPackagingWasteTonnage);
-            Assert.AreEqual(0, glassTonnage.ScaledupReportedPublicBinTonnage);
-            Assert.AreEqual(0.03m, glassTonnage.ScaledupHouseholdDrinksContainersTonnageGlass);
-            Assert.AreEqual(0.13m, glassTonnage.ScaledupTotalReportedTonnage);
-            Assert.AreEqual(0.13m, glassTonnage.ScaledupNetReportedTonnage);
-        }
-
-        [TestMethod]
         public async Task GetCalcResultSummary_ScaledUpProducerShouldReturnCorrectValue()
         {
             calculationResult.CalcResultScaledupProducers.ScaledupProducers = GetScaledUpProducers();
