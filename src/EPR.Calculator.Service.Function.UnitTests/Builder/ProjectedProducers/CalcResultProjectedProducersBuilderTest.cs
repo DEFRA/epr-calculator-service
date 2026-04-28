@@ -68,7 +68,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         // Could move to CSV
         // Format: ProducerId, SubsidiaryId, SubmissionPeriod, Level, Material, PackagingType, TotalTonnage, RTonnage, RMTonnage, ATonnage, AMTonnage, GTonnage, GMTonnage
 
-        /*[TestMethod]
+        [TestMethod]
         public async Task H1H2Projection_untouched()
         {
             // RAM is complete - no modifications made
@@ -77,10 +77,25 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 new[] { "101", "", "2025-H2", "", "AL", "HH", "100", "20", "40", "40", "0", "", "" }
             };
             var expected = new [] {
-                new[] { "101", "", "2025-H1", "1", "AL", "HH", "100", "20", "40", "40", "0", "0", "0" },
-                new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "20", "40", "40", "0", "0", "0" }
+                new[] { "101", "", "2025-H1", "1", "AL", "HH", "100", "20.0", "40.0", "40.0", "0", "0", "0" },
+                new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "20"  , "40"  , "40"  , "0", "0", "0" }
             };
             AssertExcepted(expected, await FillGaps(given));
+        }
+
+        [TestMethod]
+        public async Task H1H2Projection_untouched_previous()
+        {
+            // RAM is complete - no modifications made
+            var given = new[] {
+                new[] { "101", "", "2025-H1", "", "AL", "HH", "100", "20", "40", "40", "0", "", "" },
+                new[] { "101", "", "2025-H2", "", "AL", "HH", "100", "20", "40", "40", "0", "", "" }
+            };
+            var expected = new [] {
+                new[] { "101", "", "2025-H1", "1", "AL", "HH", "100", "20.0", "40.0", "40.0", "0", "0", "0" },
+                new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "20"  , "40"  , "40"  , "0", "0", "0" }
+            };
+            AssertExcepted(expected, await FillGapsPrevious(given));
         }
 
         [TestMethod]
@@ -97,6 +112,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         }
 
         [TestMethod]
+        public async Task H1H2Projection_untouched_onlyh2_previous()
+        {
+            // RAM is complete - only H2 - no modifications made
+            var given = new[] {
+                new[] { "101", "", "2025-H2", "", "AL", "HH", "100", "20", "40", "40", "0", "", "" }
+            };
+            var expected = new [] {
+                new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "20", "40", "40", "0", "0", "0" }
+            };
+            AssertExcepted(expected, await FillGapsPrevious(given));
+        }
+
+        [TestMethod]
         public async Task H1H2Projection_untouched_onlyh1()
         {
             // RAM is complete - only H1 - no modifications made
@@ -107,6 +135,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 new[] { "101", "", "2025-H1", "1", "AL", "HH", "100", "30", "40", "40", "0", "0", "0" }
             };
             AssertExcepted(expected, await FillGaps(given));
+        }
+
+        [TestMethod]
+        public async Task H1H2Projection_untouched_onlyh1_previous()
+        {
+            // RAM is complete - only H1 - no modifications made
+            var given = new[] {
+                new[] { "101", "", "2025-H1", "", "AL", "HH", "100", "30", "40", "40", "0", "", "" }
+            };
+            var expected = new [] {
+                new[] { "101", "", "2025-H1", "1", "AL", "HH", "100", "30", "40", "40", "0", "0", "0" }
+            };
+            AssertExcepted(expected, await FillGapsPrevious(given));
         }
 
         [TestMethod]
@@ -123,21 +164,51 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             };
             var expected = new string[][]
             {
-                new string[] { "101", "" , "2025-H1", "1", "AL", "HH" , "100", "20", "40", "40", "0", "0", "0" },
-                new string[] { "101", "" , "2025-H1", "1", "AL", "PB" , "100", "20", "40", "40", "0", "0", "0" },
-                new string[] { "101", "" , "2025-H1", "1", "GL", "HDC", "100", "20", "40", "40", "0", "0", "0" },
-                new string[] { "101", "" , "2025-H1", "2", "AL", "HH" , "100", "20", "40", "40", "0", "0", "0" },
-                new string[] { "101", "B", "2025-H1", "2", "AL", "PB" , "100", "20", "40", "40", "0", "0", "0" },
-                new string[] { "101", "A", "2025-H1", "2", "GL", "HDC", "100", "20", "40", "40", "0", "0", "0" },
-                new string[] { "101", "" , "2025-H2", "1", "AL", "HH" , "100", "20", "40", "40", "0", "0", "0" },
-                new string[] { "101", "" , "2025-H2", "1", "PL", "HH" , "100", "20", "40", "40", "0", "0", "0" },
-                new string[] { "101", "" , "2025-H2", "1", "ST", "PB" , "100", "20", "40", "40", "0", "0", "0" },
-                new string[] { "101", "" , "2025-H2", "2", "PL", "HH" , "100", "20", "40", "40", "0", "0", "0" },
-                new string[] { "101", "B", "2025-H2", "2", "AL", "HH" , "100", "20", "40", "40", "0", "0", "0" },
-                new string[] { "101", "A", "2025-H2", "2", "ST", "PB" , "100", "20", "40", "40", "0", "0", "0" }
+                //new string[] { "101", "" , "2025-H1", "1", "AL", "HH" , "100", "20", "40", "40", "0", "0", "0" },
+                //new string[] { "101", "" , "2025-H1", "1", "AL", "PB" , "100", "20", "40", "40", "0", "0", "0" },
+                //new string[] { "101", "" , "2025-H1", "1", "GL", "HDC", "100", "20", "40", "40", "0", "0", "0" },
+                new string[] { "101", "" , "2025-H1", "2", "AL", "HH" , "100", "20.0", "40.0", "40.0", "0", "0", "0" },
+                new string[] { "101", "B", "2025-H1", "2", "AL", "PB" , "100", "20.0", "40.0", "40.0", "0", "0", "0" },
+                new string[] { "101", "A", "2025-H1", "2", "GL", "HDC", "100", "20"  , "40"  , "40"  , "0", "0", "0" },
+                //new string[] { "101", "" , "2025-H2", "1", "AL", "HH" , "100", "20", "40", "40", "0", "0", "0" },
+                //new string[] { "101", "" , "2025-H2", "1", "PL", "HH" , "100", "20", "40", "40", "0", "0", "0" },
+                //new string[] { "101", "" , "2025-H2", "1", "ST", "PB" , "100", "20", "40", "40", "0", "0", "0" },
+                new string[] { "101", "" , "2025-H2", "2", "PL", "HH" , "100", "20"  , "40"  , "40"  , "0", "0", "0" },
+                new string[] { "101", "B", "2025-H2", "2", "AL", "HH" , "100", "20"  , "40"  , "40"  , "0", "0", "0" },
+                new string[] { "101", "A", "2025-H2", "2", "ST", "PB" , "100", "20"  , "40"  , "40"  , "0", "0", "0" }
             };
             AssertExcepted(expected, await FillGaps(given));
-        }*/
+        }
+
+        [TestMethod]
+        public async Task H1H2Projection_untouched_hc_previous()
+        {
+            // RAM is complete - no modifications made
+            var given = new[] {
+                new[] { "101", "" , "2025-H1", "", "AL", "HH" , "100", "20", "40", "40", "0", "", "" },
+                new[] { "101", "A", "2025-H1", "", "GL", "HDC", "100", "20", "40", "40", "0", "", "" },
+                new[] { "101", "B", "2025-H1", "", "AL", "PB" , "100", "20", "40", "40", "0", "", "" },
+                new[] { "101", "" , "2025-H2", "", "PL", "HH" , "100", "20", "40", "40", "0", "", "" },
+                new[] { "101", "A", "2025-H2", "", "ST", "PB" , "100", "20", "40", "40", "0", "", "" },
+                new[] { "101", "B", "2025-H2", "", "AL", "HH" , "100", "20", "40", "40", "0", "", "" }
+            };
+            var expected = new string[][]
+            {
+                new string[] { "101", "" , "2025-H1", "1", "AL", "HH" , "100", "20.0", "40.0", "40.0", "0", "0", "0" },
+                new string[] { "101", "" , "2025-H1", "1", "AL", "PB" , "100", "20.0", "40.0", "40.0", "0", "0", "0" },
+                new string[] { "101", "" , "2025-H1", "1", "GL", "HDC", "100", "20"  , "40"  , "40"  , "0", "0", "0" },
+                new string[] { "101", "" , "2025-H1", "2", "AL", "HH" , "100", "20.0", "40.0", "40.0", "0", "0", "0" },
+                new string[] { "101", "B", "2025-H1", "2", "AL", "PB" , "100", "20.0", "40.0", "40.0", "0", "0", "0" },
+                new string[] { "101", "A", "2025-H1", "2", "GL", "HDC", "100", "20"  , "40"  , "40"  , "0", "0", "0" },
+                new string[] { "101", "" , "2025-H2", "1", "AL", "HH" , "100", "20"  , "40"  , "40"  , "0", "0", "0" },
+                new string[] { "101", "" , "2025-H2", "1", "PL", "HH" , "100", "20"  , "40"  , "40"  , "0", "0", "0" },
+                new string[] { "101", "" , "2025-H2", "1", "ST", "PB" , "100", "20"  , "40"  , "40"  , "0", "0", "0" },
+                new string[] { "101", "" , "2025-H2", "2", "PL", "HH" , "100", "20"  , "40"  , "40"  , "0", "0", "0" },
+                new string[] { "101", "B", "2025-H2", "2", "AL", "HH" , "100", "20"  , "40"  , "40"  , "0", "0", "0" },
+                new string[] { "101", "A", "2025-H2", "2", "ST", "PB" , "100", "20"  , "40"  , "40"  , "0", "0", "0" }
+            };
+            AssertExcepted(expected, await FillGapsPrevious(given));
+        }
 
         [TestMethod]
         public async Task H1H2Projection_onlyh2_incomplete()
@@ -152,7 +223,20 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             AssertExcepted(expected, await FillGaps(given));
         }
 
-        /*[TestMethod]
+        [TestMethod]
+        public async Task H1H2Projection_onlyh2_incomplete_previous()
+        {
+            // Incomplete H2 - inferred as Red
+            var given = new[] {
+                new[] { "101", "", "2025-H2", "", "AL", "HH", "100", "", "", "", "", "", "" }
+            };
+            var expected = new [] {
+                new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "100", "0", "0", "0", "0", "0" }
+            };
+            AssertExcepted(expected, await FillGapsPrevious(given));
+        }
+
+        [TestMethod]
         public async Task H1H2Projection_onlyh2_partial()
         {
             // Partial H2 - inferred as Red
@@ -166,6 +250,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         }
 
         [TestMethod]
+        public async Task H1H2Projection_onlyh2_partial_previous()
+        {
+            // Partial H2 - inferred as Red
+            var given = new[] {
+                new[] { "101", "", "2025-H2", "", "AL", "HH", "100", "50", "", "", "", "", "" }
+            };
+            var expected = new [] {
+                new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "100", "0", "0", "0", "0", "0" }
+            };
+            AssertExcepted(expected, await FillGapsPrevious(given));
+        }
+
+        [TestMethod]
         public async Task H1H2Projection_onlyh2_partial2()
         {
             // Partial H2 - inferred as Red
@@ -176,9 +273,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "50", "50", "0", "0", "0", "0" }
             };
             AssertExcepted(expected, await FillGaps(given));
-        }*/
+        }
 
-        /*[TestMethod]
+        public async Task H1H2Projection_onlyh2_partial2_previous2()
+        {
+            // Partial H2 - inferred as Red
+            var given = new[] {
+                new[] { "101", "", "2025-H2", "", "AL", "HH", "100", "", "50", "", "", "", "" }
+            };
+            var expected = new [] {
+                new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "50", "50", "0", "0", "0", "0" }
+            };
+            AssertExcepted(expected, await FillGapsPrevious(given));
+        }
+
+        [TestMethod]
         public async Task H1H2Projection_incomplete_h1()
         {
             // Incomplete H1 - reflects proportions from H2
@@ -246,7 +355,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 new[] { "101", "A", "2025-H1", "", "PL", "PB", "200", "", "", "20", "", "", "20" }
             };
             var expected = new [] {
-                new[] { "101", "", "2025-H1", "1", "PL", "PB", "300", "240", "10", "30", "0", "0", "20" },
+                //new[] { "101", "", "2025-H1", "1", "PL", "PB", "300", "240", "10", "30", "0", "0", "20" },
                 new[] { "101", "", "2025-H1", "2", "PL", "PB", "100", "80", "10", "10", "0", "0", "0" },
                 new[] { "101", "A", "2025-H1", "2", "PL", "PB", "200", "160", "0", "20", "0", "0", "20" }
             };
@@ -262,9 +371,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 new[] { "101", "A", "2025-H2", "", "GL", "HDC", "21", "6", "5", "4", "3", "2", "1" }
             };
             var expected = new [] {
-                new[] { "101", "", "2025-H1", "1", "GL", "HDC", "43", "13.000", "10.000", "8.000", "6.000", "4.000", "2.000" },
+                //new[] { "101", "", "2025-H1", "1", "GL", "HDC", "43", "13.000", "10.000", "8.000", "6.000", "4.000", "2.000" },
                 new[] { "101", "A", "2025-H1", "2", "GL", "HDC", "43", "13.000", "10.000", "8.000", "6.000", "4.000", "2.000" },
-                new[] { "101", "", "2025-H2", "1", "GL", "HDC", "21", "6", "5", "4", "3", "2", "1" },
+                //new[] { "101", "", "2025-H2", "1", "GL", "HDC", "21", "6", "5", "4", "3", "2", "1" },
                 new[] { "101", "A", "2025-H2", "2", "GL", "HDC", "21", "6", "5", "4", "3", "2", "1" }
             };
             AssertExcepted(expected, await FillGaps(given));
@@ -272,6 +381,34 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 
         [TestMethod]
         public async Task H1H2Projection_subtotal_hg_no_parent_report_multi_materials()
+        {
+            // Part of holding group where holding group doesn't report for themselves - different materials
+            var given = new[] {
+                new[] { "101", "A", "2025-H1", "", "ST", "HH", "100", "20",  "20", "40",  "0",  "", "" },
+                new[] { "101", "A", "2025-H2", "", "AL", "HH", "100", "20",  "40", "40",  "0",  "", "" },
+                new[] { "101", "A", "2025-H1", "", "PL", "PB", "100", "20",  "40", "40",  "0",  "", "" },
+                new[] { "101", "A", "2025-H2", "", "PL", "PB", "100", "20",  "40", "40",  "0",  "", "" },
+                new[] { "101", "B", "2025-H1", "", "ST", "HH", "200", "50",  "50", "100", "0",  "", "" },
+                new[] { "101", "B", "2025-H2", "", "AL", "HH", "200", "150", "25", "25",  "0",  "", "" }
+            };
+            var expected = new[]  {
+                //new[] { "101", "",  "2025-H1", "1", "PL", "PB", "100", "20.0", "40.0", "40.0", "0", "0", "0" },
+                //new[] { "101", "",  "2025-H1", "1", "ST", "HH", "300", "90",   "70",   "140",  "0", "0", "0" },
+                new[] { "101", "A", "2025-H1", "2", "PL", "PB", "100", "20.0", "40.0", "40.0", "0", "0", "0" },
+                new[] { "101", "A", "2025-H1", "2", "ST", "HH", "100", "40",   "20",   "40",   "0", "0", "0" },
+                new[] { "101", "B", "2025-H1", "2", "ST", "HH", "200", "50",   "50",   "100",  "0", "0", "0" },
+
+                //new[] { "101", "",  "2025-H2", "1", "AL", "HH", "300", "170",  "65",   "65",   "0", "0", "0" },
+                //new[] { "101", "",  "2025-H2", "1", "PL", "PB", "100", "20",   "40",   "40",   "0", "0", "0" },
+                new[] { "101", "A", "2025-H2", "2", "AL", "HH", "100", "20",   "40",   "40",   "0", "0", "0" },
+                new[] { "101", "B", "2025-H2", "2", "AL", "HH", "200", "150",  "25",   "25",   "0", "0", "0" },
+                new[] { "101", "A", "2025-H2", "2", "PL", "PB", "100", "20",   "40",   "40",   "0", "0", "0" }
+            };
+            AssertExcepted(expected, await FillGaps(given));
+        }
+
+        [TestMethod]
+        public async Task H1H2Projection_subtotal_hg_no_parent_report_multi_materials_previous()
         {
             // Part of holding group where holding group doesn't report for themselves - different materials
             var given = new[] {
@@ -295,29 +432,55 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 new[] { "101", "B", "2025-H2", "2", "AL", "HH", "200", "150",  "25",   "25",   "0", "0", "0" },
                 new[] { "101", "A", "2025-H2", "2", "PL", "PB", "100", "20",   "40",   "40",   "0", "0", "0" }
             };
-            AssertExcepted(expected, await FillGaps(given));
+            AssertExcepted(expected, await FillGapsPrevious(given));
         }
 
+        /*
+        Don't understand this test
+        Multiple 101 ! 2025-H2 AL - testing ability to merge?
+        https://github.com/DEFRA/epr-calculator-service/blob/feature/ECV-512/src/EPR.Calculator.Service.Function.UnitTests/Builder/ProjectedProducers/CalcResultProjectedProducersBuilderTest.cs#L387
+*/
         [TestMethod]
         public async Task H1H2Projection_h1_use_subtotal_h2_projection()
         {
             var given = new[] {
-                new[] { "101", "", "2025-H2", "", "AL", "HH", "100", "20",  "40", "40",  "0",  "", "" },
+                new[] { "101", "" , "2025-H2", "", "AL", "HH", "100", "20",  "40", "40",  "0",  "", "" },
                 new[] { "101", "A", "2025-H2", "", "AL", "HH", "200", "20",  "40", "40",  "0",  "", "" },
                 new[] { "101", "B", "2025-H2", "", "AL", "HH", "300", "150", "25", "25",  "0",  "", "" },
-                new[] { "101", "", "2025-H1", "", "AL", "HH", "100", "20",  "40", "40",  "0",  "", "" },
+                new[] { "101", "" , "2025-H1", "", "AL", "HH", "100", "20",  "40", "40",  "0",  "", "" },
                 new[] { "101", "A", "2025-H2", "", "AL", "HH", "200", "20",  "40", "40",  "0",  "", "" },
                 new[] { "101", "B", "2025-H2", "", "AL", "HH", "300", "150", "25", "25",  "0",  "", "" },
             };
             var expected = new[]  {
-                new[] { "101", "", "2025-H1", "1", "AL", "HH", "100", "20.000", "40.000", "40.000", "0", "0", "0" },
-                new[] { "101", "", "2025-H2", "1", "AL", "HH", "1100", "760", "170", "170", "0", "0", "0" },
-                new[] { "101", "", "2025-H2", "2", "AL", "HH", "100", "20", "40", "40", "0", "0", "0" },
-                new[] { "101", "A", "2025-H2", "2", "AL", "HH", "400", "240", "80", "80", "0", "0", "0" },
-                new[] { "101", "B", "2025-H2", "2", "AL", "HH", "600", "500", "50", "50", "0", "0", "0" }
+                new[] { "101", "" , "2025-H1", "1", "AL", "HH",  "100", "20.000", "40.000", "40.000", "0", "0", "0" }, // TODO should be level 2
+                new[] { "101", "" , "2025-H2", "1", "AL", "HH", "1100",    "760",    "170",    "170", "0", "0", "0" },
+                new[] { "101", "" , "2025-H2", "2", "AL", "HH",  "100",     "20",     "40",     "40", "0", "0", "0" },
+                new[] { "101", "A", "2025-H2", "2", "AL", "HH",  "400",    "240",     "80",     "80", "0", "0", "0" },
+                new[] { "101", "B", "2025-H2", "2", "AL", "HH",  "600",    "500",     "50",     "50", "0", "0", "0" }
             };
             AssertExcepted(expected, await FillGaps(given));
-        }*/
+        }
+
+        [TestMethod]
+        public async Task H1H2Projection_h1_use_subtotal_h2_projection_previous()
+        {
+            var given = new[] {
+                new[] { "101", "" , "2025-H2", "", "AL", "HH", "100", "20",  "40", "40",  "0",  "", "" },
+                new[] { "101", "A", "2025-H2", "", "AL", "HH", "200", "20",  "40", "40",  "0",  "", "" },
+                new[] { "101", "B", "2025-H2", "", "AL", "HH", "300", "150", "25", "25",  "0",  "", "" },
+                new[] { "101", "" , "2025-H1", "", "AL", "HH", "100", "20",  "40", "40",  "0",  "", "" },
+                new[] { "101", "A", "2025-H2", "", "AL", "HH", "200", "20",  "40", "40",  "0",  "", "" },
+                new[] { "101", "B", "2025-H2", "", "AL", "HH", "300", "150", "25", "25",  "0",  "", "" },
+            };
+            var expected = new[]  {
+                new[] { "101", "" , "2025-H1", "1", "AL", "HH",  "100", "20.000", "40.000", "40.000", "0", "0", "0" }, // TODO should be level 2
+                new[] { "101", "" , "2025-H2", "1", "AL", "HH", "1100",    "760",    "170",    "170", "0", "0", "0" },
+                new[] { "101", "" , "2025-H2", "2", "AL", "HH",  "100",     "20",     "40",     "40", "0", "0", "0" },
+                new[] { "101", "A", "2025-H2", "2", "AL", "HH",  "400",    "240",     "80",     "80", "0", "0", "0" },
+                new[] { "101", "B", "2025-H2", "2", "AL", "HH",  "600",    "500",     "50",     "50", "0", "0", "0" }
+            };
+            AssertExcepted(expected, await FillGapsPrevious(given));
+        }
 
         private CalcResultsRequestDto InsertData(string[][] given)
         {
@@ -349,12 +512,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             return new CalcResultsRequestDto { RunId = runId, RelativeYear = relativeYear };
         }
 
-        private string[][] ConvertResult((List<L1>, CalcResultProjectedProducers) given)
+        private string[][] ConvertResult((List<ProducerReportedMaterialsForSubmissionPeriod>, CalcResultProjectedProducers) given)
         {
             Console.WriteLine($">> ConvertResult");
-            string[]? createRow(int producerId, string? subsidiaryId, string level, MaterialSubmission submission)
+
+            var materials = dbContext.Material.Select(e => e).ToList();
+
+            string[]? createRow(int producerId, string? subsidiaryId, string level, ProducerReportedMaterial submission)
             {
-                if (submission.Total == 0)
+                if (submission.PackagingTonnage == 0)
                     return null;
                 else
                 {
@@ -363,70 +529,34 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     row[SubsidiaryI] = subsidiaryId ?? "";
                     row[PeriodI] = submission.SubmissionPeriod;
                     row[LevelI] = level;
-                    row[MaterialCodeI] = submission.MaterialCode;
+                    row[MaterialCodeI] = materials.Find(m => m.Id == submission.MaterialId).Code;
                     row[PackagingTypeI] = submission.PackagingType;
-                    row[TotalTonnageI] = submission.Total.ToString();
-                    row[RTonnageI]  = (submission.RAM?.R  ?? 0m).ToString();
-                    row[RMTonnageI] = (submission.RAM?.RM ?? 0m).ToString();
-                    row[ATonnageI]  = (submission.RAM?.A  ?? 0m).ToString();
-                    row[AMTonnageI] = (submission.RAM?.AM ?? 0m).ToString();
-                    row[GTonnageI]  = (submission.RAM?.G  ?? 0m).ToString();
-                    row[GMTonnageI] = (submission.RAM?.GM ?? 0m).ToString();
+                    row[TotalTonnageI] = submission.PackagingTonnage.ToString();
+                    row[RTonnageI]  = (submission.PackagingTonnageRed  ?? 0m).ToString();
+                    row[RMTonnageI] = (submission.PackagingTonnageRedMedical ?? 0m).ToString();
+                    row[ATonnageI]  = (submission.PackagingTonnageAmber  ?? 0m).ToString();
+                    row[AMTonnageI] = (submission.PackagingTonnageAmberMedical ?? 0m).ToString();
+                    row[GTonnageI]  = (submission.PackagingTonnageGreen  ?? 0m).ToString();
+                    row[GMTonnageI] = (submission.PackagingTonnageGreenMedical ?? 0m).ToString();
                     return row;
                 }
             }
 
-            List<string[]> populateForSingleL1(SingleL1 sl1)
-            {
-                Console.WriteLine($">> populateForSingleL1");
-                var result = new List<string[]>();
-                foreach (var submission in sl1.MaterialSubmissions)
+            // TODO if L2 - then add L1?
+            var levelLookup = given.Item1.Select(p => (ProducerId: p.ProducerId, SubsidiaryId: p.SubsidiaryId)).Distinct()
+                .GroupBy(p => p.ProducerId).SelectMany(producerGroup =>
                 {
-                    var row = createRow(sl1.OrgId, null, "1", submission);
-                    if (row != null)
-                    {
-                        result.Add(row);
-                    }
-                }
-                return result;
-            }
+                    return producerGroup.GroupBy(p => p.SubsidiaryId).Select(subsidiaryGroup =>
+                        ((producerGroup.Key, subsidiaryGroup.Key), (producerGroup.Count() == 1 && string.IsNullOrEmpty(subsidiaryGroup.Key)) ? "1" : "2")
+                    ).ToList();
+                }).ToDictionary();
+            Console.WriteLine($">> levelLookup {JsonConvert.SerializeObject(levelLookup, Formatting.Indented)}");
 
-            List<string[]> populateForHoldingCompany(HC hc)
-            {
-                Console.WriteLine($">> populateForHoldingCompany");
-                var result = new List<string[]>();
-                foreach (var submission in hc.MaterialSubmissions)
-                {
-                    var hcRow = createRow(hc.OrgId, null, "1", submission);
-                    if (hcRow != null)
-                    {
-                        result.Add(hcRow);
-                    }
-                }
-                foreach (var l2 in hc.L2s)
-                {
-                    foreach (var submission in l2.MaterialSubmissions)
-                    {
-                        var row = createRow(l2.OrgId, l2.SubsidiaryId, "2", submission);
-                        if (row != null)
-                        {
-                            result.Add(row);
-                        }
-                    }
-                }
-                return result;
-            }
-
-            var result = new List<string[]>();
-            foreach (var l1 in given.Item1)
-            {
-                result.AddRange(l1 switch
-                {
-                    SingleL1 sl1 => populateForSingleL1(sl1),
-                    HC hc => populateForHoldingCompany(hc),
-                    //_ => throw new ArgumentException("Unsupported L1 type")
-                });
-            }
+            var result = given.Item1.SelectMany(p =>
+                p.ReportedMaterials.Select(r =>
+                    createRow(producerId: p.ProducerId, subsidiaryId: p.SubsidiaryId, level: levelLookup[(p.ProducerId, p.SubsidiaryId)], r)
+                )
+            );
 
             Console.WriteLine($">> result {JsonConvert.SerializeObject(result, Formatting.Indented)}");
 
@@ -439,7 +569,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     .ThenBy(a => a[PackagingTypeI])
                     .ToArray();
         }
-        private List<L1> ToProducers(string[][] given)
+        private List<ProducerReportedMaterialsForSubmissionPeriod> ToProducers(string[][] given)
         {
             decimal? ToDecimal(string? s)
             {
@@ -447,66 +577,99 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 return decimal.Parse(s, CultureInfo.InvariantCulture);
             }
 
-            return given.GroupBy(row => row[ProducerI]).SelectMany(rows => {
-                var bySub = rows.GroupBy(row => row[SubsidiaryI]);
-                if (bySub.Count() == 1 && bySub.First().Key == "")
-                {
-                    var materialSubmissions = bySub.SelectMany(rows =>
-                        rows.Select(row =>
-                            new MaterialSubmission(
-                                MaterialCode     : row[MaterialCodeI],
-                                SubmissionPeriod : row[PeriodI],
-                                PackagingType    : row[PackagingTypeI],
-                                Total            : ToDecimal(row[TotalTonnageI]) ?? 0m,
-                                RAM              : new RamTonnage(
-                                    R  : ToDecimal(row[RTonnageI]) ?? 0m,
-                                    A  : ToDecimal(row[ATonnageI]) ?? 0m,
-                                    G  : ToDecimal(row[GTonnageI]) ?? 0m,
-                                    RM : ToDecimal(row[RMTonnageI]) ?? 0m,
-                                    AM : ToDecimal(row[AMTonnageI]) ?? 0m,
-                                    GM : ToDecimal(row[GMTonnageI]) ?? 0m
-                                )
-                            )
-                        )
-                    ).ToList();
-                    Console.WriteLine($">> Return L1 {JsonConvert.SerializeObject(materialSubmissions, Formatting.Indented)}");
-                    return new List<L1> {
-                        new SingleL1(int.Parse(rows.Key), materialSubmissions)
-                    };
-                } else
-                {
-                    //Console.WriteLine($">> bySub {JsonConvert.SerializeObject(bySub, Formatting.Indented)}");
-                    var l2s = bySub.Select(bySubRows => {
-                        var materialSubmissions =
-                            bySubRows.Select(row =>
-                                new MaterialSubmission(
-                                    MaterialCode     : row[MaterialCodeI],
-                                    SubmissionPeriod : row[PeriodI],
-                                    PackagingType    : row[PackagingTypeI],
-                                    Total            : ToDecimal(row[TotalTonnageI]) ?? 0m,
-                                    RAM              : new RamTonnage(
-                                        R  : ToDecimal(row[RTonnageI]) ?? 0m,
-                                        A  : ToDecimal(row[ATonnageI]) ?? 0m,
-                                        G  : ToDecimal(row[GTonnageI]) ?? 0m,
-                                        RM : ToDecimal(row[RMTonnageI]) ?? 0m,
-                                        AM : ToDecimal(row[AMTonnageI]) ?? 0m,
-                                        GM : ToDecimal(row[GMTonnageI]) ?? 0m
-                                    )
-                                )
-                            ).ToList();
-                        Console.WriteLine($">> Return L2 {JsonConvert.SerializeObject(materialSubmissions.Count(), Formatting.Indented)}");
-                        return new L2(OrgId: int.Parse(rows.Key), SubsidiaryId: bySubRows.Key, MaterialSubmissions: materialSubmissions);
-                    }).ToList();
-                    Console.WriteLine($">> Returning L1 with {l2s.Count()} L2s");
-                    return new List<L1>{
-                        new HC(orgId: int.Parse(rows.Key), l2s: l2s)
-                    };
-                }
-            }).ToList();
+            var materials = dbContext.Material.Select(e => e).ToList();
+
+            var res = given.GroupBy(row => (ProducerId: row[ProducerI], SubsidiaryId: row[SubsidiaryI], SubmissionPeriod: row[PeriodI])).Distinct()
+                .Select(producerRows =>
+                    //Console.WriteLine($"{producerRows.Key}: {row[MaterialCodeI]}");
+                    new ProducerReportedMaterialsForSubmissionPeriod(
+                        producerId : int.Parse(producerRows.Key.ProducerId),
+                        subsidiaryId : string.IsNullOrWhiteSpace(producerRows.Key.SubsidiaryId) ? null : producerRows.Key.SubsidiaryId,
+                        submissionPeriod: producerRows.Key.SubmissionPeriod,
+                        reportedMaterials: producerRows.Select(row =>
+                            new ProducerReportedMaterial
+                            {
+                                MaterialId = materials.Find(m => m.Code == row[MaterialCodeI]).Id,
+                                PackagingType = row[PackagingTypeI],
+                                PackagingTonnage = ToDecimal(row[TotalTonnageI]) ?? 0m,
+                                PackagingTonnageRed = ToDecimal(row[RTonnageI]),
+                                PackagingTonnageAmber = ToDecimal(row[ATonnageI]),
+                                PackagingTonnageGreen = ToDecimal(row[GTonnageI]),
+                                PackagingTonnageRedMedical = ToDecimal(row[RMTonnageI]),
+                                PackagingTonnageAmberMedical = ToDecimal(row[AMTonnageI]),
+                                PackagingTonnageGreenMedical = ToDecimal(row[GMTonnageI]),
+                                SubmissionPeriod = producerRows.Key.SubmissionPeriod
+                            }).ToList()
+                    )
+                ).ToList();
+            Console.WriteLine($"{res.Count()}: {JsonConvert.SerializeObject(res, Formatting.Indented)}");
+            return res;
         }
 
         private async Task<string[][]> FillGaps(string[][] given) =>
             ConvertResult(await builder.ConstructAsync(InsertData(given), ToProducers(given)));
+
+        private string[][] ConvertResultPrevious(CalcResultProjectedProducers given)
+        {
+            var result = new List<string[]>();
+
+            string[]? createRow(int producerId, string? subsidiaryId, string submissonPeriodCode, string materialCode, string packagingType, string? level, RAMTonnage? projectedRamTonnage)
+            {
+                if (projectedRamTonnage == null || projectedRamTonnage.Tonnage == 0)
+                    return null;
+                else
+                {
+                    var row = new string[13];
+                    row[ProducerI] = producerId.ToString();
+                    row[SubsidiaryI] = subsidiaryId ?? "";
+                    row[PeriodI] = submissonPeriodCode;
+                    row[LevelI] = level ?? "";
+                    row[MaterialCodeI] = materialCode;
+                    row[PackagingTypeI] = packagingType;
+                    row[TotalTonnageI] = (projectedRamTonnage?.Tonnage ?? 0m).ToString();
+                    row[RTonnageI] = (projectedRamTonnage?.RedTonnage ?? 0m).ToString();
+                    row[RMTonnageI] = (projectedRamTonnage?.RedMedicalTonnage ?? 0m).ToString();
+                    row[ATonnageI] = (projectedRamTonnage?.AmberTonnage ?? 0m).ToString();
+                    row[AMTonnageI] = (projectedRamTonnage?.AmberMedicalTonnage ?? 0m).ToString();
+                    row[GTonnageI] = (projectedRamTonnage?.GreenTonnage ?? 0m).ToString();
+                    row[GMTonnageI] = (projectedRamTonnage?.GreenMedicalTonnage ?? 0m).ToString();
+                    return row;
+                }
+            }
+
+            if (given.H1ProjectedProducers != null && given.H2ProjectedProducers != null) {
+                foreach (var producer in given.H1ProjectedProducers.Cast<ICalcResultProjectedProducer>().Concat(given.H2ProjectedProducers))
+                {
+                    var producerId = producer.ProducerId;
+                    var subsidiaryId = producer.SubsidiaryId;
+                    var submissionPeriod = producer.SubmissionPeriodCode;
+
+                    foreach (var kv in producer.ProjectedTonnageByMaterial)
+                    {
+                        var materialCode = kv.Key;
+                        var v = kv.Value;
+                        var hhRow = createRow(producerId, subsidiaryId, producer.SubmissionPeriodCode, materialCode, "HH", producer.Level, v.ProjectedHouseholdRAMTonnage);
+                        if (hhRow != null) result.Add(hhRow);
+                        var pbRow = createRow(producerId, subsidiaryId, producer.SubmissionPeriodCode, materialCode, "PB", producer.Level, v.ProjectedPublicBinRAMTonnage);
+                        if (pbRow != null) result.Add(pbRow);
+                        var hdcRow = createRow(producerId, subsidiaryId, producer.SubmissionPeriodCode, materialCode, "HDC", producer.Level, v.ProjectedHouseholdDrinksContainerRAMTonnage);
+                        if (hdcRow != null) result.Add(hdcRow);
+                    }
+                }
+            }
+
+            return result
+                    .OrderBy(a => a[PeriodI])
+                    .ThenBy(a => a[ProducerI])
+                    .ThenBy(a => string.IsNullOrEmpty(a[SubsidiaryI]) ? 0 : 1)
+                    .ThenBy(a => a[LevelI])
+                    .ThenBy(a => a[MaterialCodeI])
+                    .ThenBy(a => a[PackagingTypeI])
+                    .ToArray();
+        }
+
+        private async Task<string[][]> FillGapsPrevious(string[][] given) =>
+            ConvertResultPrevious((await builder.ConstructAsync(InsertData(given), ToProducers(given))).Item2);
 
         private string ToPrintable(string[] arr) =>
           arr is null ? "null" : "[" + string.Join(", ", arr.Select(x => x?.ToString() ?? "null")) + "]";

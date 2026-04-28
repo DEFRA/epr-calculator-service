@@ -1,6 +1,7 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
 using EPR.Calculator.Service.Function.Builder;
 using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
 using EPR.Calculator.Service.Function.Constants;
@@ -268,7 +269,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             PrepareNonScaledUpProducer();
             PrepareScaledUpProducer();
             var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
-            var mockProducers = new List<L1>();
+            var mockProducers = new List<ProducerReportedMaterialsForSubmissionPeriod>();
 
             // Act
             var result = await builder.ConstructAsync(requestDto, mockProducers);
@@ -292,7 +293,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             PrepareNonScaledUpProducer();
             PrepareScaledUpProducer();
             var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
-            var mockProducers = new List<L1>();
+            var mockProducers = new List<ProducerReportedMaterialsForSubmissionPeriod>();
 
             // Act
             var result = await builder.ConstructAsync(requestDto, mockProducers);
@@ -313,7 +314,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             // Arrange
             PrepareNonScaledUpProducer();
             var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
-            var mockProducers = new List<L1>();
+            var mockProducers = new List<ProducerReportedMaterialsForSubmissionPeriod>();
 
             // Act
             var result = await builder.ConstructAsync(requestDto, mockProducers);

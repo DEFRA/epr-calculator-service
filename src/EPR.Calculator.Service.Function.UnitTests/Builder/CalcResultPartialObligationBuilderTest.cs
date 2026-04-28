@@ -2,6 +2,7 @@
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.PartialObligations;
+using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
@@ -256,7 +257,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
             // Act
-            var result = await builder.ConstructAsync(requestDto, new List<L1>());
+            var result = await builder.ConstructAsync(requestDto, new List<ProducerReportedMaterialsForSubmissionPeriod>());
 
             // Assert
             //Assert.AreEqual(1, result.PartialObligations!.Count());
@@ -310,7 +311,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             PrepareData();
             var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
-            var scaledUpProducers = new List<L1> {
+            var scaledUpProducers = new List<ProducerReportedMaterialsForSubmissionPeriod> {
                 /*new CalcResultScaledupProducer {
                     ProducerId = 22,
                     SubsidiaryId = null,

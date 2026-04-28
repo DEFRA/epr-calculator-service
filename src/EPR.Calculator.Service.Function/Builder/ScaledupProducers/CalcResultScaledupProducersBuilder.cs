@@ -10,14 +10,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
 {
-    public record ScaledupProducerData
-    {
-
-    }
-
     public interface ICalcResultScaledupProducersBuilder
     {
-        Task<List<(L1, ScaledupProducerData?)>> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<L1> producers);
+        Task<(List<ProducerReportedMaterialsForSubmissionPeriod>, CalcResultScaledupProducers)> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<ProducerReportedMaterialsForSubmissionPeriod> producers);
     }
 
     public class CalcResultScaledupProducersBuilder : ICalcResultScaledupProducersBuilder
@@ -147,7 +142,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
         }
 
         /// <inheritdoc/>
-        public async Task<List<(L1, ScaledupProducerData?)>> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<L1> producers)
+        public async Task<(List<ProducerReportedMaterialsForSubmissionPeriod>, CalcResultScaledupProducers)> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<ProducerReportedMaterialsForSubmissionPeriod> producers)
         {
             var runId = resultsRequestDto.RunId;
             var materialsFromDb = await context.Material.ToListAsync();
@@ -187,8 +182,12 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
             };
 
             SetHeaders(scaledupProducersSummary, materials);
-            //return scaledupProducersSummary;
-            return producers.Select(p => (p, (ScaledupProducerData?)null)).ToList();
+            return (toProducers(scaledupProducersSummary), scaledupProducersSummary);
+        }
+
+        private List<ProducerReportedMaterialsForSubmissionPeriod> toProducers(CalcResultScaledupProducers result)
+        {
+            return new List<ProducerReportedMaterialsForSubmissionPeriod>(); // TODO
         }
 
         public async Task<IEnumerable<CalculatorRunPomDataDetail>> GetScaledupOrganisationDetails(int runId, IEnumerable<int> organisationIds)

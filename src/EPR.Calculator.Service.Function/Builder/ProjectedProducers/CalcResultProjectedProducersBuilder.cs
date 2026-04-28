@@ -18,11 +18,13 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
     using EPR.Calculator.Service.Function.Builder.Summary.Common;
 
     using Microsoft.EntityFrameworkCore;
+    using Azure.Analytics.Synapse.Artifacts.Models;
+    using Npgsql.EntityFrameworkCore.PostgreSQL.Query.Expressions.Internal;
 
 
     public interface ICalcResultProjectedProducersBuilder
     {
-        Task<(List<L1>, CalcResultProjectedProducers)> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<L1> producers);
+        Task<(List<ProducerReportedMaterialsForSubmissionPeriod>, CalcResultProjectedProducers)> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<ProducerReportedMaterialsForSubmissionPeriod> producers);
     }
 
     public class CalcResultProjectedProducersBuilder : ICalcResultProjectedProducersBuilder
@@ -34,121 +36,70 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             context = dbContext;
         }
 
-        private List<ProducerReportedMaterialsForSubmissionPeriod> transformSl1ToOldModel(List<MaterialDetail> materials, SingleL1 sl1)
+        private List<ProducerReportedMaterial> asd(List<MaterialDetail> materials, ProducerReportedMaterialsForSubmissionPeriod p, IEnumerable<ICalcResultProjectedProducer> projectedProducers)
         {
-            return sl1.MaterialSubmissions.Select(submission => {
-                Console.WriteLine($">> Loking for {submission.MaterialCode} in {JsonConvert.SerializeObject(materials, Formatting.Indented)}");
-                return new ProducerReportedMaterial
-                {
-                    MaterialId = materials.First(m => m.Code == submission.MaterialCode).Id,
-                    PackagingType = submission.PackagingType,
-                    SubmissionPeriod = submission.SubmissionPeriod,
-                    PackagingTonnage = submission.Total,
-                    PackagingTonnageRed = submission.RAM?.R ?? 0m,
-                    PackagingTonnageAmber = submission.RAM?.A ?? 0m,
-                    PackagingTonnageGreen = submission.RAM?.G ?? 0m,
-                    PackagingTonnageRedMedical = submission.RAM?.RM ?? 0m,
-                    PackagingTonnageAmberMedical = submission.RAM?.AM ?? 0m,
-                    PackagingTonnageGreenMedical = submission.RAM?.GM ?? 0m,
-                };
-            }
-            ).GroupBy(e => e.SubmissionPeriod)
-              .Select(reportedMaterials =>
-                new ProducerReportedMaterialsForSubmissionPeriod(
-                    producerId: sl1.OrgId,
-                    subsidiaryId: null,
-                    submissionPeriod: reportedMaterials.Key,
-                    reportedMaterials : reportedMaterials.ToList()
-                )
-              ).ToList();
-        }
-
-        private List<ProducerReportedMaterialsForSubmissionPeriod> transformL2ToOldModel(List<MaterialDetail> materials, L2 l2)
-        {
-            return l2.MaterialSubmissions.Select(submission =>
-                new ProducerReportedMaterial
-                {
-                    MaterialId = materials.First(m => m.Code == submission.MaterialCode).Id,
-                    PackagingType = submission.PackagingType,
-                    SubmissionPeriod = submission.SubmissionPeriod,
-                    PackagingTonnage = submission.Total,
-                    PackagingTonnageRed = submission.RAM?.R ?? 0m,
-                    PackagingTonnageAmber = submission.RAM?.A ?? 0m,
-                    PackagingTonnageGreen = submission.RAM?.G ?? 0m,
-                    PackagingTonnageRedMedical = submission.RAM?.RM ?? 0m,
-                    PackagingTonnageAmberMedical = submission.RAM?.AM ?? 0m,
-                    PackagingTonnageGreenMedical = submission.RAM?.GM ?? 0m,
+            return projectedProducers
+                .Where(q => !q.IsSubtotal)
+                .Where(q => q.ProducerId == p.ProducerId && q.SubsidiaryId == p.SubsidiaryId && q.SubmissionPeriodCode == p.SubmissionPeriod)
+                .SelectMany(q => {
+                    //Console.WriteLine($">> q For {p.ProducerId} {p.SubsidiaryId} {p.SubmissionPeriod}: {JsonConvert.SerializeObject(q, Formatting.Indented)}");
+                    return p.ReportedMaterials.Select(rm =>
+                    {
+                        var projected = q.ProjectedTonnageByMaterial.First(pt => pt.Key == materials.Find(m => m.Id == rm.MaterialId).Code).Value;
+                        var projectedRam = rm.PackagingType switch
+                        {
+                            "HH" => projected.ProjectedHouseholdRAMTonnage,
+                            "PB" => projected.ProjectedPublicBinRAMTonnage,
+                            "HDC" => projected.ProjectedHouseholdDrinksContainerRAMTonnage,
+                        };
+                        return new ProducerReportedMaterial
+                        {
+                            Id = rm.Id,
+                            MaterialId = rm.MaterialId,
+                            ProducerDetailId = rm.ProducerDetailId,
+                            PackagingType = rm.PackagingType,
+                            PackagingTonnage = rm.PackagingTonnage,
+                            PackagingTonnageRed = projectedRam.RedTonnage,
+                            PackagingTonnageAmber = projectedRam.AmberTonnage,
+                            PackagingTonnageGreen = projectedRam.GreenTonnage,
+                            PackagingTonnageRedMedical = projectedRam.RedMedicalTonnage,
+                            PackagingTonnageAmberMedical = projectedRam.AmberMedicalTonnage,
+                            PackagingTonnageGreenMedical = projectedRam.GreenMedicalTonnage,
+                            SubmissionPeriod = rm.SubmissionPeriod,
+                            ProducerDetail = rm.ProducerDetail,
+                            Material = rm.Material
+                        };
+                    }).ToList();
                 }
-            ).GroupBy(e => e.SubmissionPeriod)
-              .Select(reportedMaterials =>
-                new ProducerReportedMaterialsForSubmissionPeriod(
-                    producerId: l2.OrgId,
-                    subsidiaryId: l2.SubsidiaryId,
-                    submissionPeriod: reportedMaterials.Key,
-                    reportedMaterials : reportedMaterials.ToList()
-                )
-              ).ToList();
+                ).ToList();
         }
 
-        List<ProducerReportedMaterialsForSubmissionPeriod> transformHcToOldModel(List<MaterialDetail> materials, HC hc)
+        private List<ProducerReportedMaterialsForSubmissionPeriod> toNewModel(List<MaterialDetail> materials, List<ProducerReportedMaterialsForSubmissionPeriod> producers, CalcResultProjectedProducers result)
         {
-            return hc.L2s.SelectMany(l2 => transformL2ToOldModel(materials, l2)).ToList();
-        }
-
-        private List<ProducerReportedMaterialsForSubmissionPeriod> transformToOldModel(List<MaterialDetail> materials, List<L1> producers)
-        {
-            return producers.SelectMany(producer =>
-               producer switch
-               {
-                   SingleL1 sl1 => transformSl1ToOldModel(materials, sl1),
-                   HC hc => transformHcToOldModel(materials, hc)
-               }
-            ).ToList();
-        }
-
-        private List<L1> toNewModel(CalcResultProjectedProducers result)
-        {/*
-            result.H2ProjectedProducers.Select(p =>
+            return producers.Select( p =>
             {
-               return p.ProducerId;
-               return p.SubsidiaryId;
-            })
-        public IEnumerable<CalcResultH2ProjectedProducer>? H2ProjectedProducers { get; init; }
-        public IEnumerable<CalcResultH1ProjectedProducer>? H1ProjectedProducers { get; init; }*/
-
-            return new List<L1>();
-
-  /*                  public required int ProducerId { get; init; }
-        public string? SubsidiaryId { get; init; }
-        public required string Level { get; init; }
-        public required string SubmissionPeriodCode { get; init; }
-        public bool IsSubtotal { get; init; }
-        public abstract IEnumerable<KeyValuePair<string, CalcResultProjectedProducerMaterialTonnage>> ProjectedTonnageByMaterial { get; }
-    }
-
-    public record CalcResultH2ProjectedProducer : ICalcResultProjectedProducer
-    {
-        public IReadOnlyDictionary<string, CalcResultH2ProjectedProducerMaterialTonnage> H2ProjectedTonnageByMaterial { get; init; }
-            = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>();
-
-        public override IEnumerable<KeyValuePair<string, CalcResultProjectedProducerMaterialTonnage>> ProjectedTonnageByMaterial =>
-            H2ProjectedTonnageByMaterial.Select(kv => new KeyValuePair<string, CalcResultProjectedProducerMaterialTonnage>(kv.Key, kv.Value));
-*/
+                List<ProducerReportedMaterial> h1reportedMaterials = asd(materials, p, result.H1ProjectedProducers);
+                List<ProducerReportedMaterial> h2reportedMaterials = asd(materials, p, result.H2ProjectedProducers);
+                return new ProducerReportedMaterialsForSubmissionPeriod(
+                    producerId : p.ProducerId,
+                    subsidiaryId : p.SubsidiaryId,
+                    submissionPeriod : p.SubmissionPeriod,
+                    reportedMaterials : h1reportedMaterials.Concat(h2reportedMaterials).ToList()
+                );
+            }).ToList();
         }
 
-
-        public async Task<(List<L1>, CalcResultProjectedProducers)> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<L1> producers)
+        public async Task<(List<ProducerReportedMaterialsForSubmissionPeriod>, CalcResultProjectedProducers)> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<ProducerReportedMaterialsForSubmissionPeriod> producers)
         {
-            //var result = producers.Select(p => project(p)).ToList();
-            //Console.WriteLine($">> Returning {JsonConvert.SerializeObject(result, Formatting.Indented)}");
+            Console.WriteLine($">> producers: {JsonConvert.SerializeObject(producers, Formatting.Indented)}");
+
             var runId = resultsRequestDto.RunId;
             var materialsFromDb = await context.Material.ToListAsync();
             var materials = MaterialMapper.Map(materialsFromDb);
 
             var submissionPeriod = (string i) => $"{resultsRequestDto.RelativeYear.Value - 1}-{i}";
-            var producersAsOldModel = transformToOldModel(materials, producers);
-            List<ProducerReportedMaterialsForSubmissionPeriod> h2ReportedMaterials = producersAsOldModel.Where(r => r.SubmissionPeriod == submissionPeriod("H2")).ToList();
-            List<ProducerReportedMaterialsForSubmissionPeriod> h1ReportedMaterials = producersAsOldModel.Where(r => r.SubmissionPeriod == submissionPeriod("H1")).ToList();
+            List<ProducerReportedMaterialsForSubmissionPeriod> h2ReportedMaterials = producers.Where(r => r.SubmissionPeriod == submissionPeriod("H2")).ToList();
+            List<ProducerReportedMaterialsForSubmissionPeriod> h1ReportedMaterials = producers.Where(r => r.SubmissionPeriod == submissionPeriod("H1")).ToList();
 
             var h2ProjectedProduers = H2ProjectedProducersBuilderUtils.GetProjectedProducers(h2ReportedMaterials, materials);
             var h2ProjectedProducersWithSubtotals = AddSubtotals<CalcResultH2ProjectedProducer>(
@@ -170,7 +121,9 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                 H2ProjectedProducers = h2ProjectedProducersWithSubtotals.OrderBy(p => p.ProducerId).ThenBy(p => p.Level).ThenBy(p => p.SubsidiaryId).ToList(),
                 H1ProjectedProducers = h1ProjectedProducersWithSubtotals.OrderBy(p => p.ProducerId).ThenBy(p => p.Level).ThenBy(p => p.SubsidiaryId).ToList()
             };
-            return (toNewModel(x), x);
+            //Console.WriteLine($">> x: {JsonConvert.SerializeObject(x, Formatting.Indented)}");
+
+            return (toNewModel(materials, producers, x), x);
         }
 
         public static RAMTonnage GetRAMTonnage(string packagingType, List<ProducerReportedMaterial> reportedMaterials) {

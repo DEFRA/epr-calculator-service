@@ -123,7 +123,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public async Task Build_ShouldReturnCalcResult()
         {
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025)};
-            var mockProducers = new List<L1>();
+            var mockProducers = new List<ProducerReportedMaterialsForSubmissionPeriod>();
             var mockResultDetail = new Mock<CalcResultDetail>();
             var mockLapcapData = new Mock<CalcResultLapcapData>();
             var mockOtherParams = new Mock<CalcResultParameterOtherCost>();
@@ -182,7 +182,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public async Task Build_ShouldReturnCalcResult_WithProjectedProducers()
         {
             var resultsRequestDto = new CalcResultsRequestDto() { RunId = 1, RelativeYear = new RelativeYear(2026), IsBillingFile = false };
-            var mockProducers = new List<L1>();
+            var mockProducers = new List<ProducerReportedMaterialsForSubmissionPeriod>();
             var mockCalcResultScaledUpProducersData = new Mock<CalcResultScaledupProducers>();
             var mockCalcResultProjectedProducersData = new Mock<CalcResultProjectedProducers>();
 
@@ -204,7 +204,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         public async Task Build_ShouldReturnCalcResult_WithProjectedProducers_Billing()
         {
             var resultsRequestDto = new CalcResultsRequestDto() { RunId = 1, RelativeYear = new RelativeYear(2026), IsBillingFile = true };
-            var mockProducers = new List<L1>();
+            var mockProducers = new List<ProducerReportedMaterialsForSubmissionPeriod>();
             var mockCalcResultScaledUpProducersData = new Mock<CalcResultScaledupProducers>();
             var mockCalcResultProjectedProducersData = new Mock<CalcResultProjectedProducers>();
 
