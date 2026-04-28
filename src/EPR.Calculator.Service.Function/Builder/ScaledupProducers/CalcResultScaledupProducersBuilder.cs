@@ -73,7 +73,8 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
         public static void CalculateScaledupTonnage(
             IEnumerable<CalcResultScaledupProducer> runProducerMaterialDetails,
             IEnumerable<CalculatorRunPomDataDetail> allOrganisationPomDetails,
-            IEnumerable<MaterialDetail> materials)
+            IEnumerable<MaterialDetail> materials
+        )
         {
             foreach (var item in runProducerMaterialDetails)
             {
@@ -190,67 +191,78 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
             return new List<ProducerReportedMaterialsForSubmissionPeriod>(); // TODO
         }
 
+        // TODO this contains POM data
         public async Task<IEnumerable<CalculatorRunPomDataDetail>> GetScaledupOrganisationDetails(int runId, IEnumerable<int> organisationIds)
         {
-            var result = await (from run in context.CalculatorRuns
-                                join crpdm in context.CalculatorRunPomDataMaster on run.CalculatorRunPomDataMasterId equals crpdm.Id
-                                join crpdd in context.CalculatorRunPomDataDetails on crpdm.Id equals crpdd.CalculatorRunPomDataMasterId
-                                join pd in context.ProducerDetail.Include(x => x.ProducerReportedMaterials) on crpdd.OrganisationId equals pd.ProducerId
-                                join org in context.CalculatorRunOrganisationDataDetails
-                                  on new { pd.ProducerId, pd.SubsidiaryId, crpdd.SubmitterId}
-                                    equals new { ProducerId = org.OrganisationId, org.SubsidiaryId, org.SubmitterId }
-                                where run.Id == runId  && organisationIds.Contains(crpdd.OrganisationId.GetValueOrDefault()) && org.ObligationStatus == ObligationStates.Obligated
-                                select crpdd).Distinct().ToListAsync();
-            return result;
+            return await (
+                    from run in context.CalculatorRuns
+                    join crpdm in context.CalculatorRunPomDataMaster on run.CalculatorRunPomDataMasterId equals crpdm.Id
+                    join crpdd in context.CalculatorRunPomDataDetails on crpdm.Id equals crpdd.CalculatorRunPomDataMasterId
+                    join pd in context.ProducerDetail.Include(x => x.ProducerReportedMaterials) on crpdd.OrganisationId equals pd.ProducerId
+                    join org in context.CalculatorRunOrganisationDataDetails
+                      on new { pd.ProducerId, pd.SubsidiaryId, crpdd.SubmitterId}
+                        equals new { ProducerId = org.OrganisationId, org.SubsidiaryId, org.SubmitterId }
+                    where run.Id == runId  && organisationIds.Contains(crpdd.OrganisationId.GetValueOrDefault()) && org.ObligationStatus == ObligationStates.Obligated
+                    select crpdd
+                ).Distinct().ToListAsync();
         }
 
         public async Task<List<CalcResultScaledupProducer>> GetProducerReportedMaterialsAsync(int runId, IEnumerable<int> organisationIds)
         {
-            return await (from run in context.CalculatorRuns
-                                join crpdd in context.CalculatorRunPomDataDetails on run.CalculatorRunPomDataMasterId equals crpdd.CalculatorRunPomDataMasterId
-                                join spl in context.SubmissionPeriodLookup on crpdd.SubmissionPeriod equals spl.SubmissionPeriod
-                                join pd in context.ProducerDetail.Include(x => x.ProducerReportedMaterials) on crpdd.OrganisationId equals pd.ProducerId
-                                join org in context.CalculatorRunOrganisationDataDetails
-                                  on new { pd.ProducerId, pd.SubsidiaryId, crpdd.SubmitterId}
-                                    equals new { ProducerId = org.OrganisationId, org.SubsidiaryId, org.SubmitterId }
-                                where run.Id == runId && organisationIds.Contains(crpdd.OrganisationId.GetValueOrDefault())
-                                  && pd.CalculatorRunId == runId && org.ObligationStatus == ObligationStates.Obligated
-                                select new CalcResultScaledupProducer
-                                {
-                                    ProducerId = pd.ProducerId,
-                                    SubsidiaryId = pd.SubsidiaryId!,
-                                    ProducerName = pd.ProducerName!,
-                                    TradingName = pd.TradingName!,
-                                    ScaleupFactor = spl.ScaleupFactor,
-                                    SubmissionPeriodCode = spl.SubmissionPeriod,
-                                    DaysInSubmissionPeriod = spl.DaysInSubmissionPeriod,
-                                    DaysInWholePeriod = spl.DaysInWholePeriod,
-                                    Level = pd.SubsidiaryId != null ? CommonConstants.LevelTwo.ToString() : CommonConstants.LevelOne.ToString(),
-                                }).Distinct().ToListAsync();
+            return await (
+                from run in context.CalculatorRuns
+                join crpdd in context.CalculatorRunPomDataDetails on run.CalculatorRunPomDataMasterId equals crpdd.CalculatorRunPomDataMasterId
+                join spl in context.SubmissionPeriodLookup on crpdd.SubmissionPeriod equals spl.SubmissionPeriod
+                join pd in context.ProducerDetail.Include(x => x.ProducerReportedMaterials) on crpdd.OrganisationId equals pd.ProducerId
+                join org in context.CalculatorRunOrganisationDataDetails
+                  on new { pd.ProducerId, pd.SubsidiaryId, crpdd.SubmitterId }
+                    equals new { ProducerId = org.OrganisationId, org.SubsidiaryId, org.SubmitterId }
+                where run.Id == runId && organisationIds.Contains(crpdd.OrganisationId.GetValueOrDefault())
+                  && pd.CalculatorRunId == runId && org.ObligationStatus == ObligationStates.Obligated
+                select new CalcResultScaledupProducer
+                {
+                    ProducerId = pd.ProducerId,
+                    SubsidiaryId = pd.SubsidiaryId!,
+                    ProducerName = pd.ProducerName!,
+                    TradingName = pd.TradingName!,
+                    ScaleupFactor = spl.ScaleupFactor,
+                    SubmissionPeriodCode = spl.SubmissionPeriod,
+                    DaysInSubmissionPeriod = spl.DaysInSubmissionPeriod,
+                    DaysInWholePeriod = spl.DaysInWholePeriod,
+                    Level = pd.SubsidiaryId != null ? CommonConstants.LevelTwo.ToString() : CommonConstants.LevelOne.ToString(),
+                }
+            ).Distinct().ToListAsync();
         }
 
         public async Task<IEnumerable<Organisation>> GetScaledUpOrganisationsAsync(int runId)
         {
-            var scaleupOrganisationIds = await (from run in context.CalculatorRuns
-                                            join crpdm in context.CalculatorRunPomDataMaster on run.CalculatorRunPomDataMasterId equals crpdm.Id
-                                            join crpdd in context.CalculatorRunPomDataDetails on crpdm.Id equals crpdd.CalculatorRunPomDataMasterId
-                                            join spl in context.SubmissionPeriodLookup on crpdd.SubmissionPeriod equals spl.SubmissionPeriod
-                                            where run.Id == runId && crpdd.OrganisationId != null && spl.ScaleupFactor > NormalScaleup
-                                            select crpdd.OrganisationId.GetValueOrDefault()).Distinct().ToListAsync() ?? [];
+            var scaleupOrganisationIds =
+                await (
+                    from run in context.CalculatorRuns
+                    join crpdm in context.CalculatorRunPomDataMaster on run.CalculatorRunPomDataMasterId equals crpdm.Id
+                    join crpdd in context.CalculatorRunPomDataDetails on crpdm.Id equals crpdd.CalculatorRunPomDataMasterId
+                    join spl in context.SubmissionPeriodLookup on crpdd.SubmissionPeriod equals spl.SubmissionPeriod
+                    where run.Id == runId && crpdd.OrganisationId != null && spl.ScaleupFactor > NormalScaleup
+                    select crpdd.OrganisationId.GetValueOrDefault()
+                ).Distinct().ToListAsync() ?? [];
 
-            var filteredCrodds = context.CalculatorRunOrganisationDataDetails.AsNoTracking()
-                                 .Where(x => scaleupOrganisationIds.Contains(x.OrganisationId) && x.SubsidiaryId == null);
+            var filteredCrodds =
+                context.CalculatorRunOrganisationDataDetails.AsNoTracking()
+                    .Where(x => scaleupOrganisationIds.Contains(x.OrganisationId) && x.SubsidiaryId == null);
 
-            var scaledupOrganisations = await (from run in context.CalculatorRuns.AsNoTracking()
-                                            join crodm in context.CalculatorRunOrganisationDataMaster.AsNoTracking() on run.CalculatorRunOrganisationDataMasterId equals crodm.Id
-                                            join crodd in filteredCrodds on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
-                                            where run.Id == runId
-                                            select new Organisation
-                                            {
-                                                OrganisationId = crodd.OrganisationId,
-                                                OrganisationName = crodd.OrganisationName,
-                                                TradingName = crodd.TradingName
-                                            }).AsNoTracking().Distinct().ToListAsync();
+            var scaledupOrganisations =
+                await (
+                    from run in context.CalculatorRuns.AsNoTracking()
+                    join crodm in context.CalculatorRunOrganisationDataMaster.AsNoTracking() on run.CalculatorRunOrganisationDataMasterId equals crodm.Id
+                    join crodd in filteredCrodds on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
+                    where run.Id == runId
+                    select new Organisation
+                    {
+                        OrganisationId = crodd.OrganisationId,
+                        OrganisationName = crodd.OrganisationName,
+                        TradingName = crodd.TradingName
+                    }
+                ).AsNoTracking().Distinct().ToListAsync();
 
             return scaledupOrganisations;
         }

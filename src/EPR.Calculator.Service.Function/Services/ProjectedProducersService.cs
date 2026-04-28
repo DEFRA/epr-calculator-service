@@ -32,7 +32,7 @@ namespace EPR.Calculator.Service.Function.Services
             var missingH2Projected = MapH2ToProducerReportedMaterialProjected(existingAsProjected, h2ProjectedProducers);
             var missingH1Projected = MapH1ToProducerReportedMaterialProjected(existingAsProjected, h1ProjectedProducers);
             var allProjected = existingAsProjected.Concat(missingH2Projected).Concat(missingH1Projected).ToList();
-            await producerReportedMaterialProjectedChunker.InsertRecords(allProjected);          
+            await producerReportedMaterialProjectedChunker.InsertRecords(allProjected);
         }
 
         private async Task<List<ProducerReportedMaterialProjected>> GetExistingAsProjected(int runId) {

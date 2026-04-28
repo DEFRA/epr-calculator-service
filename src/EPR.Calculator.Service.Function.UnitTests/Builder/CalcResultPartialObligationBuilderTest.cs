@@ -9,6 +9,7 @@ using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Newtonsoft.Json;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
@@ -19,7 +20,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         private readonly int runId = 2;
         private CalcResultPartialObligationBuilder builder;
 
-        private void PrepareData()
+        private List<ProducerReportedMaterialsForSubmissionPeriod> PrepareData()
         {
 
             //Run 1
@@ -89,36 +90,46 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             var alm = new Material { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" };
 
-            foreach (var subPeriod in new[] { "2025-H1", "2025-H2"}) {
-                this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-                {
-                    PackagingType = "HH",
-                    SubmissionPeriod = subPeriod,
-                    ProducerDetail = producerDetail,
-                });
-                this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-                {
-                    PackagingType = "HDC",
-                    SubmissionPeriod = subPeriod,
-                    ProducerDetail = producerDetail,
-                });
-                this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-                {
-                    PackagingType = "HH",
-                    Material = alm,
-                    PackagingTonnage = 50,
-                    SubmissionPeriod = subPeriod,
-                    ProducerDetail = producerDetail2,
-                });
-                this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-                {
-                    PackagingType = "CW",
-                    Material = alm,
-                    PackagingTonnage = 10,
-                    SubmissionPeriod = subPeriod,
-                    ProducerDetail = producerDetail2,
-                });
-            }
+            var producerReportedMaterials =
+                new[] { "2025-H1", "2025-H2"}.SelectMany(subPeriod =>
+                    new List<ProducerReportedMaterial> {
+                        new ProducerReportedMaterial
+                        {
+                            PackagingType = "HH",
+                            MaterialId = alm.Id,
+                            Material = alm,
+                            SubmissionPeriod = subPeriod,
+                            ProducerDetail = producerDetail,
+                        },
+                        new ProducerReportedMaterial
+                        {
+                            PackagingType = "HDC",
+                            MaterialId = alm.Id,
+                            Material = alm,
+                            SubmissionPeriod = subPeriod,
+                            ProducerDetail = producerDetail,
+                        },
+                        new ProducerReportedMaterial
+                        {
+                            PackagingType = "HH",
+                            MaterialId = alm.Id,
+                            Material = alm,
+                            PackagingTonnage = 50,
+                            SubmissionPeriod = subPeriod,
+                            ProducerDetail = producerDetail2,
+                        },
+                        new ProducerReportedMaterial
+                        {
+                            PackagingType = "CW",
+                            MaterialId = alm.Id,
+                            Material = alm,
+                            PackagingTonnage = 10,
+                            SubmissionPeriod = subPeriod,
+                            ProducerDetail = producerDetail2,
+                        }
+                    }
+                );
+            this.dbContext.ProducerReportedMaterial.AddRange(producerReportedMaterials);
 
             //Run 2
             var calcRunOrganisationDataMaster2 = new CalculatorRunOrganisationDataMaster
@@ -179,42 +190,52 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             {
                 Id = 4,
                 CalculatorRunId = runId,
-                ProducerId = 22,
+                ProducerId = 44,
                 SubsidiaryId = null,
                 ProducerName = "Partial Packaging",
             };
             dbContext.ProducerDetail.Add(producerDetail4);
 
-            foreach (var subPeriod in new[] { "2025-H1", "2025-H2"}) {
-                this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-                {
-                    PackagingType = "HH",
-                    SubmissionPeriod = subPeriod,
-                    ProducerDetail = producerDetail3,
-                });
-                this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-                {
-                    PackagingType = "HDC",
-                    SubmissionPeriod = subPeriod,
-                    ProducerDetail = producerDetail3,
-                });
-                this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-                {
-                    PackagingType = "HH",
-                    Material = alm,
-                    PackagingTonnage = 50,
-                    SubmissionPeriod = subPeriod,
-                    ProducerDetail = producerDetail4,
-                });
-                this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-                {
-                    PackagingType = "CW",
-                    Material = alm,
-                    PackagingTonnage = 10,
-                    SubmissionPeriod = subPeriod,
-                    ProducerDetail = producerDetail4,
-                });
-            }
+            var producerReportedMaterials2 =
+                new[] { "2025-H1", "2025-H2"}.SelectMany(subPeriod =>
+                    new List<ProducerReportedMaterial> {
+                        new ProducerReportedMaterial
+                        {
+                            PackagingType = "HH",
+                            MaterialId = alm.Id,
+                            Material = alm,
+                            SubmissionPeriod = subPeriod,
+                            ProducerDetail = producerDetail3,
+                        },
+                        new ProducerReportedMaterial
+                        {
+                            PackagingType = "HDC",
+                            MaterialId = alm.Id,
+                            Material = alm,
+                            SubmissionPeriod = subPeriod,
+                            ProducerDetail = producerDetail3,
+                        },
+                        new ProducerReportedMaterial
+                        {
+                            PackagingType = "HH",
+                            MaterialId = alm.Id,
+                            Material = alm,
+                            PackagingTonnage = 50,
+                            SubmissionPeriod = subPeriod,
+                            ProducerDetail = producerDetail4,
+                        },
+                        new ProducerReportedMaterial
+                        {
+                            PackagingType = "CW",
+                            MaterialId = alm.Id,
+                            Material = alm,
+                            PackagingTonnage = 10,
+                            SubmissionPeriod = subPeriod,
+                            ProducerDetail = producerDetail4,
+                        }
+                    }
+                ).ToList();
+            this.dbContext.ProducerReportedMaterial.AddRange(producerReportedMaterials2);
 
             dbContext.Material.AddRange(
                 alm,
@@ -228,6 +249,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             );
 
             dbContext.SaveChanges();
+
+            return (producerReportedMaterials.Concat(producerReportedMaterials2)).GroupBy(rm => (rm.ProducerDetail, rm.SubmissionPeriod)).Select(rms =>
+                new ProducerReportedMaterialsForSubmissionPeriod(
+                    producerId : rms.Key.Item1.ProducerId,
+                    subsidiaryId : rms.Key.Item1.SubsidiaryId,
+                    submissionPeriod : rms.Key.Item2,
+                    reportedMaterials : rms.ToList()
+                )
+            ).ToList();
         }
 
         public CalcResultPartialObligationBuilderTest()
@@ -253,135 +283,57 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public async Task Construct_WhenPartialObligationsExists()
         {
             // Arrange
-            PrepareData();
+            var producers = PrepareData();
             var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
             // Act
-            var result = await builder.ConstructAsync(requestDto, new List<ProducerReportedMaterialsForSubmissionPeriod>());
+            var result = await builder.ConstructAsync(requestDto, producers);
+
+            Console.WriteLine($"result.Item2: {JsonConvert.SerializeObject(result.Item2, Formatting.Indented)}");
 
             // Assert
-            //Assert.AreEqual(1, result.PartialObligations!.Count());
-            //var parOrg = result.PartialObligations!.First();
-            //Assert.IsTrue(parOrg.ProducerId == 22);
-            //Assert.IsTrue(parOrg.SubsidiaryId == null);
-            //Assert.IsTrue(parOrg.ProducerName == "Partial Packaging");
-            //Assert.IsTrue(parOrg.Level == CommonConstants.LevelOne.ToString());
-            //Assert.IsTrue(parOrg.JoiningDate == "15/07/2025");
-            //Assert.IsTrue(parOrg.DaysObligated == 183);
-            //Assert.IsTrue(parOrg.DaysInSubmissionYear == 365);
-            //Assert.IsTrue(parOrg.ObligatedPercentage == "50.14%");
+            Assert.AreEqual(1, result.Item2.PartialObligations!.Count());
+            var parOrg = result.Item2.PartialObligations!.First();
+            Assert.IsTrue(parOrg.ProducerId == 22);
+            Assert.IsTrue(parOrg.SubsidiaryId == null);
+            Assert.IsTrue(parOrg.ProducerName == "Partial Packaging");
+            Assert.IsTrue(parOrg.Level == CommonConstants.LevelOne.ToString());
+            Assert.IsTrue(parOrg.JoiningDate == "15/07/2025");
+            Assert.IsTrue(parOrg.DaysObligated == 183);
+            Assert.IsTrue(parOrg.DaysInSubmissionYear == 365);
+            Assert.IsTrue(parOrg.ObligatedPercentage == "50.14%");
 
-
-            //var parOrgMats = parOrg.PartialObligationTonnageByMaterial;
-            //Assert.AreEqual(8, parOrgMats.Count());
-            //Assert.IsTrue(parOrgMats.Any(mat =>
-            //    mat.Key == MaterialCodes.Aluminium &&
-            //    mat.Value.ReportedHouseholdPackagingWasteTonnage == 100 &&
-            //    mat.Value.ReportedPublicBinTonnage == 0 &&
-            //    mat.Value.ReportedSelfManagedConsumerWasteTonnage == 20 &&
-            //    mat.Value.NetReportedTonnage == 80 &&
-            //    mat.Value.TotalReportedTonnage == 100 &&
-            //    mat.Value.PartialReportedHouseholdPackagingWasteTonnage == 50.137m &&
-            //    mat.Value.PartialReportedPublicBinTonnage == 0 &&
-            //    mat.Value.PartialReportedSelfManagedConsumerWasteTonnage == 10.027m &&
-            //    mat.Value.PartialNetReportedTonnage == 40.110m &&
-            //    mat.Value.PartialTotalReportedTonnage == 50.137m
-            //));
-            //Assert.IsTrue(parOrgMats.Any(mat =>
-            //    mat.Key == MaterialCodes.Glass &&
-            //    mat.Value.ReportedHouseholdPackagingWasteTonnage == 0 &&
-            //    mat.Value.ReportedPublicBinTonnage == 0 &&
-            //    mat.Value.ReportedSelfManagedConsumerWasteTonnage == 0 &&
-            //    mat.Value.HouseholdDrinksContainersTonnageGlass == 0 &&
-            //    mat.Value.NetReportedTonnage == 0 &&
-            //    mat.Value.TotalReportedTonnage == 0 &&
-            //    mat.Value.PartialReportedHouseholdPackagingWasteTonnage == 0 &&
-            //    mat.Value.PartialReportedPublicBinTonnage == 0 &&
-            //    mat.Value.PartialReportedSelfManagedConsumerWasteTonnage == 0 &&
-            //    mat.Value.PartialNetReportedTonnage == 0 &&
-            //    mat.Value.PartialTotalReportedTonnage == 0 &&
-            //    mat.Value.PartialHouseholdDrinksContainersTonnageGlass == 0
-            //));
-        }
-
-        [TestMethod]
-        public async Task Construct_WhenPartialObligationsExists_WithScaledUpTonnage()
-        {
-            // Arrange
-            PrepareData();
-            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
-
-            var scaledUpProducers = new List<ProducerReportedMaterialsForSubmissionPeriod> {
-                /*new CalcResultScaledupProducer {
-                    ProducerId = 22,
-                    SubsidiaryId = null,
-                    ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>{
-                        {
-                            MaterialCodes.Aluminium,
-                            new CalcResultScaledupProducerTonnage
-                            {
-                                ReportedHouseholdPackagingWasteTonnage = 100,
-                                ReportedPublicBinTonnage = 0,
-                                ReportedSelfManagedConsumerWasteTonnage = 20,
-                                NetReportedTonnage = 80,
-                                TotalReportedTonnage = 100,
-                                ScaledupReportedHouseholdPackagingWasteTonnage = 300,
-                                ScaledupReportedPublicBinTonnage = 0,
-                                ScaledupReportedSelfManagedConsumerWasteTonnage = 60,
-                                ScaledupNetReportedTonnage = 240,
-                                ScaledupTotalReportedTonnage = 300
-                            }
-                        }
-                    }
-                }*/
-            };
-
-            // Act
-            var result = await builder.ConstructAsync(requestDto, scaledUpProducers);
-
-            // Assert
-            //Assert.AreEqual(1, result.PartialObligations!.Count());
-            //var parOrg = result.PartialObligations!.First();
-            //Assert.IsTrue(parOrg.ProducerId == 22);
-            //Assert.IsTrue(parOrg.SubsidiaryId == null);
-            //Assert.IsTrue(parOrg.ProducerName == "Partial Packaging");
-            //Assert.IsTrue(parOrg.Level == CommonConstants.LevelOne.ToString());
-            //Assert.IsTrue(parOrg.JoiningDate == "15/07/2025");
-            //Assert.IsTrue(parOrg.DaysObligated == 183);
-            //Assert.IsTrue(parOrg.DaysInSubmissionYear == 365);
-            //Assert.IsTrue(parOrg.ObligatedPercentage == "50.14%");
-
-            //var parOrgMats = parOrg.PartialObligationTonnageByMaterial;
-            //Assert.AreEqual(8, parOrgMats.Count());
-            //Assert.IsTrue(parOrgMats.Any(mat =>
-            //    mat.Key == MaterialCodes.Aluminium &&
-            //    mat.Value.ReportedHouseholdPackagingWasteTonnage == 100 &&
-            //    mat.Value.ReportedPublicBinTonnage == 0 &&
-            //    mat.Value.ReportedSelfManagedConsumerWasteTonnage == 20 &&
-            //    mat.Value.NetReportedTonnage == 80 &&
-            //    mat.Value.TotalReportedTonnage == 100 &&
-            //    mat.Value.PartialReportedHouseholdPackagingWasteTonnage == 150.411m &&
-            //    mat.Value.PartialReportedPublicBinTonnage == 0 &&
-            //    mat.Value.PartialReportedSelfManagedConsumerWasteTonnage == 30.082m &&
-            //    mat.Value.PartialNetReportedTonnage == 120.329m &&
-            //    mat.Value.PartialTotalReportedTonnage == 150.411m
-            //));
-            //Assert.IsTrue(parOrgMats.Any(mat =>
-            //    mat.Key == MaterialCodes.Glass &&
-            //    mat.Value.ReportedHouseholdPackagingWasteTonnage == 0 &&
-            //    mat.Value.ReportedPublicBinTonnage == 0 &&
-            //    mat.Value.ReportedSelfManagedConsumerWasteTonnage == 0 &&
-            //    mat.Value.HouseholdDrinksContainersTonnageGlass == 0 &&
-            //    mat.Value.NetReportedTonnage == 0 &&
-            //    mat.Value.TotalReportedTonnage == 0 &&
-            //    mat.Value.PartialReportedHouseholdPackagingWasteTonnage == 0 &&
-            //    mat.Value.PartialReportedPublicBinTonnage == 0 &&
-            //    mat.Value.PartialReportedSelfManagedConsumerWasteTonnage == 0 &&
-            //    mat.Value.PartialNetReportedTonnage == 0 &&
-            //    mat.Value.PartialTotalReportedTonnage == 0 &&
-            //    mat.Value.PartialHouseholdDrinksContainersTonnageGlass == 0
-            //));
-
+            var parOrgMats = parOrg.PartialObligationTonnageByMaterial;
+            //Assert.AreEqual(8, parOrgMats.Count()); // TODO expects one per material
+            //Console.WriteLine("" + parOrgMats.Select(mat => mat.Key == MaterialCodes.Aluminium));
+            var aluResult = parOrgMats.Where(mat => mat.Key == MaterialCodes.Aluminium).First();
+            //Console.WriteLine($">> AL: {JsonConvert.SerializeObject(parOrgMats.Where(mat => mat.Key == MaterialCodes.Aluminium).First(), Formatting.Indented)}");
+            Assert.AreEqual(100, aluResult.Value.ReportedHouseholdPackagingWasteTonnage);
+            Assert.AreEqual(0, aluResult.Value.ReportedPublicBinTonnage);
+            Assert.AreEqual(20, aluResult.Value.ReportedSelfManagedConsumerWasteTonnage);
+            Assert.AreEqual(80, aluResult.Value.NetReportedTonnage);
+            Assert.AreEqual(100, aluResult.Value.TotalReportedTonnage);
+            Assert.AreEqual(50.137m, aluResult.Value.PartialReportedHouseholdPackagingWasteTonnage);
+            Assert.AreEqual(0, aluResult.Value.PartialReportedPublicBinTonnage);
+            Assert.AreEqual(10.027m, aluResult.Value.PartialReportedSelfManagedConsumerWasteTonnage);
+            Assert.AreEqual(40.110m, aluResult.Value.PartialNetReportedTonnage);
+            Assert.AreEqual(50.137m, aluResult.Value.PartialTotalReportedTonnage);
+            // TODO requires adding empty materials
+            Assert.IsTrue(parOrgMats.Any(mat =>
+                mat.Key == MaterialCodes.Glass &&
+                mat.Value.ReportedHouseholdPackagingWasteTonnage == 0 &&
+                mat.Value.ReportedPublicBinTonnage == 0 &&
+                mat.Value.ReportedSelfManagedConsumerWasteTonnage == 0 &&
+                mat.Value.HouseholdDrinksContainersTonnageGlass == 0 &&
+                mat.Value.NetReportedTonnage == 0 &&
+                mat.Value.TotalReportedTonnage == 0 &&
+                mat.Value.PartialReportedHouseholdPackagingWasteTonnage == 0 &&
+                mat.Value.PartialReportedPublicBinTonnage == 0 &&
+                mat.Value.PartialReportedSelfManagedConsumerWasteTonnage == 0 &&
+                mat.Value.PartialNetReportedTonnage == 0 &&
+                mat.Value.PartialTotalReportedTonnage == 0 &&
+                mat.Value.PartialHouseholdDrinksContainersTonnageGlass == 0
+            ));
         }
     }
 }
