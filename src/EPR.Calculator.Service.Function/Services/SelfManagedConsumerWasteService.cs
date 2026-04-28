@@ -4,6 +4,7 @@ using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Builder.Summary;
+using EPR.Calculator.Service.Function.Builder.Summary.Common;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Interface;
@@ -11,6 +12,7 @@ using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Utilities;
 
 namespace EPR.Calculator.Service.Function.Services
 {
@@ -40,8 +42,6 @@ namespace EPR.Calculator.Service.Function.Services
             return await context
                 .ProducerDetail
                 .Where(pd => pd.CalculatorRunId == runId)
-                .OrderBy(x => x.ProducerId)
-                .ThenBy(x => x.SubsidiaryId)
                 .ToListAsync();
         }
 
@@ -54,208 +54,92 @@ namespace EPR.Calculator.Service.Function.Services
         {
             var producerTotals = (await GetProducerDetails(resultsRequestDto.RunId))
                 .GroupBy(x => x.ProducerId)
-                .SelectMany(group => group.Select((producerDetail, index) =>
-                {
-                    var level = index == 0 ? 1 : 2;
-                    return new ProducerSelfManagedConsumerWaste
-                    {
-                        producerDetail = producerDetail,
-                        Level = level,
-                        SelfManagedConsumerWasteDataPerMaterials =
-                            materialDetails.ToDictionary(
-                                material => material.Code,
-                                material => {
-                                    var smcw         = level == 1
-                                                         ? group.Sum(p => GetTonnage(p, material, PackagingTypes.ConsumerWaste, scaledUpProducers, partialObligations))
-                                                         : GetTonnage(producerDetail, material, PackagingTypes.ConsumerWaste, scaledUpProducers, partialObligations);
-                                    var totalTonnage = level == 1
-                                                         ? group.Sum(p => GetReportedTonnage(p, material, scaledUpProducers, partialObligations))
-                                                         : GetReportedTonnage(producerDetail, material, scaledUpProducers, partialObligations);
-
-                                    return new SelfManagedConsumerWasteData
-                                    {
-                                        SelfManagedConsumerWasteTonnage = smcw,
-                                        ActionedSelfManagedConsumerWasteTonnage = GetActionedSelfManagedConsumerWasteTonnage(totalReportedTonnage: totalTonnage, selfManagedConsumerWasteTonnage: smcw, level: level),
-                                        NetReportedTonnage = GetNetReportedTonnage(group, material, scaledUpProducers, partialObligations, showModulations, level)
-                                    };
-                                }
-                            )
-                    };
-                })).ToList();
+                .SelectMany(group =>
+                    materialDetails
+                        .SelectMany(material =>
+                            SelfManagedConsumerWasteServiceLevels
+                                .Calculate(BuildL1(group, material, scaledUpProducers, partialObligations))
+                                .Select(r => (material, result: r))
+                        )
+                        .GroupBy(x => (x.result.OrgId, x.result.SubsidiaryId, x.result.Level))
+                        .Select(g =>
+                            new ProducerSelfManagedConsumerWaste
+                            {
+                                ProducerId                               = g.Key.OrgId,
+                                SubsidiaryId                             = g.Key.SubsidiaryId,
+                                Level                                    = g.Key.Level,
+                                SelfManagedConsumerWasteDataPerMaterials = g.ToDictionary(x => x.material.Code, x => MapResultToData(x.result))
+                            }
+                        )
+                )
+                .ToList();
 
             return new SelfManagedConsumerWaste
             {
-                ProducerTotals = producerTotals,
-                OverallTotalPerMaterials =
-                    materialDetails.ToDictionary(
-                        material => material.Code,
-                        material => producerTotals
-                                        .Where(x => x.Level == 1)
-                                        .Select(x => x.SelfManagedConsumerWasteDataPerMaterials[material.Code])
-                                        .Sum()
-                    )
+                ProducerTotals  = producerTotals,
+                OverallTotalPerMaterials = materialDetails.ToDictionary(
+                    m => m.Code,
+                    m => producerTotals
+                        .Where(x => x.Level == 1)
+                        .Select(x => x.SelfManagedConsumerWasteDataPerMaterials.GetValueOrDefault(m.Code))
+                        .Sum()
+                )
             };
         }
 
-        public static decimal? GetScaledUpTonnage(ProducerDetail producer, MaterialDetail material, string packagingType, IEnumerable<CalcResultScaledupProducer> scaledUpProducers)
-        {
-            var scaledupProducerForAllSubmissionPeriods = scaledUpProducers.Where(p => p.ProducerId == producer.ProducerId
-                && p.SubsidiaryId == producer.SubsidiaryId
-                && !p.IsSubtotalRow
-                && !p.IsTotalRow);
-
-            if (scaledupProducerForAllSubmissionPeriods.Any())
-            {
-                decimal tonnage = 0;
-                foreach (var scaledupProducerTonnageByMaterial in scaledupProducerForAllSubmissionPeriods.Select(x => x.ScaledupProducerTonnageByMaterial))
-                {
-                    switch (packagingType)
-                    {
-                        case PackagingTypes.Household:
-                            tonnage += scaledupProducerTonnageByMaterial.GetValueOrDefault(material.Code)?.ScaledupReportedHouseholdPackagingWasteTonnage ?? 0;
-                            break;
-                        case PackagingTypes.PublicBin:
-                            tonnage += scaledupProducerTonnageByMaterial.GetValueOrDefault(material.Code)?.ScaledupReportedPublicBinTonnage ?? 0;
-                            break;
-                        case PackagingTypes.ConsumerWaste:
-                            tonnage += scaledupProducerTonnageByMaterial.GetValueOrDefault(material.Code)?.ScaledupReportedSelfManagedConsumerWasteTonnage ?? 0;
-                            break;
-                        case PackagingTypes.HouseholdDrinksContainers:
-                            tonnage += scaledupProducerTonnageByMaterial.GetValueOrDefault(material.Code)?.ScaledupHouseholdDrinksContainersTonnageGlass ?? 0;
-                            break;
-                        default:
-                            tonnage += 0;
-                            break;
-                    }
-                }
-
-                return tonnage;
-            }
-            return null;
-        }
-
-        public static decimal? GetPartialTonnage(ProducerDetail producer, MaterialDetail material, string packagingType, IEnumerable<CalcResultPartialObligation> partialObligations)
-        {
-            var maybePartialObligation = partialObligations.FirstOrDefault(p => p.ProducerId == producer.ProducerId && p.SubsidiaryId == producer.SubsidiaryId);
-
-            if (maybePartialObligation != null)
-            {
-                switch (packagingType)
-                {
-                    case PackagingTypes.Household:
-                        return maybePartialObligation.PartialObligationTonnageByMaterial.GetValueOrDefault(material.Code)?.PartialReportedHouseholdPackagingWasteTonnage ?? 0;
-                    case PackagingTypes.PublicBin:
-                        return maybePartialObligation.PartialObligationTonnageByMaterial.GetValueOrDefault(material.Code)?.PartialReportedPublicBinTonnage ?? 0;
-                    case PackagingTypes.ConsumerWaste:
-                        return maybePartialObligation.PartialObligationTonnageByMaterial.GetValueOrDefault(material.Code)?.PartialReportedSelfManagedConsumerWasteTonnage ?? 0;
-                    case PackagingTypes.HouseholdDrinksContainers:
-                        return maybePartialObligation.PartialObligationTonnageByMaterial.GetValueOrDefault(material.Code)?.PartialHouseholdDrinksContainersTonnageGlass ?? 0;
-                    default:
-                        return 0;
-                }
-            }
-            return null;
-        }
-
-        private static decimal GetTonnage(
-            ProducerDetail producer,
-            MaterialDetail material,
-            string packagingType,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
-            IEnumerable<CalcResultPartialObligation> partialObligations,
-            RagRating? ragRating = null)
-        {
-            var maybePartialScaledUpTonnage = GetPartialTonnage(producer, material, packagingType, partialObligations);
-
-            if (maybePartialScaledUpTonnage != null) {
-                return (decimal)maybePartialScaledUpTonnage;
-            }
-
-            var maybeScaledUpTonnage = GetScaledUpTonnage(producer, material, packagingType, scaledUpProducers);
-
-            if (maybeScaledUpTonnage != null) {
-                return (decimal)maybeScaledUpTonnage;
-            }
-
-            var prms = producer.ProducerReportedMaterials.Where(p => p.Material?.Code == material.Code && p.PackagingType == packagingType);
-
-            return ragRating switch
-            {
-                null                   => prms.Sum(p => p.PackagingTonnage),
-                RagRating.Red          => prms.Sum(p => p.PackagingTonnageRed ?? 0),
-                RagRating.Amber        => prms.Sum(p => p.PackagingTonnageAmber ?? 0),
-                RagRating.Green        => prms.Sum(p => p.PackagingTonnageGreen ?? 0),
-                RagRating.RedMedical   => prms.Sum(p => p.PackagingTonnageRedMedical ?? 0),
-                RagRating.AmberMedical => prms.Sum(p => p.PackagingTonnageAmberMedical ?? 0),
-                RagRating.GreenMedical => prms.Sum(p => p.PackagingTonnageGreenMedical ?? 0),
-                _                      => 0m
-            };
-        }
-
-        private static decimal GetReportedTonnage(
-            ProducerDetail producer,
+        private IL1 BuildL1(
+            IGrouping<int, ProducerDetail> group,
             MaterialDetail material,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
-            IEnumerable<CalcResultPartialObligation> partialObligations,
-            RagRating? ragRating = null)
+            IEnumerable<CalcResultPartialObligation> partialObligations)
         {
-
-
-            var householdTonnage = GetTonnage(producer, material, PackagingTypes.Household, scaledUpProducers, partialObligations, ragRating);
-            var publicBinTonnage = GetTonnage(producer, material, PackagingTypes.PublicBin, scaledUpProducers, partialObligations, ragRating);
-            var glassTonnage = material.Code == MaterialCodes.Glass
-                ? GetTonnage(producer, material, PackagingTypes.HouseholdDrinksContainers, scaledUpProducers, partialObligations, ragRating)
-                : 0;
-
-            return householdTonnage + publicBinTonnage + glassTonnage;
-        }
-
-        internal static (decimal? total, decimal? red,  decimal? amber, decimal? green) GetNetReportedTonnage(
-            IEnumerable<ProducerDetail> producerAndSubsidiaries,
-            MaterialDetail material,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
-            IEnumerable<CalcResultPartialObligation> partialObligations,
-            bool showModulations,
-            int level)
-        {
-            var reportedTonnage = producerAndSubsidiaries.Sum(producer => GetReportedTonnage(producer, material, scaledUpProducers, partialObligations));
-            var toSubtract = producerAndSubsidiaries.Sum(producer => GetTonnage(producer, material, PackagingTypes.ConsumerWaste, scaledUpProducers, partialObligations));
-            var total = reportedTonnage - toSubtract;
-
-            if (showModulations)
+            if (group.Count() == 1 && group.First().SubsidiaryId == null)
             {
-                if (level == CommonConstants.LevelTwo)
-                    return (total: null, red: null, amber: null, green: null);
+                var p = group.First();
 
-                var red   = producerAndSubsidiaries.Sum(producer => GetReportedTonnage(producer, material, scaledUpProducers, partialObligations, RagRating.Red)) +
-                            producerAndSubsidiaries.Sum(producer => GetReportedTonnage(producer, material, scaledUpProducers, partialObligations, RagRating.RedMedical));
-                var amber = producerAndSubsidiaries.Sum(producer => GetReportedTonnage(producer, material, scaledUpProducers, partialObligations, RagRating.Amber)) +
-                            producerAndSubsidiaries.Sum(producer => GetReportedTonnage(producer, material, scaledUpProducers, partialObligations, RagRating.AmberMedical));
-                var green = producerAndSubsidiaries.Sum(producer => GetReportedTonnage(producer, material, scaledUpProducers, partialObligations, RagRating.Green)) +
-                            producerAndSubsidiaries.Sum(producer => GetReportedTonnage(producer, material, scaledUpProducers, partialObligations, RagRating.GreenMedical));
-
-                return (
-                    total: Math.Max(total, 0),
-                    red  : Math.Max(red - Math.Max(toSubtract - amber, 0), 0),
-                    amber: Math.Max(amber - toSubtract, 0),
-                    green: Math.Max(green - Math.Max(toSubtract - amber - red, 0), 0)
+                return new SingleL1(
+                    OrgId: p.ProducerId,
+                    R:     CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.Red) +
+                           CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.RedMedical),
+                    A:     CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.Amber) +
+                           CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.AmberMedical),
+                    G:     CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.Green) +
+                           CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.GreenMedical),
+                    Smcw:  CalcResultSummaryUtil.GetTonnage(p, material, PackagingTypes.ConsumerWaste, scaledUpProducers, partialObligations)
                 );
-            } else {
-                if (level == CommonConstants.LevelTwo)
-                    return (total: total, red: null, amber: null, green: null);
-
-                return (total: Math.Max(total, 0), red: null, amber: null, green: null);
             }
+
+            var l2s = group
+                .OrderBy(p => p.ProducerId)
+                .ThenBy(p => p.SubsidiaryId)
+                .Select(p => new L2(
+                    OrgId:        p.ProducerId,
+                    SubsidiaryId: p.SubsidiaryId,
+                    R:            CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.Red) +
+                                  CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.RedMedical),
+                    A:            CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.Amber) +
+                                  CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.AmberMedical),
+                    G:            CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.Green) +
+                                  CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.GreenMedical),
+                    Smcw:         CalcResultSummaryUtil.GetTonnage(p, material, PackagingTypes.ConsumerWaste, scaledUpProducers, partialObligations)
+                )).ToList();
+
+            return new HC(group.Key, l2s);
         }
 
-        private static decimal? GetActionedSelfManagedConsumerWasteTonnage(
-            decimal totalReportedTonnage,
-            decimal selfManagedConsumerWasteTonnage,
-            int level)
+        private static SelfManagedConsumerWasteData MapResultToData(Result r)
         {
-            return level == CommonConstants.LevelOne
-                ? Math.Min(totalReportedTonnage, selfManagedConsumerWasteTonnage):
-                null;
+            return new SelfManagedConsumerWasteData
+            {
+                SelfManagedConsumerWasteTonnage         = r.Residual + r.ActionedSmcwR + r.ActionedSmcwA + r.ActionedSmcwG,
+                ActionedSelfManagedConsumerWasteTonnage =              r.ActionedSmcwR + r.ActionedSmcwA + r.ActionedSmcwG,
+                NetReportedTonnage = (
+                    total: r.NetR + r.NetA + r.NetG,
+                    red  : r.NetR,
+                    amber: r.NetA,
+                    green: r.NetG
+                )
+            };
         }
     }
 
@@ -267,7 +151,8 @@ namespace EPR.Calculator.Service.Function.Services
 
     public record ProducerSelfManagedConsumerWaste
     {
-        public required ProducerDetail producerDetail { get; init; }
+        public int ProducerId { get; set; }
+        public string? SubsidiaryId { get; set; }
         public required int Level {get; init; }
         public required Dictionary<string, SelfManagedConsumerWasteData> SelfManagedConsumerWasteDataPerMaterials { get; init; }
     }
@@ -310,8 +195,7 @@ namespace EPR.Calculator.Service.Function.Services
 
     public static class SelfManagedConsumerWasteDataExtensions
     {
-        public static SelfManagedConsumerWasteData Sum(
-            this IEnumerable<SelfManagedConsumerWasteData?> source)
+        public static SelfManagedConsumerWasteData Sum(this IEnumerable<SelfManagedConsumerWasteData?> source)
         {
             return source.Aggregate(
                 SelfManagedConsumerWasteData.Zero,

@@ -24,58 +24,64 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             return new ApplicationDBContext(options);
         }
 
-        private void SeedBasicData(ApplicationDBContext context)
+        private void SeedProducer(
+            ApplicationDBContext context,
+            decimal hh,
+            decimal hhRed,
+            decimal hhRedMedical,
+            decimal hhAmber,
+            decimal hhAmberMedical,
+            decimal hhGreen,
+            decimal hhGreenMedical,
+            decimal smcw,
+            int runId = 1,
+            string materialCode = MaterialCodes.Aluminium)
         {
             var material = new Material
             {
-                Id = 1,
-                Code = MaterialCodes.Aluminium,
-                Name = MaterialNames.Aluminium
+                Code = materialCode,
+                Name = materialCode
             };
+
+            context.Material.Add(material);
+            context.SaveChanges();
 
             var producer = new ProducerDetail
             {
-                Id = 1,
                 ProducerId = 1,
                 SubsidiaryId = null,
-                CalculatorRunId = 1,
+                CalculatorRunId = runId
             };
 
-            var hh = new ProducerReportedMaterial
-            {
-                ProducerDetail = producer,
-                ProducerDetailId = producer.Id,
-                Material = material,
-                MaterialId = material.Id,
-                PackagingType = PackagingTypes.Household,
-                PackagingTonnage = 100,
-                SubmissionPeriod = "2025-H1"
-            };
-
-            var cw = new ProducerReportedMaterial
-            {
-                ProducerDetail = producer,
-                ProducerDetailId = producer.Id,
-                Material = material,
-                MaterialId = material.Id,
-                PackagingType = PackagingTypes.ConsumerWaste,
-                PackagingTonnage = 40,
-                SubmissionPeriod = "2025-H1"
-            };
-
-            producer.ProducerReportedMaterials.Add(hh);
-            producer.ProducerReportedMaterials.Add(cw);
-
-            context.Material.Add(material);
             context.ProducerDetail.Add(producer);
-            context.ProducerReportedMaterial.AddRange(hh, cw);
-
             context.SaveChanges();
 
-            var loadedProducer = context.ProducerDetail.First();
-            loadedProducer.ProducerReportedMaterials.Clear();
-            loadedProducer.ProducerReportedMaterials.Add(hh);
-            loadedProducer.ProducerReportedMaterials.Add(cw);
+            var household = new ProducerReportedMaterial
+            {
+                ProducerDetailId = producer.Id,
+                MaterialId = material.Id,
+                PackagingType = PackagingTypes.Household,
+                PackagingTonnage = hh,
+                PackagingTonnageRed = hhRed,
+                PackagingTonnageRedMedical = hhRedMedical,
+                PackagingTonnageAmber = hhAmber,
+                PackagingTonnageAmberMedical = hhAmberMedical,
+                PackagingTonnageGreen = hhGreen,
+                PackagingTonnageGreenMedical = hhGreenMedical,
+                SubmissionPeriod = "2025-H1"
+            };
+
+            var consumerWaste = new ProducerReportedMaterial
+            {
+                ProducerDetailId = producer.Id,
+                MaterialId = material.Id,
+                PackagingType = PackagingTypes.ConsumerWaste,
+                PackagingTonnage = smcw,
+                SubmissionPeriod = "2025-H1"
+            };
+
+            context.ProducerReportedMaterial.AddRange(household, consumerWaste);
+            context.SaveChanges();
         }
 
         [TestMethod]
@@ -102,11 +108,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var result = items.Sum();
 
             Assert.AreEqual(30, result.SelfManagedConsumerWasteTonnage);
-            Assert.AreEqual(5, result.ActionedSelfManagedConsumerWasteTonnage);
-            Assert.AreEqual(3, result.NetReportedTonnage.total);
-            Assert.AreEqual(3, result.NetReportedTonnage.red);
-            Assert.AreEqual(3, result.NetReportedTonnage.amber);
-            Assert.AreEqual(3, result.NetReportedTonnage.green);
+            Assert.AreEqual(5 , result.ActionedSelfManagedConsumerWasteTonnage);
+            Assert.AreEqual(3 , result.NetReportedTonnage.total);
+            Assert.AreEqual(3 , result.NetReportedTonnage.red);
+            Assert.AreEqual(3 , result.NetReportedTonnage.amber);
+            Assert.AreEqual(3 , result.NetReportedTonnage.green);
         }
 
         [TestMethod]
@@ -123,13 +129,24 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task Calculate_Should_Aggregate_OverallTotals_Correctly()
         {
             var context = CreateContext();
-            SeedBasicData(context);
+
+            SeedProducer(
+                context,
+                hh: 100,
+                hhRed: 25,
+                hhRedMedical: 25,
+                hhAmber: 20,
+                hhAmberMedical: 20,
+                hhGreen: 5,
+                hhGreenMedical: 5,
+                smcw: 40
+            );
 
             var service = new SelfManagedConsumerWasteService(context);
 
             var materials = new[]
             {
-                new MaterialDetail { Code = "AL", Name = "Aluminium", Description = "" }
+                new MaterialDetail { Code = MaterialCodes.Aluminium, Name = MaterialNames.Aluminium, Description = "" }
             };
 
             var result = await service.Calculate(
@@ -139,17 +156,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 partialObligations: [],
                 showModulations: false);
 
-            var total = result.OverallTotalPerMaterials["AL"];
-
-            foreach (var p in result.ProducerTotals)
-            {
-                Console.WriteLine($"Producer {p.producerDetail.Id}, Level {p.Level}");
-
-                foreach (var kv in p.SelfManagedConsumerWasteDataPerMaterials)
-                {
-                    Console.WriteLine($"Material {kv.Key}: SMCW={kv.Value.SelfManagedConsumerWasteTonnage} Actioned SMCW={kv.Value.ActionedSelfManagedConsumerWasteTonnage} NetReportedTonnage={kv.Value.NetReportedTonnage.total}");
-                }
-            }
+            var total = result.OverallTotalPerMaterials[MaterialCodes.Aluminium];
 
             // HH = 100, CW = 40 → Net = 60
             Assert.AreEqual(40, total.SelfManagedConsumerWasteTonnage);
@@ -161,7 +168,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task Calculate_Should_Return_Zero_When_Material_Missing()
         {
             var context = CreateContext();
-            SeedBasicData(context);
+
+            SeedProducer(
+                context,
+                hh: 100,
+                hhRed: 25,
+                hhRedMedical: 25,
+                hhAmber: 20,
+                hhAmberMedical: 20,
+                hhGreen: 5,
+                hhGreenMedical: 5,
+                smcw: 40
+            );
 
             var service = new SelfManagedConsumerWasteService(context);
 
@@ -184,7 +202,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             var context = CreateContext();
 
-            var material = new Material { Id = 1, Code = "AL", Name = "Aluminium", Description = "" };
+            var material = new Material { Id = 1, Code = MaterialCodes.Aluminium, Name = MaterialNames.Aluminium, Description = "" };
 
             var producer1 = new ProducerDetail
             {
@@ -211,50 +229,23 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var result = await service.Calculate(
                 new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) },
-                new[] { new MaterialDetail { Code = "AL", Name = "Aluminium", Description = "" } },
+                new[] { new MaterialDetail { Code = MaterialCodes.Aluminium, Name = MaterialNames.Aluminium, Description = "" } },
                 [],
                 [],
                 false);
 
-            var total = result.OverallTotalPerMaterials["AL"];
+            var total = result.OverallTotalPerMaterials[MaterialCodes.Aluminium];
 
             // Level 2 should not contribute
             Assert.AreEqual(0, total.SelfManagedConsumerWasteTonnage);
             Assert.AreEqual(0, total.NetReportedTonnage.total);
         }
 
-        [TestMethod]
-        public void GetNetReportedTonnage_LevelTwo_With_Modulations_ReturnsNulls()
-        {
-            var producer = new ProducerDetail
-            {
-                Id = 1,
-                ProducerId = 1,
-                SubsidiaryId = null,
-                CalculatorRunId = 1,
-            };
-
-            var material = new MaterialDetail { Code = "AL", Name = "Aluminium", Description = "" };
-
-            var result = SelfManagedConsumerWasteService.GetNetReportedTonnage(
-                new[] { producer },
-                material,
-                [],
-                [],
-                showModulations: true,
-                level: CommonConstants.LevelTwo);
-
-            Assert.AreEqual(null, result.total);
-            Assert.AreEqual(null, result.red);
-            Assert.AreEqual(null, result.amber);
-            Assert.AreEqual(null, result.green);
-        }
-
         public static IEnumerable<object[]> NetReportedTonnageCases => new List<object[]>
         {
             //             hh        , red     , redM, amber     , amberM, green   , greenM, cw  ,                           expected tuple   (total     , red.    , amber     , green)       // ECV-430
             new object[] { 942.362m  , 464.266m, 0m  , 278.096m  , 0m    , 200m    , 0m    , 100m, ((decimal?, decimal?, decimal?, decimal?)) (842.362m  , 464.266m, 178.096m  , 200m    ) }, // AC1
-            new object[] { 27522.359m, 11000m  , 0m  , 15899.754m, 0m    , 622.610m, 0m    , 500m, ((decimal?, decimal?, decimal?, decimal?)) (27022.359m, 11000m  , 15399.754m, 622.610m) }, // AC2
+            new object[] { 27522.364m, 11000m  , 0m  , 15899.754m, 0m    , 622.610m, 0m    , 500m, ((decimal?, decimal?, decimal?, decimal?)) (27022.364m, 11000m  , 15399.754m, 622.610m) }, // AC2
             new object[] { 3287.503m , 2190.39m, 0m  , 300m      , 0m    , 797.113m, 0m    , 500m, ((decimal?, decimal?, decimal?, decimal?)) (2787.503m , 1990.39m, 0m        , 797.113m) }, // AC3
             new object[] { 220m      , 25m     , 0m  , 50m       , 0m    , 145m    , 0m    , 100m, ((decimal?, decimal?, decimal?, decimal?)) (120m      , 0m      , 0m        , 120m    ) }, // AC4
             new object[] { 0m        , 0m      , 0m  , 0m        , 0m    , 0m      , 0m    , 100m, ((decimal?, decimal?, decimal?, decimal?)) (0m        , 0m      , 0m        , 0m      ) }, // AC5
@@ -270,8 +261,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         [DataTestMethod]
         [DynamicData(nameof(NetReportedTonnageCases), DynamicDataSourceType.Property)]
-        public void CanGetNetReportedTonnage_WithModulations(
-            decimal hhTotal,
+        public async Task CanGetNetReportedTonnage_WithModulations(
+            decimal hh,
             decimal red,
             decimal redMedical,
             decimal amber,
@@ -281,50 +272,38 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             decimal cw,
             (decimal? total, decimal? red, decimal? amber, decimal? green) expected)
         {
-            var producer = new ProducerDetail
-            {
-                Id = 1,
-                ProducerId = 1,
-                SubsidiaryId = null,
-                CalculatorRunId = 1,
-            };
 
-            var materialDetail = new MaterialDetail { Code = "AL", Name = "Aluminium", Description = "" };
+            var context = CreateContext();
 
-            producer.ProducerReportedMaterials.Add(new ProducerReportedMaterial
-            {
-                SubmissionPeriod = "2025-H1",
-                Material = new Material { Code = "AL", Name = "Aluminium", Description = "" },
-                PackagingTonnage = hhTotal,
-                PackagingType = PackagingTypes.Household,
-                PackagingTonnageRed = red,
-                PackagingTonnageRedMedical = redMedical,
-                PackagingTonnageAmber = amber,
-                PackagingTonnageAmberMedical = amberMedical,
-                PackagingTonnageGreen = green,
-                PackagingTonnageGreenMedical = greenMedical
-            });
+            SeedProducer(
+                context,
+                hh,
+                red,
+                redMedical,
+                amber,
+                amberMedical,
+                green,
+                greenMedical,
+                cw
+            );
 
-            producer.ProducerReportedMaterials.Add(new ProducerReportedMaterial
-            {
-                SubmissionPeriod = "2025-H1",
-                Material = new Material { Code = "AL", Name = "Aluminium", Description = "" },
-                PackagingTonnage = cw,
-                PackagingType = PackagingTypes.ConsumerWaste
-            });
+            var service = new SelfManagedConsumerWasteService(context);
 
-            var result = SelfManagedConsumerWasteService.GetNetReportedTonnage(
-                new[] { producer },
-                materialDetail,
+            var result = await service.Calculate(
+                new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) },
+                new[] { new MaterialDetail { Code = MaterialCodes.Aluminium, Name = MaterialNames.Aluminium, Description = "" } },
                 [],
                 [],
-                showModulations: true,
-                level: CommonConstants.LevelOne);
+                false);
 
-            Assert.AreEqual(expected.total, result.total, "Total mismatch");
-            Assert.AreEqual(expected.red, result.red, "Red mismatch");
-            Assert.AreEqual(expected.amber, result.amber, "Amber mismatch");
-            Assert.AreEqual(expected.green, result.green, "Green mismatch");
+            var x = result.ProducerTotals.First().SelfManagedConsumerWasteDataPerMaterials[MaterialCodes.Aluminium];
+
+            Assert.AreEqual(expected.total  , x.NetReportedTonnage.total               , "Net Total mismatch");
+            Assert.AreEqual(expected.red    , x.NetReportedTonnage.red                 , "Net Red mismatch");
+            Assert.AreEqual(expected.amber  , x.NetReportedTonnage.amber               , "Net Amber mismatch");
+            Assert.AreEqual(expected.green  , x.NetReportedTonnage.green               , "Net Green mismatch");
+            Assert.AreEqual(cw              , x.SelfManagedConsumerWasteTonnage        , "SelfManagedConsumerWasteTonnage mismatch");
+            Assert.AreEqual(Math.Min(hh, cw), x.ActionedSelfManagedConsumerWasteTonnage, "ActionedSelfManagedConsumerWasteTonnage mismatch");
         }
     }
 }

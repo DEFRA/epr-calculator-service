@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Services
 {
-    public interface ProducerData
+    public interface IProducerData
     {
         public int OrgId { get; }
         public decimal R { get; }
@@ -10,11 +10,11 @@ namespace EPR.Calculator.Service.Function.Services
         public decimal G { get; }
         public decimal Smcw { get; }
     }
-    public interface L1 : ProducerData;
+    public interface IL1 : IProducerData;
 
-    public record SingleL1(int OrgId, decimal R, decimal A, decimal G, decimal Smcw) : L1;
+    public record SingleL1(int OrgId, decimal R, decimal A, decimal G, decimal Smcw) : IL1;
 
-    public record HC : L1
+    public record HC : IL1
     {
         public int OrgId { get; }
         public List<L2> L2s { get; }
@@ -34,12 +34,12 @@ namespace EPR.Calculator.Service.Function.Services
         }
     }
 
-    public record L2(int OrgId, int? SubsidiaryId, decimal R, decimal G, decimal A, decimal Smcw) : ProducerData;
+    public record L2(int OrgId, string? SubsidiaryId, decimal R, decimal A, decimal G, decimal Smcw) : IProducerData;
 
     public record Result(
         int OrgId,
-        int? SubsidiaryId,
-        string Level,
+        string? SubsidiaryId,
+        int Level,
         decimal NetR,
         decimal NetA,
         decimal NetG,
@@ -49,14 +49,9 @@ namespace EPR.Calculator.Service.Function.Services
         decimal ActionedSmcwG
     );
 
-    public interface ISelfManagedConsumerWasteServiceLevels
+    public static class SelfManagedConsumerWasteServiceLevels
     {
-        List<Result> Calculate(L1 l1);
-    }
-
-    public class SelfManagedConsumerWasteServiceLevels: ISelfManagedConsumerWasteServiceLevels
-    {
-        public List<Result> Calculate(L1 l1)
+        public static List<Result> Calculate(IL1 l1)
         {
             return l1 switch
             {
@@ -66,16 +61,16 @@ namespace EPR.Calculator.Service.Function.Services
             };
         }
 
-        private Result UpdateSingleL1(L1 l1)
+        private static Result UpdateSingleL1(IL1 l1)
         {
-            var (netA, actionedA, nextSmcwA     ) = ApplySubSmcw(l1.A, l1.Smcw);
-            var (netR, actionedR, nextSmcwR     ) = ApplySubSmcw(l1.R, nextSmcwA);
-            var (netG, actionedG, nextAvailableG) = ApplySubSmcw(l1.G, nextSmcwR);
+            var (netA, actionedA, nextSmcwA) = ApplySubSmcw(l1.A, l1.Smcw);
+            var (netR, actionedR, nextSmcwR) = ApplySubSmcw(l1.R, nextSmcwA);
+            var (netG, actionedG, _        ) = ApplySubSmcw(l1.G, nextSmcwR);
 
             return new Result(
                 OrgId: l1.OrgId,
                 SubsidiaryId: null,
-                Level: "L1",
+                Level: 1,
                 NetR: netR,
                 NetA: netA,
                 NetG: netG,
@@ -86,7 +81,7 @@ namespace EPR.Calculator.Service.Function.Services
             );
         }
 
-        private List<Result> UpdateHC(HC hc)
+        private static List<Result> UpdateHC(HC hc)
         {
             var hcResult = UpdateSingleL1(hc);
             var availableA = hc.A - hcResult.NetA;
@@ -114,7 +109,7 @@ namespace EPR.Calculator.Service.Function.Services
                 results.Add(new Result(
                     OrgId : sub.OrgId,
                     SubsidiaryId : sub.SubsidiaryId,
-                    Level : "L2",
+                    Level : 2,
                     NetR : netR,
                     NetA : netA,
                     NetG :  netG,
