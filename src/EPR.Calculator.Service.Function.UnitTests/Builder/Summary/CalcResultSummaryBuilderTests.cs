@@ -11,6 +11,7 @@ using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Mappers;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Models.JsonExporter;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -298,8 +299,54 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
 
             smcw = new SelfManagedConsumerWaste
             {
-                ProducerTotals = [],
-                OverallTotalPerMaterials = []
+                ProducerTotals = new List<ProducerSelfManagedConsumerWaste>
+                {
+                    new ProducerSelfManagedConsumerWaste
+                    {
+                        ProducerId = 4,
+                        SubsidiaryId = string.Empty,
+                        Level = 1,
+                        SelfManagedConsumerWasteDataPerMaterials = new Dictionary<string, SelfManagedConsumerWasteData>
+                        {
+                            { "AL", new SelfManagedConsumerWasteData
+                                {
+                                    SelfManagedConsumerWasteTonnage = 0,
+                                    ActionedSelfManagedConsumerWasteTonnage = 0,
+                                    NetReportedTonnage = (0, 0, 0, 0)
+                                }
+                            },
+                            { "GL", new SelfManagedConsumerWasteData
+                                {
+                                    SelfManagedConsumerWasteTonnage = 0,
+                                    ActionedSelfManagedConsumerWasteTonnage = 0,
+                                    NetReportedTonnage = (0, 0, 0, 0)
+                                }
+                            }
+                        }
+                    }
+                },
+
+                OverallTotalPerMaterials = new Dictionary<string, SelfManagedConsumerWasteData>
+                {
+                    {
+                        MaterialCodes.Aluminium,
+                        new SelfManagedConsumerWasteData
+                        {
+                            SelfManagedConsumerWasteTonnage = 0,
+                            ActionedSelfManagedConsumerWasteTonnage = 0,
+                            NetReportedTonnage = (0, 0, 0, 0)
+                        }
+                    },
+                    {
+                        MaterialCodes.Glass,
+                        new SelfManagedConsumerWasteData
+                        {
+                            SelfManagedConsumerWasteTonnage = 0,
+                            ActionedSelfManagedConsumerWasteTonnage = 0,
+                            NetReportedTonnage = (0, 0, 0, 0)
+                        }
+                    }
+                }
             };
         }
 
@@ -1199,7 +1246,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024));
             var defaultParams = new List<DefaultParamResultsClass>();
 
-            var summary = calcResultsService.GetCalcResultSummary(ordered, materials, calculationResult, totalPackaging, producerInvoicedMaterialNetTonnage, defaultParams, smcw);
+            var fixedSmcw = smcw with
+            {
+                ProducerTotals = smcw.ProducerTotals
+                    .Select(p => p with
+                    {
+                        ProducerId = 1
+                    })
+                    .ToList()
+            };
+
+            var summary = calcResultsService.GetCalcResultSummary(ordered, materials, calculationResult, totalPackaging, producerInvoicedMaterialNetTonnage, defaultParams, fixedSmcw);
 
             Assert.IsTrue(summary.ProducerDisposalFees.Any(r => r.isTotalRow));
         }

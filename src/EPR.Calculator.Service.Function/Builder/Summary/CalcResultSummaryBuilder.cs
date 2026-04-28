@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Enums;
@@ -212,6 +213,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             return producerDetails.Where(pd => pd.CalculatorRunId == runId).OrderBy(pd => pd.ProducerId).ThenBy(pd => pd.SubsidiaryId).ToList();
         }
 
+        [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         public CalcResultSummaryProducerDisposalFees GetProducerTotalRow(
             List<ProducerDetail> producersAndSubsidiaries,
             IEnumerable<MaterialDetail> materials,
@@ -304,6 +306,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             return totalRow;
         }
 
+        [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         public CalcResultSummaryProducerDisposalFees GetProducerRow(
             List<CalcResultSummaryProducerDisposalFees> producerDisposalFeesLookup,
             List<ProducerDetail> producerAndSubsidiaries,
@@ -450,11 +453,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                                                 .FirstOrDefault();
 
             var totalReportedTonnage = CalcResultSummaryUtil.GetReportedTonnage(producer, material, ScaledupProducers, PartialObligations);
-            var producerSmcwMaterial = smcw.ProducerTotals.Find(x => x.producerDetail.Id == producer.Id)?.SelfManagedConsumerWasteDataPerMaterials[material.Code] ?? SelfManagedConsumerWasteData.Zero;
+            var producerSmcwMaterial = smcw
+                .ProducerTotals
+                .Find(x => x.ProducerId == producer.ProducerId && x.SubsidiaryId == producer.SubsidiaryId && x.Level == level)?
+                .SelfManagedConsumerWasteDataPerMaterials[material.Code] ?? SelfManagedConsumerWasteData.Zero;
 
             return new CalcResultSummaryProducerDisposalFeesByMaterial
             {
-
                 HouseholdPackagingWasteTonnage = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.Household, ScaledupProducers, PartialObligations),
                 HouseholdPackagingWasteTonnageRagRating = calcResult.ShowModulations
                     ? Enum.GetValues<RagRating>().ToDictionary(
@@ -715,7 +720,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                                                    .Select(x => x.InvoicedTonnage?.InvoicedNetTonnage)
                                                    .FirstOrDefault();
 
-                var selfManagedConsumerWasteData = MaterialCostsUtil.SumSelfManagedConsumerWasteData(producerDisposalFees, producersAndSubsidiaries, ScaledupProducers, PartialObligations, material, isOverAllTotalRow, smcw);
+                var selfManagedConsumerWasteData = MaterialCostsUtil.SumSelfManagedConsumerWasteData(producersAndSubsidiaries, material, isOverAllTotalRow, smcw);
 
                 // Compute TonnageChange per the story:
                 // - Overall totals row: sum of Level-1 values

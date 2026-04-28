@@ -9,10 +9,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
     public static class MaterialCostsUtil
     {
         public static SelfManagedConsumerWasteData SumSelfManagedConsumerWasteData(
-            IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
             IEnumerable<ProducerDetail> producersAndSubsidiaries,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
-            IEnumerable<CalcResultPartialObligation> partialObligations,
             MaterialDetail material,
             bool isOverAllTotalRow,
             SelfManagedConsumerWaste smcw)
@@ -20,9 +17,9 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             return isOverAllTotalRow
                 ? smcw.OverallTotalPerMaterials.GetValueOrDefault(material.Code) ?? SelfManagedConsumerWasteData.Zero
                 : smcw.ProducerTotals
-                    .Where(x => x.Level == 1 && producersAndSubsidiaries.Any(y => x.producerDetail.Id == y.Id))
+                    .Where(x => x.Level == 1 && producersAndSubsidiaries.Any(y => x.ProducerId == y.ProducerId))
                     .Select(x => x.SelfManagedConsumerWasteDataPerMaterials[material.Code])
-                    .Sum();
+                    .Single();
         }
 
         public static decimal? GetPreviousInvoicedTonnage(
