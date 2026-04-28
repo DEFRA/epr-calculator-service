@@ -35,10 +35,76 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             context = dbContext;
         }
 
+        private decimal total(RamTonnage ram)
+        {
+            return ram.R + ram.A + ram.G + ram.RM + ram.AM + ram.GM;
+        }
+
+        private SingleL1 updateSingleL1(SingleL1 sl1)
+        {
+            Console.WriteLine($">> sl1 {JsonConvert.SerializeObject(sl1, Formatting.Indented)}");
+            var materialSubmissons = sl1.MaterialSubmissions.Select(submission =>
+            {
+                if (submission.SubmissionPeriod.EndsWith("-H2"))
+                {
+                    var diff = submission.Total - total(submission.RAM);
+                    if (diff != 0)
+                    {
+                        return submission with { RAM = submission.RAM with { R = submission.RAM.R + diff }};
+                    }
+                    else
+                    {
+                        return submission;
+                    }
+                }
+                else
+                {
+                    return submission;
+                }
+            });
+            return sl1 with { MaterialSubmissions = materialSubmissons.ToList() };
+        }
+
+        private L2 updateL2(L2 l2)
+        {
+            var materialSubmissons = l2.MaterialSubmissions.Select(submission =>
+            {
+                if (submission.SubmissionPeriod.EndsWith("-H2"))
+                {
+                    var diff = submission.Total - total(submission.RAM);
+                    if (diff != 0)
+                    {
+                        return submission with { RAM = submission.RAM with { R = submission.RAM.R + diff }};
+                    }
+                    else
+                    {
+                        return submission;
+                    }
+                }
+                else
+                {
+                    return submission;
+                }
+            });
+            return l2 with { MaterialSubmissions = materialSubmissons.ToList() };
+        }
+
+        // TODO Unit Test should focus on this
+        public (L1, ProjectionData?) project(L1 l1)
+        {
+            var updatedL1 = l1 switch
+            {
+                SingleL1 sl1 => (L1) updateSingleL1(sl1),
+                HC hc => new HC(hc.OrgId, hc.L2s.Select(l2 => updateL2(l2)).ToList()),
+                _ => throw new ArgumentException($"Invalid L1 {l1.GetType()}")
+            };
+            return (updatedL1, (ProjectionData?)null);
+        }
+
         public async Task<List<(L1, ProjectionData?)>> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<L1> producers)
         {
             Console.WriteLine($">> Returning {JsonConvert.SerializeObject(producers, Formatting.Indented)}");
-            return producers.Select(p => (p, (ProjectionData?)null)).ToList();
+            return producers.Select(p => project(p)).ToList();
             /*var runId = resultsRequestDto.RunId;
             var materialsFromDb = await context.Material.ToListAsync();
             var materials = MaterialMapper.Map(materialsFromDb);

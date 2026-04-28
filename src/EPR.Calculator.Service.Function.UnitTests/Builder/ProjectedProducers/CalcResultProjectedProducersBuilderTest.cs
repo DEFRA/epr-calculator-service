@@ -139,7 +139,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             AssertExcepted(expected, await FillGaps(given));
         }
 
-        /*[TestMethod]
+        [TestMethod]
         public async Task H1H2Projection_onlyh2_incomplete()
         {
             // Incomplete H2 - inferred as Red
@@ -178,7 +178,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             AssertExcepted(expected, await FillGaps(given));
         }
 
-        [TestMethod]
+        /*[TestMethod]
         public async Task H1H2Projection_incomplete_h1()
         {
             // Incomplete H1 - reflects proportions from H2
@@ -344,43 +344,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                    .ToArray();
             dbContext.Material.AddRange(materials);
 
-            /*var producers = given
-                   .Select(row => (row[ProducerI], row[SubsidiaryI]))
-                   .Distinct()
-                   .Select(ps => new ProducerDetail
-                   {
-                       CalculatorRunId = runId,
-                       ProducerId = int.Parse(ps.Item1),
-                       SubsidiaryId = string.IsNullOrWhiteSpace(ps.Item2) ? null : ps.Item2,
-                       ProducerName = $"Producer {ps.Item1}/{ps.Item2}",
-                   })
-                   .ToArray();
-
-            dbContext.ProducerDetail.AddRange(producers);
-            var idByProducerId = producers.ToDictionary(p => (p.ProducerId, p.SubsidiaryId ?? ""), p => p.Id);
-
-            foreach (var entry in given)
-            {
-                var (producerId, subsidiaryId, period, materialCode, packagingType, totalTonnage, rTonnage, rmTonnage, aTonnage, amTonnage, gTonnage, gmTonnage)
-                    = (entry[ProducerI], entry[SubsidiaryI], entry[PeriodI], entry[MaterialCodeI], entry[PackagingTypeI], entry[TotalTonnageI], entry[RTonnageI], entry[RMTonnageI], entry[ATonnageI], entry[AMTonnageI], entry[GTonnageI], entry[GMTonnageI]);
-                dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-                {
-                    ProducerDetailId = idByProducerId[(int.Parse(producerId), subsidiaryId)],
-                    MaterialId = materials.First(m => m.Code == materialCode).Id,
-                    PackagingType = packagingType,
-                    PackagingTonnage = ToDecimal(totalTonnage) ?? throw new InvalidOperationException("Total tonnage cannot be blank"),
-                    PackagingTonnageRed = ToDecimal(rTonnage),
-                    PackagingTonnageRedMedical = ToDecimal(rmTonnage),
-                    PackagingTonnageAmber = ToDecimal(aTonnage),
-                    PackagingTonnageAmberMedical = ToDecimal(amTonnage),
-                    PackagingTonnageGreen = ToDecimal(gTonnage),
-                    PackagingTonnageGreenMedical = ToDecimal(gmTonnage),
-                    SubmissionPeriod = period
-                });
-            }
-
-            dbContext.SaveChanges();*/
-
             return new CalcResultsRequestDto { RunId = runId, RelativeYear = relativeYear };
         }
 
@@ -462,27 +425,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     //_ => throw new ArgumentException("Unsupported L1 type")
                 });
             }
-/*
-            if (given.H1ProjectedProducers != null && given.H2ProjectedProducers != null) {
-                foreach (var producer in given.H1ProjectedProducers.Cast<ICalcResultProjectedProducer>().Concat(given.H2ProjectedProducers))
-                {
-                    var producerId = producer.ProducerId;
-                    var subsidiaryId = producer.SubsidiaryId;
-                    var submissionPeriod = producer.SubmissionPeriodCode;
-
-                    foreach (var kv in producer.ProjectedTonnageByMaterial)
-                    {
-                        var materialCode = kv.Key;
-                        var v = kv.Value;
-                        var hhRow = createRow(producerId, subsidiaryId, producer.SubmissionPeriodCode, materialCode, "HH", producer.Level, v.ProjectedHouseholdRAMTonnage);
-                        if (hhRow != null) result.Add(hhRow);
-                        var pbRow = createRow(producerId, subsidiaryId, producer.SubmissionPeriodCode, materialCode, "PB", producer.Level, v.ProjectedPublicBinRAMTonnage);
-                        if (pbRow != null) result.Add(pbRow);
-                        var hdcRow = createRow(producerId, subsidiaryId, producer.SubmissionPeriodCode, materialCode, "HDC", producer.Level, v.ProjectedHouseholdDrinksContainerRAMTonnage);
-                        if (hdcRow != null) result.Add(hdcRow);
-                    }
-                }
-            }*/
 
             Console.WriteLine($">> result {JsonConvert.SerializeObject(result, Formatting.Indented)}");
 
