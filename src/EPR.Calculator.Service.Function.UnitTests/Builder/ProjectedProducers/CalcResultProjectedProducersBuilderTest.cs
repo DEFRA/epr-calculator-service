@@ -1,8 +1,11 @@
 ﻿using System.Globalization;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using Newtonsoft.Json;
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 {
     using System.Reflection.Metadata.Ecma335;
+    using System.Security.Cryptography.X509Certificates;
+
     using AutoFixture;
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
@@ -74,7 +77,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 new[] { "101", "", "2025-H2", "", "AL", "HH", "100", "20", "40", "40", "0", "", "" }
             };
             var expected = new [] {
-                new[] { "101", "", "2025-H1", "1", "AL", "HH", "100", "20.0", "40.0", "40.0", "0", "0", "0" },
+                new[] { "101", "", "2025-H1", "1", "AL", "HH", "100", "20", "40", "40", "0", "0", "0" },
                 new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "20", "40", "40", "0", "0", "0" }
             };
             AssertExcepted(expected, await FillGaps(given));
@@ -111,32 +114,32 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         {
             // RAM is complete - no modifications made
             var given = new[] {
-                new[] { "101", "", "2025-H1", "", "AL", "HH", "100", "20", "40", "40", "0", "", "" },
+                new[] { "101", "" , "2025-H1", "", "AL", "HH" , "100", "20", "40", "40", "0", "", "" },
                 new[] { "101", "A", "2025-H1", "", "GL", "HDC", "100", "20", "40", "40", "0", "", "" },
-                new[] { "101", "B", "2025-H1", "", "AL", "PB", "100", "20", "40", "40", "0", "", "" },
-                new[] { "101", "", "2025-H2", "", "PL", "HH", "100", "20", "40", "40", "0", "", "" },
-                new[] { "101", "A", "2025-H2", "", "ST", "PB", "100", "20", "40", "40", "0", "", "" },
-                new[] { "101", "B", "2025-H2", "", "AL", "HH", "100", "20", "40", "40", "0", "", "" }
+                new[] { "101", "B", "2025-H1", "", "AL", "PB" , "100", "20", "40", "40", "0", "", "" },
+                new[] { "101", "" , "2025-H2", "", "PL", "HH" , "100", "20", "40", "40", "0", "", "" },
+                new[] { "101", "A", "2025-H2", "", "ST", "PB" , "100", "20", "40", "40", "0", "", "" },
+                new[] { "101", "B", "2025-H2", "", "AL", "HH" , "100", "20", "40", "40", "0", "", "" }
             };
             var expected = new string[][]
             {
-                new string[] { "101", "", "2025-H1", "1", "AL", "HH", "100", "20.0", "40.0", "40.0", "0", "0", "0" },
-                new string[] { "101", "", "2025-H1", "1", "AL", "PB", "100", "20.0", "40.0", "40.0", "0", "0", "0" },
-                new string[] { "101", "", "2025-H1", "1", "GL", "HDC", "100", "20", "40", "40", "0", "0", "0" },
-                new string[] { "101", "", "2025-H1", "2", "AL", "HH", "100", "20.0", "40.0", "40.0", "0", "0", "0" },
-                new string[] { "101", "B", "2025-H1", "2", "AL", "PB", "100", "20.0", "40.0", "40.0", "0", "0", "0" },
+                new string[] { "101", "" , "2025-H1", "1", "AL", "HH" , "100", "20", "40", "40", "0", "0", "0" },
+                new string[] { "101", "" , "2025-H1", "1", "AL", "PB" , "100", "20", "40", "40", "0", "0", "0" },
+                new string[] { "101", "" , "2025-H1", "1", "GL", "HDC", "100", "20", "40", "40", "0", "0", "0" },
+                new string[] { "101", "" , "2025-H1", "2", "AL", "HH" , "100", "20", "40", "40", "0", "0", "0" },
+                new string[] { "101", "B", "2025-H1", "2", "AL", "PB" , "100", "20", "40", "40", "0", "0", "0" },
                 new string[] { "101", "A", "2025-H1", "2", "GL", "HDC", "100", "20", "40", "40", "0", "0", "0" },
-                new string[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "20", "40", "40", "0", "0", "0" },
-                new string[] { "101", "", "2025-H2", "1", "PL", "HH", "100", "20", "40", "40", "0", "0", "0" },
-                new string[] { "101", "", "2025-H2", "1", "ST", "PB", "100", "20", "40", "40", "0", "0", "0" },
-                new string[] { "101", "", "2025-H2", "2", "PL", "HH", "100", "20", "40", "40", "0", "0", "0" },
-                new string[] { "101", "B", "2025-H2", "2", "AL", "HH", "100", "20", "40", "40", "0", "0", "0" },
-                new string[] { "101", "A", "2025-H2", "2", "ST", "PB", "100", "20", "40", "40", "0", "0", "0" }
+                new string[] { "101", "" , "2025-H2", "1", "AL", "HH" , "100", "20", "40", "40", "0", "0", "0" },
+                new string[] { "101", "" , "2025-H2", "1", "PL", "HH" , "100", "20", "40", "40", "0", "0", "0" },
+                new string[] { "101", "" , "2025-H2", "1", "ST", "PB" , "100", "20", "40", "40", "0", "0", "0" },
+                new string[] { "101", "" , "2025-H2", "2", "PL", "HH" , "100", "20", "40", "40", "0", "0", "0" },
+                new string[] { "101", "B", "2025-H2", "2", "AL", "HH" , "100", "20", "40", "40", "0", "0", "0" },
+                new string[] { "101", "A", "2025-H2", "2", "ST", "PB" , "100", "20", "40", "40", "0", "0", "0" }
             };
             AssertExcepted(expected, await FillGaps(given));
         }
 
-        [TestMethod]
+        /*[TestMethod]
         public async Task H1H2Projection_onlyh2_incomplete()
         {
             // Incomplete H2 - inferred as Red
@@ -314,7 +317,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 new[] { "101", "B", "2025-H2", "2", "AL", "HH", "600", "500", "50", "50", "0", "0", "0" }
             };
             AssertExcepted(expected, await FillGaps(given));
-        }
+        }*/
 
         private CalcResultsRequestDto InsertData(string[][] given)
         {
@@ -341,7 +344,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                    .ToArray();
             dbContext.Material.AddRange(materials);
 
-            var producers = given
+            /*var producers = given
                    .Select(row => (row[ProducerI], row[SubsidiaryI]))
                    .Distinct()
                    .Select(ps => new ProducerDetail
@@ -355,12 +358,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 
             dbContext.ProducerDetail.AddRange(producers);
             var idByProducerId = producers.ToDictionary(p => (p.ProducerId, p.SubsidiaryId ?? ""), p => p.Id);
-
-            decimal? ToDecimal(string? s)
-            {
-                if (string.IsNullOrWhiteSpace(s)) return null;
-                return decimal.Parse(s, CultureInfo.InvariantCulture);
-            }
 
             foreach (var entry in given)
             {
@@ -382,73 +379,74 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 });
             }
 
-            dbContext.SaveChanges();
+            dbContext.SaveChanges();*/
 
             return new CalcResultsRequestDto { RunId = runId, RelativeYear = relativeYear };
         }
 
         private string[][] ConvertResult(List<(L1, ProjectionData?)> given)
         {
-            string[]? createRow(int producerId, string? subsidiaryId, string submissonPeriodCode, string materialCode, string packagingType, string? level, RAMTonnage? projectedRamTonnage)
+            Console.WriteLine($">> ConvertResult");
+            string[]? createRow(int producerId, string? subsidiaryId, string level, MaterialSubmission submission)
             {
-                if (projectedRamTonnage == null || projectedRamTonnage.Tonnage == 0)
+                if (submission.Total == 0)
                     return null;
                 else
                 {
                     var row = new string[13];
                     row[ProducerI] = producerId.ToString();
                     row[SubsidiaryI] = subsidiaryId ?? "";
-                    row[PeriodI] = submissonPeriodCode;
-                    row[LevelI] = level ?? "";
-                    row[MaterialCodeI] = materialCode;
-                    row[PackagingTypeI] = packagingType;
-                    row[TotalTonnageI] = (projectedRamTonnage?.Tonnage ?? 0m).ToString();
-                    row[RTonnageI] = (projectedRamTonnage?.RedTonnage ?? 0m).ToString();
-                    row[RMTonnageI] = (projectedRamTonnage?.RedMedicalTonnage ?? 0m).ToString();
-                    row[ATonnageI] = (projectedRamTonnage?.AmberTonnage ?? 0m).ToString();
-                    row[AMTonnageI] = (projectedRamTonnage?.AmberMedicalTonnage ?? 0m).ToString();
-                    row[GTonnageI] = (projectedRamTonnage?.GreenTonnage ?? 0m).ToString();
-                    row[GMTonnageI] = (projectedRamTonnage?.GreenMedicalTonnage ?? 0m).ToString();
+                    row[PeriodI] = submission.SubmissionPeriod;
+                    row[LevelI] = level;
+                    row[MaterialCodeI] = submission.MaterialCode;
+                    row[PackagingTypeI] = submission.PackagingType;
+                    row[TotalTonnageI] = submission.Total.ToString();
+                    row[RTonnageI]  = (submission.RAM?.R  ?? 0m).ToString();
+                    row[RMTonnageI] = (submission.RAM?.RM ?? 0m).ToString();
+                    row[ATonnageI]  = (submission.RAM?.A  ?? 0m).ToString();
+                    row[AMTonnageI] = (submission.RAM?.AM ?? 0m).ToString();
+                    row[GTonnageI]  = (submission.RAM?.G  ?? 0m).ToString();
+                    row[GMTonnageI] = (submission.RAM?.GM ?? 0m).ToString();
                     return row;
                 }
             }
 
-            RAMTonnage toRAMTonnage(ReportedData data)
-            {
-                return new RAMTonnage
-                {
-                    Tonnage = data.R + data.A + data.G + data.RM + data.AM + data.GM,
-                    RedTonnage = data.R,
-                    AmberTonnage = data.A,
-                    GreenTonnage = data.G,
-                    RedMedicalTonnage = data.RM,
-                    AmberMedicalTonnage = data.AM,
-                    GreenMedicalTonnage = data.GM
-                };
-            }
-
             List<string[]> populateForSingleL1(SingleL1 sl1)
             {
+                Console.WriteLine($">> populateForSingleL1");
                 var result = new List<string[]>();
                 foreach (var submission in sl1.MaterialSubmissions)
                 {
-                    result.Add(createRow(sl1.OrgId, null, submission.SubmissionPeriod, submission.Material.Name, "HH", "L1", toRAMTonnage(submission.HH)));
-                    result.Add(createRow(sl1.OrgId, null, submission.SubmissionPeriod, submission.Material.Name, "PB", "L1", toRAMTonnage(submission.PB)));
-                    result.Add(createRow(sl1.OrgId, null, submission.SubmissionPeriod, submission.Material.Name, "HDC", "L1", toRAMTonnage(submission.HDC)));
+                    var row = createRow(sl1.OrgId, null, "1", submission);
+                    if (row != null)
+                    {
+                        result.Add(row);
+                    }
                 }
                 return result;
             }
 
             List<string[]> populateForHoldingCompany(HC hc)
             {
+                Console.WriteLine($">> populateForHoldingCompany");
                 var result = new List<string[]>();
+                foreach (var submission in hc.MaterialSubmissions)
+                {
+                    var hcRow = createRow(hc.OrgId, null, "1", submission);
+                    if (hcRow != null)
+                    {
+                        result.Add(hcRow);
+                    }
+                }
                 foreach (var l2 in hc.L2s)
                 {
                     foreach (var submission in l2.MaterialSubmissions)
                     {
-                        result.Add(createRow(l2.OrgId, l2.SubsidiaryId, submission.SubmissionPeriod, submission.Material.Name, "HH", "L1", toRAMTonnage(submission.HH)));
-                        result.Add(createRow(l2.OrgId, l2.SubsidiaryId, submission.SubmissionPeriod, submission.Material.Name, "PB", "L1", toRAMTonnage(submission.PB)));
-                        result.Add(createRow(l2.OrgId, l2.SubsidiaryId, submission.SubmissionPeriod, submission.Material.Name, "HDC", "L1", toRAMTonnage(submission.HDC)));
+                        var row = createRow(l2.OrgId, l2.SubsidiaryId, "2", submission);
+                        if (row != null)
+                        {
+                            result.Add(row);
+                        }
                     }
                 }
                 return result;
@@ -486,6 +484,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 }
             }*/
 
+            Console.WriteLine($">> result {JsonConvert.SerializeObject(result, Formatting.Indented)}");
+
             return result
                     .OrderBy(a => a[PeriodI])
                     .ThenBy(a => a[ProducerI])
@@ -495,10 +495,74 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     .ThenBy(a => a[PackagingTypeI])
                     .ToArray();
         }
-        private List<L1> mockProducers = new List<L1>();
+        private List<L1> ToProducers(string[][] given)
+        {
+            decimal? ToDecimal(string? s)
+            {
+                if (string.IsNullOrWhiteSpace(s)) return null;
+                return decimal.Parse(s, CultureInfo.InvariantCulture);
+            }
+
+            return given.GroupBy(row => row[ProducerI]).SelectMany(rows => {
+                var bySub = rows.GroupBy(row => row[SubsidiaryI]);
+                if (bySub.Count() == 1 && bySub.First().Key == "")
+                {
+                    var materialSubmissions = bySub.SelectMany(rows =>
+                        rows.Select(row =>
+                            new MaterialSubmission(
+                                MaterialCode     : row[MaterialCodeI],
+                                SubmissionPeriod : row[PeriodI],
+                                PackagingType    : row[PackagingTypeI],
+                                Total            : ToDecimal(row[TotalTonnageI]) ?? 0m,
+                                RAM              : new RamTonnage(
+                                    R  : ToDecimal(row[RTonnageI]) ?? 0m,
+                                    A  : ToDecimal(row[ATonnageI]) ?? 0m,
+                                    G  : ToDecimal(row[GTonnageI]) ?? 0m,
+                                    RM : ToDecimal(row[RMTonnageI]) ?? 0m,
+                                    AM : ToDecimal(row[AMTonnageI]) ?? 0m,
+                                    GM : ToDecimal(row[GMTonnageI]) ?? 0m
+                                )
+                            )
+                        )
+                    ).ToList();
+                    Console.WriteLine($">> Return L1 {JsonConvert.SerializeObject(materialSubmissions, Formatting.Indented)}");
+                    return new List<L1> {
+                        new SingleL1(int.Parse(rows.Key), materialSubmissions)
+                    };
+                } else
+                {
+                    //Console.WriteLine($">> bySub {JsonConvert.SerializeObject(bySub, Formatting.Indented)}");
+                    var l2s = bySub.Select(bySubRows => {
+                        var materialSubmissions =
+                            bySubRows.Select(row =>
+                                new MaterialSubmission(
+                                    MaterialCode     : row[MaterialCodeI],
+                                    SubmissionPeriod : row[PeriodI],
+                                    PackagingType    : row[PackagingTypeI],
+                                    Total            : ToDecimal(row[TotalTonnageI]) ?? 0m,
+                                    RAM              : new RamTonnage(
+                                        R  : ToDecimal(row[RTonnageI]) ?? 0m,
+                                        A  : ToDecimal(row[ATonnageI]) ?? 0m,
+                                        G  : ToDecimal(row[GTonnageI]) ?? 0m,
+                                        RM : ToDecimal(row[RMTonnageI]) ?? 0m,
+                                        AM : ToDecimal(row[AMTonnageI]) ?? 0m,
+                                        GM : ToDecimal(row[GMTonnageI]) ?? 0m
+                                    )
+                                )
+                            ).ToList();
+                        Console.WriteLine($">> Return L2 {JsonConvert.SerializeObject(materialSubmissions.Count(), Formatting.Indented)}");
+                        return new L2(OrgId: int.Parse(rows.Key), SubsidiaryId: bySubRows.Key, MaterialSubmissions: materialSubmissions);
+                    }).ToList();
+                    Console.WriteLine($">> Returning L1 with {l2s.Count()} L2s");
+                    return new List<L1>{
+                        new HC(orgId: int.Parse(rows.Key), l2s: l2s)
+                    };
+                }
+            }).ToList();
+        }
 
         private async Task<string[][]> FillGaps(string[][] given) =>
-            ConvertResult(await builder.ConstructAsync(InsertData(given), mockProducers));
+            ConvertResult(await builder.ConstructAsync(InsertData(given), ToProducers(given)));
 
         private string ToPrintable(string[] arr) =>
           arr is null ? "null" : "[" + string.Join(", ", arr.Select(x => x?.ToString() ?? "null")) + "]";

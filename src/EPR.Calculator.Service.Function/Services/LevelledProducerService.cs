@@ -5,26 +5,25 @@ using EPR.Calculator.Service.Function.Mappers;
 using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Enums;
+using EPR.Calculator.Service.Function.Services;
 
 namespace EPR.Calculator.Service.Function.Services
 {
-    public record ReportedData(
-        decimal Total,
+    public record RamTonnage(
         decimal R,
         decimal A,
         decimal G,
         decimal RM,
         decimal AM,
-        decimal GM,
-        decimal Smcw
+        decimal GM
     );
 
     public record MaterialSubmission(
-        MaterialDetail Material,
+        string MaterialCode,
         string SubmissionPeriod,
-        ReportedData HH,
-        ReportedData PB,
-        ReportedData HDC
+        string PackagingType,
+        decimal Total,
+        RamTonnage? RAM // doesn't apply to PackagingType SMCW
     );
 
     public interface ProducerData
@@ -49,7 +48,28 @@ namespace EPR.Calculator.Service.Function.Services
         {
             this.OrgId = orgId;
             this.L2s   = l2s;
-            this.MaterialSubmissions    = new List<MaterialSubmission>();//l2s.Sum(x => x.hh);// TODO make ReportedData a Monoid (Summable)
+            this.MaterialSubmissions =
+                //l2s.Sum(x => x.hh);// TODO make ReportedData a Monoid (Summable)
+                    l2s.SelectMany(l2 => l2.MaterialSubmissions)
+                      .GroupBy(sub => new { MaterialCode = sub.MaterialCode, SubmissionPeriod = sub.SubmissionPeriod, PackagingType = sub.PackagingType})
+                      .Select(grouped => new MaterialSubmission(
+                        MaterialCode : grouped.Key.MaterialCode,
+                        SubmissionPeriod : grouped.Key.SubmissionPeriod,
+                        PackagingType : grouped.Key.PackagingType,
+                        Total         : grouped.Select(e => e.Total).Sum(),
+                        RAM           : grouped.Select(e => e.RAM).Aggregate( // TODO See https://github.com/DEFRA/epr-calculator-service/blob/6b74b3b710adf62e77a0a168afa33fddb48d0418/src/EPR.Calculator.Service.Function/Services/SelfManagedConsumerWasteService.cs#L173
+                                          new RamTonnage(0m,0m,0m,0m,0m,0m),
+                                          (acc, cur) => new RamTonnage(
+                                              acc.R + cur.R,
+                                              acc.A + cur.A,
+                                              acc.G + cur.G,
+                                              acc.RM + cur.RM,
+                                              acc.AM + cur.AM,
+                                              acc.GM + cur.GM
+                                          )
+                                        )
+                      ))
+                      .ToList();
         }
     }
 
@@ -93,7 +113,8 @@ namespace EPR.Calculator.Service.Function.Services
 
         public async Task<List<L1>> GetProducers(int runId, List<MaterialDetail> materials)
         {
-            return (await GetProducers2(runId))
+            return new List<L1>();
+            /*return (await GetProducers2(runId))
                 .GroupBy(e => e.ProducerId)
                 .Select(e =>
                 {
@@ -103,12 +124,14 @@ namespace EPR.Calculator.Service.Function.Services
                         List<MaterialSubmission> materialSubmissions =
                             bySub.SelectMany(f =>
                             {
+
                                 return f.SelectMany(g =>
                                 {
                                     var x = g.ReportedMaterials.Select( h =>
                                         new {
                                         PackagingType = h.PackagingType,
                                         MaterialId    = h.MaterialId,
+                                        PackagingType =
                                         data          = new ReportedData(
                                             Total: h.PackagingTonnage,
                                             R    : h.PackagingTonnageRed ?? 0m,
@@ -116,19 +139,20 @@ namespace EPR.Calculator.Service.Function.Services
                                             G    : h.PackagingTonnageGreen ?? 0m,
                                             RM   : h.PackagingTonnageRedMedical ?? 0m,
                                             AM   : h.PackagingTonnageAmberMedical ?? 0m,
-                                            GM   : h.PackagingTonnageGreenMedical ?? 0m,
-                                            Smcw : 0m // h.Smcw ?? 0m
+                                            GM   : h.PackagingTonnageGreenMedical ?? 0m
                                         )
                                         }
                                     );
                                     List<MaterialSubmission> y = x.GroupBy(e => e.MaterialId)
                                     .Select( e =>
                                         new MaterialSubmission(
-                                            Material : materials.Find(m => m.Id == e.Key),
+                                            MaterialCode : materials.Find(m => m.Id == e.Key).Code,
                                             SubmissionPeriod : g.SubmissionPeriod,
+                                            PackagingType : e.PackagingType
                                             HH  : e.First(f => f.PackagingType == "HH").data,
                                             PB  : e.First(f => f.PackagingType == "PB").data,
-                                            HDC : e.First(f => f.PackagingType == "HDC").data
+                                            HDC : e.First(f => f.PackagingType == "HDC").data,
+                                            Smcw : 0m // h.Smcw ?? 0m
                                         )
                                     ).ToList();
                                     return y;
@@ -144,7 +168,7 @@ namespace EPR.Calculator.Service.Function.Services
                         // TODO
                         return null;
                     }
-                }).ToList();
+                }).ToList();*/
         }
 
 /*

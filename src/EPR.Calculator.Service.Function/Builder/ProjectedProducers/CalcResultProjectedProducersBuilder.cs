@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 {
     using System;
@@ -36,6 +37,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 
         public async Task<List<(L1, ProjectionData?)>> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<L1> producers)
         {
+            Console.WriteLine($">> Returning {JsonConvert.SerializeObject(producers, Formatting.Indented)}");
             return producers.Select(p => (p, (ProjectionData?)null)).ToList();
             /*var runId = resultsRequestDto.RunId;
             var materialsFromDb = await context.Material.ToListAsync();
