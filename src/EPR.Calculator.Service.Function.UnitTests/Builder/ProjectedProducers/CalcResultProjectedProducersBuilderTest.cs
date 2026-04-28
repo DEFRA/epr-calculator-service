@@ -344,10 +344,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                    .ToArray();
             dbContext.Material.AddRange(materials);
 
+            dbContext.SaveChanges();
+
             return new CalcResultsRequestDto { RunId = runId, RelativeYear = relativeYear };
         }
 
-        private string[][] ConvertResult(List<(L1, ProjectionData?)> given)
+        private string[][] ConvertResult((List<L1>, CalcResultProjectedProducers) given)
         {
             Console.WriteLine($">> ConvertResult");
             string[]? createRow(int producerId, string? subsidiaryId, string level, MaterialSubmission submission)
@@ -416,7 +418,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             }
 
             var result = new List<string[]>();
-            foreach (var l1 in given.Select(e => e.Item1))
+            foreach (var l1 in given.Item1)
             {
                 result.AddRange(l1 switch
                 {

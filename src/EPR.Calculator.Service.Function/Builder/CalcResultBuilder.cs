@@ -144,8 +144,8 @@ namespace EPR.Calculator.Service.Function.Builder
             {
                 _telemetryClient.TrackTrace("calcResultProjectedProducerBuilder started...");
                 var calcResultProjectedProducers = await calcResultProjectedProducersBuilder.ConstructAsync(resultsRequestDto, producers1);
-                //result.CalcResultProjectedProducers = calcResultProjectedProducers.Select(e => e.Item2).ToList();
-                producers2 = calcResultProjectedProducers.Select(e => e.Item1).ToList();
+                producers2 = calcResultProjectedProducers.Item1;
+                result.CalcResultProjectedProducers = calcResultProjectedProducers.Item2;
                 _telemetryClient.TrackTrace("calcResultProjectedProducerBuilder end...");
             } else
             {
