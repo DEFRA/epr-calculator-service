@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using static EPR.Calculator.Service.Function.Constants.CommonConstants;
 namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 {
     using System;
@@ -16,10 +17,18 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 
     using Microsoft.EntityFrameworkCore;
 
-    public record ProjectionData
-    {
+    public record H2ProjectedData(
+        decimal TonnageDefaultedToRed
+    );
 
-    }
+    public record H1ProjectedData(
+
+    );
+
+    public record ProjectionData(
+        List<H2ProjectedData> H2,
+        List<H1ProjectedData> H1
+    );
 
     public interface ICalcResultProjectedProducersBuilder
     {
@@ -40,7 +49,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             return ram.R + ram.A + ram.G + ram.RM + ram.AM + ram.GM;
         }
 
-        private SingleL1 updateSingleL1(SingleL1 sl1)
+        private (L1, List<H2ProjectedData>?) updateSingleL1(SingleL1 sl1)
         {
             Console.WriteLine($">> sl1 {JsonConvert.SerializeObject(sl1, Formatting.Indented)}");
             var materialSubmissons = sl1.MaterialSubmissions.Select(submission =>
@@ -50,22 +59,28 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                     var diff = submission.Total - total(submission.RAM);
                     if (diff != 0)
                     {
-                        return submission with { RAM = submission.RAM with { R = submission.RAM.R + diff }};
+                        return (
+                            submission with { RAM = submission.RAM with { R = submission.RAM.R + diff }},
+                            new H2ProjectedData(TonnageDefaultedToRed: diff)
+                        );
                     }
                     else
                     {
-                        return submission;
+                        return (submission, (H2ProjectedData?) null);
                     }
                 }
                 else
                 {
-                    return submission;
+                    return (submission, (H2ProjectedData?) null);
                 }
             });
-            return sl1 with { MaterialSubmissions = materialSubmissons.ToList() };
+            return (
+                sl1 with { MaterialSubmissions = materialSubmissons.Select(e => e.Item1).ToList() },
+                materialSubmissons.Select(e => e.Item2).ToList()
+            );
         }
 
-        private L2 updateL2(L2 l2)
+        private (L2, List<H2ProjectedData>?) updateL2(L2 l2)
         {
             var materialSubmissons = l2.MaterialSubmissions.Select(submission =>
             {
@@ -74,37 +89,62 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                     var diff = submission.Total - total(submission.RAM);
                     if (diff != 0)
                     {
-                        return submission with { RAM = submission.RAM with { R = submission.RAM.R + diff }};
+                        return (
+                            submission with { RAM = submission.RAM with { R = submission.RAM.R + diff }},
+                            new H2ProjectedData(TonnageDefaultedToRed: diff)
+                        );
                     }
                     else
                     {
-                        return submission;
+                        return (submission, (H2ProjectedData?) null);
                     }
                 }
                 else
                 {
-                    return submission;
+                    return (submission, (H2ProjectedData?) null);
                 }
             });
-            return l2 with { MaterialSubmissions = materialSubmissons.ToList() };
+            return (
+                l2 with { MaterialSubmissions = materialSubmissons.Select(e => e.Item1).ToList() },
+                materialSubmissons.Select(e => e.Item2).ToList()
+            );
         }
+
+        private (HC, List<H2ProjectedData>?) updateH2(HC hc)
+        {
+            var projectedData = new List<H2ProjectedData?>();
+            var updatedL2s =
+                hc.L2s.Select(l2 => {
+                    var (updatedL2, projections) = updateL2(l2);
+                    projectedData.AddRange(projections);
+                    return updatedL2;
+                }).ToList();
+            return (new HC(hc.OrgId, updatedL2s), projectedData);
+        }
+
 
         // TODO Unit Test should focus on this
         public (L1, ProjectionData?) project(L1 l1)
         {
-            var updatedL1 = l1 switch
+            var (updatedL1, h2ProjectionData) = l1 switch
             {
-                SingleL1 sl1 => (L1) updateSingleL1(sl1),
-                HC hc => new HC(hc.OrgId, hc.L2s.Select(l2 => updateL2(l2)).ToList()),
+                SingleL1 sl1 => updateSingleL1(sl1),
+                HC hc => updateH2(hc),
                 _ => throw new ArgumentException($"Invalid L1 {l1.GetType()}")
             };
-            return (updatedL1, (ProjectionData?)null);
+            var projectionData = new ProjectionData(
+                H2: h2ProjectionData,
+                H1: null
+            );
+            Console.WriteLine($">> h2ProjectionData {JsonConvert.SerializeObject(h2ProjectionData, Formatting.Indented)}");
+            return (updatedL1, projectionData);
         }
 
         public async Task<List<(L1, ProjectionData?)>> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<L1> producers)
         {
-            Console.WriteLine($">> Returning {JsonConvert.SerializeObject(producers, Formatting.Indented)}");
-            return producers.Select(p => project(p)).ToList();
+            var result = producers.Select(p => project(p)).ToList();
+            Console.WriteLine($">> Returning {JsonConvert.SerializeObject(result, Formatting.Indented)}");
+            return result;
             /*var runId = resultsRequestDto.RunId;
             var materialsFromDb = await context.Material.ToListAsync();
             var materials = MaterialMapper.Map(materialsFromDb);
