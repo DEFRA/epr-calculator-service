@@ -17,7 +17,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
         private readonly List<MaterialDetail> materials = new List<MaterialDetail>()
         {
             new MaterialDetail { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
-            new MaterialDetail { Id = 2, Code = "GL", Name = "Glass", Description = "Glass" }
+            new MaterialDetail { Id = 2, Code = "GL", Name = "Glass", Description = "Glass" },
+            new MaterialDetail { Id = 3, Code = "OT", Name = "Other materials", Description = "Other materials" }
         };
 
         [TestMethod]
@@ -49,8 +50,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
             var h2MaterialHeaders = rows[4];
 
             var h2MaterialHeadersIndexes = FindAllHeaderIndexes(h2ColumnHeaders, CalcResultProjectedProducersHeaders.HouseholdPackagingTonnage);
-            Assert.IsTrue(h2MaterialHeaders[h2MaterialHeadersIndexes.First()].Contains("Aluminium Breakdown"));
-            Assert.IsTrue(h2MaterialHeaders[h2MaterialHeadersIndexes.Last()].Contains("Glass Breakdown"));
+            Assert.IsTrue(h2MaterialHeaders[h2MaterialHeadersIndexes[0]].Contains("Aluminium Breakdown"));
+            Assert.IsTrue(h2MaterialHeaders[h2MaterialHeadersIndexes[1]].Contains("Glass Breakdown"));
+            Assert.IsTrue(h2MaterialHeaders[h2MaterialHeadersIndexes[2]].Contains("Other materials Breakdown"));
 
             var h2Data = GetColumnHeaderValues(h2ColumnHeaders, h2ColumnValues);
 
@@ -59,42 +61,40 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
             Assert.AreEqual("1", h2Data[CalcResultProjectedProducersHeaders.Level].First());
             Assert.AreEqual("2026-H2", h2Data[CalcResultProjectedProducersHeaders.SubmissionPeriodCode].First());
             //Aluminium
-            Assert.AreEqual("100.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdPackagingTonnage].First());
-            Assert.AreEqual("30.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdRedTonnage].First());
-            Assert.AreEqual("40.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdAmberTonnage].First());
-            Assert.AreEqual("0.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdGreenTonnage].First());
-            Assert.AreEqual("40.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdRedMedicalTonnage].First());
-            Assert.AreEqual("0.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdAmberMedicalTonnage].First());
-            Assert.AreEqual("0.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdGreenMedicalTonnage].First());
-            Assert.AreEqual("0.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdTonnageWithoutRAMDefaultedToRed].First());
-            Assert.AreEqual("300.000", h2Data[CalcResultProjectedProducersHeaders.TotalTonnage].First());
+            Assert.AreEqual("100.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdPackagingTonnage][0]);
+            Assert.AreEqual("30.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdRedTonnage][0]);
+            Assert.AreEqual("40.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdAmberTonnage][0]);
+            Assert.AreEqual("0.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdGreenTonnage][0]);
+            Assert.AreEqual("40.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdRedMedicalTonnage][0]);
+            Assert.AreEqual("0.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdAmberMedicalTonnage][0]);
+            Assert.AreEqual("0.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdGreenMedicalTonnage][0]);
+            Assert.AreEqual("0.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdTonnageWithoutRAMDefaultedToRed][0]);
+            Assert.AreEqual("300.000", h2Data[CalcResultProjectedProducersHeaders.TotalTonnage][0]);
             //Glass
-            Assert.AreEqual("500.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersPackagingTonnage].Last());
-            Assert.AreEqual("0.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersRedTonnage].Last());
-            Assert.AreEqual("0.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersAmberTonnage].Last());
-            Assert.AreEqual("0.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersGreenTonnage].Last());
-            Assert.AreEqual("0.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersRedMedicalTonnage].Last());
-            Assert.AreEqual("0.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersAmberMedicalTonnage].Last());
-            Assert.AreEqual("0.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersGreenMedicalTonnage].Last());
-            Assert.AreEqual("500.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersTonnageWithoutRAMDefaultedToRed].Last());
-            Assert.AreEqual("800.000", h2Data[CalcResultProjectedProducersHeaders.TotalTonnage].Last());
+            Assert.AreEqual("500.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersPackagingTonnage].First());
+            Assert.AreEqual("0.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersRedTonnage].First());
+            Assert.AreEqual("0.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersAmberTonnage].First());
+            Assert.AreEqual("0.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersGreenTonnage].First());
+            Assert.AreEqual("0.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersRedMedicalTonnage].First());
+            Assert.AreEqual("0.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersAmberMedicalTonnage].First());
+            Assert.AreEqual("0.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersGreenMedicalTonnage].First());
+            Assert.AreEqual("500.000", h2Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersTonnageWithoutRAMDefaultedToRed].First());
+            Assert.AreEqual("800.000", h2Data[CalcResultProjectedProducersHeaders.TotalTonnage][1]);
 
             // Assert H1
             Assert.IsTrue(rows[9][0].Contains(CalcResultProjectedProducersHeaders.H1ProjectedProducers));
 
             var h1ColumnHeaders = rows[12];
             var h1ColumnValues = rows[13];
-            var aluminiumIndex = 0;
-            var projectedAluminiumIndex = 1;
-            var glassIndex = 2;
-            var projectedGlassIndex = 3;
 
             var h1MaterialHeaders = rows[11];
             var h1MaterialHeadersIndexes = FindAllHeaderIndexes(h1ColumnHeaders, CalcResultProjectedProducersHeaders.HouseholdPackagingTonnage);
-            Assert.IsTrue(h1MaterialHeaders[h1MaterialHeadersIndexes[aluminiumIndex]].Contains("Aluminium Breakdown"));
-            Assert.IsTrue(h1MaterialHeaders[h1MaterialHeadersIndexes[projectedAluminiumIndex]].Contains("Projected Aluminium Breakdown"));
-            Assert.IsTrue(h1MaterialHeaders[h1MaterialHeadersIndexes[glassIndex]].Contains("Glass Breakdown"));
-            Assert.IsTrue(h1MaterialHeaders[h1MaterialHeadersIndexes[projectedGlassIndex]].Contains("Projected Glass Breakdown"));
+            Assert.IsTrue(h1MaterialHeaders[h1MaterialHeadersIndexes[0]].Contains("Aluminium Breakdown"));
+            Assert.IsTrue(h1MaterialHeaders[h1MaterialHeadersIndexes[1]].Contains("Projected Aluminium Breakdown"));
+            Assert.IsTrue(h1MaterialHeaders[h1MaterialHeadersIndexes[2]].Contains("Glass Breakdown"));
+            Assert.IsTrue(h1MaterialHeaders[h1MaterialHeadersIndexes[3]].Contains("Projected Glass Breakdown"));
+            Assert.IsTrue(h1MaterialHeaders[h1MaterialHeadersIndexes[4]].Contains("Other materials Breakdown"));
+            Assert.IsTrue(h1MaterialHeaders[h1MaterialHeadersIndexes[5]].Contains("Projected Other materials Breakdown"));
 
             var h1Data = GetColumnHeaderValues(h1ColumnHeaders, h1ColumnValues);
 
@@ -103,56 +103,62 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
             Assert.AreEqual("1", h1Data[CalcResultProjectedProducersHeaders.Level].First());
             Assert.AreEqual("2026-H1", h1Data[CalcResultProjectedProducersHeaders.SubmissionPeriodCode].First());
             //Aluminium
-            Assert.AreEqual("100.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinPackagingTonnage][aluminiumIndex]);
-            Assert.AreEqual("30.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinRedTonnage][aluminiumIndex]);
-            Assert.AreEqual("40.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinAmberTonnage][aluminiumIndex]);
-            Assert.AreEqual("0.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinGreenTonnage][aluminiumIndex]);
-            Assert.AreEqual("40.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinRedMedicalTonnage][aluminiumIndex]);
-            Assert.AreEqual("0.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinAmberMedicalTonnage][aluminiumIndex]);
-            Assert.AreEqual("0.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinGreenMedicalTonnage][aluminiumIndex]);
-            Assert.AreEqual("0.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinTonnageWithoutRAM][aluminiumIndex]);
+            Assert.AreEqual("100.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinPackagingTonnage][0]);
+            Assert.AreEqual("30.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinRedTonnage][0]);
+            Assert.AreEqual("40.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinAmberTonnage][0]);
+            Assert.AreEqual("0.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinGreenTonnage][0]);
+            Assert.AreEqual("40.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinRedMedicalTonnage][0]);
+            Assert.AreEqual("0.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinAmberMedicalTonnage][0]);
+            Assert.AreEqual("0.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinGreenMedicalTonnage][0]);
+            Assert.AreEqual("0.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinTonnageWithoutRAM][0]);
             // H2 Aluminium proportions
-            Assert.AreEqual("-", h1Data[CalcResultProjectedProducersHeaders.RedH2MaterialTonnageProportion].First());
-            Assert.AreEqual("-", h1Data[CalcResultProjectedProducersHeaders.AmberH2MaterialTonnageProportion].First());
-            Assert.AreEqual("-", h1Data[CalcResultProjectedProducersHeaders.GreenH2MaterialTonnageProportion].First());
-            Assert.AreEqual("-", h1Data[CalcResultProjectedProducersHeaders.RedMedicalH2MaterialTonnageProportion].First());
-            Assert.AreEqual("-", h1Data[CalcResultProjectedProducersHeaders.AmberMedicalH2MaterialTonnageProportion].First());
-            Assert.AreEqual("-", h1Data[CalcResultProjectedProducersHeaders.GreenMedicalH2MaterialTonnageProportion].First());
+            Assert.AreEqual("-", h1Data[CalcResultProjectedProducersHeaders.RedH2MaterialTonnageProportion][0]);
+            Assert.AreEqual("-", h1Data[CalcResultProjectedProducersHeaders.AmberH2MaterialTonnageProportion][0]);
+            Assert.AreEqual("-", h1Data[CalcResultProjectedProducersHeaders.GreenH2MaterialTonnageProportion][0]);
+            Assert.AreEqual("-", h1Data[CalcResultProjectedProducersHeaders.RedMedicalH2MaterialTonnageProportion][0]);
+            Assert.AreEqual("-", h1Data[CalcResultProjectedProducersHeaders.AmberMedicalH2MaterialTonnageProportion][0]);
+            Assert.AreEqual("-", h1Data[CalcResultProjectedProducersHeaders.GreenMedicalH2MaterialTonnageProportion][0]);
             //Projected Aluminium
-            Assert.AreEqual("100.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinPackagingTonnage][projectedAluminiumIndex]);
-            Assert.AreEqual("25.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinRedTonnage][projectedAluminiumIndex]);
-            Assert.AreEqual("20.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinAmberTonnage][projectedAluminiumIndex]);
-            Assert.AreEqual("50.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinGreenTonnage][projectedAluminiumIndex]);
-            Assert.AreEqual("10.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinRedMedicalTonnage][projectedAluminiumIndex]);
-            Assert.AreEqual("0.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinAmberMedicalTonnage][projectedAluminiumIndex]);
-            Assert.AreEqual("0.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinGreenMedicalTonnage][projectedAluminiumIndex]);
-            
-            var hdcIndex = 0;
-            var projectedHdcIndex = 1;
+            Assert.AreEqual("100.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinPackagingTonnage][1]);
+            Assert.AreEqual("25.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinRedTonnage][1]);
+            Assert.AreEqual("20.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinAmberTonnage][1]);
+            Assert.AreEqual("50.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinGreenTonnage][1]);
+            Assert.AreEqual("10.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinRedMedicalTonnage][1]);
+            Assert.AreEqual("0.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinAmberMedicalTonnage][1]);
+            Assert.AreEqual("0.000", h1Data[CalcResultProjectedProducersHeaders.PublicBinGreenMedicalTonnage][1]);
+     
             //Glass
-            Assert.AreEqual("500.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersPackagingTonnage][hdcIndex]);
-            Assert.AreEqual("0.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersRedTonnage][hdcIndex]);
-            Assert.AreEqual("0.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersAmberTonnage][hdcIndex]);
-            Assert.AreEqual("0.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersGreenTonnage][hdcIndex]);
-            Assert.AreEqual("100.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersRedMedicalTonnage][hdcIndex]);
-            Assert.AreEqual("0.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersAmberMedicalTonnage][hdcIndex]);
-            Assert.AreEqual("0.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersGreenMedicalTonnage][hdcIndex]);
-            Assert.AreEqual("400.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersTonnageWithoutRAM][hdcIndex]);
+            Assert.AreEqual("500.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersPackagingTonnage].First());
+            Assert.AreEqual("0.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersRedTonnage].First());
+            Assert.AreEqual("0.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersAmberTonnage].First());
+            Assert.AreEqual("0.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersGreenTonnage].First());
+            Assert.AreEqual("100.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersRedMedicalTonnage].First());
+            Assert.AreEqual("0.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersAmberMedicalTonnage].First());
+            Assert.AreEqual("0.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersGreenMedicalTonnage].First());
+            Assert.AreEqual("400.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersTonnageWithoutRAM].First());
             // H2 Glass proportions
-            Assert.AreEqual("60.00%", h1Data[CalcResultProjectedProducersHeaders.RedH2MaterialTonnageProportion].Last());
-            Assert.AreEqual("50.00%", h1Data[CalcResultProjectedProducersHeaders.AmberH2MaterialTonnageProportion].Last());
-            Assert.AreEqual("40.00%", h1Data[CalcResultProjectedProducersHeaders.GreenH2MaterialTonnageProportion].Last());
-            Assert.AreEqual("30.00%", h1Data[CalcResultProjectedProducersHeaders.RedMedicalH2MaterialTonnageProportion].Last());
-            Assert.AreEqual("20.00%", h1Data[CalcResultProjectedProducersHeaders.AmberMedicalH2MaterialTonnageProportion].Last());
-            Assert.AreEqual("10.00%", h1Data[CalcResultProjectedProducersHeaders.GreenMedicalH2MaterialTonnageProportion].Last());
+            Assert.AreEqual("60.00%", h1Data[CalcResultProjectedProducersHeaders.RedH2MaterialTonnageProportion][1]);
+            Assert.AreEqual("50.00%", h1Data[CalcResultProjectedProducersHeaders.AmberH2MaterialTonnageProportion][1]);
+            Assert.AreEqual("40.00%", h1Data[CalcResultProjectedProducersHeaders.GreenH2MaterialTonnageProportion][1]);
+            Assert.AreEqual("30.00%", h1Data[CalcResultProjectedProducersHeaders.RedMedicalH2MaterialTonnageProportion][1]);
+            Assert.AreEqual("20.00%", h1Data[CalcResultProjectedProducersHeaders.AmberMedicalH2MaterialTonnageProportion][1]);
+            Assert.AreEqual("10.00%", h1Data[CalcResultProjectedProducersHeaders.GreenMedicalH2MaterialTonnageProportion][1]);
             //Projected Glass
-            Assert.AreEqual("700.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersPackagingTonnage][projectedHdcIndex]);
-            Assert.AreEqual("50.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersRedTonnage][projectedHdcIndex]);
-            Assert.AreEqual("200.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersAmberTonnage][projectedHdcIndex]);
-            Assert.AreEqual("50.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersGreenTonnage][projectedHdcIndex]);
-            Assert.AreEqual("200.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersRedMedicalTonnage][projectedHdcIndex]);
-            Assert.AreEqual("0.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersAmberMedicalTonnage][projectedHdcIndex]);
-            Assert.AreEqual("0.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersGreenMedicalTonnage][projectedHdcIndex]);
+            Assert.AreEqual("700.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersPackagingTonnage].Last());
+            Assert.AreEqual("50.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersRedTonnage].Last());
+            Assert.AreEqual("200.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersAmberTonnage].Last());
+            Assert.AreEqual("50.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersGreenTonnage].Last());
+            Assert.AreEqual("200.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersRedMedicalTonnage].Last());
+            Assert.AreEqual("0.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersAmberMedicalTonnage].Last());
+            Assert.AreEqual("0.000", h1Data[CalcResultProjectedProducersHeaders.HouseholdDrinksContainersGreenMedicalTonnage].Last());
+
+            //Other material proportions
+            Assert.AreEqual("-", h1Data[CalcResultProjectedProducersHeaders.RedH2MaterialTonnageProportion][2]);
+            Assert.AreEqual("-", h1Data[CalcResultProjectedProducersHeaders.AmberH2MaterialTonnageProportion][2]);
+            Assert.AreEqual("-", h1Data[CalcResultProjectedProducersHeaders.GreenH2MaterialTonnageProportion][2]);
+            Assert.AreEqual("-", h1Data[CalcResultProjectedProducersHeaders.RedMedicalH2MaterialTonnageProportion][2]);
+            Assert.AreEqual("-", h1Data[CalcResultProjectedProducersHeaders.AmberMedicalH2MaterialTonnageProportion][2]);
+            Assert.AreEqual("-", h1Data[CalcResultProjectedProducersHeaders.GreenMedicalH2MaterialTonnageProportion][2]);
         }
 
         [TestMethod]
@@ -191,17 +197,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                         SubsidiaryId = null,
                         Level = "1",
                         SubmissionPeriodCode = "2026-H2",
-                        ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
+                        H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
                         {
                             {
                                 "AL",
                                 new CalcResultH2ProjectedProducerMaterialTonnage
                                 {
                                    HouseholdRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 30, RedMedicalTonnage = 40, AmberTonnage = 40, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
-                                   HouseholdTonnageDefaultedRed = 0,
+                                   HouseholdTonnageWithoutRAM = 0,
                                    PublicBinRAMTonnage = new RAMTonnage{ Tonnage = 200, RedTonnage = 50, RedMedicalTonnage = 20, AmberTonnage = 30, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
-                                   PublicBinTonnageDefaultedRed = 0,
-                                   TotalTonnage = 300
+                                   PublicBinTonnageWithoutRAM = 0,
+                                   TotalTonnage = 300,
+                                   ProjectedHouseholdRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 30, RedMedicalTonnage = 40, AmberTonnage = 40, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                   ProjectedPublicBinRAMTonnage = new RAMTonnage{ Tonnage = 200, RedTonnage = 50, RedMedicalTonnage = 20, AmberTonnage = 30, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
                                 }
                             },
                             {
@@ -209,12 +217,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                                 new CalcResultH2ProjectedProducerMaterialTonnage
                                 {
                                     HouseholdRAMTonnage = new RAMTonnage{ Tonnage = 200, RedTonnage = 50, RedMedicalTonnage = 20, AmberTonnage = 30, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
-                                    HouseholdTonnageDefaultedRed = 0,
+                                    HouseholdTonnageWithoutRAM = 0,
                                     PublicBinRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 30, RedMedicalTonnage = 40, AmberTonnage = 40, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
-                                    PublicBinTonnageDefaultedRed = 0,
+                                    PublicBinTonnageWithoutRAM = 0,
                                     HouseholdDrinksContainerRAMTonnage = new RAMTonnage{ Tonnage = 500, RedTonnage = 0, RedMedicalTonnage = 0, AmberTonnage = 0, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
-                                    HouseholdDrinksContainerDefaultedRed = 500,
-                                    TotalTonnage = 800
+                                    HouseholdDrinksContainerTonnageWithoutRAM = 500,
+                                    TotalTonnage = 800,
+                                    ProjectedHouseholdRAMTonnage = new RAMTonnage{ Tonnage = 200, RedTonnage = 50, RedMedicalTonnage = 20, AmberTonnage = 30, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    ProjectedPublicBinRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 30, RedMedicalTonnage = 40, AmberTonnage = 40, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    ProjectedHouseholdDrinksContainerRAMTonnage = new RAMTonnage{ Tonnage = 500, RedTonnage = 500, RedMedicalTonnage = 0, AmberTonnage = 0, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
                                 }
                             },
                         },
@@ -232,7 +243,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                         SubsidiaryId = null,
                         Level = "1",
                         SubmissionPeriodCode = "2026-H1",
-                        ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>
+                        H1ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>
                         {
                             {
                                 "AL",
@@ -245,6 +256,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                                    H2RamProportions = new RAMProportions { Red = 0.1m, Amber = 0.2m, Green = 0.3m, RedMedical = 0.4m, AmberMedical = 0.5m, GreenMedical = 0.6m },
                                    ProjectedHouseholdRAMTonnage = new RAMTonnage{ Tonnage = 50, RedTonnage = 15, RedMedicalTonnage = 20, AmberTonnage = 10, AmberMedicalTonnage = 0, GreenTonnage = 20, GreenMedicalTonnage = 0 },
                                    ProjectedPublicBinRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 25, RedMedicalTonnage = 10, AmberTonnage = 20, AmberMedicalTonnage = 0, GreenTonnage = 50, GreenMedicalTonnage = 0 },
+                                   TotalTonnage = 300,
+                                   H2TotalTonnage = 300
                                 }
                             },
                             {
@@ -261,6 +274,23 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                                     ProjectedHouseholdRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 15, RedMedicalTonnage = 20, AmberTonnage = 10, AmberMedicalTonnage = 0, GreenTonnage = 20, GreenMedicalTonnage = 0 },
                                     ProjectedPublicBinRAMTonnage = new RAMTonnage{ Tonnage = 50, RedTonnage = 25, RedMedicalTonnage = 10, AmberTonnage = 20, AmberMedicalTonnage = 0, GreenTonnage = 50, GreenMedicalTonnage = 0 },
                                     ProjectedHouseholdDrinksContainerRAMTonnage = new RAMTonnage{ Tonnage = 700, RedTonnage = 50, RedMedicalTonnage = 200, AmberTonnage = 200, AmberMedicalTonnage = 0, GreenTonnage = 50, GreenMedicalTonnage = 0 },
+                                    TotalTonnage = 300,
+                                    H2TotalTonnage = 700
+                                }
+                            },
+                            {
+                                "OT",
+                                new CalcResultH1ProjectedProducerMaterialTonnage
+                                {
+                                    HouseholdRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 30, RedMedicalTonnage = 40, AmberTonnage = 40, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    HouseholdTonnageWithoutRAM = 0,
+                                    PublicBinRAMTonnage = new RAMTonnage{ Tonnage = 200, RedTonnage = 50, RedMedicalTonnage = 20, AmberTonnage = 30, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 },
+                                    PublicBinTonnageWithoutRAM = 0,
+                                    H2RamProportions = new RAMProportions { Red = 0, Amber = 0, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 },
+                                    ProjectedHouseholdRAMTonnage = new RAMTonnage{ Tonnage = 100, RedTonnage = 15, RedMedicalTonnage = 20, AmberTonnage = 10, AmberMedicalTonnage = 0, GreenTonnage = 20, GreenMedicalTonnage = 0 },
+                                    ProjectedPublicBinRAMTonnage = new RAMTonnage{ Tonnage = 50, RedTonnage = 25, RedMedicalTonnage = 10, AmberTonnage = 20, AmberMedicalTonnage = 0, GreenTonnage = 50, GreenMedicalTonnage = 0 },
+                                    TotalTonnage = 300,
+                                    H2TotalTonnage = 0
                                 }
                             },
                         },

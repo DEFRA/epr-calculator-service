@@ -187,7 +187,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             Assert.IsNotNull(result);
             Assert.AreNotEqual(mockCalcResultScaledUpProducersData.Object, result.CalcResultScaledupProducers);
-            Assert.AreEqual(mockCalcResultProjectedProducersData.Object, result.CalcResultProjectedProducers);
+            Assert.AreSame(mockCalcResultProjectedProducersData.Object, result.CalcResultProjectedProducers);
 
             mockCalcResultScaledupProducersBuilder.Verify(m => m.ConstructAsync(resultsRequestDto), Times.Never);
             mockCalcResultProjectedProducersBuilder.Verify(m => m.ConstructAsync(resultsRequestDto), Times.Once);
@@ -208,7 +208,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
 
             Assert.IsNotNull(result);
             Assert.AreNotEqual(mockCalcResultScaledUpProducersData.Object, result.CalcResultScaledupProducers);
-            Assert.AreEqual(mockCalcResultProjectedProducersData.Object, result.CalcResultProjectedProducers);
+            Assert.AreSame(mockCalcResultProjectedProducersData.Object, result.CalcResultProjectedProducers);
 
             mockCalcResultScaledupProducersBuilder.Verify(m => m.ConstructAsync(resultsRequestDto), Times.Never);
             mockCalcResultProjectedProducersBuilder.Verify(m => m.ConstructAsync(resultsRequestDto), Times.Once);

@@ -19,13 +19,13 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.Level));
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.SubmissionPeriodCode));
 
-                AppendProjectedProducerTonnageByMaterial(csvContent, producer.ProjectedTonnageByMaterial);
+                AppendProjectedProducerTonnageByMaterial(csvContent, producer.H1ProjectedTonnageByMaterial);
 
                 csvContent.AppendLine();
             }
         }
 
-        private static void AppendProjectedProducerTonnageByMaterial(StringBuilder csvContent, Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage> h1ProjectedProducerTonnageByMaterial)
+        private static void AppendProjectedProducerTonnageByMaterial(StringBuilder csvContent, IReadOnlyDictionary<string, CalcResultH1ProjectedProducerMaterialTonnage> h1ProjectedProducerTonnageByMaterial)
         {
             foreach (var producerTonnage in h1ProjectedProducerTonnageByMaterial)
             {
@@ -36,8 +36,10 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
         private static void AppendMaterialTonnage(StringBuilder csvContent, string materialCode, CalcResultH1ProjectedProducerMaterialTonnage tonnage)
         {
             string GetProportionPercentage(decimal proportion) {
-                var anyTonnageWithoutRam = tonnage.HouseholdTonnageWithoutRAM > 0 || tonnage.PublicBinTonnageWithoutRAM > 0 || (tonnage.HouseholdDrinksContainerTonnageWithoutRAM ?? 0) > 0;
-                return anyTonnageWithoutRam ? CsvSanitiser.SanitiseData(proportion * 100, DecimalPlaces.Two, DecimalFormats.F2, isPercentage: true) : CsvSanitiser.SanitiseData(CommonConstants.Hyphen);
+                var showProportion = 
+                    (tonnage.HouseholdTonnageWithoutRAM > 0 || tonnage.PublicBinTonnageWithoutRAM > 0 || (tonnage.HouseholdDrinksContainerTonnageWithoutRAM ?? 0) > 0)
+                        && tonnage.H2TotalTonnage > 0;
+                return showProportion ? CsvSanitiser.SanitiseData(proportion * 100, DecimalPlaces.Two, DecimalFormats.F2, isPercentage: true) : CsvSanitiser.SanitiseData(CommonConstants.Hyphen);
             }
 
             AppendRamTonnage(csvContent, tonnage.HouseholdRAMTonnage);
