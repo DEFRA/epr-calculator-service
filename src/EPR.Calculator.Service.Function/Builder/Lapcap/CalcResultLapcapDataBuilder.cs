@@ -132,7 +132,7 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
                 });
             }
 
-            return new CalcResultLapcapData { Name = LapcapHeader, CalcResultLapcapDataDetail = data };
+            return new CalcResultLapcapData { Name = LapcapHeader, CalcResultLapcapDataDetails = data };
         }
 #pragma warning restore
 

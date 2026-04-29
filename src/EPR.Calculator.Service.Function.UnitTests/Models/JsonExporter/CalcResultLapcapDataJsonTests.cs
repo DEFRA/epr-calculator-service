@@ -54,7 +54,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             var data = new CalcResultLapcapData
             {
                 Name = "Test Lapcap Data",
-                CalcResultLapcapDataDetail = records,
+                CalcResultLapcapDataDetails = records,
             };
 
             // Act
@@ -63,8 +63,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(data.Name, result.Name);
-            Assert.IsNotNull(result.CalcResultLapcapDataDetail);
-            var details = result.CalcResultLapcapDataDetail.ToList();
+            Assert.IsNotNull(result.CalcResultLapcapDataDetails);
+            var details = result.CalcResultLapcapDataDetails.ToList();
             Assert.IsTrue(details.Any(d => d.MaterialName == "Paper"));
 
             Assert.IsNotNull(result.CalcResultLapcapDataTotal);

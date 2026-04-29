@@ -145,7 +145,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
                     Name = "LAPCAP Data",
-                    CalcResultLapcapDataDetail = new List<CalcResultLapcapDataDetail>
+                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetail>
                     {
                         new()
                         {

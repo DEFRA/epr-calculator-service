@@ -61,7 +61,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
                     Name = "LAPCAP Data",
-                    CalcResultLapcapDataDetail = new List<CalcResultLapcapDataDetail>
+                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetail>
                     {
                         new()
                         {

@@ -159,7 +159,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                         },
                     },
                 },
-                CalcResultLapcapData = new CalcResultLapcapData { CalcResultLapcapDataDetail = new List<CalcResultLapcapDataDetail>() },
+                CalcResultLapcapData = new CalcResultLapcapData { CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetail>() },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment
                 {
                     Name = Fixture.Create<string>(),
