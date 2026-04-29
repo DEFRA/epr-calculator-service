@@ -492,6 +492,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
                 SelfManagedConsumerWasteTonnage = producerSmcwMaterial.SelfManagedConsumerWasteTonnage,
                 ActionedSelfManagedConsumerWasteTonnage = producerSmcwMaterial.ActionedSelfManagedConsumerWasteTonnage,
+                ResidualSelfManagedConsumerWasteTonnage = producerSmcwMaterial.ResidualSelfManagedConsumerWasteTonnage,
                 NetReportedTonnage = producerSmcwMaterial.NetReportedTonnage,
                 TonnageChange = TonnageChangeUtil.ComputePerMaterialChange(level.ToString(), producerSmcwMaterial.NetReportedTonnage.total, previousInvoicedNetTonnage),
                 PricePerTonne = CalcResultSummaryUtil.GetPricePerTonne(material, calcResult),
@@ -766,6 +767,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
                     SelfManagedConsumerWasteTonnage = selfManagedConsumerWasteData.SelfManagedConsumerWasteTonnage,
                     ActionedSelfManagedConsumerWasteTonnage = selfManagedConsumerWasteData.ActionedSelfManagedConsumerWasteTonnage,
+                    ResidualSelfManagedConsumerWasteTonnage = selfManagedConsumerWasteData.ResidualSelfManagedConsumerWasteTonnage,
                     NetReportedTonnage = selfManagedConsumerWasteData.NetReportedTonnage,
                     PricePerTonne = CalcResultSummaryUtil.GetPricePerTonne(material, calcResult),
                     ProducerDisposalFee = MaterialCostsUtil.GetProducerDisposalFee(producerDisposalFees, producersAndSubsidiaries, ScaledupProducers, PartialObligations, material, calcResult, isOverAllTotalRow),

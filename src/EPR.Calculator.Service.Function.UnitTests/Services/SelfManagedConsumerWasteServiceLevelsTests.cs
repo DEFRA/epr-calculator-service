@@ -10,41 +10,41 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         [TestMethod]
         public void SingleL1_a_first()
         {
-            var l1 = new SingleL1(OrgId: 1, R: 1, A: 1, G: 1, Smcw: 1);
-            var result = SelfManagedConsumerWasteServiceLevels.Calculate(l1);
+            var l1 = new SingleL1(OrgId: 1, R: 1, A: 1, G: 1, Total: 3, Smcw: 1);
+            var result = SelfManagedConsumerWasteServiceLevels.Calculate(l1, showModulations: true);
 
             Assert.AreEqual(1, result.Count);
-            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: null, Level: 1, NetR: 1, NetA: 0, NetG: 1, Residual: 0, ActionedSmcwR: 0, ActionedSmcwA: 1, ActionedSmcwG: 0), result[0]);
+            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: null, Level: 1, Smcw: 1, NetTotal: 2, NetR: 1, NetA: 0, NetG: 1, Residual: 0, ActionedSmcwR: 0, ActionedSmcwA: 1, ActionedSmcwG: 0), result[0]);
         }
 
         [TestMethod]
         public void SingleL1_r_second()
         {
-            var l1 = new SingleL1(OrgId: 1, R: 1, A: 1, G: 1, Smcw: 2);
-            var result = SelfManagedConsumerWasteServiceLevels.Calculate(l1);
+            var l1 = new SingleL1(OrgId: 1, R: 1, A: 1, G: 1, Total: 3, Smcw: 2);
+            var result = SelfManagedConsumerWasteServiceLevels.Calculate(l1, showModulations: true);
 
             Assert.AreEqual(1, result.Count);
-            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: null, Level: 1, NetR: 0, NetA: 0, NetG: 1, Residual: 0, ActionedSmcwR: 1, ActionedSmcwA: 1, ActionedSmcwG: 0), result[0]);
+            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: null, Level: 1, Smcw: 2, NetTotal: 1, NetR: 0, NetA: 0, NetG: 1, Residual: 0, ActionedSmcwR: 1, ActionedSmcwA: 1, ActionedSmcwG: 0), result[0]);
         }
 
         [TestMethod]
         public void SingleL1_g_last()
         {
-            var l1 = new SingleL1(OrgId: 1, R: 1, A: 1, G: 1, Smcw: 3);
-            var result = SelfManagedConsumerWasteServiceLevels.Calculate(l1);
+            var l1 = new SingleL1(OrgId: 1, R: 1, A: 1, G: 1, Total: 3, Smcw: 3);
+            var result = SelfManagedConsumerWasteServiceLevels.Calculate(l1, showModulations: true);
 
             Assert.AreEqual(1, result.Count);
-            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: null, Level: 1, NetR: 0, NetA: 0, NetG: 0, Residual: 0, ActionedSmcwR: 1, ActionedSmcwA: 1, ActionedSmcwG: 1), result[0]);
+            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: null, Level: 1, Smcw: 3, NetTotal: 0, NetR: 0, NetA: 0, NetG: 0, Residual: 0, ActionedSmcwR: 1, ActionedSmcwA: 1, ActionedSmcwG: 1), result[0]);
         }
 
         [TestMethod]
         public void SingleL1_g_collect_residual()
         {
-            var l1 = new SingleL1(OrgId: 1, R: 1, A: 1, G: 1, Smcw: 4);
-            var result = SelfManagedConsumerWasteServiceLevels.Calculate(l1);
+            var l1 = new SingleL1(OrgId: 1, R: 1, A: 1, G: 1, Total: 3, Smcw: 4);
+            var result = SelfManagedConsumerWasteServiceLevels.Calculate(l1, showModulations: true);
 
             Assert.AreEqual(1, result.Count);
-            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: null, Level: 1, NetR: 0, NetA: 0, NetG: 0, Residual: 1, ActionedSmcwR: 1, ActionedSmcwA: 1, ActionedSmcwG: 1), result[0]);
+            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: null, Level: 1, Smcw: 4, NetTotal: 0, NetR: 0, NetA: 0, NetG: 0, Residual: 1, ActionedSmcwR: 1, ActionedSmcwA: 1, ActionedSmcwG: 1), result[0]);
         }
 
         [TestMethod]
@@ -53,16 +53,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var l1 = new HC(
                 orgId: 1,
                 new List<L2>{
-                    new L2(OrgId: 1, SubsidiaryId: null, R: 10, A: 10, G: 10, Smcw: 5),
-                    new L2(OrgId: 1, SubsidiaryId: "2" , R: 10, A: 10, G: 10, Smcw: 5)
+                    new L2(OrgId: 1, SubsidiaryId: null, R: 10, A: 10, G: 10, Total: 30, Smcw: 5),
+                    new L2(OrgId: 1, SubsidiaryId: "2" , R: 10, A: 10, G: 10, Total: 30, Smcw: 5)
                 }
             );
-            var result = SelfManagedConsumerWasteServiceLevels.Calculate(l1);
+            var result = SelfManagedConsumerWasteServiceLevels.Calculate(l1, showModulations: true);
 
             Assert.AreEqual(3, result.Count);
-            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: null, Level: 1, NetR: 20, NetA: 10, NetG: 20, Residual:  0, ActionedSmcwR: 0, ActionedSmcwA: 10, ActionedSmcwG: 0), result[0]);
-            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: null, Level: 2, NetR: 10, NetA:  0, NetG: 10, Residual: -5, ActionedSmcwR: 0, ActionedSmcwA: 10, ActionedSmcwG: 0), result[1]); // negative indicates smcw was borrowed
-            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: "2" , Level: 2, NetR: 10, NetA: 10, NetG: 10, Residual:  5, ActionedSmcwR: 0, ActionedSmcwA:  0, ActionedSmcwG: 0), result[2]); // positive indicates smcw is available for others
+            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: null, Level: 1, Smcw: 10, NetTotal: 50, NetR: 20, NetA: 10, NetG: 20, Residual:  0, ActionedSmcwR: 0, ActionedSmcwA: 10, ActionedSmcwG: 0), result[0]);
+            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: null, Level: 2, Smcw:  5, NetTotal: 20, NetR: 10, NetA:  0, NetG: 10, Residual: -5, ActionedSmcwR: 0, ActionedSmcwA: 10, ActionedSmcwG: 0), result[1]); // negative indicates smcw was borrowed
+            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: "2" , Level: 2, Smcw:  5, NetTotal: 30, NetR: 10, NetA: 10, NetG: 10, Residual:  5, ActionedSmcwR: 0, ActionedSmcwA:  0, ActionedSmcwG: 0), result[2]); // positive indicates smcw is available for others
             verifyL1Matches(result[0], result.Skip(1));
         }
 
@@ -72,16 +72,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var l1 = new HC(
                 orgId: 1,
                 new List<L2>{
-                    new L2(OrgId: 1, SubsidiaryId: null, R: 10, A: 10, G: 10, Smcw:  5),
-                    new L2(OrgId: 1, SubsidiaryId: "2" , R: 10, A: 10, G: 10, Smcw: 25)
+                    new L2(OrgId: 1, SubsidiaryId: null, R: 10, A: 10, G: 10, Total: 30, Smcw:  5),
+                    new L2(OrgId: 1, SubsidiaryId: "2" , R: 10, A: 10, G: 10, Total: 30, Smcw: 25)
                 }
             );
-            var result = SelfManagedConsumerWasteServiceLevels.Calculate(l1);
+            var result = SelfManagedConsumerWasteServiceLevels.Calculate(l1, showModulations: true);
 
             Assert.AreEqual(3, result.Count);
-            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: null, Level: 1, NetR: 10, NetA: 0, NetG: 20, Residual:   0, ActionedSmcwR: 10, ActionedSmcwA: 20, ActionedSmcwG: 0), result[0]);
-            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: null, Level: 2, NetR:  0, NetA: 0, NetG: 10, Residual: -15, ActionedSmcwR: 10, ActionedSmcwA: 10, ActionedSmcwG: 0), result[1]); // negative indicates smcw was borrowed
-            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: "2" , Level: 2, NetR: 10, NetA: 0, NetG: 10, Residual:  15, ActionedSmcwR:  0, ActionedSmcwA: 10, ActionedSmcwG: 0), result[2]); // positive indicates smcw is available for others
+            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: null, Level: 1, Smcw: 30, NetTotal: 30, NetR: 10, NetA: 0, NetG: 20, Residual:   0, ActionedSmcwR: 10, ActionedSmcwA: 20, ActionedSmcwG: 0), result[0]);
+            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: null, Level: 2, Smcw:  5, NetTotal: 10, NetR:  0, NetA: 0, NetG: 10, Residual: -15, ActionedSmcwR: 10, ActionedSmcwA: 10, ActionedSmcwG: 0), result[1]); // negative indicates smcw was borrowed
+            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: "2" , Level: 2, Smcw: 25, NetTotal: 20, NetR: 10, NetA: 0, NetG: 10, Residual:  15, ActionedSmcwR:  0, ActionedSmcwA: 10, ActionedSmcwG: 0), result[2]); // positive indicates smcw is available for others
             verifyL1Matches(result[0], result.Skip(1));
         }
 
@@ -91,16 +91,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var l1 = new HC(
                 orgId: 1,
                 new List<L2>{
-                    new L2(OrgId: 1, SubsidiaryId: null, R: 10, A: 10, G: 10, Smcw: 45),
-                    new L2(OrgId: 1, SubsidiaryId: "2" , R: 30, A: 10, G: 20, Smcw: 30)
+                    new L2(OrgId: 1, SubsidiaryId: null, R: 10, A: 10, G: 10, Total: 30, Smcw: 45),
+                    new L2(OrgId: 1, SubsidiaryId: "2" , R: 30, A: 10, G: 20, Total: 60, Smcw: 30)
                 }
             );
-            var result = SelfManagedConsumerWasteServiceLevels.Calculate(l1);
+            var result = SelfManagedConsumerWasteServiceLevels.Calculate(l1, showModulations: true);
 
             Assert.AreEqual(3, result.Count);
-            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: null, Level: 1, NetR: 0, NetA: 0, NetG: 15, Residual:   0, ActionedSmcwR: 40, ActionedSmcwA: 20, ActionedSmcwG: 15), result[0]);
-            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: null, Level: 2, NetR: 0, NetA: 0, NetG:  0, Residual:  15, ActionedSmcwR: 10, ActionedSmcwA: 10, ActionedSmcwG: 10), result[1]);
-            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: "2" , Level: 2, NetR: 0, NetA: 0, NetG: 15, Residual: -15, ActionedSmcwR: 30, ActionedSmcwA: 10, ActionedSmcwG:  5), result[2]);
+            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: null, Level: 1, Smcw: 75, NetTotal: 15, NetR: 0, NetA: 0, NetG: 15, Residual:   0, ActionedSmcwR: 40, ActionedSmcwA: 20, ActionedSmcwG: 15), result[0]);
+            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: null, Level: 2, Smcw: 45, NetTotal:  0, NetR: 0, NetA: 0, NetG:  0, Residual:  15, ActionedSmcwR: 10, ActionedSmcwA: 10, ActionedSmcwG: 10), result[1]);
+            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: "2" , Level: 2, Smcw: 30, NetTotal: 15, NetR: 0, NetA: 0, NetG: 15, Residual: -15, ActionedSmcwR: 30, ActionedSmcwA: 10, ActionedSmcwG:  5), result[2]);
             verifyL1Matches(result[0], result.Skip(1));
         }
 
@@ -110,16 +110,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var l1 = new HC(
                 orgId: 1,
                 new List<L2>{
-                    new L2(OrgId: 1, SubsidiaryId: null, R: 10, A: 10, G: 10, Smcw: 70),
-                    new L2(OrgId: 1, SubsidiaryId: "2" , R: 30, A: 10, G: 20, Smcw: 30)
+                    new L2(OrgId: 1, SubsidiaryId: null, R: 10, A: 10, G: 10, Total: 30, Smcw: 70),
+                    new L2(OrgId: 1, SubsidiaryId: "2" , R: 30, A: 10, G: 20, Total: 50, Smcw: 30)
                 }
             );
-            var result = SelfManagedConsumerWasteServiceLevels.Calculate(l1);
+            var result = SelfManagedConsumerWasteServiceLevels.Calculate(l1, showModulations: true);
 
             Assert.AreEqual(3, result.Count);
-            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: null, Level: 1, NetR: 0, NetA: 0, NetG: 0, Residual:  10, ActionedSmcwR: 40, ActionedSmcwA: 20, ActionedSmcwG: 30), result[0]);
-            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: null, Level: 2, NetR: 0, NetA: 0, NetG: 0, Residual:  40, ActionedSmcwR: 10, ActionedSmcwA: 10, ActionedSmcwG: 10), result[1]);
-            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: "2" , Level: 2, NetR: 0, NetA: 0, NetG: 0, Residual: -30, ActionedSmcwR: 30, ActionedSmcwA: 10, ActionedSmcwG: 20), result[2]);
+            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: null, Level: 1, Smcw: 100, NetTotal: 0, NetR: 0, NetA: 0, NetG: 0, Residual:  10, ActionedSmcwR: 40, ActionedSmcwA: 20, ActionedSmcwG: 30), result[0]);
+            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: null, Level: 2, Smcw:  70, NetTotal: 0, NetR: 0, NetA: 0, NetG: 0, Residual:  40, ActionedSmcwR: 10, ActionedSmcwA: 10, ActionedSmcwG: 10), result[1]);
+            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: "2" , Level: 2, Smcw:  30, NetTotal: 0, NetR: 0, NetA: 0, NetG: 0, Residual: -30, ActionedSmcwR: 30, ActionedSmcwA: 10, ActionedSmcwG: 20), result[2]);
             verifyL1Matches(result[0], result.Skip(1));
         }
 
