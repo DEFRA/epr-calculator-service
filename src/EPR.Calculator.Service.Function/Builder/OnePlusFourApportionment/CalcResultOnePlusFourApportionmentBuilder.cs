@@ -55,7 +55,7 @@ namespace EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment
 
         private static CalcResultLapcapDataDetail GetTotalCost(CalcResult calcResult, string name)
         {
-            return calcResult.CalcResultLapcapData.CalcResultLapcapDataDetail
+            return calcResult.CalcResultLapcapData.CalcResultLapcapDataDetails
                 .Single(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         }
 

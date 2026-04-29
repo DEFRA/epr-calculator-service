@@ -12,7 +12,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap
             csvContent.AppendLine();
 
             csvContent.AppendLine(calcResultLapcapData.Name);
-            var lapcapDataDetails = calcResultLapcapData.CalcResultLapcapDataDetail.OrderBy(x => x.OrderId);
+            var lapcapDataDetails = calcResultLapcapData.CalcResultLapcapDataDetails.OrderBy(x => x.OrderId);
 
             foreach (var lapcapData in lapcapDataDetails)
             {

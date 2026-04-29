@@ -4,6 +4,6 @@
     {
         public string Name { get; set; } = string.Empty;
 
-        public required IEnumerable<CalcResultLapcapDataDetail> CalcResultLapcapDataDetail { get; set; }
+        public required IEnumerable<CalcResultLapcapDataDetail> CalcResultLapcapDataDetails { get; set; }
     }
 }

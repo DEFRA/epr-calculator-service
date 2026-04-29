@@ -84,7 +84,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
                     Name = string.Empty,
-                    CalcResultLapcapDataDetail = new List<CalcResultLapcapDataDetail>(),
+                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetail>(),
                 },
                 CalcResultParameterOtherCost = new()
                 {

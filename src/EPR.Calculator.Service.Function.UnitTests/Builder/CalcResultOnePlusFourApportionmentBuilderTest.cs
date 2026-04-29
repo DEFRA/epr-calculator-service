@@ -26,7 +26,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
                     Name = "LAPCAP Data",
-                    CalcResultLapcapDataDetail = new[]
+                    CalcResultLapcapDataDetails = new[]
                     {
                         new CalcResultLapcapDataDetail
                         {
