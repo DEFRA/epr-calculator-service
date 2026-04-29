@@ -50,7 +50,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
             var scaledUpProducerReportedOn = calcResult.CalcResultScaledupProducers.ScaledupProducers?.FirstOrDefault(x => x.IsTotalRow);
             producerData = producerData.Where(t => calcResult.CalcResultScaledupProducers.ScaledupProducers != null && !calcResult.CalcResultScaledupProducers.ScaledupProducers.Any(i => i.ProducerId == t.ProducerDetail?.ProducerId)).ToList();
 
-            var lapcapDetails = calcResult.CalcResultLapcapData.CalcResultLapcapDataDetail
+            var lapcapDetails = calcResult.CalcResultLapcapData.CalcResultLapcapDataDetails
                 .Where(t => t.OrderId != 1 && t.Name != CalcResultLapcapDataBuilder.CountryApportionment).ToList();
 
             foreach (var detail in lapcapDetails)

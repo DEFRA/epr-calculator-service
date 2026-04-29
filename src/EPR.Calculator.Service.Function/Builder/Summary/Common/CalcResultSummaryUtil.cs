@@ -444,7 +444,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         public static CalcResultLapcapDataDetail? GetCountryApportionmentPercentage(CalcResult calcResult)
         {
-            return calcResult.CalcResultLapcapData.CalcResultLapcapDataDetail?.FirstOrDefault(la => la.Name == CalcResultSummaryHeaders.OneCountryApportionment);
+            return calcResult.CalcResultLapcapData.CalcResultLapcapDataDetails?.FirstOrDefault(la => la.Name == CalcResultSummaryHeaders.OneCountryApportionment);
         }
 
         public static decimal GetTotal1Plus2ABadDebt(

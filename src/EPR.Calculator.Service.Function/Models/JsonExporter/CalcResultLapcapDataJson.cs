@@ -9,7 +9,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         public required string Name { get; set; }
 
         [JsonPropertyName("calcResultLapcapDataDetails")]
-        public required IEnumerable<CalcResultLapcapDataDetailJson> CalcResultLapcapDataDetail { get; set; }
+        public required IEnumerable<CalcResultLapcapDataDetailJson> CalcResultLapcapDataDetails { get; set; }
 
         [JsonPropertyName("calcResultLapcapDataTotal")]
         public CalcResultLapcapDataDetailTotalJson? CalcResultLapcapDataTotal { get; set; }
@@ -24,15 +24,15 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
             return new CalcResultLapcapDataJson
             {
                 Name = data.Name,
-                CalcResultLapcapDataDetail =
-                    data.CalcResultLapcapDataDetail
+                CalcResultLapcapDataDetails =
+                    data.CalcResultLapcapDataDetails
                     .Where(record => !SeperatedRecords.Contains(record.Name))
                     .Select(details => CalcResultLapcapDataDetailJson.From(details)),
                 CalcResultLapcapDataTotal = CalcResultLapcapDataDetailTotalJson.From(
-                    data.CalcResultLapcapDataDetail.Single(record => record.Name == CalcResultLapcapDataBuilder.Total)
+                    data.CalcResultLapcapDataDetails.Single(record => record.Name == CalcResultLapcapDataBuilder.Total)
                 ),
                 OneCountryApportionmentPercentages = CalcResultLapcapDataDetailApportionmentJson.From(
-                    data.CalcResultLapcapDataDetail.Single(record => record.Name == CalcResultLapcapDataBuilder.CountryApportionment)
+                    data.CalcResultLapcapDataDetails.Single(record => record.Name == CalcResultLapcapDataBuilder.CountryApportionment)
                 )
             };
         }

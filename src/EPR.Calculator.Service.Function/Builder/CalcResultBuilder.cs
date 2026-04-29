@@ -95,7 +95,7 @@ namespace EPR.Calculator.Service.Function.Builder
                 CalcResultLapcapData =
                 new CalcResultLapcapData
                 {
-                    CalcResultLapcapDataDetail = new List<CalcResultLapcapDataDetail>(),
+                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetail>(),
                 },
                 CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
                 {
