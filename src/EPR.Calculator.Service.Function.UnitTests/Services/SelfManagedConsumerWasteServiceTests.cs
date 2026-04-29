@@ -94,6 +94,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 {
                     SelfManagedConsumerWasteTonnage = 10,
                     ActionedSelfManagedConsumerWasteTonnage = 5,
+                    ResidualSelfManagedConsumerWasteTonnage = 5,
                     NetReportedTonnage = (1,1,1,1)
                 },
                 null,
@@ -101,6 +102,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 {
                     SelfManagedConsumerWasteTonnage = 20,
                     ActionedSelfManagedConsumerWasteTonnage = null,
+                    ResidualSelfManagedConsumerWasteTonnage = -5,
                     NetReportedTonnage = (2,2,2,2)
                 }
             };
@@ -109,6 +111,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             Assert.AreEqual(30, result.SelfManagedConsumerWasteTonnage);
             Assert.AreEqual(5 , result.ActionedSelfManagedConsumerWasteTonnage);
+            Assert.AreEqual(0 , result.ResidualSelfManagedConsumerWasteTonnage);
             Assert.AreEqual(3 , result.NetReportedTonnage.total);
             Assert.AreEqual(3 , result.NetReportedTonnage.red);
             Assert.AreEqual(3 , result.NetReportedTonnage.amber);
@@ -150,7 +153,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             };
 
             var result = await service.Calculate(
-                new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) },
+                new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) },
                 materials,
                 scaledUpProducers: [],
                 partialObligations: [],
@@ -158,9 +161,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var total = result.OverallTotalPerMaterials[MaterialCodes.Aluminium];
 
-            // HH = 100, CW = 40 → Net = 60
             Assert.AreEqual(40, total.SelfManagedConsumerWasteTonnage);
-            Assert.AreEqual(40, total.ActionedSelfManagedConsumerWasteTonnage);
+            Assert.AreEqual( 0, total.ActionedSelfManagedConsumerWasteTonnage);
             Assert.AreEqual(60, total.NetReportedTonnage.total);
         }
 
@@ -184,17 +186,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var service = new SelfManagedConsumerWasteService(context);
 
             var result = await service.Calculate(
-                new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) },
+                new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) },
                 new[] { new MaterialDetail { Code = "NOT_EXIST", Name = "", Description = "" } },
                 [],
                 [],
-                false);
+                showModulations: false);
 
             var total = result.OverallTotalPerMaterials["NOT_EXIST"];
 
-            Assert.AreEqual(0, total.SelfManagedConsumerWasteTonnage);
-            Assert.AreEqual(0, total.ActionedSelfManagedConsumerWasteTonnage);
-            Assert.AreEqual(0, total.NetReportedTonnage.total);
+            Assert.AreEqual(0, total.SelfManagedConsumerWasteTonnage, "SelfManagedConsumerWasteTonnage mismatch");
+            Assert.AreEqual(0, total.ActionedSelfManagedConsumerWasteTonnage, "ActionedSelfManagedConsumerWasteTonnage mismatch");
+            Assert.AreEqual(0, total.NetReportedTonnage.total, "NetReportedTonnage total mismatch");
         }
 
         [TestMethod]
@@ -232,7 +234,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new[] { new MaterialDetail { Code = MaterialCodes.Aluminium, Name = MaterialNames.Aluminium, Description = "" } },
                 [],
                 [],
-                false);
+                showModulations: false);
 
             var total = result.OverallTotalPerMaterials[MaterialCodes.Aluminium];
 
@@ -294,7 +296,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new[] { new MaterialDetail { Code = MaterialCodes.Aluminium, Name = MaterialNames.Aluminium, Description = "" } },
                 [],
                 [],
-                false);
+                showModulations: true);
 
             var x = result.ProducerTotals.First().SelfManagedConsumerWasteDataPerMaterials[MaterialCodes.Aluminium];
 

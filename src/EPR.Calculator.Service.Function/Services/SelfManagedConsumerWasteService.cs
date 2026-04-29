@@ -58,7 +58,7 @@ namespace EPR.Calculator.Service.Function.Services
                     materialDetails
                         .SelectMany(material =>
                             SelfManagedConsumerWasteServiceLevels
-                                .Calculate(BuildL1(group, material, scaledUpProducers, partialObligations))
+                                .Calculate(BuildL1(group, material, scaledUpProducers, partialObligations), showModulations)
                                 .Select(r => (material, result: r))
                         )
                         .GroupBy(x => (x.result.OrgId, x.result.SubsidiaryId, x.result.Level))
@@ -105,6 +105,7 @@ namespace EPR.Calculator.Service.Function.Services
                            CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.AmberMedical),
                     G:     CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.Green) +
                            CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.GreenMedical),
+                    Total: CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations),
                     Smcw:  CalcResultSummaryUtil.GetTonnage(p, material, PackagingTypes.ConsumerWaste, scaledUpProducers, partialObligations)
                 );
             }
@@ -121,6 +122,7 @@ namespace EPR.Calculator.Service.Function.Services
                                   CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.AmberMedical),
                     G:            CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.Green) +
                                   CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.GreenMedical),
+                    Total:        CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations),
                     Smcw:         CalcResultSummaryUtil.GetTonnage(p, material, PackagingTypes.ConsumerWaste, scaledUpProducers, partialObligations)
                 )).ToList();
 
@@ -131,10 +133,11 @@ namespace EPR.Calculator.Service.Function.Services
         {
             return new SelfManagedConsumerWasteData
             {
-                SelfManagedConsumerWasteTonnage         = r.Residual + r.ActionedSmcwR + r.ActionedSmcwA + r.ActionedSmcwG,
-                ActionedSelfManagedConsumerWasteTonnage =              r.ActionedSmcwR + r.ActionedSmcwA + r.ActionedSmcwG,
+                SelfManagedConsumerWasteTonnage         = r.Smcw,
+                ActionedSelfManagedConsumerWasteTonnage = r.ActionedSmcwR + r.ActionedSmcwA + r.ActionedSmcwG,
+                ResidualSelfManagedConsumerWasteTonnage = r.Residual,
                 NetReportedTonnage = (
-                    total: r.NetR + r.NetA + r.NetG,
+                    total: r.NetTotal,
                     red  : r.NetR,
                     amber: r.NetA,
                     green: r.NetG
@@ -161,12 +164,14 @@ namespace EPR.Calculator.Service.Function.Services
     {
         public required decimal SelfManagedConsumerWasteTonnage { get; init; }
         public required decimal? ActionedSelfManagedConsumerWasteTonnage { get; init; }
+        public required decimal? ResidualSelfManagedConsumerWasteTonnage { get; init; }
         public required (decimal? total, decimal? red, decimal? amber, decimal? green) NetReportedTonnage { get; init; }
 
         public static SelfManagedConsumerWasteData Zero => new()
         {
             SelfManagedConsumerWasteTonnage = 0,
             ActionedSelfManagedConsumerWasteTonnage = 0,
+            ResidualSelfManagedConsumerWasteTonnage = 0,
             NetReportedTonnage = (0, 0, 0, 0)
         };
 
@@ -182,6 +187,10 @@ namespace EPR.Calculator.Service.Function.Services
                 ActionedSelfManagedConsumerWasteTonnage =
                     (a.ActionedSelfManagedConsumerWasteTonnage ?? 0) +
                     (b.ActionedSelfManagedConsumerWasteTonnage ?? 0),
+
+                ResidualSelfManagedConsumerWasteTonnage =
+                    (a.ResidualSelfManagedConsumerWasteTonnage ?? 0) +
+                    (b.ResidualSelfManagedConsumerWasteTonnage ?? 0),
 
                 NetReportedTonnage = (
                     (a.NetReportedTonnage.total ?? 0) + (b.NetReportedTonnage.total ?? 0),

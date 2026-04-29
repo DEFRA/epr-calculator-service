@@ -59,6 +59,8 @@
         public static readonly string GreenPlusGreenMedicalTotalTonnage = "Green + Green Medical Total Tonnage";
         public static readonly string SelfManagedConsumerWasteTonnage = "Self Managed Consumer Waste Tonnage";
         public static readonly string ActionedSelfManagedConsumerWasteTonnage = "Actioned Self Managed Consumer Waste Tonnage";
+        public static readonly string ResidualSelfManagedConsumerWasteTonnage = "Residual SMCW";
+
         public static readonly string NetTonnage = "Net Tonnage";
         public static readonly string RedPlusRedMedicalNetTonnage = "Red + Red Medical Net Tonnage";
         public static readonly string AmberPlusAmberMedicalNetTonnage = "Amber + Amber Medical Net Tonnage";
