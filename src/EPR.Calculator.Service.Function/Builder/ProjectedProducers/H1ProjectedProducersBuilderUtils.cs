@@ -64,7 +64,9 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                 AmberMedical = GetH2RAMProportion(h2ProjectedTonnage.GetTotalProjectedAmberMedicalTonnage(), h2ProjectedTonnage.TotalTonnage),
                 GreenMedical = GetH2RAMProportion(h2ProjectedTonnage.GetTotalProjectedGreenMedicalTonnage(), h2ProjectedTonnage.TotalTonnage)
             };
-            var h1ProportionateRAMTonnage = (RAMTonnage ramTonnage, decimal tonnageWithoutRAM, decimal h2TotalTonnage) => GetProjectedTonnage(ramTonnage, tonnageWithoutRAM, h2RamProportions, h2TotalTonnage);
+
+            var h1ProportionateRAMTonnage = (RAMTonnage ramTonnage, decimal tonnageWithoutRAM, decimal h2TotalTonnage) 
+                => GetProjectedTonnage(ramTonnage, tonnageWithoutRAM, h2RamProportions, h2TotalTonnage);
 
             return new CalcResultH1ProjectedProducerMaterialTonnage
             {
@@ -90,32 +92,52 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             return Math.Round(totalH2MatTonnage / totalH2Tonnage, 6);
         }
 
-        private static RAMTonnage GetProjectedTonnage(RAMTonnage h1RAMTonnage, decimal tonnageWithoutRAM, RAMProportions h2RamProportions, decimal h2TotalTonnage)
+        public static RAMTonnage GetProportionateRam(RAMTonnage h1RAMTonnage, decimal tonnageWithoutRAM, RAMProportions h2RamProportions)
+        {
+            return h1RAMTonnage with {
+                RedTonnage = Math.Round(h1RAMTonnage.RedTonnage + (tonnageWithoutRAM * h2RamProportions.Red), 3),
+                AmberTonnage = Math.Round(h1RAMTonnage.AmberTonnage + (tonnageWithoutRAM * h2RamProportions.Amber), 3),
+                GreenTonnage = Math.Round(h1RAMTonnage.GreenTonnage + (tonnageWithoutRAM * h2RamProportions.Green), 3),
+                RedMedicalTonnage = Math.Round(h1RAMTonnage.RedMedicalTonnage + (tonnageWithoutRAM * h2RamProportions.RedMedical), 3),
+                AmberMedicalTonnage = Math.Round(h1RAMTonnage.AmberMedicalTonnage + (tonnageWithoutRAM * h2RamProportions.AmberMedical), 3),
+                GreenMedicalTonnage = Math.Round(h1RAMTonnage.GreenMedicalTonnage + (tonnageWithoutRAM * h2RamProportions.GreenMedical), 3)
+            };
+        }
+
+        public static RAMTonnage GetProjectedTonnage(RAMTonnage h1RAMTonnage, decimal tonnageWithoutRAM, RAMProportions h2RamProportions, decimal h2TotalTonnage)
         {
             if (h2TotalTonnage > 0) {
-                return new RAMTonnage
-                {
-                    Tonnage = h1RAMTonnage.Tonnage,
-                    RedTonnage = Math.Round(h1RAMTonnage.RedTonnage + (tonnageWithoutRAM * h2RamProportions.Red), 3),
-                    AmberTonnage = Math.Round(h1RAMTonnage.AmberTonnage + (tonnageWithoutRAM * h2RamProportions.Amber), 3),
-                    GreenTonnage = Math.Round(h1RAMTonnage.GreenTonnage + (tonnageWithoutRAM * h2RamProportions.Green), 3),
-                    RedMedicalTonnage = Math.Round(h1RAMTonnage.RedMedicalTonnage + (tonnageWithoutRAM * h2RamProportions.RedMedical), 3),
-                    AmberMedicalTonnage = Math.Round(h1RAMTonnage.AmberMedicalTonnage + (tonnageWithoutRAM * h2RamProportions.AmberMedical), 3),
-                    GreenMedicalTonnage = Math.Round(h1RAMTonnage.GreenMedicalTonnage + (tonnageWithoutRAM * h2RamProportions.GreenMedical), 3)
-                };
-            } else
+                var projectedTonnage = GetProportionateRam(h1RAMTonnage, tonnageWithoutRAM, h2RamProportions);
+                return ReconcileRoundingDifference(projectedTonnage);
+            } 
+            else
             {
-                return new RAMTonnage
-                {
-                    Tonnage = h1RAMTonnage.Tonnage,
-                    RedTonnage = h1RAMTonnage.RedTonnage + tonnageWithoutRAM,
-                    AmberTonnage = h1RAMTonnage.AmberTonnage,
-                    GreenTonnage = h1RAMTonnage.GreenTonnage,
-                    RedMedicalTonnage = h1RAMTonnage.RedMedicalTonnage,
-                    AmberMedicalTonnage = h1RAMTonnage.AmberMedicalTonnage,
-                    GreenMedicalTonnage = h1RAMTonnage.GreenMedicalTonnage
-                };
+                return h1RAMTonnage with { RedTonnage = h1RAMTonnage.RedTonnage + tonnageWithoutRAM };
             }
+        }
+
+        public static RAMTonnage ReconcileRoundingDifference(RAMTonnage projectedTonnage)
+        {
+            var diffTonnage = projectedTonnage.Tonnage - projectedTonnage.GetTotalRamTonnage();
+            if (diffTonnage != 0)
+            {
+                var dominantRamTonnage = new[]
+                {
+                    (Priority: 1, Tonnage: projectedTonnage.AmberTonnage, Apply: (Func<RAMTonnage, RAMTonnage>)(t => t with { AmberTonnage = t.AmberTonnage + diffTonnage })),
+                    (Priority: 2, Tonnage: projectedTonnage.RedTonnage, Apply: t => t with { RedTonnage = t.RedTonnage + diffTonnage }),
+                    (Priority: 3, Tonnage: projectedTonnage.GreenTonnage, Apply: t => t with { GreenTonnage = t.GreenTonnage + diffTonnage }),
+                    (Priority: 4, Tonnage: projectedTonnage.AmberMedicalTonnage, Apply: t => t with { AmberMedicalTonnage = t.AmberMedicalTonnage + diffTonnage }),
+                    (Priority: 5, Tonnage: projectedTonnage.RedMedicalTonnage, Apply: t => t with { RedMedicalTonnage = t.RedMedicalTonnage + diffTonnage }),
+                    (Priority: 6, Tonnage: projectedTonnage.GreenMedicalTonnage, Apply: t => t with { GreenMedicalTonnage = t.GreenMedicalTonnage + diffTonnage }),
+                }
+                .OrderByDescending(kv => kv.Tonnage)
+                .ThenBy(kv => kv.Priority)
+                .First();
+
+                return dominantRamTonnage.Apply(projectedTonnage);
+            }
+
+            return projectedTonnage;
         }
 
         public static CalcResultH1ProjectedProducer CreateParentProducer(CalcResultH1ProjectedProducer p)
