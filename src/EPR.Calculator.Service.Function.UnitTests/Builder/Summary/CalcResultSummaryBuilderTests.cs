@@ -312,6 +312,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                                 {
                                     SelfManagedConsumerWasteTonnage = 0,
                                     ActionedSelfManagedConsumerWasteTonnage = 0,
+                                    ResidualSelfManagedConsumerWasteTonnage = 0,
                                     NetReportedTonnage = (0, 0, 0, 0)
                                 }
                             },
@@ -319,6 +320,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                                 {
                                     SelfManagedConsumerWasteTonnage = 0,
                                     ActionedSelfManagedConsumerWasteTonnage = 0,
+                                    ResidualSelfManagedConsumerWasteTonnage = 0,
                                     NetReportedTonnage = (0, 0, 0, 0)
                                 }
                             }
@@ -334,6 +336,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                         {
                             SelfManagedConsumerWasteTonnage = 0,
                             ActionedSelfManagedConsumerWasteTonnage = 0,
+                            ResidualSelfManagedConsumerWasteTonnage = 0,
                             NetReportedTonnage = (0, 0, 0, 0)
                         }
                     },
@@ -343,6 +346,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                         {
                             SelfManagedConsumerWasteTonnage = 0,
                             ActionedSelfManagedConsumerWasteTonnage = 0,
+                            ResidualSelfManagedConsumerWasteTonnage = 0,
                             NetReportedTonnage = (0, 0, 0, 0)
                         }
                     }
@@ -749,7 +753,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
 
             var defaultParams = new List<DefaultParamResultsClass>();
 
-
             var result = new CalcResultSummaryBuilder(context).GetCalcResultSummary(orderedProducerDetails, materials, calculationResult, totalPackagingTonnage, producerInvoicedMaterialNetTonnage, defaultParams, smcw);
 
             Assert.IsNotNull(result);
@@ -770,7 +773,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             var modulationResult = calculationResult;
             modulationResult.ShowModulations = true;
             var result2 = new CalcResultSummaryBuilder(context).GetCalcResultSummary(orderedProducerDetails, materials, modulationResult, totalPackagingTonnage, producerInvoicedMaterialNetTonnage, defaultParams, smcw);
-            Assert.AreEqual(223, result2.ColumnHeaders.Count());
+            Assert.AreEqual(225, result2.ColumnHeaders.Count());
         }
 
         [TestMethod]

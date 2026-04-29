@@ -640,7 +640,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
                         CalcResultSummaryHeaders.NetTonnage,
                         CalcResultSummaryHeaders.RedPlusRedMedicalNetTonnage,
                         CalcResultSummaryHeaders.AmberPlusAmberMedicalNetTonnage,
-                        CalcResultSummaryHeaders.GreenPlusGreenMedicalNetTonnage
+                        CalcResultSummaryHeaders.GreenPlusGreenMedicalNetTonnage,
+                        CalcResultSummaryHeaders.ResidualSelfManagedConsumerWasteTonnage
                     ));
                 } else {
                     headers.AddRange(CreateHeaders(
