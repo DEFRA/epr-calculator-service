@@ -20,6 +20,8 @@
         public const string HouseholdDrinkContainers = "Household Drinks Containers Tonnage";
         public const string LateReportingTonnage = "Late Reporting Tonnage";
         public const string ProducerReportedTotalTonnage = "Producer Household Tonnage + Late Reporting Tonnage + Public Bin Tonnage + Household Drinks Containers Tonnage";
+        public const string ActionedSelfManagedConsumerWasteTonnage = "Actioned Self Managed Consumer Waste";
+        public const string ModulatedProducerReportedTotalTonnage = "Producer Household Tonnage + Late Reporting Tonnage + Public Bin Tonnage + Household Drinks Containers Tonnage - Actioned Self Managed Consumer Waste";
         public const string DisposalCostPricePerTonne = "Disposal Cost Price Per Tonne";
         public const string LADisposalCostData = "LA Disposal Cost Data";
         public const string PolicyName = "AllowAllOrigins";

@@ -115,8 +115,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         {
             // Arrange
             var calcResult = CreateCalcResult();
-            calcResult.CalcResultModulation = "Test Modulation";
-            
+            calcResult.ShowModulations = true;
+
             // Act
             var result = TestClass.Export(calcResult);
 
@@ -141,10 +141,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         {
             return new CalcResult
             {
+                ShowModulations = false,
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
                     Name = "LAPCAP Data",
-                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>
+                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetail>
                     {
                         new()
                         {
@@ -328,7 +329,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                             Wales = "WalesTest",
                             Name = "ScotlandTest",
                             Scotland = "ScotlandTest",
-                            Material = "Material1",
                             NorthernIreland = "NorthernIrelandTest",
                             Total = "null",
                             ProducerReportedHouseholdPackagingWasteTonnage = "null",
@@ -438,7 +438,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                     RelativeYear = new RelativeYear(2024)
                 },
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
-                CalcResultModulation = null,
             };
         }
 
