@@ -34,7 +34,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TonnageVsAll
             var scaledupProducers = Fixture.Create<List<CalcResultScaledupProducer>>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
-            var TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, producers.First().CalculatorRunId, scaledupProducers, partialObligations);
+            var TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, producers.First().CalculatorRunId);
             // Act
             var result = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducersTotal(producers, TotalPackagingTonnage);
 
@@ -66,7 +66,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TonnageVsAll
 
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
-            var TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId, scaledupProducers, partialObligations);
+            var TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId);
 
             // Act
             var result = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducersTotal(producers, TotalPackagingTonnage);
@@ -84,7 +84,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TonnageVsAll
             var testSubsidaryId = Fixture.Create<string>();
             var materialDetails = Fixture.Create<List<MaterialDetail>>();
             var testMaterialId = Fixture.Create<int>();
-           
+
             //CalcResultSummaryBuilder.ScaledupProducers = Fixture.Create<List<CalcResultScaledupProducer>>();
 
             var producer = Fixture.Create<ProducerDetail>();
@@ -98,7 +98,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TonnageVsAll
 
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
-            var TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId, scaledupProducers, partialObligations);
+            var TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId);
 
             // Act
             var result = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducers(
@@ -129,7 +129,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TonnageVsAll
 
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
-            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId, scaledupProducers, partialObligations);
+            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId);
 
             // Act
             var result = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducersTotal(producers, totalPackagingTonnage);
@@ -163,7 +163,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TonnageVsAll
 
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
-            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId, scaledupProducers, partialObligations);
+            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId);
 
             // Act
             var result = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducers(

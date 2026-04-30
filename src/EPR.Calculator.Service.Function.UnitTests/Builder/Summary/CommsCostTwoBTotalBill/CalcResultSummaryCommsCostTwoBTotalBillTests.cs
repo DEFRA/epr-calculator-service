@@ -137,9 +137,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             };
 
             var materails = TestDataHelper.GetMaterials();
-            var scaledup = new List<CalcResultScaledupProducer>();
-            var partialObligations = new List<CalcResultPartialObligation>();
-            TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(_allResults, materails, 1, scaledup, partialObligations);
+            TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(_allResults, materails, 1);
         }
 
         [TestCleanup]

@@ -21,7 +21,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
     public class CalcResultSummaryBuilderTests
     {
         private readonly DbContextOptions<ApplicationDBContext> dbContextOptions;
-        private readonly ApplicationDBContext context;
+        private readonly ApplicationDBContext dbContext;
         private readonly CalcResultSummaryBuilder calcResultsService;
         private readonly CalcResult calculationResult;
         private readonly CalcResultScaledupProducers scaledupProducers;
@@ -35,8 +35,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
                 .UseInMemoryDatabase(databaseName: "CalcResultSummaryTestDb")
                 .Options;
-            context = new ApplicationDBContext(dbContextOptions);
-            calcResultsService = new CalcResultSummaryBuilder(context);
+            dbContext = new ApplicationDBContext(dbContextOptions);
+            calcResultsService = new CalcResultSummaryBuilder(dbContext);
             scaledupProducers = TestDataHelper.GetScaledupProducers();
             partialObligations = TestDataHelper.GetPartialObligations();
             calculationResult = new CalcResult
@@ -295,7 +295,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
             };
             // Seed database
-            SeedDatabase(context);
+            SeedDatabase(dbContext);
 
             smcw = new SelfManagedConsumerWaste
             {
@@ -357,8 +357,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         [TestCleanup]
         public void TestCleanup()
         {
-            context.Database.EnsureDeleted();
-            context.Dispose();
+            dbContext.Database.EnsureDeleted();
+            dbContext.Dispose();
         }
 
         [TestMethod]
@@ -682,7 +682,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         [TestMethod]
         public void MaterialMapper_ShouldReturnCorrectValue()
         {
-            var materials = context.Material.ToList();
+            var materials = dbContext.Material.ToList();
             var result = MaterialMapper.Map(materials);
             Assert.IsNotNull(result);
             Assert.AreEqual(materials.Count, result.Count);
@@ -696,23 +696,26 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
 
         private IEnumerable<CalcResultProducerAndReportMaterialDetail> GetProducerRunMaterialDetails(
             IEnumerable<ProducerDetail> producerDetails,
-            IEnumerable<ProducerReportedMaterial> producerReportedmaterials,
-            int runId)
+            IEnumerable<ProducerReportedMaterialProjected> producerReportedMaterials,
+            int runId
+        )
         {
-            return (from p in producerDetails
-                    join m in producerReportedmaterials on p.Id equals m.ProducerDetailId
-                    where p.CalculatorRunId == runId
-                    select new CalcResultProducerAndReportMaterialDetail
-                    {
-                        ProducerDetail = p,
-                        ProducerReportedMaterial = m,
-                    }).ToList();
+            return (
+                from p in producerDetails
+                join m in producerReportedMaterials on p.Id equals m.ProducerDetailId
+                where p.CalculatorRunId == runId
+                select new CalcResultProducerAndReportMaterialDetail
+                {
+                    ProducerDetail = p,
+                    ProducerReportedMaterial = m
+                }
+            ).ToList();
         }
 
         [TestMethod]
         public void GetOrderedListOfProducersAssociatedRunId_ShouldReturnCorrectValue()
         {
-            var result = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
+            var result = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, dbContext.ProducerDetail.ToList());
             Assert.IsNotNull(result);
             Assert.AreEqual(4, result.Count());
             Assert.AreEqual("Producer1", result.First().ProducerName);
@@ -735,25 +738,26 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         [TestMethod]
         public void GetCalcResultSummary_ShouldReturnCorrectValue()
         {
-            var orderedProducerDetails = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
+            var orderedProducerDetails = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, dbContext.ProducerDetail.ToList());
             var runProducerMaterialDetails = GetProducerRunMaterialDetails(
                 orderedProducerDetails,
-                context.ProducerReportedMaterial.ToList(),
+                dbContext.ProducerReportedMaterialProjected.ToList(),
                 1);
 
-            var materials = MaterialMapper.Map(context.Material.ToList());
+            var materials = MaterialMapper.Map(dbContext.Material.ToList());
 
-            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails,
-                                                                                                materials,
-                                                                                                1,
-                                                                                                calcResultsService.ScaledupProducers.ToList(),
-                                                                                                calcResultsService.PartialObligations.ToList());
+            var totalPackagingTonnage =
+                CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(
+                    runProducerMaterialDetails,
+                    materials,
+                    1
+                );
 
             var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024));
 
             var defaultParams = new List<DefaultParamResultsClass>();
 
-            var result = new CalcResultSummaryBuilder(context).GetCalcResultSummary(orderedProducerDetails, materials, calculationResult, totalPackagingTonnage, producerInvoicedMaterialNetTonnage, defaultParams, smcw);
+            var result = new CalcResultSummaryBuilder(dbContext).GetCalcResultSummary(orderedProducerDetails, materials, calculationResult, totalPackagingTonnage, producerInvoicedMaterialNetTonnage, defaultParams, smcw);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(149, result.ColumnHeaders.Count());
@@ -772,27 +776,27 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
 
             var modulationResult = calculationResult;
             modulationResult.ShowModulations = true;
-            var result2 = new CalcResultSummaryBuilder(context).GetCalcResultSummary(orderedProducerDetails, materials, modulationResult, totalPackagingTonnage, producerInvoicedMaterialNetTonnage, defaultParams, smcw);
+            var result2 = new CalcResultSummaryBuilder(dbContext).GetCalcResultSummary(orderedProducerDetails, materials, modulationResult, totalPackagingTonnage, producerInvoicedMaterialNetTonnage, defaultParams, smcw);
             Assert.AreEqual(225, result2.ColumnHeaders.Count());
         }
 
         [TestMethod]
         public void GetCalcResultSummary_CanAddTotalRow()
         {
-            var sut = new CalcResultSummaryBuilder(context);
+            var sut = new CalcResultSummaryBuilder(dbContext);
             calcResultsService.ParentOrganisations = new List<Organisation> {
                 new() { OrganisationId = 1, OrganisationName = "Org1" }
             };
 
-            var orderedProducerDetails = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList()).ToList();
+            var orderedProducerDetails = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, dbContext.ProducerDetail.ToList()).ToList();
             var runProducerMaterialDetails = GetProducerRunMaterialDetails(
                 orderedProducerDetails,
-                context.ProducerReportedMaterial.ToList(),
+                dbContext.ProducerReportedMaterialProjected.ToList(),
                 1);
 
-            var materials = MaterialMapper.Map(context.Material.ToList());
+            var materials = MaterialMapper.Map(dbContext.Material.ToList());
 
-            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, 1, calcResultsService.ScaledupProducers.ToList(), calcResultsService.PartialObligations.ToList());
+            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, 1);
 
             orderedProducerDetails.Add(new ProducerDetail
             {
@@ -821,129 +825,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         }
 
         [TestMethod]
-        public async Task GetCalcResultSummary_ScaledUpProducerShouldReturnCorrectValue()
-        {
-            calculationResult.CalcResultScaledupProducers.ScaledupProducers = GetScaledUpProducers();
-            await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calculationResult, smcw);
-
-            var orderedProducerDetails = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
-            var runProducerMaterialDetails = GetProducerRunMaterialDetails(
-                orderedProducerDetails,
-                context.ProducerReportedMaterial.ToList(),
-                1);
-
-            var materials = MaterialMapper.Map(context.Material.ToList());
-
-            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails,
-                                                                                                materials,
-                                                                                                1,
-                                                                                                calcResultsService.ScaledupProducers.ToList(),
-                                                                                                calcResultsService.PartialObligations.ToList());
-            var scaledUpProducer = totalPackagingTonnage.First(t => t.ProducerId == 4);
-
-            Assert.AreEqual(2, totalPackagingTonnage.Count());
-            Assert.IsNotNull(scaledUpProducer.ProducerId);
-            Assert.AreEqual(100, scaledUpProducer.TotalPackagingTonnage);
-        }
-
-        public static List<CalcResultScaledupProducer> GetScaledUpProducers()
-        {
-            var test = new List<CalcResultScaledupProducer>
-            {
-                new CalcResultScaledupProducer
-                {
-                    ProducerId = 4,
-                    ProducerName = "Test",
-                    ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>
-                {
-                    {
-                        "1",
-                        new CalcResultScaledupProducerTonnage
-                        {
-                            ReportedHouseholdPackagingWasteTonnage = 0,
-                            ReportedPublicBinTonnage = 0,
-                            TotalReportedTonnage = 0,
-                            ReportedSelfManagedConsumerWasteTonnage = 0,
-                            NetReportedTonnage = 0,
-                            ScaledupReportedHouseholdPackagingWasteTonnage = 0,
-                            ScaledupReportedPublicBinTonnage = 0,
-                            ScaledupTotalReportedTonnage = 100,
-                            ScaledupReportedSelfManagedConsumerWasteTonnage = 0,
-                            ScaledupNetReportedTonnage = 0,
-                        }
-                    },
-                },
-                },
-            };
-
-            return test;
-        }
-
-        [TestMethod]
-        public async Task GetCalcResultSummary_PartialObligationShouldReturnCorrectValue()
-        {
-            calculationResult.CalcResultPartialObligations.PartialObligations = GetPartialObligations();
-            await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calculationResult, smcw);
-
-            var orderedProducerDetails = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
-            var runProducerMaterialDetails = GetProducerRunMaterialDetails(
-                orderedProducerDetails,
-                context.ProducerReportedMaterial.ToList(),
-                1);
-
-            var materials = MaterialMapper.Map(context.Material.ToList());
-
-            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails,
-                                                                                                materials,
-                                                                                                1,
-                                                                                                calcResultsService.ScaledupProducers.ToList(),
-                                                                                                calcResultsService.PartialObligations.ToList());
-            var partialObligation = totalPackagingTonnage.First(t => t.ProducerId == 4);
-
-            Assert.AreEqual(2, totalPackagingTonnage.Count());
-            Assert.IsNotNull(partialObligation.ProducerId);
-            Assert.AreEqual(25, partialObligation.TotalPackagingTonnage);
-        }
-
-        public static List<CalcResultPartialObligation> GetPartialObligations()
-        {
-            var test = new List<CalcResultPartialObligation>
-            {
-                new CalcResultPartialObligation
-                {
-                    ProducerId = 4,
-                    ProducerName = "Test",
-                    PartialObligationTonnageByMaterial = new Dictionary<string, CalcResultPartialObligationTonnage>
-                {
-                    {
-                        "1",
-                        new CalcResultPartialObligationTonnage
-                        {
-                            ReportedHouseholdPackagingWasteTonnage = 0,
-                            ReportedPublicBinTonnage = 0,
-                            TotalReportedTonnage = 0,
-                            ReportedSelfManagedConsumerWasteTonnage = 0,
-                            NetReportedTonnage = 0,
-                            PartialReportedHouseholdPackagingWasteTonnage = 0,
-                            PartialReportedPublicBinTonnage = 0,
-                            PartialTotalReportedTonnage = 25,
-                            PartialReportedSelfManagedConsumerWasteTonnage = 0,
-                            PartialNetReportedTonnage = 0,
-                        }
-                    },
-                },
-                },
-            };
-
-            return test;
-        }
-
-        [TestMethod]
         public void CanAddTotalRow_ParentProducerNotFound_ReturnsFalse()
         {
             // Arrange
-            ProducerDetail producer = context.ProducerDetail.FirstOrDefault()!;
-            IEnumerable<ProducerDetail> producersAndSubsidiaries = context.ProducerDetail;
+            ProducerDetail producer = dbContext.ProducerDetail.FirstOrDefault()!;
+            IEnumerable<ProducerDetail> producersAndSubsidiaries = dbContext.ProducerDetail;
             List<CalcResultSummaryProducerDisposalFees> producerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>();
 
             calcResultsService.ParentOrganisations = new List<Organisation>();
@@ -959,8 +845,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         public void CanAddTotalRow_ProducerDisposalFeeExists_ReturnsFalse()
         {
             // Arrange
-            ProducerDetail producer = context.ProducerDetail.FirstOrDefault()!;
-            IEnumerable<ProducerDetail> producersAndSubsidiaries = context.ProducerDetail;
+            ProducerDetail producer = dbContext.ProducerDetail.FirstOrDefault()!;
+            IEnumerable<ProducerDetail> producersAndSubsidiaries = dbContext.ProducerDetail;
             List<CalcResultSummaryProducerDisposalFees> producerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> {
                     new CalcResultSummaryProducerDisposalFees { ProducerId = "1", ProducerName="Org1", SubsidiaryId = "" }
                 };
@@ -980,8 +866,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         public void CanAddTotalRow_ValidConditions_ReturnsTrue()
         {
             // Arrange
-            ProducerDetail producer = context.ProducerDetail.FirstOrDefault()!;
-            IEnumerable<ProducerDetail> producersAndSubsidiaries = context.ProducerDetail;
+            ProducerDetail producer = dbContext.ProducerDetail.FirstOrDefault()!;
+            IEnumerable<ProducerDetail> producersAndSubsidiaries = dbContext.ProducerDetail;
             List<CalcResultSummaryProducerDisposalFees> producerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> {
                     new CalcResultSummaryProducerDisposalFees { ProducerId = "2", ProducerName="Org1", SubsidiaryId = "" }
                 };
@@ -1121,14 +1007,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         public void GetCalcResultSummary_AddsProducerTotalRow_AndProducerRow()
         {
             // Arrange
-            var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
-            var materials = MaterialMapper.Map(context.Material.ToList());
-            var runDetails = GetProducerRunMaterialDetails(ordered, context.ProducerReportedMaterial.ToList(), 1);
+            var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, dbContext.ProducerDetail.ToList());
+            var materials = MaterialMapper.Map(dbContext.Material.ToList());
+            var runDetails = GetProducerRunMaterialDetails(ordered, dbContext.ProducerReportedMaterialProjected.ToList(), 1);
 
             calcResultsService.ScaledupProducers = new List<CalcResultScaledupProducer>();
 
-            var totalPackaging = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(
-                runDetails, materials, 1, calcResultsService.ScaledupProducers.ToList(), calcResultsService.PartialObligations.ToList());
+            var totalPackaging =
+                CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runDetails, materials, 1);
 
             calcResultsService.ParentOrganisations = new List<Organisation>
             {
@@ -1150,7 +1036,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         [TestMethod]
         public void GetCalcResultSummary_AddsTotalRow_WhenProducerHasSubsidiary()
         {
-            var parent = context.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
+            var parent = dbContext.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
             var sub = new ProducerDetail
             {
                 ProducerName = parent.ProducerName + " and subsidiary",
@@ -1158,8 +1044,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                 CalculatorRunId = parent.CalculatorRunId,
                 SubsidiaryId = "S1"
             };
-            context.ProducerDetail.Add(sub);
-            context.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            dbContext.ProducerDetail.Add(sub);
+            dbContext.ProducerReportedMaterialProjected.Add(new ProducerReportedMaterialProjected
             {
                 ProducerDetail = sub,
                 MaterialId = 1,
@@ -1167,7 +1053,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                 SubmissionPeriod = "2025-H1",
                 PackagingTonnage = 5m
             });
-            context.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+            dbContext.ProducerReportedMaterialProjected.Add(new ProducerReportedMaterialProjected
             {
                 ProducerDetail = sub,
                 MaterialId = 1,
@@ -1175,19 +1061,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                 SubmissionPeriod = "2025-H2",
                 PackagingTonnage = 5m
             });
-            context.SaveChanges();
+            dbContext.SaveChanges();
 
             calcResultsService.ParentOrganisations = new List<Organisation>
             {
                 new Organisation { OrganisationId = parent.ProducerId, OrganisationName = "Org1" }
             };
 
-            var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
-            var materials = MaterialMapper.Map(context.Material.ToList());
-            var runDetails = GetProducerRunMaterialDetails(ordered, context.ProducerReportedMaterial.ToList(), 1);
-            var totalPackaging = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(
-                runDetails, materials, 1, calcResultsService.ScaledupProducers.ToList(),
-                calcResultsService.PartialObligations.ToList());
+            var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, dbContext.ProducerDetail.ToList());
+            var materials = MaterialMapper.Map(dbContext.Material.ToList());
+            var runDetails = GetProducerRunMaterialDetails(ordered, dbContext.ProducerReportedMaterialProjected.ToList(), 1);
+            var totalPackaging =
+                CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runDetails, materials, 1);
 
             var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024));
             var defaultParams = new List<DefaultParamResultsClass>();
@@ -1211,9 +1096,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         public void GetProducerRow_MarksProducerAsScaledUp_WhenMatchExists()
         {
 
-            var producer = context.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
+            var producer = dbContext.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
 
-            var materials = MaterialMapper.Map(context.Material.ToList());
+            var materials = MaterialMapper.Map(dbContext.Material.ToList());
 
             var tonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>();
 
@@ -1244,7 +1129,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                 }
             };
 
-            var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
+            var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, dbContext.ProducerDetail.ToList());
 
             var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024));
 
@@ -1264,9 +1149,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         public void GetProducerRow_MarksProducerAsPartialObligation_WhenMatchExists()
         {
 
-            var producer = context.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
+            var producer = dbContext.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
 
-            var materials = MaterialMapper.Map(context.Material.ToList());
+            var materials = MaterialMapper.Map(dbContext.Material.ToList());
 
             var tonnageByMaterial = new Dictionary<string, CalcResultPartialObligationTonnage>();
 
@@ -1297,7 +1182,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                 }
             };
 
-            var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
+            var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, dbContext.ProducerDetail.ToList());
 
             var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024));
 
@@ -1316,7 +1201,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         [TestMethod]
         public void CanAddTotalRow_SingleProducerAndPomDataExists_ReturnsFalse()
         {
-            var producer = context.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
+            var producer = dbContext.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
 
             var producersAndSubsidiaries = new List<ProducerDetail>
             {
@@ -1342,12 +1227,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         [TestMethod]
         public void GetProducerRow_MarksProducerAsNotScaledUp_WhenNoMatch()
         {
-            var producer = context.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
-            var materials = MaterialMapper.Map(context.Material.ToList());
+            var producer = dbContext.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
+            var materials = MaterialMapper.Map(dbContext.Material.ToList());
 
             calcResultsService.ScaledupProducers = new List<CalcResultScaledupProducer>();
 
-            var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
+            var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, dbContext.ProducerDetail.ToList());
             var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024));
 
             var row = calcResultsService.GetProducerRow(
@@ -1366,8 +1251,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         [TestMethod]
         public void GetProducerRow_OrgDetailColumnsIfAvailable()
         {
-            var producer = context.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
-            var materials = MaterialMapper.Map(context.Material.ToList());
+            var producer = dbContext.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
+            var materials = MaterialMapper.Map(dbContext.Material.ToList());
 
             calcResultsService.ScaledupProducers = new List<CalcResultScaledupProducer>();
             calcResultsService.Organisations = new List<Organisation>
@@ -1383,7 +1268,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                     LeaverDate = "15/07/2025" }
             };
 
-            var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
+            var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, dbContext.ProducerDetail.ToList());
             var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024));
 
             var row = calcResultsService.GetProducerRow(
@@ -1406,12 +1291,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         [TestMethod]
         public void GetProducerRow_MarksProducerAsNotPartialObligation_WhenNoMatch()
         {
-            var producer = context.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
-            var materials = MaterialMapper.Map(context.Material.ToList());
+            var producer = dbContext.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
+            var materials = MaterialMapper.Map(dbContext.Material.ToList());
 
             calcResultsService.PartialObligations = new List<CalcResultPartialObligation>();
 
-            var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, context.ProducerDetail.ToList());
+            var ordered = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, dbContext.ProducerDetail.ToList());
             var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024));
 
             var row = calcResultsService.GetProducerRow(
@@ -1430,7 +1315,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         [TestMethod]
         public void CanAddTotalRow_NoParentPomButHasSubsidiary_ReturnsTrue()
         {
-            var parent = context.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
+            var parent = dbContext.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
             var subOnly = new List<ProducerDetail> {
                 new ProducerDetail { ProducerId = parent.ProducerId, CalculatorRunId = parent.CalculatorRunId, SubsidiaryId = "S1", ProducerName = "Sub1" }
             };
@@ -1457,7 +1342,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             Assert.IsNotNull(level1.BillingInstructionSection, "BillingInstructionSection should be populated on Level 1.");
 
             // Assert
-            var entity = context.ProducerResultFileSuggestedBillingInstruction
+            var entity = dbContext.ProducerResultFileSuggestedBillingInstruction
                                 .Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
 
             Assert.AreEqual(level1.BillingInstructionSection!.CurrentYearInvoiceTotalToDate, entity.CurrentYearInvoiceTotalToDate);
@@ -1475,7 +1360,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         public async Task ConstructAsync_WhenIsBillingFileFalse_DoesNotPersist_Billing_Instructions_ToDb()
         {
             // Arrange
-            var beforeEntity = context.ProducerResultFileSuggestedBillingInstruction
+            var beforeEntity = dbContext.ProducerResultFileSuggestedBillingInstruction
                                      .Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
 
             var before = new
@@ -1494,7 +1379,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             // Act
             await calcResultsService.ConstructAsync(runId: 1, relativeYear: new RelativeYear(2024), isBillingFile: false, calculationResult, smcw);
 
-            var afterEntity = context.ProducerResultFileSuggestedBillingInstruction
+            var afterEntity = dbContext.ProducerResultFileSuggestedBillingInstruction
                                     .Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
 
             Assert.AreEqual(before.CurrentYearInvoiceTotalToDate, afterEntity.CurrentYearInvoiceTotalToDate);
@@ -1527,13 +1412,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                 }
             };
 
-            var before = context.ProducerResultFileSuggestedBillingInstruction.Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1).SuggestedInvoiceAmount;
+            var before = dbContext.ProducerResultFileSuggestedBillingInstruction.Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1).SuggestedInvoiceAmount;
 
             // Act
             await calcResultsService.UpdateBillingInstructions(calcResult, summary);
 
             // Assert
-            var after = context.ProducerResultFileSuggestedBillingInstruction.Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1).SuggestedInvoiceAmount;
+            var after = dbContext.ProducerResultFileSuggestedBillingInstruction.Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1).SuggestedInvoiceAmount;
 
             Assert.AreEqual(before, after);
         }
@@ -1563,7 +1448,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
 
             await calcResultsService.UpdateBillingInstructions(calcResult, summary);
 
-            var entity = context.ProducerResultFileSuggestedBillingInstruction.Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
+            var entity = dbContext.ProducerResultFileSuggestedBillingInstruction.Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
 
             Assert.AreNotEqual(123m, entity.SuggestedInvoiceAmount);
         }
@@ -1605,7 +1490,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             await calcResultsService.UpdateBillingInstructions(calcResult, summary);
 
             // Assert
-            var entity = context.ProducerResultFileSuggestedBillingInstruction
+            var entity = dbContext.ProducerResultFileSuggestedBillingInstruction
                                 .Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
 
             Assert.AreEqual(section.CurrentYearInvoiceTotalToDate, entity.CurrentYearInvoiceTotalToDate);
@@ -1623,7 +1508,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         public async Task UpdateBillingInstructions_Level1WithNullBillingInstructionSection_SetsFieldsToNullOrZero()
         {
             // Arrange
-            var entity = context.ProducerResultFileSuggestedBillingInstruction.Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
+            var entity = dbContext.ProducerResultFileSuggestedBillingInstruction.Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
             entity.CurrentYearInvoiceTotalToDate = 999.99m;
             entity.TonnageChangeSinceLastInvoice = "CHANGE";
             entity.AmountLiabilityDifferenceCalcVsPrev = 888.88m;
@@ -1633,7 +1518,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             entity.TonnagePercentageThresholdBreached = "TON%";
             entity.SuggestedBillingInstruction = "INITIAL";
             entity.SuggestedInvoiceAmount = 555.55m;
-            await context.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
 
             var summary = TestDataHelper.GetCalcResultSummary();
             summary.ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
@@ -1653,7 +1538,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             await calcResultsService.UpdateBillingInstructions(calculationResult, summary);
 
             // Assert
-            var updated = context.ProducerResultFileSuggestedBillingInstruction.Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
+            var updated = dbContext.ProducerResultFileSuggestedBillingInstruction.Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
             Assert.IsNull(updated.CurrentYearInvoiceTotalToDate);
             Assert.IsNull(updated.TonnageChangeSinceLastInvoice);
             Assert.IsNull(updated.AmountLiabilityDifferenceCalcVsPrev);
@@ -1669,9 +1554,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         public async Task UpdateBillingInstructions_Level1WithNullSuggestedInvoiceAmount_SetsInvoiceAmountToZero()
         {
             // Arrange
-            var entity = context.ProducerResultFileSuggestedBillingInstruction.Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
+            var entity = dbContext.ProducerResultFileSuggestedBillingInstruction.Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
             entity.SuggestedInvoiceAmount = 321.45m;
-            await context.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
 
             var section = new CalcResultSummaryBillingInstruction
             {
@@ -1704,7 +1589,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             await calcResultsService.UpdateBillingInstructions(calculationResult, summary);
 
             // Assert
-            var updated = context.ProducerResultFileSuggestedBillingInstruction.Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
+            var updated = dbContext.ProducerResultFileSuggestedBillingInstruction.Single(p => p.CalculatorRunId == 1 && p.ProducerId == 1);
             Assert.AreEqual(section.CurrentYearInvoiceTotalToDate, updated.CurrentYearInvoiceTotalToDate);
             Assert.AreEqual(section.TonnageChangeSinceLastInvoice, updated.TonnageChangeSinceLastInvoice);
             Assert.AreEqual(section.LiabilityDifference, updated.AmountLiabilityDifferenceCalcVsPrev);
@@ -1716,15 +1601,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             Assert.AreEqual(0m, updated.SuggestedInvoiceAmount);
         }
 
-        private static void SeedDatabase(ApplicationDBContext context)
+        private static void SeedDatabase(ApplicationDBContext dbContext)
         {
-            context.Material.AddRange(new List<Material>
+            dbContext.Material.AddRange(new List<Material>
             {
                 new() { Id = 1, Name = "Material1", Code = MaterialCodes.Aluminium },
                 new() { Id = 2, Name = "Material2", Code = MaterialCodes.Glass },
             });
 
-            context.ProducerDetail.AddRange(new List<ProducerDetail>
+            dbContext.ProducerDetail.AddRange(new List<ProducerDetail>
             {
                 new()
                 {
@@ -1768,7 +1653,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                 new() { Id = 6, ProducerName = "Subsidiary1", ProducerId = 4, CalculatorRunId = 1 , SubsidiaryId="A456"},
             });
 
-            context.ProducerReportedMaterial.AddRange(new List<ProducerReportedMaterial>
+            dbContext.ProducerReportedMaterialProjected.AddRange(new List<ProducerReportedMaterialProjected>
             {
                 new() { MaterialId = 1, PackagingType = "HH", SubmissionPeriod = "2025-H1", PackagingTonnage = 350m, ProducerDetailId = 1 },
                 new() { MaterialId = 1, PackagingType = "HH", SubmissionPeriod = "2025-H2", PackagingTonnage = 50m, ProducerDetailId = 1 },
@@ -1788,36 +1673,36 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                 new() { MaterialId = 1, PackagingType = "HH", SubmissionPeriod = "2025-H2", PackagingTonnage = 190m, ProducerDetailId = 5 }
             });
 
-            context.ProducerResultFileSuggestedBillingInstruction.AddRange(new List<ProducerResultFileSuggestedBillingInstruction>
+            dbContext.ProducerResultFileSuggestedBillingInstruction.AddRange(new List<ProducerResultFileSuggestedBillingInstruction>
             {
                 new ProducerResultFileSuggestedBillingInstruction { Id = 1, CalculatorRunId = 1, ProducerId = 1, SuggestedBillingInstruction="INITIAL", BillingInstructionAcceptReject="Accepted"},
                 new ProducerResultFileSuggestedBillingInstruction { Id = 2, CalculatorRunId = 2, ProducerId = 2, SuggestedBillingInstruction="INITIAL", BillingInstructionAcceptReject="Accepted"},
                 new ProducerResultFileSuggestedBillingInstruction { Id = 3, CalculatorRunId = 3, ProducerId = 3, SuggestedBillingInstruction="INITIAL", BillingInstructionAcceptReject="Accepted"},
             });
 
-            context.ProducerDesignatedRunInvoiceInstruction.AddRange(new List<ProducerDesignatedRunInvoiceInstruction>
+            dbContext.ProducerDesignatedRunInvoiceInstruction.AddRange(new List<ProducerDesignatedRunInvoiceInstruction>
             {
                 new ProducerDesignatedRunInvoiceInstruction { Id = 1,CalculatorRunId = 1, ProducerId = 1},
                 new ProducerDesignatedRunInvoiceInstruction { Id = 2,CalculatorRunId = 2, ProducerId = 2},
                 new ProducerDesignatedRunInvoiceInstruction { Id = 3,CalculatorRunId = 2, ProducerId = 2},
             });
-            context.ProducerInvoicedMaterialNetTonnage.AddRange(new List<ProducerInvoicedMaterialNetTonnage>
+            dbContext.ProducerInvoicedMaterialNetTonnage.AddRange(new List<ProducerInvoicedMaterialNetTonnage>
             {
                 new ProducerInvoicedMaterialNetTonnage { Id = 3, MaterialId = 1,CalculatorRunId = 1, ProducerId = 1, InvoicedNetTonnage = 12.5M},
                 new ProducerInvoicedMaterialNetTonnage { Id = 4, MaterialId = 2,CalculatorRunId = 2, ProducerId = 2, InvoicedNetTonnage = 13.5M},
                 new ProducerInvoicedMaterialNetTonnage { Id = 5, MaterialId = 2,CalculatorRunId = 2, ProducerId = 2, InvoicedNetTonnage = 13.5M},
             });
-            context.CalculatorRunOrganisationDataMaster.AddRange(new List<CalculatorRunOrganisationDataMaster>
+            dbContext.CalculatorRunOrganisationDataMaster.AddRange(new List<CalculatorRunOrganisationDataMaster>
             {
                 new CalculatorRunOrganisationDataMaster {Id = 1,RelativeYear = new RelativeYear(2025), CreatedAt= DateTime.UtcNow, CreatedBy = "TestUser" , EffectiveFrom = DateTime.UtcNow}
             });
 
-            context.CalculatorRunOrganisationDataDetails.AddRange(new List<CalculatorRunOrganisationDataDetail>
+            dbContext.CalculatorRunOrganisationDataDetails.AddRange(new List<CalculatorRunOrganisationDataDetail>
             {
                 new CalculatorRunOrganisationDataDetail {Id = 2, CalculatorRunOrganisationDataMasterId = 1, OrganisationId = 4, OrganisationName="ORG1", SubsidiaryId = null, StatusCode = "99", JoinerDate = "01/01/2025", LeaverDate = "15/07/2025"},
             });
 
-            context.SaveChanges();
+            dbContext.SaveChanges();
         }
     }
 }
