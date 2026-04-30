@@ -175,14 +175,25 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
                 }
 
                 AppendCsvValue(csvContent, disposalFee.TonnageChange, producer.isOverallTotalRow, DecimalPlaces.Three, DecimalFormats.F3);
-                csvContent.Append(producer.LeaverDate != CommonConstants.Totals ? CsvSanitiser.SanitiseData(disposalFee.PricePerTonne, null, null, true) : CommonConstants.CsvFileDelimiter);
-                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ProducerDisposalFee, DecimalPlaces.Two, null, true));
-                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.BadDebtProvision, DecimalPlaces.Two, null, true));
-                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ProducerDisposalFeeWithBadDebtProvision, DecimalPlaces.Two, null, true));
+
+                if (showModulations) {
+                    csvContent.Append(producer.LeaverDate != CommonConstants.Totals ? CsvSanitiser.SanitiseData(disposalFee.PricePerTonne.red  , null, null, true, canBeEmpty: true) : CommonConstants.CsvFileDelimiter);
+                    csvContent.Append(producer.LeaverDate != CommonConstants.Totals ? CsvSanitiser.SanitiseData(disposalFee.PricePerTonne.amber, null, null, true, canBeEmpty: true) : CommonConstants.CsvFileDelimiter);
+                    csvContent.Append(producer.LeaverDate != CommonConstants.Totals ? CsvSanitiser.SanitiseData(disposalFee.PricePerTonne.green, null, null, true, canBeEmpty: true) : CommonConstants.CsvFileDelimiter);
+                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ProducerDisposalFee.red  , DecimalPlaces.Two, DecimalFormats.F2, true, canBeEmpty: true));
+                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ProducerDisposalFee.amber, DecimalPlaces.Two, DecimalFormats.F2, true, canBeEmpty: true));
+                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ProducerDisposalFee.green, DecimalPlaces.Two, DecimalFormats.F2, true, canBeEmpty: true));
+                } else {
+                    csvContent.Append(producer.LeaverDate != CommonConstants.Totals ? CsvSanitiser.SanitiseData(disposalFee.PricePerTonne.total ?? 0, null, null, true) : CommonConstants.CsvFileDelimiter);
+                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ProducerDisposalFee.total ?? 0, DecimalPlaces.Two, DecimalFormats.F2, true));
+                }
+
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.BadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ProducerDisposalFeeWithBadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.EnglandWithBadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
-                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.WalesWithBadDebtProvision, DecimalPlaces.Two, null, true));
-                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ScotlandWithBadDebtProvision, DecimalPlaces.Two, null, true));
-                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.NorthernIrelandWithBadDebtProvision, DecimalPlaces.Two, null, true));
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.WalesWithBadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ScotlandWithBadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.NorthernIrelandWithBadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
             }
         }
 
@@ -196,13 +207,13 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
                 }
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.TotalReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 csvContent.Append(producer.LeaverDate != CommonConstants.Totals ? CsvSanitiser.SanitiseData(disposalFee.Value.PriceperTonne, null, null, true) : CommonConstants.CsvFileDelimiter);
-                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ProducerTotalCostWithoutBadDebtProvision, DecimalPlaces.Two, null, true));
-                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.BadDebtProvision, DecimalPlaces.Two, null, true));
-                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ProducerTotalCostwithBadDebtProvision, DecimalPlaces.Two, null, true));
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ProducerTotalCostWithoutBadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.BadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ProducerTotalCostwithBadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.EnglandWithBadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
-                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.WalesWithBadDebtProvision, DecimalPlaces.Two, null, true));
-                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ScotlandWithBadDebtProvision, DecimalPlaces.Two, null, true));
-                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.NorthernIrelandWithBadDebtProvision, DecimalPlaces.Two, null, true));
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.WalesWithBadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ScotlandWithBadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.NorthernIrelandWithBadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
             }
         }
 

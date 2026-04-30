@@ -1123,8 +1123,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         NetReportedTonnage = showModulations
                             ?(total: 910, red: 300, amber: 200, green: 410)
                             :(total: 910, red: null, amber: null, green: null),
-                        PricePerTonne = 0.6676m,
-                        ProducerDisposalFee = 607.52m,
+                        PricePerTonne = showModulations
+                            ? (total: 0.6676m, red: 1, amber: 2, green: 3)
+                            : (total: 0.6676m, red: null, amber: null, green: null),
+                        ProducerDisposalFee = showModulations
+                            ? (total: 607.52m, red: 4, amber: 5, green: 6)
+                            : (total: 607.52m, red: null, amber: null, green: null),
                         BadDebtProvision = 36.45m,
                         ProducerDisposalFeeWithBadDebtProvision = 643.97m,
                         EnglandWithBadDebtProvision = 348.06m,
@@ -1145,9 +1149,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         NetReportedTonnage = showModulations
                             ?(total: 1860, red: 860, amber: 0, green: 1000)
                             :(total: 1860, red: null, amber: null, green: null),
-
-                        PricePerTonne = 0.7825m,
-                        ProducerDisposalFee = 1455.45m,
+                        PricePerTonne = showModulations
+                            ? (total: 0.7825m, red: 1, amber: 2, green: 3)
+                            : (total: 0.7825m, red: null, amber: null, green: null),
+                        ProducerDisposalFee = showModulations
+                            ? (total: 1455.45m, red: 4, amber: 5, green: 6)
+                            : (total: 1455.45m, red: null, amber: null, green: null),
                         BadDebtProvision = 87.33m,
                         ProducerDisposalFeeWithBadDebtProvision = 1542.78m,
                         EnglandWithBadDebtProvision = 833.85m,
@@ -1168,8 +1175,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         NetReportedTonnage = showModulations
                             ?(total: 350, red: 300, amber: 50, green: 0)
                             :(total: 350, red: null, amber: null, green: null),
-                        PricePerTonne = 6.4404m,
-                        ProducerDisposalFee = 2254.14m,
+                        PricePerTonne = showModulations
+                            ? (total: 6.4404m, red: 1, amber: 2, green: 3)
+                            : (total: 6.4404m, red: null, amber: null, green: null),
+                        ProducerDisposalFee = showModulations
+                            ? (total: 2254.14m, red: 4, amber: 5, green: 6)
+                            : (total: 2254.14m, red: null, amber: null, green: null),
                         BadDebtProvision = 135.25m,
                         ProducerDisposalFeeWithBadDebtProvision = 2389.39m,
                         EnglandWithBadDebtProvision = 1291.43m,
@@ -1191,8 +1202,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         NetReportedTonnage = showModulations
                             ?(total: 17.800m, red: 0, amber: 0, green: 0)
                             :(total: 17.800m, red: null, amber: null, green: null),
-                        PricePerTonne = 2.4488m,
-                        ProducerDisposalFee = 43.59m,
+                        PricePerTonne = showModulations
+                            ? (total: 2.4488m, red: 1, amber: 2, green: 3)
+                            : (total: 2.4488m, red: null, amber: null, green: null),
+                        ProducerDisposalFee = showModulations
+                            ? (total: 43.59m, red: 4, amber: 5, green: 6)
+                            : (total: 43.59m, red: null, amber: null, green: null),
                         BadDebtProvision = 2.62m,
                         ProducerDisposalFeeWithBadDebtProvision = 46.20m,
                         EnglandWithBadDebtProvision = 24.97m,
@@ -1213,8 +1228,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         NetReportedTonnage = showModulations
                             ?(total: 4.400m, red: 4.400m, amber: 0, green: 0)
                             :(total: 4.400m, red: null, amber: null, green: null),
-                        PricePerTonne = 2.1601m,
-                        ProducerDisposalFee = 9.50m,
+                        PricePerTonne = showModulations
+                            ? (total: 2.1601m, red: 1, amber: 2, green: 3)
+                            : (total: 2.1601m, red: null, amber: null, green: null),
+                        ProducerDisposalFee = showModulations
+                            ? (total: 9.50m, red: 4, amber: 5, green: 6)
+                            : (total: 9.50m, red: null, amber: null, green: null),
                         BadDebtProvision = 0.57m,
                         ProducerDisposalFeeWithBadDebtProvision = 10.07m,
                         EnglandWithBadDebtProvision = 5.45m,
@@ -1235,8 +1254,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         NetReportedTonnage = showModulations
                             ?(total: 0, red: 0, amber: 0, green: 0)
                             :(total: 0, red: null, amber: null, green: null),
-                        PricePerTonne = 1.9813m,
-                        ProducerDisposalFee = 0.00m,
+                        PricePerTonne = showModulations
+                            ? (total: 1.9813m, red: 1, amber: 2, green: 3)
+                            : (total: 1.9813m, red: null, amber: null, green: null),
+                        ProducerDisposalFee = showModulations
+                            ? (total: 0.00m, red: 4, amber: 5, green: 6)
+                            : (total: 0.00m, red: null, amber: null, green: null),
                         BadDebtProvision = 0.00m,
                         ProducerDisposalFeeWithBadDebtProvision = 0.00m,
                         EnglandWithBadDebtProvision = 0.00m,
@@ -1257,8 +1280,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         NetReportedTonnage = showModulations
                             ?(total: 405.000m, red: 300, amber: 100, green: 5)
                             :(total: 405.000m, red: null, amber: null, green: null),
-                        PricePerTonne = 2.0000m,
-                        ProducerDisposalFee = 810.00m,
+                        PricePerTonne = showModulations
+                            ? (total: 2.0000m, red: 1, amber: 2, green: 3)
+                            : (total: 2.0000m, red: null, amber: null, green: null),
+                        ProducerDisposalFee = showModulations
+                            ? (total: 810.00m, red: 4, amber: 5, green: 6)
+                            : (total: 810.00m, red: null, amber: null, green: null),
                         BadDebtProvision = 48.60m,
                         ProducerDisposalFeeWithBadDebtProvision = 858.60m,
                         EnglandWithBadDebtProvision = 464.06m,
@@ -1279,8 +1306,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         NetReportedTonnage = showModulations
                             ?(total: 44.500m, red: 0, amber: 44.500m, green: 0)
                             :(total: 44.500m, red: null, amber: null, green: null),
-                        PricePerTonne = 1.1954m,
-                        ProducerDisposalFee = 53.20m,
+                        PricePerTonne = showModulations
+                            ? (total: 1.1954m, red: 1, amber: 2, green: 3)
+                            : (total: 1.1954m, red: null, amber: null, green: null),
+                        ProducerDisposalFee = showModulations
+                            ? (total: 53.20m, red: 4, amber: 5, green: 6)
+                            : (total: 53.20m, red: null, amber: null, green: null),
                         BadDebtProvision = 3.19m,
                         ProducerDisposalFeeWithBadDebtProvision = 56.39m,
                         EnglandWithBadDebtProvision = 30.48m,

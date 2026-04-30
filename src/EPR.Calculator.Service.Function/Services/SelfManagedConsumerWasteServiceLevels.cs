@@ -77,7 +77,6 @@ namespace EPR.Calculator.Service.Function.Services
             };
         }
 
-
         private static Result UpdateSingleL1(IL1 l1, bool showModulations)
         {
             if (showModulations)
@@ -129,7 +128,6 @@ namespace EPR.Calculator.Service.Function.Services
             var l2Results = ProcessL2s(hc.L2s, availableA, availableR, availableG, showModulations);
             return new List<Result> { hcResult }.Concat(l2Results).ToList();
         }
-
 
         private static List<Result> ProcessL2s(List<L2> l2s, decimal? availableA, decimal? availableR, decimal? availableG, bool showModulations)
         {
