@@ -172,7 +172,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 .ReturnsAsync(mockCalcResultCommsCost.Object);
             mockLateReportingBuilder.Setup(m => m.ConstructAsync(resultsRequestDto))
                 .ReturnsAsync(mockCalcResultLateReportingTonnage);
-            mockCalcRunLaDisposalCostBuilder.Setup(m => m.ConstructAsync(resultsRequestDto, It.IsAny<List<MaterialDetail>>(), It.IsAny<CalcResult>(), It.IsAny<SelfManagedConsumerWaste>()))
+            mockCalcRunLaDisposalCostBuilder.Setup(m => m.ConstructAsync(resultsRequestDto, It.IsAny<List<MaterialDetail>>(), It.IsAny<CalcResultLapcapData>(), It.IsAny<CalcResultLateReportingTonnage>(), It.IsAny<SelfManagedConsumerWaste>(), It.IsAny<bool>()))
                 .ReturnsAsync(mockCalcResultLaDisposalCostData.Object);
             mockReportedProducerService.Setup(m => m.GetProducers(resultsRequestDto.RunId))
                 .ReturnsAsync(mockProducers1);
@@ -212,7 +212,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             Assert.AreNotEqual(mockCalcResultProjectedProducersData.Object, result.CalcResultProjectedProducers);
             Assert.AreEqual(mockCalcResultSummary.Object, result.CalcResultSummary);
 
-            mockCalcRunLaDisposalCostBuilder.Verify(m => m.ConstructAsync(resultsRequestDto, It.IsAny<List<MaterialDetail>>(), It.IsAny<CalcResult>(), It.IsAny<SelfManagedConsumerWaste>()), Times.Once);
+            mockCalcRunLaDisposalCostBuilder.Verify(m => m.ConstructAsync(resultsRequestDto, It.IsAny<List<MaterialDetail>>(), It.IsAny<CalcResultLapcapData>(), It.IsAny<CalcResultLateReportingTonnage>(), It.IsAny<SelfManagedConsumerWaste>(), It.IsAny<bool>()), Times.Once);
             mockCalcResultScaledupProducersBuilder.Verify(m => m.ConstructAsync(resultsRequestDto, It.IsAny<List<ProducerDetail>>()), Times.Once);
             mockCalcResultProjectedProducersBuilder.Verify(m => m.ConstructAsync(resultsRequestDto, It.IsAny<List<ProducerDetail>>()), Times.Never);
             mockCalcResultPartialObligationBuilder.Verify(m => m.ConstructAsync(resultsRequestDto, It.IsAny<List<ProducerDetail>>()), Times.Once);

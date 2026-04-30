@@ -206,7 +206,7 @@ namespace EPR.Calculator.Service.Function.Builder
             _telemetryClient.TrackTrace("selfManagedConsumerWasteService ended...");
 
             _telemetryClient.TrackTrace("laDisposalCostBuilder started...");
-            result.CalcResultLaDisposalCostData = await laDisposalCostBuilder.ConstructAsync(resultsRequestDto, materialDetails, result, smcw);
+            result.CalcResultLaDisposalCostData = await laDisposalCostBuilder.ConstructAsync(resultsRequestDto, materialDetails, result.CalcResultLapcapData, result.CalcResultLateReportingTonnageData, smcw, result.ShowModulations);
             _telemetryClient.TrackTrace("laDisposalCostBuilder end...");
 
             _telemetryClient.TrackTrace("commsCostReportBuilder started...");
