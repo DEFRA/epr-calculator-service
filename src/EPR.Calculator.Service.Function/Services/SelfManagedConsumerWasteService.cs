@@ -99,14 +99,14 @@ namespace EPR.Calculator.Service.Function.Services
 
                 return new SingleL1(
                     OrgId: p.ProducerId,
-                    R:     CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.Red) +
-                           CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.RedMedical),
-                    A:     CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.Amber) +
-                           CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.AmberMedical),
-                    G:     CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.Green) +
-                           CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.GreenMedical),
-                    Total: CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations),
-                    Smcw:  CalcResultSummaryUtil.GetTonnage(p, material, PackagingTypes.ConsumerWaste, scaledUpProducers, partialObligations)
+                    R:     CalcResultSummaryUtil.GetReportedTonnage(p, material, RagRating.Red) +
+                           CalcResultSummaryUtil.GetReportedTonnage(p, material, RagRating.RedMedical),
+                    A:     CalcResultSummaryUtil.GetReportedTonnage(p, material, RagRating.Amber) +
+                           CalcResultSummaryUtil.GetReportedTonnage(p, material, RagRating.AmberMedical),
+                    G:     CalcResultSummaryUtil.GetReportedTonnage(p, material, RagRating.Green) +
+                           CalcResultSummaryUtil.GetReportedTonnage(p, material, RagRating.GreenMedical),
+                    Total: CalcResultSummaryUtil.GetReportedTonnage(p, material),
+                    Smcw:  CalcResultSummaryUtil.GetTonnage(p, material, PackagingTypes.ConsumerWaste)
                 );
             }
 
@@ -116,14 +116,14 @@ namespace EPR.Calculator.Service.Function.Services
                 .Select(p => new L2(
                     OrgId:        p.ProducerId,
                     SubsidiaryId: p.SubsidiaryId,
-                    R:            CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.Red) +
-                                  CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.RedMedical),
-                    A:            CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.Amber) +
-                                  CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.AmberMedical),
-                    G:            CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.Green) +
-                                  CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations, RagRating.GreenMedical),
-                    Total:        CalcResultSummaryUtil.GetReportedTonnage(p, material, scaledUpProducers, partialObligations),
-                    Smcw:         CalcResultSummaryUtil.GetTonnage(p, material, PackagingTypes.ConsumerWaste, scaledUpProducers, partialObligations)
+                    R:            CalcResultSummaryUtil.GetReportedTonnage(p, material, RagRating.Red) +
+                                  CalcResultSummaryUtil.GetReportedTonnage(p, material, RagRating.RedMedical),
+                    A:            CalcResultSummaryUtil.GetReportedTonnage(p, material, RagRating.Amber) +
+                                  CalcResultSummaryUtil.GetReportedTonnage(p, material, RagRating.AmberMedical),
+                    G:            CalcResultSummaryUtil.GetReportedTonnage(p, material, RagRating.Green) +
+                                  CalcResultSummaryUtil.GetReportedTonnage(p, material, RagRating.GreenMedical),
+                    Total:        CalcResultSummaryUtil.GetReportedTonnage(p, material),
+                    Smcw:         CalcResultSummaryUtil.GetTonnage(p, material, PackagingTypes.ConsumerWaste)
                 )).ToList();
 
             return new HC(group.Key, l2s);

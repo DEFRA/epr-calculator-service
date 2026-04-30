@@ -75,7 +75,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 0m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetEnglandWithBadDebtProvisionForCommsTotal(producers, material, calcResult, scaledupProducers, partialObligations);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetEnglandWithBadDebtProvisionForCommsTotal(producers, material, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -88,7 +88,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 1139.71200m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetEnglandWithBadDebtProvisionForCommsTotal(producers, material, calcResult, scaledupProducers, partialObligations);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetEnglandWithBadDebtProvisionForCommsTotal(producers, material, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -101,7 +101,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 284.92800m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetWalesWithBadDebtProvisionForCommsTotal(producers, material, calcResult, scaledupProducers, partialObligations);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetWalesWithBadDebtProvisionForCommsTotal(producers, material, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -114,7 +114,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 427.39200m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetScotlandWithBadDebtProvisionForCommsTotal(producers, material, calcResult, scaledupProducers, partialObligations);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetScotlandWithBadDebtProvisionForCommsTotal(producers, material, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -127,7 +127,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 997.24800m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetNorthernIrelandWithBadDebtProvisionForCommsTotal(producers, material, calcResult, scaledupProducers, partialObligations);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetNorthernIrelandWithBadDebtProvisionForCommsTotal(producers, material, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -140,7 +140,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 1344.00m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostWithoutBadDebtProvisionTotal(producers, material, calcResult, scaledupProducers, partialObligations);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostWithoutBadDebtProvisionTotal(producers, material, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -153,7 +153,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 80.64m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetBadDebtProvisionForCommsCostTotal(producers, material, calcResult, scaledupProducers, partialObligations);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetBadDebtProvisionForCommsCostTotal(producers, material, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -166,7 +166,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 427.392m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetEnglandWithBadDebtProvisionForComms(producers[0], material, calcResult, scaledupProducers, partialObligations);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetEnglandWithBadDebtProvisionForComms(producers[0], material, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -179,7 +179,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 106.848m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetWalesWithBadDebtProvisionForComms(producers[0], material, calcResult, scaledupProducers, partialObligations);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetWalesWithBadDebtProvisionForComms(producers[0], material, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -192,7 +192,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 160.272m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetScotlandWithBadDebtProvisionForComms(producers[0], material, calcResult, scaledupProducers, partialObligations);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetScotlandWithBadDebtProvisionForComms(producers[0], material, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -205,7 +205,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 373.96800m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetNorthernIrelandWithBadDebtProvisionForComms(producers[0], material, calcResult, scaledupProducers, partialObligations);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetNorthernIrelandWithBadDebtProvisionForComms(producers[0], material, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -265,7 +265,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 534.2400m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostwithBadDebtProvision(producers[0], material, calcResult, scaledupProducers, partialObligations);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostwithBadDebtProvision(producers[0], material, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -278,7 +278,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 504.00m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostWithoutBadDebtProvision(producers[0], material, calcResult, scaledupProducers, partialObligations);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostWithoutBadDebtProvision(producers[0], material, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -291,7 +291,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 1424.6400m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostwithBadDebtProvisionTotal(producers, material, calcResult, scaledupProducers, partialObligations);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostwithBadDebtProvisionTotal(producers, material, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -305,7 +305,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             var material = GetHDCMaterial();
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetTotalReportedTonnageTotal(producers, material, scaledupProducers, partialObligations);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetTotalReportedTonnageTotal(producers, material);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -318,7 +318,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 3200;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetTotalReportedTonnageTotal(producers, material, scaledupProducers, partialObligations);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetTotalReportedTonnageTotal(producers, material);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
