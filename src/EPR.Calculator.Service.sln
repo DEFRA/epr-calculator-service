@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EPR.Calculator.Service.Common.UnitTests", "EPR.Calculator.Service.Common.UnitTests\EPR.Calculator.Service.Common.UnitTests.csproj", "{56CB565A-CC41-4315-AAE4-72DA3D916096}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EPR.Calculator.Service.Common", "EPR.Calculator.Service.Common\EPR.Calculator.Service.Common.csproj", "{D8D6FDCB-C7AA-436E-A8EE-747F34BFF1CA}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EPR.Calculator.Service.Function", "EPR.Calculator.Service.Function\EPR.Calculator.Service.Function.csproj", "{9F996041-5BFE-4DCE-B046-416321B57969}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EPR.Calculator.Service.Function.UnitTests", "EPR.Calculator.Service.Function.UnitTests\EPR.Calculator.Service.Function.UnitTests.csproj", "{A8770216-A3B7-481A-8E8A-FB70B45ED2AD}"
@@ -20,14 +16,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{56CB565A-CC41-4315-AAE4-72DA3D916096}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{56CB565A-CC41-4315-AAE4-72DA3D916096}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{56CB565A-CC41-4315-AAE4-72DA3D916096}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{56CB565A-CC41-4315-AAE4-72DA3D916096}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D8D6FDCB-C7AA-436E-A8EE-747F34BFF1CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D8D6FDCB-C7AA-436E-A8EE-747F34BFF1CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D8D6FDCB-C7AA-436E-A8EE-747F34BFF1CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D8D6FDCB-C7AA-436E-A8EE-747F34BFF1CA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9F996041-5BFE-4DCE-B046-416321B57969}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9F996041-5BFE-4DCE-B046-416321B57969}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F996041-5BFE-4DCE-B046-416321B57969}.Release|Any CPU.ActiveCfg = Release|Any CPU

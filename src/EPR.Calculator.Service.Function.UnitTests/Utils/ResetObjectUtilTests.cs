@@ -1,7 +1,7 @@
-using AutoFixture;
-using EPR.Calculator.Service.Common.Utils;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
+using EPR.Calculator.Service.Function.Utils;
 
-namespace EPR.Calculator.Service.Common.UnitTests.Utils
+namespace EPR.Calculator.Service.Function.UnitTests.Utils
 {
     [TestClass]
     public class ResetObjectUtilTests
@@ -10,7 +10,6 @@ namespace EPR.Calculator.Service.Common.UnitTests.Utils
         public void CanCallResetObject()
         {
             // Arrange
-            var fixture = new Fixture();
             var j = new TestClass
             {
                 Temperature = 10.9m,
@@ -19,7 +18,7 @@ namespace EPR.Calculator.Service.Common.UnitTests.Utils
                 IsTotalRow = true,
                 IsTested = true,
                 childTest = new ChildTestClass { IsChild = true },
-                Humidity = fixture.Create<double>(),
+                Humidity = TestFixtures.Legacy.Create<double>(),
                 LeaverDate = "Totals",
                 isOverallTotalRow = true,
                 Numbers = new List<int> { 1, 2, 3 },
