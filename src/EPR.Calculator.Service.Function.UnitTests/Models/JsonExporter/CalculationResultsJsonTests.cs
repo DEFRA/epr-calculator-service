@@ -131,8 +131,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             var actualChange = ReadNullableDecimal(actual, "tonnageChange");
             Assert.AreEqual(expected.Value.TonnageChange, actualChange);
 
-            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(expected.Value.PricePerTonne, 4), actual["pricePerTonne"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(expected.Value.ProducerDisposalFee), actual["producerDisposalFeeWithoutBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(expected.Value.PricePerTonne.total ?? 0, 4), actual["pricePerTonne"]!.GetValue<string>());
+            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(expected.Value.ProducerDisposalFee.total ?? 0), actual["producerDisposalFeeWithoutBadDebtProvision"]!.GetValue<string>());
             Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(expected.Value.BadDebtProvision), actual["badDebtProvision"]!.GetValue<string>());
             Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(expected.Value.ProducerDisposalFeeWithBadDebtProvision), actual["producerDisposalFeeWithBadDebtProvision"]!.GetValue<string>());
             Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(expected.Value.EnglandWithBadDebtProvision), actual["englandWithBadDebtProvision"]!.GetValue<string>());

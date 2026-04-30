@@ -66,6 +66,12 @@
         public static readonly string AmberPlusAmberMedicalNetTonnage = "Amber + Amber Medical Net Tonnage";
         public static readonly string GreenPlusGreenMedicalNetTonnage = "Green + Green Medical Net Tonnage";
 
+        public static readonly string RedPlusRedMedicalMaterialPricePerTonne = "Red + Red Medical Material Price per Tonne";
+        public static readonly string AmberPlusAmberMedicalMaterialPricePerTonne = "Amber + Amber Medical Material Price per Tonne";
+        public static readonly string GreenPlusGreenMedicalMaterialPricePerTonne = "Green + Green Medical Material Price per Tonne";
+        public static readonly string ProducerRedPlusRedMedicalMaterialDisposalCost = "Producer Red + Red Medical Material Disposal Cost";
+        public static readonly string ProducerAmberPlusAmberMedicalMaterialDisposalCost = "Producer Amber + Amber Medical Material Disposal Cost";
+        public static readonly string ProducerGreenPlusGreenMedicalMaterialDisposalCost = "Producer Green + Green Medical Material Disposal Cost";
 
         public static readonly string PricePerTonne = "Price per Tonne";
         public static readonly string ProducerDisposalFee = "Producer Disposal Fee w/o Bad Debt Provision";

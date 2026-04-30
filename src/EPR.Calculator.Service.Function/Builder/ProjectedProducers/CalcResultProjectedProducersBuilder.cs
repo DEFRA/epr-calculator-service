@@ -26,7 +26,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             this.dbContext = dbContext;
         }
 
-        public async Task<(List<ProducerDetail>, CalcResultProjectedProducers)> ConstructAsync(
+        public Task<(List<ProducerDetail>, CalcResultProjectedProducers)> ConstructAsync(
             List<MaterialDetail> materialDetails,
             List<ProducerDetail> producerDetails,
             CalcResultsRequestDto resultsRequestDto
@@ -73,7 +73,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                 H1ProjectedProducers = allH1Rows.OrderBy(p => p.ProducerId).ThenBy(p => p.Level).ThenBy(p => p.SubsidiaryId).ToList()
             };
 
-            return (updatedProducers, result);
+            return Task.FromResult((updatedProducers, result));
         }
 
         private ProducerDetail ApplyProjectedMaterials(

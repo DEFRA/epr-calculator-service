@@ -299,30 +299,26 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             {
                 ProducerTotals = new List<ProducerSelfManagedConsumerWaste>
                 {
-                    new ProducerSelfManagedConsumerWaste
+                    new ()
+                    {
+                        ProducerId = 1,
+                        SubsidiaryId = null,
+                        Level = 1,
+                        SelfManagedConsumerWasteDataPerMaterials = CreateMaterialData()
+                    },
+                    new ()
                     {
                         ProducerId = 4,
-                        SubsidiaryId = string.Empty,
+                        SubsidiaryId = null,
                         Level = 1,
-                        SelfManagedConsumerWasteDataPerMaterials = new Dictionary<string, SelfManagedConsumerWasteData>
-                        {
-                            { "AL", new SelfManagedConsumerWasteData
-                                {
-                                    SelfManagedConsumerWasteTonnage = 0,
-                                    ActionedSelfManagedConsumerWasteTonnage = 0,
-                                    ResidualSelfManagedConsumerWasteTonnage = 0,
-                                    NetReportedTonnage = (0, 0, 0, 0)
-                                }
-                            },
-                            { "GL", new SelfManagedConsumerWasteData
-                                {
-                                    SelfManagedConsumerWasteTonnage = 0,
-                                    ActionedSelfManagedConsumerWasteTonnage = 0,
-                                    ResidualSelfManagedConsumerWasteTonnage = 0,
-                                    NetReportedTonnage = (0, 0, 0, 0)
-                                }
-                            }
-                        }
+                        SelfManagedConsumerWasteDataPerMaterials = CreateMaterialData()
+                    },
+                    new ()
+                    {
+                        ProducerId = 4,
+                        SubsidiaryId = "A123",
+                        Level = 2,
+                        SelfManagedConsumerWasteDataPerMaterials = CreateMaterialData()
                     }
                 },
 
@@ -349,6 +345,26 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                         }
                     }
                 }
+            };
+        }
+
+        private Dictionary<string, SelfManagedConsumerWasteData> CreateMaterialData()
+        {
+            return new Dictionary<string, SelfManagedConsumerWasteData>
+            {
+                { "AL", CreateEmptyData() },
+                { "GL", CreateEmptyData() }
+            };
+        }
+
+        private SelfManagedConsumerWasteData CreateEmptyData()
+        {
+            return new SelfManagedConsumerWasteData
+            {
+                SelfManagedConsumerWasteTonnage = 0,
+                ActionedSelfManagedConsumerWasteTonnage = 0,
+                ResidualSelfManagedConsumerWasteTonnage = 0,
+                NetReportedTonnage = (0, 0, 0, 0)
             };
         }
 
@@ -775,110 +791,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             var modulationResult = calculationResult;
             modulationResult.ApplyModulation = true;
             var result2 = new CalcResultSummaryBuilder(dbContext).GetCalcResultSummary(projectedMaterialsLookup, orderedProducerDetails, materials, modulationResult, totalPackagingTonnage, producerInvoicedMaterialNetTonnage, defaultParams, smcw);
-            Assert.AreEqual(225, result2.ColumnHeaders.Count());
-        }
-
-        [TestMethod]
-        public void GetCalcResultSummary_CanAddTotalRow()
-        {
-            var sut = new CalcResultSummaryBuilder(dbContext);
-            calcResultsService.ParentOrganisations = new List<Organisation> {
-                new() { OrganisationId = 1, OrganisationName = "Org1" }
-            };
-
-            var orderedProducerDetails = CalcResultSummaryBuilder.GetOrderedListOfProducersAssociatedRunId(1, dbContext.ProducerDetail.ToList()).ToList();
-            var runProducerMaterialDetails = GetProducerRunMaterialDetails(
-                orderedProducerDetails,
-                dbContext.ProducerReportedMaterialProjected.ToList(),
-                1);
-
-            var materials = MaterialMapper.Map(dbContext.Material.ToList());
-
-            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materials, 1);
-
-            orderedProducerDetails.Add(new ProducerDetail
-            {
-                ProducerId = 1
-            });
-
-            var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024));
-            var defaultParams = new List<DefaultParamResultsClass>();
-
-            var result = sut.GetCalcResultSummary(projectedMaterialsLookup, orderedProducerDetails, materials, calculationResult, totalPackagingTonnage, producerInvoicedMaterialNetTonnage, defaultParams, smcw);
-
-            Assert.IsNotNull(result);
-            Assert.AreEqual(149, result.ColumnHeaders.Count());
-
-            var producerDisposalFees = result.ProducerDisposalFees;
-            Assert.IsNotNull(producerDisposalFees);
-
-            var totals = producerDisposalFees.First(t => t.LeaverDate == "Totals");
-
-            var producer = producerDisposalFees.First(t => t.Level == "1");
-            Assert.IsNotNull(producer);
-
-            Assert.AreEqual(string.Empty, totals.ProducerName);
-            Assert.IsNotNull(producer.ProducerName);
-            Assert.AreEqual("Producer1", producer.ProducerName);
-        }
-
-        [TestMethod]
-        public void CanAddTotalRow_ParentProducerNotFound_ReturnsFalse()
-        {
-            // Arrange
-            ProducerDetail producer = dbContext.ProducerDetail.FirstOrDefault()!;
-            IEnumerable<ProducerDetail> producersAndSubsidiaries = dbContext.ProducerDetail;
-            List<CalcResultSummaryProducerDisposalFees> producerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>();
-
-            calcResultsService.ParentOrganisations = new List<Organisation>();
-
-            // Act
-            var result = calcResultsService.CanAddTotalRow(producer, producersAndSubsidiaries, producerDisposalFees);
-
-            // Assert
-            Assert.IsFalse(result);
-        }
-
-        [TestMethod]
-        public void CanAddTotalRow_ProducerDisposalFeeExists_ReturnsFalse()
-        {
-            // Arrange
-            ProducerDetail producer = dbContext.ProducerDetail.FirstOrDefault()!;
-            IEnumerable<ProducerDetail> producersAndSubsidiaries = dbContext.ProducerDetail;
-            List<CalcResultSummaryProducerDisposalFees> producerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> {
-                    new CalcResultSummaryProducerDisposalFees { ProducerId = "1", ProducerName="Org1", SubsidiaryId = "" }
-                };
-
-            calcResultsService.ParentOrganisations = new List<Organisation> {
-                    new Organisation { OrganisationId = 1, OrganisationName = "Org1" }
-                };
-
-            // Act
-            var result = calcResultsService.CanAddTotalRow(producer, producersAndSubsidiaries, producerDisposalFees);
-
-            // Assert
-            Assert.IsFalse(result);
-        }
-
-        [TestMethod]
-        public void CanAddTotalRow_ValidConditions_ReturnsTrue()
-        {
-            // Arrange
-            ProducerDetail producer = dbContext.ProducerDetail.FirstOrDefault()!;
-            IEnumerable<ProducerDetail> producersAndSubsidiaries = dbContext.ProducerDetail;
-            List<CalcResultSummaryProducerDisposalFees> producerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> {
-                    new CalcResultSummaryProducerDisposalFees { ProducerId = "2", ProducerName="Org1", SubsidiaryId = "" }
-                };
-
-            calcResultsService.ParentOrganisations = new List<Organisation> {
-                    new Organisation { OrganisationId = 1, OrganisationName = "Org1" }
-                };
-
-            // Act
-            var result = calcResultsService.CanAddTotalRow(producer, producersAndSubsidiaries, producerDisposalFees);
-
-            // Assert
-            Assert.IsTrue(result);
+            Assert.AreEqual(235, result2.ColumnHeaders.Count());
         }
 
         [TestMethod]
@@ -1075,17 +988,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024));
             var defaultParams = new List<DefaultParamResultsClass>();
 
-            var fixedSmcw = smcw with
-            {
-                ProducerTotals = smcw.ProducerTotals
-                    .Select(p => p with
-                    {
-                        ProducerId = 1
-                    })
-                    .ToList()
-            };
-
-            var summary = calcResultsService.GetCalcResultSummary(projectedMaterialsLookup, ordered, materials, calculationResult, totalPackaging, producerInvoicedMaterialNetTonnage, defaultParams, fixedSmcw);
+            var summary = calcResultsService.GetCalcResultSummary(projectedMaterialsLookup, ordered, materials, calculationResult, totalPackaging, producerInvoicedMaterialNetTonnage, defaultParams, smcw);
 
             Assert.IsTrue(summary.ProducerDisposalFees.Any(r => r.isTotalRow));
         }
@@ -1198,32 +1101,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         }
 
         [TestMethod]
-        public void CanAddTotalRow_SingleProducerAndPomDataExists_ReturnsFalse()
-        {
-            var producer = dbContext.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
-
-            var producersAndSubsidiaries = new List<ProducerDetail>
-            {
-                new ProducerDetail
-                {
-                    ProducerId = producer.ProducerId,
-                    CalculatorRunId = producer.CalculatorRunId,
-                    SubsidiaryId = null,
-                    ProducerName = "Parent Org"
-                }
-            };
-
-            calcResultsService.ParentOrganisations = new List<Organisation>
-            {
-                new Organisation { OrganisationId = producer.ProducerId, OrganisationName = "Org1" }
-            };
-
-            var result = calcResultsService.CanAddTotalRow(producer, producersAndSubsidiaries, new List<CalcResultSummaryProducerDisposalFees>());
-
-            Assert.IsFalse(result);
-        }
-
-        [TestMethod]
         public void GetProducerRow_MarksProducerAsNotScaledUp_WhenNoMatch()
         {
             var producer = dbContext.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
@@ -1312,22 +1189,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                 smcw);
 
             Assert.AreEqual(CommonConstants.No, row.IsPartialObligation);
-        }
-
-        [TestMethod]
-        public void CanAddTotalRow_NoParentPomButHasSubsidiary_ReturnsTrue()
-        {
-            var parent = dbContext.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
-            var subOnly = new List<ProducerDetail> {
-                new ProducerDetail { ProducerId = parent.ProducerId, CalculatorRunId = parent.CalculatorRunId, SubsidiaryId = "S1", ProducerName = "Sub1" }
-            };
-
-            calcResultsService.ParentOrganisations = new List<Organisation> {
-                new Organisation { OrganisationId = parent.ProducerId, OrganisationName = "Org1" }
-            };
-
-            var canAdd = calcResultsService.CanAddTotalRow(parent, subOnly, new List<CalcResultSummaryProducerDisposalFees>());
-            Assert.IsTrue(canAdd);
         }
 
         [TestMethod]

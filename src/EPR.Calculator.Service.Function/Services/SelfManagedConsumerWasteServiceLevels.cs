@@ -130,7 +130,6 @@ namespace EPR.Calculator.Service.Function.Services
             return new List<Result> { hcResult }.Concat(l2Results).ToList();
         }
 
-
         private static List<Result> ProcessL2s(List<L2> l2s, decimal? availableA, decimal? availableR, decimal? availableG, bool applyModulation)
         {
             if (applyModulation)
