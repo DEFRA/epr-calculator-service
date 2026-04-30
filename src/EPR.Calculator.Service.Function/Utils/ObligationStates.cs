@@ -1,4 +1,4 @@
-﻿namespace EPR.Calculator.Service.Function.Services
+﻿namespace EPR.Calculator.Service.Function.Utils
 {
     public static class ObligationStates
     {

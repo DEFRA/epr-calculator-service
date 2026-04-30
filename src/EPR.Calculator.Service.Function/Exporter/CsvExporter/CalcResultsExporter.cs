@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
@@ -7,101 +7,70 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.ErrorReport;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
-using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
+using EPR.Calculator.Service.Function.Features.Calculator.Contexts;
 using EPR.Calculator.Service.Function.Models;
-using System.Diagnostics.CodeAnalysis;
 
-namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
+namespace EPR.Calculator.Service.Function.Exporter.CsvExporter;
+
+public interface IResultsFileCsvWriter
 {
-    public class CalcResultsExporter : ICalcResultsExporter<CalcResult>
+    string WriteToString(CalculatorRunContext runContext, CalcResult calcResult);
+}
+
+[SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
+public class ResultsFileCsvWriter(
+    ILateReportingExporter lateReportingExporter,
+    ICalcResultDetailExporter resultDetailexporter,
+    IOnePlusFourApportionmentExporter onePlusFourApportionmentExporter,
+    ICalcResultLaDisposalCostExporter laDisposalCostExporter,
+    ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter,
+    ICalcResultPartialObligationsExporter calcResultPartialObligationsExporter,
+    ICalcResultProjectedProducersExporter calcResultProjectedProducersExporter,
+    ILapcaptDetailExporter lapcaptDetailExporter,
+    ICalcResultParameterOtherCostExporter parameterOtherCostsExporter,
+    ICommsCostExporter commsCostExporter,
+    ICalcResultSummaryExporter calcResultSummaryExporter,
+    ICalcResultCancelledProducersExporter calcResultCancelledProducersExporter,
+    ICalcResultErrorReportExporter calcResultErrorReportExporter)
+    : IResultsFileCsvWriter
+{
+    public string WriteToString(CalculatorRunContext runContext, CalcResult calcResult)
     {
-        private readonly ICalcResultSummaryExporter calcResultSummaryExporter;
-        private readonly ICalcResultDetailExporter resultDetailexporter;
-        private readonly IOnePlusFourApportionmentExporter onePlusFourApportionmentExporter;
-        private readonly ILapcaptDetailExporter lapcaptDetailExporter;
-        private readonly ICalcResultParameterOtherCostExporter parameterOtherCosts;
-        private readonly ILateReportingExporter lateReportingExporter;
-        private readonly ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter;
-        private readonly ICalcResultPartialObligationsExporter calcResultPartialObligationsExporter;
-        private readonly ICalcResultProjectedProducersExporter calcResultProjectedProducersExporter;
-        private readonly ICalcResultLaDisposalCostExporter laDisposalCostExporter;
-        private readonly ICommsCostExporter commsCostExporter;
-        private readonly ICalcResultCancelledProducersExporter calcResultCancelledProducersExporter;
-        private readonly ICalcResultErrorReportExporter calcResultErrorReportExporter;
+        var csvContent = new StringBuilder();
+        resultDetailexporter.Export(calcResult.CalcResultDetail, csvContent);
 
-        // Suppress SonarQube warning for constructor parameter count
-        [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
-        public CalcResultsExporter(
-            ILateReportingExporter lateReporting,
-            ICalcResultDetailExporter resultDetail,
-            IOnePlusFourApportionmentExporter onePlusFourApportionment,
-            ICalcResultLaDisposalCostExporter laDisposalCost,
-            ICalcResultScaledupProducersExporter calcResultScaledupProducers,
-            ICalcResultPartialObligationsExporter calcResultPartialObligations,
-            ICalcResultProjectedProducersExporter calcResultProjectedProducers,
-            ILapcaptDetailExporter lapcaptDetail,
-            ICalcResultParameterOtherCostExporter parameterOt,
-            ICommsCostExporter commsCost,
-            ICalcResultSummaryExporter calcResultSummary,
-            ICalcResultCancelledProducersExporter calcResultCancelledProducers,
-            ICalcResultErrorReportExporter calcResultErrorReport)
+        lapcaptDetailExporter.Export(calcResult.CalcResultLapcapData, csvContent);
+
+        csvContent.Append(lateReportingExporter.Export(calcResult.CalcResultLateReportingTonnageData));
+
+        parameterOtherCostsExporter.Export(calcResult.CalcResultParameterOtherCost, csvContent);
+
+        onePlusFourApportionmentExporter.Export(calcResult.CalcResultOnePlusFourApportionment, csvContent);
+
+        commsCostExporter.Export(calcResult.CalcResultCommsCostReportDetail, csvContent);
+
+        laDisposalCostExporter.Export(calcResult.CalcResultLaDisposalCostData, csvContent);
+
+        calcResultCancelledProducersExporter.Export(calcResult.CalcResultCancelledProducers, csvContent);
+
+        if (calcResult.CalcResultModulation is not null)
         {
-            resultDetailexporter = resultDetail;
-            onePlusFourApportionmentExporter = onePlusFourApportionment;
-            lateReportingExporter = lateReporting;
-            calcResultScaledupProducersExporter = calcResultScaledupProducers;
-            calcResultPartialObligationsExporter = calcResultPartialObligations;
-            calcResultProjectedProducersExporter = calcResultProjectedProducers;
-            lapcaptDetailExporter = lapcaptDetail;
-            parameterOtherCosts = parameterOt;
-            calcResultSummaryExporter = calcResultSummary;
-            laDisposalCostExporter = laDisposalCost;
-            commsCostExporter = commsCost;
-            calcResultCancelledProducersExporter = calcResultCancelledProducers;
-            calcResultErrorReportExporter = calcResultErrorReport;
+            calcResultProjectedProducersExporter.Export(calcResult.CalcResultProjectedProducers, csvContent);
+        }
+        else
+        {
+            calcResultScaledupProducersExporter.Export(calcResult.CalcResultScaledupProducers, csvContent);
         }
 
-        public string Export(CalcResult calcResult)
-        {
-            if (calcResult == null)
-            {
-                throw new ArgumentNullException(nameof(calcResult), "The calcResult parameter cannot be null.");
-            }
+        calcResultPartialObligationsExporter.Export(calcResult.CalcResultPartialObligations, csvContent);
 
-            var csvContent = new StringBuilder();
-            resultDetailexporter.Export(calcResult.CalcResultDetail, csvContent);
+        calcResultSummaryExporter.Export(calcResult.CalcResultSummary, csvContent, calcResult.CalcResultModulation is not null);
 
-            lapcaptDetailExporter.Export(calcResult.CalcResultLapcapData, csvContent);
+        calcResultErrorReportExporter.Export(calcResult.CalcResultErrorReports, csvContent);
 
-            csvContent.Append(lateReportingExporter.Export(calcResult.CalcResultLateReportingTonnageData));
-
-            parameterOtherCosts.Export(calcResult.CalcResultParameterOtherCost, csvContent);
-
-            onePlusFourApportionmentExporter.Export(calcResult.CalcResultOnePlusFourApportionment, csvContent);
-
-            commsCostExporter.Export(calcResult.CalcResultCommsCostReportDetail, csvContent);
-
-            laDisposalCostExporter.Export(calcResult.CalcResultLaDisposalCostData, csvContent);
-
-            calcResultCancelledProducersExporter.Export(calcResult.CalcResultCancelledProducers, csvContent);
-
-            if (calcResult.CalcResultModulation is not null)
-            {
-                calcResultProjectedProducersExporter.Export(calcResult.CalcResultProjectedProducers, csvContent);
-            }
-            else {
-                calcResultScaledupProducersExporter.Export(calcResult.CalcResultScaledupProducers, csvContent);
-            }
-
-            calcResultPartialObligationsExporter.Export(calcResult.CalcResultPartialObligations, csvContent);
-
-            calcResultSummaryExporter.Export(calcResult.CalcResultSummary, csvContent, calcResult.CalcResultModulation is not null);
-
-            calcResultErrorReportExporter.Export(calcResult.CalcResultErrorReports, csvContent);
-
-            return csvContent.ToString();
-        }
+        return csvContent.ToString();
     }
 }

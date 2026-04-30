@@ -1,4 +1,4 @@
-﻿namespace EPR.Calculator.Service.Function.Converter
+﻿namespace EPR.Calculator.Service.Function.Converters
 {
     public class DecimalPrecisionTwelveConverter : DecimalPrecisionConverter
     {

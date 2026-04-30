@@ -1,4 +1,4 @@
-﻿namespace EPR.Calculator.Service.Function.Models
+namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResult
     {
@@ -21,12 +21,6 @@
                 TonnageHeading = string.Empty
             };
 
-        public CalcResultParameterCommunicationCost CalcResultParameterCommunicationCost { get; set; }
-            = new()
-            {
-                Name = string.Empty
-            };
- 
         public required CalcResultParameterOtherCost CalcResultParameterOtherCost { get; set; } =
             new()
             {

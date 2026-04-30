@@ -15,5 +15,4 @@ public class CalcResultCommsCostCommsCostByMaterial : CalcResultCommsCostOnePlus
     public decimal ProducerReportedTotalTonnage { get; set; }
     public string? TotalReportedTonnage { get; set; }
     public decimal CommsCostByMaterialPricePerTonneValue { get; set; }
-
 }

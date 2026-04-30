@@ -1,57 +1,56 @@
-﻿namespace EPR.Calculator.Service.Function.Models
+﻿using System.Collections.Immutable;
+
+namespace EPR.Calculator.Service.Function.Models;
+
+public record CalcResultCancelledProducersResponse
 {
-    public class CalcResultCancelledProducersResponse
-    {
-        public string? TitleHeader { get; set; }
-        public IEnumerable<CalcResultCancelledProducersDto> CancelledProducers { get; set; } = [];
-    }
+    public string? TitleHeader { get; set; }
+    public ImmutableArray<CalcResultCancelledProducersDto> CancelledProducers { get; set; } = [];
+}
 
-    public class CalcResultCancelledProducersDto
-    {
-        public string? ProducerId_Header { get; set; }
-        public string? ProducerName_Header { get; set; }
-        public string? TradingName_Header { get; set; }
-        public int ProducerId { get; set; }
-        public string? SubsidiaryIdValue { get; set; }
-        public string? ProducerOrSubsidiaryNameValue { get; set; }
-        public string? TradingNameValue { get; set; }
-        public LastTonnage? LastTonnage { get; set; }
-        public LatestInvoice? LatestInvoice { get; set; }
-    }
+public record CalcResultCancelledProducersDto
+{
+    public string? ProducerId_Header { get; init; }
+    public string? ProducerName_Header { get; init; }
+    public string? TradingName_Header { get; init; }
+    public int ProducerId { get; init; }
+    public string? SubsidiaryIdValue { get; init; }
+    public string? ProducerOrSubsidiaryNameValue { get; init; }
+    public string? TradingNameValue { get; init; }
+    public LastTonnage? LastTonnage { get; init; }
+    public LatestInvoice? LatestInvoice { get; init; }
+}
 
-    public class LastTonnage
-    {
-        public string? LastTonnage_Header { get; set; }
-        public string? Aluminium_Header { get; set; }
-        public string? FibreComposite_Header { get; set; }
-        public string? Glass_Header { get; set; }
-        public string? PaperOrCard_Header { get; set; }
-        public string? Plastic_Header { get; set; }
-        public string? Steel_Header { get; set; }
-        public string? Wood_Header { get; set; }
-        public string? OtherMaterials_Header { get; set; }
+public record LastTonnage
+{
+    public string? LastTonnage_Header { get; init; }
+    public string? Aluminium_Header { get; init; }
+    public string? FibreComposite_Header { get; init; }
+    public string? Glass_Header { get; init; }
+    public string? PaperOrCard_Header { get; init; }
+    public string? Plastic_Header { get; init; }
+    public string? Steel_Header { get; init; }
+    public string? Wood_Header { get; init; }
+    public string? OtherMaterials_Header { get; init; }
+    public decimal? AluminiumValue { get; init; }
+    public decimal? FibreCompositeValue { get; init; }
+    public decimal? GlassValue { get; init; }
+    public decimal? PaperOrCardValue { get; init; }
+    public decimal? PlasticValue { get; init; }
+    public decimal? SteelValue { get; init; }
+    public decimal? WoodValue { get; init; }
+    public decimal? OtherMaterialsValue { get; init; }
+}
 
-        public decimal? AluminiumValue { get; set; }
-        public decimal? FibreCompositeValue { get; set; }
-        public decimal? GlassValue { get; set; }
-        public decimal? PaperOrCardValue { get; set; }
-        public decimal? PlasticValue { get; set; }
-        public decimal? SteelValue { get; set; }
-        public decimal? WoodValue { get; set; }
-        public decimal? OtherMaterialsValue { get; set; }
-    }
-
-    public class LatestInvoice
-    {
-        public string? LatestInvoice_Header { get; set; }
-        public string? CurrentYearInvoicedTotalToDate_Header { get; set; }
-        public string? RunNumber_Header { get; set; }
-        public string? RunName_Header { get; set; }
-        public string? BillingInstructionId_Header { get; set; }
-
-        public decimal? CurrentYearInvoicedTotalToDateValue { get; set; }
-        public string? RunNumberValue { get; set; }
-        public string? RunNameValue { get; set; }
-        public string? BillingInstructionIdValue { get; set; }
-    }
+public record LatestInvoice
+{
+    public string? LatestInvoice_Header { get; init; }
+    public string? CurrentYearInvoicedTotalToDate_Header { get; init; }
+    public string? RunNumber_Header { get; init; }
+    public string? RunName_Header { get; init; }
+    public string? BillingInstructionId_Header { get; init; }
+    public decimal? CurrentYearInvoicedTotalToDateValue { get; init; }
+    public string? RunNumberValue { get; init; }
+    public string? RunNameValue { get; init; }
+    public string? BillingInstructionIdValue { get; init; }
 }

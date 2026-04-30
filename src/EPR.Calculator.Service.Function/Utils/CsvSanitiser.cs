@@ -3,7 +3,7 @@ using System.Text.Json;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
 
-namespace EPR.Calculator.Service.Function.Misc
+namespace EPR.Calculator.Service.Function.Utils
 {
     public static class CsvSanitiser
     {

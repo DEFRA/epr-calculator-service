@@ -2,348 +2,146 @@ using System.Diagnostics.CodeAnalysis;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Enums;
-using EPR.Calculator.Service.Common.Logging;
-using EPR.Calculator.Service.Function.Enums;
-using EPR.Calculator.Service.Function.Interface;
-using EPR.Calculator.Service.Function.Misc;
-using Microsoft.AspNetCore.Mvc;
+using EPR.Calculator.Service.Function.Features.Calculator.Contexts;
+using EPR.Calculator.Service.Function.Utils;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
-namespace EPR.Calculator.Service.Function.Services
+namespace EPR.Calculator.Service.Function.Services;
+
+public interface ITransposePomAndOrgDataService
 {
-    /// <summary>
-    /// Service for transposing POM and organization data.
-    /// </summary>
-    public class TransposePomAndOrgDataService : ITransposePomAndOrgDataService
+    Task Transpose(CalculatorRunContext runContext, CancellationToken cancellationToken);
+}
+
+/// <summary>
+///     Service for transposing POM and organization data.
+/// </summary>
+[ExcludeFromCodeCoverage]
+public class TransposePomAndOrgDataService(
+    ApplicationDBContext dbContext,
+    IBulkOperations bulkOps,
+    IErrorReportService errorReportService,
+    ILogger<TransposePomAndOrgDataService> logger)
+    : ITransposePomAndOrgDataService
+{
+    [SuppressMessage("Critical Code Smell", "S3776:Cognitive Complexity of methods should not be too high")]
+    public async Task Transpose(CalculatorRunContext runContext, CancellationToken cancellationToken)
     {
-        private readonly ApplicationDBContext context;
-        private readonly ICalculatorTelemetryLogger telemetryLogger;
+        var calculatorRun = await dbContext.CalculatorRuns
+            .AsNoTracking()
+            .Where(x => x.Id == runContext.RunId
+                        && x.CalculatorRunOrganisationDataMaster != null
+                        && x.CalculatorRunPomDataMaster != null)
+            .SingleAsync(cancellationToken);
 
-        public class OrganisationDetails
-        {
-            public int? OrganisationId { get; set; }
+        var materials = await dbContext.Material
+            .AsNoTracking()
+            .ToImmutableArrayAsync(cancellationToken);
 
-            public required string OrganisationName { get; set; }
+        var calculatorRunOrgDataDetails = await dbContext.CalculatorRunOrganisationDataDetails
+            .AsNoTracking()
+            .Where(x => x.CalculatorRunOrganisationDataMasterId == calculatorRun.CalculatorRunOrganisationDataMasterId)
+            .ToImmutableArrayAsync(cancellationToken);
 
-            public string? TradingName { get; set; }
+        var calculatorRunPomDataDetails = await dbContext.CalculatorRunPomDataDetails
+            .AsNoTracking()
+            .Where(x => x.CalculatorRunPomDataMasterId == calculatorRun.CalculatorRunPomDataMasterId)
+            .ToImmutableArrayAsync(cancellationToken);
 
-            public string? SubmissionPeriod { get; set; }
+        var unmatchedSet = await errorReportService.HandleErrors(
+            calculatorRunPomDataDetails,
+            calculatorRunOrgDataDetails,
+            runContext.RunId,
+            runContext.User,
+            runContext.RelativeYear,
+            cancellationToken);
 
-            public string? SubmissionPeriodDescription { get; set; }
-
-            public string? SubsidaryId { get; set; }
-        }
-
-        public TransposePomAndOrgDataService(
-            ApplicationDBContext context,
-            ICommandTimeoutService commandTimeoutService,
-            IDbLoadingChunkerService<ProducerDetail> producerDetailChunker,
-            IDbLoadingChunkerService<ProducerReportedMaterial> producerReportedMaterialChunker,
-            IErrorReportService errorReportService,
-            ICalculatorTelemetryLogger telemetryLogger)
-        {
-            this.context = context;
-            CommandTimeoutService = commandTimeoutService;
-            ProducerDetailChunker = producerDetailChunker;
-            ProducerReportedMaterialChunker = producerReportedMaterialChunker;
-            ErrorReportService = errorReportService;
-            this.telemetryLogger = telemetryLogger;
-        }
-
-        public ICommandTimeoutService CommandTimeoutService { get; init; }
-
-        private IDbLoadingChunkerService<ProducerDetail> ProducerDetailChunker { get; init; }
-
-        private IDbLoadingChunkerService<ProducerReportedMaterial> ProducerReportedMaterialChunker { get; init; }
-
-        private IErrorReportService ErrorReportService { get; init; }
-
-        public async Task<bool> TransposeBeforeResultsFileAsync(
-            [FromBody] CalcResultsRequestDto resultsRequestDto,
-            string? runName,
-            CancellationToken cancellationToken)
-        {
-            var startTime = DateTime.UtcNow;
-
-            CommandTimeoutService.SetCommandTimeout(context.Database);
-
-            CalculatorRun? calculatorRun = null;
-            try
+        calculatorRunPomDataDetails = calculatorRunPomDataDetails
+            .Where(p =>
             {
-                telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = resultsRequestDto.RunId,
-                    RunName = runName,
-                    Message = $"Transpose POM and ORG data for run: {resultsRequestDto.RunId}",
-                });
-                calculatorRun = await context.CalculatorRuns.SingleOrDefaultAsync(
-                run => run.Id == resultsRequestDto.RunId,
-                cancellationToken);
-                if (calculatorRun == null)
-                {
-                    return false;
-                }
+                var orgId = p.OrganisationId.GetValueOrDefault();
+                var subId = p.SubsidiaryId;
+                return !unmatchedSet.Contains((orgId, subId));
+            })
+            .ToImmutableArray();
 
-                await Transpose(
-                    resultsRequestDto,
-                    cancellationToken);
-                var endTime = DateTime.UtcNow;
-                var timeDiff = startTime - endTime;
-                telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = resultsRequestDto.RunId,
-                    RunName = runName,
-                    Message = $"Transpose POM and ORG data for run: {resultsRequestDto.RunId} completed in {timeDiff.TotalSeconds} seconds",
-                });
-                return true;
-            }
-            catch (OperationCanceledException exception)
+        var organisationDataDetails = calculatorRunOrgDataDetails
+            .Where(odd => ObligationStates.IsObligated(odd.ObligationStatus)
+                && !string.IsNullOrWhiteSpace(odd.OrganisationName))
+            .GroupBy(odd => new { odd.OrganisationId, odd.SubsidiaryId, odd.SubmitterId })
+            .Select(odd => odd.OrderByDescending(o => o.HasH2).First())
+            .ToImmutableArray();
+
+        var newProducerDetails = new List<ProducerDetail>();
+
+        foreach (var organisation in organisationDataDetails)
+        {
+            // Get the producer based on the latest submission period
+            var producer = organisationDataDetails
+                .First(odd => odd.OrganisationName == organisation.OrganisationName && odd.SubsidiaryId == organisation.SubsidiaryId);
+
+            // Get the calculator run pom data details related to the calculator run pom data master
+            var subsidiaryPomsByMaterial = calculatorRunPomDataDetails
+                .Where(pdd =>
+                    pdd.OrganisationId == organisation.OrganisationId &&
+                    pdd.SubsidiaryId == organisation.SubsidiaryId &&
+                    pdd.SubmitterId == organisation.SubmitterId)
+                .GroupBy(pdd => pdd.PackagingMaterial!)
+                .ToImmutableDictionary(grp => grp.Key,
+                    grp => grp.ToImmutableArray(),
+                    StringComparer.OrdinalIgnoreCase);
+
+            if (subsidiaryPomsByMaterial.Count == 0)
+                continue;
+
+            // ⚠️ Only set scalar FK columns (e.g. CalculatorRunId, MaterialId) on the entities below.
+            // Navigation properties to existing rows (CalculatorRun, Material) are intentionally left
+            // unset so that the IncludeGraph bulk insert below does not try to re-insert them.
+            var producerDetail = new ProducerDetail
             {
-                telemetryLogger.LogError(new ErrorMessage
-                {
-                    RunId = resultsRequestDto.RunId,
-                    RunName = runName,
-                    Message = "Operation cancelled",
-                    Exception = exception,
-                });
+                CalculatorRunId = runContext.RunId,
+                ProducerId = producer.OrganisationId,
+                TradingName = organisation.TradingName,
+                SubsidiaryId = producer.SubsidiaryId,
+                ProducerName = producer.OrganisationName
+            };
 
-                if (calculatorRun != null)
+            foreach (var material in materials)
+            {
+                if(!subsidiaryPomsByMaterial.TryGetValue(material.Code, out var subsidiaryPomsForMaterial))
+                    continue;
+
+                foreach (var poms in subsidiaryPomsForMaterial.GroupBy(p => p.PackagingType))
                 {
-                    calculatorRun.CalculatorRunClassificationId = (int)RunClassification.ERROR;
-                    context.CalculatorRuns.Update(calculatorRun);
-                    await context.SaveChangesAsync();
-                    telemetryLogger.LogError(new ErrorMessage
+                    var packagingType = poms.First().PackagingType!;
+                    var submissionPeriod = poms.First().SubmissionPeriod!;
+                    var totalPackagingMaterialWeight = poms.Sum(x => x.PackagingMaterialWeight)!;
+
+                    producerDetail.ProducerReportedMaterials.Add(new ProducerReportedMaterial
                     {
-                        RunId = resultsRequestDto.RunId,
-                        RunName = runName,
-                        Message = "RunId is updated with ClassificationId Error",
-                        Exception = exception,
-                    });
-                }
-
-                return false;
-            }
-            catch (Exception exception)
-            {
-                telemetryLogger.LogError(new ErrorMessage
-                {
-                    RunId = resultsRequestDto.RunId,
-                    RunName = runName,
-                    Message = "Error occurred while transposing POM and ORG data",
-                    Exception = exception,
-                });
-                if (calculatorRun != null)
-                {
-                    calculatorRun.CalculatorRunClassificationId = (int)RunClassification.ERROR;
-                    context.CalculatorRuns.Update(calculatorRun);
-                    await context.SaveChangesAsync();
-                    telemetryLogger.LogError(new ErrorMessage
-                    {
-                        RunId = resultsRequestDto.RunId,
-                        RunName = runName,
-                        Message = "RunId is updated with ClassificationId Error",
-                        Exception = exception,
+                        MaterialId = material.Id,
+                        PackagingType = packagingType, // IncludeGraph in bulk insert below will propagate the parent's Id.
+                        SubmissionPeriod = submissionPeriod,
+                        PackagingTonnage = Math.Round((decimal)totalPackagingMaterialWeight / 1000, 3),
+                        PackagingTonnageRed = Math.Round((decimal)(poms.Where(x => x.RamRagRating == RagRating.Red).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
+                        PackagingTonnageAmber = Math.Round((decimal)(poms.Where(x => x.RamRagRating == RagRating.Amber).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
+                        PackagingTonnageGreen = Math.Round((decimal)(poms.Where(x => x.RamRagRating == RagRating.Green).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
+                        PackagingTonnageRedMedical = Math.Round((decimal)(poms.Where(x => x.RamRagRating == RagRating.RedMedical).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
+                        PackagingTonnageAmberMedical = Math.Round((decimal)(poms.Where(x => x.RamRagRating == RagRating.AmberMedical).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
+                        PackagingTonnageGreenMedical = Math.Round((decimal)(poms.Where(x => x.RamRagRating == RagRating.GreenMedical).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3)
                     });
                 }
             }
 
-            return false;
+            newProducerDetails.Add(producerDetail);
         }
 
-        [SuppressMessage(
-            "Critical Code Smell",
-            "S3776:Cognitive Complexity of methods should not be too high",
-            Justification = "Temporaraly suppress - will refactor later.")]
-        [ExcludeFromCodeCoverage]
-        public async Task<bool> Transpose(CalcResultsRequestDto resultsRequestDto, CancellationToken cancellationToken)
-        {
-            context.ChangeTracker.AutoDetectChangesEnabled = false;
-            var newProducerDetails = new List<ProducerDetail>();
-            var newProducerReportedMaterials = new List<ProducerReportedMaterial>();
+        var totalReportedMaterials = newProducerDetails.Sum(p => p.ProducerReportedMaterials.Count);
+        logger.LogInformation("Transpose produced {ProducerDetailCount} producer details and {ReportedMaterialCount} reported materials",
+            newProducerDetails.Count, totalReportedMaterials);
 
-            var materials = await context.Material.ToListAsync(cancellationToken);
-
-            var calculatorRun = await context.CalculatorRuns
-                .Where(x => x.Id == resultsRequestDto.RunId)
-                .SingleAsync(cancellationToken);
-            var calculatorRunOrgDataDetails = await context.CalculatorRunOrganisationDataDetails
-                .Where(x => x.CalculatorRunOrganisationDataMasterId == calculatorRun.CalculatorRunOrganisationDataMasterId)
-                .ToListAsync(cancellationToken);
-            var calculatorRunPomDataDetails = await context.CalculatorRunPomDataDetails
-                .Where(x => x.CalculatorRunPomDataMasterId == calculatorRun.CalculatorRunPomDataMasterId)
-                .ToListAsync(cancellationToken);
-
-            var unmatchedSet = await ErrorReportService.HandleErrors(
-                calculatorRunPomDataDetails,
-                calculatorRunOrgDataDetails,
-                resultsRequestDto.RunId,
-                resultsRequestDto.CreatedBy,
-                resultsRequestDto.RelativeYear,
-                cancellationToken);
-
-            calculatorRunPomDataDetails = calculatorRunPomDataDetails
-                                            .Where(p =>
-                                            {
-                                                var orgId = p.OrganisationId.GetValueOrDefault();
-                                                var subId = p.SubsidiaryId;
-                                                return !unmatchedSet.Contains((orgId, subId));
-                                            }).ToList();
-
-            if (IsCalculatorRunPOMMasterIdExists(calculatorRun))
-            {
-                var organisationDataMaster = await context.CalculatorRunOrganisationDataMaster
-                    .SingleAsync(x => x.Id == calculatorRun.CalculatorRunOrganisationDataMasterId, cancellationToken);
-
-                var OrganisationsList = GetAllOrganisationsBasedonRunId(calculatorRunOrgDataDetails);
-
-
-                var organisationDataDetails = calculatorRunOrgDataDetails
-                    .Where(odd => odd.CalculatorRunOrganisationDataMasterId == organisationDataMaster.Id && odd.OrganisationName != null && odd.OrganisationName != "" && ObligationStates.IsObligated(odd.ObligationStatus))
-                    .OrderBy(odd => odd.OrganisationName)
-                    .GroupBy(odd => new { odd.OrganisationId, odd.SubsidiaryId, odd.SubmitterId })
-                    .Select(odd => odd.First())
-                    .ToList();
-
-                // Get the calculator run pom data master record based on the CalculatorRunPomDataMasterId
-                var pomDataMaster = await context.CalculatorRunPomDataMaster
-                    .SingleAsync(x => x.Id == calculatorRun.CalculatorRunPomDataMasterId, cancellationToken);
-
-                foreach (var organisation in organisationDataDetails.Where(t => !string.IsNullOrWhiteSpace(t.OrganisationName)))
-                {
-                    // Initialise the producerReportedMaterials
-                    var producerReportedMaterials = new List<ProducerReportedMaterial>();
-
-                    // Get the calculator run pom data details related to the calculator run pom data master
-                    var runPomDataDetailsForSubsidaryId = calculatorRunPomDataDetails.Where
-                        (
-                            pdd => pdd.CalculatorRunPomDataMasterId == pomDataMaster.Id &&
-                            pdd.OrganisationId == organisation.OrganisationId &&
-                            pdd.SubsidiaryId == organisation.SubsidiaryId  &&
-                            pdd.SubmitterId == organisation.SubmitterId
-                        ).ToList();
-
-                    // Proceed further only if there is any pom data based on the pom data master id and organisation id
-                    // TO DO: We have to record if there is no pom data in a separate table post Dec 2024
-                    if (IsRunPomDataDetailsExistsForSubsidaryId(runPomDataDetailsForSubsidaryId))
-                    {
-                        var organisations = organisationDataDetails.Where(odd => odd.OrganisationName == organisation.OrganisationName && odd.SubsidiaryId == organisation.SubsidiaryId);
-
-                        // Get the producer based on the latest submission period
-                        var producer = organisations.FirstOrDefault();
-
-                        // Proceed further only if the organisation is not null and organisation id not null
-                        // TO DO: We have to record if the organisation name is null in a separate table post Dec 2024
-                        if (producer != null)
-                        {
-                            var producerDetail = new ProducerDetail
-                            {
-                                CalculatorRunId = resultsRequestDto.RunId,
-                                ProducerId = producer.OrganisationId,
-                                TradingName = organisation.TradingName,
-                                SubsidiaryId = producer.SubsidiaryId,
-                                ProducerName = GetLatestproducerName(producer.OrganisationId, producer.SubsidiaryId, OrganisationsList),
-                                CalculatorRun = calculatorRun,
-                            };
-
-                            // Add producer detail record to the database context
-                            newProducerDetails.Add(producerDetail);
-
-                            foreach (var material in materials)
-                            {
-                                var pomDataDetailsByMaterial = runPomDataDetailsForSubsidaryId.Where(pdd => pdd.PackagingMaterial == material.Code).GroupBy(pdd => new { pdd.SubmissionPeriod, pdd.PackagingType });
-
-                                foreach (var pomData in pomDataDetailsByMaterial)
-                                {
-                                    var pom = pomData.AsEnumerable();
-                                    var packagingType = pom.FirstOrDefault()?.PackagingType;
-                                    var submissionPeriod = pom.FirstOrDefault()?.SubmissionPeriod;
-                                    var totalPackagingMaterialWeight = pom.Sum(x => x.PackagingMaterialWeight) ?? 0;
-
-                                    // Proceed further only if the packaging type and packaging material weight is not null
-                                    // TO DO: We have to record if the packaging type or packaging material weight is null in a separate table post Dec 2024
-                                    if (IsPackagingTypeAndPackagingMaterialWeightExists(packagingType, totalPackagingMaterialWeight))
-                                    {
-                                        var producerReportedMaterial = new ProducerReportedMaterial
-                                        {
-                                            MaterialId = material.Id,
-                                            Material = material,
-                                            ProducerDetail = producerDetail,
-                                            PackagingType = packagingType!,
-                                            SubmissionPeriod = submissionPeriod!,
-                                            PackagingTonnage = Math.Round((decimal)(totalPackagingMaterialWeight) / 1000, 3),
-                                            PackagingTonnageRed = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.Red).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
-                                            PackagingTonnageAmber = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.Amber).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
-                                            PackagingTonnageGreen = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.Green).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
-                                            PackagingTonnageRedMedical = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.RedMedical).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
-                                            PackagingTonnageAmberMedical = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.AmberMedical).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
-                                            PackagingTonnageGreenMedical = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.GreenMedical).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
-                                        };
-
-                                        // Populate the producer reported material list
-                                        producerReportedMaterials.Add(producerReportedMaterial);
-                                    }
-                                }
-                            }
-
-                            // Add the list of producer reported materials to the database context
-                            newProducerReportedMaterials.AddRange(producerReportedMaterials);
-                        }
-                    }
-                }
-
-                await ProducerDetailChunker.InsertRecords(newProducerDetails);
-                await ProducerReportedMaterialChunker.InsertRecords(newProducerReportedMaterials);
-
-            }
-
-            return true;
-
-        }
-
-        private static bool IsPackagingTypeAndPackagingMaterialWeightExists(string? packagingType, double? totalPackagingMaterialWeight)
-        {
-            return packagingType != null && totalPackagingMaterialWeight != null;
-        }
-
-        private static bool IsRunPomDataDetailsExistsForSubsidaryId(List<CalculatorRunPomDataDetail> runPomDataDetailsForSubsidaryId)
-        {
-            return runPomDataDetailsForSubsidaryId.Count > 0;
-        }
-
-        private static bool IsCalculatorRunPOMMasterIdExists(CalculatorRun calculatorRun)
-        {
-            return calculatorRun.CalculatorRunPomDataMasterId != null;
-        }
-
-        public IEnumerable<OrganisationDetails> GetAllOrganisationsBasedonRunId(
-            IEnumerable<CalculatorRunOrganisationDataDetail> calculatorRunOrganisationDataDetails)
-        {
-            return calculatorRunOrganisationDataDetails.Where(org => org.OrganisationName != null)
-                .Select(org =>
-                    new OrganisationDetails
-                    {
-                        OrganisationId = org.OrganisationId,
-                        OrganisationName = org.OrganisationName,
-                        TradingName = org.TradingName,
-                        SubsidaryId = org.SubsidiaryId,
-                    }).Distinct();
-        }
-
-        public string? GetLatestOrganisationName(int orgId, IEnumerable<OrganisationDetails> organisationsList)
-        {
-            var organisation = organisationsList.FirstOrDefault(t => t.OrganisationId == orgId && t.SubsidaryId == null);
-            var orgName = organisation?.OrganisationName;
-            return orgName;
-        }
-
-        public string? GetLatestproducerName(int orgId, string? subsidaryId, IEnumerable<OrganisationDetails> organisationsList)
-        {
-
-            var organisation = subsidaryId is null ? organisationsList.FirstOrDefault(t => t.OrganisationId == orgId && t.SubsidaryId == null) :
-                organisationsList.FirstOrDefault(t => t.OrganisationId == orgId && t.SubsidaryId == subsidaryId);
-
-            var subsidaryName = organisation?.OrganisationName;
-            return subsidaryName;
-        }
+        // Must include graph for EF navigation properties to be set on the inserted entities.
+        await bulkOps.BulkInsertAsync(dbContext, newProducerDetails, cfg => cfg.IncludeGraph = true, cancellationToken);
     }
 }

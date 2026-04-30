@@ -1,32 +1,25 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.Detail
 {
-    public class CalcResultDetailBuilder : ICalcResultDetailBuilder
+    public class CalcResultDetailBuilder(ApplicationDBContext dbContext) : ICalcResultDetailBuilder
     {
-        private readonly ApplicationDBContext context;
-
-        public CalcResultDetailBuilder(ApplicationDBContext context)
+        public async Task<CalcResultDetail> ConstructAsync(RunContext runContext)
         {
-            this.context = context;
-        }
-
-        public async Task<CalcResultDetail> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
-        {
-            var calculatorRuns = await context.CalculatorRuns
+            var calculatorRuns = await dbContext.CalculatorRuns
                 .Include(o => o.CalculatorRunOrganisationDataMaster)
                 .Include(o => o.CalculatorRunPomDataMaster)
                 .Include(o => o.DefaultParameterSettingMaster)
                 .Include(x => x.LapcapDataMaster)
                 .ToListAsync();
 
-            string idMsg() => $"CalculatorRun {resultsRequestDto.RunId}";
+            string idMsg() => $"CalculatorRun {runContext.RunId}";
 
-            var calculatorRun = calculatorRuns.Find(x => x.Id == resultsRequestDto.RunId)
+            var calculatorRun = calculatorRuns.Find(x => x.Id == runContext.RunId)
                                 ?? throw new InvalidOperationException($"{idMsg()}  not found.");
 
             var results = new CalcResultDetail

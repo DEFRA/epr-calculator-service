@@ -2,9 +2,6 @@
 {
     public static class CommonConstants
     {
-        public const bool True = true;
-        public const bool False = false;
-
         public const int DefaultMinValue = 0;
         public const int LevelOne = 1;
         public const int LevelTwo = 2;
@@ -32,8 +29,6 @@
         public const string No = "No";
         public const string ParametersOther = "Parameters - Other";
         public const string ZeroCurrency = "£0";
-        public const string Initial = "INITIAL";
-        public const string CancelStatus = "CANCEL";
         public const char Comma = ',';
 
         public const string OnePlusFourCommsCostApportionmentPercentages = "onePlusFourCommsCostApportionmentPercentages";
@@ -82,12 +77,7 @@
         public const string TonnagePercentageIncrease = "TONT-PI";
         public const string TonnagePercentageDecrease = "TONT-PD";
 
-        public const string Delta = "DELTA";
-        public const string Rebill = "REBILL";
         public const string CurrentYearInvoicedTotalToDate = "Current Year Invoiced Total To Date";
-        public const string Accepted = "Accepted";
-        public const string Rejected = "Rejected";
-        public const string Cancel = "Cancel";
 
         public const string ErrorReportHeader = "Error Table";
         public const string LeaverCode = "Leaver Code";

@@ -3,15 +3,15 @@ using System.Globalization;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
-using Microsoft.ApplicationInsights;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace EPR.Calculator.Service.Function.Builder.CommsCost
 {
     [ExcludeFromCodeCoverage]
-    public class CalcResultCommsCostBuilder(ApplicationDBContext context, TelemetryClient telemetryClient)
+    public class CalcResultCommsCostBuilder(ApplicationDBContext dbContext, ILogger<CalcResultCommsCostBuilder> logger)
         : ICalcResultCommsCostBuilder
     {
         public const string Header = "Parameters - Comms Costs";
@@ -27,12 +27,12 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
         public const string PoundSign = "£";
 
         public async Task<CalcResultCommsCost> ConstructAsync(
-            CalcResultsRequestDto resultsRequestDto,
+            RunContext runContext,
             CalcResultOnePlusFourApportionment apportionment,
             CalcResult calcResult)
         {
-            telemetryClient.TrackTrace("Begining constructing comms cost...");
-            var runId = resultsRequestDto.RunId;
+            logger.LogTrace("Beginning constructing comms cost");
+            var runId = runContext.RunId;
             var culture = CultureInfo.CreateSpecificCulture(EnGb);
             culture.NumberFormat.CurrencySymbol = PoundSign;
             culture.NumberFormat.CurrencyPositivePattern = 0;
@@ -41,21 +41,21 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             var apportionmentDetail = apportionmentDetails.Last();
 
             var result = new CalcResultCommsCost();
-            telemetryClient.TrackTrace("Calculating apportionment...");
+            logger.LogTrace("Calculating apportionment...");
             CalculateApportionment(apportionmentDetail, result);
             result.Name = Header;
 
-            telemetryClient.TrackTrace("Getting material names...");
-            var materials = await context.Material.ToListAsync();
+            logger.LogTrace("Getting material names...");
+            var materials = await dbContext.Material.ToListAsync();
             var materialNames = materials.Select(x => x.Name).ToList();
 
-            telemetryClient.TrackTrace("Getting material defaults...");
-            var allDefaultResults = await (from run in context.CalculatorRuns
-                                           join defaultMaster in context.DefaultParameterSettings on run.DefaultParameterSettingMasterId equals
+            logger.LogTrace("Getting material defaults...");
+            var allDefaultResults = await (from run in dbContext.CalculatorRuns
+                                           join defaultMaster in dbContext.DefaultParameterSettings on run.DefaultParameterSettingMasterId equals
                                                defaultMaster.Id
-                                           join defaultDetail in context.DefaultParameterSettingDetail on defaultMaster.Id equals defaultDetail
+                                           join defaultDetail in dbContext.DefaultParameterSettingDetail on defaultMaster.Id equals defaultDetail
                                                .DefaultParameterSettingMasterId
-                                           join defaultTemplate in context.DefaultParameterTemplateMasterList on defaultDetail
+                                           join defaultTemplate in dbContext.DefaultParameterTemplateMasterList on defaultDetail
                                                .ParameterUniqueReferenceId equals defaultTemplate.ParameterUniqueReferenceId
                                            where run.Id == runId
                                            select new CalcCommsBuilderResult
@@ -67,10 +67,10 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             var materialDefaults = allDefaultResults.Where(x =>
                 x.ParameterType == CommunicationCostByMaterial && materialNames.Contains(x.ParameterCategory));
 
-            telemetryClient.TrackTrace("Getting producer reported materials...");
-            var producerReportedMaterials = await GetProducerReportedMaterials(context, runId);
+            logger.LogTrace("Getting producer reported materials...");
+            var producerReportedMaterials = await GetProducerReportedMaterials(runId);
 
-            telemetryClient.TrackTrace("Getting headers...");
+            logger.LogTrace("Getting headers...");
             var list = new List<CalcResultCommsCostCommsCostByMaterial>();
 
             var header = new CalcResultCommsCostCommsCostByMaterial
@@ -93,18 +93,18 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             };
             list.Add(header);
 
-            telemetryClient.TrackTrace("Filtering producer reported materials...");
+            logger.LogTrace("Filtering producer reported materials...");
             producerReportedMaterials = producerReportedMaterials.Where(t => calcResult.CalcResultScaledupProducers.ScaledupProducers != null && !calcResult.CalcResultScaledupProducers.ScaledupProducers.
                 Any(i => i.ProducerId == t.ProducerDetail?.ProducerId)).ToList();
 
-            telemetryClient.TrackTrace("Getting scaled up producer reported on...");
+            logger.LogTrace("Getting scaled up producer reported on...");
             var scaledUpProducerReportedOn = calcResult.CalcResultScaledupProducers
                   .ScaledupProducers?.FirstOrDefault(t => t.IsTotalRow);
 
-            telemetryClient.TrackTrace($"Generating comms costs for {materialNames.Count} materials...");
+            logger.LogTrace("Generating comms costs for {MaterialCount} materials", materialNames.Count);
             foreach (var materialName in materialNames)
             {
-                telemetryClient.TrackTrace($"Generating comms cost for {materialName}...");
+                logger.LogTrace("Generating comms cost for {MaterialName}", materialName);
                 var commsCost = GetCommsCost(materialDefaults, materialName, apportionmentDetail, culture);
                 var currentMaterial = materials.Single(x => x.Name == materialName);
 
@@ -147,7 +147,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                 list.Add(commsCost);
             }
 
-            telemetryClient.TrackTrace("Generating total row...");
+            logger.LogTrace("Generating total row...");
             var totalRow = GetTotalRow(list, culture);
 
             list.Add(totalRow);
@@ -168,19 +168,19 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                 OrderId = 2,
             };
 
-            telemetryClient.TrackTrace("Getting comms cost by country...");
+            logger.LogTrace("Getting comms cost by country...");
             var commsCostByCountryList = GetCommsCostByCountryList(ukCost, allDefaultResults, culture);
             result.CommsCostByCountry = commsCostByCountryList;
 
             return result;
         }
 
-        public async Task<List<ProducerReportedMaterial>> GetProducerReportedMaterials(ApplicationDBContext context, int runId)
+        public async Task<List<ProducerReportedMaterial>> GetProducerReportedMaterials(int runId)
         {
-            return await (from run in context.CalculatorRuns
-                          join pd in context.ProducerDetail on run.Id equals pd.CalculatorRunId
-                          join mat in context.ProducerReportedMaterial on pd.Id equals mat.ProducerDetailId
-                          join material in context.Material on mat.MaterialId equals material.Id
+            return await (from run in dbContext.CalculatorRuns
+                          join pd in dbContext.ProducerDetail on run.Id equals pd.CalculatorRunId
+                          join mat in dbContext.ProducerReportedMaterial on pd.Id equals mat.ProducerDetailId
+                          join material in dbContext.Material on mat.MaterialId equals material.Id
                           where run.Id == runId &&
                                 mat.PackagingType != null &&
                                 (mat.PackagingType == PackagingTypes.Household ||

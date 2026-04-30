@@ -10,7 +10,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
     {
         public static decimal GetEnglandWithBadDebtProvisionForCommsTotal(
             IEnumerable<ProducerDetail> producers,
-            MaterialDetail material,
+            MaterialDto material,
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
@@ -20,7 +20,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
 
         public static decimal GetWalesWithBadDebtProvisionForCommsTotal(
             IEnumerable<ProducerDetail> producers,
-            MaterialDetail material,
+            MaterialDto material,
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
@@ -30,7 +30,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
 
         public static decimal GetScotlandWithBadDebtProvisionForCommsTotal(
             IEnumerable<ProducerDetail> producers,
-            MaterialDetail material,
+            MaterialDto material,
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
@@ -40,7 +40,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
 
         public static decimal GetNorthernIrelandWithBadDebtProvisionForCommsTotal(
             IEnumerable<ProducerDetail> producers,
-            MaterialDetail material,
+            MaterialDto material,
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
@@ -50,7 +50,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
 
         public static decimal GetProducerTotalCostWithoutBadDebtProvisionTotal(
             IEnumerable<ProducerDetail> producers,
-            MaterialDetail material,
+            MaterialDto material,
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
@@ -60,7 +60,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
 
         public static decimal GetBadDebtProvisionForCommsCostTotal(
             IEnumerable<ProducerDetail> producers,
-            MaterialDetail material,
+            MaterialDto material,
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
@@ -70,7 +70,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
 
         public static decimal GetEnglandWithBadDebtProvisionForComms(
             ProducerDetail producer,
-            MaterialDetail material,
+            MaterialDto material,
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
@@ -81,7 +81,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
 
         public static decimal GetWalesWithBadDebtProvisionForComms(
             ProducerDetail producer,
-            MaterialDetail material,
+            MaterialDto material,
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
@@ -92,7 +92,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
 
         public static decimal GetScotlandWithBadDebtProvisionForComms(
             ProducerDetail producer,
-            MaterialDetail material,
+            MaterialDto material,
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
@@ -103,7 +103,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
 
         public static decimal GetNorthernIrelandWithBadDebtProvisionForComms(
             ProducerDetail producer,
-            MaterialDetail material,
+            MaterialDto material,
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
@@ -112,7 +112,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
             return producerTotalCostwithBadDebtProvision * (Convert.ToDecimal(calcResult.CalcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.Select(x => x.NorthernIrelandDisposalTotal).ToList()[4].Trim('%')) / 100);
         }
 
-        public static decimal GetPriceperTonneForComms(MaterialDetail material, CalcResult calcResult)
+        public static decimal GetPriceperTonneForComms(MaterialDto material, CalcResult calcResult)
         {
             var commsCostDataDetail = calcResult.CalcResultCommsCostReportDetail.CalcResultCommsCostCommsCostByMaterial.FirstOrDefault(la => la.Name == material.Name);
 
@@ -128,7 +128,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
 
         public static decimal GetProducerTotalCostwithBadDebtProvision(
             ProducerDetail producer,
-            MaterialDetail material,
+            MaterialDto material,
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
@@ -140,7 +140,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
 
         public static decimal GetTotalReportedTonnage(
             ProducerDetail producer,
-            MaterialDetail material,
+            MaterialDto material,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
         {
@@ -160,7 +160,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
 
         public static decimal GetProducerTotalCostWithoutBadDebtProvision(
             ProducerDetail producer,
-            MaterialDetail material,
+            MaterialDto material,
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
@@ -171,7 +171,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
 
         public static decimal GetBadDebtProvisionForCommsCost(
             ProducerDetail producer,
-            MaterialDetail material,
+            MaterialDto material,
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
@@ -183,7 +183,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
 
         public static decimal GetProducerTotalCostwithBadDebtProvisionTotal(
             IEnumerable<ProducerDetail> producers,
-            MaterialDetail material,
+            MaterialDto material,
             CalcResult calcResult,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
@@ -193,7 +193,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
 
         public static decimal GetTotalReportedTonnageTotal(
             IEnumerable<ProducerDetail> producers,
-            MaterialDetail material,
+            MaterialDto material,
             IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
             IEnumerable<CalcResultPartialObligation> partialObligations)
         {

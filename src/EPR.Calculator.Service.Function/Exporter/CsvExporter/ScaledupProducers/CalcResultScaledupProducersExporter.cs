@@ -1,8 +1,8 @@
 using System.Text;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
-using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers
 {
@@ -58,11 +58,8 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers
 
         private static void AppendScaledupProducerTonnageByMaterial(StringBuilder csvContent, CalcResultScaledupProducer producer)
         {
-            foreach (var producerTonnage in producer.ScaledupProducerTonnageByMaterial)
+            foreach (var (materialCode, tonnage) in producer.ScaledupProducerTonnageByMaterial)
             {
-                var materialCode = producerTonnage.Key;
-                var tonnage = producerTonnage.Value;
-
                 csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ReportedHouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ReportedPublicBinTonnage, DecimalPlaces.Three, DecimalFormats.F3));
 

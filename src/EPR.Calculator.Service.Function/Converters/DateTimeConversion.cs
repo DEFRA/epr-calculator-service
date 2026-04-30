@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using EPR.Calculator.Service.Function.Constants;
 
-namespace EPR.Calculator.Service.Function.Converter
+namespace EPR.Calculator.Service.Function.Converters
 {
     /// <summary>
     /// Converts a DateTime string value to DateFormatISO8601.

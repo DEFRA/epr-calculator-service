@@ -2,14 +2,10 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace EPR.Calculator.Service.Function.Converter
+namespace EPR.Calculator.Service.Function.Converters
 {
-    public class DecimalPrecisionConverter : JsonConverter<decimal>
+    public class DecimalPrecisionConverter(int precision) : JsonConverter<decimal>
     {
-        private readonly int _precision;
-
-        public DecimalPrecisionConverter(int precision) => _precision = precision;
-
         public override decimal Read(
             ref Utf8JsonReader reader,
             Type typeToConvert,
@@ -25,7 +21,7 @@ namespace EPR.Calculator.Service.Function.Converter
             else
             {
                 writer.WriteRawValue(value.ToString(
-                    $"N{_precision}",
+                    $"N{precision}",
                     new NumberFormatInfo
                     {
                         // Don't use a comma in the number, or JSON will interpret it as the end of the line.

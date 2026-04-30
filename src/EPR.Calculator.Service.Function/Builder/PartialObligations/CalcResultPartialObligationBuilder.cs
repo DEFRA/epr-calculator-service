@@ -1,32 +1,28 @@
+using System.Collections.Immutable;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.Summary.Common;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Mappers;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.PartialObligations
 {
-    public class CalcResultPartialObligationBuilder : ICalcResultPartialObligationBuilder
+    public class CalcResultPartialObligationBuilder(
+        ApplicationDBContext dbContext,
+        IMaterialService materialService)
+        : ICalcResultPartialObligationBuilder
     {
-
-        private readonly ApplicationDBContext context;
         private const int MaterialsBreakdownHeaderInitialColumnIndex = 11;
         private const int MaterialsBreakdownHeaderIncrementalColumnIndex = 10;
 
-        public CalcResultPartialObligationBuilder(ApplicationDBContext context)
+        public async Task<CalcResultPartialObligations> ConstructAsync(RunContext runContext, IEnumerable<CalcResultScaledupProducer> scaledupProducers)
         {
-            this.context = context;
-        }
-
-        public async Task<CalcResultPartialObligations> ConstructAsync(CalcResultsRequestDto resultsRequestDto, IEnumerable<CalcResultScaledupProducer> scaledupProducers)
-        {
-            var runId = resultsRequestDto.RunId;
-            var materialsFromDb = await context.Material.ToListAsync();
-            var materials = MaterialMapper.Map(materialsFromDb);
+            var runId = runContext.RunId;
+            var materials = await materialService.GetMaterials();
 
             var partialObligationsForRun = await GetPartialObligations(runId, materials, scaledupProducers);
 
@@ -47,12 +43,12 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
             };
         }
 
-        public async Task<List<CalcResultPartialObligation>> GetPartialObligations(int runId, List<MaterialDetail> materials, IEnumerable<CalcResultScaledupProducer> scaledupProducers)
+        public async Task<List<CalcResultPartialObligation>> GetPartialObligations(int runId, ImmutableArray<MaterialDto> materials, IEnumerable<CalcResultScaledupProducer> scaledupProducers)
         {
-            return await (from run in context.CalculatorRuns.AsNoTracking()
-                                join crodm in context.CalculatorRunOrganisationDataMaster.AsNoTracking() on run.CalculatorRunOrganisationDataMasterId equals crodm.Id
-                                join crodd in context.CalculatorRunOrganisationDataDetails.AsNoTracking() on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
-                                join pd in context.ProducerDetail.Include(x => x.ProducerReportedMaterials) on crodd.OrganisationId equals pd.ProducerId
+            return await (from run in dbContext.CalculatorRuns.AsNoTracking()
+                                join crodm in dbContext.CalculatorRunOrganisationDataMaster.AsNoTracking() on run.CalculatorRunOrganisationDataMasterId equals crodm.Id
+                                join crodd in dbContext.CalculatorRunOrganisationDataDetails.AsNoTracking() on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
+                                join pd in dbContext.ProducerDetail.Include(x => x.ProducerReportedMaterials) on crodd.OrganisationId equals pd.ProducerId
                                 where run.Id == runId && crodd.ObligationStatus == ObligationStates.Obligated && crodd.DaysObligated != null && crodd.SubsidiaryId == pd.SubsidiaryId && pd.CalculatorRunId == runId
                                 let daysInYear = DateTime.IsLeapYear(crodm.RelativeYear.Value) ? 366 : 365
                                 let partialAmount = crodd.DaysObligated != null ? (decimal)crodd.DaysObligated! / daysInYear : 1
@@ -72,7 +68,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
                                 }).ToListAsync();
         }
 
-        public static Dictionary<string, CalcResultPartialObligationTonnage> GetPartialObligationTonnages(ProducerDetail producer, IEnumerable<MaterialDetail> materials, decimal partialAmount, IEnumerable<CalcResultScaledupProducer> scaledupProducers)
+        public static Dictionary<string, CalcResultPartialObligationTonnage> GetPartialObligationTonnages(ProducerDetail producer, ImmutableArray<MaterialDto> materials, decimal partialAmount, IEnumerable<CalcResultScaledupProducer> scaledupProducers)
         {
             var mats = from md in materials
                        join prm in producer.ProducerReportedMaterials.ToList() on md.Id equals prm.MaterialId into prms
@@ -81,7 +77,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
             return mats.ToDictionary(m => m.md.Code, m => GetPartialObligationTonnage(m.md, m.prms.ToList(), partialAmount, producer, scaledupProducers));
         }
 
-        public static CalcResultPartialObligationTonnage GetPartialObligationTonnage(MaterialDetail material, List<ProducerReportedMaterial> reportedForMaterial, decimal partialAmount, ProducerDetail producer, IEnumerable<CalcResultScaledupProducer> scaledupProducers){
+        public static CalcResultPartialObligationTonnage GetPartialObligationTonnage(MaterialDto material, List<ProducerReportedMaterial> reportedForMaterial, decimal partialAmount, ProducerDetail producer, IEnumerable<CalcResultScaledupProducer> scaledupProducers){
             decimal GetReportedTonnage(string packagingType) {
                 return reportedForMaterial.Where(p => p.PackagingType == packagingType).Sum(t => t.PackagingTonnage);
             }
@@ -127,7 +123,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
             return tonnage;
         }
 
-        public static List<CalcResultPartialObligationHeader> GetMaterialsBreakdownHeader(IEnumerable<MaterialDetail> materials)
+        public static List<CalcResultPartialObligationHeader> GetMaterialsBreakdownHeader(ImmutableArray<MaterialDto> materials)
         {
             var materialsBreakdownHeaders = new List<CalcResultPartialObligationHeader>();
             var columnIndex = MaterialsBreakdownHeaderInitialColumnIndex;
@@ -148,7 +144,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
             return materialsBreakdownHeaders;
         }
 
-        public static List<CalcResultPartialObligationHeader> GetColumnHeaders(IEnumerable<MaterialDetail> materials)
+        public static List<CalcResultPartialObligationHeader> GetColumnHeaders(ImmutableArray<MaterialDto> materials)
         {
             var columnHeaders = new List<CalcResultPartialObligationHeader>();
 

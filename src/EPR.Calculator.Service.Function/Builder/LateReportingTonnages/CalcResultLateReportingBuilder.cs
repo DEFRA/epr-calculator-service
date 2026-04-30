@@ -1,11 +1,12 @@
 ﻿using EPR.Calculator.API.Data;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.LateReportingTonnages
 {
-    public class CalcResultLateReportingBuilder : ICalcResultLateReportingBuilder
+    public class CalcResultLateReportingBuilder(ApplicationDBContext dbContext)
+        : ICalcResultLateReportingBuilder
     {
         public const string LateReportingHeader = "Parameters - Late Reporting Tonnages";
         public const string Total = "Total";
@@ -14,21 +15,15 @@ namespace EPR.Calculator.Service.Function.Builder.LateReportingTonnages
         public const string RedTonnageHeading = "Red + Red Medical Late Reporting Tonnage";
         public const string AmberTonnageHeading = "Amber + Amber Medical Late Reporting Tonnage";
         public const string GreenTonnageHeading = "Green + Green Medical Late Reporting Tonnage";
-        private readonly ApplicationDBContext context;
 
-        public CalcResultLateReportingBuilder(ApplicationDBContext context)
+        public async Task<CalcResultLateReportingTonnage> ConstructAsync(RunContext runContext)
         {
-            this.context = context;
-        }
-
-        public async Task<CalcResultLateReportingTonnage> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
-        {
-            var result = await (from run in context.CalculatorRuns
-                                join master in context.DefaultParameterSettings
+            var result = await (from run in dbContext.CalculatorRuns
+                                join master in dbContext.DefaultParameterSettings
                                 on run.DefaultParameterSettingMasterId equals master.Id
-                                join detail in context.DefaultParameterSettingDetail on master.Id equals detail.DefaultParameterSettingMasterId
-                                join template in context.DefaultParameterTemplateMasterList on detail.ParameterUniqueReferenceId equals template.ParameterUniqueReferenceId
-                                where run.Id == resultsRequestDto.RunId && template.ParameterType == TonnageHeading
+                                join detail in dbContext.DefaultParameterSettingDetail on master.Id equals detail.DefaultParameterSettingMasterId
+                                join template in dbContext.DefaultParameterTemplateMasterList on detail.ParameterUniqueReferenceId equals template.ParameterUniqueReferenceId
+                                where run.Id == runContext.RunId && template.ParameterType == TonnageHeading
                                 select new { template.ParameterCategory, detail.ParameterValue}).ToListAsync();
 
             var tonnageDetails = result

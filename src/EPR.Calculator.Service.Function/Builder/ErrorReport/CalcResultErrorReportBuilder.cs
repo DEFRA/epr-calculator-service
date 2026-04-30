@@ -1,42 +1,36 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.ErrorReport
 {
-    public class CalcResultErrorReportBuilder : ICalcResultErrorReportBuilder
+    public class CalcResultErrorReportBuilder(ApplicationDBContext dbContext)
+        : ICalcResultErrorReportBuilder
     {
-        private readonly ApplicationDBContext context;
-
-        public CalcResultErrorReportBuilder(ApplicationDBContext context)
+        public IEnumerable<CalcResultErrorReport> ConstructAsync(RunContext runContext)
         {
-            this.context = context;
-        }
-
-        public IEnumerable<CalcResultErrorReport> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
-        {
-            var runId = resultsRequestDto.RunId;
+            var runId = runContext.RunId;
 
             var baseQuery =
-                from run in context.CalculatorRuns
+                from run in dbContext.CalculatorRuns
                 where run.Id == runId
 
-                join er in context.ErrorReports on run.Id equals er.CalculatorRunId
-                join odm in context.CalculatorRunOrganisationDataMaster
+                join er in dbContext.ErrorReports on run.Id equals er.CalculatorRunId
+                join odm in dbContext.CalculatorRunOrganisationDataMaster
                     on run.CalculatorRunOrganisationDataMasterId equals odm.Id
 
                 // LEFT JOIN to find a subsidiary-specific detail: match ProdId + SubsId
-                join subOdd in context.CalculatorRunOrganisationDataDetails
+                join subOdd in dbContext.CalculatorRunOrganisationDataDetails
                     on new { OrgId = er.ProducerId, MasterId = odm.Id, SubsId = er.SubsidiaryId }
                     equals new { OrgId = subOdd.OrganisationId, MasterId = subOdd.CalculatorRunOrganisationDataMasterId, SubsId = subOdd.SubsidiaryId }
                     into subGroup
                 from subLeft in subGroup.DefaultIfEmpty()
 
                     // LEFT JOIN to find a producer-level detail (SubsidiaryId null) as fallback
-                join prodOdd in context.CalculatorRunOrganisationDataDetails
+                join prodOdd in dbContext.CalculatorRunOrganisationDataDetails
                     on new { OrgId = er.ProducerId, MasterId = odm.Id, SubsId = (string?)null }
                     equals new { OrgId = prodOdd.OrganisationId, MasterId = prodOdd.CalculatorRunOrganisationDataMasterId, SubsId = prodOdd.SubsidiaryId }
                     into prodGroup

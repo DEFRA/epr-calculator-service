@@ -1,6 +1,6 @@
 ﻿using EPR.Calculator.API.Data.DataModels;
 
-namespace EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs
+namespace EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer
 {
     public static class TonnageVsAllProducerUtil
     {

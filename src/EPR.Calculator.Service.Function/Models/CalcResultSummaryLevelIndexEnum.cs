@@ -3,5 +3,5 @@
 public enum CalcResultSummaryLevelIndex
 {
     One = 1,
-    Two = 2,
+    Two = 2
 }

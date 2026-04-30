@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace EPR.Calculator.Service.Function.Converter
+namespace EPR.Calculator.Service.Function.Converters
 {
     /// <summary>
     /// Converts a decimal value to and from a currency string representation for use in JSON serialisation.
