@@ -10,6 +10,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.CommsCost
 {
+    public interface ICalcResultCommsCostBuilder
+    {
+        Task<CalcResultCommsCost> ConstructAsync(
+            CalcResultsRequestDto resultsRequestDto,
+            CalcResultOnePlusFourApportionment apportionment,
+            CalcResultLateReportingTonnage calcResultLateReportingTonnageData
+        );
+    }
+
     [ExcludeFromCodeCoverage]
     public class CalcResultCommsCostBuilder(ApplicationDBContext context, TelemetryClient telemetryClient)
         : ICalcResultCommsCostBuilder
@@ -29,7 +38,8 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
         public async Task<CalcResultCommsCost> ConstructAsync(
             CalcResultsRequestDto resultsRequestDto,
             CalcResultOnePlusFourApportionment apportionment,
-            CalcResult calcResult)
+            CalcResultLateReportingTonnage calcResultLateReportingTonnage
+        )
         {
             telemetryClient.TrackTrace("Begining constructing comms cost...");
             var runId = resultsRequestDto.RunId;
@@ -50,20 +60,18 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             var materialNames = materials.Select(x => x.Name).ToList();
 
             telemetryClient.TrackTrace("Getting material defaults...");
-            var allDefaultResults = await (from run in context.CalculatorRuns
-                                           join defaultMaster in context.DefaultParameterSettings on run.DefaultParameterSettingMasterId equals
-                                               defaultMaster.Id
-                                           join defaultDetail in context.DefaultParameterSettingDetail on defaultMaster.Id equals defaultDetail
-                                               .DefaultParameterSettingMasterId
-                                           join defaultTemplate in context.DefaultParameterTemplateMasterList on defaultDetail
-                                               .ParameterUniqueReferenceId equals defaultTemplate.ParameterUniqueReferenceId
-                                           where run.Id == runId
-                                           select new CalcCommsBuilderResult
-                                           {
-                                               ParameterValue = defaultDetail.ParameterValue,
-                                               ParameterType = defaultTemplate.ParameterType,
-                                               ParameterCategory = defaultTemplate.ParameterCategory,
-                                           }).Distinct().ToListAsync();
+            var allDefaultResults = await (
+                from run in context.CalculatorRuns
+                join defaultMaster in context.DefaultParameterSettings on run.DefaultParameterSettingMasterId equals defaultMaster.Id
+                join defaultDetail in context.DefaultParameterSettingDetail on defaultMaster.Id equals defaultDetail.DefaultParameterSettingMasterId
+                join defaultTemplate in context.DefaultParameterTemplateMasterList on defaultDetail.ParameterUniqueReferenceId equals defaultTemplate.ParameterUniqueReferenceId
+                where run.Id == runId
+                select new CalcCommsBuilderResult
+                {
+                    ParameterValue = defaultDetail.ParameterValue,
+                    ParameterType = defaultTemplate.ParameterType,
+                    ParameterCategory = defaultTemplate.ParameterCategory,
+                }).Distinct().ToListAsync();
             var materialDefaults = allDefaultResults.Where(x =>
                 x.ParameterType == CommunicationCostByMaterial && materialNames.Contains(x.ParameterCategory));
 
@@ -93,14 +101,6 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             };
             list.Add(header);
 
-            telemetryClient.TrackTrace("Filtering producer reported materials...");
-            producerReportedMaterials = producerReportedMaterials.Where(t => calcResult.CalcResultScaledupProducers.ScaledupProducers != null && !calcResult.CalcResultScaledupProducers.ScaledupProducers.
-                Any(i => i.ProducerId == t.ProducerDetail?.ProducerId)).ToList();
-
-            telemetryClient.TrackTrace("Getting scaled up producer reported on...");
-            var scaledUpProducerReportedOn = calcResult.CalcResultScaledupProducers
-                  .ScaledupProducers?.FirstOrDefault(t => t.IsTotalRow);
-
             telemetryClient.TrackTrace($"Generating comms costs for {materialNames.Count} materials...");
             foreach (var materialName in materialNames)
             {
@@ -111,17 +111,13 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                 var producerReportedTon = producerReportedMaterials.Where(x => x.MaterialId == currentMaterial.Id && x.PackagingType != PackagingTypes.PublicBin && x.PackagingType != PackagingTypes.HouseholdDrinksContainers)
                     .Sum(x => x.PackagingTonnage);
 
-                var scaledProducerTonnages = scaledUpProducerReportedOn
-                    ?.ScaledupProducerTonnageByMaterial
-                    .GetValueOrDefault(materialName, new CalcResultScaledupProducerTonnage());
-
-                var lateReportingTonnage = calcResult.CalcResultLateReportingTonnageData.CalcResultLateReportingTonnageDetails.Single(x => x.Name == materialName);
+                var lateReportingTonnage = calcResultLateReportingTonnage.CalcResultLateReportingTonnageDetails.Single(x => x.Name == materialName);
                 var publicBinTonnage = producerReportedMaterials.Where(p => p.MaterialId == currentMaterial.Id && p.PackagingType == PackagingTypes.PublicBin).Sum(p => p.PackagingTonnage);
                 var householdcontainers = producerReportedMaterials.Where(p => p.MaterialId == currentMaterial.Id && p.PackagingType == PackagingTypes.HouseholdDrinksContainers).Sum(p => p.PackagingTonnage);
 
-                commsCost.ProducerReportedHouseholdPackagingWasteTonnageValue = producerReportedTon + (scaledProducerTonnages?.ScaledupReportedHouseholdPackagingWasteTonnage ?? 0);
-                commsCost.ReportedPublicBinTonnageValue = publicBinTonnage + (scaledProducerTonnages?.ScaledupReportedPublicBinTonnage ?? 0);
-                commsCost.HouseholdDrinksContainersValue = householdcontainers + (scaledProducerTonnages?.ScaledupHouseholdDrinksContainersTonnageGlass ?? 0);
+                commsCost.ProducerReportedHouseholdPackagingWasteTonnageValue = producerReportedTon;
+                commsCost.ReportedPublicBinTonnageValue = publicBinTonnage;
+                commsCost.HouseholdDrinksContainersValue = householdcontainers;
 
                 commsCost.LateReportingTonnageValue = lateReportingTonnage.TotalLateReportingTonnage;
                 commsCost.ProducerReportedTotalTonnage =
@@ -175,24 +171,28 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             return result;
         }
 
-        public async Task<List<ProducerReportedMaterial>> GetProducerReportedMaterials(ApplicationDBContext context, int runId)
+        public async Task<List<ProducerReportedMaterialProjected>> GetProducerReportedMaterials(ApplicationDBContext context, int runId)
         {
-            return await (from run in context.CalculatorRuns
-                          join pd in context.ProducerDetail on run.Id equals pd.CalculatorRunId
-                          join mat in context.ProducerReportedMaterial on pd.Id equals mat.ProducerDetailId
-                          join material in context.Material on mat.MaterialId equals material.Id
-                          where run.Id == runId &&
-                                mat.PackagingType != null &&
-                                (mat.PackagingType == PackagingTypes.Household ||
-                                 mat.PackagingType == PackagingTypes.PublicBin ||
-                                 (mat.PackagingType == PackagingTypes.HouseholdDrinksContainers &&
-                                  material.Code == MaterialCodes.Glass))
-                          select mat
-                        ).Distinct().ToListAsync();
+            return await (
+                from run in context.CalculatorRuns
+                join pd in context.ProducerDetail on run.Id equals pd.CalculatorRunId
+                join mat in context.ProducerReportedMaterialProjected on pd.Id equals mat.ProducerDetailId
+                join material in context.Material on mat.MaterialId equals material.Id
+                where run.Id == runId &&
+                      // TODO need the following filter?
+                      mat.PackagingType != null &&
+                      (mat.PackagingType == PackagingTypes.Household ||
+                       mat.PackagingType == PackagingTypes.PublicBin ||
+                       (mat.PackagingType == PackagingTypes.HouseholdDrinksContainers &&
+                        material.Code == MaterialCodes.Glass))
+                select mat
+            ).Distinct().ToListAsync();
         }
 
-        private static CalcResultCommsCostCommsCostByMaterial GetTotalRow(IEnumerable<CalcResultCommsCostCommsCostByMaterial> list,
-            CultureInfo culture)
+        private static CalcResultCommsCostCommsCostByMaterial GetTotalRow(
+            IEnumerable<CalcResultCommsCostCommsCostByMaterial> list,
+            CultureInfo culture
+        )
         {
             var totalRow = new CalcResultCommsCostCommsCostByMaterial
             {
@@ -227,7 +227,8 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             IEnumerable<CalcCommsBuilderResult> materialDefaults,
             string materialName,
             CalcResultOnePlusFourApportionmentDetail apportionmentDetail,
-            CultureInfo culture)
+            CultureInfo culture
+        )
         {
             var materialDefault = materialDefaults.Single(m => m.ParameterCategory == materialName);
             var commsCost = new CalcResultCommsCostCommsCostByMaterial();
@@ -252,7 +253,8 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
         private static List<CalcResultCommsCostOnePlusFourApportionment> GetCommsCostByCountryList(
             CalcResultCommsCostOnePlusFourApportionment ukCost,
             IEnumerable<CalcCommsBuilderResult> allDefaultResults,
-            CultureInfo culture)
+            CultureInfo culture
+        )
         {
             var commsCostByCountryList = new List<CalcResultCommsCostOnePlusFourApportionment>();
             commsCostByCountryList.Add(new CalcResultCommsCostCommsCostByMaterial

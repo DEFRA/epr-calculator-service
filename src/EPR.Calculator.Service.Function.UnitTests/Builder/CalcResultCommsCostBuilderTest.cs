@@ -46,7 +46,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public async Task ConstructTest()
         {
             var calcResult = TestDataHelper.GetCalcResult();
-            calcResult.CalcResultScaledupProducers = GetScaledUpProducers();
 
             CreateMaterials();
             CreateDefaultTemplate();
@@ -74,7 +73,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     },
                 },
             };
-            var result = await builder.ConstructAsync(resultsRequestDto, apportionment, calcResult);
+            var result = await builder.ConstructAsync(resultsRequestDto, apportionment, calcResult.CalcResultLateReportingTonnageData);
 
             Assert.IsNotNull(result);
 
@@ -137,16 +136,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual("£2.00", aluminiumCost.Scotland);
             Assert.AreEqual("£2.00", aluminiumCost.NorthernIreland);
             Assert.AreEqual("£10.00", aluminiumCost.Total);
-            Assert.AreEqual(
-                "910.000",
-                aluminiumCost.ProducerReportedHouseholdPackagingWasteTonnage);
+            Assert.AreEqual("1000.000", aluminiumCost.ProducerReportedHouseholdPackagingWasteTonnage);
             Assert.AreEqual("8000.000", aluminiumCost.LateReportingTonnage);
-            Assert.AreEqual(
-                "8920.000",
-                aluminiumCost.ProducerReportedHouseholdPlusLateReportingTonnage);
-            Assert.AreEqual(
-                "0.0011",
-                aluminiumCost.CommsCostByMaterialPricePerTonne);
+            Assert.AreEqual("9000.000", aluminiumCost.ProducerReportedHouseholdPlusLateReportingTonnage);
+            Assert.AreEqual("0.0011", aluminiumCost.CommsCostByMaterialPricePerTonne);
 
             var fibreCompositeCost = materialCosts[2];
             Assert.AreEqual("Fibre composite", fibreCompositeCost.Name);
@@ -155,16 +148,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual("£2.00", fibreCompositeCost.Scotland);
             Assert.AreEqual("£2.00", fibreCompositeCost.NorthernIreland);
             Assert.AreEqual("£10.00", fibreCompositeCost.Total);
-            Assert.AreEqual(
-                "1800.000",
-                fibreCompositeCost.ProducerReportedHouseholdPackagingWasteTonnage);
+            Assert.AreEqual("2000.000", fibreCompositeCost.ProducerReportedHouseholdPackagingWasteTonnage);
             Assert.AreEqual("10.000", fibreCompositeCost.LateReportingTonnage);
-            Assert.AreEqual(
-                "1810.000",
-                fibreCompositeCost.ProducerReportedHouseholdPlusLateReportingTonnage);
-            Assert.AreEqual(
-                "0.0055",
-                fibreCompositeCost.CommsCostByMaterialPricePerTonne);
+            Assert.AreEqual("2210.000", fibreCompositeCost.ProducerReportedHouseholdPlusLateReportingTonnage);
+            Assert.AreEqual("0.0045", fibreCompositeCost.CommsCostByMaterialPricePerTonne);
 
             var glassCost = materialCosts[3];
             Assert.AreEqual("Glass", glassCost.Name);
@@ -173,17 +160,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual("£2.00", glassCost.Scotland);
             Assert.AreEqual("£2.00", glassCost.NorthernIreland);
             Assert.AreEqual("£10.00", glassCost.Total);
-            Assert.AreEqual(
-                "2700.000",
-                glassCost.ProducerReportedHouseholdPackagingWasteTonnage);
+            Assert.AreEqual("3000.000", glassCost.ProducerReportedHouseholdPackagingWasteTonnage);
             Assert.AreEqual("10.000", glassCost.LateReportingTonnage);
-            Assert.AreEqual(
-                "2810.000",
-                glassCost.ProducerReportedHouseholdPlusLateReportingTonnage);
-            Assert.AreEqual(
-                "0.0036",
-                glassCost.CommsCostByMaterialPricePerTonne);
-            Assert.AreEqual("100.0000", glassCost.HouseholdDrinksContainers);
+            Assert.AreEqual("3210.000", glassCost.ProducerReportedHouseholdPlusLateReportingTonnage);
+            Assert.AreEqual("0.0031", glassCost.CommsCostByMaterialPricePerTonne);
+            Assert.AreEqual("200.0000", glassCost.HouseholdDrinksContainers);
 
             var totalMaterialCost = materialCosts.Last();
             Assert.AreEqual("Total", totalMaterialCost.Name);
@@ -192,13 +173,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual("£16.00", totalMaterialCost.Scotland);
             Assert.AreEqual("£16.00", totalMaterialCost.NorthernIreland);
             Assert.AreEqual("£80.00", totalMaterialCost.Total);
-            Assert.AreEqual(
-                "32410.000",
-                totalMaterialCost.ProducerReportedHouseholdPackagingWasteTonnage);
+            Assert.AreEqual("36000.000", totalMaterialCost.ProducerReportedHouseholdPackagingWasteTonnage);
             Assert.AreEqual("10020.000", totalMaterialCost.LateReportingTonnage);
-            Assert.AreEqual(
-                "42540.000",
-                totalMaterialCost.ProducerReportedHouseholdPlusLateReportingTonnage);
+            Assert.AreEqual("46420.000", totalMaterialCost.ProducerReportedHouseholdPlusLateReportingTonnage);
             Assert.IsTrue(string.IsNullOrEmpty(totalMaterialCost.CommsCostByMaterialPricePerTonne));
         }
 
@@ -232,23 +209,23 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             context.ProducerDetail.Add(producerDetail);
 
             var materials = new List<Material>
-        {
-            new Material { Id = 1, Name = "Plastic", Code = MaterialCodes.Plastic },
-            new Material { Id = 2, Name = "Steel", Code = MaterialCodes.Steel },
-            new Material { Id = 3, Name = "Glass", Code = MaterialCodes.Glass },
-        };
+            {
+                new Material { Id = 1, Name = "Plastic", Code = MaterialCodes.Plastic },
+                new Material { Id = 2, Name = "Steel", Code = MaterialCodes.Steel },
+                new Material { Id = 3, Name = "Glass", Code = MaterialCodes.Glass },
+            };
             context.Material.AddRange(materials);
 
-            var producerReportedMaterials = new List<ProducerReportedMaterial>
-        {
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 1, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 1, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 2, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 2, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 3, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 3, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
-        };
-            context.ProducerReportedMaterial.AddRange(producerReportedMaterials);
+            var producerReportedMaterials = new List<ProducerReportedMaterialProjected>
+            {
+                new ProducerReportedMaterialProjected { ProducerDetailId = 1, MaterialId = 1, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
+                new ProducerReportedMaterialProjected { ProducerDetailId = 1, MaterialId = 1, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
+                new ProducerReportedMaterialProjected { ProducerDetailId = 1, MaterialId = 2, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
+                new ProducerReportedMaterialProjected { ProducerDetailId = 1, MaterialId = 2, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
+                new ProducerReportedMaterialProjected { ProducerDetailId = 1, MaterialId = 3, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
+                new ProducerReportedMaterialProjected { ProducerDetailId = 1, MaterialId = 3, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
+            };
+            context.ProducerReportedMaterialProjected.AddRange(producerReportedMaterials);
 
             context.SaveChanges();
         }
@@ -288,7 +265,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 {
                     for (int materialId = 1; materialId < 9; materialId++)
                     {
-                        this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                        this.dbContext.ProducerReportedMaterialProjected.Add(new ProducerReportedMaterialProjected
                         {
                             MaterialId = materialId,
                             ProducerDetailId = producerDetailId,
@@ -299,31 +276,31 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     }
                 }
 
-                this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial()
-                {
-                    MaterialId = 3,
-                    ProducerDetailId = 1,
-                    PackagingType = "HDC",
-                    SubmissionPeriod = subPeriod,
-                    PackagingTonnage = 50,
-                });
-
-                this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial()
-                {
-                    MaterialId = 3,
-                    ProducerDetailId = 2,
-                    PackagingType = "HDC",
-                    SubmissionPeriod = subPeriod,
-                    PackagingTonnage = 50,
-                });
-
-                this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial()
-                {
-                    MaterialId = 2,
-                    ProducerDetailId = 1,
-                    PackagingType = "PB",
-                    SubmissionPeriod = subPeriod,
-                    PackagingTonnage = 100,
+                this.dbContext.ProducerReportedMaterialProjected.AddRange(new List<ProducerReportedMaterialProjected> {
+                    new ProducerReportedMaterialProjected()
+                        {
+                            MaterialId = 3,
+                            ProducerDetailId = 1,
+                            PackagingType = "HDC",
+                            SubmissionPeriod = subPeriod,
+                            PackagingTonnage = 50,
+                        },
+                        new ProducerReportedMaterialProjected()
+                        {
+                            MaterialId = 3,
+                            ProducerDetailId = 2,
+                            PackagingType = "HDC",
+                            SubmissionPeriod = subPeriod,
+                            PackagingTonnage = 50,
+                        },
+                        new ProducerReportedMaterialProjected()
+                        {
+                            MaterialId = 2,
+                            ProducerDetailId = 1,
+                            PackagingType = "PB",
+                            SubmissionPeriod = subPeriod,
+                            PackagingTonnage = 100,
+                        }
                 });
             }
 
@@ -355,7 +332,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 {
                     ParameterUniqueReferenceId = Guid.NewGuid().ToString(),
                     ParameterCategory = material,
-                    ParameterType = parameterTypes[0],
+                    ParameterType = parameterTypes[0]
                 });
                 var rag = new[] { "R", "A", "G" };
                 foreach (var v in rag)
@@ -364,7 +341,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     {
                         ParameterUniqueReferenceId = Guid.NewGuid().ToString(),
                         ParameterCategory = $"{material}-{v}",
-                        ParameterType = parameterTypes[1],
+                        ParameterType = parameterTypes[1]
                     });
                 }
             }
@@ -375,7 +352,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 "Northern Ireland",
                 "Scotland",
                 "United Kingdom",
-                "Wales",
+                "Wales"
             };
 
             foreach (var country in countries)
@@ -384,7 +361,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 {
                     ParameterUniqueReferenceId = Guid.NewGuid().ToString(),
                     ParameterCategory = country,
-                    ParameterType = "Communication costs by country",
+                    ParameterType = "Communication costs by country"
                 });
             }
 
@@ -400,7 +377,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 RelativeYear = new RelativeYear(2024),
                 CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
                 CreatedBy = "Test User",
-                DefaultParameterSettingMasterId = 1,
+                DefaultParameterSettingMasterId = 1
             };
             dbContext.CalculatorRuns.Add(run);
             dbContext.SaveChanges();
@@ -425,7 +402,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     ParameterUniqueReferenceId = templateMaster.ParameterUniqueReferenceId,
                     ParameterValue = GetValue(templateMaster),
                     DefaultParameterSettingMasterId = 1,
-                    DefaultParameterSettingMaster = defaultMaster,
+                    DefaultParameterSettingMaster = defaultMaster
                 };
                 dbContext.DefaultParameterSettingDetail.Add(defaultDetail);
             }
@@ -453,58 +430,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             return 10;
         }
 
-        private static CalcResultScaledupProducers GetScaledUpProducers()
-        {
-           return new CalcResultScaledupProducers
-           {
-                ScaledupProducers = new List<CalcResultScaledupProducer>
-                {
-                     new CalcResultScaledupProducer
-                     {
-                        ProducerId = 1,
-                        IsTotalRow = true,
-                        ScaledupProducerTonnageByMaterial = new()
-                        {
-                         ["Aluminium"] = new CalcResultScaledupProducerTonnage
-                        {
-                            ReportedHouseholdPackagingWasteTonnage = 10,
-                            ReportedPublicBinTonnage = 10,
-                            TotalReportedTonnage = 10,
-                            ReportedSelfManagedConsumerWasteTonnage = 10,
-                            NetReportedTonnage = 10,
-                            ScaledupReportedHouseholdPackagingWasteTonnage = 10,
-                            ScaledupReportedPublicBinTonnage = 10,
-                            ScaledupTotalReportedTonnage = 10,
-                            ScaledupReportedSelfManagedConsumerWasteTonnage = 10,
-                            ScaledupNetReportedTonnage = 10,
-                        },
-                        },
-                     },
-                     new CalcResultScaledupProducer
-                     {
-                        ProducerId = 1,
-                        IsTotalRow = true,
-                        ScaledupProducerTonnageByMaterial = new()
-                        {
-                         ["GL"] = new CalcResultScaledupProducerTonnage
-                        {
-                            ReportedHouseholdPackagingWasteTonnage = 10,
-                            ReportedPublicBinTonnage = 10,
-                            TotalReportedTonnage = 10,
-                            ReportedSelfManagedConsumerWasteTonnage = 10,
-                            NetReportedTonnage = 10,
-                            ScaledupReportedHouseholdPackagingWasteTonnage = 10,
-                            ScaledupReportedPublicBinTonnage = 10,
-                            ScaledupTotalReportedTonnage = 10,
-                            ScaledupReportedSelfManagedConsumerWasteTonnage = 10,
-                            ScaledupNetReportedTonnage = 10,
-                        },
-                        },
-                     },
-                 },
-            };
-        }
-
         private void CreateMaterials()
         {
             var materialDictionary = new Dictionary<string, string>();
@@ -523,7 +448,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 {
                     Name = materialKv.Value,
                     Code = materialKv.Key,
-                    Description = "Some",
+                    Description = "Some"
                 });
             }
 
