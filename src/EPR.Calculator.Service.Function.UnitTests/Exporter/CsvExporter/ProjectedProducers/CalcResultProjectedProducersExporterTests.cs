@@ -1,25 +1,23 @@
 
+using System.Text;
+using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers;
+using EPR.Calculator.Service.Function.Models;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.ProjectedProducers
 {
-    using System.Text;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers;
-    using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
-
-
     [TestClass]
     public class CalcResultProjectedProducersExporterTests
     {
         private CalcResultProjectedProducersExporter exporter = new CalcResultProjectedProducersExporter();
 
-        private readonly List<MaterialDetail> materials = new List<MaterialDetail>()
-        {
-            new MaterialDetail { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
-            new MaterialDetail { Id = 2, Code = "GL", Name = "Glass", Description = "Glass" },
-            new MaterialDetail { Id = 3, Code = "OT", Name = "Other materials", Description = "Other materials" }
-        };
+        private readonly ImmutableArray<MaterialDto> materials =
+        [
+            new MaterialDto { Id = 1, Code = "AL", Name = "Aluminium" },
+            new MaterialDto { Id = 2, Code = "GL", Name = "Glass" },
+            new MaterialDto { Id = 3, Code = "OT", Name = "Other materials" }
+        ];
 
         [TestMethod]
         public void Export_ShouldIncludeProjectedProducers_WhenNotNull()

@@ -2,108 +2,24 @@
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown;
 using EPR.Calculator.Service.Function.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBreakdown
 {
-    /// <summary>
-    /// Defines the <see cref="TotalBillBreakdownProducerTests" />
-    /// </summary>
     [TestClass]
     public class TotalBillBreakdownProducerTests
     {
-        /// <summary>
-        /// Defines the _dbContext
-        /// </summary>
-        private readonly ApplicationDBContext _dbContext;
+        private ApplicationDBContext _dbContext = null!;
+        private CalcResult _calcResult = null!;
+        private int columnIndex = 289;
 
-        /// <summary>
-        /// Defines the _materials
-        /// </summary>
-        private readonly IEnumerable<MaterialDetail> _materials;
-
-        /// <summary>
-        /// Defines the _calcResult
-        /// </summary>
-        private readonly CalcResult _calcResult;
-
-        private readonly int columnIndex = 289;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TotalBillBreakdownProducerTests"/> class.
-        /// </summary>
-        public TotalBillBreakdownProducerTests()
+        [TestInitialize]
+        public void Init()
         {
-            var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
-                .UseInMemoryDatabase(databaseName: "PayCal")
-                .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-                .Options;
-
-            _dbContext = new ApplicationDBContext(dbContextOptions);
-            _dbContext.Database.EnsureCreated();
+            _dbContext = TestFixtures.New().Create<ApplicationDBContext>();
 
             CreateMaterials();
             CreateProducerDetail();
-
-            _materials = [
-                new MaterialDetail
-                {
-                    Id = 1,
-                    Code = "AL",
-                    Name = "Aluminium",
-                    Description = "Aluminium",
-                },
-                new MaterialDetail
-                {
-                    Id = 2,
-                    Code = "FC",
-                    Name = "Fibre composite",
-                    Description = "Fibre composite",
-                },
-                new MaterialDetail
-                {
-                    Id = 3,
-                    Code = "GL",
-                    Name = "Glass",
-                    Description = "Glass",
-                },
-                new MaterialDetail
-                {
-                    Id = 4,
-                    Code = "PC",
-                    Name = "Paper or card",
-                    Description = "Paper or card",
-                },
-                new MaterialDetail
-                {
-                    Id = 5,
-                    Code = "PL",
-                    Name = "Plastic",
-                    Description = "Plastic",
-                },
-                new MaterialDetail
-                {
-                    Id = 6,
-                    Code = "ST",
-                    Name = "Steel",
-                    Description = "Steel",
-                },
-                new MaterialDetail
-                {
-                    Id = 7,
-                    Code = "WD",
-                    Name = "Wood",
-                    Description = "Wood",
-                },
-                new MaterialDetail
-                {
-                    Id = 8,
-                    Code = "OT",
-                    Name = "Other materials",
-                    Description = "Other materials",
-                }
-            ];
 
             _calcResult = TestDataHelper.GetCalcResult();
         }
@@ -286,7 +202,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
                 for (int materialId = 1; materialId < 9; materialId++)
                 {
                     foreach (var subPeriod in new[] { "2025-H1", "2025-H2"}) {
-                        _dbContext?.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                        _dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
                         {
                             MaterialId = materialId,
                             ProducerDetailId = producerDetailId,
@@ -294,7 +210,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
                             SubmissionPeriod = subPeriod,
                             PackagingTonnage = materialId * 50,
                         });
-                        _dbContext?.ProducerReportedMaterial.Add(new ProducerReportedMaterial
+                        _dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
                         {
                             MaterialId = materialId,
                             ProducerDetailId = producerDetailId,

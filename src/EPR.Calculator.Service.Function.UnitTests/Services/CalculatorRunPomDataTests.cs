@@ -1,8 +1,9 @@
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Services;
-using Microsoft.Data.Sqlite;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
@@ -10,35 +11,23 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     [TestClass]
     public class CalculatorRunPomDataTests : IDisposable
     {
-        private readonly SqliteConnection _connection;
         private readonly ApplicationDBContext context;
 
         public CalculatorRunPomDataTests()
         {
-            _connection = new SqliteConnection("Data Source=:memory:");
-            _connection.Open();
-
-            var options = new DbContextOptionsBuilder<ApplicationDBContext>()
-                .UseSqlite(_connection)
-                .Options;
-
-            context = new ApplicationDBContext(options);
-            context.Database.EnsureCreated();
+            context = TestFixtures.New(o => o.UseSqlLite()).Create<ApplicationDBContext>();
         }
 
         public void Dispose()
         {
+            context.Database.CloseConnection();
             context.Dispose();
-            _connection.Close();
         }
 
-        private async Task<(RelativeYear, CalculatorRunClassification, PomData)> SeedData()
+        private async Task<(RelativeYear, PomData)> SeedData()
         {
             var calculatorRunRelativeYear = new CalculatorRunRelativeYear { Value  = 2024 };
             context.CalculatorRunRelativeYears.Add(calculatorRunRelativeYear);
-
-            var classification = new CalculatorRunClassification { Status = "Test Classification" };
-            context.CalculatorRunClassifications.Add(classification);
 
             var pomData = new PomData
             {
@@ -60,7 +49,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 VALUES ({pomData.OrganisationId}, {pomData.PackagingActivity}, {pomData.PackagingType}, {pomData.PackagingClass}, {pomData.PackagingMaterial}, {pomData.PackagingMaterialWeight}, {pomData.LoadTimeStamp}, {pomData.SubmissionPeriod}, {pomData.SubmissionPeriodDesc}, {pomData.SubsidiaryId})");
 
             await context.SaveChangesAsync();
-            return (new RelativeYear(calculatorRunRelativeYear.Value), classification, pomData);
+            return (new RelativeYear(calculatorRunRelativeYear.Value), pomData);
 
         }
 
@@ -72,10 +61,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             string createdBy = "TestUser";
             var cancellationToken = CancellationToken.None;
             var service = new CalculatorRunPomData(context);
-            var (relativeYear, classification, pomData) = await SeedData();
+            var (relativeYear, pomData) = await SeedData();
 
             //Run 1
-            var run = new CalculatorRun { Id = runId, RelativeYear = relativeYear, Name = "CalculatorRunTest1", CalculatorRunClassificationId = classification.Id };
+            var run = new CalculatorRun { Id = runId, RelativeYear = relativeYear, Name = "CalculatorRunTest1", Classification = RunClassification.None };
             context.CalculatorRuns.Add(run);
             await context.SaveChangesAsync();
 
@@ -99,7 +88,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.AreEqual(pomMasterRun1.Id, calculatorRun1!.CalculatorRunPomDataMasterId);
 
             //Run 2
-            var run2 = new CalculatorRun { Id = runId2, RelativeYear = relativeYear, Name = "CalculatorRunTest2", CalculatorRunClassificationId = classification.Id };
+            var run2 = new CalculatorRun { Id = runId2, RelativeYear = relativeYear, Name = "CalculatorRunTest2", Classification = RunClassification.None };
             context.CalculatorRuns.Add(run2);
             await context.SaveChangesAsync();
 

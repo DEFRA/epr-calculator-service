@@ -1,30 +1,19 @@
 ﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 {
-    using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.API.Data.Models;
-    using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
     using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Mappers;
-    using EPR.Calculator.Service.Function.Misc;
-
     using EPR.Calculator.Service.Function.Models;
-    using EPR.Calculator.Service.Function.Services;
-
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Diagnostics;
-    using static EPR.Calculator.Service.Function.UnitTests.Builder.CalcRunLaDisposalCostBuilderTests;
 
     [TestClass]
     public class H1ProjectedProducersBuilderUtilsTest
     {
-        private List<MaterialDetail> materials = new List<MaterialDetail>()
-        {
-            new MaterialDetail { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
-            new MaterialDetail { Id = 2, Code = "GL", Name = "Glass", Description = "Glass" },
-            new MaterialDetail { Id = 3, Code = "OT", Name = "Other materials", Description = "Other materials" }
-        };
+        private ImmutableArray<MaterialDto> materials =
+        [
+            new MaterialDto { Id = 1, Code = "AL", Name = "Aluminium" },
+            new MaterialDto { Id = 2, Code = "GL", Name = "Glass" },
+            new MaterialDto { Id = 3, Code = "OT", Name = "Other materials" }
+        ];
 
         private RAMTonnage EmptyRAMTonnage() { return new RAMTonnage { Tonnage = 0, RedTonnage = 0, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 }; }
 

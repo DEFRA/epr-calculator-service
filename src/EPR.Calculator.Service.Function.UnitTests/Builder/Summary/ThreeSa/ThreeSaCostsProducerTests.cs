@@ -4,8 +4,7 @@ using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.Summary.ThreeSa;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
 {
@@ -13,82 +12,29 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
     public class ThreeSaCostsProducerTests
     {
         private ApplicationDBContext? _dbContext;
-        private IEnumerable<MaterialDetail>? _materials;
         private CalcResult? _calcResult;
-        private Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial>? _materialCostSummary;
-        private Dictionary<MaterialDetail, CalcResultSummaryProducerCommsFeesCostByMaterial>? _commsCostSummary;
+        private ImmutableArray<MaterialDto> _materials;
+        private Dictionary<MaterialDto, CalcResultSummaryProducerDisposalFeesByMaterial>? _materialCostSummary;
+        private Dictionary<MaterialDto, CalcResultSummaryProducerCommsFeesCostByMaterial>? _commsCostSummary;
 
         [TestInitialize]
         public void TestInitialize()
         {
-            var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
-                .UseInMemoryDatabase(databaseName: "PayCal")
-                .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-                .Options;
-
-            _dbContext = new ApplicationDBContext(dbContextOptions);
-            _dbContext.Database.EnsureCreated();
+            _dbContext = TestFixtures.New().Create<ApplicationDBContext>();
 
             CreateMaterials();
             CreateProducerDetail();
 
-            _materials = [
-                new MaterialDetail
-                {
-                    Id = 1,
-                    Code = "AL",
-                    Name = "Aluminium",
-                    Description = "Aluminium"
-                },
-                new MaterialDetail
-                {
-                    Id = 2,
-                    Code = "FC",
-                    Name = "Fibre composite",
-                    Description = "Fibre composite"
-                },
-                new MaterialDetail
-                {
-                    Id = 3,
-                    Code = "GL",
-                    Name = "Glass",
-                    Description = "Glass"
-                },
-                new MaterialDetail
-                {
-                    Id = 4,
-                    Code = "PC",
-                    Name = "Paper or card",
-                    Description = "Paper or card"
-                },
-                new MaterialDetail
-                {
-                    Id = 5,
-                    Code = "PL",
-                    Name = "Plastic",
-                    Description = "Plastic"
-                },
-                new MaterialDetail
-                {
-                    Id = 6,
-                    Code = "ST",
-                    Name = "Steel",
-                    Description = "Steel"
-                },
-                new MaterialDetail
-                {
-                    Id = 7,
-                    Code = "WD",
-                    Name = "Wood",
-                    Description = "Wood"
-                },
-                new MaterialDetail
-                {
-                    Id = 8,
-                    Code = "OT",
-                    Name = "Other materials",
-                    Description = "Other materials"
-                }
+            _materials =
+            [
+                new MaterialDto { Id = 1, Code = "AL", Name = "Aluminium" },
+                new MaterialDto { Id = 2, Code = "FC", Name = "Fibre composite" },
+                new MaterialDto { Id = 3, Code = "GL", Name = "Glass" },
+                new MaterialDto { Id = 4, Code = "PC", Name = "Paper or card" },
+                new MaterialDto { Id = 5, Code = "PL", Name = "Plastic" },
+                new MaterialDto { Id = 6, Code = "ST", Name = "Steel" },
+                new MaterialDto { Id = 7, Code = "WD", Name = "Wood" },
+                new MaterialDto { Id = 8, Code = "OT", Name = "Other materials" }
             ];
 
             _calcResult = new CalcResult
@@ -286,10 +232,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                     ],
                     Name = "some test",
                 },
-                CalcResultParameterCommunicationCost = new CalcResultParameterCommunicationCost
-                {
-                    Name = "some test",
-                },
                 CalcResultSummary = new CalcResultSummary
                 {
                     ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
@@ -338,8 +280,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                 CalcResultModulation = null,
             };
 
-            _materialCostSummary = new Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial>();
-            _commsCostSummary = new Dictionary<MaterialDetail, CalcResultSummaryProducerCommsFeesCostByMaterial>();
+            _materialCostSummary = new Dictionary<MaterialDto, CalcResultSummaryProducerDisposalFeesByMaterial>();
+            _commsCostSummary = new Dictionary<MaterialDto, CalcResultSummaryProducerCommsFeesCostByMaterial>();
 
             foreach (var material in _materials)
             {

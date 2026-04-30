@@ -4,6 +4,7 @@ using EPR.Calculator.Service.Function.Builder.Summary.Common;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
 {
@@ -11,8 +12,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
     public class CalcResultSummaryUtilTests
     {
         private readonly CalcResult calcResult;
-
-        private Fixture Fixture { get; init; } = new Fixture();
 
         public CalcResultSummaryUtilTests()
         {
@@ -25,7 +24,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
                 CalcResultLaDisposalCostData = TestDataHelper.GetCalcResultLaDisposalCostData(),
                 CalcResultLapcapData = TestDataHelper.GetCalcResultLapcapData(),
                 CalcResultOnePlusFourApportionment = TestDataHelper.GetCalcResultOnePlusFourApportionment(),
-                CalcResultParameterCommunicationCost = GetCalcResultParameterCommunicationCost(),
                 CalcResultSummary = TestDataHelper.GetCalcResultSummary(),
                 CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
                 CalcResultLateReportingTonnageData = this.GetCalcResultLateReportingTonnage(),
@@ -53,7 +51,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -69,7 +67,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "PL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "PL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -85,7 +83,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "GL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -101,7 +99,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -117,7 +115,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -133,7 +131,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "PL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "PL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -149,7 +147,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -165,7 +163,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "GL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -181,7 +179,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -198,7 +196,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             producer.SubsidiaryId = string.Empty;
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -214,7 +212,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
             var partialObligations = TestDataHelper.GetPartialObligations().PartialObligations;
 
@@ -230,7 +228,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = TestDataHelper.GetPartialObligations().PartialObligations;
 
@@ -247,7 +245,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             producer.SubsidiaryId = string.Empty;
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -263,7 +261,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = TestDataHelper.GetPartialObligations().PartialObligations;
 
@@ -280,7 +278,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             producer.SubsidiaryId = string.Empty;
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -296,7 +294,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = TestDataHelper.GetPartialObligations().PartialObligations;
 
@@ -313,7 +311,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             producer.SubsidiaryId = string.Empty;
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "GL");
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -329,7 +327,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "GL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = TestDataHelper.GetPartialObligations().PartialObligations;
 
@@ -346,7 +344,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             producer.SubsidiaryId = string.Empty;
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "GL");
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -363,7 +361,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             producer.SubsidiaryId = string.Empty;
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "GL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = TestDataHelper.GetPartialObligations().PartialObligations;
 
@@ -380,7 +378,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "GL");
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -396,7 +394,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -412,7 +410,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -428,7 +426,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "GL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -444,7 +442,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producer = TestDataHelper.GetProducers().Where(p => p.Id == 1).Take(1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "GL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -460,7 +458,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producer = TestDataHelper.GetProducers().Where(p => p.Id == 1).Take(1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -478,7 +476,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producerDisposalFees = TestDataHelper.GetProducerDisposalFees(showModulations: false);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
 
             // Act
             var result = CalcResultSummaryUtil.GetNetReportedTonnageOverallTotal(producerDisposalFees, material, showModulations: false);
@@ -492,7 +490,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producerDisposalFees = TestDataHelper.GetProducerDisposalFees(showModulations: true);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
 
             // Act
             var result = CalcResultSummaryUtil.GetNetReportedTonnageOverallTotal(producerDisposalFees, material, showModulations: true);
@@ -534,7 +532,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
 
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
@@ -591,7 +589,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetActionedSelfManagedConsumerWasteTonnageOverallTotal()
         {
             var producerDisposalFees = TestDataHelper.GetProducerDisposalFees();
-            var materials            = TestDataHelper.GetMaterials();
+            var materials            = TestDataHelper.Materials;
             Assert.AreEqual(90 , CalcResultSummaryUtil.GetActionedSelfManagedConsumerWasteTonnageOverallTotal(producerDisposalFees, materials.First(m => m.Code == "AL")));
             Assert.AreEqual(140, CalcResultSummaryUtil.GetActionedSelfManagedConsumerWasteTonnageOverallTotal(producerDisposalFees, materials.First(m => m.Code == "FC")));
             Assert.AreEqual(150, CalcResultSummaryUtil.GetActionedSelfManagedConsumerWasteTonnageOverallTotal(producerDisposalFees, materials.First(m => m.Code == "GL")));
@@ -602,7 +600,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetPricePerTonne_NonMatchingMaterial()
         {
             // Arrange
-            var material = Fixture.Create<MaterialDetail>();
+            var material = TestFixtures.Legacy.Create<MaterialDto>();
 
             // Act
             var result = CalcResultSummaryUtil.GetPricePerTonne(material, calcResult);
@@ -617,7 +615,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             var producerAndSubsidiaries = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -633,7 +631,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -649,7 +647,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producerDisposalFees = TestDataHelper.GetProducerDisposalFees(showModulations: false);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
 
             // Act
             var result = CalcResultSummaryUtil.GetProducerDisposalFeeOverallTotal(producerDisposalFees, material);
@@ -663,7 +661,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "GL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -680,7 +678,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             var producerAndSubsidiaries = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -697,7 +695,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             // Arrange
             var producers = TestDataHelper.GetProducers();
             var producer = producers.First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "GL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
             var calculatorResult = calcResult;
@@ -715,7 +713,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -731,7 +729,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producerDisposalFees = TestDataHelper.GetProducerDisposalFees(showModulations: false);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
 
             // Act
             var result = CalcResultSummaryUtil.GetBadDebtProvisionOverallTotal(producerDisposalFees, material);
@@ -745,7 +743,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
             var calculatorResult = calcResult;
@@ -764,7 +762,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             var producerAndSubsidiaries = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -781,7 +779,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             // Arrange
             var producers = TestDataHelper.GetProducers();
             var producer = producers.First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
             var calculatorResult = calcResult;
@@ -800,7 +798,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -816,7 +814,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -833,7 +831,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producerDisposalFees = TestDataHelper.GetProducerDisposalFees(showModulations: false);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
 
             // Act
             var result = CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvisionOverallTotal(producerDisposalFees, material);
@@ -848,7 +846,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             var producerAndSubsidiaries = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -865,7 +863,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             var producerAndSubsidiaries = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -882,7 +880,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             var producerAndSubsidiaries = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -899,7 +897,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             var producerAndSubsidiaries = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -916,7 +914,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
             var producerAndSubsidiaries = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -932,7 +930,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -950,7 +948,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -969,7 +967,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -987,7 +985,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "AL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -1018,7 +1016,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producers = TestDataHelper.GetProducers();
-            var materials = TestDataHelper.GetMaterials();
+            var materials = TestDataHelper.Materials;
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -1159,7 +1157,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 2);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "PL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "PL");
             var scaledupProducers = TestDataHelper.GetScaledupProducers().ScaledupProducers;
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -1175,7 +1173,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producer = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "PL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "PL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -1191,7 +1189,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "GL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -1207,7 +1205,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             // Arrange
             var producer = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var material = TestDataHelper.Materials.First(m => m.Code == "GL");
             var scaledupProducers = new List<CalcResultScaledupProducer>();
             var partialObligations = new List<CalcResultPartialObligation>();
 
@@ -1218,14 +1216,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             Assert.AreEqual(60.00m, result);
         }
 
-        private CalcResultParameterCommunicationCost GetCalcResultParameterCommunicationCost()
-        {
-            return Fixture.Create<CalcResultParameterCommunicationCost>();
-        }
-
         private CalcResultLateReportingTonnage GetCalcResultLateReportingTonnage()
         {
-            return Fixture.Create<CalcResultLateReportingTonnage>();
+            return TestFixtures.Legacy.Create<CalcResultLateReportingTonnage>();
         }
     }
 }

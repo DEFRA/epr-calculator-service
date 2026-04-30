@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
-using EPR.Calculator.Service.Function.UnitTests.Builder;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Lapcap
 {

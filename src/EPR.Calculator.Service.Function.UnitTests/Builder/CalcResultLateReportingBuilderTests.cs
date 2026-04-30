@@ -1,41 +1,29 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.LateReportingTonnages;
-using EPR.Calculator.Service.Function.Enums;
-using EPR.Calculator.Service.Function.Misc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using EPR.Calculator.Service.Function.Features.Calculator.Contexts;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
     [TestClass]
     public class CalcResultLateReportingBuilderTest
     {
-        public required CalcResultLateReportingBuilder builder;
-        protected ApplicationDBContext? dbContext;
+        private CalcResultLateReportingBuilder builder = null!;
+        private ApplicationDBContext dbContext = null!;
 
         [TestInitialize]
         public void DataSetup()
         {
-            var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
-                                    .UseInMemoryDatabase(databaseName: "PayCal")
-                                    .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-                                                .Options;
-
-            dbContext = new ApplicationDBContext(dbContextOptions);
-            dbContext.Database.EnsureCreated();
-
-            dbContext.DefaultParameterTemplateMasterList.RemoveRange(dbContext.DefaultParameterTemplateMasterList);
-            dbContext.DefaultParameterSettingDetail.RemoveRange(dbContext.DefaultParameterSettingDetail);
-            dbContext.CalculatorRuns.RemoveRange(dbContext.CalculatorRuns);
-            dbContext.SaveChanges();
+            dbContext = TestFixtures.New().Create<ApplicationDBContext>();
 
             var calculatorRuns = new List<CalculatorRun>
             {
                 new() { Id = 1,
                         DefaultParameterSettingMasterId = 1,
-                        CalculatorRunClassificationId = (int)RunClassification.RUNNING,
+                        Classification = RunClassification.Running,
                         Name = "Test Run",
                         RelativeYear = new RelativeYear(2024),
                         CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
@@ -114,17 +102,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             builder = new CalcResultLateReportingBuilder(dbContext);
         }
 
-        public ApplicationDBContext? GetDbContext()
-        {
-            return dbContext;
-        }
-
         [TestMethod]
         public async Task Construct_ShouldReturnCorrectResults()
         {
-            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) };
-
-            var result = await builder.ConstructAsync(requestDto);
+            var runContext = TestFixtures.Legacy.Create<CalculatorRunContext>();
+            var result = await builder.ConstructAsync(runContext);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(CalcResultLateReportingBuilder.LateReportingHeader, result.Name);

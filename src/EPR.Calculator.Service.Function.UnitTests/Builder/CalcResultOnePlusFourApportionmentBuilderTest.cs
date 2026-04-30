@@ -1,25 +1,22 @@
-﻿using AutoFixture;
-using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Calculator.Contexts;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
     [TestClass]
     public class CalcResultOnePlusFourApportionmentBuilderTest : CalcResultOnePlusFourApportionmentBuilder
     {
-        private Fixture Fixture { get; init; } = new Fixture();
-
         [TestMethod]
         public void Construct_ShouldReturnCorrectApportionment()
         {
             // Arrange
-            var resultsDto = new CalcResultsRequestDto { RunId = 6, RelativeYear = new RelativeYear(2025) };
+            var runContext = TestFixtures.Legacy.Create<CalculatorRunContext>();
             var calcResult = new CalcResult
             {
-                CalcResultDetail = new CalcResultDetail { RunId = resultsDto.RunId, RelativeYear = resultsDto.RelativeYear },
+                CalcResultDetail = new CalcResultDetail { RunId = runContext.RunId, RelativeYear = runContext.RelativeYear },
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultLapcapData = new CalcResultLapcapData
@@ -65,12 +62,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         },
                     },
                 },
-                CalcResultLateReportingTonnageData = Fixture.Create<CalcResultLateReportingTonnage>(),
+                CalcResultLateReportingTonnageData = TestFixtures.Legacy.Create<CalcResultLateReportingTonnage>(),
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
                 CalcResultModulation = null,
             };
 
-            var resultCalc = ConstructAsync(resultsDto, calcResult);
+            var resultCalc = ConstructAsync(runContext, calcResult);
             // Assert
             Assert.IsNotNull(calcResult);
             Assert.AreEqual("1 + 4 Apportionment %s", resultCalc.Name);

@@ -4,22 +4,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
     using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
     using EPR.Calculator.API.Data.Models;
-    using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Mappers;
-    using EPR.Calculator.Service.Function.Misc;
-
+    using EPR.Calculator.Service.Function.Features.Calculator.Contexts;
     using EPR.Calculator.Service.Function.Models;
     using EPR.Calculator.Service.Function.Services;
 
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
-    using static EPR.Calculator.Service.Function.UnitTests.Builder.CalcRunLaDisposalCostBuilderTests;
 
     using System.Linq;
-    using System.Runtime.InteropServices;
-    using EPR.Calculator.Service.Function.Models.JsonExporter;
 
     [TestClass]
     public class CalcResultProjectedProducersBuilderTest
@@ -36,7 +29,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 
             dbContext = new ApplicationDBContext(dbContextOptions);
             dbContext.Database.EnsureCreated();
-            builder = new CalcResultProjectedProducersBuilder(dbContext);
+            builder = new CalcResultProjectedProducersBuilder(dbContext, new MaterialService(dbContext));
         }
 
         [TestCleanup]
@@ -266,7 +259,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             AssertExcepted(expected, await FillGaps(given));
         }
 
-        private CalcResultsRequestDto InsertData(string[][] given)
+        private CalculatorRunContext InsertData(string[][] given)
         {
             for (int i = 0; i < given.GetLength(0); i++)
             {
@@ -334,7 +327,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 
             dbContext.SaveChanges();
 
-            return new CalcResultsRequestDto { RunId = runId, RelativeYear = relativeYear };
+            return new CalculatorRunContext
+            {
+                RunId = runId,
+                RunName = "Run " + runId,
+                RelativeYear = relativeYear,
+                ProcessingStartedAt = DateTimeOffset.UtcNow,
+                User = "Test User"
+            };
         }
 
         private string[][] ConvertResult(CalcResultProjectedProducers given)

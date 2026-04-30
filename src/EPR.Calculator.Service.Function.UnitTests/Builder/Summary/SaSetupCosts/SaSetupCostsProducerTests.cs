@@ -1,95 +1,78 @@
-﻿using AutoFixture;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.Summary.SaSetupCosts;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
 {
     [TestClass]
     public class SaSetupCostsProducerTests
     {
-        private readonly ApplicationDBContext dbContext;
-        private readonly IEnumerable<MaterialDetail> _materials;
-        private readonly CalcResult _calcResult;
-        private readonly Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial> _materialCostSummary;
-        private readonly Dictionary<MaterialDetail, CalcResultSummaryProducerCommsFeesCostByMaterial> _commsCostSummary;
+        private ApplicationDBContext dbContext = null!;
+        private ImmutableArray<MaterialDto> _materials;
+        private CalcResult _calcResult = null!;
+        private Dictionary<MaterialDto, CalcResultSummaryProducerDisposalFeesByMaterial> _materialCostSummary = null!;
+        private Dictionary<MaterialDto, CalcResultSummaryProducerCommsFeesCostByMaterial> _commsCostSummary = null!;
 
-        private Fixture Fixture { get; init; } = new Fixture();
-
-        public SaSetupCostsProducerTests()
+        [TestInitialize]
+        public void Initalize()
         {
-            var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
-                .UseInMemoryDatabase(databaseName: "PayCal")
-                .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-                .Options;
-
-            dbContext = new ApplicationDBContext(dbContextOptions);
-            dbContext.Database.EnsureCreated();
+            dbContext = TestFixtures.New().Create<ApplicationDBContext>();
 
             CreateMaterials();
             CreateProducerDetail();
 
             _materials = [
-                new MaterialDetail
+                new MaterialDto
                 {
                     Id = 1,
                     Code = "AL",
-                    Name = "Aluminium",
-                    Description = "Aluminium",
+                    Name = "Aluminium"
                 },
-                new MaterialDetail
+                new MaterialDto
                 {
                     Id = 2,
                     Code = "FC",
-                    Name = "Fibre composite",
-                    Description = "Fibre composite",
+                    Name = "Fibre composite"
                 },
-                new MaterialDetail
+                new MaterialDto
                 {
                     Id = 3,
                     Code = "GL",
-                    Name = "Glass",
-                    Description = "Glass",
+                    Name = "Glass"
                 },
-                new MaterialDetail
+                new MaterialDto
                 {
                     Id = 4,
                     Code = "PC",
-                    Name = "Paper or card",
-                    Description = "Paper or card",
+                    Name = "Paper or card"
                 },
-                new MaterialDetail
+                new MaterialDto
                 {
                     Id = 5,
                     Code = "PL",
-                    Name = "Plastic",
-                    Description = "Plastic",
+                    Name = "Plastic"
                 },
-                new MaterialDetail
+                new MaterialDto
                 {
                     Id = 6,
                     Code = "ST",
-                    Name = "Steel",
-                    Description = "Steel",
+                    Name = "Steel"
                 },
-                new MaterialDetail
+                new MaterialDto
                 {
                     Id = 7,
                     Code = "WD",
-                    Name = "Wood",
-                    Description = "Wood",
+                    Name = "Wood"
                 },
-                new MaterialDetail
+                new MaterialDto
                 {
                     Id = 8,
                     Code = "OT",
-                    Name = "Other materials",
-                    Description = "Other materials",
+                    Name = "Other materials"
                 }
             ];
 
@@ -164,7 +147,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                 CalcResultDetail = new CalcResultDetail { RunId = 1, RelativeYear = new RelativeYear(2024) },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData
                 {
-                    Name = Fixture.Create<string>(),
+                    Name = TestFixtures.Legacy.Create<string>(),
                     CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>
                     {
                         new CalcResultLaDisposalCostDataDetail
@@ -177,9 +160,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                             Material = "Material1",
                             NorthernIreland = "NorthernIrelandTest",
                             Total = "TotalTest",
-                            ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
-                            ReportedPublicBinTonnage = Fixture.Create<string>(),
-                            ProducerReportedTotalTonnage = Fixture.Create<string>(),
+                            ProducerReportedHouseholdPackagingWasteTonnage = TestFixtures.Legacy.Create<string>(),
+                            ReportedPublicBinTonnage = TestFixtures.Legacy.Create<string>(),
+                            ProducerReportedTotalTonnage = TestFixtures.Legacy.Create<string>(),
                         },
                         new CalcResultLaDisposalCostDataDetail
                         {
@@ -190,9 +173,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                             Scotland="ScotlandTest",
                             NorthernIreland = "NorthernIrelandTest",
                             Total = "TotalTest",
-                            ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
-                            ReportedPublicBinTonnage = Fixture.Create<string>(),
-                            ProducerReportedTotalTonnage = Fixture.Create<string>(),
+                            ProducerReportedHouseholdPackagingWasteTonnage = TestFixtures.Legacy.Create<string>(),
+                            ReportedPublicBinTonnage = TestFixtures.Legacy.Create<string>(),
+                            ProducerReportedTotalTonnage = TestFixtures.Legacy.Create<string>(),
                         },
                         new CalcResultLaDisposalCostDataDetail
                         {
@@ -203,9 +186,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                             Scotland="ScotlandTest",
                             NorthernIreland = "NorthernIrelandTest",
                             Total = "TotalTest",
-                            ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
-                            ReportedPublicBinTonnage = Fixture.Create<string>(),
-                            ProducerReportedTotalTonnage = Fixture.Create<string>(),
+                            ProducerReportedHouseholdPackagingWasteTonnage = TestFixtures.Legacy.Create<string>(),
+                            ReportedPublicBinTonnage = TestFixtures.Legacy.Create<string>(),
+                            ProducerReportedTotalTonnage = TestFixtures.Legacy.Create<string>(),
                         },
                     },
                 },
@@ -215,7 +198,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                 },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment
                 {
-                    Name = Fixture.Create<string>(),
+                    Name = TestFixtures.Legacy.Create<string>(),
                     CalcResultOnePlusFourApportionmentDetails =
                     [
                         new()
@@ -286,7 +269,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                         },
                     ],
                 },
-                CalcResultParameterCommunicationCost = Fixture.Create<CalcResultParameterCommunicationCost>(),
                 CalcResultSummary = new CalcResultSummary
                 {
                     ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
@@ -322,13 +304,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                         }
                     ],
                 },
-                CalcResultLateReportingTonnageData = Fixture.Create<CalcResultLateReportingTonnage>(),
+                CalcResultLateReportingTonnageData = TestFixtures.Legacy.Create<CalcResultLateReportingTonnage>(),
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
                 CalcResultModulation = null,
             };
 
-            _materialCostSummary = new Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial>();
-            _commsCostSummary = new Dictionary<MaterialDetail, CalcResultSummaryProducerCommsFeesCostByMaterial>();
+            _materialCostSummary = new Dictionary<MaterialDto, CalcResultSummaryProducerDisposalFeesByMaterial>();
+            _commsCostSummary = new Dictionary<MaterialDto, CalcResultSummaryProducerCommsFeesCostByMaterial>();
 
             foreach (var material in _materials)
             {

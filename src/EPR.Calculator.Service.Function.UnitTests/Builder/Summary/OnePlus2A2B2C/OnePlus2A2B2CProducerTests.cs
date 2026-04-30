@@ -1,38 +1,28 @@
-﻿using AutoFixture;
-using EPR.Calculator.API.Data;
+﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C;
 using EPR.Calculator.Service.Function.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.OnePlus2A2B2C
 {
     [TestClass]
     public class OnePlus2A2B2CProducerTests
     {
-        private readonly ApplicationDBContext _dbContext;
-        private readonly CalcResult _calcResult;
-        private readonly int columnIndex = 266;
+        private ApplicationDBContext _dbContext = null!;
+        private CalcResult _calcResult = null!;
+        private int columnIndex = 266;
 
-        public OnePlus2A2B2CProducerTests()
+        [TestInitialize]
+        public void Init()
         {
-            Fixture = new Fixture();
-            var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
-                .UseInMemoryDatabase(databaseName: "PayCal")
-                .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-                .Options;
-
-            _dbContext = new ApplicationDBContext(dbContextOptions);
-            _dbContext.Database.EnsureCreated();
+            _dbContext = TestFixtures.New().Create<ApplicationDBContext>();
 
             CreateMaterials();
             CreateProducerDetail();
 
             _calcResult = TestDataHelper.GetCalcResult();
         }
-
-        private Fixture Fixture { get; init; }
 
         [TestCleanup]
         public void TearDown()

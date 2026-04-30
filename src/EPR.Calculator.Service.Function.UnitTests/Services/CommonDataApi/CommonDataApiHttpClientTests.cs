@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
-using Microsoft.Extensions.Options;
+using OptionsFactory = Microsoft.Extensions.Options.Options;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services.CommonDataApi
 {
@@ -207,7 +207,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.CommonDataApi
         private static CommonDataApiHttpClient CreateClient(HttpMessageHandler handler, CommonDataApiHttpClientOptions options)
         {
             var httpClient = new HttpClient(handler);
-            return new CommonDataApiHttpClient(httpClient, Options.Create(options));
+            return new CommonDataApiHttpClient(httpClient, OptionsFactory.Create(options));
         }
 
         private static MockHandler CreateOkHandler(string ndJsonContent) =>

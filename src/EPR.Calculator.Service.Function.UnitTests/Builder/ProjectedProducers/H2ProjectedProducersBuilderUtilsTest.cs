@@ -1,29 +1,18 @@
 ﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 {
-    using EPR.Calculator.API.Data;
     using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.API.Data.Models;
-    using EPR.Calculator.Service.Common;
     using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
     using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Mappers;
-    using EPR.Calculator.Service.Function.Misc;
-
     using EPR.Calculator.Service.Function.Models;
-    using EPR.Calculator.Service.Function.Services;
-
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Diagnostics;
-    using static EPR.Calculator.Service.Function.UnitTests.Builder.CalcRunLaDisposalCostBuilderTests;
 
     [TestClass]
     public class H2ProjectedProducersBuilderUtilsTest
     {
-        private List<MaterialDetail> materials = new List<MaterialDetail>()
-        {
-            new MaterialDetail { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
-            new MaterialDetail { Id = 2, Code = "GL", Name = "Glass", Description = "Glass" }
-        };
+        private ImmutableArray<MaterialDto> materials =
+        [
+            new MaterialDto { Id = 1, Code = "AL", Name = "Aluminium" },
+            new MaterialDto { Id = 2, Code = "GL", Name = "Glass" }
+        ];
 
         private List<ProducerReportedMaterialsForSubmissionPeriod> reportedMaterials = new List<ProducerReportedMaterialsForSubmissionPeriod>()
         {

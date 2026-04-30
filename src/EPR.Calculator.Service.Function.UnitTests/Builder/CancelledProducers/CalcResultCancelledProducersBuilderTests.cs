@@ -3,71 +3,60 @@ using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.CancelledProducers;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Billing.Constants;
+using EPR.Calculator.Service.Function.Features.Billing.Contexts;
+using EPR.Calculator.Service.Function.Features.Calculator.Contexts;
 using EPR.Calculator.Service.Function.Services;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Moq;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
+using Microsoft.Extensions.Logging;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
 {
     [TestClass]
     public class CalcResultCancelledProducersBuilderTests
     {
-        private CalcResultCancelledProducersBuilder builder;
-        private readonly ApplicationDBContext dbContext;
-        private Mock<IDbContextFactory<ApplicationDBContext>> dbContextFactory;
-
-        private Mock<IMaterialService> materialService;
+        private readonly ApplicationDBContext _dbContext;
+        private readonly Mock<IMaterialService> _materialService;
+        private readonly CalcResultCancelledProducersBuilder _sut;
 
         public CalcResultCancelledProducersBuilderTests()
         {
+            _dbContext = TestFixtures.New().Create<ApplicationDBContext>();
 
-            var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
-                .UseInMemoryDatabase(databaseName: "PayCal")
-                .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-                .Options;
-            dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
-            dbContext = new ApplicationDBContext(dbContextOptions);
-            dbContext.Database.EnsureCreated();
-            dbContextFactory.Setup(factory => factory.CreateDbContext()).Returns(dbContext);
-            materialService = new Mock<IMaterialService>();
-            var producerDetailService = new ProducerDetailService(dbContext);
+            _materialService = new Mock<IMaterialService>();
+            _materialService.Setup(t => t.GetMaterialIdsByType(It.IsAny<CancellationToken>())).ReturnsAsync(TestDataHelper.Materials.ToImmutableDictionary(t => t.Name, t => t.Id));
 
-            builder = new CalcResultCancelledProducersBuilder(
-                dbContext,
-                materialService.Object,
-                producerDetailService);
+            var invoicedProducerService = new InvoicedProducerService(_dbContext, new Mock<ILogger<InvoicedProducerService>>().Object);
+
+            _sut = new CalcResultCancelledProducersBuilder(invoicedProducerService, _materialService.Object);
         }
 
         [TestCleanup]
         public void TearDown()
         {
-            dbContext?.Database.EnsureDeleted();
+            _dbContext.Database.EnsureDeleted();
+            _dbContext.Dispose();
         }
 
         [TestMethod]
         public async Task CanConstruct()
         {
-            TestDataHelper.SeedDatabaseForInitialRun(dbContext);
+            TestDataHelper.SeedDatabaseForInitialRun(_dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto { RunId = 2, RelativeYear = new RelativeYear(2025) };
+            var runContext = TestFixtures.Legacy.Create<CalculatorRunContext>() with { RunId = 2 };
 
-            var expected = dbContext.ProducerDesignatedRunInvoiceInstruction.FirstOrDefault(t => t.ProducerId == 2 && t.CalculatorRunId == 1);
-
-
-            materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
+            var expected = _dbContext.ProducerDesignatedRunInvoiceInstruction.FirstOrDefault(t => t.ProducerId == 2 && t.CalculatorRunId == 1);
 
             // Act
-            var result = await builder.ConstructAsync(requestDto);
+            var result = await _sut.ConstructAsync(runContext);
 
             // Assert
             Assert.IsNotNull(result);
             var cancelledProducer = result.CancelledProducers.LastOrDefault();
             Assert.IsNotNull(cancelledProducer);
             Assert.AreEqual(2, cancelledProducer.ProducerId);
-            Assert.AreEqual("Test2", cancelledProducer.ProducerOrSubsidiaryNameValue);
+            Assert.AreEqual("TestOrgName|Master_1|Producer_2", cancelledProducer.ProducerOrSubsidiaryNameValue);
             Assert.AreEqual(expected?.BillingInstructionId, cancelledProducer.LatestInvoice?.BillingInstructionIdValue);
             Assert.AreEqual(expected?.CalculatorRunId.ToString(), cancelledProducer.LatestInvoice?.RunNumberValue);
             Assert.AreEqual(100, cancelledProducer.LatestInvoice?.CurrentYearInvoicedTotalToDateValue);
@@ -77,15 +66,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         [TestMethod]
         public async Task CanConstructWithOutCancelledProducers()
         {
-            SeedDatabaseForUnclassified(dbContext);
+            TestDataHelper.SeedDatabaseForUnclassified(_dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
+            var runContext = TestFixtures.Legacy.Create<CalculatorRunContext>();
 
-            materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
+            _materialService.Setup(t => t.GetMaterials(It.IsAny<CancellationToken>())).ReturnsAsync(TestDataHelper.Materials);
 
             // Act
-            var result = await builder.ConstructAsync(requestDto);
+            var result = await _sut.ConstructAsync(runContext);
 
             // Assert
             Assert.IsNotNull(result);
@@ -94,22 +83,22 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         }
 
 
-
         [TestMethod]
         public async Task CancelledProducersShouldNotGetAcceptedProducers()
         {
-            SeedDatabaseForInitialRunCompleted(dbContext);
+            TestDataHelper.SeedDatabaseForInitialRunCompleted(_dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto { RunId = 2, RelativeYear = new RelativeYear(2025) };
+            var runContext = TestFixtures.Legacy.Create<CalculatorRunContext>() with { RunId = 2 };
 
-            var expected = dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject == CommonConstants.Accepted && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant() && t.CalculatorRunId == 2);
-
-
-            materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
+            var expected = _dbContext.ProducerResultFileSuggestedBillingInstruction
+                .FirstOrDefault(t =>
+                    t.BillingInstructionAcceptReject == BillingConstants.Action.Accepted
+                    && BillingConstants.Suggestion.Cancel.Equals(t.SuggestedBillingInstruction, StringComparison.OrdinalIgnoreCase)
+                    && t.CalculatorRunId == 2);
 
             // Act
-            var result = await builder.ConstructAsync(requestDto);
+            var result = await _sut.ConstructAsync(runContext);
 
             // Assert
             Assert.IsNotNull(result);
@@ -121,20 +110,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         [TestMethod]
         public async Task CancelledProducersShouldGetAcceptedProducersForBillingFile()
         {
-            SeedDatabaseForInitialRunCompleted(dbContext);
+            TestDataHelper.SeedDatabaseForInitialRunCompleted(_dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto { RunId = 3, RelativeYear = new RelativeYear(2025), IsBillingFile = true };
+            var runContext = TestFixtures.Legacy.Create<BillingRunContext>();
 
-            var expected = dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject == CommonConstants.Accepted && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant() && t.CalculatorRunId == 3);
-
-
-            materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
-
-            //this.producerDetailsService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
+            var expected = _dbContext.ProducerResultFileSuggestedBillingInstruction
+                .FirstOrDefault(t =>
+                    t.BillingInstructionAcceptReject == BillingConstants.Action.Accepted
+                    && BillingConstants.Suggestion.Cancel.Equals(t.SuggestedBillingInstruction, StringComparison.OrdinalIgnoreCase)
+                    && t.CalculatorRunId == runContext.RunId);
 
             // Act
-            var result = await builder.ConstructAsync(requestDto);
+            var result = await _sut.ConstructAsync(runContext);
 
             // Assert
             Assert.IsNotNull(result);
@@ -146,18 +134,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         [TestMethod]
         public async Task CancelledProducersShouldNotGetRejectedProducersForBillingFile()
         {
-            SeedDatabaseForInitialRunCompleted(dbContext);
+            TestDataHelper.SeedDatabaseForInitialRunCompleted(_dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto { RunId = 3, RelativeYear = new RelativeYear(2025), IsBillingFile = true };
+            var runContext = TestFixtures.Legacy.Create<BillingRunContext>();
 
-            var expected = dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject == CommonConstants.Rejected && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant() && t.CalculatorRunId == 3);
-
-
-            materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
+            var expected = _dbContext.ProducerResultFileSuggestedBillingInstruction
+                .FirstOrDefault(t =>
+                    t.BillingInstructionAcceptReject == BillingConstants.Action.Rejected
+                    && BillingConstants.Suggestion.Cancel.Equals(t.SuggestedBillingInstruction, StringComparison.OrdinalIgnoreCase)
+                    && t.CalculatorRunId == runContext.RunId);
 
             // Act
-            var result = await builder.ConstructAsync(requestDto);
+            var result = await _sut.ConstructAsync(runContext);
 
             // Assert
             Assert.IsNotNull(result);
@@ -170,19 +159,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         [TestMethod]
         public async Task CancelledProducersShouldGetRejectedProducers()
         {
-            SeedDatabaseForInitialRunCompleted(dbContext);
+            TestDataHelper.SeedDatabaseForInitialRunCompleted(_dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto { RunId = 3, RelativeYear = new RelativeYear(2025) };
+            var runContext = TestFixtures.Legacy.Create<BillingRunContext>();
 
-            var expected = dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject ==
-            CommonConstants.Rejected && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant()
-            && t.CalculatorRunId == 2);
-
-            materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
+            var expected = _dbContext.ProducerResultFileSuggestedBillingInstruction
+                .FirstOrDefault(t =>
+                    t.BillingInstructionAcceptReject == BillingConstants.Action.Rejected
+                    && BillingConstants.Suggestion.Cancel.Equals(t.SuggestedBillingInstruction, StringComparison.OrdinalIgnoreCase)
+                    && t.CalculatorRunId == 2);
 
             // Act
-            var result = await builder.ConstructAsync(requestDto);
+            var result = await _sut.ConstructAsync(runContext);
 
             // Assert
             Assert.IsNotNull(result);
@@ -194,37 +183,36 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         [TestMethod]
         public async Task CancelledProducersShouldNotGetRejectedInitialProducer()
         {
-            SeedDatabaseForInitialRunCompleted(dbContext);
+            TestDataHelper.SeedDatabaseForInitialRunCompleted(_dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto { RunId = 3, RelativeYear = new RelativeYear(2025) };
-
-            materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
+            var runContext = TestFixtures.Legacy.Create<CalculatorRunContext>();
 
             // Act
-            var result = await builder.ConstructAsync(requestDto);
+            var result = await _sut.ConstructAsync(runContext);
 
             // Assert
             Assert.IsNotNull(result);
-            var cancelledProducer = result.CancelledProducers.Where(t=>t.ProducerId == 3).FirstOrDefault();
+            var cancelledProducer = result.CancelledProducers.FirstOrDefault(t => t.ProducerId == 3);
             Assert.IsNull(cancelledProducer);
         }
 
         [TestMethod]
         public async Task CancelledProducersWithNoMaterials()
         {
-            SeedDatabaseForInitialRunCompleted(dbContext);
+            TestDataHelper.SeedDatabaseForInitialRunCompleted(_dbContext);
 
             // Arrange
-            var requestDto = new CalcResultsRequestDto { RunId = 3, RelativeYear = new RelativeYear(2025) };
+            var runContext = TestFixtures.Legacy.Create<CalculatorRunContext>() with { RunId = 3 };
 
-            var expected = dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject ==
-            CommonConstants.Rejected && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant()
-            && t.CalculatorRunId == 2);
-
+            var expected = _dbContext.ProducerResultFileSuggestedBillingInstruction
+                .FirstOrDefault(t =>
+                    t.BillingInstructionAcceptReject == BillingConstants.Action.Rejected
+                    && BillingConstants.Suggestion.Cancel.Equals(t.SuggestedBillingInstruction, StringComparison.OrdinalIgnoreCase)
+                    && t.CalculatorRunId == 2);
 
             // Act
-            var result = await builder.ConstructAsync(requestDto);
+            var result = await _sut.ConstructAsync(runContext);
 
             // Assert
             Assert.IsNotNull(result);
@@ -232,598 +220,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             Assert.IsNotNull(cancelledProducer);
             Assert.AreEqual(expected?.ProducerId, cancelledProducer.ProducerId);
             Assert.IsNull(cancelledProducer.LastTonnage?.AluminiumValue);
-        }
-
-        private void SeedDatabaseForUnclassified(ApplicationDBContext context)
-        {
-            //calculator runs
-            var runs = new List<CalculatorRun> { new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest1" },
-             new CalculatorRun { Id = 2, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest2" }};
-            context.CalculatorRuns.AddRange(runs);
-
-
-
-            var producerDetails = new List<ProducerDetail>
-            {  new ProducerDetail { Id =1 , CalculatorRunId = 1, ProducerName="Test1", ProducerId = 1, TradingName = "TN1"},
-             new ProducerDetail { Id =2 , CalculatorRunId = 1, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
-              new ProducerDetail { Id =3 , CalculatorRunId = 2, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"},
-               new ProducerDetail { Id =4 , CalculatorRunId = 1, ProducerName="Test3", ProducerId = 3, TradingName = "TN4"},
-            };
-
-            context.ProducerDetail.AddRange(producerDetails);
-
-            var materials = new List<Material>
-        {
-            new Material { Id = 1, Name = "Plastic", Code = MaterialCodes.Plastic },
-            new Material { Id = 2, Name = "Steel", Code = MaterialCodes.Steel },
-            new Material { Id = 3, Name = "Glass", Code = MaterialCodes.Glass },
-        };
-            context.Material.AddRange(materials);
-
-            var producerReportedMaterials = new List<ProducerReportedMaterial>
-        {
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 1, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 1, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 2, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 2, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 3, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 3, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
-            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 1, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
-            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 1, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
-            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 2, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
-            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 2, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
-            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 3, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
-            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 3, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
-
-        };
-            context.ProducerReportedMaterial.AddRange(producerReportedMaterials);
-
-
-
-            var designatedRunInvoice = new List<ProducerDesignatedRunInvoiceInstruction>
-            { new ProducerDesignatedRunInvoiceInstruction
-                {
-                    BillingInstructionId = "1_1",
-                    CalculatorRunId = 1,
-                    CurrentYearInvoicedTotalAfterThisRun = 100,
-                    Id = 1,
-                    ProducerId = 1,
-                    InvoiceAmount = 100,
-                    OutstandingBalance = 100,
-
-                },
-                new ProducerDesignatedRunInvoiceInstruction
-                {
-                    BillingInstructionId = "1_2",
-                    CalculatorRunId = 1,
-                    CurrentYearInvoicedTotalAfterThisRun = 100,
-                    Id = 2,
-                    ProducerId = 2,
-                    InvoiceAmount = 100,
-                    OutstandingBalance = 100,
-
-                },
-            };
-
-
-            context.ProducerDesignatedRunInvoiceInstruction.AddRange(designatedRunInvoice);
-
-
-            var billingInstructionList = new List<ProducerResultFileSuggestedBillingInstruction>
-            {  new ProducerResultFileSuggestedBillingInstruction
-                {
-                    MaterialPercentageThresholdBreached = "1%",
-                    MaterialPoundThresholdBreached = "1",
-                    ProducerId = 1,
-                    SuggestedBillingInstruction = "Initial",
-                    SuggestedInvoiceAmount = 100,
-                    CalculatorRunId = 1,
-                    BillingInstructionAcceptReject = "Accepted"
-                },
-            new ProducerResultFileSuggestedBillingInstruction
-            {
-                    MaterialPercentageThresholdBreached = "1%",
-                    MaterialPoundThresholdBreached = "1",
-                    ProducerId = 2,
-                    SuggestedBillingInstruction = "Initial",
-                    SuggestedInvoiceAmount = 100,
-                    CalculatorRunId = 1,
-                    BillingInstructionAcceptReject = "Accepted"
-                },
-             new ProducerResultFileSuggestedBillingInstruction
-             {
-                    MaterialPercentageThresholdBreached = "1%",
-                    MaterialPoundThresholdBreached = "1",
-                    ProducerId = 3,
-                    SuggestedBillingInstruction = "Initial",
-                    SuggestedInvoiceAmount = 100,
-                    CalculatorRunId = 1,
-                    BillingInstructionAcceptReject = "Accepted"
-                }
-            };
-
-
-
-            context.ProducerResultFileSuggestedBillingInstruction.AddRange(billingInstructionList);
-
-            var materialInvoiceTonnage = new List<ProducerInvoicedMaterialNetTonnage>
-            {
-                 new ProducerInvoicedMaterialNetTonnage
-                 {
-                      CalculatorRunId =1,
-                      MaterialId= 1,
-                      InvoicedNetTonnage = 100,
-                      ProducerId =1, Id=1
-
-                 },
-                new ProducerInvoicedMaterialNetTonnage
-                {
-                      CalculatorRunId =1,
-                      MaterialId= 2,
-                      InvoicedNetTonnage = 100,
-                      ProducerId =1,
-                    Id=2
-
-                 },
-            new ProducerInvoicedMaterialNetTonnage
-            {
-                      CalculatorRunId =1,
-                      MaterialId= 1,
-                      InvoicedNetTonnage = 100,
-                      ProducerId =2, Id=3
-
-                 },
-                new ProducerInvoicedMaterialNetTonnage
-                {
-                      CalculatorRunId =1,
-                      MaterialId= 2,
-                      InvoicedNetTonnage = 100,
-                      ProducerId =2,
-                    Id=4
-
-                 }};
-
-            context.ProducerInvoicedMaterialNetTonnage.AddRange(materialInvoiceTonnage);
-
-
-
-            context.SaveChanges();
-        }
-
-        private void SeedDatabaseForInitialRunCompleted(ApplicationDBContext context)
-        {
-            //calculator runs
-            var runs = new List<CalculatorRun> { new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=7, Name = "CalculatorRunTest1" },
-             new CalculatorRun { Id = 2, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=12, Name = "CalculatorRunTest2" },
-            new CalculatorRun { Id = 3, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest3" }};
-
-            context.CalculatorRuns.AddRange(runs);
-
-
-
-            var producerDetails = new List<ProducerDetail>()
-            {  
-                new ProducerDetail() { Id =1 , CalculatorRunId = 1, ProducerName="Test1", ProducerId = 1, TradingName = "TN1"},
-                new ProducerDetail() { Id =2 , CalculatorRunId = 1, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
-                new ProducerDetail() { Id =4 , CalculatorRunId = 1, ProducerName="Test3", ProducerId = 3, TradingName = "TN4"},
-                new ProducerDetail() { Id =5 , CalculatorRunId = 1, ProducerName="Test4", ProducerId = 4, TradingName = "TN5"},
-                new ProducerDetail() { Id =6 , CalculatorRunId = 2, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
-                new ProducerDetail() { Id =3 , CalculatorRunId = 2, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"},
-                new ProducerDetail() { Id =7 , CalculatorRunId = 3, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"}
-            };
-
-            context.ProducerDetail.AddRange(producerDetails);
-
-            var materials = new List<Material>
-        {
-            new Material { Id = 1, Name = "Plastic", Code = MaterialCodes.Plastic },
-            new Material { Id = 2, Name = "Steel", Code = MaterialCodes.Steel },
-            new Material { Id = 3, Name = "Glass", Code = MaterialCodes.Glass },
-        };
-            context.Material.AddRange(materials);
-
-            var producerReportedMaterials = new List<ProducerReportedMaterial>
-        {
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 1, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 1, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 2, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 2, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 3, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 3, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
-            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 1,SubmissionPeriod = "2025-H1",  PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
-            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 1,SubmissionPeriod = "2025-H2",  PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
-            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 2, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
-            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 2, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
-            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 3, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
-            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 3, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
-            new ProducerReportedMaterial { ProducerDetailId = 4, MaterialId = 1, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
-            new ProducerReportedMaterial { ProducerDetailId = 4, MaterialId = 1, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
-            new ProducerReportedMaterial { ProducerDetailId = 4, MaterialId = 2, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
-            new ProducerReportedMaterial { ProducerDetailId = 4, MaterialId = 2, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
-            new ProducerReportedMaterial { ProducerDetailId = 4, MaterialId = 3, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
-            new ProducerReportedMaterial { ProducerDetailId = 4, MaterialId = 3, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
-            new ProducerReportedMaterial { ProducerDetailId = 3, MaterialId = 1,SubmissionPeriod = "2025-H1",  PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
-            new ProducerReportedMaterial { ProducerDetailId = 3, MaterialId = 1,SubmissionPeriod = "2025-H2",  PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
-            new ProducerReportedMaterial { ProducerDetailId = 3, MaterialId = 2,SubmissionPeriod = "2025-H1",  PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
-            new ProducerReportedMaterial { ProducerDetailId = 3, MaterialId = 2,SubmissionPeriod = "2025-H2",  PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
-            new ProducerReportedMaterial { ProducerDetailId = 3, MaterialId = 3,SubmissionPeriod = "2025-H1",  PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
-            new ProducerReportedMaterial { ProducerDetailId = 3, MaterialId = 3,SubmissionPeriod = "2025-H2",  PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
-
-        };
-            context.ProducerReportedMaterial.AddRange(producerReportedMaterials);
-
-
-
-            var designatedRunInvoice = new List<ProducerDesignatedRunInvoiceInstruction>
-            { new ProducerDesignatedRunInvoiceInstruction
-                {
-                    BillingInstructionId = "1_1",
-                    CalculatorRunId = 1,
-                    CurrentYearInvoicedTotalAfterThisRun = 100,
-                    Id = 1,
-                    ProducerId = 1,
-                    InvoiceAmount = 100,
-                    OutstandingBalance = 100,
-
-                },
-                 new ProducerDesignatedRunInvoiceInstruction
-                 {
-                    BillingInstructionId = "1_2",
-                    CalculatorRunId = 1,
-                    CurrentYearInvoicedTotalAfterThisRun = 100,
-                    Id = 2,
-                    ProducerId = 2,
-                    InvoiceAmount = 100,
-                    OutstandingBalance = 100,
-
-                },
-                 new ProducerDesignatedRunInvoiceInstruction
-                 {
-                    BillingInstructionId = "1_3",
-                    CalculatorRunId = 1,
-                    CurrentYearInvoicedTotalAfterThisRun = 100,
-                    Id = 3,
-                    ProducerId = 3,
-                    InvoiceAmount = 100,
-                    OutstandingBalance = 100,
-
-                },
-                 new ProducerDesignatedRunInvoiceInstruction
-                 {
-                    BillingInstructionId = "1_4",
-                    CalculatorRunId = 1,
-                    CurrentYearInvoicedTotalAfterThisRun = 100,
-                    Id = 4,
-                    ProducerId = 4,
-                    InvoiceAmount = 100,
-                    OutstandingBalance = 100,
-
-                },
-                  new ProducerDesignatedRunInvoiceInstruction
-                  {
-                    BillingInstructionId = "2_5",
-                    CalculatorRunId = 2,
-                    CurrentYearInvoicedTotalAfterThisRun = 100,
-                    Id = 5,
-                    ProducerId = 1,
-                    InvoiceAmount = 100,
-                    OutstandingBalance = 100,
-                },
-                  new ProducerDesignatedRunInvoiceInstruction
-                  {
-                    BillingInstructionId = "2_6",
-                    CalculatorRunId = 2,
-                    CurrentYearInvoicedTotalAfterThisRun = null,
-                    Id = 6,
-                    ProducerId = 2,
-                    InvoiceAmount = null,
-                    OutstandingBalance = 100,
-                },
-            };
-
-
-            context.ProducerDesignatedRunInvoiceInstruction.AddRange(designatedRunInvoice);
-
-
-            var billingInstructionList = new List<ProducerResultFileSuggestedBillingInstruction>
-            {  new ProducerResultFileSuggestedBillingInstruction
-                {
-                    MaterialPercentageThresholdBreached = "1%",
-                    MaterialPoundThresholdBreached = "1",
-                    ProducerId = 1,
-                    SuggestedBillingInstruction = "Initial",
-                    SuggestedInvoiceAmount = 100,
-                    CalculatorRunId = 1,
-                    BillingInstructionAcceptReject = "Accepted"
-                },
-            new ProducerResultFileSuggestedBillingInstruction
-            {
-                    MaterialPercentageThresholdBreached = "1%",
-                    MaterialPoundThresholdBreached = "1",
-                    ProducerId = 2,
-                    SuggestedBillingInstruction = "Initial",
-                    SuggestedInvoiceAmount = 100,
-                    CalculatorRunId = 1,
-                    BillingInstructionAcceptReject = "Accepted"
-                },
-             new ProducerResultFileSuggestedBillingInstruction
-             {
-                    MaterialPercentageThresholdBreached = "1%",
-                    MaterialPoundThresholdBreached = "1",
-                    ProducerId = 3,
-                    SuggestedBillingInstruction = "Initial",
-                    SuggestedInvoiceAmount = 100,
-                    CalculatorRunId = 1,
-                    BillingInstructionAcceptReject = "Rejected"
-                },
-              new ProducerResultFileSuggestedBillingInstruction
-              {
-                    MaterialPercentageThresholdBreached = "1%",
-                    MaterialPoundThresholdBreached = "1",
-                    ProducerId = 4,
-                    SuggestedBillingInstruction = "Initial",
-                    SuggestedInvoiceAmount = 100,
-                    CalculatorRunId = 1,
-                    BillingInstructionAcceptReject = "Accepted"
-                },
-               new ProducerResultFileSuggestedBillingInstruction
-               {
-                    MaterialPercentageThresholdBreached = "1%",
-                    MaterialPoundThresholdBreached = "1",
-                    ProducerId = 1,
-                    SuggestedBillingInstruction = "Initial",
-                    SuggestedInvoiceAmount = 100,
-                    CalculatorRunId = 2,
-                    BillingInstructionAcceptReject = "Accepted"
-                },
-                new ProducerResultFileSuggestedBillingInstruction
-                {
-                    MaterialPercentageThresholdBreached = "1%",
-                    MaterialPoundThresholdBreached = "1",
-                    ProducerId = 2,
-                    SuggestedBillingInstruction = "Initial",
-                    SuggestedInvoiceAmount = 100,
-                    CalculatorRunId = 2,
-                    BillingInstructionAcceptReject = "Accepted"
-                },
-                 new ProducerResultFileSuggestedBillingInstruction
-                 {
-                    MaterialPercentageThresholdBreached = "1%",
-                    MaterialPoundThresholdBreached = "1",
-                    ProducerId = 4,
-                    SuggestedBillingInstruction = "CANCEL",
-                    SuggestedInvoiceAmount = 100,
-                    CalculatorRunId = 2,
-                    BillingInstructionAcceptReject = "Rejected"
-                },
-                  new ProducerResultFileSuggestedBillingInstruction
-                  {
-                    MaterialPercentageThresholdBreached = "1%",
-                    MaterialPoundThresholdBreached = "1",
-                    ProducerId = 4,
-                    SuggestedBillingInstruction = "CANCEL",
-                    SuggestedInvoiceAmount = 100,
-                    CalculatorRunId = 3,
-                    BillingInstructionAcceptReject = "Accepted"
-                },
-                   new ProducerResultFileSuggestedBillingInstruction
-                   {
-                    MaterialPercentageThresholdBreached = "1%",
-                    MaterialPoundThresholdBreached = "1",
-                    ProducerId = 2,
-                    SuggestedBillingInstruction = "CANCEL",
-                    SuggestedInvoiceAmount = 100,
-                    CalculatorRunId = 3,
-                    BillingInstructionAcceptReject = "Rejected"
-                }
-            };
-
-
-
-            context.ProducerResultFileSuggestedBillingInstruction.AddRange(billingInstructionList);
-
-            var materialInvoiceTonnage = new List<ProducerInvoicedMaterialNetTonnage>
-            {
-                 new ProducerInvoicedMaterialNetTonnage
-                 {
-                     CalculatorRunId =1,
-                      MaterialId= 1,
-                      InvoicedNetTonnage = 100,
-                      ProducerId =1,
-                     Id=1
-
-                 },
-                new ProducerInvoicedMaterialNetTonnage
-                {
-                      CalculatorRunId =1,
-                      MaterialId= 2,
-                      InvoicedNetTonnage = 100,
-                      ProducerId =1,
-                     Id=2
-                 },
-            new ProducerInvoicedMaterialNetTonnage
-            {
-                      CalculatorRunId =1,
-                      MaterialId= 1,
-                      InvoicedNetTonnage = 100,
-                      ProducerId =2,
-                      Id=3
-
-                 },
-                new ProducerInvoicedMaterialNetTonnage
-                {
-                      CalculatorRunId =1,
-                      MaterialId= 2,
-                      InvoicedNetTonnage = 100,
-                      ProducerId =2,
-                     Id=4
-
-                 },
-                 new ProducerInvoicedMaterialNetTonnage
-                 {
-                      CalculatorRunId =1,
-                      MaterialId= 2,
-                      InvoicedNetTonnage = 100,
-                      ProducerId =3,
-                     Id=5
-
-                 },
-                  new ProducerInvoicedMaterialNetTonnage
-                  {
-                      CalculatorRunId =1,
-                      MaterialId= 2,
-                      InvoicedNetTonnage = 100,
-                      ProducerId =4,
-                     Id=6
-
-                 },
-            new ProducerInvoicedMaterialNetTonnage
-            {
-                 CalculatorRunId = 2,
-                 MaterialId = 2,
-                 InvoicedNetTonnage = 100,
-                 ProducerId = 1,
-                 Id = 7
-
-             }
-             ,new ProducerInvoicedMaterialNetTonnage
-             {
-                      CalculatorRunId =2,
-                      MaterialId= 2,
-                      InvoicedNetTonnage = 100,
-                      ProducerId =2,
-                     Id=8
-                 }
-            };
-            context.ProducerInvoicedMaterialNetTonnage.AddRange(materialInvoiceTonnage);
-            context.SaveChanges();
-        }
-
-        private void CreateProducerDetail()
-        {
-            var producerNames = new string[]
-            {
-                "Allied Packaging",
-                "Beeline Materials",
-                "Cloud Boxes",
-                "Decking and Shed",
-                "Electric Things",
-                "French Flooring",
-                "Good Fruit Co",
-                "Happy Shopper",
-                "Icicle Foods",
-                "Jumbo Box Store",
-            };
-
-            var producerId = 1;
-            foreach (var producerName in producerNames)
-            {
-                this.dbContext.ProducerDetail.Add(new ProducerDetail
-                {
-                    ProducerId = producerId++,
-                    SubsidiaryId = $"{producerId}-Sub",
-                    ProducerName = producerName,
-                    CalculatorRunId = 1,
-                });
-            }
-
-            this.dbContext.SaveChanges();
-
-            for (int producerDetailId = 1; producerDetailId <= 10; producerDetailId++)
-            {
-                for (int materialId = 1; materialId < 9; materialId++)
-                {
-                    this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-                    {
-                        MaterialId = materialId,
-                        ProducerDetailId = producerDetailId,
-                        SubmissionPeriod = "2025-H1",
-                        PackagingType = "HH",
-                        PackagingTonnage = materialId * 50,
-                    });
-                    this.dbContext.ProducerReportedMaterial.Add(new ProducerReportedMaterial
-                    {
-                        MaterialId = materialId,
-                        ProducerDetailId = producerDetailId,
-                        SubmissionPeriod = "2025-H2",
-                        PackagingType = "HH",
-                        PackagingTonnage = materialId * 50,
-                    });
-                }
-            }
-
-            this.dbContext.ProducerReportedMaterial.AddRange(
-                new()  {
-                    MaterialId = 3,
-                    ProducerDetailId = 1,
-                    PackagingType = "HDC",
-                    SubmissionPeriod = "2025-H1",
-                    PackagingTonnage = 50,
-                },
-                new()  {
-                    MaterialId = 3,
-                    ProducerDetailId = 1,
-                    PackagingType = "HDC",
-                    SubmissionPeriod = "2025-H2",
-                    PackagingTonnage = 50,
-                },
-                new() {
-                    MaterialId = 3,
-                    ProducerDetailId = 2,
-                    PackagingType = "HDC",
-                    SubmissionPeriod = "2025-H1",
-                    PackagingTonnage = 100,
-                },
-                new() {
-                    MaterialId = 3,
-                    ProducerDetailId = 2,
-                    PackagingType = "HDC",
-                    SubmissionPeriod = "2025-H2",
-                    PackagingTonnage = 50,
-                },
-                new() {
-                    MaterialId = 2,
-                    ProducerDetailId = 1,
-                    PackagingType = "PB",
-                    SubmissionPeriod = "2025-H1",
-                    PackagingTonnage = 50,
-                },
-                new() {
-                    MaterialId = 2,
-                    ProducerDetailId = 1,
-                    PackagingType = "PB",
-                    SubmissionPeriod = "2025-H2",
-                    PackagingTonnage = 100,
-                }
-            );
-
-            this.dbContext.SaveChanges();
-        }
-
-        private void CreateNewRun()
-        {
-            var run = new CalculatorRun
-            {
-                CalculatorRunClassificationId = 7,
-                Name = "Test Run",
-                RelativeYear = new RelativeYear(2025),
-                CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
-                CreatedBy = "Test User",
-                DefaultParameterSettingMasterId = 1,
-            };
-
-            var run1 = new CalculatorRun
-            {
-                CalculatorRunClassificationId = 2,
-                Name = "Test Run1",
-                RelativeYear = new RelativeYear(2025),
-                CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
-                CreatedBy = "Test User",
-                DefaultParameterSettingMasterId = 2,
-            };
-            this.dbContext.CalculatorRuns.Add(run);
-            this.dbContext.CalculatorRuns.Add(run1);
-            this.dbContext.SaveChanges();
         }
     }
 }

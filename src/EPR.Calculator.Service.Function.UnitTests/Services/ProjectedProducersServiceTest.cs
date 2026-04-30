@@ -1,33 +1,23 @@
-﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
-using EPR.Calculator.Service.Function.UnitTests.Builder;
-using Microsoft.EntityFrameworkCore;
-using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Utils;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
     [TestClass]
     public class ProjectedProducersServiceTest
     {
-        private readonly ApplicationDBContext context;
+        private ApplicationDBContext context = null!;
 
-        public ProjectedProducersServiceTest()
+        [TestInitialize]
+        public void Init()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDBContext>()
-                .UseInMemoryDatabase(databaseName: "PayCal")
-                .Options;
-            context = new ApplicationDBContext(options);
+            context = TestFixtures.New().Create<ApplicationDBContext>();
         }
 
         [TestCleanup]
@@ -41,19 +31,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             TestDataHelper.SeedDatabaseForInitialRun(context);
 
-            var producerReportedMaterialProjectedChunker = new Mock<IDbLoadingChunkerService<ProducerReportedMaterialProjected>>();
-            List<ProducerReportedMaterialProjected> savedProjectedProducers = new List<ProducerReportedMaterialProjected>();
+            var service = new ProjectedProducersService(context, new TestBulkOps());
 
-            producerReportedMaterialProjectedChunker
-                .Setup(c => c.InsertRecords(It.IsAny<IEnumerable<ProducerReportedMaterialProjected>>()))
-                .Returns((IEnumerable<ProducerReportedMaterialProjected> arg) =>
-                {
-                    savedProjectedProducers = arg.ToList();
-                    return Task.FromResult(arg);
-                });
-
-            var service = new ProjectedProducersService(context, producerReportedMaterialProjectedChunker.Object);
-            
             var h2ProjectedProducers = new List<CalcResultH2ProjectedProducer>
             {
                 new CalcResultH2ProjectedProducer
@@ -63,27 +42,27 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     SubmissionPeriodCode = "2025-H2",
                     H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
                     {
-                        ["PL"] = 
-                            new() { 
+                        ["PL"] =
+                            new() {
                                 HouseholdRAMTonnage = new RAMTonnage(),
-                                PublicBinRAMTonnage = new RAMTonnage(),   
+                                PublicBinRAMTonnage = new RAMTonnage(),
                                 HouseholdTonnageWithoutRAM = 10,
                                 PublicBinTonnageWithoutRAM = 0,
                                 TotalTonnage = 150,
                                 ProjectedHouseholdRAMTonnage = new RAMTonnage(),
-                                ProjectedPublicBinRAMTonnage = new RAMTonnage()   
-                                
+                                ProjectedPublicBinRAMTonnage = new RAMTonnage()
+
                             },
-                        ["ST"] = 
-                            new() { 
+                        ["ST"] =
+                            new() {
                                 HouseholdRAMTonnage = new RAMTonnage(),
-                                PublicBinRAMTonnage = new RAMTonnage(),   
+                                PublicBinRAMTonnage = new RAMTonnage(),
                                 HouseholdTonnageWithoutRAM = 0,
                                 PublicBinTonnageWithoutRAM = 0,
                                 TotalTonnage = 200,
                                 ProjectedHouseholdRAMTonnage = new RAMTonnage(),
                                 ProjectedPublicBinRAMTonnage = new RAMTonnage()
-                                
+
                             }
                     }
                 },
@@ -95,18 +74,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     SubmissionPeriodCode = "2025-H2",
                     H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
                     {
-                        ["GL"] = 
-                            new() { 
+                        ["GL"] =
+                            new() {
                                 HouseholdRAMTonnage = new RAMTonnage(),
-                                PublicBinRAMTonnage = new RAMTonnage(),  
-                                HouseholdDrinksContainerRAMTonnage = new RAMTonnage(),   
+                                PublicBinRAMTonnage = new RAMTonnage(),
+                                HouseholdDrinksContainerRAMTonnage = new RAMTonnage(),
                                 HouseholdTonnageWithoutRAM = 10,
                                 PublicBinTonnageWithoutRAM = 20,
                                 HouseholdDrinksContainerTonnageWithoutRAM = 50,
                                 TotalTonnage = 150,
                                 ProjectedHouseholdRAMTonnage = new RAMTonnage(),
-                                ProjectedPublicBinRAMTonnage = new RAMTonnage(),  
-                                ProjectedHouseholdDrinksContainerRAMTonnage = new RAMTonnage(),      
+                                ProjectedPublicBinRAMTonnage = new RAMTonnage(),
+                                ProjectedHouseholdDrinksContainerRAMTonnage = new RAMTonnage(),
                             }
                     }
                 },
@@ -117,19 +96,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     SubmissionPeriodCode = "2025-H2",
                     H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
                     {
-                        ["GL"] = 
-                            new() { 
+                        ["GL"] =
+                            new() {
                                 HouseholdRAMTonnage = new RAMTonnage(),
-                                PublicBinRAMTonnage = new RAMTonnage(),  
-                                HouseholdDrinksContainerRAMTonnage = new RAMTonnage(),   
+                                PublicBinRAMTonnage = new RAMTonnage(),
+                                HouseholdDrinksContainerRAMTonnage = new RAMTonnage(),
                                 HouseholdTonnageWithoutRAM = 10,
                                 PublicBinTonnageWithoutRAM = 20,
                                 HouseholdDrinksContainerTonnageWithoutRAM = 50,
                                 TotalTonnage = 150,
                                 ProjectedHouseholdRAMTonnage = new RAMTonnage(),
-                                ProjectedPublicBinRAMTonnage = new RAMTonnage(),  
-                                ProjectedHouseholdDrinksContainerRAMTonnage = new RAMTonnage(),   
-                                
+                                ProjectedPublicBinRAMTonnage = new RAMTonnage(),
+                                ProjectedHouseholdDrinksContainerRAMTonnage = new RAMTonnage(),
+
                             }
                     }
                 }
@@ -144,10 +123,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     SubmissionPeriodCode = "2025-H1",
                     H1ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>
                     {
-                        ["PL"] = 
-                            new() { 
+                        ["PL"] =
+                            new() {
                                 HouseholdRAMTonnage = new RAMTonnage() { Tonnage = 100, RedTonnage = 10, AmberTonnage = 10, GreenTonnage = 10, RedMedicalTonnage = 10, AmberMedicalTonnage = 10, GreenMedicalTonnage = 0 },
-                                PublicBinRAMTonnage = new RAMTonnage() { Tonnage = 0, RedTonnage = 0, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },   
+                                PublicBinRAMTonnage = new RAMTonnage() { Tonnage = 0, RedTonnage = 0, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
                                 HouseholdTonnageWithoutRAM = 50,
                                 PublicBinTonnageWithoutRAM = 0,
                                 TotalTonnage = 100,
@@ -156,17 +135,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                                 ProjectedHouseholdRAMTonnage = new RAMTonnage() { Tonnage = 100, RedTonnage = 20, AmberTonnage = 20, GreenTonnage = 20, RedMedicalTonnage = 20, AmberMedicalTonnage = 20, GreenMedicalTonnage = 0 },
                                 ProjectedPublicBinRAMTonnage = new RAMTonnage() { Tonnage = 0, RedTonnage = 0, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 }
                             },
-                        ["ST"] = 
-                            new() { 
+                        ["ST"] =
+                            new() {
                                 HouseholdRAMTonnage = new RAMTonnage() { Tonnage = 0, RedTonnage = 0, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
-                                PublicBinRAMTonnage = new RAMTonnage() { Tonnage = 50, RedTonnage = 0, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },   
+                                PublicBinRAMTonnage = new RAMTonnage() { Tonnage = 50, RedTonnage = 0, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
                                 HouseholdTonnageWithoutRAM = 0,
                                 PublicBinTonnageWithoutRAM = 50,
                                 TotalTonnage = 50,
                                 H2RamProportions = new RAMProportions { Red = 1, Amber = 0, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 },
                                 H2TotalTonnage = 100,
                                 ProjectedHouseholdRAMTonnage = new RAMTonnage() { Tonnage = 0, RedTonnage = 0, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
-                                ProjectedPublicBinRAMTonnage = new RAMTonnage() { Tonnage = 50, RedTonnage = 50, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },   
+                                ProjectedPublicBinRAMTonnage = new RAMTonnage() { Tonnage = 50, RedTonnage = 50, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
                             }
                     }
                 },
@@ -178,11 +157,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     SubmissionPeriodCode = "2025-H1",
                     H1ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>
                     {
-                        ["GL"] = 
-                            new() { 
+                        ["GL"] =
+                            new() {
                                 HouseholdRAMTonnage = new RAMTonnage() { Tonnage = 0, RedTonnage = 0, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
-                                PublicBinRAMTonnage = new RAMTonnage() { Tonnage = 50, RedTonnage = 20, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },  
-                                HouseholdDrinksContainerRAMTonnage = new RAMTonnage() { Tonnage = 200, RedTonnage = 0, AmberTonnage = 100, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },   
+                                PublicBinRAMTonnage = new RAMTonnage() { Tonnage = 50, RedTonnage = 20, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                                HouseholdDrinksContainerRAMTonnage = new RAMTonnage() { Tonnage = 200, RedTonnage = 0, AmberTonnage = 100, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
                                 HouseholdTonnageWithoutRAM = 20,
                                 PublicBinTonnageWithoutRAM = 0,
                                 HouseholdDrinksContainerTonnageWithoutRAM = 100,
@@ -202,11 +181,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     SubmissionPeriodCode = "2025-H1",
                     H1ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>
                     {
-                        ["GL"] = 
-                            new() { 
+                        ["GL"] =
+                            new() {
                                 HouseholdRAMTonnage = new RAMTonnage() { Tonnage = 0, RedTonnage = 0, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
-                                PublicBinRAMTonnage = new RAMTonnage() { Tonnage = 50, RedTonnage = 20, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },  
-                                HouseholdDrinksContainerRAMTonnage = new RAMTonnage() { Tonnage = 200, RedTonnage = 0, AmberTonnage = 100, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },   
+                                PublicBinRAMTonnage = new RAMTonnage() { Tonnage = 50, RedTonnage = 20, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                                HouseholdDrinksContainerRAMTonnage = new RAMTonnage() { Tonnage = 200, RedTonnage = 0, AmberTonnage = 100, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
                                 HouseholdTonnageWithoutRAM = 0,
                                 PublicBinTonnageWithoutRAM = 20,
                                 HouseholdDrinksContainerTonnageWithoutRAM = 100,
@@ -223,6 +202,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             await service.StoreProjectedProducers(1, h2ProjectedProducers, h1ProjectedProducers);
 
+            var savedProjectedProducers = context.ProducerReportedMaterialProjected.ToList();
             Assert.AreEqual(20, savedProjectedProducers.Count());
             var submissionPeriods = savedProjectedProducers.GroupBy(p => p.SubmissionPeriod).ToDictionary(g => g.Key, g => g.ToList());
 

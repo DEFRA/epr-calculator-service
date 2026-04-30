@@ -2,8 +2,8 @@ using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.Detail;
-using EPR.Calculator.Service.Function.Misc;
-using Microsoft.EntityFrameworkCore;
+using EPR.Calculator.Service.Function.Features.Calculator.Contexts;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
@@ -15,11 +15,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
         public CalcResultDetailBuilderTests()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDBContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
-
-            _context = new ApplicationDBContext(options);
+            _context = TestFixtures.New().Create<ApplicationDBContext>();
             _builder = new CalcResultDetailBuilder(_context);
             SeedDatabase();
         }
@@ -64,7 +60,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         [TestMethod]
         public async Task Construct_AllPropertiesPresent_ReturnsCorrectData()
         {
-            var result = await _builder.ConstructAsync(new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) });
+            var result = await _builder.ConstructAsync(TestFixtures.Legacy.Create<CalculatorRunContext>());
             Assert.AreEqual(1, result.RunId);
             Assert.AreEqual("TestRun", result.RunName);
             Assert.AreEqual("TestUser", result.RunBy);
@@ -94,7 +90,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             _context.CalculatorRuns.Add(calculatorRun);
             await _context.SaveChangesAsync();
 
-            var result = await _builder.ConstructAsync(new CalcResultsRequestDto { RunId = 2, RelativeYear = new RelativeYear(2025) });
+            var runContext = TestFixtures.Legacy.Create<CalculatorRunContext>() with { RunId = 2 };
+            var result = await _builder.ConstructAsync(runContext);
 
             Assert.AreEqual(2, result.RunId);
             Assert.AreEqual("RunWithMissingProps", result.RunName);

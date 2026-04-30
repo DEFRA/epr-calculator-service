@@ -1,9 +1,7 @@
-﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Services;
-using EPR.Calculator.Service.Function.UnitTests.Builder;
-using Microsoft.EntityFrameworkCore;
-using Moq;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
@@ -13,53 +11,50 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     [TestClass]
     public class MaterialServiceTests
     {
-        private Mock<IDbContextFactory<ApplicationDBContext>> dbContextFactory;
-        private ApplicationDBContext dbContext;
-        private MaterialService materialService;
+        private ApplicationDBContext _dbContext = null!;
+        private MaterialService _materialService = null!;
 
-        public MaterialServiceTests()
+        [TestInitialize]
+        public async Task Init()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDBContext>()
-                .UseInMemoryDatabase(databaseName: "TestDatabase")
-                .Options;
+            var dbMaterials = TestDataHelper.Materials.Select(m => new Material
+            {
+                Id = m.Id,
+                Code = m.Code,
+                Name = m.Name
+            });
 
-            dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
-            dbContext = new ApplicationDBContext(options);
-            dbContextFactory.Setup(factory => factory.CreateDbContext()).Returns(dbContext);
-            materialService = new MaterialService(dbContextFactory.Object);
+            _dbContext = TestFixtures.New().Create<ApplicationDBContext>();
+            await _dbContext.Material.AddRangeAsync(dbMaterials);
+            await _dbContext.SaveChangesAsync();
+
+            _materialService = new MaterialService(_dbContext);
         }
 
         [TestCleanup]
         public void Cleanup()
         {
-            dbContext.Dispose();
+            _dbContext.Dispose();
         }
 
         [TestMethod]
-        public async Task ShouldReturnMaterials()
+        public async Task Should_return_materials()
         {
-            // Arrange
-            var materials = new List<Material>();
-            var materialDetails = TestDataHelper.GetMaterials();
-
-            foreach (var material in materialDetails)
-            {
-                materials.Add(new Material
-                {
-                    Name = material.Name,
-                    Code = material.Code,
-                    Description = material.Description
-                });
-            }
-
-            dbContext.Material.AddRange(materials);
-            await dbContext.SaveChangesAsync();
-
             // Act
-            var result = await materialService.GetMaterials();
+            var result = await _materialService.GetMaterials();
 
             // Assert
-            Assert.AreEqual(8, result.Count);
+            result.Length.ShouldBe(TestDataHelper.Materials.Length);
+        }
+
+        [TestMethod]
+        public async Task Should_return_materials_by_type()
+        {
+            // Act
+            var result = await _materialService.GetMaterialIdsByType();
+
+            // Assert
+            result.Count.ShouldBe(TestDataHelper.Materials.Length);
         }
     }
 }

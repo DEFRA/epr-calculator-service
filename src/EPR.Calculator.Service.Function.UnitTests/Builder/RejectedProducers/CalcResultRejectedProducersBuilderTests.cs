@@ -3,34 +3,29 @@ using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.RejectedProducers;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Misc;
-using Microsoft.EntityFrameworkCore;
+using EPR.Calculator.Service.Function.Features.Billing.Constants;
+using EPR.Calculator.Service.Function.Features.Calculator.Contexts;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
 {
     [TestClass]
     public class CalcResultRejectedProducersBuilderTests
     {
-        private ApplicationDBContext CreateDbContext()
-        {
-            var options = new DbContextOptionsBuilder<ApplicationDBContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
+        private ApplicationDBContext context = null!;
+        private CalcResultRejectedProducersBuilder builder = null!;
 
-            return new ApplicationDBContext(options);
-        }
-
-        private CalcResultRejectedProducersBuilder CreateBuilder(ApplicationDBContext context)
+        [TestInitialize]
+        public void Init()
         {
-            return new CalcResultRejectedProducersBuilder(context);
+            context = TestFixtures.New(o => o.UseSqlLite()).Create<ApplicationDBContext>();
+            builder = new CalcResultRejectedProducersBuilder(context);
         }
 
         [TestMethod]
         public async Task Construct_ReturnsRejectedProducers_WithLatestOrganisationDetails()
         {
             // Arrange
-            var context = CreateDbContext();
-
             const int organisationId = 100;
             context.CalculatorRunRelativeYears.Add(new CalculatorRunRelativeYear { Value = 2025 });
 
@@ -105,7 +100,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
                 ProducerId = organisationId,
                 SuggestedBillingInstruction = "Instruction A",
                 SuggestedInvoiceAmount = 123.45m,
-                BillingInstructionAcceptReject = CommonConstants.Rejected,
+                BillingInstructionAcceptReject = BillingConstants.Action.Rejected,
                 ReasonForRejection = "Invalid data",
                 LastModifiedAcceptReject = confirmedDate,
                 LastModifiedAcceptRejectBy = "User A"
@@ -113,15 +108,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.RejectedProducers
 
             await context.SaveChangesAsync();
 
-            var builder = CreateBuilder(context);
-            var requestDto = new CalcResultsRequestDto
-            {
-                RunId = runOld.Id,
-                RelativeYear = new RelativeYear(2025)
-            };
+            var runContext = TestFixtures.Legacy.Create<CalculatorRunContext>();
 
             // Act
-            var result = (await builder.ConstructAsync(requestDto)).ToList();
+            var result = (await builder.ConstructAsync(runContext)).ToList();
 
             // Assert
             Assert.AreEqual(1, result.Count);
