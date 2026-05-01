@@ -24,7 +24,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             return new ApplicationDBContext(options);
         }
 
-        private void SeedProducer(
+        private int SeedProducer(
             ApplicationDBContext context,
             decimal hh,
             decimal hhRed,
@@ -37,14 +37,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             int runId = 1,
             string materialCode = MaterialCodes.Aluminium)
         {
-            var material = new Material
-            {
-                Code = materialCode,
-                Name = materialCode
-            };
-
+            var material = new Material { Code = materialCode, Name = materialCode };
             context.Material.Add(material);
-            context.SaveChanges();
 
             var producer = new ProducerDetail
             {
@@ -52,36 +46,34 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 SubsidiaryId = null,
                 CalculatorRunId = runId
             };
-
             context.ProducerDetail.Add(producer);
+
+            context.ProducerReportedMaterialProjected.AddRange(
+                new ProducerReportedMaterialProjected
+                {
+                    ProducerDetailId             = producer.Id,
+                    MaterialId                   = material.Id,
+                    PackagingType                = PackagingTypes.Household,
+                    PackagingTonnage             = hh,
+                    PackagingTonnageRed          = hhRed,
+                    PackagingTonnageRedMedical   = hhRedMedical,
+                    PackagingTonnageAmber        = hhAmber,
+                    PackagingTonnageAmberMedical = hhAmberMedical,
+                    PackagingTonnageGreen        = hhGreen,
+                    PackagingTonnageGreenMedical = hhGreenMedical,
+                    SubmissionPeriod             = "2025-H1"
+                },
+                new ProducerReportedMaterialProjected
+                {
+                    ProducerDetailId = producer.Id,
+                    MaterialId       = material.Id,
+                    PackagingType    = PackagingTypes.ConsumerWaste,
+                    PackagingTonnage = smcw,
+                    SubmissionPeriod = "2025-H1"
+                }
+            );
             context.SaveChanges();
-
-            var household = new ProducerReportedMaterial
-            {
-                ProducerDetailId = producer.Id,
-                MaterialId = material.Id,
-                PackagingType = PackagingTypes.Household,
-                PackagingTonnage = hh,
-                PackagingTonnageRed = hhRed,
-                PackagingTonnageRedMedical = hhRedMedical,
-                PackagingTonnageAmber = hhAmber,
-                PackagingTonnageAmberMedical = hhAmberMedical,
-                PackagingTonnageGreen = hhGreen,
-                PackagingTonnageGreenMedical = hhGreenMedical,
-                SubmissionPeriod = "2025-H1"
-            };
-
-            var consumerWaste = new ProducerReportedMaterial
-            {
-                ProducerDetailId = producer.Id,
-                MaterialId = material.Id,
-                PackagingType = PackagingTypes.ConsumerWaste,
-                PackagingTonnage = smcw,
-                SubmissionPeriod = "2025-H1"
-            };
-
-            context.ProducerReportedMaterial.AddRange(household, consumerWaste);
-            context.SaveChanges();
+            return material.Id;
         }
 
         [TestMethod]
@@ -133,7 +125,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             var context = CreateContext();
 
-            SeedProducer(
+            var materialId = SeedProducer(
                 context,
                 hh: 100,
                 hhRed: 25,
@@ -149,14 +141,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var materials = new[]
             {
-                new MaterialDetail { Code = MaterialCodes.Aluminium, Name = MaterialNames.Aluminium, Description = "" }
+                new MaterialDetail { Id = materialId, Code = MaterialCodes.Aluminium, Name = MaterialNames.Aluminium, Description = "" }
             };
 
             var result = await service.Calculate(
                 new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) },
                 materials,
-                scaledUpProducers: [],
-                partialObligations: [],
                 showModulations: false);
 
             var total = result.OverallTotalPerMaterials[MaterialCodes.Aluminium];
@@ -188,8 +178,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var result = await service.Calculate(
                 new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) },
                 new[] { new MaterialDetail { Code = "NOT_EXIST", Name = "", Description = "" } },
-                [],
-                [],
                 showModulations: false);
 
             var total = result.OverallTotalPerMaterials["NOT_EXIST"];
@@ -232,8 +220,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var result = await service.Calculate(
                 new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) },
                 new[] { new MaterialDetail { Code = MaterialCodes.Aluminium, Name = MaterialNames.Aluminium, Description = "" } },
-                [],
-                [],
                 showModulations: false);
 
             var total = result.OverallTotalPerMaterials[MaterialCodes.Aluminium];
@@ -277,7 +263,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var context = CreateContext();
 
-            SeedProducer(
+            var materialId = SeedProducer(
                 context,
                 hh,
                 red,
@@ -293,9 +279,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var result = await service.Calculate(
                 new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) },
-                new[] { new MaterialDetail { Code = MaterialCodes.Aluminium, Name = MaterialNames.Aluminium, Description = "" } },
-                [],
-                [],
+                new[] { new MaterialDetail { Id = materialId, Code = MaterialCodes.Aluminium, Name = MaterialNames.Aluminium, Description = "" } },
                 showModulations: true);
 
             var x = result.ProducerTotals.First().SelfManagedConsumerWasteDataPerMaterials[MaterialCodes.Aluminium];

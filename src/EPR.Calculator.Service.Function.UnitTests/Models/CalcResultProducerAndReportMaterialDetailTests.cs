@@ -21,7 +21,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
                     CalculatorRunId = 1,
                     CalculatorRun = new CalculatorRun { RelativeYear = new RelativeYear(2024), Name = "Test Run 1" },
                 },
-                ProducerReportedMaterial = new ProducerReportedMaterialProjected
+                ProducerReportedMaterialProjected = new ProducerReportedMaterialProjected
                 {
                     Material = new Material { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
                     PackagingTonnage = 1000.00m,
@@ -57,10 +57,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             var testValue = fixture.Create<ProducerReportedMaterialProjected>();
 
             // Act
-            calcResultProducerAndReportMaterialDetail.ProducerReportedMaterial = testValue;
+            calcResultProducerAndReportMaterialDetail.ProducerReportedMaterialProjected = testValue;
 
             // Assert
-            Assert.AreSame(testValue, calcResultProducerAndReportMaterialDetail.ProducerReportedMaterial);
+            Assert.AreSame(testValue, calcResultProducerAndReportMaterialDetail.ProducerReportedMaterialProjected);
         }
     }
 }

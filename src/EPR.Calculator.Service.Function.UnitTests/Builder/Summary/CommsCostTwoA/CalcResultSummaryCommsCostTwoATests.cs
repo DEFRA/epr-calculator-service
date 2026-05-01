@@ -2,6 +2,7 @@
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwoA
 {
@@ -47,8 +48,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             {
                 new Dictionary<string, CalcResultScaledupProducerTonnage>
                 {
-                    {
-                        "10001",
+                    ["10001"] =
                         new CalcResultScaledupProducerTonnage
                         {
                             ReportedHouseholdPackagingWasteTonnage = 0,
@@ -62,8 +62,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                             ScaledupReportedSelfManagedConsumerWasteTonnage = 0,
                             ScaledupNetReportedTonnage = 0,
                         }
-                    },
-                },
+                }
             };
         }
 
@@ -75,7 +74,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 0m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetEnglandWithBadDebtProvisionForCommsTotal(producers, material, calcResult);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetEnglandWithBadDebtProvisionForCommsTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -88,7 +87,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 1139.71200m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetEnglandWithBadDebtProvisionForCommsTotal(producers, material, calcResult);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetEnglandWithBadDebtProvisionForCommsTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -101,7 +100,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 284.92800m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetWalesWithBadDebtProvisionForCommsTotal(producers, material, calcResult);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetWalesWithBadDebtProvisionForCommsTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -114,7 +113,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 427.39200m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetScotlandWithBadDebtProvisionForCommsTotal(producers, material, calcResult);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetScotlandWithBadDebtProvisionForCommsTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -127,7 +126,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 997.24800m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetNorthernIrelandWithBadDebtProvisionForCommsTotal(producers, material, calcResult);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetNorthernIrelandWithBadDebtProvisionForCommsTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -140,7 +139,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 1344.00m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostWithoutBadDebtProvisionTotal(producers, material, calcResult);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostWithoutBadDebtProvisionTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -153,7 +152,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 80.64m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetBadDebtProvisionForCommsCostTotal(producers, material, calcResult);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetBadDebtProvisionForCommsCostTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -166,7 +165,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 427.392m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetEnglandWithBadDebtProvisionForComms(producers[0], material, calcResult);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetEnglandWithBadDebtProvisionForComms(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers[0], material, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -179,7 +178,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 106.848m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetWalesWithBadDebtProvisionForComms(producers[0], material, calcResult);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetWalesWithBadDebtProvisionForComms(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers[0], material, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -192,7 +191,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 160.272m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetScotlandWithBadDebtProvisionForComms(producers[0], material, calcResult);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetScotlandWithBadDebtProvisionForComms(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers[0], material, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -205,7 +204,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 373.96800m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetNorthernIrelandWithBadDebtProvisionForComms(producers[0], material, calcResult);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetNorthernIrelandWithBadDebtProvisionForComms(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers[0], material, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -265,7 +264,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 534.2400m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostwithBadDebtProvision(producers[0], material, calcResult);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostwithBadDebtProvision(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers[0], material, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -278,7 +277,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 504.00m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostWithoutBadDebtProvision(producers[0], material, calcResult);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostWithoutBadDebtProvision(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers[0], material, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -291,7 +290,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 1424.6400m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostwithBadDebtProvisionTotal(producers, material, calcResult);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostwithBadDebtProvisionTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -305,7 +304,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             var material = GetHDCMaterial();
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetTotalReportedTonnageTotal(producers, material);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetTotalReportedTonnageTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -318,7 +317,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal expectedCost1 = 3200;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetTotalReportedTonnageTotal(producers, material);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetTotalReportedTonnageTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -334,7 +333,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                 {
                     MaterialId = 1,
                     ProducerDetailId = 1,
-                    PackagingType = "HH",
+                    PackagingType = "AL",
                     PackagingTonnage = 50,
                     SubmissionPeriod = subPeriod,
                     Material = new Material
@@ -348,14 +347,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
 
                 producers[0].ProducerReportedMaterials.Add(new ProducerReportedMaterial
                 {
-                    MaterialId = 2,
+                    MaterialId = 3,
                     ProducerDetailId = 2,
                     PackagingType = "HDC",
                     PackagingTonnage = 50,
                     SubmissionPeriod = subPeriod,
                     Material = new Material
                     {
-                        Id = 2,
+                        Id = 3,
                         Code = "GL",
                         Name = "Material2",
                         Description = "Material2",
@@ -364,7 +363,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
 
                 producers[0].ProducerReportedMaterials.Add(new ProducerReportedMaterial
                 {
-                    MaterialId = 3,
+                    MaterialId = 1,
                     ProducerDetailId = 3,
                     PackagingType = "PB",
                     PackagingTonnage = 100,
@@ -398,7 +397,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
         {
             var material = new MaterialDetail
             {
-                Id = 2,
+                Id = 3,
                 Code = "GL",
                 Name = "Material2",
                 Description = "Material2",

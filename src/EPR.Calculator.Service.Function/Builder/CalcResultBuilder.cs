@@ -197,11 +197,8 @@ namespace EPR.Calculator.Service.Function.Builder
                 _telemetryClient.TrackTrace("CalcResultRejectedProducersBuilder end...");
             }
 
-            var scaledUpProducers = result.CalcResultScaledupProducers?.ScaledupProducers ?? [];
-            var partialObligations = result.CalcResultPartialObligations?.PartialObligations ?? [];
-
             _telemetryClient.TrackTrace("selfManagedConsumerWasteService started...");
-            var smcw = await _selfManagedConsumerWasteService.Calculate(resultsRequestDto, materialDetails, scaledUpProducers, partialObligations, result.ShowModulations);
+            var smcw = await _selfManagedConsumerWasteService.Calculate(resultsRequestDto, materialDetails, result.ShowModulations);
             result.Smcw = smcw;
             _telemetryClient.TrackTrace("selfManagedConsumerWasteService ended...");
 
