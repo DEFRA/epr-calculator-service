@@ -217,14 +217,16 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             CalcResultProjectedProducers producers,
             IEnumerable<int> acceptedProducerIds)
         {
-            var acceptedProducers = producers.H2ProjectedProducers?.Where(
-                x => acceptedProducerIds.Contains(x.ProducerId) || x.ProducerId == 0
-            ).ToList() ?? new List<CalcResultH2ProjectedProducer>();
+            var isAccepted = (int producerId) => acceptedProducerIds.Contains(producerId) || producerId == 0;
+            var acceptedH2Producers = producers.H2ProjectedProducers?.Where(x => isAccepted(x.ProducerId)).ToList() ?? new List<CalcResultH2ProjectedProducer>();
+            var acceptedH1Producers = producers.H1ProjectedProducers?.Where(x => isAccepted(x.ProducerId)).ToList() ?? new List<CalcResultH1ProjectedProducer>();
 
             return new CalcResultProjectedProducers
             {
                 H2ProjectedProducersHeaders = producers.H2ProjectedProducersHeaders,
-                H2ProjectedProducers = acceptedProducers,
+                H1ProjectedProducersHeaders = producers.H1ProjectedProducersHeaders,
+                H2ProjectedProducers = acceptedH2Producers,
+                H1ProjectedProducers = acceptedH1Producers,
             };
         }
 
