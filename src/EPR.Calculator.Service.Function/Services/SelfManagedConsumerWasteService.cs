@@ -16,15 +16,12 @@ using NetTopologySuite.Utilities;
 
 namespace EPR.Calculator.Service.Function.Services
 {
-
     public interface ISelfManagedConsumerWasteService
     {
         Task<SelfManagedConsumerWaste>
          Calculate(
             CalcResultsRequestDto resultsRequestDto,
             IEnumerable<MaterialDetail> materialDetails,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
-            IEnumerable<CalcResultPartialObligation> partialObligations,
             bool showModulations);
     }
 
@@ -37,28 +34,39 @@ namespace EPR.Calculator.Service.Function.Services
             this.context = context;
         }
 
-        private async Task<IEnumerable<ProducerDetail>> GetProducerDetails(int runId)
-        {
-            return await context
-                .ProducerDetail
-                .Where(pd => pd.CalculatorRunId == runId)
-                .ToListAsync();
-        }
-
         public async Task<SelfManagedConsumerWaste> Calculate(
             CalcResultsRequestDto resultsRequestDto,
             IEnumerable<MaterialDetail> materialDetails,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
-            IEnumerable<CalcResultPartialObligation> partialObligations,
-            bool showModulations)
+            bool showModulations
+        )
         {
-            var producerTotals = (await GetProducerDetails(resultsRequestDto.RunId))
+            // TODO also used by CalcResultSummaryBuilder - look up in CalcResultBuilder...
+            var producerMaterialDetails = await (
+                from pd in context.ProducerDetail
+                join prm in context.ProducerReportedMaterialProjected on pd.Id equals prm.ProducerDetailId
+                where pd.CalculatorRunId == resultsRequestDto.RunId
+                select new CalcResultProducerAndReportMaterialDetail
+                {
+                    ProducerDetail = pd,
+                    ProducerReportedMaterialProjected = prm,
+                }
+            ).ToListAsync();
+
+            var projectedMaterialsLookup = producerMaterialDetails
+                .ToLookup(
+                    x => (x.ProducerDetail.ProducerId, x.ProducerDetail.SubsidiaryId),
+                    x => x.ProducerReportedMaterialProjected
+                );
+
+            var producerDetails = producerMaterialDetails.Select(x => x.ProducerDetail).Distinct().ToList();
+
+            var producerTotals = producerDetails
                 .GroupBy(x => x.ProducerId)
                 .SelectMany(group =>
                     materialDetails
                         .SelectMany(material =>
                             SelfManagedConsumerWasteServiceLevels
-                                .Calculate(BuildL1(group, material, scaledUpProducers, partialObligations), showModulations)
+                                .Calculate(BuildL1(projectedMaterialsLookup, group, material), showModulations)
                                 .Select(r => (material, result: r))
                         )
                         .GroupBy(x => (x.result.OrgId, x.result.SubsidiaryId, x.result.Level))
@@ -88,10 +96,10 @@ namespace EPR.Calculator.Service.Function.Services
         }
 
         private IL1 BuildL1(
+            ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             IGrouping<int, ProducerDetail> group,
-            MaterialDetail material,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
-            IEnumerable<CalcResultPartialObligation> partialObligations)
+            MaterialDetail material
+        )
         {
             if (group.Count() == 1 && group.First().SubsidiaryId == null)
             {
@@ -99,14 +107,14 @@ namespace EPR.Calculator.Service.Function.Services
 
                 return new SingleL1(
                     OrgId: p.ProducerId,
-                    R:     CalcResultSummaryUtil.GetReportedTonnage(p, material, RagRating.Red) +
-                           CalcResultSummaryUtil.GetReportedTonnage(p, material, RagRating.RedMedical),
-                    A:     CalcResultSummaryUtil.GetReportedTonnage(p, material, RagRating.Amber) +
-                           CalcResultSummaryUtil.GetReportedTonnage(p, material, RagRating.AmberMedical),
-                    G:     CalcResultSummaryUtil.GetReportedTonnage(p, material, RagRating.Green) +
-                           CalcResultSummaryUtil.GetReportedTonnage(p, material, RagRating.GreenMedical),
-                    Total: CalcResultSummaryUtil.GetReportedTonnage(p, material),
-                    Smcw:  CalcResultSummaryUtil.GetTonnage(p, material, PackagingTypes.ConsumerWaste)
+                    R:     CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, p, material, RagRating.Red) +
+                           CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, p, material, RagRating.RedMedical),
+                    A:     CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, p, material, RagRating.Amber) +
+                           CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, p, material, RagRating.AmberMedical),
+                    G:     CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, p, material, RagRating.Green) +
+                           CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, p, material, RagRating.GreenMedical),
+                    Total: CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, p, material),
+                    Smcw:  CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, p, material, PackagingTypes.ConsumerWaste)
                 );
             }
 
@@ -116,14 +124,14 @@ namespace EPR.Calculator.Service.Function.Services
                 .Select(p => new L2(
                     OrgId:        p.ProducerId,
                     SubsidiaryId: p.SubsidiaryId,
-                    R:            CalcResultSummaryUtil.GetReportedTonnage(p, material, RagRating.Red) +
-                                  CalcResultSummaryUtil.GetReportedTonnage(p, material, RagRating.RedMedical),
-                    A:            CalcResultSummaryUtil.GetReportedTonnage(p, material, RagRating.Amber) +
-                                  CalcResultSummaryUtil.GetReportedTonnage(p, material, RagRating.AmberMedical),
-                    G:            CalcResultSummaryUtil.GetReportedTonnage(p, material, RagRating.Green) +
-                                  CalcResultSummaryUtil.GetReportedTonnage(p, material, RagRating.GreenMedical),
-                    Total:        CalcResultSummaryUtil.GetReportedTonnage(p, material),
-                    Smcw:         CalcResultSummaryUtil.GetTonnage(p, material, PackagingTypes.ConsumerWaste)
+                    R:            CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, p, material, RagRating.Red) +
+                                  CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, p, material, RagRating.RedMedical),
+                    A:            CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, p, material, RagRating.Amber) +
+                                  CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, p, material, RagRating.AmberMedical),
+                    G:            CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, p, material, RagRating.Green) +
+                                  CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, p, material, RagRating.GreenMedical),
+                    Total:        CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, p, material),
+                    Smcw:         CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, p, material, PackagingTypes.ConsumerWaste)
                 )).ToList();
 
             return new HC(group.Key, l2s);

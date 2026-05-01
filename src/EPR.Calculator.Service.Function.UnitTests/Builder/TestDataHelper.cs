@@ -1686,37 +1686,37 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     },
                     new ProducerReportedMaterial
                     {
-                        Material = new Material { Id = 3, Code = "PL", Name = "Plastic", Description = "Plastic" },
+                        Material = new Material { Id = 5, Code = "PL", Name = "Plastic", Description = "Plastic" },
                         PackagingTonnage = 10.00m,
                         PackagingType = "PB",
+                        MaterialId = 5,
+                        SubmissionPeriod = subPeriod,
+                        ProducerDetail = null,
+                    },
+                    new ProducerReportedMaterial
+                    {
+                        Material = new Material { Id = 3, Code = "GL", Name = "Glass", Description = "Glass" },
+                        PackagingTonnage = 20.00m,
+                        PackagingType = "HH",
                         MaterialId = 3,
                         SubmissionPeriod = subPeriod,
                         ProducerDetail = null,
                     },
                     new ProducerReportedMaterial
                     {
-                        Material = new Material { Id = 4, Code = "GL", Name = "Glass", Description = "Glass" },
-                        PackagingTonnage = 20.00m,
-                        PackagingType = "HH",
-                        MaterialId = 4,
-                        SubmissionPeriod = subPeriod,
-                        ProducerDetail = null,
-                    },
-                    new ProducerReportedMaterial
-                    {
-                        Material = new Material { Id = 4, Code = "GL", Name = "Glass", Description = "Glass" },
+                        Material = new Material { Id = 3, Code = "GL", Name = "Glass", Description = "Glass" },
                         PackagingTonnage = 10.00m,
                         PackagingType = "HDC",
-                        MaterialId = 4,
+                        MaterialId = 3,
                         SubmissionPeriod = subPeriod,
                         ProducerDetail = null,
                     },
                     new ProducerReportedMaterial
                     {
-                        Material = new Material { Id = 1, Code = "GL", Name = "Glass", Description = "Glass" },
+                        Material = new Material { Id = 3, Code = "GL", Name = "Glass", Description = "Glass" },
                         PackagingTonnage = 50.00m,
                         PackagingType = "CW",
-                        MaterialId = 1,
+                        MaterialId = 3,
                         SubmissionPeriod = subPeriod,
                         ProducerDetail = null,
                     }
@@ -2444,8 +2444,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             var materials = new List<Material>
         {
-            new Material { Id = 1, Name = "Plastic", Code = MaterialCodes.Plastic },
-            new Material { Id = 2, Name = "Steel", Code = MaterialCodes.Steel },
+            new Material { Id = 5, Name = "Plastic", Code = MaterialCodes.Plastic },
+            new Material { Id = 6, Name = "Steel", Code = MaterialCodes.Steel },
             new Material { Id = 3, Name = "Glass", Code = MaterialCodes.Glass },
         };
             context.Material.AddRange(materials);
@@ -2600,8 +2600,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             var materials = new List<Material>
         {
-            new Material { Id = 1, Name = "Plastic", Code = MaterialCodes.Plastic },
-            new Material { Id = 2, Name = "Steel", Code = MaterialCodes.Steel },
+            new Material { Id = 5, Name = "Plastic", Code = MaterialCodes.Plastic },
+            new Material { Id = 6, Name = "Steel", Code = MaterialCodes.Steel },
             new Material { Id = 3, Name = "Glass", Code = MaterialCodes.Glass },
         };
             context.Material.AddRange(materials);

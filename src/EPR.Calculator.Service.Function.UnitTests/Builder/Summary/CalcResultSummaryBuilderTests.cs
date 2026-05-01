@@ -4,7 +4,6 @@ using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder;
 using EPR.Calculator.Service.Function.Builder.ParametersOther;
-using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
 using EPR.Calculator.Service.Function.Builder.Summary;
 using EPR.Calculator.Service.Function.Builder.Summary.OneAndTwoA;
 using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs;
@@ -24,9 +23,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         private readonly ApplicationDBContext dbContext;
         private readonly CalcResultSummaryBuilder calcResultsService;
         private readonly CalcResult calculationResult;
-        private readonly CalcResultScaledupProducers scaledupProducers;
-        private readonly CalcResultPartialObligations partialObligations;
+        private readonly ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup;
         private readonly SelfManagedConsumerWaste smcw;
+
 
         private Fixture Fixture { get; init; } = new Fixture();
 
@@ -37,8 +36,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                 .Options;
             dbContext = new ApplicationDBContext(dbContextOptions);
             calcResultsService = new CalcResultSummaryBuilder(dbContext);
-            scaledupProducers = TestDataHelper.GetScaledupProducers();
-            partialObligations = TestDataHelper.GetPartialObligations();
             calculationResult = new CalcResult
             {
                 ShowModulations = false,
@@ -295,7 +292,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
             };
             // Seed database
-            SeedDatabase(dbContext);
+            projectedMaterialsLookup = SeedDatabase(dbContext);
 
             smcw = new SelfManagedConsumerWaste
             {
@@ -707,7 +704,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                 select new CalcResultProducerAndReportMaterialDetail
                 {
                     ProducerDetail = p,
-                    ProducerReportedMaterial = m
+                    ProducerReportedMaterialProjected = m
                 }
             ).ToList();
         }
@@ -757,7 +754,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
 
             var defaultParams = new List<DefaultParamResultsClass>();
 
-            var result = new CalcResultSummaryBuilder(dbContext).GetCalcResultSummary(orderedProducerDetails, materials, calculationResult, totalPackagingTonnage, producerInvoicedMaterialNetTonnage, defaultParams, smcw);
+            var result = new CalcResultSummaryBuilder(dbContext).GetCalcResultSummary(projectedMaterialsLookup, orderedProducerDetails, materials, calculationResult, totalPackagingTonnage, producerInvoicedMaterialNetTonnage, defaultParams, smcw);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(149, result.ColumnHeaders.Count());
@@ -776,7 +773,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
 
             var modulationResult = calculationResult;
             modulationResult.ShowModulations = true;
-            var result2 = new CalcResultSummaryBuilder(dbContext).GetCalcResultSummary(orderedProducerDetails, materials, modulationResult, totalPackagingTonnage, producerInvoicedMaterialNetTonnage, defaultParams, smcw);
+            var result2 = new CalcResultSummaryBuilder(dbContext).GetCalcResultSummary(projectedMaterialsLookup, orderedProducerDetails, materials, modulationResult, totalPackagingTonnage, producerInvoicedMaterialNetTonnage, defaultParams, smcw);
             Assert.AreEqual(225, result2.ColumnHeaders.Count());
         }
 
@@ -806,7 +803,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024));
             var defaultParams = new List<DefaultParamResultsClass>();
 
-            var result = sut.GetCalcResultSummary(orderedProducerDetails, materials, calculationResult, totalPackagingTonnage, producerInvoicedMaterialNetTonnage, defaultParams, smcw);
+            var result = sut.GetCalcResultSummary(projectedMaterialsLookup, orderedProducerDetails, materials, calculationResult, totalPackagingTonnage, producerInvoicedMaterialNetTonnage, defaultParams, smcw);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(149, result.ColumnHeaders.Count());
@@ -1024,7 +1021,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024));
             var defaultParams = new List<DefaultParamResultsClass>();
             // Act
-            var summary = calcResultsService.GetCalcResultSummary(ordered, materials, calculationResult, totalPackaging, producerInvoicedMaterialNetTonnage, defaultParams, smcw);
+            var summary = calcResultsService.GetCalcResultSummary(projectedMaterialsLookup, ordered, materials, calculationResult, totalPackaging, producerInvoicedMaterialNetTonnage, defaultParams, smcw);
 
             // Assert
             Assert.IsNotNull(summary);
@@ -1087,7 +1084,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                     .ToList()
             };
 
-            var summary = calcResultsService.GetCalcResultSummary(ordered, materials, calculationResult, totalPackaging, producerInvoicedMaterialNetTonnage, defaultParams, fixedSmcw);
+            var summary = calcResultsService.GetCalcResultSummary(projectedMaterialsLookup, ordered, materials, calculationResult, totalPackaging, producerInvoicedMaterialNetTonnage, defaultParams, fixedSmcw);
 
             Assert.IsTrue(summary.ProducerDisposalFees.Any(r => r.isTotalRow));
         }
@@ -1134,6 +1131,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024));
 
             var row = calcResultsService.GetProducerRow(
+                projectedMaterialsLookup,
                 new List<CalcResultSummaryProducerDisposalFees>(),
                 ordered.Where(pd => pd.ProducerId == producer.ProducerId).ToList(),
                 producer,
@@ -1148,7 +1146,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
         [TestMethod]
         public void GetProducerRow_MarksProducerAsPartialObligation_WhenMatchExists()
         {
-
             var producer = dbContext.ProducerDetail.Single(p => p.ProducerId == 1 && p.CalculatorRunId == 1);
 
             var materials = MaterialMapper.Map(dbContext.Material.ToList());
@@ -1187,6 +1184,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024));
 
             var row = calcResultsService.GetProducerRow(
+                projectedMaterialsLookup,
                 new List<CalcResultSummaryProducerDisposalFees>(),
                 ordered.Where(pd => pd.ProducerId == producer.ProducerId).ToList(),
                 producer,
@@ -1236,6 +1234,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024));
 
             var row = calcResultsService.GetProducerRow(
+                projectedMaterialsLookup,
                 new List<CalcResultSummaryProducerDisposalFees>(),
                 ordered.Where(pd => pd.ProducerId == producer.ProducerId).ToList(),
                 producer,
@@ -1272,6 +1271,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024));
 
             var row = calcResultsService.GetProducerRow(
+                projectedMaterialsLookup,
                 new List<CalcResultSummaryProducerDisposalFees>(),
                 ordered.Where(pd => pd.ProducerId == producer.ProducerId).ToList(),
                 producer,
@@ -1300,6 +1300,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             var producerInvoicedMaterialNetTonnage = calcResultsService.GetPreviousInvoicedTonnageFromDb(new RelativeYear(2024));
 
             var row = calcResultsService.GetProducerRow(
+                projectedMaterialsLookup,
                 new List<CalcResultSummaryProducerDisposalFees>(),
                 ordered.Where(pd => pd.ProducerId == producer.ProducerId).ToList(),
                 producer,
@@ -1601,7 +1602,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             Assert.AreEqual(0m, updated.SuggestedInvoiceAmount);
         }
 
-        private static void SeedDatabase(ApplicationDBContext dbContext)
+        private static ILookup<(int, string?), ProducerReportedMaterialProjected> SeedDatabase(ApplicationDBContext dbContext)
         {
             dbContext.Material.AddRange(new List<Material>
             {
@@ -1609,7 +1610,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                 new() { Id = 2, Name = "Material2", Code = MaterialCodes.Glass },
             });
 
-            dbContext.ProducerDetail.AddRange(new List<ProducerDetail>
+            var producerDetails = new List<ProducerDetail>
             {
                 new()
                 {
@@ -1651,9 +1652,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                 new() { Id = 4, ProducerName = "Producer4", ProducerId = 4, CalculatorRunId = 1 , SubsidiaryId=null },
                 new() { Id = 5, ProducerName = "Producer5", ProducerId = 4, CalculatorRunId = 1 , SubsidiaryId="A123" },
                 new() { Id = 6, ProducerName = "Subsidiary1", ProducerId = 4, CalculatorRunId = 1 , SubsidiaryId="A456"},
-            });
+            };
+            dbContext.ProducerDetail.AddRange(producerDetails);
 
-            dbContext.ProducerReportedMaterialProjected.AddRange(new List<ProducerReportedMaterialProjected>
+            var producerReportedMaterialProjecteds = new List<ProducerReportedMaterialProjected>
             {
                 new() { MaterialId = 1, PackagingType = "HH", SubmissionPeriod = "2025-H1", PackagingTonnage = 350m, ProducerDetailId = 1 },
                 new() { MaterialId = 1, PackagingType = "HH", SubmissionPeriod = "2025-H2", PackagingTonnage = 50m, ProducerDetailId = 1 },
@@ -1671,7 +1673,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                 new() { MaterialId = 2, PackagingType = "HH", SubmissionPeriod = "2025-H2", PackagingTonnage = 250m, ProducerDetailId = 4 },
                 new() { MaterialId = 1, PackagingType = "HH", SubmissionPeriod = "2025-H1", PackagingTonnage = 110m, ProducerDetailId = 5 },
                 new() { MaterialId = 1, PackagingType = "HH", SubmissionPeriod = "2025-H2", PackagingTonnage = 190m, ProducerDetailId = 5 }
-            });
+            };
+
+            dbContext.ProducerReportedMaterialProjected.AddRange(producerReportedMaterialProjecteds);
+            var projectedMaterialsLookup = producerDetails
+                .SelectMany(pd => producerReportedMaterialProjecteds
+                    .Where(rm => rm.ProducerDetailId == pd.Id)
+                    .Select(rm => (Key: (pd.ProducerId, pd.SubsidiaryId), Rm: rm))
+                )
+                .ToLookup(x => x.Key, x => x.Rm);
+
 
             dbContext.ProducerResultFileSuggestedBillingInstruction.AddRange(new List<ProducerResultFileSuggestedBillingInstruction>
             {
@@ -1703,6 +1714,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             });
 
             dbContext.SaveChanges();
+
+            return projectedMaterialsLookup;
         }
     }
 }

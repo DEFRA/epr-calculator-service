@@ -497,8 +497,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 
         private string[][] ConvertResult((List<ProducerDetail>, CalcResultProjectedProducers) given)
         {
-            Console.WriteLine($">> ConvertResult");
-
             var materials = dbContext.Material.Select(e => e).ToList();
 
             string[]? createRow(int producerId, string? subsidiaryId, string level, ProducerReportedMaterial submission)
@@ -533,15 +531,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                         ((producerGroup.Key, subsidiaryGroup.Key), (producerGroup.Count() == 1 && string.IsNullOrEmpty(subsidiaryGroup.Key)) ? "1" : "2")
                     ).ToList();
                 }).ToDictionary();
-            Console.WriteLine($">> levelLookup {JsonConvert.SerializeObject(levelLookup, Formatting.Indented)}");
 
             var result = given.Item1.SelectMany(p =>
                 p.ProducerReportedMaterials.Select(r =>
                     createRow(producerId: p.ProducerId, subsidiaryId: p.SubsidiaryId, level: levelLookup[(p.ProducerId, p.SubsidiaryId)], r)
                 )
             );
-
-            Console.WriteLine($">> result {JsonConvert.SerializeObject(result, Formatting.Indented)}");
 
             return result
                     .OrderBy(a => a[PeriodI])
@@ -564,7 +559,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 
             var res = given.GroupBy(row => (ProducerId: row[ProducerI], SubsidiaryId: row[SubsidiaryI])).Distinct()
                 .Select(producerRows => {
-                    //Console.WriteLine($"{producerRows.Key}: {row[MaterialCodeI]}");
                     var producer =  new ProducerDetail{
                         ProducerId  = int.Parse(producerRows.Key.ProducerId),
                         SubsidiaryId = string.IsNullOrWhiteSpace(producerRows.Key.SubsidiaryId) ? null : producerRows.Key.SubsidiaryId
@@ -589,7 +583,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     }
                     return producer;
                 }).ToList();
-            Console.WriteLine($"{res.Count()}: {JsonConvert.SerializeObject(res, Formatting.Indented)}");
+            //Console.WriteLine($"{res.Count()}: {JsonConvert.SerializeObject(res, Formatting.Indented)}");
             return res;
         }
 

@@ -36,6 +36,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
         }
 
         public static decimal GetProducerDisposalFee(
+            ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
             IEnumerable<ProducerDetail> producersAndSubsidiaries,
             MaterialDetail material,
@@ -45,10 +46,11 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
         {
             return isOverAllTotalRow
                 ? CalcResultSummaryUtil.GetProducerDisposalFeeOverallTotal(producerDisposalFees, material)
-                : CalcResultSummaryUtil.GetProducerDisposalFeeProducerTotal(producersAndSubsidiaries, material, calcResult);
+                : CalcResultSummaryUtil.GetProducerDisposalFeeProducerTotal(projectedMaterialsLookup, producersAndSubsidiaries, material, calcResult);
         }
 
         public static decimal GetBadDebtProvision(
+            ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
             IEnumerable<ProducerDetail> producersAndSubsidiaries,
             MaterialDetail material,
@@ -58,10 +60,11 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
         {
             return isOverAllTotalRow
                 ? CalcResultSummaryUtil.GetBadDebtProvisionOverallTotal(producerDisposalFees, material)
-                : CalcResultSummaryUtil.GetBadDebtProvisionProducerTotal(producersAndSubsidiaries, material, calcResult);
+                : CalcResultSummaryUtil.GetBadDebtProvisionProducerTotal(projectedMaterialsLookup, producersAndSubsidiaries, material, calcResult);
         }
 
         public static decimal GetProducerDisposalFeeWithBadDebtProvision(
+            ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
             IEnumerable<ProducerDetail> producersAndSubsidiaries,
             MaterialDetail material,
@@ -71,11 +74,12 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
         {
             return isOverAllTotalRow
                 ? CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvisionOverallTotal(producerDisposalFees, material)
-                : CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvisionProducerTotal(producersAndSubsidiaries, material, calcResult);
+                : CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvisionProducerTotal(projectedMaterialsLookup, producersAndSubsidiaries, material, calcResult);
         }
 
         [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         public static decimal GetCountryDisposalFeeWithBadDebtProvision(
+            ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
             IEnumerable<ProducerDetail> producersAndSubsidiaries,
             MaterialDetail material,
@@ -86,7 +90,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
         {
             return isOverAllTotalRow
                 ? CalcResultSummaryUtil.GetCountryBadDebtProvisionOverallTotal(producerDisposalFees, material, country)
-                : CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(producersAndSubsidiaries, material, calcResult, country);
+                : CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(projectedMaterialsLookup, producersAndSubsidiaries, material, calcResult, country);
         }
     }
 }

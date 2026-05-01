@@ -188,8 +188,6 @@ namespace EPR.Calculator.Service.Function.UnitTests
             mockSelfManagedConsumerWasteService.Setup(x => x.Calculate(
                     It.IsAny<CalcResultsRequestDto>(),
                     It.IsAny<IEnumerable<MaterialDetail>>(),
-                    It.IsAny<IEnumerable<CalcResultScaledupProducer>>(),
-                    It.IsAny<IEnumerable<CalcResultPartialObligation>>(),
                     It.IsAny<bool>()))
                 .ReturnsAsync(new SelfManagedConsumerWaste
                 {
