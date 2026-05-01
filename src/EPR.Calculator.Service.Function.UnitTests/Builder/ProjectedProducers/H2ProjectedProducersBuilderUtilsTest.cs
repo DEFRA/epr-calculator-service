@@ -106,5 +106,63 @@
             Assert.AreEqual(expProd11Sub22HDCTotalTonnage, prod11Sub22Glass.TotalTonnage);
             Assert.AreEqual(expProd11Sub22HDC with { RedTonnage = 500 }, prod11Sub22Glass.ProjectedHouseholdDrinksContainerRAMTonnage);
         }
+
+        [TestMethod]
+        public void SumProducerGroupTonnages_CorrectlySums()
+        {
+            var prodGroup = new List<CalcResultH2ProjectedProducer>() 
+            {
+                new (){
+                    ProducerId = 11,
+                    SubsidiaryId = null,
+                    SubmissionPeriodCode = "2025-H1",
+                    Level = string.Empty,
+                    H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>() {
+                        ["AL"] = new() {
+                            HouseholdRAMTonnage = new RAMTonnage { Tonnage = 100, RedTonnage = 100, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                            PublicBinRAMTonnage = new RAMTonnage { Tonnage = 200, RedTonnage = 0, AmberTonnage = 100, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                            HouseholdTonnageWithoutRAM = 0,
+                            PublicBinTonnageWithoutRAM = 100,
+                            TotalTonnage = 300,
+                            ProjectedHouseholdRAMTonnage = new RAMTonnage { Tonnage = 100, RedTonnage = 100, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                            ProjectedPublicBinRAMTonnage = new RAMTonnage { Tonnage = 200, RedTonnage = 100, AmberTonnage = 100, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 }
+                        }
+                    }
+                },
+                new (){
+                    ProducerId = 11,
+                    SubsidiaryId = "A",
+                    SubmissionPeriodCode = "2025-H1",
+                    Level = string.Empty,
+                    H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>() {
+                        ["AL"] = new() {
+                            HouseholdRAMTonnage = new RAMTonnage { Tonnage = 100, RedTonnage = 100, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                            PublicBinRAMTonnage = new RAMTonnage { Tonnage = 200, RedTonnage = 0, AmberTonnage = 100, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                            HouseholdTonnageWithoutRAM = 0,
+                            PublicBinTonnageWithoutRAM = 100,
+                            TotalTonnage = 300,
+                            ProjectedHouseholdRAMTonnage = new RAMTonnage { Tonnage = 100, RedTonnage = 100, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                            ProjectedPublicBinRAMTonnage = new RAMTonnage { Tonnage = 200, RedTonnage = 100, AmberTonnage = 100, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 }
+                        }
+                    }
+                },
+            };
+            
+            var expSummedAlm = new CalcResultH2ProjectedProducerMaterialTonnage() {
+                HouseholdRAMTonnage = new RAMTonnage { Tonnage = 200, RedTonnage = 200, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                PublicBinRAMTonnage = new RAMTonnage { Tonnage = 400, RedTonnage = 0, AmberTonnage = 200, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                HouseholdTonnageWithoutRAM = 0,
+                PublicBinTonnageWithoutRAM = 200,
+                TotalTonnage = 600,
+                ProjectedHouseholdRAMTonnage = new RAMTonnage { Tonnage = 200, RedTonnage = 200, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                ProjectedPublicBinRAMTonnage = new RAMTonnage { Tonnage = 400, RedTonnage = 200, AmberTonnage = 200, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 }
+            };
+
+            var result = H2ProjectedProducersBuilderUtils.SumProducerGroupTonnages(prodGroup);
+
+            Assert.IsTrue(result.IsSubtotal);
+            Assert.AreEqual("1", result.Level);
+            Assert.AreEqual(expSummedAlm, result.H2ProjectedTonnageByMaterial["AL"]);
+        }
     }
 }

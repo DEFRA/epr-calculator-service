@@ -46,7 +46,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                 createSubtotal: H2ProjectedProducersBuilderUtils.CreateParentProducer,
                 sumProducerGroupTonnages: H2ProjectedProducersBuilderUtils.SumProducerGroupTonnages
             );
-            var h1ProjectedProduers = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1ReportedMaterials, h2ProjectedProduers, materials);
+            var h1ProjectedProduers = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1ReportedMaterials, h2ProjectedProducersWithSubtotals, materials);
             var h1ProjectedProducersWithSubtotals = AddSubtotals<CalcResultH1ProjectedProducer>(
                 h1ProjectedProduers,
                 createSubtotal: H1ProjectedProducersBuilderUtils.CreateParentProducer,
@@ -129,7 +129,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
         private static List<TSubmissionPeriodProducer> AddSubtotals<TSubmissionPeriodProducer>(
             List<TSubmissionPeriodProducer> projectedProducers,
             Func<TSubmissionPeriodProducer, TSubmissionPeriodProducer> createSubtotal,
-            Func<IEnumerable<TSubmissionPeriodProducer>, TSubmissionPeriodProducer> sumProducerGroupTonnages)
+            Func<List<TSubmissionPeriodProducer>, TSubmissionPeriodProducer> sumProducerGroupTonnages)
             where TSubmissionPeriodProducer : ICalcResultProjectedProducer
         {
             var result = new List<TSubmissionPeriodProducer>();
@@ -143,7 +143,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 
                     result.AddRange(updatedGroup);
                     result.Add(
-                        sumProducerGroupTonnages(group)
+                        sumProducerGroupTonnages(group.ToList())
                     );
                 }
                 else
