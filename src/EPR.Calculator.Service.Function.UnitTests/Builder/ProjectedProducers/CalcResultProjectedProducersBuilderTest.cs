@@ -65,41 +65,48 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         [TestMethod]
         public async Task H1H2Projection_untouched()
         {
-            // RAM is complete - no modifications needed and therefore they do not appear
+            // RAM is complete - no modifications made
             var given = new[] {
                 new[] { "101", "", "2025-H1", "", "AL", "HH", "100", "20", "40", "40", "0", "", "" },
                 new[] { "101", "", "2025-H2", "", "AL", "HH", "100", "20", "40", "40", "0", "", "" }
             };
-            var expected = Array.Empty<string[]>();
+            var expected = new [] {
+                new[] { "101", "", "2025-H1", "1", "AL", "HH", "100", "20.0", "40.0", "40.0", "0", "0", "0" },
+                new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "20", "40", "40", "0", "0", "0" }
+            };
             AssertExcepted(expected, await FillGaps(given));
         }
         
         [TestMethod]
         public async Task H1H2Projection_untouched_onlyh2()
         {
-            // RAM is complete - only H2 - no modifications needed and therefore they do not appear
+            // RAM is complete - only H2 - no modifications made
             var given = new[] {
                 new[] { "101", "", "2025-H2", "", "AL", "HH", "100", "30", "40", "40", "0", "", "" }
             };
-            var expected = Array.Empty<string[]>();
+            var expected = new [] {
+                new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "30", "40", "40", "0", "0", "0" }
+            };
             AssertExcepted(expected, await FillGaps(given));
         }
 
         [TestMethod]
         public async Task H1H2Projection_untouched_onlyh1()
         {
-            // RAM is complete - only H1 - no modifications needed and therefore they do not appear
+            // RAM is complete - only H1 - no modifications made
             var given = new[] {
                 new[] { "101", "", "2025-H1", "", "AL", "HH", "100", "30", "40", "40", "0", "", "" }
             };
-            var expected = Array.Empty<string[]>();
+            var expected = new [] {
+                new[] { "101", "", "2025-H1", "1", "AL", "HH", "100", "30", "40", "40", "0", "0", "0" }
+            };
             AssertExcepted(expected, await FillGaps(given));
         }
 
         [TestMethod]
         public async Task H1H2Projection_untouched_hc()
         {
-            // RAM is complete - no modifications needed and therefore they do not appear
+            // RAM is complete - no modifications made
             var given = new[] {
                 new[] { "101", "", "2025-H1", "", "AL", "HH", "100", "20", "40", "40", "0", "", "" },
                 new[] { "101", "A", "2025-H1", "", "GL", "HDC", "100", "20", "40", "40", "0", "", "" },
@@ -108,7 +115,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 new[] { "101", "A", "2025-H2", "", "ST", "PB", "100", "20", "40", "40", "0", "", "" },
                 new[] { "101", "B", "2025-H2", "", "AL", "HH", "100", "20", "40", "40", "0", "", "" }
             };
-            var expected = Array.Empty<string[]>();
+            var expected = new string[][]
+            {
+                new string[] { "101", "", "2025-H1", "1", "AL", "HH", "100", "20.0", "40.0", "40.0", "0", "0", "0" },
+                new string[] { "101", "", "2025-H1", "1", "AL", "PB", "100", "20.0", "40.0", "40.0", "0", "0", "0" },
+                new string[] { "101", "", "2025-H1", "1", "GL", "HDC", "100", "20", "40", "40", "0", "0", "0" },
+                new string[] { "101", "", "2025-H1", "2", "AL", "HH", "100", "20.0", "40.0", "40.0", "0", "0", "0" },
+                new string[] { "101", "B", "2025-H1", "2", "AL", "PB", "100", "20.0", "40.0", "40.0", "0", "0", "0" },
+                new string[] { "101", "A", "2025-H1", "2", "GL", "HDC", "100", "20", "40", "40", "0", "0", "0" },
+                new string[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "20", "40", "40", "0", "0", "0" },
+                new string[] { "101", "", "2025-H2", "1", "PL", "HH", "100", "20", "40", "40", "0", "0", "0" },
+                new string[] { "101", "", "2025-H2", "1", "ST", "PB", "100", "20", "40", "40", "0", "0", "0" },
+                new string[] { "101", "", "2025-H2", "2", "PL", "HH", "100", "20", "40", "40", "0", "0", "0" },
+                new string[] { "101", "B", "2025-H2", "2", "AL", "HH", "100", "20", "40", "40", "0", "0", "0" },
+                new string[] { "101", "A", "2025-H2", "2", "ST", "PB", "100", "20", "40", "40", "0", "0", "0" }
+            };
             AssertExcepted(expected, await FillGaps(given));
         }
 
