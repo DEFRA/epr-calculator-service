@@ -13,6 +13,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
     public interface ICalcResultCommsCostBuilder
     {
         Task<CalcResultCommsCost> ConstructAsync(
+            List<MaterialDetail> materialDetails,
             CalcResultsRequestDto resultsRequestDto,
             CalcResultOnePlusFourApportionment apportionment,
             CalcResultLateReportingTonnage calcResultLateReportingTonnageData
@@ -36,6 +37,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
         public const string PoundSign = "£";
 
         public async Task<CalcResultCommsCost> ConstructAsync(
+            List<MaterialDetail> materialDetails,
             CalcResultsRequestDto resultsRequestDto,
             CalcResultOnePlusFourApportionment apportionment,
             CalcResultLateReportingTonnage calcResultLateReportingTonnage
@@ -55,10 +57,6 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             CalculateApportionment(apportionmentDetail, result);
             result.Name = Header;
 
-            telemetryClient.TrackTrace("Getting material names...");
-            var materials = await context.Material.ToListAsync();
-            var materialNames = materials.Select(x => x.Name).ToList();
-
             telemetryClient.TrackTrace("Getting material defaults...");
             var allDefaultResults = await (
                 from run in context.CalculatorRuns
@@ -72,8 +70,9 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                     ParameterType = defaultTemplate.ParameterType,
                     ParameterCategory = defaultTemplate.ParameterCategory,
                 }).Distinct().ToListAsync();
+
             var materialDefaults = allDefaultResults.Where(x =>
-                x.ParameterType == CommunicationCostByMaterial && materialNames.Contains(x.ParameterCategory));
+                x.ParameterType == CommunicationCostByMaterial && materialDetails.Select(m => m.Name).Contains(x.ParameterCategory));
 
             telemetryClient.TrackTrace("Getting producer reported materials...");
             var producerReportedMaterials = await GetProducerReportedMaterials(context, runId);
@@ -101,19 +100,18 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             };
             list.Add(header);
 
-            telemetryClient.TrackTrace($"Generating comms costs for {materialNames.Count} materials...");
-            foreach (var materialName in materialNames)
+            telemetryClient.TrackTrace($"Generating comms costs for {materialDetails.Count} materials...");
+            foreach (var material in materialDetails)
             {
-                telemetryClient.TrackTrace($"Generating comms cost for {materialName}...");
-                var commsCost = GetCommsCost(materialDefaults, materialName, apportionmentDetail, culture);
-                var currentMaterial = materials.Single(x => x.Name == materialName);
+                telemetryClient.TrackTrace($"Generating comms cost for {material.Name}...");
+                var commsCost = GetCommsCost(materialDefaults, material.Name, apportionmentDetail, culture);
 
-                var producerReportedTon = producerReportedMaterials.Where(x => x.MaterialId == currentMaterial.Id && x.PackagingType != PackagingTypes.PublicBin && x.PackagingType != PackagingTypes.HouseholdDrinksContainers)
+                var producerReportedTon = producerReportedMaterials.Where(x => x.MaterialId == material.Id && x.PackagingType != PackagingTypes.PublicBin && x.PackagingType != PackagingTypes.HouseholdDrinksContainers)
                     .Sum(x => x.PackagingTonnage);
 
-                var lateReportingTonnage = calcResultLateReportingTonnage.CalcResultLateReportingTonnageDetails.Single(x => x.Name == materialName);
-                var publicBinTonnage = producerReportedMaterials.Where(p => p.MaterialId == currentMaterial.Id && p.PackagingType == PackagingTypes.PublicBin).Sum(p => p.PackagingTonnage);
-                var householdcontainers = producerReportedMaterials.Where(p => p.MaterialId == currentMaterial.Id && p.PackagingType == PackagingTypes.HouseholdDrinksContainers).Sum(p => p.PackagingTonnage);
+                var lateReportingTonnage = calcResultLateReportingTonnage.CalcResultLateReportingTonnageDetails.Single(x => x.Name == material.Name);
+                var publicBinTonnage = producerReportedMaterials.Where(p => p.MaterialId == material.Id && p.PackagingType == PackagingTypes.PublicBin).Sum(p => p.PackagingTonnage);
+                var householdcontainers = producerReportedMaterials.Where(p => p.MaterialId == material.Id && p.PackagingType == PackagingTypes.HouseholdDrinksContainers).Sum(p => p.PackagingTonnage);
 
                 commsCost.ProducerReportedHouseholdPackagingWasteTonnageValue = producerReportedTon;
                 commsCost.ReportedPublicBinTonnageValue = publicBinTonnage;
@@ -132,7 +130,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                     $"{commsCost.ProducerReportedHouseholdPackagingWasteTonnageValue:0.000}";
                 commsCost.ReportedPublicBinTonnage =
                     $"{commsCost.ReportedPublicBinTonnageValue:0.0000}";
-                commsCost.HouseholdDrinksContainers = materialName == MaterialNames.Glass ?
+                commsCost.HouseholdDrinksContainers = material.Name == MaterialNames.Glass ?
                     $"{commsCost.HouseholdDrinksContainersValue:0.0000}" : string.Empty;
                 commsCost.LateReportingTonnage = $"{commsCost.LateReportingTonnageValue:0.000}";
                 commsCost.ProducerReportedHouseholdPlusLateReportingTonnage =

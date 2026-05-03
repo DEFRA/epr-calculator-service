@@ -147,7 +147,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var result = await service.Calculate(
                 new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) },
                 materials,
-                showModulations: false);
+                applyModulation: false);
 
             var total = result.OverallTotalPerMaterials[MaterialCodes.Aluminium];
 
@@ -178,7 +178,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var result = await service.Calculate(
                 new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) },
                 new[] { new MaterialDetail { Code = "NOT_EXIST", Name = "", Description = "" } },
-                showModulations: false);
+                applyModulation: false);
 
             var total = result.OverallTotalPerMaterials["NOT_EXIST"];
 
@@ -220,11 +220,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var result = await service.Calculate(
                 new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) },
                 new[] { new MaterialDetail { Code = MaterialCodes.Aluminium, Name = MaterialNames.Aluminium, Description = "" } },
-                showModulations: false);
+                applyModulation: false);
 
             var total = result.OverallTotalPerMaterials[MaterialCodes.Aluminium];
 
             // Level 2 should not contribute
+            // TODO there is no ProducerReportdMaterialProjected created, so there's nothing to filter out
             Assert.AreEqual(0, total.SelfManagedConsumerWasteTonnage);
             Assert.AreEqual(0, total.NetReportedTonnage.total);
         }
@@ -280,7 +281,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var result = await service.Calculate(
                 new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) },
                 new[] { new MaterialDetail { Id = materialId, Code = MaterialCodes.Aluminium, Name = MaterialNames.Aluminium, Description = "" } },
-                showModulations: true);
+                applyModulation: true);
 
             var x = result.ProducerTotals.First().SelfManagedConsumerWasteDataPerMaterials[MaterialCodes.Aluminium];
 

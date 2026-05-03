@@ -11,7 +11,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
     {
         private readonly IEnumerable<string> extraColumns = [MaterialCodes.Glass];
 
-        public void Export(CalcResultSummary resultSummary, StringBuilder csvContent, bool showModulations)
+        public void Export(CalcResultSummary resultSummary, StringBuilder csvContent, bool applyModulation)
         {
             // Add empty lines
             csvContent.AppendLine();
@@ -23,15 +23,15 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             // Add data
             foreach (var producer in resultSummary.ProducerDisposalFees)
             {
-                AddNewRow(csvContent, producer, showModulations);
+                AddNewRow(csvContent, producer, applyModulation);
             }
         }
 
-        public void AddNewRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool showModulations)
+        public void AddNewRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
         {
             AddFirstColumns(csvContent, producer);
 
-            AppendProducerDisposalFeesByMaterial(csvContent, producer, showModulations);
+            AppendProducerDisposalFeesByMaterial(csvContent, producer, applyModulation);
 
             AddProducerDisposal(csvContent, producer);
 
@@ -140,7 +140,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         private void AppendProducerDisposalFeesByMaterial(
             StringBuilder csvContent,
             CalcResultSummaryProducerDisposalFees producer,
-            bool showModulations)
+            bool applyModulation)
         {
             foreach (var (key, disposalFee) in producer.ProducerDisposalFeesByMaterial)
             {
@@ -153,7 +153,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
                     csvContent.Append(CsvSanitiser.SanitiseData(tonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 }
 
-                if (showModulations) {
+                if (applyModulation) {
                     csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.TotalReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
 
                     foreach (var (_, v) in disposalFee.TotalReportedTonnageRagRating.OrderBy(x => x.Key))

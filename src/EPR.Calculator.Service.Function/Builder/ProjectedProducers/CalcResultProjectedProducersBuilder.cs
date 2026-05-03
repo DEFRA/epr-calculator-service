@@ -2,7 +2,6 @@ using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.PartialObligations;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Mappers;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +10,11 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 {
     public interface ICalcResultProjectedProducersBuilder
     {
-        Task<(List<ProducerDetail>, CalcResultProjectedProducers)> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<ProducerDetail> producerDetails);
+        Task<(List<ProducerDetail>, CalcResultProjectedProducers)> ConstructAsync(
+            List<MaterialDetail> materialDetails,
+            List<ProducerDetail> producerDetails,
+            CalcResultsRequestDto resultsRequestDto
+        );
     }
 
     public class CalcResultProjectedProducersBuilder : ICalcResultProjectedProducersBuilder
@@ -23,10 +26,12 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             this.dbContext = dbContext;
         }
 
-        public async Task<(List<ProducerDetail>, CalcResultProjectedProducers)> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<ProducerDetail> producerDetails)
+        public async Task<(List<ProducerDetail>, CalcResultProjectedProducers)> ConstructAsync(
+            List<MaterialDetail> materialDetails,
+            List<ProducerDetail> producerDetails,
+            CalcResultsRequestDto resultsRequestDto
+        )
         {
-            var materialsFromDb = await dbContext.Material.ToListAsync();
-            var materials = MaterialMapper.Map(materialsFromDb);
             var h2Period = $"{resultsRequestDto.RelativeYear.Value - 1}-H2";
             var h1Period = $"{resultsRequestDto.RelativeYear.Value - 1}-H1";
 
@@ -40,17 +45,17 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             {
                 var groupList = producerGroup.ToList();
 
-                var h2Rows = H2ProjectedProducersBuilderUtils.GetProjectedProducers(groupList, materials, h2Period);
+                var h2Rows = H2ProjectedProducersBuilderUtils.GetProjectedProducers(groupList, materialDetails, h2Period);
                 var h2WithGroupSubtotals = AddSubtotals<CalcResultH2ProjectedProducer>(
                     h2Rows,
                     createSubtotal: H2ProjectedProducersBuilderUtils.CreateParentProducer,
                     sumProducerGroupTonnages: H2ProjectedProducersBuilderUtils.SumProducerGroupTonnages
                 );
 
-                var h1Rows = H1ProjectedProducersBuilderUtils.GetProjectedProducers(groupList, h2WithGroupSubtotals, materials, h1Period);
+                var h1Rows = H1ProjectedProducersBuilderUtils.GetProjectedProducers(groupList, h2WithGroupSubtotals, materialDetails, h1Period);
 
                 for (var i = 0; i < groupList.Count; i++)
-                    updatedProducers.Add(ApplyProjectedMaterials(groupList[i], h1Rows[i], h2Rows[i], materials, h1Period, h2Period));
+                    updatedProducers.Add(ApplyProjectedMaterials(groupList[i], h1Rows[i], h2Rows[i], materialDetails, h1Period, h2Period));
 
                 allH2Rows.AddRange(h2WithGroupSubtotals);
                 allH1Rows.AddRange(AddSubtotals<CalcResultH1ProjectedProducer>(
@@ -62,8 +67,8 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 
             var result = new CalcResultProjectedProducers
             {
-                H2ProjectedProducersHeaders = H2ProjectedProducersBuilderUtils.GetProjectedProducerHeaders(materials),
-                H1ProjectedProducersHeaders = H1ProjectedProducersBuilderUtils.GetProjectedProducerHeaders(materials),
+                H2ProjectedProducersHeaders = H2ProjectedProducersBuilderUtils.GetProjectedProducerHeaders(materialDetails),
+                H1ProjectedProducersHeaders = H1ProjectedProducersBuilderUtils.GetProjectedProducerHeaders(materialDetails),
                 H2ProjectedProducers = allH2Rows.OrderBy(p => p.ProducerId).ThenBy(p => p.Level).ThenBy(p => p.SubsidiaryId).ToList(),
                 H1ProjectedProducers = allH1Rows.OrderBy(p => p.ProducerId).ThenBy(p => p.Level).ThenBy(p => p.SubsidiaryId).ToList()
             };

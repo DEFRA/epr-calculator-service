@@ -18,7 +18,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             calcResult = new CalcResult
             {
-                ShowModulations = false,
+                ApplyModulation = false,
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultParameterOtherCost = TestDataHelper.GetCalcResultParameterOtherCost(),
@@ -237,7 +237,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
 
             // Act
-            var result = CalcResultSummaryUtil.GetNetReportedTonnage(ProjectedMaterialsLookup(producers.ToList()), producers, material, showModulations: false);
+            var result = CalcResultSummaryUtil.GetNetReportedTonnage(ProjectedMaterialsLookup(producers.ToList()), producers, material, applyModulation: false);
 
             // Assert
             Assert.AreEqual((total: 0, red: null, amber: null, green: null), result);
@@ -251,8 +251,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
 
             // Act
-            var result1 = CalcResultSummaryUtil.GetNetReportedTonnage(ProjectedMaterialsLookup(producers.ToList()), producers, material, showModulations: false, CommonConstants.LevelTwo);
-            var result2 = CalcResultSummaryUtil.GetNetReportedTonnage(ProjectedMaterialsLookup(producers.ToList()), producers, material, showModulations: true, CommonConstants.LevelTwo);
+            var result1 = CalcResultSummaryUtil.GetNetReportedTonnage(ProjectedMaterialsLookup(producers.ToList()), producers, material, applyModulation: false, CommonConstants.LevelTwo);
+            var result2 = CalcResultSummaryUtil.GetNetReportedTonnage(ProjectedMaterialsLookup(producers.ToList()), producers, material, applyModulation: true, CommonConstants.LevelTwo);
 
             // Assert
             Assert.AreEqual((total: 980.00m, red: null, amber: null, green: null), result1);
@@ -263,11 +263,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetNetReportedTonnageOverallTotal()
         {
             // Arrange
-            var producerDisposalFees = TestDataHelper.GetProducerDisposalFees(showModulations: false);
+            var producerDisposalFees = TestDataHelper.GetProducerDisposalFees(applyModulation: false);
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
 
             // Act
-            var result = CalcResultSummaryUtil.GetNetReportedTonnageOverallTotal(producerDisposalFees, material, showModulations: false);
+            var result = CalcResultSummaryUtil.GetNetReportedTonnageOverallTotal(producerDisposalFees, material, applyModulation: false);
 
             // Assert
             Assert.AreEqual((total: 910, red: null, amber: null, green: null), result);
@@ -277,11 +277,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetNetReportedTonnageOverallTotal_WithModulations()
         {
             // Arrange
-            var producerDisposalFees = TestDataHelper.GetProducerDisposalFees(showModulations: true);
+            var producerDisposalFees = TestDataHelper.GetProducerDisposalFees(applyModulation: true);
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
 
             // Act
-            var result = CalcResultSummaryUtil.GetNetReportedTonnageOverallTotal(producerDisposalFees, material, showModulations: true);
+            var result = CalcResultSummaryUtil.GetNetReportedTonnageOverallTotal(producerDisposalFees, material, applyModulation: true);
 
             // Assert
             Assert.AreEqual((total: 910, red: 300, amber: 200, green: 410), result);
@@ -351,7 +351,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             // Act
             var result = CalcResultSummaryUtil.GetNetReportedTonnage(
                 ProjectedMaterialsLookup(new List<ProducerDetail> { producer }),
-                [producer], material, showModulations: true);
+                [producer], material, applyModulation: true);
 
             // Assert (with clear messages)
             Assert.AreEqual(expected.total, result.total, "Total mismatch");
@@ -429,7 +429,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetProducerDisposalFeeOverallTotal()
         {
             // Arrange
-            var producerDisposalFees = TestDataHelper.GetProducerDisposalFees(showModulations: false);
+            var producerDisposalFees = TestDataHelper.GetProducerDisposalFees(applyModulation: false);
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
 
             // Act
@@ -503,7 +503,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetBadDebtProvisionOverallTotal()
         {
             // Arrange
-            var producerDisposalFees = TestDataHelper.GetProducerDisposalFees(showModulations: false);
+            var producerDisposalFees = TestDataHelper.GetProducerDisposalFees(applyModulation: false);
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
 
             // Act
@@ -594,7 +594,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetProducerDisposalFeeWithBadDebtProvisionOverallTotal()
         {
             // Arrange
-            var producerDisposalFees = TestDataHelper.GetProducerDisposalFees(showModulations: false);
+            var producerDisposalFees = TestDataHelper.GetProducerDisposalFees(applyModulation: false);
             var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
 
             // Act
@@ -688,7 +688,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
 
             // Act
             var result = CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(ProjectedMaterialsLookup(producers), producers, material, calcResult, Countries.England);
-            var total = CalcResultSummaryUtil.GetCountryBadDebtProvisionOverallTotal(TestDataHelper.GetProducerDisposalFees(showModulations: false), material, Countries.England);
+            var total = CalcResultSummaryUtil.GetCountryBadDebtProvisionOverallTotal(TestDataHelper.GetProducerDisposalFees(applyModulation: false), material, Countries.England);
 
             // Assert
             Assert.AreEqual(1124.4885486407845440m, result);
@@ -704,7 +704,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
 
             // Act
             var result = CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(ProjectedMaterialsLookup(producers), producers, material, calcResult, Countries.Wales);
-            var total = CalcResultSummaryUtil.GetCountryBadDebtProvisionOverallTotal(TestDataHelper.GetProducerDisposalFees(showModulations: false), material, Countries.Wales);
+            var total = CalcResultSummaryUtil.GetCountryBadDebtProvisionOverallTotal(TestDataHelper.GetProducerDisposalFees(applyModulation: false), material, Countries.Wales);
 
             // Assert
             Assert.AreEqual(253.4707793368154880m, result);
@@ -721,7 +721,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
 
             // Act
             var result = CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(ProjectedMaterialsLookup(producers), producers, material, calcResult, Countries.Scotland);
-            var total = CalcResultSummaryUtil.GetCountryBadDebtProvisionOverallTotal(TestDataHelper.GetProducerDisposalFees(showModulations: false), material, Countries.Scotland);
+            var total = CalcResultSummaryUtil.GetCountryBadDebtProvisionOverallTotal(TestDataHelper.GetProducerDisposalFees(applyModulation: false), material, Countries.Scotland);
 
             // Assert
             Assert.AreEqual(504.8933101925519520m, result);
@@ -737,7 +737,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
 
             // Act
             var result = CalcResultSummaryUtil.GetCountryBadDebtProvisionTotal(ProjectedMaterialsLookup(producers), producers, material, calcResult, Countries.NorthernIreland);
-            var total = CalcResultSummaryUtil.GetCountryBadDebtProvisionOverallTotal(TestDataHelper.GetProducerDisposalFees(showModulations: false), material, Countries.NorthernIreland);
+            var total = CalcResultSummaryUtil.GetCountryBadDebtProvisionOverallTotal(TestDataHelper.GetProducerDisposalFees(applyModulation: false), material, Countries.NorthernIreland);
 
             // Assert
             Assert.AreEqual(197.6560018298480160m, result);

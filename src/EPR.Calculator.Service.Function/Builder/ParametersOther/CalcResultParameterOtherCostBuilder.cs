@@ -8,6 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.ParametersOther
 {
+    public interface ICalcResultParameterOtherCostBuilder
+    {
+        Task<CalcResultParameterOtherCost> ConstructAsync(CalcResultsRequestDto resultsRequestDto);
+    }
+
     public class CalcResultParameterOtherCostBuilder : ICalcResultParameterOtherCostBuilder
     {
         public const string SchemeAdminOperatingCost = "Scheme administrator operating costs";
@@ -23,7 +28,7 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
         private readonly ICalcCountryApportionmentService calcCountryApportionmentService;
 
         public CalcResultParameterOtherCostBuilder(ApplicationDBContext context,
-            ICalcCountryApportionmentService calcCountryApportionmentService) 
+            ICalcCountryApportionmentService calcCountryApportionmentService)
         {
             this.context = context;
             this.calcCountryApportionmentService = calcCountryApportionmentService;
@@ -34,19 +39,20 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
             var culture = CultureInfo.CreateSpecificCulture("en-GB");
             culture.NumberFormat.CurrencySymbol = "£";
             culture.NumberFormat.CurrencyPositivePattern = 0;
-            var results = await (from run in context.CalculatorRuns
-                           join defaultMaster in context.DefaultParameterSettings on run.DefaultParameterSettingMasterId equals defaultMaster.Id
-                           join defaultDetail in context.DefaultParameterSettingDetail on defaultMaster.Id equals defaultDetail.DefaultParameterSettingMasterId
-                           join defaultTemplate in context.DefaultParameterTemplateMasterList on defaultDetail.ParameterUniqueReferenceId equals defaultTemplate.ParameterUniqueReferenceId
-                           where run.Id == resultsRequestDto.RunId
-                           select new DefaultParamResultsClass
-                           {
-                               ParameterValue = defaultDetail.ParameterValue,
-                               ParameterCategory = defaultTemplate.ParameterCategory,
-                               ParameterType = defaultTemplate.ParameterType,
-                               ParameterUniqueReference = defaultDetail.ParameterUniqueReferenceId
-                               
-                           }).ToListAsync();
+            var results = await (
+                from run in context.CalculatorRuns
+                join defaultMaster in context.DefaultParameterSettings on run.DefaultParameterSettingMasterId equals defaultMaster.Id
+                join defaultDetail in context.DefaultParameterSettingDetail on defaultMaster.Id equals defaultDetail.DefaultParameterSettingMasterId
+                join defaultTemplate in context.DefaultParameterTemplateMasterList on defaultDetail.ParameterUniqueReferenceId equals defaultTemplate.ParameterUniqueReferenceId
+                where run.Id == resultsRequestDto.RunId
+                select new DefaultParamResultsClass
+                {
+                    ParameterValue = defaultDetail.ParameterValue,
+                    ParameterCategory = defaultTemplate.ParameterCategory,
+                    ParameterType = defaultTemplate.ParameterType,
+                    ParameterUniqueReference = defaultDetail.ParameterUniqueReferenceId
+                }
+            ).ToListAsync();
 
             var schemeAdminCosts = results.Where(x => x.ParameterType == SchemeAdminOperatingCost);
 

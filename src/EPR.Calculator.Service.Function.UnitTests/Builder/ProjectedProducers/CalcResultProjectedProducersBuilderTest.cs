@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using Newtonsoft.Json;
+using EPR.Calculator.Service.Function.Mappers;
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 {
     using EPR.Calculator.API.Data;
@@ -465,7 +466,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             AssertExcepted(expected, await FillGapsPrevious(given));
         }
 
-        private CalcResultsRequestDto InsertData(string[][] given)
+        private (List<MaterialDetail>, CalcResultsRequestDto) InsertData(string[][] given)
         {
             for (int i = 0; i < given.GetLength(0); i++)
             {
@@ -492,7 +493,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 
             dbContext.SaveChanges();
 
-            return new CalcResultsRequestDto { RunId = runId, RelativeYear = relativeYear };
+            return (MaterialMapper.Map(materials), new CalcResultsRequestDto { RunId = runId, RelativeYear = relativeYear });
         }
 
         private string[][] ConvertResult((List<ProducerDetail>, CalcResultProjectedProducers) given)
@@ -587,8 +588,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             return res;
         }
 
-        private async Task<string[][]> FillGaps(string[][] given) =>
-            ConvertResult(await builder.ConstructAsync(InsertData(given), ToProducers(given)));
+        private async Task<string[][]> FillGaps(string[][] given)
+        {
+            var (materialDetails, requestDto) = InsertData(given);
+            return ConvertResult(await builder.ConstructAsync(materialDetails, ToProducers(given), requestDto));
+        }
 
         private string[][] ConvertResultPrevious(CalcResultProjectedProducers given)
         {
@@ -649,8 +653,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     .ToArray();
         }
 
-        private async Task<string[][]> FillGapsPrevious(string[][] given) =>
-            ConvertResultPrevious((await builder.ConstructAsync(InsertData(given), ToProducers(given))).Item2);
+        private async Task<string[][]> FillGapsPrevious(string[][] given)
+        {
+            var (materialDetails, requestDto) = InsertData(given);
+            return ConvertResultPrevious((await builder.ConstructAsync(materialDetails, ToProducers(given), requestDto)).Item2);
+        }
 
         private string ToPrintable(string[] arr) =>
           arr is null ? "null" : "[" + string.Join(", ", arr.Select(x => x?.ToString() ?? "null")) + "]";

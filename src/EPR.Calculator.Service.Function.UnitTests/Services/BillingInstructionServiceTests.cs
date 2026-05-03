@@ -50,7 +50,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Arrange
             var calcResult = new CalcResult
             {
-                ShowModulations = true,
+                ApplyModulation = true,
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultDetail = new CalcResultDetail
@@ -133,7 +133,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Arrange
             var calcResult = new CalcResult
             {
-                ShowModulations = true,
+                ApplyModulation = true,
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultDetail = new CalcResultDetail
@@ -188,7 +188,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var fixture = new Fixture();
             var calcResult = new CalcResult
             {
-                ShowModulations = true,
+                ApplyModulation = true,
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultDetail = new CalcResultDetail

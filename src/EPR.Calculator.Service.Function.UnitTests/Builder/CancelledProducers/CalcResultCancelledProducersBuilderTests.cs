@@ -18,8 +18,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         private readonly ApplicationDBContext dbContext;
         private Mock<IDbContextFactory<ApplicationDBContext>> dbContextFactory;
 
-        private Mock<IMaterialService> materialService;
-
         public CalcResultCancelledProducersBuilderTests()
         {
 
@@ -31,12 +29,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             dbContext = new ApplicationDBContext(dbContextOptions);
             dbContext.Database.EnsureCreated();
             dbContextFactory.Setup(factory => factory.CreateDbContext()).Returns(dbContext);
-            materialService = new Mock<IMaterialService>();
             var producerDetailService = new ProducerDetailService(dbContext);
 
             builder = new CalcResultCancelledProducersBuilder(
                 dbContext,
-                materialService.Object,
                 producerDetailService);
         }
 
@@ -56,11 +52,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
 
             var expected = dbContext.ProducerDesignatedRunInvoiceInstruction.FirstOrDefault(t => t.ProducerId == 2 && t.CalculatorRunId == 1);
 
-
-            materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
+            var materialDetails = TestDataHelper.GetMaterials().ToList();
 
             // Act
-            var result = await builder.ConstructAsync(requestDto);
+            var result = await builder.ConstructAsync(materialDetails, requestDto);
 
             // Assert
             Assert.IsNotNull(result);
@@ -82,10 +77,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             // Arrange
             var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
-            materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
+            var materialDetails = TestDataHelper.GetMaterials().ToList();
 
             // Act
-            var result = await builder.ConstructAsync(requestDto);
+            var result = await builder.ConstructAsync(materialDetails, requestDto);
 
             // Assert
             Assert.IsNotNull(result);
@@ -105,11 +100,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
 
             var expected = dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject == CommonConstants.Accepted && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant() && t.CalculatorRunId == 2);
 
-
-            materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
+            var materialDetails = TestDataHelper.GetMaterials().ToList();
 
             // Act
-            var result = await builder.ConstructAsync(requestDto);
+            var result = await builder.ConstructAsync(materialDetails, requestDto);
 
             // Assert
             Assert.IsNotNull(result);
@@ -128,13 +122,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
 
             var expected = dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject == CommonConstants.Accepted && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant() && t.CalculatorRunId == 3);
 
-
-            materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
-
-            //this.producerDetailsService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
+            var materialDetails = TestDataHelper.GetMaterials().ToList();
 
             // Act
-            var result = await builder.ConstructAsync(requestDto);
+            var result = await builder.ConstructAsync(materialDetails, requestDto);
 
             // Assert
             Assert.IsNotNull(result);
@@ -153,11 +144,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
 
             var expected = dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject == CommonConstants.Rejected && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant() && t.CalculatorRunId == 3);
 
-
-            materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
+            var materialDetails = TestDataHelper.GetMaterials().ToList();
 
             // Act
-            var result = await builder.ConstructAsync(requestDto);
+            var result = await builder.ConstructAsync(materialDetails, requestDto);
 
             // Assert
             Assert.IsNotNull(result);
@@ -179,10 +169,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             CommonConstants.Rejected && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant()
             && t.CalculatorRunId == 2);
 
-            materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
+            var materialDetails = TestDataHelper.GetMaterials().ToList();
 
             // Act
-            var result = await builder.ConstructAsync(requestDto);
+            var result = await builder.ConstructAsync(materialDetails, requestDto);
 
             // Assert
             Assert.IsNotNull(result);
@@ -199,10 +189,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             // Arrange
             var requestDto = new CalcResultsRequestDto { RunId = 3, RelativeYear = new RelativeYear(2025) };
 
-            materialService.Setup(t => t.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials().ToList());
+            var materialDetails = TestDataHelper.GetMaterials().ToList();
 
             // Act
-            var result = await builder.ConstructAsync(requestDto);
+            var result = await builder.ConstructAsync(materialDetails, requestDto);
 
             // Assert
             Assert.IsNotNull(result);
@@ -218,13 +208,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
             // Arrange
             var requestDto = new CalcResultsRequestDto { RunId = 3, RelativeYear = new RelativeYear(2025) };
 
-            var expected = dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject ==
-            CommonConstants.Rejected && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant()
-            && t.CalculatorRunId == 2);
+            var expected = dbContext.ProducerResultFileSuggestedBillingInstruction.FirstOrDefault(t => t.BillingInstructionAcceptReject == CommonConstants.Rejected
+                && t.SuggestedBillingInstruction.ToLowerInvariant() == CommonConstants.Cancel.ToLowerInvariant()
+                && t.CalculatorRunId == 2);
+
+            var materialDetails = TestDataHelper.GetMaterials().ToList();
 
 
             // Act
-            var result = await builder.ConstructAsync(requestDto);
+            var result = await builder.ConstructAsync(materialDetails, requestDto);
 
             // Assert
             Assert.IsNotNull(result);
@@ -402,7 +394,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
 
 
             var producerDetails = new List<ProducerDetail>()
-            {  
+            {
                 new ProducerDetail() { Id =1 , CalculatorRunId = 1, ProducerName="Test1", ProducerId = 1, TradingName = "TN1"},
                 new ProducerDetail() { Id =2 , CalculatorRunId = 1, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
                 new ProducerDetail() { Id =4 , CalculatorRunId = 1, ProducerName="Test3", ProducerId = 3, TradingName = "TN4"},

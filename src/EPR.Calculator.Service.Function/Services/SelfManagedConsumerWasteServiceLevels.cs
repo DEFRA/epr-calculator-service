@@ -57,30 +57,30 @@ namespace EPR.Calculator.Service.Function.Services
 
     public static class SelfManagedConsumerWasteServiceLevels
     {
-        public static List<Result> Calculate(IL1 l1, bool showModulations)
+        public static List<Result> Calculate(IL1 l1, bool applyModulation)
         {
             return l1 switch
             {
-                SingleL1 sl1 => new List<Result> { UpdateSingleL1(sl1, showModulations) },
-                HC       hc  => UpdateHC(hc, showModulations),
+                SingleL1 sl1 => new List<Result> { UpdateSingleL1(sl1, applyModulation) },
+                HC       hc  => UpdateHC(hc, applyModulation),
                 _            => throw new ArgumentException($"Unsupported L1 type {l1.GetType}")
             };
         }
 
-        public static List<Result> Calculate2(IL1 l1, bool showModulations)
+        public static List<Result> Calculate2(IL1 l1, bool applyModulation)
         {
             return l1 switch
             {
                 SingleL1 sl1 => new List<Result> {  },
-                HC       hc  => UpdateHC(hc, showModulations),
+                HC       hc  => UpdateHC(hc, applyModulation),
                 _            => throw new ArgumentException($"Unsupported L1 type {l1.GetType}")
             };
         }
 
 
-        private static Result UpdateSingleL1(IL1 l1, bool showModulations)
+        private static Result UpdateSingleL1(IL1 l1, bool applyModulation)
         {
-            if (showModulations)
+            if (applyModulation)
             {
                 var (netA, actionedA, nextSmcwA) = ApplySubSmcw(l1.A, l1.Smcw);
                 var (netR, actionedR, nextSmcwR) = ApplySubSmcw(l1.R, nextSmcwA);
@@ -120,20 +120,20 @@ namespace EPR.Calculator.Service.Function.Services
             }
         }
 
-        private static List<Result> UpdateHC(HC hc, bool showModulations)
+        private static List<Result> UpdateHC(HC hc, bool applyModulation)
         {
-            var hcResult = UpdateSingleL1(hc, showModulations);
+            var hcResult = UpdateSingleL1(hc, applyModulation);
             var availableA = hc.A - hcResult.NetA;
             var availableR = hc.R - hcResult.NetR;
             var availableG = hc.G - hcResult.NetG;
-            var l2Results = ProcessL2s(hc.L2s, availableA, availableR, availableG, showModulations);
+            var l2Results = ProcessL2s(hc.L2s, availableA, availableR, availableG, applyModulation);
             return new List<Result> { hcResult }.Concat(l2Results).ToList();
         }
 
 
-        private static List<Result> ProcessL2s(List<L2> l2s, decimal? availableA, decimal? availableR, decimal? availableG, bool showModulations)
+        private static List<Result> ProcessL2s(List<L2> l2s, decimal? availableA, decimal? availableR, decimal? availableG, bool applyModulation)
         {
-            if (showModulations)
+            if (applyModulation)
             {
                 decimal currentA = availableA ?? 0;
                 decimal currentR = availableR ?? 0;

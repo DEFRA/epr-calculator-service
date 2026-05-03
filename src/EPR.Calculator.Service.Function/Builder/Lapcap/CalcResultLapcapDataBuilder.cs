@@ -7,24 +7,35 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.Lapcap
 {
+    public interface ICalcResultLapcapDataBuilder
+    {
+        Task<CalcResultLapcapData> ConstructAsync(
+            IEnumerable<MaterialDetail> materialDetails,
+            CalcResultsRequestDto resultsRequestDto
+        );
+    }
+
     public class CalcResultLapcapDataBuilder : ICalcResultLapcapDataBuilder
     {
         private readonly ICalcCountryApportionmentService calcCountryApportionmentService;
-        private readonly ApplicationDBContext context;
+        private readonly ApplicationDBContext dbContext;
         public const string LapcapHeader = "LAPCAP Data";
         public const string CountryApportionment = "1 Country Apportionment %s";
         public const string Total = "Total";
         public const int HundredPercent = 100;
 
-        public CalcResultLapcapDataBuilder(ApplicationDBContext context,
+        public CalcResultLapcapDataBuilder(ApplicationDBContext dbContext,
             ICalcCountryApportionmentService calcCountryApportionmentService)
         {
-            this.context = context;
+            this.dbContext = dbContext;
             this.calcCountryApportionmentService = calcCountryApportionmentService;
         }
 
 #pragma warning disable S1854
-        public async Task<CalcResultLapcapData> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
+        public async Task<CalcResultLapcapData> ConstructAsync(
+            IEnumerable<MaterialDetail> materialDetails,
+            CalcResultsRequestDto resultsRequestDto
+        )
         {
             var culture = CultureInfo.CreateSpecificCulture("en-GB");
             culture.NumberFormat.CurrencySymbol = "£";
@@ -42,26 +53,26 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
                 TotalDisposalCost = LapcapHeaderConstants.TotalDisposalCost,
             });
 
-            var results = await (from run in context.CalculatorRuns
-                           join lapcapMaster in context.LapcapDataMaster on run.LapcapDataMasterId equals lapcapMaster.Id
-                           join lapcapDetail in context.LapcapDataDetail on lapcapMaster.Id equals lapcapDetail.LapcapDataMasterId
-                           join lapcapTemplate in context.LapcapDataTemplateMaster on lapcapDetail.UniqueReference equals lapcapTemplate.UniqueReference
-                           where run.Id == resultsRequestDto.RunId
-                           select new ResultsClass
-                           {
-                               Material = lapcapTemplate.Material,
-                               Country = lapcapTemplate.Country,
-                               TotalCost = lapcapDetail.TotalCost,
-                           }).ToListAsync();
+            var results = await (
+                from run in dbContext.CalculatorRuns
+                join lapcapMaster in dbContext.LapcapDataMaster on run.LapcapDataMasterId equals lapcapMaster.Id
+                join lapcapDetail in dbContext.LapcapDataDetail on lapcapMaster.Id equals lapcapDetail.LapcapDataMasterId
+                join lapcapTemplate in dbContext.LapcapDataTemplateMaster on lapcapDetail.UniqueReference equals lapcapTemplate.UniqueReference
+                where run.Id == resultsRequestDto.RunId
+                select new ResultsClass
+                {
+                    Material  = lapcapTemplate.Material,
+                    Country   = lapcapTemplate.Country,
+                    TotalCost = lapcapDetail.TotalCost,
+                }
+            ).ToListAsync();
 
-            var materials = await context.Material.Select(x => x.Name).ToListAsync();
+            var countries = await dbContext.Country.ToListAsync();
 
-            var countries = await context.Country.ToListAsync();
-
-            var costType = await context.CostType.SingleAsync(x => x.Name == "Fee for LA Disposal Costs");
+            var costType = await dbContext.CostType.SingleAsync(x => x.Name == "Fee for LA Disposal Costs");
             var costTypeId = costType.Id;
 
-            foreach (var material in materials)
+            foreach (var material in materialDetails.Select(m => m.Name))
             {
                 var detail = new CalcResultLapcapDataDetail
                 {

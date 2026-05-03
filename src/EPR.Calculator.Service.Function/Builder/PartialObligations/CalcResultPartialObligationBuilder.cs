@@ -1,7 +1,6 @@
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Mappers;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
@@ -11,24 +10,29 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
 {
     public interface ICalcResultPartialObligationBuilder
     {
-        Task<(List<ProducerDetail>, CalcResultPartialObligations)> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<ProducerDetail> producerDetails);
+        Task<(List<ProducerDetail>, CalcResultPartialObligations)> ConstructAsync(
+            List<MaterialDetail> materialDetails,
+            List<ProducerDetail> producerDetails,
+            CalcResultsRequestDto resultsRequestDto,
+            bool applyModulation
+        );
     }
 
     public class CalcResultPartialObligationBuilder : ICalcResultPartialObligationBuilder
     {
-        private readonly ApplicationDBContext context;
+        private readonly ApplicationDBContext dbContext;
         private const int MaterialsBreakdownHeaderInitialColumnIndex = 11;
         private const int MaterialsBreakdownHeaderIncrementalColumnIndex = 10;
 
-        public CalcResultPartialObligationBuilder(ApplicationDBContext context)
+        public CalcResultPartialObligationBuilder(ApplicationDBContext dbContext)
         {
-            this.context = context;
+            this.dbContext = dbContext;
         }
 
-        private ProducerReportedMaterial scale(ProducerReportedMaterial reportedMaterial, CalcResultPartialObligation partialObligation)
+        private ProducerReportedMaterial scale(bool applyModulation, ProducerReportedMaterial reportedMaterial, CalcResultPartialObligation partialObligation)
         {
             var p = partialObligation.ObligatedFactor;
-            if (reportedMaterial.SubmissionPeriod.StartsWith("2024")) // TODO or use ShowModulation = false
+            if (!applyModulation)
             {
                 return new ProducerReportedMaterial
                 {
@@ -82,11 +86,14 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
             return pd;
         }
 
-        public async Task<(List<ProducerDetail>, CalcResultPartialObligations)> ConstructAsync(CalcResultsRequestDto resultsRequestDto, List<ProducerDetail> producerDetails)
+        public async Task<(List<ProducerDetail>, CalcResultPartialObligations)> ConstructAsync(
+            List<MaterialDetail> materialDetails,
+            List<ProducerDetail> producerDetails,
+            CalcResultsRequestDto resultsRequestDto,
+            bool applyModulation
+        )
         {
             var runId = resultsRequestDto.RunId;
-            var materialsFromDb = await context.Material.ToListAsync();
-            var materials = MaterialMapper.Map(materialsFromDb);
 
             var partialObligationsForRun = await GetPartialObligations(runId);
             var obligationsLookup = partialObligationsForRun.ToDictionary(p => (p.ProducerId, p.SubsidiaryId));
@@ -97,11 +104,11 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
                     return pd;
 
                 obligation.PartialObligationTonnageByMaterial =
-                    ComputeTonnageByMaterial(pd.ProducerReportedMaterials, materials, obligation.ObligatedFactor ?? 1m);
+                    ComputeTonnageByMaterial(pd.ProducerReportedMaterials, materialDetails, obligation.ObligatedFactor ?? 1m);
 
                 return UpdateReportedMaterials(
                     pd,
-                    reportedMaterials => reportedMaterials.Select(rm => scale(rm, obligation)).ToList()
+                    reportedMaterials => reportedMaterials.Select(rm => scale(applyModulation, rm, obligation)).ToList()
                 );
             }).ToList();
 
@@ -112,8 +119,8 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
                     Name = CalcResultPartialObligationHeaders.PartialObligations,
                     ColumnIndex = 1,
                 },
-                MaterialBreakdownHeaders = GetMaterialsBreakdownHeader(materials),
-                ColumnHeaders = GetColumnHeaders(materials),
+                MaterialBreakdownHeaders = GetMaterialsBreakdownHeader(materialDetails),
+                ColumnHeaders = GetColumnHeaders(materialDetails),
                 PartialObligations = partialObligationsForRun
                     .OrderBy(p => p.ProducerId)
                     .ThenBy(p => p.Level)
@@ -127,10 +134,10 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
         private async Task<List<CalcResultPartialObligation>> GetPartialObligations(int runId)
         {
             return await (
-                from run in context.CalculatorRuns.AsNoTracking()
-                join crodm in context.CalculatorRunOrganisationDataMaster.AsNoTracking() on run.CalculatorRunOrganisationDataMasterId equals crodm.Id
-                join crodd in context.CalculatorRunOrganisationDataDetails.AsNoTracking() on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
-                join pd in context.ProducerDetail.AsNoTracking() on crodd.OrganisationId equals pd.ProducerId
+                from run in dbContext.CalculatorRuns.AsNoTracking()
+                join crodm in dbContext.CalculatorRunOrganisationDataMaster.AsNoTracking() on run.CalculatorRunOrganisationDataMasterId equals crodm.Id
+                join crodd in dbContext.CalculatorRunOrganisationDataDetails.AsNoTracking() on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
+                join pd in dbContext.ProducerDetail.AsNoTracking() on crodd.OrganisationId equals pd.ProducerId
                 where run.Id == runId && crodd.ObligationStatus == ObligationStates.Obligated && crodd.DaysObligated != null && crodd.SubsidiaryId == pd.SubsidiaryId && pd.CalculatorRunId == runId
                 let daysInYear = DateTime.IsLeapYear(crodm.RelativeYear.Value) ? 366 : 365
                 let partialAmount = crodd.DaysObligated != null ? (decimal)crodd.DaysObligated! / daysInYear : 1
