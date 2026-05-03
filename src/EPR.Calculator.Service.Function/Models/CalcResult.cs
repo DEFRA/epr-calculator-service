@@ -5,7 +5,7 @@ namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResult
     {
-        public required bool ShowModulations {get; set;}
+        public required bool ApplyModulation {get; set;}
         public required CalcResultDetail CalcResultDetail { get; set; }
 
         public required CalcResultLapcapData CalcResultLapcapData { get; set; } = new()

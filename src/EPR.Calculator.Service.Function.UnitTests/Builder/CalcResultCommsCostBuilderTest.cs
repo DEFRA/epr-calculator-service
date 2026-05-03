@@ -47,7 +47,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             var calcResult = TestDataHelper.GetCalcResult();
 
-            CreateMaterials();
+            var materialDetails = CreateMaterials();
             CreateDefaultTemplate();
             CreateDefaultParameters();
             CreateNewRun();
@@ -73,7 +73,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     },
                 },
             };
-            var result = await builder.ConstructAsync(resultsRequestDto, apportionment, calcResult.CalcResultLateReportingTonnageData);
+            var result = await builder.ConstructAsync(materialDetails, resultsRequestDto, apportionment, calcResult.CalcResultLateReportingTonnageData);
 
             Assert.IsNotNull(result);
 
@@ -430,29 +430,22 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             return 10;
         }
 
-        private void CreateMaterials()
+        private List<MaterialDetail> CreateMaterials()
         {
-            var materialDictionary = new Dictionary<string, string>();
-            materialDictionary.Add("AL", "Aluminium");
-            materialDictionary.Add("FC", "Fibre composite");
-            materialDictionary.Add("GL", "Glass");
-            materialDictionary.Add("PC", "Paper or card");
-            materialDictionary.Add("PL", "Plastic");
-            materialDictionary.Add("ST", "Steel");
-            materialDictionary.Add("WD", "Wood");
-            materialDictionary.Add("OT", "Other materials");
+            var materials = TestDataHelper.GetMaterials();
 
-            foreach (var materialKv in materialDictionary)
-            {
-                dbContext.Material.Add(new Material
+            dbContext.Material.AddRange(materials.Select(m =>
+                new Material
                 {
-                    Name = materialKv.Value,
-                    Code = materialKv.Key,
-                    Description = "Some"
-                });
-            }
+                    Name        = m.Name,
+                    Code        = m.Code,
+                    Description = m.Description
+                }
+            ));
 
             dbContext.SaveChanges();
+
+            return materials;
         }
     }
 }

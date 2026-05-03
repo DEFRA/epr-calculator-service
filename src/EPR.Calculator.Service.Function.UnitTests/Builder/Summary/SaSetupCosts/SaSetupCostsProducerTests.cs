@@ -95,7 +95,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
 
             _calcResult = new CalcResult
             {
-                ShowModulations = false,
+                ApplyModulation = false,
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultParameterOtherCost = new CalcResultParameterOtherCost

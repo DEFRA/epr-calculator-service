@@ -5,7 +5,6 @@ using EPR.Calculator.Service.Function.Interface;
 namespace EPR.Calculator.Service.Function.Services
 {
     // TODO rename this - not just projected producers
-    // TODO Once this is persisted, everwhere needs to use this new data (and stop passing scaledUpProducers, partialObligations to GetReportedTonnage)
     public interface IProjectedProducersService
     {
         Task StoreProjectedProducers(int runId, List<ProducerDetail> producerDetails);

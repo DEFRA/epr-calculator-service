@@ -26,7 +26,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
 
             calcResult = new CalcResult
             {
-                ShowModulations = false,
+                ApplyModulation = false,
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultParameterOtherCost = TestDataHelper.GetCalcResultParameterOtherCost(),

@@ -9,18 +9,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
     public static class TestDataHelper
     {
-        public static CalcResult GetCalcResult(bool showModulations = false)
+        public static CalcResult GetCalcResult(bool applyModulation = false)
         {
             return new CalcResult
             {
-                ShowModulations = showModulations,
+                ApplyModulation = applyModulation,
                 CalcResultScaledupProducers = GetScaledupProducers(),
                 CalcResultPartialObligations = GetPartialObligations(),
                 CalcResultParameterOtherCost = GetCalcResultParameterOtherCost(),
                 CalcResultDetail = GetCalcResultDetail(),
                 CalcResultLapcapData = GetCalcResultLapcapData(),
                 CalcResultLateReportingTonnageData = GetCalcResultLateReportingTonnage(),
-                CalcResultSummary = GetCalcResultSummary(showModulations),
+                CalcResultSummary = GetCalcResultSummary(applyModulation),
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
             };
         }
@@ -699,7 +699,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
         }
 
-        public static CalcResultSummary GetCalcResultSummary(bool showModulations = false)
+        public static CalcResultSummary GetCalcResultSummary(bool applyModulation = false)
         {
             return new CalcResultSummary
             {
@@ -725,11 +725,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 CommsCostHeaderWithBadDebtFor2bTitle = 1419.446075708277M,
                 CommsCostHeaderBadDebtProvisionFor2bTitle = 80.34600428537418M,
                 TotalOnePlus2A2B2CFeeWithBadDebtProvision = 10230.2550766M,
-                ProducerDisposalFees = GetProducerDisposalFees(showModulations),
+                ProducerDisposalFees = GetProducerDisposalFees(applyModulation),
             };
         }
 
-        public static List<CalcResultSummaryProducerDisposalFees> GetProducerDisposalFees(bool showModulations = false)
+        public static List<CalcResultSummaryProducerDisposalFees> GetProducerDisposalFees(bool applyModulation = false)
         {
             return new List<CalcResultSummaryProducerDisposalFees>
             {
@@ -848,7 +848,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         ScotlandTotalWithBadDebtProvision = 733.3901516568284m,
                         NorthernIrelandTotalWithBadDebtProvision = 299.39426423361965m
                     },
-                    ProducerDisposalFeesByMaterial = GetProducerDisposalFeesByMaterial(showModulations),
+                    ProducerDisposalFeesByMaterial = GetProducerDisposalFeesByMaterial(applyModulation),
                     ProducerCommsFeesByMaterial = GetProducerCommsFeesByMaterial(),
                     TonnageChangeCount = "0",
                     TonnageChangeAdvice = "",
@@ -856,7 +856,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
         }
 
-        public static List<CalcResultSummaryProducerDisposalFees> GetProducerDisposalFeesForOverAllTotal(bool showModulations = false)
+        public static List<CalcResultSummaryProducerDisposalFees> GetProducerDisposalFeesForOverAllTotal(bool applyModulation = false)
         {
             return new List<CalcResultSummaryProducerDisposalFees>
             {
@@ -975,7 +975,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         ScotlandTotalWithBadDebtProvision = 733.3901516568284m,
                         NorthernIrelandTotalWithBadDebtProvision = 299.39426423361965m
                     },
-                    ProducerDisposalFeesByMaterial = GetProducerDisposalFeesByMaterial(showModulations),
+                    ProducerDisposalFeesByMaterial = GetProducerDisposalFeesByMaterial(applyModulation),
                     ProducerCommsFeesByMaterial = GetProducerCommsFeesByMaterial(),
                     TonnageChangeCount = "0",
                     TonnageChangeAdvice = "",
@@ -984,7 +984,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
         }
 
-        public static List<CalcResultSummaryProducerDisposalFees> GetProducerDisposalFeesTonnageValueNull(bool showModulations = false)
+        public static List<CalcResultSummaryProducerDisposalFees> GetProducerDisposalFeesTonnageValueNull(bool applyModulation = false)
         {
             return new List<CalcResultSummaryProducerDisposalFees>
             {
@@ -1103,14 +1103,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         ScotlandTotalWithBadDebtProvision = 733.3901516568284m,
                         NorthernIrelandTotalWithBadDebtProvision = 299.39426423361965m
                     },
-                    ProducerDisposalFeesByMaterial = GetProducerDisposalFeesByMaterial(showModulations),
+                    ProducerDisposalFeesByMaterial = GetProducerDisposalFeesByMaterial(applyModulation),
                     ProducerCommsFeesByMaterial = GetProducerCommsFeesByMaterial(),
                     TonnageChangeCount = null,
                     TonnageChangeAdvice = null,
                 },
             };
         }
-        public static Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> GetProducerDisposalFeesByMaterial(bool showModulations = false)
+        public static Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> GetProducerDisposalFeesByMaterial(bool applyModulation = false)
         {
             return new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>
             {
@@ -1120,7 +1120,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     {
                         HouseholdPackagingWasteTonnage = 1000,
                         SelfManagedConsumerWasteTonnage = 90,
-                        NetReportedTonnage = showModulations
+                        NetReportedTonnage = applyModulation
                             ?(total: 910, red: 300, amber: 200, green: 410)
                             :(total: 910, red: null, amber: null, green: null),
                         PricePerTonne = 0.6676m,
@@ -1142,7 +1142,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     {
                         HouseholdPackagingWasteTonnage = 2000,
                         SelfManagedConsumerWasteTonnage = 140,
-                        NetReportedTonnage = showModulations
+                        NetReportedTonnage = applyModulation
                             ?(total: 1860, red: 860, amber: 0, green: 1000)
                             :(total: 1860, red: null, amber: null, green: null),
 
@@ -1165,7 +1165,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     {
                         HouseholdPackagingWasteTonnage = 500,
                         SelfManagedConsumerWasteTonnage = 150,
-                        NetReportedTonnage = showModulations
+                        NetReportedTonnage = applyModulation
                             ?(total: 350, red: 300, amber: 50, green: 0)
                             :(total: 350, red: null, amber: null, green: null),
                         PricePerTonne = 6.4404m,
@@ -1188,7 +1188,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     {
                         HouseholdPackagingWasteTonnage = 20,
                         SelfManagedConsumerWasteTonnage = 2.200m,
-                        NetReportedTonnage = showModulations
+                        NetReportedTonnage = applyModulation
                             ?(total: 17.800m, red: 0, amber: 0, green: 0)
                             :(total: 17.800m, red: null, amber: null, green: null),
                         PricePerTonne = 2.4488m,
@@ -1210,7 +1210,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     {
                         HouseholdPackagingWasteTonnage = 5.000m,
                         SelfManagedConsumerWasteTonnage = 0.600m,
-                        NetReportedTonnage = showModulations
+                        NetReportedTonnage = applyModulation
                             ?(total: 4.400m, red: 4.400m, amber: 0, green: 0)
                             :(total: 4.400m, red: null, amber: null, green: null),
                         PricePerTonne = 2.1601m,
@@ -1232,7 +1232,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     {
                         HouseholdPackagingWasteTonnage = 0.000m,
                         SelfManagedConsumerWasteTonnage = 0.000m,
-                        NetReportedTonnage = showModulations
+                        NetReportedTonnage = applyModulation
                             ?(total: 0, red: 0, amber: 0, green: 0)
                             :(total: 0, red: null, amber: null, green: null),
                         PricePerTonne = 1.9813m,
@@ -1254,7 +1254,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     {
                         HouseholdPackagingWasteTonnage = 500.000m,
                         SelfManagedConsumerWasteTonnage = 95.000m,
-                        NetReportedTonnage = showModulations
+                        NetReportedTonnage = applyModulation
                             ?(total: 405.000m, red: 300, amber: 100, green: 5)
                             :(total: 405.000m, red: null, amber: null, green: null),
                         PricePerTonne = 2.0000m,
@@ -1276,7 +1276,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     {
                         HouseholdPackagingWasteTonnage = 50.000m,
                         SelfManagedConsumerWasteTonnage = 5.500m,
-                        NetReportedTonnage = showModulations
+                        NetReportedTonnage = applyModulation
                             ?(total: 44.500m, red: 0, amber: 44.500m, green: 0)
                             :(total: 44.500m, red: null, amber: null, green: null),
                         PricePerTonne = 1.1954m,

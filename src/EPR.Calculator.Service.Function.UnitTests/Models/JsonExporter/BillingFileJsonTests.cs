@@ -58,7 +58,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         {
             return new CalcResult
             {
-                ShowModulations = true,
+                ApplyModulation = true,
                 CalcResultDetail = new CalcResultDetail
                 {
                     RunId = 1,

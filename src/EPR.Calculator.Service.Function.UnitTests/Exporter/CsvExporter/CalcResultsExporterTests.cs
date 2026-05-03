@@ -120,7 +120,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         {
             // Arrange
             var calcResult = CreateCalcResult();
-            calcResult.ShowModulations = true;
+            calcResult.ApplyModulation = true;
 
             // Act
             var result = TestClass.Export(calcResult);
@@ -146,7 +146,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         {
             return new CalcResult
             {
-                ShowModulations = false,
+                ApplyModulation = false,
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
                     Name = "LAPCAP Data",

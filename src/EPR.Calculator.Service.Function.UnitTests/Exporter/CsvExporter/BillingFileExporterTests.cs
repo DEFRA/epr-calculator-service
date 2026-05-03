@@ -97,7 +97,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             // Arrange
             var fixture = new Fixture();
             var results = fixture.Create<CalcResult>();
-            results.ShowModulations = false;
+            results.ApplyModulation = false;
             var acceptedProducerIds = results.CalcResultScaledupProducers?.ScaledupProducers?.Select(t => t.ProducerId).Take(1).ToList() ?? fixture.Create<List<int>>();
 
             _resultDetailexporter.Setup(mock => mock.Export(It.IsAny<CalcResultDetail>(), It.IsAny<StringBuilder>())).Verifiable();
@@ -138,7 +138,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             // Arrange
             var fixture = new Fixture();
             var results = fixture.Create<CalcResult>();
-            results.ShowModulations = true;
+            results.ApplyModulation = true;
             var acceptedProducerIds = results.CalcResultProjectedProducers?.H2ProjectedProducers?.Select(t => t.ProducerId).Take(1).ToList() ?? fixture.Create<List<int>>();
 
             _resultDetailexporter.Setup(mock => mock.Export(It.IsAny<CalcResultDetail>(), It.IsAny<StringBuilder>())).Verifiable();

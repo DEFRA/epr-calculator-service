@@ -22,7 +22,7 @@ namespace EPR.Calculator.Service.Function.Services
          Calculate(
             CalcResultsRequestDto resultsRequestDto,
             IEnumerable<MaterialDetail> materialDetails,
-            bool showModulations);
+            bool applyModulation);
     }
 
     public class SelfManagedConsumerWasteService: ISelfManagedConsumerWasteService
@@ -37,7 +37,7 @@ namespace EPR.Calculator.Service.Function.Services
         public async Task<SelfManagedConsumerWaste> Calculate(
             CalcResultsRequestDto resultsRequestDto,
             IEnumerable<MaterialDetail> materialDetails,
-            bool showModulations
+            bool applyModulation
         )
         {
             // TODO also used by CalcResultSummaryBuilder - look up in CalcResultBuilder...
@@ -66,7 +66,7 @@ namespace EPR.Calculator.Service.Function.Services
                     materialDetails
                         .SelectMany(material =>
                             SelfManagedConsumerWasteServiceLevels
-                                .Calculate(BuildL1(projectedMaterialsLookup, group, material), showModulations)
+                                .Calculate(BuildL1(projectedMaterialsLookup, group, material), applyModulation)
                                 .Select(r => (material, result: r))
                         )
                         .GroupBy(x => (x.result.OrgId, x.result.SubsidiaryId, x.result.Level))

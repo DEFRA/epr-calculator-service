@@ -23,6 +23,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         private readonly CalculatorRunOrganisationDataMaster calcRunOrganisationDataMaster;
         private readonly int pcId;
         private readonly int runId = 1;
+        private readonly List<MaterialDetail> materialDetails;
 
         private CalcResultScaledupProducersBuilder builder;
 
@@ -70,7 +71,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             });
 
             this.pcId = 4;
-            dbContext.Material.AddRange(
+            var materials = new List<Material>
+            {
                 new Material { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
                 new Material { Id = 2, Code = "FC", Name = "Fibre composite", Description = "Fibre composite" },
                 new Material { Id = 3, Code = "GL", Name = "Glass", Description = "Glass" },
@@ -79,7 +81,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 new Material { Id = 6, Code = "ST", Name = "Steel", Description = "Steel" },
                 new Material { Id = 7, Code = "WD", Name = "Wood", Description = "Wood" },
                 new Material { Id = 8, Code = "OT", Name = "Other materials", Description = "Other materials" }
-            );
+            };
+            dbContext.Material.AddRange(materials);
+            materialDetails = MaterialMapper.Map(materials);
 
             dbContext.SaveChanges();
         }
@@ -315,7 +319,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
             // Act
-            var result = (await builder.ConstructAsync(requestDto, producers)).Item2;
+            var result = (await builder.ConstructAsync(materialDetails, producers, requestDto)).Item2;
 
             // Assert
             Assert.AreEqual(2, result.ScaledupProducers!.Count());
@@ -334,7 +338,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
             // Act
-            var updatedProducers = (await builder.ConstructAsync(requestDto, producers)).Item1;
+            var updatedProducers = (await builder.ConstructAsync(materialDetails, producers, requestDto)).Item1;
 
             // Assert
             Assert.AreEqual(producers.Count(), updatedProducers.Count());
@@ -367,7 +371,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
             // Act
-            var result = (await builder.ConstructAsync(requestDto, producers)).Item2;
+            var result = (await builder.ConstructAsync(materialDetails, producers, requestDto)).Item2;
 
             // Assert
             Assert.AreEqual(0, result.ScaledupProducers?.Count());

@@ -4,11 +4,13 @@ using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.Lapcap;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Mappers;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moq;
+using Newtonsoft.Json;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
@@ -22,9 +24,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public CalcResultLapcapDataBuilderTest()
         {
             var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
-                                    .UseInMemoryDatabase(databaseName: "PayCal")
-                                    .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-                                                .Options;
+                .UseInMemoryDatabase(databaseName: "PayCal")
+                .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
+                .Options;
 
             dbContext = new ApplicationDBContext(dbContextOptions);
             dbContext.Database.EnsureCreated();
@@ -81,15 +83,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             dbContext.LapcapDataMaster.Add(lapcapDataMaster);
             dbContext.LapcapDataDetail.AddRange(details);
-            await dbContext.SaveChangesAsync();
 
             dbContext.Material.Add(new Material { Name = aluminium, Code = "AL", Description = "Some" });
             dbContext.Material.Add(new Material { Name = plastic, Code = "PL", Description = "Some" });
+
             dbContext.CalculatorRuns.Add(run);
             await dbContext.SaveChangesAsync();
 
+            var materialDetails = MaterialMapper.Map(await dbContext.Material.ToListAsync());
+
             var resultsDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) };
-            var lapcapResults = await builder.ConstructAsync(resultsDto);
+            var lapcapResults = await builder.ConstructAsync(materialDetails, resultsDto);
 
             Assert.IsNotNull(lapcapResults);
             Assert.AreEqual(CalcResultLapcapDataBuilder.LapcapHeader, lapcapResults.Name);

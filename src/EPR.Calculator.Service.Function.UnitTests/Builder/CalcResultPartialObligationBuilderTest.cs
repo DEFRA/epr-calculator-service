@@ -4,6 +4,7 @@ using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.PartialObligations;
 using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
 using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Mappers;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
@@ -21,7 +22,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         private readonly int alId = 1;
         private CalcResultPartialObligationBuilder builder;
 
-        private List<ProducerDetail> PrepareData()
+        private (List<MaterialDetail>, List<ProducerDetail>) PrepareData()
         {
             //Run 1
             var calcRunOrganisationDataMaster = new CalculatorRunOrganisationDataMaster
@@ -253,7 +254,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 );
             }
 
-            dbContext.Material.AddRange(
+            var materials = new List<Material>{
                 alm,
                 new Material { Id = 2, Code = "FC", Name = "Fibre composite", Description = "Fibre composite" },
                 new Material { Id = 3, Code = "GL", Name = "Glass", Description = "Glass" },
@@ -262,14 +263,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 new Material { Id = 6, Code = "ST", Name = "Steel", Description = "Steel" },
                 new Material { Id = 7, Code = "WD", Name = "Wood", Description = "Wood" },
                 new Material { Id = 8, Code = "OT", Name = "Other materials", Description = "Other materials" }
-            );
+            };
+
+            dbContext.Material.AddRange(materials);
 
             dbContext.ProducerDetail.AddRange(producerDetail, producerDetail2, producerDetail3, producerDetail4);
 
             dbContext.SaveChanges();
 
             // read from db to populate ids
-            return (dbContext.ProducerDetail).ToList();
+            return (MaterialMapper.Map(materials), (dbContext.ProducerDetail).ToList());
         }
 
         public CalcResultPartialObligationBuilderTest()
@@ -295,11 +298,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public async Task Construct_WhenPartialObligationsExists()
         {
             // Arrange
-            var producers = PrepareData();
+            var (materialDetails, producers) = PrepareData();
             var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
+            var applyModulation = false;
 
             // Act
-            var result = await builder.ConstructAsync(requestDto, producers);
+            var result = await builder.ConstructAsync(materialDetails, producers, requestDto, applyModulation);
 
             // Assert
             Assert.AreEqual(1, result.Item2.PartialObligations!.Count());
@@ -348,11 +352,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public async Task Construct_WhenPartialObligationsExists_producers()
         {
             // Arrange
-            var producers = PrepareData();
+            var (materialDetails, producers) = PrepareData();
             var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
+            var applyModulation = false;
 
             // Act
-            var updatedProducers = (await builder.ConstructAsync(requestDto, producers)).Item1;
+            var updatedProducers = (await builder.ConstructAsync(materialDetails, producers, requestDto, applyModulation)).Item1;
 
             // Assert
             Assert.AreEqual(producers.Count(), updatedProducers.Count());
@@ -382,5 +387,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 }
             }
         }
+
+        // TODO tests for when applyModulation=true
     }
 }

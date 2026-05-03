@@ -7,7 +7,6 @@ using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
 namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
 {
@@ -19,7 +18,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
             CalcResultLapcapData lapcapData,
             CalcResultLateReportingTonnage lateReportingTonnage,
             SelfManagedConsumerWaste smcw,
-            bool showModulations
+            bool applyModulation
         );
     }
 
@@ -54,7 +53,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
             CalcResultLapcapData lapcapData,
             CalcResultLateReportingTonnage lateReportingTonnage,
             SelfManagedConsumerWaste smcw,
-            bool showModulations
+            bool applyModulation
         )
         {
             var laDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>();
@@ -85,11 +84,11 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
                 var materialCode = materialDetails.FirstOrDefault(x => x.Name == detail.Name)?.Code;
 
                 laDisposalDetail.ActionedSelfManagedConsumerWasteTonnage =
-                    showModulations
+                    applyModulation
                         ? GetActionedSelfManagedConsumerWasteTonnageValue(smcw, laDisposalDetail, materialCode).ToString()
                         : String.Empty;
 
-                laDisposalDetail.ProducerReportedTotalTonnage = GetProducerReportedTotalTonnage(laDisposalDetail, showModulations).ToString();
+                laDisposalDetail.ProducerReportedTotalTonnage = GetProducerReportedTotalTonnage(laDisposalDetail, applyModulation).ToString();
 
                 laDisposalDetail.DisposalCostPricePerTonne = laDisposalDetail.Name == CommonConstants.Total
                     ? string.Empty
@@ -97,7 +96,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
                 laDisposalCostDetails.Add(laDisposalDetail);
             }
 
-            var header = GetHeader(showModulations);
+            var header = GetHeader(applyModulation);
             laDisposalCostDetails.Insert(0, header);
 
             return new CalcResultLaDisposalCostData
@@ -149,13 +148,13 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
                 .ToString();
         }
 
-        private static decimal GetProducerReportedTotalTonnage(CalcResultLaDisposalCostDataDetail detail, bool showModulations)
+        private static decimal GetProducerReportedTotalTonnage(CalcResultLaDisposalCostDataDetail detail, bool applyModulation)
         {
             return GetDecimalValue(detail.LateReportingTonnage)
                 + GetDecimalValue(detail.ProducerReportedHouseholdPackagingWasteTonnage)
                 + GetDecimalValue(detail.ReportedPublicBinTonnage)
                 + GetDecimalValue(detail.HouseholdDrinkContainers)
-                - (showModulations ? GetDecimalValue(detail.ActionedSelfManagedConsumerWasteTonnage): 0);
+                - (applyModulation ? GetDecimalValue(detail.ActionedSelfManagedConsumerWasteTonnage): 0);
         }
 
         private static decimal GetActionedSelfManagedConsumerWasteTonnageValue(
@@ -194,7 +193,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
             return value.ToString("C4", culture);
         }
 
-        private static CalcResultLaDisposalCostDataDetail GetHeader(bool showModulations)
+        private static CalcResultLaDisposalCostDataDetail GetHeader(bool applyModulation)
         {
             return new CalcResultLaDisposalCostDataDetail
             {
@@ -208,8 +207,8 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
                 ReportedPublicBinTonnage = CommonConstants.ReportedPublicBinTonnage,
                 HouseholdDrinkContainers = CommonConstants.HouseholdDrinkContainers,
                 LateReportingTonnage = CommonConstants.LateReportingTonnage,
-                ActionedSelfManagedConsumerWasteTonnage = showModulations ? CommonConstants.ActionedSelfManagedConsumerWasteTonnage : String.Empty,
-                ProducerReportedTotalTonnage = showModulations ? CommonConstants.ModulatedProducerReportedTotalTonnage : CommonConstants.ProducerReportedTotalTonnage,
+                ActionedSelfManagedConsumerWasteTonnage = applyModulation ? CommonConstants.ActionedSelfManagedConsumerWasteTonnage : String.Empty,
+                ProducerReportedTotalTonnage = applyModulation ? CommonConstants.ModulatedProducerReportedTotalTonnage : CommonConstants.ProducerReportedTotalTonnage,
                 DisposalCostPricePerTonne = CommonConstants.DisposalCostPricePerTonne,
                 OrderId = 1,
             };

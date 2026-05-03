@@ -96,17 +96,18 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 
             calcResultCancelledProducersExporter.Export(calcResult.CalcResultCancelledProducers, csvContent);
 
-            if (calcResult.ShowModulations)
+            if (calcResult.ApplyModulation)
             {
                 calcResultProjectedProducersExporter.Export(calcResult.CalcResultProjectedProducers, csvContent);
             }
-            else {
+            else
+            {
                 calcResultScaledupProducersExporter.Export(calcResult.CalcResultScaledupProducers, csvContent);
             }
 
             calcResultPartialObligationsExporter.Export(calcResult.CalcResultPartialObligations, csvContent);
 
-            calcResultSummaryExporter.Export(calcResult.CalcResultSummary, csvContent, calcResult.ShowModulations);
+            calcResultSummaryExporter.Export(calcResult.CalcResultSummary, csvContent, calcResult.ApplyModulation);
 
             calcResultErrorReportExporter.Export(calcResult.CalcResultErrorReports, csvContent);
 
