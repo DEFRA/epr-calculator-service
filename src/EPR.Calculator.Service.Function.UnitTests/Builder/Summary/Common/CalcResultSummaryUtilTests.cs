@@ -1,9 +1,11 @@
 using AutoFixture;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Builder.Modulation;
 using EPR.Calculator.Service.Function.Builder.Summary.Common;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Services;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
 {
@@ -228,6 +230,83 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         }
 
         [TestMethod]
+        public void CanGetPricePerTonne()
+        {
+            // Arrange
+            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+
+            // Act
+            var result = CalcResultSummaryUtil.GetPricePerTonne(material, calcResult);
+
+            // Assert
+            Assert.AreEqual((total: 0.6676m, red: null, amber: null, green: null), result);
+        }
+
+        [TestMethod]
+        public void CanGetProducerDisposalFee()
+        {
+            // Arrange
+            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+
+            // Act
+            var result = CalcResultSummaryUtil.GetProducerDisposalFee(material, calcResult, SelfManagedConsumerWasteData.Zero);
+
+            // Assert
+            Assert.AreEqual((total: 0m, red: null, amber: null, green: null), result);
+        }
+
+        [TestMethod]
+        public void CanGetProducerDisposalFee_WithModulation()
+        {
+            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+
+            calcResult.CalcResultModulation = new ModulationResult
+            {
+                GreenFactor = 2,
+                RedFactor   = 4,
+                MaterialModulation = new Dictionary<MaterialDetail, MaterialModulation>
+                {
+                    [material] = mkMaterialModulation(100, 120,  77.1423m,  220,  550,  22000,  55000),
+                }
+            };
+
+            var smcw = new SelfManagedConsumerWasteData
+            {
+                SelfManagedConsumerWasteTonnage = 0,
+                ActionedSelfManagedConsumerWasteTonnage = 0,
+                ResidualSelfManagedConsumerWasteTonnage = 0,
+                NetReportedTonnage = (null, 1m, 2m, 3m)
+            };
+
+            var result = CalcResultSummaryUtil.GetProducerDisposalFee(material, calcResult, smcw);
+
+            Assert.AreEqual((total: 551.4269m, red: 120, amber: 200, green: 231.4269m), result);
+        }
+
+
+        [TestMethod]
+        public void GetBadDebtProvision_ValidPercentage_WithPercent()
+        {
+            var result = CalcResultSummaryUtil.GetBadDebtProvision(calcResult, 200m);
+            Assert.AreEqual(12m, result);
+        }
+
+        [TestMethod]
+        public void GetProducerDisposalFeeWithBadDebtProvision_AddsPercentage()
+        {
+            var result = CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvision(calcResult, 100m);
+            Assert.AreEqual(106m, result);
+        }
+
+        [TestMethod]
+        public void GetCountryBadDebtProvision()
+        {
+            Assert.AreEqual(57.2916564076m, CalcResultSummaryUtil.GetCountryBadDebtProvision(calcResult, Countries.England, 100m));
+            Assert.AreEqual(12.9141028752m, CalcResultSummaryUtil.GetCountryBadDebtProvision(calcResult, Countries.Wales  , 100m));
+
+        }
+
+        [TestMethod]
         public void CanGetCountryApportionmentPercentage()
         {
             // Act
@@ -429,6 +508,20 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         private CalcResultLateReportingTonnage GetCalcResultLateReportingTonnage()
         {
             return Fixture.Create<CalcResultLateReportingTonnage>();
+        }
+
+        private MaterialModulation mkMaterialModulation(decimal adc, decimal rdc, decimal gdc, decimal rt, decimal gt, decimal rAtAdc, decimal gAtAdc)
+        {
+            return new MaterialModulation
+            {
+                AmberMaterialDisposalCost = adc,
+                RedMaterialDisposalCost   = rdc,
+                GreenMaterialDisposalCost = gdc,
+                RedMaterialTonnages       = rt,
+                GreenMaterialTonnages     = gt,
+                TotalRedMaterialAtAmberDisposalCost   = rAtAdc,
+                TotalGreenMaterialAtAmberDisposalCost = gAtAdc
+            };
         }
     }
 }

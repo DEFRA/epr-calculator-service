@@ -261,11 +261,14 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             var pricePerTonne = GetPricePerTonne(material, calcResult);
 
             if (calcResult.CalcResultModulation is not null) {
+                var red   = smcw.NetReportedTonnage.red   * pricePerTonne.red;
+                var amber = smcw.NetReportedTonnage.amber * pricePerTonne.amber;
+                var green = smcw.NetReportedTonnage.green * pricePerTonne.green;
                 return (
-                    total: smcw.NetReportedTonnage.total * pricePerTonne.total,
-                    red:   smcw.NetReportedTonnage.red   * pricePerTonne.red,
-                    amber: smcw.NetReportedTonnage.amber * pricePerTonne.amber,
-                    green: smcw.NetReportedTonnage.green * pricePerTonne.green
+                    total: red + amber + green,
+                    red:   red,
+                    amber: amber,
+                    green: green
                 );
             } else {
                 var total = Math.Max((smcw.NetReportedTonnage.total ?? 0) * (pricePerTonne.total ?? 0), 0);
