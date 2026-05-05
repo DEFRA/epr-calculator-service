@@ -108,8 +108,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
                         AmberMaterialDisposalCost = 0.631234m,
                         RedMaterialDisposalCost   = 0.761234m,
                         GreenMaterialDisposalCost = 0.471234m,
-                        RedMaterialTonnages   = 0,
-                        GreenMaterialTonnages = 0,
+                        AmberMaterialTonnages = 5000000.23m,
+                        RedMaterialTonnages   = 21000000.12m,
+                        GreenMaterialTonnages = 209863.18m,
                         TotalRedMaterialAtAmberDisposalCost   = 6280704.41m,
                         TotalGreenMaterialAtAmberDisposalCost = 4955297.80m
                     },
@@ -118,8 +119,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
                         AmberMaterialDisposalCost =  96.591234m,
                         RedMaterialDisposalCost   = 115.901234m,
                         GreenMaterialDisposalCost =  72.551234m,
-                        RedMaterialTonnages   = 0,
-                        GreenMaterialTonnages = 0,
+                        AmberMaterialTonnages  = 400000.22m,
+                        RedMaterialTonnages   = 3001.33m,
+                        GreenMaterialTonnages = 706.33m,
                         TotalRedMaterialAtAmberDisposalCost   = 14817325.23m,
                         TotalGreenMaterialAtAmberDisposalCost = 11697888.16m
                     }
@@ -158,8 +160,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
                     "Amber Material Disposal Cost = Material Disposal Cost per Tonne",
                     "Green Material Disposal Cost = Green Modulation Factor * Amber Material Disposal Cost"
                 },
-                new[] { "Aluminium"      , "26181753.110", "24610.429", "", "3500", "123.456", "26209863.54", "21000000.12", "5000000.23", "209863.18",  "£6280704.41",  "£4955297.80",   "£0.7612",  "£0.6312",  "£0.4712" },
-                new[] { "Fibre composite",   "401772.341",  "1146.546", "",  "789",       "0",   "403707.89",     "3001.33",  "400000.22",    "706.33", "£14817325.23", "£11697888.16", "£115.9012", "£96.5912", "£72.5512" },
+                new[] { "Aluminium"      , "26181753.110", "24610.429", "", "3500", "123.456", "26209863.53", "21000000.12", "5000000.23", "209863.18",  "£6280704.41",  "£4955297.80",   "£0.7612",  "£0.6312",  "£0.4712" },
+                new[] { "Fibre composite",   "401772.341",  "1146.546", "",  "789",       "0",   "403707.88",     "3001.33",  "400000.22",    "706.33", "£14817325.23", "£11697888.16", "£115.9012", "£96.5912", "£72.5512" },
                 new[] { "Total"          , "26583525.451", "25756.975", "", "4289", "123.456", "26613571.43", "21003001.46", "5400000.46", "210569.51", "£21098029.64", "£16653185.96" },
                 new string[] { }
             };

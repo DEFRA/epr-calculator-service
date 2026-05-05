@@ -28,9 +28,20 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
         private MaterialDetail wd = materials.First(m => m.Code == "WD");
         private MaterialDetail ot = materials.First(m => m.Code == "OT");
 
+        private IReadOnlyDictionary<string, decimal> lateReportingTonnageDict;
+
         public CalcResultModulationBuilderTest()
         {
             builder = new CalcResultModulationBuilder();
+
+            lateReportingTonnageDict = materials
+                .SelectMany(m => new[]
+                {
+                    ($"LRET-{m.Code}-R", 1m),
+                    ($"LRET-{m.Code}"  , 2m),
+                    ($"LRET-{m.Code}-G", 3m)
+                })
+                .ToDictionary(t => t.Item1, t => t.Item2);
         }
 
         private CalcResultLaDisposalCostDataDetail mkLaDisposalCost(MaterialDetail material, decimal costPerTonnage)
@@ -78,14 +89,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
             };
         }
 
-        private MaterialModulation mkMaterialModulation(decimal adc, decimal rdc, decimal gdc, decimal rt, decimal gt, decimal rAtAdc, decimal gAtAdc)
+        private MaterialModulation mkMaterialModulation(decimal adc, decimal rdc, decimal gdc, decimal at, decimal rt, decimal gt, decimal rAtAdc, decimal gAtAdc)
         {
             return new MaterialModulation
             {
-                AmberMaterialDisposalCost = adc,
                 RedMaterialDisposalCost   = rdc,
+                AmberMaterialDisposalCost = adc,
                 GreenMaterialDisposalCost = gdc,
                 RedMaterialTonnages       = rt,
+                AmberMaterialTonnages     = at,
                 GreenMaterialTonnages     = gt,
                 TotalRedMaterialAtAmberDisposalCost   = rAtAdc,
                 TotalGreenMaterialAtAmberDisposalCost = gAtAdc
@@ -127,24 +139,25 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
                 }
             };
 
-            var defaultParameters = new Dictionary<string, decimal> { ["REDM-RF"] = 1.2m };
+            var redFactor = 1.2m;
+            var defaultParameters = new Dictionary<string, decimal> { ["REDM-RF"] = redFactor }.Concat(lateReportingTonnageDict).ToDictionary(k => k.Key, v => v.Value);
             var modulationResults = await builder.ConstructAsync(defaultParameters, TestDataHelper.GetMaterials(), laDisposalCostData, smcw);
             //Console.WriteLine($">> {JsonConvert.SerializeObject(modulationResults, Formatting.Indented)}");
 
             Assert.AreEqual(     1.2m, modulationResults.RedFactor);
-            Assert.AreEqual(0.771423m, modulationResults.GreenFactor);
+            Assert.AreEqual(0.772567m, modulationResults.GreenFactor);
 
             var expected =
                 new Dictionary<MaterialDetail, MaterialModulation>
                 {
-                    [al] = mkMaterialModulation(100, 120,  77.1423m,  220,  550,  22000,  55000),
-                    [fc] = mkMaterialModulation(130, 156, 100.2850m,  275,   55,  35750,   7150),
-                    [gl] = mkMaterialModulation(150, 180, 115.7134m,  110,  220,  16500,  33000),
-                    [pc] = mkMaterialModulation(200, 240, 154.2846m,  400, 2400,  80000, 480000),
-                    [pl] = mkMaterialModulation(250, 300, 192.8558m, 2150,  270, 537500,  67500),
-                    [st] = mkMaterialModulation(175, 210, 134.9990m,   33,   74,   5775,  12950),
-                    [wd] = mkMaterialModulation(150, 180, 115.7134m,  265,    0,  39750,      0),
-                    [ot] = mkMaterialModulation(400, 480, 308.5692m,   30,    0,  12000,      0)
+                    [al] = mkMaterialModulation(100, 120,  77.2567m,  332,  221,  553,  22100,  55300),
+                    [fc] = mkMaterialModulation(130, 156, 100.4337m,   57,  276,   58,  35880,   7540),
+                    [gl] = mkMaterialModulation(150, 180, 115.8850m,  222,  111,  223,  16650,  33450),
+                    [pc] = mkMaterialModulation(200, 240, 154.5134m, 1052,  401, 2403,  80200, 480600),
+                    [pl] = mkMaterialModulation(250, 300, 193.1418m,  277, 2151,  273, 537750,  68250),
+                    [st] = mkMaterialModulation(175, 210, 135.1992m,   42,   34,   77,   5950,  13475),
+                    [wd] = mkMaterialModulation(150, 180, 115.8850m,    2,  266,    3,  39900,    450),
+                    [ot] = mkMaterialModulation(400, 480, 309.0268m,    2,   31,    3,  12400,   1200)
                 };
 
             CollectionAssert.AreEquivalent(expected.Keys.ToList(), modulationResults.MaterialModulation.Keys.ToList());
@@ -189,7 +202,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
                 }
             };
 
-            var defaultParameters = new Dictionary<string, decimal> { ["REDM-RF"] = 1m };
+            var redFactor = 1m;
+            var defaultParameters = new Dictionary<string, decimal> { ["REDM-RF"] = redFactor }.Concat(lateReportingTonnageDict).ToDictionary(k => k.Key, v => v.Value);
             var modulationResults = await builder.ConstructAsync(defaultParameters, materials, laDisposalCostData, smcw);
 
             Assert.AreEqual(1m, modulationResults.RedFactor);
@@ -241,7 +255,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
             };
 
             var redFactor = 1.2m;
-            var defaultParameters = new Dictionary<string, decimal> { ["REDM-RF"] = redFactor };
+            var lateReportingTonnageDict = materials
+                .SelectMany(m => new[]
+                {
+                    ($"LRET-{m.Code}-R", 1m),
+                    ($"LRET-{m.Code}"  , 2m),
+                    ($"LRET-{m.Code}-G", 0m)
+                })
+                .ToDictionary(t => t.Item1, t => t.Item2);
+            var defaultParameters = new Dictionary<string, decimal> { ["REDM-RF"] = redFactor }.Concat(lateReportingTonnageDict).ToDictionary(k => k.Key, v => v.Value);
             var modulationResults = await builder.ConstructAsync(defaultParameters, materials, laDisposalCostData, smcw);
 
             Assert.AreEqual(redFactor, modulationResults.RedFactor);
