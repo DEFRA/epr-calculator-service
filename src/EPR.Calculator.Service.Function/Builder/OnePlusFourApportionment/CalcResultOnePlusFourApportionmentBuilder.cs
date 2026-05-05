@@ -53,13 +53,13 @@ namespace EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment
             };
         }
 
-        private static CalcResultLapcapDataDetails GetTotalCost(CalcResult calcResult, string name)
+        private static CalcResultLapcapDataDetail GetTotalCost(CalcResult calcResult, string name)
         {
             return calcResult.CalcResultLapcapData.CalcResultLapcapDataDetails
                 .Single(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         }
 
-        private static CalcResultOnePlusFourApportionmentDetail CreateDisposalDetailRow(string name, CalcResultLapcapDataDetails totalLACost, int orderId)
+        private static CalcResultOnePlusFourApportionmentDetail CreateDisposalDetailRow(string name, CalcResultLapcapDataDetail totalLACost, int orderId)
         {
             return new CalcResultOnePlusFourApportionmentDetail
             {
@@ -96,7 +96,7 @@ namespace EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment
             };
         }
 
-        private static CalcResultOnePlusFourApportionmentDetail CreateTotalRow(CalcResultLapcapDataDetails totalLACost, CalcResultParameterOtherCostDetail dataPrepCharge, int orderId)
+        private static CalcResultOnePlusFourApportionmentDetail CreateTotalRow(CalcResultLapcapDataDetail totalLACost, CalcResultParameterOtherCostDetail dataPrepCharge, int orderId)
         {
             var culture = CultureInfo.CreateSpecificCulture("en-GB");
             culture.NumberFormat.CurrencySymbol = "£";

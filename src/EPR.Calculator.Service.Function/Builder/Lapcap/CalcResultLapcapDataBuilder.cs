@@ -30,8 +30,8 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
             culture.NumberFormat.CurrencySymbol = "£";
             culture.NumberFormat.CurrencyPositivePattern = 0;
             var orderId = 1;
-            var data = new List<CalcResultLapcapDataDetails>();
-            data.Add(new CalcResultLapcapDataDetails
+            var data = new List<CalcResultLapcapDataDetail>();
+            data.Add(new CalcResultLapcapDataDetail
             {
                 Name = LapcapHeaderConstants.Name,
                 EnglandDisposalCost = LapcapHeaderConstants.EnglandDisposalCost,
@@ -63,7 +63,7 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
 
             foreach (var material in materials)
             {
-                var detail = new CalcResultLapcapDataDetails
+                var detail = new CalcResultLapcapDataDetail
                 {
                     Name = material,
                     EnglandCost = GetMaterialDisposalCostPerCountry(CountryConstants.England, material, results),
@@ -83,7 +83,7 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
                 data.Add(detail);
             }
 
-            var totalDetail = new CalcResultLapcapDataDetails
+            var totalDetail = new CalcResultLapcapDataDetail
             {
                 Name = Total,
                 EnglandCost = data.Sum(x => x.EnglandCost),
@@ -101,7 +101,7 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
             data.Add(totalDetail);
 
 
-            var countryApportionment = new CalcResultLapcapDataDetails
+            var countryApportionment = new CalcResultLapcapDataDetail
             {
                 Name = CountryApportionment,
                 EnglandCost = CalculateApportionment(totalDetail.EnglandCost, totalDetail.TotalCost),

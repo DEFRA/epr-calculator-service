@@ -4,8 +4,6 @@
     {
         public required string Name { get; set; }
 
-        public string? Material { get; set; }
-
         public required string England { get; set; }
 
         public required string Wales { get; set; }
@@ -25,6 +23,8 @@
         public string LateReportingTonnage { get; set; } = string.Empty;
 
         public string? TotalReportedTonnage { get; set; }
+
+        public string ActionedSelfManagedConsumerWasteTonnage { get; set; } = string.Empty;
 
         public string ProducerReportedTotalTonnage { get; set; } = string.Empty;
 

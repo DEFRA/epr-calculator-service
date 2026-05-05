@@ -158,7 +158,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var results = csvContent.ToString().Split(",");
 
             // Assert
-            Assert.AreEqual(338, results.Length);
+            Assert.AreEqual(346, results.Length);
         }
 
         [TestMethod]

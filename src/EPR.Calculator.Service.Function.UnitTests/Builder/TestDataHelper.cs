@@ -13,6 +13,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResult
             {
+                ShowModulations = showModulations,
                 CalcResultScaledupProducers = GetScaledupProducers(),
                 CalcResultPartialObligations = GetPartialObligations(),
                 CalcResultParameterOtherCost = GetCalcResultParameterOtherCost(),
@@ -21,7 +22,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 CalcResultLateReportingTonnageData = GetCalcResultLateReportingTonnage(),
                 CalcResultSummary = GetCalcResultSummary(showModulations),
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
-                CalcResultModulation = null,
             };
         }
 
@@ -182,7 +182,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     new CalcResultLaDisposalCostDataDetail
                     {
                         Name = "Material",
-                        Material = null,
                         England = "England",
                         Wales = "Wales",
                         Scotland = "Scotland",
@@ -198,7 +197,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     new CalcResultLaDisposalCostDataDetail
                     {
                         Name = "Aluminium",
-                        Material = null,
                         England = "£5,000.00",
                         Wales = "£1,750.00",
                         Scotland = "£2,000.00",
@@ -214,7 +212,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     new CalcResultLaDisposalCostDataDetail
                     {
                         Name = "Fibre composite",
-                        Material = null,
                         England = "£7,500.00",
                         Wales = "£2,100.00",
                         Scotland = "£3,400.00",
@@ -230,7 +227,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     new CalcResultLaDisposalCostDataDetail
                     {
                         Name = "Glass",
-                        Material = null,
                         England = "£45,000.00",
                         Wales = "£0.00",
                         Scotland = "£20,700.00",
@@ -246,7 +242,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     new CalcResultLaDisposalCostDataDetail
                     {
                         Name = "Paper or card",
-                        Material = null,
                         England = "£12,500.00",
                         Wales = "£2,300.00",
                         Scotland = "£4,500.00",
@@ -262,7 +257,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     new CalcResultLaDisposalCostDataDetail
                     {
                         Name = "Plastic",
-                        Material = null,
                         England = "£23,000.00",
                         Wales = "£4,500.00",
                         Scotland = "£6,700.00",
@@ -278,7 +272,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     new CalcResultLaDisposalCostDataDetail
                     {
                         Name = "Steel",
-                        Material = null,
                         England = "£13,400.00",
                         Wales = "£0.00",
                         Scotland = "£7,800.00",
@@ -294,7 +287,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     new CalcResultLaDisposalCostDataDetail
                     {
                         Name = "Wood",
-                        Material = null,
                         England = "£0.00",
                         Wales = "£12,000.00",
                         Scotland = "£0.00",
@@ -310,7 +302,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     new CalcResultLaDisposalCostDataDetail
                     {
                         Name = "Other materials",
-                        Material = null,
                         England = "£3,400.00",
                         Wales = "£2,100.00",
                         Scotland = "£4,200.00",
@@ -326,7 +317,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     new CalcResultLaDisposalCostDataDetail
                     {
                         Name = "Total",
-                        Material = null,
                         England = "£109,800.00",
                         Wales = "£24,750.00",
                         Scotland = "£49,300.00",
@@ -348,9 +338,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             return new CalcResultLapcapData
             {
                 Name = "LAPCAP Data",
-                CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>
+                CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetail>
                 {
-                    new CalcResultLapcapDataDetails
+                    new CalcResultLapcapDataDetail
                     {
                         Name = "Material",
                         EnglandDisposalCost = "England LA Disposal Cost",
@@ -365,7 +355,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         TotalCost = 0,
                         OrderId = 1,
                     },
-                    new CalcResultLapcapDataDetails
+                    new CalcResultLapcapDataDetail
                     {
                         Name = "Aluminium",
                         EnglandDisposalCost = "£5,000.00",
@@ -380,7 +370,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         TotalCost = 10000,
                         OrderId = 2,
                     },
-                    new CalcResultLapcapDataDetails
+                    new CalcResultLapcapDataDetail
                     {
                         Name = "Fibre composite",
                         EnglandDisposalCost = "£7,500.00",
@@ -395,7 +385,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         TotalCost = 14750,
                         OrderId = 3,
                     },
-                    new CalcResultLapcapDataDetails
+                    new CalcResultLapcapDataDetail
                     {
                         Name = "Glass",
                         EnglandDisposalCost = "£45,000.00",
@@ -410,7 +400,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         TotalCost = 70200,
                         OrderId = 4,
                     },
-                    new CalcResultLapcapDataDetails
+                    new CalcResultLapcapDataDetail
                     {
                         Name = "Paper or card",
                         EnglandDisposalCost = "£12,500.00",
@@ -425,7 +415,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         TotalCost = 22700,
                         OrderId = 5,
                     },
-                    new CalcResultLapcapDataDetails
+                    new CalcResultLapcapDataDetail
                     {
                         Name = "Plastic",
                         EnglandDisposalCost = "£23,000.00",
@@ -440,7 +430,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         TotalCost = 36300,
                         OrderId = 6,
                     },
-                    new CalcResultLapcapDataDetails
+                    new CalcResultLapcapDataDetail
                     {
                         Name = "Steel",
                         EnglandDisposalCost = "£13,400.00",
@@ -455,7 +445,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         TotalCost = 21200,
                         OrderId = 7,
                     },
-                    new CalcResultLapcapDataDetails
+                    new CalcResultLapcapDataDetail
                     {
                         Name = "Wood",
                         EnglandDisposalCost = "£0.00",
@@ -470,7 +460,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         TotalCost = 17600,
                         OrderId = 8,
                     },
-                    new CalcResultLapcapDataDetails
+                    new CalcResultLapcapDataDetail
                     {
                         Name = "Other materials",
                         EnglandDisposalCost = "£3,400.00",
@@ -485,7 +475,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         TotalCost = 10400,
                         OrderId = 9,
                     },
-                    new CalcResultLapcapDataDetails
+                    new CalcResultLapcapDataDetail
                     {
                         Name = "Total",
                         EnglandDisposalCost = "£109,800.00",
@@ -500,7 +490,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         TotalCost = 203150,
                         OrderId = 10,
                     },
-                    new CalcResultLapcapDataDetails
+                    new CalcResultLapcapDataDetail
                     {
                         Name = "1 Country Apportionment %s",
                         EnglandDisposalCost = "54.04873246%",

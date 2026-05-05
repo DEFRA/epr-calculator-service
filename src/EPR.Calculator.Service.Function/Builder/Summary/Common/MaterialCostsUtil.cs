@@ -2,35 +2,24 @@
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Services;
 
 namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 {
     public static class MaterialCostsUtil
     {
-        public static (decimal? total, decimal? red,  decimal? amber, decimal? green) GetNetReportedTonnage(
-            IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
+        public static SelfManagedConsumerWasteData SumSelfManagedConsumerWasteData(
             IEnumerable<ProducerDetail> producersAndSubsidiaries,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
-            IEnumerable<CalcResultPartialObligation> partialObligations,
             MaterialDetail material,
             bool isOverAllTotalRow,
-            bool showModulations)
+            SelfManagedConsumerWaste smcw)
         {
             return isOverAllTotalRow
-                ? CalcResultSummaryUtil.GetNetReportedTonnageOverallTotal(producerDisposalFees, material, showModulations)
-                : CalcResultSummaryUtil.GetNetReportedTonnage(producersAndSubsidiaries, material, scaledUpProducers, partialObligations, showModulations);
-        }
-
-        public static decimal? GetActionedSelfManagedConsumerWasteTonnage(
-            IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
-            MaterialDetail material,
-            decimal totalReportedTonnage,
-            decimal selfManagedConsumerWasteTonnage,
-            bool isOverAllTotalRow)
-        {
-            return isOverAllTotalRow
-                ? CalcResultSummaryUtil.GetActionedSelfManagedConsumerWasteTonnageOverallTotal(producerDisposalFees, material)
-                : CalcResultSummaryUtil.GetActionedSelfManagedConsumerWasteTonnage(totalReportedTonnage: totalReportedTonnage, selfManagedConsumerWasteTonnage: selfManagedConsumerWasteTonnage);
+                ? smcw.OverallTotalPerMaterials.GetValueOrDefault(material.Code) ?? SelfManagedConsumerWasteData.Zero
+                : smcw.ProducerTotals
+                    .Where(x => x.Level == 1 && producersAndSubsidiaries.Any(y => x.ProducerId == y.ProducerId))
+                    .Select(x => x.SelfManagedConsumerWasteDataPerMaterials[material.Code])
+                    .Single();
         }
 
         public static decimal? GetPreviousInvoicedTonnage(
