@@ -59,9 +59,9 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation
             append("Late Reporting Tonnage");
             append("Actioned Self-Managed Consumer Waste");
             append("Producer Household Tonnage + Late Reporting Tonnage + Public Bin Tonnage + Household Drinks Containers Tonnage - Self-Managed Consumer Waste");
-            append("Red + Red-Medical Household Tonnage + Red + Red-Medical Public Bin Tonnage + Red + Red-Medical Household Drinks Containers Tonnage (Net Tonnage)");
-            append("Amber + Amber-Medical Household Tonnage + Amber Public Bin Tonnage + Amber-Medical Public Bin + Amber Household Drinks Containers + Amber Household Drinks Containers Tonnage (Net Tonnage)");
-            append("Green + Green Medical Household + Green Public Bin + Green Medical Public Bin Tonnage+ Green Household Drinks Containers + Green Medical Household Drinks Containers (Net Tonnage)");
+            append("Red + Red Medical Household Tonnage + Red + Red Medical Public Bin Tonnage + Red + Red Medical Household Drinks Containers Tonnage (Net Tonnage)");
+            append("Amber + Amber Medical Household Tonnage + Amber + Amber Medical Public Bin Tonnage + Amber + Amber Medical Household Drinks Containers Tonnage (Net Tonnage)");
+            append("Green + Green Medical Household Tonnage + Green + Green Medical Public Bin Tonnage + Green + Green Medical Household Drinks Containers Tonnage (Net Tonnage)");
             append("Total Red Material at Amber Disposal Cost = Amber Material Disposal Cost x Red Material Tonnage");
             append("Total Green Material at Amber Disposal Cost = Amber Material Disposal Cost x Green Material Tonnage");
             append("Red Material Disposal Cost = Red Modulation Factor * Amber Material Disposal Cost");
