@@ -1,4 +1,6 @@
 using AutoFixture;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Builder.Modulation;
 using EPR.Calculator.Service.Function.Builder;
 using EPR.Calculator.Service.Function.Builder.CancelledProducers;
 using EPR.Calculator.Service.Function.Builder.CommsCost;
@@ -15,20 +17,19 @@ using EPR.Calculator.Service.Function.Builder.PartialObligations;
 using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
 using EPR.Calculator.Service.Function.Builder.Summary;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Services;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Function.Services;
-using System.Threading.Tasks;
-using EPR.Calculator.Service.Function.Misc;
 
 namespace EPR.Calculator.Service.Function.UnitTests
 {
     [TestClass]
     public class CalcResultBuilderTests
     {
+        private readonly Mock<IParameterService> mockParameterService;
+        private readonly Mock<IMaterialService> mockMaterialService;
         private readonly Mock<ICalcResultDetailBuilder> mockCalcResultDetailBuilder;
         private readonly Mock<ICalcResultLapcapDataBuilder> mockLapcapBuilder;
         private readonly Mock<ICalcResultLateReportingBuilder> mockLateReportingBuilder;
@@ -45,11 +46,15 @@ namespace EPR.Calculator.Service.Function.UnitTests
         private readonly Mock<ICalcResultRejectedProducersBuilder> mockCalcResultRejectedProducersBuilder;
         private readonly Mock<ICalcResultErrorReportBuilder> mockCalcResultErrorReportBuilder;
         private readonly Mock<IProjectedProducersService> mockProjectedProducerService;
+        private readonly Mock<ISelfManagedConsumerWasteService> mockSelfManagedConsumerWasteService;
+        private readonly Mock<ICalcResultModulationBuilder> mockModulationBuilder;
         private TelemetryClient telemetryClient;
 
         public CalcResultBuilderTests()
         {
             Fixture = new Fixture();
+            mockParameterService = new Mock<IParameterService>();
+            mockMaterialService = new Mock<IMaterialService>();
             mockCalcResultDetailBuilder = new Mock<ICalcResultDetailBuilder>();
             mockLapcapBuilder = new Mock<ICalcResultLapcapDataBuilder>();
             mockSummaryBuilder = new Mock<ICalcResultSummaryBuilder>();
@@ -65,10 +70,14 @@ namespace EPR.Calculator.Service.Function.UnitTests
             mockCalcResultRejectedProducersBuilder = new Mock<ICalcResultRejectedProducersBuilder>();
             mockCalcResultErrorReportBuilder = new Mock<ICalcResultErrorReportBuilder>();
             mockProjectedProducerService = new Mock<IProjectedProducersService>();
+            mockSelfManagedConsumerWasteService = new Mock<ISelfManagedConsumerWasteService>();
+            mockModulationBuilder = new Mock<ICalcResultModulationBuilder>();
 
             telemetryClient = new TelemetryClient(new TelemetryConfiguration());
 
             calcResultBuilder = new CalcResultBuilder(
+                mockParameterService.Object,
+                mockMaterialService.Object,
                 mockCalcResultDetailBuilder.Object,
                 mockLapcapBuilder.Object,
                 mockCalcResultParameterOtherCostBuilder.Object,
@@ -84,6 +93,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 mockCalcResultRejectedProducersBuilder.Object,
                 mockCalcResultErrorReportBuilder.Object,
                 mockProjectedProducerService.Object,
+                mockSelfManagedConsumerWasteService.Object,
+                mockModulationBuilder.Object,
                 telemetryClient);
         }
 
@@ -94,6 +105,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Act
             var instance = new CalcResultBuilder(
+                mockParameterService.Object,
+                mockMaterialService.Object,
                 mockCalcResultDetailBuilder.Object,
                 mockLapcapBuilder.Object,
                 mockCalcResultParameterOtherCostBuilder.Object,
@@ -109,6 +122,8 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 mockCalcResultRejectedProducersBuilder.Object,
                 mockCalcResultErrorReportBuilder.Object,
                 mockProjectedProducerService.Object,
+                mockSelfManagedConsumerWasteService.Object,
+                mockModulationBuilder.Object,
                 telemetryClient);
 
             // Assert
@@ -142,7 +157,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 .ReturnsAsync(mockCalcResultCommsCost.Object);
             mockLateReportingBuilder.Setup(m => m.ConstructAsync(resultsRequestDto))
                 .ReturnsAsync(mockCalcResultLateReportingTonnage);
-            mockCalcRunLaDisposalCostBuilder.Setup(m => m.ConstructAsync(resultsRequestDto, It.IsAny<CalcResult>()))
+            mockCalcRunLaDisposalCostBuilder.Setup(m => m.ConstructAsync(resultsRequestDto, It.IsAny<List<MaterialDetail>>(), It.IsAny<CalcResult>(), It.IsAny<SelfManagedConsumerWaste>()))
                 .ReturnsAsync(mockCalcResultLaDisposalCostData.Object);
             mockCalcResultScaledupProducersBuilder.Setup(m => m.ConstructAsync(resultsRequestDto))
                 .ReturnsAsync(mockCalcResultScaledUpProducersData.Object);
@@ -150,8 +165,22 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 .ReturnsAsync(mockCalcResultPartialObligationsData.Object);
             mockCalcResultProjectedProducersBuilder.Setup(m => m.ConstructAsync(resultsRequestDto))
                 .ReturnsAsync(mockCalcResultProjectedProducersData.Object);
-            mockSummaryBuilder.Setup(x => x.ConstructAsync(It.IsAny<int>(), It.IsAny<RelativeYear>(), It.IsAny<bool>(), It.IsAny<CalcResult>()))
+            mockSummaryBuilder.Setup(x => x.ConstructAsync(It.IsAny<int>(), It.IsAny<RelativeYear>(), It.IsAny<bool>(), It.IsAny<CalcResult>(), It.IsAny<SelfManagedConsumerWaste>()))
                 .ReturnsAsync(mockCalcResultSummary.Object);
+
+            mockMaterialService.Setup(x => x.GetMaterials())
+                .ReturnsAsync(new List<MaterialDetail>());
+            mockSelfManagedConsumerWasteService.Setup(x => x.Calculate(
+                    It.IsAny<CalcResultsRequestDto>(),
+                    It.IsAny<IEnumerable<MaterialDetail>>(),
+                    It.IsAny<IEnumerable<CalcResultScaledupProducer>>(),
+                    It.IsAny<IEnumerable<CalcResultPartialObligation>>(),
+                    It.IsAny<bool>()))
+                .ReturnsAsync(new SelfManagedConsumerWaste
+                {
+                    ProducerTotals = [],
+                    OverallTotalPerMaterials = []
+                });
 
             var result = await calcResultBuilder.BuildAsync(resultsRequestDto);
 
@@ -168,7 +197,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             Assert.AreNotEqual(mockCalcResultProjectedProducersData.Object, result.CalcResultProjectedProducers);
             Assert.AreEqual(mockCalcResultSummary.Object, result.CalcResultSummary);
 
-            mockCalcRunLaDisposalCostBuilder.Verify(m => m.ConstructAsync(resultsRequestDto, It.IsAny<CalcResult>()), Times.Once);
+            mockCalcRunLaDisposalCostBuilder.Verify(m => m.ConstructAsync(resultsRequestDto, It.IsAny<List<MaterialDetail>>(), It.IsAny<CalcResult>(), It.IsAny<SelfManagedConsumerWaste>()), Times.Once);
             mockCalcResultScaledupProducersBuilder.Verify(m => m.ConstructAsync(resultsRequestDto), Times.Once);
             mockCalcResultProjectedProducersBuilder.Verify(m => m.ConstructAsync(resultsRequestDto), Times.Never);
         }

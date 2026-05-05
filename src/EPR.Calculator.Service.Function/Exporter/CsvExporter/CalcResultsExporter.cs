@@ -6,10 +6,11 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ErrorReport;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
-using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Models;
 using System.Diagnostics.CodeAnalysis;
 
@@ -27,6 +28,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         private readonly ICalcResultPartialObligationsExporter calcResultPartialObligationsExporter;
         private readonly ICalcResultProjectedProducersExporter calcResultProjectedProducersExporter;
         private readonly ICalcResultLaDisposalCostExporter laDisposalCostExporter;
+        private readonly ICalcResultModulationExporter modulationExporter;
         private readonly ICommsCostExporter commsCostExporter;
         private readonly ICalcResultCancelledProducersExporter calcResultCancelledProducersExporter;
         private readonly ICalcResultErrorReportExporter calcResultErrorReportExporter;
@@ -38,6 +40,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             ICalcResultDetailExporter resultDetail,
             IOnePlusFourApportionmentExporter onePlusFourApportionment,
             ICalcResultLaDisposalCostExporter laDisposalCost,
+            ICalcResultModulationExporter modulationExporter,
             ICalcResultScaledupProducersExporter calcResultScaledupProducers,
             ICalcResultPartialObligationsExporter calcResultPartialObligations,
             ICalcResultProjectedProducersExporter calcResultProjectedProducers,
@@ -46,7 +49,8 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             ICommsCostExporter commsCost,
             ICalcResultSummaryExporter calcResultSummary,
             ICalcResultCancelledProducersExporter calcResultCancelledProducers,
-            ICalcResultErrorReportExporter calcResultErrorReport)
+            ICalcResultErrorReportExporter calcResultErrorReport
+        )
         {
             resultDetailexporter = resultDetail;
             onePlusFourApportionmentExporter = onePlusFourApportionment;
@@ -58,6 +62,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             parameterOtherCosts = parameterOt;
             calcResultSummaryExporter = calcResultSummary;
             laDisposalCostExporter = laDisposalCost;
+            this.modulationExporter = modulationExporter;
             commsCostExporter = commsCost;
             calcResultCancelledProducersExporter = calcResultCancelledProducers;
             calcResultErrorReportExporter = calcResultErrorReport;
@@ -85,9 +90,13 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 
             laDisposalCostExporter.Export(calcResult.CalcResultLaDisposalCostData, csvContent);
 
+            if (calcResult.Smcw is not null && calcResult.CalcResultModulation is not null) {
+                modulationExporter.Export(calcResult.CalcResultLaDisposalCostData, calcResult.Smcw, calcResult.CalcResultModulation, csvContent);
+            }
+
             calcResultCancelledProducersExporter.Export(calcResult.CalcResultCancelledProducers, csvContent);
 
-            if (calcResult.CalcResultModulation is not null)
+            if (calcResult.ShowModulations)
             {
                 calcResultProjectedProducersExporter.Export(calcResult.CalcResultProjectedProducers, csvContent);
             }
@@ -97,7 +106,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 
             calcResultPartialObligationsExporter.Export(calcResult.CalcResultPartialObligations, csvContent);
 
-            calcResultSummaryExporter.Export(calcResult.CalcResultSummary, csvContent, calcResult.CalcResultModulation is not null);
+            calcResultSummaryExporter.Export(calcResult.CalcResultSummary, csvContent, calcResult.ShowModulations);
 
             calcResultErrorReportExporter.Export(calcResult.CalcResultErrorReports, csvContent);
 

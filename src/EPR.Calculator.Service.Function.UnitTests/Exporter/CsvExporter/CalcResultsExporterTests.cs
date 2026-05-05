@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using AutoFixture;
-using EPR.Calculator.Service.Function.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
@@ -14,9 +14,10 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ErrorReport;
-using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 {
@@ -30,6 +31,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             MockResultDetailexporter = new();
             MockOnePlusFourExporter = new();
             MockLaDisposalCostDataExporter = new();
+            MockCalcResultModulationExporter = new();
             MockScaledupProducersExporter = new();
             MockPartialObligationsExporter = new();
             MockProjectedProducersExporter = new();
@@ -44,6 +46,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 MockResultDetailexporter.Object,
                 MockOnePlusFourExporter.Object,
                 MockLaDisposalCostDataExporter.Object,
+                MockCalcResultModulationExporter.Object,
                 MockScaledupProducersExporter.Object,
                 MockPartialObligationsExporter.Object,
                 MockProjectedProducersExporter.Object,
@@ -64,6 +67,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         private Mock<IOnePlusFourApportionmentExporter> MockOnePlusFourExporter { get; init; }
 
         private Mock<ICalcResultLaDisposalCostExporter> MockLaDisposalCostDataExporter { get; init; }
+
+        private Mock<ICalcResultModulationExporter> MockCalcResultModulationExporter { get; init; }
 
         private Mock<ICalcResultScaledupProducersExporter> MockScaledupProducersExporter { get; init; }
 
@@ -115,8 +120,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         {
             // Arrange
             var calcResult = CreateCalcResult();
-            calcResult.CalcResultModulation = "Test Modulation";
-            
+            calcResult.ShowModulations = true;
+
             // Act
             var result = TestClass.Export(calcResult);
 
@@ -141,10 +146,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         {
             return new CalcResult
             {
+                ShowModulations = false,
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
                     Name = "LAPCAP Data",
-                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>
+                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetail>
                     {
                         new()
                         {
@@ -328,7 +334,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                             Wales = "WalesTest",
                             Name = "ScotlandTest",
                             Scotland = "ScotlandTest",
-                            Material = "Material1",
                             NorthernIreland = "NorthernIrelandTest",
                             Total = "null",
                             ProducerReportedHouseholdPackagingWasteTonnage = "null",
@@ -359,7 +364,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                             ReportedPublicBinTonnage = string.Empty,
                         },
                     },
-                    Name = "LA Disposal Cost Data",
+                    Name = "LA Disposal Cost Data"
                 },
                 CalcResultScaledupProducers = new CalcResultScaledupProducers
                 {
@@ -438,7 +443,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                     RelativeYear = new RelativeYear(2024)
                 },
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
-                CalcResultModulation = null,
             };
         }
 

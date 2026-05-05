@@ -1,10 +1,10 @@
-﻿namespace EPR.Calculator.Service.Function.Models
+﻿using EPR.Calculator.API.Data.Enums;
+
+namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResultLaDisposalCostDataDetail
     {
         public required string Name { get; set; }
-
-        public string? Material { get; set; }
 
         public required string England { get; set; }
 
@@ -25,6 +25,8 @@
         public string LateReportingTonnage { get; set; } = string.Empty;
 
         public string? TotalReportedTonnage { get; set; }
+
+        public string ActionedSelfManagedConsumerWasteTonnage { get; set; } = string.Empty;
 
         public string ProducerReportedTotalTonnage { get; set; } = string.Empty;
 

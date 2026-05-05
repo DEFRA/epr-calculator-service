@@ -1,7 +1,11 @@
-﻿namespace EPR.Calculator.Service.Function.Models
+﻿using EPR.Calculator.Service.Function.Builder.Modulation;
+using EPR.Calculator.API.Data.Enums;
+using EPR.Calculator.Service.Function.Services;
+namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResult
     {
+        public required bool ShowModulations {get; set;}
         public required CalcResultDetail CalcResultDetail { get; set; }
 
         public required CalcResultLapcapData CalcResultLapcapData { get; set; } = new()
@@ -26,7 +30,7 @@
             {
                 Name = string.Empty
             };
- 
+
         public required CalcResultParameterOtherCost CalcResultParameterOtherCost { get; set; } =
             new()
             {
@@ -48,7 +52,7 @@
             = new()
             {
                 Name = string.Empty,
-                CalcResultLaDisposalCostDetails = [],
+                CalcResultLaDisposalCostDetails = []
             };
 
         public required CalcResultPartialObligations CalcResultPartialObligations { get; set; }
@@ -70,8 +74,8 @@
 
         public IEnumerable<CalcResultErrorReport> CalcResultErrorReports { get; set; } = [];
 
-        #pragma warning disable S1135 // Sonar TODO comment
-        public required string? CalcResultModulation { get; set; } // TODO add modulation class here for CSV section - not part of this ticket
-        #pragma warning restore S1135
+        public SelfManagedConsumerWaste? Smcw { get; set; }
+
+        public ModulationResult? CalcResultModulation { get; set; }
     }
 }
