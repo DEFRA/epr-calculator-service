@@ -266,7 +266,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
                 RedFactor   = 4,
                 MaterialModulation = new Dictionary<MaterialDetail, MaterialModulation>
                 {
-                    [material] = mkMaterialModulation(100, 120,  77.1423m,  220,  550,  22000,  55000),
+                    [material] = mkMaterialModulation(adc: 100, rdc: 120,  gdc: 77.1423m, at: 90, rt: 220, gt: 550, rAtAdc: 22000, gAtAdc: 55000),
                 }
             };
 
@@ -510,13 +510,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             return Fixture.Create<CalcResultLateReportingTonnage>();
         }
 
-        private MaterialModulation mkMaterialModulation(decimal adc, decimal rdc, decimal gdc, decimal rt, decimal gt, decimal rAtAdc, decimal gAtAdc)
+        private MaterialModulation mkMaterialModulation(decimal adc, decimal rdc, decimal gdc, decimal at, decimal rt, decimal gt, decimal rAtAdc, decimal gAtAdc)
         {
             return new MaterialModulation
             {
                 AmberMaterialDisposalCost = adc,
                 RedMaterialDisposalCost   = rdc,
                 GreenMaterialDisposalCost = gdc,
+                AmberMaterialTonnages     = at,
                 RedMaterialTonnages       = rt,
                 GreenMaterialTonnages     = gt,
                 TotalRedMaterialAtAmberDisposalCost   = rAtAdc,

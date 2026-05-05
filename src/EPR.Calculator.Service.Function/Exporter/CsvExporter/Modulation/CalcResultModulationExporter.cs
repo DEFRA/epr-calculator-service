@@ -83,14 +83,10 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation
 
                 appendd(smcw.OverallTotalPerMaterials[material.Code].ActionedSelfManagedConsumerWasteTonnage ?? 0, DecimalPlaces.Three); // F
 
-                var netReportedTonnage = smcw.OverallTotalPerMaterials[material.Code].NetReportedTonnage;
-                var netR = netReportedTonnage.red   ?? 0m;
-                var netA = netReportedTonnage.amber ?? 0m;
-                var netG = netReportedTonnage.green ?? 0m;
-                appendd(netR + netA + netG, DecimalPlaces.Two); // G
-                appendd(netR, DecimalPlaces.Two); // H
-                appendd(netA, DecimalPlaces.Two); // I
-                appendd(netG, DecimalPlaces.Two); // J
+                appendd(modulation.RedMaterialTonnages + modulation.AmberMaterialTonnages + modulation.GreenMaterialTonnages, DecimalPlaces.Three); // G
+                appendd(modulation.RedMaterialTonnages, DecimalPlaces.Three); // H
+                appendd(modulation.AmberMaterialTonnages, DecimalPlaces.Three); // I
+                appendd(modulation.GreenMaterialTonnages, DecimalPlaces.Three); // J
 
                 appendc(modulation.TotalRedMaterialAtAmberDisposalCost, DecimalPlaces.Two); // K
                 appendc(modulation.TotalGreenMaterialAtAmberDisposalCost, DecimalPlaces.Two); // L
@@ -121,9 +117,9 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation
                 appendc(modulationResult.MaterialModulation.Values.Select(m => m.TotalRedMaterialAtAmberDisposalCost  ).Sum(), DecimalPlaces.Two); // K
                 appendc(modulationResult.MaterialModulation.Values.Select(m => m.TotalGreenMaterialAtAmberDisposalCost).Sum(), DecimalPlaces.Two); // L
 
-                appendc(null, DecimalPlaces.Two); // M
-                appendc(null, DecimalPlaces.Two); // N
-                appendc(null, DecimalPlaces.Two); // O
+                append(null); // M
+                append(null); // N
+                append(null); // O
                 nl();
             }
         }

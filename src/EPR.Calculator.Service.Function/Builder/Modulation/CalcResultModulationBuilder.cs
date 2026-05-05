@@ -1,4 +1,5 @@
-﻿using EPR.Calculator.Service.Function.Models;
+﻿using EPR.Calculator.API.Data.Enums;
+using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
@@ -7,10 +8,11 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
 {
     public record MaterialModulation
     {
-        public required decimal AmberMaterialDisposalCost { get; init; }
         public required decimal RedMaterialDisposalCost { get; init; }
+        public required decimal AmberMaterialDisposalCost { get; init; }
         public required decimal GreenMaterialDisposalCost { get; init; }
         public required decimal RedMaterialTonnages { get; init; }
+        public required decimal AmberMaterialTonnages { get; init; }
         public required decimal GreenMaterialTonnages { get; init; }
         public required decimal TotalRedMaterialAtAmberDisposalCost { get; init; }
         public required decimal TotalGreenMaterialAtAmberDisposalCost { get; init; }
@@ -55,14 +57,17 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
                 {
                     var materialDisposalCost = pricePerTonne(material);
                     var netReportedTonnage = smcw.OverallTotalPerMaterials[material.Code].NetReportedTonnage;
+                    var lateReportingTonnageR = GetLateReportingTonnage(defaultParams, material, RagRating.Red);
+                    var lateReportingTonnageA = GetLateReportingTonnage(defaultParams, material, RagRating.Amber);
+                    var lateReportingTonnageG = GetLateReportingTonnage(defaultParams, material, RagRating.Green);
                     return new
                     {
                         material = material,
                         amberMaterialDisposalCost = materialDisposalCost,
                         redMaterialDisposalCost   = materialDisposalCost * redFactor,
-                        redMaterialTonnages   = netReportedTonnage.red   ?? 0m,
-                        amberMaterialTonnages = netReportedTonnage.amber ?? 0m,
-                        greenMaterialTonnages = netReportedTonnage.green ?? 0m
+                        redMaterialTonnages   = lateReportingTonnageR + netReportedTonnage.red   ?? 0m,
+                        amberMaterialTonnages = lateReportingTonnageA + netReportedTonnage.amber ?? 0m,
+                        greenMaterialTonnages = lateReportingTonnageG + netReportedTonnage.green ?? 0m
                     };
                 });
 
@@ -89,10 +94,11 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
 
                     return new MaterialModulation
                     {
-                        AmberMaterialDisposalCost = to4dp(cost.amberMaterialDisposalCost),
                         RedMaterialDisposalCost   = to4dp(cost.redMaterialDisposalCost),
+                        AmberMaterialDisposalCost = to4dp(cost.amberMaterialDisposalCost),
                         GreenMaterialDisposalCost = to4dp(greenMaterialDisposalCost),
                         RedMaterialTonnages       = cost.redMaterialTonnages,
+                        AmberMaterialTonnages     = cost.amberMaterialTonnages,
                         GreenMaterialTonnages     = cost.greenMaterialTonnages,
                         TotalRedMaterialAtAmberDisposalCost   = cost.redMaterialTonnages   * cost.amberMaterialDisposalCost,
                         TotalGreenMaterialAtAmberDisposalCost = cost.greenMaterialTonnages * cost.amberMaterialDisposalCost,
@@ -105,6 +111,18 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
                 RedFactor   = redFactor,
                 MaterialModulation = materialModulations
             });
+        }
+
+        private decimal GetLateReportingTonnage(IReadOnlyDictionary<string, decimal> defaultParams, MaterialDetail material, RagRating ragRating)
+        {
+            var rag = ragRating switch
+            {
+                RagRating.Red   => "-R",
+                RagRating.Amber => "",
+                RagRating.Green => "-G",
+                _ => throw new ArgumentException("Invalid RagRating")
+            };
+            return defaultParams[$"LRET-{material.Code}{rag}"];
         }
     }
 }
