@@ -39,10 +39,10 @@ namespace EPR.Calculator.Service.Function.Services
 
         private async Task<IEnumerable<ProducerDetail>> GetProducerDetails(int runId)
         {
-            return await context
-                .ProducerDetail
-                .Where(pd => pd.CalculatorRunId == runId)
-                .ToListAsync();
+            return await context.ProducerDetail.AsNoTracking()
+                            .Where(pd => pd.CalculatorRunId == runId)
+                            .Include(pd => pd.ProducerReportedMaterials).ThenInclude(prm => prm.Material)
+                            .ToListAsync();
         }
 
         public async Task<SelfManagedConsumerWaste> Calculate(
