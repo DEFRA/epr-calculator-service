@@ -1060,16 +1060,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             {
                 tonnageByMaterial[m.Code] = new CalcResultPartialObligationTonnage
                 {
-                    ReportedHouseholdPackagingWasteTonnage = 0,
-                    ReportedPublicBinTonnage = 0,
-                    ReportedSelfManagedConsumerWasteTonnage = 0,
-                    TotalReportedTonnage = 0,
-                    NetReportedTonnage = 0,
-                    PartialReportedHouseholdPackagingWasteTonnage = 0,
-                    PartialReportedPublicBinTonnage = 0,
-                    PartialReportedSelfManagedConsumerWasteTonnage = 0,
-                    PartialTotalReportedTonnage = 0,
-                    PartialNetReportedTonnage = 0
+                    HouseholdTonnage = 0,
+                    PublicBinTonnage = 0,
+                    SelfManagedConsumerWasteTonnage = 0,
+                    TotalTonnage = 0,
+                    PartialHouseholdTonnage = 0,
+                    PartialPublicBinTonnage = 0,
+                    PartialSelfManagedConsumerWasteTonnage = 0,
+                    PartialTotalTonnage = 0
                 };
             }
 

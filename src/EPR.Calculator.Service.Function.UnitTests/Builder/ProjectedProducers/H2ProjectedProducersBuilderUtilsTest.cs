@@ -67,7 +67,7 @@
             Assert.AreEqual("2026-H2", prod11.SubmissionPeriodCode);
 
             var prod11Mats = prod11.H2ProjectedTonnageByMaterial;
-            var expProd11MatAl = new RAMTonnage{ Tonnage = 100, RedTonnage = 30, RedMedicalTonnage = 40, AmberTonnage = 40, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 };
+            var expProd11MatAl = new RAMTonnage{ RedTonnage = 30, RedMedicalTonnage = 40, AmberTonnage = 40, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 };
             var expProd11AlDefaultRed = 0;
             var expProd11AlTotalTonnage = 100;
             var prod11Al = prod11Mats[MaterialCodes.Aluminium];
@@ -85,7 +85,7 @@
             Assert.AreEqual("2026-H2", prod11Sub22.SubmissionPeriodCode);
 
             var prod11Sub22Mats = prod11Sub22.H2ProjectedTonnageByMaterial;
-            var expProd11Sub22HDC = new RAMTonnage{ Tonnage = 500, RedTonnage = 0, RedMedicalTonnage = 0, AmberTonnage = 0, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 };
+            var expProd11Sub22HDC = new RAMTonnage{ RedTonnage = 0, RedMedicalTonnage = 0, AmberTonnage = 0, AmberMedicalTonnage = 0, GreenTonnage = 0, GreenMedicalTonnage = 0 };
             var expProd11Sub22HDCDefaultRed = 500;
             var expProd11Sub22HDCTotalTonnage = 500;
             var prod11Sub22Glass = prod11Sub22Mats[MaterialCodes.Glass];
@@ -108,13 +108,17 @@
                     Level = string.Empty,
                     H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>() {
                         ["AL"] = new() {
-                            HouseholdRAMTonnage = new RAMTonnage { Tonnage = 100, RedTonnage = 100, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
-                            PublicBinRAMTonnage = new RAMTonnage { Tonnage = 200, RedTonnage = 0, AmberTonnage = 100, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                            HouseholdTonnage = 100,
+                            HouseholdRAMTonnage = new RAMTonnage { RedTonnage = 100, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                            PublicBinTonnage = 200,
+                            PublicBinRAMTonnage = new RAMTonnage { RedTonnage = 0, AmberTonnage = 100, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
                             HouseholdTonnageWithoutRAM = 0,
                             PublicBinTonnageWithoutRAM = 100,
                             TotalTonnage = 300,
-                            ProjectedHouseholdRAMTonnage = new RAMTonnage { Tonnage = 100, RedTonnage = 100, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
-                            ProjectedPublicBinRAMTonnage = new RAMTonnage { Tonnage = 200, RedTonnage = 100, AmberTonnage = 100, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 }
+                            ProjectedHouseholdTonnage = 100,
+                            ProjectedHouseholdRAMTonnage = new RAMTonnage { RedTonnage = 100, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                            ProjectedPublicBinTonnage = 200,
+                            ProjectedPublicBinRAMTonnage = new RAMTonnage { RedTonnage = 100, AmberTonnage = 100, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 }
                         }
                     }
                 },
@@ -125,25 +129,33 @@
                     Level = string.Empty,
                     H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>() {
                         ["AL"] = new() {
-                            HouseholdRAMTonnage = new RAMTonnage { Tonnage = 100, RedTonnage = 100, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
-                            PublicBinRAMTonnage = new RAMTonnage { Tonnage = 200, RedTonnage = 0, AmberTonnage = 100, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                            HouseholdTonnage = 100,
+                            HouseholdRAMTonnage = new RAMTonnage { RedTonnage = 100, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                            PublicBinTonnage = 200,
+                            PublicBinRAMTonnage = new RAMTonnage { RedTonnage = 0, AmberTonnage = 100, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
                             HouseholdTonnageWithoutRAM = 0,
                             PublicBinTonnageWithoutRAM = 100,
                             TotalTonnage = 300,
-                            ProjectedHouseholdRAMTonnage = new RAMTonnage { Tonnage = 100, RedTonnage = 100, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
-                            ProjectedPublicBinRAMTonnage = new RAMTonnage { Tonnage = 200, RedTonnage = 100, AmberTonnage = 100, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 }
+                            ProjectedHouseholdTonnage = 100,
+                            ProjectedHouseholdRAMTonnage = new RAMTonnage { RedTonnage = 100, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                            ProjectedPublicBinTonnage = 200,
+                            ProjectedPublicBinRAMTonnage = new RAMTonnage { RedTonnage = 100, AmberTonnage = 100, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 }
                         }
                     }
                 },
             };
             var expSummedAlm = new CalcResultH2ProjectedProducerMaterialTonnage() {
-                HouseholdRAMTonnage = new RAMTonnage { Tonnage = 200, RedTonnage = 200, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
-                PublicBinRAMTonnage = new RAMTonnage { Tonnage = 400, RedTonnage = 0, AmberTonnage = 200, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                HouseholdTonnage = 200,
+                PublicBinTonnage = 400,
+                HouseholdRAMTonnage = new RAMTonnage { RedTonnage = 200, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                PublicBinRAMTonnage = new RAMTonnage { RedTonnage = 0, AmberTonnage = 200, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
                 HouseholdTonnageWithoutRAM = 0,
                 PublicBinTonnageWithoutRAM = 200,
                 TotalTonnage = 600,
-                ProjectedHouseholdRAMTonnage = new RAMTonnage { Tonnage = 200, RedTonnage = 200, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
-                ProjectedPublicBinRAMTonnage = new RAMTonnage { Tonnage = 400, RedTonnage = 200, AmberTonnage = 200, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 }
+                ProjectedHouseholdTonnage = 200,
+                ProjectedPublicBinTonnage = 400,
+                ProjectedHouseholdRAMTonnage = new RAMTonnage { RedTonnage = 200, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                ProjectedPublicBinRAMTonnage = new RAMTonnage { RedTonnage = 200, AmberTonnage = 200, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 }
             };
 
             var result = H2ProjectedProducersBuilderUtils.SumProducerGroupTonnages(prodGroup);

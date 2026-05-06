@@ -1,21 +1,5 @@
 ﻿namespace EPR.Calculator.Service.Function.Models
 {
-    public record RAMTonnage
-    {
-        public decimal Tonnage { get; init; }
-        public decimal RedTonnage { get; init; }
-        public decimal AmberTonnage { get; init; }
-        public decimal GreenTonnage { get; init; }
-        public decimal RedMedicalTonnage { get; init; }
-        public decimal AmberMedicalTonnage { get; init; }
-        public decimal GreenMedicalTonnage { get; init; }
-
-        public decimal GetTotalRamTonnage()
-        {
-            return RedTonnage + RedMedicalTonnage + AmberTonnage + AmberMedicalTonnage + GreenTonnage + GreenMedicalTonnage;
-        }
-    }
-
     public record RAMProportions
     {
         public decimal Red { get; init; }
@@ -33,14 +17,20 @@
 
     public abstract record CalcResultProjectedProducerMaterialTonnage
     {
+        public required decimal HouseholdTonnage { get; init; }
         public required RAMTonnage HouseholdRAMTonnage { get; init; }
+        public required decimal PublicBinTonnage { get; init; }
         public required RAMTonnage PublicBinRAMTonnage { get; init; }
+        public decimal? HouseholdDrinksContainerTonnage { get; init; }
         public RAMTonnage? HouseholdDrinksContainerRAMTonnage { get; init; }
         public required decimal HouseholdTonnageWithoutRAM { get; init; }
         public required decimal PublicBinTonnageWithoutRAM { get; init; }
         public decimal? HouseholdDrinksContainerTonnageWithoutRAM { get; init; }
+        public required decimal ProjectedHouseholdTonnage { get; init; }
         public required RAMTonnage ProjectedHouseholdRAMTonnage { get; init; }
+        public required decimal ProjectedPublicBinTonnage { get; init; }
         public required RAMTonnage ProjectedPublicBinRAMTonnage { get; init; }
+        public decimal? ProjectedHouseholdDrinksContainerTonnage { get; init; }
         public RAMTonnage? ProjectedHouseholdDrinksContainerRAMTonnage { get; init; }
         public required decimal TotalTonnage { get; init; }
 
