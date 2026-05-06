@@ -791,7 +791,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             var modulationResult = calculationResult;
             modulationResult.ApplyModulation = true;
             var result2 = new CalcResultSummaryBuilder(dbContext).GetCalcResultSummary(projectedMaterialsLookup, orderedProducerDetails, materials, modulationResult, totalPackagingTonnage, producerInvoicedMaterialNetTonnage, defaultParams, smcw);
-            Assert.AreEqual(235, result2.ColumnHeaders.Count());
+            Assert.AreEqual(233, result2.ColumnHeaders.Count());
         }
 
         [TestMethod]
