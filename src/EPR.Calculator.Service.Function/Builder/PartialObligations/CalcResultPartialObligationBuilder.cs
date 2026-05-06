@@ -32,7 +32,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
         private ProducerReportedMaterial scale(bool applyModulation, ProducerReportedMaterial reportedMaterial, CalcResultPartialObligation partialObligation)
         {
             var p = partialObligation.ObligatedFactor;
-            if (!applyModulation)
+            if (!applyModulation || reportedMaterial.PackagingType == PackagingTypes.ConsumerWaste)
             {
                 return new ProducerReportedMaterial
                 {
