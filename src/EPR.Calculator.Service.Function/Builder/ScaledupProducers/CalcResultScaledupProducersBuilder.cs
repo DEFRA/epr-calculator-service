@@ -1,4 +1,5 @@
-﻿using EPR.Calculator.API.Data;
+﻿using System.Diagnostics.CodeAnalysis;
+using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.PartialObligations;
 using EPR.Calculator.Service.Function.Constants;
@@ -155,7 +156,10 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
             }
         }
 
-        /// <inheritdoc/>
+        [SuppressMessage(
+            "Critical Code Smell",
+            "S3776:Cognitive Complexity of methods should not be too high",
+            Justification = "Temporaraly suppress - will refactor later.")]
         public async Task<(List<ProducerDetail>, CalcResultScaledupProducers)> ConstructAsync(
             List<MaterialDetail> materialDetails,
             List<ProducerDetail> producerDetails,

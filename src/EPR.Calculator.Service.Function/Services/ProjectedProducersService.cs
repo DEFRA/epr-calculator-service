@@ -12,12 +12,10 @@ namespace EPR.Calculator.Service.Function.Services
 
     public class ProjectedProducersService : IProjectedProducersService
     {
-        private readonly ApplicationDBContext dbContext;
         private IDbLoadingChunkerService<ProducerReportedMaterialProjected> chunker { get; init; }
 
-        public ProjectedProducersService(ApplicationDBContext dbContext, IDbLoadingChunkerService<ProducerReportedMaterialProjected> chunker)
+        public ProjectedProducersService(IDbLoadingChunkerService<ProducerReportedMaterialProjected> chunker)
         {
-            this.dbContext = dbContext;
             this.chunker = chunker;
         }
 
