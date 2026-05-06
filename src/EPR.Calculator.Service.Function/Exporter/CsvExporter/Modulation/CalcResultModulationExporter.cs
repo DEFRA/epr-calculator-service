@@ -106,16 +106,17 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation
                 append(laDisposalCost.LateReportingTonnage); // E
                 appendd(smcw.OverallTotalPerMaterials.Values.Sum(e => e.ActionedSelfManagedConsumerWasteTonnage), DecimalPlaces.Three); // F
 
-                var netR = smcw.OverallTotalPerMaterials.Values.Sum(e => e.NetReportedTonnage.red)   ?? 0m;
-                var netA = smcw.OverallTotalPerMaterials.Values.Sum(e => e.NetReportedTonnage.amber) ?? 0m;
-                var netG = smcw.OverallTotalPerMaterials.Values.Sum(e => e.NetReportedTonnage.green) ?? 0m;
-                appendd(netR + netA + netG, DecimalPlaces.Two); // G
-                appendd(netR, DecimalPlaces.Two); // H
-                appendd(netA, DecimalPlaces.Two); // I
-                appendd(netG, DecimalPlaces.Two); // J
+                var r = modulationResult.MaterialModulation.Values.Sum(m => m.RedMaterialTonnages  );
+                var a = modulationResult.MaterialModulation.Values.Sum(m => m.AmberMaterialTonnages);
+                var g = modulationResult.MaterialModulation.Values.Sum(m => m.GreenMaterialTonnages);
 
-                appendc(modulationResult.MaterialModulation.Values.Select(m => m.TotalRedMaterialAtAmberDisposalCost  ).Sum(), DecimalPlaces.Two); // K
-                appendc(modulationResult.MaterialModulation.Values.Select(m => m.TotalGreenMaterialAtAmberDisposalCost).Sum(), DecimalPlaces.Two); // L
+                appendd(r + a + g, DecimalPlaces.Two); // G
+                appendd(r, DecimalPlaces.Two); // H
+                appendd(a, DecimalPlaces.Two); // I
+                appendd(g, DecimalPlaces.Two); // J
+
+                appendc(modulationResult.MaterialModulation.Values.Sum(m => m.TotalRedMaterialAtAmberDisposalCost  ), DecimalPlaces.Two); // K
+                appendc(modulationResult.MaterialModulation.Values.Sum(m => m.TotalGreenMaterialAtAmberDisposalCost), DecimalPlaces.Two); // L
 
                 append(null); // M
                 append(null); // N
