@@ -8,11 +8,13 @@ namespace EPR.Calculator.Service.Function.Models
 
         public decimal? ActionedSelfManagedConsumerWasteTonnage { get; set; }
 
-        public (decimal? total, decimal? red,  decimal? amber, decimal? green)  NetReportedTonnage { get; set; }
+        public decimal? ResidualSelfManagedConsumerWasteTonnage { get; set; }
 
-        public decimal PricePerTonne { get; set; }
+        public (decimal? total, decimal? red,  decimal? amber, decimal? green) NetReportedTonnage { get; set; }
 
-        public decimal ProducerDisposalFee { get; set; }
+        public (decimal? total, decimal? red,  decimal? amber, decimal? green) PricePerTonne { get; set; }
+
+        public (decimal? total, decimal? red,  decimal? amber, decimal? green) ProducerDisposalFee { get; set; }
 
         public decimal ProducerDisposalFeeWithBadDebtProvision { get; set; }
 

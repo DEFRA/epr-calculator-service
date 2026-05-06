@@ -6,20 +6,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
 {
+    public interface ICalcResultRejectedProducersBuilder
+    {
+        public Task<IEnumerable<CalcResultRejectedProducer>> ConstructAsync(CalcResultsRequestDto resultsRequestDto);
+    }
+
     public class CalcResultRejectedProducersBuilder : ICalcResultRejectedProducersBuilder
     {
-        private readonly ApplicationDBContext context;
+        private readonly ApplicationDBContext dbContext;
 
         public CalcResultRejectedProducersBuilder(ApplicationDBContext dbContext)
         {
-            context = dbContext;
+            this.dbContext = dbContext;
         }
 
         public async Task<IEnumerable<CalcResultRejectedProducer>> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
         {
             var billingInstructionsQuery =
-                from prsbi in context.ProducerResultFileSuggestedBillingInstruction
-                join pd in context.ProducerDetail
+                from prsbi in dbContext.ProducerResultFileSuggestedBillingInstruction
+                join pd in dbContext.ProducerDetail
                     on new { prsbi.ProducerId, prsbi.CalculatorRunId }
                     equals new { pd.ProducerId, pd.CalculatorRunId } into pdGroup
                 from pd in pdGroup.DefaultIfEmpty()
@@ -42,10 +47,10 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                 };
 
             var orgDetailsQuery =
-                from cr in context.CalculatorRuns
-                join crodm in context.CalculatorRunOrganisationDataMaster
+                from cr in dbContext.CalculatorRuns
+                join crodm in dbContext.CalculatorRunOrganisationDataMaster
                     on cr.CalculatorRunOrganisationDataMasterId equals crodm.Id
-                join crodd in context.CalculatorRunOrganisationDataDetails
+                join crodd in dbContext.CalculatorRunOrganisationDataDetails
                     on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
                 join b in billingInstructionsQuery
                     on crodd.OrganisationId equals b.ProducerId
@@ -60,10 +65,10 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                 };
 
             var rejectedProducersQuery =
-                from cr in context.CalculatorRuns
-                join crodm in context.CalculatorRunOrganisationDataMaster
+                from cr in dbContext.CalculatorRuns
+                join crodm in dbContext.CalculatorRunOrganisationDataMaster
                     on cr.CalculatorRunOrganisationDataMasterId equals crodm.Id
-                join crodd in context.CalculatorRunOrganisationDataDetails
+                join crodd in dbContext.CalculatorRunOrganisationDataDetails
                     on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
                 join b in billingInstructionsQuery
                     on crodd.OrganisationId equals b.ProducerId
@@ -86,9 +91,7 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                     ReasonForRejection = b.ReasonForRejection
                 };
 
-            var result = await rejectedProducersQuery.AsNoTracking().Distinct().ToListAsync();
-
-            return result;
+            return await rejectedProducersQuery.AsNoTracking().Distinct().ToListAsync();
         }
     }
 }

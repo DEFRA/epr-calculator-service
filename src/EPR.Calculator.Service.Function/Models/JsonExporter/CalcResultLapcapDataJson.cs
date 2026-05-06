@@ -2,20 +2,20 @@ using System.Text.Json.Serialization;
 using EPR.Calculator.Service.Function.Builder.Lapcap;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
-{  
+{
     public class CalcResultLapcapDataJson
     {
         [JsonPropertyName("name")]
         public required string Name { get; set; }
 
         [JsonPropertyName("calcResultLapcapDataDetails")]
-        public required IEnumerable<CalcResultLapcapDataDetailsJson> CalcResultLapcapDataDetails { get; set; }
+        public required IEnumerable<CalcResultLapcapDataDetailJson> CalcResultLapcapDataDetails { get; set; }
 
         [JsonPropertyName("calcResultLapcapDataTotal")]
-        public CalcResultLapcapDataDetailsTotalJson? CalcResultLapcapDataTotal { get; set; }
+        public CalcResultLapcapDataDetailTotalJson? CalcResultLapcapDataTotal { get; set; }
 
         [JsonPropertyName("oneCountryApportionmentPercentages")]
-        public CalcResultLapcapDataDetailsApportionmentJson? OneCountryApportionmentPercentages { get; set; }
+        public CalcResultLapcapDataDetailApportionmentJson? OneCountryApportionmentPercentages { get; set; }
 
         public static CalcResultLapcapDataJson From(CalcResultLapcapData data)
         {
@@ -24,21 +24,21 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
             return new CalcResultLapcapDataJson
             {
                 Name = data.Name,
-                CalcResultLapcapDataDetails = 
+                CalcResultLapcapDataDetails =
                     data.CalcResultLapcapDataDetails
                     .Where(record => !SeperatedRecords.Contains(record.Name))
-                    .Select(details => CalcResultLapcapDataDetailsJson.From(details)),
-                CalcResultLapcapDataTotal = CalcResultLapcapDataDetailsTotalJson.From(
+                    .Select(details => CalcResultLapcapDataDetailJson.From(details)),
+                CalcResultLapcapDataTotal = CalcResultLapcapDataDetailTotalJson.From(
                     data.CalcResultLapcapDataDetails.Single(record => record.Name == CalcResultLapcapDataBuilder.Total)
                 ),
-                OneCountryApportionmentPercentages = CalcResultLapcapDataDetailsApportionmentJson.From(
+                OneCountryApportionmentPercentages = CalcResultLapcapDataDetailApportionmentJson.From(
                     data.CalcResultLapcapDataDetails.Single(record => record.Name == CalcResultLapcapDataBuilder.CountryApportionment)
                 )
             };
         }
     }
 
-    public class CalcResultLapcapDataDetailsJson
+    public class CalcResultLapcapDataDetailJson
     {
         [JsonPropertyName("materialName")]
         public required string MaterialName { get; set; }
@@ -58,9 +58,9 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("oneLaDisposalCostTotal")]
         public required string OneLaDisposalCostTotal { get; set; }
 
-        public static CalcResultLapcapDataDetailsJson From(CalcResultLapcapDataDetails record)
+        public static CalcResultLapcapDataDetailJson From(CalcResultLapcapDataDetail record)
         {
-            return new CalcResultLapcapDataDetailsJson
+            return new CalcResultLapcapDataDetailJson
             {
                 MaterialName = record.Name,
                 EnglandLaDisposalCost = record.EnglandDisposalCost,
@@ -72,7 +72,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         }
     }
 
-    public class CalcResultLapcapDataDetailsTotalJson
+    public class CalcResultLapcapDataDetailTotalJson
     {
         [JsonPropertyName("totalEnglandLaDisposalCost")]
         public required string TotalEnglandLaDisposalCost { get; set; }
@@ -89,9 +89,9 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("totalLaDisposalCost")]
         public required string TotalLaDisposalCost { get; set; }
 
-        public static CalcResultLapcapDataDetailsTotalJson From(CalcResultLapcapDataDetails record)
+        public static CalcResultLapcapDataDetailTotalJson From(CalcResultLapcapDataDetail record)
         {
-            return new CalcResultLapcapDataDetailsTotalJson
+            return new CalcResultLapcapDataDetailTotalJson
             {
                 TotalEnglandLaDisposalCost = record.EnglandDisposalCost,
                 TotalWalesLaDisposalCost = record.WalesDisposalCost,
@@ -102,7 +102,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         }
     }
 
-    public class CalcResultLapcapDataDetailsApportionmentJson
+    public class CalcResultLapcapDataDetailApportionmentJson
     {
         [JsonPropertyName("englandApportionment")]
         public required string EnglandApportionment { get; set; }
@@ -119,9 +119,9 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("totalApportionment")]
         public required string TotalApportionment { get; set; }
 
-        public static CalcResultLapcapDataDetailsApportionmentJson From(CalcResultLapcapDataDetails record)
+        public static CalcResultLapcapDataDetailApportionmentJson From(CalcResultLapcapDataDetail record)
         {
-            return new CalcResultLapcapDataDetailsApportionmentJson
+            return new CalcResultLapcapDataDetailApportionmentJson
             {
                 EnglandApportionment = record.EnglandDisposalCost,
                 WalesApportionment = record.WalesDisposalCost,

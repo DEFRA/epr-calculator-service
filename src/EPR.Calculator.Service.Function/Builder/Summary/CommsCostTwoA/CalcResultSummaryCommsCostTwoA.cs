@@ -9,106 +9,108 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
     public static class CalcResultSummaryCommsCostTwoA
     {
         public static decimal GetEnglandWithBadDebtProvisionForCommsTotal(
+            ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             IEnumerable<ProducerDetail> producers,
             MaterialDetail material,
-            CalcResult calcResult,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
-            IEnumerable<CalcResultPartialObligation> partialObligations)
+            CalcResult calcResult
+        )
         {
-            return producers.Sum(producer => GetEnglandWithBadDebtProvisionForComms(producer, material, calcResult, scaledUpProducers, partialObligations));
+            return producers.Sum(producer =>
+                GetEnglandWithBadDebtProvisionForComms(projectedMaterialsLookup, producer, material, calcResult)
+            );
         }
 
         public static decimal GetWalesWithBadDebtProvisionForCommsTotal(
+            ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             IEnumerable<ProducerDetail> producers,
             MaterialDetail material,
-            CalcResult calcResult,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
-            IEnumerable<CalcResultPartialObligation> partialObligations)
+            CalcResult calcResult
+        )
         {
-            return producers.Sum(producer => GetWalesWithBadDebtProvisionForComms(producer, material, calcResult, scaledUpProducers, partialObligations));
+            return producers.Sum(producer => GetWalesWithBadDebtProvisionForComms(projectedMaterialsLookup, producer, material, calcResult));
         }
 
         public static decimal GetScotlandWithBadDebtProvisionForCommsTotal(
+            ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             IEnumerable<ProducerDetail> producers,
             MaterialDetail material,
-            CalcResult calcResult,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
-            IEnumerable<CalcResultPartialObligation> partialObligations)
+            CalcResult calcResult
+        )
         {
-            return producers.Sum(producer => GetScotlandWithBadDebtProvisionForComms(producer, material, calcResult, scaledUpProducers, partialObligations));
+            return producers.Sum(producer => GetScotlandWithBadDebtProvisionForComms(projectedMaterialsLookup, producer, material, calcResult));
         }
 
         public static decimal GetNorthernIrelandWithBadDebtProvisionForCommsTotal(
+            ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             IEnumerable<ProducerDetail> producers,
             MaterialDetail material,
-            CalcResult calcResult,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
-            IEnumerable<CalcResultPartialObligation> partialObligations)
+            CalcResult calcResult
+        )
         {
-            return producers.Sum(producer => GetNorthernIrelandWithBadDebtProvisionForComms(producer, material, calcResult, scaledUpProducers, partialObligations));
+            return producers.Sum(producer => GetNorthernIrelandWithBadDebtProvisionForComms(projectedMaterialsLookup, producer, material, calcResult));
         }
 
         public static decimal GetProducerTotalCostWithoutBadDebtProvisionTotal(
+            ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             IEnumerable<ProducerDetail> producers,
             MaterialDetail material,
-            CalcResult calcResult,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
-            IEnumerable<CalcResultPartialObligation> partialObligations)
+            CalcResult calcResult
+        )
         {
-            return producers.Sum(producer => GetProducerTotalCostWithoutBadDebtProvision(producer, material, calcResult, scaledUpProducers, partialObligations));
+            return producers.Sum(producer => GetProducerTotalCostWithoutBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult));
         }
 
         public static decimal GetBadDebtProvisionForCommsCostTotal(
+            ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             IEnumerable<ProducerDetail> producers,
             MaterialDetail material,
-            CalcResult calcResult,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
-            IEnumerable<CalcResultPartialObligation> partialObligations)
+            CalcResult calcResult
+        )
         {
-            return producers.Sum(producer => GetBadDebtProvisionForCommsCost(producer, material, calcResult, scaledUpProducers, partialObligations));
+            return producers.Sum(producer => GetBadDebtProvisionForCommsCost(projectedMaterialsLookup, producer, material, calcResult));
         }
 
         public static decimal GetEnglandWithBadDebtProvisionForComms(
+            ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             ProducerDetail producer,
             MaterialDetail material,
-            CalcResult calcResult,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
-            IEnumerable<CalcResultPartialObligation> partialObligations)
+            CalcResult calcResult
+        )
         {
-            var producerTotalCostwithBadDebtProvision = GetProducerTotalCostwithBadDebtProvision(producer, material, calcResult, scaledUpProducers, partialObligations);
+            var producerTotalCostwithBadDebtProvision = GetProducerTotalCostwithBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
             return producerTotalCostwithBadDebtProvision * (Convert.ToDecimal(calcResult.CalcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.Select(x => x.EnglandDisposalTotal).ToList()[4].Trim('%')) / 100);
         }
 
         public static decimal GetWalesWithBadDebtProvisionForComms(
+            ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             ProducerDetail producer,
             MaterialDetail material,
-            CalcResult calcResult,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
-            IEnumerable<CalcResultPartialObligation> partialObligations)
+            CalcResult calcResult
+        )
         {
-            var producerTotalCostwithBadDebtProvision = GetProducerTotalCostwithBadDebtProvision(producer, material, calcResult, scaledUpProducers, partialObligations);
+            var producerTotalCostwithBadDebtProvision = GetProducerTotalCostwithBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
             return producerTotalCostwithBadDebtProvision * (Convert.ToDecimal(calcResult.CalcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.Select(x => x.WalesDisposalTotal).ToList()[4].Trim('%')) / 100);
         }
 
         public static decimal GetScotlandWithBadDebtProvisionForComms(
+            ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             ProducerDetail producer,
             MaterialDetail material,
-            CalcResult calcResult,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
-            IEnumerable<CalcResultPartialObligation> partialObligations)
+            CalcResult calcResult
+        )
         {
-            var producerTotalCostwithBadDebtProvision = GetProducerTotalCostwithBadDebtProvision(producer, material, calcResult, scaledUpProducers, partialObligations);
+            var producerTotalCostwithBadDebtProvision = GetProducerTotalCostwithBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
             return producerTotalCostwithBadDebtProvision * (Convert.ToDecimal(calcResult.CalcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.Select(x => x.ScotlandDisposalTotal).ToList()[4].Trim('%')) / 100);
         }
 
         public static decimal GetNorthernIrelandWithBadDebtProvisionForComms(
+            ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             ProducerDetail producer,
             MaterialDetail material,
-            CalcResult calcResult,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
-            IEnumerable<CalcResultPartialObligation> partialObligations)
+            CalcResult calcResult
+        )
         {
-            var producerTotalCostwithBadDebtProvision = GetProducerTotalCostwithBadDebtProvision(producer, material, calcResult, scaledUpProducers, partialObligations);
+            var producerTotalCostwithBadDebtProvision = GetProducerTotalCostwithBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
             return producerTotalCostwithBadDebtProvision * (Convert.ToDecimal(calcResult.CalcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.Select(x => x.NorthernIrelandDisposalTotal).ToList()[4].Trim('%')) / 100);
         }
 
@@ -127,30 +129,30 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
         }
 
         public static decimal GetProducerTotalCostwithBadDebtProvision(
+            ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             ProducerDetail producer,
             MaterialDetail material,
-            CalcResult calcResult,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
-            IEnumerable<CalcResultPartialObligation> partialObligations)
+            CalcResult calcResult
+        )
         {
             var badDebtProvision = Convert.ToDecimal(calcResult.CalcResultParameterOtherCost.BadDebtProvision.Value.Trim('%'));
-            var producerTotalCostWithoutBadDebtProvision = GetProducerTotalCostWithoutBadDebtProvision(producer, material, calcResult, scaledUpProducers, partialObligations);
+            var producerTotalCostWithoutBadDebtProvision = GetProducerTotalCostWithoutBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
             return producerTotalCostWithoutBadDebtProvision * (1 + badDebtProvision / 100);
         }
 
         public static decimal GetTotalReportedTonnage(
+            ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             ProducerDetail producer,
-            MaterialDetail material,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
-            IEnumerable<CalcResultPartialObligation> partialObligations)
+            MaterialDetail material
+        )
         {
             decimal hdcTonnage = 0;
-            var hhPackagingWasteTonnage = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.Household, scaledUpProducers, partialObligations);
-            var reportedPublicBinTonnage = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.PublicBin, scaledUpProducers, partialObligations);
+            var hhPackagingWasteTonnage = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.Household);
+            var reportedPublicBinTonnage = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.PublicBin);
 
             if (material.Code == MaterialCodes.Glass)
             {
-                hdcTonnage = CalcResultSummaryUtil.GetTonnage(producer, material, PackagingTypes.HouseholdDrinksContainers, scaledUpProducers, partialObligations);
+                hdcTonnage = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.HouseholdDrinksContainers);
             }
 
             return material.Code == MaterialCodes.Glass
@@ -159,45 +161,45 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
         }
 
         public static decimal GetProducerTotalCostWithoutBadDebtProvision(
+            ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             ProducerDetail producer,
             MaterialDetail material,
-            CalcResult calcResult,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
-            IEnumerable<CalcResultPartialObligation> partialObligations)
+            CalcResult calcResult
+        )
         {
             var priceperTonne = GetPriceperTonneForComms(material, calcResult);
-            return GetTotalReportedTonnage(producer, material, scaledUpProducers, partialObligations) * priceperTonne;
+            return GetTotalReportedTonnage(projectedMaterialsLookup, producer, material) * priceperTonne;
         }
 
         public static decimal GetBadDebtProvisionForCommsCost(
+            ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             ProducerDetail producer,
             MaterialDetail material,
-            CalcResult calcResult,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
-            IEnumerable<CalcResultPartialObligation> partialObligations)
+            CalcResult calcResult
+        )
         {
             var badDebtProvision = Convert.ToDecimal(calcResult.CalcResultParameterOtherCost.BadDebtProvision.Value.Trim('%'));
-            var producerTotalCostWithoutBadDebtProvision = GetProducerTotalCostWithoutBadDebtProvision(producer, material, calcResult, scaledUpProducers, partialObligations);
+            var producerTotalCostWithoutBadDebtProvision = GetProducerTotalCostWithoutBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
             return producerTotalCostWithoutBadDebtProvision * badDebtProvision / 100;
         }
 
         public static decimal GetProducerTotalCostwithBadDebtProvisionTotal(
+            ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             IEnumerable<ProducerDetail> producers,
             MaterialDetail material,
-            CalcResult calcResult,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
-            IEnumerable<CalcResultPartialObligation> partialObligations)
+            CalcResult calcResult
+        )
         {
-            return producers.Sum(producer => GetProducerTotalCostwithBadDebtProvision(producer, material, calcResult, scaledUpProducers, partialObligations));
+            return producers.Sum(producer => GetProducerTotalCostwithBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult));
         }
 
         public static decimal GetTotalReportedTonnageTotal(
+            ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             IEnumerable<ProducerDetail> producers,
-            MaterialDetail material,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
-            IEnumerable<CalcResultPartialObligation> partialObligations)
+            MaterialDetail material
+        )
         {
-            return producers.Sum(producer => GetTotalReportedTonnage(producer, material, scaledUpProducers, partialObligations));
+            return producers.Sum(producer => GetTotalReportedTonnage(projectedMaterialsLookup, producer, material));
         }
     }
 }

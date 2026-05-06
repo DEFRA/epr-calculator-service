@@ -16,9 +16,11 @@
 
         public int DaysInSubmissionYear { get; set; }
 
-        public string? JoiningDate { get; set; } 
+        public string? JoiningDate { get; set; }
 
         public int? DaysObligated { get; set; }
+
+        public decimal? ObligatedFactor { get; set; }
 
         public string? ObligatedPercentage { get; set; }
 

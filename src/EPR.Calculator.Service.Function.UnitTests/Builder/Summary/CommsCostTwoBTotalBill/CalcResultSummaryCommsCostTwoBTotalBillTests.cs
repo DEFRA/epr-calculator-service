@@ -22,6 +22,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
 
             _calcResult = new CalcResult
             {
+                ApplyModulation = false,
                 CalcResultParameterOtherCost = TestDataHelper.GetCalcResultParameterOtherCost(),
                 CalcResultDetail = TestDataHelper.GetCalcResultDetail(),
                 CalcResultLaDisposalCostData = TestDataHelper.GetCalcResultLaDisposalCostData(),
@@ -34,7 +35,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                 CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
-                CalcResultModulation = null,
             };
 
             // Set up consistent data
@@ -61,7 +61,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                 new CalcResultProducerAndReportMaterialDetail
                 {
                     ProducerDetail = producer1,
-                    ProducerReportedMaterial = 
+                    ProducerReportedMaterialProjected =
                         new(){
                             MaterialId = 1,
                             ProducerDetailId = 1,
@@ -80,7 +80,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                 new CalcResultProducerAndReportMaterialDetail
                 {
                     ProducerDetail = producer1,
-                    ProducerReportedMaterial = 
+                    ProducerReportedMaterialProjected =
                         new(){
                             MaterialId = 1,
                             ProducerDetailId = 1,
@@ -99,7 +99,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                 new CalcResultProducerAndReportMaterialDetail
                 {
                     ProducerDetail = producer2,
-                    ProducerReportedMaterial = 
+                    ProducerReportedMaterialProjected =
                     new(){
                         MaterialId = 1,
                         ProducerDetailId = 2,
@@ -118,7 +118,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                 new CalcResultProducerAndReportMaterialDetail
                 {
                     ProducerDetail = producer2,
-                    ProducerReportedMaterial = 
+                    ProducerReportedMaterialProjected =
                     new(){
                         MaterialId = 1,
                         ProducerDetailId = 2,
@@ -137,9 +137,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             };
 
             var materails = TestDataHelper.GetMaterials();
-            var scaledup = new List<CalcResultScaledupProducer>();
-            var partialObligations = new List<CalcResultPartialObligation>();
-            TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(_allResults, materails, 1, scaledup, partialObligations);
+            TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(_allResults, materails, 1);
         }
 
         [TestCleanup]

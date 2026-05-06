@@ -109,7 +109,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var producer = TestDataHelper.GetProducerDisposalFees()[0];
 
             // Act
-            _testClass.AddNewRow(csvContent, producer, showModulations: false);
+            _testClass.AddNewRow(csvContent, producer, applyModulation: false);
             var results = csvContent.ToString().Split(",");
 
             // Assert
@@ -124,7 +124,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var producer = TestDataHelper.GetProducerDisposalFeesForOverAllTotal()[0];
 
             // Act
-            _testClass.AddNewRow(csvContent, producer, showModulations: false);
+            _testClass.AddNewRow(csvContent, producer, applyModulation: false);
             var results = csvContent.ToString().Split(",");
 
             // Assert
@@ -139,7 +139,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var producer = TestDataHelper.GetProducerDisposalFeesTonnageValueNull()[0];
 
             // Act
-            _testClass.AddNewRow(csvContent, producer, showModulations: false);
+            _testClass.AddNewRow(csvContent, producer, applyModulation: false);
             var results = csvContent.ToString().Split(",");
 
             // Assert
@@ -154,11 +154,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var producer = TestDataHelper.GetProducerDisposalFees()[0];
 
             // Act
-            _testClass.AddNewRow(csvContent, producer, showModulations: true);
+            _testClass.AddNewRow(csvContent, producer, applyModulation: true);
             var results = csvContent.ToString().Split(",");
 
             // Assert
-            Assert.AreEqual(338, results.Length);
+            Assert.AreEqual(378, results.Length);
         }
 
         [TestMethod]
@@ -177,7 +177,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var csvContent = new StringBuilder();
 
             // Act
-            _testClass.Export(resultSummary, csvContent, showModulations: false);
+            _testClass.Export(resultSummary, csvContent, applyModulation: false);
 
             // Assert
             Assert.IsNotNull(csvContent.ToString());

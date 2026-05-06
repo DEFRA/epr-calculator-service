@@ -93,6 +93,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
 
             _calcResult = new CalcResult
             {
+                ApplyModulation = false,
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultParameterOtherCost = new CalcResultParameterOtherCost
@@ -176,7 +177,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                             Wales = "WalesTest",
                             Name = "ScotlandTest",
                             Scotland = "ScotlandTest",
-                            Material = "Material1",
                             NorthernIreland = "NorthernIrelandTest",
                             Total = string.Empty,
                             ProducerReportedHouseholdPackagingWasteTonnage = string.Empty,
@@ -207,11 +207,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                             ReportedPublicBinTonnage = string.Empty,
                         },
                     },
-                    Name = "some test",
+                    Name = "some test"
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
-                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetails>(),
+                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetail>(),
                 },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment
                 {
@@ -335,7 +335,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                     TonnageHeading = string.Empty
                 },
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
-                CalcResultModulation = null,
             };
 
             _materialCostSummary = new Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial>();
@@ -348,8 +347,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                     HouseholdPackagingWasteTonnage = 1000,
                     SelfManagedConsumerWasteTonnage = 90,
                     NetReportedTonnage = (total: 910, red: null, amber: null, green: null),
-                    PricePerTonne = 0.6676m,
-                    ProducerDisposalFee = 607.52m,
+                    PricePerTonne = (total: 0.6676m, red: null, amber: null, green: null),
+                    ProducerDisposalFee =(total: 607.52m, red: null, amber: null, green: null),
                     BadDebtProvision = 36.45m,
                     ProducerDisposalFeeWithBadDebtProvision = 643.97m,
                     EnglandWithBadDebtProvision = 348.06m,

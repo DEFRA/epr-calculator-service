@@ -13,6 +13,7 @@ using EPR.Calculator.Service.Function.Builder.ErrorReport;
 using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
 using EPR.Calculator.Service.Function.Builder.Lapcap;
 using EPR.Calculator.Service.Function.Builder.LateReportingTonnages;
+using EPR.Calculator.Service.Function.Builder.Modulation;
 using EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment;
 using EPR.Calculator.Service.Function.Builder.ParametersOther;
 using EPR.Calculator.Service.Function.Builder.PartialObligations;
@@ -28,6 +29,7 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ErrorReport;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.RejectedProducers;
@@ -114,6 +116,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<CalculatorRunValidator, CalculatorRunValidator>();
             services.AddTransient<ICommandTimeoutService, CommandTimeoutService>();
             services.AddTransient<IPrepareCalcService, PrepareCalcService>();
+            services.AddTransient<IParameterService, ParameterService>();
             services.AddTransient<ICalcResultDetailBuilder, CalcResultDetailBuilder>();
             services.AddTransient<ICalcResultLapcapDataBuilder, CalcResultLapcapDataBuilder>();
             services.AddTransient<ICalcResultParameterOtherCostBuilder, CalcResultParameterOtherCostBuilder>();
@@ -125,6 +128,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcResultPartialObligationBuilder, CalcResultPartialObligationBuilder>();
             services.AddTransient<ICalcResultProjectedProducersBuilder, CalcResultProjectedProducersBuilder>();
             services.AddTransient<ICalcResultRejectedProducersBuilder, CalcResultRejectedProducersBuilder>();
+            services.AddTransient<ICalcResultModulationBuilder, CalcResultModulationBuilder>();
             services.AddTransient<ICalcResultSummaryBuilder, CalcResultSummaryBuilder>();
             services.AddTransient<IBillingInstructionService, BillingInstructionService>();
             services.AddTransient<IOnePlusFourApportionmentExporter, OnePlusFourApportionmentExporter>();
@@ -140,6 +144,7 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcResultProjectedProducersExporter, CalcResultProjectedProducersExporter>();
             services.AddTransient<LateReportingExporter, LateReportingExporter>();
             services.AddTransient<ICalcResultParameterOtherCostExporter, CalcResultParameterOtherCostExporter>();
+            services.AddTransient<ICalcResultModulationExporter, CalcResultModulationExporter>();
             services.AddTransient<ICommsCostExporter, CommsCostExporter>();
             services.AddTransient<IDbLoadingChunkerService<ProducerDetail>, DbLoadingChunkerService<ProducerDetail>>();
             services.AddTransient<IDbLoadingChunkerService<ProducerReportedMaterial>, DbLoadingChunkerService<ProducerReportedMaterial>>();
@@ -168,6 +173,8 @@ namespace EPR.Calculator.Service.Function
             services.AddTransient<ICalcResultErrorReportExporter, CalcResultErrorReportExporter>();
             services.AddTransient<IErrorReportService, ErrorReportService>();
             services.AddTransient<IProjectedProducersService, ProjectedProducersService>();
+            services.AddTransient<ISelfManagedConsumerWasteService, SelfManagedConsumerWasteService>();
+            services.AddTransient<IReportedProducerService, ReportedProducerService>();
 
             services.AddScoped<PrepareCalcServiceDependencies>(provider => new PrepareCalcServiceDependencies
             {

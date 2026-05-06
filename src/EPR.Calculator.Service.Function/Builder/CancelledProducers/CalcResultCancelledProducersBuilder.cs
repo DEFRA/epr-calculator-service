@@ -6,45 +6,44 @@ using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.CancelledProducers
 {
+    public interface ICalcResultCancelledProducersBuilder
+    {
+        Task<CalcResultCancelledProducersResponse> ConstructAsync(
+            List<MaterialDetail> materialDetails,
+            CalcResultsRequestDto resultsRequestDto
+        );
+    }
+
     public class CalcResultCancelledProducersBuilder : ICalcResultCancelledProducersBuilder
     {
-        private readonly ApplicationDBContext context;
-        private readonly IMaterialService materialService;
-        private List<MaterialDetail> materials;
+        private readonly ApplicationDBContext dbContext;
         private readonly IProducerDetailService producerDetailsService;
 
-        public CalcResultCancelledProducersBuilder(ApplicationDBContext context,
-            IMaterialService materialService,
-            IProducerDetailService producerDetailsService)
+        public CalcResultCancelledProducersBuilder(
+            ApplicationDBContext dbContext,
+            IProducerDetailService producerDetailsService
+        )
         {
-            this.context = context;
-            this.materialService = materialService;
-            materials = new List<MaterialDetail>();
+            this.dbContext = dbContext;
             this.producerDetailsService = producerDetailsService;
         }
 
-        public async Task<CalcResultCancelledProducersResponse> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
+        public async Task<CalcResultCancelledProducersResponse> ConstructAsync(List<MaterialDetail> materialDetails, CalcResultsRequestDto resultsRequestDto)
         {
+            var producers = await GetCancelledProducers(materialDetails, resultsRequestDto.RelativeYear, resultsRequestDto.RunId, resultsRequestDto.IsBillingFile);
 
-            materials = await materialService.GetMaterials();
-
-            var producers = await GetCancelledProducers(resultsRequestDto.RelativeYear, resultsRequestDto.RunId, resultsRequestDto.IsBillingFile);
-
-            var response = new CalcResultCancelledProducersResponse
+            return new CalcResultCancelledProducersResponse
             {
                 TitleHeader = CommonConstants.CancelledProducers,
                 CancelledProducers = producers
             };
-
-            return response;
         }
 
-        public async Task<IEnumerable<CalcResultCancelledProducersDto>> GetCancelledProducers(RelativeYear relativeYear, int runId, bool isBilling)
+        public async Task<IEnumerable<CalcResultCancelledProducersDto>> GetCancelledProducers(List<MaterialDetail> materialDetails, RelativeYear relativeYear, int runId, bool isBilling)
         {
             IEnumerable<int> allProducerIds = await GetAllProducerIds(relativeYear);
 
@@ -89,20 +88,20 @@ namespace EPR.Calculator.Service.Function.Builder.CancelledProducers
 
                     LastTonnage = new LastTonnage
                     {
-                        AluminiumValue = GetInvoicedTonnageForMaterials(filteredMissingProducers, GetMaterialId(MaterialNames.Aluminium), producerId),
-                        FibreCompositeValue = GetInvoicedTonnageForMaterials(filteredMissingProducers, GetMaterialId(MaterialNames.FibreComposite), producerId),
-                        GlassValue = GetInvoicedTonnageForMaterials(filteredMissingProducers, GetMaterialId(MaterialNames.Glass), producerId),
-                        PaperOrCardValue = GetInvoicedTonnageForMaterials(filteredMissingProducers, GetMaterialId(MaterialNames.PaperOrCard), producerId),
-                        PlasticValue = GetInvoicedTonnageForMaterials(filteredMissingProducers, GetMaterialId(MaterialNames.Plastic), producerId),
-                        WoodValue = GetInvoicedTonnageForMaterials(filteredMissingProducers, GetMaterialId(MaterialNames.Wood), producerId),
-                        SteelValue = GetInvoicedTonnageForMaterials(filteredMissingProducers, GetMaterialId(MaterialNames.Steel), producerId),
-                        OtherMaterialsValue = GetInvoicedTonnageForMaterials(filteredMissingProducers, GetMaterialId(MaterialNames.OtherMaterials), producerId)
+                        AluminiumValue      = GetInvoicedTonnageForMaterials(filteredMissingProducers, materialDetails.First(m => m.Name == MaterialNames.Aluminium     ).Id, producerId),
+                        FibreCompositeValue = GetInvoicedTonnageForMaterials(filteredMissingProducers, materialDetails.First(m => m.Name == MaterialNames.FibreComposite).Id, producerId),
+                        GlassValue          = GetInvoicedTonnageForMaterials(filteredMissingProducers, materialDetails.First(m => m.Name == MaterialNames.Glass         ).Id, producerId),
+                        PaperOrCardValue    = GetInvoicedTonnageForMaterials(filteredMissingProducers, materialDetails.First(m => m.Name == MaterialNames.PaperOrCard   ).Id, producerId),
+                        PlasticValue        = GetInvoicedTonnageForMaterials(filteredMissingProducers, materialDetails.First(m => m.Name == MaterialNames.Plastic       ).Id, producerId),
+                        WoodValue           = GetInvoicedTonnageForMaterials(filteredMissingProducers, materialDetails.First(m => m.Name == MaterialNames.Wood          ).Id, producerId),
+                        SteelValue          = GetInvoicedTonnageForMaterials(filteredMissingProducers, materialDetails.First(m => m.Name == MaterialNames.Steel         ).Id, producerId),
+                        OtherMaterialsValue = GetInvoicedTonnageForMaterials(filteredMissingProducers, materialDetails.First(m => m.Name == MaterialNames.OtherMaterials).Id, producerId)
                     },
                     LatestInvoice = new LatestInvoice
                     {
-                        BillingInstructionIdValue = filteredMissingProducers.Where(t => t.InvoiceInstruction?.ProducerId == producerId).OrderByDescending(t => t.CalculatorRunId).Select(t => t.InvoiceInstruction?.BillingInstructionId).FirstOrDefault(),
-                        RunNameValue = filteredMissingProducers.Where(t => t.InvoiceInstruction?.ProducerId == producerId).OrderByDescending(t => t.CalculatorRunId).Select(t => t.CalculatorName).FirstOrDefault(),
-                        RunNumberValue = filteredMissingProducers.Where(t => t.InvoiceInstruction?.ProducerId == producerId).OrderByDescending(t => t.CalculatorRunId).Select(t => t.CalculatorRunId).FirstOrDefault().ToString(),
+                        BillingInstructionIdValue           = filteredMissingProducers.Where(t => t.InvoiceInstruction?.ProducerId == producerId).OrderByDescending(t => t.CalculatorRunId).Select(t => t.InvoiceInstruction?.BillingInstructionId).FirstOrDefault(),
+                        RunNameValue                        = filteredMissingProducers.Where(t => t.InvoiceInstruction?.ProducerId == producerId).OrderByDescending(t => t.CalculatorRunId).Select(t => t.CalculatorName).FirstOrDefault(),
+                        RunNumberValue                      = filteredMissingProducers.Where(t => t.InvoiceInstruction?.ProducerId == producerId).OrderByDescending(t => t.CalculatorRunId).Select(t => t.CalculatorRunId).FirstOrDefault().ToString(),
                         CurrentYearInvoicedTotalToDateValue = filteredMissingProducers.Where(t => t.InvoiceInstruction?.ProducerId == producerId).OrderByDescending(t => t.CalculatorRunId).Select(t => t.InvoiceInstruction?.CurrentYearInvoicedTotalAfterThisRun).FirstOrDefault(),
                     }
                 });
@@ -113,19 +112,21 @@ namespace EPR.Calculator.Service.Function.Builder.CancelledProducers
 
         private async Task<IEnumerable<int>> GetAllProducerIds(RelativeYear relativeYear)
         {
-            return await (from prfb in context.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
-                          join cr in context.CalculatorRuns.AsNoTracking()
-                          on prfb.CalculatorRunId equals cr.Id
-                          where
-                             new[]
-                             {
-                                                            RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
-                                                            RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
-                                                            RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
-                                                            RunClassificationStatusIds.FINALRUNCOMPLETEDID
-                             }.Contains(cr.CalculatorRunClassificationId) && cr.RelativeYearValue == relativeYear.Value
-                             && prfb.BillingInstructionAcceptReject == CommonConstants.Accepted
-                          select prfb.ProducerId).ToListAsync();
+            return await (
+                from prfb in dbContext.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
+                join cr in dbContext.CalculatorRuns.AsNoTracking()
+                on prfb.CalculatorRunId equals cr.Id
+                where
+                   new[]
+                   {
+                      RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
+                      RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
+                      RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
+                      RunClassificationStatusIds.FINALRUNCOMPLETEDID
+                   }.Contains(cr.CalculatorRunClassificationId) && cr.RelativeYearValue == relativeYear.Value
+                   && prfb.BillingInstructionAcceptReject == CommonConstants.Accepted
+                select prfb.ProducerId
+            ).ToListAsync();
         }
 
         private static decimal? GetInvoicedTonnageForMaterials(List<ProducerInvoicedDto> cancelledProducersWithData, int materialId, int? producerId)
@@ -133,54 +134,42 @@ namespace EPR.Calculator.Service.Function.Builder.CancelledProducers
             return cancelledProducersWithData.Where(t => t.InvoicedTonnage?.MaterialId == materialId && t.InvoicedTonnage.ProducerId == producerId).OrderByDescending(t => t.CalculatorRunId).Select(k => k.InvoicedTonnage?.InvoicedNetTonnage).FirstOrDefault();
         }
 
-        private int GetMaterialId(string materialName)
-        {
-            if (materials is not null)
-            {
-                return materials.First(t => t.Name == materialName).Id;
-            }
-            return 0;
-        }
-
-
         private async Task<List<int>> GetAcceptedCancelledProducers(RelativeYear relativeYear)
         {
-            var cancelledAcceptedProducers = await (from calc in context.CalculatorRuns.AsNoTracking()
-                                                    join p in context.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
-                                                        on calc.Id equals p.CalculatorRunId
-                                                    where calc.RelativeYearValue == relativeYear.Value
-                                                        && p.BillingInstructionAcceptReject != null
-                                                        && p.BillingInstructionAcceptReject == CommonConstants.Accepted
-                                                        && p.SuggestedBillingInstruction == CommonConstants.CancelStatus
-                                                        && new[]
-                                                        {
-                                                            RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
-                                                            RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
-                                                            RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
-                                                            RunClassificationStatusIds.FINALRUNCOMPLETEDID
-                                                        }.Contains(calc.CalculatorRunClassificationId)
-                                                    select p.ProducerId)
-                                                    .ToListAsync();
-            return cancelledAcceptedProducers;
+            return await (
+                from calc in dbContext.CalculatorRuns.AsNoTracking()
+                join p in dbContext.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
+                    on calc.Id equals p.CalculatorRunId
+                where calc.RelativeYearValue == relativeYear.Value
+                    && p.BillingInstructionAcceptReject != null
+                    && p.BillingInstructionAcceptReject == CommonConstants.Accepted
+                    && p.SuggestedBillingInstruction == CommonConstants.CancelStatus
+                    && new[]
+                    {
+                        RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
+                        RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
+                        RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
+                        RunClassificationStatusIds.FINALRUNCOMPLETEDID
+                    }.Contains(calc.CalculatorRunClassificationId)
+                select p.ProducerId
+            ).ToListAsync();
         }
 
         private async Task<List<int>> GetAcceptedCancelledProducersForThisRun(int runId)
         {
-            var cancelledAcceptedProducers = await (from p in context.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
-                                                    where p.CalculatorRunId == runId
-                                                        && p.BillingInstructionAcceptReject == CommonConstants.Accepted
-                                                        && p.SuggestedBillingInstruction == CommonConstants.CancelStatus
-                                                    select p.ProducerId)
-                                                    .ToListAsync();
-
-            return cancelledAcceptedProducers;
+            return await (
+                from p in dbContext.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
+                where p.CalculatorRunId == runId
+                    && p.BillingInstructionAcceptReject == CommonConstants.Accepted
+                    && p.SuggestedBillingInstruction == CommonConstants.CancelStatus
+                select p.ProducerId
+            ).ToListAsync();
         }
 
 
         private async Task<IEnumerable<ProducerDetail>> GetProducerDetails(IEnumerable<int?> producerIds)
         {
-            return await context.CalculatorRunOrganisationDataDetails
-                .AsNoTracking()
+            return await dbContext.CalculatorRunOrganisationDataDetails.AsNoTracking()
                 .OrderByDescending(t => t.CalculatorRunOrganisationDataMasterId)
                 .Where(t => producerIds.Contains(t.OrganisationId) && string.IsNullOrEmpty(t.SubsidiaryId))
                 .Select(t => new ProducerDetail { ProducerId= t.OrganisationId, ProducerName= t.OrganisationName, TradingName = t.TradingName })
