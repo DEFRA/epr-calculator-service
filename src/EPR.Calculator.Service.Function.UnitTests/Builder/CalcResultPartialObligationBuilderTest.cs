@@ -22,7 +22,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         private readonly int alId = 1;
         private CalcResultPartialObligationBuilder builder;
 
-        private (List<MaterialDetail>, List<ProducerDetail>) PrepareData()
+        private (List<MaterialDetail>, List<ProducerDetail>) PrepareData(bool applyModulation)
         {
             //Run 1
             var calcRunOrganisationDataMaster = new CalculatorRunOrganisationDataMaster
@@ -124,23 +124,29 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 producerDetail2.ProducerReportedMaterials.Add(
                     new ProducerReportedMaterial
                     {
-                        PackagingType = "HH",
-                        MaterialId = alm.Id,
-                        Material = alm,
-                        PackagingTonnage = 50,
-                        SubmissionPeriod = subPeriod,
-                        ProducerDetail = producerDetail2,
+                        PackagingType                = "HH",
+                        MaterialId                   = alm.Id,
+                        Material                     = alm,
+                        PackagingTonnage             = 50,
+                        PackagingTonnageRed          = applyModulation ? 10 : null,
+                        PackagingTonnageRedMedical   = applyModulation ? 10 : null,
+                        PackagingTonnageAmber        = applyModulation ? 15 : null,
+                        PackagingTonnageAmberMedical = applyModulation ? 15 : null,
+                        PackagingTonnageGreen        = applyModulation ?  0 : null,
+                        PackagingTonnageGreenMedical = applyModulation ?  0 : null,
+                        SubmissionPeriod             = subPeriod,
+                        ProducerDetail               = producerDetail2,
                     }
                 );
                 producerDetail2.ProducerReportedMaterials.Add(
                     new ProducerReportedMaterial
                     {
-                        PackagingType = "CW",
-                        MaterialId = alm.Id,
-                        Material = alm,
+                        PackagingType    = "CW",
+                        MaterialId       = alm.Id,
+                        Material         = alm,
                         PackagingTonnage = 10,
                         SubmissionPeriod = subPeriod,
-                        ProducerDetail = producerDetail2,
+                        ProducerDetail   = producerDetail2,
                     }
                 );
             }
@@ -233,23 +239,29 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 producerDetail4.ProducerReportedMaterials.Add(
                     new ProducerReportedMaterial
                     {
-                        PackagingType = "HH",
-                        MaterialId = alm.Id,
-                        Material = alm,
-                        PackagingTonnage = 50,
-                        SubmissionPeriod = subPeriod,
-                        ProducerDetail = producerDetail4,
+                        PackagingType                = "HH",
+                        MaterialId                   = alm.Id,
+                        Material                     = alm,
+                        PackagingTonnage             = 50,
+                        PackagingTonnageRed          = applyModulation ? 10 : null,
+                        PackagingTonnageRedMedical   = applyModulation ? 10 : null,
+                        PackagingTonnageAmber        = applyModulation ? 15 : null,
+                        PackagingTonnageAmberMedical = applyModulation ? 15 : null,
+                        PackagingTonnageGreen        = applyModulation ?  0 : null,
+                        PackagingTonnageGreenMedical = applyModulation ?  0 : null,
+                        SubmissionPeriod             = subPeriod,
+                        ProducerDetail               = producerDetail4,
                     }
                 );
                 producerDetail4.ProducerReportedMaterials.Add(
                     new ProducerReportedMaterial
                     {
-                        PackagingType = "CW",
-                        MaterialId = alm.Id,
-                        Material = alm,
+                        PackagingType    = "CW",
+                        MaterialId       = alm.Id,
+                        Material         = alm,
                         PackagingTonnage = 10,
                         SubmissionPeriod = subPeriod,
-                        ProducerDetail = producerDetail4,
+                        ProducerDetail   = producerDetail4,
                     }
                 );
             }
@@ -298,9 +310,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public async Task Construct_WhenPartialObligationsExists()
         {
             // Arrange
-            var (materialDetails, producers) = PrepareData();
-            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
             var applyModulation = false;
+            var (materialDetails, producers) = PrepareData(applyModulation);
+            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
             // Act
             var result = await builder.ConstructAsync(materialDetails, producers, requestDto, applyModulation);
@@ -352,9 +364,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public async Task Construct_WhenPartialObligationsExists_producers()
         {
             // Arrange
-            var (materialDetails, producers) = PrepareData();
-            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
             var applyModulation = false;
+            var (materialDetails, producers) = PrepareData(applyModulation);
+            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
             // Act
             var updatedProducers = (await builder.ConstructAsync(materialDetails, producers, requestDto, applyModulation)).Item1;
@@ -372,12 +384,43 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     var reportedAlCW = producer.ProducerReportedMaterials.First(rm => rm.MaterialId == alId && rm.PackagingType == "CW" && rm.SubmissionPeriod == "2024-P1");
                     Assert.AreEqual(5.014m, reportedAlCW.PackagingTonnage);
                 }
-                else if (producer.ProducerId == 22 && producer.SubsidiaryId == null)
+                else
                 {
-                    var reportedAl = producer.ProducerReportedMaterials.First(rm => rm.MaterialId == alId && rm.PackagingType == "HH" && rm.SubmissionPeriod == "2024-P4");
-                    Assert.AreEqual(25.068m, reportedAl.PackagingTonnage);
+                    var expectedProducer = producers.First(p => p.ProducerId == producer.ProducerId && p.SubsidiaryId == producer.SubsidiaryId);
+                    Assert.AreEqual(expectedProducer, producer);
+                }
+            }
+        }
 
-                    var reportedAlCW = producer.ProducerReportedMaterials.First(rm => rm.MaterialId == alId && rm.PackagingType == "CW" && rm.SubmissionPeriod == "2024-P4");
+        // TODO tests for when applyModulation=true
+        [TestMethod]
+        public async Task Construct_WhenPartialObligationsExists_producers_with_modulations()
+        {
+            // Arrange
+            var applyModulation = true;
+            var (materialDetails, producers) = PrepareData(applyModulation);
+            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
+
+            // Act
+            var updatedProducers = (await builder.ConstructAsync(materialDetails, producers, requestDto, applyModulation)).Item1;
+
+            // Assert
+            Assert.AreEqual(producers.Count(), updatedProducers.Count());
+
+            foreach (var producer in updatedProducers)
+            {
+                if (producer.ProducerId == 22 && producer.SubsidiaryId == null)
+                {
+                    var reportedAlHH = producer.ProducerReportedMaterials.First(rm => rm.MaterialId == alId && rm.PackagingType == "HH" && rm.SubmissionPeriod == "2024-P1");
+                    Assert.AreEqual(25.070m, reportedAlHH.PackagingTonnage);
+                    Assert.AreEqual( 5.014m, reportedAlHH.PackagingTonnageRed);
+                    Assert.AreEqual( 5.014m, reportedAlHH.PackagingTonnageRedMedical);
+                    Assert.AreEqual( 7.521m, reportedAlHH.PackagingTonnageAmber);
+                    Assert.AreEqual( 7.521m, reportedAlHH.PackagingTonnageAmberMedical);
+                    Assert.AreEqual( 0     , reportedAlHH.PackagingTonnageGreen);
+                    Assert.AreEqual( 0     , reportedAlHH.PackagingTonnageGreenMedical);
+
+                    var reportedAlCW = producer.ProducerReportedMaterials.First(rm => rm.MaterialId == alId && rm.PackagingType == "CW" && rm.SubmissionPeriod == "2024-P1");
                     Assert.AreEqual(5.014m, reportedAlCW.PackagingTonnage);
                 }
                 else
@@ -388,6 +431,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             }
         }
 
-        // TODO tests for when applyModulation=true
+
     }
 }
