@@ -59,7 +59,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         // Format: ProducerId, SubsidiaryId, SubmissionPeriod, Level, Material, PackagingType, TotalTonnage, RTonnage, RMTonnage, ATonnage, AMTonnage, GTonnage, GMTonnage
 
         [TestMethod]
-        public async Task H1H2Projection_untouched()
+        public void H1H2Projection_untouched()
         {
             // RAM is complete - no modifications made
             var given = new[] {
@@ -70,11 +70,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 new[] { "101", "", "2025-H1", "1", "AL", "HH", "100", "20.0", "40.0", "40.0", "0", "0", "0" },
                 new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "20"  , "40"  , "40"  , "0", "0", "0" }
             };
-            AssertExcepted(expected, await FillGaps(given));
+            AssertExcepted(expected, FillGaps(given));
         }
 
         [TestMethod]
-        public async Task H1H2Projection_untouched_previous()
+        public void H1H2Projection_untouched_previous()
         {
             // RAM is complete - no modifications made
             var given = new[] {
@@ -85,11 +85,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 new[] { "101", "", "2025-H1", "1", "AL", "HH", "100", "20.0", "40.0", "40.0", "0", "0", "0" },
                 new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "20"  , "40"  , "40"  , "0", "0", "0" }
             };
-            AssertExcepted(expected, await FillGapsPrevious(given));
+            AssertExcepted(expected, FillGapsPrevious(given));
         }
 
         [TestMethod]
-        public async Task H1H2Projection_untouched_onlyh2()
+        public void H1H2Projection_untouched_onlyh2()
         {
             // RAM is complete - only H2 - no modifications made
             var given = new[] {
@@ -98,11 +98,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             var expected = new [] {
                 new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "20", "40", "40", "0", "0", "0" }
             };
-            AssertExcepted(expected, await FillGaps(given));
+            AssertExcepted(expected, FillGaps(given));
         }
 
         [TestMethod]
-        public async Task H1H2Projection_untouched_onlyh2_previous()
+        public void H1H2Projection_untouched_onlyh2_previous()
         {
             // RAM is complete - only H2 - no modifications made
             var given = new[] {
@@ -111,11 +111,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             var expected = new [] {
                 new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "20", "40", "40", "0", "0", "0" }
             };
-            AssertExcepted(expected, await FillGapsPrevious(given));
+            AssertExcepted(expected, FillGapsPrevious(given));
         }
 
         [TestMethod]
-        public async Task H1H2Projection_untouched_onlyh1()
+        public void H1H2Projection_untouched_onlyh1()
         {
             // RAM is complete - only H1 - no modifications made
             var given = new[] {
@@ -124,7 +124,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             var expected = new [] {
                 new[] { "101", "", "2025-H1", "1", "AL", "HH", "100", "30", "40", "40", "0", "0", "0" }
             };
-            AssertExcepted(expected, await FillGaps(given));
+            AssertExcepted(expected, FillGaps(given));
         }
 
         [TestMethod]
@@ -154,11 +154,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 new string[] { "101", "B", "2025-H2", "2", "AL", "HH" , "100", "20"  , "40"  , "40"  , "0", "0", "0" },
                 new string[] { "101", "A", "2025-H2", "2", "ST", "PB" , "100", "20"  , "40"  , "40"  , "0", "0", "0" }
             };
-            AssertExcepted(expected, await FillGaps(given));
+            AssertExcepted(expected, FillGaps(given));
         }
 
         [TestMethod]
-        public async Task H1H2Projection_untouched_hc_previous()
+        public void H1H2Projection_untouched_hc_previous()
         {
             // RAM is complete - no modifications made
             var given = new[] {
@@ -184,11 +184,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 new string[] { "101", "B", "2025-H2", "2", "AL", "HH" , "100", "20"  , "40"  , "40"  , "0", "0", "0" },
                 new string[] { "101", "A", "2025-H2", "2", "ST", "PB" , "100", "20"  , "40"  , "40"  , "0", "0", "0" }
             };
-            AssertExcepted(expected, await FillGapsPrevious(given));
+            AssertExcepted(expected, FillGapsPrevious(given));
         }
 
         [TestMethod]
-        public async Task H1H2Projection_onlyh2_incomplete()
+        public void H1H2Projection_onlyh2_incomplete()
         {
             // Incomplete H2 - inferred as Red
             var given = new[] {
@@ -197,11 +197,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             var expected = new [] {
                 new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "100", "0", "0", "0", "0", "0" }
             };
-            AssertExcepted(expected, await FillGaps(given));
+            AssertExcepted(expected, FillGaps(given));
         }
 
         [TestMethod]
-        public async Task H1H2Projection_onlyh2_incomplete_previous()
+        public void H1H2Projection_onlyh2_incomplete_previous()
         {
             // Incomplete H2 - inferred as Red
             var given = new[] {
@@ -210,11 +210,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             var expected = new [] {
                 new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "100", "0", "0", "0", "0", "0" }
             };
-            AssertExcepted(expected, await FillGapsPrevious(given));
+            AssertExcepted(expected, FillGapsPrevious(given));
         }
 
         [TestMethod]
-        public async Task H1H2Projection_onlyh2_partial()
+        public void H1H2Projection_onlyh2_partial()
         {
             // Partial H2 - inferred as Red
             var given = new[] {
@@ -223,11 +223,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             var expected = new [] {
                 new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "100", "0", "0", "0", "0", "0" }
             };
-            AssertExcepted(expected, await FillGaps(given));
+            AssertExcepted(expected, FillGaps(given));
         }
 
         [TestMethod]
-        public async Task H1H2Projection_onlyh2_partial_previous()
+        public void H1H2Projection_onlyh2_partial_previous()
         {
             // Partial H2 - inferred as Red
             var given = new[] {
@@ -236,11 +236,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             var expected = new [] {
                 new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "100", "0", "0", "0", "0", "0" }
             };
-            AssertExcepted(expected, await FillGapsPrevious(given));
+            AssertExcepted(expected, FillGapsPrevious(given));
         }
 
         [TestMethod]
-        public async Task H1H2Projection_onlyh2_partial2()
+        public void H1H2Projection_onlyh2_partial2()
         {
             // Partial H2 - inferred as Red
             var given = new[] {
@@ -249,11 +249,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             var expected = new [] {
                 new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "50", "50", "0", "0", "0", "0" }
             };
-            AssertExcepted(expected, await FillGaps(given));
+            AssertExcepted(expected, FillGaps(given));
         }
 
         [TestMethod]
-        public async Task H1H2Projection_onlyh2_partial2_previous2()
+        public void H1H2Projection_onlyh2_partial2_previous2()
         {
             // Partial H2 - inferred as Red
             var given = new[] {
@@ -262,11 +262,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             var expected = new [] {
                 new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "50", "50", "0", "0", "0", "0" }
             };
-            AssertExcepted(expected, await FillGapsPrevious(given));
+            AssertExcepted(expected, FillGapsPrevious(given));
         }
 
         [TestMethod]
-        public async Task H1H2Projection_incomplete_h1()
+        public void H1H2Projection_incomplete_h1()
         {
             // Incomplete H1 - reflects proportions from H2
             var given = new[] {
@@ -277,11 +277,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 new[] { "101", "", "2025-H1", "1", "AL", "HH", "42", "12.000", "10.000", "8.000", "6.000", "4.000", "2.000" },
                 new[] { "101", "", "2025-H2", "1", "AL", "HH", "21", "6", "5", "4", "3", "2", "1" }
             };
-            AssertExcepted(expected, await FillGaps(given));
+            AssertExcepted(expected, FillGaps(given));
         }
 
         [TestMethod]
-        public async Task H1H2Projection_partial_h1()
+        public void H1H2Projection_partial_h1()
         {
             // Incomplete H1 - reflects proportions from H2, perserving any H1
             var given = new[] {
@@ -292,11 +292,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 new[] { "101", "", "2025-H1", "1", "AL", "HH", "43", "13.000", "10.000", "8.000", "6.000", "4.000", "2.000" },
                 new[] { "101", "", "2025-H2", "1", "AL", "HH", "21", "6", "5", "4", "3", "2", "1" }
             };
-            AssertExcepted(expected, await FillGaps(given));
+            AssertExcepted(expected, FillGaps(given));
         }
 
         [TestMethod]
-        public async Task H1H2Projection_partial_h2_and_partial_h1()
+        public void H1H2Projection_partial_h2_and_partial_h1()
         {
             // Incomplete H2 - defaults some to red
             // Incomplete H1 - reflects proportions from H2, perserving any H1
@@ -308,11 +308,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 new[] { "101", "", "2025-H1", "1", "AL", "HH", "43", "40", "0", "3", "0", "0", "0" },
                 new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "100", "0", "0", "0", "0", "0" }
             };
-            AssertExcepted(expected, await FillGaps(given));
+            AssertExcepted(expected, FillGaps(given));
         }
 
         [TestMethod]
-        public async Task H1H2Projection_partial_h1_no_h2()
+        public void H1H2Projection_partial_h1_no_h2()
         {
             // Incomplete H1 - cannot reflect proportions from H2, defaults remaining tonnage to red
             var given = new[] {
@@ -321,11 +321,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             var expected = new [] {
                 new[] { "101", "", "2025-H1", "1", "AL", "HH", "100", "90", "0", "10", "0", "0", "0" }
             };
-            AssertExcepted(expected, await FillGaps(given));
+            AssertExcepted(expected, FillGaps(given));
         }
 
         [TestMethod]
-        public async Task H1H2Projection_subtotal_hg_h1_noh2()
+        public void H1H2Projection_subtotal_hg_h1_noh2()
         {
             // Level 1 subtotal added for parent who reports for themselves too
             var given = new[] {
@@ -337,11 +337,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 new[] { "101", "", "2025-H1", "2", "PL", "PB", "100", "80", "10", "10", "0", "0", "0" },
                 new[] { "101", "A", "2025-H1", "2", "PL", "PB", "200", "160", "0", "20", "0", "0", "20" }
             };
-            AssertExcepted(expected, await FillGaps(given));
+            AssertExcepted(expected, FillGaps(given));
         }
 
         [TestMethod]
-        public async Task H1H2Projection_subtotal_hg_indv()
+        public void H1H2Projection_subtotal_hg_indv()
         {
             // Part of holding group but subsidiary reports individually - expected subtotal row for parent
             var given = new[] {
@@ -354,11 +354,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 //new[] { "101", "", "2025-H2", "1", "GL", "HDC", "21", "6", "5", "4", "3", "2", "1" },
                 new[] { "101", "A", "2025-H2", "2", "GL", "HDC", "21", "6", "5", "4", "3", "2", "1" }
             };
-            AssertExcepted(expected, await FillGaps(given));
+            AssertExcepted(expected, FillGaps(given));
         }
 
         [TestMethod]
-        public async Task H1H2Projection_subtotal_hg_no_parent_report_multi_materials()
+        public void H1H2Projection_subtotal_hg_no_parent_report_multi_materials()
         {
             // Part of holding group where holding group doesn't report for themselves - different materials
             var given = new[] {
@@ -382,11 +382,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 new[] { "101", "B", "2025-H2", "2", "AL", "HH", "200", "150",  "25",   "25",   "0", "0", "0" },
                 new[] { "101", "A", "2025-H2", "2", "PL", "PB", "100", "20",   "40",   "40",   "0", "0", "0" }
             };
-            AssertExcepted(expected, await FillGaps(given));
+            AssertExcepted(expected, FillGaps(given));
         }
 
         [TestMethod]
-        public async Task H1H2Projection_subtotal_hg_no_parent_report_multi_materials_previous()
+        public void H1H2Projection_subtotal_hg_no_parent_report_multi_materials_previous()
         {
             // Part of holding group where holding group doesn't report for themselves - different materials
             var given = new[] {
@@ -410,7 +410,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 new[] { "101", "B", "2025-H2", "2", "AL", "HH", "200", "150",  "25",   "25",   "0", "0", "0" },
                 new[] { "101", "A", "2025-H2", "2", "PL", "PB", "100", "20",   "40",   "40",   "0", "0", "0" }
             };
-            AssertExcepted(expected, await FillGapsPrevious(given));
+            AssertExcepted(expected, FillGapsPrevious(given));
         }
 
         /*
@@ -419,7 +419,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         https://github.com/DEFRA/epr-calculator-service/blob/feature/ECV-512/src/EPR.Calculator.Service.Function.UnitTests/Builder/ProjectedProducers/CalcResultProjectedProducersBuilderTest.cs#L387
 */
         [TestMethod]
-        public async Task H1H2Projection_h1_use_subtotal_h2_projection()
+        public void H1H2Projection_h1_use_subtotal_h2_projection()
         {
             var given = new[] {
                 new[] { "101", "" , "2025-H2", "", "AL", "HH", "100", "20",  "40", "40",  "0",  "", "" },
@@ -439,11 +439,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 new[] { "101", "A", "2025-H2", "2", "AL", "HH", "200",    "120",      "40",      "40", "0", "0", "0" },
                 new[] { "101", "B", "2025-H2", "2", "AL", "HH", "300",    "250",      "25",      "25", "0", "0", "0" }
             };
-            AssertExcepted(expected, await FillGaps(given));
+            AssertExcepted(expected, FillGaps(given));
         }
 
         [TestMethod]
-        public async Task H1H2Projection_h1_use_subtotal_h2_projection_previous()
+        public void H1H2Projection_h1_use_subtotal_h2_projection_previous()
         {
             var given = new[] {
                 new[] { "101", "" , "2025-H2", "", "AL", "HH", "100", "20",  "40", "40",  "0",  "", "" },
@@ -463,7 +463,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 new[] { "101", "A", "2025-H2", "2", "AL", "HH", "200",    "120",      "40",      "40", "0", "0", "0" },
                 new[] { "101", "B", "2025-H2", "2", "AL", "HH", "300",    "250",      "25",      "25", "0", "0", "0" }
             };
-            AssertExcepted(expected, await FillGapsPrevious(given));
+            AssertExcepted(expected, FillGapsPrevious(given));
         }
 
         private (List<MaterialDetail>, CalcResultsRequestDto) InsertData(string[][] given)
@@ -511,7 +511,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     row[SubsidiaryI] = subsidiaryId ?? "";
                     row[PeriodI] = submission.SubmissionPeriod;
                     row[LevelI] = level;
-                    row[MaterialCodeI] = materials.Find(m => m.Id == submission.MaterialId).Code;
+                    row[MaterialCodeI] = materials.Find(m => m.Id == submission.MaterialId)!.Code;
                     row[PackagingTypeI] = submission.PackagingType;
                     row[TotalTonnageI] = submission.PackagingTonnage.ToString();
                     row[RTonnageI]  = (submission.PackagingTonnageRed  ?? 0m).ToString();
@@ -537,9 +537,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 p.ProducerReportedMaterials.Select(r =>
                     createRow(producerId: p.ProducerId, subsidiaryId: p.SubsidiaryId, level: levelLookup[(p.ProducerId, p.SubsidiaryId)], r)
                 )
-            );
+            ).Where(row => row is not null).Cast<string[]>();
 
-            return result
+            return result       
                     .OrderBy(a => a[PeriodI])
                     .ThenBy(a => a[ProducerI])
                     .ThenBy(a => string.IsNullOrEmpty(a[SubsidiaryI]) ? 0 : 1)
@@ -569,7 +569,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                         producer.ProducerReportedMaterials.Add(
                             new ProducerReportedMaterial
                             {
-                                MaterialId = materials.Find(m => m.Code == row[MaterialCodeI]).Id,
+                                MaterialId = materials.Find(m => m.Code == row[MaterialCodeI])!.Id,
                                 PackagingType = row[PackagingTypeI],
                                 PackagingTonnage = ToDecimal(row[TotalTonnageI]) ?? 0m,
                                 PackagingTonnageRed = ToDecimal(row[RTonnageI]),
@@ -588,19 +588,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             return res;
         }
 
-        private async Task<string[][]> FillGaps(string[][] given)
+        private string[][] FillGaps(string[][] given)
         {
             var (materialDetails, requestDto) = InsertData(given);
-            return ConvertResult(await builder.ConstructAsync(materialDetails, ToProducers(given), requestDto));
+            return ConvertResult(builder.ConstructAsync(materialDetails, ToProducers(given), requestDto));
         }
 
         private string[][] ConvertResultPrevious(CalcResultProjectedProducers given)
         {
             var result = new List<string[]>();
 
-            string[]? createRow(int producerId, string? subsidiaryId, string submissonPeriodCode, string materialCode, string packagingType, string? level, RAMTonnage? projectedRamTonnage)
+            string[]? createRow(int producerId, string? subsidiaryId, string submissonPeriodCode, string materialCode, string packagingType, string? level, RAMTonnage? projectedRamTonnage, decimal? tonnage)
             {
-                if (projectedRamTonnage == null || projectedRamTonnage.Tonnage == 0)
+                if (projectedRamTonnage == null || tonnage == 0)
                     return null;
                 else
                 {
@@ -611,7 +611,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     row[LevelI] = level ?? "";
                     row[MaterialCodeI] = materialCode;
                     row[PackagingTypeI] = packagingType;
-                    row[TotalTonnageI] = (projectedRamTonnage?.Tonnage ?? 0m).ToString();
+                    row[TotalTonnageI] = (tonnage ?? 0m).ToString();
                     row[RTonnageI] = (projectedRamTonnage?.RedTonnage ?? 0m).ToString();
                     row[RMTonnageI] = (projectedRamTonnage?.RedMedicalTonnage ?? 0m).ToString();
                     row[ATonnageI] = (projectedRamTonnage?.AmberTonnage ?? 0m).ToString();
@@ -633,11 +633,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     {
                         var materialCode = kv.Key;
                         var v = kv.Value;
-                        var hhRow = createRow(producerId, subsidiaryId, producer.SubmissionPeriodCode, materialCode, "HH", producer.Level, v.ProjectedHouseholdRAMTonnage);
+                        var hhRow = createRow(producerId, subsidiaryId, producer.SubmissionPeriodCode, materialCode, "HH", producer.Level, v.ProjectedHouseholdRAMTonnage, v.ProjectedHouseholdTonnage);
                         if (hhRow != null) result.Add(hhRow);
-                        var pbRow = createRow(producerId, subsidiaryId, producer.SubmissionPeriodCode, materialCode, "PB", producer.Level, v.ProjectedPublicBinRAMTonnage);
+                        var pbRow = createRow(producerId, subsidiaryId, producer.SubmissionPeriodCode, materialCode, "PB", producer.Level, v.ProjectedPublicBinRAMTonnage, v.ProjectedPublicBinTonnage);
                         if (pbRow != null) result.Add(pbRow);
-                        var hdcRow = createRow(producerId, subsidiaryId, producer.SubmissionPeriodCode, materialCode, "HDC", producer.Level, v.ProjectedHouseholdDrinksContainerRAMTonnage);
+                        var hdcRow = createRow(producerId, subsidiaryId, producer.SubmissionPeriodCode, materialCode, "HDC", producer.Level, v.ProjectedHouseholdDrinksContainerRAMTonnage, v.ProjectedHouseholdDrinksContainerTonnage);
                         if (hdcRow != null) result.Add(hdcRow);
                     }
                 }
@@ -653,10 +653,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     .ToArray();
         }
 
-        private async Task<string[][]> FillGapsPrevious(string[][] given)
+        private string[][] FillGapsPrevious(string[][] given)
         {
             var (materialDetails, requestDto) = InsertData(given);
-            return ConvertResultPrevious((await builder.ConstructAsync(materialDetails, ToProducers(given), requestDto)).Item2);
+            return ConvertResultPrevious((builder.ConstructAsync(materialDetails, ToProducers(given), requestDto)).Item2);
         }
 
         private string ToPrintable(string[] arr) =>

@@ -2,28 +2,22 @@
 {
     public class CalcResultPartialObligationTonnage
     {
-        public decimal ReportedHouseholdPackagingWasteTonnage { get; set; }
-
-        public decimal ReportedPublicBinTonnage { get; set; }
-
-        public decimal TotalReportedTonnage { get; set; }
-
-        public decimal ReportedSelfManagedConsumerWasteTonnage { get; set; }
-
-        public decimal NetReportedTonnage { get; set; }
-
-        public decimal PartialReportedHouseholdPackagingWasteTonnage { get; set; }
-
-        public decimal PartialReportedPublicBinTonnage { get; set; }
-
-        public decimal PartialTotalReportedTonnage { get; set; }
-
-        public decimal PartialReportedSelfManagedConsumerWasteTonnage { get; set; }
-
-        public decimal PartialNetReportedTonnage { get; set; }
-
-        public decimal HouseholdDrinksContainersTonnageGlass { get; set; }
-
-        public decimal PartialHouseholdDrinksContainersTonnageGlass { get; set; }
+        public decimal HouseholdTonnage { get; set; }
+        public RAMTonnage? HouseholdRAMTonnage { get; set; }
+        public decimal PublicBinTonnage { get; set; }
+        public RAMTonnage? PublicBinRAMTonnage { get; set; }
+        public decimal? HouseholdDrinksContainersTonnage { get; set; }
+        public RAMTonnage? HouseholdDrinksContainersRAMTonnage { get; set; }
+        public decimal TotalTonnage { get; set; }
+        public decimal SelfManagedConsumerWasteTonnage { get; set; }
+        public decimal PartialHouseholdTonnage { get; set; }
+        public RAMTonnage? PartialHouseholdRAMTonnage { get; set; }
+        public decimal PartialPublicBinTonnage { get; set; }
+        public RAMTonnage? PartialPublicBinRAMTonnage { get; set; }
+        public decimal? PartialHouseholdDrinksContainersTonnage { get; set; }
+        public RAMTonnage? PartialHouseholdDrinksContainersRAMTonnage { get; set; }
+        public decimal PartialTotalTonnage { get; set; }
+        public decimal PartialSelfManagedConsumerWasteTonnage { get; set; }
     }
 }
+
