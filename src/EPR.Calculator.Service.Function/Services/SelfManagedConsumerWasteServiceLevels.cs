@@ -67,17 +67,6 @@ namespace EPR.Calculator.Service.Function.Services
             };
         }
 
-        public static List<Result> Calculate2(IL1 l1, bool applyModulation)
-        {
-            return l1 switch
-            {
-                SingleL1 sl1 => new List<Result> {  },
-                HC       hc  => UpdateHC(hc, applyModulation),
-                _            => throw new ArgumentException($"Unsupported L1 type {l1.GetType}")
-            };
-        }
-
-
         private static Result UpdateSingleL1(IL1 l1, bool applyModulation)
         {
             if (applyModulation)

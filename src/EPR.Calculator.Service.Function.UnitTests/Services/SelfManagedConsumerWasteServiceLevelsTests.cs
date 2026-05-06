@@ -7,6 +7,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     [TestClass]
     public class SelfManagedConsumerWasteServiceLevelsTests
     {
+
+        [TestMethod]
+        public void SingleL1_without_modulation()
+        {
+            var l1 = new SingleL1(OrgId: 1, R: 0, A: 0, G: 0, Total: 3, Smcw: 4);
+            var result = SelfManagedConsumerWasteServiceLevels.Calculate(l1, applyModulation: false);
+
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: null, Level: 1, Smcw: 4, NetTotal: 0, NetR: null, NetA: null, NetG: null, Residual: null, ActionedSmcwR: null, ActionedSmcwA: null, ActionedSmcwG: null), result[0]);
+        }
+
         [TestMethod]
         public void SingleL1_a_first()
         {
@@ -45,6 +56,24 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             Assert.AreEqual(1, result.Count);
             Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: null, Level: 1, Smcw: 4, NetTotal: 0, NetR: 0, NetA: 0, NetG: 0, Residual: 1, ActionedSmcwR: 1, ActionedSmcwA: 1, ActionedSmcwG: 1), result[0]);
+        }
+
+        [TestMethod]
+        public void HC_without_modulation()
+        {
+            var l1 = new HC(
+                orgId: 1,
+                new List<L2>{
+                    new L2(OrgId: 1, SubsidiaryId: null, R: 0, A: 0, G: 0, Total: 30, Smcw: 45),
+                    new L2(OrgId: 1, SubsidiaryId: "2" , R: 0, A: 0, G: 0, Total: 60, Smcw: 30)
+                }
+            );
+            var result = SelfManagedConsumerWasteServiceLevels.Calculate(l1, applyModulation: false);
+
+            Assert.AreEqual(3, result.Count);
+            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: null, Level: 1, Smcw: 75, NetTotal:  15, NetR: null, NetA: null, NetG: null, Residual: null, ActionedSmcwR: null, ActionedSmcwA: null, ActionedSmcwG: null), result[0]);
+            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: null, Level: 2, Smcw: 45, NetTotal: -15, NetR: null, NetA: null, NetG: null, Residual: null, ActionedSmcwR: null, ActionedSmcwA: null, ActionedSmcwG: null), result[1]);
+            Assert.AreEqual(new Result(OrgId: 1, SubsidiaryId: "2" , Level: 2, Smcw: 30, NetTotal:  30, NetR: null, NetA: null, NetG: null, Residual: null, ActionedSmcwR: null, ActionedSmcwA: null, ActionedSmcwG: null), result[2]);
         }
 
         [TestMethod]
