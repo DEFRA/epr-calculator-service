@@ -534,10 +534,10 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
                 } else {
                     headers.AddRange(CreateHeaders(CalcResultSummaryHeaders.PricePerTonne));
+                    headers.AddRange(CreateHeaders( CalcResultSummaryHeaders.ProducerDisposalFee));
                 }
 
                 headers.AddRange(CreateHeaders(
-                    CalcResultSummaryHeaders.ProducerDisposalFee,
                     CalcResultSummaryHeaders.BadDebtProvision,
                     CalcResultSummaryHeaders.ProducerDisposalFeeWithBadDebtProvision,
                     CalcResultSummaryHeaders.EnglandWithBadDebtProvision,
