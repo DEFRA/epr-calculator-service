@@ -6,9 +6,14 @@ using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations
 {
+    public interface ICalcResultPartialObligationsExporter
+    {
+        public void Export(CalcResultPartialObligations calcResultPartialObligations, StringBuilder stringBuilder, bool showModulation);
+    }
+
     public class CalcResultPartialObligationsExporter : ICalcResultPartialObligationsExporter
     {
-        public void Export(CalcResultPartialObligations calcResultPartialObligations, StringBuilder stringBuilder)
+        public void Export(CalcResultPartialObligations calcResultPartialObligations, StringBuilder stringBuilder, bool showModulation)
         {
             // Add empty lines
             stringBuilder.AppendLine();
@@ -20,7 +25,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligation
             // Add data
             if (calcResultPartialObligations.PartialObligations?.Any() == true)
             {
-                AppendPartialObligations(calcResultPartialObligations.PartialObligations!, stringBuilder);
+                AppendPartialObligations(calcResultPartialObligations.PartialObligations!, stringBuilder, showModulation);
             }
             else
             {
@@ -28,7 +33,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligation
             }
         }
 
-        private static void AppendPartialObligations(IEnumerable<CalcResultPartialObligation> partialObligations, StringBuilder csvContent)
+        private static void AppendPartialObligations(IEnumerable<CalcResultPartialObligation> partialObligations, StringBuilder csvContent, bool showModulation)
         {
             foreach (var producer in partialObligations)
             {
@@ -43,41 +48,61 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligation
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.DaysObligated));
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.ObligatedPercentage));
 
-                AppendPartialObligationTonnageByMaterial(csvContent, producer.PartialObligationTonnageByMaterial);
+                AppendPartialObligationTonnageByMaterial(csvContent, producer.PartialObligationTonnageByMaterial, showModulation);
 
                 csvContent.AppendLine();
             }
         }
 
-        private static void AppendPartialObligationTonnageByMaterial(StringBuilder csvContent, Dictionary<string, CalcResultPartialObligationTonnage> partialObligationTonnageByMaterial)
+        private static void AppendPartialObligationTonnageByMaterial(StringBuilder csvContent, Dictionary<string, CalcResultPartialObligationTonnage> partialObligationTonnageByMaterial, bool showModulation)
         {
+            void AppendRam(RAMTonnage? ram)
+            {
+                if (showModulation && ram != null)
+                { 
+                    csvContent.Append(CsvSanitiser.SanitiseData(ram.RedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+                    csvContent.Append(CsvSanitiser.SanitiseData(ram.AmberTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+                    csvContent.Append(CsvSanitiser.SanitiseData(ram.GreenTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+                    csvContent.Append(CsvSanitiser.SanitiseData(ram.RedMedicalTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+                    csvContent.Append(CsvSanitiser.SanitiseData(ram.AmberMedicalTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+                    csvContent.Append(CsvSanitiser.SanitiseData(ram.GreenMedicalTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+                }
+            } 
+
             foreach (var producerTonnage in partialObligationTonnageByMaterial)
             {
                 var materialCode = producerTonnage.Key;
                 var tonnage = producerTonnage.Value;
 
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ReportedHouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ReportedPublicBinTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.HouseholdTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+                AppendRam(tonnage.HouseholdRAMTonnage);
 
-                if (materialCode == MaterialCodes.Glass || materialCode == MaterialNames.Glass)
+                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.PublicBinTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+                AppendRam(tonnage.PublicBinRAMTonnage);
+
+                if (materialCode == MaterialCodes.Glass)
                 {
-                    csvContent.Append(CsvSanitiser.SanitiseData(tonnage.HouseholdDrinksContainersTonnageGlass, DecimalPlaces.Three, DecimalFormats.F3));
+                    csvContent.Append(CsvSanitiser.SanitiseData(tonnage.HouseholdDrinksContainersTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+                    AppendRam(tonnage.HouseholdDrinksContainersRAMTonnage);
                 }
 
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.TotalReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ReportedSelfManagedConsumerWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.NetReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.PartialReportedHouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.PartialReportedPublicBinTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.TotalTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.SelfManagedConsumerWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+                
+                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.PartialHouseholdTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+                AppendRam(tonnage.PartialHouseholdRAMTonnage);
 
-                if (materialCode == MaterialCodes.Glass || materialCode == MaterialNames.Glass)
+                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.PartialPublicBinTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+                AppendRam(tonnage.PartialPublicBinRAMTonnage);
+
+                if (materialCode == MaterialCodes.Glass)
                 {
-                    csvContent.Append(CsvSanitiser.SanitiseData(tonnage.PartialHouseholdDrinksContainersTonnageGlass, DecimalPlaces.Three, DecimalFormats.F3));
+                    csvContent.Append(CsvSanitiser.SanitiseData(tonnage.PartialHouseholdDrinksContainersTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+                    AppendRam(tonnage.PartialHouseholdDrinksContainersRAMTonnage);
                 }
 
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.PartialTotalReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.PartialReportedSelfManagedConsumerWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.PartialNetReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.PartialTotalTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.PartialSelfManagedConsumerWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
             }
         }
 

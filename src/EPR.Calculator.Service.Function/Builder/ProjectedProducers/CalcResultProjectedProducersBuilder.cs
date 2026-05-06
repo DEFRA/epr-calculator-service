@@ -10,7 +10,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 {
     public interface ICalcResultProjectedProducersBuilder
     {
-        Task<(List<ProducerDetail>, CalcResultProjectedProducers)> ConstructAsync(
+        (List<ProducerDetail>, CalcResultProjectedProducers) ConstructAsync(
             List<MaterialDetail> materialDetails,
             List<ProducerDetail> producerDetails,
             CalcResultsRequestDto resultsRequestDto
@@ -26,7 +26,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             this.dbContext = dbContext;
         }
 
-        public Task<(List<ProducerDetail>, CalcResultProjectedProducers)> ConstructAsync(
+        public (List<ProducerDetail>, CalcResultProjectedProducers) ConstructAsync(
             List<MaterialDetail> materialDetails,
             List<ProducerDetail> producerDetails,
             CalcResultsRequestDto resultsRequestDto
@@ -73,7 +73,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                 H1ProjectedProducers = allH1Rows.OrderBy(p => p.ProducerId).ThenBy(p => p.Level).ThenBy(p => p.SubsidiaryId).ToList()
             };
 
-            return Task.FromResult((updatedProducers, result));
+            return (updatedProducers, result);
         }
 
         private ProducerDetail ApplyProjectedMaterials(
@@ -128,30 +128,15 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             );
         }
 
-        public static RAMTonnage GetRAMTonnage(string packagingType, List<ProducerReportedMaterial> reportedMaterials) {
-            decimal GetReportedTonnage(string packagingType, Func<ProducerReportedMaterial, decimal?> tonnageFunc) {
-                return reportedMaterials.Where(p => p.PackagingType == packagingType).Sum(t => tonnageFunc(t) ?? 0);
-            }
 
-            return new RAMTonnage {
-                Tonnage = GetReportedTonnage(packagingType, t => t.PackagingTonnage),
-                RedTonnage = GetReportedTonnage(packagingType, t => t.PackagingTonnageRed),
-                RedMedicalTonnage = GetReportedTonnage(packagingType, t => t.PackagingTonnageRedMedical),
-                AmberTonnage = GetReportedTonnage(packagingType, t => t.PackagingTonnageAmber),
-                AmberMedicalTonnage = GetReportedTonnage(packagingType, t => t.PackagingTonnageAmberMedical),
-                GreenTonnage = GetReportedTonnage(packagingType, t => t.PackagingTonnageGreen),
-                GreenMedicalTonnage = GetReportedTonnage(packagingType, t => t.PackagingTonnageGreenMedical),
-            };
-        }
-
-        public static decimal TonnageWithoutRAM(RAMTonnage tonnage)
+        public static decimal TonnageWithoutRAM(decimal tonnage, RAMTonnage ramTonnage)
         {
-            return Math.Max(0, tonnage.Tonnage - tonnage.GetTotalRamTonnage());
+            return Math.Max(0, tonnage - ramTonnage.TotalRamTonnage());
         }
 
         public static RAMTonnage SumRAMTonnages(List<ICalcResultProjectedProducer> producers, string materialCode, Func<CalcResultProjectedProducerMaterialTonnage, RAMTonnage?> getRAMTonnage)
         {
-            decimal tonnage = 0, red = 0, redMed = 0, amber = 0, amberMed = 0, green = 0, greenMed = 0;
+            decimal red = 0, redMed = 0, amber = 0, amberMed = 0, green = 0, greenMed = 0;
 
             foreach (var p in producers)
             {
@@ -161,7 +146,6 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                 var ram = getRAMTonnage(material);
                 if (ram == null) continue;
 
-                tonnage += ram.Tonnage;
                 red += ram.RedTonnage;
                 redMed += ram.RedMedicalTonnage;
                 amber += ram.AmberTonnage;
@@ -172,7 +156,6 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 
             return new RAMTonnage
             {
-                Tonnage = tonnage,
                 RedTonnage = red,
                 RedMedicalTonnage = redMed,
                 AmberTonnage = amber,

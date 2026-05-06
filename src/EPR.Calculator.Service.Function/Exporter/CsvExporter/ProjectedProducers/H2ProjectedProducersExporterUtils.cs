@@ -29,7 +29,6 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
         {
             void appendRamTonnage(RAMTonnage tonnage)
             {
-                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.Tonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 csvContent.Append(CsvSanitiser.SanitiseData(tonnage.RedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 csvContent.Append(CsvSanitiser.SanitiseData(tonnage.AmberTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 csvContent.Append(CsvSanitiser.SanitiseData(tonnage.GreenTonnage, DecimalPlaces.Three, DecimalFormats.F3));
@@ -43,14 +42,17 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
                 var materialCode = producerTonnage.Key;
                 var tonnage = producerTonnage.Value;
 
+                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.HouseholdTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 appendRamTonnage(tonnage.HouseholdRAMTonnage);
                 csvContent.Append(CsvSanitiser.SanitiseData(tonnage.HouseholdTonnageWithoutRAM, DecimalPlaces.Three, DecimalFormats.F3));
 
+                csvContent.Append(CsvSanitiser.SanitiseData(tonnage.PublicBinTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 appendRamTonnage(tonnage.PublicBinRAMTonnage);
                 csvContent.Append(CsvSanitiser.SanitiseData(tonnage.PublicBinTonnageWithoutRAM, DecimalPlaces.Three, DecimalFormats.F3));
 
                 if (materialCode == MaterialCodes.Glass)
                 {
+                    csvContent.Append(CsvSanitiser.SanitiseData(tonnage.HouseholdDrinksContainerTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                     appendRamTonnage(tonnage.HouseholdDrinksContainerRAMTonnage!);
                     csvContent.Append(CsvSanitiser.SanitiseData(tonnage.HouseholdDrinksContainerTonnageWithoutRAM, DecimalPlaces.Three, DecimalFormats.F3));
                 }

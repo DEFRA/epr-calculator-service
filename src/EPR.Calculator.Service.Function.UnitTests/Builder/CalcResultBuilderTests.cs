@@ -240,7 +240,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             mockReportedProducerService.Setup(m => m.GetProducers(resultsRequestDto.RunId))
                 .ReturnsAsync(mockProducers1);
             mockCalcResultProjectedProducersBuilder.Setup(m => m.ConstructAsync(It.IsAny<List<MaterialDetail>>(), mockProducers1, resultsRequestDto))
-                .ReturnsAsync((mockProducers2, mockCalcResultProjectedProducersData.Object));
+                .Returns((mockProducers2, mockCalcResultProjectedProducersData.Object));
             mockCalcResultPartialObligationBuilder.Setup(m => m.ConstructAsync(It.IsAny<List<MaterialDetail>>(), mockProducers2, resultsRequestDto, applyModulation))
                 .ReturnsAsync((mockProducers2, mockCalcResultPartialObligationsData.Object));
 
@@ -274,7 +274,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
                 .ReturnsAsync(mockProducers1);
 
             mockCalcResultProjectedProducersBuilder.Setup(m => m.ConstructAsync(It.IsAny<List<MaterialDetail>>(), mockProducers1, resultsRequestDto))
-                .ReturnsAsync((mockProducers2, mockCalcResultProjectedProducersData.Object!));
+                .Returns((mockProducers2, mockCalcResultProjectedProducersData.Object!));
 
             var result = await calcResultBuilder.BuildAsync(resultsRequestDto);
 
