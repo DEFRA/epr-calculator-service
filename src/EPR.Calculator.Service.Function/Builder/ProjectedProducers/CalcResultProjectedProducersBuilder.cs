@@ -19,13 +19,6 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 
     public class CalcResultProjectedProducersBuilder : ICalcResultProjectedProducersBuilder
     {
-        private readonly ApplicationDBContext dbContext;
-
-        public CalcResultProjectedProducersBuilder(ApplicationDBContext dbContext)
-        {
-            this.dbContext = dbContext;
-        }
-
         public Task<(List<ProducerDetail>, CalcResultProjectedProducers)> ConstructAsync(
             List<MaterialDetail> materialDetails,
             List<ProducerDetail> producerDetails,

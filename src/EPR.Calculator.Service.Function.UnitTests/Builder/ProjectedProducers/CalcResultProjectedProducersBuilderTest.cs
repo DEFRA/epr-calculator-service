@@ -28,7 +28,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 
             dbContext = new ApplicationDBContext(dbContextOptions);
             dbContext.Database.EnsureCreated();
-            builder = new CalcResultProjectedProducersBuilder(dbContext);
+            builder = new CalcResultProjectedProducersBuilder();
         }
 
         [TestCleanup]
@@ -511,7 +511,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     row[SubsidiaryI] = subsidiaryId ?? "";
                     row[PeriodI] = submission.SubmissionPeriod;
                     row[LevelI] = level;
-                    row[MaterialCodeI] = materials.Find(m => m.Id == submission.MaterialId).Code;
+                    row[MaterialCodeI] = materials.Single(m => m.Id == submission.MaterialId).Code;
                     row[PackagingTypeI] = submission.PackagingType;
                     row[TotalTonnageI] = submission.PackagingTonnage.ToString();
                     row[RTonnageI]  = (submission.PackagingTonnageRed  ?? 0m).ToString();
@@ -569,7 +569,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                         producer.ProducerReportedMaterials.Add(
                             new ProducerReportedMaterial
                             {
-                                MaterialId = materials.Find(m => m.Code == row[MaterialCodeI]).Id,
+                                MaterialId = materials.Single(m => m.Code == row[MaterialCodeI]).Id,
                                 PackagingType = row[PackagingTypeI],
                                 PackagingTonnage = ToDecimal(row[TotalTonnageI]) ?? 0m,
                                 PackagingTonnageRed = ToDecimal(row[RTonnageI]),

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using EPR.Calculator.Service.Common.Utils;
 using EPR.Calculator.Service.Function.Constants;
@@ -31,11 +32,16 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         {
             AddFirstColumns(csvContent, producer);
 
-            AppendProducerDisposalFeesByMaterial(csvContent, producer, applyModulation);
+            bool isNotTotal = producer.LeaverDate != CommonConstants.Totals;
+
+            foreach (var (key, disposalFee) in producer.ProducerDisposalFeesByMaterial)
+            {
+                AppendProducerDisposalFeesByMaterial(csvContent, producer, key, disposalFee, applyModulation: applyModulation, isNotTotal: isNotTotal);
+            }
 
             AddProducerDisposal(csvContent, producer);
 
-            AppendProducerCommsFeesByMaterial(csvContent, producer);
+            AppendProducerCommsFeesByMaterial(csvContent, producer, isNotTotal: isNotTotal);
 
             AddProducerCommsFee(csvContent, producer);
 
@@ -137,67 +143,71 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             csvContent.Append(CsvSanitiser.SanitiseData(producer.LeaverDate));
         }
 
+        [SuppressMessage(
+            "Critical Code Smell",
+            "S3776:Cognitive Complexity of methods should not be too high",
+            Justification = "Temporaraly suppress - will refactor later.")]
         private void AppendProducerDisposalFeesByMaterial(
             StringBuilder csvContent,
             CalcResultSummaryProducerDisposalFees producer,
-            bool applyModulation)
+            string key,
+            CalcResultSummaryProducerDisposalFeesByMaterial disposalFee,
+            bool applyModulation,
+            bool isNotTotal)
         {
-            foreach (var (key, disposalFee) in producer.ProducerDisposalFeesByMaterial)
-            {
-                csvContent.Append(
-                    !producer.isOverallTotalRow && (producer.Level != "1" || disposalFee.PreviousInvoicedTonnage == null)
-                        ? CsvSanitiser.SanitiseData(CommonConstants.Hyphen)
-                        : CsvSanitiser.SanitiseData(disposalFee.PreviousInvoicedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+            csvContent.Append(
+                !producer.isOverallTotalRow && (producer.Level != "1" || disposalFee.PreviousInvoicedTonnage == null)
+                    ? CsvSanitiser.SanitiseData(CommonConstants.Hyphen)
+                    : CsvSanitiser.SanitiseData(disposalFee.PreviousInvoicedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
 
-                foreach (var tonnage in MaterialTonnagePackages(key, disposalFee)) {
-                    csvContent.Append(CsvSanitiser.SanitiseData(tonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                }
-
-                if (applyModulation) {
-                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.TotalReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-
-                    foreach (var (_, v) in disposalFee.TotalReportedTonnageRagRating.OrderBy(x => x.Key))
-                    {
-                        csvContent.Append(CsvSanitiser.SanitiseData(v, DecimalPlaces.Three, DecimalFormats.F3));
-                    }
-
-                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.SelfManagedConsumerWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ActionedSelfManagedConsumerWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3, canBeEmpty: true));
-                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.NetReportedTonnage.total, DecimalPlaces.Three, DecimalFormats.F3, canBeEmpty: true));
-                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.NetReportedTonnage.red, DecimalPlaces.Three, DecimalFormats.F3, canBeEmpty: true));
-                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.NetReportedTonnage.amber, DecimalPlaces.Three, DecimalFormats.F3, canBeEmpty: true));
-                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.NetReportedTonnage.green, DecimalPlaces.Three, DecimalFormats.F3, canBeEmpty: true));
-                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ResidualSelfManagedConsumerWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3, canBeEmpty: true));
-                } else {
-                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.TotalReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.SelfManagedConsumerWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.NetReportedTonnage.total, DecimalPlaces.Three, DecimalFormats.F3));
-                }
-
-                AppendCsvValue(csvContent, disposalFee.TonnageChange, producer.isOverallTotalRow, DecimalPlaces.Three, DecimalFormats.F3);
-
-                if (applyModulation) {
-                    csvContent.Append(producer.LeaverDate != CommonConstants.Totals ? CsvSanitiser.SanitiseData(disposalFee.PricePerTonne.red  , null, null, true, canBeEmpty: true) : CommonConstants.CsvFileDelimiter);
-                    csvContent.Append(producer.LeaverDate != CommonConstants.Totals ? CsvSanitiser.SanitiseData(disposalFee.PricePerTonne.amber, null, null, true, canBeEmpty: true) : CommonConstants.CsvFileDelimiter);
-                    csvContent.Append(producer.LeaverDate != CommonConstants.Totals ? CsvSanitiser.SanitiseData(disposalFee.PricePerTonne.green, null, null, true, canBeEmpty: true) : CommonConstants.CsvFileDelimiter);
-                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ProducerDisposalFee.red  , DecimalPlaces.Two, DecimalFormats.F2, true, canBeEmpty: true));
-                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ProducerDisposalFee.amber, DecimalPlaces.Two, DecimalFormats.F2, true, canBeEmpty: true));
-                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ProducerDisposalFee.green, DecimalPlaces.Two, DecimalFormats.F2, true, canBeEmpty: true));
-                } else {
-                    csvContent.Append(producer.LeaverDate != CommonConstants.Totals ? CsvSanitiser.SanitiseData(disposalFee.PricePerTonne.total ?? 0, null, null, true) : CommonConstants.CsvFileDelimiter);
-                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ProducerDisposalFee.total ?? 0, DecimalPlaces.Two, DecimalFormats.F2, true));
-                }
-
-                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.BadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
-                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ProducerDisposalFeeWithBadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
-                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.EnglandWithBadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
-                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.WalesWithBadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
-                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ScotlandWithBadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
-                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.NorthernIrelandWithBadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
+            foreach (var tonnage in MaterialTonnagePackages(key, disposalFee)) {
+                csvContent.Append(CsvSanitiser.SanitiseData(tonnage, DecimalPlaces.Three, DecimalFormats.F3));
             }
+
+            if (applyModulation) {
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.TotalReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+
+                foreach (var (_, v) in disposalFee.TotalReportedTonnageRagRating.OrderBy(x => x.Key))
+                {
+                    csvContent.Append(CsvSanitiser.SanitiseData(v, DecimalPlaces.Three, DecimalFormats.F3));
+                }
+
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.SelfManagedConsumerWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ActionedSelfManagedConsumerWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3, canBeEmpty: true));
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.NetReportedTonnage.total, DecimalPlaces.Three, DecimalFormats.F3, canBeEmpty: true));
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.NetReportedTonnage.red, DecimalPlaces.Three, DecimalFormats.F3, canBeEmpty: true));
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.NetReportedTonnage.amber, DecimalPlaces.Three, DecimalFormats.F3, canBeEmpty: true));
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.NetReportedTonnage.green, DecimalPlaces.Three, DecimalFormats.F3, canBeEmpty: true));
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ResidualSelfManagedConsumerWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3, canBeEmpty: true));
+            } else {
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.TotalReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.SelfManagedConsumerWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.NetReportedTonnage.total, DecimalPlaces.Three, DecimalFormats.F3));
+            }
+
+            AppendCsvValue(csvContent, disposalFee.TonnageChange, producer.isOverallTotalRow, DecimalPlaces.Three, DecimalFormats.F3);
+
+            if (applyModulation) {
+                csvContent.Append(isNotTotal ? CsvSanitiser.SanitiseData(disposalFee.PricePerTonne.red  , null, null, true, canBeEmpty: true) : CommonConstants.CsvFileDelimiter);
+                csvContent.Append(isNotTotal ? CsvSanitiser.SanitiseData(disposalFee.PricePerTonne.amber, null, null, true, canBeEmpty: true) : CommonConstants.CsvFileDelimiter);
+                csvContent.Append(isNotTotal ? CsvSanitiser.SanitiseData(disposalFee.PricePerTonne.green, null, null, true, canBeEmpty: true) : CommonConstants.CsvFileDelimiter);
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ProducerDisposalFee.red  , DecimalPlaces.Two, DecimalFormats.F2, true, canBeEmpty: true));
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ProducerDisposalFee.amber, DecimalPlaces.Two, DecimalFormats.F2, true, canBeEmpty: true));
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ProducerDisposalFee.green, DecimalPlaces.Two, DecimalFormats.F2, true, canBeEmpty: true));
+            } else {
+                csvContent.Append(isNotTotal ? CsvSanitiser.SanitiseData(disposalFee.PricePerTonne.total ?? 0, null, null, true) : CommonConstants.CsvFileDelimiter);
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ProducerDisposalFee.total ?? 0, DecimalPlaces.Two, DecimalFormats.F2, true));
+            }
+
+            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.BadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ProducerDisposalFeeWithBadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.EnglandWithBadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.WalesWithBadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ScotlandWithBadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.NorthernIrelandWithBadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
         }
 
-        private void AppendProducerCommsFeesByMaterial(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
+        private void AppendProducerCommsFeesByMaterial(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool isNotTotal)
         {
             if (producer.ProducerCommsFeesByMaterial == null) { return; }
             foreach (var disposalFee in producer.ProducerCommsFeesByMaterial!)
@@ -206,7 +216,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
                     csvContent.Append(CsvSanitiser.SanitiseData(tonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 }
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.TotalReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                csvContent.Append(producer.LeaverDate != CommonConstants.Totals ? CsvSanitiser.SanitiseData(disposalFee.Value.PriceperTonne, null, null, true) : CommonConstants.CsvFileDelimiter);
+                csvContent.Append(isNotTotal ? CsvSanitiser.SanitiseData(disposalFee.Value.PriceperTonne, null, null, true) : CommonConstants.CsvFileDelimiter);
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ProducerTotalCostWithoutBadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.BadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ProducerTotalCostwithBadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));

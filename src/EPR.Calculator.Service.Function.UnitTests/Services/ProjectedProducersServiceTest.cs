@@ -54,7 +54,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     return Task.FromResult(arg);
                 });
 
-            var service = new ProjectedProducersService(context, producerReportedMaterialProjectedChunker.Object);
+            var service = new ProjectedProducersService(producerReportedMaterialProjectedChunker.Object);
 
             ProducerReportedMaterial mkProducerReportedMaterial(string submissionPeriod, string material, string packagingType, decimal total, decimal? r, decimal? a)
             {

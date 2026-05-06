@@ -16,7 +16,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             List<MaterialDetail> materialDetails,
             CalcResultsRequestDto resultsRequestDto,
             CalcResultOnePlusFourApportionment apportionment,
-            CalcResultLateReportingTonnage calcResultLateReportingTonnageData
+            CalcResultLateReportingTonnage calcResultLateReportingTonnage
         );
     }
 
