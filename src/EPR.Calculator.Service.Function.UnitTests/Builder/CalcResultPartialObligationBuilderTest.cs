@@ -31,7 +31,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             new Material { Id = 8, Code = "OT", Name = "Other materials", Description = "Other materials" }
         };
 
-        private (List<MaterialDetail>, List<ProducerDetail>) PrepareData(bool applyModulation)
+        private (List<MaterialDetail>, List<ProducerDetail>) PrepareData()
         {
             var calcRunOrganisationDataMaster = new CalculatorRunOrganisationDataMaster
             {
@@ -291,7 +291,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             // Arrange
             var applyModulation = false;
-            var (materialDetails, producers) = PrepareData(applyModulation);
+            var (materialDetails, producers) = PrepareData();
             var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
             // Act
@@ -349,7 +349,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             // Arrange
             var applyModulation = false;
-            var (materialDetails, producers) = PrepareData(applyModulation);
+            var (materialDetails, producers) = PrepareData();
             var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
             // Act
