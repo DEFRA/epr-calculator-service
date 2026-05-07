@@ -110,7 +110,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             MockCommsCostExporter.Verify(x => x.Export(It.IsAny<CalcResultCommsCost>(), It.IsAny<StringBuilder>()));
             MockOnePlusFourExporter.Verify(x => x.Export(It.IsAny<CalcResultOnePlusFourApportionment>(), It.IsAny<StringBuilder>()));
             MockScaledupProducersExporter.Verify(x => x.Export(It.IsAny<CalcResultScaledupProducers>(), It.IsAny<StringBuilder>()));
-            MockPartialObligationsExporter.Verify(x => x.Export(It.IsAny<CalcResultPartialObligations>(), It.IsAny<StringBuilder>()));
+            MockPartialObligationsExporter.Verify(x => x.Export(It.IsAny<CalcResultPartialObligations>(), It.IsAny<StringBuilder>(), It.IsAny<bool>()));
             MockProjectedProducersExporter.Verify(x => x.Export(It.IsAny<CalcResultProjectedProducers>(), It.IsAny<StringBuilder>()), Times.Never);
             MockParameterOtherCostExporter.Verify(x => x.Export(It.IsAny<CalcResultParameterOtherCost>(), It.IsAny<StringBuilder>()));
         }
