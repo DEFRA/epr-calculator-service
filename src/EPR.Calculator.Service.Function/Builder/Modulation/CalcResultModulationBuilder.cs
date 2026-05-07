@@ -60,24 +60,23 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
                     var lateReportingTonnageR = GetLateReportingTonnage(defaultParams, material, RagRating.Red);
                     var lateReportingTonnageA = GetLateReportingTonnage(defaultParams, material, RagRating.Amber);
                     var lateReportingTonnageG = GetLateReportingTonnage(defaultParams, material, RagRating.Green);
+                    var redMaterialTonnages   = lateReportingTonnageR + netReportedTonnage.red   ?? 0m;
+                    var amberMaterialTonnages = lateReportingTonnageA + netReportedTonnage.amber ?? 0m;
+                    var greenMaterialTonnages = lateReportingTonnageG + netReportedTonnage.green ?? 0m;
                     return new
                     {
                         material = material,
                         amberMaterialDisposalCost = materialDisposalCost,
-                        redMaterialDisposalCost   = materialDisposalCost * redFactor,
-                        redMaterialTonnages   = lateReportingTonnageR + netReportedTonnage.red   ?? 0m,
-                        amberMaterialTonnages = lateReportingTonnageA + netReportedTonnage.amber ?? 0m,
-                        greenMaterialTonnages = lateReportingTonnageG + netReportedTonnage.green ?? 0m
+                        redMaterialTonnages   = redMaterialTonnages,
+                        amberMaterialTonnages = amberMaterialTonnages,
+                        greenMaterialTonnages = greenMaterialTonnages,
+                        redAtAmberDisposalCost   = Math.Round(redMaterialTonnages   * materialDisposalCost, 2),
+                        greenAtAmberDisposalCost = Math.Round(greenMaterialTonnages * materialDisposalCost, 2)
                     };
                 });
 
-            decimal to4dp(decimal d)
-            {
-                return Math.Round(d, 4);
-            }
-
-            var totalRedAtAmberDisposalCost  = materialCosts.Sum(c => c.amberMaterialDisposalCost * c.redMaterialTonnages);
-            var totalGreenAtAmberDispoalCost = materialCosts.Sum(c => c.amberMaterialDisposalCost * c.greenMaterialTonnages);
+            var totalRedAtAmberDisposalCost  = materialCosts.Sum(c => c.redAtAmberDisposalCost);
+            var totalGreenAtAmberDispoalCost = materialCosts.Sum(c => c.greenAtAmberDisposalCost);
             var greenDiscount =
                 totalGreenAtAmberDispoalCost == 0
                     ? 0m // this is unlikely, but if happens then the green discount is moot
@@ -88,20 +87,17 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
                     material => material,
                     material =>
                 {
-
                     var cost = materialCosts.First(c => c.material == material);
-                    var greenMaterialDisposalCost = greenFactor * cost.amberMaterialDisposalCost;
-
                     return new MaterialModulation
                     {
-                        RedMaterialDisposalCost   = to4dp(cost.redMaterialDisposalCost),
-                        AmberMaterialDisposalCost = to4dp(cost.amberMaterialDisposalCost),
-                        GreenMaterialDisposalCost = to4dp(greenMaterialDisposalCost),
+                        RedMaterialDisposalCost   = Math.Round(cost.amberMaterialDisposalCost * redFactor  , 4),
+                        AmberMaterialDisposalCost = Math.Round(cost.amberMaterialDisposalCost              , 4),
+                        GreenMaterialDisposalCost = Math.Round(cost.amberMaterialDisposalCost * greenFactor, 4),
                         RedMaterialTonnages       = cost.redMaterialTonnages,
                         AmberMaterialTonnages     = cost.amberMaterialTonnages,
                         GreenMaterialTonnages     = cost.greenMaterialTonnages,
-                        TotalRedMaterialAtAmberDisposalCost   = cost.redMaterialTonnages   * cost.amberMaterialDisposalCost,
-                        TotalGreenMaterialAtAmberDisposalCost = cost.greenMaterialTonnages * cost.amberMaterialDisposalCost,
+                        TotalRedMaterialAtAmberDisposalCost   = cost.redAtAmberDisposalCost,
+                        TotalGreenMaterialAtAmberDisposalCost = cost.greenAtAmberDisposalCost
                     };
                 });
 
