@@ -196,9 +196,9 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ProducerDisposalFee.green, DecimalPlaces.Two, DecimalFormats.F2, true, canBeEmpty: true));
             } else {
                 csvContent.Append(isNotTotal ? CsvSanitiser.SanitiseData(disposalFee.PricePerTonne.total ?? 0, null, null, true) : CommonConstants.CsvFileDelimiter);
-                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ProducerDisposalFee.total ?? 0, DecimalPlaces.Two, DecimalFormats.F2, true));
             }
 
+            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ProducerDisposalFee.total ?? 0, DecimalPlaces.Two, DecimalFormats.F2, true));
             csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.BadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
             csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ProducerDisposalFeeWithBadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
             csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.EnglandWithBadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, true));
