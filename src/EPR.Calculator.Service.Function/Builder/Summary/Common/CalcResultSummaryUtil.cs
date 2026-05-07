@@ -531,13 +531,12 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
                         CalcResultSummaryHeaders.ProducerRedPlusRedMedicalMaterialDisposalCost,
                         CalcResultSummaryHeaders.ProducerAmberPlusAmberMedicalMaterialDisposalCost,
                         CalcResultSummaryHeaders.ProducerGreenPlusGreenMedicalMaterialDisposalCost));
-
                 } else {
                     headers.AddRange(CreateHeaders(CalcResultSummaryHeaders.PricePerTonne));
-                    headers.AddRange(CreateHeaders( CalcResultSummaryHeaders.ProducerDisposalFee));
                 }
 
                 headers.AddRange(CreateHeaders(
+                    CalcResultSummaryHeaders.ProducerDisposalFee,
                     CalcResultSummaryHeaders.BadDebtProvision,
                     CalcResultSummaryHeaders.ProducerDisposalFeeWithBadDebtProvision,
                     CalcResultSummaryHeaders.EnglandWithBadDebtProvision,
