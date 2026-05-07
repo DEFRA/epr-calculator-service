@@ -105,7 +105,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
                 calcResultScaledupProducersExporter.Export(calcResult.CalcResultScaledupProducers, csvContent);
             }
 
-            calcResultPartialObligationsExporter.Export(calcResult.CalcResultPartialObligations, csvContent);
+            calcResultPartialObligationsExporter.Export(calcResult.CalcResultPartialObligations, csvContent, calcResult.ApplyModulation);
 
             calcResultSummaryExporter.Export(calcResult.CalcResultSummary, csvContent, calcResult.ApplyModulation);
 

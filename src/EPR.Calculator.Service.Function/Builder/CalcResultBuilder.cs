@@ -152,7 +152,7 @@ namespace EPR.Calculator.Service.Function.Builder
             if (result.ApplyModulation)
             {
                 telemetryClient.TrackTrace("calcResultProjectedProducerBuilder started...");
-                var calcResultProjectedProducers = await calcResultProjectedProducersBuilder.ConstructAsync(materialDetails, producers1, resultsRequestDto);
+                var calcResultProjectedProducers = calcResultProjectedProducersBuilder.ConstructAsync(materialDetails, producers1, resultsRequestDto);
                 producers2 = calcResultProjectedProducers.Item1;
                 result.CalcResultProjectedProducers = calcResultProjectedProducers.Item2;
                 telemetryClient.TrackTrace("calcResultProjectedProducerBuilder end...");
