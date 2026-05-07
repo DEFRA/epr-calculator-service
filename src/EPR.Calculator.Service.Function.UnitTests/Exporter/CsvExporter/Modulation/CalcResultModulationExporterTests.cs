@@ -140,7 +140,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
                 new string[] {},
                 new string[] {},
                 new[] { "Modulation Calculation" },
-                new[] { "Red Modulation Factor", "1.2" },
+                new[] { "Red Modulation Factor", "1.200" },
                 new[] { "Green Modulation Factor", "0.751106" },
                 new[]
                 {
@@ -160,9 +160,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
                     "Amber Material Disposal Cost = Material Disposal Cost per Tonne",
                     "Green Material Disposal Cost = Green Modulation Factor * Amber Material Disposal Cost"
                 },
-                new[] { "Aluminium"      , "26181753.110", "24610.429", "", "3500", "123.456", "26209863.53", "21000000.12", "5000000.23", "209863.18",  "£6280704.41",  "£4955297.80",   "£0.7612",  "£0.6312",  "£0.4712" },
-                new[] { "Fibre composite",   "401772.341",  "1146.546", "",  "789",       "0",   "403707.88",     "3001.33",  "400000.22",    "706.33", "£14817325.23", "£11697888.16", "£115.9012", "£96.5912", "£72.5512" },
-                new[] { "Total"          , "26583525.451", "25756.975", "", "4289", "123.456", "26613571.41", "21003001.45", "5400000.45", "210569.51", "£21098029.64", "£16653185.96" },
+                new[] { "Aluminium"      , "26181753.110", "24610.429", "", "3500", "123.456", "26209863.530", "21000000.120", "5000000.230", "209863.180",  "£6280704.41",  "£4955297.80",   "£0.7612",  "£0.6312",  "£0.4712" },
+                new[] { "Fibre composite",   "401772.341",  "1146.546", "",  "789",   "0.000",   "403707.880",     "3001.330",  "400000.220",    "706.330", "£14817325.23", "£11697888.16", "£115.9012", "£96.5912", "£72.5512" },
+                new[] { "Total"          , "26583525.451", "25756.975", "", "4289", "123.456", "26613571.410", "21003001.450", "5400000.450", "210569.510", "£21098029.64", "£16653185.96" },
                 new string[] { }
             };
 

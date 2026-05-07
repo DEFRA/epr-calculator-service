@@ -29,13 +29,13 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation
                 csvContent.Append(CsvSanitiser.SanitiseData(s));
             }
 
-            void appendd(decimal? d, DecimalPlaces dp)
+            void appendd(decimal? d, DecimalPlaces dp, DecimalFormats df)
             {
-                csvContent.Append(CsvSanitiser.SanitiseData(d, dp, null));
+                csvContent.Append(CsvSanitiser.SanitiseData(d, dp, df));
             }
-            void appendc(decimal? d, DecimalPlaces dp)
+            void appendc(decimal? d, DecimalPlaces dp, DecimalFormats df)
             {
-                csvContent.Append(CsvSanitiser.SanitiseData(d, dp, null, true));
+                csvContent.Append(CsvSanitiser.SanitiseData(d, dp, df, true));
             }
 
             nl();
@@ -45,11 +45,11 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation
             nl();
 
             append("Red Modulation Factor");
-            appendd(modulationResult.RedFactor, DecimalPlaces.Three);
+            appendd(modulationResult.RedFactor, DecimalPlaces.Three, DecimalFormats.F3);
             nl();
 
             append("Green Modulation Factor");
-            appendd(modulationResult.GreenFactor, DecimalPlaces.Six);
+            appendd(modulationResult.GreenFactor, DecimalPlaces.Six, DecimalFormats.F6);
             nl();
 
             append("Material");
@@ -81,19 +81,19 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation
                 append(laDisposalCost.HouseholdDrinkContainers); // D
                 append(laDisposalCost.LateReportingTonnage); // E
 
-                appendd(smcw.OverallTotalPerMaterials[material.Code].ActionedSelfManagedConsumerWasteTonnage ?? 0, DecimalPlaces.Three); // F
+                appendd(smcw.OverallTotalPerMaterials[material.Code].ActionedSelfManagedConsumerWasteTonnage ?? 0, DecimalPlaces.Three, DecimalFormats.F3); // F
 
-                appendd(modulation.RedMaterialTonnages + modulation.AmberMaterialTonnages + modulation.GreenMaterialTonnages, DecimalPlaces.Three); // G
-                appendd(modulation.RedMaterialTonnages, DecimalPlaces.Three); // H
-                appendd(modulation.AmberMaterialTonnages, DecimalPlaces.Three); // I
-                appendd(modulation.GreenMaterialTonnages, DecimalPlaces.Three); // J
+                appendd(modulation.RedMaterialTonnages + modulation.AmberMaterialTonnages + modulation.GreenMaterialTonnages, DecimalPlaces.Three, DecimalFormats.F3); // G
+                appendd(modulation.RedMaterialTonnages, DecimalPlaces.Three, DecimalFormats.F3); // H
+                appendd(modulation.AmberMaterialTonnages, DecimalPlaces.Three, DecimalFormats.F3); // I
+                appendd(modulation.GreenMaterialTonnages, DecimalPlaces.Three, DecimalFormats.F3); // J
 
-                appendc(modulation.TotalRedMaterialAtAmberDisposalCost, DecimalPlaces.Two); // K
-                appendc(modulation.TotalGreenMaterialAtAmberDisposalCost, DecimalPlaces.Two); // L
+                appendc(modulation.TotalRedMaterialAtAmberDisposalCost, DecimalPlaces.Two, DecimalFormats.F2); // K
+                appendc(modulation.TotalGreenMaterialAtAmberDisposalCost, DecimalPlaces.Two, DecimalFormats.F2); // L
 
-                appendc(modulation.RedMaterialDisposalCost  , DecimalPlaces.Four); // M
-                appendc(modulation.AmberMaterialDisposalCost, DecimalPlaces.Four); // N
-                appendc(modulation.GreenMaterialDisposalCost, DecimalPlaces.Four); // O
+                appendc(modulation.RedMaterialDisposalCost  , DecimalPlaces.Four, DecimalFormats.F4); // M
+                appendc(modulation.AmberMaterialDisposalCost, DecimalPlaces.Four, DecimalFormats.F4); // N
+                appendc(modulation.GreenMaterialDisposalCost, DecimalPlaces.Four, DecimalFormats.F4); // O
                 nl();
             }
 
@@ -104,19 +104,19 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation
                 append(laDisposalCost.ReportedPublicBinTonnage); // C
                 append(laDisposalCost.HouseholdDrinkContainers); // D
                 append(laDisposalCost.LateReportingTonnage); // E
-                appendd(smcw.OverallTotalPerMaterials.Values.Sum(e => e.ActionedSelfManagedConsumerWasteTonnage), DecimalPlaces.Three); // F
+                appendd(smcw.OverallTotalPerMaterials.Values.Sum(e => e.ActionedSelfManagedConsumerWasteTonnage), DecimalPlaces.Three, DecimalFormats.F3); // F
 
                 var r = modulationResult.MaterialModulation.Values.Sum(m => m.RedMaterialTonnages  );
                 var a = modulationResult.MaterialModulation.Values.Sum(m => m.AmberMaterialTonnages);
                 var g = modulationResult.MaterialModulation.Values.Sum(m => m.GreenMaterialTonnages);
 
-                appendd(r + a + g, DecimalPlaces.Two); // G
-                appendd(r, DecimalPlaces.Two); // H
-                appendd(a, DecimalPlaces.Two); // I
-                appendd(g, DecimalPlaces.Two); // J
+                appendd(r + a + g, DecimalPlaces.Three, DecimalFormats.F3); // G
+                appendd(r        , DecimalPlaces.Three, DecimalFormats.F3); // H
+                appendd(a        , DecimalPlaces.Three, DecimalFormats.F3); // I
+                appendd(g        , DecimalPlaces.Three, DecimalFormats.F3); // J
 
-                appendc(modulationResult.MaterialModulation.Values.Sum(m => m.TotalRedMaterialAtAmberDisposalCost  ), DecimalPlaces.Two); // K
-                appendc(modulationResult.MaterialModulation.Values.Sum(m => m.TotalGreenMaterialAtAmberDisposalCost), DecimalPlaces.Two); // L
+                appendc(modulationResult.MaterialModulation.Values.Sum(m => m.TotalRedMaterialAtAmberDisposalCost  ), DecimalPlaces.Two, DecimalFormats.F2); // K
+                appendc(modulationResult.MaterialModulation.Values.Sum(m => m.TotalGreenMaterialAtAmberDisposalCost), DecimalPlaces.Two, DecimalFormats.F2); // L
 
                 append(null); // M
                 append(null); // N
