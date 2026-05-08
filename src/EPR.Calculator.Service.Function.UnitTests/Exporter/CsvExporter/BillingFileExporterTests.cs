@@ -16,6 +16,8 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using EPR.Calculator.Service.Function.Builder.Modulation;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 {
@@ -27,6 +29,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         private Mock<ICalcResultDetailExporter> _resultDetailexporter;
         private Mock<IOnePlusFourApportionmentExporter> _onePlusFourApportionmentExporter;
         private Mock<ICalcResultLaDisposalCostExporter> _laDisposalCostExporter;
+        private Mock<ICalcResultModulationExporter> _modulationExporter;
         private Mock<ICalcResultScaledupProducersExporter> _calcResultScaledupProducersExporter;
         private Mock<ICalcResultPartialObligationsExporter> _calcResultPartialObligationsExporter;
         private Mock<ICalcResultProjectedProducersExporter> _calcResultProjectedProducersExporter;
@@ -43,6 +46,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             _resultDetailexporter = new Mock<ICalcResultDetailExporter>();
             _onePlusFourApportionmentExporter = new Mock<IOnePlusFourApportionmentExporter>();
             _laDisposalCostExporter = new Mock<ICalcResultLaDisposalCostExporter>();
+            _modulationExporter = new Mock<ICalcResultModulationExporter>();
             _calcResultScaledupProducersExporter = new Mock<ICalcResultScaledupProducersExporter>();
             _calcResultPartialObligationsExporter = new Mock<ICalcResultPartialObligationsExporter>();
             _calcResultProjectedProducersExporter = new Mock<ICalcResultProjectedProducersExporter>();
@@ -57,6 +61,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 _resultDetailexporter.Object,
                 _onePlusFourApportionmentExporter.Object,
                 _laDisposalCostExporter.Object,
+                _modulationExporter.Object,
                 _calcResultScaledupProducersExporter.Object,
                 _calcResultPartialObligationsExporter.Object,
                 _calcResultProjectedProducersExporter.Object,
@@ -77,6 +82,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 _resultDetailexporter.Object,
                 _onePlusFourApportionmentExporter.Object,
                 _laDisposalCostExporter.Object,
+                _modulationExporter.Object,
                 _calcResultScaledupProducersExporter.Object,
                 _calcResultPartialObligationsExporter.Object,
                 _calcResultProjectedProducersExporter.Object,
