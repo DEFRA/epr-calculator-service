@@ -250,7 +250,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         )
         {
             var materialCosts = GetMaterialCosts(projectedMaterialsLookup, producersAndSubsidiaries, producerDisposalFees, materials, calcResult, isOverAllTotalRow, producerInvoicedMaterialNetTonnage, smcw);
-            var communicationCosts = GetCommunicationCosts(projectedMaterialsLookup, producersAndSubsidiaries, materials, calcResult, calcResult.ApplyModulation);
+            var communicationCosts = GetCommunicationCosts(projectedMaterialsLookup, producersAndSubsidiaries, materials, calcResult);
 
             // Compute Count/Advice for the producer-total (Level 1) row
             string? tonnageChangeCount = null;
@@ -392,8 +392,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     projectedMaterialsLookup,
                     producer,
                     material,
-                    calcResult,
-                    calcResult.ApplyModulation
+                    calcResult
                 );
 
                 commsCostSummary.Add(material.Code, producerCommsFeesCostByMaterial);
@@ -550,35 +549,16 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             ProducerDetail producer,
             MaterialDetail material,
-            CalcResult calcResult,
-            bool applyModulation
+            CalcResult calcResult
         )
         {
             return new CalcResultSummaryProducerCommsFeesCostByMaterial
             {
                 HouseholdPackagingWasteTonnage = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.Household),
-                HouseholdPackagingWasteTonnageRagRating = applyModulation
-                    ? Enum.GetValues<RagRating>().ToDictionary(
-                        rag => rag,
-                        rag => CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.Household, rag))
-                    : new(),
-
                 PublicBinTonnage = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.PublicBin),
-                PublicBinTonnageRagRating = applyModulation
-                    ? Enum.GetValues<RagRating>().ToDictionary(
-                        rag => rag,
-                        rag => CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.PublicBin, rag))
-                    : new(),
-
                 HouseholdDrinksContainersTonnage = material.Code == MaterialCodes.Glass
                     ? CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.HouseholdDrinksContainers)
                     : new(),
-                HouseholdDrinksContainersTonnageRagRating = applyModulation && material.Code == MaterialCodes.Glass
-                    ? Enum.GetValues<RagRating>().ToDictionary(
-                        rag => rag,
-                        rag => CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.HouseholdDrinksContainers, rag))
-                    : new(),
-
                 TotalReportedTonnage = CalcResultSummaryCommsCostTwoA.GetTotalReportedTonnage(projectedMaterialsLookup, producer, material),
                 PriceperTonne = CalcResultSummaryCommsCostTwoA.GetPriceperTonneForComms(material, calcResult),
                 ProducerTotalCostWithoutBadDebtProvision = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostWithoutBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult),
@@ -781,8 +761,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             IEnumerable<ProducerDetail> producersAndSubsidiaries,
             IEnumerable<MaterialDetail> materials,
-            CalcResult calcResult,
-            bool applyModulation
+            CalcResult calcResult
         )
         {
             var communicationCosts = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>();
@@ -794,28 +773,10 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 communicationCosts.Add(material.Code, new CalcResultSummaryProducerCommsFeesCostByMaterial
                 {
                     HouseholdPackagingWasteTonnage = CalcResultSummaryUtil.GetTonnageTotal(projectedMaterialsLookup, producersAndSubsidiaries, material, PackagingTypes.Household),
-                    HouseholdPackagingWasteTonnageRagRating = applyModulation
-                        ? Enum.GetValues<RagRating>().ToDictionary(
-                            rag => rag,
-                            rag => CalcResultSummaryUtil.GetTonnageTotal(projectedMaterialsLookup, producersAndSubsidiaries, material, PackagingTypes.Household, rag))
-                        : new(),
-
                     PublicBinTonnage = publicBinTonnage,
-                    PublicBinTonnageRagRating = applyModulation
-                        ? Enum.GetValues<RagRating>().ToDictionary(
-                            rag => rag,
-                            rag => CalcResultSummaryUtil.GetTonnageTotal(projectedMaterialsLookup, producersAndSubsidiaries, material, PackagingTypes.PublicBin, rag))
-                        : new(),
-
                     HouseholdDrinksContainersTonnage = material.Code == MaterialCodes.Glass
                         ? CalcResultSummaryUtil.GetTonnageTotal(projectedMaterialsLookup, producersAndSubsidiaries, material, PackagingTypes.HouseholdDrinksContainers)
                         : 0,
-                    HouseholdDrinksContainersTonnageRagRating = applyModulation && material.Code == MaterialCodes.Glass
-                        ? Enum.GetValues<RagRating>().ToDictionary(
-                            rag => rag,
-                            rag => CalcResultSummaryUtil.GetTonnageTotal(projectedMaterialsLookup, producersAndSubsidiaries, material, PackagingTypes.HouseholdDrinksContainers, rag))
-                        : new(),
-
                     TotalReportedTonnage = CalcResultSummaryCommsCostTwoA.GetTotalReportedTonnageTotal(projectedMaterialsLookup, producersAndSubsidiaries, material),
                     PriceperTonne = CalcResultSummaryCommsCostTwoA.GetPriceperTonneForComms(material, calcResult),
                     ProducerTotalCostWithoutBadDebtProvision = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostWithoutBadDebtProvisionTotal(projectedMaterialsLookup, producersAndSubsidiaries, material, calcResult),
