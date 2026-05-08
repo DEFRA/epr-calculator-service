@@ -131,7 +131,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
 
             foreach (var pair in groupByResult)
             {
-                var first = pair.ToList()[0];
+                var first = pair.First();
 
                 var parentProducer = scaledupOrganisations.FirstOrDefault(so => so.OrganisationId == pair.Key.ProducerId);
 

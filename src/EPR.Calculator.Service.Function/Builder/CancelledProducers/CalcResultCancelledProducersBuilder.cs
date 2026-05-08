@@ -80,6 +80,11 @@ namespace EPR.Calculator.Service.Function.Builder.CancelledProducers
             {
                 var producerId = missingProducerId is null ? 0 : missingProducerId;
 
+                var latestForProducer = filteredMissingProducers
+                    .Where(t => t.InvoiceInstruction?.ProducerId == producerId)
+                    .OrderByDescending(t => t.CalculatorRunId)
+                    .FirstOrDefault();
+
                 calcResultCancelledProducers.Add(new CalcResultCancelledProducersDto
                 {
                     ProducerId = (int)producerId,
@@ -99,10 +104,10 @@ namespace EPR.Calculator.Service.Function.Builder.CancelledProducers
                     },
                     LatestInvoice = new LatestInvoice
                     {
-                        BillingInstructionIdValue           = filteredMissingProducers.Where(t => t.InvoiceInstruction?.ProducerId == producerId).OrderByDescending(t => t.CalculatorRunId).Select(t => t.InvoiceInstruction?.BillingInstructionId).FirstOrDefault(),
-                        RunNameValue                        = filteredMissingProducers.Where(t => t.InvoiceInstruction?.ProducerId == producerId).OrderByDescending(t => t.CalculatorRunId).Select(t => t.CalculatorName).FirstOrDefault(),
-                        RunNumberValue                      = filteredMissingProducers.Where(t => t.InvoiceInstruction?.ProducerId == producerId).OrderByDescending(t => t.CalculatorRunId).Select(t => t.CalculatorRunId).FirstOrDefault().ToString(),
-                        CurrentYearInvoicedTotalToDateValue = filteredMissingProducers.Where(t => t.InvoiceInstruction?.ProducerId == producerId).OrderByDescending(t => t.CalculatorRunId).Select(t => t.InvoiceInstruction?.CurrentYearInvoicedTotalAfterThisRun).FirstOrDefault(),
+                        BillingInstructionIdValue           = latestForProducer?.InvoiceInstruction?.BillingInstructionId,
+                        RunNameValue                        = latestForProducer?.CalculatorName,
+                        RunNumberValue                      = latestForProducer?.CalculatorRunId.ToString(),
+                        CurrentYearInvoicedTotalToDateValue = latestForProducer?.InvoiceInstruction?.CurrentYearInvoicedTotalAfterThisRun,
                     }
                 });
             }
