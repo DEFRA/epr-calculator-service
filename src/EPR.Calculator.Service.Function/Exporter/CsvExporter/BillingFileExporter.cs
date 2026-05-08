@@ -7,6 +7,7 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.RejectedProducers;
@@ -28,6 +29,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         private readonly ICalcResultPartialObligationsExporter calcResultPartialObligationsExporterCsv;
         private readonly ICalcResultProjectedProducersExporter calcResultProjectedProducersExporterCsv;
         private readonly ICalcResultLaDisposalCostExporter laDisposalCostExporterCsv;
+        private readonly ICalcResultModulationExporter modulationExporterCsv;
         private readonly ICommsCostExporter commsCostExporterCsv;
         private readonly ICalcResultCancelledProducersExporter calcResultCancelledProducersExporterCsv;
         private readonly ICalcResultRejectedProducersExporter calcResultRejectedProducersExporterCsv;
@@ -38,6 +40,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             ICalcResultDetailExporter resultDetailexporter,
             IOnePlusFourApportionmentExporter onePlusFourApportionmentExporter,
             ICalcResultLaDisposalCostExporter laDisposalCostExporter,
+            ICalcResultModulationExporter modulationExporter,
             ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter,
             ICalcResultPartialObligationsExporter calcResultPartialObligationsExporter,
             ICalcResultProjectedProducersExporter calcResultProjectedProducersExporter,
@@ -58,6 +61,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             parameterOtherCostsCsv = parameterOtherCosts;
             calcResultSummaryExporterCsv = calcResultSummaryExporter;
             laDisposalCostExporterCsv = laDisposalCostExporter;
+            modulationExporterCsv = modulationExporter;
             commsCostExporterCsv = commsCostExporter;
             calcResultCancelledProducersExporterCsv = calcResultCancelledProducersExporter;
             calcResultRejectedProducersExporterCsv = calcResultRejectedProducersExporter;
@@ -79,6 +83,10 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             commsCostExporterCsv.Export(calcResult.CalcResultCommsCostReportDetail, csvContent);
 
             laDisposalCostExporterCsv.Export(calcResult.CalcResultLaDisposalCostData, csvContent);
+
+            if (calcResult.Smcw is not null && calcResult.CalcResultModulation is not null) {
+                modulationExporterCsv.Export(calcResult.CalcResultLaDisposalCostData, calcResult.Smcw, calcResult.CalcResultModulation, csvContent);
+            }
 
             calcResultCancelledProducersExporterCsv.Export(calcResult.CalcResultCancelledProducers, csvContent);
 
