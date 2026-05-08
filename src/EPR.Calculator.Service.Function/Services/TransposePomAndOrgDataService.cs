@@ -254,9 +254,9 @@ namespace EPR.Calculator.Service.Function.Services
 
                                 foreach (var pomData in pomDataDetailsByMaterial)
                                 {
-                                    var pom = pomData.AsEnumerable();
-                                    var packagingType = pom.FirstOrDefault()?.PackagingType;
-                                    var submissionPeriod = pom.FirstOrDefault()?.SubmissionPeriod;
+                                    var pom = pomData.ToList();
+                                    var packagingType = pom[0].PackagingType;
+                                    var submissionPeriod = pom[0].SubmissionPeriod;
                                     var totalPackagingMaterialWeight = pom.Sum(x => x.PackagingMaterialWeight) ?? 0;
 
                                     // Proceed further only if the packaging type and packaging material weight is not null

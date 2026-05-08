@@ -172,13 +172,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
                 foreach (var producerAndSubsidiaries in orderedProducerDetails.GroupBy(x => x.ProducerId))
                 {
-                    if (!(producerAndSubsidiaries.Count() == 1 && producerAndSubsidiaries.First().SubsidiaryId == null)) {
-                        producerDisposalFees.Add(GetProducerTotalRow(projectedMaterialsLookup, producerAndSubsidiaries.ToList(), materials, calcResult, producerDisposalFees, false, totalPackagingTonnage, producerInvoicedMaterialNetTonnage, smcw));
-                    }
+                    var subsidiariesList = producerAndSubsidiaries.ToList();
 
-                    foreach (var producer in producerAndSubsidiaries) {
+                    if (!(subsidiariesList.Count == 1 && subsidiariesList[0].SubsidiaryId == null))
+                        producerDisposalFees.Add(GetProducerTotalRow(projectedMaterialsLookup, producerAndSubsidiaries.ToList(), materials, calcResult, producerDisposalFees, false, totalPackagingTonnage, producerInvoicedMaterialNetTonnage, smcw));
+
+                    foreach (var producer in subsidiariesList)
                         producerDisposalFees.Add(GetProducerRow(projectedMaterialsLookup, producerDisposalFees, producerAndSubsidiaries.ToList(), producer, materials, calcResult, totalPackagingTonnage, producerInvoicedMaterialNetTonnage, smcw));
-                    }
                 };
 
                 // Calculate the total for all the producers
