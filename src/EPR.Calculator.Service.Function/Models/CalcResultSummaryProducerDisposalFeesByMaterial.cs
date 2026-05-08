@@ -1,9 +1,19 @@
 ﻿
+using EPR.Calculator.API.Data.Enums;
+
 namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResultSummaryProducerDisposalFeesByMaterial
         : CalcResultSummaryProducerMaterialBase
     {
+        public Dictionary<RagRating, decimal> HouseholdPackagingWasteTonnageRagRating { get; set; } = new();
+
+        public Dictionary<RagRating, decimal> PublicBinTonnageRagRating { get; set; } = new();
+
+        public Dictionary<RagRating, decimal> HouseholdDrinksContainersTonnageRagRating { get; set; } = new();
+
+        public Dictionary<RagRating, decimal> TotalReportedTonnageRagRating { get; set; } = new();
+
         public decimal SelfManagedConsumerWasteTonnage { get; set; }
 
         public decimal? ActionedSelfManagedConsumerWasteTonnage { get; set; }

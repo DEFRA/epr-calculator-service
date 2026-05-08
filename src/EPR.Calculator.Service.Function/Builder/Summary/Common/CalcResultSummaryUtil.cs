@@ -345,7 +345,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             int section1MaterialsIdx           = 1                             + startingHeaders().Count();
             int section1DisposalFeeIdx         = section1MaterialsIdx          + section1Materials(materials, applyModulation).Count();
             int section2aMaterialsIdx          = section1DisposalFeeIdx        + section1DisposalFee().Count();
-            int section2aCommsIdx              = section2aMaterialsIdx         + section2aMaterials(materials, applyModulation).Count();
+            int section2aCommsIdx              = section2aMaterialsIdx         + section2aMaterials(materials).Count();
             int section1DisposalIdx            = section2aCommsIdx             + section1Disposal().Count();
             int section2aComms2aIdx            = section1DisposalIdx           + section2aComms().Count();
             int commsCost2aPercentageIdx       = section2aComms2aIdx           + commsCost2aPercentage().Count();
@@ -396,7 +396,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             foreach (var material in materials)
             {
                 materialsBreakdownHeaders.Add(new CalcResultSummaryHeader { Name = $"{material.Name} Breakdown", ColumnIndex = commsCostColumnIndex });
-                commsCostColumnIndex += section2aMaterials([material], applyModulation).Count();
+                commsCostColumnIndex += section2aMaterials([material]).Count();
             }
             materialsBreakdownHeaders.Add(new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.CommsCostSummaryHeader, ColumnIndex = commsCostColumnIndex});
             materialsBreakdownHeaders.AddRange(CreateMoneyHeaders(section1DisposalIdx, result.TotalFeeforLADisposalCostswoBadDebtprovision1, result.BadDebtProvisionFor1, result.TotalFeeforLADisposalCostswithBadDebtprovision1));
@@ -413,7 +413,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             columnHeaders.AddRange(startingHeaders());
             columnHeaders.AddRange(section1Materials(materials, applyModulation));
             columnHeaders.AddRange(section1DisposalFee());
-            columnHeaders.AddRange(section2aMaterials(materials, applyModulation));
+            columnHeaders.AddRange(section2aMaterials(materials));
             columnHeaders.AddRange(section2aComms());
             columnHeaders.AddRange(section1Disposal());
             columnHeaders.AddRange(section2aComms2a());
@@ -562,50 +562,18 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
                 CalcResultSummaryHeaders.TonnageChangeAdvice);
         }
 
-        private static IEnumerable<CalcResultSummaryHeader> section2aMaterials(IEnumerable<MaterialDetail> materials, bool applyModulation)
+        private static IEnumerable<CalcResultSummaryHeader> section2aMaterials(IEnumerable<MaterialDetail> materials)
         {
             return materials.SelectMany(material =>
             {
                 var headers = new List<CalcResultSummaryHeader>();
-
-                headers.AddRange(CreateHeaders(CalcResultSummaryHeaders.HouseholdPackagingWasteTonnage));
-                if (applyModulation)
-                {
-                    headers.AddRange(CreateHeaders(
-                        CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageRed,
-                        CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageAmber,
-                        CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageGreen,
-                        CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageRedMedical,
-                        CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageAmberMedical,
-                        CalcResultSummaryHeaders.HouseholdPackagingWasteTonnageGreenMedical
-                    ));
-                }
-
-                headers.AddRange(CreateHeaders(CalcResultSummaryHeaders.PublicBinTonnage));
-                if (applyModulation)
-                {
-                    headers.AddRange(CreateHeaders(
-                        CalcResultSummaryHeaders.PublicBinTonnageRed,
-                        CalcResultSummaryHeaders.PublicBinTonnageAmber,
-                        CalcResultSummaryHeaders.PublicBinTonnageGreen,
-                        CalcResultSummaryHeaders.PublicBinTonnageRedMedical,
-                        CalcResultSummaryHeaders.PublicBinTonnageAmberMedical,
-                        CalcResultSummaryHeaders.PublicBinTonnageGreenMedical));
-                }
+                headers.AddRange(CreateHeaders(
+                    CalcResultSummaryHeaders.HouseholdPackagingWasteTonnage,
+                    CalcResultSummaryHeaders.PublicBinTonnage));
 
                 if (material.Code == MaterialCodes.Glass)
                 {
                     headers.AddRange(CreateHeaders(CalcResultSummaryHeaders.HouseholdDrinksContainersTonnage));
-                    if (applyModulation)
-                    {
-                        headers.AddRange(CreateHeaders(
-                            CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageRed,
-                            CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageAmber,
-                            CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageGreen,
-                            CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageRedMedical,
-                            CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageAmberMedical,
-                            CalcResultSummaryHeaders.HouseholdDrinksContainersTonnageGreenMedical));
-                    }
                 }
 
                 headers.AddRange(CreateHeaders(

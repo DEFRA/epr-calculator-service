@@ -10,8 +10,6 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 {
     public class CalcResultSummaryExporter : ICalcResultSummaryExporter
     {
-        private readonly IEnumerable<string> extraColumns = [MaterialCodes.Glass];
-
         public void Export(CalcResultSummary resultSummary, StringBuilder csvContent, bool applyModulation)
         {
             // Add empty lines
@@ -212,8 +210,11 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             if (producer.ProducerCommsFeesByMaterial == null) { return; }
             foreach (var disposalFee in producer.ProducerCommsFeesByMaterial!)
             {
-                foreach (var tonnage in MaterialTonnagePackages(disposalFee.Key, disposalFee.Value)) {
-                    csvContent.Append(CsvSanitiser.SanitiseData(tonnage, DecimalPlaces.Three, DecimalFormats.F3));
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.HouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+                csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.PublicBinTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+                if (disposalFee.Key == MaterialCodes.Glass)
+                {
+                    csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.HouseholdDrinksContainersTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 }
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.TotalReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 csvContent.Append(isNotTotal ? CsvSanitiser.SanitiseData(disposalFee.Value.PriceperTonne, null, null, true) : CommonConstants.CsvFileDelimiter);
@@ -227,7 +228,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             }
         }
 
-        private IEnumerable<decimal> MaterialTonnagePackages(string material, CalcResultSummaryProducerMaterialBase mb)
+        private IEnumerable<decimal> MaterialTonnagePackages(string materialCode, CalcResultSummaryProducerDisposalFeesByMaterial mb)
         {
             yield return mb.HouseholdPackagingWasteTonnage;
 
@@ -243,7 +244,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
                 yield return dict.Value;
             }
 
-            if (extraColumns.Contains(material))
+            if (materialCode == MaterialCodes.Glass)
             {
                 yield return mb.HouseholdDrinksContainersTonnage;
 
