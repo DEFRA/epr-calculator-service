@@ -1,25 +1,22 @@
+using System.Text;
+using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers;
+using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.ProjectedProducers
 {
-    using System.Text;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers;
-    using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
-
-
     [TestClass]
     public class CalcResultProjectedProducersExporterTests
     {
         private CalcResultProjectedProducersExporter exporter = new CalcResultProjectedProducersExporter();
 
-        private readonly List<MaterialDetail> materials = new List<MaterialDetail>()
-        {
-            new MaterialDetail { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
-            new MaterialDetail { Id = 2, Code = "GL", Name = "Glass", Description = "Glass" },
-            new MaterialDetail { Id = 3, Code = "OT", Name = "Other materials", Description = "Other materials" }
-        };
+        private readonly ImmutableArray<MaterialDetail> materials =
+        [
+            new MaterialDetail { Id = 1, Code = "AL", Name = "Aluminium" },
+            new MaterialDetail { Id = 2, Code = "GL", Name = "Glass" },
+            new MaterialDetail { Id = 3, Code = "OT", Name = "Other materials" }
+        ];
 
         [TestMethod]
         public void Export_ShouldIncludeProjectedProducers_WhenNotNull()
@@ -230,8 +227,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
 
         private List<CalcResultH2ProjectedProducer> GetH2ProjectedProducersList()
         {
-            return new List<CalcResultH2ProjectedProducer>()
-                {
+            return new List<CalcResultH2ProjectedProducer>
+            {
                     new CalcResultH2ProjectedProducer
                     {
                         ProducerId = 101001,
@@ -286,8 +283,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
 
         private List<CalcResultH2ProjectedProducer> GetCompleteH2ProjectedProducersList()
         {
-            return new List<CalcResultH2ProjectedProducer>()
-                {
+            return new List<CalcResultH2ProjectedProducer>
+            {
                     new CalcResultH2ProjectedProducer
                     {
                         ProducerId = 202002,
@@ -418,8 +415,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
 
         private List<CalcResultH1ProjectedProducer> GetH1ProjectedProducersList()
         {
-            return new List<CalcResultH1ProjectedProducer>()
-                {
+            return new List<CalcResultH1ProjectedProducer>
+            {
                     new CalcResultH1ProjectedProducer
                     {
                         ProducerId = 101001,
@@ -494,8 +491,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
 
         private List<CalcResultH1ProjectedProducer> GetCompleteH1ProjectedProducersList()
         {
-            return new List<CalcResultH1ProjectedProducer>()
-                {
+            return new List<CalcResultH1ProjectedProducer>
+            {
                     new CalcResultH1ProjectedProducer
                     {
                         ProducerId = 202002,

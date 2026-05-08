@@ -2,6 +2,7 @@
 {
     public enum DecimalFormats
     {
+        F0,
         F2,
         F3,
         F4,

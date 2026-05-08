@@ -1,16 +1,14 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.PartialObligations;
-using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Mappers;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Data;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Extensions;
+using EPR.Calculator.Service.Function.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Newtonsoft.Json;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
@@ -18,38 +16,23 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
     public class CalcResultPartialObligationBuilderTest
     {
         private readonly ApplicationDBContext dbContext;
-        private readonly int alId = 1;
         private CalcResultPartialObligationBuilder builder;
-        private List<Material> materials = new List<Material>{
-            new Material { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
-            new Material { Id = 2, Code = "FC", Name = "Fibre composite", Description = "Fibre composite" },
-            new Material { Id = 3, Code = "GL", Name = "Glass", Description = "Glass" },
-            new Material { Id = 4, Code = "PC", Name = "Paper or card", Description = "Paper or card" },
-            new Material { Id = 5, Code = "PL", Name = "Plastic", Description = "Plastic" },
-            new Material { Id = 6, Code = "ST", Name = "Steel", Description = "Steel" },
-            new Material { Id = 7, Code = "WD", Name = "Wood", Description = "Wood" },
-            new Material { Id = 8, Code = "OT", Name = "Other materials", Description = "Other materials" }
-        };
 
-        private (List<MaterialDetail>, List<ProducerDetail>) PrepareData()
+        private (RunContext, ImmutableList<MaterialDetail>, List<ProducerDetail>) PrepareData()
         {
+            var runContext = DummyData.RunContexts.CalculatorRun2025;
             var calcRunOrganisationDataMaster = new CalculatorRunOrganisationDataMaster
             {
                 Id = 11,
-                RelativeYear = new RelativeYear(2025),
+                RelativeYear = runContext.RelativeYear,
                 EffectiveFrom = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test User",
             };
             dbContext.CalculatorRunOrganisationDataMaster.Add(calcRunOrganisationDataMaster);
 
-            dbContext.CalculatorRuns.Add(new CalculatorRun
-            {
-                Id = 1,
-                RelativeYear = new RelativeYear(2024),
-                Name = "Name",
-                CalculatorRunOrganisationDataMaster = calcRunOrganisationDataMaster
-            });
+            var run = runContext.ToEntity(r => r.CalculatorRunOrganisationDataMasterId = calcRunOrganisationDataMaster.Id);
+            dbContext.CalculatorRuns.Add(run);
 
             dbContext.CalculatorRunOrganisationDataDetails.Add(
                 new CalculatorRunOrganisationDataDetail
@@ -80,7 +63,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var producerDetail = new ProducerDetail
             {
                 Id = 1,
-                CalculatorRunId = 1,
+                CalculatorRunId = run.Id,
                 ProducerId = 11,
                 SubsidiaryId = null,
                 ProducerName = "Allied Packaging",
@@ -89,7 +72,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var producerDetail2 = new ProducerDetail
             {
                 Id = 2,
-                CalculatorRunId = 1,
+                CalculatorRunId = run.Id,
                 ProducerId = 22,
                 SubsidiaryId = null,
                 ProducerName = "Partial Packaging",
@@ -137,35 +120,37 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 );
             }
 
-            dbContext.Material.AddRange(materials);
+            var materials = DummyData.Materials;
+            dbContext.Material.AddRange(materials.Select(md => new Material
+            {
+                Id = md.Id,
+                Code = md.Code,
+                Name = md.Name
+            }));
 
             dbContext.ProducerDetail.AddRange(producerDetail, producerDetail2);
 
             dbContext.SaveChanges();
 
             // read from db to populate ids
-            return (MaterialMapper.Map(materials), (dbContext.ProducerDetail).ToList());
+            return (runContext, materials, (dbContext.ProducerDetail).ToList());
         }
 
-        private (List<MaterialDetail>, List<ProducerDetail>) PrepareDataWithModulation()
+        private (RunContext, ImmutableList<MaterialDetail>, List<ProducerDetail>) PrepareDataWithModulation()
         {
+            var runContext = DummyData.RunContexts.CalculatorRun2026;
             var calcRunOrganisationDataMaster = new CalculatorRunOrganisationDataMaster
             {
                 Id = 11,
-                RelativeYear = new RelativeYear(2026),
+                RelativeYear = runContext.RelativeYear,
                 EffectiveFrom = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = "Test User",
             };
             dbContext.CalculatorRunOrganisationDataMaster.Add(calcRunOrganisationDataMaster);
 
-            dbContext.CalculatorRuns.Add(new CalculatorRun
-            {
-                Id = 1,
-                RelativeYear = new RelativeYear(2026),
-                Name = "Name",
-                CalculatorRunOrganisationDataMaster = calcRunOrganisationDataMaster
-            });
+            var run = runContext.ToEntity(r => r.CalculatorRunOrganisationDataMasterId = calcRunOrganisationDataMaster.Id);
+            dbContext.CalculatorRuns.Add(run);
 
             dbContext.CalculatorRunOrganisationDataDetails.Add(
                 new CalculatorRunOrganisationDataDetail
@@ -196,7 +181,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var producerDetail = new ProducerDetail
             {
                 Id = 1,
-                CalculatorRunId = 1,
+                CalculatorRunId = run.Id,
                 ProducerId = 11,
                 SubsidiaryId = null,
                 ProducerName = "Allied Packaging",
@@ -205,7 +190,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var producerDetail2 = new ProducerDetail
             {
                 Id = 2,
-                CalculatorRunId = 1,
+                CalculatorRunId = run.Id,
                 ProducerId = 22,
                 SubsidiaryId = null,
                 ProducerName = "Partial Packaging",
@@ -257,14 +242,20 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 );
             }
 
-            dbContext.Material.AddRange(materials);
+            var materials = DummyData.Materials;
+            dbContext.Material.AddRange(materials.Select(md => new Material
+            {
+                Id = md.Id,
+                Code = md.Code,
+                Name = md.Name
+            }));
 
             dbContext.ProducerDetail.AddRange(producerDetail, producerDetail2);
 
             dbContext.SaveChanges();
 
             // read from db to populate ids
-            return (MaterialMapper.Map(materials), (dbContext.ProducerDetail).ToList());
+            return (runContext, DummyData.Materials, dbContext.ProducerDetail.ToList());
         }
 
         public CalcResultPartialObligationBuilderTest()
@@ -290,12 +281,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public async Task Construct_WhenPartialObligationsExists()
         {
             // Arrange
-            var applyModulation = false;
-            var (materialDetails, producers) = PrepareData();
-            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
+            var (runContext, materials, producers) = PrepareData();
 
             // Act
-            var result = await builder.ConstructAsync(materialDetails, producers, requestDto, applyModulation);
+            var result = await builder.ConstructAsync(runContext, materials, producers);
 
             // Assert
             Assert.AreEqual(1, result.Item2.PartialObligations!.Count());
@@ -348,12 +337,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public async Task Construct_WhenPartialObligationsExists_producers()
         {
             // Arrange
-            var applyModulation = false;
-            var (materialDetails, producers) = PrepareData();
-            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
+            var (runContext, materials, producers) = PrepareData();
 
             // Act
-            var updatedProducers = (await builder.ConstructAsync(materialDetails, producers, requestDto, applyModulation)).Item1;
+            var updatedProducers = (await builder.ConstructAsync(runContext, materials, producers)).Item1;
 
             // Assert
             Assert.AreEqual(producers.Count(), updatedProducers.Count());
@@ -362,18 +349,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             {
                 if (producer.ProducerId == 22 && producer.SubsidiaryId == null)
                 {
-                    var reportedAlHH = producer.ProducerReportedMaterials.First(rm => rm.MaterialId == alId && rm.PackagingType == "HH" && rm.SubmissionPeriod == "2024-P1");
+                    var reportedAlHH = producer.ProducerReportedMaterials.First(rm => rm.MaterialId == 1 && rm.PackagingType == "HH" && rm.SubmissionPeriod == "2024-P1");
                     Assert.AreEqual(25.068m, reportedAlHH.PackagingTonnage);
 
-                    var reportedAlCW = producer.ProducerReportedMaterials.First(rm => rm.MaterialId == alId && rm.PackagingType == "CW" && rm.SubmissionPeriod == "2024-P1");
+                    var reportedAlCW = producer.ProducerReportedMaterials.First(rm => rm.MaterialId == 1 && rm.PackagingType == "CW" && rm.SubmissionPeriod == "2024-P1");
                     Assert.AreEqual(5.014m, reportedAlCW.PackagingTonnage);
                 }
                 else if (producer.ProducerId == 22 && producer.SubsidiaryId == null)
                 {
-                    var reportedAl = producer.ProducerReportedMaterials.First(rm => rm.MaterialId == alId && rm.PackagingType == "HH" && rm.SubmissionPeriod == "2024-P4");
+                    var reportedAl = producer.ProducerReportedMaterials.First(rm => rm.MaterialId == 1 && rm.PackagingType == "HH" && rm.SubmissionPeriod == "2024-P4");
                     Assert.AreEqual(25.068m, reportedAl.PackagingTonnage);
 
-                    var reportedAlCW = producer.ProducerReportedMaterials.First(rm => rm.MaterialId == alId && rm.PackagingType == "CW" && rm.SubmissionPeriod == "2024-P4");
+                    var reportedAlCW = producer.ProducerReportedMaterials.First(rm => rm.MaterialId == 1 && rm.PackagingType == "CW" && rm.SubmissionPeriod == "2024-P4");
                     Assert.AreEqual(5.014m, reportedAlCW.PackagingTonnage);
                 }
                 else
@@ -388,12 +375,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public async Task Construct_WhenPartialObligationsExists_Modulation()
         {
             // Arrange
-            var (materialDetails, producers) = PrepareDataWithModulation();
-            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
-            var applyModulation = true;
+            var (runContext, materials, producers) = PrepareDataWithModulation();
 
             // Act
-            var result = await builder.ConstructAsync(materialDetails, producers, requestDto, applyModulation);
+            var result = await builder.ConstructAsync(runContext, materials, producers);
 
             // Assert
             Assert.AreEqual(1, result.Item2.PartialObligations!.Count());
@@ -419,7 +404,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual(new RAMTonnage(), aluResult.PublicBinRAMTonnage);
             Assert.AreEqual(20, aluResult.SelfManagedConsumerWasteTonnage);
             Assert.AreEqual(100, aluResult.TotalTonnage);
-            Assert.AreEqual(50.136m, aluResult.PartialHouseholdTonnage);         
+            Assert.AreEqual(50.136m, aluResult.PartialHouseholdTonnage);
             Assert.AreEqual(new RAMTonnage {
                  RedTonnage = 10.027m, AmberTonnage = 10.027m, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 30.082m
             }, aluResult.PartialHouseholdRAMTonnage);
@@ -450,12 +435,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public async Task Construct_WhenPartialObligationsExists_producers_Modulation()
         {
             // Arrange
-            var (materialDetails, producers) = PrepareDataWithModulation();
-            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
-            var applyModulation = true;
+            var (runContext, materialDetails, producers) = PrepareDataWithModulation();
 
             // Act
-            var updatedProducers = (await builder.ConstructAsync(materialDetails, producers, requestDto, applyModulation)).Item1;
+            var updatedProducers = (await builder.ConstructAsync(runContext, materialDetails, producers)).Item1;
 
             // Assert
             Assert.AreEqual(producers.Count(), updatedProducers.Count());
@@ -464,7 +447,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             {
                 if (producer.ProducerId == 22 && producer.SubsidiaryId == null)
                 {
-                    var reportedAlHH = producer.ProducerReportedMaterials.First(rm => rm.MaterialId == alId && rm.PackagingType == "HH" && rm.SubmissionPeriod == "2025-H1");
+                    var reportedAlHH = producer.ProducerReportedMaterials.First(rm => rm.MaterialId == 1 && rm.PackagingType == "HH" && rm.SubmissionPeriod == "2025-H1");
                     Assert.AreEqual(25.069m, reportedAlHH.PackagingTonnage);
                     Assert.AreEqual(5.014m, reportedAlHH.PackagingTonnageRed);
                     Assert.AreEqual(5.014m, reportedAlHH.PackagingTonnageAmber);
@@ -473,7 +456,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     Assert.AreEqual(0, reportedAlHH.PackagingTonnageAmberMedical);
                     Assert.AreEqual(15.041m, reportedAlHH.PackagingTonnageGreenMedical);
 
-                    var reportedAlCW = producer.ProducerReportedMaterials.First(rm => rm.MaterialId == alId && rm.PackagingType == "CW" && rm.SubmissionPeriod == "2025-H1");
+                    var reportedAlCW = producer.ProducerReportedMaterials.First(rm => rm.MaterialId == 1 && rm.PackagingType == "CW" && rm.SubmissionPeriod == "2025-H1");
                     Assert.AreEqual(5.014m, reportedAlCW.PackagingTonnage);
                     Assert.IsNull(reportedAlCW.PackagingTonnageRed);
                     Assert.IsNull(reportedAlCW.PackagingTonnageAmber);
@@ -484,7 +467,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 }
                 else if (producer.ProducerId == 22 && producer.SubsidiaryId == null)
                 {
-                    var reportedAlHH = producer.ProducerReportedMaterials.First(rm => rm.MaterialId == alId && rm.PackagingType == "HH" && rm.SubmissionPeriod == "2025-H2");
+                    var reportedAlHH = producer.ProducerReportedMaterials.First(rm => rm.MaterialId == 1 && rm.PackagingType == "HH" && rm.SubmissionPeriod == "2025-H2");
                     Assert.AreEqual(25.068m, reportedAlHH.PackagingTonnage);
                     Assert.AreEqual(5.014m, reportedAlHH.PackagingTonnageRed);
                     Assert.AreEqual(5.014m, reportedAlHH.PackagingTonnageAmber);
@@ -493,7 +476,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     Assert.AreEqual(0, reportedAlHH.PackagingTonnageAmberMedical);
                     Assert.AreEqual(15.041m, reportedAlHH.PackagingTonnageGreenMedical);
 
-                    var reportedAlCW = producer.ProducerReportedMaterials.First(rm => rm.MaterialId == alId && rm.PackagingType == "CW" && rm.SubmissionPeriod == "2025-H2");
+                    var reportedAlCW = producer.ProducerReportedMaterials.First(rm => rm.MaterialId == 1 && rm.PackagingType == "CW" && rm.SubmissionPeriod == "2025-H2");
                     Assert.AreEqual(5.014m, reportedAlCW.PackagingTonnage);
                     Assert.IsNull(reportedAlCW.PackagingTonnageRed);
                     Assert.IsNull(reportedAlCW.PackagingTonnageAmber);

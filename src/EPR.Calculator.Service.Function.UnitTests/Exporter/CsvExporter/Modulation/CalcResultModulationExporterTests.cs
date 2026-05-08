@@ -1,14 +1,9 @@
-using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.API.Data.Enums;
+using System.Text;
 using EPR.Calculator.Service.Function.Builder.Modulation;
-using EPR.Calculator.Service.Function.Enums;
-using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
-using EPR.Calculator.Service.Function.UnitTests.Builder;
-using Newtonsoft.Json;
-using System.Text;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Data;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulation
 {
@@ -17,8 +12,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
     {
         private CalcResultModulationExporter exporter;
 
-        private MaterialDetail al = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
-        private MaterialDetail fc = TestDataHelper.GetMaterials().First(m => m.Code == "FC");
+        private MaterialDetail al = DummyData.Materials.First(m => m.Code == "AL");
+        private MaterialDetail fc = DummyData.Materials.First(m => m.Code == "FC");
 
         public CalcResultModulationExporterTests()
         {

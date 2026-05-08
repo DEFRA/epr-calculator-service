@@ -1,13 +1,12 @@
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 {
     public static class H1ProjectedProducersBuilderUtils
     {
-        public static List<CalcResultH1ProjectedProducer> GetProjectedProducers(List<ProducerDetail> producerDetails, List<CalcResultH2ProjectedProducer> h2ProjectedProducers, List<MaterialDetail> materials, string submissionPeriod)
+        public static List<CalcResultH1ProjectedProducer> GetProjectedProducers(List<ProducerDetail> producerDetails, List<CalcResultH2ProjectedProducer> h2ProjectedProducers, ImmutableList<MaterialDetail> materials, string submissionPeriod)
         {
             CalcResultH2ProjectedProducer? GetH2Producer(ProducerDetail rm)
             {
@@ -30,7 +29,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             }).ToList();
         }
 
-        private static Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage> GetProjectedTonnages(List<MaterialDetail> materials, List<ProducerReportedMaterial> reportedMaterials, CalcResultH2ProjectedProducer? h2ProjectedProducer)
+        private static Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage> GetProjectedTonnages(ImmutableList<MaterialDetail> materials, List<ProducerReportedMaterial> reportedMaterials, CalcResultH2ProjectedProducer? h2ProjectedProducer)
         {
             return materials.ToDictionary(m => m.Code, m => GetProjectedTonnage(m, reportedMaterials.Where(rm => rm.MaterialId == m.Id).ToList(), h2ProjectedProducer));
         }
@@ -113,10 +112,8 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                 var projectedTonnage = GetProportionateRam(h1RAMTonnage, tonnageWithoutRAM, h2RamProportions);
                 return ReconcileRoundingDifference(tonnage, projectedTonnage);
             }
-            else
-            {
-                return h1RAMTonnage with { RedTonnage = h1RAMTonnage.RedTonnage + tonnageWithoutRAM };
-            }
+
+            return h1RAMTonnage with { RedTonnage = h1RAMTonnage.RedTonnage + tonnageWithoutRAM };
         }
 
         public static RAMTonnage ReconcileRoundingDifference(decimal tonnage, RAMTonnage projectedTonnage)

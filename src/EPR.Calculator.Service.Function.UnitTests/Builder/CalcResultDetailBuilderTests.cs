@@ -2,43 +2,45 @@ using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.Detail;
-using EPR.Calculator.Service.Function.Misc;
-using Microsoft.EntityFrameworkCore;
+using EPR.Calculator.Service.Function.Features.Common;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Data;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
     [TestClass]
     public class CalcResultDetailBuilderTests
     {
-        private readonly ApplicationDBContext _context;
-        private readonly CalcResultDetailBuilder _builder;
+        private ApplicationDBContext _dbContext = null!;
+        private CalcResultDetailBuilder _sut = null!;
+        private RunContext _runContext = DummyData.RunContexts.CalculatorRun2025;
+        private IFixture _fixture = null!;
 
-        public CalcResultDetailBuilderTests()
+        [TestInitialize]
+        public void Init()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDBContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
-
-            _context = new ApplicationDBContext(options);
-            _builder = new CalcResultDetailBuilder(_context);
+            _fixture = TestFixtures.New();
+            _dbContext = _fixture.Freeze<ApplicationDBContext>();
             SeedDatabase();
+
+            _sut = new CalcResultDetailBuilder(_dbContext);
         }
 
         [TestCleanup]
         public void TearDown()
         {
-            _context.Dispose();
+            _dbContext.Dispose();
         }
 
         private void SeedDatabase()
         {
             var calculatorRun = new CalculatorRun
             {
-                Id = 1,
-                Name = "TestRun",
-                CreatedBy = "TestUser",
+                Id = _runContext.RunId,
+                Name = _runContext.RunName,
+                RelativeYear = _runContext.RelativeYear,
+                CreatedBy = _runContext.User,
                 CreatedAt = new DateTime(2023, 1, 1),
-                RelativeYear = new RelativeYear(2024),
                 CalculatorRunOrganisationDataMaster = new CalculatorRunOrganisationDataMaster { CreatedBy = "", RelativeYear = new RelativeYear(2024), EffectiveFrom = new DateTime(2023, 1, 1), CreatedAt = new DateTime(2023, 1, 1) },
                 CalculatorRunPomDataMaster = new CalculatorRunPomDataMaster { CreatedBy = "", RelativeYear = new RelativeYear(2024), EffectiveFrom = new DateTime(2023, 1, 1), CreatedAt = new DateTime(2023, 1, 1) },
                 LapcapDataMaster = new LapcapDataMaster
@@ -57,19 +59,20 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 },
             };
 
-            _context.CalculatorRuns.Add(calculatorRun);
-            _context.SaveChanges();
+            _dbContext.CalculatorRuns.Add(calculatorRun);
+            _dbContext.SaveChanges();
         }
 
         [TestMethod]
         public async Task Construct_AllPropertiesPresent_ReturnsCorrectData()
         {
-            var result = await _builder.ConstructAsync(new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) });
-            Assert.AreEqual(1, result.RunId);
-            Assert.AreEqual("TestRun", result.RunName);
-            Assert.AreEqual("TestUser", result.RunBy);
+            var runContext = DummyData.RunContexts.CalculatorRun2025;
+            var result = await _sut.ConstructAsync(DummyData.RunContexts.CalculatorRun2025);
+            Assert.AreEqual(runContext.RunId, result.RunId);
+            Assert.AreEqual(runContext.RunName, result.RunName);
+            Assert.AreEqual(runContext.User, result.RunBy);
             Assert.AreEqual(new DateTime(2023, 1, 1), result.RunDate);
-            Assert.AreEqual(2024, result.RelativeYear.Value);
+            Assert.AreEqual(runContext.RelativeYear, result.RelativeYear);
             Assert.AreEqual("01/01/2023 00:00", result.RpdFileORG);
             Assert.AreEqual("01/01/2023 00:00", result.RpdFilePOM);
             Assert.AreEqual("LapcapFile.csv,01/01/2023 00:00,TestUser", result.LapcapFile);
@@ -79,8 +82,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         [TestMethod]
         public async Task Construct_MissingOptionalProperties_ReturnsPartialData()
         {
-            _context.CalculatorRuns.RemoveRange(_context.CalculatorRuns);
-            await _context.SaveChangesAsync();
+            _dbContext.CalculatorRuns.RemoveRange(_dbContext.CalculatorRuns);
+            await _dbContext.SaveChangesAsync();
 
             var calculatorRun = new CalculatorRun
             {
@@ -91,10 +94,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 RelativeYear = new RelativeYear(2025),
             };
 
-            _context.CalculatorRuns.Add(calculatorRun);
-            await _context.SaveChangesAsync();
+            _dbContext.CalculatorRuns.Add(calculatorRun);
+            await _dbContext.SaveChangesAsync();
 
-            var result = await _builder.ConstructAsync(new CalcResultsRequestDto { RunId = 2, RelativeYear = new RelativeYear(2025) });
+            var runContext = DummyData.RunContexts.CalculatorRun2025 with { RunId = 2 };
+            var result = await _sut.ConstructAsync(runContext);
 
             Assert.AreEqual(2, result.RunId);
             Assert.AreEqual("RunWithMissingProps", result.RunName);

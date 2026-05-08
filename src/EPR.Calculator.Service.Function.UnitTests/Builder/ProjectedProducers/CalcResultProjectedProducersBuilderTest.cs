@@ -1,18 +1,17 @@
 using System.Globalization;
-using Newtonsoft.Json;
-using EPR.Calculator.Service.Function.Mappers;
+using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
+using EPR.Calculator.Service.Function.Features.Common;
+using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Data;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Extensions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 {
-    using EPR.Calculator.API.Data;
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.API.Data.Models;
-    using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
-    using EPR.Calculator.Service.Function.Misc;
-
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Diagnostics;
-
     [TestClass]
     public class CalcResultProjectedProducersBuilderTest
     {
@@ -466,7 +465,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             AssertExcepted(expected, FillGapsPrevious(given));
         }
 
-        private (List<MaterialDetail>, CalcResultsRequestDto) InsertData(string[][] given)
+        private (RunContext, ImmutableList<MaterialDetail>) InsertData(string[][] given)
         {
             for (int i = 0; i < given.GetLength(0); i++)
             {
@@ -475,14 +474,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     throw new Exception($"Supplied test data should have length 13 - entry {i} had length {entry.Length}.");
             }
 
-            var runId = 1;
-            var relativeYear = new RelativeYear(2026);
-            dbContext.CalculatorRuns.Add(new CalculatorRun
-            {
-                Id = runId,
-                RelativeYear = relativeYear,
-                Name = "Run " + runId
-            });
+            var runContext = DummyData.RunContexts.CalculatorRun2026 with { RunId = 1 };
+            dbContext.CalculatorRuns.Add(runContext.ToEntity());
 
             var materials = given
                    .Select(row => row[MaterialCodeI])
@@ -493,7 +486,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 
             dbContext.SaveChanges();
 
-            return (MaterialMapper.Map(materials), new CalcResultsRequestDto { RunId = runId, RelativeYear = relativeYear });
+            return (runContext, materials.Select(m => new MaterialDetail { Id = m.Id, Code = m.Code, Name = m.Name }).ToImmutableList());
         }
 
         private string[][] ConvertResult((List<ProducerDetail>, CalcResultProjectedProducers) given)
@@ -539,7 +532,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 )
             ).Where(row => row is not null).Cast<string[]>();
 
-            return result       
+            return result
                     .OrderBy(a => a[PeriodI])
                     .ThenBy(a => a[ProducerI])
                     .ThenBy(a => string.IsNullOrEmpty(a[SubsidiaryI]) ? 0 : 1)
@@ -590,8 +583,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 
         private string[][] FillGaps(string[][] given)
         {
-            var (materialDetails, requestDto) = InsertData(given);
-            return ConvertResult(builder.ConstructAsync(materialDetails, ToProducers(given), requestDto));
+            var (runContext, materials) = InsertData(given);
+            return ConvertResult(builder.Construct(runContext, materials, ToProducers(given)));
         }
 
         private string[][] ConvertResultPrevious(CalcResultProjectedProducers given)
@@ -655,8 +648,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 
         private string[][] FillGapsPrevious(string[][] given)
         {
-            var (materialDetails, requestDto) = InsertData(given);
-            return ConvertResultPrevious((builder.ConstructAsync(materialDetails, ToProducers(given), requestDto)).Item2);
+            var (runContext, materials) = InsertData(given);
+            return ConvertResultPrevious((builder.Construct(runContext, materials, ToProducers(given))).Item2);
         }
 
         private string ToPrintable(string[] arr) =>

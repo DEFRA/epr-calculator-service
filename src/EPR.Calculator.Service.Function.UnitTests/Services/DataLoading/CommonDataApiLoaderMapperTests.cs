@@ -1,5 +1,5 @@
-using EPR.Calculator.Service.Function.Services.CommonDataApi;
-using EPR.Calculator.Service.Function.Services.DataLoading;
+using EPR.Calculator.Service.Function.Services.ExternalDataLoading.CommonDataApi;
+using EPR.Calculator.Service.Function.Services.ExternalDataLoading.CommonDataApi.HttpClient;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
 {

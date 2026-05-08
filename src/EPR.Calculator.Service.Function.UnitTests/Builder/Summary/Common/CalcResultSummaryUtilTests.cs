@@ -6,6 +6,7 @@ using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Data;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
 {
@@ -20,17 +21,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         {
             calcResult = new CalcResult
             {
-                ApplyModulation = false,
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
-                CalcResultParameterOtherCost = TestDataHelper.GetCalcResultParameterOtherCost(),
-                CalcResultDetail = TestDataHelper.GetCalcResultDetail(),
-                CalcResultLaDisposalCostData = TestDataHelper.GetCalcResultLaDisposalCostData(),
-                CalcResultLapcapData = TestDataHelper.GetCalcResultLapcapData(),
-                CalcResultOnePlusFourApportionment = TestDataHelper.GetCalcResultOnePlusFourApportionment(),
-                CalcResultParameterCommunicationCost = GetCalcResultParameterCommunicationCost(),
-                CalcResultSummary = TestDataHelper.GetCalcResultSummary(),
-                CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
+                CalcResultParameterOtherCost = DummyData.GetCalcResultParameterOtherCost(),
+                CalcResultDetail = DummyData.GetCalcResultDetail(),
+                CalcResultLaDisposalCostData = DummyData.GetCalcResultLaDisposalCostData(),
+                CalcResultLapcapData = DummyData.GetCalcResultLapcapData(),
+                CalcResultOnePlusFourApportionment = DummyData.GetCalcResultOnePlusFourApportionment(),
+                CalcResultSummary = DummyData.GetCalcResultSummary(),
+                CalcResultCommsCostReportDetail = DummyData.GetCalcResultCommsCostReportDetail(),
                 CalcResultLateReportingTonnageData = this.GetCalcResultLateReportingTonnage(),
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
             };
@@ -66,8 +65,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetNonTotalRowLevelIndex()
         {
             // Arrange
-            var producerDisposalFeesLookup = TestDataHelper.GetProducerDisposalFees();
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
+            var producerDisposalFeesLookup = DummyData.GetProducerDisposalFees();
+            var producer = DummyData.GetProducers().First(p => p.Id == 1);
 
             // Act
             var result = CalcResultSummaryUtil.GetLevelIndex(producerDisposalFeesLookup, producer);
@@ -80,8 +79,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetHouseholdPackagingWasteTonnage()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producer = DummyData.GetProducers().First(p => p.Id == 1);
+            var material = DummyData.Materials.First(m => m.Code == "AL");
 
             // Act
             var result = CalcResultSummaryUtil.GetTonnage(ProjectedMaterialsLookup(new List<ProducerDetail> { producer } ), producer, material, PackagingTypes.Household);
@@ -94,8 +93,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetPublicBinTonnage()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "PL");
+            var producer = DummyData.GetProducers().First(p => p.Id == 1);
+            var material = DummyData.Materials.First(m => m.Code == "PL");
 
             // Act
             var result = CalcResultSummaryUtil.GetTonnage(ProjectedMaterialsLookup(new List<ProducerDetail> { producer } ), producer, material, PackagingTypes.PublicBin);
@@ -108,8 +107,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetHouseholdDrinksContainersTonnage()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var producer = DummyData.GetProducers().First(p => p.Id == 1);
+            var material = DummyData.Materials.First(m => m.Code == "GL");
 
             // Act
             var result = CalcResultSummaryUtil.GetTonnage(ProjectedMaterialsLookup(new List<ProducerDetail> { producer } ), producer, material, PackagingTypes.HouseholdDrinksContainers);
@@ -122,8 +121,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetReportedTonnage()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producer = DummyData.GetProducers().First(p => p.Id == 1);
+            var material = DummyData.Materials.First(m => m.Code == "AL");
 
             // Act
             var result = CalcResultSummaryUtil.GetReportedTonnage(ProjectedMaterialsLookup(new List<ProducerDetail> { producer } ), producer, material);
@@ -136,8 +135,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetHouseholdPackagingWasteTonnageProducerTotal()
         {
             // Arrange
-            var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producers = DummyData.GetProducers();
+            var material = DummyData.Materials.First(m => m.Code == "AL");
 
             // Act
             var result = CalcResultSummaryUtil.GetTonnageTotal(ProjectedMaterialsLookup(producers), producers, material, PackagingTypes.Household);
@@ -150,8 +149,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetPublicBinTonnageProducerTotal()
         {
             // Arrange
-            var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "PL");
+            var producers = DummyData.GetProducers();
+            var material = DummyData.Materials.First(m => m.Code == "PL");
 
             // Act
             var result = CalcResultSummaryUtil.GetTonnageTotal(ProjectedMaterialsLookup(producers), producers, material, PackagingTypes.PublicBin);
@@ -164,8 +163,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetReportedTonnageProducerTotal()
         {
             // Arrange
-            var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producers = DummyData.GetProducers();
+            var material = DummyData.Materials.First(m => m.Code == "AL");
 
             // Act
             var result = CalcResultSummaryUtil.GetReportedTonnageTotal(ProjectedMaterialsLookup(producers), producers, material);
@@ -178,8 +177,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetHouseholdDrinksContainersTonnageProducerTotal()
         {
             // Arrange
-            var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var producers = DummyData.GetProducers();
+            var material = DummyData.Materials.First(m => m.Code == "GL");
 
             // Act
             var result = CalcResultSummaryUtil.GetTonnageTotal(ProjectedMaterialsLookup(producers), producers, material, PackagingTypes.HouseholdDrinksContainers);
@@ -192,8 +191,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetManagedConsumerWasteTonnage()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producer = DummyData.GetProducers().First(p => p.Id == 1);
+            var material = DummyData.Materials.First(m => m.Code == "AL");
 
             // Act
             var result = CalcResultSummaryUtil.GetTonnage(ProjectedMaterialsLookup( new List<ProducerDetail>{ producer }), producer, material, PackagingTypes.ConsumerWaste);
@@ -206,8 +205,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetManagedConsumerWasteTonnageProducerTotal()
         {
             // Arrange
-            var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var producers = DummyData.GetProducers();
+            var material = DummyData.Materials.First(m => m.Code == "AL");
 
             // Act
             var result = CalcResultSummaryUtil.GetTonnageTotal(ProjectedMaterialsLookup(producers), producers, material, PackagingTypes.ConsumerWaste);
@@ -233,7 +232,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetPricePerTonne()
         {
             // Arrange
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = DummyData.Materials.First(m => m.Code == "AL");
 
             // Act
             var result = CalcResultSummaryUtil.GetPricePerTonne(material, calcResult);
@@ -246,7 +245,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetProducerDisposalFee()
         {
             // Arrange
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = DummyData.Materials.First(m => m.Code == "AL");
 
             // Act
             var result = CalcResultSummaryUtil.GetProducerDisposalFee(material, calcResult, SelfManagedConsumerWasteData.Zero);
@@ -258,7 +257,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         [TestMethod]
         public void CanGetProducerDisposalFee_WithModulation()
         {
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
+            var material = DummyData.Materials.First(m => m.Code == "AL");
 
             calcResult.CalcResultModulation = new ModulationResult
             {
@@ -448,8 +447,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetReportedPublicBinTonnage()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 2);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "PL");
+            var producer = DummyData.GetProducers().First(p => p.Id == 2);
+            var material = DummyData.Materials.First(m => m.Code == "PL");
 
             // Act
             var result = CalcResultSummaryUtil.GetTonnage(ProjectedMaterialsLookup(new List<ProducerDetail> { producer } ), producer, material, PackagingTypes.PublicBin);
@@ -462,8 +461,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetReportedPublicBinTonnageTotal()
         {
             // Arrange
-            var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "PL");
+            var producers = DummyData.GetProducers();
+            var material = DummyData.Materials.First(m => m.Code == "PL");
 
             // Act
             var result = CalcResultSummaryUtil.GetTonnageTotal(ProjectedMaterialsLookup(producers), producers, material, PackagingTypes.PublicBin);
@@ -476,8 +475,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetReportedHDCTonnage()
         {
             // Arrange
-            var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var producer = DummyData.GetProducers().First(p => p.Id == 1);
+            var material = DummyData.Materials.First(m => m.Code == "GL");
 
             // Act
             var result = CalcResultSummaryUtil.GetTonnage(ProjectedMaterialsLookup(new List<ProducerDetail> { producer } ), producer, material, PackagingTypes.HouseholdDrinksContainers);
@@ -490,19 +489,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         public void CanGetReportedHDCTonnageTotal()
         {
             // Arrange
-            var producers = TestDataHelper.GetProducers();
-            var material = TestDataHelper.GetMaterials().First(m => m.Code == "GL");
+            var producers = DummyData.GetProducers();
+            var material = DummyData.Materials.First(m => m.Code == "GL");
 
             // Act
             var result = CalcResultSummaryUtil.GetTonnageTotal(ProjectedMaterialsLookup(producers), producers, material, PackagingTypes.HouseholdDrinksContainers);
 
             // Assert
             Assert.AreEqual(60.00m, result);
-        }
-
-        private CalcResultParameterCommunicationCost GetCalcResultParameterCommunicationCost()
-        {
-            return Fixture.Create<CalcResultParameterCommunicationCost>();
         }
 
         private CalcResultLateReportingTonnage GetCalcResultLateReportingTonnage()

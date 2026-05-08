@@ -3,47 +3,42 @@ using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.LateReportingTonnages;
-using EPR.Calculator.Service.Function.Enums;
-using EPR.Calculator.Service.Function.Misc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using EPR.Calculator.Service.Function.Features.Calculator.Contexts;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Data;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
     [TestClass]
     public class CalcResultLateReportingBuilderTest
     {
-        public required CalcResultLateReportingBuilder builder;
-        protected ApplicationDBContext? dbContext;
+        private CalcResultLateReportingBuilder _sut = null!;
+        private ApplicationDBContext _dbContext = null!;
+        private IFixture _fixture = null!;
+        private CalculatorRunContext _runContext = null!;
 
         [TestInitialize]
         public void DataSetup()
         {
-            var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
-                                    .UseInMemoryDatabase(databaseName: "PayCal")
-                                    .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-                                                .Options;
+            _fixture = TestFixtures.New();
+            _dbContext = TestFixtures.New().Create<ApplicationDBContext>();
+            _runContext = DummyData.RunContexts.CalculatorRun2024;
 
-            dbContext = new ApplicationDBContext(dbContextOptions);
-            dbContext.Database.EnsureCreated();
+            List<CalculatorRun> calculatorRuns =
+            [
+                new()
+                {
+                    Id = _runContext.RunId,
+                    DefaultParameterSettingMasterId = 1,
+                    Classification = RunClassification.Running,
+                    Name = _runContext.RunName,
+                    RelativeYear = _runContext.RelativeYear,
+                    CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
+                    CreatedBy = "Test User",
+                    LapcapDataMasterId = 2,
+                }
 
-            dbContext.DefaultParameterTemplateMasterList.RemoveRange(dbContext.DefaultParameterTemplateMasterList);
-            dbContext.DefaultParameterSettingDetail.RemoveRange(dbContext.DefaultParameterSettingDetail);
-            dbContext.CalculatorRuns.RemoveRange(dbContext.CalculatorRuns);
-            dbContext.SaveChanges();
-
-            var calculatorRuns = new List<CalculatorRun>
-            {
-                new() { Id = 1,
-                        DefaultParameterSettingMasterId = 1,
-                        Classification = RunClassification.Running,
-                        Name = "Test Run",
-                        RelativeYear = new RelativeYear(2024),
-                        CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
-                        CreatedBy = "Test User",
-                        LapcapDataMasterId = 2,
-                      },
-            };
+            ];
 
             var defaultParameterSettings = new List<DefaultParameterSettingMaster>
             {
@@ -106,26 +101,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 },
             };
 
-            dbContext.CalculatorRuns.AddRange(calculatorRuns);
-            dbContext.DefaultParameterSettings.AddRange(defaultParameterSettings);
-            dbContext.DefaultParameterSettingDetail.AddRange(defaultParameterSettingDetails);
-            dbContext.DefaultParameterTemplateMasterList.AddRange(defaultParameterTemplateMasterList);
-            dbContext.SaveChanges();
+            _dbContext.CalculatorRuns.AddRange(calculatorRuns);
+            _dbContext.DefaultParameterSettings.AddRange(defaultParameterSettings);
+            _dbContext.DefaultParameterSettingDetail.AddRange(defaultParameterSettingDetails);
+            _dbContext.DefaultParameterTemplateMasterList.AddRange(defaultParameterTemplateMasterList);
+            _dbContext.SaveChanges();
 
-            builder = new CalcResultLateReportingBuilder(dbContext);
-        }
-
-        public ApplicationDBContext? GetDbContext()
-        {
-            return dbContext;
+            _sut = new CalcResultLateReportingBuilder(_dbContext);
         }
 
         [TestMethod]
         public async Task Construct_ShouldReturnCorrectResults()
         {
-            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) };
-
-            var result = await builder.ConstructAsync(requestDto);
+            var result = await _sut.ConstructAsync(_runContext);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(CalcResultLateReportingBuilder.LateReportingHeader, result.Name);

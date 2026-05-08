@@ -1,14 +1,8 @@
-﻿using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.API.Data.Enums;
+﻿using System.Globalization;
 using EPR.Calculator.Service.Function.Builder.Modulation;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
-using EPR.Calculator.Service.Function.UnitTests.Builder.Modulation;
-using EPR.Calculator.Service.Function.UnitTests.Builder;
-using Moq;
-using NetTopologySuite.Operation.Buffer;
-using Newtonsoft.Json;
-using System.Globalization;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Data;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
 {
@@ -16,30 +10,28 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
     public class CalcResultModulationBuilderTest
     {
         private CalcResultModulationBuilder builder;
-
-        private static List<MaterialDetail> materials = TestDataHelper.GetMaterials().ToList();
-
-        private MaterialDetail al = materials.First(m => m.Code == "AL");
-        private MaterialDetail fc = materials.First(m => m.Code == "FC");
-        private MaterialDetail gl = materials.First(m => m.Code == "GL");
-        private MaterialDetail pc = materials.First(m => m.Code == "PC");
-        private MaterialDetail pl = materials.First(m => m.Code == "PL");
-        private MaterialDetail st = materials.First(m => m.Code == "ST");
-        private MaterialDetail wd = materials.First(m => m.Code == "WD");
-        private MaterialDetail ot = materials.First(m => m.Code == "OT");
-
         private IReadOnlyDictionary<string, decimal> lateReportingTonnageDict;
+
+        private static readonly ImmutableDictionary<string, MaterialDetail> _materials = DummyData.MaterialsByCode;
+        private MaterialDetail al = _materials["AL"];
+        private MaterialDetail fc = _materials["FC"];
+        private MaterialDetail gl = _materials["GL"];
+        private MaterialDetail pc = _materials["PC"];
+        private MaterialDetail pl = _materials["PL"];
+        private MaterialDetail st = _materials["ST"];
+        private MaterialDetail wd = _materials["WD"];
+        private MaterialDetail ot = _materials["OT"];
 
         public CalcResultModulationBuilderTest()
         {
             builder = new CalcResultModulationBuilder();
 
-            lateReportingTonnageDict = materials
+            lateReportingTonnageDict = _materials
                 .SelectMany(m => new[]
                 {
-                    ($"LRET-{m.Code}-R", 1m),
-                    ($"LRET-{m.Code}"  , 2m),
-                    ($"LRET-{m.Code}-G", 3m)
+                    ($"LRET-{m.Key}-R", 1m),
+                    ($"LRET-{m.Key}"  , 2m),
+                    ($"LRET-{m.Key}-G", 3m)
                 })
                 .ToDictionary(t => t.Item1, t => t.Item2);
         }
@@ -128,7 +120,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
 
             var redFactor = 1.2m;
             var defaultParameters = new Dictionary<string, decimal> { ["REDM-RF"] = redFactor }.Concat(lateReportingTonnageDict).ToDictionary(k => k.Key, v => v.Value);
-            var modulationResults = await builder.ConstructAsync(defaultParameters, TestDataHelper.GetMaterials(), laDisposalCostData, smcw);
+            var modulationResults = await builder.ConstructAsync(defaultParameters, DummyData.Materials, laDisposalCostData, smcw);
             //Console.WriteLine($">> {JsonConvert.SerializeObject(modulationResults, Formatting.Indented)}");
 
             Assert.AreEqual(     1.2m, modulationResults.RedFactor);
@@ -192,7 +184,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
 
             var redFactor = 1.2m;
             var defaultParameters = new Dictionary<string, decimal> { ["REDM-RF"] = redFactor }.Concat(lateReportingTonnageDict).ToDictionary(k => k.Key, v => v.Value);
-            var modulationResults = await builder.ConstructAsync(defaultParameters, TestDataHelper.GetMaterials(), laDisposalCostData, smcw);
+            var modulationResults = await builder.ConstructAsync(defaultParameters, DummyData.Materials, laDisposalCostData, smcw);
             //Console.WriteLine($">> {JsonConvert.SerializeObject(modulationResults, Formatting.Indented)}");
 
             Assert.AreEqual(     1.2m, modulationResults.RedFactor);
@@ -255,11 +247,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
 
             var redFactor = 1m;
             var defaultParameters = new Dictionary<string, decimal> { ["REDM-RF"] = redFactor }.Concat(lateReportingTonnageDict).ToDictionary(k => k.Key, v => v.Value);
-            var modulationResults = await builder.ConstructAsync(defaultParameters, materials, laDisposalCostData, smcw);
+            var modulationResults = await builder.ConstructAsync(defaultParameters, _materials.Values.ToImmutableList(), laDisposalCostData, smcw);
 
             Assert.AreEqual(1m, modulationResults.RedFactor);
             Assert.AreEqual(1m, modulationResults.GreenFactor);
-            foreach (var material in materials)
+            foreach (var material in _materials.Values)
             {
                 var costStr = laDisposalCostData.CalcResultLaDisposalCostDetails.First(d => d.Name == material.Name).DisposalCostPricePerTonne;
                 var cost = decimal.Parse(costStr!.TrimStart('£'), CultureInfo.InvariantCulture);
@@ -306,20 +298,20 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
             };
 
             var redFactor = 1.2m;
-            var lateReportingTonnageDict = materials
+            var lateReportingTonnageDict = _materials
                 .SelectMany(m => new[]
                 {
-                    ($"LRET-{m.Code}-R", 1m),
-                    ($"LRET-{m.Code}"  , 2m),
-                    ($"LRET-{m.Code}-G", 0m)
+                    ($"LRET-{m.Key}-R", 1m),
+                    ($"LRET-{m.Key}"  , 2m),
+                    ($"LRET-{m.Key}-G", 0m)
                 })
                 .ToDictionary(t => t.Item1, t => t.Item2);
             var defaultParameters = new Dictionary<string, decimal> { ["REDM-RF"] = redFactor }.Concat(lateReportingTonnageDict).ToDictionary(k => k.Key, v => v.Value);
-            var modulationResults = await builder.ConstructAsync(defaultParameters, materials, laDisposalCostData, smcw);
+            var modulationResults = await builder.ConstructAsync(defaultParameters, _materials.Values.ToImmutableList(), laDisposalCostData, smcw);
 
             Assert.AreEqual(redFactor, modulationResults.RedFactor);
             Assert.AreEqual(1.0m, modulationResults.GreenFactor);
-            foreach (var material in materials)
+            foreach (var material in _materials.Values)
             {
                 var costStr = laDisposalCostData.CalcResultLaDisposalCostDetails.First(d => d.Name == material.Name).DisposalCostPricePerTonne;
                 var cost = decimal.Parse(costStr!.TrimStart('£'), CultureInfo.InvariantCulture);

@@ -1,7 +1,7 @@
 using System.Text;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter;
 using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.UnitTests.Builder;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Data;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 {
@@ -53,7 +53,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var csvContent = new StringBuilder();
 
             // Act
-            _testClass.WriteColumnHeaders(resultSummary, csvContent);
+            CalcResultSummaryExporter.WriteColumnHeaders(resultSummary, csvContent);
 
             // Assert
             Assert.AreEqual("\"Column 0\",\"Column 2\",\"Column 6\",\"Column 11\",\"Column 21\",", csvContent.ToString());
@@ -91,7 +91,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 },
             };
             var csvContent = new StringBuilder();
-            _testClass.WriteSecondaryHeaders(csvContent, columnHeaders);
+            CalcResultSummaryExporter.WriteSecondaryHeaders(csvContent, columnHeaders);
 
             var rowContents = csvContent.ToString().Split(",");
             Assert.AreEqual("\"Column 0\"", rowContents[0]);
@@ -106,7 +106,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         {
             // Arrange
             var csvContent = new StringBuilder();
-            var producer = TestDataHelper.GetProducerDisposalFees()[0];
+            var producer = DummyData.GetProducerDisposalFees()[0];
 
             // Act
             _testClass.AddNewRow(csvContent, producer, applyModulation: false);
@@ -121,7 +121,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         {
             // Arrange
             var csvContent = new StringBuilder();
-            var producer = TestDataHelper.GetProducerDisposalFeesForOverAllTotal()[0];
+            var producer = DummyData.GetProducerDisposalFeesForOverAllTotal()[0];
 
             // Act
             _testClass.AddNewRow(csvContent, producer, applyModulation: false);
@@ -136,7 +136,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         {
             // Arrange
             var csvContent = new StringBuilder();
-            var producer = TestDataHelper.GetProducerDisposalFeesTonnageValueNull()[0];
+            var producer = DummyData.GetProducerDisposalFeesTonnageValueNull()[0];
 
             // Act
             _testClass.AddNewRow(csvContent, producer, applyModulation: false);
@@ -151,7 +151,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         {
             // Arrange
             var csvContent = new StringBuilder();
-            var producer = TestDataHelper.GetProducerDisposalFees()[0];
+            var producer = DummyData.GetProducerDisposalFees()[0];
 
             // Act
             _testClass.AddNewRow(csvContent, producer, applyModulation: true);
@@ -171,7 +171,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 ProducerDisposalFeesHeaders = [new CalcResultSummaryHeader { ColumnIndex = 1, Name = "Column 1"}],
                 MaterialBreakdownHeaders = [new CalcResultSummaryHeader { ColumnIndex = 1, Name = "Column 1"}],
                 ColumnHeaders = [new CalcResultSummaryHeader { ColumnIndex = 1, Name = "Column 1"}],
-                ProducerDisposalFees = TestDataHelper.GetProducerDisposalFees()
+                ProducerDisposalFees = DummyData.GetProducerDisposalFees()
             };
 
             var csvContent = new StringBuilder();

@@ -1,123 +1,92 @@
-using EPR.Calculator.API.Data.Enums;
+using System.Diagnostics;
 using EPR.Calculator.Service.Function;
-using EPR.Calculator.Service.Function.Enums;
-using EPR.Calculator.Service.Function.Interface;
-using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.Exceptions;
+using EPR.Calculator.Service.Function.Features.Billing;
+using EPR.Calculator.Service.Function.Features.Billing.Contexts;
+using EPR.Calculator.Service.Function.Features.Calculator;
+using EPR.Calculator.Service.Function.Features.Calculator.Contexts;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Services.Telemetry;
+using EPR.Calculator.Service.Function.Services.Telemetry.Helpers;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.WebJobs;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
-namespace EPR.Calculator.Service.Function
+namespace EPR.Calculator.Service.Function;
+
+public class ServiceBusQueueTrigger(
+    ICalculatorRunContextBuilder calculatorRunContextBuilder,
+    ICalculatorRunProcessor calculatorRunProcessor,
+    IBillingRunContextBuilder billingRunContextBuilder,
+    IBillingRunProcessor billingRunProcessor,
+    ITelemetryClient telemetry,
+    ILogger<ServiceBusQueueTrigger> logger)
 {
     /// <summary>
-    /// ServiceBusQueueTrigger to trigger the calculator run process and generate the result file.
+    ///     This is the main entry point for the PayCal service. It triggers the calculator/billing run processes.
     /// </summary>
-    public class ServiceBusQueueTrigger
+    [FunctionName("EPRCalculatorRunServiceBusQueueTrigger")]
+    public async Task Run(
+        [ServiceBusTrigger("%ServiceBusQueueName%", Connection = "ServiceBusConnectionString")]
+        ServiceBusMessage message,
+        CancellationToken cancellationToken)
     {
-        private readonly ICalculatorRunService calculatorRunService;
-        private readonly ICalculatorRunParameterMapper calculatorRunParameterMapper;
-        private readonly ICalculatorTelemetryLogger telemetryLogger;
-        private readonly IRunNameService runNameService;
-        private readonly IMessageTypeService messageTypeService;
-        private readonly IPrepareBillingFileService prepareBillingFileService;
-        private readonly IClassificationService classificationService;
-
-        public ServiceBusQueueTrigger(
-            ICalculatorRunService calculatorRunService,
-            ICalculatorRunParameterMapper calculatorRunParameterMapper,
-            IRunNameService runNameService,
-            ICalculatorTelemetryLogger telemetryLogger,
-            IMessageTypeService messageTypeService,
-            IPrepareBillingFileService prepareBillingFileService,
-            IClassificationService classificationService)
+        try
         {
-            this.calculatorRunService = calculatorRunService;
-            this.calculatorRunParameterMapper = calculatorRunParameterMapper;
-            this.runNameService = runNameService;
-            this.telemetryLogger = telemetryLogger;
-            this.messageTypeService = messageTypeService;
-            this.prepareBillingFileService = prepareBillingFileService;
-            this.classificationService = classificationService;
-        }
+            telemetry.TrackEvent(TelemetryEvents.RunInit());
+            var sw = Stopwatch.StartNew();
 
-        /// <summary>
-        /// Triggering Azure function <see cref="Run"/> to read the message from Service Bus.
-        /// </summary>
-        /// <param name="myQueueItem">Service Bus message.</param>
-        [FunctionName("EPRCalculatorRunServiceBusQueueTrigger")]
-        public async Task Run([ServiceBusTrigger(queueName: "%ServiceBusQueueName%", Connection = "ServiceBusConnectionString")] string myQueueItem)
-        {
-            telemetryLogger.LogInformation(new TrackMessage { Message = "Executing the function app started" });
-
-            if (string.IsNullOrEmpty(myQueueItem))
+            RunContext runContext = message.RunType switch
             {
-                LogError("Message is null or empty", new ArgumentNullException(nameof(myQueueItem)));
-                return;
-            }
-
-            MessageBase? resultMessageType = null;
-            bool processStatus = false;
-
-            try
-            {
-                resultMessageType = messageTypeService.DeserializeMessage(myQueueItem);
-
-                var runName = await runNameService.GetRunNameAsync(resultMessageType.CalculatorRunId);
-
-                if (resultMessageType is CreateBillingFileMessage billingmessage)
-                {
-                    telemetryLogger.LogInformation(new TrackMessage { Message = "CreateBillingFileMessage" });
-                    var billingFileMessage = calculatorRunParameterMapper.Map(billingmessage);
-                    telemetryLogger.LogInformation(new TrackMessage { Message = "After Billing File Map" });
-                    processStatus = await prepareBillingFileService.PrepareBillingFileAsync(billingFileMessage.Id, runName, billingFileMessage.ApprovedBy);
-                }
-                else if (resultMessageType is CreateResultFileMessage resultmessage)
-                {
-                    var calculatorRunParameter = calculatorRunParameterMapper.Map(resultmessage);
-                    telemetryLogger.LogInformation(new TrackMessage { Message = $"Process is going start with message type: {calculatorRunParameter.MessageType}" });
-
-                    processStatus = await calculatorRunService.PrepareResultsFileAsync(calculatorRunParameter, runName);
-                }
-
-                telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = resultMessageType.CalculatorRunId,
-                    RunName = runName,
-                    Message = $"Process status: {processStatus}",
-                });
-
-                if (!processStatus)
-                {
-                    // Set the run classification as ERROR
-                    await classificationService.UpdateRunClassification(resultMessageType.CalculatorRunId, RunClassification.Errored);
-                }
-            }
-            catch (Exception exception)
-            {
-                if (resultMessageType != null)
-                {
-                    // Set the run classification as ERROR
-                    await classificationService.UpdateRunClassification(resultMessageType.CalculatorRunId, RunClassification.Errored);
-                }
-
-                LogError($"Error - {myQueueItem} - {exception.Message}", exception);
-            }
-
-            telemetryLogger.LogInformation(new TrackMessage { Message = "Azure function app execution finished" });
-        }
-
-        private void LogError(string message, Exception exception)
-        {
-            var errorMessage = new ErrorMessage
-            {
-                Message = message,
-                Exception = exception,
-                RunId = null,
-                RunName = string.Empty,
+                RunType.Calculator => await calculatorRunContextBuilder.CreateContext(message.RunId, message.User, cancellationToken),
+                RunType.Billing => await billingRunContextBuilder.CreateContext(message.RunId, message.User, cancellationToken),
+                _ => throw new RunContextException(RunType.Unknown, message.RunId, $"Invalid message type: {message.RunType}")
             };
-            telemetryLogger.LogError(errorMessage);
+
+            await ProcessRun(runContext, sw, cancellationToken);
         }
+        catch (RunContextException ex)
+        {
+            logger.LogError(ex, "Run initialization failed for: '{Message}'", message);
+            telemetry.TrackEvent(TelemetryEvents.RunInitFailed(message.ToString()));
+        }
+        catch (Exception ex)
+        {
+            // Exceptions that occur during run context initialization/processing should already be handled.
+            // So if we're here, it's likely due to service misconfiguration.
+            logger.LogCritical(ex, "Run failed (unhandled exception)");
+        }
+    }
+
+    private async Task ProcessRun(RunContext runContext, Stopwatch sw, CancellationToken ct)
+    {
+        using (logger.BeginScope(runContext.Summary))
+        {
+            telemetry.TrackEvent(TelemetryEvents.RunStarted(runContext));
+
+            var processingTask = runContext switch
+            {
+                BillingRunContext billingRunContext => billingRunProcessor.Process(billingRunContext, ct),
+                CalculatorRunContext calculatorRunContext => calculatorRunProcessor.Process(calculatorRunContext, ct),
+                _ => throw new ArgumentException("Invalid runContext type: " + runContext.GetType().Name)
+            };
+
+            var success = await processingTask;
+            sw.Stop();
+
+            telemetry.TrackEvent(success
+                ? TelemetryEvents.RunCompleted(runContext, sw.Elapsed)
+                : TelemetryEvents.RunFailed(runContext, sw.Elapsed, "ProcessingFailed"));
+
+            telemetry.TrackDuration($"{runContext.RunType}Run", sw.Elapsed);
+        }
+    }
+
+    public sealed record ServiceBusMessage
+    {
+        public required RunType RunType { get; init; }
+        public required int RunId { get; init; }
+        public required string? User { get; init; }
     }
 }

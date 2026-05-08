@@ -1,8 +1,7 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Services;
-using Microsoft.EntityFrameworkCore;
-using Moq;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
@@ -12,30 +11,23 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     [TestClass]
     public class ParameterServiceTests
     {
-        private Mock<IDbContextFactory<ApplicationDBContext>> dbContextFactory;
-        private ApplicationDBContext dbContext;
-        private ParameterService parameterService;
+        private IFixture _fixture = null!;
+        private ApplicationDBContext _dbContext = null!;
+        private ParameterService _sut = null!;
 
-        public ParameterServiceTests()
+        [TestInitialize]
+        public void Init()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDBContext>()
-                .UseInMemoryDatabase(databaseName: "ParameterTestDatabase")
-                .Options;
+            _fixture = TestFixtures.New();
+            _dbContext = _fixture.Freeze<ApplicationDBContext>();
 
-            dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
-            dbContext = new ApplicationDBContext(options);
-
-            dbContextFactory
-                .Setup(factory => factory.CreateDbContext())
-                .Returns(dbContext);
-
-            parameterService = new ParameterService(dbContextFactory.Object);
+            _sut = _fixture.Create<ParameterService>();
         }
 
         [TestCleanup]
         public void Cleanup()
         {
-            dbContext.Dispose();
+            _dbContext.Dispose();
         }
 
         [TestMethod]
@@ -68,15 +60,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 ParameterCategory = "Some Category"
             };
 
-            dbContext.CalculatorRuns.Add(run);
-            dbContext.DefaultParameterSettings.Add(master);
-            dbContext.DefaultParameterSettingDetail.Add(detail);
-            dbContext.DefaultParameterTemplateMasterList.Add(template);
+            _dbContext.CalculatorRuns.Add(run);
+            _dbContext.DefaultParameterSettings.Add(master);
+            _dbContext.DefaultParameterSettingDetail.Add(detail);
+            _dbContext.DefaultParameterTemplateMasterList.Add(template);
 
-            await dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
 
             // Act
-            var result = await parameterService.GetDefaultParameters(1);
+            var result = await _sut.GetDefaultParameters(1);
 
             // Assert
             Assert.AreEqual(1, result.Count);

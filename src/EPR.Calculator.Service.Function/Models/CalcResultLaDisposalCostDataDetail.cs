@@ -1,37 +1,20 @@
-﻿using EPR.Calculator.API.Data.Enums;
+﻿namespace EPR.Calculator.Service.Function.Models;
 
-namespace EPR.Calculator.Service.Function.Models
+public class CalcResultLaDisposalCostDataDetail
 {
-    public class CalcResultLaDisposalCostDataDetail
-    {
-        public required string Name { get; set; }
-
-        public required string England { get; set; }
-
-        public required string Wales { get; set; }
-
-        public required string Scotland { get; set; }
-
-        public required string NorthernIreland { get; set; }
-
-        public required string Total { get; set; }
-
-        public required string ProducerReportedHouseholdPackagingWasteTonnage { get; set; }
-
-        public required string ReportedPublicBinTonnage { get; set; }
-
-        public string HouseholdDrinkContainers { get; set; } = string.Empty;
-
-        public string LateReportingTonnage { get; set; } = string.Empty;
-
-        public string? TotalReportedTonnage { get; set; }
-
-        public string ActionedSelfManagedConsumerWasteTonnage { get; set; } = string.Empty;
-
-        public string ProducerReportedTotalTonnage { get; set; } = string.Empty;
-
-        public string? DisposalCostPricePerTonne { get; set; }
-
-        public int OrderId { get; set; }
-    }
+    public required string Name { get; set; }
+    public required string England { get; set; }
+    public required string Wales { get; set; }
+    public required string Scotland { get; set; }
+    public required string NorthernIreland { get; set; }
+    public required string Total { get; set; }
+    public required string ProducerReportedHouseholdPackagingWasteTonnage { get; set; }
+    public required string ReportedPublicBinTonnage { get; set; }
+    public string HouseholdDrinkContainers { get; set; } = string.Empty;
+    public string LateReportingTonnage { get; set; } = string.Empty;
+    public string? TotalReportedTonnage { get; set; }
+    public string ActionedSelfManagedConsumerWasteTonnage { get; set; } = string.Empty;
+    public string ProducerReportedTotalTonnage { get; set; } = string.Empty;
+    public string? DisposalCostPricePerTonne { get; set; }
+    public int OrderId { get; set; }
 }

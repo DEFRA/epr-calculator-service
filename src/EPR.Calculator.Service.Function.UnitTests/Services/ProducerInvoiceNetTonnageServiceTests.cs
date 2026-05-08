@@ -1,77 +1,51 @@
-using AutoFixture;
-using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Function.Interface;
-using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
-using EPR.Calculator.Service.Function.Services.Telemetry;
-using EPR.Calculator.Service.Function.UnitTests.Builder;
-using Moq;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Data;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Utils;
+using Microsoft.Extensions.Logging;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
     [TestClass]
     public class ProducerInvoiceNetTonnageServiceTests
     {
+        private ApplicationDBContext _dbContext = null!;
+        private ProducerInvoiceNetTonnageService _testClass = null!;
+        private Mock<ILogger<ProducerInvoiceNetTonnageService>> _logger = null!;
+        private Mock<IMaterialService> _materialService = null!;
 
-        public ProducerInvoiceNetTonnageServiceTests()
+        [TestInitialize]
+        public void Initalize()
         {
-            producerInvoiceMaterialChunker = new Mock<IDbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage>>();
-            telemetryLogger = new Mock<ICalculatorTelemetryLogger>();
-            materialService = new Mock<IMaterialService>();
-            producerInvoiceMapper = new Mock<IProducerInvoiceTonnageMapper>();
-            testClass = new ProducerInvoiceNetTonnageService(producerInvoiceMaterialChunker.Object, telemetryLogger.Object, materialService.Object, producerInvoiceMapper.Object);
+            _dbContext = TestFixtures.New().Create<ApplicationDBContext>();
+            _logger = new Mock<ILogger<ProducerInvoiceNetTonnageService>>();
+            _materialService = new Mock<IMaterialService>();
+            _testClass = new ProducerInvoiceNetTonnageService(_dbContext, new TestBulkOps(), _materialService.Object, _logger.Object);
         }
-
-        private ProducerInvoiceNetTonnageService testClass { get; init; }
-        private Mock<IDbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage>> producerInvoiceMaterialChunker { get; init; }
-        private Mock<ICalculatorTelemetryLogger> telemetryLogger { get; init; }
-        private Mock<IMaterialService> materialService { get; init; }
-        private Mock<IProducerInvoiceTonnageMapper> producerInvoiceMapper { get; init; }
-
-        [TestMethod]
-        public void CanConstruct()
-        {
-            // Act
-            var instance = new ProducerInvoiceNetTonnageService(producerInvoiceMaterialChunker.Object, telemetryLogger.Object, materialService.Object, producerInvoiceMapper.Object);
-
-            // Assert
-            Assert.IsNotNull(instance);
-        }
-
 
         [TestMethod]
         public async Task CanCallCreateProducerInvoiceNetTonnage1()
         {
             // Arrange
-            var fixture = new Fixture();
-            var calcResult = TestDataHelper.GetCalcResult();
+            var runContext = DummyData.RunContexts.CalculatorRun2025;
+            var calcResult = DummyData.GetCalcResult();
 
-            telemetryLogger.Setup(mock => mock.LogInformation(It.IsAny<TrackMessage>())).Verifiable();
-            telemetryLogger.Setup(mock => mock.LogError(It.IsAny<ErrorMessage>())).Verifiable();
+            _materialService.Setup(m => m.GetMaterials(It.IsAny<CancellationToken>())).ReturnsAsync(DummyData.Materials);
 
-            materialService.Setup(m => m.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials());
-            producerInvoiceMapper.Setup(m => m.Map(It.IsAny<ProducerInvoiceTonnage>())).Returns(fixture.Create<ProducerInvoicedMaterialNetTonnage>());
-
-            // Act
-
-            var result = await testClass.CreateProducerInvoiceNetTonnage(calcResult);
-
-            // Assert
-            telemetryLogger.Verify(mock => mock.LogInformation(It.IsAny<TrackMessage>()));
-
-            Assert.IsTrue(result);
+            // Act/Assert
+            await Should.NotThrowAsync(async () => await _testClass.CreateProducerInvoiceNetTonnage(runContext, calcResult));
         }
 
         [TestMethod]
         public async Task CanCallCreateProducerInvoiceTonnageWithNoProducers()
         {
             // Arrange
-            var fixture = new Fixture();
+            var runContext = DummyData.RunContexts.CalculatorRun2025;
             var calcResult = new CalcResult
             {
-                ApplyModulation = true,
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultDetail = new CalcResultDetail
@@ -105,33 +79,22 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
             };
 
-            materialService.Setup(mock => mock.GetMaterials()).ReturnsAsync(fixture.Create<List<MaterialDetail>>());
-            telemetryLogger.Setup(mock => mock.LogInformation(It.IsAny<TrackMessage>())).Verifiable();
-            telemetryLogger.Setup(mock => mock.LogError(It.IsAny<ErrorMessage>())).Verifiable();
+            _materialService.Setup(mock => mock.GetMaterials(It.IsAny<CancellationToken>())).ReturnsAsync(TestFixtures.Legacy.Create<ImmutableList<MaterialDetail>>());
 
-            // Act
-            var result = await testClass.CreateProducerInvoiceNetTonnage(calcResult);
-
-            Assert.IsFalse(result);
+            // Act/Assert
+            await Should.ThrowAsync<Exception>(async () => await _testClass.CreateProducerInvoiceNetTonnage(runContext, calcResult));
         }
 
         [TestMethod]
         public async Task CannotCallCreateProducerInvoiceTonnageWithNullCalcResult()
         {
             // Arrange
-            var fixture = new Fixture();
-            var calcResult = fixture.Create<CalcResult>();
+            var runContext = DummyData.RunContexts.CalculatorRun2025;
+            var calcResult = TestFixtures.Legacy.Create<CalcResult>();
+            _materialService.Setup(mock => mock.GetMaterials(It.IsAny<CancellationToken>())).Throws<Exception>();
 
-            telemetryLogger.Setup(mock => mock.LogInformation(It.IsAny<TrackMessage>())).Verifiable();
-            materialService.Setup(mock => mock.GetMaterials()).Throws<Exception>();
-
-            // Act
-            var result = await testClass.CreateProducerInvoiceNetTonnage(calcResult);
-
-            // Assert
-            telemetryLogger.Verify(mock => mock.LogError(It.IsAny<ErrorMessage>()));
-
-            Assert.IsFalse(result);
+            // Act/Assert
+            await Should.ThrowAsync<Exception>(async () => await _testClass.CreateProducerInvoiceNetTonnage(runContext, calcResult));
         }
     }
 }

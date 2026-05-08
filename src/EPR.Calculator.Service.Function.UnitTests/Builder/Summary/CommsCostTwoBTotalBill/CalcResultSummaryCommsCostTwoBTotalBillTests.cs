@@ -2,8 +2,10 @@
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.Summary;
 using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoBTotalBill;
-using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs;
+using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Data;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwoBTotalBill
 {
@@ -14,31 +16,30 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
         private CalcResult _calcResult;
         private List<ProducerDetail> _producers;
         private List<CalcResultProducerAndReportMaterialDetail> _allResults;
-        private Fixture Fixture { get; init; } = new Fixture();
+        private readonly IFixture _fixture;
 
         public CalcResultSummaryCommsCostTwoBTotalBillTests()
         {
+            _fixture = TestFixtures.New();
             _producers = GetProducers();
 
             _calcResult = new CalcResult
             {
-                ApplyModulation = false,
-                CalcResultParameterOtherCost = TestDataHelper.GetCalcResultParameterOtherCost(),
-                CalcResultDetail = TestDataHelper.GetCalcResultDetail(),
-                CalcResultLaDisposalCostData = TestDataHelper.GetCalcResultLaDisposalCostData(),
-                CalcResultLapcapData = TestDataHelper.GetCalcResultLapcapData(),
+                CalcResultParameterOtherCost = DummyData.GetCalcResultParameterOtherCost(),
+                CalcResultDetail = DummyData.GetCalcResultDetail(),
+                CalcResultLaDisposalCostData = DummyData.GetCalcResultLaDisposalCostData(),
+                CalcResultLapcapData = DummyData.GetCalcResultLapcapData(),
                 CalcResultOnePlusFourApportionment = GetCalcResultOnePlusFourApportionment(),
-                CalcResultParameterCommunicationCost = GetCalcResultParameterCommunicationCost(),
-                CalcResultSummary = TestDataHelper.GetCalcResultSummary(),
-                CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
+                CalcResultSummary = DummyData.GetCalcResultSummary(),
+                CalcResultCommsCostReportDetail = DummyData.GetCalcResultCommsCostReportDetail(),
                 CalcResultLateReportingTonnageData = GetCalcResultLateReportingTonnage(),
-                CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers(),
+                CalcResultScaledupProducers = DummyData.GetScaledupProducers(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
             };
 
             // Set up consistent data
-            this._calcResult.CalcResultParameterOtherCost = Fixture.Create<CalcResultParameterOtherCost>();
+            this._calcResult.CalcResultParameterOtherCost = _fixture.Create<CalcResultParameterOtherCost>();
             this._calcResult.CalcResultParameterOtherCost.BadDebtProvision = new KeyValuePair<string, string>("10 Bad Debt Provision", "10.00%");
             var producer1 = new ProducerDetail
                             {
@@ -136,7 +137,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                 }
             };
 
-            var materails = TestDataHelper.GetMaterials();
+            var materails = DummyData.Materials;
             TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(_allResults, materails, 1);
         }
 
@@ -319,7 +320,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
 
         private List<ProducerDetail> GetProducers()
         {
-            var producers = Fixture.CreateMany<ProducerDetail>(2).ToList();
+            var producers = _fixture.CreateMany<ProducerDetail>(2).ToList();
             producers[0].SubsidiaryId = "1";
             producers[0].CalculatorRunId = 1;
             producers[0].ProducerId = 1;
@@ -345,22 +346,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             return producers;
         }
 
-        private CalcResultParameterCommunicationCost GetCalcResultParameterCommunicationCost()
-        {
-            return Fixture.Create<CalcResultParameterCommunicationCost>();
-        }
-
         private CalcResultLateReportingTonnage GetCalcResultLateReportingTonnage()
         {
-            return Fixture.Create<CalcResultLateReportingTonnage>();
+            return _fixture.Create<CalcResultLateReportingTonnage>();
         }
 
         private CalcResultOnePlusFourApportionment GetCalcResultOnePlusFourApportionment()
         {
-            var calcResultOnePlusFourApportionment = Fixture.Create<CalcResultOnePlusFourApportionment>();
+            var calcResultOnePlusFourApportionment = _fixture.Create<CalcResultOnePlusFourApportionment>();
 
             // Ensure the lists have enough elements
-            calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails = Fixture.CreateMany<CalcResultOnePlusFourApportionmentDetail>(5).ToList();
+            calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails = _fixture.CreateMany<CalcResultOnePlusFourApportionmentDetail>(5).ToList();
 
             // Set up consistent data
             calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.Last().EnglandDisposalTotal = "50%";

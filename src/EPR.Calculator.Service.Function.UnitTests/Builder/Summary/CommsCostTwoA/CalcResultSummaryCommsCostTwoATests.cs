@@ -3,6 +3,7 @@ using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Data;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwoA
 {
@@ -26,17 +27,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
 
             calcResult = new CalcResult
             {
-                ApplyModulation = false,
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
-                CalcResultParameterOtherCost = TestDataHelper.GetCalcResultParameterOtherCost(),
-                CalcResultDetail = TestDataHelper.GetCalcResultDetail(),
-                CalcResultLaDisposalCostData = TestDataHelper.GetCalcResultLaDisposalCostData(),
-                CalcResultLapcapData = TestDataHelper.GetCalcResultLapcapData(),
-                CalcResultOnePlusFourApportionment = TestDataHelper.GetCalcResultOnePlusFourApportionment(),
-                CalcResultParameterCommunicationCost = GetCalcResultParameterCommunicationCost(),
-                CalcResultSummary = TestDataHelper.GetCalcResultSummary(),
-                CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
+                CalcResultParameterOtherCost = DummyData.GetCalcResultParameterOtherCost(),
+                CalcResultDetail = DummyData.GetCalcResultDetail(),
+                CalcResultLaDisposalCostData = DummyData.GetCalcResultLaDisposalCostData(),
+                CalcResultLapcapData = DummyData.GetCalcResultLapcapData(),
+                CalcResultOnePlusFourApportionment = DummyData.GetCalcResultOnePlusFourApportionment(),
+                CalcResultSummary = DummyData.GetCalcResultSummary(),
+                CalcResultCommsCostReportDetail = DummyData.GetCalcResultCommsCostReportDetail(),
                 CalcResultLateReportingTonnageData = this.GetCalcResultLateReportingTonnage(),
                 CalcResultProjectedProducers = new CalcResultProjectedProducers()
             };
@@ -227,11 +226,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
         public void GetPriceperTonneForComms_WhenNoMaterialMatch_ShouldReturn0()
         {
             // Arrange
-            material.Name = "Aluminium";
+            var mat = material with { Name = "Aluminium" };
             decimal expectedCost1 = 0m;
 
             // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetPriceperTonneForComms(material, calcResult);
+            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetPriceperTonneForComms(mat, calcResult);
 
             // Assert
             Assert.AreEqual(expectedCost1, totalCost);
@@ -325,7 +324,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
 
         private static List<ProducerDetail> GetProducers()
         {
-            var producers = TestDataHelper.GetProducers();
+            var producers = DummyData.GetProducers();
 
             foreach (var subPeriod in new[] {"2025-H1", "2025-H2"})
             {
@@ -387,8 +386,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             {
                 Id = 1,
                 Code = "AL",
-                Name = "Material1",
-                Description = "Material1",
+                Name = "Material1"
             };
             return material;
         }
@@ -399,15 +397,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             {
                 Id = 3,
                 Code = "GL",
-                Name = "Material2",
-                Description = "Material2",
+                Name = "Material2"
             };
             return material;
-        }
-
-        private CalcResultParameterCommunicationCost GetCalcResultParameterCommunicationCost()
-        {
-            return Fixture.Create<CalcResultParameterCommunicationCost>();
         }
 
         private CalcResultLateReportingTonnage GetCalcResultLateReportingTonnage()

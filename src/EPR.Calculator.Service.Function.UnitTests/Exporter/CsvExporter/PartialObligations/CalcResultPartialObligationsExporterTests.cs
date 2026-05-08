@@ -10,12 +10,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
     public class CalcResultPartialObligationsExporterTests
     {
         private CalcResultPartialObligationsExporter exporter;
-        private readonly List<MaterialDetail> materials = new List<MaterialDetail>()
-        {
-            new MaterialDetail { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
-            new MaterialDetail { Id = 2, Code = "GL", Name = "Glass", Description = "Glass" },
-            new MaterialDetail { Id = 3, Code = "OT", Name = "Other materials", Description = "Other materials" }
-        };
+        private readonly List<MaterialDetail> materials =
+        [
+            new() { Id = 1, Code = "AL", Name = "Aluminium" },
+            new() { Id = 2, Code = "GL", Name = "Glass" },
+            new() { Id = 3, Code = "OT", Name = "Other materials" }
+        ];
 
         public CalcResultPartialObligationsExporterTests()
         {
@@ -37,7 +37,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
             var csvContent = new StringBuilder();
 
             exporter.Export(projectedProducers, csvContent, showModulation);
-            var rows = CsvTestUtils.GetRows(csvContent); 
+            var rows = CsvTestUtils.GetRows(csvContent);
 
             Assert.IsTrue(rows[2][0].Contains(CalcResultPartialObligationHeaders.PartialObligations));
 
@@ -77,17 +77,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
             Assert.AreEqual("9.000", data[CalcResultPartialObligationHeaders.PublicBinGreenTonnage][0]);
             Assert.AreEqual("10.000", data[CalcResultPartialObligationHeaders.PublicBinRedMedicalTonnage][0]);
             Assert.AreEqual("11.000", data[CalcResultPartialObligationHeaders.PublicBinAmberMedicalTonnage][0]);
-            Assert.AreEqual("12.000", data[CalcResultPartialObligationHeaders.PublicBinGreenMedicalTonnage][0]);            
+            Assert.AreEqual("12.000", data[CalcResultPartialObligationHeaders.PublicBinGreenMedicalTonnage][0]);
             Assert.AreEqual("120.000", data[CalcResultPartialObligationHeaders.TotalTonnage][0]);
             Assert.AreEqual("60.000", data[CalcResultPartialObligationHeaders.SelfManagedConsumerWasteTonnage][0]);
-            Assert.AreEqual("50.000", data[CalcResultPartialObligationHeaders.PartialHouseholdPackagingWasteTonnage][0]);            
+            Assert.AreEqual("50.000", data[CalcResultPartialObligationHeaders.PartialHouseholdPackagingWasteTonnage][0]);
             Assert.AreEqual("13.000", data[CalcResultPartialObligationHeaders.PartialHouseholdRedTonnage][0]);
             Assert.AreEqual("14.000", data[CalcResultPartialObligationHeaders.PartialHouseholdAmberTonnage][0]);
             Assert.AreEqual("15.000", data[CalcResultPartialObligationHeaders.PartialHouseholdGreenTonnage][0]);
             Assert.AreEqual("16.000", data[CalcResultPartialObligationHeaders.PartialHouseholdRedMedicalTonnage][0]);
             Assert.AreEqual("17.000", data[CalcResultPartialObligationHeaders.PartialHouseholdAmberMedicalTonnage][0]);
             Assert.AreEqual("18.000", data[CalcResultPartialObligationHeaders.PartialHouseholdGreenMedicalTonnage][0]);
-            Assert.AreEqual("10.000", data[CalcResultPartialObligationHeaders.PartialPublicBinTonnage][0]);        
+            Assert.AreEqual("10.000", data[CalcResultPartialObligationHeaders.PartialPublicBinTonnage][0]);
             Assert.AreEqual("19.000", data[CalcResultPartialObligationHeaders.PartialPublicBinRedTonnage][0]);
             Assert.AreEqual("20.000", data[CalcResultPartialObligationHeaders.PartialPublicBinAmberTonnage][0]);
             Assert.AreEqual("21.000", data[CalcResultPartialObligationHeaders.PartialPublicBinGreenTonnage][0]);
@@ -117,17 +117,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
             Assert.AreEqual("15.000", data[CalcResultPartialObligationHeaders.HouseholdDrinksContainersGreenTonnage][0]);
             Assert.AreEqual("16.000", data[CalcResultPartialObligationHeaders.HouseholdDrinksContainersRedMedicalTonnage][0]);
             Assert.AreEqual("17.000", data[CalcResultPartialObligationHeaders.HouseholdDrinksContainersAmberMedicalTonnage][0]);
-            Assert.AreEqual("18.000", data[CalcResultPartialObligationHeaders.HouseholdDrinksContainersGreenMedicalTonnage][0]);            
+            Assert.AreEqual("18.000", data[CalcResultPartialObligationHeaders.HouseholdDrinksContainersGreenMedicalTonnage][0]);
             Assert.AreEqual("190.000", data[CalcResultPartialObligationHeaders.TotalTonnage][1]);
             Assert.AreEqual("60.000", data[CalcResultPartialObligationHeaders.SelfManagedConsumerWasteTonnage][1]);
-            Assert.AreEqual("50.000", data[CalcResultPartialObligationHeaders.PartialHouseholdPackagingWasteTonnage][1]);            
+            Assert.AreEqual("50.000", data[CalcResultPartialObligationHeaders.PartialHouseholdPackagingWasteTonnage][1]);
             Assert.AreEqual("19.000", data[CalcResultPartialObligationHeaders.PartialHouseholdRedTonnage][1]);
             Assert.AreEqual("20.000", data[CalcResultPartialObligationHeaders.PartialHouseholdAmberTonnage][1]);
             Assert.AreEqual("21.000", data[CalcResultPartialObligationHeaders.PartialHouseholdGreenTonnage][1]);
             Assert.AreEqual("22.000", data[CalcResultPartialObligationHeaders.PartialHouseholdRedMedicalTonnage][1]);
             Assert.AreEqual("23.000", data[CalcResultPartialObligationHeaders.PartialHouseholdAmberMedicalTonnage][1]);
             Assert.AreEqual("24.000", data[CalcResultPartialObligationHeaders.PartialHouseholdGreenMedicalTonnage][1]);
-            Assert.AreEqual("10.000", data[CalcResultPartialObligationHeaders.PartialPublicBinTonnage][1]);        
+            Assert.AreEqual("10.000", data[CalcResultPartialObligationHeaders.PartialPublicBinTonnage][1]);
             Assert.AreEqual("25.000", data[CalcResultPartialObligationHeaders.PartialPublicBinRedTonnage][1]);
             Assert.AreEqual("26.000", data[CalcResultPartialObligationHeaders.PartialPublicBinAmberTonnage][1]);
             Assert.AreEqual("27.000", data[CalcResultPartialObligationHeaders.PartialPublicBinGreenTonnage][1]);
@@ -160,7 +160,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
             var csvContent = new StringBuilder();
 
             exporter.Export(projectedProducers, csvContent, showModulation);
-            var rows = CsvTestUtils.GetRows(csvContent); 
+            var rows = CsvTestUtils.GetRows(csvContent);
 
             Assert.IsTrue(rows[2][0].Contains(CalcResultPartialObligationHeaders.PartialObligations));
 
@@ -200,17 +200,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PublicBinGreenTonnage][0]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PublicBinRedMedicalTonnage][0]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PublicBinAmberMedicalTonnage][0]);
-            Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PublicBinGreenMedicalTonnage][0]);            
+            Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PublicBinGreenMedicalTonnage][0]);
             Assert.AreEqual("120.000", data[CalcResultPartialObligationHeaders.TotalTonnage][0]);
             Assert.AreEqual("60.000", data[CalcResultPartialObligationHeaders.SelfManagedConsumerWasteTonnage][0]);
-            Assert.AreEqual("50.000", data[CalcResultPartialObligationHeaders.PartialHouseholdPackagingWasteTonnage][0]);            
+            Assert.AreEqual("50.000", data[CalcResultPartialObligationHeaders.PartialHouseholdPackagingWasteTonnage][0]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialHouseholdRedTonnage][0]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialHouseholdAmberTonnage][0]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialHouseholdGreenTonnage][0]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialHouseholdRedMedicalTonnage][0]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialHouseholdAmberMedicalTonnage][0]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialHouseholdGreenMedicalTonnage][0]);
-            Assert.AreEqual("10.000", data[CalcResultPartialObligationHeaders.PartialPublicBinTonnage][0]);        
+            Assert.AreEqual("10.000", data[CalcResultPartialObligationHeaders.PartialPublicBinTonnage][0]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialPublicBinRedTonnage][0]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialPublicBinAmberTonnage][0]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialPublicBinGreenTonnage][0]);
@@ -240,17 +240,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.HouseholdDrinksContainersGreenTonnage][0]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.HouseholdDrinksContainersRedMedicalTonnage][0]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.HouseholdDrinksContainersAmberMedicalTonnage][0]);
-            Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.HouseholdDrinksContainersGreenMedicalTonnage][0]);            
+            Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.HouseholdDrinksContainersGreenMedicalTonnage][0]);
             Assert.AreEqual("190.000", data[CalcResultPartialObligationHeaders.TotalTonnage][1]);
             Assert.AreEqual("60.000", data[CalcResultPartialObligationHeaders.SelfManagedConsumerWasteTonnage][1]);
-            Assert.AreEqual("50.000", data[CalcResultPartialObligationHeaders.PartialHouseholdPackagingWasteTonnage][1]);            
+            Assert.AreEqual("50.000", data[CalcResultPartialObligationHeaders.PartialHouseholdPackagingWasteTonnage][1]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialHouseholdRedTonnage][1]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialHouseholdAmberTonnage][1]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialHouseholdGreenTonnage][1]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialHouseholdRedMedicalTonnage][1]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialHouseholdAmberMedicalTonnage][1]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialHouseholdGreenMedicalTonnage][1]);
-            Assert.AreEqual("10.000", data[CalcResultPartialObligationHeaders.PartialPublicBinTonnage][1]);        
+            Assert.AreEqual("10.000", data[CalcResultPartialObligationHeaders.PartialPublicBinTonnage][1]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialPublicBinRedTonnage][1]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialPublicBinAmberTonnage][1]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialPublicBinGreenTonnage][1]);
@@ -283,7 +283,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
             var csvContent = new StringBuilder();
 
             exporter.Export(projectedProducers, csvContent, showModulation);
-            var rows = CsvTestUtils.GetRows(csvContent); 
+            var rows = CsvTestUtils.GetRows(csvContent);
 
             Assert.IsTrue(rows[2][0].Contains(CalcResultPartialObligationHeaders.PartialObligations));
             Assert.IsTrue(rows[6][0].Contains(CalcResultPartialObligationHeaders.NoPartialObligations));
@@ -426,4 +426,3 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
         }
     }
 }
-

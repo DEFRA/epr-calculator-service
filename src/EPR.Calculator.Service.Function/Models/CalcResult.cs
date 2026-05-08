@@ -1,11 +1,10 @@
 ﻿using EPR.Calculator.Service.Function.Builder.Modulation;
-using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.Service.Function.Services;
+
 namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResult
     {
-        public required bool ApplyModulation {get; set;}
         public required CalcResultDetail CalcResultDetail { get; set; }
 
         public required CalcResultLapcapData CalcResultLapcapData { get; set; } = new()
@@ -23,12 +22,6 @@ namespace EPR.Calculator.Service.Function.Models
                 CalcResultLateReportingTonnageDetails = new List<CalcResultLateReportingTonnageDetail>(),
                 MaterialHeading = string.Empty,
                 TonnageHeading = string.Empty
-            };
-
-        public CalcResultParameterCommunicationCost CalcResultParameterCommunicationCost { get; set; }
-            = new()
-            {
-                Name = string.Empty
             };
 
         public required CalcResultParameterOtherCost CalcResultParameterOtherCost { get; set; } =

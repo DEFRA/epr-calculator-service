@@ -2,7 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
-using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Utils;
 
@@ -78,7 +77,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             csvContent.AppendLine();
         }
 
-        public void AddBillingInstructionsSection(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
+        public static void AddBillingInstructionsSection(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
         {
             csvContent.Append(CsvSanitiser.SanitiseData(CurrencyConverterUtils.FormattedCurrencyValue(producer.BillingInstructionSection!.CurrentYearInvoiceTotalToDate), DecimalPlaces.Two, null, true));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.BillingInstructionSection.TonnageChangeSinceLastInvoice ?? CommonConstants.Hyphen));
@@ -92,7 +91,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             csvContent.Append(CsvSanitiser.SanitiseData(CurrencyConverterUtils.FormattedCurrencyValue(producer.BillingInstructionSection.SuggestedInvoiceAmount), DecimalPlaces.Two, null, true));
         }
 
-        public void AddTwoC(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
+        public static void AddTwoC(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
         {
             csvContent.Append(CsvSanitiser.SanitiseData(producer.TwoCTotalProducerFeeForCommsCostsWithoutBadDebt, DecimalPlaces.Two, null, true));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.TwoCBadDebtProvision, DecimalPlaces.Two, null, true));
@@ -103,7 +102,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             csvContent.Append(CsvSanitiser.SanitiseData(producer.TwoCNorthernIrelandTotalWithBadDebt, DecimalPlaces.Two, null, true));
         }
 
-        public void AddProducerCommsFee(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
+        public static void AddProducerCommsFee(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
         {
             csvContent.Append(CsvSanitiser.SanitiseData(producer.TotalProducerCommsFee, DecimalPlaces.Two, null, true));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.BadDebtProvisionComms, DecimalPlaces.Two, null, true));
@@ -114,7 +113,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             csvContent.Append(CsvSanitiser.SanitiseData(producer.NorthernIrelandTotalComms, DecimalPlaces.Two, null, true));
         }
 
-        public void AddProducerDisposal(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
+        public static void AddProducerDisposal(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
         {
             csvContent.Append(CsvSanitiser.SanitiseData(producer.TotalProducerDisposalFee, DecimalPlaces.Two, null, true));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.BadDebtProvision, DecimalPlaces.Two, null, true));
@@ -127,7 +126,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             AppendCsvValue(csvContent, producer.TonnageChangeAdvice, producer.isOverallTotalRow);
         }
 
-        public void AddFirstColumns(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
+        public static void AddFirstColumns(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
         {
             csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerId));
             csvContent.Append(CsvSanitiser.SanitiseData(producer.SubsidiaryId));
@@ -208,7 +207,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         private void AppendProducerCommsFeesByMaterial(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool isNotTotal)
         {
             if (producer.ProducerCommsFeesByMaterial == null) { return; }
-            foreach (var disposalFee in producer.ProducerCommsFeesByMaterial!)
+            foreach (var disposalFee in producer.ProducerCommsFeesByMaterial)
             {
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.HouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.PublicBinTonnage, DecimalPlaces.Three, DecimalFormats.F3));
@@ -255,7 +254,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             }
         }
 
-        public void WriteSecondaryHeaders(StringBuilder csvContent, IEnumerable<CalcResultSummaryHeader> headers)
+        public static void WriteSecondaryHeaders(StringBuilder csvContent, IEnumerable<CalcResultSummaryHeader> headers)
         {
             var maxColumnSize = headers.MaxBy(h => h.ColumnIndex ?? 0)?.ColumnIndex ?? throw new ArgumentException("No headers specified");
 
@@ -269,7 +268,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             csvContent.AppendLine(headerRow);
         }
 
-        public void WriteColumnHeaders(CalcResultSummary resultSummary, StringBuilder csvContent)
+        public static void WriteColumnHeaders(CalcResultSummary resultSummary, StringBuilder csvContent)
         {
             foreach (var item in resultSummary.ColumnHeaders)
             {
@@ -277,7 +276,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             }
         }
 
-        private void PrepareSummaryDataHeader(CalcResultSummary resultSummary, StringBuilder csvContent)
+        private static void PrepareSummaryDataHeader(CalcResultSummary resultSummary, StringBuilder csvContent)
         {
             // Add result summary header
             csvContent.AppendLine(CsvSanitiser.SanitiseData(resultSummary.ResultSummaryHeader?.Name))
@@ -299,7 +298,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             csvContent.AppendLine();
         }
 
-        private void AddSectionContent(StringBuilder csvContent, CalcResultSummaryBadDebtProvision? costs)
+        private static void AddSectionContent(StringBuilder csvContent, CalcResultSummaryBadDebtProvision? costs)
         {
             csvContent.Append(CsvSanitiser.SanitiseData(costs?.TotalProducerFeeWithoutBadDebtProvision, DecimalPlaces.Two, null, true));
             csvContent.Append(CsvSanitiser.SanitiseData(costs?.BadDebtProvision, DecimalPlaces.Two, null, true));
@@ -310,7 +309,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             csvContent.Append(CsvSanitiser.SanitiseData(costs?.NorthernIrelandTotalWithBadDebtProvision, DecimalPlaces.Two, null, true));
         }
 
-        private void AppendCsvValue(StringBuilder csvContent, object? value, bool isOverallTotalRow = false,
+        private static void AppendCsvValue(StringBuilder csvContent, object? value, bool isOverallTotalRow = false,
                                     DecimalPlaces decimalPlaces = DecimalPlaces.Zero,
                                     DecimalFormats decimalFormat = DecimalFormats.F2)
         {

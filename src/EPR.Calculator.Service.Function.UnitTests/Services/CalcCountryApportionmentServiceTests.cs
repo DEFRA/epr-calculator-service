@@ -1,9 +1,7 @@
-using AutoFixture;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Services;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
@@ -16,14 +14,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         [TestInitialize]
         public void SetUp()
         {
-            var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
-                           .UseInMemoryDatabase(databaseName: "PayCal")
-                           .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-                           .Options;
-
-            _context = new ApplicationDBContext(dbContextOptions);
-
-            _context.Database.EnsureCreated();
+            _context = TestFixtures.New().Create<ApplicationDBContext>();
 
             if(!_context.Country.Any())
             {
@@ -57,8 +48,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task CanCallSaveChangesAsync()
         {
             // Arrange
-            var fixture = new Fixture();
-            var countryApportionmentServiceDto = fixture.Create<CalcCountryApportionmentServiceDto>();
+            var countryApportionmentServiceDto = TestFixtures.Legacy.Create<CalcCountryApportionmentServiceDto>();
 
             countryApportionmentServiceDto.Countries = _context.Country.ToList();
 
@@ -72,7 +62,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             await _testClass.SaveChangesAsync(countryApportionmentServiceDto);
 
             var apportionment = _context.CountryApportionment.ToList();
-            Assert.AreEqual(4, apportionment.Count());
+            Assert.AreEqual(4, apportionment.Count);
 
             Assert.IsTrue(apportionment.Exists(x => 
             x.CountryId == 1

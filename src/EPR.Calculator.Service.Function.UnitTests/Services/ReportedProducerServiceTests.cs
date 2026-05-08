@@ -1,9 +1,7 @@
 ﻿using EPR.Calculator.API.Data;
-using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Services;
-using EPR.Calculator.Service.Function.UnitTests.Builder;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Data;
 using Microsoft.EntityFrameworkCore;
-using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
@@ -39,7 +37,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         [TestMethod]
         public async Task ShouldReturnProducers_ForGivenRunId()
         {
-            TestDataHelper.SeedDatabaseForInitialRun(dbContext);
+            DummyData.SeedDatabaseForInitialRun(dbContext);
             var result = await reportedProducerService.GetProducers(1);
 
             Assert.AreEqual(3, result.Count);

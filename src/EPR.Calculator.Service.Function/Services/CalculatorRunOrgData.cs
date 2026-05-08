@@ -44,14 +44,14 @@ namespace EPR.Calculator.Service.Function.Services {
             var columnNames = insertTable.GetProperties()
                 .Where(p => !string.Equals(p.Name, "Id", StringComparison.OrdinalIgnoreCase))
                 .Select(p => p.GetColumnName(tableId));
-            #pragma warning disable S2077 // Table and column names come from EF Core metadata, not user input
+            #pragma warning disable EF1002, S2077 // Table and column names come from EF Core metadata, not user input
             await _context.Database.ExecuteSqlRawAsync($@"
                 INSERT INTO {insertTable.GetTableName()} ({string.Join(", ", columnNames)})
                 SELECT {newMaster.Id}, {string.Join(", ", columnNames.Skip(1))}
                 FROM {selectTable.GetTableName()};",
                 cancellationToken
             );
-            #pragma warning restore S2077
+            #pragma warning restore EF1002, S2077
 
             var calculatorRun = await _context.CalculatorRuns
                 .FirstAsync(x => x.Id == runId, cancellationToken);

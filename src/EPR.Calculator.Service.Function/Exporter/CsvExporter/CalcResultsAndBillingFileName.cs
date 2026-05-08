@@ -1,6 +1,4 @@
-﻿using EPR.Calculator.API.Data;
-
-namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
+﻿namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 {
     /// <summary>
     /// Builds the file name for the calculator results file.
@@ -50,12 +48,8 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         /// Initializes a new instance of the <see cref="CalcResultsAndBillingFileName"/> class.
         /// Only use it for JSON billing files.
         /// </summary>
-        public CalcResultsAndBillingFileName(int runId, bool isDraftBillingFile, bool isJson)
+        public CalcResultsAndBillingFileName(int runId)
         {
-            if (!isJson || !isDraftBillingFile)
-            {
-                throw new ArgumentException("This constructor is only for JSON billing files.");
-            }
             var name = $"{runId}billing";
             Value = Path.ChangeExtension(name, JsonFileExtension);
         }
@@ -69,21 +63,5 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         /// <param name="calcResultsFileName"></param>
         public static implicit operator string(CalcResultsAndBillingFileName calcResultsFileName)
             => calcResultsFileName.ToString();
-
-        /// <summary>
-        /// Generates a file name for the results file, by retrieving the needed values
-        /// from the database.
-        /// </summary>
-        /// <param name="context">The database context.</param>
-        /// <param name="runId">The run ID.</param>
-        /// <returns></returns>
-        public static CalcResultsAndBillingFileName FromDatabase(ApplicationDBContext context, int runId)
-        {
-            var runDetails = context.CalculatorRuns
-                .Where(run => run.Id == runId)
-                .Select(run => new { run.Name, run.CreatedAt }).Single();
-
-            return new CalcResultsAndBillingFileName(runId, runDetails.Name ?? string.Empty, runDetails.CreatedAt);
-        }
     }
 }

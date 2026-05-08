@@ -1,15 +1,14 @@
-﻿namespace EPR.Calculator.Service.Function.Models
+﻿namespace EPR.Calculator.Service.Function.Models;
+
+public record CalcResultLateReportingTonnageDetail
 {
-    public record CalcResultLateReportingTonnageDetail
-    {
-        required public string Name { get; init; }
+    public required string Name { get; init; }
 
-        required public decimal TotalLateReportingTonnage { get; init; }
+    public required decimal TotalLateReportingTonnage { get; init; }
 
-        required public decimal RedLateReportingTonnage { get; init; }
+    public required decimal RedLateReportingTonnage { get; init; }
 
-        required public decimal AmberLateReportingTonnage { get; init; }
+    public required decimal AmberLateReportingTonnage { get; init; }
 
-        required public decimal GreenLateReportingTonnage { get; init; }
-    }
+    public required decimal GreenLateReportingTonnage { get; init; }
 }

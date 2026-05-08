@@ -1,17 +1,12 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.API.Data.Enums;
-using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.Lapcap;
-using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Enums;
-using EPR.Calculator.Service.Function.Mappers;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Data;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Moq;
-using Newtonsoft.Json;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
@@ -33,7 +28,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             dbContext.Database.EnsureCreated();
             dbContext.DefaultParameterTemplateMasterList.RemoveRange(dbContext.DefaultParameterTemplateMasterList);
             dbContext.SaveChanges();
-            dbContext.DefaultParameterTemplateMasterList.AddRange(TestDataHelper.GetDefaultParameterTemplateMasterData().ToList());
+            dbContext.DefaultParameterTemplateMasterList.AddRange(DummyData.GetDefaultParameterTemplateMasterData());
             dbContext.SaveChanges();
 
             mockService = new Mock<ICalcCountryApportionmentService>();
@@ -51,23 +46,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         [TestMethod]
         public async Task ConstructTest_For_Aluminuim_Plastic()
         {
+            var runContext = DummyData.RunContexts.CalculatorRun2024;
+
             const string aluminium = "Aluminium";
             const string plastic = "Plastic";
-            var run = new CalculatorRun
-            {
-                Id = 1,
-                Classification = RunClassification.Running,
-                Name = "Test Run",
-                RelativeYear = new RelativeYear(2024),
-                CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
-                CreatedBy = "Test User",
-                LapcapDataMasterId = 2,
-            };
+            var run = runContext.ToEntity(r => r.LapcapDataMasterId = 2);
 
             var lapcapDataMaster = new LapcapDataMaster
             {
                 Id = 2,
-                RelativeYear = new RelativeYear(2024),
+                RelativeYear = runContext.RelativeYear,
                 CreatedBy = "Testuser",
                 CreatedAt = DateTime.UtcNow,
                 EffectiveFrom = DateTime.UtcNow,
@@ -85,16 +73,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             dbContext.LapcapDataMaster.Add(lapcapDataMaster);
             dbContext.LapcapDataDetail.AddRange(details);
 
-            dbContext.Material.Add(new Material { Name = aluminium, Code = "AL", Description = "Some" });
-            dbContext.Material.Add(new Material { Name = plastic, Code = "PL", Description = "Some" });
+            ImmutableList<MaterialDetail> materials =
+            [
+                new() { Id = 1, Name = aluminium, Code = "AL" },
+                new() { Id = 2, Name = plastic, Code = "PL" }
+            ];
 
             dbContext.CalculatorRuns.Add(run);
             await dbContext.SaveChangesAsync();
 
-            var materialDetails = MaterialMapper.Map(await dbContext.Material.ToListAsync());
-
-            var resultsDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) };
-            var lapcapResults = await builder.ConstructAsync(materialDetails, resultsDto);
+            var lapcapResults = await builder.ConstructAsync(runContext, materials);
 
             Assert.IsNotNull(lapcapResults);
             Assert.AreEqual(CalcResultLapcapDataBuilder.LapcapHeader, lapcapResults.Name);
@@ -152,7 +140,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             var details = new List<LapcapDataDetail>();
 
-            foreach (var uniqueRef in LapcapDataUniqueReferences.UniqueReferences)
+            foreach (var uniqueRef in LapcapDataUniqueReferences)
             {
                 details.Add(
                     new LapcapDataDetail
@@ -187,5 +175,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             return 25M;
         }
+
+        public static readonly string[] LapcapDataUniqueReferences =
+        {
+            "ENG-AL", "ENG-FC", "ENG-GL", "ENG-OT",
+            "ENG-PC", "ENG-PL", "ENG-ST", "ENG-WD",
+            "NI-AL", "NI-FC", "NI-GL", "NI-OT",
+            "NI-PC", "NI-PL", "NI-ST", "NI-WD",
+            "SCT-AL", "SCT-FC", "SCT-GL", "SCT-OT",
+            "SCT-PC", "SCT-PL", "SCT-ST", "SCT-WD",
+            "WLS-AL", "WLS-FC", "WLS-GL", "WLS-OT",
+            "WLS-PC", "WLS-PL", "WLS-ST", "WLS-WD"
+        };
     }
 }

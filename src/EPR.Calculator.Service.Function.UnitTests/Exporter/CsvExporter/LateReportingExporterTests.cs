@@ -1,6 +1,6 @@
-using AutoFixture;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 {
@@ -15,13 +15,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         /// </summary>
         public LateReportingExporterTests()
         {
-            Fixture = new Fixture();
             TestClass = new LateReportingExporter();
         }
 
         private LateReportingExporter TestClass { get; init; }
-
-        private IFixture Fixture { get; init; }
 
         /// <summary>
         /// Checks that the output matches the expected format.
@@ -30,7 +27,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         public void CanCallPrepareData()
         {
             // Arrange
-            var input = Fixture.Create<CalcResultLateReportingTonnage>();
+            var input = TestFixtures.Legacy.Create<CalcResultLateReportingTonnage>();
             var expectedheader = $"\"{input.Name}\"," + Environment.NewLine +
                 $"\"{input.MaterialHeading}\",\"{input.TonnageHeading}\",\"{input.RedTonnageHeading}\",\"{input.AmberTonnageHeading}\",\"{input.GreenTonnageHeading}\"," + Environment.NewLine;
             var expectedMaterials = input.CalcResultLateReportingTonnageDetails.Select(m

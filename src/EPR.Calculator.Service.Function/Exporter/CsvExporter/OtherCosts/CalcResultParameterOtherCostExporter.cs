@@ -1,6 +1,6 @@
 ﻿using System.Text;
-using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts
 {
@@ -28,7 +28,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts
             Materiality(otherCost, csvContent);
         }
 
-        public void Materiality(CalcResultParameterOtherCost otherCost, StringBuilder csvContent)
+        public static void Materiality(CalcResultParameterOtherCost otherCost, StringBuilder csvContent)
         {
             var materiality = otherCost.Materiality;
             foreach (var material in materiality)
@@ -39,7 +39,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts
             }
         }
 
-        public void SchemeSetupCost(CalcResultParameterOtherCost otherCost, StringBuilder csvContent)
+        public static void SchemeSetupCost(CalcResultParameterOtherCost otherCost, StringBuilder csvContent)
         {
             var schemeCost = otherCost.SchemeSetupCost;
             csvContent.Append($"{CsvSanitiser.SanitiseData(schemeCost.Name)}");
@@ -50,7 +50,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts
             csvContent.AppendLine($"{CsvSanitiser.SanitiseData(schemeCost.Total)}");
         }
 
-        public void LaDataPrepCosts(CalcResultParameterOtherCost otherCost, StringBuilder csvContent)
+        public static void LaDataPrepCosts(CalcResultParameterOtherCost otherCost, StringBuilder csvContent)
         {
             var laDataPreps = otherCost.Details.OrderBy(x => x.OrderId);
 
@@ -65,7 +65,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts
             }
         }
 
-        public void SaOpertingCosts(CalcResultParameterOtherCost otherCost, StringBuilder csvContent)
+        public static void SaOpertingCosts(CalcResultParameterOtherCost otherCost, StringBuilder csvContent)
         {
             var saOperatingCosts = otherCost.SaOperatingCost.OrderBy(x => x.OrderId);
 

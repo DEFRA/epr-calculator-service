@@ -1,23 +1,41 @@
 ﻿using EPR.Calculator.API.Data;
-using EPR.Calculator.Service.Function.Mappers;
 using EPR.Calculator.Service.Function.Models;
-using Microsoft.EntityFrameworkCore;
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Services
 {
-    public class MaterialService : IMaterialService
+    public interface IMaterialService
     {
-        private readonly ApplicationDBContext context;
+        public Task<ImmutableList<MaterialDetail>> GetMaterials(CancellationToken cancellationToken = default);
+        public Task<ImmutableDictionary<string, MaterialDetail>> GetMaterialsByCode(CancellationToken cancellationToken = default);
+    }
 
-        public MaterialService(IDbContextFactory<ApplicationDBContext> context)
+    public class MaterialService(
+        ApplicationDBContext dbContext)
+        : IMaterialService
+    {
+        public async Task<ImmutableList<MaterialDetail>> GetMaterials(CancellationToken cancellationToken = default)
         {
-            this.context = context.CreateDbContext();
+            return await dbContext.Material
+                .Select(material => new MaterialDetail
+                {
+                    Id = material.Id,
+                    Code = material.Code,
+                    Name = material.Name
+                })
+                .ToImmutableListAsync(cancellationToken);
         }
 
-        public async Task<List<MaterialDetail>> GetMaterials()
+        public async Task<ImmutableDictionary<string, MaterialDetail>> GetMaterialsByCode(CancellationToken cancellationToken = default)
         {
-            var materials = await context.Material.ToListAsync();
-            return MaterialMapper.Map(materials);
+            return await dbContext.Material
+                .Select(material => new MaterialDetail
+                {
+                    Id = material.Id,
+                    Code = material.Code,
+                    Name = material.Name
+                })
+                .ToImmutableDictionaryAsync(m => m.Code, StringComparer.OrdinalIgnoreCase, cancellationToken);
         }
     }
 }

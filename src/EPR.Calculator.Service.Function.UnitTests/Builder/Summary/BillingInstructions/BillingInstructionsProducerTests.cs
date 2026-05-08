@@ -3,59 +3,29 @@ using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.ParametersOther;
 using EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions;
 using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Features.Billing.Constants;
 using EPR.Calculator.Service.Function.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Data;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstructions
 {
-    /// <summary>
-    /// Defines the <see cref="BillingInstructionsProducerTests" />
-    /// </summary>
     [TestClass]
     public class BillingInstructionsProducerTests
     {
-        /// <summary>
-        /// Defines the _dbContext
-        /// </summary>
-        private readonly ApplicationDBContext _dbContext;
+        private ApplicationDBContext _dbContext = null!;
+        private ImmutableArray<MaterialDetail> _materials;
+        private CalcResult _calcResult = null!;
+        private Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial> _materialCostSummary = null!;
+        private Dictionary<MaterialDetail, CalcResultSummaryProducerCommsFeesCostByMaterial> _commsCostSummary = null!;
+        private List<InvoicedProducerRecord> producerInvoicedDto = null!;
+        private List<DefaultParamResultsClass> defaultParam = null!;
 
-        /// <summary>
-        /// Defines the _materials
-        /// </summary>
-        private readonly IEnumerable<MaterialDetail> _materials;
-
-        /// <summary>
-        /// Defines the _calcResult
-        /// </summary>
-        private readonly CalcResult _calcResult;
-
-        /// <summary>
-        /// Defines the _materialCostSummary
-        /// </summary>
-        private readonly Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial> _materialCostSummary;
-
-        /// <summary>
-        /// Defines the _commsCostSummary
-        /// </summary>
-        private readonly Dictionary<MaterialDetail, CalcResultSummaryProducerCommsFeesCostByMaterial> _commsCostSummary;
-
-        private List<ProducerInvoicedDto> producerInvoicedDto;
-
-        private List<DefaultParamResultsClass> defaultParam;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="BillingInstructionsProducerTests"/> class.
-        /// </summary>
-        public BillingInstructionsProducerTests()
+        [TestInitialize]
+        public void Init()
         {
-            var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
-                .UseInMemoryDatabase(databaseName: "PayCal")
-                .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-                .Options;
-
-            _dbContext = new ApplicationDBContext(dbContextOptions);
-            _dbContext.Database.EnsureCreated();
+            var fixture = TestFixtures.New();
+            _dbContext = fixture.Freeze<ApplicationDBContext>();
 
             CreateMaterials();
             CreateProducerDetail();
@@ -65,62 +35,53 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
                 {
                     Id = 1,
                     Code = "AL",
-                    Name = "Aluminium",
-                    Description = "Aluminium",
+                    Name = "Aluminium"
                 },
                 new MaterialDetail
                 {
                     Id = 2,
                     Code = "FC",
-                    Name = "Fibre composite",
-                    Description = "Fibre composite",
+                    Name = "Fibre composite"
                 },
                 new MaterialDetail
                 {
                     Id = 3,
                     Code = "GL",
-                    Name = "Glass",
-                    Description = "Glass",
+                    Name = "Glass"
                 },
                 new MaterialDetail
                 {
                     Id = 4,
                     Code = "PC",
                     Name = "Paper or card",
-                    Description = "Paper or card",
                 },
                 new MaterialDetail
                 {
                     Id = 5,
                     Code = "PL",
                     Name = "Plastic",
-                    Description = "Plastic",
                 },
                 new MaterialDetail
                 {
                     Id = 6,
                     Code = "ST",
                     Name = "Steel",
-                    Description = "Steel",
                 },
                 new MaterialDetail
                 {
                     Id = 7,
                     Code = "WD",
-                    Name = "Wood",
-                    Description = "Wood",
+                    Name = "Wood"
                 },
                 new MaterialDetail
                 {
                     Id = 8,
                     Code = "OT",
-                    Name = "Other materials",
-                    Description = "Other materials",
+                    Name = "Other materials"
                 }
             ];
 
-            _calcResult = TestDataHelper.GetCalcResult();
-
+            _calcResult = DummyData.GetCalcResult();
             _materialCostSummary = new Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial>();
             _commsCostSummary = new Dictionary<MaterialDetail, CalcResultSummaryProducerCommsFeesCostByMaterial>();
 
@@ -155,13 +116,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
                 });
             }
 
-            producerInvoicedDto = new List<ProducerInvoicedDto> {
-                new() {
-                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 1 },
-                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction {
-                        ProducerId = 1,
-                        CurrentYearInvoicedTotalAfterThisRun = 20.003m
-                    }
+            producerInvoicedDto = new List<InvoicedProducerRecord> {
+                new()
+                {
+                    CalculatorRunId = 1,
+                    CalculatorName = "TestRun",
+                    ProducerId = 1,
+                    ProducerName = "Test Producer",
+                    TradingName = "Test Trading Name",
+                    MaterialId = 77,
+                    InvoicedNetTonnage = 20,
+                    BillingInstructionId = "id_1",
+                    CurrentYearInvoicedTotalAfterThisRun = 20.003m
                 }
             };
 
@@ -244,31 +210,26 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         public void CanCallSetValues()
         {
             // Act
-            var producerInvoicedMaterialNetTonnage = new List<ProducerInvoicedDto>
-            {
-                new ProducerInvoicedDto
+            ImmutableList<InvoicedProducerRecord> invoiced =
+            [
+                new()
                 {
-                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage
-                    {
-                        CalculatorRunId = 101,
-                        InvoicedNetTonnage = 20,
-                        MaterialId = 77,
-                        ProducerId = 1,
-                        Id = 22
-                    },
-                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction
-                        {
-                            ProducerId = 1,
-                            Id = 22,
-                            CurrentYearInvoicedTotalAfterThisRun = 20.00m
-                        },
+                    CalculatorRunId = 101,
+                    CalculatorName = "TestRun",
+                    ProducerId = 1,
+                    ProducerName = "Test Producer",
+                    TradingName = "Test Trading Name",
+                    MaterialId = 77,
+                    InvoicedNetTonnage = 20,
+                    BillingInstructionId = "id_1",
+                    CurrentYearInvoicedTotalAfterThisRun = 20.00m
                 }
-            };
+            ];
 
             defaultParam.First().ParameterValue = 55000m;
             defaultParam.First().ParameterUniqueReference = "MATT-PD";
 
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, producerInvoicedMaterialNetTonnage, defaultParam);
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, invoiced, defaultParam);
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection;
 
 
@@ -284,7 +245,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
             Assert.AreEqual(52355.85m, fee.PercentageLiabilityDifference);
             Assert.AreEqual("-ve", fee.MaterialPercentageThresholdBreached);
             Assert.AreEqual("-", fee.TonnagePercentageThresholdBreached);
-            Assert.AreEqual(CommonConstants.Delta, fee.SuggestedBillingInstruction);
+            Assert.AreEqual(BillingConstants.Suggestion.Delta, fee.SuggestedBillingInstruction);
             Assert.AreEqual(10471.17m, fee.SuggestedInvoiceAmount);
         }
 
@@ -310,18 +271,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
                                         }
             };
 
-            var invoiced = new List<ProducerInvoicedDto>
-                            {
-                                new()
-                                {
-                                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 101 },
-                                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction
-                                    {
-                                        ProducerId = 101,
-                                        CurrentYearInvoicedTotalAfterThisRun = 20.003m
-                                    }
-                                }
-                            };
+            ImmutableList<InvoicedProducerRecord> invoiced =
+            [
+                new()
+                {
+                    CalculatorRunId = 101,
+                    CalculatorName = "TestRun",
+                    ProducerId = 101,
+                    ProducerName = "Test Producer",
+                    TradingName = "Test Trading Name",
+                    MaterialId = 77,
+                    InvoicedNetTonnage = 20,
+                    BillingInstructionId = "id_1",
+                    CurrentYearInvoicedTotalAfterThisRun = 20.003m
+                }
+            ];
 
             BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
 
@@ -352,18 +316,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
                                         }
             };
 
-            var invoiced = new List<ProducerInvoicedDto>
-                            {
-                                new()
-                                {
-                                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 301 },
-                                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction
-                                    {
-                                        ProducerId = 301,
-                                        CurrentYearInvoicedTotalAfterThisRun = 10m
-                                    }
-                                }
-                            };
+            ImmutableList<InvoicedProducerRecord> invoiced =
+            [
+                new()
+                {
+                    CalculatorRunId = 101,
+                    CalculatorName = "TestRun",
+                    ProducerId = 301,
+                    ProducerName = "Test Producer",
+                    TradingName = "Test Trading Name",
+                    MaterialId = 77,
+                    InvoicedNetTonnage = 20,
+                    BillingInstructionId = "id_1",
+                    CurrentYearInvoicedTotalAfterThisRun = 10m
+                }
+            ];
 
             BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
             Assert.IsNull(summary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!.LiabilityDifference);
@@ -388,18 +355,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
                                         }
             };
 
-            var invoiced = new List<ProducerInvoicedDto>
-                                {
-                                    new()
-                                    {
-                                        InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 11 },
-                                        InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction
-                                        {
-                                            ProducerId = 11,
-                                            CurrentYearInvoicedTotalAfterThisRun = 5m
-                                        }
-                                    }
-                                };
+            ImmutableList<InvoicedProducerRecord> invoiced =
+            [
+                new()
+                {
+                    CalculatorRunId = 101,
+                    CalculatorName = "TestRun",
+                    ProducerId = 11,
+                    ProducerName = "Test Producer",
+                    TradingName = "Test Trading Name",
+                    MaterialId = 77,
+                    InvoicedNetTonnage = 20,
+                    BillingInstructionId = "id_1",
+                    CurrentYearInvoicedTotalAfterThisRun = 5m
+                }
+            ];
 
             BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
 
@@ -441,19 +411,33 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
 
             var summary = new CalcResultSummary { ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { a, b, total } };
 
-            var invoiced = new List<ProducerInvoicedDto>
-                            {
-                                new()
-                                {
-                                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 1 },
-                                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 1, CurrentYearInvoicedTotalAfterThisRun = 20m }
-                                },
-                                new()
-                                {
-                                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 2 },
-                                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 2, CurrentYearInvoicedTotalAfterThisRun = 80m }
-                                }
-                            };
+            ImmutableList<InvoicedProducerRecord> invoiced =
+            [
+                new()
+                {
+                    CalculatorRunId = 101,
+                    CalculatorName = "TestRun",
+                    ProducerId = 1,
+                    ProducerName = "Test Producer",
+                    TradingName = "Test Trading Name",
+                    MaterialId = 77,
+                    InvoicedNetTonnage = 20,
+                    BillingInstructionId = "id_1",
+                    CurrentYearInvoicedTotalAfterThisRun = 20m
+                },
+                new()
+                {
+                    CalculatorRunId = 101,
+                    CalculatorName = "TestRun",
+                    ProducerId = 2,
+                    ProducerName = "Test Producer",
+                    TradingName = "Test Trading Name",
+                    MaterialId = 77,
+                    InvoicedNetTonnage = 20,
+                    BillingInstructionId = "id_1",
+                    CurrentYearInvoicedTotalAfterThisRun = 80m
+                }
+            ];
 
             BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
 
@@ -499,19 +483,33 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
 
             var summary = new CalcResultSummary { ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { a, b, total } };
 
-            var invoiced = new List<ProducerInvoicedDto>
-                            {
-                                new()
-                                {
-                                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 1 },
-                                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 1, CurrentYearInvoicedTotalAfterThisRun = 20m }
-                                },
-                                new()
-                                {
-                                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 2 },
-                                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 2, CurrentYearInvoicedTotalAfterThisRun = 50m }
-                                }
-                            };
+            ImmutableList<InvoicedProducerRecord> invoiced =
+            [
+                new()
+                {
+                    CalculatorRunId = 101,
+                    CalculatorName = "TestRun",
+                    ProducerId = 1,
+                    ProducerName = "Test Producer",
+                    TradingName = "Test Trading Name",
+                    MaterialId = 77,
+                    InvoicedNetTonnage = 20,
+                    BillingInstructionId = "id_1",
+                    CurrentYearInvoicedTotalAfterThisRun = 20m
+                },
+                new()
+                {
+                    CalculatorRunId = 101,
+                    CalculatorName = "TestRun",
+                    ProducerId = 2,
+                    ProducerName = "Test Producer",
+                    TradingName = "Test Trading Name",
+                    MaterialId = 77,
+                    InvoicedNetTonnage = 20,
+                    BillingInstructionId = "id_1",
+                    CurrentYearInvoicedTotalAfterThisRun = 50m
+                }
+            ];
 
             BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
 
@@ -535,7 +533,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
 
             var summary = new CalcResultSummary { ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { total } };
 
-            BillingInstructionsProducer.SetValues(summary, new List<ProducerInvoicedDto>(), new List<DefaultParamResultsClass>());
+            BillingInstructionsProducer.SetValues(summary, new List<InvoicedProducerRecord>(), new List<DefaultParamResultsClass>());
 
             Assert.AreEqual(string.Empty, summary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!.MaterialThresholdBreached);
         }
@@ -554,14 +552,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
             };
             var summary = new CalcResultSummary { ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
 
-            var invoiced = new List<ProducerInvoicedDto>
-                            {
-                                new()
-                                {
-                                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 1 },
-                                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 1, CurrentYearInvoicedTotalAfterThisRun = 90m }
-                                }
-                            };
+            ImmutableList<InvoicedProducerRecord> invoiced =
+            [
+                new()
+                {
+                    CalculatorRunId = 101,
+                    CalculatorName = "TestRun",
+                    ProducerId = 1,
+                    ProducerName = "Test Producer",
+                    TradingName = "Test Trading Name",
+                    MaterialId = 77,
+                    InvoicedNetTonnage = 20,
+                    BillingInstructionId = "id_1",
+                    CurrentYearInvoicedTotalAfterThisRun = 90m
+                }
+            ];
 
             BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
 
@@ -581,16 +586,25 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
             };
             var summary = new CalcResultSummary { ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
 
-            BillingInstructionsProducer.SetValues(
-                summary,
-                new List<ProducerInvoicedDto>
-                {
+            ImmutableList<InvoicedProducerRecord> invoiced =
+            [
                 new()
                 {
-                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 1 },
-                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 1, CurrentYearInvoicedTotalAfterThisRun = 90m }
+                    CalculatorRunId = 101,
+                    CalculatorName = "TestRun",
+                    ProducerId = 1,
+                    ProducerName = "Test Producer",
+                    TradingName = "Test Trading Name",
+                    MaterialId = 77,
+                    InvoicedNetTonnage = 20,
+                    BillingInstructionId = "id_1",
+                    CurrentYearInvoicedTotalAfterThisRun = 90m
                 }
-                    },
+            ];
+
+            BillingInstructionsProducer.SetValues(
+                summary,
+                invoiced,
                     new List<DefaultParamResultsClass>
                     {
                 new()
@@ -626,14 +640,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
             };
             var summary = new CalcResultSummary { ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
 
-            var invoiced = new List<ProducerInvoicedDto>
-                            {
-                                new()
-                                {
-                                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 1 },
-                                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 1, CurrentYearInvoicedTotalAfterThisRun = 100m }
-                                }
-                            };
+            ImmutableList<InvoicedProducerRecord> invoiced =
+            [
+                new()
+                {
+                    CalculatorRunId = 101,
+                    CalculatorName = "TestRun",
+                    ProducerId = 1,
+                    ProducerName = "Test Producer",
+                    TradingName = "Test Trading Name",
+                    MaterialId = 77,
+                    InvoicedNetTonnage = 20,
+                    BillingInstructionId = "id_1",
+                    CurrentYearInvoicedTotalAfterThisRun = 100m
+                }
+            ];
 
             BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
             Assert.AreEqual("-", fee.BillingInstructionSection!.MaterialThresholdBreached);
@@ -653,14 +674,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
             };
             var summary = new CalcResultSummary { ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
 
-            var invoiced = new List<ProducerInvoicedDto>
-                            {
-                                new()
-                                {
-                                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 1 },
-                                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 1, CurrentYearInvoicedTotalAfterThisRun = 100m }
-                                }
-                            };
+            ImmutableList<InvoicedProducerRecord> invoiced =
+            [
+                new()
+                {
+                    CalculatorRunId = 101,
+                    CalculatorName = "TestRun",
+                    ProducerId = 1,
+                    ProducerName = "Test Producer",
+                    TradingName = "Test Trading Name",
+                    MaterialId = 77,
+                    InvoicedNetTonnage = 20,
+                    BillingInstructionId = "id_1",
+                    CurrentYearInvoicedTotalAfterThisRun = 100m
+                }
+            ];
 
             var dp = new List<DefaultParamResultsClass>
                             {
@@ -698,14 +726,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
             };
             var summary = new CalcResultSummary { ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
 
-            var invoiced = new List<ProducerInvoicedDto>
-                                {
-                                    new()
-                                    {
-                                        InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 1 },
-                                        InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 1, CurrentYearInvoicedTotalAfterThisRun = 100m }
-                                    }
-                                };
+            ImmutableList<InvoicedProducerRecord> invoiced =
+            [
+                new()
+                {
+                    CalculatorRunId = 101,
+                    CalculatorName = "TestRun",
+                    ProducerId = 1,
+                    ProducerName = "Test Producer",
+                    TradingName = "Test Trading Name",
+                    MaterialId = 77,
+                    InvoicedNetTonnage = 20,
+                    BillingInstructionId = "id_1",
+                    CurrentYearInvoicedTotalAfterThisRun = 100m
+                }
+            ];
 
             var dp = new List<DefaultParamResultsClass>
                                 {
@@ -743,14 +778,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
             };
             var summary = new CalcResultSummary { ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
 
-            var invoiced = new List<ProducerInvoicedDto>
-                                    {
-                                        new()
-                                        {
-                                            InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 1 },
-                                            InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 1, CurrentYearInvoicedTotalAfterThisRun = 100m }
-                                        }
-                                    };
+            ImmutableList<InvoicedProducerRecord> invoiced =
+            [
+                new()
+                {
+                    CalculatorRunId = 101,
+                    CalculatorName = "TestRun",
+                    ProducerId = 1,
+                    ProducerName = "Test Producer",
+                    TradingName = "Test Trading Name",
+                    MaterialId = 77,
+                    InvoicedNetTonnage = 20,
+                    BillingInstructionId = "id_1",
+                    CurrentYearInvoicedTotalAfterThisRun = 100m
+                }
+            ];
 
             var dp = new List<DefaultParamResultsClass>
                                     {
@@ -789,14 +831,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
             };
             var summary = new CalcResultSummary { ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
 
-            var invoiced = new List<ProducerInvoicedDto>
-                                {
-                                    new()
-                                    {
-                                        InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 1 },
-                                        InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 1, CurrentYearInvoicedTotalAfterThisRun = 100m }
-                                    }
-                                };
+            ImmutableList<InvoicedProducerRecord> invoiced =
+            [
+                new()
+                {
+                    CalculatorRunId = 101,
+                    CalculatorName = "TestRun",
+                    ProducerId = 1,
+                    ProducerName = "Test Producer",
+                    TradingName = "Test Trading Name",
+                    MaterialId = 77,
+                    InvoicedNetTonnage = 20,
+                    BillingInstructionId = "id_1",
+                    CurrentYearInvoicedTotalAfterThisRun = 100m
+                }
+            ];
 
             var dp = new List<DefaultParamResultsClass>
                         {
@@ -835,14 +884,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
             };
             var summary = new CalcResultSummary { ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
 
-            var invoiced = new List<ProducerInvoicedDto>
-                            {
-                                new()
-                                {
-                                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 1 },
-                                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 1, CurrentYearInvoicedTotalAfterThisRun = 100m }
-                                }
-                            };
+            ImmutableList<InvoicedProducerRecord> invoiced =
+            [
+                new()
+                {
+                    CalculatorRunId = 101,
+                    CalculatorName = "TestRun",
+                    ProducerId = 1,
+                    ProducerName = "Test Producer",
+                    TradingName = "Test Trading Name",
+                    MaterialId = 77,
+                    InvoicedNetTonnage = 20,
+                    BillingInstructionId = "id_1",
+                    CurrentYearInvoicedTotalAfterThisRun = 100m
+                }
+            ];
 
             BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
             Assert.AreEqual("-", fee.BillingInstructionSection!.TonnageThresholdBreached);
@@ -863,14 +919,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
             };
             var summary = new CalcResultSummary { ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
 
-            var invoiced = new List<ProducerInvoicedDto>
-                            {
-                                new()
-                                {
-                                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 1 },
-                                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 1, CurrentYearInvoicedTotalAfterThisRun = 100m }
-                                }
-                            };
+            ImmutableList<InvoicedProducerRecord> invoiced =
+            [
+                new()
+                {
+                    CalculatorRunId = 101,
+                    CalculatorName = "TestRun",
+                    ProducerId = 1,
+                    ProducerName = "Test Producer",
+                    TradingName = "Test Trading Name",
+                    MaterialId = 77,
+                    InvoicedNetTonnage = 20,
+                    BillingInstructionId = "id_1",
+                    CurrentYearInvoicedTotalAfterThisRun = 100m
+                }
+            ];
 
             var dp = new List<DefaultParamResultsClass>
                             {
@@ -909,14 +972,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
             };
             var summary = new CalcResultSummary { ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
 
-            var invoiced = new List<ProducerInvoicedDto>
-                            {
-                                new()
-                                {
-                                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 1 },
-                                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 1, CurrentYearInvoicedTotalAfterThisRun = 100m }
-                                }
-                            };
+            ImmutableList<InvoicedProducerRecord> invoiced =
+            [
+                new()
+                {
+                    CalculatorRunId = 101,
+                    CalculatorName = "TestRun",
+                    ProducerId = 1,
+                    ProducerName = "Test Producer",
+                    TradingName = "Test Trading Name",
+                    MaterialId = 77,
+                    InvoicedNetTonnage = 20,
+                    BillingInstructionId = "id_1",
+                    CurrentYearInvoicedTotalAfterThisRun = 100m
+                }
+            ];
 
             var dp = new List<DefaultParamResultsClass>
                             {
@@ -955,14 +1025,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
             };
             var summary = new CalcResultSummary { ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
 
-            var invoiced = new List<ProducerInvoicedDto>
-                            {
-                                new()
-                                {
-                                    InvoicedTonnage = new ProducerInvoicedMaterialNetTonnage { ProducerId = 1 },
-                                    InvoiceInstruction = new ProducerDesignatedRunInvoiceInstruction { ProducerId = 1, CurrentYearInvoicedTotalAfterThisRun = 100m }
-                                }
-                            };
+            ImmutableList<InvoicedProducerRecord> invoiced =
+            [
+                new()
+                {
+                    CalculatorRunId = 101,
+                    CalculatorName = "TestRun",
+                    ProducerId = 1,
+                    ProducerName = "Test Producer",
+                    TradingName = "Test Trading Name",
+                    MaterialId = 77,
+                    InvoicedNetTonnage = 20,
+                    BillingInstructionId = "id_1",
+                    CurrentYearInvoicedTotalAfterThisRun = 100m
+                }
+            ];
 
             var dp = new List<DefaultParamResultsClass>
                             {
@@ -1127,37 +1204,47 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         [TestMethod]
         public void CalculateSuggestedBillingInstruction_Level1_ReturnsDelta()
         {
-            producerInvoicedDto.First().InvoiceInstruction!.CurrentYearInvoicedTotalAfterThisRun = 100m;
+            InvoicedProducerRecord[] invoiced =
+            [
+                producerInvoicedDto[0] with { CurrentYearInvoicedTotalAfterThisRun = 100m }
+            ];
 
             defaultParam.First().ParameterValue = 55000m;
             defaultParam.First().ParameterUniqueReference = "MATT-PD";
 
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, producerInvoicedDto, defaultParam);
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, invoiced, defaultParam);
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
-            Assert.AreEqual(CommonConstants.Delta, fee.SuggestedBillingInstruction);
+            Assert.AreEqual(BillingConstants.Suggestion.Delta, fee.SuggestedBillingInstruction);
         }
+
 
         [TestMethod]
         public void CalculateSuggestedBillingInstruction_Level1_ReturnsRebill()
         {
-            producerInvoicedDto.First().InvoiceInstruction!.CurrentYearInvoicedTotalAfterThisRun = 15000m;
+            InvoicedProducerRecord[] invoiced =
+            [
+                producerInvoicedDto[0] with { CurrentYearInvoicedTotalAfterThisRun = 15000m }
+            ];
 
             defaultParam.First().ParameterValue = 55000m;
             defaultParam.First().ParameterUniqueReference = "MATT-PD";
 
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, producerInvoicedDto, defaultParam);
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, invoiced, defaultParam);
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
-            Assert.AreEqual(CommonConstants.Rebill, fee.SuggestedBillingInstruction);
+            Assert.AreEqual(BillingConstants.Suggestion.Rebill, fee.SuggestedBillingInstruction);
         }
 
         [TestMethod]
         public void CalculateSuggestedBillingInstruction_Level1_ReturnsHypen()
         {
-            producerInvoicedDto.First().InvoiceInstruction!.CurrentYearInvoicedTotalAfterThisRun = 10491.17m;
+            InvoicedProducerRecord[] invoiced =
+            [
+                producerInvoicedDto[0] with { CurrentYearInvoicedTotalAfterThisRun = 10491.17m }
+            ];
 
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, producerInvoicedDto, new List<DefaultParamResultsClass>());
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, invoiced, new List<DefaultParamResultsClass>());
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
             Assert.AreEqual(CommonConstants.Hyphen, fee.SuggestedBillingInstruction);
@@ -1177,12 +1264,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         [TestMethod]
         public void CalculateGetSuggestedInvoiceAmount_Level1_ReturnsLiabilityDifference()
         {
-            producerInvoicedDto.First().InvoiceInstruction!.CurrentYearInvoicedTotalAfterThisRun = 100m;
+            InvoicedProducerRecord[] invoiced =
+            [
+                producerInvoicedDto[0] with { CurrentYearInvoicedTotalAfterThisRun = 100m }
+            ];
 
             defaultParam.First().ParameterValue = 55000m;
             defaultParam.First().ParameterUniqueReference = "MATT-PD";
 
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, producerInvoicedDto, defaultParam);
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, invoiced, defaultParam);
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
             Assert.AreEqual(fee.LiabilityDifference, fee.SuggestedInvoiceAmount);
@@ -1191,21 +1281,24 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         [TestMethod]
         public void CalculateGetSuggestedInvoiceAmount_Level1_ReturnsTotalProducerFeeWithBadDebtProvision()
         {
-            producerInvoicedDto.First().InvoiceInstruction!.CurrentYearInvoicedTotalAfterThisRun = 15000m;
+            InvoicedProducerRecord[] invoiced =
+            [
+                producerInvoicedDto[0] with { CurrentYearInvoicedTotalAfterThisRun = 15000m }
+            ];
 
             defaultParam.First().ParameterValue = 55000m;
             defaultParam.First().ParameterUniqueReference = "MATT-PD";
 
             _dbContext.ProducerResultFileSuggestedBillingInstruction.AddRange(new List<ProducerResultFileSuggestedBillingInstruction>
             {
-                new ProducerResultFileSuggestedBillingInstruction { Id = 1, CalculatorRunId = 101, ProducerId = 1, SuggestedBillingInstruction="INITIAL", BillingInstructionAcceptReject="Accepted"},
-                new ProducerResultFileSuggestedBillingInstruction { Id = 2, CalculatorRunId = 101, ProducerId = 2, SuggestedBillingInstruction="INITIAL", BillingInstructionAcceptReject="Accepted"},
-                new ProducerResultFileSuggestedBillingInstruction { Id = 3, CalculatorRunId = 101, ProducerId = 3, SuggestedBillingInstruction="INITIAL", BillingInstructionAcceptReject="Accepted"},
+                new() { Id = 1, CalculatorRunId = 101, ProducerId = 1, SuggestedBillingInstruction=BillingConstants.Suggestion.Initial, BillingInstructionAcceptReject=BillingConstants.Action.Accepted},
+                new() { Id = 2, CalculatorRunId = 101, ProducerId = 2, SuggestedBillingInstruction=BillingConstants.Suggestion.Initial, BillingInstructionAcceptReject=BillingConstants.Action.Accepted},
+                new() { Id = 3, CalculatorRunId = 101, ProducerId = 3, SuggestedBillingInstruction=BillingConstants.Suggestion.Initial, BillingInstructionAcceptReject=BillingConstants.Action.Accepted},
             });
 
             _dbContext.SaveChanges();
 
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, producerInvoicedDto, defaultParam);
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, invoiced, defaultParam);
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
             Assert.AreEqual(10491.17m, Math.Round(fee.SuggestedInvoiceAmount ?? 0m, 2));
@@ -1214,9 +1307,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstr
         [TestMethod]
         public void CalculateGetSuggestedInvoiceAmount_Level1_ReturnsHypen()
         {
-            producerInvoicedDto.First().InvoiceInstruction!.CurrentYearInvoicedTotalAfterThisRun = 10491.17m;
+            InvoicedProducerRecord[] invoiced =
+            [
+                producerInvoicedDto[0] with { CurrentYearInvoicedTotalAfterThisRun = 10491.17m }
+            ];
 
-            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, producerInvoicedDto, new List<DefaultParamResultsClass>());
+            BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, invoiced, new List<DefaultParamResultsClass>());
 
             var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
             Assert.IsNull(fee.SuggestedInvoiceAmount);

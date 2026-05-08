@@ -2,32 +2,32 @@
 {
     public static class CalcResultScaledupProducerHeaders
     {
-        public static readonly string ScaledupProducers = "Scaled-up Producers";
+        public const string ScaledupProducers = "Scaled-up Producers";
 
-        public static readonly string EachSubmissionForTheYear = "Each submission for the year";
+        public const string EachSubmissionForTheYear = "Each submission for the year";
 
-        public static readonly string ProducerId = "Producer ID";
-        public static readonly string SubsidiaryId = "Subsidiary ID";
-        public static readonly string ProducerOrSubsidiaryName = "Producer / Subsidiary Name";
-        public static readonly string TradingName = "Trading Name";
-        public static readonly string Level = "Level";
-        public static readonly string SubmissionPeriodCode = "Submission period code";
-        public static readonly string DaysInSubmissionPeriod = "Days in submission period";
-        public static readonly string DaysInWholePeriod = "Days in whole period";
-        public static readonly string ScaleupFactor = "Scale-up factor";
+        public const string ProducerId = "Producer ID";
+        public const string SubsidiaryId = "Subsidiary ID";
+        public const string ProducerOrSubsidiaryName = "Producer / Subsidiary Name";
+        public const string TradingName = "Trading Name";
+        public const string Level = "Level";
+        public const string SubmissionPeriodCode = "Submission period code";
+        public const string DaysInSubmissionPeriod = "Days in submission period";
+        public const string DaysInWholePeriod = "Days in whole period";
+        public const string ScaleupFactor = "Scale-up factor";
 
-        public static readonly string HouseholdPackagingWasteTonnage = "Household Packaging Tonnage";
-        public static readonly string PublicBinTonnage = "Public Bin Tonnage";
-        public static readonly string TotalTonnage = "Total Tonnage";
-        public static readonly string SelfManagedConsumerWasteTonnage = "Self Managed Consumer Waste Tonnage";
-        public static readonly string NetTonnage = "Net Tonnage";
-        public static readonly string ScaledupHouseholdPackagingWasteTonnage = "Scaled-up Household Packaging Tonnage";
-        public static readonly string ScaledupPublicBinTonnage = "Scaled-up Public Bin Tonnage";
-        public static readonly string ScaledupTotalTonnage = "Scaled-up Total Tonnage";
-        public static readonly string ScaledupSelfManagedConsumerWasteTonnage = "Scaled-up Self Managed Consumer Waste Tonnage";
-        public static readonly string ScaledupNetTonnage = "Scaled-up Net Tonnage";
-        public static readonly string HouseholdDrinksContainersTonnageGlass = "Household Drinks Containers Tonnage - Glass";
-        public static readonly string ScaledupHouseholdDrinksContainersTonnageGlass = "Scaled-up Household Drinks Containers Tonnage - Glass";
-        public static readonly string NoScaledupProducers = "None";
+        public const string HouseholdPackagingWasteTonnage = "Household Packaging Tonnage";
+        public const string PublicBinTonnage = "Public Bin Tonnage";
+        public const string TotalTonnage = "Total Tonnage";
+        public const string SelfManagedConsumerWasteTonnage = "Self Managed Consumer Waste Tonnage";
+        public const string NetTonnage = "Net Tonnage";
+        public const string ScaledupHouseholdPackagingWasteTonnage = "Scaled-up Household Packaging Tonnage";
+        public const string ScaledupPublicBinTonnage = "Scaled-up Public Bin Tonnage";
+        public const string ScaledupTotalTonnage = "Scaled-up Total Tonnage";
+        public const string ScaledupSelfManagedConsumerWasteTonnage = "Scaled-up Self Managed Consumer Waste Tonnage";
+        public const string ScaledupNetTonnage = "Scaled-up Net Tonnage";
+        public const string HouseholdDrinksContainersTonnageGlass = "Household Drinks Containers Tonnage - Glass";
+        public const string ScaledupHouseholdDrinksContainersTonnageGlass = "Scaled-up Household Drinks Containers Tonnage - Glass";
+        public const string NoScaledupProducers = "None";
     }
 }

@@ -1,19 +1,18 @@
 using System.Net;
 using System.Text;
 using EPR.Calculator.API.Data;
-using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.Services.CommonDataApi;
-using EPR.Calculator.Service.Function.Services.DataLoading;
+using EPR.Calculator.Service.Function.Services.ExternalDataLoading.CommonDataApi;
+using EPR.Calculator.Service.Function.Services.ExternalDataLoading.CommonDataApi.HttpClient;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Data;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using OptionsFactory = Microsoft.Extensions.Options.Options;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
 {
     /// <summary>
-    ///     Unit tests for <see cref="CommonDataApiLoader" />.
+    ///     Unit tests for <see cref="CommonDataApiDataLoader" />.
     ///     <para>
     ///         The database context factory is mocked (no SQLite/InMemory) because the bulk-insert
     ///         and transaction behaviour in <c>UpdateDatabase</c>/<c>BulkInsert</c> is incompatible
@@ -22,23 +21,23 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
     ///     <para>
     ///         Tests focus on the observable behaviour of the non-excluded code paths:
     ///         the disabled guard, logging, the time-provider call, and HTTP stream
-    ///         initialisation / error handling inside <c>GetStreams</c> and <c>Run</c>.
+    ///         initialization / error handling inside <c>GetStreams</c> and <c>Run</c>.
     ///     </para>
     /// </summary>
     [TestClass]
-    public class CommonDataApiLoaderTests
+    public class CommonDataApiDataLoaderTests
     {
         private static readonly DateTimeOffset FixedTime = new(2024, 6, 15, 12, 0, 0, TimeSpan.Zero);
 
         private Mock<IDbContextFactory<ApplicationDBContext>> _mockDbFactory = null!;
-        private Mock<ILogger<CommonDataApiLoader>> _mockLogger = null!;
+        private Mock<ILogger<CommonDataApiDataLoader>> _mockLogger = null!;
         private Mock<TimeProvider> _mockTimeProvider = null!;
 
         [TestInitialize]
         public void SetUp()
         {
             _mockDbFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
-            _mockLogger = new Mock<ILogger<CommonDataApiLoader>>();
+            _mockLogger = new Mock<ILogger<CommonDataApiDataLoader>>();
             _mockTimeProvider = new Mock<TimeProvider>();
             _mockTimeProvider.Setup(t => t.GetUtcNow()).Returns(FixedTime);
         }
@@ -61,10 +60,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
             var loader = CreateLoader(enabled: false, httpHandler: handler);
 
             // Act
-            await loader.LoadData(CreateRunParams(), "TestRun");
+            await loader.LoadOrgAndPomData(DummyData.RunContexts.CalculatorRun2025);
 
             // Assert
-            VerifyLogContains(LogLevel.Information, "Disabled", Times.Once(), "Logger should record it is disabled.");
+            _mockLogger.VerifyLogContains(LogLevel.Information, "Disabled");
             Assert.AreEqual(0, httpCallCount, "HTTP client should not be called when disabled.");
             _mockDbFactory.Verify(f => f.CreateDbContextAsync(It.IsAny<CancellationToken>()), Times.Never, "DB Context should not be created when disabled.");
         }
@@ -84,7 +83,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
 
             // Act & Assert
             await Assert.ThrowsExceptionAsync<HttpRequestException>(
-                async () => await loader.LoadData(CreateRunParams(), "TestRun"));
+                async () => await loader.LoadOrgAndPomData(DummyData.RunContexts.CalculatorRun2025));
 
             _mockTimeProvider.Verify(t => t.GetUtcNow(), Times.Once);
         }
@@ -101,40 +100,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
 
             // Act & Assert
             await Assert.ThrowsExceptionAsync<HttpRequestException>(
-                async () => await loader.LoadData(CreateRunParams(), "TestRun"));
+                async () => await loader.LoadOrgAndPomData(DummyData.RunContexts.CalculatorRun2025));
 
-            VerifyLogContains(LogLevel.Information, "Starting", Times.Once());
-        }
-
-        /// <summary>
-        ///     The "Starting" log message must include the run ID, run name, and relative year
-        ///     from the supplied run parameters.
-        /// </summary>
-        [TestMethod]
-        public async Task LoadData_IncludesRunParamsInStartLog()
-        {
-            // Arrange
-            var loader = CreateLoader(enabled: true, httpHandler: ServerErrorHandler());
-            var runParams = new CalculatorRunParameter
-            {
-                Id = 42,
-                User = "user",
-                RelativeYear = new RelativeYear(2025),
-                MessageType = MessageTypes.Result,
-            };
-
-            // Act & Assert
-            await Assert.ThrowsExceptionAsync<HttpRequestException>(
-                async () => await loader.LoadData(runParams, "MyTestRun"));
-
-            VerifyLogContains(LogLevel.Information, "Id=42", Times.Once());
+            _mockLogger.VerifyLogContains(LogLevel.Information, "Starting");
         }
 
         // ─────────────────────────── LoadData – enabled path, HTTP stream failures ───────────────────────────
 
         /// <summary>
         ///     When both HTTP streams return server errors, <see cref="HttpRequestException" />
-        ///     must propagate out of <see cref="CommonDataApiLoader.LoadData" />.
+        ///     must propagate out of <see cref="CommonDataApiDataLoader.LoadOrgAndPomData" />.
         /// </summary>
         [TestMethod]
         public async Task LoadData_WhenBothHttpStreamsFail_ThrowsHttpRequestException()
@@ -144,7 +119,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
 
             // Act & Assert
             await Assert.ThrowsExceptionAsync<HttpRequestException>(
-                async () => await loader.LoadData(CreateRunParams(), "TestRun"));
+                async () => await loader.LoadOrgAndPomData(DummyData.RunContexts.CalculatorRun2025));
         }
 
         /// <summary>
@@ -164,7 +139,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
 
             // Act & Assert
             await Assert.ThrowsExceptionAsync<HttpRequestException>(
-                async () => await loader.LoadData(CreateRunParams(), "TestRun"));
+                async () => await loader.LoadOrgAndPomData(DummyData.RunContexts.CalculatorRun2025));
         }
 
         /// <summary>
@@ -184,14 +159,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
 
             // Act & Assert
             await Assert.ThrowsExceptionAsync<HttpRequestException>(
-                async () => await loader.LoadData(CreateRunParams(), "TestRun"));
+                async () => await loader.LoadOrgAndPomData(DummyData.RunContexts.CalculatorRun2025));
         }
 
         // ─────────────────────────── LoadData – cancellation ───────────────────────────
 
         /// <summary>
         ///     When the supplied cancellation token is already cancelled before the streams are
-        ///     initialised, a <see cref="TaskCanceledException" /> must propagate.
+        ///     initialized, a <see cref="TaskCanceledException" /> must propagate.
         /// </summary>
         [TestMethod]
         public async Task LoadData_WhenAlreadyCancelled_Throws()
@@ -204,13 +179,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
 
             // Act & Assert
             await Assert.ThrowsExceptionAsync<TaskCanceledException>(
-                async () => await loader.LoadData(CreateRunParams(), "TestRun", cts.Token));
+                async () => await loader.LoadOrgAndPomData(DummyData.RunContexts.CalculatorRun2025, cts.Token));
         }
 
         // ─────────────────────────── Run – try-catch-finally ───────────────────────────
 
         /// <summary>
-        ///     When stream initialisation succeeds but the DB context factory throws, the
+        ///     When stream initialization succeeds but the DB context factory throws, the
         ///     exception must propagate through the <c>catch when</c> / <c>finally</c> block
         ///     inside <c>Run</c>, exercising the linked-cancellation-token cancellation and
         ///     stream-enumerator disposal paths.
@@ -228,21 +203,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
 
             // Act & Assert
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
-                async () => await loader.LoadData(CreateRunParams(), "TestRun"));
+                async () => await loader.LoadOrgAndPomData(DummyData.RunContexts.CalculatorRun2025));
         }
 
         // ─────────────────────────── Helpers ───────────────────────────
 
-        private CommonDataApiLoader CreateLoader(bool enabled, HttpMessageHandler httpHandler)
+        private CommonDataApiDataLoader CreateLoader(bool enabled, HttpMessageHandler httpHandler)
         {
-            var loaderOptions = Options.Create(new CommonDataApiLoaderOptions
+            var loaderOptions = OptionsFactory.Create(new CommonDataApiLoaderOptions
             {
                 Enabled = enabled,
                 PomBatchSize = 100,
                 OrganisationBatchSize = 100,
             });
 
-            var httpClientOptions = Options.Create(new CommonDataApiHttpClientOptions
+            var httpClientOptions = OptionsFactory.Create(new CommonDataApiHttpClientOptions
             {
                 BaseUrl = "https://test-api.example.com",
                 CompressionEnabled = false,
@@ -251,22 +226,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
 
             var httpClient = new CommonDataApiHttpClient(new HttpClient(httpHandler), httpClientOptions);
 
-            return new CommonDataApiLoader(
+            return new CommonDataApiDataLoader(
                 loaderOptions,
                 _mockDbFactory.Object,
                 httpClient,
                 _mockTimeProvider.Object,
                 _mockLogger.Object);
         }
-
-        private static CalculatorRunParameter CreateRunParams() =>
-            new CalculatorRunParameter
-            {
-                Id = 1,
-                User = "test-user",
-                RelativeYear = new RelativeYear(2024),
-                MessageType = MessageTypes.Result,
-            };
 
         private static HttpResponseMessage OkNdJson(string content) =>
             new(HttpStatusCode.OK)
@@ -276,20 +242,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
 
         private static UrlDispatchHandler ServerErrorHandler() =>
             new(_ => new HttpResponseMessage(HttpStatusCode.InternalServerError));
-
-        /// <summary>Verifies that the mock logger received a log entry at the given level whose message contains <paramref name="text" />.</summary>
-        private void VerifyLogContains(LogLevel level, string text, Times times, string? failMessage = null)
-        {
-            _mockLogger.Verify(
-                l => l.Log(
-                    level,
-                    It.IsAny<EventId>(),
-                    It.Is<It.IsAnyType>((o, _) => o.ToString()!.Contains(text)),
-                    It.IsAny<Exception?>(),
-                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-                times,
-                failMessage ?? $"Log message should contain '{text}'.");
-        }
 
         // ─────────────────────────── Mock HTTP handlers ───────────────────────────
 

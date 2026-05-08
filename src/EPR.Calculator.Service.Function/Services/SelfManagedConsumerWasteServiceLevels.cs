@@ -1,5 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-
 namespace EPR.Calculator.Service.Function.Services
 {
     public interface IProducerData
@@ -28,13 +26,13 @@ namespace EPR.Calculator.Service.Function.Services
 
         public HC(int orgId, List<L2> l2s)
         {
-            this.OrgId = orgId;
-            this.L2s   = l2s;
-            this.R     = l2s.Sum(x => x.R);
-            this.A     = l2s.Sum(x => x.A);
-            this.G     = l2s.Sum(x => x.G);
-            this.Total = l2s.Sum(x => x.Total);
-            this.Smcw  = l2s.Sum(x => x.Smcw);
+            OrgId = orgId;
+            L2s   = l2s;
+            R     = l2s.Sum(x => x.R);
+            A     = l2s.Sum(x => x.A);
+            G     = l2s.Sum(x => x.G);
+            Total = l2s.Sum(x => x.Total);
+            Smcw  = l2s.Sum(x => x.Smcw);
         }
     }
 
@@ -90,23 +88,21 @@ namespace EPR.Calculator.Service.Function.Services
                     ActionedSmcwG: actionedG
                 );
             }
-            else
-            {
-                return new Result(
-                    OrgId: l1.OrgId,
-                    SubsidiaryId: null,
-                    Level: 1,
-                    Smcw: l1.Smcw,
-                    NetTotal: Math.Max((l1.Total - l1.Smcw), 0),
-                    NetR: null,
-                    NetA: null,
-                    NetG: null,
-                    Residual: null,
-                    ActionedSmcwR: null,
-                    ActionedSmcwA: null,
-                    ActionedSmcwG: null
-                );
-            }
+
+            return new Result(
+                OrgId: l1.OrgId,
+                SubsidiaryId: null,
+                Level: 1,
+                Smcw: l1.Smcw,
+                NetTotal: Math.Max((l1.Total - l1.Smcw), 0),
+                NetR: null,
+                NetA: null,
+                NetG: null,
+                Residual: null,
+                ActionedSmcwR: null,
+                ActionedSmcwA: null,
+                ActionedSmcwG: null
+            );
         }
 
         private static List<Result> UpdateHC(HC hc, bool applyModulation)
@@ -153,25 +149,23 @@ namespace EPR.Calculator.Service.Function.Services
                     );
                 }).ToList();
             }
-            else
-            {
-                return l2s.Select(sub =>
-                    new Result(
-                        OrgId: sub.OrgId,
-                        SubsidiaryId: sub.SubsidiaryId,
-                        Level: 2,
-                        Smcw: sub.Smcw,
-                        NetTotal: sub.Total - sub.Smcw,
-                        NetR: null,
-                        NetA: null,
-                        NetG: null,
-                        Residual: null,
-                        ActionedSmcwR: null,
-                        ActionedSmcwA: null,
-                        ActionedSmcwG: null
-                    )
-                ).ToList();
-            }
+
+            return l2s.Select(sub =>
+                new Result(
+                    OrgId: sub.OrgId,
+                    SubsidiaryId: sub.SubsidiaryId,
+                    Level: 2,
+                    Smcw: sub.Smcw,
+                    NetTotal: sub.Total - sub.Smcw,
+                    NetR: null,
+                    NetA: null,
+                    NetG: null,
+                    Residual: null,
+                    ActionedSmcwR: null,
+                    ActionedSmcwA: null,
+                    ActionedSmcwG: null
+                )
+            ).ToList();
         }
 
         private static (decimal net, decimal used, decimal nextAvailable) ApplySubSmcw(decimal t, decimal smcw)

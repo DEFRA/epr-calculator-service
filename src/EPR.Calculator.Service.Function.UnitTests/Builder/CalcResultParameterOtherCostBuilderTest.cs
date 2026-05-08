@@ -1,69 +1,52 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.API.Data.Enums;
-using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.ParametersOther;
-using EPR.Calculator.Service.Function.Enums;
-using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Services;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Moq;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Data;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Extensions;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
     [TestClass]
     public class CalcResultParameterOtherCostBuilderTest
     {
-        public CalcResultParameterOtherCostBuilder builder;
-        protected ApplicationDBContext dbContext;
+        private CalcResultParameterOtherCostBuilder _sut = null!;
+        private ApplicationDBContext _dbContext = null!;
+        private IFixture _fixture = null!;
 
-        public CalcResultParameterOtherCostBuilderTest()
+        [TestInitialize]
+        public void Init()
         {
-            var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
-                .UseInMemoryDatabase(databaseName: "PayCal")
-                .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-                .Options;
+            _fixture = TestFixtures.New();
+            _dbContext = _fixture.Freeze<ApplicationDBContext>();
 
-            dbContext = new ApplicationDBContext(dbContextOptions);
-            dbContext.Database.EnsureCreated();
-            dbContext.DefaultParameterTemplateMasterList.RemoveRange(dbContext.DefaultParameterTemplateMasterList);
-            dbContext.SaveChanges();
-            dbContext.DefaultParameterTemplateMasterList.AddRange(TestDataHelper.GetDefaultParameterTemplateMasterData().ToList());
-            // dbContext.LapcapDataTemplateMaster.AddRange(BaseControllerTest.GetLapcapTemplateMasterData().ToList());
-            dbContext.SaveChanges();
+            // Fixture populates this with default data, but these tests need more
+            _dbContext.DefaultParameterTemplateMasterList.RemoveRange(_dbContext.DefaultParameterTemplateMasterList);
+            _dbContext.DefaultParameterTemplateMasterList.AddRange(DummyData.GetDefaultParameterTemplateMasterData());
+            _dbContext.SaveChanges();
 
             var mockService = new Mock<ICalcCountryApportionmentService>();
-            builder = new CalcResultParameterOtherCostBuilder(dbContext, mockService.Object);
+            _sut = new CalcResultParameterOtherCostBuilder(_dbContext, mockService.Object);
         }
 
         [TestCleanup]
         public void TearDown()
         {
-            dbContext.Database.EnsureDeleted();
+            _dbContext.Database.EnsureDeleted();
         }
 
         [TestMethod]
         public async Task ConstructTest()
         {
-            var run = new CalculatorRun
-            {
-                Classification = RunClassification.Running,
-                Name = "Test Run",
-                RelativeYear = new RelativeYear(2024),
-                CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
-                CreatedBy = "Test User",
-                DefaultParameterSettingMasterId = 1,
-            };
+            var runContext = DummyData.RunContexts.CalculatorRun2024;
+            var run = runContext.ToEntity();
+            _dbContext.CalculatorRuns.Add(run);
 
-            var templateMasterList = dbContext.DefaultParameterTemplateMasterList.ToList();
-
-            var defaultMaster = new DefaultParameterSettingMaster { RelativeYear = new RelativeYear(2024) };
-            defaultMaster.RelativeYear = new RelativeYear(2024);
-
-            dbContext.DefaultParameterSettings.Add(defaultMaster);
-            dbContext.CalculatorRuns.Add(run);
-            await dbContext.SaveChangesAsync();
+            var templateMasterList = _dbContext.DefaultParameterTemplateMasterList.ToList();
+            var defaultMaster = new DefaultParameterSettingMaster { RelativeYear = 2024 };
+            _dbContext.DefaultParameterSettings.Add(defaultMaster);
+            await _dbContext.SaveChangesAsync();
 
             foreach (var templateMaster in templateMasterList)
             {
@@ -74,27 +57,27 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     DefaultParameterSettingMasterId = 1,
                     DefaultParameterSettingMaster = null,
                 };
-                dbContext.DefaultParameterSettingDetail.Add(defaultDetail);
+                _dbContext.DefaultParameterSettingDetail.Add(defaultDetail);
             }
 
-            var param = dbContext.DefaultParameterTemplateMasterList.Single(x =>
+            var param = _dbContext.DefaultParameterTemplateMasterList.Single(x =>
                 x.ParameterUniqueReferenceId == "BADEBT-P");
             param.ParameterCategory = "Percentage";
             param.ParameterType = "Bad debt provision";
 
-            dbContext.DefaultParameterTemplateMasterList.Update(param);
+            _dbContext.DefaultParameterTemplateMasterList.Update(param);
 
-            dbContext.CostType.Add(new CostType
+            _dbContext.CostType.Add(new CostType
                 { Code = "1", Name = "LA Data Prep Charge", Description = "LA Data Prep Charge" });
 
-            dbContext.Country.Add(new Country { Code = "En", Name = "England", Description = "England" });
-            dbContext.Country.Add(new Country { Code = "Wa", Name = "Wales", Description = "Wales" });
-            dbContext.Country.Add(new Country { Code = "Sc", Name = "Scotland", Description = "Scotland" });
-            dbContext.Country.Add(new Country { Code = "NI", Name = "Northern Ireland", Description = "Northern Ireland" });
+            _dbContext.Country.Add(new Country { Code = "En", Name = "England", Description = "England" });
+            _dbContext.Country.Add(new Country { Code = "Wa", Name = "Wales", Description = "Wales" });
+            _dbContext.Country.Add(new Country { Code = "Sc", Name = "Scotland", Description = "Scotland" });
+            _dbContext.Country.Add(new Country { Code = "NI", Name = "Northern Ireland", Description = "Northern Ireland" });
 
-            await dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
 
-            var otherCost = await builder.ConstructAsync(new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) });
+            var otherCost = await _sut.ConstructAsync(runContext);
 
             Assert.IsNotNull(otherCost.SaOperatingCost);
             Assert.AreEqual(2, otherCost.SaOperatingCost.Count());

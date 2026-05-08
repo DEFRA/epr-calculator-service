@@ -1,14 +1,13 @@
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
-using Microsoft.EntityFrameworkCore;
 using static EPR.Calculator.Service.Function.Builder.ProjectedProducers.CalcResultProjectedProducersBuilder;
 
 namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 {
     public static class H2ProjectedProducersBuilderUtils
     {
-        public static List<CalcResultH2ProjectedProducer> GetProjectedProducers(List<ProducerDetail> producerDetails, List<MaterialDetail> materials, string submissionPeriod)
+        public static List<CalcResultH2ProjectedProducer> GetProjectedProducers(List<ProducerDetail> producerDetails, ImmutableList<MaterialDetail> materials, string submissionPeriod)
         {
             return producerDetails.Select(pd => new CalcResultH2ProjectedProducer
             {
@@ -23,7 +22,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             }).ToList();
         }
 
-        private static Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage> GetProjectedTonnages(List<MaterialDetail> materials, List<ProducerReportedMaterial> reportedMaterials)
+        private static Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage> GetProjectedTonnages(ImmutableList<MaterialDetail> materials, List<ProducerReportedMaterial> reportedMaterials)
         {
             return materials.ToDictionary(m => m.Code, m => GetProjectedTonnage(m, reportedMaterials.Where(rm => rm.MaterialId == m.Id).ToList()));
         }
@@ -42,16 +41,16 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                     GreenMedicalTonnage = tonnage.GreenMedicalTonnage,
                 };
             }
-            
+
             var hhTonnage = RAMTonnage.GetReportedTonnage(reportedMaterials, PackagingTypes.Household, rm => rm.PackagingTonnage);
             var householdRAMTonnage = RAMTonnage.ToRAMTonnage(PackagingTypes.Household, reportedMaterials);
             var pbTonnage = RAMTonnage.GetReportedTonnage(reportedMaterials, PackagingTypes.PublicBin, rm => rm.PackagingTonnage);
             var publicBinRAMTonnage = RAMTonnage.ToRAMTonnage(PackagingTypes.PublicBin, reportedMaterials);
             decimal? hdcTonnage = (material.Code == MaterialCodes.Glass) ? RAMTonnage.GetReportedTonnage(reportedMaterials, PackagingTypes.HouseholdDrinksContainers, rm => rm.PackagingTonnage) : null;
             var hdcRAMTonnage = (material.Code == MaterialCodes.Glass) ? RAMTonnage.ToRAMTonnage(PackagingTypes.HouseholdDrinksContainers, reportedMaterials) : null;
-            var hhWithoutRam = CalcResultProjectedProducersBuilder.TonnageWithoutRAM(hhTonnage, householdRAMTonnage);
-            var pbWithoutRam = CalcResultProjectedProducersBuilder.TonnageWithoutRAM(pbTonnage, publicBinRAMTonnage);
-            decimal? hdcWithoutRam = (hdcTonnage != null && hdcRAMTonnage != null) ? CalcResultProjectedProducersBuilder.TonnageWithoutRAM(hdcTonnage.Value, hdcRAMTonnage) : null;
+            var hhWithoutRam = TonnageWithoutRAM(hhTonnage, householdRAMTonnage);
+            var pbWithoutRam = TonnageWithoutRAM(pbTonnage, publicBinRAMTonnage);
+            decimal? hdcWithoutRam = (hdcTonnage != null && hdcRAMTonnage != null) ? TonnageWithoutRAM(hdcTonnage.Value, hdcRAMTonnage) : null;
 
             return new CalcResultH2ProjectedProducerMaterialTonnage
             {
@@ -76,7 +75,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 
         public static CalcResultH2ProjectedProducer CreateParentProducer(CalcResultH2ProjectedProducer p)
         {
-            return new CalcResultH2ProjectedProducer()
+            return new CalcResultH2ProjectedProducer
             {
                 ProducerId = p.ProducerId,
                 SubsidiaryId = null,
@@ -91,7 +90,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
         {
             var producer = prodGroup.First();
             var sumRam = (string matKey, Func<CalcResultProjectedProducerMaterialTonnage, RAMTonnage?> tonnageFunc) =>
-                CalcResultProjectedProducersBuilder.SumRAMTonnages(prodGroup.Cast<ICalcResultProjectedProducer>().ToList(), matKey, tonnageFunc);
+                SumRAMTonnages(prodGroup.Cast<ICalcResultProjectedProducer>().ToList(), matKey, tonnageFunc);
 
             return new CalcResultH2ProjectedProducer
             {

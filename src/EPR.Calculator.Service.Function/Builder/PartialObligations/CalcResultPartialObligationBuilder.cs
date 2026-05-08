@@ -1,9 +1,9 @@
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.PartialObligations
@@ -11,22 +11,15 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
     public interface ICalcResultPartialObligationBuilder
     {
         Task<(List<ProducerDetail>, CalcResultPartialObligations)> ConstructAsync(
-            List<MaterialDetail> materialDetails,
-            List<ProducerDetail> producerDetails,
-            CalcResultsRequestDto resultsRequestDto,
-            bool applyModulation
+            RunContext runContext,
+            ImmutableList<MaterialDetail> materials,
+            List<ProducerDetail> producerDetails
         );
     }
 
-    public class CalcResultPartialObligationBuilder : ICalcResultPartialObligationBuilder
+    public class CalcResultPartialObligationBuilder(ApplicationDBContext dbContext)
+        : ICalcResultPartialObligationBuilder
     {
-        private readonly ApplicationDBContext dbContext;
-
-        public CalcResultPartialObligationBuilder(ApplicationDBContext dbContext)
-        {
-            this.dbContext = dbContext;
-        }
-
         private ProducerReportedMaterial scale(bool applyModulation, ProducerReportedMaterial reportedMaterial, CalcResultPartialObligation partialObligation)
         {
             var p = partialObligation.ObligatedFactor;
@@ -44,32 +37,30 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
                     Material = reportedMaterial.Material
                 };
             }
-            else
+
+            var r = Math.Round(p * reportedMaterial.PackagingTonnageRed ?? 0m, 3);
+            var a = Math.Round(p * reportedMaterial.PackagingTonnageAmber ?? 0m, 3);
+            var g = Math.Round(p * reportedMaterial.PackagingTonnageGreen ?? 0m, 3);
+            var rm = Math.Round(p * reportedMaterial.PackagingTonnageRedMedical ?? 0m, 3);
+            var am = Math.Round(p * reportedMaterial.PackagingTonnageAmberMedical ?? 0m, 3);
+            var gm = Math.Round(p * reportedMaterial.PackagingTonnageGreenMedical ?? 0m, 3);
+            return new ProducerReportedMaterial
             {
-                var r = Math.Round(p * reportedMaterial.PackagingTonnageRed ?? 0m, 3);
-                var a = Math.Round(p * reportedMaterial.PackagingTonnageAmber ?? 0m, 3);
-                var g = Math.Round(p * reportedMaterial.PackagingTonnageGreen ?? 0m, 3);
-                var rm = Math.Round(p * reportedMaterial.PackagingTonnageRedMedical ?? 0m, 3);
-                var am = Math.Round(p * reportedMaterial.PackagingTonnageAmberMedical ?? 0m, 3);
-                var gm = Math.Round(p * reportedMaterial.PackagingTonnageGreenMedical ?? 0m, 3);
-                return new ProducerReportedMaterial
-                {
-                    Id = reportedMaterial.Id,
-                    MaterialId = reportedMaterial.MaterialId,
-                    ProducerDetailId = reportedMaterial.ProducerDetailId,
-                    PackagingType = reportedMaterial.PackagingType,
-                    PackagingTonnage =  r + a + g + rm + am + gm,
-                    PackagingTonnageRed = r,
-                    PackagingTonnageAmber = a,
-                    PackagingTonnageGreen = g,
-                    PackagingTonnageRedMedical = rm,
-                    PackagingTonnageAmberMedical = am,
-                    PackagingTonnageGreenMedical = gm,
-                    SubmissionPeriod = reportedMaterial.SubmissionPeriod,
-                    ProducerDetail = reportedMaterial.ProducerDetail,
-                    Material = reportedMaterial.Material
-                };
-            }
+                Id = reportedMaterial.Id,
+                MaterialId = reportedMaterial.MaterialId,
+                ProducerDetailId = reportedMaterial.ProducerDetailId,
+                PackagingType = reportedMaterial.PackagingType,
+                PackagingTonnage =  r + a + g + rm + am + gm,
+                PackagingTonnageRed = r,
+                PackagingTonnageAmber = a,
+                PackagingTonnageGreen = g,
+                PackagingTonnageRedMedical = rm,
+                PackagingTonnageAmberMedical = am,
+                PackagingTonnageGreenMedical = gm,
+                SubmissionPeriod = reportedMaterial.SubmissionPeriod,
+                ProducerDetail = reportedMaterial.ProducerDetail,
+                Material = reportedMaterial.Material
+            };
         }
 
         // TODO move this to a utility
@@ -85,15 +76,12 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
         }
 
         public async Task<(List<ProducerDetail>, CalcResultPartialObligations)> ConstructAsync(
-            List<MaterialDetail> materialDetails,
-            List<ProducerDetail> producerDetails,
-            CalcResultsRequestDto resultsRequestDto,
-            bool applyModulation
+            RunContext runContext,
+            ImmutableList<MaterialDetail> materials,
+            List<ProducerDetail> producerDetails
         )
         {
-            var runId = resultsRequestDto.RunId;
-
-            var partialObligationsForRun = await GetPartialObligations(runId);
+            var partialObligationsForRun = await GetPartialObligations(runContext.RunId);
             var obligationsLookup = partialObligationsForRun.ToDictionary(p => (p.ProducerId, p.SubsidiaryId));
 
             var updatedProducers = producerDetails.Select(pd =>
@@ -102,11 +90,11 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
                     return pd;
 
                 obligation.PartialObligationTonnageByMaterial =
-                    ComputeTonnageByMaterial(pd.ProducerReportedMaterials, materialDetails, obligation.ObligatedFactor ?? 1m, applyModulation);
+                    ComputeTonnageByMaterial(pd.ProducerReportedMaterials, materials, obligation.ObligatedFactor ?? 1m, runContext.RequiresModulation);
 
                 return UpdateReportedMaterials(
                     pd,
-                    reportedMaterials => reportedMaterials.Select(rm => scale(applyModulation, rm, obligation)).ToList()
+                    reportedMaterials => reportedMaterials.Select(rm => scale(runContext.RequiresModulation, rm, obligation)).ToList()
                 );
             }).ToList();
 
@@ -117,8 +105,8 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
                     Name = CalcResultPartialObligationHeaders.PartialObligations,
                     ColumnIndex = 1,
                 },
-                MaterialBreakdownHeaders = GetMaterialsBreakdownHeader(materialDetails, applyModulation),
-                ColumnHeaders = GetColumnHeaders(materialDetails, applyModulation),
+                MaterialBreakdownHeaders = GetMaterialsBreakdownHeader(materials, runContext.RequiresModulation),
+                ColumnHeaders = GetColumnHeaders(materials, runContext.RequiresModulation),
                 PartialObligations = partialObligationsForRun
                     .OrderBy(p => p.ProducerId)
                     .ThenBy(p => p.Level)
@@ -202,7 +190,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
 
                 var smcw = RAMTonnage.GetReportedTonnage(matList, PackagingTypes.ConsumerWaste, rm => rm.PackagingTonnage);
                 var scaledSmcw = Math.Round(smcw * partialAmount, 3);
-                
+
                 return new CalcResultPartialObligationTonnage
                 {
                     HouseholdTonnage = hh,
@@ -242,7 +230,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
             var isGlass = materialCode == MaterialCodes.Glass;
             if(applyModulation)
             {
-                return new CalcResultPartialObligationTonnage()
+                return new CalcResultPartialObligationTonnage
                 {
                     HouseholdRAMTonnage = new RAMTonnage(),
                     PublicBinRAMTonnage = new RAMTonnage(),
@@ -253,15 +241,14 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
                     PartialHouseholdDrinksContainersTonnage = isGlass ? 0m : null,
                     PartialHouseholdDrinksContainersRAMTonnage = isGlass ? new RAMTonnage() : null,
                 };
-            } else
-            {
-                return new CalcResultPartialObligationTonnage()
-                {
-                    HouseholdDrinksContainersTonnage = isGlass ? 0m : null,
-                    PartialHouseholdDrinksContainersTonnage = isGlass ? 0m : null
-                };
             }
-            
+
+            return new CalcResultPartialObligationTonnage
+            {
+                HouseholdDrinksContainersTonnage = isGlass ? 0m : null,
+                PartialHouseholdDrinksContainersTonnage = isGlass ? 0m : null
+            };
+
         }
 
         private static RAMTonnage ToPartialRam(RAMTonnage ram, decimal partialAmount) {
@@ -329,7 +316,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
             var columns = new List<CalcResultPartialObligationHeader>();
 
             void Add(string name) => columns.Add(new CalcResultPartialObligationHeader { Name = name });
-            
+
             void AddRange(params string[] names)
             {
                 foreach (var name in names)
@@ -343,8 +330,8 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
             }
 
             Add(CalcResultPartialObligationHeaders.HouseholdPackagingWasteTonnage);
-            AddRangeIf(showModulation, 
-                CalcResultPartialObligationHeaders.HouseholdRedTonnage, 
+            AddRangeIf(showModulation,
+                CalcResultPartialObligationHeaders.HouseholdRedTonnage,
                 CalcResultPartialObligationHeaders.HouseholdAmberTonnage,
                 CalcResultPartialObligationHeaders.HouseholdGreenTonnage,
                 CalcResultPartialObligationHeaders.HouseholdRedMedicalTonnage,
@@ -388,7 +375,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
             AddRangeIf(showModulation,
                 CalcResultPartialObligationHeaders.PartialPublicBinRedTonnage,
                 CalcResultPartialObligationHeaders.PartialPublicBinAmberTonnage,
-                CalcResultPartialObligationHeaders.PartialPublicBinGreenTonnage,  
+                CalcResultPartialObligationHeaders.PartialPublicBinGreenTonnage,
                 CalcResultPartialObligationHeaders.PartialPublicBinRedMedicalTonnage,
                 CalcResultPartialObligationHeaders.PartialPublicBinAmberMedicalTonnage,
                 CalcResultPartialObligationHeaders.PartialPublicBinGreenMedicalTonnage

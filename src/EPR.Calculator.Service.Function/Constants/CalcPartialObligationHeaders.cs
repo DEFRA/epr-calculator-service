@@ -63,4 +63,3 @@
         private static string MaterialTonnageHeader(string type, string RAM) { return $"{type} {RAM} Material Tonnage"; }
     }
 }
-

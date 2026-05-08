@@ -1,67 +1,58 @@
-﻿using AutoFixture;
-using EPR.Calculator.API.Data;
+﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.CommsCost;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Enums;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
-using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.Extensibility;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Data;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Extensions;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
     [TestClass]
     public class CalcResultCommsCostBuilderTest
     {
-        private readonly CalcResultCommsCostBuilder builder;
-        private readonly ApplicationDBContext dbContext;
+        private IFixture _fixture = null!;
+        private CalcResultCommsCostBuilder _sut = null!;
+        private ApplicationDBContext _dbContext = null!;
 
-        public CalcResultCommsCostBuilderTest()
+        [TestInitialize]
+        public void Init()
         {
-            var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
-                .UseInMemoryDatabase(databaseName: "PayCal")
-                .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-                .Options;
+            _fixture = TestFixtures.New();
+            _dbContext = _fixture.Freeze<ApplicationDBContext>();
 
-            dbContext = new ApplicationDBContext(dbContextOptions);
-            dbContext.Database.EnsureCreated();
-            builder = new CalcResultCommsCostBuilder(
-                dbContext,
-                new TelemetryClient(TelemetryConfiguration.CreateDefault()));
+            _sut = _fixture.Create<CalcResultCommsCostBuilder>();
         }
-
-        private Fixture Fixture { get; init; } = new Fixture();
 
         [TestCleanup]
         public void TearDown()
         {
-            dbContext.Database.EnsureDeleted();
+            _dbContext.Dispose();
         }
 
         [TestMethod]
         public async Task ConstructTest()
         {
-            var calcResult = TestDataHelper.GetCalcResult();
+            var runContext = DummyData.RunContexts.CalculatorRun2024 with {RunId = 1};
+            var materials = DummyData.Materials;
+            var calcResult = DummyData.GetCalcResult();
 
-            var materialDetails = CreateMaterials();
             CreateDefaultTemplate();
             CreateDefaultParameters();
-            CreateNewRun();
+            CreateRun(runContext);
+            CreateMaterials(materials);
             CreateProducerDetail();
-            var resultsRequestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) };
             var apportionment = new CalcResultOnePlusFourApportionment
             {
-                Name = Fixture.Create<string>(),
+                Name = _fixture.Create<string>(),
                 CalcResultOnePlusFourApportionmentDetails = new List<CalcResultOnePlusFourApportionmentDetail>
                 {
                     new CalcResultOnePlusFourApportionmentDetail
                     {
-                        Name = Fixture.Create<string>(),
+                        Name = _fixture.Create<string>(),
                         EnglandTotal = 40M,
                         ScotlandTotal = 20M,
                         WalesTotal = 20M,
@@ -74,7 +65,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     },
                 },
             };
-            var result = await builder.ConstructAsync(materialDetails, resultsRequestDto, apportionment, calcResult.CalcResultLateReportingTonnageData);
+            var result = await _sut.ConstructAsync(runContext, materials, apportionment, calcResult.CalcResultLateReportingTonnageData);
 
             Assert.IsNotNull(result);
 
@@ -184,11 +175,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public async Task GetProducerReportedMaterials_ShouldReturnValidMaterials()
         {
             // Arrange
-            SeedDatabase(dbContext);
-            var runId = 1;
+            var runContext = DummyData.RunContexts.CalculatorRun2024 with {RunId = 1};
+            SeedDatabase(_dbContext, runContext);
 
             // Act
-            var result = await builder.GetProducerReportedMaterials(dbContext, runId);
+            var result = await _sut.GetProducerReportedMaterials(runContext.RunId);
 
             // Assert
             Assert.IsNotNull(result);
@@ -201,12 +192,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.IsTrue(result.Any(r => r.Material!.Code == "GL" && r.PackagingType == "HDC" && r.PackagingTonnage == 150 && r.SubmissionPeriod == "2025-H2"));
         }
 
-        private void SeedDatabase(ApplicationDBContext context)
+        private void SeedDatabase(ApplicationDBContext context, RunContext runContext)
         {
-            var run = new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2024), Name = "CalculatorRunTest1" };
+            var run = runContext.ToEntity();
             context.CalculatorRuns.Add(run);
 
-            var producerDetail = new ProducerDetail { Id = 1, CalculatorRunId = 1 };
+            var producerDetail = new ProducerDetail { Id = 1, CalculatorRunId = runContext.RunId };
             context.ProducerDetail.Add(producerDetail);
 
             var materials = new List<Material>
@@ -231,6 +222,24 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             context.SaveChanges();
         }
 
+        private void CreateRun(RunContext runContext)
+        {
+            _dbContext.CalculatorRuns.Add(runContext.ToEntity());
+            _dbContext.SaveChanges();
+        }
+
+        private void CreateMaterials(IEnumerable<MaterialDetail> materials)
+        {
+            _dbContext.Material.AddRange(materials.Select(m => new Material
+            {
+                Id = m.Id,
+                Code = m.Code,
+                Name = m.Name,
+                Description = m.Name,
+            }));
+            _dbContext.SaveChanges();
+        }
+
         private void CreateProducerDetail()
         {
             var producerNames = new[]
@@ -250,7 +259,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var producerId = 1;
             foreach (var producerName in producerNames)
             {
-                dbContext.ProducerDetail.Add(new ProducerDetail
+                _dbContext.ProducerDetail.Add(new ProducerDetail
                 {
                     ProducerId = producerId++,
                     SubsidiaryId = $"{producerId}-Sub",
@@ -259,14 +268,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 });
             }
 
-            dbContext.SaveChanges();
+            _dbContext.SaveChanges();
 
             foreach (var subPeriod in new[] { "2025-H1", "2025-H2"}) {
                 for (int producerDetailId = 1; producerDetailId <= 10; producerDetailId++)
                 {
                     for (int materialId = 1; materialId < 9; materialId++)
                     {
-                        this.dbContext.ProducerReportedMaterialProjected.Add(new ProducerReportedMaterialProjected
+                        this._dbContext.ProducerReportedMaterialProjected.Add(new ProducerReportedMaterialProjected
                         {
                             MaterialId = materialId,
                             ProducerDetailId = producerDetailId,
@@ -277,7 +286,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     }
                 }
 
-                this.dbContext.ProducerReportedMaterialProjected.AddRange(new List<ProducerReportedMaterialProjected> {
+                this._dbContext.ProducerReportedMaterialProjected.AddRange(new List<ProducerReportedMaterialProjected> {
                     new ProducerReportedMaterialProjected()
                         {
                             MaterialId = 3,
@@ -305,14 +314,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 });
             }
 
-            dbContext.SaveChanges();
+            _dbContext.SaveChanges();
         }
 
         private void CreateDefaultTemplate()
         {
-            dbContext.DefaultParameterTemplateMasterList.RemoveRange(
-                dbContext.DefaultParameterTemplateMasterList.ToList());
-            dbContext.SaveChanges();
+            _dbContext.DefaultParameterTemplateMasterList.RemoveRange(
+                _dbContext.DefaultParameterTemplateMasterList.ToList());
+            _dbContext.SaveChanges();
 
             var materialDictionary = new Dictionary<string, string>
             {
@@ -329,7 +338,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var parameterTypes = new[] { "Communication costs by material", "Late reporting tonnage" };
             foreach (var material in materialDictionary.Values)
             {
-                dbContext.DefaultParameterTemplateMasterList.Add(new DefaultParameterTemplateMaster
+                _dbContext.DefaultParameterTemplateMasterList.Add(new DefaultParameterTemplateMaster
                 {
                     ParameterUniqueReferenceId = Guid.NewGuid().ToString(),
                     ParameterCategory = material,
@@ -338,7 +347,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 var rag = new[] { "R", "A", "G" };
                 foreach (var v in rag)
                 {
-                    dbContext.DefaultParameterTemplateMasterList.Add(new DefaultParameterTemplateMaster
+                    _dbContext.DefaultParameterTemplateMasterList.Add(new DefaultParameterTemplateMaster
                     {
                         ParameterUniqueReferenceId = Guid.NewGuid().ToString(),
                         ParameterCategory = $"{material}-{v}",
@@ -358,7 +367,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             foreach (var country in countries)
             {
-                dbContext.DefaultParameterTemplateMasterList.Add(new DefaultParameterTemplateMaster
+                _dbContext.DefaultParameterTemplateMasterList.Add(new DefaultParameterTemplateMaster
                 {
                     ParameterUniqueReferenceId = Guid.NewGuid().ToString(),
                     ParameterCategory = country,
@@ -366,35 +375,20 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 });
             }
 
-            dbContext.SaveChanges();
-        }
-
-        private void CreateNewRun()
-        {
-            var run = new CalculatorRun
-            {
-                Classification = RunClassification.Running,
-                Name = "Test Run",
-                RelativeYear = new RelativeYear(2024),
-                CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
-                CreatedBy = "Test User",
-                DefaultParameterSettingMasterId = 1
-            };
-            dbContext.CalculatorRuns.Add(run);
-            dbContext.SaveChanges();
+            _dbContext.SaveChanges();
         }
 
         private void CreateDefaultParameters()
         {
-            var templateMasterList = dbContext.DefaultParameterTemplateMasterList.ToList();
+            var templateMasterList = _dbContext.DefaultParameterTemplateMasterList.ToList();
 
             var defaultMaster = new DefaultParameterSettingMaster
             {
                 RelativeYear = new RelativeYear(2024),
             };
 
-            dbContext.DefaultParameterSettings.Add(defaultMaster);
-            dbContext.SaveChanges();
+            _dbContext.DefaultParameterSettings.Add(defaultMaster);
+            _dbContext.SaveChanges();
 
             foreach (var templateMaster in templateMasterList)
             {
@@ -405,10 +399,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     DefaultParameterSettingMasterId = 1,
                     DefaultParameterSettingMaster = defaultMaster
                 };
-                dbContext.DefaultParameterSettingDetail.Add(defaultDetail);
+                _dbContext.DefaultParameterSettingDetail.Add(defaultDetail);
             }
 
-            dbContext.SaveChanges();
+            _dbContext.SaveChanges();
         }
 
         private static decimal GetValue(DefaultParameterTemplateMaster templateMaster)
@@ -429,24 +423,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             }
 
             return 10;
-        }
-
-        private List<MaterialDetail> CreateMaterials()
-        {
-            var materials = TestDataHelper.GetMaterials();
-
-            dbContext.Material.AddRange(materials.Select(m =>
-                new Material
-                {
-                    Name        = m.Name,
-                    Code        = m.Code,
-                    Description = m.Description
-                }
-            ));
-
-            dbContext.SaveChanges();
-
-            return materials;
         }
     }
 }

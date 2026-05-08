@@ -17,12 +17,12 @@
       "default": "Warning",
       "Host.Results": "Error",
       "Function": "Information",
-      "Microsoft.AspNetCore.Hosting": "Information"
+      "EPR.Calculator": "Debug"
     },
     "applicationInsights": {
       "samplingSettings": {
         "isEnabled": true,
-        "excludedTypes": "Request"
+        "excludedTypes": "Request;Event"
       },
       "enableLiveMetricsFilters": true
     }

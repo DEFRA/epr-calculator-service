@@ -1,10 +1,7 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Enums;
-using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers
 {
@@ -33,7 +30,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
             PrepareProjectedProducersHeaders(calcResultProjectedProducers.H2ProjectedProducersHeaders!, stringBuilder);
 
             // Add H2 data
-            if (h2WhereModified.Any() == true)
+            if (h2WhereModified.Any())
             {
                 H2ProjectedProducersExporterUtils.AppendProjectedProducers(h2WhereModified, stringBuilder);
             }
@@ -50,7 +47,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
             PrepareProjectedProducersHeaders(calcResultProjectedProducers.H1ProjectedProducersHeaders!, stringBuilder);
 
             // Add H1 data
-            if (h1WhereModified.Any() == true)
+            if (h1WhereModified.Any())
             {
                 H1ProjectedProducersExporterUtils.AppendProjectedProducers(h1WhereModified, stringBuilder);
             }

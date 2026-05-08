@@ -1,8 +1,8 @@
 ﻿using System.Text;
-using AutoFixture;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ErrorReport;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.ErrorReport
 {
@@ -41,8 +41,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.ErrorRe
             var stringBuilder = new StringBuilder();
 
             var calcResultErrorReport = new List<CalcResultErrorReport>();
-            var fixture = new Fixture();
-            var error = fixture.Create<CalcResultErrorReport>();
+            var error = TestFixtures.Legacy.Create<CalcResultErrorReport>();
             calcResultErrorReport.Add(error);
 
             // Act

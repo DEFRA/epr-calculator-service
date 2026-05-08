@@ -60,8 +60,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
                 return (null, null);
             }
 
-            int count = byMaterial?.Values
-                .Count(m => m?.TonnageChange.HasValue == true && m.TonnageChange.Value != 0m) ?? 0;
+            int count = byMaterial.Values
+                .Count(m => m.TonnageChange.HasValue && m.TonnageChange.Value != 0m);
 
             return (
                 count.ToString(CultureInfo.InvariantCulture),

@@ -3,7 +3,7 @@ using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Services;
-using Microsoft.Data.Sqlite;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
@@ -11,26 +11,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     [TestClass]
     public class CalculatorRunPomDataTests : IDisposable
     {
-        private readonly SqliteConnection _connection;
         private readonly ApplicationDBContext context;
 
         public CalculatorRunPomDataTests()
         {
-            _connection = new SqliteConnection("Data Source=:memory:");
-            _connection.Open();
-
-            var options = new DbContextOptionsBuilder<ApplicationDBContext>()
-                .UseSqlite(_connection)
-                .Options;
-
-            context = new ApplicationDBContext(options);
-            context.Database.EnsureCreated();
+            context = TestFixtures.New(o => o.UseSqlLite()).Create<ApplicationDBContext>();
         }
 
         public void Dispose()
         {
+            context.Database.CloseConnection();
             context.Dispose();
-            _connection.Close();
         }
 
         private async Task<(RelativeYear, PomData)> SeedData()
@@ -73,7 +64,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var (relativeYear, pomData) = await SeedData();
 
             //Run 1
-            var run = new CalculatorRun { Id = runId, RelativeYear = relativeYear, Name = "CalculatorRunTest1", Classification = RunClassification.Running };
+            var run = new CalculatorRun { Id = runId, RelativeYear = relativeYear, Name = "CalculatorRunTest1", Classification = RunClassification.None };
             context.CalculatorRuns.Add(run);
             await context.SaveChangesAsync();
 
@@ -97,7 +88,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.AreEqual(pomMasterRun1.Id, calculatorRun1!.CalculatorRunPomDataMasterId);
 
             //Run 2
-            var run2 = new CalculatorRun { Id = runId2, RelativeYear = relativeYear, Name = "CalculatorRunTest2", Classification = RunClassification.Running };
+            var run2 = new CalculatorRun { Id = runId2, RelativeYear = relativeYear, Name = "CalculatorRunTest2", Classification = RunClassification.None };
             context.CalculatorRuns.Add(run2);
             await context.SaveChangesAsync();
 

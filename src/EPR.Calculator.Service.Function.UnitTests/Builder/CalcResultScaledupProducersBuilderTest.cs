@@ -4,10 +4,10 @@ using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder;
 using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Mappers;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Calculator.Contexts;
 using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Data;
+using EPR.Calculator.Service.Function.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -21,17 +21,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         private readonly ApplicationDBContext dbContext;
         private readonly CalculatorRunPomDataMaster calcRunPomDataMaster;
         private readonly CalculatorRunOrganisationDataMaster calcRunOrganisationDataMaster;
-        private readonly int pcId;
-        private readonly int runId = 1;
-        private readonly List<MaterialDetail> materialDetails;
-
+        private readonly CalculatorRunContext _runContext;
         private CalcResultScaledupProducersBuilder builder;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CalcResultScaledupProducersBuilderTest"/> class.
-        /// </summary>
         public CalcResultScaledupProducersBuilderTest()
         {
+            _runContext = DummyData.RunContexts.CalculatorRun2025;
             var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
             .UseInMemoryDatabase(databaseName: "PayCal")
             .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
@@ -63,27 +58,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             dbContext.CalculatorRuns.Add(new CalculatorRun
             {
-                Id = runId,
-                RelativeYear = new RelativeYear(2024),
-                Name = "Name",
+                Id = _runContext.RunId,
+                RelativeYear = _runContext.RelativeYear,
+                Name = _runContext.RunName,
                 CalculatorRunOrganisationDataMaster = calcRunOrganisationDataMaster,
                 CalculatorRunPomDataMaster = calcRunPomDataMaster,
             });
 
-            this.pcId = 4;
-            var materials = new List<Material>
+            dbContext.Material.AddRange(DummyData.Materials.Select(md => new Material
             {
-                new Material { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
-                new Material { Id = 2, Code = "FC", Name = "Fibre composite", Description = "Fibre composite" },
-                new Material { Id = 3, Code = "GL", Name = "Glass", Description = "Glass" },
-                new Material { Id = pcId, Code = "PC", Name = "Paper or card", Description = "Paper or card" },
-                new Material { Id = 5, Code = "PL", Name = "Plastic", Description = "Plastic" },
-                new Material { Id = 6, Code = "ST", Name = "Steel", Description = "Steel" },
-                new Material { Id = 7, Code = "WD", Name = "Wood", Description = "Wood" },
-                new Material { Id = 8, Code = "OT", Name = "Other materials", Description = "Other materials" }
-            };
-            dbContext.Material.AddRange(materials);
-            materialDetails = MaterialMapper.Map(materials);
+                Id = md.Id,
+                Code = md.Code,
+                Name = md.Name
+            }));
 
             dbContext.SaveChanges();
         }
@@ -102,7 +89,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var producerDetail = new ProducerDetail
             {
                 Id = 1,
-                CalculatorRunId = runId,
+                CalculatorRunId = _runContext.RunId,
                 ProducerId = 11,
                 SubsidiaryId = "Subsidary 1",
                 ProducerName = "Producer Name",
@@ -113,7 +100,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             producerDetail.ProducerReportedMaterials.Add(
                 new ProducerReportedMaterial
                 {
-                  MaterialId = pcId,
+                  MaterialId = DummyData.MaterialsByCode["PC"].Id,
                   PackagingType = "HH",
                   SubmissionPeriod = "2025-H1"
                 }
@@ -121,7 +108,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             producerDetail.ProducerReportedMaterials.Add(
                 new ProducerReportedMaterial
                 {
-                  MaterialId = pcId,
+                  MaterialId = DummyData.MaterialsByCode["PC"].Id,
                   PackagingType = "HDC",
                   SubmissionPeriod = "2025-H1"
                 }
@@ -129,7 +116,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             producerDetail.ProducerReportedMaterials.Add(
                 new ProducerReportedMaterial
                 {
-                  MaterialId = pcId,
+                  MaterialId = DummyData.MaterialsByCode["PC"].Id,
                   PackagingType = "HH",
                   SubmissionPeriod = "2025-H2"
                 }
@@ -137,7 +124,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             producerDetail.ProducerReportedMaterials.Add(
                 new ProducerReportedMaterial
                 {
-                  MaterialId = pcId,
+                  MaterialId = DummyData.MaterialsByCode["PC"].Id,
                   PackagingType = "HDC",
                   SubmissionPeriod = "2025-H2"
                 }
@@ -263,7 +250,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             var producerDetail = new ProducerDetail
             {
-                CalculatorRunId = 1,
+                CalculatorRunId = _runContext.RunId,
                 ProducerId = 12,
                 SubsidiaryId = null,
                 ProducerName = "Producer 12",
@@ -304,22 +291,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             return result;
         }
 
-        /// <summary>
-        /// Tests that the <see cref="ICalcResultScaledupProducersBuilder.ConstructAsync(CalcResultsRequestDto)"/>
-        /// method returns the correct result when scaled up data is present.
-        /// </summary>
-        /// <returns>A <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task Construct_WhenScaledUpDataPresent()
         {
             // Arrange
+            var materials = DummyData.Materials;
             //var nonScaledupProducers = PrepareNonScaledUpProducer();
             var producers = PrepareScaledUpProducer();
             //var producers = nonScaledupProducers.Concat(scaledupProducers).ToList();
-            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
+            var runContext = DummyData.RunContexts.CalculatorRun2025;
 
             // Act
-            var result = (await builder.ConstructAsync(materialDetails, producers, requestDto)).Item2;
+            var result = (await builder.ConstructAsync(runContext, materials, producers)).Item2;
 
             // Assert
             Assert.AreEqual(2, result.ScaledupProducers!.Count());
@@ -332,13 +315,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public async Task Construct_ReturnsModifiedProducerData()
         {
             // Arrange
+            var materials = DummyData.Materials;
             var nonScaledupProducers = PrepareNonScaledUpProducer();
             var scaledupProducers = PrepareScaledUpProducer();
             var producers = nonScaledupProducers.Concat(scaledupProducers).ToList();
-            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
+            var runContext = DummyData.RunContexts.CalculatorRun2025;
 
             // Act
-            var updatedProducers = (await builder.ConstructAsync(materialDetails, producers, requestDto)).Item1;
+            var updatedProducers = (await builder.ConstructAsync(runContext, materials, producers)).Item1;
 
             // Assert
             Assert.AreEqual(producers.Count(), updatedProducers.Count());
@@ -358,20 +342,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             }
         }
 
-        /// <summary>
-        /// Tests that the <see cref="ICalcResultScaledupProducersBuilder.ConstructAsync(CalcResultsRequestDto)"/>
-        /// method returns the correct result when scaled up data is not present.
-        /// </summary>
-        /// <returns>A <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task Construct_WhenNoScaledUpDataPresent()
         {
             // Arrange
+            var materials = DummyData.Materials;
             var producers = PrepareNonScaledUpProducer();
-            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
+            var runContext = DummyData.RunContexts.CalculatorRun2025;
 
             // Act
-            var result = (await builder.ConstructAsync(materialDetails, producers, requestDto)).Item2;
+            var result = (await builder.ConstructAsync(runContext, materials, producers)).Item2;
 
             // Assert
             Assert.AreEqual(0, result.ScaledupProducers?.Count());
@@ -381,7 +361,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public async Task GetScaledUpOrganisations_Test()
         {
             PrepareScaledUpProducer();
-            var result = await builder.GetScaledUpOrganisationsAsync(runId);
+            var result = await builder.GetScaledUpOrganisationsAsync(_runContext.RunId);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(1, result.Count());
@@ -411,7 +391,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 new ProducerData { ProducerDetail = new ProducerDetail { ProducerId = 2 }, MaterialName = "Glass", PackagingType = "HDC" },
             };
 
-            var calcResult = TestDataHelper.GetCalcResult();
+            var calcResult = DummyData.GetCalcResult();
             calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers
             {
                 ScaledupProducers = new List<CalcResultScaledupProducer>
@@ -545,10 +525,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 ScaledupProducerTonnageByMaterial = dictionary,
             });
 
-            var materials = new List<Material>();
-            materials.Add(new Material { Code = "AL", Name = "Aluminium" });
-            var materialDetails = MaterialMapper.Map(materials);
-            var totalRow = CalcResultScaledupProducersBuilder.GetOverallTotalRow(runProducerMaterialDetails, materialDetails);
+            ImmutableList<MaterialDetail> materials =
+            [
+                DummyData.MaterialsByCode["AL"]
+            ];
+            var totalRow = CalcResultScaledupProducersBuilder.GetOverallTotalRow(runProducerMaterialDetails, materials);
             Assert.IsNotNull(totalRow);
             var aluminium = totalRow.ScaledupProducerTonnageByMaterial["Aluminium"];
             Assert.IsNotNull(aluminium);
@@ -572,20 +553,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         [TestMethod]
         public void GetTonnagesTest()
         {
-            var alId = 1;
-            var materials = new List<Material>();
-            materials.Add(new Material { Id = alId, Code = "AL", Name = "Aluminium" });
-            var materialDetails = MaterialMapper.Map(materials);
+            ImmutableList<MaterialDetail> materials =
+            [
+                DummyData.MaterialsByCode["AL"]
+            ];
+
             var reportedMaterials = new List<ProducerReportedMaterial>{
                 new ProducerReportedMaterial
                 {
                     SubmissionPeriod = "2024-P2",
                     PackagingType = "HH",
-                    MaterialId = alId,
+                    MaterialId = DummyData.MaterialsByCode["AL"].Id,
                     PackagingTonnage = 0.1m
                 }
             };
-            var tonnage = CalcResultScaledupProducersBuilder.GetTonnages(reportedMaterials, materialDetails, 2);
+            var tonnage = CalcResultScaledupProducersBuilder.GetTonnages(reportedMaterials, materials, 2);
             Assert.IsNotNull(tonnage);
             var aluminium = tonnage["AL"];
             Assert.AreEqual(0.1m, aluminium.ReportedHouseholdPackagingWasteTonnage);
@@ -595,10 +577,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         [TestMethod]
         public void GetColumnHeadersTest()
         {
-            var materials = new List<Material>();
-            materials.Add(new Material { Code = "AL", Name = "Aluminium" });
-            var materialDetails = MaterialMapper.Map(materials);
-            var columnHeaders = CalcResultScaledupProducersBuilder.GetColumnHeaders(materialDetails);
+            ImmutableList<MaterialDetail> materials =
+            [
+                DummyData.MaterialsByCode["AL"]
+            ];
+            var columnHeaders = CalcResultScaledupProducersBuilder.GetColumnHeaders(materials);
             Assert.IsNotNull(columnHeaders);
             Assert.AreEqual(19, columnHeaders.Count);
         }
@@ -606,10 +589,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         [TestMethod]
         public void GetMaterialsBreakdownHeaderTest()
         {
-            var materials = new List<Material>();
-            materials.Add(new Material { Code = "AL", Name = "Aluminium" });
-            var materialDetails = MaterialMapper.Map(materials);
-            var materialsBreakDown = CalcResultScaledupProducersBuilder.GetMaterialsBreakdownHeader(materialDetails);
+            ImmutableList<MaterialDetail> materials =
+            [
+                DummyData.MaterialsByCode["AL"]
+            ];
+            var materialsBreakDown = CalcResultScaledupProducersBuilder.GetMaterialsBreakdownHeader(materials);
             Assert.IsNotNull(materialsBreakDown);
             Assert.AreEqual(2, materialsBreakDown.Count);
         }
@@ -621,10 +605,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             {
                 ScaledupProducers = new List<CalcResultScaledupProducer>(),
             };
-            var materials = new List<Material>();
-            materials.Add(new Material { Code = "AL", Name = "Aluminium" });
-            var materialDetails = MaterialMapper.Map(materials);
-            CalcResultScaledupProducersBuilder.SetHeaders(producers, materialDetails);
+            ImmutableList<MaterialDetail> materials =
+            [
+                DummyData.MaterialsByCode["AL"]
+            ];
+            CalcResultScaledupProducersBuilder.SetHeaders(producers, materials);
             Assert.AreEqual(19, producers.ColumnHeaders?.Count());
             Assert.AreEqual(2, producers.MaterialBreakdownHeaders?.Count());
         }
@@ -646,7 +631,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             List<MaterialDetail> materials = new List<MaterialDetail>();
             var alId = 1;
-            var glassMaterial = new MaterialDetail { Id = alId, Code = MaterialCodes.Aluminium, Name = "Aluminium", Description = ""};
+            var glassMaterial = new MaterialDetail { Id = alId, Code = MaterialCodes.Aluminium, Name = "Aluminium"};
             materials.Add(glassMaterial);
 
             var producer = new ProducerDetail {
@@ -713,7 +698,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             List<MaterialDetail> materials = new List<MaterialDetail>();
             var glassId = 1;
-            var glassMaterial = new MaterialDetail { Id = glassId, Code = MaterialCodes.Glass, Name = "Glass", Description = ""};
+            var glassMaterial = new MaterialDetail { Id = glassId, Code = MaterialCodes.Glass, Name = "Glass"};
             materials.Add(glassMaterial);
 
             var producer = new ProducerDetail{
@@ -770,7 +755,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             List<MaterialDetail> materials = new List<MaterialDetail>();
             var glassId = 1;
-            var glassMaterial = new MaterialDetail { Id = glassId, Code = MaterialCodes.Glass, Name = "Glass", Description = ""};
+            var glassMaterial = new MaterialDetail { Id = glassId, Code = MaterialCodes.Glass, Name = "Glass"};
             materials.Add(glassMaterial);
 
             var reportedMaterials = new List<ProducerReportedMaterial>{

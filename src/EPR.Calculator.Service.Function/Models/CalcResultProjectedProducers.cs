@@ -1,9 +1,5 @@
-﻿namespace EPR.Calculator.Service.Function.Models
+namespace EPR.Calculator.Service.Function.Models
 {
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-
-
     public record ProjectedProducersHeader
     {
         required public string Name { get; init; }
