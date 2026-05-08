@@ -126,10 +126,10 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                 var dominantRamTonnage = new[]
                 {
                     (Priority: 1, Tonnage: projectedTonnage.AmberTonnage, Apply: (Func<RAMTonnage, RAMTonnage>)(t => t with { AmberTonnage = t.AmberTonnage + diffTonnage })),
-                    (Priority: 2, Tonnage: projectedTonnage.RedTonnage, Apply: t => t with { RedTonnage = t.RedTonnage + diffTonnage }),
-                    (Priority: 3, Tonnage: projectedTonnage.GreenTonnage, Apply: t => t with { GreenTonnage = t.GreenTonnage + diffTonnage }),
-                    (Priority: 4, Tonnage: projectedTonnage.AmberMedicalTonnage, Apply: t => t with { AmberMedicalTonnage = t.AmberMedicalTonnage + diffTonnage }),
-                    (Priority: 5, Tonnage: projectedTonnage.RedMedicalTonnage, Apply: t => t with { RedMedicalTonnage = t.RedMedicalTonnage + diffTonnage }),
+                    (Priority: 2, Tonnage: projectedTonnage.AmberMedicalTonnage, Apply: t => t with { AmberMedicalTonnage = t.AmberMedicalTonnage + diffTonnage }),
+                    (Priority: 3, Tonnage: projectedTonnage.RedTonnage, Apply: t => t with { RedTonnage = t.RedTonnage + diffTonnage }),
+                    (Priority: 4, Tonnage: projectedTonnage.RedMedicalTonnage, Apply: t => t with { RedMedicalTonnage = t.RedMedicalTonnage + diffTonnage }),
+                    (Priority: 5, Tonnage: projectedTonnage.GreenTonnage, Apply: t => t with { GreenTonnage = t.GreenTonnage + diffTonnage }),
                     (Priority: 6, Tonnage: projectedTonnage.GreenMedicalTonnage, Apply: t => t with { GreenMedicalTonnage = t.GreenMedicalTonnage + diffTonnage }),
                 }
                 .OrderByDescending(kv => kv.Tonnage)
