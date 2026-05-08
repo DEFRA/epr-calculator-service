@@ -1,4 +1,5 @@
 ﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.Service.Function.Enums;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,7 +23,7 @@ namespace EPR.Calculator.Service.Function.Services
                 throw new KeyNotFoundException($"Calculator run id {runId} not found");
             }
 
-            calculatorRun.CalculatorRunClassificationId = (int)runClassification;
+            calculatorRun.Classification = runClassification;
             Context.CalculatorRuns.Update(calculatorRun);
             await Context.SaveChangesAsync();
         }

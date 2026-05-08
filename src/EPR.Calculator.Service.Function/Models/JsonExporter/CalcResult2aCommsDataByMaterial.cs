@@ -1,10 +1,10 @@
 ﻿using System.Globalization;
 using System.Text.Json.Serialization;
-using EPR.Calculator.Service.Common.Utils;
 using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
-{   
+{
     public class CalcResult2ACommsDataByMaterial
     {
         [JsonPropertyName("name")]
@@ -81,5 +81,5 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         }
     }
 
-    
+
 }

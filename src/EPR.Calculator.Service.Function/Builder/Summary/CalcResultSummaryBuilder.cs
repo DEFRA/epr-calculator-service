@@ -575,10 +575,10 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         {
             var validClassificationStatuses = new[]
             {
-                RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
-                RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
-                RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
-                RunClassificationStatusIds.FINALRUNCOMPLETEDID
+                RunClassification.InitialRunCompleted,
+                RunClassification.InterimRecalculationRunCompleted,
+                RunClassification.FinalRecalculationRunCompleted,
+                RunClassification.FinalRecalculationRunCompleted
             };
 
             var previousInvoicedNetTonnage =
@@ -590,8 +590,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                      equals new { p.CalculatorRunId, p.ProducerId }
                  join t in context.ProducerInvoicedMaterialNetTonnage.AsNoTracking()
                      on new { calc.Id, p.ProducerId } equals new { Id = t.CalculatorRunId, t.ProducerId }
-                 where validClassificationStatuses.Contains(calc.CalculatorRunClassificationId)
-                       && calc.RelativeYearValue == relativeYear.Value
+                 where validClassificationStatuses.Contains(calc.Classification)
+                       && calc.RelativeYear == relativeYear
                        && b.BillingInstructionAcceptReject == PrepareBillingFileConstants.BillingInstructionAccepted
                        && b.SuggestedBillingInstruction != PrepareBillingFileConstants.SuggestedBillingInstructionCancelBill
                        //not exists clause -- to exclude previous "net tonnage" and "current year invoice total to date" values if cancel bill has been accepted since.
@@ -601,8 +601,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                             where b2.ProducerId == p.ProducerId
                                   && b2.BillingInstructionAcceptReject == PrepareBillingFileConstants.BillingInstructionAccepted
                                   && b2.SuggestedBillingInstruction == PrepareBillingFileConstants.SuggestedBillingInstructionCancelBill
-                                  && calc2.RelativeYearValue == relativeYear.Value
-                                  && validClassificationStatuses.Contains(calc2.CalculatorRunClassificationId)
+                                  && calc2.RelativeYear == relativeYear
+                                  && validClassificationStatuses.Contains(calc2.Classification)
                                   && calc2.Id > calc.Id
                             select 1).Any()
                  select new { calc, p, t })

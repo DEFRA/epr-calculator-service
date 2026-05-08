@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using Newtonsoft.Json;
 using EPR.Calculator.Service.Function.Mappers;
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers

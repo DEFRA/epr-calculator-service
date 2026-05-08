@@ -1,7 +1,7 @@
 ﻿using EPR.Calculator.API.Data.Models;
 
-namespace EPR.Calculator.Service.Common
-{
+namespace EPR.Calculator.Service.Function.Models;
+
     /// <summary>
     /// CalculatorRunParameter model class.
     /// </summary>
@@ -27,4 +27,3 @@ namespace EPR.Calculator.Service.Common
         /// </summary>
         required public string MessageType { get; set; }
     }
-}

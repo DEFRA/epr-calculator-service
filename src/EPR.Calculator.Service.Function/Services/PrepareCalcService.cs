@@ -1,13 +1,13 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.Service.Common.Logging;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.Service.Function.Builder;
-using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Exporter;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Services.Telemetry;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -168,7 +168,7 @@ namespace EPR.Calculator.Service.Function.Services
                     calculatorRun = await Context.CalculatorRuns.SingleOrDefaultAsync(
                             run => run.Id == resultsRequestDto.RunId,
                             cancellationToken);
-                    calculatorRun!.CalculatorRunClassificationId = (int)RunClassification.UNCLASSIFIED;
+                    calculatorRun!.Classification = RunClassification.Unclassified;
                     Context.CalculatorRuns.Update(calculatorRun);
                     await Context.SaveChangesAsync(cancellationToken);
                     return true;
@@ -183,7 +183,7 @@ namespace EPR.Calculator.Service.Function.Services
             }
             catch (OperationCanceledException exception)
             {
-                await HandleErrorAsync(calculatorRun, RunClassification.ERROR);
+                await HandleErrorAsync(calculatorRun, RunClassification.Errored);
                 telemetryLogger.LogError(new ErrorMessage
                 {
                     RunId = resultsRequestDto.RunId,
@@ -195,7 +195,7 @@ namespace EPR.Calculator.Service.Function.Services
             }
             catch (Exception exception)
             {
-                await HandleErrorAsync(calculatorRun, RunClassification.ERROR);
+                await HandleErrorAsync(calculatorRun, RunClassification.Errored);
                 telemetryLogger.LogError(new ErrorMessage
                 {
                     RunId = resultsRequestDto.RunId,
@@ -206,7 +206,7 @@ namespace EPR.Calculator.Service.Function.Services
                 return false;
             }
 
-            await HandleErrorAsync(calculatorRun, RunClassification.ERROR);
+            await HandleErrorAsync(calculatorRun, RunClassification.Errored);
             telemetryLogger.LogInformation(new TrackMessage
             {
                 RunId = resultsRequestDto.RunId,
@@ -319,7 +319,7 @@ namespace EPR.Calculator.Service.Function.Services
             });
 
             var calcRun = await Context.CalculatorRuns.SingleAsync(run => run.Id == resultsRequestDto.RunId);
-            calcRun.IsBillingFileGenerating = false;
+            calcRun.BillingRunStatus = BillingRunStatus.Completed;
 
 
             var billingFileMetadata = new CalculatorRunBillingFileMetadata
@@ -354,7 +354,7 @@ namespace EPR.Calculator.Service.Function.Services
         {
             if (calculatorRun != null)
             {
-                calculatorRun.CalculatorRunClassificationId = (int)classification;
+                calculatorRun.Classification = classification;
                 Context.CalculatorRuns.Update(calculatorRun);
                 await Context.SaveChangesAsync();
             }

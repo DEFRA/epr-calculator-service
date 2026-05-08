@@ -157,34 +157,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.CommonDataApi
         }
 
         /// <summary>
-        ///     Verifies that StreamPoms throws ArgumentNullException when relativeYear is null.
-        /// </summary>
-        [TestMethod]
-        public void StreamPoms_WithNullRelativeYear_ThrowsArgumentNullException()
-        {
-            // Arrange
-            var handler = CreateOkHandler(string.Empty);
-            var client = CreateClient(handler);
-
-            // Act & Assert
-            Assert.ThrowsException<ArgumentNullException>(() => client.StreamPoms(null!));
-        }
-
-        /// <summary>
-        ///     Verifies that StreamOrganisations throws ArgumentNullException when relativeYear is null.
-        /// </summary>
-        [TestMethod]
-        public void StreamOrganisations_WithNullRelativeYear_ThrowsArgumentNullException()
-        {
-            // Arrange
-            var handler = CreateOkHandler(string.Empty);
-            var client = CreateClient(handler);
-
-            // Act & Assert
-            Assert.ThrowsException<ArgumentNullException>(() => client.StreamOrganisations(null!));
-        }
-
-        /// <summary>
         ///     Verifies that an empty response returns no records.
         /// </summary>
         [TestMethod]

@@ -35,7 +35,7 @@ namespace EPR.Calculator.Service.Function.Builder.Detail
                 RunName = calculatorRun.Name ?? throw new InvalidOperationException($"{idMsg()} has no Name assigned."),
                 RunBy = calculatorRun.CreatedBy ?? throw new InvalidOperationException($"{idMsg()} has no CreatedBy assigned."),
                 RunDate = calculatorRun.CreatedAt,
-                RelativeYear = calculatorRun.RelativeYear ?? throw new InvalidOperationException($"{idMsg()} has no RelativeYear assigned."),
+                RelativeYear = calculatorRun.RelativeYear,
                 RpdFileORG = calculatorRun.CalculatorRunOrganisationDataMaster != null
                                 ? calculatorRun.CalculatorRunOrganisationDataMaster.CreatedAt.ToString(CalculationResults.DateFormat)
                                 : string.Empty,

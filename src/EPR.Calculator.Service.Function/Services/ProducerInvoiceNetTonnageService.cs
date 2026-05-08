@@ -1,9 +1,9 @@
 ﻿using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Services.Telemetry;
 
 namespace EPR.Calculator.Service.Function.Services
 {

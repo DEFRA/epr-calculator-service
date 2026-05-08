@@ -1,12 +1,12 @@
 using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
-using EPR.Calculator.Service.Common;
-using EPR.Calculator.Service.Common.Logging;
-using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services.DataLoading;
+using EPR.Calculator.Service.Function.Services.Telemetry;
 
 namespace EPR.Calculator.Service.Function.Services
 {
@@ -71,7 +71,7 @@ namespace EPR.Calculator.Service.Function.Services
 
             var statusUpdateResponse = await LogAndUpdateStatus(calculatorRunParameter, runName);
 
-            if (statusUpdateResponse == RunClassification.RUNNING)
+            if (statusUpdateResponse == RunClassification.Running)
             {
                 var isTransposeSuccess = await transposePomAndOrgDataService.TransposeBeforeResultsFileAsync(
                     new CalcResultsRequestDto { RunId = calculatorRunParameter.Id, RelativeYear = calculatorRunParameter.RelativeYear, CreatedBy = calculatorRunParameter.User },

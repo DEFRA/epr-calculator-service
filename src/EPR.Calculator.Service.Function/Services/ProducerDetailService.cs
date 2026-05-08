@@ -1,5 +1,6 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Interface;
@@ -24,14 +25,14 @@ namespace EPR.Calculator.Service.Function.Services
                                          join ins in context.ProducerInvoicedMaterialNetTonnage on new { pd.ProducerId, pd.CalculatorRunId } equals new { ins.ProducerId, ins.CalculatorRunId }
                                          join d in context.ProducerDesignatedRunInvoiceInstruction on new { pd.ProducerId, pd.CalculatorRunId } equals new { d.ProducerId, d.CalculatorRunId }
                                          join c in context.CalculatorRuns on pd.CalculatorRunId equals c.Id
-                                         where c.RelativeYearValue == relativeYear.Value
+                                         where c.RelativeYear == relativeYear
                                             && new[]
                                             {
-                                                RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
-                                                RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
-                                                RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
-                                                RunClassificationStatusIds.FINALRUNCOMPLETEDID
-                                             }.Contains(c.CalculatorRunClassificationId)
+                                                RunClassification.InitialRunCompleted,
+                                                RunClassification.InterimRecalculationRunCompleted,
+                                                RunClassification.FinalRecalculationRunCompleted,
+                                                RunClassification.FinalRunCompleted
+                                             }.Contains(c.Classification)
                                             && pds.BillingInstructionAcceptReject == CommonConstants.Accepted
                                          select new ProducerInvoicedDto
                                          {

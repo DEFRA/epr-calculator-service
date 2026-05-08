@@ -1,4 +1,4 @@
-﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
@@ -54,8 +54,7 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                     on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
                 join b in billingInstructionsQuery
                     on crodd.OrganisationId equals b.ProducerId
-                where cr.RelativeYearValue == resultsRequestDto.RelativeYear.Value
-                      && crodd.OrganisationName != null
+                where cr.RelativeYear == resultsRequestDto.RelativeYear
                       && crodd.SubsidiaryId == null
                 group cr by crodd.OrganisationId into g
                 select new

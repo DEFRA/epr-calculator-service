@@ -1,5 +1,6 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.Summary;
 using Microsoft.EntityFrameworkCore;
@@ -47,8 +48,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             );
 
             context.CalculatorRuns.AddRange(
-                new CalculatorRun { Id = 1, Name = "R1", RelativeYear = new RelativeYear(2024), CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID },
-                new CalculatorRun { Id = 2, Name = "R2", RelativeYear = new RelativeYear(2024), CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID }
+                new CalculatorRun { Id = 1, Name = "R1", RelativeYear = new RelativeYear(2024), Classification = RunClassification.FinalRunCompleted },
+                new CalculatorRun { Id = 2, Name = "R2", RelativeYear = new RelativeYear(2024), Classification = RunClassification.FinalRunCompleted }
             );
 
             // Previous invoiced net tonnage
@@ -144,9 +145,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             );
 
             context.CalculatorRuns.AddRange(
-                new CalculatorRun { Id = 1, Name = "R1", RelativeYear = new RelativeYear(2024), CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID },
-                new CalculatorRun { Id = 2, Name = "R2", RelativeYear = new RelativeYear(2024), CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID },
-                new CalculatorRun { Id = 3, Name = "R3", RelativeYear = new RelativeYear(2024), CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID }
+                new CalculatorRun { Id = 1, Name = "R1", RelativeYear = new RelativeYear(2024), Classification = RunClassification.FinalRunCompleted },
+                new CalculatorRun { Id = 2, Name = "R2", RelativeYear = new RelativeYear(2024), Classification = RunClassification.FinalRunCompleted },
+                new CalculatorRun { Id = 3, Name = "R3", RelativeYear = new RelativeYear(2024), Classification = RunClassification.FinalRunCompleted }
             );
 
             // Previous invoiced net tonnage
@@ -243,8 +244,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             );
 
             context.CalculatorRuns.AddRange(
-                new CalculatorRun { Id = 1, Name = "R1", RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID },
-                new CalculatorRun { Id = 2, Name = "R2", RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID }
+                new CalculatorRun { Id = 1, Name = "R1", RelativeYear = new RelativeYear(2025), Classification = RunClassification.FinalRunCompleted },
+                new CalculatorRun { Id = 2, Name = "R2", RelativeYear = new RelativeYear(2025), Classification = RunClassification.FinalRunCompleted }
             );
 
             // Previous invoiced net tonnage
@@ -342,9 +343,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             );
 
             context.CalculatorRuns.AddRange(
-                new CalculatorRun { Id = 1, Name = "R1", RelativeYear = new RelativeYear(2024), CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID },
-                new CalculatorRun { Id = 2, Name = "R2", RelativeYear = new RelativeYear(2024), CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID },
-                new CalculatorRun { Id = 3, Name = "R3", RelativeYear = new RelativeYear(2024), CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID }
+                new CalculatorRun { Id = 1, Name = "R1", RelativeYear = new RelativeYear(2024), Classification = RunClassification.FinalRunCompleted },
+                new CalculatorRun { Id = 2, Name = "R2", RelativeYear = new RelativeYear(2024), Classification = RunClassification.FinalRunCompleted },
+                new CalculatorRun { Id = 3, Name = "R3", RelativeYear = new RelativeYear(2024), Classification = RunClassification.FinalRunCompleted }
             );
 
             // Previous invoiced net tonnage
@@ -457,10 +458,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
             );
 
             context.CalculatorRuns.AddRange(
-                new CalculatorRun { Id = 1, Name = "R1", RelativeYear = new RelativeYear(2024), CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID },
-                new CalculatorRun { Id = 2, Name = "R2", RelativeYear = new RelativeYear(2024), CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID },
-                new CalculatorRun { Id = 3, Name = "R3", RelativeYear = new RelativeYear(2024), CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID },
-                new CalculatorRun { Id = 4, Name = "R4", RelativeYear = new RelativeYear(2024), CalculatorRunClassificationId = RunClassificationStatusIds.FINALRUNCOMPLETEDID }
+                new CalculatorRun { Id = 1, Name = "R1", RelativeYear = new RelativeYear(2024), Classification = RunClassification.FinalRunCompleted },
+                new CalculatorRun { Id = 2, Name = "R2", RelativeYear = new RelativeYear(2024), Classification = RunClassification.FinalRunCompleted },
+                new CalculatorRun { Id = 3, Name = "R3", RelativeYear = new RelativeYear(2024), Classification = RunClassification.FinalRunCompleted },
+                new CalculatorRun { Id = 4, Name = "R4", RelativeYear = new RelativeYear(2024), Classification = RunClassification.FinalRunCompleted }
             );
 
             // Invoiced net tonnage

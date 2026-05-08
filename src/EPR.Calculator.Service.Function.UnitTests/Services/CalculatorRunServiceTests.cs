@@ -1,16 +1,14 @@
 using System.Text;
 using System.Text.Json;
-using AutoFixture;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.Services.DataLoading;
-using Moq;
+using EPR.Calculator.Service.Function.Services.Telemetry;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
@@ -43,7 +41,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     It.IsAny<string>(),
                     It.IsAny<string>(),
                     It.IsAny<CancellationToken>()))
-                .ReturnsAsync(RunClassification.RUNNING);
+                .ReturnsAsync(RunClassification.Running);
 
             Environment.SetEnvironmentVariable(EnvironmentVariableKeys.StatusUpdateEndpoint,
                 Fixture.Create<Uri>().ToString());
@@ -177,7 +175,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Arrange
             StatusService.Setup(s => s.UpdateRpdStatus(
                     It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(RunClassification.UNCLASSIFIED);
+                .ReturnsAsync(RunClassification.Unclassified);
 
             var runParams = new CalculatorRunParameter
             {

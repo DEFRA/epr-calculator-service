@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
-using EPR.Calculator.Service.Common.Utils;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Converter;
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
@@ -61,7 +61,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
         [JsonPropertyName("disposalCostPricePerTonne")]
         public required string? DisposalCostPricePerTonne { get; init; }
-   
+
         public static CalcResultLaDisposalCostDetails From(CalcResultLaDisposalCostDataDetail item)
         {
             return new CalcResultLaDisposalCostDetails

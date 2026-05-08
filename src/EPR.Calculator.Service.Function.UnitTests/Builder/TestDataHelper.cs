@@ -1,5 +1,6 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
@@ -2222,7 +2223,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             list.Add(new CalculatorRun
             {
                 Id = 1,
-                CalculatorRunClassificationId = 3,
+                Classification = RunClassification.Unclassified,
                 Name = "Test Run 1",
                 RelativeYear = new RelativeYear(204),
                 CreatedAt = DateTime.UtcNow,
@@ -2235,7 +2236,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             list.Add(new CalculatorRun
             {
                 Id = 2,
-                CalculatorRunClassificationId = 2,
+                Classification = RunClassification.Running,
                 Name = "Test Run 2",
                 RelativeYear = new RelativeYear(204),
                 CreatedAt = DateTime.UtcNow,
@@ -2442,8 +2443,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public static void SeedDatabaseForInitialRun(ApplicationDBContext context)
         {
             //calculator runs
-            var runs = new List<CalculatorRun> { new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=7, Name = "CalculatorRunTest1" },
-             new CalculatorRun { Id = 2, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest2" }};
+            var runs = new List<CalculatorRun> { new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), Classification = RunClassification.InitialRunCompleted, Name = "CalculatorRunTest1" },
+             new CalculatorRun { Id = 2, RelativeYear = new RelativeYear(2025), Classification = RunClassification.Running, Name = "CalculatorRunTest2" }};
             context.CalculatorRuns.AddRange(runs);
 
             context.CalculatorRunOrganisationDataMaster.AddRange(GetCalculatorRunOrganisationDataMaster());
@@ -2620,8 +2621,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public static void SeedDatabaseForUnclassified(ApplicationDBContext context)
         {
             //calculator runs
-            var runs = new List<CalculatorRun> { new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest1" },
-             new CalculatorRun { Id = 2, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest2" }};
+            var runs = new List<CalculatorRun> { new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), Classification = RunClassification.Running, Name = "CalculatorRunTest1" },
+             new CalculatorRun { Id = 2, RelativeYear = new RelativeYear(2025), Classification = RunClassification.Running, Name = "CalculatorRunTest2" }};
             context.CalculatorRuns.AddRange(runs);
 
 

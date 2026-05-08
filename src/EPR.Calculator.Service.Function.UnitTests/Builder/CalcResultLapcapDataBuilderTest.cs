@@ -1,5 +1,6 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.Lapcap;
 using EPR.Calculator.Service.Function.Constants;
@@ -55,7 +56,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var run = new CalculatorRun
             {
                 Id = 1,
-                CalculatorRunClassificationId = (int)RunClassification.RUNNING,
+                Classification = RunClassification.Running,
                 Name = "Test Run",
                 RelativeYear = new RelativeYear(2024),
                 CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),

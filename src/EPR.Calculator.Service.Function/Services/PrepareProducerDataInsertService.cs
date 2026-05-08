@@ -1,5 +1,5 @@
-﻿using EPR.Calculator.Service.Common.Logging;
-using EPR.Calculator.Service.Function.Models;
+﻿using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Services.Telemetry;
 
 namespace EPR.Calculator.Service.Function.Services
 {

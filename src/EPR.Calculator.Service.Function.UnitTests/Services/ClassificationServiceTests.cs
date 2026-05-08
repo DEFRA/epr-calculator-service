@@ -1,5 +1,6 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Services;
@@ -37,9 +38,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        [DataRow(1, RunClassification.RUNNING, 2023)]
-        [DataRow(2, RunClassification.UNCLASSIFIED, 2024)]
-        [DataRow(3, RunClassification.ERROR, 2025)]
+        [DataRow(1, RunClassification.Running, 2023)]
+        [DataRow(2, RunClassification.Unclassified, 2024)]
+        [DataRow(3, RunClassification.Errored, 2025)]
         public async Task ShouldUpdateRunClassification(int runId, RunClassification runClassification, int relativeYearValue)
         {
             // Arrange
@@ -53,7 +54,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Assert
             var calculatorRun = await dbContext.CalculatorRuns.FirstOrDefaultAsync(run => run.Id == runId);
-            Assert.AreEqual(calculatorRun?.CalculatorRunClassificationId, (int)runClassification);
+            Assert.AreEqual(calculatorRun?.Classification, runClassification);
         }
 
         [TestMethod]
@@ -63,7 +64,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var runId = 10;
 
             // Act
-            var exceptionResult = await Assert.ThrowsExceptionAsync<KeyNotFoundException>(() => classificationService.UpdateRunClassification(runId, RunClassification.ERROR));
+            var exceptionResult = await Assert.ThrowsExceptionAsync<KeyNotFoundException>(() => classificationService.UpdateRunClassification(runId, RunClassification.Errored));
 
             // Assert
             Assert.AreEqual("Calculator run id 10 not found", exceptionResult.Message);

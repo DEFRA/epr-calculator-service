@@ -1,5 +1,6 @@
 using AutoFixture;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Misc;
@@ -17,8 +18,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
 
         private Mock<IOrgAndPomWrapper> Wrapper { get; set; }
 
-        private IEnumerable<CalculatorRunClassification> CalculatorRunClassifications { get; set; }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="RpdStatusDataValidatorTests"/> class.
         /// </summary>
@@ -27,20 +26,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
             Fixture = new Fixture();
             Wrapper = new Mock<IOrgAndPomWrapper>();
             TestClass = new RpdStatusDataValidator(Wrapper.Object);
-
-            CalculatorRunClassifications = new List<CalculatorRunClassification>
-            {
-                new CalculatorRunClassification
-                {
-                    Id = (int)RunClassification.INTHEQUEUE,
-                    Status = "IN THE QUEUE",
-                },
-                new CalculatorRunClassification
-                {
-                    Id = (int) RunClassification.RUNNING,
-                    Status = RunClassification.RUNNING.ToString(),
-                },
-            };
         }
 
         [TestMethod]
@@ -54,8 +39,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
         }
 
         [TestMethod]
-        [DataRow(RunClassification.INTHEQUEUE)]
-        [DataRow(RunClassification.RUNNING)]
+        [DataRow(RunClassification.None)]
+        [DataRow(RunClassification.Running)]
         public void IsValidRun_Success(RunClassification runClassification)
         {
             // Arrange
@@ -64,13 +49,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
             run.Id = runId;
             run.CalculatorRunOrganisationDataMasterId = null;
             run.CalculatorRunPomDataMasterId = null;
-            run.CalculatorRunClassificationId = (int)runClassification;
+            run.Classification = runClassification;
 
             // Act
             var result = TestClass.IsValidRun(
                 run,
-                runId,
-                CalculatorRunClassifications);
+                runId);
 
             // Assert
             Assert.IsTrue(result.isValid);
@@ -86,8 +70,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
             // Act
             var result = TestClass.IsValidRun(
                 null,
-                runId,
-                Fixture.CreateMany<CalculatorRunClassification>());
+                runId);
 
             // Assert
             Assert.IsFalse(result.isValid);
@@ -106,8 +89,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
             // Act
             var result = TestClass.IsValidRun(
                 run,
-                runId,
-                Fixture.CreateMany<CalculatorRunClassification>());
+                runId);
 
             // Assert
             Assert.IsFalse(result.isValid);
@@ -127,8 +109,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
             // Act
             var result = TestClass.IsValidRun(
                 run,
-                runId,
-                Fixture.CreateMany<CalculatorRunClassification>());
+                runId);
 
             // Assert
             Assert.IsNotNull(result);
@@ -146,14 +127,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
             run.CalculatorRunOrganisationDataMasterId = null;
             run.CalculatorRunPomDataMasterId = null;
 
-            var classification = new CalculatorRunClassification
-            {
-                Id = runId,
-                Status = RunClassification.ERROR.ToString(),
-            };
-
-            // Act
-            var result = TestClass.IsValidRun(run, runId, [classification]);
+       // Act
+            var result = TestClass.IsValidRun(run, runId);
 
             // Assert
             Assert.IsNotNull(result);

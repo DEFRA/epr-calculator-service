@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder;
 using EPR.Calculator.Service.Function.Builder.ParametersOther;
@@ -1481,7 +1482,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                         Id = 1,
                         RelativeYear = new RelativeYear(2024),
                         Name = "CalculatorRunTest1",
-                        CalculatorRunClassificationId=7,
+                        Classification = RunClassification.InitialRunCompleted,
                         CalculatorRunOrganisationDataMasterId = 1
                     }
                 },
@@ -1494,7 +1495,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                             Id = 2,
                             RelativeYear = new RelativeYear(2024),
                             Name = "CalculatorRunTest2",
-                            CalculatorRunClassificationId=7,
+                            Classification = RunClassification.InitialRunCompleted,
                             CalculatorRunOrganisationDataMasterId = 1
                         }
                 },
@@ -1507,7 +1508,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary
                             Id = 3,
                             RelativeYear = new RelativeYear(2024),
                             Name = "CalculatorRunTest3",
-                            CalculatorRunClassificationId=7
+                            Classification = RunClassification.InitialRunCompleted
                         }
                 },
                 new() { Id = 4, ProducerName = "Producer4", ProducerId = 4, CalculatorRunId = 1 , SubsidiaryId=null },

@@ -2,10 +2,10 @@ using System.Diagnostics.CodeAnalysis;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Enums;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Services.Telemetry;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -109,7 +109,7 @@ namespace EPR.Calculator.Service.Function.Services
 
                 if (calculatorRun != null)
                 {
-                    calculatorRun.CalculatorRunClassificationId = (int)RunClassification.ERROR;
+                    calculatorRun.Classification = RunClassification.Errored;
                     context.CalculatorRuns.Update(calculatorRun);
                     await context.SaveChangesAsync();
                     telemetryLogger.LogError(new ErrorMessage
@@ -134,7 +134,7 @@ namespace EPR.Calculator.Service.Function.Services
                 });
                 if (calculatorRun != null)
                 {
-                    calculatorRun.CalculatorRunClassificationId = (int)RunClassification.ERROR;
+                    calculatorRun.Classification = RunClassification.Errored;
                     context.CalculatorRuns.Update(calculatorRun);
                     await context.SaveChangesAsync();
                     telemetryLogger.LogError(new ErrorMessage

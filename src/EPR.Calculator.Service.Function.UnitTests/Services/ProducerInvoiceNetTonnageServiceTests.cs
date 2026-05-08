@@ -1,11 +1,11 @@
 using AutoFixture;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.Services.Telemetry;
 using EPR.Calculator.Service.Function.UnitTests.Builder;
 using Moq;
 

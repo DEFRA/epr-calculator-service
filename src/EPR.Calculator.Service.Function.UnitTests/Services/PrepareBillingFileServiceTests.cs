@@ -1,11 +1,12 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.Services.Telemetry;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moq;
@@ -76,7 +77,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             _context.CalculatorRuns.Add(
                 new CalculatorRun {
                     Id = calculatorRunId,
-                    CalculatorRunClassificationId = 8,
+                    Classification = RunClassification.InitialRun,
                     Name = calculatorName,
                     RelativeYear = new RelativeYear(2025),
                     CreatedBy = "user",
@@ -107,12 +108,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             _context.CalculatorRuns.Add(new CalculatorRun
                 {
                     Id = calculatorRunId,
-                    CalculatorRunClassificationId = 1,
+                    Classification = RunClassification.Running,
                     Name = calculatorName,
                     RelativeYear = new RelativeYear(2025),
                     CreatedBy = "user",
                     CreatedAt = DateTime.UtcNow,
-                    IsBillingFileGenerating = true
+                    BillingRunStatus = BillingRunStatus.Running
             });
 
             // Add an accepted billing instruction
@@ -166,12 +167,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             _context.CalculatorRuns.Add(new CalculatorRun
             {
                 Id = calculatorRunId,
-                CalculatorRunClassificationId = 1,
+                Classification = RunClassification.Running,
                 Name = calculatorName,
                 RelativeYear = new RelativeYear(2025),
                 CreatedBy = "user",
                 CreatedAt = DateTime.UtcNow,
-                IsBillingFileGenerating = true
+                BillingRunStatus = BillingRunStatus.Running
             });
 
             // Add an accepted billing instruction

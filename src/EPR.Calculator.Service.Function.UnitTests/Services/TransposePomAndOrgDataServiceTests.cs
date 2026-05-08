@@ -1,12 +1,13 @@
 ﻿using AutoFixture;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.Services.Telemetry;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moq;
@@ -291,7 +292,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 {
                     savedProductReportedMaterials = arg.ToList();
                     return Task.FromResult(arg);
-                });       
+                });
 
             var service = new TransposePomAndOrgDataService(
                 this._context,
@@ -446,8 +447,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 Times.Once);
             using var assertContext = new ApplicationDBContext(_dbContextOptions);
             Assert.AreEqual(
-                (int)RunClassification.ERROR,
-                (await assertContext.CalculatorRuns.SingleAsync(run => run.Id == runId)).CalculatorRunClassificationId);
+                RunClassification.Errored,
+                (await assertContext.CalculatorRuns.SingleAsync(run => run.Id == runId)).Classification);
         }
 
         /// <summary>
@@ -482,8 +483,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 Times.Once);
             using var assertContext = new ApplicationDBContext(_dbContextOptions);
             Assert.AreEqual(
-                (int)RunClassification.ERROR,
-                (await assertContext.CalculatorRuns.SingleAsync(run => run.Id == runId)).CalculatorRunClassificationId);
+                RunClassification.Errored,
+                (await assertContext.CalculatorRuns.SingleAsync(run => run.Id == runId)).Classification);
         }
 
         protected static IEnumerable<CalculatorRunOrganisationDataMaster> GetCalculatorRunOrganisationDataMaster()
@@ -782,7 +783,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     CalculatorRunPomDataMasterId = 1,
                     SubmissionPeriodDesc = "July to December 2025",
                     SubmitterId = SubmitterId2
-                }                
+                }
             };
             return list;
         }
@@ -793,7 +794,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 new ()
                 {
-                    CalculatorRunClassificationId = (int)RunClassification.RUNNING,
+                    Classification = RunClassification.Running,
                     Name = "Test Run",
                     RelativeYear = new RelativeYear(2024),
                     CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
@@ -803,7 +804,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 },
                 new ()
                 {
-                    CalculatorRunClassificationId = (int)RunClassification.RUNNING,
+                    Classification = RunClassification.Running,
                     Name = "Test Calculated Result",
                     RelativeYear = new RelativeYear(2024),
                     CreatedAt = new DateTime(2024, 8, 21, 14, 16, 27, DateTimeKind.Utc),
@@ -811,7 +812,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 },
                 new ()
                 {
-                    CalculatorRunClassificationId = (int)RunClassification.RUNNING,
+                    Classification = RunClassification.Running,
                     Name = "Test Run",
                     RelativeYear = new RelativeYear(2024),
                     CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
@@ -821,7 +822,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 },
                 new ()
                 {
-                    CalculatorRunClassificationId = (int)RunClassification.RUNNING,
+                    Classification = RunClassification.Running,
                     Name = "Test Calculated Result",
                     RelativeYear = new RelativeYear(2024),
                     CreatedAt = new DateTime(2024, 8, 21, 14, 16, 27, DateTimeKind.Utc),

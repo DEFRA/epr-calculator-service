@@ -1,4 +1,4 @@
-﻿using EPR.Calculator.Service.Function.Enums;
+﻿using EPR.Calculator.API.Data.Enums;
 
 namespace EPR.Calculator.Service.Function.Services
 {

@@ -1,8 +1,7 @@
-using AutoFixture;
-using EPR.Calculator.Service.Common.Utils;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
 {

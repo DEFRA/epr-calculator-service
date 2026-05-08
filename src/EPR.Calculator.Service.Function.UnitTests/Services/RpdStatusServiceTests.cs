@@ -1,12 +1,13 @@
 using AutoFixture;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.Services.Telemetry;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -30,7 +31,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 .Options;
 
             Context = new ApplicationDBContext(dbContextOptions);
-            SetupRunClassifications();
             Context.SaveChanges();
             var contextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
             contextFactory.Setup(f => f.CreateDbContext()).Returns(Context);
@@ -40,8 +40,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 .Returns(new RpdStatusValidation { isValid = true });
             Validator.Setup(v => v.IsValidRun(
                 It.IsAny<CalculatorRun>(),
-                It.IsAny<int>(),
-                It.IsAny<IEnumerable<CalculatorRunClassification>>()))
+                It.IsAny<int>()))
                 .Returns(new RpdStatusValidation { isValid = true });
 
             CommandTimeoutService = new Mock<ICommandTimeoutService>();
@@ -83,22 +82,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         private Mock<ICalculatorRunPomData> CalculatorRunPomData { get; init; }
 
-        private void SetupRunClassifications()
-        {
-            Context.CalculatorRunClassifications
-                 .Add(new CalculatorRunClassification
-                 {
-                     Id = (int)RunClassification.RUNNING,
-                     Status = RunClassification.RUNNING.ToString(),
-                 });
-            Context.CalculatorRunClassifications
-                .Add(new CalculatorRunClassification
-                {
-                    Id = (int)RunClassification.ERROR,
-                    Status = RunClassification.ERROR.ToString(),
-                });
-        }
-
         [TestMethod]
         public async Task UpdateRpdStatus_With_RunId_When_Successful()
         {
@@ -125,7 +108,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Assert
             var calcRun = await Context.CalculatorRuns.SingleAsync(x => x.Id == runId);
             Assert.IsNotNull(calcRun);
-            Assert.AreEqual((int)RunClassification.RUNNING, calcRun.CalculatorRunClassificationId);
+            Assert.AreEqual(RunClassification.Running, calcRun.Classification);
             CalculatorRunOrgData.Verify(s => s.LoadOrgDataForCalcRun(runId, run.RelativeYear, It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
             CalculatorRunPomData.Verify(s => s.LoadPomDataForCalcRun(runId, run.RelativeYear, It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
         }
@@ -143,8 +126,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             Validator.Setup(v => v.IsValidRun(
                 It.IsAny<CalculatorRun>(),
-                It.IsAny<int>(),
-                It.IsAny<IEnumerable<CalculatorRunClassification>>()))
+                It.IsAny<int>()))
                 .Returns(new RpdStatusValidation { isValid = false });
 
             // Act

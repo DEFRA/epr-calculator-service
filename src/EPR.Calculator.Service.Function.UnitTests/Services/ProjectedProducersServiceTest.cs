@@ -1,21 +1,9 @@
-﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common;
-using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
-using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Interface;
-using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.Builder;
 using Microsoft.EntityFrameworkCore;
-using Moq;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {

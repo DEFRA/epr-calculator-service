@@ -1,7 +1,7 @@
 ﻿using EPR.Calculator.API.Data;
-using EPR.Calculator.Service.Common.Logging;
-using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.Service.Function.Interface;
+using EPR.Calculator.Service.Function.Services.Telemetry;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -66,10 +66,8 @@ namespace EPR.Calculator.Service.Function.Services
             var calcRun = await Context.CalculatorRuns.SingleOrDefaultAsync(
                 run => run.Id == runId,
                 timeout);
-            var runClassifications = await Context.CalculatorRunClassifications
-                .ToListAsync(timeout);
 
-            var validationResult = Validator.IsValidRun(calcRun, runId, runClassifications);
+            var validationResult = Validator.IsValidRun(calcRun, runId);
             if (!validationResult.isValid)
             {
                 TelemetryLogger.LogError(new ErrorMessage
@@ -98,19 +96,19 @@ namespace EPR.Calculator.Service.Function.Services
             var relativeYear = calcRun!.RelativeYear;
 
             await using var transaction = await Context.Database.BeginTransactionAsync(timeout);
-            
+
             try
             {
                 TelemetryLogger.LogInformation(new TrackMessage { RunId = runId, RunName = runName, Message = $"Creating run organization and POM for run: {runId}" });
                 await CalculatorRunOrgData.LoadOrgDataForCalcRun(runId, relativeYear, createdBy, timeout);
                 await CalculatorRunPomData.LoadPomDataForCalcRun(runId, relativeYear, createdBy, timeout);
 
-                calcRun.CalculatorRunClassificationId = runClassifications.Single(x => x.Status == RunClassification.RUNNING.ToString()).Id;
+                calcRun.Classification = RunClassification.Running;
 
                 await Context.SaveChangesAsync(timeout);
                 await transaction.CommitAsync(timeout);
 
-                return RunClassification.RUNNING;
+                return RunClassification.Running;
             }
             catch (Exception)
             {

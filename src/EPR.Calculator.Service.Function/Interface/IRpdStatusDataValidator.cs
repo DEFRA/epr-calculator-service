@@ -5,7 +5,7 @@ namespace EPR.Calculator.Service.Function.Interface
 {
     public interface IRpdStatusDataValidator
     {
-        RpdStatusValidation IsValidRun(CalculatorRun? calcRun, int runId, IEnumerable<CalculatorRunClassification> calculatorRunClassifications);
+        RpdStatusValidation IsValidRun(CalculatorRun? calcRun, int runId);
 
         RpdStatusValidation IsValidSuccessfulRun(int runId);
     }

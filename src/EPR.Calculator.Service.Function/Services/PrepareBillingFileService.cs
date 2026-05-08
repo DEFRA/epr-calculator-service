@@ -1,8 +1,9 @@
 ﻿using EPR.Calculator.API.Data;
-using EPR.Calculator.Service.Common.Logging;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Services.Telemetry;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Services
@@ -38,7 +39,7 @@ namespace EPR.Calculator.Service.Function.Services
                 return false;
             }
 
-            if (!calculatorRun.IsBillingFileGenerating.GetValueOrDefault())
+            if (calculatorRun.BillingRunStatus is not (BillingRunStatus.Starting or BillingRunStatus.Running))
             {
                 telemetryLogger.LogInformation(new TrackMessage
                 {

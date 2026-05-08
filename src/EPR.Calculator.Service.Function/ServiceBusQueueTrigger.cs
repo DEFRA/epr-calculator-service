@@ -1,8 +1,9 @@
-using EPR.Calculator.Service.Common.Logging;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.Service.Function;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.Services.Telemetry;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.WebJobs;
 
@@ -48,7 +49,7 @@ namespace EPR.Calculator.Service.Function
         [FunctionName("EPRCalculatorRunServiceBusQueueTrigger")]
         public async Task Run([ServiceBusTrigger(queueName: "%ServiceBusQueueName%", Connection = "ServiceBusConnectionString")] string myQueueItem)
         {
-            telemetryLogger.LogInformation(new TrackMessage { Message = "Executing the function app started" });            
+            telemetryLogger.LogInformation(new TrackMessage { Message = "Executing the function app started" });
 
             if (string.IsNullOrEmpty(myQueueItem))
             {
@@ -90,7 +91,7 @@ namespace EPR.Calculator.Service.Function
                 if (!processStatus)
                 {
                     // Set the run classification as ERROR
-                    await classificationService.UpdateRunClassification(resultMessageType.CalculatorRunId, RunClassification.ERROR);
+                    await classificationService.UpdateRunClassification(resultMessageType.CalculatorRunId, RunClassification.Errored);
                 }
             }
             catch (Exception exception)
@@ -98,7 +99,7 @@ namespace EPR.Calculator.Service.Function
                 if (resultMessageType != null)
                 {
                     // Set the run classification as ERROR
-                    await classificationService.UpdateRunClassification(resultMessageType.CalculatorRunId, RunClassification.ERROR);
+                    await classificationService.UpdateRunClassification(resultMessageType.CalculatorRunId, RunClassification.Errored);
                 }
 
                 LogError($"Error - {myQueueItem} - {exception.Message}", exception);

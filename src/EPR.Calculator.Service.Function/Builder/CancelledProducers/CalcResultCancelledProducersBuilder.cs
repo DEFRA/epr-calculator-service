@@ -1,6 +1,5 @@
-﻿using System.Collections.Immutable;
 using EPR.Calculator.API.Data;
-using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Interface;
@@ -124,11 +123,11 @@ namespace EPR.Calculator.Service.Function.Builder.CancelledProducers
                 where
                    new[]
                    {
-                      RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
-                      RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
-                      RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
-                      RunClassificationStatusIds.FINALRUNCOMPLETEDID
-                   }.Contains(cr.CalculatorRunClassificationId) && cr.RelativeYearValue == relativeYear.Value
+                      RunClassification.InitialRunCompleted,
+                      RunClassification.InterimRecalculationRunCompleted,
+                      RunClassification.FinalRecalculationRunCompleted,
+                      RunClassification.FinalRunCompleted
+                   }.Contains(cr.Classification) && cr.RelativeYear == relativeYear
                    && prfb.BillingInstructionAcceptReject == CommonConstants.Accepted
                 select prfb.ProducerId
             ).ToListAsync();
@@ -145,17 +144,17 @@ namespace EPR.Calculator.Service.Function.Builder.CancelledProducers
                 from calc in dbContext.CalculatorRuns.AsNoTracking()
                 join p in dbContext.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
                     on calc.Id equals p.CalculatorRunId
-                where calc.RelativeYearValue == relativeYear.Value
+                where calc.RelativeYear == relativeYear
                     && p.BillingInstructionAcceptReject != null
                     && p.BillingInstructionAcceptReject == CommonConstants.Accepted
                     && p.SuggestedBillingInstruction == CommonConstants.CancelStatus
                     && new[]
                     {
-                        RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
-                        RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
-                        RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
-                        RunClassificationStatusIds.FINALRUNCOMPLETEDID
-                    }.Contains(calc.CalculatorRunClassificationId)
+                        RunClassification.InitialRunCompleted,
+                        RunClassification.InterimRecalculationRunCompleted,
+                        RunClassification.FinalRecalculationRunCompleted,
+                        RunClassification.FinalRunCompleted
+                    }.Contains(calc.Classification)
                 select p.ProducerId
             ).ToListAsync();
         }

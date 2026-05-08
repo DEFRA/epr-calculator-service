@@ -1,4 +1,5 @@
 ﻿using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.AspNetCore.Http;
@@ -12,7 +13,7 @@ namespace EPR.Calculator.Service.Function.Misc
     {
         private readonly IOrgAndPomWrapper wrapper = wrapper;
 
-        public RpdStatusValidation IsValidRun(CalculatorRun? calcRun, int runId, IEnumerable<CalculatorRunClassification> calculatorRunClassifications)
+        public RpdStatusValidation IsValidRun(CalculatorRun? calcRun, int runId)
         {
             if (calcRun == null)
             {
@@ -44,11 +45,7 @@ namespace EPR.Calculator.Service.Function.Misc
                 };
             }
 
-            var expectedRunClassifications = calculatorRunClassifications.Where(cl =>
-                cl.Status == "RUNNING" || cl.Status == "IN THE QUEUE"
-            );
-
-            if (!expectedRunClassifications.Any(cl => cl.Id == calcRun.CalculatorRunClassificationId))
+            if (calcRun.Classification is not (RunClassification.None or RunClassification.Running) )
             {
                 return new RpdStatusValidation
                 {

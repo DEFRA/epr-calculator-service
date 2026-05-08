@@ -1,10 +1,10 @@
 using System.Text.Json;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Interface;
+using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.Services.Telemetry;
 using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests

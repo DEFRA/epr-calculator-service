@@ -1,5 +1,6 @@
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.CancelledProducers;
 using EPR.Calculator.Service.Function.Constants;
@@ -229,8 +230,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         private void SeedDatabaseForUnclassified(ApplicationDBContext context)
         {
             //calculator runs
-            var runs = new List<CalculatorRun> { new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest1" },
-             new CalculatorRun { Id = 2, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest2" }};
+            var runs = new List<CalculatorRun> { new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), Classification = RunClassification.Running, Name = "CalculatorRunTest1" },
+             new CalculatorRun { Id = 2, RelativeYear = new RelativeYear(2025), Classification = RunClassification.Running, Name = "CalculatorRunTest2" }};
             context.CalculatorRuns.AddRange(runs);
 
 
@@ -385,9 +386,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         private void SeedDatabaseForInitialRunCompleted(ApplicationDBContext context)
         {
             //calculator runs
-            var runs = new List<CalculatorRun> { new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=7, Name = "CalculatorRunTest1" },
-             new CalculatorRun { Id = 2, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=12, Name = "CalculatorRunTest2" },
-            new CalculatorRun { Id = 3, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest3" }};
+            var runs = new List<CalculatorRun> { new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), Classification = RunClassification.InitialRunCompleted, Name = "CalculatorRunTest1" },
+             new CalculatorRun { Id = 2, RelativeYear = new RelativeYear(2025), Classification = RunClassification.InterimRecalculationRunCompleted, Name = "CalculatorRunTest2" },
+            new CalculatorRun { Id = 3, RelativeYear = new RelativeYear(2025), Classification = RunClassification.Running, Name = "CalculatorRunTest3" }};
 
             context.CalculatorRuns.AddRange(runs);
 
@@ -796,7 +797,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
         {
             var run = new CalculatorRun
             {
-                CalculatorRunClassificationId = 7,
+                Classification = RunClassification.InitialRunCompleted,
                 Name = "Test Run",
                 RelativeYear = new RelativeYear(2025),
                 CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
@@ -806,7 +807,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.CancelledProducers
 
             var run1 = new CalculatorRun
             {
-                CalculatorRunClassificationId = 2,
+                Classification = RunClassification.Running,
                 Name = "Test Run1",
                 RelativeYear = new RelativeYear(2025),
                 CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),

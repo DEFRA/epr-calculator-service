@@ -1,8 +1,8 @@
 using AutoFixture;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Builder;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Exporter;
@@ -11,6 +11,7 @@ using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.Services.Telemetry;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moq;
@@ -244,7 +245,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             var fixture = new Fixture();
             var calcRun = _context.CalculatorRuns.Single(x => x.Id == 1);
-            calcRun.IsBillingFileGenerating = true;
+            calcRun.BillingRunStatus = BillingRunStatus.Running;
             await _context.SaveChangesAsync();
 
             _jsonExporter.Setup(t => t.Export(It.IsAny<CalcResult>(), It.IsAny<List<int>>())).Returns(fixture.Create<string>());
@@ -265,7 +266,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             Assert.IsTrue(billingResult);
             calcRun = _context.CalculatorRuns.Single(x => x.Id == 1);
-            Assert.IsFalse(calcRun.IsBillingFileGenerating);
+            Assert.AreEqual(calcRun.BillingRunStatus, BillingRunStatus.Completed);
 
             _builder
                 .Verify(b => b.BuildAsync(It.Is<CalcResultsRequestDto>(x => x.RunId == 1 && x.IsBillingFile)), Times.Once);
@@ -506,7 +507,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new ()
                 {
                     Id = 1,
-                    CalculatorRunClassificationId = (int)RunClassification.RUNNING,
+                    Classification = RunClassification.Running,
                     Name = "Test Run",
                     RelativeYear = new RelativeYear(2024),
                     CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
@@ -519,7 +520,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new ()
                 {
                     Id = 2,
-                    CalculatorRunClassificationId = (int)RunClassification.RUNNING,
+                    Classification = RunClassification.Running,
                     Name = "Test Calculated Result",
                     RelativeYear = new RelativeYear(2025),
                     CreatedAt = new DateTime(2024, 8, 21, 14, 16, 27, DateTimeKind.Utc),
@@ -530,7 +531,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new ()
                 {
                     Id = 3,
-                    CalculatorRunClassificationId = (int)RunClassification.RUNNING,
+                    Classification = RunClassification.Running,
                     Name = "Test Run",
                     RelativeYear = new RelativeYear(2025),
                     CreatedAt = new DateTime(2024, 8, 28, 10, 12, 30, DateTimeKind.Utc),
@@ -543,7 +544,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new ()
                 {
                     Id = 4,
-                    CalculatorRunClassificationId = (int)RunClassification.RUNNING,
+                    Classification = RunClassification.Running,
                     Name = "Test Calculated Result",
                     RelativeYear = new RelativeYear(2025),
                     CreatedAt = new DateTime(2024, 8, 21, 14, 16, 27, DateTimeKind.Utc),

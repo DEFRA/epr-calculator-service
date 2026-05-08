@@ -1,6 +1,5 @@
-﻿using AutoFixture;
-using EPR.Calculator.Service.Common.Utils;
-using EPR.Calculator.Service.Function.Models.JsonExporter;
+﻿using EPR.Calculator.Service.Function.Models.JsonExporter;
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
 {
@@ -12,7 +11,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2bTests()
         {
             _testClass = new CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2B();
-        }       
+        }
 
         [TestMethod]
         public void CanSetAndGetTotalProducerFeeForCommsCostsUKWideWithoutBadDebtProvision()
