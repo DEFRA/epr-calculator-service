@@ -105,43 +105,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             return producers.Sum(producer => GetReportedTonnage(projectedMaterialsLookup, producer, material, ragRating));
         }
 
-        public static (decimal? total, decimal? red,  decimal? amber, decimal? green) GetNetReportedTonnage(
-            ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-            IEnumerable<ProducerDetail> producerAndSubsidiaries,
-            MaterialDetail material,
-            bool applyModulation,
-            int level = CommonConstants.LevelOne)
-        {
-            var reportedTonnage = producerAndSubsidiaries.Sum(producer => GetReportedTonnage(projectedMaterialsLookup, producer, material));
-            var toSubtract = producerAndSubsidiaries.Sum(producer => GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.ConsumerWaste));
-            var total = reportedTonnage - toSubtract;
-
-            if (applyModulation)
-            {
-                if (level == CommonConstants.LevelTwo)
-                    return (total: null, red: null, amber: null, green: null);
-
-                var red   = producerAndSubsidiaries.Sum(producer => GetReportedTonnage(projectedMaterialsLookup, producer, material, RagRating.Red)) +
-                            producerAndSubsidiaries.Sum(producer => GetReportedTonnage(projectedMaterialsLookup, producer, material, RagRating.RedMedical));
-                var amber = producerAndSubsidiaries.Sum(producer => GetReportedTonnage(projectedMaterialsLookup, producer, material, RagRating.Amber)) +
-                            producerAndSubsidiaries.Sum(producer => GetReportedTonnage(projectedMaterialsLookup, producer, material, RagRating.AmberMedical));
-                var green = producerAndSubsidiaries.Sum(producer => GetReportedTonnage(projectedMaterialsLookup, producer, material, RagRating.Green)) +
-                            producerAndSubsidiaries.Sum(producer => GetReportedTonnage(projectedMaterialsLookup, producer, material, RagRating.GreenMedical));
-
-                return (
-                    total: Math.Max(total, 0),
-                    red  : Math.Max(red - Math.Max(toSubtract - amber, 0), 0),
-                    amber: Math.Max(amber - toSubtract, 0),
-                    green: Math.Max(green - Math.Max(toSubtract - amber - red, 0), 0)
-                );
-            } else {
-                if (level == CommonConstants.LevelTwo)
-                    return (total: total, red: null, amber: null, green: null);
-
-                return (total: Math.Max(total, 0), red: null, amber: null, green: null);
-            }
-        }
-
         public static SelfManagedConsumerWasteData SumSelfManagedConsumerWasteData(
             IEnumerable<ProducerDetail> producersAndSubsidiaries,
             MaterialDetail material,
@@ -166,37 +129,10 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             decimal? previousInvoicedNetTonnage)
         {
             return isOverAllTotalRow
-                ? GetPreviousInvoicedTonnageOverallTotal(producerDisposalFees, material)
+                ? producerDisposalFees
+                    .Where(fee => fee.Level == CommonConstants.LevelOne.ToString())
+                    .Sum(row => row.ProducerDisposalFeesByMaterial?[material.Code].PreviousInvoicedTonnage)
                 : previousInvoicedNetTonnage;
-        }
-
-        public static (decimal? total, decimal? red,  decimal? amber, decimal? green) GetNetReportedTonnageOverallTotal(
-            IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
-            MaterialDetail material,
-            bool applyModulation)
-        {
-            var totals = producerDisposalFees
-                .Where(fee => fee.Level == CommonConstants.LevelOne.ToString())
-                .SelectMany(row =>
-                    row != null &&
-                    row.ProducerDisposalFeesByMaterial.TryGetValue(material.Code, out var fee)
-                        ? new[] { fee.NetReportedTonnage }
-                        : Array.Empty<(decimal? total, decimal? red,  decimal? amber, decimal? green) >());
-
-            decimal? SumNullable(IEnumerable<decimal?> values)
-            {
-                var list = values.Where(v => v.HasValue).ToList();
-                return list.Count == 0 ? null : list.Sum(v => v!.Value);
-            }
-
-            var total = SumNullable(totals.Select(x => x.total));
-            var red   = SumNullable(totals.Select(x => x.red));
-            var amber = SumNullable(totals.Select(x => x.amber));
-            var green = SumNullable(totals.Select(x => x.green));
-
-            return applyModulation
-                ? (total: total, red: red, amber: amber, green: green)
-                : (total: total, red: null, amber: null, green: null);
         }
 
         public static decimal? GetActionedSelfManagedConsumerWasteTonnage(
@@ -216,15 +152,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             return producerDisposalFees
                 .Where(fee => fee.Level == CommonConstants.LevelOne.ToString())
                 .Sum(row => row?.ProducerDisposalFeesByMaterial.GetValueOrDefault(material.Code)?.ActionedSelfManagedConsumerWasteTonnage ?? 0);
-        }
-
-        public static decimal? GetPreviousInvoicedTonnageOverallTotal(
-          IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
-          MaterialDetail material)
-        {
-            return producerDisposalFees
-                    .Where(fee => fee.Level == CommonConstants.LevelOne.ToString())
-                    .Sum(row => row.ProducerDisposalFeesByMaterial?[material.Code].PreviousInvoicedTonnage);
         }
 
         public static (decimal? total, decimal? red,  decimal? amber, decimal? green) GetPricePerTonne(
