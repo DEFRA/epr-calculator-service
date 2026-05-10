@@ -67,9 +67,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             producer2.ProducerReportedMaterials.Add(mkProducerReportedMaterial(submissionPeriod: "2025-H2", material: "ST", packagingType: "PB", total:   5, r:   1, a: 4 ));
             producer2.ProducerReportedMaterials.Add(mkProducerReportedMaterial(submissionPeriod: "2025-H2", material: "PL", packagingType: "HH", total:  10, r:   0, a: 10));
             producer2.ProducerReportedMaterials.Add(mkProducerReportedMaterial(submissionPeriod: "2025-H2", material: "ST", packagingType: "HH", total: 200, r: 200, a: 0 ));
-            var producers = new List<ProducerDetail>
+            var producers = new List<L1Producer>
             {
-                producer1, producer2
+                new L1Producer(1, [producer1, producer2])
             };
 
             await _sut.StoreProjectedProducers(1, producers);

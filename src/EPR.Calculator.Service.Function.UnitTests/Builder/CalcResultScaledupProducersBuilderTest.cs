@@ -95,10 +95,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             dbContext.Dispose();
         }
 
-        private List<ProducerDetail> PrepareNonScaledUpProducer()
+        private List<L1Producer> PrepareNonScaledUpProducer()
         {
-            var result = new List<ProducerDetail>();
-
             var producerDetail = new ProducerDetail
             {
                 Id = 1,
@@ -143,7 +141,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 }
             );
 
-            result.Add(producerDetail);
             dbContext.ProducerDetail.Add(producerDetail);
 
             foreach (var subPeriod in new[] { "2025-H1", "2025-H2"}) {
@@ -224,10 +221,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             dbContext.SaveChanges();
 
-            return result;
+            return [new L1Producer(producerDetail.ProducerId, [producerDetail])];
         }
 
-        private List<ProducerDetail> PrepareScaledUpProducer()
+        private List<L1Producer> PrepareScaledUpProducer()
         {
             dbContext.CalculatorRunOrganisationDataDetails.AddRange(
                 new CalculatorRunOrganisationDataDetail
@@ -281,11 +278,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             dbContext.ProducerDetail.Add(producerDetail);
 
-            var result = new List<ProducerDetail>
-            {
-                producerDetail
-            };
-
             dbContext.SubmissionPeriodLookup.Add(
                 new SubmissionPeriodLookup
                 {
@@ -301,7 +293,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             dbContext.SaveChanges();
 
-            return result;
+            return [new L1Producer(producerDetail.ProducerId, [producerDetail])];
         }
 
         /// <summary>
@@ -343,9 +335,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var updatedProducers = (await builder.ConstructAsync(materialDetails, producers, requestDto)).Item1;
 
             // Assert
-            Assert.AreEqual(producers.Count(), updatedProducers.Count());
+            Assert.AreEqual(producers.Count, updatedProducers.Count);
 
-            foreach (var producer in updatedProducers)
+            var updatedPds = updatedProducers.SelectMany(l1 => l1.Producers).ToList();
+            var originalPds = producers.SelectMany(l1 => l1.Producers).ToList();
+
+            foreach (var producer in updatedPds)
             {
                 if (producer.ProducerId == 12 && producer.SubsidiaryId == null)
                 {
@@ -354,7 +349,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 }
                 else
                 {
-                    var expectedProducer = producers.First(p => p.ProducerId == producer.ProducerId && p.SubsidiaryId == producer.SubsidiaryId);
+                    var expectedProducer = originalPds.First(p => p.ProducerId == producer.ProducerId && p.SubsidiaryId == producer.SubsidiaryId);
                     Assert.AreEqual(expectedProducer, producer);
                 }
             }

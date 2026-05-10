@@ -6,6 +6,7 @@ using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
 using EPR.Calculator.Service.Function.Mappers;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -494,9 +495,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             return (MaterialMapper.Map(materials), new CalcResultsRequestDto { RunId = runId, RelativeYear = relativeYear });
         }
 
-        private string[][] ConvertResult((List<ProducerDetail>, CalcResultProjectedProducers) given)
+        private string[][] ConvertResult((List<L1Producer>, CalcResultProjectedProducers) given)
         {
             var materials = dbContext.Material.Select(e => e).ToList();
+            var allProducers = given.Item1.SelectMany(l1 => l1.Producers).ToList();
 
             string[]? createRow(int producerId, string? subsidiaryId, string level, ProducerReportedMaterial submission)
             {
@@ -523,7 +525,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             }
 
             // TODO if L2 - then add L1?
-            var levelLookup = given.Item1.Select(p => (ProducerId: p.ProducerId, SubsidiaryId: p.SubsidiaryId)).Distinct()
+            var levelLookup = allProducers.Select(p => (ProducerId: p.ProducerId, SubsidiaryId: p.SubsidiaryId)).Distinct()
                 .GroupBy(p => p.ProducerId).SelectMany(producerGroup =>
                 {
                     return producerGroup.GroupBy(p => p.SubsidiaryId).Select(subsidiaryGroup =>
@@ -531,7 +533,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     ).ToList();
                 }).ToDictionary();
 
-            var result = given.Item1.SelectMany(p =>
+            var result = allProducers.SelectMany(p =>
                 p.ProducerReportedMaterials.Select(r =>
                     createRow(producerId: p.ProducerId, subsidiaryId: p.SubsidiaryId, level: levelLookup[(p.ProducerId, p.SubsidiaryId)], r)
                 )
@@ -546,6 +548,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     .ThenBy(a => a[PackagingTypeI])
                     .ToArray();
         }
+        private List<L1Producer> ToL1Producers(string[][] given) =>
+            ToProducers(given)
+                .GroupBy(pd => pd.ProducerId)
+                .Select(g => new L1Producer(g.Key, g.ToList()))
+                .ToList();
+
         private List<ProducerDetail> ToProducers(string[][] given)
         {
             decimal? ToDecimal(string? s)
@@ -589,7 +597,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         private string[][] FillGaps(string[][] given)
         {
             var (materialDetails, requestDto) = InsertData(given);
-            return ConvertResult(builder.ConstructAsync(materialDetails, ToProducers(given), requestDto));
+            return ConvertResult(builder.ConstructAsync(materialDetails, ToL1Producers(given), requestDto));
         }
 
         private string[][] ConvertResultPrevious(CalcResultProjectedProducers given)
@@ -654,7 +662,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         private string[][] FillGapsPrevious(string[][] given)
         {
             var (materialDetails, requestDto) = InsertData(given);
-            return ConvertResultPrevious((builder.ConstructAsync(materialDetails, ToProducers(given), requestDto)).Item2);
+            return ConvertResultPrevious((builder.ConstructAsync(materialDetails, ToL1Producers(given), requestDto)).Item2);
         }
 
         private string ToPrintable(string[] arr) =>

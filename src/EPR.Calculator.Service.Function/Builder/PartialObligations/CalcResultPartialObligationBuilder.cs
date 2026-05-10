@@ -10,9 +10,9 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
 {
     public interface ICalcResultPartialObligationBuilder
     {
-        Task<(List<ProducerDetail>, CalcResultPartialObligations)> ConstructAsync(
+        Task<(List<L1Producer>, CalcResultPartialObligations)> ConstructAsync(
             List<MaterialDetail> materialDetails,
-            List<ProducerDetail> producerDetails,
+            List<L1Producer> producers,
             CalcResultsRequestDto resultsRequestDto,
             bool applyModulation
         );
@@ -84,9 +84,9 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
             return pd;
         }
 
-        public async Task<(List<ProducerDetail>, CalcResultPartialObligations)> ConstructAsync(
+        public async Task<(List<L1Producer>, CalcResultPartialObligations)> ConstructAsync(
             List<MaterialDetail> materialDetails,
-            List<ProducerDetail> producerDetails,
+            List<L1Producer> producers,
             CalcResultsRequestDto resultsRequestDto,
             bool applyModulation
         )
@@ -96,19 +96,22 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
             var partialObligationsForRun = await GetPartialObligations(runId);
             var obligationsLookup = partialObligationsForRun.ToDictionary(p => (p.ProducerId, p.SubsidiaryId));
 
-            var updatedProducers = producerDetails.Select(pd =>
-            {
-                if (!obligationsLookup.TryGetValue((pd.ProducerId, pd.SubsidiaryId), out var obligation))
-                    return pd;
+            var updatedProducers = producers.Select(l1 => new L1Producer(
+                l1.OrganisationId,
+                l1.Producers.Select(pd =>
+                {
+                    if (!obligationsLookup.TryGetValue((pd.ProducerId, pd.SubsidiaryId), out var obligation))
+                        return pd;
 
-                obligation.PartialObligationTonnageByMaterial =
-                    ComputeTonnageByMaterial(pd.ProducerReportedMaterials, materialDetails, obligation.ObligatedFactor, applyModulation);
+                    obligation.PartialObligationTonnageByMaterial =
+                        ComputeTonnageByMaterial(pd.ProducerReportedMaterials, materialDetails, obligation.ObligatedFactor, applyModulation);
 
-                return UpdateReportedMaterials(
-                    pd,
-                    reportedMaterials => reportedMaterials.Select(rm => Scale(applyModulation, rm, obligation)).ToList()
-                );
-            }).ToList();
+                    return UpdateReportedMaterials(
+                        pd,
+                        reportedMaterials => reportedMaterials.Select(rm => Scale(applyModulation, rm, obligation)).ToList()
+                    );
+                }).ToList()
+            )).ToList();
 
             var result = new CalcResultPartialObligations
             {
